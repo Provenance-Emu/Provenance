@@ -31,6 +31,10 @@ public protocol Container {
     var containerURL: URL? { get }
 }
 
+extension Notification.Name {
+    static let cloudDataDownloaded = Notification.Name("kCloudDataDownloaded")
+}
+
 extension Container {
     public var containerURL: URL? { get { return URL.iCloudContainerDirectory }}
     var documentsURL: URL? { get { return URL.iCloudDocumentsDirectory }}
@@ -44,8 +48,9 @@ public protocol SyncFileToiCloud: Container {
 }
 
 public protocol iCloudTypeSyncer: Container {
+    var newFiles: Set<URL> { get }
+    var directory: String { get }
     var metadataQuery: NSMetadataQuery { get }
-    var metadataQueryPredicate: NSPredicate { get } // ex NSPredicate(format: "%K like 'PHOTO*'", NSMetadataItemFSNameKey)
 
     func loadAllFromICloud() -> Completable
     func removeAllFromICloud() -> Completable
@@ -63,33 +68,33 @@ final class NotificationObserver {
         observer = center.addObserver(forName: name, object: object, queue: queue, using: block)
     }
 
-    deinit {
-        center.removeObserver(observer, name: name, object: object)
+    deinit {//because this was created inline, deinit gets called right away. does this ever need to be removed? shouldn't this be in the lifetime of the application?
+        //center.removeObserver(observer, name: name, object: object)
     }
 }
 
 extension iCloudTypeSyncer {
     public func loadAllFromICloud() -> Completable {
         return Completable.create { completable in
-            Task {
-                guard self.containerURL != nil else {
-                    completable(.error(SyncError.noUbiquityURL))
-                    return Disposables.create {}
-                }
+            //body mustn't run in a task, otherwise the NotificationObserver closure won't get called
+            guard containerURL != nil
+            else {
+                completable(.error(SyncError.noUbiquityURL))
                 return Disposables.create {}
             }
-            //        metadataQuery = NSMetadataQuery()
+            var tmp = newFiles
+            tmp.removeAll()
             self.metadataQuery.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
-            self.metadataQuery.predicate = self.metadataQueryPredicate
-
+            metadataQuery.predicate = NSPredicate(format: "%K CONTAINS[c] %@", NSMetadataItemPathKey, "/Documents/\(directory)/")
+            
             let _: NotificationObserver = .init(
                 forName: Notification.Name.NSMetadataQueryDidFinishGathering,
                 object: self.metadataQuery,
-                queue: nil) {[self] notification in
+                queue: nil) { notification in
                     self.queryFinished(notification: notification)
                     completable(.completed)
                 }
-
+            
             self.metadataQuery.start()
             return Disposables.create {}
         }
@@ -107,7 +112,7 @@ extension iCloudTypeSyncer {
             }
             //        metadataQuery = NSMetadataQuery()
             self.metadataQuery.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
-            self.metadataQuery.predicate = self.metadataQueryPredicate
+//            self.metadataQuery.predicate = self.metadataQueryPredicate
 
             let token: NSObjectProtocol? = NotificationCenter.default.addObserver(
                 forName: Notification.Name.NSMetadataQueryDidFinishGathering,
@@ -154,25 +159,47 @@ extension iCloudTypeSyncer {
     }
 
     func queryFinished(notification: Notification) {
-        let mq = notification.object as! NSMetadataQuery
-        mq.disableUpdates()
-        mq.stop()
-
-        //        for i in 0 ..< mq.resultCount {
-        //            let result = mq.result(at: i) as! NSMetadataItem
-        //            let name = result.value(forAttribute: NSMetadataItemFSNameKey) as! String
-        //            let url = result.value(forAttribute: NSMetadataItemURLKey) as! URL
-        // TODO: Some kind of observable rx?
-        //            let document: Self.Type! = DocumentPhoto(fileURL: url)
-        //            document?.open(completionHandler: {(success) -> Void in
-        //
-        //                if (success) {
-        //                    print("Image loaded with name \(name)")
-        //                    self.cells.append(document.image)
-        //                    self.collectionView.reloadData()
-        //                }
-        //            })
-        //        }
+        //TODO: update so this is generic for all downloads
+        guard type(of: self) != SaveStateSyncer.self
+        else {
+            return
+        }
+        
+        guard let query = notification.object as? NSMetadataQuery
+        else {
+            return
+        }
+        let fileManager = FileManager.default
+        let isMainThread = Thread.isMainThread
+        print("isMainThread:\(isMainThread)")
+        var files: [URL] = []
+        //accessing results automatically pauses updates and resumes after deallocated
+        for item in query.results {
+            if let fileItem = item as? NSMetadataItem,
+               let file = fileItem.value(forAttribute: NSMetadataItemURLKey) as? URL,
+               let downloadStatus = fileItem.value(forAttribute: NSMetadataUbiquitousItemDownloadingStatusKey) as? String,
+               downloadStatus == NSMetadataUbiquitousItemDownloadingStatusNotDownloaded {
+                print("Found file: \(String(describing: file)), download status: \(downloadStatus)")
+                files.append(file)
+                
+                do {
+                    try fileManager.startDownloadingUbiquitousItem(at: file)
+                    //TODO: we have to wait until the files are downloaded, we can just create a queue and then just loop until the queue is empty
+                    print("Download started for: \(file.lastPathComponent)")
+                } catch {
+                    print("Failed to start download: \(error)")
+                }
+            }
+        }
+        var downloadedFiles = newFiles
+        while downloadedFiles.count != files.count {
+            for file in files {
+                if fileManager.fileExists(atPath: file.path) {
+                    downloadedFiles.insert(file)
+                }
+            }
+        }
+        
     }
 }
 
@@ -281,7 +308,9 @@ enum iCloudError: Error {
 }
 
 public enum iCloudSync {
-    static var disposeBag: DisposeBag?
+    //TODO: move bags to each class
+    static var disposeBagSaveState: DisposeBag?
+    static var disposeBagRoms: DisposeBag?
     public static func initICloudDocuments() {
         let fm = FileManager.default
         if let currentiCloudToken = fm.ubiquityIdentityToken {
@@ -296,26 +325,36 @@ public enum iCloudSync {
         }
 
         let saveStateSyncer = SaveStateSyncer()
-        let disposeBag = DisposeBag()
-        self.disposeBag = disposeBag
+        let currentDisposeBagSaveState = DisposeBag()
+        self.disposeBagSaveState = currentDisposeBagSaveState
         saveStateSyncer.loadAllFromICloud()
             .observe(on: MainScheduler.instance)
             .subscribe(onCompleted: {
                 importNewSaves()
-                self.disposeBag = nil
             }) { error in
-                ELOG("\(error.localizedDescription)")
-            }.disposed(by: disposeBag)
+                ELOG(error.localizedDescription)
+            }.disposed(by: currentDisposeBagSaveState)
+        let romsSyncer = RomsSyncer()
+        let currentDisposeBagRoms = DisposeBag()
+        disposeBagRoms = currentDisposeBagRoms
+        romsSyncer.loadAllFromICloud()
+            .observe(on: MainScheduler.instance)
+            .subscribe(onCompleted: {
+                romsSyncer.handleNewRomFiles()
+            }) { error in
+                ELOG(error.localizedDescription)
+            }.disposed(by: currentDisposeBagRoms)
     }
-
+    
+//TODO: prolly this should be in SaveStateSyncer
     public static func importNewSaves() {
-        if !RomDatabase.databaseInitialized {
-            // Keep trying // TODO: Add a notification for this
-            // instead of dumb loop
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                self.importNewSaves()
-            }
+        guard RomDatabase.databaseInitialized
+        else {
             return
+        }
+        
+        defer {
+            disposeBagSaveState = nil
         }
 
         Task {
@@ -440,8 +479,54 @@ public enum iCloudSync {
 }
 
 class SaveStateSyncer: iCloudTypeSyncer {
-    public var metadataQuery: NSMetadataQuery = .init()
-    public var metadataQueryPredicate: NSPredicate {
-        return NSPredicate(format: "%K CONTAINS[c] 'Save States'", NSMetadataItemPathKey)
+    var metadataQuery: NSMetadataQuery = .init()
+    var newFiles: Set<URL> = []
+    init() {
+        NotificationCenter.default.addObserver(self, selector: #selector(wrapper), name: .cloudDataDownloaded, object: nil)
+    }
+    deinit {
+        print("dying")
+    }
+    
+    @objc
+    func wrapper() {
+        iCloudSync.importNewSaves()
+    }
+    
+    var directory: String {
+        "Save States"
+    }
+}
+
+class RomsSyncer: iCloudTypeSyncer {
+    var metadataQuery: NSMetadataQuery = .init()
+    var newFiles: Set<URL> = []
+    
+    init() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleNewRomFiles), name: .cloudDataDownloaded, object: nil)
+    }
+    deinit {
+        print("dying")
+    }
+    
+    var directory: String {
+        "ROMs"
+    }
+    
+    /// sends a notification that rom files are ready to e
+    @objc
+    func handleNewRomFiles() {
+        guard !newFiles.isEmpty
+        else {
+            return
+        }
+        
+        guard RomDatabase.databaseInitialized
+        else {
+            return
+        }
+        
+        NotificationCenter.default.post(name: .cloudDataDownloaded, object: nil, userInfo: ["kCloudDataDownloaded": newFiles])
+        iCloudSync.disposeBagRoms = nil
     }
 }
