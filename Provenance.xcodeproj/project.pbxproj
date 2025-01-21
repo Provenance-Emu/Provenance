@@ -821,8 +821,6 @@
 		B3E2A9FB2CB60F1200E2636D /* PVPPSSPP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2A9F92CB60F1200E2636D /* PVPPSSPP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E2AA252CB6328100E2636D /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA242CB6328100E2636D /* PVVecX.framework */; };
 		B3E2AA262CB6328100E2636D /* PVVecX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA242CB6328100E2636D /* PVVecX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E2AA302CB6346900E2636D /* PVOpera.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA2F2CB6346900E2636D /* PVOpera.framework */; };
-		B3E2AA312CB6346900E2636D /* PVOpera.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA2F2CB6346900E2636D /* PVOpera.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E2AA382CB635BB00E2636D /* PVGME.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA372CB635BB00E2636D /* PVGME.framework */; };
 		B3E2AA392CB635BB00E2636D /* PVGME.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA372CB635BB00E2636D /* PVGME.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E2AA4E2CB638F400E2636D /* PVDesmume2015.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA4D2CB638F400E2636D /* PVDesmume2015.framework */; platformFilters = (ios, maccatalyst, ); };
@@ -1534,7 +1532,6 @@
 				B318E28B2CAB512F00D0E599 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B38FB4B32CBEF961006786C6 /* PVRetroArch.framework in Embed Frameworks */,
 				B3E2AA522CB63A6200E2636D /* PVBeetlePSX.framework in Embed Frameworks */,
-				B3E2AA312CB6346900E2636D /* PVOpera.framework in Embed Frameworks */,
 				B318E29B2CAB586800D0E599 /* snes9x.framework in Embed Frameworks */,
 				B38FB4B12CBEF6B1006786C6 /* libswscale.xcframework in Embed Frameworks */,
 				B3B925A32C614208006317EC /* PVVirtualJaguar-Dynamic in Embed Frameworks */,
@@ -2957,7 +2954,6 @@
 				B3E2A9FA2CB60F1200E2636D /* PVPPSSPP.framework in Frameworks */,
 				B33A09342D2D0B0C00BFB6C9 /* PVJIT in Frameworks */,
 				B32D45C72CB7310C006B76C2 /* PVGambatte in Frameworks */,
-				B3E2AA302CB6346900E2636D /* PVOpera.framework in Frameworks */,
 				B306D7E62D3DDC6B00C71EBE /* FirebaseCore in Frameworks */,
 				B394CD7C2BDEE53A006B63E8 /* CoreServices.framework in Frameworks */,
 				B394CD872BDEE53A006B63E8 /* AVFoundation.framework in Frameworks */,
