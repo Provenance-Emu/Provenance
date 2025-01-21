@@ -64,8 +64,10 @@ struct ProvenanceApp: App {
                        WhatsNewEnvironment(
                            // Specify in which way the presented WhatsNew Versions are stored.
                            // In default the `UserDefaultsWhatsNewVersionStore` is used.
-                           versionStore: // InMemoryWhatsNewVersionStore(),
-                           NSUbiquitousKeyValueWhatsNewVersionStore(), // UserDefaultsWhatsNewVersionStore(),
+                           versionStore:
+//                             InMemoryWhatsNewVersionStore(),
+                           NSUbiquitousKeyValueWhatsNewVersionStore(),
+                           // UserDefaultsWhatsNewVersionStore(),
                            // Pass a `WhatsNewCollectionProvider` or an array of WhatsNew instances
                            whatsNewCollection: self
                        )
@@ -235,18 +237,38 @@ extension ProvenanceApp: WhatsNewCollectionProvider {
             features: [
                 .init(
                     image: .init(systemName: "cpu.fill", foregroundColor: .blue),
-                    title: "Graphics Improvements",
-                    subtitle: "Enhanced Metal renderer compatibility and fixed GPU-specific crashes"
+                    title: "Core Scanning Improvements",
+                    subtitle: "Enhanced core detection and loading to prevent boot crashes"
                 ),
                 .init(
-                    image: .init(systemName: "archivebox.fill", foregroundColor: .green),
+                    image: .init(systemName: "exclamationmark.triangle.fill", foregroundColor: .orange),
+                    title: "Better Error Handling",
+                    subtitle: "Improved RetroArch error handling for enhanced stability"
+                ),
+                .init(
+                    image: .init(systemName: "gamecontroller.fill", foregroundColor: .green),
+                    title: "Controller Fixes",
+                    subtitle: "Fixed Intellivision on-screen control layout and responsiveness"
+                ),
+                .init(
+                    image: .init(systemName: "cpu.fill", foregroundColor: .purple),
+                    title: "Graphics Enhancements",
+                    subtitle: "Custom MoltenVK implementation to fix 3DS crashes and shader issues"
+                ),
+                .init(
+                    image: .init(systemName: "display", foregroundColor: .red),
+                    title: "Jaguar Improvements",
+                    subtitle: "Fixed video rendering and display issues for Atari Jaguar games"
+                ),
+                .init(
+                    image: .init(systemName: "archivebox.fill", foregroundColor: .blue),
                     title: "BIOS Support",
-                    subtitle: "Added support for compressed BIOS files and improved detection"
+                    subtitle: "Added support for zipped BIOS files including Neo Geo and others"
                 ),
                 .init(
-                    image: .init(systemName: "gamecontroller.fill", foregroundColor: .orange),
-                    title: "Core Enhancements",
-                    subtitle: "Improved Jaguar emulation and graphics rendering"
+                    image: .init(systemName: "wrench.and.screwdriver.fill", foregroundColor: .gray),
+                    title: "General Improvements",
+                    subtitle: "Various bug fixes and stability improvements across all systems"
                 )
             ],
             primaryAction: .init(

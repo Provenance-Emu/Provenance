@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenance.SameDuck</string>
+	<string>com.provenance.core.SameDuck</string>
 	<key>PVPrincipleClass</key>
-	<string>PVSameDuckCore</string>
+	<string>PVSameDuck.PVSameDuckCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.megaduck</string>

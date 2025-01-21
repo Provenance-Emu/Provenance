@@ -39,6 +39,94 @@
 		B30E99312C6EF32600C1431E /* PVObjCUtils in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99302C6EF32600C1431E /* PVObjCUtils */; };
 		B30E99E02C6F049700C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99DF2C6F049700C1431E /* PVCoreBridge */; };
 		B35D8A862B58E20E00F37E8B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35D8A852B58E20E00F37E8B /* Foundation.framework */; };
+		B39952AD2D3F19D400FC3FFE /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA44F287296AD00EAEB37 /* libretro.c */; };
+		B39952AE2D3F1A7700FC3FFE /* cuefile.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA450287296AD00EAEB37 /* cuefile.c */; };
+		B39952AF2D3F1A7700FC3FFE /* opera_lr_dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA45D287296AD00EAEB37 /* opera_lr_dsp.c */; };
+		B39952B02D3F1A7700FC3FFE /* lr_input_descs.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA499287296AD00EAEB37 /* lr_input_descs.c */; };
+		B39952B12D3F1A7700FC3FFE /* lr_input.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA546287296AD00EAEB37 /* lr_input.c */; };
+		B39952B22D3F1A7700FC3FFE /* libretro_core_options.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA44E287296AD00EAEB37 /* libretro_core_options.c */; };
+		B39952B32D3F1A7700FC3FFE /* opera_lr_nvram.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA54B287296AD00EAEB37 /* opera_lr_nvram.c */; };
+		B39952B42D3F1A7700FC3FFE /* retro_cdimage.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA54A287296AD00EAEB37 /* retro_cdimage.c */; };
+		B39952B52D3F1A7700FC3FFE /* lr_input_crosshair.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA463287296AD00EAEB37 /* lr_input_crosshair.c */; };
+		B39952B62D3F1A7700FC3FFE /* opera_lr_opts.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA49A287296AD00EAEB37 /* opera_lr_opts.c */; };
+		B39952B72D3F1A7700FC3FFE /* opera_lr_callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA461287296AD00EAEB37 /* opera_lr_callbacks.c */; };
+		B39952B82D3F1AC000FC3FFE /* opera_dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA481287296AD00EAEB37 /* opera_dsp.c */; };
+		B39952B92D3F1AC000FC3FFE /* opera_fixedpoint_math.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA47B287296AD00EAEB37 /* opera_fixedpoint_math.c */; };
+		B39952BA2D3F1AC000FC3FFE /* opera_sport.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA485287296AD00EAEB37 /* opera_sport.c */; };
+		B39952BB2D3F1AC000FC3FFE /* opera_region.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA47E287296AD00EAEB37 /* opera_region.c */; };
+		B39952BC2D3F1AC000FC3FFE /* opera_clio.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA48B287296AD00EAEB37 /* opera_clio.c */; };
+		B39952BD2D3F1AC000FC3FFE /* opera_bitop.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA484287296AD00EAEB37 /* opera_bitop.c */; };
+		B39952BE2D3F1AC000FC3FFE /* opera_diag_port.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA46B287296AD00EAEB37 /* opera_diag_port.c */; };
+		B39952BF2D3F1AC000FC3FFE /* opera_3do.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA486287296AD00EAEB37 /* opera_3do.c */; };
+		B39952C02D3F1AC000FC3FFE /* opera_pbus.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA471287296AD00EAEB37 /* opera_pbus.c */; };
+		B39952C12D3F1AC000FC3FFE /* opera_bios.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA479287296AD00EAEB37 /* opera_bios.c */; };
+		B39952C22D3F1AC000FC3FFE /* opera_madam.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA46F287296AD00EAEB37 /* opera_madam.c */; };
+		B39952C32D3F1AC000FC3FFE /* opera_arm.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA47D287296AD00EAEB37 /* opera_arm.c */; };
+		B39952C42D3F1AC000FC3FFE /* opera_clock.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA480287296AD00EAEB37 /* opera_clock.c */; };
+		B39952C52D3F1AC000FC3FFE /* opera_cdrom.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA476287296AD00EAEB37 /* opera_cdrom.c */; };
+		B39952C62D3F1AC000FC3FFE /* opera_nvram.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA488287296AD00EAEB37 /* opera_nvram.c */; };
+		B39952C72D3F1AC000FC3FFE /* opera_xbus_cdrom_plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA47A287296AD00EAEB37 /* opera_xbus_cdrom_plugin.c */; };
+		B39952C82D3F1AC000FC3FFE /* opera_vdlp.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA472287296AD00EAEB37 /* opera_vdlp.c */; };
+		B39952C92D3F1AC000FC3FFE /* opera_xbus.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA490287296AD00EAEB37 /* opera_xbus.c */; };
+		B39952CA2D3F1AF100FC3FFE /* file_path.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA4AD287296AD00EAEB37 /* file_path.c */; };
+		B39952CB2D3F1AF100FC3FFE /* retro_dirent.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA4AE287296AD00EAEB37 /* retro_dirent.c */; };
+		B39952CC2D3F1B1200FC3FFE /* file_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA4B4287296AD00EAEB37 /* file_stream.c */; };
+		B39952CD2D3F1B2100FC3FFE /* interface_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA4B1287296AD00EAEB37 /* interface_stream.c */; };
+		B39952CE2D3F1B3100FC3FFE /* memory_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA4B2287296AD00EAEB37 /* memory_stream.c */; };
+		B39952CF2D3F1B6400FC3FFE /* file_stream_transforms.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA4B0287296AD00EAEB37 /* file_stream_transforms.c */; };
+		B39952D02D3F1B6400FC3FFE /* chd_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA4B3287296AD00EAEB37 /* chd_stream.c */; };
+		B39952D22D3F1BC700FC3FFE /* libchdr_chd.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA4FF287296AD00EAEB37 /* libchdr_chd.c */; };
+		B39952D32D3F1BC700FC3FFE /* libchdr_flac.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA502287296AD00EAEB37 /* libchdr_flac.c */; };
+		B39952D42D3F1BC700FC3FFE /* libchdr_huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA501287296AD00EAEB37 /* libchdr_huffman.c */; };
+		B39952D52D3F1BC700FC3FFE /* libchdr_bitstream.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA500287296AD00EAEB37 /* libchdr_bitstream.c */; };
+		B39952D62D3F1BF500FC3FFE /* libchdr_cdrom.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA504287296AD00EAEB37 /* libchdr_cdrom.c */; };
+		B39952D72D3F1C4200FC3FFE /* vfs_implementation.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA49F287296AD00EAEB37 /* vfs_implementation.c */; };
+		B39952D82D3F1C7C00FC3FFE /* Lzma86Enc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA541287296AD00EAEB37 /* Lzma86Enc.c */; };
+		B39952D92D3F1C7C00FC3FFE /* Bra86.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA53B287296AD00EAEB37 /* Bra86.c */; };
+		B39952DA2D3F1C7C00FC3FFE /* Delta.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA540287296AD00EAEB37 /* Delta.c */; };
+		B39952DB2D3F1C7C00FC3FFE /* LzmaEnc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA538287296AD00EAEB37 /* LzmaEnc.c */; };
+		B39952DC2D3F1C7C00FC3FFE /* CpuArch.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA542287296AD00EAEB37 /* CpuArch.c */; };
+		B39952DD2D3F1C7C00FC3FFE /* LzFind.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA539287296AD00EAEB37 /* LzFind.c */; };
+		B39952DE2D3F1C7C00FC3FFE /* Sort.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA53A287296AD00EAEB37 /* Sort.c */; };
+		B39952DF2D3F1C7C00FC3FFE /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA53D287296AD00EAEB37 /* LzmaDec.c */; };
+		B39952E02D3F1C7C00FC3FFE /* Alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA53C287296AD00EAEB37 /* Alloc.c */; };
+		B39952E12D3F1C7C00FC3FFE /* Lzma86Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA53F287296AD00EAEB37 /* Lzma86Dec.c */; };
+		B39952E22D3F1C7C00FC3FFE /* BraIA64.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA53E287296AD00EAEB37 /* BraIA64.c */; };
+		B39952E32D3F1CD800FC3FFE /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA611287296E500EAEB37 /* zutil.c */; };
+		B39952E42D3F1CD800FC3FFE /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA60E287296E500EAEB37 /* crc32.c */; };
+		B39952E52D3F1CD800FC3FFE /* adler32.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA61F287296E500EAEB37 /* adler32.c */; };
+		B39952E62D3F1CD800FC3FFE /* inftrees.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA615287296E500EAEB37 /* inftrees.c */; };
+		B39952E72D3F1CD800FC3FFE /* inffast.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA61E287296E500EAEB37 /* inffast.c */; };
+		B39952E82D3F1CD800FC3FFE /* infback.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA610287296E500EAEB37 /* infback.c */; };
+		B39952E92D3F1CD800FC3FFE /* inflate.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA608287296E500EAEB37 /* inflate.c */; };
+		B39952EA2D3F1D1000FC3FFE /* compat_posix_string.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA5A5287296E500EAEB37 /* compat_posix_string.c */; };
+		B39952EB2D3F1D1000FC3FFE /* compat_strcasestr.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA5A6287296E500EAEB37 /* compat_strcasestr.c */; };
+		B39952EC2D3F1D1000FC3FFE /* fopen_utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA5A8287296E500EAEB37 /* fopen_utf8.c */; };
+		B39952ED2D3F1D1000FC3FFE /* compat_strl.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA5A4287296E500EAEB37 /* compat_strl.c */; };
+		B39952EE2D3F1D1000FC3FFE /* compat_snprintf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA5A7287296E500EAEB37 /* compat_snprintf.c */; };
+		B39952EF2D3F1ED800FC3FFE /* file_stream_transforms.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA5B0287296E500EAEB37 /* file_stream_transforms.c */; };
+		B39952F02D3F1FE600FC3FFE /* memmap.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA5E4287296E500EAEB37 /* memmap.c */; };
+		B39952F12D3F1FF100FC3FFE /* memalign.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA5E5287296E500EAEB37 /* memalign.c */; };
+		B39952F22D3F200400FC3FFE /* string_list.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA5AB287296E500EAEB37 /* string_list.c */; };
+		B39952F32D3F200400FC3FFE /* dir_list.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA5AA287296E500EAEB37 /* dir_list.c */; };
+		B39952F42D3F201000FC3FFE /* encoding_utf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA59D287296E500EAEB37 /* encoding_utf.c */; };
+		B39952F52D3F201900FC3FFE /* vfs_implementation.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA59F287296E500EAEB37 /* vfs_implementation.c */; };
+		B39952F62D3F202A00FC3FFE /* stdstring.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA5ED287296E500EAEB37 /* stdstring.c */; };
+		B39952F72D3F205100FC3FFE /* rthreads.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA5E7287296E500EAEB37 /* rthreads.c */; };
+		B3EDA1E92D3F22F500BA275D /* stdstring.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA4ED287296AD00EAEB37 /* stdstring.c */; };
+		B3EDA1EA2D3F230400BA275D /* rthreads.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA4E7287296AD00EAEB37 /* rthreads.c */; };
+		B3EDA1EB2D3F230C00BA275D /* memmap.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA4E4287296AD00EAEB37 /* memmap.c */; };
+		B3EDA1EC2D3F230C00BA275D /* memalign.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA4E5287296AD00EAEB37 /* memalign.c */; };
+		B3EDA1ED2D3F231400BA275D /* string_list.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA4AB287296AD00EAEB37 /* string_list.c */; };
+		B3EDA1EE2D3F231400BA275D /* dir_list.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA4AA287296AD00EAEB37 /* dir_list.c */; };
+		B3EDA1EF2D3F231E00BA275D /* encoding_utf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA49D287296AD00EAEB37 /* encoding_utf.c */; };
+		B3EDA1F02D3F232700BA275D /* compat_posix_string.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA4A5287296AD00EAEB37 /* compat_posix_string.c */; };
+		B3EDA1F12D3F232700BA275D /* compat_strl.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA4A4287296AD00EAEB37 /* compat_strl.c */; };
+		B3EDA1F22D3F232700BA275D /* compat_snprintf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA4A7287296AD00EAEB37 /* compat_snprintf.c */; };
+		B3EDA1F32D3F232700BA275D /* compat_strcasestr.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA4A6287296AD00EAEB37 /* compat_strcasestr.c */; };
+		B3EDA1F42D3F232700BA275D /* fopen_utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA4A8287296AD00EAEB37 /* fopen_utf8.c */; };
+		B3EDA1F62D3F246F00BA275D /* OperaOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EDA1F52D3F246F00BA275D /* OperaOptions.swift */; };
+		B3EDA1F92D3F266200BA275D /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3EDA1F82D3F266200BA275D /* PVLogging */; };
 		B3F8DFE72CB36B4000017D1B /* PVOperaCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8DFE42CB36B4000017D1B /* PVOperaCore.swift */; };
 		B3F8DFE82CB36B4000017D1B /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8DFE62CB36B4000017D1B /* CorePlist-Generated.swift */; };
 		B3F8DFE92CB36B4000017D1B /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8DFE52CB36B4000017D1B /* CorePlist.swift */; };
@@ -1134,6 +1222,7 @@
 		B3EBABF22872970300EAEB37 /* cdrom copy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "cdrom copy.h"; sourceTree = "<group>"; };
 		B3EBABF42872970300EAEB37 /* stdint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stdint.h; sourceTree = "<group>"; };
 		B3EBABF52872970300EAEB37 /* stdint copy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "stdint copy.h"; sourceTree = "<group>"; };
+		B3EDA1F52D3F246F00BA275D /* OperaOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperaOptions.swift; sourceTree = "<group>"; };
 		B3F8DFE42CB36B4000017D1B /* PVOperaCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVOperaCore.swift; sourceTree = "<group>"; };
 		B3F8DFE52CB36B4000017D1B /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
 		B3F8DFE62CB36B4000017D1B /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
@@ -1148,6 +1237,7 @@
 				B30E99E02C6F049700C1431E /* PVCoreBridge in Frameworks */,
 				B3F8DFF42CB36D6A00017D1B /* PVEmulatorCore in Frameworks */,
 				B3F8DFEE2CB36C0A00017D1B /* PVCoreBridgeRetro.framework in Frameworks */,
+				B3EDA1F92D3F266200BA275D /* PVLogging in Frameworks */,
 				B30E98AD2C6EEF2900C1431E /* PVSupport in Frameworks */,
 				B30E99312C6EF32600C1431E /* PVObjCUtils in Frameworks */,
 				B3F8DFF72CB36DD600017D1B /* PVPlists in Frameworks */,
@@ -1172,6 +1262,7 @@
 		B37022C4287253B300B3F6DA /* PVOperaCore */ = {
 			isa = PBXGroup;
 			children = (
+				B3EDA1F52D3F246F00BA275D /* OperaOptions.swift */,
 				93F6EC69298ACB1A00397536 /* PVDebug.m */,
 				B3EBA44C287296AD00EAEB37 /* opera-libretro */,
 				B37022C5287253B300B3F6DA /* PVOperaCore.h */,
@@ -1218,42 +1309,42 @@
 		B3EBA44C287296AD00EAEB37 /* opera-libretro */ = {
 			isa = PBXGroup;
 			children = (
+				B3EBA464287296AD00EAEB37 /* .gitignore */,
+				B3EBA54D287296AD00EAEB37 /* control */,
+				B3EBA45B287296AD00EAEB37 /* Makefile */,
 				B3EBA44D287296AD00EAEB37 /* Tupfile */,
+				B3EBA450287296AD00EAEB37 /* cuefile.c */,
 				B3EBA44E287296AD00EAEB37 /* libretro_core_options.c */,
 				B3EBA44F287296AD00EAEB37 /* libretro.c */,
-				B3EBA450287296AD00EAEB37 /* cuefile.c */,
-				B3EBA451287296AD00EAEB37 /* lr_input_crosshair.h */,
-				B3EBA452287296AD00EAEB37 /* opera_lr_callbacks.h */,
-				B3EBA453287296AD00EAEB37 /* opera_lr_dsp_regular.ic */,
-				B3EBA454287296AD00EAEB37 /* opera_lr_opts.h */,
-				B3EBA455287296AD00EAEB37 /* lr_input_descs.h */,
-				B3EBA456287296AD00EAEB37 /* retro_cdimage.h */,
-				B3EBA457287296AD00EAEB37 /* lr_input.h */,
-				B3EBA45B287296AD00EAEB37 /* Makefile */,
-				B3EBA45C287296AD00EAEB37 /* opera_lr_dsp_threaded.ic */,
-				B3EBA45D287296AD00EAEB37 /* opera_lr_dsp.c */,
-				B3EBA45E287296AD00EAEB37 /* Makefile.common */,
-				B3EBA45F287296AD00EAEB37 /* opera_lr_nvram.h */,
-				B3EBA460287296AD00EAEB37 /* README.md */,
-				B3EBA461287296AD00EAEB37 /* opera_lr_callbacks.c */,
-				B3EBA462287296AD00EAEB37 /* cuefile.h */,
 				B3EBA463287296AD00EAEB37 /* lr_input_crosshair.c */,
-				B3EBA464287296AD00EAEB37 /* .gitignore */,
-				B3EBA465287296AD00EAEB37 /* libretro_core_options.h */,
-				B3EBA466287296AD00EAEB37 /* libopera */,
 				B3EBA499287296AD00EAEB37 /* lr_input_descs.c */,
-				B3EBA49A287296AD00EAEB37 /* opera_lr_opts.c */,
-				B3EBA49B287296AD00EAEB37 /* libretro-common */,
-				B3EBA4EE287296AD00EAEB37 /* deps */,
-				B3EBA543287296AD00EAEB37 /* .gitlab-ci.yml */,
-				B3EBA544287296AD00EAEB37 /* link.T */,
-				B3EBA545287296AD00EAEB37 /* opera_lr_dsp.h */,
 				B3EBA546287296AD00EAEB37 /* lr_input.c */,
-				B3EBA547287296AD00EAEB37 /* jni */,
-				B3EBA54A287296AD00EAEB37 /* retro_cdimage.c */,
+				B3EBA461287296AD00EAEB37 /* opera_lr_callbacks.c */,
+				B3EBA45D287296AD00EAEB37 /* opera_lr_dsp.c */,
 				B3EBA54B287296AD00EAEB37 /* opera_lr_nvram.c */,
+				B3EBA49A287296AD00EAEB37 /* opera_lr_opts.c */,
+				B3EBA54A287296AD00EAEB37 /* retro_cdimage.c */,
+				B3EBA45E287296AD00EAEB37 /* Makefile.common */,
+				B3EBA462287296AD00EAEB37 /* cuefile.h */,
+				B3EBA465287296AD00EAEB37 /* libretro_core_options.h */,
+				B3EBA451287296AD00EAEB37 /* lr_input_crosshair.h */,
+				B3EBA455287296AD00EAEB37 /* lr_input_descs.h */,
+				B3EBA457287296AD00EAEB37 /* lr_input.h */,
+				B3EBA452287296AD00EAEB37 /* opera_lr_callbacks.h */,
+				B3EBA545287296AD00EAEB37 /* opera_lr_dsp.h */,
+				B3EBA45F287296AD00EAEB37 /* opera_lr_nvram.h */,
+				B3EBA454287296AD00EAEB37 /* opera_lr_opts.h */,
+				B3EBA456287296AD00EAEB37 /* retro_cdimage.h */,
+				B3EBA453287296AD00EAEB37 /* opera_lr_dsp_regular.ic */,
+				B3EBA45C287296AD00EAEB37 /* opera_lr_dsp_threaded.ic */,
+				B3EBA460287296AD00EAEB37 /* README.md */,
+				B3EBA544287296AD00EAEB37 /* link.T */,
+				B3EBA543287296AD00EAEB37 /* .gitlab-ci.yml */,
 				B3EBA54C287296AD00EAEB37 /* .travis.yml */,
-				B3EBA54D287296AD00EAEB37 /* control */,
+				B3EBA4EE287296AD00EAEB37 /* deps */,
+				B3EBA547287296AD00EAEB37 /* jni */,
+				B3EBA466287296AD00EAEB37 /* libopera */,
+				B3EBA49B287296AD00EAEB37 /* libretro-common */,
 			);
 			path = "opera-libretro";
 			sourceTree = SOURCE_ROOT;
@@ -1261,56 +1352,56 @@
 		B3EBA466287296AD00EAEB37 /* libopera */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBA467287296AD00EAEB37 /* opera_3do.h */,
-				B3EBA468287296AD00EAEB37 /* opera_region_i.h */,
-				B3EBA469287296AD00EAEB37 /* opera_bitop.h */,
-				B3EBA46A287296AD00EAEB37 /* opera_sport.h */,
-				B3EBA46B287296AD00EAEB37 /* opera_diag_port.c */,
-				B3EBA46C287296AD00EAEB37 /* extern_c.h */,
-				B3EBA46D287296AD00EAEB37 /* opera_dsp.h */,
-				B3EBA46E287296AD00EAEB37 /* opera_xbus.h */,
-				B3EBA46F287296AD00EAEB37 /* opera_madam.c */,
-				B3EBA470287296AD00EAEB37 /* endianness.h */,
-				B3EBA471287296AD00EAEB37 /* opera_pbus.c */,
-				B3EBA472287296AD00EAEB37 /* opera_vdlp.c */,
-				B3EBA473287296AD00EAEB37 /* opera_clio.h */,
-				B3EBA474287296AD00EAEB37 /* opera_nvram.h */,
-				B3EBA475287296AD00EAEB37 /* hack_flags.h */,
-				B3EBA476287296AD00EAEB37 /* opera_cdrom.c */,
-				B3EBA477287296AD00EAEB37 /* bool.h */,
-				B3EBA478287296AD00EAEB37 /* opera_swi_hle_0x5XXXX.h */,
-				B3EBA479287296AD00EAEB37 /* opera_bios.c */,
-				B3EBA47A287296AD00EAEB37 /* opera_xbus_cdrom_plugin.c */,
-				B3EBA47B287296AD00EAEB37 /* opera_fixedpoint_math.c */,
-				B3EBA47C287296AD00EAEB37 /* inline.h */,
-				B3EBA47D287296AD00EAEB37 /* opera_arm.c */,
-				B3EBA47E287296AD00EAEB37 /* opera_region.c */,
-				B3EBA47F287296AD00EAEB37 /* opera_vdl.h */,
-				B3EBA480287296AD00EAEB37 /* opera_clock.c */,
-				B3EBA481287296AD00EAEB37 /* opera_dsp.c */,
-				B3EBA482287296AD00EAEB37 /* static_assert.h */,
-				B3EBA483287296AD00EAEB37 /* opera_diag_port.h */,
-				B3EBA484287296AD00EAEB37 /* opera_bitop.c */,
-				B3EBA485287296AD00EAEB37 /* opera_sport.c */,
 				B3EBA486287296AD00EAEB37 /* opera_3do.c */,
-				B3EBA487287296AD00EAEB37 /* pbus.txt */,
-				B3EBA488287296AD00EAEB37 /* opera_nvram.c */,
-				B3EBA489287296AD00EAEB37 /* opera_cdrom.h */,
-				B3EBA48A287296AD00EAEB37 /* opera_pbus.h */,
+				B3EBA47D287296AD00EAEB37 /* opera_arm.c */,
+				B3EBA479287296AD00EAEB37 /* opera_bios.c */,
+				B3EBA484287296AD00EAEB37 /* opera_bitop.c */,
+				B3EBA476287296AD00EAEB37 /* opera_cdrom.c */,
 				B3EBA48B287296AD00EAEB37 /* opera_clio.c */,
-				B3EBA48C287296AD00EAEB37 /* opera_vdlp.h */,
-				B3EBA48D287296AD00EAEB37 /* opera_dsp2_i.h */,
-				B3EBA48E287296AD00EAEB37 /* opera_vdlp_i.h */,
-				B3EBA48F287296AD00EAEB37 /* opera_madam.h */,
+				B3EBA480287296AD00EAEB37 /* opera_clock.c */,
+				B3EBA46B287296AD00EAEB37 /* opera_diag_port.c */,
+				B3EBA481287296AD00EAEB37 /* opera_dsp.c */,
+				B3EBA47B287296AD00EAEB37 /* opera_fixedpoint_math.c */,
+				B3EBA46F287296AD00EAEB37 /* opera_madam.c */,
+				B3EBA488287296AD00EAEB37 /* opera_nvram.c */,
+				B3EBA471287296AD00EAEB37 /* opera_pbus.c */,
+				B3EBA47E287296AD00EAEB37 /* opera_region.c */,
+				B3EBA485287296AD00EAEB37 /* opera_sport.c */,
+				B3EBA472287296AD00EAEB37 /* opera_vdlp.c */,
+				B3EBA47A287296AD00EAEB37 /* opera_xbus_cdrom_plugin.c */,
 				B3EBA490287296AD00EAEB37 /* opera_xbus.c */,
-				B3EBA491287296AD00EAEB37 /* opera_bios.h */,
-				B3EBA492287296AD00EAEB37 /* opera_xbus_cdrom_plugin.h */,
-				B3EBA493287296AD00EAEB37 /* opera_core.h */,
+				B3EBA477287296AD00EAEB37 /* bool.h */,
+				B3EBA470287296AD00EAEB37 /* endianness.h */,
+				B3EBA46C287296AD00EAEB37 /* extern_c.h */,
+				B3EBA475287296AD00EAEB37 /* hack_flags.h */,
+				B3EBA47C287296AD00EAEB37 /* inline.h */,
+				B3EBA467287296AD00EAEB37 /* opera_3do.h */,
 				B3EBA494287296AD00EAEB37 /* opera_arm_core.h */,
-				B3EBA495287296AD00EAEB37 /* opera_region.h */,
 				B3EBA496287296AD00EAEB37 /* opera_arm.h */,
+				B3EBA491287296AD00EAEB37 /* opera_bios.h */,
+				B3EBA469287296AD00EAEB37 /* opera_bitop.h */,
+				B3EBA489287296AD00EAEB37 /* opera_cdrom.h */,
+				B3EBA473287296AD00EAEB37 /* opera_clio.h */,
 				B3EBA497287296AD00EAEB37 /* opera_clock.h */,
+				B3EBA493287296AD00EAEB37 /* opera_core.h */,
+				B3EBA483287296AD00EAEB37 /* opera_diag_port.h */,
+				B3EBA46D287296AD00EAEB37 /* opera_dsp.h */,
+				B3EBA48D287296AD00EAEB37 /* opera_dsp2_i.h */,
 				B3EBA498287296AD00EAEB37 /* opera_fixedpoint_math.h */,
+				B3EBA48F287296AD00EAEB37 /* opera_madam.h */,
+				B3EBA474287296AD00EAEB37 /* opera_nvram.h */,
+				B3EBA48A287296AD00EAEB37 /* opera_pbus.h */,
+				B3EBA468287296AD00EAEB37 /* opera_region_i.h */,
+				B3EBA495287296AD00EAEB37 /* opera_region.h */,
+				B3EBA46A287296AD00EAEB37 /* opera_sport.h */,
+				B3EBA478287296AD00EAEB37 /* opera_swi_hle_0x5XXXX.h */,
+				B3EBA47F287296AD00EAEB37 /* opera_vdl.h */,
+				B3EBA48E287296AD00EAEB37 /* opera_vdlp_i.h */,
+				B3EBA48C287296AD00EAEB37 /* opera_vdlp.h */,
+				B3EBA492287296AD00EAEB37 /* opera_xbus_cdrom_plugin.h */,
+				B3EBA46E287296AD00EAEB37 /* opera_xbus.h */,
+				B3EBA482287296AD00EAEB37 /* static_assert.h */,
+				B3EBA487287296AD00EAEB37 /* pbus.txt */,
 			);
 			path = libopera;
 			sourceTree = "<group>";
@@ -1318,17 +1409,17 @@
 		B3EBA49B287296AD00EAEB37 /* libretro-common */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBA49C287296AD00EAEB37 /* encodings */,
-				B3EBA49E287296AD00EAEB37 /* vfs */,
 				B3EBA4A1287296AD00EAEB37 /* cdrom */,
 				B3EBA4A3287296AD00EAEB37 /* compat */,
-				B3EBA4A9287296AD00EAEB37 /* lists */,
+				B3EBA49C287296AD00EAEB37 /* encodings */,
 				B3EBA4AC287296AD00EAEB37 /* file */,
-				B3EBA4AF287296AD00EAEB37 /* streams */,
 				B3EBA4B5287296AD00EAEB37 /* include */,
+				B3EBA4A9287296AD00EAEB37 /* lists */,
 				B3EBA4E3287296AD00EAEB37 /* memmap */,
 				B3EBA4E6287296AD00EAEB37 /* rthreads */,
+				B3EBA4AF287296AD00EAEB37 /* streams */,
 				B3EBA4EC287296AD00EAEB37 /* string */,
+				B3EBA49E287296AD00EAEB37 /* vfs */,
 			);
 			path = "libretro-common";
 			sourceTree = "<group>";
@@ -1391,11 +1482,11 @@
 		B3EBA4AF287296AD00EAEB37 /* streams */ = {
 			isa = PBXGroup;
 			children = (
+				B3EBA4B3287296AD00EAEB37 /* chd_stream.c */,
 				B3EBA4B0287296AD00EAEB37 /* file_stream_transforms.c */,
+				B3EBA4B4287296AD00EAEB37 /* file_stream.c */,
 				B3EBA4B1287296AD00EAEB37 /* interface_stream.c */,
 				B3EBA4B2287296AD00EAEB37 /* memory_stream.c */,
-				B3EBA4B3287296AD00EAEB37 /* chd_stream.c */,
-				B3EBA4B4287296AD00EAEB37 /* file_stream.c */,
 			);
 			path = streams;
 			sourceTree = "<group>";
@@ -2162,28 +2253,28 @@
 		B3EBA605287296E500EAEB37 /* zlib-1.2.11 */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBA606287296E500EAEB37 /* zutil.h */,
-				B3EBA607287296E500EAEB37 /* inftrees.h */,
-				B3EBA608287296E500EAEB37 /* inflate.c */,
-				B3EBA609287296E500EAEB37 /* configure */,
 				B3EBA60A287296E500EAEB37 /* ChangeLog */,
-				B3EBA60B287296E500EAEB37 /* inffixed.h */,
+				B3EBA609287296E500EAEB37 /* configure */,
 				B3EBA60C287296E500EAEB37 /* FAQ */,
-				B3EBA60D287296E500EAEB37 /* inffast.h */,
-				B3EBA60E287296E500EAEB37 /* crc32.c */,
-				B3EBA60F287296E500EAEB37 /* README */,
-				B3EBA610287296E500EAEB37 /* infback.c */,
-				B3EBA611287296E500EAEB37 /* zutil.c */,
-				B3EBA612287296E500EAEB37 /* gzguts.h */,
-				B3EBA613287296E500EAEB37 /* zlib.h */,
-				B3EBA614287296E500EAEB37 /* inflate.h */,
-				B3EBA615287296E500EAEB37 /* inftrees.c */,
 				B3EBA616287296E500EAEB37 /* INDEX */,
-				B3EBA617287296E500EAEB37 /* doc */,
-				B3EBA61D287296E500EAEB37 /* crc32.h */,
-				B3EBA61E287296E500EAEB37 /* inffast.c */,
+				B3EBA60F287296E500EAEB37 /* README */,
 				B3EBA61F287296E500EAEB37 /* adler32.c */,
+				B3EBA60E287296E500EAEB37 /* crc32.c */,
+				B3EBA610287296E500EAEB37 /* infback.c */,
+				B3EBA61E287296E500EAEB37 /* inffast.c */,
+				B3EBA608287296E500EAEB37 /* inflate.c */,
+				B3EBA615287296E500EAEB37 /* inftrees.c */,
+				B3EBA611287296E500EAEB37 /* zutil.c */,
+				B3EBA61D287296E500EAEB37 /* crc32.h */,
+				B3EBA612287296E500EAEB37 /* gzguts.h */,
+				B3EBA60D287296E500EAEB37 /* inffast.h */,
+				B3EBA60B287296E500EAEB37 /* inffixed.h */,
+				B3EBA614287296E500EAEB37 /* inflate.h */,
+				B3EBA607287296E500EAEB37 /* inftrees.h */,
 				B3EBA620287296E500EAEB37 /* zconf.h */,
+				B3EBA613287296E500EAEB37 /* zlib.h */,
+				B3EBA606287296E500EAEB37 /* zutil.h */,
+				B3EBA617287296E500EAEB37 /* doc */,
 			);
 			path = "zlib-1.2.11";
 			sourceTree = "<group>";
@@ -3568,6 +3659,7 @@
 				B3F8DFEB2CB36BF800017D1B /* PVCoreObjCBridge */,
 				B3F8DFF32CB36D6A00017D1B /* PVEmulatorCore */,
 				B3F8DFF62CB36DD600017D1B /* PVPlists */,
+				B3EDA1F82D3F266200BA275D /* PVLogging */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVOpera.framework */;
@@ -3621,6 +3713,7 @@
 				B3F8DFEA2CB36BF800017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
 				B3F8DFF22CB36D6A00017D1B /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
 				B3F8DFF52CB36DD600017D1B /* XCLocalSwiftPackageReference "../../PVPlists" */,
+				B3EDA1F72D3F266200BA275D /* XCLocalSwiftPackageReference "../../PVLogging" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -3710,9 +3803,96 @@
 			files = (
 				93F6EC6A298ACB1A00397536 /* PVDebug.m in Sources */,
 				B3F8DFE72CB36B4000017D1B /* PVOperaCore.swift in Sources */,
+				B3EDA1EF2D3F231E00BA275D /* encoding_utf.c in Sources */,
+				B39952AE2D3F1A7700FC3FFE /* cuefile.c in Sources */,
+				B39952AF2D3F1A7700FC3FFE /* opera_lr_dsp.c in Sources */,
+				B39952B02D3F1A7700FC3FFE /* lr_input_descs.c in Sources */,
+				B39952B12D3F1A7700FC3FFE /* lr_input.c in Sources */,
+				B3EDA1EA2D3F230400BA275D /* rthreads.c in Sources */,
+				B39952B22D3F1A7700FC3FFE /* libretro_core_options.c in Sources */,
+				B39952B32D3F1A7700FC3FFE /* opera_lr_nvram.c in Sources */,
+				B39952B42D3F1A7700FC3FFE /* retro_cdimage.c in Sources */,
+				B39952B52D3F1A7700FC3FFE /* lr_input_crosshair.c in Sources */,
+				B39952B62D3F1A7700FC3FFE /* opera_lr_opts.c in Sources */,
+				B39952CA2D3F1AF100FC3FFE /* file_path.c in Sources */,
+				B39952CB2D3F1AF100FC3FFE /* retro_dirent.c in Sources */,
+				B39952F52D3F201900FC3FFE /* vfs_implementation.c in Sources */,
+				B39952B72D3F1A7700FC3FFE /* opera_lr_callbacks.c in Sources */,
 				B3F8DFE82CB36B4000017D1B /* CorePlist-Generated.swift in Sources */,
+				B39952CE2D3F1B3100FC3FFE /* memory_stream.c in Sources */,
 				B3F8DFF82CB36EAA00017D1B /* PVOperaCore.mm in Sources */,
+				B39952F12D3F1FF100FC3FFE /* memalign.c in Sources */,
+				B39952AD2D3F19D400FC3FFE /* libretro.c in Sources */,
+				B39952EF2D3F1ED800FC3FFE /* file_stream_transforms.c in Sources */,
+				B39952CD2D3F1B2100FC3FFE /* interface_stream.c in Sources */,
+				B39952B82D3F1AC000FC3FFE /* opera_dsp.c in Sources */,
+				B39952B92D3F1AC000FC3FFE /* opera_fixedpoint_math.c in Sources */,
+				B39952CC2D3F1B1200FC3FFE /* file_stream.c in Sources */,
+				B39952BA2D3F1AC000FC3FFE /* opera_sport.c in Sources */,
+				B39952E32D3F1CD800FC3FFE /* zutil.c in Sources */,
+				B39952E42D3F1CD800FC3FFE /* crc32.c in Sources */,
+				B39952E52D3F1CD800FC3FFE /* adler32.c in Sources */,
+				B39952E62D3F1CD800FC3FFE /* inftrees.c in Sources */,
+				B39952E72D3F1CD800FC3FFE /* inffast.c in Sources */,
+				B39952E82D3F1CD800FC3FFE /* infback.c in Sources */,
+				B3EDA1ED2D3F231400BA275D /* string_list.c in Sources */,
+				B3EDA1EE2D3F231400BA275D /* dir_list.c in Sources */,
+				B39952E92D3F1CD800FC3FFE /* inflate.c in Sources */,
+				B39952BB2D3F1AC000FC3FFE /* opera_region.c in Sources */,
+				B39952BC2D3F1AC000FC3FFE /* opera_clio.c in Sources */,
+				B39952BD2D3F1AC000FC3FFE /* opera_bitop.c in Sources */,
+				B39952BE2D3F1AC000FC3FFE /* opera_diag_port.c in Sources */,
+				B39952BF2D3F1AC000FC3FFE /* opera_3do.c in Sources */,
+				B39952C02D3F1AC000FC3FFE /* opera_pbus.c in Sources */,
+				B39952C12D3F1AC000FC3FFE /* opera_bios.c in Sources */,
+				B3EDA1F62D3F246F00BA275D /* OperaOptions.swift in Sources */,
+				B39952C22D3F1AC000FC3FFE /* opera_madam.c in Sources */,
+				B39952C32D3F1AC000FC3FFE /* opera_arm.c in Sources */,
+				B39952D22D3F1BC700FC3FFE /* libchdr_chd.c in Sources */,
+				B39952D72D3F1C4200FC3FFE /* vfs_implementation.c in Sources */,
+				B39952D32D3F1BC700FC3FFE /* libchdr_flac.c in Sources */,
+				B39952D62D3F1BF500FC3FFE /* libchdr_cdrom.c in Sources */,
+				B39952D42D3F1BC700FC3FFE /* libchdr_huffman.c in Sources */,
+				B39952D52D3F1BC700FC3FFE /* libchdr_bitstream.c in Sources */,
+				B39952C42D3F1AC000FC3FFE /* opera_clock.c in Sources */,
+				B39952CF2D3F1B6400FC3FFE /* file_stream_transforms.c in Sources */,
+				B39952D02D3F1B6400FC3FFE /* chd_stream.c in Sources */,
+				B39952C52D3F1AC000FC3FFE /* opera_cdrom.c in Sources */,
+				B39952C62D3F1AC000FC3FFE /* opera_nvram.c in Sources */,
+				B39952C72D3F1AC000FC3FFE /* opera_xbus_cdrom_plugin.c in Sources */,
+				B39952EA2D3F1D1000FC3FFE /* compat_posix_string.c in Sources */,
+				B39952EB2D3F1D1000FC3FFE /* compat_strcasestr.c in Sources */,
+				B39952EC2D3F1D1000FC3FFE /* fopen_utf8.c in Sources */,
+				B39952ED2D3F1D1000FC3FFE /* compat_strl.c in Sources */,
+				B39952EE2D3F1D1000FC3FFE /* compat_snprintf.c in Sources */,
+				B39952C82D3F1AC000FC3FFE /* opera_vdlp.c in Sources */,
+				B39952F72D3F205100FC3FFE /* rthreads.c in Sources */,
+				B39952C92D3F1AC000FC3FFE /* opera_xbus.c in Sources */,
+				B3EDA1E92D3F22F500BA275D /* stdstring.c in Sources */,
+				B39952D82D3F1C7C00FC3FFE /* Lzma86Enc.c in Sources */,
+				B39952D92D3F1C7C00FC3FFE /* Bra86.c in Sources */,
+				B39952DA2D3F1C7C00FC3FFE /* Delta.c in Sources */,
+				B39952F02D3F1FE600FC3FFE /* memmap.c in Sources */,
+				B39952DB2D3F1C7C00FC3FFE /* LzmaEnc.c in Sources */,
+				B39952DC2D3F1C7C00FC3FFE /* CpuArch.c in Sources */,
+				B39952DD2D3F1C7C00FC3FFE /* LzFind.c in Sources */,
+				B39952F22D3F200400FC3FFE /* string_list.c in Sources */,
+				B3EDA1F02D3F232700BA275D /* compat_posix_string.c in Sources */,
+				B3EDA1F12D3F232700BA275D /* compat_strl.c in Sources */,
+				B3EDA1F22D3F232700BA275D /* compat_snprintf.c in Sources */,
+				B3EDA1F32D3F232700BA275D /* compat_strcasestr.c in Sources */,
+				B3EDA1F42D3F232700BA275D /* fopen_utf8.c in Sources */,
+				B39952F32D3F200400FC3FFE /* dir_list.c in Sources */,
+				B39952DE2D3F1C7C00FC3FFE /* Sort.c in Sources */,
+				B39952DF2D3F1C7C00FC3FFE /* LzmaDec.c in Sources */,
+				B39952F62D3F202A00FC3FFE /* stdstring.c in Sources */,
+				B39952E02D3F1C7C00FC3FFE /* Alloc.c in Sources */,
+				B39952F42D3F201000FC3FFE /* encoding_utf.c in Sources */,
+				B39952E12D3F1C7C00FC3FFE /* Lzma86Dec.c in Sources */,
+				B39952E22D3F1C7C00FC3FFE /* BraIA64.c in Sources */,
 				B3F8DFE92CB36B4000017D1B /* CorePlist.swift in Sources */,
+				B3EDA1EB2D3F230C00BA275D /* memmap.c in Sources */,
+				B3EDA1EC2D3F230C00BA275D /* memalign.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3817,6 +3997,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(SRCROOT)/../opera/opera-libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/../opera/opera-libretro\"",
+					"\"$(SRCROOT)/../opera/opera-libretro/deps/libchdr/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_MAP_FILE_PATH = "";
@@ -3847,9 +4030,6 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVOpera/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -3947,6 +4127,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(SRCROOT)/../opera/opera-libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/../opera/opera-libretro\"",
+					"\"$(SRCROOT)/../opera/opera-libretro/deps/libchdr/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_MAP_FILE_PATH = "";
@@ -4054,6 +4237,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreBridge;
 		};
+		B3EDA1F72D3F266200BA275D /* XCLocalSwiftPackageReference "../../PVLogging" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVLogging;
+		};
 		B3F8DFEA2CB36BF800017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreObjCBridge;
@@ -4080,6 +4267,10 @@
 		B30E99DF2C6F049700C1431E /* PVCoreBridge */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVCoreBridge;
+		};
+		B3EDA1F82D3F266200BA275D /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
 		};
 		B3F8DFEB2CB36BF800017D1B /* PVCoreObjCBridge */ = {
 			isa = XCSwiftPackageProductDependency;

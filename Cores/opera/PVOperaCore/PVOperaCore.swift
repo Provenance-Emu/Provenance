@@ -24,6 +24,12 @@ open class PVOperaCore: PVEmulatorCore {
     }
 }
 
+extension PVOperaCore: CoreOptional {
+    public static var options: [CoreOption] {
+        return OperaOptions.options
+    }
+}
+
 extension PVOperaCore: PV3DOSystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PV3DOButton, forPlayer player: Int) {
         (_bridge as! PV3DOSystemResponderClient).didPush(button, forPlayer: player)
