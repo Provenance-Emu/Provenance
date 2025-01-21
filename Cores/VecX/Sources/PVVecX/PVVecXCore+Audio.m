@@ -8,18 +8,18 @@
 
 #import "PVVecXCore+Audio.h"
 
-@implementation PVVecXCoreBridge (Audio)
-
-- (NSTimeInterval)frameInterval {
-    return 50;
-}
-
-- (NSUInteger)channelCount {
-    return 2;
-}
-
-- (double)audioSampleRate {
-    return 44100;
-}
-
-@end
+//@implementation PVVecXCoreBridge (Audio)
+//
+//- (NSTimeInterval)frameInterval {
+//    return 50;
+//}
+//
+//- (NSUInteger)channelCount {
+//    return 2;
+//}
+//
+//- (double)audioSampleRate {
+//    return 44100;
+//}
+//
+//@end
