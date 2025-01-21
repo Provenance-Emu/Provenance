@@ -229,6 +229,33 @@ extension ProvenanceApp: WhatsNewCollectionProvider {
                 hapticFeedback: .notification(.success)
             )
         )
+        WhatsNew(
+            version: "3.0.3",
+            title: "Performance & Compatibility",
+            features: [
+                .init(
+                    image: .init(systemName: "cpu.fill", foregroundColor: .blue),
+                    title: "Graphics Improvements",
+                    subtitle: "Enhanced Metal renderer compatibility and fixed GPU-specific crashes"
+                ),
+                .init(
+                    image: .init(systemName: "archivebox.fill", foregroundColor: .green),
+                    title: "BIOS Support",
+                    subtitle: "Added support for compressed BIOS files and improved detection"
+                ),
+                .init(
+                    image: .init(systemName: "gamecontroller.fill", foregroundColor: .orange),
+                    title: "Core Enhancements",
+                    subtitle: "Improved Jaguar emulation and graphics rendering"
+                )
+            ],
+            primaryAction: .init(
+                title: "Continue",
+                backgroundColor: ThemeManager.shared.currentPalette.switchON?.swiftUIColor ?? .accentColor,
+                foregroundColor: ThemeManager.shared.currentPalette.switchThumb?.swiftUIColor ?? .white,
+                hapticFeedback: .notification(.success)
+            )
+        )
     }
 }
 #endif

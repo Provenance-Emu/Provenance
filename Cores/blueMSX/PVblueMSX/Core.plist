@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenance.blueMSX</string>
+	<string>com.provenance.core.blueMSX</string>
 	<key>PVPrincipleClass</key>
-	<string>PVblueMSXCore</string>
+	<string>PVblueMSX.PVblueMSXCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.msx</string>

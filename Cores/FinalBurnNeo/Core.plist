@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.fbneo</string>
 	<key>PVPrincipleClass</key>
-	<string>PVFBNeoCore</string>
+	<string>PVFBNeo.PVFBNeoCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.neogeo</string>

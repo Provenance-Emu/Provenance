@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.minivmac</string>
 	<key>PVPrincipleClass</key>
-	<string>PVMiniVMacCore</string>
+	<string>PVMiniVMac.PVMiniVMacCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.macintosh</string>
