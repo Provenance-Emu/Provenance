@@ -354,7 +354,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
     }
     
     @objc func cloudDataDownloaded(notification: Notification) {
-        guard let files = notification.userInfo?["kCloudDataDownloaded"] as? Set<URL>,
+        guard let files = notification.userInfo?["kCloudDataDownloaded"] as? [URL],
               let gameImporter = appState?.gameImporter
         else {
             return
