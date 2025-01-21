@@ -40,7 +40,7 @@
 
 - (instancetype)init {
 	if (self = [super init]) {
-        pitch_shift = 1;
+        pitch_shift = 2;
 	}
 
 	_current = self;
@@ -142,11 +142,15 @@
     } else if ([value isKindOfClass:[NSString class]]) {
         if (V("vecx_use_hw")) {
             // Convert our friendly names back to libretro values
+#if HAS_GPU
             NSDictionary *renderMap = @{
                 @"Software": @"Software",
                 @"Hardware": @"Hardware"
             };
             stringValue = renderMap[value] ?: value;
+#else
+            stringValue = @"Software";
+#endif
         } else if (V("vecx_res_hw") ||
                   V("vecx_bloom_width") ||
                   V("vecx_scale_x") ||
