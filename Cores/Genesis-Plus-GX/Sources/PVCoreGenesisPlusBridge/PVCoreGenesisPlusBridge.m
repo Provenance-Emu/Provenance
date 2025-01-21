@@ -271,7 +271,7 @@ __weak PVCoreGenesisPlusBridge *_current;
 static void audio_callback(int16_t left, int16_t right)
 {
 	__strong PVCoreGenesisPlusBridge *strongCurrent = _current;
-	
+
 	[[strongCurrent ringBufferAtIndex:0] write:&left size:2];
 	[[strongCurrent ringBufferAtIndex:0] write:&right size:2];
 
@@ -281,35 +281,35 @@ static void audio_callback(int16_t left, int16_t right)
 static size_t audio_batch_callback(const int16_t *data, size_t frames)
 {
 	__strong PVCoreGenesisPlusBridge *strongCurrent = _current;
-	
+
 	[[strongCurrent ringBufferAtIndex:0] write:data size:frames << 2];
-	
+
 	strongCurrent = nil;
-	
+
 	return frames;
 }
 
 static void video_callback(const void *data, unsigned width, unsigned height, size_t pitch)
 {
 	__strong PVCoreGenesisPlusBridge *strongCurrent = _current;
-	
+
     strongCurrent->_videoWidth  = width;
     strongCurrent->_videoHeight = height;
-    
+
     static dispatch_queue_t memory_queue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_USER_INTERACTIVE, 0);
         memory_queue = dispatch_queue_create("com.provenance.video", queueAttributes);
     });
-        
+
     dispatch_apply(height, memory_queue, ^(size_t y){
         const uint32_t *src = (uint32_t*)data + y * (pitch >> 2); //pitch is in bytes not pixels
         uint32_t *dst = strongCurrent->videoBuffer + y * 720; //width
-        
+
         memcpy(dst, src, sizeof(uint32_t)*width);
     });
-	
+
 	strongCurrent = nil;
 }
 
@@ -321,7 +321,7 @@ static void input_poll_callback(void)
 static int16_t input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id)
 {
 	//DLOG(@"polled input: port: %d device: %d id: %d", port, device, id);
-	
+
 	__strong PVCoreGenesisPlusBridge *strongCurrent = _current;
     int16_t value = 0;
 
@@ -349,22 +349,22 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
             value = strongCurrent->_pad[1][_id];
         }
 	}
-	
+
 	strongCurrent = nil;
-	
+
 	return value;
 }
 
 static bool environment_callback(unsigned cmd, void *data)
 {
     __strong PVCoreGenesisPlusBridge *strongCurrent = _current;
-    
+
 	switch(cmd)
 	{
 		case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY :
 		{
 			NSString *appSupportPath = [strongCurrent BIOSPath];
-			
+
 			*(const char **)data = [appSupportPath UTF8String];
 			DLOG(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
 			break;
@@ -377,9 +377,9 @@ static bool environment_callback(unsigned cmd, void *data)
 			DLOG(@"Environ UNSUPPORTED (#%u).\n", cmd);
 			return false;
 	}
-	
+
     strongCurrent = nil;
-    
+
 	return true;
 }
 
@@ -388,9 +388,9 @@ static bool environment_callback(unsigned cmd, void *data)
         videoBufferA = (uint32_t *)malloc(720 * 576 * sizeof(uint32_t));
         videoBufferB = (uint32_t *)malloc(720 * 576 * sizeof(uint32_t));
 	}
-	
+
 	_current = self;
-	
+
 	return self;
 }
 - (void)initialize {
@@ -434,8 +434,11 @@ static bool environment_callback(unsigned cmd, void *data)
 		[self writeSaveFile:filePath forType:RETRO_MEMORY_SAVE_RAM];
     }
 
+    if (system_hw == SYSTEM_MCD)
+        bram_save();
+
 	[super stopEmulation];
-	
+
 	double delayInSeconds = 0.1;
 	dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
 	dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
@@ -445,155 +448,151 @@ static bool environment_callback(unsigned cmd, void *data)
 }
 
 - (void)executeFrame {
-    int aud;
-    
-    if (system_hw == SYSTEM_MCD)
-        system_frame_scd(0);
-    else if ((system_hw & SYSTEM_PBC) == SYSTEM_MD)
-        system_frame_gen(0);
-    else
-        system_frame_sms(0);
-    
-    video_callback(bitmap.data, bitmap.viewport.w + (bitmap.viewport.x * 2), bitmap.viewport.h + (bitmap.viewport.y * 2), bitmap.pitch);
-    
-    aud = audio_update(soundbuffer) << 1;
-    audio_batch_callback(soundbuffer, aud >> 1);
+    @synchronized(self) {
+        if (system_hw == SYSTEM_MCD)
+            system_frame_scd(0);
+        else if ((system_hw & SYSTEM_PBC) == SYSTEM_MD)
+            system_frame_gen(0);
+        else
+            system_frame_sms(0);
+
+        video_callback(bitmap.data, bitmap.viewport.w + (bitmap.viewport.x * 2), bitmap.viewport.h + (bitmap.viewport.y * 2), bitmap.pitch);
+
+        size_t size = audio_update(soundbuffer);
+        audio_batch_callback(soundbuffer, size);
+    }
 }
 
 - (void)executeFrameSkippingFrame:(BOOL)skip {
     //int aud;
-    
+
 //    int skipI = skip ? 1 : 0;
-    
+
     if (system_hw == SYSTEM_MCD)
-        system_frame_scd(0);
+        system_frame_scd(skip ? 1 : 0);
     else if ((system_hw & SYSTEM_PBC) == SYSTEM_MD)
-        system_frame_gen(0);
+        system_frame_gen(skip ? 1 : 0);
     else
-        system_frame_sms(0);
-    
+        system_frame_sms(skip ? 1 : 0);
+
     video_callback(bitmap.data, bitmap.viewport.w + (bitmap.viewport.x * 2), bitmap.viewport.h + (bitmap.viewport.y * 2), bitmap.pitch);
-    
+
     int aud = audio_update(soundbuffer) << 1;
     audio_batch_callback(soundbuffer, aud >> 1);
 }
 
-- (BOOL)loadFileAtPath:(NSString*)path error:(NSError**)error {
-	memset(_pad, 0, sizeof(int16_t) * 10);
-    
-    const void *data;
-    size_t size;
-    self.romName = [[[path lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0];
-    
-    //load cart, read bytes, get length
-    NSData* dataObj = [NSData dataWithContentsOfFile:[path stringByStandardizingPath]];
-    if (dataObj == nil)
-	{
-		if(error != NULL) {
-			NSDictionary *userInfo = @{
-									   NSLocalizedDescriptionKey: @"Failed to load game.",
-									   NSLocalizedFailureReasonErrorKey: @"File was unreadble.",
-									   NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and exists."
-									   };
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error
+{
+//    @synchronized(self) {
+        // Get the data from the file
+        NSData *data = [NSData dataWithContentsOfFile:path];
 
-			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-													code:PVEmulatorCoreErrorCodeCouldNotLoadRom
-												userInfo:userInfo];
+        if (data == nil) {
+            if (error) {
+                *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                           code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                       userInfo:@{
+                    NSLocalizedDescriptionKey : @"Failed to load ROM.",
+                    NSLocalizedFailureReasonErrorKey : @"Couldn't load ROM data from path.",
+                    NSLocalizedRecoverySuggestionErrorKey : @"Check that the ROM file exists and is accessible."
+                }];
+            }
+            return NO;
+        }
 
-			*error = newError;
-		}
-		return false;
-	}
-    size = [dataObj length];
-    data = (uint8_t*)[dataObj bytes];
-    const char *meta = NULL;
-    
-    if (videoBufferA) {
-        free(videoBufferA);
-    }
-    videoBufferA = NULL;
-    
-    if (videoBufferB) {
-        free(videoBufferB);
-    }
-    videoBufferB = NULL;
-    
-    videoBuffer = NULL;
-    
-    videoBufferA = (uint8_t *)malloc(720 * 576 * sizeof(uint32_t));
-    videoBufferB = (uint8_t *)malloc(720 * 576 * sizeof(uint32_t));
-    
-    bitmap.data = (uint8_t *)videoBufferA;
-    videoBuffer = videoBufferB;
-    
-    retro_set_environment(environment_callback);
-	retro_init();
-	
-    retro_set_audio_sample(audio_callback);
-    retro_set_audio_sample_batch(audio_batch_callback);
-    retro_set_video_refresh(video_callback);
-    retro_set_input_poll(input_poll_callback);
-    retro_set_input_state(input_state_callback);
-    
-    const char *fullPath = [path UTF8String];
-    
-    struct retro_game_info info = {NULL};
-    info.path = fullPath;
-    info.data = data;
-    info.size = size;
-    info.meta = meta;
+        // Clean up existing video buffers
+        if (videoBufferA) {
+            free(videoBufferA);
+        }
+        videoBufferA = NULL;
 
-	  /* input options */
-	  input.system[0] = SYSTEM_GAMEPAD;
-	  input.system[1] = SYSTEM_GAMEPAD;
-	  for (int i=0; i<MAX_INPUTS; i++) {
-		config.input[i].padtype = DEVICE_PAD2B | DEVICE_PAD3B | DEVICE_PAD6B;
-	  }
+        if (videoBufferB) {
+            free(videoBufferB);
+        }
+        videoBufferB = NULL;
 
-    
-    if (retro_load_game(&info)) {
+        videoBuffer = NULL;
+
+        // Allocate new video buffers
+        videoBufferA = (uint8_t *)malloc(720 * 576 * sizeof(uint32_t));
+        videoBufferB = (uint8_t *)malloc(720 * 576 * sizeof(uint32_t));
+
+        bitmap.data = (uint8_t *)videoBufferA;
+        videoBuffer = videoBufferB;
+
+        // Initialize paths for CD BRAM files using BIOS directory
+        NSString *biosPath = self.BIOSPath;
+        NSString *bramPath = self.batterySavesPath;
+
+        // Set up BRAM paths
+        strncpy(CD_BRAM_JP, [[bramPath stringByAppendingPathComponent:@"BRAM_JP.brm"] UTF8String], sizeof(CD_BRAM_JP) - 1);
+        strncpy(CD_BRAM_US, [[bramPath stringByAppendingPathComponent:@"BRAM_US.brm"] UTF8String], sizeof(CD_BRAM_US) - 1);
+        strncpy(CD_BRAM_EU, [[bramPath stringByAppendingPathComponent:@"BRAM_EU.brm"] UTF8String], sizeof(CD_BRAM_EU) - 1);
+        strncpy(CART_BRAM, [[bramPath stringByAppendingPathComponent:@"CART.brm"] UTF8String], sizeof(CART_BRAM) - 1);
+
+        // Set up BIOS paths
+        strncpy(CD_BIOS_US, [[biosPath stringByAppendingPathComponent:@"bios_CD_U.bin"] UTF8String], sizeof(CD_BIOS_US) - 1);
+        strncpy(CD_BIOS_EU, [[biosPath stringByAppendingPathComponent:@"bios_CD_E.bin"] UTF8String], sizeof(CD_BIOS_EU) - 1);
+        strncpy(CD_BIOS_JP, [[biosPath stringByAppendingPathComponent:@"bios_CD_J.bin"] UTF8String], sizeof(CD_BIOS_JP) - 1);
+
+        ILOG(@"BIOS/BRAM paths initialized:");
+        ILOG(@"CD_BIOS_US: %s", CD_BIOS_US);
+        ILOG(@"CD_BIOS_EU: %s", CD_BIOS_EU);
+        ILOG(@"CD_BIOS_JP: %s", CD_BIOS_JP);
+        ILOG(@"CD_BRAM_JP: %s", CD_BRAM_JP);
+        ILOG(@"CD_BRAM_US: %s", CD_BRAM_US);
+        ILOG(@"CD_BRAM_EU: %s", CD_BRAM_EU);
+
+        // Set up libretro environment and callbacks
+        retro_set_environment(environment_callback);
+        retro_init();
+
+        retro_set_audio_sample(audio_callback);
+        retro_set_audio_sample_batch(audio_batch_callback);
+        retro_set_video_refresh(video_callback);
+        retro_set_input_poll(input_poll_callback);
+        retro_set_input_state(input_state_callback);
+
+        // Set up the game info struct
+        struct retro_game_info info;
+        info.path = [path UTF8String];
+        info.data = [data bytes];
+        info.size = [data length];
+        info.meta = "";
+
+        /* input options */
+        input.system[0] = SYSTEM_GAMEPAD;
+        input.system[1] = SYSTEM_GAMEPAD;
+        for (int i=0; i<MAX_INPUTS; i++) {
+          config.input[i].padtype = DEVICE_PAD2B | DEVICE_PAD3B | DEVICE_PAD6B;
+        }
+
+        // Load the ROM
+        if (!retro_load_game(&info)) {
+            if (error) {
+                *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                           code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                       userInfo:@{
+                    NSLocalizedDescriptionKey : @"Failed to load ROM.",
+                    NSLocalizedFailureReasonErrorKey : @"Core failed to load ROM data.",
+                    NSLocalizedRecoverySuggestionErrorKey : @"Check that the ROM is a valid Genesis, Sega CD, or 32X ROM."
+                }];
+            }
+            return NO;
+        }
+
         [self readOptions];
 
-        if ([self.batterySavesPath length]) {
-            [[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath withIntermediateDirectories:YES attributes:nil error:NULL];
-            
-            NSString *filePath = [self.batterySavesPath stringByAppendingPathComponent:[self.romName stringByAppendingPathExtension:@"sav"]];
-            
-            [self loadSaveFile:filePath forType:RETRO_MEMORY_SAVE_RAM];
+        // Initialize BRAM after ROM load for Sega CD games
+        if (system_hw == SYSTEM_MCD) {
+            ILOG(@"Loading Sega CD game, initializing BRAM");
+            bram_load();
         }
-        
-        struct retro_system_av_info info;
-        retro_get_system_av_info(&info);
-        
-        _frameInterval = info.timing.fps;
-        _sampleRate = info.timing.sample_rate;
-        
-        retro_get_region();
-		
-//#warning "No clue what this does, JM"
-//		if (system_hw == SYSTEM_MCD)
-//			 bram_load();
 
-		[self executeFrame];
-        
+        [self executeFrame];
+
         return YES;
-    }
-
-	if(error != NULL) {
-		NSDictionary *userInfo = @{
-								   NSLocalizedDescriptionKey: @"Failed to load game.",
-								   NSLocalizedFailureReasonErrorKey: @"GenPlusGX failed to load game.",
-								   NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and supported GenPlusGX ROM format."
-								   };
-
-		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-												code:PVEmulatorCoreErrorCodeCouldNotLoadRom
-											userInfo:userInfo];
-
-		*error = newError;
-	}
-
-    return NO;
+//    }
 }
 
 -(void)readOptions {
@@ -633,7 +632,7 @@ static bool environment_callback(unsigned cmd, void *data)
   //      config.master_clock   = 0; /* AUTO */
   //      config.force_dtack    = 0;
   //      config.addr_error     = 1;
-  //      config.bios           = 0;
+        config.bios           = 3;
   //      config.lock_on        = 0;
      #ifdef HAVE_OVERCLOCK
         config.overclock      = PVCoreGenesisPlusOptions.overclock;
@@ -653,18 +652,18 @@ static bool environment_callback(unsigned cmd, void *data)
 - (void)loadSaveFile:(NSString *)path forType:(int)type {
     size_t size = retro_get_memory_size(type);
     void *ramData = retro_get_memory_data(type);
-    
+
     if (size == 0 || !ramData)
     {
         return;
     }
-    
+
     NSData *data = [NSData dataWithContentsOfFile:path];
     if (!data || ![data length])
     {
         WLOG(@"Couldn't load save file.");
     }
-    
+
     [data getBytes:ramData length:size];
 }
 
@@ -672,7 +671,7 @@ static bool environment_callback(unsigned cmd, void *data)
 {
     size_t size = retro_get_memory_size(type);
     void *ramData = retro_get_memory_data(type);
-    
+
     if (ramData && (size > 0))
     {
         retro_serialize(ramData, size);
@@ -716,7 +715,7 @@ static bool environment_callback(unsigned cmd, void *data)
      SG-1000: 4:3 (assumed)
      Game Gear: 5:4
      Genesis/Megadrive: 10:7
-     
+
      With overscan:
      Sega Master System: 4:3 (maintained)
      SG-1000: 4:3 (assumed, maintained)
@@ -784,7 +783,7 @@ static bool environment_callback(unsigned cmd, void *data)
         return CGSizeMake(292, 224);
     }
 }
- 
+
 - (CGSize)bufferSize {
     return CGSizeMake(720, 576);
 }
@@ -877,7 +876,7 @@ static bool environment_callback(unsigned cmd, void *data)
                 default:
                     break;
             }
-            
+
         } else if ([controller gamepad]) {
             GCGamepad *gamepad = [controller gamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
@@ -898,7 +897,7 @@ static bool environment_callback(unsigned cmd, void *data)
                     break;
             }
         }
-        
+
 #if TARGET_OS_TV
 
         else if ([controller microGamepad]) {
@@ -927,9 +926,9 @@ static bool environment_callback(unsigned cmd, void *data)
                     break;
             }
         }
-        
+
 #endif
-        
+
     // Sega Master System…
     } else if (self.subCoreType == GenesisCoreTypeMasterSystem) {
        if ([controller extendedGamepad]) {
@@ -1002,7 +1001,7 @@ static bool environment_callback(unsigned cmd, void *data)
                    break;
            }
        }
-           
+
 #endif
         // Game Gear…
     } else if (self.subCoreType == GenesisCoreTypeGameGear) {
@@ -1027,9 +1026,9 @@ static bool environment_callback(unsigned cmd, void *data)
                 default:
                     break;
             }
-            
+
         } else if ([controller gamepad]) {
-            
+
             GCGamepad *gamepad = [controller gamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             switch (buttonID) {
@@ -1051,9 +1050,9 @@ static bool environment_callback(unsigned cmd, void *data)
                     break;
             }
         }
-        
+
 #if TARGET_OS_TV
-        
+
         else if ([controller microGamepad]) {
             GCMicroGamepad *gamepad = [controller microGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
@@ -1080,12 +1079,12 @@ static bool environment_callback(unsigned cmd, void *data)
                     break;
             }
         }
-        
+
 #endif
-        
+
     // Sega Genesis/Mega Drive, Sega/Mega CD, 32X…
     } else {
-       
+
         if ([controller extendedGamepad]) {
             GCExtendedGamepad *gamepad = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
@@ -1146,7 +1145,7 @@ static bool environment_callback(unsigned cmd, void *data)
                 default:
                    break;
             }}
-            
+
         } else if ([controller gamepad]) {
             GCGamepad *gamepad = [controller gamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
@@ -1175,9 +1174,9 @@ static bool environment_callback(unsigned cmd, void *data)
                     break;
             }
         }
-        
+
 #if TARGET_OS_TV
-        
+
         else if ([controller microGamepad]) {
             GCMicroGamepad *gamepad = [controller microGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
@@ -1204,12 +1203,12 @@ static bool environment_callback(unsigned cmd, void *data)
                     break;
             }
         }
-        
+
   #endif
-        
+
     }
-  
-    
+
+
     return 0;
 }
 
@@ -1220,9 +1219,9 @@ static bool environment_callback(unsigned cmd, void *data)
     @synchronized(self) {
         int serial_size = retro_serialize_size();
         uint8_t *serial_data = (uint8_t *) malloc(serial_size);
-        
+
         retro_serialize(serial_data, serial_size);
-        
+
         NSError *error = nil;
         NSData *saveStateData = [NSData dataWithBytes:serial_data length:serial_size];
         free(serial_data);
@@ -1233,7 +1232,7 @@ static bool environment_callback(unsigned cmd, void *data)
             ELOG(@"Error saving state: %@", [error localizedDescription]);
             return NO;
         }
-        
+
         return YES;
     }
 }
@@ -1259,7 +1258,7 @@ static bool environment_callback(unsigned cmd, void *data)
             ELOG(@"Unable to load save state from path: %@", path);
             return NO;
         }
-        
+
         if (!retro_unserialize([saveStateData bytes], [saveStateData length]))
         {
 			if(error != NULL) {
@@ -1277,7 +1276,7 @@ static bool environment_callback(unsigned cmd, void *data)
             DLOG(@"Unable to load save state");
             return NO;
         }
-        
+
         return YES;
     }
 }
