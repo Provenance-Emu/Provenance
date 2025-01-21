@@ -544,7 +544,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 inputTexture = device?.makeTexture(descriptor: desc)
 
                 if let inputTexture = inputTexture {
-                    ILOG("Created new input texture with size: \(inputTexture.width)x\(inputTexture.height), format: \(inputTexture.pixelFormat)")
+//                    ILOG("Created new input texture with size: \(inputTexture.width)x\(inputTexture.height), format: \(inputTexture.pixelFormat)")
                 } else {
                     ELOG("Failed to create input texture")
                 }
@@ -563,13 +563,13 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 if emulatorCore.pixelFormat == GLenum(GL_RGB565) ||
                    emulatorCore.pixelType == GLenum(GL_UNSIGNED_SHORT_5_6_5) {
                     textureDescriptor.pixelFormat = .b5g6r5Unorm  // Use BGR565 for RGB565 input
-                    ILOG("Using B5G6R5 format for RGB565 input")
+//                    ILOG("Using B5G6R5 format for RGB565 input")
                 } else if emulatorCore.pixelFormat == GLenum(GL_BGRA) {
                     textureDescriptor.pixelFormat = .bgra8Unorm
-                    ILOG("Using BGRA8 format")
+//                    ILOG("Using BGRA8 format")
                 } else {
                     textureDescriptor.pixelFormat = .rgba8Unorm
-                    ILOG("Using RGBA8 format")
+//                    ILOG("Using RGBA8 format")
                 }
 
                 textureDescriptor.usage = [.shaderRead, .shaderWrite, .pixelFormatView]
