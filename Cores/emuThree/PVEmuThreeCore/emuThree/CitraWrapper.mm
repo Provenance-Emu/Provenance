@@ -164,8 +164,9 @@ static void InitializeLogging() {
     Settings::values.resolution_factor.SetValue([[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.Resolution Upscaling"]] unsignedIntValue]);
     Settings::values.async_shader_compilation.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Async Shader Compilation"]);
     Settings::values.async_presentation.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Async Presentation"]);
-    Settings::values.use_hw_shader.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Hardware Shader"]);
-    Settings::values.shader_type.SetValue([[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.Shader Acceleration / Graphic Accuracy"]] unsignedIntValue]);
+    unsigned int shaderType = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.Shader Acceleration / Graphic Accuracy"]] unsignedIntValue];
+    Settings::values.use_hw_shader.SetValue(shaderType >= 2);
+    Settings::values.shader_type.SetValue(shaderType);
 
     Settings::values.use_cpu_jit.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Just in Time"]);
     Settings::values.cpu_clock_percentage.SetValue([[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.CPU Clock Speed"]] unsignedIntValue]);
