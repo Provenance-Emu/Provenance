@@ -55,8 +55,8 @@ import PVCoreBridge
     
     static var enableJITOption: CoreOption {
         .bool(.init(
-            title: "Enable Just in Time (Faster, will Crash if not supported)",
-            description: nil,
+            title: "Enable Just in Time",
+            description: "Faster CPU, will Crash if not supported",
             requiresRestart: true),
               defaultValue: false)
     }
@@ -65,7 +65,7 @@ import PVCoreBridge
         .bool(.init(
             title: "Enable Logging",
             description: "May affect performance",
-            requiresRestart: false),
+            requiresRestart: true),
               defaultValue: false)
     }
     
