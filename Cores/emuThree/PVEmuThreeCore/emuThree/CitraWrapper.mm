@@ -84,7 +84,7 @@ static void InitializeLogging() {
 
 -(instancetype) init {
     if (self = [super init]) {
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enable_logging"]) {
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Logging"]) {
             InitializeLogging();
         }
         finishedShutdown = false;
@@ -160,42 +160,43 @@ static void InitializeLogging() {
 
 -(void) setOptions:(bool)resetButtons {
     Config{};
-    Settings::values.layout_option.SetValue((Settings::LayoutOption)[[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"portrait_layout_option"]] unsignedIntValue]);
-    Settings::values.resolution_factor.SetValue([[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"resolution_factor"]] unsignedIntValue]);
-    Settings::values.async_shader_compilation.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"async_shader_compilation"]);
-    Settings::values.async_presentation.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"async_presentation"]);
-    Settings::values.use_hw_shader.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"use_hw_shader"]);
-    Settings::values.shader_type.SetValue([[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"shader_type"]] unsignedIntValue]);
+    Settings::values.layout_option.SetValue((Settings::LayoutOption)[[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.Portrait Layout"]] unsignedIntValue]);
+    Settings::values.resolution_factor.SetValue([[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.Resolution Upscaling"]] unsignedIntValue]);
+    Settings::values.async_shader_compilation.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Async Shader Compilation"]);
+    Settings::values.async_presentation.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Async Presentation"]);
+    unsigned int shaderType = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.Shader Acceleration / Graphic Accuracy"]] unsignedIntValue];
+    Settings::values.use_hw_shader.SetValue(shaderType >= 2);
+    Settings::values.shader_type.SetValue(shaderType);
 
-    Settings::values.use_cpu_jit.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"use_cpu_jit"]);
-    Settings::values.cpu_clock_percentage.SetValue([[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"cpu_clock_percentage"]] unsignedIntValue]);
-    Settings::values.is_new_3ds.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"is_new_3ds"]);
+    Settings::values.use_cpu_jit.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Just in Time"]);
+    Settings::values.cpu_clock_percentage.SetValue([[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.CPU Clock Speed"]] unsignedIntValue]);
+    Settings::values.is_new_3ds.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable New 3DS"]);
 
-    Settings::values.use_vsync_new.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"use_vsync_new"]);
-    Settings::values.shaders_accurate_mul.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"shaders_accurate_mul"]);
-    Settings::values.use_shader_jit.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"use_shader_jit"]);
+    Settings::values.use_vsync_new.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable VSync"]);
+    Settings::values.shaders_accurate_mul.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Shader Accurate Mul"]);
+    Settings::values.use_shader_jit.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Shader Just in Time"]);
 
-    Settings::values.swap_screen.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"swap_screen"]);
-    Settings::values.upright_screen.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"upright_screen"]);
+    Settings::values.swap_screen.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Swap Screen"]);
+    Settings::values.upright_screen.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Upright Screen"]);
 
-    Settings::values.render_3d.SetValue((Settings::StereoRenderOption)[[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"render_3d"]] unsignedIntValue]);
-    Settings::values.factor_3d.SetValue([[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"factor_3d"]] unsignedIntValue]);
+    Settings::values.render_3d.SetValue((Settings::StereoRenderOption)[[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.3D Stereo Render"]] unsignedIntValue]);
+    Settings::values.factor_3d.SetValue([[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.3D Factor"]] unsignedIntValue]);
 
     Settings::values.dump_textures.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"dump_textures"]);
     Settings::values.custom_textures.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"custom_textures"]);
-    Settings::values.preload_textures.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"preload_textures"]);
+    Settings::values.preload_textures.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Preload Textures"]);
     Settings::values.async_custom_loading.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"async_custom_loading"]);
 
     [self prepareAudio];
     Settings::values.isReloading.SetValue(false);
-    shouldStretchAudio=[[NSUserDefaults standardUserDefaults] boolForKey:@"stretch_audio"];
+    shouldStretchAudio=[[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Stretch Audio"];
     Settings::values.enable_audio_stretching.SetValue(shouldStretchAudio);
-    int volume = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"audio_volume"]] unsignedIntValue];
+    int volume = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.Audio Volume"]] unsignedIntValue];
     Settings::values.volume.SetValue((float)volume / 100.0);
     if (resetButtons)
         [CitraWrapper.sharedInstance setButtons];
     for (const auto& service_module : Service::service_module_map) {
-        Settings::values.lle_modules.emplace(service_module.name, ![[NSUserDefaults standardUserDefaults] boolForKey:@"use_hle"]);
+        Settings::values.lle_modules.emplace(service_module.name, ![[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable High Level Emulation"]);
     }
     [self getModelType];
     Settings::Apply();
