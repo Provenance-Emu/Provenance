@@ -153,8 +153,10 @@ static void InitializeLogging() {
 }
 
 -(void) setShaderOption {
-    Settings::values.use_hw_shader.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"use_hw_shader"]);
-    Settings::values.shader_type.SetValue([[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"shader_type"]] unsignedIntValue]);
+    unsigned int shaderType = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.Shader Acceleration / Graphic Accuracy"]] unsignedIntValue];
+
+    Settings::values.use_hw_shader.SetValue(shaderType >= 2);
+    Settings::values.shader_type.SetValue(shaderType);
     Settings::Apply();
 }
 
