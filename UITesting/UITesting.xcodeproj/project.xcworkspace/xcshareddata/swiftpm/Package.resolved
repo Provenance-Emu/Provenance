@@ -121,10 +121,10 @@
     {
       "identity" : "packagebuildinfo",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JoeMatt/PackageBuildInfo",
+      "location" : "https://github.com/DimaRU/PackageBuildInfo.git",
       "state" : {
-        "branch" : "master",
-        "revision" : "d9c2c27e799b00dedf0620e5d6268968bcf5320e"
+        "revision" : "b58288cada24fdaaedaaa329afe52d910794fdb2",
+        "version" : "1.0.4"
       }
     },
     {
@@ -141,8 +141,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ashleymills/Reachability.swift.git",
       "state" : {
-        "branch" : "master",
-        "revision" : "21d1dc412cfecbe6e34f1f4c4eb88d3f912654a6"
+        "revision" : "21d1dc412cfecbe6e34f1f4c4eb88d3f912654a6",
+        "version" : "5.2.4"
       }
     },
     {

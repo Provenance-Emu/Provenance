@@ -26,6 +26,8 @@ struct UITestingApp: App {
     @State private var showGameMoreInfoRealm = false
     @State private var showArtworkSearch = false
     @State private var showFreeROMs = false
+    @State private var showingCheatsSheet = false
+    @State private var showingMockCheatsSheet = false
 
     @StateObject
     private var mockImportStatusDriverData = MockImportStatusDriverData()
@@ -79,6 +81,18 @@ struct UITestingApp: App {
                         showFreeROMs = true
                     }
                     .buttonStyle(.borderedProminent)
+
+                    HStack {
+                        Button("Show Cheats (Mock)") {
+                            showingMockCheatsSheet = true
+                        }
+                        .buttonStyle(.borderedProminent)
+
+                        Button("Show Cheats (Realm)") {
+                            showingCheatsSheet = true
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
                 }
             }
             .sheet(isPresented: $showingRealmSheet) {
@@ -168,6 +182,20 @@ struct UITestingApp: App {
             .sheet(isPresented: $showFreeROMs) {
                 FreeROMsView { rom, url in
                     print("Downloaded ROM: \(rom.file) to: \(url)")
+                }
+            }
+            .sheet(isPresented: $showingMockCheatsSheet) {
+                NavigationStack {
+                    CheatListView(driver: MockCheatDriver(mockData: true))
+                }
+            }
+            .sheet(isPresented: $showingCheatsSheet) {
+                NavigationStack {
+                    if let driver = try? RealmCheatDriver.previewDriver() {
+                        CheatListView(driver: driver)
+                    } else {
+                        Text("Error loading Realm driver")
+                    }
                 }
             }
             .onAppear {
