@@ -2,6 +2,7 @@ import Foundation
 import RealmSwift
 import PVPrimitives
 import PVRealm
+import SwiftUI
 
 public class RealmCheatDriver: CheatDriver {
     public typealias Entry = RealmCheatEntry
@@ -141,9 +142,7 @@ public class RealmCheatDriver: CheatDriver {
 
 // MARK: - Preview Helper
 extension RealmCheatDriver {
-    static func previewDriver() throws -> RealmCheatDriver {
-        let realm = try Realm(configuration: Realm.Configuration(inMemoryIdentifier: "preview"))
-
+    static func previewDriver(realm: Realm) throws -> RealmCheatDriver {
         // Create test data if needed
         if realm.objects(PVGame.self).isEmpty {
             try realm.write {
@@ -181,5 +180,15 @@ extension RealmCheatDriver {
 
         let game = realm.objects(PVGame.self).first!
         return RealmCheatDriver(realm: realm, game: game)
+    }
+
+    // Update preview helper to use singleton
+    static func previewDriver() throws -> RealmCheatDriver {
+        guard let realm = TestRealmManager.shared.realm else {
+            throw NSError(domain: "com.provenance.testing",
+                         code: -1,
+                         userInfo: [NSLocalizedDescriptionKey: "Test Realm not initialized"])
+        }
+        return try previewDriver(realm: realm)
     }
 }

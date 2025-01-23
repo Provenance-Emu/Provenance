@@ -191,7 +191,8 @@ struct UITestingApp: App {
             }
             .sheet(isPresented: $showingCheatsSheet) {
                 NavigationStack {
-                    if let driver = try? RealmCheatDriver.previewDriver() {
+                    if let realm = TestRealmManager.shared.realm,
+                       let driver = try? RealmCheatDriver.previewDriver(realm: realm) {
                         CheatListView(driver: driver)
                     } else {
                         Text("Error loading Realm driver")
