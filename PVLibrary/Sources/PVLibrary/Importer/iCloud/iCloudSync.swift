@@ -33,6 +33,8 @@ public protocol Container {
 
 extension Notification.Name {
     static let cloudDataDownloaded = Notification.Name("kCloudDataDownloaded")
+    static let newCloudFiles = Notification.Name("kNewCloudFiles")
+    static let romDatabaseInitialized = Notification.Name("kRomDatabaseInitialized")
 }
 
 extension Container {
@@ -48,12 +50,15 @@ public protocol SyncFileToiCloud: Container {
 }
 
 public protocol iCloudTypeSyncer: Container {
-    var newFiles: Set<URL> { get }
+    var newFiles: Set<URL> { get set }
     var directory: String { get }
     var metadataQuery: NSMetadataQuery { get }
 
     func loadAllFromICloud() -> Completable
     func removeAllFromICloud() -> Completable
+    mutating func clearNewFiles()
+    mutating func insertNewFile(_ file: URL)
+    mutating func setNewFiles(_ files: Set<URL>)
 }
 
 final class NotificationObserver {
@@ -74,7 +79,19 @@ final class NotificationObserver {
 }
 
 extension iCloudTypeSyncer {
-    public func loadAllFromICloud() -> Completable {
+    mutating func setNewFiles(_ files: Set<URL>) {
+        newFiles = files
+    }
+    
+    mutating func clearNewFiles() {
+        newFiles.removeAll()
+    }
+    
+    mutating func insertNewFile(_ file: URL) {
+        newFiles.insert(file)
+    }
+    
+    func loadAllFromICloud() -> Completable {
         return Completable.create { completable in
             //body mustn't run in a task, otherwise the NotificationObserver closure won't get called
             guard containerURL != nil
@@ -82,13 +99,11 @@ extension iCloudTypeSyncer {
                 completable(.error(SyncError.noUbiquityURL))
                 return Disposables.create {}
             }
-            var tmp = newFiles
-            tmp.removeAll()
             self.metadataQuery.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
             metadataQuery.predicate = NSPredicate(format: "%K CONTAINS[c] %@", NSMetadataItemPathKey, "/Documents/\(directory)/")
             
             let _: NotificationObserver = .init(
-                forName: Notification.Name.NSMetadataQueryDidFinishGathering,
+                forName: .NSMetadataQueryDidFinishGathering,
                 object: self.metadataQuery,
                 queue: nil) { notification in
                     self.queryFinished(notification: notification)
@@ -159,20 +174,16 @@ extension iCloudTypeSyncer {
     }
 
     func queryFinished(notification: Notification) {
-        //TODO: update so this is generic for all downloads
-        guard type(of: self) != SaveStateSyncer.self
-        else {
-            return
-        }
-        
         guard let query = notification.object as? NSMetadataQuery
         else {
             return
         }
         let fileManager = FileManager.default
-        let isMainThread = Thread.isMainThread
-        print("isMainThread:\(isMainThread)")
         var files: [URL] = []
+        query.disableUpdates()
+        defer {
+            query.enableUpdates()
+        }
         //accessing results automatically pauses updates and resumes after deallocated
         for item in query.results {
             if let fileItem = item as? NSMetadataItem,
@@ -191,7 +202,7 @@ extension iCloudTypeSyncer {
                 }
             }
         }
-        var downloadedFiles = newFiles
+        var downloadedFiles = Set<URL>()
         while downloadedFiles.count != files.count {
             for file in files {
                 if fileManager.fileExists(atPath: file.path) {
@@ -199,7 +210,9 @@ extension iCloudTypeSyncer {
                 }
             }
         }
-        
+        let name = Notification.Name.newCloudFiles
+        print("downloadedFiles: \(downloadedFiles.count)")
+        NotificationCenter.default.post(name: name, object: nil, userInfo: [name.rawValue: downloadedFiles])
     }
 }
 
@@ -324,7 +337,7 @@ public enum iCloudSync {
             UserDefaults.standard.removeObject(forKey: UbiquityIdentityTokenKey)
         }
 
-        let saveStateSyncer = SaveStateSyncer()
+        var saveStateSyncer = SaveStateSyncer()
         let currentDisposeBagSaveState = DisposeBag()
         self.disposeBagSaveState = currentDisposeBagSaveState
         saveStateSyncer.loadAllFromICloud()
@@ -334,7 +347,7 @@ public enum iCloudSync {
             }) { error in
                 ELOG(error.localizedDescription)
             }.disposed(by: currentDisposeBagSaveState)
-        let romsSyncer = RomsSyncer()
+        var romsSyncer = RomsSyncer()
         let currentDisposeBagRoms = DisposeBag()
         disposeBagRoms = currentDisposeBagRoms
         romsSyncer.loadAllFromICloud()
@@ -482,7 +495,7 @@ class SaveStateSyncer: iCloudTypeSyncer {
     var metadataQuery: NSMetadataQuery = .init()
     var newFiles: Set<URL> = []
     init() {
-        NotificationCenter.default.addObserver(self, selector: #selector(wrapper), name: .cloudDataDownloaded, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(wrapper), name: .romDatabaseInitialized, object: nil)
     }
     deinit {
         print("dying")
@@ -503,7 +516,8 @@ class RomsSyncer: iCloudTypeSyncer {
     var newFiles: Set<URL> = []
     
     init() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleNewRomFiles), name: .cloudDataDownloaded, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleNewRomFiles), name: .romDatabaseInitialized, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleNewFiles(_:)), name: .newCloudFiles, object: nil)
     }
     deinit {
         print("dying")
@@ -511,6 +525,15 @@ class RomsSyncer: iCloudTypeSyncer {
     
     var directory: String {
         "ROMs"
+    }
+    
+    @objc
+    func handleNewFiles(_ notification: Notification) {
+        guard let downloadedFiles = notification.userInfo?[Notification.Name.newCloudFiles.rawValue] as? Set<URL>
+        else {
+            return
+        }
+        newFiles = downloadedFiles
     }
     
     /// sends a notification that rom files are ready to e
@@ -526,7 +549,13 @@ class RomsSyncer: iCloudTypeSyncer {
             return
         }
         
-        NotificationCenter.default.post(name: .cloudDataDownloaded, object: nil, userInfo: ["kCloudDataDownloaded": newFiles])
-        iCloudSync.disposeBagRoms = nil
+        var converted = [URL]()
+        for item in newFiles {
+            converted.append(item)
+        }
+        newFiles.removeAll()
+        let name = Notification.Name.cloudDataDownloaded
+        NotificationCenter.default.post(name: name, object: nil, userInfo: [name.rawValue: converted])
+//        iCloudSync.disposeBagRoms = nil
     }
 }
