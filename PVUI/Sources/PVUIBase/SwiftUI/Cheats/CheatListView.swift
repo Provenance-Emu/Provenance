@@ -3,6 +3,7 @@ import PVPrimitives
 
 /// Main view for displaying and managing cheat codes
 public struct CheatListView<Driver: CheatDriver>: View {
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var driver: Driver
     @State private var searchText = ""
     @State private var showingAddSheet = false
@@ -12,8 +13,11 @@ public struct CheatListView<Driver: CheatDriver>: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     #endif
 
-    public init(driver: Driver) {
+    let isModal: Bool
+
+    public init(driver: Driver, isModal: Bool = false) {
         _driver = StateObject(wrappedValue: driver)
+        self.isModal = isModal
     }
 
     private var filteredCheats: [Driver.Entry] {
@@ -61,8 +65,16 @@ public struct CheatListView<Driver: CheatDriver>: View {
             }
         }
         .searchable(text: $searchText, prompt: "Search cheats")
-        .navigationTitle("Cheat Codes")
+        .navigationTitle("Cheats")
         .toolbar {
+            if isModal {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+
             ToolbarItem(placement: .primaryAction) {
                 Button {
                     showingAddSheet = true

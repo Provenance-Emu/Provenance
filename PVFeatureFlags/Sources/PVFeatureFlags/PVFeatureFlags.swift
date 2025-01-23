@@ -328,6 +328,20 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         return enabled
     }
 
+    /// Whether to use the SwiftUI interface for cheats
+    public var cheatsUseSwiftUI: Bool {
+        /// Check debug override first
+        if let override = debugOverrides["cheatsUseSwiftUI"] {
+            print("Debug override active for cheatsUseSwiftUI: \(override)")
+            return override
+        }
+
+        /// Fall back to main feature flags system
+        let enabled = featureFlags.isEnabled("cheatsUseSwiftUI")
+        print("No debug override, using feature flags system value for cheatsUseSwiftUI: \(enabled)")
+        return enabled
+    }
+
     /// Set a debug override for a feature flag
     public func setDebugOverride(feature: String, enabled: Bool) {
         print("Setting debug override for \(feature) to: \(enabled)")

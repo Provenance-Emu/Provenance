@@ -8,14 +8,16 @@ import PVSupport
 import RealmSwift
 import PVRealm
 import PVLogging
+import PVFeatureFlags
 
 #if canImport(UIKit)
 import UIKit
 #endif
+import SwiftUI
 import PVEmulatorCore
 
 extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
-    
+
     struct CheatLoadState {
         static var isFirstLoad:Bool = true
     }
@@ -97,7 +99,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
         isShowingMenu = false
         enableControllerInput(false)
     }
-    
+
     func cheatsViewControllerCreateNewState(_ cheatsViewController: PVCheatsViewController,
                                             code: String,
                                             type: String,
@@ -147,11 +149,58 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
     }
 
     @objc func showCheatsMenu() {
-        Task.detached { [weak self ] in
+        Task.detached { [weak self] in
             guard let self = self else { return }
             await self.recoverCheatCodes()
         }
-        guard let cheatsNavController = UIStoryboard(name: "Cheats", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "PVCheatsViewControllerNav") as? UINavigationController else {
+
+        // Check if we should use SwiftUI interface
+        if PVFeatureFlagsManager.shared.cheatsUseSwiftUI {
+            showSwiftUICheatMenu()
+        } else {
+            showUIKitCheatMenu()
+        }
+    }
+
+    private func showSwiftUICheatMenu() {
+        let realm = game.realm ?? RomDatabase.sharedInstance.realm
+
+        let driver = RealmCheatDriver(realm: realm, game: game)
+        let cheatsView = NavigationStack {
+            CheatListView(driver: driver, isModal: true)
+                .onDisappear {
+                    // Handle cleanup when view disappears
+                    self.core.setPauseEmulation(false)
+                    self.isShowingMenu = false
+                    self.enableControllerInput(false)
+                }
+        }
+
+        let hostingController = UIHostingController(rootView: cheatsView)
+
+        #if os(iOS)
+        if traitCollection.userInterfaceIdiom == .pad {
+            hostingController.modalPresentationStyle = UIModalPresentationStyle.formSheet
+        } else {
+            hostingController.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
+        }
+        #endif
+
+        #if os(tvOS)
+        hostingController.modalPresentationStyle = UIModalPresentationStyle.blurOverFullScreen
+        #endif
+
+        // Set the presentation delegate to handle dismissal
+        hostingController.presentationController?.delegate = self
+
+        self.core.setPauseEmulation(false)
+        self.enableControllerInput(false)
+        present(hostingController, animated: true)
+    }
+
+    private func showUIKitCheatMenu() {
+        guard let cheatsNavController = UIStoryboard(name: "Cheats", bundle: BundleLoader.module)
+            .instantiateViewController(withIdentifier: "PVCheatsViewControllerNav") as? UINavigationController else {
             return
         }
 
@@ -162,19 +211,19 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
         }
         cheatsNavController.modalPresentationStyle = .overCurrentContext
 
-        self.core.resetCheatCodes();
+        self.core.resetCheatCodes()
         #if os(iOS)
-            if traitCollection.userInterfaceIdiom == .pad {
-                cheatsNavController.modalPresentationStyle = .formSheet
-            }
-            self.enableControllerInput(false)
-            let ui=UIViewController()
-            ui.addChildViewController(cheatsNavController, toContainerView: ui.view)
-            present(ui, animated: true)
-            return
+        if traitCollection.userInterfaceIdiom == .pad {
+            cheatsNavController.modalPresentationStyle = .formSheet
+        }
+        self.enableControllerInput(false)
+        let ui = UIViewController()
+        ui.addChildViewController(cheatsNavController, toContainerView: ui.view)
+        present(ui, animated: true)
+        return
         #endif
         #if os(tvOS)
-            cheatsNavController.modalPresentationStyle = .blurOverFullScreen
+        cheatsNavController.modalPresentationStyle = .blurOverFullScreen
         #endif
         present(cheatsNavController, animated: true)
     }
@@ -262,5 +311,14 @@ import PVCoreBridge
         return self.setCheat(code:code, type:type, enabled:enabled)
     }
     @objc public func resetCheatCodes() {
+    }
+}
+
+extension PVEmulatorViewController: UIAdaptivePresentationControllerDelegate {
+    public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        // Handle cleanup when dismissed
+        self.core.setPauseEmulation(false)
+        self.isShowingMenu = false
+        self.enableControllerInput(false)
     }
 }
