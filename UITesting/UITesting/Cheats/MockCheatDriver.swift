@@ -7,7 +7,27 @@ import PVPrimitives
 public class MockCheatDriver: CheatDriver {
     public typealias Entry = MockCheatEntry
 
+    // Shared instances for different mock scenarios
+    private static var sharedMockInstance: MockCheatDriver?
+    private static var sharedEmptyInstance: MockCheatDriver?
+
+    public static func shared(mockData: Bool = true) -> MockCheatDriver {
+        if mockData {
+            if sharedMockInstance == nil {
+                sharedMockInstance = MockCheatDriver(mockData: true)
+            }
+            return sharedMockInstance!
+        } else {
+            if sharedEmptyInstance == nil {
+                sharedEmptyInstance = MockCheatDriver(mockData: false)
+            }
+            return sharedEmptyInstance!
+        }
+    }
+
     @Published private(set) public var cheats: [MockCheatEntry] = []
+    public let gameTitle: String
+    public let supportedCheatTypes: [CheatCodeTypes]
 
     public struct MockCheatEntry: CheatEntry {
         public let id: String
@@ -15,15 +35,13 @@ public class MockCheatDriver: CheatDriver {
         public var type: CheatCodeTypes
         public var title: String
         public var enabled: Bool
-        public var gameTitle: String
 
-        public init(id: String, code: String, type: CheatCodeTypes, title: String, enabled: Bool, gameTitle: String) {
+        public init(id: String, code: String, type: CheatCodeTypes, title: String, enabled: Bool) {
             self.id = id
             self.code = code
             self.type = type
             self.title = title
             self.enabled = enabled
-            self.gameTitle = gameTitle
         }
 
         public func hash(into hasher: inout Hasher) {
@@ -31,7 +49,12 @@ public class MockCheatDriver: CheatDriver {
         }
     }
 
-    public init(mockData: Bool = true) {
+    // Make init private to enforce singleton usage
+    private init(mockData: Bool = true,
+                gameTitle: String = "Super Mario World",
+                supportedTypes: [CheatCodeTypes] = [.gameGenie, .gameShark]) {
+        self.gameTitle = gameTitle
+        self.supportedCheatTypes = supportedTypes
         if mockData {
             loadMockData()
         }
@@ -39,18 +62,20 @@ public class MockCheatDriver: CheatDriver {
 
     private func loadMockData() {
         cheats = [
-            MockCheatEntry(id: UUID().uuidString,
-                          code: "01AB2345",
-                          type: .gameShark,
-                          title: "Infinite Lives",
-                          enabled: true,
-                          gameTitle: "Super Mario World"),
-            MockCheatEntry(id: UUID().uuidString,
-                          code: "ABCD-EFGH",
-                          type: .gameGenie,
-                          title: "Max Power",
-                          enabled: false,
-                          gameTitle: "Sonic the Hedgehog")
+            MockCheatEntry(
+                id: UUID().uuidString,
+                code: "01AB2345",
+                type: .gameShark,
+                title: "Infinite Lives",
+                enabled: true
+            ),
+            MockCheatEntry(
+                id: UUID().uuidString,
+                code: "ABCD-EFGH",
+                type: .gameGenie,
+                title: "Max Power",
+                enabled: false
+            )
         ]
     }
 

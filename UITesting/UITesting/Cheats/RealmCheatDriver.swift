@@ -11,24 +11,35 @@ public class RealmCheatDriver: CheatDriver {
     private let realm: Realm
     private let game: PVGame
 
+    public var gameTitle: String {
+        game.title
+    }
+
+    public var supportedCheatTypes: [CheatCodeTypes] {
+        // Get supported types from the core if available
+        if let core = game.system.cores.first {
+            // TODO: Implement core-specific cheat type filtering
+            return CheatCodeTypes.allCases
+        }
+        return CheatCodeTypes.allCases
+    }
+
     public struct RealmCheatEntry: CheatEntry {
         public let id: String
         public var code: String
         public var type: CheatCodeTypes
         public var title: String
         public var enabled: Bool
-        public var gameTitle: String
 
         fileprivate let realmCheat: PVCheats
 
         // Required by CheatEntry protocol
-        public init(id: String, code: String, type: CheatCodeTypes, title: String, enabled: Bool, gameTitle: String) {
+        public init(id: String, code: String, type: CheatCodeTypes, title: String, enabled: Bool) {
             self.id = id
             self.code = code
             self.type = type
             self.title = title
             self.enabled = enabled
-            self.gameTitle = gameTitle
             // Create a temporary PVCheats since we're not actually using it in this case
             self.realmCheat = PVCheats()
         }
@@ -40,7 +51,6 @@ public class RealmCheatDriver: CheatDriver {
             self.type = CheatCodeTypes.detectType(from: realmCheat.code).first ?? .rawCode
             self.title = realmCheat.type // We store the title in the type field in Realm
             self.enabled = realmCheat.enabled
-            self.gameTitle = realmCheat.game.title
             self.realmCheat = realmCheat
         }
 

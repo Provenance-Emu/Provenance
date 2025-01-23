@@ -23,7 +23,7 @@ struct CheatListView<Driver: CheatDriver>: View {
         return driver.cheats.filter { cheat in
             cheat.title.localizedCaseInsensitiveContains(searchText) ||
             cheat.code.localizedCaseInsensitiveContains(searchText) ||
-            cheat.gameTitle.localizedCaseInsensitiveContains(searchText)
+            driver.gameTitle.localizedCaseInsensitiveContains(searchText)
         }
     }
 
@@ -83,9 +83,12 @@ struct CheatListView<Driver: CheatDriver>: View {
         }
         .sheet(isPresented: $showingAddSheet) {
             NavigationStack {
-                AddCheatView<Driver> { newCheat in
-                    driver.addCheat(newCheat)
-                }
+                AddCheatView<Driver>(
+                    driver: driver,
+                    onSave: { newCheat in
+                        driver.addCheat(newCheat)
+                    }
+                )
             }
             #if os(iOS)
             .presentationDragIndicator(.visible)
@@ -94,9 +97,12 @@ struct CheatListView<Driver: CheatDriver>: View {
         #if os(iOS)
         .sheet(isPresented: $showingImportSheet) {
             NavigationStack {
-                ImportCheatView<Driver> { newCheats in
-                    newCheats.forEach { driver.addCheat($0) }
-                }
+                ImportCheatView<Driver>(
+                    driver: driver,
+                    onImport: { newCheats in
+                        newCheats.forEach { driver.addCheat($0) }
+                    }
+                )
             }
             .presentationDragIndicator(.visible)
         }
@@ -153,6 +159,6 @@ struct CheatRowView<Entry: CheatEntry>: View {
 
 #Preview {
     NavigationStack {
-        CheatListView(driver: MockCheatDriver())
+        CheatListView(driver: MockCheatDriver.shared())
     }
 }

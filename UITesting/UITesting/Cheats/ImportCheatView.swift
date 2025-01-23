@@ -4,17 +4,18 @@ import PVPrimitives
 
 struct ImportCheatView<Driver: CheatDriver>: View {
     @Environment(\.dismiss) private var dismiss
+    let driver: Driver
     let onImport: ([Driver.Entry]) -> Void
 
     @State private var showingFilePicker = false
     @State private var importedCheats: [Driver.Entry] = []
     @State private var errorMessage: String?
-    @State private var gameTitle = ""
 
     var body: some View {
         Form {
             Section {
-                TextField("Game Title", text: $gameTitle)
+                Text(driver.gameTitle)
+                    .foregroundStyle(.secondary)
             }
 
             Section {
@@ -60,7 +61,7 @@ struct ImportCheatView<Driver: CheatDriver>: View {
                     onImport(importedCheats)
                     dismiss()
                 }
-                .disabled(importedCheats.isEmpty || gameTitle.isEmpty)
+                .disabled(importedCheats.isEmpty)
             }
         }
         .fileImporter(
@@ -74,7 +75,7 @@ struct ImportCheatView<Driver: CheatDriver>: View {
 
                 do {
                     let data = try String(contentsOf: url)
-                    importedCheats = try CheatFileParser<Driver>.parse(data, gameTitle: gameTitle)
+                    importedCheats = try CheatFileParser<Driver>.parse(data)
                     errorMessage = nil
                 } catch {
                     errorMessage = error.localizedDescription
@@ -98,6 +99,9 @@ extension UTType {
 
 #Preview {
     NavigationStack {
-        ImportCheatView<MockCheatDriver> { _ in }
+        ImportCheatView<MockCheatDriver>(
+            driver: MockCheatDriver.shared(),
+            onImport: { _ in }
+        )
     }
 }

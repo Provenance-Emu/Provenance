@@ -186,7 +186,7 @@ struct UITestingApp: App {
             }
             .sheet(isPresented: $showingMockCheatsSheet) {
                 NavigationStack {
-                    CheatListView(driver: MockCheatDriver(mockData: true))
+                    CheatListView(driver: MockCheatDriver.shared(mockData: true))
                 }
             }
             .sheet(isPresented: $showingCheatsSheet) {

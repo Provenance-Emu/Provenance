@@ -8,9 +8,8 @@ public protocol CheatEntry: Identifiable, Hashable {
     var type: CheatCodeTypes { get }
     var title: String { get }
     var enabled: Bool { get }
-    var gameTitle: String { get }
 
-    init(id: String, code: String, type: CheatCodeTypes, title: String, enabled: Bool, gameTitle: String)
+    init(id: String, code: String, type: CheatCodeTypes, title: String, enabled: Bool)
 }
 
 public protocol CheatDriver: ObservableObject {
@@ -18,6 +17,10 @@ public protocol CheatDriver: ObservableObject {
 
     /// Published property to track cheats
     var cheats: [Entry] { get }
+    /// The game title associated with this driver
+    var gameTitle: String { get }
+    /// The supported cheat code types for this game/core combination
+    var supportedCheatTypes: [CheatCodeTypes] { get }
 
     func addCheat(_ cheat: Entry)
     func toggleCheat(_ id: String)

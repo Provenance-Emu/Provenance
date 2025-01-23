@@ -3,15 +3,15 @@ import PVPrimitives
 
 struct AddCheatView<Driver: CheatDriver>: View {
     @Environment(\.dismiss) private var dismiss
+    let driver: Driver
     let onSave: (Driver.Entry) -> Void
 
     @State private var title = ""
     @State private var code = ""
     @State private var selectedType: CheatCodeTypes?
-    @State private var gameTitle = ""
 
     private var detectedTypes: [CheatCodeTypes] {
-        CheatCodeTypes.detectType(from: code)
+        CheatCodeTypes.detectType(from: code).filter { driver.supportedCheatTypes.contains($0) }
     }
 
     private var isValidCode: Bool {
@@ -19,14 +19,15 @@ struct AddCheatView<Driver: CheatDriver>: View {
     }
 
     private var canSave: Bool {
-        !title.isEmpty && isValidCode && !gameTitle.isEmpty
+        !title.isEmpty && isValidCode
     }
 
     var body: some View {
         Form {
             Section {
                 TextField("Title", text: $title)
-                TextField("Game Title", text: $gameTitle)
+                Text(driver.gameTitle)
+                    .foregroundStyle(.secondary)
             }
 
             Section {
@@ -50,8 +51,20 @@ struct AddCheatView<Driver: CheatDriver>: View {
             } header: {
                 Text("Cheat Code")
             } footer: {
-                if let type = selectedType {
-                    Text(type.formatDescription)
+                VStack(alignment: .leading, spacing: 4) {
+                    if let type = selectedType {
+                        Text("\(type.stringValue) format:")
+                            .foregroundStyle(.secondary)
+                        Text(type.formatDescription)
+                            .foregroundStyle(.secondary)
+                    } else {
+                        Text("Supported formats:")
+                            .foregroundStyle(.secondary)
+                        ForEach(driver.supportedCheatTypes, id: \.self) { type in
+                            Text("\(type.stringValue): \(type.formatDescription)")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
                 }
             }
         }
@@ -73,8 +86,7 @@ struct AddCheatView<Driver: CheatDriver>: View {
                         code: code,
                         type: type,
                         title: title,
-                        enabled: false,
-                        gameTitle: gameTitle
+                        enabled: false
                     ))
                     dismiss()
                 }
@@ -86,6 +98,9 @@ struct AddCheatView<Driver: CheatDriver>: View {
 
 #Preview {
     NavigationStack {
-        AddCheatView<MockCheatDriver> { _ in }
+        AddCheatView<MockCheatDriver>(
+            driver: MockCheatDriver.shared(),
+            onSave: { _ in }
+        )
     }
 }

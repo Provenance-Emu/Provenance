@@ -3,7 +3,7 @@ import PVPrimitives
 
 protocol CheatParser {
     associatedtype Entry: CheatEntry
-    static func parse(_ contents: String, gameTitle: String) throws -> [Entry]
+    static func parse(_ contents: String) throws -> [Entry]
 }
 
 enum CheatFileParser<Driver: CheatDriver>: CheatParser {
@@ -21,7 +21,7 @@ enum CheatFileParser<Driver: CheatDriver>: CheatParser {
         }
     }
 
-    static func parse(_ contents: String, gameTitle: String) throws -> [Driver.Entry] {
+    static func parse(_ contents: String) throws -> [Driver.Entry] {
         var cheats: [Driver.Entry] = []
         var currentTitle: String?
         var currentCode: String?
@@ -44,8 +44,7 @@ enum CheatFileParser<Driver: CheatDriver>: CheatParser {
                         code: code,
                         type: detectedType,
                         title: title,
-                        enabled: false,
-                        gameTitle: gameTitle
+                        enabled: false
                     )
                     cheats.append(cheat)
                 }
@@ -70,8 +69,7 @@ enum CheatFileParser<Driver: CheatDriver>: CheatParser {
                 code: code,
                 type: detectedType,
                 title: title,
-                enabled: false,
-                gameTitle: gameTitle
+                enabled: false
             )
             cheats.append(cheat)
         }
