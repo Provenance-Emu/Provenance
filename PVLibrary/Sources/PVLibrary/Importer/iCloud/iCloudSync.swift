@@ -180,10 +180,11 @@ extension iCloudTypeSyncer {
         }
         let fileManager = FileManager.default
         var files: [URL] = []
-        query.disableUpdates()
-        defer {
-            query.enableUpdates()
-        }
+        //TODO: don't think we need this
+//        query.disableUpdates()
+//        defer {
+//            query.enableUpdates()
+//        }
         //accessing results automatically pauses updates and resumes after deallocated
         for item in query.results {
             if let fileItem = item as? NSMetadataItem,
