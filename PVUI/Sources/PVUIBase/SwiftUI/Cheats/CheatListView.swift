@@ -2,7 +2,7 @@ import SwiftUI
 import PVPrimitives
 
 /// Main view for displaying and managing cheat codes
-struct CheatListView<Driver: CheatDriver>: View {
+public struct CheatListView<Driver: CheatDriver>: View {
     @StateObject private var driver: Driver
     @State private var searchText = ""
     @State private var showingAddSheet = false
@@ -12,7 +12,7 @@ struct CheatListView<Driver: CheatDriver>: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     #endif
 
-    init(driver: Driver) {
+    public init(driver: Driver) {
         _driver = StateObject(wrappedValue: driver)
     }
 
@@ -27,7 +27,7 @@ struct CheatListView<Driver: CheatDriver>: View {
         }
     }
 
-    var body: some View {
+    public var body: some View {
         List {
             ForEach(filteredCheats) { cheat in
                 CheatRowView(cheat: cheat) { action in

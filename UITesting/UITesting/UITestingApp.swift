@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PVSwiftUI
+import PVUIBase
 import PVThemes
 import SwiftUI
 import UIKit

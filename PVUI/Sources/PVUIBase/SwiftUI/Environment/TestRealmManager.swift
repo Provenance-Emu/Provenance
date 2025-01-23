@@ -1,10 +1,10 @@
 import Foundation
 import RealmSwift
 
-final class TestRealmManager {
-    static let shared = TestRealmManager()
+public final class TestRealmManager {
+    public static let shared = TestRealmManager()
 
-    private(set) var realm: Realm?
+    public private(set) var realm: Realm?
 
     private init() {
         do {

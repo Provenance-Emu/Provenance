@@ -2,7 +2,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 import PVPrimitives
 
-struct ImportCheatView<Driver: CheatDriver>: View {
+public struct ImportCheatView<Driver: CheatDriver>: View {
     @Environment(\.dismiss) private var dismiss
     let driver: Driver
     let onImport: ([Driver.Entry]) -> Void
@@ -11,14 +11,14 @@ struct ImportCheatView<Driver: CheatDriver>: View {
     @State private var importedCheats: [Driver.Entry] = []
     @State private var errorMessage: String?
 
-    var body: some View {
-        Form {
-            Section {
+    public var body: some View {
+        SwiftUI.Form {
+            SwiftUI.Section {
                 Text(driver.gameTitle)
                     .foregroundStyle(.secondary)
             }
 
-            Section {
+            SwiftUI.Section {
                 Button {
                     showingFilePicker = true
                 } label: {
@@ -27,7 +27,7 @@ struct ImportCheatView<Driver: CheatDriver>: View {
             }
 
             if !importedCheats.isEmpty {
-                Section("Found Cheats") {
+                SwiftUI.Section("Found Cheats") {
                     ForEach(importedCheats) { cheat in
                         VStack(alignment: .leading) {
                             Text(cheat.title)
@@ -41,7 +41,7 @@ struct ImportCheatView<Driver: CheatDriver>: View {
             }
 
             if let error = errorMessage {
-                Section {
+                SwiftUI.Section {
                     Text(error)
                         .foregroundStyle(.red)
                 }

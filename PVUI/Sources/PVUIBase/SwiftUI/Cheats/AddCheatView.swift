@@ -1,7 +1,7 @@
 import SwiftUI
 import PVPrimitives
 
-struct AddCheatView<Driver: CheatDriver>: View {
+public struct AddCheatView<Driver: CheatDriver>: View {
     @Environment(\.dismiss) private var dismiss
     let driver: Driver
     let onSave: (Driver.Entry) -> Void
@@ -22,22 +22,45 @@ struct AddCheatView<Driver: CheatDriver>: View {
         !title.isEmpty && isValidCode
     }
 
-    var body: some View {
-        Form {
-            Section {
+    // iOS 17 and newer
+    @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    var newCodeField: some View {
+        SwiftUI.TextField("Code", text: $code)
+            .textInputAutocapitalization(.characters)
+            .onChange(of: code) { _, newValue in
+                if let firstType = detectedTypes.first {
+                    selectedType = firstType
+                }
+            }
+    }
+
+    // iOS 16 and older
+    @available(iOS, deprecated: 17)
+    var oldCodeField: some View {
+        SwiftUI.TextField("Code", text: $code)
+            .textInputAutocapitalization(.characters)
+            .onChange(of: code) { newValue in
+                if let firstType = detectedTypes.first {
+                    selectedType = firstType
+                }
+            }
+    }
+    
+    public var body: some View {
+
+        SwiftUI.Form {
+            SwiftUI.Section {
                 TextField("Title", text: $title)
                 Text(driver.gameTitle)
                     .foregroundStyle(.secondary)
             }
 
-            Section {
-                TextField("Code", text: $code)
-                    .textInputAutocapitalization(.characters)
-                    .onChange(of: code) { _, _ in
-                        if let firstType = detectedTypes.first {
-                            selectedType = firstType
-                        }
-                    }
+            SwiftUI.Section {
+                if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
+                    newCodeField
+                } else {
+                    oldCodeField
+                }
 
                 if !code.isEmpty {
                     if isValidCode {

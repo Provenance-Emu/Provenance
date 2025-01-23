@@ -141,7 +141,7 @@ public class RealmCheatDriver: CheatDriver {
 }
 
 // MARK: - Preview Helper
-extension RealmCheatDriver {
+public extension RealmCheatDriver {
     static func previewDriver(realm: Realm) throws -> RealmCheatDriver {
         // Create test data if needed
         if realm.objects(PVGame.self).isEmpty {
