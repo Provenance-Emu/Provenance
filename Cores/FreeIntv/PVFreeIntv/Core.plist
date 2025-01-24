@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenance.FreeIntv</string>
+	<string>com.provenance.core.FreeIntv</string>
 	<key>PVPrincipleClass</key>
-	<string>PVFreeIntvCore</string>
+	<string>PVFreeIntv.PVFreeIntvCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.intellivision</string>

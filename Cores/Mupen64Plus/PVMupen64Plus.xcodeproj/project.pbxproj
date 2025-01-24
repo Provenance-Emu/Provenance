@@ -241,7 +241,6 @@
 		B3C078EF2C750D33006F109B /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3A302912073F2AA008C1955 /* RiceVideoLinux.ini */; };
 		B3C078F02C750D33006F109B /* mupencheat.txt in Resources */ = {isa = PBXBuildFile; fileRef = B30559E22072FEE9001212D2 /* mupencheat.txt */; };
 		B3C078F12C750D33006F109B /* mupen64plus.ini in Resources */ = {isa = PBXBuildFile; fileRef = B30559E42072FEE9001212D2 /* mupen64plus.ini */; };
-		B3C078F22C750D33006F109B /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B39E8CB52053B53100380DCD /* Core.plist */; };
 		B3C078F32C750D33006F109B /* GLideN64.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CB2038AE78001E70F1 /* GLideN64.ini */; };
 		B3C078FA2C750E84006F109B /* screenshot.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F06C1183E4AA002995A1 /* screenshot.m */; };
 		B3C078FB2C750E84006F109B /* eventloop.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F06A1183E4AA002995A1 /* eventloop.m */; };
@@ -4448,7 +4447,6 @@
 				B3C078EF2C750D33006F109B /* RiceVideoLinux.ini in Resources */,
 				B3C078F02C750D33006F109B /* mupencheat.txt in Resources */,
 				B3C078F12C750D33006F109B /* mupen64plus.ini in Resources */,
-				B3C078F22C750D33006F109B /* Core.plist in Resources */,
 				B3C078F32C750D33006F109B /* GLideN64.ini in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

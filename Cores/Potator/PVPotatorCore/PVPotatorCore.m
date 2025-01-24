@@ -99,21 +99,21 @@
 //    return CGSizeMake(160, 160);
 //}
 
-- (GLenum)pixelFormat {
-    return GL_RGB565;
-}
-
-- (GLenum)pixelType {
-    return GL_UNSIGNED_SHORT_5_6_5;
-}
-
-- (GLenum)internalPixelFormat {
-#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
-    return GL_RGB565;
-#else
-    return GL_UNSIGNED_SHORT_5_6_5;
-#endif
-}
+//- (GLenum)pixelFormat {
+//    return GL_RGB565;
+//}
+//
+//- (GLenum)pixelType {
+//    return GL_UNSIGNED_SHORT_5_6_5;
+//}
+//
+//- (GLenum)internalPixelFormat {
+//#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
+//    return GL_RGB565;
+//#else
+//    return GL_UNSIGNED_SHORT_5_6_5;
+//#endif
+//}
 
 # pragma mark - Audio
 

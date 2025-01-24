@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenance.Hatari</string>
+	<string>com.provenance.core.Hatari</string>
 	<key>PVPrincipleClass</key>
-	<string>PVHatari</string>
+	<string>PVHatari.PVHatariCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.atarist</string>

@@ -34,15 +34,15 @@ struct ImportTaskRowView: View {
     @State private var isNavigatingToSystemSelection = false
     @ObservedObject private var themeManager = ThemeManager.shared
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
-    
+
     var bgColor: Color {
         themeManager.currentPalette.settingsCellBackground?.swiftUIColor ?? themeManager.currentPalette.menuBackground.swiftUIColor
     }
-    
+
     var fgColor: Color {
         themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.menuText.swiftUIColor
     }
-    
+
     var secondaryFgColor: Color {
         themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? .secondary
     }
@@ -50,7 +50,6 @@ struct ImportTaskRowView: View {
     var body: some View {
         WithPerceptionTracking {
             HStack {
-//                // TODO: add icon for fileType
                 VStack(alignment: .leading) {
                     Text(item.url.lastPathComponent)
                         .font(.headline)
@@ -60,6 +59,11 @@ struct ImportTaskRowView: View {
                         Text("BIOS")
                             .font(.subheadline)
                             .foregroundColor(fgColor)
+                    } else if let chosenSystem = item.userChosenSystem {
+                        // Show the selected system when one is chosen
+                        Text("\(chosenSystem.fullName)")
+                            .font(.subheadline)
+                            .foregroundColor(secondaryFgColor)
                     } else if !item.systems.isEmpty {
                         if item.systems.count == 1 {
                             Text("\(item.systems.first!.fullName) matched")
@@ -71,8 +75,8 @@ struct ImportTaskRowView: View {
                                 .foregroundColor(secondaryFgColor)
                         }
                     }
-                    
-                    if item.status == .failure, let errorText = item.errorValue {
+
+                    if let errorText = item.errorValue {
                         Text("Error Detail: \(errorText)")
                             .font(.subheadline)
                             .foregroundColor(secondaryFgColor)
@@ -86,7 +90,6 @@ struct ImportTaskRowView: View {
                         ProgressView()
                             .progressViewStyle(.circular)
                             .frame(width: 40, height: 40, alignment: .center)
-//                            .tint(themeManager.currentPalette.defaultTintColor!)
                     } else {
                         Image(systemName: iconNameForStatus(item.status))
                             .foregroundColor(item.status.color)
@@ -98,7 +101,6 @@ struct ImportTaskRowView: View {
                             .foregroundColor(fgColor)
                     }
                 }
-
             }
             .padding()
             .background(
@@ -106,20 +108,26 @@ struct ImportTaskRowView: View {
                     .fill(bgColor)
                     .shadow(radius: 2)
             )
-            //.background(currentPalette.gameLibraryBackground.swiftUIColor)
             .onTapGesture {
-                switch item.status {
-                case .conflict, .failure:
-                    isNavigatingToSystemSelection = true
-                default:
-                    break
+                // Only show system selection if we haven't chosen a system yet
+                if item.userChosenSystem == nil {
+                    switch item.status {
+                    case .conflict, .failure:
+                        isNavigatingToSystemSelection = true
+                    case .partial:
+                        if item.url.pathExtension.lowercased() == "cue" || item.url.pathExtension.lowercased() == "m3u" {
+                            isNavigatingToSystemSelection = true
+                        }
+                    default:
+                        break
+                    }
                 }
             }
             .background(
                 NavigationLink(destination: SystemSelectionView(item: item), isActive: $isNavigatingToSystemSelection) {
                     EmptyView()
                 }
-                    .hidden()
+                .hidden()
             )
         }
     }

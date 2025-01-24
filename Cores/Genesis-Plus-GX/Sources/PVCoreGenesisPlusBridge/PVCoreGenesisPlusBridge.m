@@ -801,6 +801,18 @@ static bool environment_callback(unsigned cmd, void *data)
     return GL_RGBA;
 }
 
+//- (GLenum)pixelFormat {
+//    return GL_RGB;
+//}
+//
+//- (GLenum)pixelType {
+//    return GL_UNSIGNED_SHORT_5_6_5;
+//}
+//
+//- (GLenum)internalPixelFormat {
+//    return GL_RGB;
+//}
+
 - (NSTimeInterval)frameInterval {
     return _frameInterval ? _frameInterval : 59.92;
 }

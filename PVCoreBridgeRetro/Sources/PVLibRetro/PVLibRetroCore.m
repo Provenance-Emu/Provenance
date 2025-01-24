@@ -1457,9 +1457,9 @@ static void core_log(enum retro_log_level level, const char * fmt, ...) {
     fprintf(stderr, "[%s] %s", levelstr[level], buffer);
     fflush(stderr);
 
-    if (level == RETRO_LOG_ERROR) {
-        exit(EXIT_FAILURE);
-    }
+//    if (level == RETRO_LOG_ERROR) {
+//        exit(EXIT_FAILURE);
+//    }
 }
 /*
  TODO:

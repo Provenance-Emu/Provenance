@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.desmume2015</string>
 	<key>PVPrincipleClass</key>
-	<string>PVDesmume2015Core</string>
+	<string>PVDesmume2015.PVDesmume2015Core</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.ds</string>

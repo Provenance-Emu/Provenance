@@ -487,18 +487,18 @@ public extension RomDatabase {
     func allGamesSortedBySystemThenTitle() -> Results<PVGame> {
         return realm.objects(PVGame.self).sorted(byKeyPath: "systemIdentifier").sorted(byKeyPath: "title")
     }
-    
+
     // MARK: Save States
-    
+
     func allSaveStates() -> Results<PVSaveState> {
         return all(PVSaveState.self)
     }
-    
+
     func allSaveStates(forGameWithID gameID: String) -> Results<PVSaveState> {
         let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameID)
         return realm.objects(PVSaveState.self).filter("game == %@", game as Any)
     }
-    
+
     func savetate(forID saveStateID: String) -> PVSaveState? {
         if let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateID) {
             return saveState
@@ -512,7 +512,7 @@ public extension Object {
     static func all() -> Results<PersistedType> {
         try! Realm().objects(Self.PersistedType)
     }
-    
+
     static func forPrimaryKey(_ primaryKey: String) -> PersistedType? {
         try! Realm().object(ofType: Self.PersistedType.self, forPrimaryKey: primaryKey)
     }
@@ -653,7 +653,7 @@ public extension RomDatabase {
             NSLog("Failed to hide game \(game.title)\n\(error.localizedDescription)")
         }
     }
-    
+
     func delete(bios: PVBIOS) throws {
         guard let biosURL = bios.file?.url else {
             ELOG("No path for BIOS")
@@ -674,7 +674,7 @@ public extension RomDatabase {
             }
         }
     }
-    
+
     func delete(game: PVGame, deleteArtwork: Bool = false, deleteSaves: Bool = false) throws {
         let romURL = PVEmulatorConfiguration.path(forGame: game)
         if deleteArtwork, !game.customArtworkURL.isEmpty {
@@ -740,10 +740,10 @@ public extension RomDatabase {
         // Get the actual save state file path from the PVFile
         let actualSavePath = saveState.file.url
         let imageURL = saveState.image?.url
-        
+
         // Create a thread-safe reference to the save state
         let saveStateRef = ThreadSafeReference(to: saveState)
-        
+
         // First delete the database entry
         do {
             try realm.write {
@@ -759,7 +759,7 @@ public extension RomDatabase {
             ELOG("Failed to delete save state from database: \(error.localizedDescription)")
             throw error
         }
-        
+
         // After successful database deletion, delete the files
         if FileManager.default.fileExists(atPath: actualSavePath.path) {
             do {
@@ -769,7 +769,7 @@ public extension RomDatabase {
                 throw RomDeletionError.fileManagerDeletionError(error)
             }
         }
-        
+
         // Delete the screenshot if it exists
         if let imagePath = imageURL,
         FileManager.default.fileExists(atPath: imagePath.path) {

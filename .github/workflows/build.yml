@@ -17,8 +17,8 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   SWIFT_PACKAGE_ALLOW_WRITING_TO_DIRECTORY: ${{ github.workspace }}
-  DEVELOPER_DIR: /Applications/Xcode_16.0.app/Contents/Developer
-  XCODE_VERSION: '16.0'
+  DEVELOPER_DIR: /Applications/Xcode_16.2.app/Contents/Developer
+  XCODE_VERSION: '16.2'
 
 jobs:
   build:
@@ -129,8 +129,12 @@ jobs:
 
       - name: Fakesign app
         run: |
-          echo "Checking entitlements file..."
+          echo "Contents of Provenance directory:"
           ls -la "Provenance/"
+          echo "Contents of ./ directory:"
+          ls -la "./"
+          echo "Contents of archive.xcarchive/Products/Applications/ directory:"
+          ls -la "archive.xcarchive/Products/Applications/"
           echo "Checking app binary..."
           ls -la "archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/"
           ldid -S"Provenance/Provenance-AppStore.entitlements" "archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/${{ matrix.APP_NAME }}" || echo "::warning::Fakesign failed but continuing build"

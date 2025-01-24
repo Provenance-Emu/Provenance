@@ -16,13 +16,19 @@ import PVCoreBridgeRetro
 @objcMembers
 open class PVVecXCore: PVEmulatorCore {
     
-    override open var alwaysUseGL: Bool { true }
+//    override open var alwaysUseGL: Bool { true }
 
     let _bridge: PVVecXCoreBridge = .init()
     
     public required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
+    }
+}
+
+extension PVVecXCore: CoreOptional {
+    public static var options: [CoreOption] {
+        return VecxOptions.options
     }
 }
 

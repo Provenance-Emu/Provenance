@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.mupen64plus</string>
 	<key>PVPrincipleClass</key>
-	<string>MupenGameCore</string>
+	<string>PVMupen64Plus.MupenGameCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.n64</string>
