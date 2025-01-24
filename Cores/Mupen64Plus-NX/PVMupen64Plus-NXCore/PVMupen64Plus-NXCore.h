@@ -17,7 +17,7 @@
 @protocol PVN64SystemResponderClient;
 
 __attribute__((visibility("default")))
-@interface PVMupen64PlusNXCore : PVLibRetroGLESCoreBridge <PVN64SystemResponderClient> {
+@interface PVMupen64PlusNXCoreBridge : PVLibRetroGLESCoreBridge <PVN64SystemResponderClient> {
 //	uint8_t padData[4][PVDOSButtonCount];
 //	int8_t xAxis[4];
 //	int8_t yAxis[4];

@@ -57,6 +57,7 @@ public func log(_ message: @autoclosure () -> String,
     }
     let logMessage = "\(emoji) \(fileName):\(line) - \(function): \(message())"
 
+    // Log to OSLog
     switch level {
     case .debug:
         category.debug("\(logMessage, privacy: .public)")
@@ -69,6 +70,11 @@ public func log(_ message: @autoclosure () -> String,
     default:
         category.log(level: level, "\(logMessage, privacy: .public)")
     }
+
+    /// Print to console in DEBUG builds
+    #if DEBUG
+    print(logMessage)
+    #endif
 }
 
 // Update convenience functions to include emojis

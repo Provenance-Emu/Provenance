@@ -774,7 +774,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_SHORT)):
             return .rgb10a2Unorm // Better match for RGB unsigned short
         case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_SHORT_5_6_5)),
-            (GLenum(GL_BGRA), GLenum(GL_UNSIGNED_SHORT_5_6_5)):
+            (GLenum(GL_BGRA), GLenum(GL_UNSIGNED_SHORT_5_6_5)),
+            (GLenum(GL_UNSIGNED_SHORT_5_6_5), GLenum(GL_UNSIGNED_BYTE)):
             return .b5g6r5Unorm
         case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_INT)):
             return .rgba32Uint // Approximation, might lose precision
@@ -1635,15 +1636,20 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     }
 
     func didRenderFrameOnAlternateThread() {
-        guard backingMTLTexture != nil else {
-            ELOG("backingMTLTexture was nil")
-            return
-        }
         glFlush()
 
         emulatorCore?.frontBufferLock.lock()
 
         previousCommandBuffer?.waitUntilScheduled()
+        
+        defer {
+            emulatorCore?.frontBufferLock.unlock()
+
+            emulatorCore?.frontBufferCondition.lock()
+            emulatorCore?.isFrontBufferReady = true
+            emulatorCore?.frontBufferCondition.signal()
+            emulatorCore?.frontBufferCondition.unlock()
+        }
 
         guard let commandBuffer = commandQueue?.makeCommandBuffer() else {
             ELOG("commandBuffer was nil")
@@ -1655,27 +1661,26 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
-        let screenRect = emulatorCore?.screenRect ?? .zero
+        if let backingMTLTexture = backingMTLTexture {
+            let screenRect = emulatorCore?.screenRect ?? .zero
 
-        encoder.copy(from: backingMTLTexture!,
-                     sourceSlice: 0, sourceLevel: 0,
-                     sourceOrigin: MTLOrigin(x: Int(screenRect.origin.x),
-                                             y: Int(screenRect.origin.y), z: 0),
-                     sourceSize: MTLSize(width: Int(screenRect.width),
-                                         height: Int(screenRect.height), depth: 1),
-                     to: inputTexture!,
-                     destinationSlice: 0, destinationLevel: 0,
-                     destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
+            encoder.copy(from: backingMTLTexture,
+                         sourceSlice: 0, sourceLevel: 0,
+                         sourceOrigin: MTLOrigin(x: Int(screenRect.origin.x),
+                                                 y: Int(screenRect.origin.y), z: 0),
+                         sourceSize: MTLSize(width: Int(screenRect.width),
+                                             height: Int(screenRect.height), depth: 1),
+                         to: inputTexture!,
+                         destinationSlice: 0, destinationLevel: 0,
+                         destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
 
-        encoder.endEncoding()
-        commandBuffer.commit()
+            encoder.endEncoding()
+            commandBuffer.commit()
 
-        emulatorCore?.frontBufferLock.unlock()
-
-        emulatorCore?.frontBufferCondition.lock()
-        emulatorCore?.isFrontBufferReady = true
-        emulatorCore?.frontBufferCondition.signal()
-        emulatorCore?.frontBufferCondition.unlock()
+        } else {
+            ELOG("backingMTLTexture was nil")
+            return
+        }
     }
 
     /// Cached viewport values

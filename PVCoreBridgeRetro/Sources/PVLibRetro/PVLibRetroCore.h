@@ -34,6 +34,9 @@ typedef struct retro_core_t retro_core_t;
 @class PVLibRetroCoreBridge;
 static __weak PVLibRetroCoreBridge * _Nonnull _current;
 
+#define PVRETRO_PAD_PLAYER_COUNT 2
+#define PVRETRO_PAD_BUTTON_COUNT 12
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
 __attribute__((weak_import))
@@ -46,7 +49,7 @@ __attribute__((weak_import))
     uint32_t *videoBufferA;
     uint32_t *videoBufferB;
     
-    int16_t _pad[2][12];
+    int16_t _pad[PVRETRO_PAD_PLAYER_COUNT][PVRETRO_PAD_BUTTON_COUNT];
     
     retro_core_t* core;
 

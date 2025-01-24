@@ -9,6 +9,7 @@
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.zxspectrum</string>
+		<string>com.provenance.ep128</string>
 	</array>
 	<key>PVProjectName</key>
 	<string>Fuse</string>

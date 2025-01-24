@@ -15,7 +15,7 @@ import Foundation
 
 // swiftlint:disable identifier_name line_length number_separator type_body_length
 public enum CorePlist {
-  public static let pvCoreIdentifier: String = "com.provenance.core.EP128Emu"
+  public static let pvCoreIdentifier: String = "com.provenance.core.flycast"
   public static let pvPrincipleClass: String = "PVFlycast.PVFlycastEmuCore"
   public static let pvProjectName: String = "Flycast"
   public static let pvProjectURL: String = ""

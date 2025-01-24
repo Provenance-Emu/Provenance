@@ -21,7 +21,7 @@ public final class PVLogging: NSObject {
 
     public var entity: PVLoggingEntity?
     public let startupTime: Date = Date()
-    
+
     public private(set) var history = [PVLogEntry]()
     private var listeners = Array<any PVLoggingEventProtocol>()
 
@@ -88,22 +88,44 @@ public final class PVLogging: NSObject {
         subsystem: Bundle.main.bundleIdentifier!, category: "App")
 
     fileprivate func log(_ entry: PVLogEntry) {
-        // TODO: Add array of "loggers" for os_log, nslogger
-        // and iterate through them
-//        if #available(iOS 14.0, tvOS 14.0, *) {
-//            switch entry.level {
-//            case .Debug:
-//                Self.logger.log(level: .debug, .init(stringLiteral: entry.string))
-//            case .Error:
-//                Self.logger.log(level: .error, .init(stringLiteral: entry.string))
-//            case .Warn:
-//                Self.logger.log(level: .error, .init(stringLiteral: entry.string))
-//            case .U:
-//                Self.logger.log(level: .fault, .init(stringLiteral: entry.string))
-//            case .Info:
-//                Self.logger.log(level: .info, .init(stringLiteral: entry.string))
-//            }
-//        }
+        /// Convert PVLogLevel to OSLogType
+        let osLogLevel: OSLogType = {
+            switch entry.level {
+            case .Debug:
+                return .debug
+            case .Info:
+                return .info
+            case .Warn:
+                return .default
+            case .Error:
+                return .error
+            case .U:
+                return .fault
+            }
+        }()
+
+        /// Create the formatted message with file, line, and function information
+        let fileName = String(describing: entry.fileString).components(separatedBy: "/").last ?? ""
+        let logMessage = "\(fileName):\(entry.lineNumberString) - \(entry.functionString): \(entry.text)"
+
+        /// Log to OSLog system
+        switch osLogLevel {
+        case .debug:
+            Logger.general.debug("\(logMessage, privacy: .public)")
+        case .info:
+            Logger.general.info("\(logMessage, privacy: .public)")
+        case .error:
+            Logger.general.error("\(logMessage, privacy: .public)")
+        case .fault:
+            Logger.general.fault("\(logMessage, privacy: .public)")
+        default:
+            Logger.general.log(level: osLogLevel, "\(logMessage, privacy: .public)")
+        }
+
+        /// Also print to console in DEBUG builds
+        #if DEBUG
+        print(logMessage)
+        #endif
     }
 
 

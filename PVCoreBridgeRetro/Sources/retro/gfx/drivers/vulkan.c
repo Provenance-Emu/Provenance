@@ -18,7 +18,6 @@
 #include <math.h>
 #include <string.h>
 
-
 #include <compat/strl.h>
 #include <gfx/scaler/scaler.h>
 #include <formats/image.h>
@@ -683,7 +682,7 @@ static bool vulkan_init_default_filter_chain(vk_t *vk)
 
    if (!vk->filter_chain)
    {
-      ELOG(@"Failed to create filter chain.\n");
+      ELOG("Failed to create filter chain.\n");
       return false;
    }
 
@@ -717,7 +716,7 @@ static bool vulkan_init_filter_chain_preset(vk_t *vk, const char *shader_path)
 
    if (!vk->filter_chain)
    {
-      ELOG(@"[Vulkan]: Failed to create preset: \"%s\".\n", shader_path);
+      RARCH_ERR("[Vulkan]: Failed to create preset: \"%s\".\n", shader_path);
       return false;
    }
 
@@ -734,13 +733,13 @@ static bool vulkan_init_filter_chain(vk_t *vk)
 
    if (type == RARCH_SHADER_NONE)
    {
-      VLOG(@"[Vulkan]: Loading stock shader.\n");
+      RARCH_LOG("[Vulkan]: Loading stock shader.\n");
       return vulkan_init_default_filter_chain(vk);
    }
 
    if (type != RARCH_SHADER_SLANG)
    {
-      VLOG(@"[Vulkan]: Only SLANG shaders are supported, falling back to stock.\n");
+      VLOG("[Vulkan]: Only SLANG shaders are supported, falling back to stock.\n");
       return vulkan_init_default_filter_chain(vk);
    }
 
@@ -848,8 +847,9 @@ static void vulkan_free(void *data)
       font_driver_free(NULL);
 
       vulkan_deinit_static_resources(vk);
+#ifdef HAVE_OVERLAY
       vulkan_overlay_free(vk);
-
+#endif
       if (vk->filter_chain)
          vulkan_filter_chain_free(vk->filter_chain);
 
@@ -1010,7 +1010,7 @@ static void vulkan_init_readback(vk_t *vk)
    if (!scaler_ctx_gen_filter(&vk->readback.scaler))
    {
       vk->readback.streamed = false;
-      ELOG(@"[Vulkan]: Failed to initialize scaler context.\n");
+      ELOG("[Vulkan]: Failed to initialize scaler context.\n");
    }
 }
 
@@ -1037,7 +1037,7 @@ static void *vulkan_init(const video_info_t *video,
    ctx_driver = vulkan_get_context(vk);
    if (!ctx_driver)
    {
-      ELOG(@"[Vulkan]: Failed to get Vulkan context.\n");
+      ELOG("[Vulkan]: Failed to get Vulkan context.\n");
       goto error;
    }
 
@@ -1049,7 +1049,7 @@ static void *vulkan_init(const video_info_t *video,
    mode.width  = 0;
    mode.height = 0;
 
-   VLOG(@"Detecting screen resolution %ux%u.\n", full_x, full_y);
+   VLOG("Detecting screen resolution %ux%u.\n", full_x, full_y);
    interval = video->vsync ? settings->video.swap_interval : 0;
    video_context_driver_swap_interval(&interval);
 
@@ -1068,7 +1068,7 @@ static void *vulkan_init(const video_info_t *video,
 
    if (!video_context_driver_set_video_mode(&mode))
    {
-      ELOG(@"[Vulkan]: Failed to set video mode.\n");
+      ELOG("[Vulkan]: Failed to set video mode.\n");
       goto error;
    }
 
@@ -1080,7 +1080,7 @@ static void *vulkan_init(const video_info_t *video,
       video_driver_set_size(&temp_width, &temp_height);
    video_driver_get_size(&temp_width, &temp_height);
 
-   VLOG(@"Vulkan: Using resolution %ux%u\n", temp_width, temp_height);
+   VLOG("Vulkan: Using resolution %ux%u\n", temp_width, temp_height);
 
    video_context_driver_get_context_data(&vk->context);
 
@@ -1091,7 +1091,7 @@ static void *vulkan_init(const video_info_t *video,
    vk->tex_fmt           = video->rgb32 
       ? VK_FORMAT_B8G8R8A8_UNORM : VK_FORMAT_R5G6B5_UNORM_PACK16;
    vk->keep_aspect       = video->force_aspect;
-   VLOG(@"[Vulkan]: Using %s format.\n", video->rgb32 ? "BGRA8888" : "RGB565");
+   VLOG("[Vulkan]: Using %s format.\n", video->rgb32 ? "BGRA8888" : "RGB565");
 
    /* Set the viewport to fix recording, since it needs to know
     * the viewport sizes before we start running. */
@@ -1103,7 +1103,7 @@ static void *vulkan_init(const video_info_t *video,
 
    if (!vulkan_init_filter_chain(vk))
    {
-      ELOG(@"[Vulkan]: Failed to init filter chain.\n");
+      ELOG("[Vulkan]: Failed to init filter chain.\n");
       goto error;
    }
 
@@ -1116,7 +1116,7 @@ static void *vulkan_init(const video_info_t *video,
       if (!font_driver_init_first(NULL, NULL, vk, *settings->path.font 
             ? settings->path.font : NULL, settings->video.font_size, false,
             FONT_DRIVER_RENDER_VULKAN_API))
-         ELOG(@"[Vulkan]: Failed to initialize font renderer.\n");
+         ELOG("[Vulkan]: Failed to initialize font renderer.\n");
    }
 
    vulkan_init_readback(vk);
@@ -1137,7 +1137,7 @@ static void vulkan_update_filter_chain(vk_t *vk)
    };
 
    if (!vulkan_filter_chain_update_swapchain_info(vk->filter_chain, &info))
-      ELOG(@"Failed to update filter chain info. This will probably lead to a crash ...\n");
+      ELOG("Failed to update filter chain info. This will probably lead to a crash ...\n");
 }
 
 static void vulkan_check_swapchain(vk_t *vk)
@@ -1163,7 +1163,7 @@ static void vulkan_set_nonblock_state(void *data, bool state)
    if (!vk)
       return;
 
-   VLOG(@"[Vulkan]: VSync => %s\n", state ? "off" : "on");
+   VLOG("[Vulkan]: VSync => %s\n", state ? "off" : "on");
 
    interval = state ? 0 : settings->video.swap_interval;
    video_context_driver_swap_interval(&interval);
@@ -1234,7 +1234,7 @@ static bool vulkan_set_shader(void *data,
 
    if (type != RARCH_SHADER_SLANG && path)
    {
-      WLOG(@"[Vulkan]: Only .slang or .slangp shaders are supported. Falling back to stock.\n");
+      WLOG("[Vulkan]: Only .slang or .slangp shaders are supported. Falling back to stock.\n");
       path = NULL;
    }
 
@@ -1250,7 +1250,7 @@ static bool vulkan_set_shader(void *data,
 
    if (!vulkan_init_filter_chain_preset(vk, path))
    {
-      ELOG(@"[Vulkan]: Failed to create filter chain: \"%s\". Falling back to stock.\n", path);
+      ELOG("[Vulkan]: Failed to create filter chain: \"%s\". Falling back to stock.\n", path);
       vulkan_init_default_filter_chain(vk);
       return false;
    }
@@ -1412,7 +1412,7 @@ static void vulkan_set_viewport(void *data, unsigned viewport_width,
    vk->tracker.dirty |= VULKAN_DIRTY_DYNAMIC_BIT;
 
 #if 0
-   VLOG(@"Setting viewport @ %ux%u\n", viewport_width, viewport_height);
+   VLOG("Setting viewport @ %ux%u\n", viewport_width, viewport_height);
 #endif
 }
 
@@ -1437,7 +1437,7 @@ static void vulkan_readback(vk_t *vk)
    /* FIXME: We won't actually get format conversion with vkCmdCopyImage, so have to check
     * properly for this. BGRA seems to be the default for all swapchains. */
    if (vk->context->swapchain_format != VK_FORMAT_B8G8R8A8_UNORM)
-      WLOG(@"[Vulkan]: Backbuffer is not BGRA8888, readbacks might not work properly.\n");
+      WLOG("[Vulkan]: Backbuffer is not BGRA8888, readbacks might not work properly.\n");
 
    staging  = &vk->readback.staging[vk->context->current_swapchain_index];
    *staging = vulkan_create_texture(vk,
@@ -1669,7 +1669,7 @@ static bool vulkan_frame(void *data, const void *frame,
          /* Does this make that this can happen at all? */
          if (!vk->hw.image)
          {
-            ELOG(@"[Vulkan]: HW image is not set. Buggy core?\n");
+            ELOG("[Vulkan]: HW image is not set. Buggy core?\n");
             return false;
          }
 

@@ -59,7 +59,7 @@
 #define SYMBOL(x) do { \
    function_t func = dylib_proc(lib_handle, #x); \
    memcpy(&current_core->x, &func, sizeof(func)); \
-   if (current_core->x == NULL) { ELOG(@"Failed to load symbol: \"%s\"\n", #x); retroarch_fail(1, "init_libretro_sym()"); } \
+   if (current_core->x == NULL) { ELOG("Failed to load symbol: \"%s\"\n", #x); retroarch_fail(1, "init_libretro_sym()"); } \
 } while (0)
 
 static dylib_t lib_handle;
@@ -245,10 +245,10 @@ static dylib_t libretro_get_system_info_lib(const char *path,
 
    if (!lib)
    {
-      ELOG(@"%s: \"%s\"\n",
+      ELOG("%s: \"%s\"\n",
             msg_hash_to_str(MSG_FAILED_TO_OPEN_LIBRETRO_CORE),
             path);
-      ELOG(@"Error(s): %s\n", dylib_error());
+      ELOG("Error(s): %s\n", dylib_error());
       return NULL;
    }
 
@@ -317,17 +317,17 @@ static void load_dynamic_core(void)
    {
       /* Try to verify that -lretro was not linked in from other modules
        * since loading it dynamically and with -l will fail hard. */
-      ELOG(@"Serious problem. RetroArch wants to load libretro cores"
+      ELOG("Serious problem. RetroArch wants to load libretro cores"
             "dyamically, but it is already linked.\n");
-      ELOG(@"This could happen if other modules RetroArch depends on "
+      ELOG("This could happen if other modules RetroArch depends on "
             "link against libretro directly.\n");
-      ELOG(@"Proceeding could cause a crash. Aborting ...\n");
+      ELOG("Proceeding could cause a crash. Aborting ...\n");
       retroarch_fail(1, "init_libretro_sym()");
    }
 
    if (string_is_empty(config_get_active_core_path()))
    {
-      ELOG(@"RetroArch is built for dynamic libretro cores, but "
+      ELOG("RetroArch is built for dynamic libretro cores, but "
             "libretro_path is not set. Cannot continue.\n");
       retroarch_fail(1, "init_libretro_sym()");
    }
@@ -339,14 +339,14 @@ static void load_dynamic_core(void)
          config_get_active_core_path_ptr(),
          config_get_active_core_path_size(), true);
 
-   VLOG(@"Loading dynamic libretro core from: \"%s\"\n",
+   VLOG("Loading dynamic libretro core from: \"%s\"\n",
          config_get_active_core_path());
    lib_handle = dylib_load(config_get_active_core_path());
    if (!lib_handle)
    {
-      ELOG(@"Failed to open libretro core: \"%s\"\n",
+      ELOG("Failed to open libretro core: \"%s\"\n",
             config_get_active_core_path());
-      ELOG(@"Error(s): %s\n", dylib_error());
+      ELOG("Error(s): %s\n", dylib_error());
       retroarch_fail(1, "load_dynamic()");
    }
 }
@@ -841,13 +841,13 @@ bool rarch_environment_cb(unsigned cmd, void *data)
    {
       case RETRO_ENVIRONMENT_GET_OVERSCAN:
          *(bool*)data = !settings->video.crop_overscan;
-         VLOG(@"Environ GET_OVERSCAN: %u\n",
+         VLOG("Environ GET_OVERSCAN: %u\n",
                (unsigned)!settings->video.crop_overscan);
          break;
 
       case RETRO_ENVIRONMENT_GET_CAN_DUPE:
          *(bool*)data = true;
-         VLOG(@"Environ GET_CAN_DUPE: true\n");
+         VLOG("Environ GET_CAN_DUPE: true\n");
          break;
 
       case RETRO_ENVIRONMENT_GET_VARIABLE:
@@ -856,7 +856,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
             struct retro_variable *var = (struct retro_variable*)data;
 
             if (var) {
-               VLOG(@"Environ GET_VARIABLE %s: not implemented.\n", var->key);
+               VLOG("Environ GET_VARIABLE %s: not implemented.\n", var->key);
                var->value = NULL;
             }
          }
@@ -868,7 +868,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
          break;
 
       case RETRO_ENVIRONMENT_SET_VARIABLES:
-         VLOG(@"Environ SET_VARIABLES.\n");
+         VLOG("Environ SET_VARIABLES.\n");
 
          runloop_ctl(RUNLOOP_CTL_CORE_OPTIONS_DEINIT, NULL);
          runloop_ctl(RUNLOOP_CTL_CORE_OPTIONS_INIT,   data);
@@ -878,7 +878,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       case RETRO_ENVIRONMENT_SET_MESSAGE:
       {
          const struct retro_message *msg = (const struct retro_message*)data;
-         VLOG(@"Environ SET_MESSAGE: %s\n", msg->msg);
+         VLOG("Environ SET_MESSAGE: %s\n", msg->msg);
          runloop_msg_queue_push(msg->msg, 3, msg->frames, true);
          break;
       }
@@ -886,7 +886,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       case RETRO_ENVIRONMENT_SET_ROTATION:
       {
          unsigned rotation = *(const unsigned*)data;
-         VLOG(@"Environ SET_ROTATION: %u\n", rotation);
+         VLOG("Environ SET_ROTATION: %u\n", rotation);
          if (!settings->video.allow_rotate)
             break;
 
@@ -899,7 +899,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       }
 
       case RETRO_ENVIRONMENT_SHUTDOWN:
-         VLOG(@"Environ SHUTDOWN.\n");
+         VLOG("Environ SHUTDOWN.\n");
          runloop_ctl(RUNLOOP_CTL_SET_SHUTDOWN,      NULL);
          runloop_ctl(RUNLOOP_CTL_SET_CORE_SHUTDOWN, NULL);
          break;
@@ -908,7 +908,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
          if (system)
          {
             system->performance_level = *(const unsigned*)data;
-            VLOG(@"Environ PERFORMANCE_LEVEL: %u.\n",
+            VLOG("Environ PERFORMANCE_LEVEL: %u.\n",
                   system->performance_level);
          }
          break;
@@ -920,20 +920,20 @@ bool rarch_environment_cb(unsigned cmd, void *data)
             if (runloop_ctl(RUNLOOP_CTL_GET_CONTENT_PATH, &fullpath) &&
                   fullpath)
             {
-               WLOG(@"SYSTEM DIR is empty, assume CONTENT DIR %s\n",
+               WLOG("SYSTEM DIR is empty, assume CONTENT DIR %s\n",
                      fullpath);
                fill_pathname_basedir(global->dir.systemdir, fullpath,
                      sizeof(global->dir.systemdir));
             }
 
             *(const char**)data = global->dir.systemdir;
-            VLOG(@"Environ SYSTEM_DIRECTORY: \"%s\".\n",
+            VLOG("Environ SYSTEM_DIRECTORY: \"%s\".\n",
                   global->dir.systemdir);
          }
          else
          {
             *(const char**)data = settings->directory.system;
-            VLOG(@"Environ SYSTEM_DIRECTORY: \"%s\".\n",
+            VLOG("Environ SYSTEM_DIRECTORY: \"%s\".\n",
                settings->directory.system);
          }
 
@@ -946,14 +946,14 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       case RETRO_ENVIRONMENT_GET_USERNAME:
          *(const char**)data = *settings->username ?
             settings->username : NULL;
-         VLOG(@"Environ GET_USERNAME: \"%s\".\n",
+         VLOG("Environ GET_USERNAME: \"%s\".\n",
                settings->username);
          break;
 
       case RETRO_ENVIRONMENT_GET_LANGUAGE:
 #ifdef HAVE_LANGEXTRA
          *(unsigned *)data = settings->user_language;
-         VLOG(@"Environ GET_LANGUAGE: \"%u\".\n",
+         VLOG("Environ GET_LANGUAGE: \"%u\".\n",
                settings->user_language);
 #endif
          break;
@@ -966,14 +966,14 @@ bool rarch_environment_cb(unsigned cmd, void *data)
          switch (pix_fmt)
          {
             case RETRO_PIXEL_FORMAT_0RGB1555:
-               VLOG(@"Environ SET_PIXEL_FORMAT: 0RGB1555.\n");
+               VLOG("Environ SET_PIXEL_FORMAT: 0RGB1555.\n");
                break;
 
             case RETRO_PIXEL_FORMAT_RGB565:
-               VLOG(@"Environ SET_PIXEL_FORMAT: RGB565.\n");
+               VLOG("Environ SET_PIXEL_FORMAT: RGB565.\n");
                break;
             case RETRO_PIXEL_FORMAT_XRGB8888:
-               VLOG(@"Environ SET_PIXEL_FORMAT: XRGB8888.\n");
+               VLOG("Environ SET_PIXEL_FORMAT: XRGB8888.\n");
                break;
             default:
                return false;
@@ -1063,7 +1063,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
                      [retro_id] = desc->description;
             }
 
-            VLOG(@"Environ SET_INPUT_DESCRIPTORS:\n");
+            VLOG("Environ SET_INPUT_DESCRIPTORS:\n");
             for (p = 0; p < settings->input.max_users; p++)
             {
                for (retro_id = 0; retro_id < RARCH_FIRST_CUSTOM_BIND; retro_id++)
@@ -1073,7 +1073,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
                   if (!description)
                      continue;
 
-                  VLOG(@"\tRetroPad, User %u, Button \"%s\" => \"%s\"\n",
+                  VLOG("\tRetroPad, User %u, Button \"%s\" => \"%s\"\n",
                         p + 1, libretro_btn_desc[retro_id], description);
                }
             }
@@ -1094,7 +1094,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
          runloop_ctl(RUNLOOP_CTL_FRONTEND_KEY_EVENT_GET, &frontend_key_event);
          runloop_ctl(RUNLOOP_CTL_KEY_EVENT_GET, &key_event);
 
-         VLOG(@"Environ SET_KEYBOARD_CALLBACK.\n");
+         VLOG("Environ SET_KEYBOARD_CALLBACK.\n");
          if (key_event)
             *key_event                  = info->callback;
 
@@ -1104,7 +1104,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       }
 
       case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE:
-         VLOG(@"Environ SET_DISK_CONTROL_INTERFACE.\n");
+         VLOG("Environ SET_DISK_CONTROL_INTERFACE.\n");
          if (system)
             system->disk_control_cb =
                *(const struct retro_disk_control_callback*)data;
@@ -1119,20 +1119,20 @@ bool rarch_environment_cb(unsigned cmd, void *data)
 
          hwr = video_driver_get_hw_context();
 
-         VLOG(@"Environ SET_HW_RENDER.\n");
+         VLOG("Environ SET_HW_RENDER.\n");
 
          switch (cb->context_type)
          {
             case RETRO_HW_CONTEXT_NONE:
-               VLOG(@"Requesting no HW context.\n");
+               VLOG("Requesting no HW context.\n");
                break;
 
             case RETRO_HW_CONTEXT_VULKAN:
 #ifdef HAVE_VULKAN
-               VLOG(@"Requesting Vulkan context.\n");
+               VLOG("Requesting Vulkan context.\n");
                break;
 #else
-               ELOG(@"Requesting Vulkan context, but RetroArch is not compiled against Vulkan. Cannot use HW context.\n");
+               ELOG("Requesting Vulkan context, but RetroArch is not compiled against Vulkan. Cannot use HW context.\n");
                return false;
 #endif
 
@@ -1143,13 +1143,13 @@ bool rarch_environment_cb(unsigned cmd, void *data)
 #ifdef HAVE_OPENGLES3
             case RETRO_HW_CONTEXT_OPENGLES3:
 #endif
-               VLOG(@"Requesting OpenGLES%u context.\n",
+               VLOG("Requesting OpenGLES%u context.\n",
                      cb->context_type == RETRO_HW_CONTEXT_OPENGLES2 ? 2 : 3);
                break;
 
 #if defined(HAVE_OPENGLES3)
             case RETRO_HW_CONTEXT_OPENGLES_VERSION:
-               VLOG(@"Requesting OpenGLES%u.%u context.\n",
+               VLOG("Requesting OpenGLES%u.%u context.\n",
                      cb->version_major, cb->version_minor);
                break;
 #endif
@@ -1157,26 +1157,26 @@ bool rarch_environment_cb(unsigned cmd, void *data)
 #endif
             case RETRO_HW_CONTEXT_OPENGL:
             case RETRO_HW_CONTEXT_OPENGL_CORE:
-               ELOG(@"Requesting OpenGL context, but RetroArch "
+               ELOG("Requesting OpenGL context, but RetroArch "
                      "is compiled against OpenGLES. Cannot use HW context.\n");
                return false;
 
 #elif defined(HAVE_OPENGL)
             case RETRO_HW_CONTEXT_OPENGLES2:
             case RETRO_HW_CONTEXT_OPENGLES3:
-               ELOG(@"Requesting OpenGLES%u context, but RetroArch "
+               ELOG("Requesting OpenGLES%u context, but RetroArch "
                      "is compiled against OpenGL. Cannot use HW context.\n",
                      cb->context_type == RETRO_HW_CONTEXT_OPENGLES2 ? 2 : 3);
                return false;
 
             case RETRO_HW_CONTEXT_OPENGLES_VERSION:
-               ELOG(@"Requesting OpenGLES%u.%u context, but RetroArch "
+               ELOG("Requesting OpenGLES%u.%u context, but RetroArch "
                      "is compiled against OpenGL. Cannot use HW context.\n",
                      cb->version_major, cb->version_minor);
                return false;
 
             case RETRO_HW_CONTEXT_OPENGL:
-               VLOG(@"Requesting OpenGL context.\n");
+               VLOG("Requesting OpenGL context.\n");
                break;
 
             case RETRO_HW_CONTEXT_OPENGL_CORE:
@@ -1187,14 +1187,14 @@ bool rarch_environment_cb(unsigned cmd, void *data)
 
                   video_context_driver_set_flags(&flags);
 
-                  VLOG(@"Requesting core OpenGL context (%u.%u).\n",
+                  VLOG("Requesting core OpenGL context (%u.%u).\n",
                         cb->version_major, cb->version_minor);
                }
                break;
 #endif
 
             default:
-               VLOG(@"Requesting unknown context.\n");
+               VLOG("Requesting unknown context.\n");
                return false;
          }
          cb->get_current_framebuffer = video_driver_get_current_framebuffer;
@@ -1212,7 +1212,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       case RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME:
       {
          bool state = *(const bool*)data;
-         VLOG(@"Environ SET_SUPPORT_NO_GAME: %s.\n", state ? "yes" : "no");
+         VLOG("Environ SET_SUPPORT_NO_GAME: %s.\n", state ? "yes" : "no");
 
          if (state)
             content_set_does_not_need_content();
@@ -1235,7 +1235,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK:
 #if defined(HAVE_THREADS) && !defined(__CELLOS_LV2__)
       {
-         VLOG(@"Environ SET_AUDIO_CALLBACK.\n");
+         VLOG("Environ SET_AUDIO_CALLBACK.\n");
          audio_driver_set_callback(data);
       }
 #endif
@@ -1243,7 +1243,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
 
       case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK:
       {
-         VLOG(@"Environ SET_FRAME_TIME_CALLBACK.\n");
+         VLOG("Environ SET_FRAME_TIME_CALLBACK.\n");
          runloop_ctl(RUNLOOP_CTL_SET_FRAME_TIME, data);
          break;
       }
@@ -1253,7 +1253,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
          struct retro_rumble_interface *iface =
             (struct retro_rumble_interface*)data;
 
-         VLOG(@"Environ GET_RUMBLE_INTERFACE.\n");
+         VLOG("Environ GET_RUMBLE_INTERFACE.\n");
          iface->set_rumble_state = input_driver_set_rumble_state;
          break;
       }
@@ -1262,7 +1262,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       {
          uint64_t *mask = (uint64_t*)data;
 
-         VLOG(@"Environ GET_INPUT_DEVICE_CAPABILITIES.\n");
+         VLOG("Environ GET_INPUT_DEVICE_CAPABILITIES.\n");
          if (input_driver_has_capabilities())
             *mask = input_driver_get_capabilities();
          else
@@ -1275,7 +1275,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
          struct retro_sensor_interface *iface =
             (struct retro_sensor_interface*)data;
 
-         VLOG(@"Environ GET_SENSOR_INTERFACE.\n");
+         VLOG("Environ GET_SENSOR_INTERFACE.\n");
          iface->set_sensor_state = input_sensor_set_state;
          iface->get_sensor_input = input_sensor_get_input;
          break;
@@ -1285,7 +1285,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
          struct retro_camera_callback *cb =
             (struct retro_camera_callback*)data;
 
-         VLOG(@"Environ GET_CAMERA_INTERFACE.\n");
+         VLOG("Environ GET_CAMERA_INTERFACE.\n");
          cb->start                        = driver_camera_start;
          cb->stop                         = driver_camera_stop;
 
@@ -1303,7 +1303,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
 //         struct retro_location_callback *cb =
 //            (struct retro_location_callback*)data;
 //
-//         VLOG(@"Environ GET_LOCATION_INTERFACE.\n");
+//         VLOG("Environ GET_LOCATION_INTERFACE.\n");
 //         cb->start                 = driver_location_start;
 //         cb->stop                  = driver_location_stop;
 //         cb->get_position          = driver_location_get_position;
@@ -1320,7 +1320,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       {
          struct retro_log_callback *cb = (struct retro_log_callback*)data;
 
-         VLOG(@"Environ GET_LOG_INTERFACE.\n");
+         VLOG("Environ GET_LOG_INTERFACE.\n");
          cb->log = rarch_log_libretro;
          break;
       }
@@ -1329,7 +1329,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       {
          struct retro_perf_callback *cb = (struct retro_perf_callback*)data;
 
-         VLOG(@"Environ GET_PERF_INTERFACE.\n");
+         VLOG("Environ GET_PERF_INTERFACE.\n");
          cb->get_time_usec    = cpu_features_get_time_usec;
          cb->get_cpu_features = cpu_features_get;
          cb->get_perf_counter = cpu_features_get_perf_counter;
@@ -1347,14 +1347,14 @@ bool rarch_environment_cb(unsigned cmd, void *data)
 
          *dir = *settings->directory.core_assets ?
             settings->directory.core_assets : NULL;
-         VLOG(@"Environ CORE_ASSETS_DIRECTORY: \"%s\".\n",
+         VLOG("Environ CORE_ASSETS_DIRECTORY: \"%s\".\n",
                settings->directory.core_assets);
          break;
       }
 
       case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO:
       {
-         VLOG(@"Environ SET_SYSTEM_AV_INFO.\n");
+         VLOG("Environ SET_SYSTEM_AV_INFO.\n");
          return driver_ctl(RARCH_DRIVER_CTL_UPDATE_SYSTEM_AV_INFO,
                (void**)&data);
       }
@@ -1365,17 +1365,17 @@ bool rarch_environment_cb(unsigned cmd, void *data)
          const struct retro_subsystem_info *info =
             (const struct retro_subsystem_info*)data;
 
-         VLOG(@"Environ SET_SUBSYSTEM_INFO.\n");
+         VLOG("Environ SET_SUBSYSTEM_INFO.\n");
 
          for (i = 0; info[i].ident; i++)
          {
-            VLOG(@"Special game type: %s\n", info[i].desc);
-            VLOG(@"  Ident: %s\n", info[i].ident);
-            VLOG(@"  ID: %u\n", info[i].id);
-            VLOG(@"  Content:\n");
+            VLOG("Special game type: %s\n", info[i].desc);
+            VLOG("  Ident: %s\n", info[i].ident);
+            VLOG("  ID: %u\n", info[i].id);
+            VLOG("  Content:\n");
             for (j = 0; j < info[i].num_roms; j++)
             {
-               VLOG(@"    %s (%s)\n",
+               VLOG("    %s (%s)\n",
                      info[i].roms[j].desc, info[i].roms[j].required ?
                      "required" : "optional");
             }
@@ -1403,13 +1403,13 @@ bool rarch_environment_cb(unsigned cmd, void *data)
          const struct retro_controller_info *info =
             (const struct retro_controller_info*)data;
 
-         VLOG(@"Environ SET_CONTROLLER_INFO.\n");
+         VLOG("Environ SET_CONTROLLER_INFO.\n");
 
          for (i = 0; info[i].types; i++)
          {
-            VLOG(@"Controller port: %u\n", i + 1);
+            VLOG("Controller port: %u\n", i + 1);
             for (j = 0; j < info[i].num_types; j++)
-               VLOG(@"   %s (ID: %u)\n", info[i].types[j].desc,
+               VLOG("   %s (ID: %u)\n", info[i].types[j].desc,
                      info[i].types[j].id);
          }
 
@@ -1437,7 +1437,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
                (const struct retro_memory_map*)data;
             struct retro_memory_descriptor *descriptors = NULL;
 
-            VLOG(@"Environ SET_MEMORY_MAPS.\n");
+            VLOG("Environ SET_MEMORY_MAPS.\n");
             free((void*)system->mmaps.descriptors);
             system->mmaps.num_descriptors = 0;
             descriptors = (struct retro_memory_descriptor*)
@@ -1454,9 +1454,9 @@ bool rarch_environment_cb(unsigned cmd, void *data)
             mmap_preprocess_descriptors(descriptors, mmaps->num_descriptors);
 
             if (sizeof(void *) == 8)
-               VLOG(@"   ndx flags  ptr              offset   start    select   disconn  len      addrspace\n");
+               VLOG("   ndx flags  ptr              offset   start    select   disconn  len      addrspace\n");
             else
-               VLOG(@"   ndx flags  ptr          offset   start    select   disconn  len      addrspace\n");
+               VLOG("   ndx flags  ptr          offset   start    select   disconn  len      addrspace\n");
 
             for (i = 0; i < system->mmaps.num_descriptors; i++)
             {
@@ -1488,7 +1488,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
                flags[5] = (desc->flags & RETRO_MEMDESC_CONST) ? 'C' : 'c';
                flags[6] = 0;
 
-               VLOG(@"   %03u %s %p %08X %08X %08X %08X %08X %s\n",
+               VLOG("   %03u %s %p %08X %08X %08X %08X %08X %s\n",
                      i + 1, flags, desc->ptr, desc->offset, desc->start,
                      desc->select, desc->disconnect, desc->len,
                      desc->addrspace ? desc->addrspace : "");
@@ -1496,7 +1496,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
          }
          else
          {
-            WLOG(@"Environ SET_MEMORY_MAPS, but system pointer not initialized..\n");
+            WLOG("Environ SET_MEMORY_MAPS, but system pointer not initialized..\n");
          }
 
          break;
@@ -1517,7 +1517,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
 
          in_geom = (const struct retro_game_geometry*)data;
 
-         VLOG(@"Environ SET_GEOMETRY.\n");
+         VLOG("Environ SET_GEOMETRY.\n");
 
          /* Can potentially be called every frame,
           * don't do anything unless required. */
@@ -1529,7 +1529,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
             geom->base_height  = in_geom->base_height;
             geom->aspect_ratio = in_geom->aspect_ratio;
 
-            VLOG(@"SET_GEOMETRY: %ux%u, aspect: %.3f.\n",
+            VLOG("SET_GEOMETRY: %ux%u, aspect: %.3f.\n",
                   geom->base_width, geom->base_height, geom->aspect_ratio);
 
             /* Forces recomputation of aspect ratios if
@@ -1553,7 +1553,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
 #ifdef HAVE_CHEEVOS
          {
             bool state = *(const bool*)data;
-            VLOG(@"Environ SET_SUPPORT_ACHIEVEMENTS: %s.\n", state ? "yes" : "no");
+            VLOG("Environ SET_SUPPORT_ACHIEVEMENTS: %s.\n", state ? "yes" : "no");
             cheevos_set_support_cheevos(state);
          }
 #endif
@@ -1563,14 +1563,14 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       {
          const struct retro_hw_render_context_negotiation_interface *iface =
             (const struct retro_hw_render_context_negotiation_interface*)data;
-         VLOG(@"Environ SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE.\n");
+         VLOG("Environ SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE.\n");
          video_driver_set_context_negotiation_interface(iface);
          break;
       }
 
       /* Default */
       default:
-         VLOG(@"Environ UNSUPPORTED (#%u).\n", cmd);
+         VLOG("Environ UNSUPPORTED (#%u).\n", cmd);
          return false;
    }
 

@@ -68,9 +68,13 @@
 //    return size;
 //}
 
-//- (BOOL)rendersToOpenGL {
-//    return YES;
-//}
+- (BOOL)rendersToOpenGL {
+#if HAS_GPU
+    return YES;
+#else
+    return NO;
+#endif
+}
 //
 //- (BOOL)isDoubleBuffered {
 //    return YES;
@@ -97,26 +101,18 @@
  info->geometry.aspect_ratio = 33.0 / 41.0;
  */
 
-//- (GLenum)pixelFormat {
-//    return GL_RGB;
-//}
-//
-//- (GLenum)pixelType {
-//    return GL_UNSIGNED_SHORT_1_5_5_5_REV;
-//}
-//
-//- (GLenum)internalPixelFormat {
-//    // TODO: use struct retro_pixel_format var, set with, RETRO_ENVIRONMENT_SET_PIXEL_FORMAT
-//#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
-//        return GL_RGB565;
-//#else
-//         return GL_UNSIGNED_SHORT_5_6_5;
-//#endif
-//}
+#if HAS_GPU
+#else
+- (GLenum)internalPixelFormat {
+    return GL_RGB5_A1;
+}
 
-//
-//- (GLenum)depthFormat {
-//        // 0, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT24
-//    return GL_DEPTH_COMPONENT24;
-//}
+- (GLenum)pixelFormat {
+    return GL_BGRA;
+}
+
+- (GLenum)pixelType {
+    return GL_UNSIGNED_SHORT_1_5_5_5_REV;
+}
+#endif
 @end

@@ -15,16 +15,19 @@
 
 #import <Foundation/Foundation.h>
 @import PVCoreBridge;
+@import PVCoreObjCBridge;
+@import PVEmulatorCore;
+@import PVLoggingObjC;
 
 // Flycast imports
-#include "types.h"
+//#include "types.h"
 //#include "profiler/profiler.h"
-#include "cfg/cfg.h"
+//#include "cfg/cfg.h"
 //#include "rend/rend.h"
-#include "rend/TexCache.h"
-#include "hw/maple/maple_devs.h"
-#include "hw/maple/maple_if.h"
-#include "hw/maple/maple_cfg.h"
+//#include "rend/TexCache.h"
+//#include "hw/maple/maple_devs.h"
+//#include "hw/maple/maple_if.h"
+//#include "hw/maple/maple_cfg.h"
 
 //__weak PVFlycastCoreBridge *_current = 0;
 
@@ -144,6 +147,15 @@ volatile bool has_init = false;
 
 	return YES;
 }
+#else
+- (instancetype)init {
+    if (self = [super init]) {
+    }
+
+    _current = self;
+    return self;
+}
+
 #endif
 - (void)printSettings {
 //#define LIST_OF_VARIABLES \
@@ -376,6 +388,31 @@ volatile bool has_init = false;
 //	[self.frontBufferCondition signal];
 //	[self.frontBufferCondition unlock];
 //}
+
+#ifdef LIBRETRO
+#pragma mark - Options
+- (void *)getVariable:(const char *)variable {
+    ILOG(@"%s", variable);
+    
+    #define V(x) strcmp(variable, x) == 0
+    
+    if (V("melonds_console_mode")) {
+        // Console Mode; DS|DSi
+        char * value = strdup("DS");
+        return value;
+    } else if (V("melonds_boot_directly")) {
+        // Boot game directly; enabled|disabled
+        char * value = strdup("enabled");
+        return value;
+    } else {
+        NSLog(@"Unprocessed var: %s", variable);
+        return nil;
+    }
+    
+#undef V
+    return NULL;
+}
+#endif
 
 @end
 

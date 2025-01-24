@@ -15,6 +15,8 @@
 
 #include <string.h>
 #include <time.h>
+#include "retroarch.h"
+#include "retro_timers.h"
 
 #ifdef __APPLE__
 #include <OpenAL/al.h>
@@ -105,7 +107,7 @@ static void *al_init(const char *device, unsigned rate, unsigned latency)
    if (al->num_buffers < 2)
       al->num_buffers = 2;
 
-   VLOG(@"[OpenAL]: Using %u buffers of %u bytes.\n", (unsigned)al->num_buffers, BUFSIZE);
+   VLOG("[OpenAL]: Using %u buffers of %u bytes.\n", (unsigned)al->num_buffers, BUFSIZE);
 
    al->buffers = (ALuint*)calloc(al->num_buffers, sizeof(ALuint));
    al->res_buf = (ALuint*)calloc(al->num_buffers, sizeof(ALuint));

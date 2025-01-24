@@ -17,10 +17,15 @@ public final class PVLogEntry: NSObject {
     public let offset: TimeInterval
     public var level: PVLogLevel = .Debug
 
-    public var fileString: StaticString = ""
-    public var functionString: StaticString = ""
+    /// Storage for both String and StaticString versions
+    private var _fileString: String = ""
+    private var _functionString: String = ""
     public var lineNumberString = ""
     public var text: String = ""
+
+    /// Properties to access the strings
+    public var fileString: String { _fileString }
+    public var functionString: String { _functionString }
 
     override init () {
         self.time = Date()
@@ -30,7 +35,7 @@ public final class PVLogEntry: NSObject {
             __PVLogEntryIndexCounter += 1
         }
     }
-    
+
     @objc
     public convenience init(message: String) {
         self.init()
@@ -41,15 +46,15 @@ public final class PVLogEntry: NSObject {
         self.init()
         self.text = message
         self.level = level
-        self.fileString = file
-        self.functionString = function
+        self._fileString = "\(file)"
+        self._functionString = "\(function)"
         self.lineNumberString = lineNumber
     }
-    
+
     override public var description: String {
         return "\(offset) [\(functionString):\(lineNumberString):\(level.rawValue)] \(text)"
     }
-    
+
     public
     lazy var string: String = { "\(offset) [\(level.rawValue)] \(text)" }()
 
@@ -64,18 +69,18 @@ public final class PVLogEntry: NSObject {
         let color3 = "#B0ADB9"
         let color4 = "#414045"
         let color5 = "#37363A"
-        
+
         let compColor1 = "#F9F7E9"
         let compColor2 = "#FFFFFF"
-        
+
         let timeColor = color1
         let functionColor = color3
         let lineNumberColor = color2
-        
+
         let textColor = toggle ? compColor2 : compColor1
-        
+
         let backgroundColor = toggle ? color4 : color5
-        
+
         return """
         <span style="background-color: \(backgroundColor);">
         <span id='time' style="color:\(timeColor)";>\(offset)</span>
@@ -85,4 +90,15 @@ public final class PVLogEntry: NSObject {
         </span>
         """
     }()
+
+    /// Objective-C compatible initializer
+    @objc
+    public convenience init(message: String, level: PVLogLevel, file: String, function: String, lineNumber: String) {
+        self.init()
+        self.text = message
+        self.level = level
+        self._fileString = file
+        self._functionString = function
+        self.lineNumberString = lineNumber
+    }
 }

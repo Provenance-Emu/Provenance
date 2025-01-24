@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 12.3.1 2023-07-20
+
+### Other changes
+* Improve backward compatibility for glslangValidator rename on Windows
+
+## 12.3.0 2023-07-19
+
+### Other changes
+* Rename glslangValidator to glslang and create glslangValidator symlink
+* Support HLSL binary literals
+* Add missing initialization members for web
+* Improve push_constant upgrading
+* Fix race condition in spirv remap
+* Support pre and post HLSL qualifier validation
+* Force generateDebugInfo when non-semantic debug info is enabled
+* Exit with error if output file cannot be written
+* Fix struct member buffer reference decorations
+
 ## 12.2.0 2023-05-17
 
 ### Other changes

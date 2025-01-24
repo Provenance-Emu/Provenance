@@ -16,6 +16,7 @@
 
 #import <Foundation/Foundation.h>
 @import PVCoreBridge;
+@import PVLoggingObjC;
 
 #define SAMPLERATE 48000
 #define SIZESOUNDBUFFER 48000 / 60 * 4

@@ -222,6 +222,9 @@
 		93FF38282965FF9C00772659 /* PVRetroArchCore+Controls.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVRetroArchCore+Controls.m */; };
 		93FF38292965FF9C00772659 /* PVRetroArchCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9366AC5E295976D000162286 /* PVRetroArchCore+Cheats.mm */; };
 		93FF382A2965FF9C00772659 /* PVRetroArch.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVRetroArch.mm */; };
+		B306BD332D2BA5D600871724 /* PVRetroArchCore+Controls+Intellivision.m in Sources */ = {isa = PBXBuildFile; fileRef = B306BD312D2BA5D600871724 /* PVRetroArchCore+Controls+Intellivision.m */; };
+		B306BD342D2BA5D600871724 /* PVRetroArchCore+Controls+MSX.m in Sources */ = {isa = PBXBuildFile; fileRef = B306BD322D2BA5D600871724 /* PVRetroArchCore+Controls+MSX.m */; };
+		B306BD452D2BA74A00871724 /* PVRetroArchCore+Controls+Vectrex.m in Sources */ = {isa = PBXBuildFile; fileRef = B306BD442D2BA74A00871724 /* PVRetroArchCore+Controls+Vectrex.m */; };
 		B30C8C822BF45AE200C91991 /* griffin_slang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C7D2BF45AE200C91991 /* griffin_slang.cpp */; };
 		B30C8C832BF45AE200C91991 /* griffin.c in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C7E2BF45AE200C91991 /* griffin.c */; };
 		B30C8C842BF45AE200C91991 /* griffin.m in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C7F2BF45AE200C91991 /* griffin.m */; };
@@ -811,6 +814,9 @@
 		93F66EE229672D9000203EB3 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		93FF38392966337100772659 /* cocoa_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoa_common.h; sourceTree = "<group>"; };
 		93FF383A2966337100772659 /* apple_platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = apple_platform.h; sourceTree = "<group>"; };
+		B306BD312D2BA5D600871724 /* PVRetroArchCore+Controls+Intellivision.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+Intellivision.m"; sourceTree = "<group>"; };
+		B306BD322D2BA5D600871724 /* PVRetroArchCore+Controls+MSX.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+MSX.m"; sourceTree = "<group>"; };
+		B306BD442D2BA74A00871724 /* PVRetroArchCore+Controls+Vectrex.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+Vectrex.m"; sourceTree = "<group>"; };
 		B30C8C7D2BF45AE200C91991 /* griffin_slang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = griffin_slang.cpp; sourceTree = "<group>"; };
 		B30C8C7E2BF45AE200C91991 /* griffin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = griffin.c; sourceTree = "<group>"; };
 		B30C8C7F2BF45AE200C91991 /* griffin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = griffin.m; sourceTree = "<group>"; };
@@ -1680,6 +1686,8 @@
 				93C372622A8B68000007671D /* PVRetroArchCore+Controls+3DO.m */,
 				93C372612A8B67FF0007671D /* PVRetroArchCore+Controls+Dreamcast.m */,
 				93C372642A8B68000007671D /* PVRetroArchCore+Controls+GB.m */,
+				B306BD312D2BA5D600871724 /* PVRetroArchCore+Controls+Intellivision.m */,
+				B306BD322D2BA5D600871724 /* PVRetroArchCore+Controls+MSX.m */,
 				93C372652A8B68000007671D /* PVRetroArchCore+Controls+GBA.m */,
 				93C372602A8B67FF0007671D /* PVRetroArchCore+Controls+Genesis.m */,
 				93C372632A8B68000007671D /* PVRetroArchCore+Controls+N64.m */,
@@ -1691,6 +1699,7 @@
 				9319F1092976C15900A7414A /* PVRetroArchCore+Controls+SNES.m */,
 				B32111B42CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m */,
 				9328B14E2A3196D10094C712 /* PVRetroArchCore+Controls+PSP.m */,
+				B306BD442D2BA74A00871724 /* PVRetroArchCore+Controls+Vectrex.m */,
 				B3FD53EA2CD17D8200175917 /* JITSupport.h */,
 				B3FD53EB2CD17D8200175917 /* JITSupport.m */,
 				B3FD53FA2CD17E2200175917 /* dispserv_apple.m */,
@@ -2317,6 +2326,8 @@
 				936BFD8A2986AF03001FF097 /* cocoa_vk_ctx.m in Sources */,
 				93835811296CFAA700A23231 /* cocoa_common.m in Sources */,
 				936B47FA2969798B00C7D2A3 /* platform_darwin.m in Sources */,
+				B306BD332D2BA5D600871724 /* PVRetroArchCore+Controls+Intellivision.m in Sources */,
+				B306BD342D2BA5D600871724 /* PVRetroArchCore+Controls+MSX.m in Sources */,
 				935E7D4B29A4ABDD00D92748 /* vulkan_common.c in Sources */,
 				B3632A522D15161300041145 /* PVRetroArchCore+Controls+DOS.m in Sources */,
 				938E5BB5298B31D500F8596C /* PVDebug.c in Sources */,
@@ -2359,6 +2370,7 @@
 				93C372672A8B68000007671D /* PVRetroArchCore+Controls+Genesis.m in Sources */,
 				93A7278B2AAEB1C60052B279 /* PVRetroArchCore+Controls+NeoGeo.m in Sources */,
 				B32111B52CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m in Sources */,
+				B306BD452D2BA74A00871724 /* PVRetroArchCore+Controls+Vectrex.m in Sources */,
 				B3FC974F2CB8D29100C6DB31 /* PVRetroArchCoreCore.swift in Sources */,
 				9328B14F2A3196D10094C712 /* PVRetroArchCore+Controls+PSP.m in Sources */,
 			);

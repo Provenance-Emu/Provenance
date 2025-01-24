@@ -17,7 +17,7 @@ import OpenGLES.ES3
 #endif
 
 @objc
-public extension PVMupen64PlusNXCore {
+public extension PVMupen64PlusNXCoreBridge {
     override var rendersToOpenGL: Bool { true }
     override var pixelType: GLenum { UInt32(GL_UNSIGNED_BYTE) }
     override var pixelFormat: GLenum { UInt32(GL_BGRA) }

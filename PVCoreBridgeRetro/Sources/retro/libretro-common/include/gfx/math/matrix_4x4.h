@@ -33,7 +33,7 @@
  * to work on GLES 2.0 and modern GL variants.
  */
 
-#define MAT_ELEM_4X4(mat, row, column) ((mat).data[4 * (column) + (row)])
+#define MAT_ELEM_4X4(mat, row, column) ((mat)->data[4 * (column) + (row)])
 
 RETRO_BEGIN_DECLS
 

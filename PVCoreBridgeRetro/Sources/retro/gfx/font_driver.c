@@ -18,6 +18,7 @@
 #include "video_thread_wrapper.h"
 #include "../general.h"
 #include "../verbosity.h"
+#include "retroarch.h"
 
 static const font_renderer_driver_t *font_backends[] = {
 #ifdef HAVE_FREETYPE
@@ -57,13 +58,13 @@ int font_renderer_create_default(const void **data, void **handle,
       *handle = font_backends[i]->init(path, font_size);
       if (*handle)
       {
-         VLOG(@"Using font rendering backend: %s.\n",
+         VLOG("Using font rendering backend: %s.\n",
                font_backends[i]->ident);
          *drv = font_backends[i];
          return 1;
       }
       else
-         ELOG(@"Failed to create rendering backend: %s.\n",
+         ELOG("Failed to create rendering backend: %s.\n",
                font_backends[i]->ident);
    }
 

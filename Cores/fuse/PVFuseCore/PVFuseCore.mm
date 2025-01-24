@@ -22,7 +22,7 @@
 #define OpenEmu 1
 
 #pragma mark - Private
-@interface PVFuseCore() {
+@interface PVFuseCoreBridge() {
 
 }
 
@@ -30,7 +30,7 @@
 
 #pragma mark - PVFuseCore Begin
 
-@implementation PVFuseCore
+@implementation PVFuseCoreBridge
 {
 }
 

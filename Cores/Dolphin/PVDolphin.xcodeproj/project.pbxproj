@@ -29,7 +29,7 @@
 		9366AC862959CD4A00162286 /* Sys in Resources */ = {isa = PBXBuildFile; fileRef = 9366AC852959CD4A00162286 /* Sys */; };
 		93713380298BEE0F0050DB6E /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 9371337F298BEE0E0050DB6E /* PVDebug.c */; };
 		93829B18298980F50061038E /* libdolphin-commonDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAC92949E94400CC8234 /* libdolphin-commonDolphin.a */; };
-		939AAF6C2A791EA8007709E5 /* libdolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libdolphin.a */; platformFilters = (ios, maccatalyst, tvos, watchos, ); };
+		939AAF6C2A791EA8007709E5 /* libdolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libdolphin.a */; };
 		93C33A952952192200CC86C5 /* libdolphin-coreDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFACB2949E94400CC8234 /* libdolphin-coreDolphin.a */; };
 		93CB27D0297CE5DF006A940B /* VulkanLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93CB27CF297CE5DF006A940B /* VulkanLoader.cpp */; };
 		B30E98FF2C6EF18400C1431E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30E98FE2C6EF18400C1431E /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
@@ -40290,12 +40290,6 @@
 		};
 		930899D929508B0400E145C8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-				maccatalyst,
-				tvos,
-				watchos,
-			);
 			target = B30178D2207C901D0051B93D /* dolphin */;
 			targetProxy = 930899D829508B0400E145C8 /* PBXContainerItemProxy */;
 		};

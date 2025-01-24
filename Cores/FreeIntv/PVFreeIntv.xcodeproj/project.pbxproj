@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B3028D962D2B9524007C5BF8 /* PVFreeIntvCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3028D932D2B9524007C5BF8 /* PVFreeIntvCore.swift */; };
+		B3028D972D2B9524007C5BF8 /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3028D942D2B9524007C5BF8 /* CorePlist.swift */; };
+		B3028D982D2B9524007C5BF8 /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3028D952D2B9524007C5BF8 /* CorePlist-Generated.swift */; };
+		B3028D9B2D2B97BD007C5BF8 /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B3028D9A2D2B97BD007C5BF8 /* PVEmulatorCore */; };
+		B3028D9E2D2B9806007C5BF8 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3028D9D2D2B9806007C5BF8 /* PVPlists */; };
 		B30E98C52C6EEFD900C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98C42C6EEFD900C1431E /* PVSupport */; };
 		B30E99F22C6F058500C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99F12C6F058500C1431E /* PVCoreBridge */; };
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
@@ -82,6 +87,9 @@
 
 /* Begin PBXFileReference section */
 		B30178D3207C901D0051B93D /* libFreeIntv.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libFreeIntv.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3028D932D2B9524007C5BF8 /* PVFreeIntvCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVFreeIntvCore.swift; sourceTree = "<group>"; };
+		B3028D942D2B9524007C5BF8 /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
+		B3028D952D2B9524007C5BF8 /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
 		B3135BAA26E4CDC50047F338 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3344BC32859E088006E6B3A /* libFreeIntv-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libFreeIntv-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -247,6 +255,8 @@
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
 				B39768F82859E23200558958 /* libFreeIntv-libretro.a in Frameworks */,
 				B3BD627C2CB1126B007A71DD /* PVCoreObjCBridge in Frameworks */,
+				B3028D9E2D2B9806007C5BF8 /* PVPlists in Frameworks */,
+				B3028D9B2D2B97BD007C5BF8 /* PVEmulatorCore in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				B3C998B629432E020024D2A2 /* OpenGL.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
@@ -271,6 +281,9 @@
 		B37022C4287253B300B3F6DA /* PVFreeIntvCore */ = {
 			isa = PBXGroup;
 			children = (
+				B3028D932D2B9524007C5BF8 /* PVFreeIntvCore.swift */,
+				B3028D942D2B9524007C5BF8 /* CorePlist.swift */,
+				B3028D952D2B9524007C5BF8 /* CorePlist-Generated.swift */,
 				B37022C5287253B300B3F6DA /* PVFreeIntvCore.h */,
 				B37022C6287253B300B3F6DA /* PVFreeIntvCore.mm */,
 			);
@@ -682,6 +695,8 @@
 				B30E98C42C6EEFD900C1431E /* PVSupport */,
 				B30E99F12C6F058500C1431E /* PVCoreBridge */,
 				B3BD627B2CB1126B007A71DD /* PVCoreObjCBridge */,
+				B3028D9A2D2B97BD007C5BF8 /* PVEmulatorCore */,
+				B3028D9D2D2B9806007C5BF8 /* PVPlists */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVFreeIntv.framework */;
@@ -704,6 +719,7 @@
 					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
+						LastSwiftMigration = 1620;
 					};
 				};
 			};
@@ -732,6 +748,8 @@
 				B30E98C32C6EEFD900C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
 				B30E99F02C6F058500C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
 				B3BD627A2CB1126B007A71DD /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
+				B3028D992D2B97BD007C5BF8 /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B3028D9C2D2B9806007C5BF8 /* XCLocalSwiftPackageReference "../../PVPlists" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -794,6 +812,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B37022C82872553E00B3F6DA /* PVFreeIntvCore.mm in Sources */,
+				B3028D962D2B9524007C5BF8 /* PVFreeIntvCore.swift in Sources */,
+				B3028D972D2B9524007C5BF8 /* CorePlist.swift in Sources */,
+				B3028D982D2B9524007C5BF8 /* CorePlist-Generated.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -922,6 +943,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -932,7 +954,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/PVFreeIntv/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -944,8 +966,9 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
-				TVOS_DEPLOYMENT_TARGET = 16.6;
+				TVOS_DEPLOYMENT_TARGET = 16.0;
 			};
 			name = Archive;
 		};
@@ -1176,6 +1199,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -1186,7 +1210,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/PVFreeIntv/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1198,8 +1222,10 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
-				TVOS_DEPLOYMENT_TARGET = 16.6;
+				TVOS_DEPLOYMENT_TARGET = 16.0;
 			};
 			name = Debug;
 		};
@@ -1207,6 +1233,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -1217,7 +1244,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/PVFreeIntv/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1229,8 +1256,9 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
-				TVOS_DEPLOYMENT_TARGET = 16.6;
+				TVOS_DEPLOYMENT_TARGET = 16.0;
 			};
 			name = Release;
 		};
@@ -1280,6 +1308,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		B3028D992D2B97BD007C5BF8 /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+		B3028D9C2D2B9806007C5BF8 /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
 		B30E98C32C6EEFD900C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVSupport;
@@ -1295,6 +1331,14 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		B3028D9A2D2B97BD007C5BF8 /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B3028D9D2D2B9806007C5BF8 /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
+		};
 		B30E98C42C6EEFD900C1431E /* PVSupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVSupport;

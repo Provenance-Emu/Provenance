@@ -22,7 +22,7 @@
 #define OpenEmu 1
 
 #pragma mark - Private
-@interface PVMupen64PlusNXCore() {
+@interface PVMupen64PlusNXCoreBridge() {
 
 }
 
@@ -30,7 +30,7 @@
 
 #pragma mark - PVMupen64PlusNXCore Begin
 
-@implementation PVMupen64PlusNXCore
+@implementation PVMupen64PlusNXCoreBridge
 {
 }
 

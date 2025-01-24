@@ -7,6 +7,7 @@
 //
 
 #import <PVDosBox/PVDosBoxCore.h>
+typedef enum PVDOSButton: NSInteger PVDOSButton;
 
 NS_ASSUME_NONNULL_BEGIN
 

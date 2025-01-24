@@ -21,7 +21,7 @@
 #include "command.h"
 #include "core_info.h"
 
-#include "managers/state_manager.h"
+#include "state_manager.h"
 //#include "audio/audio_driver.h"
 //#include "camera/camera_driver.h"
 //#include "location/location_driver.h"
@@ -29,11 +29,11 @@
 #include "core.h"
 #include "runloop.h"
 #include "performance_counters.h"
-#include "system.h"
+//#include "system.h"
 #include "record/record_driver.h"
 //#include "queues/message_queue.h"
 #include "gfx/video_driver.h"
-#include "gfx/video_context_driver.h"
+//#include "gfx/video_context_driver.h"
 #include "gfx/scaler/scaler.h"
 //#include "gfx/video_frame.h"
 
@@ -47,7 +47,7 @@
 #endif
 #include "retroarch.h"
 #include "configuration.h"
-#include "general.h"
+//#include "general.h"
 #include "msg_hash.h"
 #include "verbosity.h"
 

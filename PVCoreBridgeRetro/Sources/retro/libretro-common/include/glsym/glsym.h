@@ -26,10 +26,14 @@
 #include "rglgen.h"
 
 #ifndef HAVE_PSGL
-#if defined(HAVE_OPENGLES2)
-#include "glsym_es2.h"
-#elif defined(HAVE_OPENGLES3)
+#if defined(HAVE_OPENGLES3)
+#import <OpenGLES/ES3/gl.h>
+#import <OpenGLES/ES3/glext.h>
 #include "glsym_es3.h"
+#elif defined(HAVE_OPENGLES2)
+#import <OpenGLES/ES2/gl.h>
+#import <OpenGLES/ES2/glext.h>
+#include "glsym_es2.h"
 #else
 #ifdef HAVE_LIBNX
 #include "switch/nx_glsym.h"

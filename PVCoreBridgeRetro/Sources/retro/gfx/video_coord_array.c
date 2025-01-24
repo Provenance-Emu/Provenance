@@ -18,6 +18,7 @@
 
 #include <retro_inline.h>
 #include <retro_miscellaneous.h>
+#include <retro_math.h>
 
 #include "video_coord_array.h"
 
@@ -67,7 +68,7 @@ bool video_coord_array_append(video_coord_array_t *ca,
 
    if (ca->coords.vertices + count >= ca->allocated)
    {
-      unsigned cap = next_pow2(ca->coords.vertices + count);
+      unsigned cap = next_pow2((uint32_t)(ca->coords.vertices + count));
       if (!video_coord_array_resize(ca, cap))
          return false;
    }

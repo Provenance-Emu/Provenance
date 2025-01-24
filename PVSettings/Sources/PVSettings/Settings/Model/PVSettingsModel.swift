@@ -177,6 +177,11 @@ public final class PVSettingsWrapper: NSObject {
     public static var volume: Float {
         get { Defaults[.volume] }
         set { Defaults[.volume] = newValue }}
+    
+    @objc
+    public static var useMetal: Bool {
+        get { Defaults[.useMetal] }
+        set { Defaults[.useMetal] = newValue }}
 }
 
 public extension Defaults.Keys {

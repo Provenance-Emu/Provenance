@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.mupen64plusnx</string>
 	<key>PVPrincipleClass</key>
-	<string>PVMupen64Plus_NX.PVMupen64PlusNXCore</string>
+	<string>PVMupen64Plus-NX.PVMupen64PlusNXCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.n64</string>

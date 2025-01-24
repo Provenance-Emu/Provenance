@@ -7,7 +7,6 @@
 //
 
 #import "PVDolphinCore+Saves.h"
-#import "PVDolphinCore.h"
 
 #include "Common/CPUDetect.h"
 #include "Common/CommonPaths.h"

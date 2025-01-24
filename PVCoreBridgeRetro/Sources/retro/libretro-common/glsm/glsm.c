@@ -652,7 +652,7 @@ void rglFramebufferTexture2D(GLenum target, GLenum attachment,
 void rglFramebufferTexture(GLenum target, GLenum attachment,
   	GLuint texture, GLint level)
 {
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES_3_2)
+#if defined(HAVE_OPENGL) || (defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES_3_2))
    glFramebufferTexture(target, attachment, texture, level);
 #endif
 }

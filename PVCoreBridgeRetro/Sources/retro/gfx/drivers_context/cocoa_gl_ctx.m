@@ -108,8 +108,8 @@ void *nsview_get_ptr(void);
 static void glkitview_init_xibs(void)
 {
    /* iOS Pause menu and lifecycle. */
-   UINib *xib = (UINib*)[UINib nibWithNibName:BOXSTRING("PauseIndicatorView") bundle:nil];
-   g_pause_indicator_view = [[xib instantiateWithOwner:[RetroArch_iOS get] options:nil] lastObject];
+//   UINib *xib = (UINib*)[UINib nibWithNibName:BOXSTRING("PauseIndicatorView") bundle:nil];
+//   g_pause_indicator_view = [[xib instantiateWithOwner:[RetroArch_iOS get] options:nil] lastObject];
 }
 #endif
 
@@ -255,7 +255,9 @@ static void *cocoagl_gfx_ctx_init(void *video_driver)
     
     [g_context makeCurrentContext];
    // Make sure the view was created
-   [CocoaView get];
+#ifdef HAVE_COCOA
+    [CocoaView get];
+#endif
    return (void*)"cocoa";
 }
 

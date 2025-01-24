@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "PVCoreBridgeRetro.h"
+#import <PVLogging/PVLoggingObjC.h>
 
 #include "libretro.h"
 #ifdef HAVE_CONFIG_H
@@ -21,7 +22,7 @@
 #include "command.h"
 #include "core_info.h"
 
-#include "managers/state_manager.h"
+//#include "managers/state_manager.h"
 //#include "audio/audio_driver.h"
 //#include "camera/camera_driver.h"
 //#include "location/location_driver.h"
@@ -29,11 +30,11 @@
 #include "core.h"
 #include "runloop.h"
 #include "performance_counters.h"
-#include "system.h"
+//#include "system.h"
 #include "record/record_driver.h"
 //#include "queues/message_queue.h"
 #include "gfx/video_driver.h"
-#include "gfx/video_context_driver.h"
+//#include "gfx/video_context_driver.h"
 #include "gfx/scaler/scaler.h"
 //#include "gfx/video_frame.h"
 
@@ -47,7 +48,7 @@
 #endif
 #include "retroarch.h"
 #include "configuration.h"
-#include "general.h"
+//#include "general.h"
 #include "msg_hash.h"
 #include "verbosity.h"
 
@@ -60,29 +61,29 @@ char rotation_lut[4][32] =
 };
 
 struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END] = {
-   { "4:3",           1.3333f },
-   { "16:9",          1.7778f },
-   { "16:10",         1.6f },
-   { "16:15",         16.0f / 15.0f },
-   { "1:1",           1.0f },
-   { "2:1",           2.0f },
-   { "3:2",           1.5f },
-   { "3:4",           0.75f },
-   { "4:1",           4.0f },
-   { "4:4",           1.0f },
-   { "5:4",           1.25f },
-   { "6:5",           1.2f },
-   { "7:9",           0.7777f },
-   { "8:3",           2.6666f },
-   { "8:7",           1.1428f },
-   { "19:12",         1.5833f },
-   { "19:14",         1.3571f },
-   { "30:17",         1.7647f },
-   { "32:9",          3.5555f },
-   { "Config",        0.0f },
-   { "Square pixel",  1.0f },
-   { "Core provided", 1.0f },
-   { "Custom",        0.0f }
+   { ASPECT_RATIO_4_3,           1.3333f },
+   { ASPECT_RATIO_16_9,          1.7778f },
+   { ASPECT_RATIO_16_10,         1.6f },
+   { ASPECT_RATIO_16_15,         16.0f / 15.0f },
+   { ASPECT_RATIO_1_1,           1.0f },
+   { ASPECT_RATIO_2_1,           2.0f },
+   { ASPECT_RATIO_3_2,           1.5f },
+   { ASPECT_RATIO_3_4,           0.75f },
+   { ASPECT_RATIO_4_1,           4.0f },
+   { ASPECT_RATIO_4_4,           1.0f },
+   { ASPECT_RATIO_5_4,           1.25f },
+   { ASPECT_RATIO_6_5,           1.2f },
+   { ASPECT_RATIO_7_9,           0.7777f },
+   { ASPECT_RATIO_8_3,           2.6666f },
+   { ASPECT_RATIO_8_7,           1.1428f },
+   { ASPECT_RATIO_19_12,         1.5833f },
+   { ASPECT_RATIO_19_14,         1.3571f },
+   { ASPECT_RATIO_30_17,         1.7647f },
+   { ASPECT_RATIO_32_9,          3.5555f },
+    { ASPECT_RATIO_CONFIG,        0.0f },
+    { ASPECT_RATIO_SQUARE,  1.0f },
+   { ASPECT_RATIO_CORE, 1.0f },
+    { ASPECT_RATIO_CUSTOM,        0.0f }
 };
 
 @implementation PVLibRetroCoreBridge (Audio)

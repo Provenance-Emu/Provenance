@@ -23,6 +23,7 @@
 #include "audio_thread_wrapper.h"
 #include "../performance_counters.h"
 #include "../verbosity.h"
+#include "retroarch.h"
 
 typedef struct audio_thread
 {
@@ -53,7 +54,7 @@ static void audio_thread_loop(void *data)
    if (!thr)
       return;
 
-   VLOG(@"[Audio Thread]: Initializing audio driver.\n");
+   VLOG("[Audio Thread]: Initializing audio driver.\n");
    thr->driver_data   = thr->driver->init(thr->device, thr->out_rate, thr->latency);
    slock_lock(thr->lock);
    thr->inited        = thr->driver_data ? 1 : -1;
@@ -72,7 +73,7 @@ static void audio_thread_loop(void *data)
       scond_wait(thr->cond, thr->lock);
    slock_unlock(thr->lock);
 
-   VLOG(@"[Audio Thread]: Starting audio.\n");
+   VLOG("[Audio Thread]: Starting audio.\n");
 
    for (;;)
    {
@@ -105,7 +106,7 @@ static void audio_thread_loop(void *data)
       audio_driver_callback();
    }
 
-   VLOG(@"[Audio Thread]: Tearing down driver.\n");
+   VLOG("[Audio Thread]: Tearing down driver.\n");
    thr->driver->free(thr->driver_data);
 }
 

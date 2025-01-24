@@ -17,7 +17,7 @@ struct CoreProjectsView: View {
     init() {
         cores = RomDatabase.sharedInstance.all(PVCore.self, sortedByKeyPath: #keyPath(PVCore.projectName)).toArray()
             .filter({ core in
-                !(AppState.shared.isAppStore && core.appStoreDisabled)
+                !(AppState.shared.isAppStore && core.appStoreDisabled && !Defaults[.unsupportedCores])
             })
     }
 
