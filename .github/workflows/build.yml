@@ -129,8 +129,12 @@ jobs:
 
       - name: Fakesign app
         run: |
-          echo "Checking entitlements file..."
+          echo "Contents of Provenance directory:"
           ls -la "Provenance/"
+          echo "Contents of ./ directory:"
+          ls -la "./"
+          echo "Contents of archive.xcarchive/Products/Applications/ directory:"
+          ls -la "archive.xcarchive/Products/Applications/"
           echo "Checking app binary..."
           ls -la "archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/"
           ldid -S"Provenance/Provenance-AppStore.entitlements" "archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/${{ matrix.APP_NAME }}" || echo "::warning::Fakesign failed but continuing build"
