@@ -527,7 +527,7 @@ private struct ControllerSection: View {
                 ThemedToggle(isOn: $pauseButtonIsMenuButton) {
                     SettingsRow(title: "Pause/Menu button opens pause menu",
                                 subtitle: "If on, the start/menu button on the controller will open the pause menu in addition to pausing the game",
-                                icon: .sfSymbol("arrow.triangle.swap"))
+                                icon: .sfSymbol("pause.rectangle"))
                 }
             }
 #if !os(tvOS)
