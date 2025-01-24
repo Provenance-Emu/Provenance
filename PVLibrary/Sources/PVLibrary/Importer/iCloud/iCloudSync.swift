@@ -323,8 +323,7 @@ enum iCloudError: Error {
 
 public enum iCloudSync {
     //TODO: move bags to each class
-    static var disposeBagSaveState: DisposeBag?
-    static var disposeBagRoms: DisposeBag?
+    static var disposeBag: DisposeBag?
     public static func initICloudDocuments() {
         let fm = FileManager.default
         if let currentiCloudToken = fm.ubiquityIdentityToken {
@@ -337,27 +336,49 @@ public enum iCloudSync {
         } else {
             UserDefaults.standard.removeObject(forKey: UbiquityIdentityTokenKey)
         }
-
+        //TODO: there is an issue when all of the icloud files are downloaded and during the importing of Realm + Save States there's a clash. I think we need to import ROMs first, then BIOS (if necessary) and then save states, everything else doesn't need to be imported onto the db (at least from what I understand)
         var saveStateSyncer = SaveStateSyncer()
-        let currentDisposeBagSaveState = DisposeBag()
-        self.disposeBagSaveState = currentDisposeBagSaveState
+        let disposeBag = DisposeBag()
+        self.disposeBag = disposeBag
         saveStateSyncer.loadAllFromICloud()
             .observe(on: MainScheduler.instance)
             .subscribe(onCompleted: {
                 importNewSaves()
             }) { error in
                 ELOG(error.localizedDescription)
-            }.disposed(by: currentDisposeBagSaveState)
+            }.disposed(by: disposeBag)
         var romsSyncer = RomsSyncer()
-        let currentDisposeBagRoms = DisposeBag()
-        disposeBagRoms = currentDisposeBagRoms
         romsSyncer.loadAllFromICloud()
             .observe(on: MainScheduler.instance)
             .subscribe(onCompleted: {
                 romsSyncer.handleNewRomFiles()
             }) { error in
                 ELOG(error.localizedDescription)
-            }.disposed(by: currentDisposeBagRoms)
+            }.disposed(by: disposeBag)
+        let biosSyncer = BiosSyncer()
+        biosSyncer.loadAllFromICloud()
+            .observe(on: MainScheduler.instance)
+            .subscribe(onCompleted: {
+                //TODO: anything?
+            }) { error in
+                ELOG(error.localizedDescription)
+            }.disposed(by: disposeBag)
+        let batterySaveSyncer = BatterySavesSyncer()
+        batterySaveSyncer.loadAllFromICloud()
+            .observe(on: MainScheduler.instance)
+            .subscribe(onCompleted: {
+                //TODO: anything?
+            }) { error in
+                ELOG(error.localizedDescription)
+            }.disposed(by: disposeBag)
+        let screenshotsSyncer = ScreenshotsSyncer()
+        screenshotsSyncer.loadAllFromICloud()
+            .observe(on: MainScheduler.instance)
+            .subscribe(onCompleted: {
+                //TODO: anything?
+            }) { error in
+                ELOG(error.localizedDescription)
+            }.disposed(by: disposeBag)
     }
     
 //TODO: prolly this should be in SaveStateSyncer
@@ -365,10 +386,6 @@ public enum iCloudSync {
         guard RomDatabase.databaseInitialized
         else {
             return
-        }
-        
-        defer {
-            disposeBagSaveState = nil
         }
 
         Task {
@@ -491,7 +508,7 @@ public enum iCloudSync {
         }
     }
 }
-
+//TODO: perhaps 1 generic class since a lot of this code is similar and move the extension onto generic class. we could just add a protocol delegate dependency for ROMs and SaveState classes that does specific code
 class SaveStateSyncer: iCloudTypeSyncer {
     var metadataQuery: NSMetadataQuery = .init()
     var newFiles: Set<URL> = []
@@ -530,7 +547,7 @@ class RomsSyncer: iCloudTypeSyncer {
     
     @objc
     func handleNewFiles(_ notification: Notification) {
-        guard let downloadedFiles = notification.userInfo?[Notification.Name.newCloudFiles.rawValue] as? Set<URL>
+        guard let downloadedFiles = notification.userInfo?[notification.name.rawValue] as? Set<URL>
         else {
             return
         }
@@ -540,6 +557,7 @@ class RomsSyncer: iCloudTypeSyncer {
     /// sends a notification that rom files are ready to e
     @objc
     func handleNewRomFiles() {
+        //TODO: do we wait until the bios has been downloaded?
         guard !newFiles.isEmpty
         else {
             return
@@ -557,6 +575,32 @@ class RomsSyncer: iCloudTypeSyncer {
         newFiles.removeAll()
         let name = Notification.Name.cloudDataDownloaded
         NotificationCenter.default.post(name: name, object: nil, userInfo: [name.rawValue: converted])
-//        iCloudSync.disposeBagRoms = nil
+    }
+}
+
+class BiosSyncer: iCloudTypeSyncer {
+    var metadataQuery: NSMetadataQuery = .init()
+    var newFiles: Set<URL> = []
+    
+    var directory: String {
+        "BIOS"
+    }
+}
+
+class BatterySavesSyncer: iCloudTypeSyncer {
+    var metadataQuery: NSMetadataQuery = .init()
+    var newFiles: Set<URL> = []
+    
+    var directory: String {
+        "Battery Saves"
+    }
+}
+
+class ScreenshotsSyncer: iCloudTypeSyncer {
+    var metadataQuery: NSMetadataQuery = .init()
+    var newFiles: Set<URL> = []
+    //TODO: I think a base class that accepts the directory in the initializer may be better than this
+    var directory: String {
+        "Screenshots"
     }
 }
