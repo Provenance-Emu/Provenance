@@ -44,6 +44,7 @@ extension Defaults.Keys {
 
     static let showRecentSaveStates = Key<Bool>("showRecentSaveStates", default: true)
     static let showGameBadges = Key<Bool>("showGameBadges", default: true)
+    
     static let showRecentGames = Key<Bool>("showRecentGames", default: true)
 
     static let showFPSCount = Key<Bool>("showFPSCount", default: false)
@@ -57,11 +58,7 @@ extension Defaults.Keys {
 #else
     static let webDavAlwaysOn = Key<Bool>("webDavAlwaysOn", default: false)
 #endif
-#if canImport(UIKit)
-    static let myiCadeControllerSetting = Key<iCadeControllerSetting>("myiCadeControllerSetting", default: .disabled)
-    static let allRightShoulders = Key<Bool>("allRightShoulders", default: false)
-#endif
-    static let controllerOpacity = Key<Double>("controllerOpacity", default: 0.8)
+
 
     static let buttonTints = Key<Bool>("buttonTints", default: true)
     static let use8BitdoM30 = Key<Bool>("use8BitdoM30", default: false)
@@ -82,6 +79,17 @@ extension Defaults.Keys {
 #if os(tvOS) || targetEnvironment(macCatalyst)
     static let largeGameArt = Key<Bool>("largeGameArt", default: true)
 #endif
+}
+
+// MARK: Controls
+public extension Defaults.Keys {
+#if canImport(UIKit)
+    static let myiCadeControllerSetting = Key<iCadeControllerSetting>("myiCadeControllerSetting", default: .disabled)
+    static let allRightShoulders = Key<Bool>("allRightShoulders", default: false)
+#endif
+    static let controllerOpacity = Key<Double>("controllerOpacity", default: 0.8)
+    
+    static let pauseButtonIsMenuButton = Key<Bool>("pauseButtonIsMenuButton", default: false)
 }
 
 // MARK: File syste
@@ -131,7 +139,6 @@ public extension Defaults.Keys {
     static let onscreenJoypad = Key<Bool>("onscreenJoypad", default: true)
     static let onscreenJoypadWithKeyboard = Key<Bool>("onscreenJoypadWithKeyboard", default: true)
 #endif
-
 }
 
 // MARK: Video Options

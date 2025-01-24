@@ -504,6 +504,7 @@ private struct VideoSection: View {
 
 private struct ControllerSection: View {
     @Default(.use8BitdoM30) var use8BitdoM30
+    @Default(.pauseButtonIsMenuButton) var pauseButtonIsMenuButton
 
     var body: some View {
         Group {
@@ -521,6 +522,11 @@ private struct ControllerSection: View {
                 ThemedToggle(isOn: $use8BitdoM30) {
                     SettingsRow(title: "Use 8BitDo M30 Mapping",
                                 subtitle: "For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X, Saturn and the PC Engine",
+                                icon: .sfSymbol("arrow.triangle.swap"))
+                }
+                ThemedToggle(isOn: $pauseButtonIsMenuButton) {
+                    SettingsRow(title: "Pause/Menu button opens pause menu",
+                                subtitle: "If on, the start/menu button on the controller will open the pause menu in addition to pausing the game",
                                 icon: .sfSymbol("arrow.triangle.swap"))
                 }
             }
