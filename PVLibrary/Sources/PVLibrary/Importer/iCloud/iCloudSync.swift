@@ -94,6 +94,7 @@ extension iCloudTypeSyncer {
                 return Disposables.create {}
             }
             self.metadataQuery.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
+            DLOG("directory: \(directory)")
             metadataQuery.predicate = NSPredicate(format: "%K CONTAINS[c] %@", NSMetadataItemPathKey, "/Documents/\(directory)/")
             
             let _: NotificationObserver = .init(
@@ -169,6 +170,7 @@ extension iCloudTypeSyncer {
     }
 
     func queryFinished(notification: Notification) {
+        DLOG("directory: \(directory)")
         guard (notification.object as? NSMetadataQuery) == metadataQuery
         else {
             return
@@ -410,8 +412,7 @@ class SaveStateSyncer: iCloudTypeSyncer {
     
     @objc
     func handleNewFiles(_ notification: Notification) {
-        guard let downloadedFiles = notification.userInfo?[notification.name.rawValue] as? Set<URL>,
-              (notification.object as? RomsSyncer) === self
+        guard let downloadedFiles = notification.userInfo?[notification.name.rawValue] as? Set<URL>
         else {
             return
         }
@@ -432,14 +433,11 @@ class SaveStateSyncer: iCloudTypeSyncer {
             return
         }
         Task {
-            let saveFiles = newFiles.compactMap {
-                try? FileManager.default.contentsOfDirectory(at: $0, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-            }.joined()
-            let jsonFiles = saveFiles.filter { $0.pathExtension == "json" }
+            let jsonFiles = newFiles.filter { $0.pathExtension == "json" }
             let jsonDecorder = JSONDecoder()
             jsonDecorder.dataDecodingStrategy = .deferredToData
 
-            Task.detached { // @MainActor in
+            //Task.detached { // @MainActor in//can we re-add this with the change of not adding a task on the PVSave asRealm() function?
                 await jsonFiles.concurrentForEach { @MainActor json in
                     let realm = try! await Realm()
                     do {
@@ -500,7 +498,7 @@ class SaveStateSyncer: iCloudTypeSyncer {
                         return
                     }
                 }
-            }
+            //}
         }
     }
 }
@@ -524,8 +522,7 @@ class RomsSyncer: iCloudTypeSyncer {
     
     @objc
     func handleNewFiles(_ notification: Notification) {
-        guard let downloadedFiles = notification.userInfo?[notification.name.rawValue] as? Set<URL>,
-              (notification.object as? RomsSyncer) === self
+        guard let downloadedFiles = notification.userInfo?[notification.name.rawValue] as? Set<URL>
         else {
             return
         }

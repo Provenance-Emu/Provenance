@@ -64,7 +64,7 @@ extension SaveState: RealmRepresentable {
                 object.core = core.asRealm()
             }
 
-            Task {
+//            Task {//is this task needed? It's causing issues when downloading icloud files.
                 let path = game.file.fileName.saveStatePath.appendingPathComponent(file.fileName)
                 object.file = PVFile(withURL: path)
                 DLOG("file path: \(path)")
@@ -78,7 +78,7 @@ extension SaveState: RealmRepresentable {
                     object.image = PVImageFile(withURL: imagePath, relativeRoot: .iCloud)
                 }
                 object.isAutosave = isAutosave
-            }
+//            }
         }
     }
 }
