@@ -680,6 +680,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             self.processingState = .idle
         }
         ILOG("GameImportQueue - processQueue complete Import Processing")
+        //TODO: this doesn't appear to be needed anymore.
         NotificationCenter.default.post(name: .RomsFinishedImporting, object: nil)
     }
 
