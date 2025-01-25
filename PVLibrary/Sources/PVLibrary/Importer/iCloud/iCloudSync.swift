@@ -31,12 +31,6 @@ public protocol Container {
     var containerURL: URL? { get }
 }
 
-extension Notification.Name {
-    static let cloudDataDownloaded = Notification.Name("kCloudDataDownloaded")
-    static let newCloudFiles = Notification.Name("kNewCloudFiles")
-    static let romDatabaseInitialized = Notification.Name("kRomDatabaseInitialized")
-}
-
 extension Container {
     public var containerURL: URL? { get { return URL.iCloudContainerDirectory }}
     var documentsURL: URL? { get { return URL.iCloudDocumentsDirectory }}
@@ -109,6 +103,7 @@ extension iCloudTypeSyncer {
                     self.queryFinished(notification: notification)
                     completable(.completed)
                 }
+            //TODO: listen for updates
             
             self.metadataQuery.start()
             return Disposables.create {}
@@ -174,7 +169,7 @@ extension iCloudTypeSyncer {
     }
 
     func queryFinished(notification: Notification) {
-        guard let query = notification.object as? NSMetadataQuery
+        guard (notification.object as? NSMetadataQuery) == metadataQuery
         else {
             return
         }
@@ -186,7 +181,7 @@ extension iCloudTypeSyncer {
 //            query.enableUpdates()
 //        }
         //accessing results automatically pauses updates and resumes after deallocated
-        for item in query.results {
+        for item in metadataQuery.results {
             if let fileItem = item as? NSMetadataItem,
                let file = fileItem.value(forAttribute: NSMetadataItemURLKey) as? URL,
                let downloadStatus = fileItem.value(forAttribute: NSMetadataUbiquitousItemDownloadingStatusKey) as? String,
@@ -196,7 +191,6 @@ extension iCloudTypeSyncer {
                 
                 do {
                     try fileManager.startDownloadingUbiquitousItem(at: file)
-                    //TODO: we have to wait until the files are downloaded, we can just create a queue and then just loop until the queue is empty
                     print("Download started for: \(file.lastPathComponent)")
                 } catch {
                     print("Failed to start download: \(error)")
@@ -204,6 +198,7 @@ extension iCloudTypeSyncer {
             }
         }
         var downloadedFiles = Set<URL>()
+        //we wait for all files to finish downloaded from iCloud
         while downloadedFiles.count != files.count {
             for file in files {
                 if fileManager.fileExists(atPath: file.path) {
@@ -211,9 +206,9 @@ extension iCloudTypeSyncer {
                 }
             }
         }
-        let name = Notification.Name.newCloudFiles
+        let name = Notification.Name.NewCloudFilesAvailable
         print("downloadedFiles: \(downloadedFiles.count)")
-        NotificationCenter.default.post(name: name, object: nil, userInfo: [name.rawValue: downloadedFiles])
+        NotificationCenter.default.post(name: name, object: self, userInfo: [name.rawValue: downloadedFiles])
     }
 }
 
@@ -322,7 +317,6 @@ enum iCloudError: Error {
 }
 
 public enum iCloudSync {
-    //TODO: move bags to each class
     static var disposeBag: DisposeBag?
     public static func initICloudDocuments() {
         let fm = FileManager.default
@@ -336,14 +330,15 @@ public enum iCloudSync {
         } else {
             UserDefaults.standard.removeObject(forKey: UbiquityIdentityTokenKey)
         }
-        //TODO: there is an issue when all of the icloud files are downloaded and during the importing of Realm + Save States there's a clash. I think we need to import ROMs first, then BIOS (if necessary) and then save states, everything else doesn't need to be imported onto the db (at least from what I understand)
+        //TODO: there is an issue when all of the icloud files are downloaded and during the importing of ROMs + Save States there's a clash. I think we need to import ROMs first, then BIOS (if necessary) and then save states, everything else doesn't need to be imported onto the db (at least from what I understand)
+        //TODO: pause when a game starts so we don't interfere with the game and continue listening when no game is running
         var saveStateSyncer = SaveStateSyncer()
         let disposeBag = DisposeBag()
         self.disposeBag = disposeBag
         saveStateSyncer.loadAllFromICloud()
             .observe(on: MainScheduler.instance)
             .subscribe(onCompleted: {
-                importNewSaves()
+//                importNewSaves()
             }) { error in
                 ELOG(error.localizedDescription)
             }.disposed(by: disposeBag)
@@ -381,13 +376,13 @@ public enum iCloudSync {
             }.disposed(by: disposeBag)
     }
     
-//TODO: prolly this should be in SaveStateSyncer
+    //TODO: this function should be refactored onto SaveStateSyncer class
     public static func importNewSaves() {
         guard RomDatabase.databaseInitialized
         else {
             return
         }
-
+        //TODO: files should already been downloaded by now. use newFiles from SaveStateSyncer
         Task {
             let savesDirectory = Paths.saveSavesPath
             let legacySavesDirectory = Paths.Legacy.saveSavesPath
@@ -512,16 +507,31 @@ public enum iCloudSync {
 class SaveStateSyncer: iCloudTypeSyncer {
     var metadataQuery: NSMetadataQuery = .init()
     var newFiles: Set<URL> = []
+    var areRomsDownloaded = false
     init() {
-        NotificationCenter.default.addObserver(self, selector: #selector(wrapper), name: .romDatabaseInitialized, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(wrapperImportSaves), name: .RomDatabaseInitialized, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(romsFinishedImporting), name: .RomsFinishedImporting, object: nil)
     }
     deinit {
         print("dying")
     }
     
     @objc
-    func wrapper() {
-        iCloudSync.importNewSaves()
+    func romsFinishedImporting() {
+        //TODO: this should be reset somehow
+        areRomsDownloaded = true
+        wrapperImportSaves()
+    }
+    
+    @objc
+    func wrapperImportSaves() {
+        //TODO: fix logic. we need to know if there are ROMs to download, if no, then we do the importing of saves
+        guard areRomsDownloaded
+        else {
+            return
+        }
+        //TODO: fix, importing saves is crashing
+        //iCloudSync.importNewSaves()
     }
     
     var directory: String {
@@ -532,10 +542,11 @@ class SaveStateSyncer: iCloudTypeSyncer {
 class RomsSyncer: iCloudTypeSyncer {
     var metadataQuery: NSMetadataQuery = .init()
     var newFiles: Set<URL> = []
+    let gameImporter = GameImporter.shared
     
     init() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleNewRomFiles), name: .romDatabaseInitialized, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleNewFiles(_:)), name: .newCloudFiles, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleNewRomFiles), name: .RomDatabaseInitialized, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleNewFiles(_:)), name: .NewCloudFilesAvailable, object: self)
     }
     deinit {
         print("dying")
@@ -547,7 +558,8 @@ class RomsSyncer: iCloudTypeSyncer {
     
     @objc
     func handleNewFiles(_ notification: Notification) {
-        guard let downloadedFiles = notification.userInfo?[notification.name.rawValue] as? Set<URL>
+        guard let downloadedFiles = notification.userInfo?[notification.name.rawValue] as? Set<URL>,
+              (notification.object as? RomsSyncer) === self
         else {
             return
         }
@@ -568,13 +580,10 @@ class RomsSyncer: iCloudTypeSyncer {
             return
         }
         
-        var converted = [URL]()
-        for item in newFiles {
-            converted.append(item)
-        }
+        var converted = [URL](newFiles)
         newFiles.removeAll()
-        let name = Notification.Name.cloudDataDownloaded
-        NotificationCenter.default.post(name: name, object: nil, userInfo: [name.rawValue: converted])
+        gameImporter.addImports(forPaths: converted)
+        gameImporter.startProcessing()
     }
 }
 

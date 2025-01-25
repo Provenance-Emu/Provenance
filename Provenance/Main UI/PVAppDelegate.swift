@@ -346,21 +346,10 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
             let useiCloud = Defaults[.iCloudSync] && URL.supportsICloud
             if useiCloud {
                 DispatchQueue.main.async {
-                    NotificationCenter.default.addObserver(self, selector: #selector(self.cloudDataDownloaded(notification:)), name: Notification.Name("kCloudDataDownloaded"), object: nil)
                     iCloudSync.initICloudDocuments()
                 }
             }
         }
-    }
-    
-    @objc func cloudDataDownloaded(notification: Notification) {
-        guard let files = notification.userInfo?[notification.name.rawValue] as? [URL],
-              let gameImporter = appState?.gameImporter
-        else {
-            return
-        }
-        gameImporter.addImports(forPaths: files)
-        gameImporter.startProcessing()
     }
     
     var currentThemeObservation: Any? // AnyCancellable?
