@@ -95,14 +95,14 @@ public extension PVEmulatorViewController {
                 do {
                     try jpegData.write(to: imageURL)
                     //                    try RomDatabase.sharedInstance.writeTransaction {
-                    //                        let newFile = PVImageFile(withURL: imageURL, relativeRoot: .iCloud)//TODO: test without .iCloud
+                    //                        let newFile = PVImageFile(withURL: imageURL, relativeRoot: .iCloud)
                     //                        game.screenShots.append(newFile)
                     //                    }
                 } catch {
                     presentError("Unable to write image to disk, error: \(error.localizedDescription)", source: self.view)
                 }
 
-                imageFile = PVImageFile(withURL: imageURL, relativeRoot: .iCloud)//TODO: test without .iCloud
+                imageFile = PVImageFile(withURL: imageURL, relativeRoot: .iCloud)
             }
         }
 

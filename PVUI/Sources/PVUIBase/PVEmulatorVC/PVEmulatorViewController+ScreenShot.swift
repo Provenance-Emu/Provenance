@@ -52,7 +52,7 @@ extension PVEmulatorViewController {
                     try pngData.write(to: imageURL)
                     RomDatabase.sharedInstance.asyncWriteTransaction {
                         self.game.realm?.refresh()
-                        let newFile = PVImageFile(withURL: imageURL, relativeRoot: .iCloud)//TODO: test without .iCloud
+                        let newFile = PVImageFile(withURL: imageURL, relativeRoot: .iCloud)
                         self.game.screenShots.append(newFile)
                     }
                 } catch {
