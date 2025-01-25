@@ -186,14 +186,14 @@ extension iCloudTypeSyncer {
                let file = fileItem.value(forAttribute: NSMetadataItemURLKey) as? URL,
                let downloadStatus = fileItem.value(forAttribute: NSMetadataUbiquitousItemDownloadingStatusKey) as? String,
                downloadStatus == NSMetadataUbiquitousItemDownloadingStatusNotDownloaded {
-                print("Found file: \(String(describing: file)), download status: \(downloadStatus)")
+                DLOG("Found file: \(String(describing: file)), download status: \(downloadStatus)")
                 files.append(file)
                 
                 do {
                     try fileManager.startDownloadingUbiquitousItem(at: file)
-                    print("Download started for: \(file.lastPathComponent)")
+                    DLOG("Download started for: \(file.lastPathComponent)")
                 } catch {
-                    print("Failed to start download: \(error)")
+                    DLOG("Failed to start download: \(error)")
                 }
             }
         }
@@ -207,7 +207,7 @@ extension iCloudTypeSyncer {
             }
         }
         let name = Notification.Name.NewCloudFilesAvailable
-        print("downloadedFiles: \(downloadedFiles.count)")
+        DLOG("downloadedFiles: \(downloadedFiles.count)")
         NotificationCenter.default.post(name: name, object: self, userInfo: [name.rawValue: downloadedFiles])
     }
 }
@@ -375,68 +375,69 @@ public enum iCloudSync {
                 ELOG(error.localizedDescription)
             }.disposed(by: disposeBag)
     }
+}
+//TODO: perhaps 1 generic class since a lot of this code is similar and move the extension onto generic class. we could just add a protocol delegate dependency for ROMs and SaveState classes that does specific code
+class SaveStateSyncer: iCloudTypeSyncer {
+    var metadataQuery: NSMetadataQuery = .init()
+    var newFiles: Set<URL> = []
+    var areRomsDownloaded = false
+    init() {
+        NotificationCenter.default.addObserver(self, selector: #selector(wrapperImportSaves), name: .RomDatabaseInitialized, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(romsFinishedImporting), name: .RomsFinishedImporting, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleNewFiles(_:)), name: .NewCloudFilesAvailable, object: self)
+    }
+    deinit {
+        DLOG("dying")
+    }
     
-    //TODO: this function should be refactored onto SaveStateSyncer class
-    public static func importNewSaves() {
+    @objc
+    func romsFinishedImporting() {
+        //TODO: this should be reset somehow
+        areRomsDownloaded = true
+        wrapperImportSaves()
+    }
+    
+    @objc
+    func wrapperImportSaves() {
+        //TODO: fix logic. we need to know if there are ROMs to download, if no, then we do the importing of saves
+        guard areRomsDownloaded
+        else {
+            return
+        }
+        //TODO: fix, importing saves is crashing
+        importNewSaves()
+    }
+    
+    @objc
+    func handleNewFiles(_ notification: Notification) {
+        guard let downloadedFiles = notification.userInfo?[notification.name.rawValue] as? Set<URL>,
+              (notification.object as? RomsSyncer) === self
+        else {
+            return
+        }
+        newFiles = downloadedFiles
+    }
+    
+    var directory: String {
+        "Save States"
+    }
+    
+    func importNewSaves() {
         guard RomDatabase.databaseInitialized
         else {
             return
         }
-        //TODO: files should already been downloaded by now. use newFiles from SaveStateSyncer
+        guard !newFiles.isEmpty
+        else {
+            return
+        }
         Task {
-            let savesDirectory = Paths.saveSavesPath
-            let legacySavesDirectory = Paths.Legacy.saveSavesPath
-            let fm = FileManager.default
-            guard let subDirs = try? fm.contentsOfDirectory(at: savesDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else {
-                ELOG("Failed to read saves path: \(savesDirectory.path)")
-                return
-            }
-
-            let saveFiles = subDirs.compactMap {
-                try? fm.contentsOfDirectory(at: $0, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+            let saveFiles = newFiles.compactMap {
+                try? FileManager.default.contentsOfDirectory(at: $0, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
             }.joined()
             let jsonFiles = saveFiles.filter { $0.pathExtension == "json" }
             let jsonDecorder = JSONDecoder()
             jsonDecorder.dataDecodingStrategy = .deferredToData
-
-            let legacySubDirs: [URL]?
-            do {
-                legacySubDirs = try fm.contentsOfDirectory(at: legacySavesDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-            } catch {
-                ELOG("\(error.localizedDescription)")
-                legacySubDirs = nil
-            }
-
-            await legacySubDirs?.asyncForEach {
-                do {
-                    let destinationURL = Paths.saveSavesPath.appendingPathComponent($0.lastPathComponent, isDirectory: true)
-                    if !fm.isUbiquitousItem(at: destinationURL) {
-                        try fm.setUbiquitous(true,
-                                             itemAt: $0,
-                                             destinationURL: destinationURL)
-                    } else {
-                        //                        var resultURL: NSURL?
-                        //                        try fm.replaceItem(at: destinationURL, withItemAt: $0, backupItemName: nil, resultingItemURL: &resultURL)
-                        //                        try fm.evictUbiquitousItem(at: destinationURL)
-                        try fm.startDownloadingUbiquitousItem(at: destinationURL)
-                    }
-                } catch {
-                    ELOG("Error: \(error)")
-                }
-            }
-            //        let saves = realm.objects(PVSaveState.self)
-            //        saves.forEach {
-            //            fm.setUbiquitous(true, itemAt: $0.file.url, destinationURL: Paths.saveSavesPath.appendingPathComponent($0.game.file.fileNameWithoutExtension, isDirectory: true).app)
-            //        }
-            Task.detached {
-                jsonFiles.forEach { json in
-                    do {
-                        try FileManager.default.startDownloadingUbiquitousItem(at: json)
-                    } catch {
-                        ELOG("Download error: " + error.localizedDescription)
-                    }
-                }
-            }
 
             Task.detached { // @MainActor in
                 await jsonFiles.concurrentForEach { @MainActor json in
@@ -503,41 +504,6 @@ public enum iCloudSync {
         }
     }
 }
-//TODO: perhaps 1 generic class since a lot of this code is similar and move the extension onto generic class. we could just add a protocol delegate dependency for ROMs and SaveState classes that does specific code
-class SaveStateSyncer: iCloudTypeSyncer {
-    var metadataQuery: NSMetadataQuery = .init()
-    var newFiles: Set<URL> = []
-    var areRomsDownloaded = false
-    init() {
-        NotificationCenter.default.addObserver(self, selector: #selector(wrapperImportSaves), name: .RomDatabaseInitialized, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(romsFinishedImporting), name: .RomsFinishedImporting, object: nil)
-    }
-    deinit {
-        print("dying")
-    }
-    
-    @objc
-    func romsFinishedImporting() {
-        //TODO: this should be reset somehow
-        areRomsDownloaded = true
-        wrapperImportSaves()
-    }
-    
-    @objc
-    func wrapperImportSaves() {
-        //TODO: fix logic. we need to know if there are ROMs to download, if no, then we do the importing of saves
-        guard areRomsDownloaded
-        else {
-            return
-        }
-        //TODO: fix, importing saves is crashing
-        //iCloudSync.importNewSaves()
-    }
-    
-    var directory: String {
-        "Save States"
-    }
-}
 
 class RomsSyncer: iCloudTypeSyncer {
     var metadataQuery: NSMetadataQuery = .init()
@@ -549,7 +515,7 @@ class RomsSyncer: iCloudTypeSyncer {
         NotificationCenter.default.addObserver(self, selector: #selector(handleNewFiles(_:)), name: .NewCloudFilesAvailable, object: self)
     }
     deinit {
-        print("dying")
+        DLOG("dying")
     }
     
     var directory: String {
