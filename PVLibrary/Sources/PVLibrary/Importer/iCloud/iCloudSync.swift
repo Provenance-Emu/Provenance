@@ -226,58 +226,6 @@ extension iCloudTypeSyncer {
         setNewCloudFilesAvailable()
         DLOG("\(directory): current iteration: files pending to be downloaded: \(files.count), files downloaded : \(filesDownloaded.count)")
     }
-
-    func queryFinished2(notification: Notification) async {
-        DLOG("directory: \(directory)")
-        guard (notification.object as? NSMetadataQuery) == metadataQuery
-        else {
-            return
-        }
-        let fileManager = FileManager.default
-        var files: Set<URL> = []
-        //TODO: don't think we need this
-//        query.disableUpdates()
-//        defer {
-//            query.enableUpdates()
-//        }
-        let queue = DispatchQueue(label: "org.provenance-emu.provenance.newFiles")
-        
-        //accessing results automatically pauses updates and resumes after deallocated
-        await metadataQuery.results.concurrentForEach { item in
-            if let fileItem = item as? NSMetadataItem,
-               let file = fileItem.value(forAttribute: NSMetadataItemURLKey) as? URL,
-               let downloadStatus = fileItem.value(forAttribute: NSMetadataUbiquitousItemDownloadingStatusKey) as? String,
-               downloadStatus == NSMetadataUbiquitousItemDownloadingStatusNotDownloaded {
-                DLOG("Found file: \(String(describing: file)), download status: \(downloadStatus)")
-                do {
-                    try fileManager.startDownloadingUbiquitousItem(at: file)
-                    queue.sync {
-                        files.insert(file)
-                        insertDownloadingFile(file)
-                    }
-                    DLOG("Download started for: \(file.lastPathComponent)")
-                } catch {
-                    DLOG("Failed to start download: \(error)")
-                }
-            }
-        }
-        //TODO: for ROMs and saves, perhaps we need to store the downloaded files that need to be process in the case of a crash or the user puts the app in the background.
-        //we wait for all files to finish downloaded from iCloud
-        let count = files.count
-        var pendingToDownload = files
-        while !pendingToDownload.isEmpty {
-            await pendingToDownload.concurrentForEach { file in
-                if fileManager.fileExists(atPath: file.path) {
-                    queue.sync {
-                        files.remove(file)
-                    }
-                }
-            }
-            pendingToDownload = files
-        }
-        setNewCloudFilesAvailable()
-        DLOG("\(directory): downloaded files: \(count)")
-    }
 }
 
 extension SyncFileToiCloud where Self: LocalFileInfoProvider {
