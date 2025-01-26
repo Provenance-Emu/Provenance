@@ -443,6 +443,11 @@ class SaveStateSyncer: iCloudTypeSyncer {
         newFiles.insert(file)
     }
     
+    func deleteFromDatastore(_ file: URL) {
+//        PVSaveState
+        //TODO: delete from database
+    }
+    
     func importNewSaves(_ notification: Notification) {
         NotificationCenter.default.removeObserver(self)
         importNewSaves()
