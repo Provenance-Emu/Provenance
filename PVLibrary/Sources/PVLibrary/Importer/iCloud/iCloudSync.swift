@@ -44,15 +44,14 @@ public protocol SyncFileToiCloud: Container {
 }
 
 public protocol iCloudTypeSyncer: Container {
-    var newFiles: Set<URL> { get set }
     var directory: String { get }
     var metadataQuery: NSMetadataQuery { get }
 
-    func loadAllFromICloud() -> Completable
+    func loadAllFromICloud(iterationComplete: @escaping () -> Void) -> Completable
     func removeAllFromICloud() -> Completable
-    mutating func clearNewFiles()
-    mutating func insertNewFile(_ file: URL)
-    mutating func setNewFiles(_ files: Set<URL>)
+    func insertDownloadingFile(_ file: URL)
+    func insertDownloadedFile(_ file: URL)
+    func setNewCloudFilesAvailable()
 }
 
 final class NotificationObserver {
@@ -73,19 +72,19 @@ final class NotificationObserver {
 }
 
 extension iCloudTypeSyncer {
-    mutating func setNewFiles(_ files: Set<URL>) {
-        newFiles = files
+    func insertDownloadingFile(_ file: URL) {
+        //no-op
     }
     
-    mutating func clearNewFiles() {
-        newFiles.removeAll()
+    func insertDownloadedFile(_ file: URL) {
+        //no-op
     }
     
-    mutating func insertNewFile(_ file: URL) {
-        newFiles.insert(file)
+    func setNewCloudFilesAvailable() {
+        //no-op
     }
     
-    func loadAllFromICloud() -> Completable {
+    func loadAllFromICloud(iterationComplete: @escaping () -> Void) -> Completable {
         return Completable.create { completable in
             //body mustn't run in a task, otherwise the NotificationObserver closure won't get called
             guard containerURL != nil
@@ -96,15 +95,28 @@ extension iCloudTypeSyncer {
             self.metadataQuery.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
             DLOG("directory: \(directory)")
             metadataQuery.predicate = NSPredicate(format: "%K CONTAINS[c] %@", NSMetadataItemPathKey, "/Documents/\(directory)/")
-            
+            //TODO: update to use Publishers.MergeMany
             let _: NotificationObserver = .init(
                 forName: .NSMetadataQueryDidFinishGathering,
                 object: self.metadataQuery,
                 queue: nil) { notification in
-                    self.queryFinished(notification: notification)
-                    completable(.completed)
+                    Task {
+                        await queryFinished(notification: notification)
+//                        completable(.completed)
+                        iterationComplete()
+                    }
                 }
-            //TODO: listen for updates
+            //listen for deletions and new files. what about conflicts?
+            let _: NotificationObserver = .init(
+                forName: .NSMetadataQueryDidUpdate,
+                object: self.metadataQuery,
+                queue: nil) { notification in
+                    Task {
+                        await queryFinished(notification: notification)
+//                        completable(.completed)
+                        iterationComplete()
+                    }
+                }
             
             self.metadataQuery.start()
             return Disposables.create {}
@@ -168,49 +180,103 @@ extension iCloudTypeSyncer {
             }
         }
     }
-
-    func queryFinished(notification: Notification) {
+    
+    func queryFinished(notification: Notification) async {
         DLOG("directory: \(directory)")
         guard (notification.object as? NSMetadataQuery) == metadataQuery
         else {
             return
         }
         let fileManager = FileManager.default
-        var files: [URL] = []
+        var files: Set<URL> = []
+        var filesDownloaded: Set<URL> = []
+        let queue = DispatchQueue(label: "org.provenance-emu.provenance.newFiles")
+        
+        //accessing results automatically pauses updates and resumes after deallocated
+        await metadataQuery.results.concurrentForEach { item in
+            if let fileItem = item as? NSMetadataItem,
+               let file = fileItem.value(forAttribute: NSMetadataItemURLKey) as? URL,
+               let isDirectory = try? file.resourceValues(forKeys: [.isDirectoryKey]).isDirectory,
+               !isDirectory,//we only
+               let downloadStatus = fileItem.value(forAttribute: NSMetadataUbiquitousItemDownloadingStatusKey) as? String {
+                DLOG("Found: \(file), download status: \(downloadStatus)")
+                switch downloadStatus {
+                    case  NSMetadataUbiquitousItemDownloadingStatusNotDownloaded:
+                        do {
+                            try fileManager.startDownloadingUbiquitousItem(at: file)
+                            queue.sync {
+                                files.insert(file)
+                                insertDownloadingFile(file)
+                            }
+                            DLOG("Download started for: \(file.lastPathComponent)")
+                        } catch {
+                            DLOG("Failed to start download: \(error)")
+                        }
+                    case NSMetadataUbiquitousItemDownloadingStatusCurrent:
+                        DLOG("item up to date: \(file)")
+                        queue.sync {
+                            filesDownloaded.insert(file)
+                            insertDownloadedFile(file)
+                        }
+                    default: DLOG("\(file.lastPathComponent): download status: \(downloadStatus)")
+                }
+            }
+        }
+        //TODO: for ROMs and saves, perhaps we need to store the downloaded files that need to be process in the case of a crash or the user puts the app in the background.
+        setNewCloudFilesAvailable()
+        DLOG("\(directory): current iteration: files pending to be downloaded: \(files.count), files downloaded : \(filesDownloaded.count)")
+    }
+
+    func queryFinished2(notification: Notification) async {
+        DLOG("directory: \(directory)")
+        guard (notification.object as? NSMetadataQuery) == metadataQuery
+        else {
+            return
+        }
+        let fileManager = FileManager.default
+        var files: Set<URL> = []
         //TODO: don't think we need this
 //        query.disableUpdates()
 //        defer {
 //            query.enableUpdates()
 //        }
+        let queue = DispatchQueue(label: "org.provenance-emu.provenance.newFiles")
+        
         //accessing results automatically pauses updates and resumes after deallocated
-        for item in metadataQuery.results {
+        await metadataQuery.results.concurrentForEach { item in
             if let fileItem = item as? NSMetadataItem,
                let file = fileItem.value(forAttribute: NSMetadataItemURLKey) as? URL,
                let downloadStatus = fileItem.value(forAttribute: NSMetadataUbiquitousItemDownloadingStatusKey) as? String,
                downloadStatus == NSMetadataUbiquitousItemDownloadingStatusNotDownloaded {
                 DLOG("Found file: \(String(describing: file)), download status: \(downloadStatus)")
-                files.append(file)
-                
                 do {
                     try fileManager.startDownloadingUbiquitousItem(at: file)
+                    queue.sync {
+                        files.insert(file)
+                        insertDownloadingFile(file)
+                    }
                     DLOG("Download started for: \(file.lastPathComponent)")
                 } catch {
                     DLOG("Failed to start download: \(error)")
                 }
             }
         }
-        var downloadedFiles = Set<URL>()
+        //TODO: for ROMs and saves, perhaps we need to store the downloaded files that need to be process in the case of a crash or the user puts the app in the background.
         //we wait for all files to finish downloaded from iCloud
-        while downloadedFiles.count != files.count {
-            for file in files {
+        let count = files.count
+        var pendingToDownload = files
+        while !pendingToDownload.isEmpty {
+            await pendingToDownload.concurrentForEach { file in
                 if fileManager.fileExists(atPath: file.path) {
-                    downloadedFiles.insert(file)
+                    queue.sync {
+                        files.remove(file)
+                    }
                 }
             }
+            pendingToDownload = files
         }
-        let name = Notification.Name.NewCloudFilesAvailable
-        DLOG("downloadedFiles: \(downloadedFiles.count)")
-        NotificationCenter.default.post(name: name, object: self, userInfo: [name.rawValue: downloadedFiles])
+        setNewCloudFilesAvailable()
+        DLOG("\(directory): downloaded files: \(count)")
     }
 }
 
@@ -319,7 +385,9 @@ enum iCloudError: Error {
 }
 
 public enum iCloudSync {
-    static var disposeBag: DisposeBag?
+    static let disposeBag: DisposeBag = DisposeBag()
+    static let saveStateSyncer = SaveStateSyncer()
+    static let romsSyncer = RomsSyncer()
     public static func initICloudDocuments() {
         let fm = FileManager.default
         if let currentiCloudToken = fm.ubiquityIdentityToken {
@@ -332,95 +400,92 @@ public enum iCloudSync {
         } else {
             UserDefaults.standard.removeObject(forKey: UbiquityIdentityTokenKey)
         }
-        //TODO: there is an issue when all of the icloud files are downloaded and during the importing of ROMs + Save States there's a clash. I think we need to import ROMs first, then BIOS (if necessary) and then save states, everything else doesn't need to be imported onto the db (at least from what I understand)
-        //TODO: pause when a game starts so we don't interfere with the game and continue listening when no game is running
-        var saveStateSyncer = SaveStateSyncer()
-        let disposeBag = DisposeBag()
-        self.disposeBag = disposeBag
-        saveStateSyncer.loadAllFromICloud()
-            .observe(on: MainScheduler.instance)
-            .subscribe(onCompleted: {
-//                importNewSaves()
-            }) { error in
-                ELOG(error.localizedDescription)
-            }.disposed(by: disposeBag)
-        var romsSyncer = RomsSyncer()
-        romsSyncer.loadAllFromICloud()
-            .observe(on: MainScheduler.instance)
-            .subscribe(onCompleted: {
-                romsSyncer.handleNewRomFiles()
-            }) { error in
-                ELOG(error.localizedDescription)
-            }.disposed(by: disposeBag)
+
+        //TODO: should we pause when a game starts so we don't interfere with the game and continue listening when no game is running?
+        saveStateSyncer.loadAllFromICloud() {
+            saveStateSyncer.importNewSaves()
+        }.observe(on: MainScheduler.instance)
+        .subscribe(onCompleted: {
+        }, onError: { error in
+            ELOG(error.localizedDescription)
+        }) {
+            DLOG("disposing saveStateSyncer")
+        }.disposed(by: disposeBag)
+        romsSyncer.loadAllFromICloud() {
+            romsSyncer.handleNewRomFiles()
+        }.observe(on: MainScheduler.instance)
+        .subscribe(onCompleted: {
+        }, onError: { error in
+            ELOG(error.localizedDescription)
+        }){
+            DLOG("disposing romsSyncer")
+        }.disposed(by: disposeBag)
         let biosSyncer = BiosSyncer()
-        biosSyncer.loadAllFromICloud()
-            .observe(on: MainScheduler.instance)
-            .subscribe(onCompleted: {
-                //TODO: anything?
-            }) { error in
-                ELOG(error.localizedDescription)
-            }.disposed(by: disposeBag)
+        biosSyncer.loadAllFromICloud() {
+            
+        }.observe(on: MainScheduler.instance)
+        .subscribe(onCompleted: {
+            //no-op because nothing needs to be imported into the db
+        }) { error in
+            ELOG(error.localizedDescription)
+        }.disposed(by: disposeBag)
         let batterySaveSyncer = BatterySavesSyncer()
-        batterySaveSyncer.loadAllFromICloud()
-            .observe(on: MainScheduler.instance)
-            .subscribe(onCompleted: {
-                //TODO: anything?
-            }) { error in
-                ELOG(error.localizedDescription)
-            }.disposed(by: disposeBag)
+        batterySaveSyncer.loadAllFromICloud() {
+            
+        }.observe(on: MainScheduler.instance)
+        .subscribe(onCompleted: {
+            //no-op because nothing needs to be imported into the db
+        }) { error in
+            ELOG(error.localizedDescription)
+        }.disposed(by: disposeBag)
         let screenshotsSyncer = ScreenshotsSyncer()
-        screenshotsSyncer.loadAllFromICloud()
-            .observe(on: MainScheduler.instance)
-            .subscribe(onCompleted: {
-                //TODO: anything?
-            }) { error in
-                ELOG(error.localizedDescription)
-            }.disposed(by: disposeBag)
+        screenshotsSyncer.loadAllFromICloud() {
+        }.observe(on: MainScheduler.instance)
+        .subscribe(onCompleted: {
+            //no-op because nothing needs to be imported into the db
+        }) { error in
+            ELOG(error.localizedDescription)
+        }.disposed(by: disposeBag)
     }
 }
 //TODO: perhaps 1 generic class since a lot of this code is similar and move the extension onto generic class. we could just add a protocol delegate dependency for ROMs and SaveState classes that does specific code
 class SaveStateSyncer: iCloudTypeSyncer {
     var metadataQuery: NSMetadataQuery = .init()
+    var pendingFilesToDownload: Set<String> = []
     var newFiles: Set<URL> = []
-    var areRomsDownloaded = false
+    var didFinishDownloadingAllFiles = false
     init() {
-        NotificationCenter.default.addObserver(self, selector: #selector(wrapperImportSaves), name: .RomDatabaseInitialized, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(romsFinishedImporting), name: .RomsFinishedImporting, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleNewFiles(_:)), name: .NewCloudFilesAvailable, object: self)
+        NotificationCenter.default.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil, using: importNewSaves)
     }
     deinit {
         DLOG("dying")
     }
     
-    @objc
-    func romsFinishedImporting() {
-        //TODO: this should be reset somehow
-        areRomsDownloaded = true
-        wrapperImportSaves()
-    }
-    
-    @objc
-    func wrapperImportSaves() {
-        //TODO: fix logic. we need to know if there are ROMs to download, if no, then we do the importing of saves
-        guard areRomsDownloaded
-        else {
-            return
-        }
-        //TODO: fix, importing saves is crashing
-        importNewSaves()
-    }
-    
-    @objc
-    func handleNewFiles(_ notification: Notification) {
-        guard let downloadedFiles = notification.userInfo?[notification.name.rawValue] as? Set<URL>
-        else {
-            return
-        }
-        newFiles = downloadedFiles
+    func setNewCloudFilesAvailable() {
+        didFinishDownloadingAllFiles = pendingFilesToDownload.isEmpty
     }
     
     var directory: String {
         "Save States"
+    }
+    
+    func insertDownloadingFile(_ file: URL) {
+        pendingFilesToDownload.insert(file.absoluteString)
+    }
+    
+    func insertDownloadedFile(_ file: URL) {
+        guard let _ = pendingFilesToDownload.remove(file.absoluteString),
+              "json".caseInsensitiveCompare(file.pathExtension) == .orderedSame
+        else {
+            return
+        }
+        DLOG("downloaded save file: \(file.lastPathComponent)")
+        newFiles.insert(file)
+    }
+    
+    func importNewSaves(_ notification: Notification) {
+        NotificationCenter.default.removeObserver(self)
+        importNewSaves()
     }
     
     func importNewSaves() {
@@ -432,12 +497,18 @@ class SaveStateSyncer: iCloudTypeSyncer {
         else {
             return
         }
+        guard didFinishDownloadingAllFiles
+        else {
+            return
+        }
+        didFinishDownloadingAllFiles = false
+        let jsonFiles = newFiles
+        newFiles.removeAll()
         Task {
-            let jsonFiles = newFiles.filter { $0.pathExtension == "json" }
             let jsonDecorder = JSONDecoder()
             jsonDecorder.dataDecodingStrategy = .deferredToData
 
-            //Task.detached { // @MainActor in//can we re-add this with the change of not adding a task on the PVSave asRealm() function?
+            Task.detached { // @MainActor in
                 await jsonFiles.concurrentForEach { @MainActor json in
                     let realm = try! await Realm()
                     do {
@@ -498,20 +569,21 @@ class SaveStateSyncer: iCloudTypeSyncer {
                         return
                     }
                 }
-            //}
+            }
         }
     }
 }
 
 class RomsSyncer: iCloudTypeSyncer {
     var metadataQuery: NSMetadataQuery = .init()
-    var newFiles: Set<URL> = []
     let gameImporter = GameImporter.shared
-    
+    var didFinishDownloadingAllFiles = false
+    var newFiles: Set<URL> = []
+    var pendingFilesToDownload: Set<String> = []
     init() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleNewRomFiles), name: .RomDatabaseInitialized, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleNewFiles(_:)), name: .NewCloudFilesAvailable, object: self)
+        NotificationCenter.default.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil, using: handleNewRomFiles)
     }
+    
     deinit {
         DLOG("dying")
     }
@@ -520,59 +592,91 @@ class RomsSyncer: iCloudTypeSyncer {
         "ROMs"
     }
     
-    @objc
-    func handleNewFiles(_ notification: Notification) {
-        guard let downloadedFiles = notification.userInfo?[notification.name.rawValue] as? Set<URL>
-        else {
-            return
-        }
-        newFiles = downloadedFiles
+    func setNewCloudFilesAvailable() {
+        didFinishDownloadingAllFiles = pendingFilesToDownload.isEmpty
     }
     
     /// sends a notification that rom files are ready to e
-    @objc
-    func handleNewRomFiles() {
-        //TODO: do we wait until the bios has been downloaded?
-        guard !newFiles.isEmpty
+    func handleNewRomFiles(_ notification: Notification) {
+        NotificationCenter.default.removeObserver(self)
+        handleNewRomFiles()
+    }
+    
+    func insertDownloadingFile(_ file: URL) {
+        pendingFilesToDownload.insert(file.absoluteString)
+    }
+    
+    func insertDownloadedFile(_ file: URL) {
+        guard let _ = pendingFilesToDownload.remove(file.absoluteString)
         else {
             return
         }
         
+        let parentDirectory = file.deletingLastPathComponent().lastPathComponent
+        DLOG("adding file to game import queue: \(file), parent directory: \(parentDirectory)")
+        //we should only add to the import queue files that are actual ROMs, anything else can be ignored.
+        guard parentDirectory.range(of: "com.provenance.",
+                                    options: [.caseInsensitive, .anchored]) != nil
+        else {
+            return
+        }
+        
+        newFiles.insert(file)
+    }
+    
+    func handleNewRomFiles() {
         guard RomDatabase.databaseInitialized
         else {
             return
         }
-        
-        var converted = [URL](newFiles)
+        guard !newFiles.isEmpty
+        else {
+            return
+        }
+        guard didFinishDownloadingAllFiles
+        else {
+            return
+        }
+        didFinishDownloadingAllFiles = false
+        let importPaths = [URL](newFiles)
         newFiles.removeAll()
-        gameImporter.addImports(forPaths: converted)
+        gameImporter.addImports(forPaths: importPaths)
         gameImporter.startProcessing()
     }
 }
 
 class BiosSyncer: iCloudTypeSyncer {
     var metadataQuery: NSMetadataQuery = .init()
-    var newFiles: Set<URL> = []
     
     var directory: String {
         "BIOS"
+    }
+    
+    deinit {
+        DLOG("dying")
     }
 }
 
 class BatterySavesSyncer: iCloudTypeSyncer {
     var metadataQuery: NSMetadataQuery = .init()
-    var newFiles: Set<URL> = []
     
     var directory: String {
         "Battery Saves"
+    }
+    
+    deinit {
+        DLOG("dying")
     }
 }
 
 class ScreenshotsSyncer: iCloudTypeSyncer {
     var metadataQuery: NSMetadataQuery = .init()
-    var newFiles: Set<URL> = []
     //TODO: I think a base class that accepts the directory in the initializer may be better than this
     var directory: String {
         "Screenshots"
+    }
+    
+    deinit {
+        DLOG("dying")
     }
 }
