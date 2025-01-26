@@ -51,6 +51,7 @@ public protocol iCloudTypeSyncer: Container {
     func removeAllFromICloud() -> Completable
     func insertDownloadingFile(_ file: URL)
     func insertDownloadedFile(_ file: URL)
+    func deleteFromDatastore(_ file: URL)
     func setNewCloudFilesAvailable()
 }
 
@@ -81,6 +82,10 @@ extension iCloudTypeSyncer {
     }
     
     func setNewCloudFilesAvailable() {
+        //no-op
+    }
+    
+    func deleteFromDatastore(_ file: URL) {
         //no-op
     }
     
@@ -191,6 +196,8 @@ extension iCloudTypeSyncer {
         var files: Set<URL> = []
         var filesDownloaded: Set<URL> = []
         let queue = DispatchQueue(label: "org.provenance-emu.provenance.newFiles")
+        let removedObjects = notification.userInfo?[NSMetadataQueryUpdateRemovedItemsKey]
+        DLOG("\(directory): removedObjects: \(removedObjects)")
         
         //accessing results automatically pauses updates and resumes after deallocated
         await metadataQuery.results.concurrentForEach { item in
@@ -214,9 +221,14 @@ extension iCloudTypeSyncer {
                         }
                     case NSMetadataUbiquitousItemDownloadingStatusCurrent:
                         DLOG("item up to date: \(file)")
-                        queue.sync {
-                            filesDownloaded.insert(file)
-                            insertDownloadedFile(file)
+                        if !fileManager.fileExists(atPath: file.path) {
+                            DLOG("file DELETED from iCloud: \(file)")
+                            deleteFromDatastore(file)
+                        } else {
+                            queue.sync {
+                                filesDownloaded.insert(file)
+                                insertDownloadedFile(file)
+                            }
                         }
                     default: DLOG("\(file.lastPathComponent): download status: \(downloadStatus)")
                 }
@@ -410,7 +422,7 @@ class SaveStateSyncer: iCloudTypeSyncer {
     }
     
     func setNewCloudFilesAvailable() {
-        didFinishDownloadingAllFiles = pendingFilesToDownload.isEmpty
+        didFinishDownloadingAllFiles = pendingFilesToDownload.isEmpty && !newFiles.isEmpty
     }
     
     var directory: String {
@@ -528,6 +540,7 @@ class RomsSyncer: iCloudTypeSyncer {
     var didFinishDownloadingAllFiles = false
     var newFiles: Set<URL> = []
     var pendingFilesToDownload: Set<String> = []
+
     init() {
         NotificationCenter.default.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil, using: handleNewRomFiles)
     }
@@ -541,7 +554,7 @@ class RomsSyncer: iCloudTypeSyncer {
     }
     
     func setNewCloudFilesAvailable() {
-        didFinishDownloadingAllFiles = pendingFilesToDownload.isEmpty
+        didFinishDownloadingAllFiles = pendingFilesToDownload.isEmpty && !newFiles.isEmpty
     }
     
     /// sends a notification that rom files are ready to e
@@ -570,6 +583,34 @@ class RomsSyncer: iCloudTypeSyncer {
         }
         
         newFiles.insert(file)
+    }
+    
+    func deleteFromDatastore(_ file: URL) {
+        guard let fileName = file.lastPathComponent.removingPercentEncoding,
+              let parentDirectory = file.deletingLastPathComponent().lastPathComponent.removingPercentEncoding
+        else {
+            return
+        }
+        do {
+            let realm = try Realm()
+            let romPath = "\(parentDirectory)/\(fileName)"
+            DLOG("attempting to query PVGame by romPath: \(romPath)")
+            let results = realm.objects(PVGame.self).filter(NSPredicate(format: "\(NSExpression(forKeyPath: \PVGame.romPath.self).keyPath) == %@", romPath))
+            guard let game: PVGame = results.first
+            else {
+                return
+            }
+            
+            try realm.write {
+                game.saveStates.forEach { try? $0.delete() }
+                game.cheats.forEach { try? $0.delete() }
+                game.recentPlays.forEach { try? $0.delete() }
+                game.screenShots.forEach { try? $0.delete() }
+                realm.delete(game)
+            }
+        } catch {
+            ELOG(error.localizedDescription)
+        }
     }
     
     func handleNewRomFiles() {
