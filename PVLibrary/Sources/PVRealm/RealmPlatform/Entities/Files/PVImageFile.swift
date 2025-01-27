@@ -50,6 +50,7 @@ public final class PVImageFile: PVFile {
     }
 
     private func calculateSizeData() { // async {
+        //TODO: path is wrong when switching to iCloud
         let path = url.path
 
 //        let size = await Task { () -> CGSize in
