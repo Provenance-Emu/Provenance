@@ -112,6 +112,7 @@ public extension PVFile {
     var urlUpdate:URL {
         get {
             print("relativeRoot=\(relativeRoot)\tpartialPath=\(partialPath)")
+            //TODO: lazy load this so it's only done once
             let pathSuffix: String
             if let bundleIdentifier = Bundle.main.bundleIdentifier {
                 print("Bundle Identifier: \(bundleIdentifier)")
