@@ -140,6 +140,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                     iterationComplete?()
                 }
             }
+        //TODO: unsure if the Task doesn't work with NSMetadataQuery or if there's some other issue.
 //        Task { @MainActor [weak self] in
         DispatchQueue.main.async { [weak self] in
             self?.metadataQuery.start()
