@@ -140,8 +140,8 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                     iterationComplete?()
                 }
             }
-        Task { @MainActor [weak self] in
-//        DispatchQueue.main.async { [weak self] in
+//        Task { @MainActor [weak self] in
+        DispatchQueue.main.async { [weak self] in
             self?.metadataQuery.start()
         }
     }
@@ -310,6 +310,7 @@ public enum iCloudSync {
     static var biosSyncer: BiosSyncer!
     static var batterySavesSyncer: BatterySavesSyncer!
     static var screenshotsSyncer: ScreenshotsSyncer!
+    static var gameImporter = GameImporter.shared
     
     public static func initICloudDocuments() {
         Task {
@@ -339,6 +340,8 @@ public enum iCloudSync {
     
     static func turnOn() {
         DLOG("turning on iCloud")
+        //reset ROMs path
+        gameImporter.gameImporterDatabaseService.setRomsPath(url: gameImporter.romsPath)
         //TODO: move files from local to cloud container
         let fm = FileManager.default
         if let currentiCloudToken = fm.ubiquityIdentityToken {
@@ -412,6 +415,8 @@ public enum iCloudSync {
     static func turnOff() {
         DLOG("turning off iCloud")
         disposeBag = nil
+        //reset ROMs path
+        gameImporter.gameImporterDatabaseService.setRomsPath(url: gameImporter.romsPath)
         //TODO: remove iCloud downloads. do we also copy those files locally?
     }
 }
