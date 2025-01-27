@@ -47,8 +47,7 @@ public protocol iCloudTypeSyncer: Container {
     var directory: String { get }
     var metadataQuery: NSMetadataQuery { get }
 
-    func loadAllFromICloud(iterationComplete: @escaping () -> Void) -> Completable
-    func removeAllFromICloud() -> Completable
+    func loadAllFromICloud(iterationComplete: (() -> Void)?) -> Completable
     func insertDownloadingFile(_ file: URL)
     func insertDownloadedFile(_ file: URL)
     func deleteFromDatastore(_ file: URL)
@@ -72,7 +71,23 @@ final class NotificationObserver {
     }
 }
 
-extension iCloudTypeSyncer {
+class iCloudContainerSyncer: iCloudTypeSyncer {
+    lazy var pendingFilesToDownload: Set<String> = []
+    lazy var newFiles: Set<URL> = []
+    let directory: String
+    
+    init(directory: String) {
+        self.directory = directory
+    }
+    
+    deinit {
+        metadataQuery.disableUpdates()
+        metadataQuery.stop()
+        DLOG("dying")
+    }
+    
+    var metadataQuery: NSMetadataQuery = .init()
+    
     func insertDownloadingFile(_ file: URL) {
         //no-op
     }
@@ -89,100 +104,45 @@ extension iCloudTypeSyncer {
         //no-op
     }
     
-    func loadAllFromICloud(iterationComplete: @escaping () -> Void) -> Completable {
-        return Completable.create { completable in
-            //body mustn't run in a task, otherwise the NotificationObserver closure won't get called
-            guard containerURL != nil
-            else {
-                completable(.error(SyncError.noUbiquityURL))
-                return Disposables.create {}
-            }
-            self.metadataQuery.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
-            DLOG("directory: \(directory)")
-            metadataQuery.predicate = NSPredicate(format: "%K CONTAINS[c] %@", NSMetadataItemPathKey, "/Documents/\(directory)/")
-            //TODO: update to use Publishers.MergeMany
-            let _: NotificationObserver = .init(
-                forName: .NSMetadataQueryDidFinishGathering,
-                object: self.metadataQuery,
-                queue: nil) { notification in
-                    Task {
-                        await queryFinished(notification: notification)
-//                        completable(.completed)
-                        iterationComplete()
-                    }
-                }
-            //listen for deletions and new files. what about conflicts?
-            let _: NotificationObserver = .init(
-                forName: .NSMetadataQueryDidUpdate,
-                object: self.metadataQuery,
-                queue: nil) { notification in
-                    Task {
-                        await queryFinished(notification: notification)
-//                        completable(.completed)
-                        iterationComplete()
-                    }
-                }
-            
-            self.metadataQuery.start()
-            return Disposables.create {}
+    func loadAllFromICloud(iterationComplete: (() -> Void)? = nil) -> Completable {
+        return Completable.create { [weak self] completable in
+            self?.setupObservers(completable: completable, iterationComplete: iterationComplete)
+            return Disposables.create()
         }
     }
-
-    public func removeAllFromICloud() -> Completable {
-        return Completable.create { completable in
-            Task {
-
-                guard self.containerURL != nil else {
-                    completable(.error(SyncError.noUbiquityURL))
-                    return Disposables.create {}
-                }
-                return Disposables.create {}
-            }
-            //        metadataQuery = NSMetadataQuery()
-            self.metadataQuery.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
-//            self.metadataQuery.predicate = self.metadataQueryPredicate
-
-            let token: NSObjectProtocol? = NotificationCenter.default.addObserver(
-                forName: Notification.Name.NSMetadataQueryDidFinishGathering,
-                object: self.metadataQuery,
-                queue: nil) { notification in
-                    self.removeQueryFinished(notification: notification)
-//                    if let token = token {
-//                        NotificationCenter.default.removeObserver(token)
-//                    }
-                    completable(.completed)
-                }
-
-//            token = NotificationCenter.default.addObserver(
-//                forName: Notification.Name.NSMetadataQueryDidUpdate,
-//                object: self.metadataQuery,
-//                queue: nil) { notification in
-//                    self.queryFinished(notification: notification)
-//                }
-            self.metadataQuery.start()
-            return Disposables.create {
-                if let token = token {
-                    NotificationCenter.default.removeObserver(token)
-                }
-            }
+    
+    func setupObservers(completable: PrimitiveSequenceType.CompletableObserver, iterationComplete: (() -> Void)? = nil) {
+        guard containerURL != nil
+        else {
+            completable(.error(SyncError.noUbiquityURL))
+            return
         }
-    }
-
-    func removeQueryFinished(notification: Notification) {
-        let mq = notification.object as! NSMetadataQuery
-        mq.disableUpdates()
-        mq.stop()
-
-        for i in 0..<mq.resultCount {
-            let result = mq.result(at: i) as! NSMetadataItem
-            let url = result.value(forAttribute: NSMetadataItemURLKey) as! URL
-
-            // Remove all items in icloud
-            do {
-                try FileManager.default.removeItem(at: url)
-            } catch {
-                ELOG("error: \(error.localizedDescription)")
+        metadataQuery.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
+        DLOG("directory: \(directory)")
+        metadataQuery.predicate = NSPredicate(format: "%K CONTAINS[c] %@", NSMetadataItemPathKey, "/Documents/\(directory)/")
+        //TODO: update to use Publishers.MergeMany
+        let _: NotificationObserver = .init(
+            forName: .NSMetadataQueryDidFinishGathering,
+            object: metadataQuery,
+            queue: nil) { [weak self] notification in
+                Task {
+                    await self?.queryFinished(notification: notification)
+                    iterationComplete?()
+                }
             }
+        //listen for deletions and new files. what about conflicts?
+        let _: NotificationObserver = .init(
+            forName: .NSMetadataQueryDidUpdate,
+            object: metadataQuery,
+            queue: nil) { [weak self] notification in
+                Task {
+                    await self?.queryFinished(notification: notification)
+                    iterationComplete?()
+                }
+            }
+        Task { @MainActor [weak self] in
+//        DispatchQueue.main.async { [weak self] in
+            self?.metadataQuery.start()
         }
     }
     
@@ -200,7 +160,7 @@ extension iCloudTypeSyncer {
         DLOG("\(directory): removedObjects: \(removedObjects)")
         
         //accessing results automatically pauses updates and resumes after deallocated
-        await metadataQuery.results.concurrentForEach { item in
+        await metadataQuery.results.concurrentForEach { [weak self] item in
             if let fileItem = item as? NSMetadataItem,
                let file = fileItem.value(forAttribute: NSMetadataItemURLKey) as? URL,
                let isDirectory = try? file.resourceValues(forKeys: [.isDirectoryKey]).isDirectory,
@@ -213,7 +173,7 @@ extension iCloudTypeSyncer {
                             try fileManager.startDownloadingUbiquitousItem(at: file)
                             queue.sync {
                                 files.insert(file)
-                                insertDownloadingFile(file)
+                                self?.insertDownloadingFile(file)
                             }
                             DLOG("Download started for: \(file.lastPathComponent)")
                         } catch {
@@ -223,11 +183,11 @@ extension iCloudTypeSyncer {
                         DLOG("item up to date: \(file)")
                         if !fileManager.fileExists(atPath: file.path) {
                             DLOG("file DELETED from iCloud: \(file)")
-                            deleteFromDatastore(file)
+                            self?.deleteFromDatastore(file)
                         } else {
                             queue.sync {
                                 filesDownloaded.insert(file)
-                                insertDownloadedFile(file)
+                                self?.insertDownloadedFile(file)
                             }
                         }
                     default: DLOG("\(file.lastPathComponent): download status: \(downloadStatus)")
@@ -345,10 +305,41 @@ enum iCloudError: Error {
 }
 
 public enum iCloudSync {
-    static let disposeBag: DisposeBag = DisposeBag()
-    static let saveStateSyncer = SaveStateSyncer()
-    static let romsSyncer = RomsSyncer()
+    static var disposeBag: DisposeBag!
+    static var saveStateSyncer: SaveStateSyncer!
+    static var biosSyncer: BiosSyncer!
+    static var batterySavesSyncer: BatterySavesSyncer!
+    static var screenshotsSyncer: ScreenshotsSyncer!
+    
     public static func initICloudDocuments() {
+        Task {
+            for await value in Defaults.updates(.iCloudSync) {
+                iCloudSyncChanged(value)
+            }
+        }
+    }
+    
+    static func iCloudSyncChanged(_ newValue: Bool) {
+        DLOG("new iCloudSync value: \(newValue)")
+        guard newValue
+        else {
+            turnOff()
+            return
+        }
+
+        guard URL.supportsICloud else {
+            DLOG("attempted to turn on iCloud, but iCloud is NOT setup on the device")
+            return
+        }
+//        Task { @MainActor in
+//        DispatchQueue.main.async {
+            turnOn()
+//        }
+    }
+    
+    static func turnOn() {
+        DLOG("turning on iCloud")
+        //TODO: move files from local to cloud container
         let fm = FileManager.default
         if let currentiCloudToken = fm.ubiquityIdentityToken {
             do {
@@ -362,6 +353,9 @@ public enum iCloudSync {
         }
 
         //TODO: should we pause when a game starts so we don't interfere with the game and continue listening when no game is running?
+        disposeBag = DisposeBag()
+        
+        saveStateSyncer = .init(notificationCenter: .default)
         saveStateSyncer.loadAllFromICloud() {
             saveStateSyncer.importNewSaves()
         }.observe(on: MainScheduler.instance)
@@ -370,70 +364,83 @@ public enum iCloudSync {
             ELOG(error.localizedDescription)
         }) {
             DLOG("disposing saveStateSyncer")
+            saveStateSyncer = nil
+            
         }.disposed(by: disposeBag)
+        
+        var romsSyncer: RomsSyncer! = .init(notificationCenter: .default)
         romsSyncer.loadAllFromICloud() {
-            romsSyncer.handleNewRomFiles()
-        }.observe(on: MainScheduler.instance)
-        .subscribe(onCompleted: {
-        }, onError: { error in
-            ELOG(error.localizedDescription)
-        }){
-            DLOG("disposing romsSyncer")
-        }.disposed(by: disposeBag)
-        let biosSyncer = BiosSyncer()
-        biosSyncer.loadAllFromICloud() {
-            
-        }.observe(on: MainScheduler.instance)
-        .subscribe(onCompleted: {
-            //no-op because nothing needs to be imported into the db
-        }) { error in
-            ELOG(error.localizedDescription)
-        }.disposed(by: disposeBag)
-        let batterySaveSyncer = BatterySavesSyncer()
-        batterySaveSyncer.loadAllFromICloud() {
-            
-        }.observe(on: MainScheduler.instance)
-        .subscribe(onCompleted: {
-            //no-op because nothing needs to be imported into the db
-        }) { error in
-            ELOG(error.localizedDescription)
-        }.disposed(by: disposeBag)
-        let screenshotsSyncer = ScreenshotsSyncer()
-        screenshotsSyncer.loadAllFromICloud() {
-        }.observe(on: MainScheduler.instance)
-        .subscribe(onCompleted: {
-            //no-op because nothing needs to be imported into the db
-        }) { error in
-            ELOG(error.localizedDescription)
-        }.disposed(by: disposeBag)
+                romsSyncer.importNewRomFiles()
+            }.observe(on: MainScheduler.instance)
+            .subscribe(onError: { error in
+                ELOG(error.localizedDescription)
+            }) {
+                DLOG("disposing romsSyncer")
+//                romsSyncer.removeObservers()
+                romsSyncer = nil
+            }.disposed(by: disposeBag)
+        //TODO: set the following to merge onto a single class that just does a query for icloud for all of those directories.
+        biosSyncer = .init()
+        biosSyncer.loadAllFromICloud()
+            .observe(on: MainScheduler.instance)
+            .subscribe(onError: { error in
+                ELOG(error.localizedDescription)
+            }) {
+                DLOG("disposing BiosSyncer")
+                biosSyncer = nil
+            }.disposed(by: disposeBag)
+        batterySavesSyncer = .init()
+        batterySavesSyncer.loadAllFromICloud()
+            .observe(on: MainScheduler.instance)
+            .subscribe(onError: { error in
+                ELOG(error.localizedDescription)
+            }) {
+                DLOG("disposing BatterySavesSyncer")
+                batterySavesSyncer = nil
+            }.disposed(by: disposeBag)
+        screenshotsSyncer = .init()
+        screenshotsSyncer.loadAllFromICloud()
+            .observe(on: MainScheduler.instance)
+            .subscribe(onError: { error in
+                ELOG(error.localizedDescription)
+            }) {
+                DLOG("disposing ScreenshotsSyncer")
+                screenshotsSyncer = nil
+            }.disposed(by: disposeBag)
+    }
+    
+    static func turnOff() {
+        DLOG("turning off iCloud")
+        disposeBag = nil
+        //TODO: remove iCloud downloads. do we also copy those files locally?
     }
 }
 //TODO: perhaps 1 generic class since a lot of this code is similar and move the extension onto generic class. we could just add a protocol delegate dependency for ROMs and SaveState classes that does specific code
-class SaveStateSyncer: iCloudTypeSyncer {
-    var metadataQuery: NSMetadataQuery = .init()
-    var pendingFilesToDownload: Set<String> = []
-    var newFiles: Set<URL> = []
+class SaveStateSyncer: iCloudContainerSyncer {
     var didFinishDownloadingAllFiles = false
-    init() {
-        NotificationCenter.default.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil, using: importNewSaves)
-    }
-    deinit {
-        DLOG("dying")
+    let notificationCenter: NotificationCenter
+    
+    init(notificationCenter: NotificationCenter) {
+        self.notificationCenter = notificationCenter
+        super.init(directory: "Save States")
+        notificationCenter.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil) { [weak self] _ in
+            self?.importNewSaves()
+        }
     }
     
-    func setNewCloudFilesAvailable() {
+    deinit {
+        notificationCenter.removeObserver(self)
+    }
+    
+    override func setNewCloudFilesAvailable() {
         didFinishDownloadingAllFiles = pendingFilesToDownload.isEmpty && !newFiles.isEmpty
     }
     
-    var directory: String {
-        "Save States"
-    }
-    
-    func insertDownloadingFile(_ file: URL) {
+    override func insertDownloadingFile(_ file: URL) {
         pendingFilesToDownload.insert(file.absoluteString)
     }
     
-    func insertDownloadedFile(_ file: URL) {
+    override func insertDownloadedFile(_ file: URL) {
         guard let _ = pendingFilesToDownload.remove(file.absoluteString),
               "json".caseInsensitiveCompare(file.pathExtension) == .orderedSame
         else {
@@ -443,14 +450,9 @@ class SaveStateSyncer: iCloudTypeSyncer {
         newFiles.insert(file)
     }
     
-    func deleteFromDatastore(_ file: URL) {
+    override func deleteFromDatastore(_ file: URL) {
 //        PVSaveState
         //TODO: delete from database
-    }
-    
-    func importNewSaves(_ notification: Notification) {
-        NotificationCenter.default.removeObserver(self)
-        importNewSaves()
     }
     
     func importNewSaves() {
@@ -539,40 +541,31 @@ class SaveStateSyncer: iCloudTypeSyncer {
     }
 }
 
-class RomsSyncer: iCloudTypeSyncer {
-    var metadataQuery: NSMetadataQuery = .init()
+class RomsSyncer: iCloudContainerSyncer {
     let gameImporter = GameImporter.shared
     var didFinishDownloadingAllFiles = false
-    var newFiles: Set<URL> = []
-    var pendingFilesToDownload: Set<String> = []
-
-    init() {
-        NotificationCenter.default.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil, using: handleNewRomFiles)
+    let notificationCenter: NotificationCenter
+    init(notificationCenter: NotificationCenter) {
+        self.notificationCenter = notificationCenter
+        super.init(directory: "ROMs")
+        notificationCenter.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil) { [weak self] _ in
+            self?.importNewRomFiles()
+        }
     }
     
     deinit {
-        DLOG("dying")
+        notificationCenter.removeObserver(self)
     }
     
-    var directory: String {
-        "ROMs"
-    }
-    
-    func setNewCloudFilesAvailable() {
+    override func setNewCloudFilesAvailable() {
         didFinishDownloadingAllFiles = pendingFilesToDownload.isEmpty && !newFiles.isEmpty
     }
     
-    /// sends a notification that rom files are ready to e
-    func handleNewRomFiles(_ notification: Notification) {
-        NotificationCenter.default.removeObserver(self)
-        handleNewRomFiles()
-    }
-    
-    func insertDownloadingFile(_ file: URL) {
+    override func insertDownloadingFile(_ file: URL) {
         pendingFilesToDownload.insert(file.absoluteString)
     }
     
-    func insertDownloadedFile(_ file: URL) {
+    override func insertDownloadedFile(_ file: URL) {
         guard let _ = pendingFilesToDownload.remove(file.absoluteString)
         else {
             return
@@ -590,7 +583,7 @@ class RomsSyncer: iCloudTypeSyncer {
         newFiles.insert(file)
     }
     
-    func deleteFromDatastore(_ file: URL) {
+    override func deleteFromDatastore(_ file: URL) {
         guard let fileName = file.lastPathComponent.removingPercentEncoding,
               let parentDirectory = file.deletingLastPathComponent().lastPathComponent.removingPercentEncoding
         else {
@@ -618,7 +611,7 @@ class RomsSyncer: iCloudTypeSyncer {
         }
     }
     
-    func handleNewRomFiles() {
+    func importNewRomFiles() {
         guard RomDatabase.databaseInitialized
         else {
             return
@@ -639,38 +632,20 @@ class RomsSyncer: iCloudTypeSyncer {
     }
 }
 
-class BiosSyncer: iCloudTypeSyncer {
-    var metadataQuery: NSMetadataQuery = .init()
-    
-    var directory: String {
-        "BIOS"
-    }
-    
-    deinit {
-        DLOG("dying")
+class BiosSyncer: iCloudContainerSyncer {
+    convenience init() {
+        self.init(directory: "BIOS")
     }
 }
 
-class BatterySavesSyncer: iCloudTypeSyncer {
-    var metadataQuery: NSMetadataQuery = .init()
-    
-    var directory: String {
-        "Battery Saves"
-    }
-    
-    deinit {
-        DLOG("dying")
+class BatterySavesSyncer: iCloudContainerSyncer {
+    convenience init() {
+        self.init(directory: "Battery Saves")
     }
 }
 
-class ScreenshotsSyncer: iCloudTypeSyncer {
-    var metadataQuery: NSMetadataQuery = .init()
-    //TODO: I think a base class that accepts the directory in the initializer may be better than this
-    var directory: String {
-        "Screenshots"
-    }
-    
-    deinit {
-        DLOG("dying")
+class ScreenshotsSyncer: iCloudContainerSyncer {
+    convenience init() {
+        self.init(directory: "Screenshots")
     }
 }
