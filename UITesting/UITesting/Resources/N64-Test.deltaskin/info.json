@@ -1,0 +1,167 @@
+{
+    "name": "N64 Test Skin",
+    "identifier": "com.provenance.test.n64",
+    "gameTypeIdentifier": "com.rileytestut.delta.game.n64",
+    "debug": false,
+    "representations": {
+        "iphone": {
+            "standard": {
+                "landscape": {
+                    "assets": {
+                        "resizable": "iphone_landscape.pdf"
+                    },
+                    "screens": [
+                        {
+                            "inputFrame": {
+                                "x": 0,
+                                "y": 0,
+                                "width": 320,
+                                "height": 240
+                            },
+                            "outputFrame": {
+                                "x": 50,
+                                "y": 0,
+                                "width": 796,
+                                "height": 414
+                            },
+                            "filters": [
+                                {
+                                    "name": "CIStretch",
+                                    "parameters": {
+                                        "inputScale": {
+                                            "x": 1.33,
+                                            "y": 1.0
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "mappingSize": {
+                        "width": 896,
+                        "height": 414
+                    }
+                }
+            },
+            "edgeToEdge": {
+                "landscape": {
+                    "assets": {
+                        "resizable": "iphone_edge.pdf"
+                    },
+                    "screens": [
+                        {
+                            "inputFrame": {
+                                "x": 0,
+                                "y": 0,
+                                "width": 320,
+                                "height": 240
+                            },
+                            "outputFrame": {
+                                "x": 0,
+                                "y": 0,
+                                "width": 896,
+                                "height": 414
+                            }
+                        }
+                    ],
+                    "mappingSize": {
+                        "width": 896,
+                        "height": 414
+                    }
+                }
+            }
+        },
+        "ipad": {
+            "standard": {
+                "portrait": {
+                    "assets": {
+                        "resizable": "ipad_portrait.pdf"
+                    },
+                    "screens": [
+                        {
+                            "inputFrame": {
+                                "x": 0,
+                                "y": 0,
+                                "width": 320,
+                                "height": 240
+                            },
+                            "outputFrame": {
+                                "x": 50,
+                                "y": 100,
+                                "width": 924,
+                                "height": 693
+                            },
+                            "filters": [
+                                {
+                                    "name": "CIColorControls",
+                                    "parameters": {
+                                        "inputBrightness": 0.1,
+                                        "inputContrast": 1.1,
+                                        "inputSaturation": 1.2
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "mappingSize": {
+                        "width": 1024,
+                        "height": 1366
+                    }
+                },
+                "landscape": {
+                    "assets": {
+                        "resizable": "ipad_landscape.pdf"
+                    },
+                    "screens": [
+                        {
+                            "inputFrame": {
+                                "x": 0,
+                                "y": 0,
+                                "width": 320,
+                                "height": 240
+                            },
+                            "outputFrame": {
+                                "x": 50,
+                                "y": 50,
+                                "width": 1266,
+                                "height": 668
+                            }
+                        }
+                    ],
+                    "mappingSize": {
+                        "width": 1366,
+                        "height": 1024
+                    }
+                }
+            },
+            "splitView": {
+                "portrait": {
+                    "assets": {
+                        "resizable": "ipad_split_portrait.pdf"
+                    },
+                    "screens": [
+                        {
+                            "inputFrame": {
+                                "x": 0,
+                                "y": 0,
+                                "width": 320,
+                                "height": 240
+                            },
+                            "outputFrame": {
+                                "x": 20,
+                                "y": 20,
+                                "width": 460,
+                                "height": 345
+                            },
+                            "placement": "app"
+                        }
+                    ],
+                    "mappingSize": {
+                        "width": 500,
+                        "height": 800
+                    }
+                }
+            }
+        }
+    }
+}
