@@ -52,6 +52,10 @@ public final class PVImageFile: PVFile {
     private func calculateSizeData() { // async {
         //TODO: path is wrong when switching to iCloud
         let path = url.path
+        if path.contains("var/mobile/Containers/Data/Application")
+            && (path.contains("Mobile%20Documents") || path.contains("Mobile Documents")) {
+            ELOG("invalid path: \(path)")
+        }
 
 //        let size = await Task { () -> CGSize in
             #if canImport(UIKit)
