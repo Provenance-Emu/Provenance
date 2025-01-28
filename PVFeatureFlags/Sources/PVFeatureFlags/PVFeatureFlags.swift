@@ -58,6 +58,12 @@ public struct FeatureFlag: Codable, Sendable {
         self.allowedAppTypes = allowedAppTypes
         self.description = description
     }
+
+    /// Enables advanced skin features like filters and debug mode
+    public static let advancedSkinFeatures = FeatureFlag(
+        enabled: true,
+        description: "Enables advanced skin features like filters and debug mode"
+    )
 }
 
 /// Root structure for feature flags JSON

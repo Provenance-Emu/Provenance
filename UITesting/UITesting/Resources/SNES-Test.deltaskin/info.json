@@ -1,0 +1,64 @@
+{
+    "name": "SNES Test Skin",
+    "identifier": "com.provenance.test.snes",
+    "gameTypeIdentifier": "com.rileytestut.delta.game.snes",
+    "debug": false,
+    "representations": {
+        "iphone": {
+            "standard": {
+                "landscape": {
+                    "assets": {
+                        "resizable": "iphone_landscape.pdf"
+                    },
+                    "screens": [
+                        {
+                            "inputFrame": {
+                                "x": 0,
+                                "y": 0,
+                                "width": 256,
+                                "height": 224
+                            },
+                            "outputFrame": {
+                                "x": 50,
+                                "y": 0,
+                                "width": 796,
+                                "height": 414
+                            }
+                        }
+                    ],
+                    "mappingSize": {
+                        "width": 896,
+                        "height": 414
+                    }
+                }
+            },
+            "edgeToEdge": {
+                "landscape": {
+                    "assets": {
+                        "resizable": "iphone_edge.pdf"
+                    },
+                    "screens": [
+                        {
+                            "inputFrame": {
+                                "x": 0,
+                                "y": 0,
+                                "width": 256,
+                                "height": 224
+                            },
+                            "outputFrame": {
+                                "x": 0,
+                                "y": 0,
+                                "width": 896,
+                                "height": 414
+                            }
+                        }
+                    ],
+                    "mappingSize": {
+                        "width": 896,
+                        "height": 414
+                    }
+                }
+            }
+        }
+    }
+}

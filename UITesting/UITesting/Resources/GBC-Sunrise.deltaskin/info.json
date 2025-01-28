@@ -1,0 +1,248 @@
+{
+  "name": "GBC Sunrise by MessieJessy",
+  "identifier": "com.litritt.ignited.sunrise.gbc",
+  "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+  "debug": false,
+  "representations": {
+    "iphone": {
+      "standard": {
+        "portrait": {
+          "assets": {
+            "small": "iphone-portrait.png",
+            "medium": "iphone-portrait.png",
+            "large": "iphone-portrait.png"
+          },
+          "items": [
+            {
+              "inputs": {
+                "up": "up",
+                "down": "down",
+                "left": "left",
+                "right": "right"
+              },
+              "frame": {
+                "x": 15,
+                "y": 75,
+                "width": 164,
+                "height": 164
+              },
+              "extendedEdges": {
+                "top": 12,
+                "right": 12, 
+                "bottom": 12,
+                "left": 12
+              }
+            },
+            {
+              "inputs": [
+                "a"
+              ],
+              "frame": {
+                "x": 316,
+                "y": 84,
+                "width": 75,
+                "height": 75
+              }
+            },
+            {
+              "inputs": [
+                "b"
+              ],
+              "frame": {
+                "x": 231,
+                "y": 161,
+                "width": 75,
+                "height": 75
+              }
+            },
+            {
+              "inputs": [
+                "start"
+              ],
+              "frame": {
+                "x": 230,
+                "y": 270,
+                "width": 40,
+                "height": 18
+              },
+              "extendedEdges": {
+                "bottom": 15
+              }
+            },
+            {
+              "inputs": [
+                "select"
+              ],
+              "frame": {
+                "x": 144,
+                "y": 270,
+                "width": 40,
+                "height": 18
+              },
+              "extendedEdges": {
+                "bottom": 15
+              }
+            },
+            {
+              "inputs": [
+                "menu"
+              ],
+              "frame": {
+                "x": 15,
+                "y": 270,
+                "width": 40,
+                "height": 18
+              },
+              "extendedEdges": {
+                "bottom": 15
+              }
+            },
+            {
+              "inputs": [
+                "toggleFastForward"
+              ],
+              "frame": {
+                "x": 359,
+                "y": 270,
+                "width": 40,
+                "height": 18
+              },
+              "extendedEdges": {
+                "bottom": 15
+              }
+            }
+          ],
+          "mappingSize": {
+            "width": 414,
+            "height": 313
+          },
+          "extendedEdges": {
+            "top": 10,
+            "bottom": 10,
+            "left": 10,
+            "right": 10
+          }
+        }
+      },
+      "edgeToEdge": {
+        "portrait": {
+          "assets": {
+            "small": "iphone-e2e-portrait.png",
+            "medium": "iphone-e2e-portrait.png",
+            "large": "iphone-e2e-portrait.png"
+          },
+          "items": [
+            {
+              "inputs": {
+                "up": "up",
+                "down": "down",
+                "left": "left",
+                "right": "right"
+              },
+              "frame": {
+                "x": 15,
+                "y": 75,
+                "width": 164,
+                "height": 164
+              },
+              "extendedEdges": {
+                "top": 12,
+                "right": 12, 
+                "bottom": 12,
+                "left": 12
+              }
+            },
+            {
+              "inputs": [
+                "a"
+              ],
+              "frame": {
+                "x": 316,
+                "y": 84,
+                "width": 75,
+                "height": 75
+              }
+            },
+            {
+              "inputs": [
+                "b"
+              ],
+              "frame": {
+                "x": 231,
+                "y": 161,
+                "width": 75,
+                "height": 75
+              }
+            },
+            {
+              "inputs": [
+                "start"
+              ],
+              "frame": {
+                "x": 230,
+                "y": 270,
+                "width": 40,
+                "height": 18
+              },
+              "extendedEdges": {
+                "bottom": 15
+              }
+            },
+            {
+              "inputs": [
+                "select"
+              ],
+              "frame": {
+                "x": 144,
+                "y": 270,
+                "width": 40,
+                "height": 18
+              },
+              "extendedEdges": {
+                "bottom": 15
+              }
+            },
+            {
+              "inputs": [
+                "menu"
+              ],
+              "frame": {
+                "x": 15,
+                "y": 270,
+                "width": 40,
+                "height": 18
+              },
+              "extendedEdges": {
+                "bottom": 15
+              }
+            },
+            {
+              "inputs": [
+                "toggleFastForward"
+              ],
+              "frame": {
+                "x": 359,
+                "y": 270,
+                "width": 40,
+                "height": 18
+              },
+              "extendedEdges": {
+                "bottom": 15
+              }
+            }
+          ],
+          "mappingSize": {
+            "width": 414,
+            "height": 354
+          },
+          "extendedEdges": {
+            "top": 10,
+            "bottom": 10,
+            "left": 10,
+            "right": 10
+          }
+        }
+      }
+    }
+  }
+}

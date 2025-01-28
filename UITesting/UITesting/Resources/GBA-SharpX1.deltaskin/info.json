@@ -1,0 +1,397 @@
+{
+  "name" : "SHARP X1",
+  "identifier" : "com.failyx.sharp.x1",
+  "gameTypeIdentifier" : "com.rileytestut.delta.game.gba",
+  "debug" : false,
+  "representations" : {
+    "iphone" : {
+      "standard" : {
+        "portrait" : {
+          "assets" : {
+            "resizable" : "iphone_portrait.pdf"
+          },
+          "items" : [
+            {
+              "inputs" : {
+                "up" : "up",
+                "down" : "down",
+                "left" : "left",
+                "right" : "right"
+              },
+              "frame" : {
+                "x" : 26,
+                "y" : 757,
+                "width" : 339,
+                "height" : 339
+              },
+              "extendedEdges" : {
+                "top" : 15,
+                "bottom" : 15,
+                "left" : 15,
+                "right" : 15
+              }
+            },
+            {
+              "inputs" : [
+                "a"
+              ],
+              "frame" : {
+                "x" : 598,
+                "y" : 962,
+                "width" : 137,
+                "height" : 137
+              },
+              "extendedEdges" : {
+                "right" : 15
+              }
+            },
+            {
+              "inputs" : [
+                "b"
+              ],
+              "frame" : {
+                "x" : 420,
+                "y" : 962,
+                "width" : 137,
+                "height" : 137
+              }
+            },
+            {
+              "inputs" : [
+                "l"
+              ],
+              "frame" : {
+                "x" : 576,
+                "y" : 1230,
+                "width" : 155,
+                "height" : 55
+              }
+            },
+            {
+              "inputs" : [
+                "menu"
+              ],
+              "frame" : {
+                "x" : 0,
+                "y" : 1217,
+                "width" : 98,
+                "height" : 117
+              },
+              "extendedEdges" : {
+                "left" : 0,
+                "bottom" : 0
+              }
+            }
+          ],
+          "gameScreenFrame" : {
+            "x" : 0,
+            "y" : 79,
+            "width" : 750,
+            "height" : 503
+          },
+          "mappingSize" : {
+            "width" : 750,
+            "height" : 1334
+          },
+          "extendedEdges" : {
+            "top" : 7,
+            "bottom" : 7,
+            "left" : 7,
+            "right" : 7
+          }
+        },
+        "landscape" : {
+          "assets" : {
+            "resizable" : "iphone_landscape.pdf"
+          },
+          "items" : [
+            {
+              "inputs" : {
+                "up" : "up",
+                "down" : "down",
+                "left" : "left",
+                "right" : "right"
+              },
+              "frame" : {
+                "x" : 37,
+                "y" : 287,
+                "width" : 186,
+                "height" : 186
+              },
+              "extendedEdges" : {
+                "left" : 20,
+                "top" : 20,
+                "right" : 20,
+                "bottom" : 20
+              }
+            },
+            {
+              "inputs" : [
+                "a"
+              ],
+              "frame" : {
+                "x" : 786,
+                "y" : 396,
+                "width" : 77,
+                "height" : 77
+              },
+              "extendedEdges" : {
+                "top" : 0,
+                "bottom" : 0,
+                "left" : 0,
+                "right" : 15
+              }
+            },
+            {
+              "inputs" : [
+                "b"
+              ],
+              "frame" : {
+                "x" : 686,
+                "y" : 396,
+                "width" : 77,
+                "height" : 77
+              },
+              "extendedEdges" : {
+                "top" : 0,
+                "bottom" : 15,
+                "left" : 0,
+                "right" : 0
+              }
+            },
+            {
+              "inputs" : [
+                "l"
+              ],
+              "frame" : {
+                "x" : 795,
+                "y" : 271,
+                "width" : 81,
+                "height" : 30
+              }
+            },
+            {
+              "inputs" : [
+                "menu"
+              ],
+              "frame" : {
+                "x" : 450,
+                "y" : 423,
+                "width" : 49,
+                "height" : 77
+              }
+            }
+          ],
+          "gameScreenFrame" : {
+            "x" : 178,
+            "y" : 0,
+            "width" : 594,
+            "height" : 335
+          },
+          "mappingSize" : {
+            "width" : 889,
+            "height" : 500
+          },
+          "extendedEdges" : {
+            "top" : 15,
+            "bottom" : 15,
+            "left" : 15,
+            "right" : 15
+          },
+          "translucent" : false
+        }
+      },
+      "edgeToEdge" : {
+        "portrait" : {
+          "assets" : {
+            "resizable" : "iphone_edgetoedge_portrait.pdf"
+          },
+          "items" : [
+            {
+              "inputs" : {
+                "up" : "up",
+                "down" : "down",
+                "left" : "left",
+                "right" : "right"
+              },
+              "frame" : {
+                "x" : 13,
+                "y" : 604,
+                "width" : 221,
+                "height" : 221
+              },
+              "extendedEdges" : {
+                "top" : 15,
+                "bottom" : 15,
+                "left" : 15,
+                "right" : 15
+              }
+            },
+            {
+              "inputs" : [
+                "a"
+              ],
+              "frame" : {
+                "x" : 386,
+                "y" : 737,
+                "width" : 90,
+                "height" : 90
+              },
+              "extendedEdges" : {
+                "right" : 15
+              }
+            },
+            {
+              "inputs" : [
+                "b"
+              ],
+              "frame" : {
+                "x" : 270,
+                "y" : 737,
+                "width" : 90,
+                "height" : 90
+              }
+            },
+            {
+              "inputs" : [
+                "l"
+              ],
+              "frame" : {
+                "x" : 371,
+                "y" : 910,
+                "width" : 116,
+                "height" : 40
+              }
+            },
+            {
+              "inputs" : [
+                "menu"
+              ],
+              "frame" : {
+                "x" : 0,
+                "y" : 901,
+                "width" : 63,
+                "height" : 59
+              },
+              "extendedEdges" : {
+                "left" : 8,
+                "bottom" : 13
+              }
+            }
+          ],
+          "gameScreenFrame" : {
+            "x" : 0,
+            "y" : 141,
+            "width" : 487,
+            "height" : 327
+          },
+          "mappingSize" : {
+            "width" : 487,
+            "height" : 1056
+          },
+          "extendedEdges" : {
+            "top" : 7,
+            "bottom" : 7,
+            "left" : 7,
+            "right" : 7
+          }
+        },
+        "landscape" : {
+          "assets" : {
+            "resizable" : "iphone_edgetoedge_landscape.pdf"
+          },
+          "items" : [
+            {
+              "inputs" : {
+                "up" : "up",
+                "down" : "down",
+                "left" : "left",
+                "right" : "right"
+              },
+              "frame" : {
+                "x" : 76,
+                "y" : 287,
+                "width" : 187,
+                "height" : 187
+              },
+              "extendedEdges" : {
+                "left" : 30,
+                "top" : 20,
+                "right" : 20,
+                "bottom" : 20
+              }
+            },
+            {
+              "inputs" : [
+                "a"
+              ],
+              "frame" : {
+                "x" : 943,
+                "y" : 362,
+                "width" : 77,
+                "height" : 77
+              },
+              "extendedEdges" : {
+                "bottom" : 0,
+                "right" : 30
+              }
+            },
+            {
+              "inputs" : [
+                "b"
+              ],
+              "frame" : {
+                "x" : 843,
+                "y" : 362,
+                "width" : 77,
+                "height" : 77
+              },
+              "extendedEdges" : {
+                "right" : 0
+              }
+            },
+            {
+              "inputs" : [
+                "l"
+              ],
+              "frame" : {
+                "x" : 879,
+                "y" : 193,
+                "width" : 91,
+                "height" : 34
+              }
+            },
+            {
+              "inputs" : [
+                "menu"
+              ],
+              "frame" : {
+                "x" : 879,
+                "y" : 139,
+                "width" : 91,
+                "height" : 34
+              }
+            }
+          ],
+          "gameScreenFrame" : {
+            "x" : 244,
+            "y" : 0,
+            "width" : 595,
+            "height" : 335
+          },
+          "mappingSize" : {
+            "width" : 1083,
+            "height" : 500
+          },
+          "extendedEdges" : {
+            "top" : 15,
+            "bottom" : 15,
+            "left" : 15,
+            "right" : 15
+          },
+          "translucent" : false
+        }
+      }
+    }
+  }
+}

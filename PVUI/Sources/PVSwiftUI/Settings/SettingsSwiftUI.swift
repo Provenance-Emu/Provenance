@@ -505,6 +505,9 @@ private struct VideoSection: View {
 private struct ControllerSection: View {
     @Default(.use8BitdoM30) var use8BitdoM30
     @Default(.pauseButtonIsMenuButton) var pauseButtonIsMenuButton
+    @Default(.hapticFeedback) var hapticFeedback
+    @Default(.buttonPressEffect) var buttonPressEffect
+    @Default(.buttonSound) var buttonSound
 
     var body: some View {
         Group {
@@ -530,10 +533,20 @@ private struct ControllerSection: View {
                                 icon: .sfSymbol("pause.rectangle"))
                 }
             }
-#if !os(tvOS)
+
+            #if !os(tvOS)
+            ThemedToggle(isOn: $hapticFeedback) {
+                SettingsRow(title: "Haptic Feedback",
+                           subtitle: "Vibrate when pressing buttons.",
+                           icon: .sfSymbol("iphone.radiowaves.left.and.right"))
+            }
             OnScreenControllerSection()
-#endif
+            #endif
         }
+    }
+
+    private func playButtonSound(_ sound: ButtonSound) {
+        PVUIBase.ButtonSoundGenerator.shared.playSound(sound, pan: 0, volume: 1.0)
     }
 }
 
@@ -543,6 +556,8 @@ private struct OnScreenControllerSection: View {
     @Default(.buttonTints) var buttonTints
     @Default(.allRightShoulders) var allRightShoulders
     @Default(.buttonVibration) var buttonVibration
+    @Default(.buttonSound) var buttonSound
+    @Default(.buttonPressEffect) var buttonPressEffect
     @Default(.missingButtonsAlwaysOn) var missingButtonsAlwaysOn
     @Default(.onscreenJoypad) var onscreenJoypad
     @Default(.onscreenJoypadWithKeyboard) var onscreenJoypadWithKeyboard
@@ -591,7 +606,83 @@ private struct OnScreenControllerSection: View {
                             icon: .sfSymbol("keyboard.badge.eye"))
             }
 
+            if FeatureFlag.advancedSkinFeatures.enabled {
+                // Button Sound Effect Picker
+                NavigationLink {
+                    Form {
+                        Section(header: Text("Button Sound Effect")) {
+                            ForEach(ButtonSound.allCases, id: \.self) { sound in
+                                Button {
+                                    buttonSound = sound
+                                    // Play sample sound when selected
+                                    if sound != .none {
+                                        playButtonSound(sound)
+                                    }
+                                } label: {
+                                    HStack {
+                                        VStack(alignment: .leading) {
+                                            Text(sound.description)
+                                                .foregroundColor(.primary)
+                                            Text(sound.subtitle)
+                                                .font(.caption)
+                                                .foregroundColor(.secondary)
+                                        }
+                                        Spacer()
+                                        if buttonSound == sound {
+                                            Image(systemName: "checkmark")
+                                                .foregroundColor(.accentColor)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .navigationTitle("Button Sound Effect")
+                } label: {
+                    SettingsRow(title: "Button Sound Effect",
+                               subtitle: buttonSound.description,
+                               icon: .sfSymbol("speaker.wave.2"))
+                }
+
+                // Button Press Effect Picker
+                NavigationLink {
+                    Form {
+                        Section(header: Text("Button Press Effect")) {
+                            ForEach(ButtonPressEffect.allCases, id: \.self) { effect in
+                                Button {
+                                    buttonPressEffect = effect
+                                } label: {
+                                    HStack {
+                                        VStack(alignment: .leading) {
+                                            Text(effect.description)
+                                                .foregroundColor(.primary)
+                                            Text(effect.subtitle)
+                                                .font(.caption)
+                                                .foregroundColor(.secondary)
+                                        }
+                                        Spacer()
+                                        if buttonPressEffect == effect {
+                                            Image(systemName: "checkmark")
+                                                .foregroundColor(.accentColor)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .navigationTitle("Button Effect Style")
+                } label: {
+                    SettingsRow(title: "Button Effect Style",
+                               subtitle: buttonPressEffect.description,
+                               icon: .sfSymbol("circle.circle"))
+                }
+
+            }
         }
+    }
+
+    private func playButtonSound(_ sound: ButtonSound) {
+        PVUIBase.ButtonSoundGenerator.shared.playSound(sound, pan: 0, volume: 1.0)
     }
 }
 #endif

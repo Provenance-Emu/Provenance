@@ -104,6 +104,7 @@ let package = Package(
             resources: [
                 .copy("Resources/Shaders/fsh"),
                 .copy("Resources/Shaders/GLES"),
+                .process("Resources/Sounds"),
                 .process("Resources/Shaders/Metal"),
                 .process("Resources/SystemIcons.xcassets"),
                 .process("Resources/Assets.xcassets"),
