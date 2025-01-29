@@ -24,7 +24,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>RetroArch - Beetle PSX (HW Renderer)</string>
+			<string>Beetle PSX (HW Renderer) (RetroArch)</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.psx</string>
@@ -40,7 +40,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>RetroArch - Beetle PSX (SW Renderer)</string>
+			<string>Beetle PSX (SW Renderer) (RetroArch)</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.psx</string>
@@ -74,7 +74,7 @@
 			<key>PVProjectName</key>
 			<string>Flycast (RetroArch)</string>
 			<key>PVAppStoreDisabled</key>
-			<true/>
+			<false/>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.dreamcast</string>
@@ -83,6 +83,24 @@
 			<string>https://github.com/flyinghead/flycast</string>
 			<key>PVProjectVersion</key>
 			<string>2.0</string>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>parallel.n64.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVProjectName</key>
+			<string>Parallel N64 (RetroArch)</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.n64</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/parallel-n64</string>
+			<key>PVProjectVersion</key>
+			<string>Nightly</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -128,7 +146,7 @@
 				<string>com.provenance.macintosh</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>RetroArch - Mini vMac</string>
+			<string>Mini vMac (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://www.gryphel.com/c/minivmac/</string>
 			<key>PVProjectVersion</key>
@@ -146,7 +164,7 @@
 				<string>com.provenance.dos</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>RetroArch - DosBox Pure</string>
+			<string>DosBox Pure (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/schellingb/dosbox-pure</string>
 			<key>PVProjectVersion</key>
@@ -162,7 +180,7 @@
 				<string>com.provenance.ds</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>RetroArch - MelonDS</string>
+			<string>MelonDS (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://melonds.kuribo64.net</string>
 			<key>PVProjectVersion</key>
@@ -178,7 +196,7 @@
 				<string>com.provenance.3DO</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>RetroArch - Opera</string>
+			<string>Opera (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/opera-libretro</string>
 			<key>PVProjectVersion</key>
@@ -194,7 +212,7 @@
 				<string>com.provenance.pc98</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>RetroArch - NP2Kai (PC-98)</string>
+			<string>NP2Kai (PC-98) (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/AZO234/NP2kai</string>
 			<key>PVProjectVersion</key>
@@ -212,7 +230,7 @@
 				<string>com.provenance.pcecd</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>RetroArch - Beetle Supergrafx (PC Engine)</string>
+			<string>Beetle Supergrafx (PC Engine) (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/beetle-supergrafx-libretro</string>
 			<key>PVProjectVersion</key>
@@ -228,7 +246,7 @@
 				<string>com.provenance.nes</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>RetroArch - Nestopia</string>
+			<string>Nestopia (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/nestopia</string>
 			<key>PVProjectVersion</key>
@@ -244,7 +262,7 @@
 				<string>com.provenance.saturn</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>RetroArch - Beetle Saturn</string>
+			<string>Beetle Saturn (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/beetle-saturn-libretro</string>
 			<key>PVProjectVersion</key>
@@ -260,7 +278,7 @@
 				<string>com.provenance.saturn</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>RetroArch - Yabause (Saturn)</string>
+			<string>Yabause (Saturn) (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/yabause</string>
 			<key>PVProjectVersion</key>
@@ -280,7 +298,7 @@
 				<string>com.provenance.mastersystem</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>RetroArch - Genesis Plus GX - MS/GG/MD/CD</string>
+			<string>Genesis Plus GX - MS/GG/MD/CD (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/Genesis-Plus-GX</string>
 			<key>PVProjectVersion</key>
@@ -297,7 +315,7 @@
 				<string>com.provenance.neogeo</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>RetroArch - FBNeo</string>
+			<string>FBNeo (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/FBNeo</string>
 			<key>PVProjectVersion</key>
@@ -313,7 +331,7 @@
 				<string>com.provenance.gba</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>RetroArch - Beetle GBA</string>
+			<string>Beetle GBA (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/beetle-gba-libretro</string>
 			<key>PVProjectVersion</key>
@@ -329,7 +347,7 @@
 				<string>com.provenance.vb</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>RetroArch - Beetle VB</string>
+			<string>Beetle VB (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/beetle-vb-libretro</string>
 			<key>PVProjectVersion</key>
@@ -347,7 +365,7 @@
 				<string>com.provenance.gba</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>RetroArch - mGBA</string>
+			<string>mGBA (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/mgba</string>
 			<key>PVProjectVersion</key>
@@ -364,7 +382,7 @@
 				<string>com.provenance.gbc</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>RetroArch - SameBoy</string>
+			<string>SameBoy (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/SameBoy</string>
 			<key>PVProjectVersion</key>
@@ -381,7 +399,7 @@
 				<string>com.provenance.neogeo</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>RetroArch - MAME 2010</string>
+			<string>MAME 2010 (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/mame2010-libretro</string>
 			<key>PVProjectVersion</key>
@@ -399,7 +417,7 @@
 				<string>com.provenance.neogeo</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>RetroArch - MAME (Current)</string>
+			<string>MAME (Current) (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/development/cores/core-specific/mame/</string>
 			<key>PVProjectVersion</key>
@@ -413,7 +431,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>RetroArch - PCSX ReARMed</string>
+			<string>PCSX ReARMed (RetroArch)</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.psx</string>
@@ -429,7 +447,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>RetroArch - Play!</string>
+			<string>Play! (RetroArch)</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.ps2</string>
@@ -447,7 +465,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>RetroArch - PPSSPP</string>
+			<string>PPSSPP (RetroArch)</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.psp</string>
@@ -463,7 +481,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>RetroArch - Atari 400/800/600XL/800XL/130XE</string>
+			<string>Atari 400/800/600XL/800XL/130XE (RetroArch)</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.atari8bit</string>
@@ -479,7 +497,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>RetroArch - Atari 5200</string>
+			<string>Atari 5200 (RetroArch)</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.5200</string>
@@ -495,7 +513,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>RetroArch - Atari 2600</string>
+			<string>Atari 2600 (RetroArch)</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.2600</string>
@@ -511,7 +529,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>RetroArch - Atari 7800</string>
+			<string>Atari 7800 (RetroArch)</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.7800</string>
@@ -527,7 +545,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>RetroArch - Atari ST/STE/TT/Falcon</string>
+			<string>Atari ST/STE/TT/Falcon (RetroArch)</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.atarist</string>
@@ -543,7 +561,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>RetroArch - Atari Lynx</string>
+			<string>Atari Lynx (RetroArch)</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.lynx</string>
@@ -559,7 +577,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>RetroArch - Atari Jaguar (Virtual Jaguar)</string>
+			<string>Atari Jaguar (Virtual Jaguar) (RetroArch)</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.jaguar</string>
@@ -580,7 +598,7 @@
 				<string>com.provenance.ngpc</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>RetroArch - RACE</string>
+			<string>RACE (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/race/</string>
 			<key>PVProjectVersion</key>
@@ -597,7 +615,7 @@
 				<string>com.provenance.ngpc</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>RetroArch - Beetle Neopop</string>
+			<string>Beetle Neopop (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/beetle_neopop/</string>
 			<key>PVProjectVersion</key>
@@ -613,7 +631,7 @@
 				<string>com.provenance.music</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>RetroArch - Game Music Emu</string>
+			<string>Game Music Emu (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/game_music_emu/</string>
 			<key>PVProjectVersion</key>
@@ -629,11 +647,45 @@
 				<string>com.provenance.supervision</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>RetroArch - Potator</string>
+			<string>Potator (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/potator</string>
 			<key>PVProjectVersion</key>
 			<string>v20200223</string>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>same.cdi.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.cdi</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>Same CDi (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/same_cdi</string>
+			<key>PVProjectVersion</key>
+			<string>Nightly</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>mu.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.palmos</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>Mu (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/mu/</string>
+			<key>PVProjectVersion</key>
+			<string>Nightly</string>
 		</dict>
 	</array>
 </dict>
