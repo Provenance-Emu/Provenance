@@ -19,6 +19,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
     case AtariJaguarCD = "com.provenance.jaguarcd"
     case AtariST = "com.provenance.atarist"
     case C64 = "com.provenance.c64"
+    case CDi = "com.provenance.cdi"
     case ColecoVision = "com.provenance.colecovision"
     case DOS = "com.provenance.dos"
     case Dreamcast = "com.provenance.dreamcast"
@@ -76,133 +77,71 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
     public
     var isBeta: Bool {
         switch self {
-
-        case ._3DO:
-            true
-        case ._3DS:
-            true
-        case .AppleII:
-            true
-        case .Atari2600:
-            false
-        case .Atari5200:
-            false
-        case .Atari7800:
-            false
-        case .Atari8bit:
-            true
-        case .AtariJaguar:
-            false
-        case .AtariJaguarCD:
-            true
-        case .AtariST:
-            true
-        case .C64:
-            true
-        case .ColecoVision:
-            false
-        case .DOS:
-            true
-        case .Dreamcast:
-            true
-        case .DS:
-            true
-        case .EP128:
-            true
-        case .FDS:
-            false
-        case .GameCube:
-            true
-        case .GameGear:
-            false
-        case .GB:
-            false
-        case .GBA:
-            false
-        case .GBC:
-            false
-        case .Genesis:
-            false
-        case .Intellivision:
-            false
-        case .Lynx:
-            false
-        case .Macintosh:
-            true
-        case .MAME:
-            true
-        case .MasterSystem:
-            false
-        case .MegaDuck:
-            true
-        case .MSX:
-            true
-        case .MSX2:
-            true
-        case .Music:
-            true
-        case .N64:
-            false
-        case .NeoGeo:
-            false
-        case .NES:
-            false
-        case .NGP:
-            false
-        case .NGPC:
-            false
-        case .Odyssey2:
-            false
-        case .PalmOS:
-            true
-        case .PCE:
-            false
-        case .PCECD:
-            false
-        case .PCFX:
-            false
-        case .PokemonMini:
-            false
-        case .PS2:
-            true
-        case .PS3:
-            true
-        case .PSP:
-            false
-        case .PSX:
-            false
-        case .Saturn:
-            false
-        case .Sega32X:
-            false
-        case .SegaCD:
-            false
-        case .SG1000:
-            false
-        case .SGFX:
-            false
-        case .SNES:
-            false
-        case .Supervision:
-            false
-        case .TIC80:
-            true
-        case .Vectrex:
-            false
-        case .VirtualBoy:
-            false
-        case .Wii:
-            true
-        case .WonderSwan:
-            false
-        case .WonderSwanColor:
-            false
-        case .ZXSpectrum:
-            true
-        case .Unknown:
-            true
-        case .RetroArch:
-            false
+            
+        case ._3DO: true
+        case ._3DS: true
+        case .AppleII: true
+        case .Atari2600: false
+        case .Atari5200: false
+        case .Atari7800: false
+        case .Atari8bit: true
+        case .AtariJaguar: false
+        case .AtariJaguarCD: true
+        case .AtariST: true
+        case .C64: true
+        case .CDi: true
+        case .ColecoVision: false
+        case .DOS: true
+        case .Dreamcast: true
+        case .DS: true
+        case .EP128: true
+        case .FDS: false
+        case .GameCube: true
+        case .GameGear: false
+        case .GB: false
+        case .GBA: false
+        case .GBC: false
+        case .Genesis: false
+        case .Intellivision: false
+        case .Lynx: false
+        case .Macintosh: true
+        case .MAME: true
+        case .MasterSystem: false
+        case .MegaDuck: true
+        case .MSX: true
+        case .MSX2: true
+        case .Music: true
+        case .N64: false
+        case .NeoGeo: false
+        case .NES: false
+        case .NGP: false
+        case .NGPC: false
+        case .Odyssey2: false
+        case .PalmOS: true
+        case .PCE: false
+        case .PCECD: false
+        case .PCFX: false
+        case .PokemonMini: false
+        case .PS2: true
+        case .PS3: true
+        case .PSP: false
+        case .PSX: false
+        case .Saturn: false
+        case .Sega32X: false
+        case .SegaCD: false
+        case .SG1000: false
+        case .SGFX: false
+        case .SNES: false
+        case .Supervision: false
+        case .TIC80: true
+        case .Vectrex: false
+        case .VirtualBoy: false
+        case .Wii: true
+        case .WonderSwan: false
+        case .WonderSwanColor: false
+        case .ZXSpectrum: true
+        case .Unknown: true
+        case .RetroArch: false
         }
     }
 
@@ -298,6 +237,8 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
             return "Enterprise Systems"
         case .PalmOS:
             return "Palm"
+        case .CDi:
+            return "Philips"
         case .MAME, .Music, .RetroArch, .TIC80:
             return "Various"
         case .Unknown:
@@ -316,6 +257,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         case .AtariST:       return "ST"
         case .Atari8bit:     return "8-bit"
         case .Lynx:          return "Lynx"
+        case .CDi:           return "CD-i"
         case .NES:           return "Nintendo Entertainment System"
         case .SNES:          return "Super Nintendo Entertainment System"
         case .N64:           return "Nintendo 64"

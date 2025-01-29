@@ -62,6 +62,7 @@ public extension SystemIdentifier {
         case
                 .AppleII,
                 .Atari8bit,
+                .CDi,
                 .EP128,
                 .Macintosh,
                 .MegaDuck,
@@ -264,6 +265,7 @@ extension SystemIdentifier {
         case .Intellivision:    return "Mattel - Intellivision"
         case .Odyssey2:         return "Magnavox - Odyssey2"
         case ._3DO:             return "The 3DO Company - 3DO"
+        case .CDi:             return "Philips - CD-i"
 
         // Unknown/Default
         case .Unknown:      return "Unknown"
