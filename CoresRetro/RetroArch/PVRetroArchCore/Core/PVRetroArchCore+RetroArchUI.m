@@ -196,11 +196,11 @@ int argc =  1;
 void extract_bundles();
 -(void) writeConfigFile {
 	NSFileManager *fm = [[NSFileManager alloc] init];
-	NSString *fileName = [NSString stringWithFormat:@"%@/../../RetroArch/config/retroarch.cfg",
-						  self.batterySavesPath];
+	NSString *fileName = [NSString stringWithFormat:@"%@/RetroArch/config/retroarch.cfg",
+                          self.documentsDirectory];
     // TODO: Get the version # from core.plist
-    NSString *verFile = [NSString stringWithFormat:@"%@/../../RetroArch/config/1.27.1.cfg",
-                         self.batterySavesPath];
+    NSString *verFile = [NSString stringWithFormat:@"%@/RetroArch/config/1.27.1.cfg",
+                         self.documentsDirectory];
 	if (![fm fileExistsAtPath: fileName] || ![fm fileExistsAtPath: verFile] || [self shouldUpdateAssets]) {
         NSString *src = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"retroarch.cfg" ofType:nil];
         [self syncResource:src to:fileName];
@@ -267,7 +267,7 @@ void extract_bundles();
 #else
     // If assets were updated, refresh config
     NSFileManager *fm = [[NSFileManager alloc] init];
-    NSString *file=[NSString stringWithFormat:@"%@/../../RetroArch/assets/xmb/flatui/png/arrow.png", self.batterySavesPath];
+    NSString *file=[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/flatui/png/arrow.png", self.documentsDirectory];
     if ([fm fileExistsAtPath: file]) {
         unsigned long long fileSize = [[fm attributesOfItemAtPath:file error:nil] fileSize];
         if (fileSize == 1687) {
@@ -595,15 +595,17 @@ void extract_bundles();
 - (bool)setDisableDisplaySleep:(bool)disable { /* no-op for iOS */ return NO; }
 +(PVRetroArchCoreBridge *) get { self; }
 -(NSString*)documentsDirectory {
-	if (self.documentsDirectory == nil) {
+    static dispatch_once_t onceToken;
+    static NSString* _documentsDirectory;
+    dispatch_once(&onceToken, ^{
 #if TARGET_OS_IOS
-		NSArray *paths      = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSArray *paths      = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 #elif TARGET_OS_TV
-		NSArray *paths      = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        NSArray *paths      = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
 #endif
-		self.documentsDirectory = paths.firstObject;
-	}
-	return self.documentsDirectory;
+        _documentsDirectory = paths.firstObject;
+    });
+	return _documentsDirectory;
 }
 - (void)refreshSystemConfig {
 #if TARGET_OS_IOS && !TARGET_OS_TV
