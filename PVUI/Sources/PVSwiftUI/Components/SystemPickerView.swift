@@ -21,7 +21,7 @@ struct SystemPickerView: View {
     private var availableSystems: [PVSystem] {
         PVEmulatorConfiguration.systems.filter {
             $0.identifier != game.systemIdentifier &&
-            !(AppState.shared.isAppStore && $0.appStoreDisabled)
+            !(AppState.shared.isAppStore && $0.appStoreDisabled && !Defaults[.unsupportedCores])
         }
     }
 
