@@ -90,7 +90,9 @@ struct DeltaSkinFullscreenPreview: View {
 
                         // Copy debug info to clipboard when enabling
                         if showDebugOverlay {
+                            #if !os(tvOS)
                             UIPasteboard.general.string = debugInfo
+                            #endif
                             DLOG("Debug Info:\n\(debugInfo)")
                         }
                     } label: {
@@ -160,7 +162,9 @@ struct DeltaSkinFullscreenPreview: View {
         .sheet(isPresented: $showInfoSheet) {
             DeltaSkinInfoSheet(skin: skin)
         }
+        #if !os(tvOS)
         .statusBar(hidden: true)
+        #endif
         .ignoresSafeArea()
     }
 }
@@ -238,20 +242,33 @@ private struct DeltaSkinInfoSheet: View {
     }
 
     private func deviceSection(_ device: DeltaSkinDevice) -> some View {
+        #if !os(tvOS)
         DisclosureGroup(device.rawValue) {
             ForEach(supportedDisplayTypes(for: device), id: \.self) { type in
                 displayTypeSection(type, for: device)
             }
         }
+        #else
+        ForEach(supportedDisplayTypes(for: device), id: \.self) { type in
+            displayTypeSection(type, for: device)
+        }
+        #endif
     }
 
     private func displayTypeSection(_ type: DeltaSkinDisplayType, for device: DeltaSkinDevice) -> some View {
+        #if !os(tvOS)
         DisclosureGroup(type.rawValue) {
             ForEach(supportedOrientations(for: device, type: type), id: \.self) { orientation in
                 Text(orientation.rawValue)
                     .padding(.leading)
             }
         }
+        #else
+        ForEach(supportedOrientations(for: device, type: type), id: \.self) { orientation in
+            Text(orientation.rawValue)
+                .padding(.leading)
+        }
+        #endif
     }
 
     private func supportedDisplayTypes(for device: DeltaSkinDevice) -> [DeltaSkinDisplayType] {

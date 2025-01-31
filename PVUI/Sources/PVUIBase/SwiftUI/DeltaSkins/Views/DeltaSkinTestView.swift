@@ -20,7 +20,11 @@ public struct DeltaSkinTestView: View {
         self.skin = skin
 
         // Set initial traits based on current orientation
+        #if os(tvOS)
+        let isLandscape = true
+        #else
         let isLandscape = UIDevice.current.orientation.isLandscape
+        #endif
         let orientation: DeltaSkinOrientation = isLandscape ? .landscape : .portrait
         let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
 
@@ -139,7 +143,9 @@ public struct DeltaSkinTestView: View {
                 previewArea(geometry: geometry)
             }
         }
+        #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .navigationTitle(skin.name)
         .fullScreenCover(isPresented: $showingFullscreenPreview) {
             DeltaSkinFullscreenPagerView(
@@ -170,21 +176,25 @@ public struct DeltaSkinTestView: View {
 
     @ViewBuilder
     private var devicePicker: some View {
-        Menu {
-            ForEach(supportedDevices, id: \.self) { device in
-                Button {
-                    selectedDevice = device
-                    if !supportedDisplayTypes.contains(selectedDisplayType) {
-                        selectedDisplayType = supportedDisplayTypes.first ?? .standard
+        if #available(tvOS 17.0, *) {
+            Menu {
+                ForEach(supportedDevices, id: \.self) { device in
+                    Button {
+                        selectedDevice = device
+                        if !supportedDisplayTypes.contains(selectedDisplayType) {
+                            selectedDisplayType = supportedDisplayTypes.first ?? .standard
+                        }
+                    } label: {
+                        Label(device.rawValue, systemImage: deviceIcon(for: device))
+                            .foregroundColor(.primary)
                     }
-                } label: {
-                    Label(device.rawValue, systemImage: deviceIcon(for: device))
-                        .foregroundColor(.primary)
                 }
+            } label: {
+                Label(selectedDevice.rawValue, systemImage: deviceIcon(for: selectedDevice))
+                    .font(.subheadline)
             }
-        } label: {
-            Label(selectedDevice.rawValue, systemImage: deviceIcon(for: selectedDevice))
-                .font(.subheadline)
+        } else {
+            // Fallback on earlier versions
         }
     }
 
@@ -211,13 +221,17 @@ public struct DeltaSkinTestView: View {
 
     @ViewBuilder
     private var filtersMenu: some View {
-        Menu {
-            ForEach(TestPatternEffect.allCases, id: \.self) { effect in
-                Toggle(effect.displayName, isOn: effectBinding(for: effect))
+        if #available(tvOS 17.0, *) {
+            Menu {
+                ForEach(TestPatternEffect.allCases, id: \.self) { effect in
+                    Toggle(effect.displayName, isOn: effectBinding(for: effect))
+                }
+            } label: {
+                Image(systemName: "line.3.horizontal.decrease.circle")
+                    .symbolVariant(selectedFilters.isEmpty ? .none : .fill)
             }
-        } label: {
-            Image(systemName: "line.3.horizontal.decrease.circle")
-                .symbolVariant(selectedFilters.isEmpty ? .none : .fill)
+        } else {
+            // Fallback on earlier versions
         }
     }
 
@@ -398,7 +412,7 @@ private struct MetadataCell: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
-        .background(Color(uiColor: .secondarySystemGroupedBackground))
+        .background(Color.secondarySystemGroupedBackground)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
@@ -501,14 +515,16 @@ private struct MetadataGrid: View {
                 Button {
                     if let jsonData = try? JSONSerialization.data(withJSONObject: skin.jsonRepresentation, options: .prettyPrinted),
                        let jsonString = String(data: jsonData, encoding: .utf8) {
+                        #if !os(tvOS)
                         UIPasteboard.general.string = jsonString
+                        #endif
                         showCopiedAlert = true
                     }
                 } label: {
                     Label("Copy JSON", systemImage: "doc.on.doc")
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color(uiColor: .secondarySystemGroupedBackground))
+                        .background(Color.secondarySystemGroupedBackground)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
             }

@@ -66,6 +66,9 @@ public struct DeltaSkinFullscreenPagerView: View {
 
     private func updateTraitsForCurrentOrientation() {
         let currentSkin = skins[currentPage]
+        #if os(tvOS)
+        let desiredOrientation: DeltaSkinOrientation = .landscape
+        #else
         let deviceOrientation = UIDevice.current.orientation
 
         // Only handle valid orientations
@@ -73,7 +76,8 @@ public struct DeltaSkinFullscreenPagerView: View {
 
         // Convert UIDeviceOrientation to DeltaSkinOrientation
         let desiredOrientation: DeltaSkinOrientation = deviceOrientation.isLandscape ? .landscape : .portrait
-
+        #endif
+        
         // First try with current display type
         let newTraits = DeltaSkinTraits(
             device: currentTraits.device,
@@ -120,9 +124,11 @@ public struct DeltaSkinFullscreenPagerView: View {
         .onAppear {
             updateTraitsForCurrentOrientation()
         }
+        #if !os(tvOS)
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
             updateTraitsForCurrentOrientation()
         }
+        #endif
     }
 
     @ViewBuilder
@@ -142,7 +148,9 @@ public struct DeltaSkinFullscreenPagerView: View {
             }
         }
         .offset(x: -CGFloat(currentPage) * geometry.size.width + dragOffset)
+        #if !os(tvOS)
         .gesture(pagingGesture(geometry: geometry))
+        #endif
         .onTapGesture {
             withAnimation {
                 showControls.toggle()
@@ -194,13 +202,17 @@ public struct DeltaSkinFullscreenPagerView: View {
 
     @ViewBuilder
     private var filtersMenu: some View {
-        Menu {
-            ForEach(TestPatternEffect.allCases, id: \.self) { effect in
-                Toggle(effect.displayName, isOn: effectBinding(for: effect))
+        if #available(tvOS 17.0, *) {
+            Menu {
+                ForEach(TestPatternEffect.allCases, id: \.self) { effect in
+                    Toggle(effect.displayName, isOn: effectBinding(for: effect))
+                }
+            } label: {
+                Image(systemName: "line.3.horizontal.decrease.circle")
+                    .symbolVariant(selectedFilters.isEmpty ? .none : .fill)
             }
-        } label: {
-            Image(systemName: "line.3.horizontal.decrease.circle")
-                .symbolVariant(selectedFilters.isEmpty ? .none : .fill)
+        } else {
+            // Fallback on earlier versions
         }
     }
 
@@ -221,6 +233,7 @@ public struct DeltaSkinFullscreenPagerView: View {
         }
     }
 
+    #if !os(tvOS)
     private func pagingGesture(geometry: GeometryProxy) -> some Gesture {
         DragGesture()
             .updating($dragOffset) { value, state, _ in
@@ -241,7 +254,8 @@ public struct DeltaSkinFullscreenPagerView: View {
                 }
             }
     }
-
+    #endif
+    
     private var currentSkin: DeltaSkinProtocol {
         skins[currentPage]
     }

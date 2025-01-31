@@ -24,8 +24,10 @@ public struct DeltaSkinView: View {
     @State private var activeThumbsticks: [(frame: CGRect, image: UIImage, size: CGSize)] = []
 
     // Add feedback generator
+    #if !os(tvOS)
     private let impactGenerator = UIImpactFeedbackGenerator(style: .rigid)
-
+    #endif
+    
     // Audio engine for positional audio
     private static let audioEngine = AudioEngine()
 
@@ -343,6 +345,7 @@ public struct DeltaSkinView: View {
                     }
                 }
             }
+            #if !os(tvOS)
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { value in
@@ -371,6 +374,7 @@ public struct DeltaSkinView: View {
                         currentlyPressedButton = nil
                     }
             )
+            #endif
         }
         .task {
             await loadSkin()
@@ -499,9 +503,9 @@ public struct DeltaSkinView: View {
                     timestamp: Date()
                 )
                 activeButtons.append(newButton)
-
+                #if !os(tvOS)
                 buttonGenerator.impactOccurred(intensity: 0.8)
-
+                #endif
                 // Play sound with current position
                 playClickSound(for: button)
 
@@ -516,12 +520,14 @@ public struct DeltaSkinView: View {
         }
     }
 
+    #if !os(tvOS)
     private let buttonGenerator: UIImpactFeedbackGenerator = {
         // Haptic feedback
         let buttonGenerator = UIImpactFeedbackGenerator(style: .medium)
         buttonGenerator.prepare()
         return buttonGenerator
     }()
+    #endif
 
     private func transformFrame(_ frame: CGRect, in geometry: GeometryProxy, mappingSize: CGSize) -> CGRect {
         let scale = min(

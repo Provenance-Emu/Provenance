@@ -11,9 +11,11 @@ struct DeltaSkinThumbstick: View {
     @GestureState private var isDragging = false
 
     // Use softer haptics for thumbstick
+    #if !os(tvOS)
     private let impactGenerator = UIImpactFeedbackGenerator(style: .soft)
     private let edgeGenerator = UIImpactFeedbackGenerator(style: .medium)
-
+    #endif
+    
     private let maxDistance: CGFloat = 20  // Maximum distance thumbstick can move
 
     @State private var lastHapticDistance: CGFloat = 0
@@ -24,12 +26,14 @@ struct DeltaSkinThumbstick: View {
         let distanceDelta = abs(distance - lastHapticDistance)
         guard distanceDelta >= hapticDistanceThreshold else { return }
 
+        #if !os(tvOS)
         if isEdge {
             edgeGenerator.impactOccurred(intensity: 0.7)
         } else {
             // Softer feedback during normal movement
             impactGenerator.impactOccurred(intensity: min(distance/maxDistance * 0.5, 0.5))
         }
+        #endif
         lastHapticDistance = distance
     }
 
@@ -68,6 +72,7 @@ struct DeltaSkinThumbstick: View {
                     .resizable()
                     .frame(width: scaledFrame.width, height: scaledFrame.height)
                     .offset(dragOffset)
+                #if !os(tvOS)
                     .gesture(
                         DragGesture()
                             .onChanged { value in
@@ -99,12 +104,15 @@ struct DeltaSkinThumbstick: View {
                                 }
                             }
                     )
+                #endif
             }
             .position(x: scaledFrame.midX, y: scaledFrame.midY)
             .onAppear {
+                #if !os(tvOS)
                 // Prepare haptics
                 impactGenerator.prepare()
                 edgeGenerator.prepare()
+                #endif
             }
         }
     }

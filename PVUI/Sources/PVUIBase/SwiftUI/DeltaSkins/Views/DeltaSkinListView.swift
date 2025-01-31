@@ -67,6 +67,7 @@ public struct DeltaSkinListView: View {
                     ELOG("Failed to load skins: \(error)")
                 }
             }
+        #if !os(tvOS)
             .fileImporter(
                 isPresented: $showingDocumentPicker,
                 allowedContentTypes: [.deltaSkin],
@@ -82,6 +83,7 @@ public struct DeltaSkinListView: View {
                     }
                 }
             }
+        #endif
             .alert("Import Error", isPresented: $showingImportError) {
                 Button("OK", role: .cancel) { }
             } message: {
@@ -146,7 +148,7 @@ private struct SkinGridView: View {
             case (_, let error?, _):
                 ErrorView(error: error)
             case (_, _, true):
-                if #available(iOS 17.0, *) {
+                if #available(iOS 17.0, tvOS 17.0, *) {
                     ContentUnavailableView(
                         "No Skins Found",
                         systemImage: "gamecontroller",
@@ -188,7 +190,7 @@ private struct SkinGridView: View {
                 }
             }
         }
-        .background(Color(uiColor: .systemGroupedBackground))
+        .background(Color.systemGroupedBackground)
         .task {
             await loadSkins()
         }
@@ -396,9 +398,14 @@ private struct ErrorView: View {
 }
 
 // MARK: - Helper Extensions
-private extension Color {
+internal extension Color {
+    #if os(tvOS)
+    static let systemGroupedBackground = Color(uiColor: .darkGray)
+    static let secondarySystemGroupedBackground = Color(uiColor: .lightGray)
+    #else
     static let systemGroupedBackground = Color(uiColor: .systemGroupedBackground)
     static let secondarySystemGroupedBackground = Color(uiColor: .secondarySystemGroupedBackground)
+    #endif
 }
 
 // Add this new view:
