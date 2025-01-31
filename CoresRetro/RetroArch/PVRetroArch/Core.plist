@@ -188,6 +188,22 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
+			<string>noods.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.ds</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>NooDS (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/Hydr8gon/NooDS</string>
+			<key>PVProjectVersion</key>
+			<string>git</string>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
 			<string>opera.libretro.framework</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
