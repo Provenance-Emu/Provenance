@@ -19,30 +19,36 @@ public struct DeltaSkinTestView: View {
     public init(skin: DeltaSkinProtocol) {
         self.skin = skin
 
-        // Set initial traits based on current orientation
-        #if os(tvOS)
-        let isLandscape = true
-        #else
-        let isLandscape = UIDevice.current.orientation.isLandscape
-        #endif
-        let orientation: DeltaSkinOrientation = isLandscape ? .landscape : .portrait
-        let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
-
-        let traits = DeltaSkinTraits(
-            device: device,
+        // Find first fully supported configuration
+        var validTraits = DeltaSkinTraits(
+            device: .iphone,
             displayType: .standard,
-            orientation: orientation
+            orientation: .portrait
         )
 
-        _selectedTraits = State(initialValue: traits)
+        // Try all combinations until we find one that works
+        for device in DeltaSkinDevice.allCases {
+            for displayType in DeltaSkinDisplayType.allCases {
+                for orientation in DeltaSkinOrientation.allCases {
+                    let testTraits = DeltaSkinTraits(
+                        device: device,
+                        displayType: displayType,
+                        orientation: orientation
+                    )
+                    if skin.supports(testTraits) {
+                        validTraits = testTraits
+                        break
+                    }
+                }
+            }
+        }
 
-        // Find first supported device
-        _selectedDevice = State(initialValue: device)
+        // Initialize state with valid traits
+        _selectedTraits = State(initialValue: validTraits)
+        _selectedDevice = State(initialValue: validTraits.device)
+        _selectedDisplayType = State(initialValue: validTraits.displayType)
 
-        // Find first supported display type for the device
-        _selectedDisplayType = State(initialValue: .standard)
-
-        DLOG("Initializing test view for skin: \(skin.name)")
+        DLOG("Initializing test view for skin: \(skin.name) with traits: \(validTraits)")
     }
 
     private func makeTraits(orientation: DeltaSkinOrientation) -> DeltaSkinTraits {
@@ -94,7 +100,7 @@ public struct DeltaSkinTestView: View {
                         displayType: displayType,
                         orientation: orientation
                     )
-                    return skin.supports(traits)
+        return skin.supports(traits)
                 }
             }
         }
@@ -137,7 +143,7 @@ public struct DeltaSkinTestView: View {
     }
 
     public var body: some View {
-        GeometryReader { geometry in
+                    GeometryReader { geometry in
             VStack(spacing: 0) {
                 controlBar
                 previewArea(geometry: geometry)
@@ -167,9 +173,9 @@ public struct DeltaSkinTestView: View {
         }
         .padding(.horizontal)
         .padding(.vertical, 12)
-        .background(
+                            .background(
             Rectangle()
-                .fill(.ultraThinMaterial)
+                                    .fill(.ultraThinMaterial)
                 .shadow(color: .black.opacity(0.1), radius: 1, y: 1)
         )
     }
@@ -237,11 +243,11 @@ public struct DeltaSkinTestView: View {
 
     @ViewBuilder
     private var debugButtons: some View {
-        Button {
-            showDebugOverlay.toggle()
-        } label: {
-            Image(systemName: showDebugOverlay ? "viewfinder.circle.fill" : "viewfinder.circle")
-        }
+                Button {
+                    showDebugOverlay.toggle()
+                } label: {
+                    Image(systemName: showDebugOverlay ? "viewfinder.circle.fill" : "viewfinder.circle")
+                }
 
         Button {
             showHitTestOverlay.toggle()
@@ -282,13 +288,7 @@ public struct DeltaSkinTestView: View {
                 .foregroundStyle(.secondary)
                 .padding(.horizontal)
 
-            DeltaSkinView(
-                skin: skin,
-                traits: makeTraits(orientation: .portrait),
-                filters: selectedFilters,
-                showDebugOverlay: showDebugOverlay,
-                showHitTestOverlay: showHitTestOverlay
-            )
+            skinPreview
             .allowsHitTesting(false)
             .frame(
                 width: geometry.size.width - 32,
@@ -304,41 +304,52 @@ public struct DeltaSkinTestView: View {
 
     @ViewBuilder
     private func landscapePreview(geometry: GeometryProxy) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("Landscape")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .padding(.horizontal)
+        GeometryReader { geometry in
+            let availableWidth = geometry.size.width
+            let previewHeight = availableWidth * (3/4) // 4:3 aspect ratio rotated 90 degrees
 
-            let deviceScreen = DeltaSkinDefaults.screenSize(for: selectedDevice)
-            let containerWidth = geometry.size.width - 32
-            let rotatedHeight = deviceScreen.height
-            let rotatedWidth = deviceScreen.width
-            let scale = containerWidth / rotatedHeight
+            DeltaSkinView(
+                skin: skin,
+                traits: DeltaSkinTraits(
+                    device: selectedDevice,
+                    displayType: selectedDisplayType,
+                    orientation: .landscape
+                ),
+                filters: selectedFilters,
+                showDebugOverlay: showDebugOverlay,
+                showHitTestOverlay: showHitTestOverlay
+            )
+            .rotationEffect(.degrees(-90))
+            .frame(width: availableWidth, height: previewHeight)
+            .clipped()
+            .id("landscape_preview_\(selectedTraits.device.rawValue)_\(selectedTraits.displayType.rawValue)")
+        }
+        .frame(height: UIScreen.main.bounds.width * (3/4)) // Fixed height based on screen width
+    }
 
-            ZStack {
+    private var skinPreview: some View {
+        Group {
+            if selectedTraits.orientation == .portrait {
                 DeltaSkinView(
                     skin: skin,
-                    traits: makeTraits(orientation: .landscape),
+                    traits: selectedTraits,
                     filters: selectedFilters,
                     showDebugOverlay: showDebugOverlay,
                     showHitTestOverlay: showHitTestOverlay
                 )
-                .allowsHitTesting(false)
-                .frame(
-                    width: rotatedWidth * scale,
-                    height: rotatedHeight * scale
+                .id("portrait_\(selectedTraits.device.rawValue)_\(selectedTraits.displayType.rawValue)")
+            } else {
+                // Landscape preview - rotated and scaled to fit width
+                DeltaSkinView(
+                    skin: skin,
+                    traits: selectedTraits,
+                    filters: selectedFilters,
+                    showDebugOverlay: showDebugOverlay,
+                    showHitTestOverlay: showHitTestOverlay
                 )
-                .rotationEffect(.degrees(90))
-            }
-            .frame(
-                width: containerWidth,
-                height: rotatedWidth * scale
-            )
-            .background(Color.black)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-            .onTapGesture {
-                showFullscreenPreview(orientation: .landscape)
+                .rotationEffect(.degrees(-90))
+                .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width * (4/3))
+                .id("landscape_\(selectedTraits.device.rawValue)_\(selectedTraits.displayType.rawValue)")
             }
         }
     }
@@ -366,7 +377,7 @@ public struct DeltaSkinTestView: View {
             set: { isEnabled in
                 if isEnabled {
                     selectedFilters.insert(effect)
-                } else {
+        } else {
                     selectedFilters.remove(effect)
                 }
             }
