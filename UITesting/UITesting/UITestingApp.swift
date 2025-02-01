@@ -139,9 +139,13 @@ struct UITestingApp: App {
                         showArtworkSearch = false
                     }
                     .navigationTitle("Artwork Search")
+                    #if !os(tvOS)
                     .background(Color(uiColor: .systemBackground))
+                    #endif
                 }
+                #if !os(tvOS)
                 .presentationBackground(Color(uiColor: .systemBackground))
+                #endif
             }
             .sheet(isPresented: $showFreeROMs) {
                 FreeROMsView { rom, url in
