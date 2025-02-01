@@ -276,7 +276,7 @@ public struct DeltaSkinView: View {
 
                 if let layout = calculateLayout(for: geometry) {
                     ZStack {
-                        // Screen layer (color bars) - positioned independently
+                        // Screen layer (color bars) - should be behind everything
                         DeltaSkinScreenLayer(
                             skin: skin,
                             traits: traits,
@@ -284,9 +284,9 @@ public struct DeltaSkinView: View {
                             size: geometry.size,
                             screenAspectRatio: screenAspectRatio
                         )
-                        .zIndex(1)
+                        .zIndex(0)
 
-                        // Skin and controls container - positioned at bottom
+                        // Skin and controls container
                         ZStack {
                             // Skin image layer
                             if let skinImage {
@@ -295,6 +295,7 @@ public struct DeltaSkinView: View {
                                     .aspectRatio(contentMode: .fill)
                                     .frame(width: layout.width, height: layout.height)
                                     .clipped()
+                                    .zIndex(1)
                             }
 
                             // Debug/hit test overlays
@@ -304,6 +305,7 @@ public struct DeltaSkinView: View {
                                     traits: traits,
                                     size: geometry.size
                                 )
+                                .zIndex(2)
                             }
                             if showHitTestOverlay {
                                 DeltaSkinHitTestOverlay(
@@ -311,6 +313,7 @@ public struct DeltaSkinView: View {
                                     traits: traits,
                                     size: geometry.size
                                 )
+                                .zIndex(2)
                             }
 
                             // Effects and thumbsticks inside the skin container
@@ -321,10 +324,10 @@ public struct DeltaSkinView: View {
                                     previewSize: geometry.size,
                                     buttonId: button.buttonId
                                 )
-                                .zIndex(4)
+                                .zIndex(3)
                             }
 
-                            // Thumbstick layer
+                            // Thumbstick layer - should be on top
                             ForEach(activeThumbsticks, id: \.frame) { thumbstick in
                                 DeltaSkinThumbstick(
                                     frame: thumbstick.frame,
@@ -332,7 +335,13 @@ public struct DeltaSkinView: View {
                                     thumbstickSize: thumbstick.size,
                                     mappingSize: skin.mappingSize(for: traits) ?? .zero
                                 )
-                                .zIndex(5)
+                                .zIndex(4)
+                            }
+
+                            // Touch indicators - always on top
+                            if let location = touchLocation {
+                                DeltaSkinTouchIndicator(at: location)
+                                    .zIndex(5)
                             }
                         }
                         .frame(width: layout.width, height: layout.height)
