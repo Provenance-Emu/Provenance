@@ -703,6 +703,24 @@
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>vecx.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.vectrex</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>VecX (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/vecx/</string>
+			<key>PVProjectVersion</key>
+			<string>Nightly</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
+		</dict>
 	</array>
 </dict>
 </plist>
