@@ -22,31 +22,42 @@ struct SystemSettingsView: View {
     }()
 
     var filteredSystems: [PVSystem] {
-        if searchText.isEmpty {
-            return systems
-                .filter { system in
-                    let hasValidCores = !system.cores.isEmpty && !(isAppStore && system.appStoreDisabled)
-                    // Only show systems with no cores if unsupportedCores is true
-                    return unsupportedCores ? hasValidCores : (hasValidCores && system.cores.count > 0)
-                }
-                .sorted(by: { $0.identifier < $1.identifier })
+        let filteredSystems = systems.filter { system in
+            // Filter cores for this system
+            let validCores = system.cores.filter { core in
+                // Keep core if:
+                // 1. It's not disabled, OR unsupportedCores is true
+                // 2. AND (It's not app store disabled, OR we're not in the app store, OR unsupportedCores is true)
+                (!core.disabled || unsupportedCores) &&
+                (!core.appStoreDisabled || !isAppStore || unsupportedCores)
+            }
+            
+            // System is valid if:
+            // 1. It has valid cores (or unsupportedCores is true)
+            // 2. AND (It's not app store disabled, OR we're not in the app store, OR unsupportedCores is true)
+            let hasValidCores = !validCores.isEmpty || unsupportedCores
+            let isSystemValid = hasValidCores && (!system.appStoreDisabled || !isAppStore || unsupportedCores)
+            
+            if searchText.isEmpty {
+                return isSystemValid
+            } else {
+                // Additional search criteria
+                let meetsSearchCriteria = system.name.localizedCaseInsensitiveContains(searchText) ||
+                    system.manufacturer.localizedCaseInsensitiveContains(searchText) ||
+                    system.cores.contains { core in
+                        core.projectName.localizedCaseInsensitiveContains(searchText)
+                    } ||
+                    (system.BIOSes?.contains { bios in
+                        bios.descriptionText.localizedCaseInsensitiveContains(searchText)
+                    } ?? false)
+                
+                return isSystemValid && meetsSearchCriteria
+            }
         }
-        return systems.filter { system in
-            let hasValidCores = !system.cores.isEmpty && !(isAppStore && system.appStoreDisabled)
-            let meetsSearchCriteria = system.name.localizedCaseInsensitiveContains(searchText) ||
-                system.manufacturer.localizedCaseInsensitiveContains(searchText) ||
-                system.cores.contains { core in
-                    core.projectName.localizedCaseInsensitiveContains(searchText)
-                } ||
-                (system.BIOSes?.contains { bios in
-                    bios.descriptionText.localizedCaseInsensitiveContains(searchText)
-                } ?? false)
-
-            // Only show systems with no cores if unsupportedCores is true
-            return (unsupportedCores ? hasValidCores : (hasValidCores && system.cores.count > 0)) && meetsSearchCriteria
-        }
-        .sorted(by: { $0.identifier < $1.identifier })
+        
+        return filteredSystems.sorted(by: { $0.identifier < $1.identifier })
     }
+
 
     var body: some View {
         #if os(tvOS)
