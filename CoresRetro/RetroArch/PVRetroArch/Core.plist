@@ -73,8 +73,6 @@
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>Flycast (RetroArch)</string>
-			<key>PVAppStoreDisabled</key>
-			<false/>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.dreamcast</string>
@@ -83,6 +81,8 @@
 			<string>https://github.com/flyinghead/flycast</string>
 			<key>PVProjectVersion</key>
 			<string>2.0</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
