@@ -198,38 +198,45 @@ public struct DeltaSkinView: View {
     internal func calculateLayout(for geometry: GeometryProxy) -> SkinLayout? {
         guard let mappingSize = skin.mappingSize(for: traits) else { return nil }
 
-        let scale = min(
-            geometry.size.width / mappingSize.width,
-            geometry.size.height / mappingSize.height
-        )
+        // For portrait mode on iPhone, prioritize filling width while maintaining aspect ratio
+        var scale: CGFloat
+        if traits.device == .iphone && traits.orientation == .portrait {
+            // Start with width scale to fill screen
+            scale = geometry.size.width / mappingSize.width
+
+            // Calculate resulting height
+            let scaledHeight = mappingSize.height * scale
+
+            // If height exceeds screen, scale down while maintaining aspect ratio
+            if scaledHeight > geometry.size.height {
+                let heightScale = geometry.size.height / mappingSize.height
+                scale = min(scale, heightScale)
+            }
+        } else {
+            // For landscape, use standard fit scaling
+            scale = min(
+                geometry.size.width / mappingSize.width,
+                geometry.size.height / mappingSize.height
+            )
+        }
 
         let scaledWidth = mappingSize.width * scale
         let scaledHeight = mappingSize.height * scale
+
+        // Center horizontally
         let xOffset = (geometry.size.width - scaledWidth) / 2
 
-        // Calculate yOffset based on orientation and screen presence
+        // Calculate Y offset based on orientation and screen presence
         let yOffset: CGFloat
         if hasScreenPosition(for: traits) {
             // If screen position is specified, center the skin
             yOffset = (geometry.size.height - scaledHeight) / 2
         } else {
-            // For skins without screen position, find the top-most control
-            if let buttons = skin.buttons(for: traits),
-               let topButton = buttons.min(by: { $0.frame.minY < $1.frame.minY }) {
-                // Use the top button's position to determine available space
-                let controlsTopY = topButton.frame.minY
-                let availableHeight = geometry.size.height - (scaledHeight - (controlsTopY * scale))
-
-                switch traits.orientation {
-                case .portrait:
-                    // Position skin at bottom, screen in available space above
-                    yOffset = geometry.size.height - scaledHeight
-                case .landscape:
-                    // Center vertically
-                    yOffset = (geometry.size.height - scaledHeight) / 2
-                }
+            // For portrait skins without screen position, position at bottom
+            if traits.orientation == .portrait {
+                yOffset = geometry.size.height - scaledHeight
             } else {
-                // No controls, center the skin
+                // For landscape, center vertically
                 yOffset = (geometry.size.height - scaledHeight) / 2
             }
         }
@@ -285,8 +292,9 @@ public struct DeltaSkinView: View {
                             if let skinImage {
                                 Image(uiImage: skinImage)
                                     .resizable()
-                                    .aspectRatio(contentMode: .fit)
+                                    .aspectRatio(contentMode: .fill)
                                     .frame(width: layout.width, height: layout.height)
+                                    .clipped()
                             }
 
                             // Debug/hit test overlays
@@ -327,17 +335,8 @@ public struct DeltaSkinView: View {
                                 .zIndex(5)
                             }
                         }
-                        .position(
-                            x: geometry.size.width/2,
-                            y: layout.yOffset + layout.height/2
-                        )
-                        .zIndex(2)
-
-                        // Touch indicators - positioned independently
-                        if let location = touchLocation {
-                            DeltaSkinTouchIndicator(at: location)
-                                .zIndex(3)
-                        }
+                        .frame(width: layout.width, height: layout.height)
+                        .position(x: geometry.size.width / 2, y: geometry.size.height - layout.height / 2)
                     }
                     .environment(\.skinLayout, layout)
                     .onAppear {
