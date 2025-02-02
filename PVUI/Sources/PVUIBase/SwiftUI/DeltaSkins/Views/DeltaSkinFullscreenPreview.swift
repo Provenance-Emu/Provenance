@@ -166,6 +166,9 @@ struct DeltaSkinFullscreenPreview: View {
         .statusBar(hidden: true)
         #endif
         .ignoresSafeArea()
+        .onAppear {
+            DLOG("FullscreenPreview safe areas: \(UIApplication.shared.windows.first?.safeAreaInsets ?? .zero)")
+        }
     }
 }
 
