@@ -41,42 +41,59 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     /// Scan for available skins
     private func scanForSkins() throws {
         DLOG("Starting skin scan...")
-
-        // Clear existing skins
-        loadedSkins.removeAll()
-
-        // Get skin locations
         let locations = skinLocations()
         DLOG("Total locations to scan: \(locations.count)")
 
-        // Scan each location
+        // Create a new array to hold all skins
+        var scannedSkins: [DeltaSkinProtocol] = []
+
+        // Keep track of existing skin identifiers
+        let existingIdentifiers = Set(loadedSkins.map { $0.identifier })
+
         for location in locations {
             DLOG("Examining location: \(location.path)")
+            var isDirectory: ObjCBool = false
+            guard FileManager.default.fileExists(atPath: location.path, isDirectory: &isDirectory) else { continue }
+            DLOG("Is directory: \(isDirectory.boolValue)")
 
-            do {
-                let isDirectory = (try? location.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory ?? false
-                DLOG("Is directory: \(isDirectory)")
-
-                // Handle both directory and archive formats
-                if location.pathExtension == "deltaskin" || (isDirectory && location.lastPathComponent.hasSuffix(".deltaskin")) {
-                    try loadSkinFromURL(location)
+            if isDirectory.boolValue {
+                // Scan directory for .deltaskin files
+                if let contents = try? FileManager.default.contentsOfDirectory(
+                    at: location,
+                    includingPropertiesForKeys: nil,
+                    options: [.skipsHiddenFiles]
+                ).filter({ $0.pathExtension == "deltaskin" }) {
+                    for url in contents {
+                        if let skin = try? loadSkinFromURL(url) {
+                            // Only add if not already in scannedSkins
+                            if !scannedSkins.contains(where: { $0.identifier == skin.identifier }) {
+                                scannedSkins.append(skin)
+                            }
+                        }
+                    }
                 }
-            } catch {
-                ELOG("Error loading skin at \(location.path): \(error)")
-                // Continue loading other skins even if one fails
-                continue
+            } else if location.pathExtension == "deltaskin" {
+                if let skin = try? loadSkinFromURL(location) {
+                    // Only add if not already in scannedSkins
+                    if !scannedSkins.contains(where: { $0.identifier == skin.identifier }) {
+                        scannedSkins.append(skin)
+                    }
+                }
             }
         }
 
         // Log results
         DLOG("Scan complete. Available skins by type:")
-        let skinsByType = Dictionary(grouping: loadedSkins) { $0.gameType }
-        for (type, skins) in skinsByType {
-            DLOG("- \(type.rawValue): \(skins.count) skins")
+        let groupedSkins = Dictionary(grouping: scannedSkins) { $0.gameType.rawValue }
+        for (type, skins) in groupedSkins.sorted(by: { $0.key < $1.key }) {
+            DLOG("- \(type): \(skins.count) skins")
             for skin in skins {
-                DLOG("  • \(skin.fileURL.lastPathComponent)")
+                DLOG("  • \(skin.name)")
             }
         }
+
+        // Update loadedSkins, preserving existing skins
+        loadedSkins = scannedSkins
     }
 
     /// Load a skin from URL and add to loadedSkins
@@ -150,28 +167,62 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
         }
     }
 
-    /// Import a skin file into the app's storage
-    public func importSkin(from sourceURL: URL) async throws {
-        ILOG("Importing skin from: \(sourceURL.lastPathComponent)")
-        try await queue.asyncResult {
+    /// Import a skin from a URL, handling spaces in paths
+    public func importSkin(from url: URL) async throws -> DeltaSkinProtocol {
+        DLOG("Starting skin import from: \(url.path)")
+
+        return try await queue.asyncResult { [self] in
+            // Get destination in Documents directory
             let skinsDir = try self.skinsDirectory
-            let destinationURL = skinsDir.appendingPathComponent(sourceURL.lastPathComponent)
+            let destinationURL = skinsDir.appendingPathComponent(url.lastPathComponent)
 
             // Remove existing file if needed
             if FileManager.default.fileExists(atPath: destinationURL.path) {
-                ILOG("Removing existing file at: \(destinationURL.path)")
+                DLOG("Removing existing skin at: \(destinationURL.path)")
                 try FileManager.default.removeItem(at: destinationURL)
             }
 
-            // Copy the file
-            ILOG("Copying file from: \(sourceURL.path) to: \(destinationURL.path)")
-            try FileManager.default.copyItem(at: sourceURL, to: destinationURL)
-            ILOG("File copied successfully")
+            // Copy to skins directory
+            DLOG("Copying skin to: \(destinationURL.path)")
+            try FileManager.default.copyItem(at: url, to: destinationURL)
 
-            // Load the skin to verify it
-            ILOG("Loading skin from: \(destinationURL.path)")
-            _ = try self.loadSkinFromURL(destinationURL)
-            ILOG("Skin loaded successfully")
+            // Scan to reload all skins
+            try self.scanForSkins()
+
+            // Return the imported skin
+            guard let skin = self.loadedSkins.first(where: { $0.fileURL == destinationURL }) else {
+                throw DeltaSkinError.invalidArchive
+            }
+
+            return skin
+        }
+    }
+
+    /// Check if a skin can be deleted (i.e., it's in the skins directory and not bundled)
+    public func isDeletable(_ skin: DeltaSkinProtocol) -> Bool {
+        guard let skinsDir = try? skinsDirectory else { return false }
+        return skin.fileURL.path.starts(with: skinsDir.path)
+    }
+
+    /// Delete a skin by its identifier
+    public func deleteSkin(_ identifier: String) async throws {
+        try await queue.asyncResult { [self] in
+            // Find the skin
+            guard let skin = self.loadedSkins.first(where: { $0.identifier == identifier }) else {
+                throw DeltaSkinError.notFound
+            }
+
+            // Verify it's deletable
+            guard self.isDeletable(skin) else {
+                throw DeltaSkinError.deletionNotAllowed
+            }
+
+            // Delete the file
+            DLOG("Deleting skin at: \(skin.fileURL.path)")
+            try FileManager.default.removeItem(at: skin.fileURL)
+
+            // Rescan skins
+            try self.scanForSkins()
         }
     }
 }

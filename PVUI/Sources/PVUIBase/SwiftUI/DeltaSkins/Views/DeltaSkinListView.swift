@@ -18,7 +18,7 @@ private struct IdentifiableSkin: Identifiable, Hashable {
 
 /// Grid view for browsing and selecting skins
 public struct DeltaSkinListView: View {
-    @ObservedObject private var manager: DeltaSkinManager
+    private let manager: DeltaSkinManagerProtocol
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var showingFullscreenPreview = false
     @State private var traits: DeltaSkinTraits?
@@ -34,7 +34,7 @@ public struct DeltaSkinListView: View {
         return [GridItem(.adaptive(minimum: minWidth), spacing: 12)]
     }
 
-    public init(manager: DeltaSkinManager = .shared) {
+    public init(manager: DeltaSkinManagerProtocol) {
         self.manager = manager
     }
 
@@ -114,7 +114,7 @@ public struct DeltaSkinListView: View {
 
 /// Grid view with loading and error states
 private struct SkinGridView: View {
-    @ObservedObject var manager: DeltaSkinManager
+    var manager: DeltaSkinManagerProtocol
     let columns: [GridItem]
 
     @State private var skins: [DeltaSkinProtocol] = []
@@ -136,7 +136,7 @@ private struct SkinGridView: View {
         }
     }
 
-    public init(manager: DeltaSkinManager = .shared, columns: [GridItem]) {
+    public init(manager: DeltaSkinManagerProtocol, columns: [GridItem]) {
         self.manager = manager
         self.columns = columns
     }
@@ -180,7 +180,7 @@ private struct SkinGridView: View {
                                                 initialIndex: orderedSkins.firstIndex(where: { $0.identifier == skin.identifier }) ?? 0
                                             )
                                         } label: {
-                                            SkinPreviewCell(skin: skin)
+                                            SkinPreviewCell(skin: skin, manager: manager)
                                         }
                                     }
                                 }
@@ -216,6 +216,10 @@ private struct SkinGridView: View {
 /// Preview cell for a skin with rubber-like design
 private struct SkinPreviewCell: View {
     let skin: DeltaSkinProtocol
+    let manager: DeltaSkinManagerProtocol
+    @State private var showingDeleteAlert = false
+    @State private var deleteError: Error?
+    @State private var showingErrorAlert = false
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.colorScheme) private var colorScheme
 
@@ -328,6 +332,35 @@ private struct SkinPreviewCell: View {
         }
         .shadow(color: .black.opacity(0.2), radius: 3, x: 0, y: 2)
         .padding(2)
+        .contextMenu {
+            if manager.isDeletable(skin) {
+                Button(role: .destructive) {
+                    showingDeleteAlert = true
+                } label: {
+                    Label("Delete", systemImage: "trash")
+                }
+            }
+        }
+        .alert("Delete Skin?", isPresented: $showingDeleteAlert) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) {
+                Task {
+                    do {
+                        try await manager.deleteSkin(skin.identifier)
+                    } catch {
+                        deleteError = error
+                        showingErrorAlert = true
+                    }
+                }
+            }
+        } message: {
+            Text("Are you sure you want to delete '\(skin.name)'? This cannot be undone.")
+        }
+        .alert("Delete Error", isPresented: $showingErrorAlert, presenting: deleteError) { _ in
+            Button("OK", role: .cancel) { }
+        } message: { error in
+            Text(error.localizedDescription)
+        }
     }
 }
 

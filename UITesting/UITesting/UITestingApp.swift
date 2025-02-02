@@ -154,7 +154,7 @@ struct UITestingApp: App {
             }
             .sheet(isPresented: $showDeltaSkinList) {
                 NavigationView {
-                    DeltaSkinListView()
+                    DeltaSkinListView(manager: DeltaSkinManager.shared)
                 }
             }
             .onAppear {
