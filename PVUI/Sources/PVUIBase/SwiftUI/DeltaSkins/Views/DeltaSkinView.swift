@@ -253,6 +253,7 @@ public struct DeltaSkinView: View {
     private func logLayoutInfo(geometry: GeometryProxy, layout: SkinLayout) {
         let debugInfo = """
         Container size: \(geometry.size)
+        Safe area insets: \(geometry.safeAreaInsets)
         Mapping size: \(skin.mappingSize(for: traits) ?? .zero)
         Layout:
           - scale: \(layout.scale)
@@ -260,6 +261,11 @@ public struct DeltaSkinView: View {
           - height: \(layout.height)
           - xOffset: \(layout.xOffset)
           - yOffset: \(layout.yOffset)
+        Calculated positions:
+          - Bottom edge: \(layout.yOffset + layout.height)
+          - Screen bottom: \(geometry.size.height)
+          - Safe area bottom: \(geometry.size.height - geometry.safeAreaInsets.bottom)
+        Has screen position: \(hasScreenPosition(for: traits))
         Skin buttons:
         \(skin.buttons(for: traits)?.map { "  - \($0.id): \($0.frame)" }.joined(separator: "\n") ?? "none")
         Screen frame: \(skin.screens(for: traits)?.first?.outputFrame ?? .zero)

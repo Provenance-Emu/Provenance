@@ -95,6 +95,7 @@ public struct DeltaSkinListView: View {
         for url in urls {
             // Start accessing the security-scoped resource
             guard url.startAccessingSecurityScopedResource() else {
+                ELOG("Failed to start accessing security-scoped resource")
                 throw DeltaSkinError.accessDenied
             }
 

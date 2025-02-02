@@ -152,20 +152,26 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
 
     /// Import a skin file into the app's storage
     public func importSkin(from sourceURL: URL) async throws {
+        ILOG("Importing skin from: \(sourceURL.lastPathComponent)")
         try await queue.asyncResult {
             let skinsDir = try self.skinsDirectory
             let destinationURL = skinsDir.appendingPathComponent(sourceURL.lastPathComponent)
 
             // Remove existing file if needed
             if FileManager.default.fileExists(atPath: destinationURL.path) {
+                ILOG("Removing existing file at: \(destinationURL.path)")
                 try FileManager.default.removeItem(at: destinationURL)
             }
 
             // Copy the file
+            ILOG("Copying file from: \(sourceURL.path) to: \(destinationURL.path)")
             try FileManager.default.copyItem(at: sourceURL, to: destinationURL)
+            ILOG("File copied successfully")
 
             // Load the skin to verify it
+            ILOG("Loading skin from: \(destinationURL.path)")
             _ = try self.loadSkinFromURL(destinationURL)
+            ILOG("Skin loaded successfully")
         }
     }
 }
