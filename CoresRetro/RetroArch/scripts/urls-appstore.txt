@@ -35,7 +35,7 @@ https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mame2003_libretro_i
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mame2003_plus_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mame2010_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mame_libretro_ios.dylib.zip
-https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mcsoftserve_libretro_ios.dylib.zip
+#https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mcsoftserve_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mednafen_gba_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mednafen_lynx_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mednafen_ngp_libretro_ios.dylib.zip
