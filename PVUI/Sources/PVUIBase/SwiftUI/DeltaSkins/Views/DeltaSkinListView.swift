@@ -259,6 +259,47 @@ private struct SkinPreviewCell: View {
     }
 
     var body: some View {
+        ZStack {
+            // Preview content with disabled interaction
+            content
+                .allowsHitTesting(false)  // Disable interaction on the preview content
+
+            // Transparent overlay to capture context menu
+            Color.clear
+                .contentShape(Rectangle())  // Make entire area tappable
+        }
+        .contextMenu {
+            if manager.isDeletable(skin) {
+                Button(role: .destructive) {
+                    showingDeleteAlert = true
+                } label: {
+                    Label("Delete", systemImage: "trash")
+                }
+            }
+        }
+        .alert("Delete Skin?", isPresented: $showingDeleteAlert) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) {
+                Task {
+                    do {
+                        try await manager.deleteSkin(skin.identifier)
+                    } catch {
+                        deleteError = error
+                        showingErrorAlert = true
+                    }
+                }
+            }
+        } message: {
+            Text("Are you sure you want to delete '\(skin.name)'? This cannot be undone.")
+        }
+        .alert("Delete Error", isPresented: $showingErrorAlert, presenting: deleteError) { _ in
+            Button("OK", role: .cancel) { }
+        } message: { error in
+            Text(error.localizedDescription)
+        }
+    }
+
+    private var content: some View {
         VStack(alignment: .leading, spacing: 8) {
             // Preview
             PreviewContainer {
@@ -332,35 +373,6 @@ private struct SkinPreviewCell: View {
         }
         .shadow(color: .black.opacity(0.2), radius: 3, x: 0, y: 2)
         .padding(2)
-        .contextMenu {
-            if manager.isDeletable(skin) {
-                Button(role: .destructive) {
-                    showingDeleteAlert = true
-                } label: {
-                    Label("Delete", systemImage: "trash")
-                }
-            }
-        }
-        .alert("Delete Skin?", isPresented: $showingDeleteAlert) {
-            Button("Cancel", role: .cancel) { }
-            Button("Delete", role: .destructive) {
-                Task {
-                    do {
-                        try await manager.deleteSkin(skin.identifier)
-                    } catch {
-                        deleteError = error
-                        showingErrorAlert = true
-                    }
-                }
-            }
-        } message: {
-            Text("Are you sure you want to delete '\(skin.name)'? This cannot be undone.")
-        }
-        .alert("Delete Error", isPresented: $showingErrorAlert, presenting: deleteError) { _ in
-            Button("OK", role: .cancel) { }
-        } message: { error in
-            Text(error.localizedDescription)
-        }
     }
 }
 
