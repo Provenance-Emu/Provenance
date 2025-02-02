@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenance.Fuse</string>
+	<string>com.provenance.core.Fuse</string>
 	<key>PVPrincipleClass</key>
-	<string>PVFuseCore</string>
+	<string>PVFuse.PVFuseCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.zxspectrum</string>

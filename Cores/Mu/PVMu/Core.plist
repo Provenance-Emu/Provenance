@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.Mu</string>
 	<key>PVPrincipleClass</key>
-	<string>PVMuCore</string>
+	<string>PVMu.PVMuCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.palmos</string>

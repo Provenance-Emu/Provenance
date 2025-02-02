@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenance.TIC80</string>
+	<string>com.provenance.core.TIC80</string>
 	<key>PVPrincipleClass</key>
-	<string>PVTIC80Core</string>
+	<string>PVTIC80.PVTIC80Core</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.tic80</string>

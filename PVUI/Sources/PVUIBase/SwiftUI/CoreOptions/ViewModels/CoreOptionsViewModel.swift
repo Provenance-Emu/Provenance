@@ -20,14 +20,24 @@ final class CoreOptionsViewModel: ObservableObject {
 
     /// Load all cores that implement CoreOptional
     private func loadAvailableCores() {
+        let unsupportedCores = Defaults[.unsupportedCores]
+        let isAppStore = AppState.shared.isAppStore
         let realm = try! Realm()
+        
         availableCores = realm.objects(PVCore.self)
             .sorted(byKeyPath: "projectName")
             .filter { pvcore in
-                guard let coreClass = NSClassFromString(pvcore.principleClass) as? CoreOptional.Type else {
+                guard let _ = NSClassFromString(pvcore.principleClass) as? CoreOptional.Type else {
                     return false
                 }
-                return true
+                
+                // Keep the core if:
+                // 1. It's not disabled, OR it's disabled but unsupportedCores is true
+                // 2. AND (It's not app store disabled, OR we're not in the app store, OR unsupportedCores is true)
+                let keepDueToDisabled = !pvcore.disabled || unsupportedCores
+                let keepDueToAppStoreDisabled = !pvcore.appStoreDisabled || !isAppStore || unsupportedCores
+                
+                return keepDueToDisabled && keepDueToAppStoreDisabled
             }
     }
 

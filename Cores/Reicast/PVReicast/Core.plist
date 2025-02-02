@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.reicast</string>
 	<key>PVPrincipleClass</key>
-	<string>PVReicastCore</string>
+	<string>PVReicast.PVReicastCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.dreamcast</string>

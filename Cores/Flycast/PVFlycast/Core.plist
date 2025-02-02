@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>org.provenance.core.flycast</string>
+	<string>com.provenance.core.flycast</string>
 	<key>PVPrincipleClass</key>
-	<string>PVFlycastCore</string>
+	<string>PVFlycast.PVFlycastCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.dreamcast</string>

@@ -732,9 +732,25 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     @MainActor
     private func performImport(for item: ImportQueueItem) async throws {
+        ILOG("Starting import for file: \(item.url.lastPathComponent)")
 
         //ideally this wouldn't be needed here because we'd have done it elsewhere
         item.fileType = try determineImportType(item)
+        ILOG("Determined file type: \(item.fileType)")
+
+        // Handle BIOS files first, before any system detection
+        if item.fileType == .bios {
+            ILOG("Processing as BIOS file")
+            do {
+                try await gameImporterDatabaseService.importBIOSIntoDatabase(queueItem: item)
+                ILOG("Successfully imported BIOS file")
+                item.status = .success
+                return
+            } catch {
+                ELOG("Failed to import BIOS file: \(error)")
+                throw error
+            }
+        }
 
         if item.fileType == .artwork {
             //TODO: what do i do with the PVGame result here?
@@ -746,7 +762,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             return
         }
 
-        //get valid systems that this object might support
+        // Only do system detection for non-BIOS files
         guard let systems: [SystemIdentifier] = try? await gameImporterSystemsService.determineSystems(for: item), !systems.isEmpty else {
             //this is actually an import error
             item.status = .failure

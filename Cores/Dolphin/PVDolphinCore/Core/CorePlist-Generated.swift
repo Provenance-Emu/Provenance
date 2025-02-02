@@ -21,6 +21,7 @@ public enum CorePlist {
   public static let pvProjectURL: String = "https://github.com/OatmealDome/dolphin"
   public static let pvProjectVersion: String = "3.2.0b2 (186)"
   public static let pvSupportedSystems: [String] = ["com.provenance.gamecube", "com.provenance.wii"]
+  public static let pvAppStoreDisabled: Bool = true
 
   #if canImport(PVCoreBridge)
     public static var corePlist: EmulatorCoreInfoPlist {
@@ -30,7 +31,8 @@ public enum CorePlist {
             supportedSystems: CorePlist.pvSupportedSystems,
             projectName: CorePlist.pvProjectName,
             projectURL: CorePlist.pvProjectURL,
-            projectVersion: CorePlist.pvProjectVersion)
+            projectVersion: CorePlist.pvProjectVersion,
+            appStoreDisabled: CorePlist.pvAppStoreDisabled)
     }
 
     public var corePlist: EmulatorCoreInfoPlist { Self.corePlist }

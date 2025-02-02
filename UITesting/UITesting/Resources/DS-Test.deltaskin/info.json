@@ -1,0 +1,265 @@
+{
+    "name": "DS Test Skin",
+    "identifier": "com.provenance.test.ds",
+    "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+    "debug": false,
+    "representations": {
+        "iphone": {
+            "edgeToEdge": {
+                "landscape": {
+                    "assets": {
+                        "resizable": "iphone_landscape.pdf"
+                    },
+                    "screens": [
+                        {
+                            "inputFrame": {
+                                "x": 0,
+                                "y": 0,
+                                "width": 256,
+                                "height": 192
+                            },
+                            "outputFrame": {
+                                "x": 20,
+                                "y": 0,
+                                "width": 535,
+                                "height": 400
+                            }
+                        },
+                        {
+                            "inputFrame": {
+                                "x": 0,
+                                "y": 192,
+                                "width": 256,
+                                "height": 192
+                            },
+                            "outputFrame": {
+                                "x": 555,
+                                "y": 0,
+                                "width": 341,
+                                "height": 256
+                            }
+                        }
+                    ],
+                    "mappingSize": {
+                        "width": 896,
+                        "height": 414
+                    }
+                }
+            }
+        },
+        "ipad": {
+            "standard": {
+                "portrait": {
+                    "mini": {
+                        "assets": {
+                            "resizable": "ipad_mini_portrait.pdf"
+                        },
+                        "screens": [
+                            {
+                                "inputFrame": {
+                                    "x": 0,
+                                    "y": 0,
+                                    "width": 256,
+                                    "height": 192
+                                },
+                                "outputFrame": {
+                                    "x": 40,
+                                    "y": 40,
+                                    "width": 700,
+                                    "height": 525
+                                },
+                                "filters": [
+                                    {
+                                        "name": "CIPixellate",
+                                        "parameters": {
+                                            "inputScale": 2.0
+                                        }
+                                    },
+                                    {
+                                        "name": "CISharpenLuminance",
+                                        "parameters": {
+                                            "inputSharpness": 0.4
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "inputFrame": {
+                                    "x": 0,
+                                    "y": 192,
+                                    "width": 256,
+                                    "height": 192
+                                },
+                                "outputFrame": {
+                                    "x": 40,
+                                    "y": 605,
+                                    "width": 700,
+                                    "height": 525
+                                },
+                                "filters": [
+                                    {
+                                        "name": "CIUnsharpMask",
+                                        "parameters": {
+                                            "inputRadius": 2.5,
+                                            "inputIntensity": 0.5
+                                        }
+                                    }
+                                ]
+                            }
+                        ],
+                        "mappingSize": {
+                            "width": 780,
+                            "height": 1170
+                        }
+                    },
+                    "pro13": {
+                        "assets": {
+                            "resizable": "ipad_pro_portrait.pdf"
+                        },
+                        "screens": [
+                            {
+                                "inputFrame": {
+                                    "x": 0,
+                                    "y": 0,
+                                    "width": 256,
+                                    "height": 192
+                                },
+                                "outputFrame": {
+                                    "x": 62,
+                                    "y": 62,
+                                    "width": 1024,
+                                    "height": 768
+                                },
+                                "filters": [
+                                    {
+                                        "name": "CIPhotoEffectNoir",
+                                        "parameters": {}
+                                    },
+                                    {
+                                        "name": "CIColorInvert",
+                                        "parameters": {}
+                                    }
+                                ]
+                            },
+                            {
+                                "inputFrame": {
+                                    "x": 0,
+                                    "y": 192,
+                                    "width": 256,
+                                    "height": 192
+                                },
+                                "outputFrame": {
+                                    "x": 62,
+                                    "y": 892,
+                                    "width": 1024,
+                                    "height": 768
+                                }
+                            }
+                        ],
+                        "mappingSize": {
+                            "width": 1148,
+                            "height": 1722
+                        }
+                    }
+                }
+            },
+            "splitView": {
+                "portrait": {
+                    "mini": {
+                        // Mini-specific split view config...
+                    },
+                    "pro13": {
+                        // Pro-specific split view config...
+                    }
+                },
+                "landscape": {
+                    "mini": {
+                        // Mini-specific landscape config...
+                    },
+                    "pro13": {
+                        // Pro-specific landscape config...
+                    }
+                }
+            },
+            "stageManager": {
+                "landscape": {
+                    "pro13": {
+                        "assets": {
+                            "resizable": "ipad_stage_landscape.pdf"
+                        },
+                        "screens": [
+                            {
+                                "inputFrame": {
+                                    "x": 0,
+                                    "y": 0,
+                                    "width": 256,
+                                    "height": 192
+                                },
+                                "outputFrame": {
+                                    "x": 40,
+                                    "y": 40,
+                                    "width": 600,
+                                    "height": 450
+                                }
+                            },
+                            {
+                                "inputFrame": {
+                                    "x": 0,
+                                    "y": 192,
+                                    "width": 256,
+                                    "height": 192
+                                },
+                                "outputFrame": {
+                                    "x": 40,
+                                    "y": 530,
+                                    "width": 600,
+                                    "height": 450
+                                }
+                            }
+                        ],
+                        "mappingSize": {
+                            "width": 680,
+                            "height": 1020
+                        }
+                    }
+                }
+            },
+            "externalDisplay": {
+                "landscape": {
+                    "dedicated": {
+                        "assets": {
+                            "resizable": "external_display.pdf"
+                        },
+                        "screens": [
+                            {
+                                "inputFrame": {
+                                    "x": 0,
+                                    "y": 0,
+                                    "width": 256,
+                                    "height": 192
+                                },
+                                "outputFrame": {
+                                    "x": 0,
+                                    "y": 0,
+                                    "width": 1920,
+                                    "height": 1080
+                                },
+                                "placement": "app",
+                                "filters": [
+                                    {
+                                        "name": "CIPhotoEffectNoir",
+                                        "parameters": {}
+                                    }
+                                ]
+                            }
+                        ],
+                        "mappingSize": {
+                            "width": 1920,
+                            "height": 1080
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

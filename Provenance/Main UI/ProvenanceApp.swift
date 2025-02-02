@@ -22,27 +22,27 @@ struct ProvenanceApp: App {
     @StateObject private var featureFlags = PVFeatureFlagsManager.shared
 
     init() {
-#if canImport(Sentry)
-        if appState.isAppStore {
-            SentrySDK.start { options in
-                options.dsn = "https://f9976bad538343d59606a8ef312d4720@o199354.ingest.us.sentry.io/1309415"
-                #if DEBUG
-                options.debug = true // Enabled debug when first installing is always helpful
-                // Enable tracing to capture 100% of transactions for tracing.
-                // Use 'options.tracesSampleRate' to set the sampling rate.
-                // We recommend setting a sample rate in production.
-                options.tracesSampleRate = 1.0 // tracing must be enabled for profiling
-                options.profilesSampleRate = 1.0 // see also `profilesSampler` if you need custom sampling logic
-                options.enableAppLaunchProfiling = true // experimental new feature to start profiling in the pre-main launch phase
-                options.sessionReplay.onErrorSampleRate = 1.0
-                options.sessionReplay.sessionSampleRate = 0.1
-                #else
-                options.tracesSampleRate = 0.5
-                options.sessionReplay.onErrorSampleRate = 1.0
-                #endif
-            }
-        }
-#endif
+//#if canImport(Sentry)
+//        if appState.isAppStore {
+//            SentrySDK.start { options in
+//                options.dsn = "https://f9976bad538343d59606a8ef312d4720@o199354.ingest.us.sentry.io/1309415"
+//                #if DEBUG
+//                options.debug = true // Enabled debug when first installing is always helpful
+//                // Enable tracing to capture 100% of transactions for tracing.
+//                // Use 'options.tracesSampleRate' to set the sampling rate.
+//                // We recommend setting a sample rate in production.
+//                options.tracesSampleRate = 1.0 // tracing must be enabled for profiling
+//                options.profilesSampleRate = 1.0 // see also `profilesSampler` if you need custom sampling logic
+//                options.enableAppLaunchProfiling = true // experimental new feature to start profiling in the pre-main launch phase
+//                options.sessionReplay.onErrorSampleRate = 1.0
+//                options.sessionReplay.sessionSampleRate = 0.1
+//                #else
+//                options.tracesSampleRate = 0.5
+//                options.sessionReplay.onErrorSampleRate = 1.0
+//                #endif
+//            }
+//        }
+//#endif
       }
 
     var body: some Scene {
@@ -64,8 +64,10 @@ struct ProvenanceApp: App {
                        WhatsNewEnvironment(
                            // Specify in which way the presented WhatsNew Versions are stored.
                            // In default the `UserDefaultsWhatsNewVersionStore` is used.
-                           versionStore: // InMemoryWhatsNewVersionStore(),
-                           NSUbiquitousKeyValueWhatsNewVersionStore(), // UserDefaultsWhatsNewVersionStore(),
+                           versionStore:
+//                             InMemoryWhatsNewVersionStore(),
+                           NSUbiquitousKeyValueWhatsNewVersionStore(),
+                           // UserDefaultsWhatsNewVersionStore(),
                            // Pass a `WhatsNewCollectionProvider` or an array of WhatsNew instances
                            whatsNewCollection: self
                        )
@@ -220,6 +222,80 @@ extension ProvenanceApp: WhatsNewCollectionProvider {
                     image: .init(systemName: "gearshape.2", foregroundColor: .purple),
                     title: "Core Enhancements",
                     subtitle: "Improved 3DS core options with instant updates for settings like upscaling and CPU clock speed"
+                )
+            ],
+            primaryAction: .init(
+                title: "Continue",
+                backgroundColor: ThemeManager.shared.currentPalette.switchON?.swiftUIColor ?? .accentColor,
+                foregroundColor: ThemeManager.shared.currentPalette.switchThumb?.swiftUIColor ?? .white,
+                hapticFeedback: .notification(.success)
+            )
+        )
+        WhatsNew(
+            version: "3.0.3",
+            title: "Performance & Compatibility",
+            features: [
+                .init(
+                    image: .init(systemName: "cpu.fill", foregroundColor: .blue),
+                    title: "Core Scanning Improvements",
+                    subtitle: "Enhanced core detection and loading to prevent boot crashes"
+                ),
+                .init(
+                    image: .init(systemName: "exclamationmark.triangle.fill", foregroundColor: .orange),
+                    title: "Better Error Handling",
+                    subtitle: "Improved RetroArch error handling for enhanced stability"
+                ),
+                .init(
+                    image: .init(systemName: "gamecontroller.fill", foregroundColor: .green),
+                    title: "Controller Fixes",
+                    subtitle: "Fixed Intellivision on-screen control layout and responsiveness"
+                ),
+                .init(
+                    image: .init(systemName: "cpu.fill", foregroundColor: .purple),
+                    title: "Graphics Enhancements",
+                    subtitle: "Custom MoltenVK implementation to fix 3DS crashes and shader issues"
+                ),
+                .init(
+                    image: .init(systemName: "display", foregroundColor: .red),
+                    title: "Jaguar Improvements",
+                    subtitle: "Fixed video rendering and display issues for Atari Jaguar games"
+                ),
+                .init(
+                    image: .init(systemName: "archivebox.fill", foregroundColor: .blue),
+                    title: "BIOS Support",
+                    subtitle: "Added support for zipped BIOS files including Neo Geo and others"
+                ),
+                .init(
+                    image: .init(systemName: "wrench.and.screwdriver.fill", foregroundColor: .gray),
+                    title: "General Improvements",
+                    subtitle: "Various bug fixes and stability improvements across all systems"
+                )
+            ],
+            primaryAction: .init(
+                title: "Continue",
+                backgroundColor: ThemeManager.shared.currentPalette.switchON?.swiftUIColor ?? .accentColor,
+                foregroundColor: ThemeManager.shared.currentPalette.switchThumb?.swiftUIColor ?? .white,
+                hapticFeedback: .notification(.success)
+            )
+        )
+        WhatsNew(
+            version: "3.0.4",
+            title: "RetroArch Improvements",
+            features: [
+                .init(
+                    image: .init(systemName: "square.3.layers.3d.top.filled", foregroundColor: .blue),
+                    title: "3DS Graphics Enhancement",
+                    subtitle: "Fixed shadow rendering issues for improved visual quality in 3DS games"
+                ),
+                .init(
+                    image: .init(systemName: "list.bullet.rectangle.fill", foregroundColor: .orange),
+                    title: "RetroArch Menu Fix",
+                    subtitle: "Resolved issues with RetroArch menu display and navigation"
+                ),
+                .init(
+                    image: .init(systemName: "bolt.horizontal.circle.fill", foregroundColor: .green),
+                    title: "Core Performance",
+                    subtitle: "Enhanced stability and responsiveness across all RetroArch-based cores"
                 )
             ],
             primaryAction: .init(

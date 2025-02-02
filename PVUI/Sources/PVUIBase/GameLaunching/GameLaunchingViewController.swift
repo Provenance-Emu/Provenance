@@ -132,12 +132,11 @@ extension GameLaunchingViewController where Self: UIViewController {
 
             VLOG("\(game.title) matched system \(system.name)\n Cores: \(system.cores.map{$0.principleClass}.joined(separator: ", "))")
 
-            // Are unsupported cr
+            // Are unsupported cores enabled
             let unsupportedCores = Defaults[.unsupportedCores]
 
-
             let cores: [PVCore] = system.cores.filter {
-                (!$0.disabled || unsupportedCores) && $0.hasCoreClass && !(AppState.shared.isAppStore && $0.appStoreDisabled)
+                (!$0.disabled || unsupportedCores) && $0.hasCoreClass && !(AppState.shared.isAppStore && $0.appStoreDisabled && !unsupportedCores)
             }.sorted(by: { $0.projectName < $1.projectName })
 
             guard !cores.isEmpty else {
@@ -307,24 +306,19 @@ extension GameLaunchingViewController where Self: UIViewController {
     }
 
 
+    @MainActor
     func presentCoreSelection(forGame game: PVGame, sender: Any?) {
         guard let system = game.system else {
             ELOG("No system for game \(game.title)")
             return
         }
 
-        let cores = system.cores
-            .sorted(byKeyPath: "projectName")
-            .filter({
-                guard !$0.disabled else {
-                    return Defaults[.unsupportedCores]
-                }
-                guard $0.hasCoreClass else { return false }
-                return true
-            })
-        //            .distinct(by: #keyPath(\PVSystem.name))
-            .sorted { $0.projectName > $1.projectName }
-        //            .sorted { $0.supportedSystems.count <= $1.supportedSystems.count }
+        // Are unsupported cores enabled
+        let unsupportedCores = Defaults[.unsupportedCores]
+
+        let cores: [PVCore] = system.cores.filter {
+            (!$0.disabled || unsupportedCores) && $0.hasCoreClass && !(AppState.shared.isAppStore && $0.appStoreDisabled && !unsupportedCores)
+        }.sorted(by: { $0.projectName < $1.projectName })
 
         let coreChoiceAlert = UIAlertController(title: "Multiple cores found",
                                                 message: "Select which core to use with this game.",

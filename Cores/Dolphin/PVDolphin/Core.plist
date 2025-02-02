@@ -17,5 +17,7 @@
 	<string>https://github.com/OatmealDome/dolphin</string>
 	<key>PVProjectVersion</key>
 	<string>3.2.0b2 (186)</string>
+	<key>PVAppStoreDisabled</key>
+	<true/>
 </dict>
 </plist>

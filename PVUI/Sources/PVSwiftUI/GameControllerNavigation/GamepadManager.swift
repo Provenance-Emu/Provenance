@@ -2,6 +2,7 @@ import Foundation
 import GameController
 import SwiftUI
 import Combine
+import PVSettings
 
 public enum GamepadEvent {
     case buttonPress(Bool)
@@ -65,6 +66,7 @@ public class GamepadManager: ObservableObject {
         print("Gamepad connected and setting up handlers")
         setupBasicControls(controller)
         setupMenuToggleHandlers(controller)
+        disableDefaultGestures(controller)
     }
 
     private func setupBasicControls(_ controller: GCController) {
@@ -111,15 +113,25 @@ public class GamepadManager: ObservableObject {
 
     private func setupMenuToggleHandlers(_ controller: GCController) {
         controller.extendedGamepad?.leftTrigger.valueChangedHandler = { [weak self] button, _, _ in
-            DispatchQueue.main.async {
-                self?.eventSubject.send(.menuToggle(button.isPressed))
+            if Defaults[.pauseButtonIsMenuButton] {
+                DispatchQueue.main.async {
+                    self?.eventSubject.send(.menuToggle(button.isPressed))
+                }
             }
         }
 
         controller.extendedGamepad?.buttonOptions?.valueChangedHandler = { [weak self] _, _, pressed in
-            DispatchQueue.main.async {
-                self?.eventSubject.send(.menuToggle(pressed))
+            if Defaults[.pauseButtonIsMenuButton] {
+                DispatchQueue.main.async {
+                    self?.eventSubject.send(.menuToggle(pressed))
+                }
             }
         }
+    }
+    
+    private func disableDefaultGestures(_ controller: GCController) {
+        controller.buttonOptions?.preferredSystemGestureState = .disabled
+        controller.buttonMenu?.preferredSystemGestureState    = .disabled
+        controller.buttonHome?.preferredSystemGestureState    = .disabled
     }
 }

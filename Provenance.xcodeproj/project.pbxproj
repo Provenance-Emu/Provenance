@@ -161,6 +161,13 @@
 		B30059852C7974F5003010F5 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30059842C7974F5003010F5 /* PVSupport */; };
 		B30585692C0C14EE00B91D7A /* PVWebServer in Frameworks */ = {isa = PBXBuildFile; productRef = B30585682C0C14EE00B91D7A /* PVWebServer */; };
 		B305856E2C0D52F200B91D7A /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B305856D2C0D52F200B91D7A /* PVLibrary */; };
+		B306D7D92D3DDB6D00C71EBE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B306D7D82D3DDB6D00C71EBE /* GoogleService-Info.plist */; };
+		B306D7DD2D3DDB6D00C71EBE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B306D7D82D3DDB6D00C71EBE /* GoogleService-Info.plist */; };
+		B306D7E12D3DDB6D00C71EBE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B306D7D82D3DDB6D00C71EBE /* GoogleService-Info.plist */; };
+		B306D7E42D3DDC6B00C71EBE /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B306D7E32D3DDC6B00C71EBE /* FirebaseAnalyticsWithoutAdIdSupport */; };
+		B306D7E62D3DDC6B00C71EBE /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = B306D7E52D3DDC6B00C71EBE /* FirebaseCore */; };
+		B306D7E82D3DDC6B00C71EBE /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = B306D7E72D3DDC6B00C71EBE /* FirebaseCrashlytics */; };
+		B306D7EA2D3DDC6B00C71EBE /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = B306D7E92D3DDC6B00C71EBE /* FirebasePerformance */; };
 		B30ED0D72CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B30ED0D62CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic */; };
 		B30ED0D82CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B30ED0D62CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B30ED0DA2CFD3C5200AFCFCE /* PVCoreMednafen-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B30ED0D92CFD3C5200AFCFCE /* PVCoreMednafen-Dynamic */; };
@@ -814,8 +821,6 @@
 		B3E2A9FB2CB60F1200E2636D /* PVPPSSPP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2A9F92CB60F1200E2636D /* PVPPSSPP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E2AA252CB6328100E2636D /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA242CB6328100E2636D /* PVVecX.framework */; };
 		B3E2AA262CB6328100E2636D /* PVVecX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA242CB6328100E2636D /* PVVecX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E2AA302CB6346900E2636D /* PVOpera.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA2F2CB6346900E2636D /* PVOpera.framework */; };
-		B3E2AA312CB6346900E2636D /* PVOpera.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA2F2CB6346900E2636D /* PVOpera.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E2AA382CB635BB00E2636D /* PVGME.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA372CB635BB00E2636D /* PVGME.framework */; };
 		B3E2AA392CB635BB00E2636D /* PVGME.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA372CB635BB00E2636D /* PVGME.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E2AA4E2CB638F400E2636D /* PVDesmume2015.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA4D2CB638F400E2636D /* PVDesmume2015.framework */; platformFilters = (ios, maccatalyst, ); };
@@ -1527,7 +1532,6 @@
 				B318E28B2CAB512F00D0E599 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B38FB4B32CBEF961006786C6 /* PVRetroArch.framework in Embed Frameworks */,
 				B3E2AA522CB63A6200E2636D /* PVBeetlePSX.framework in Embed Frameworks */,
-				B3E2AA312CB6346900E2636D /* PVOpera.framework in Embed Frameworks */,
 				B318E29B2CAB586800D0E599 /* snes9x.framework in Embed Frameworks */,
 				B38FB4B12CBEF6B1006786C6 /* libswscale.xcframework in Embed Frameworks */,
 				B3B925A32C614208006317EC /* PVVirtualJaguar-Dynamic in Embed Frameworks */,
@@ -1772,6 +1776,7 @@
 		B305F103276B6BBD003AE510 /* PVCrabEmu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCrabEmu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B30623162CC81A1000B4F954 /* Provenance-UnderDevelopment-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Provenance-UnderDevelopment-Info.plist"; sourceTree = "<group>"; };
 		B3062B1D2971A60D00686D31 /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS/libMoltenVK.dylib; sourceTree = "<group>"; };
+		B306D7D82D3DDB6D00C71EBE /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B306E1412769FE65001DC52E /* PVO2EM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVO2EM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B309C7A42717C49F00279529 /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B309C7A72717C4B500279529 /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2904,6 +2909,7 @@
 			files = (
 				B3F9049E2C1FE9D8002283B3 /* libbz2.tbd in Frameworks */,
 				B30ED0D72CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic in Frameworks */,
+				B306D7EA2D3DDC6B00C71EBE /* FirebasePerformance in Frameworks */,
 				B38FB4A82CBEF6B0006786C6 /* libavcodec.xcframework in Frameworks */,
 				B33B4F4B2C1A5B4B007371C5 /* RealmSwift in Frameworks */,
 				B3E2AA382CB635BB00E2636D /* PVGME.framework in Frameworks */,
@@ -2933,6 +2939,7 @@
 				B38A68C02CCF031C001C57D0 /* PVVisualBoyAdvance-Dynamic in Frameworks */,
 				B3E0CFA52C054FC200F45074 /* PVEmulatorCore in Frameworks */,
 				B394CD772BDEE53A006B63E8 /* Photos.framework in Frameworks */,
+				B306D7E82D3DDC6B00C71EBE /* FirebaseCrashlytics in Frameworks */,
 				B3E0CFA22C054F9F00F45074 /* ZipArchive in Frameworks */,
 				B394CD782BDEE53A006B63E8 /* GameController.framework in Frameworks */,
 				B33BD1C82C6A6261001E933A /* PVStella-Dynamic in Frameworks */,
@@ -2947,7 +2954,7 @@
 				B3E2A9FA2CB60F1200E2636D /* PVPPSSPP.framework in Frameworks */,
 				B33A09342D2D0B0C00BFB6C9 /* PVJIT in Frameworks */,
 				B32D45C72CB7310C006B76C2 /* PVGambatte in Frameworks */,
-				B3E2AA302CB6346900E2636D /* PVOpera.framework in Frameworks */,
+				B306D7E62D3DDC6B00C71EBE /* FirebaseCore in Frameworks */,
 				B394CD7C2BDEE53A006B63E8 /* CoreServices.framework in Frameworks */,
 				B394CD872BDEE53A006B63E8 /* AVFoundation.framework in Frameworks */,
 				B394CD892BDEE53A006B63E8 /* CFNetwork.framework in Frameworks */,
@@ -2969,6 +2976,7 @@
 				B394CDA12BDEE53A006B63E8 /* Reachability in Frameworks */,
 				B318E27A2CAB4C2400D0E599 /* PVO2EM.framework in Frameworks */,
 				B38FB4AA2CBEF6B0006786C6 /* libavformat.xcframework in Frameworks */,
+				B306D7E42D3DDC6B00C71EBE /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				B318E2882CAB512F00D0E599 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B394CDA72BDEE53A006B63E8 /* SteamController in Frameworks */,
 				B3E2AA512CB63A6200E2636D /* PVBeetlePSX.framework in Frameworks */,
@@ -3650,6 +3658,7 @@
 		1A4869BB17C8CA2C0019F6D2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B306D7D82D3DDB6D00C71EBE /* GoogleService-Info.plist */,
 				B394CDE32BDF22A2006B63E8 /* Provenance-AppStore.entitlements */,
 				B379D0472B4FB9A80067325A /* Provenance-JB.entitlements */,
 				B361938F221FB93B00F73875 /* Provenance-Free.entitlements */,
@@ -4489,6 +4498,7 @@
 				B394CDB62BDEE53A006B63E8 /* Resources */,
 				B394CDDA2BDEE53A006B63E8 /* Script: Set Build Number */,
 				93DB4BBC9C6D487AAA130B02 /* Upload Debug Symbols to Sentry */,
+				B306D7EB2D3DDD3300C71EBE /* Crashlytics */,
 			);
 			buildRules = (
 			);
@@ -4541,6 +4551,10 @@
 				B33A09332D2D0B0C00BFB6C9 /* PVJIT */,
 				B35F93E02D2F71450016E633 /* WhatsNewKit */,
 				54925F9AB59542258A6A5CE9 /* Sentry */,
+				B306D7E32D3DDC6B00C71EBE /* FirebaseAnalyticsWithoutAdIdSupport */,
+				B306D7E52D3DDC6B00C71EBE /* FirebaseCore */,
+				B306D7E72D3DDC6B00C71EBE /* FirebaseCrashlytics */,
+				B306D7E92D3DDC6B00C71EBE /* FirebasePerformance */,
 			);
 			productName = Provenance;
 			productReference = B394CDDF2BDEE53A006B63E8 /* Provenance.app */;
@@ -4950,6 +4964,7 @@
 				B3E77F822D1F57E6004A3AD2 /* XCLocalSwiftPackageReference "PVFeatureFlags" */,
 				B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */,
 				F8F20E7C3CB546288E1FB7F2 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
+				B306D7E22D3DDC6B00C71EBE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
 			projectDirPath = "";
@@ -5105,6 +5120,7 @@
 			files = (
 				B341FDDE2BE61EC100718929 /* InfoPlist.strings in Resources */,
 				B341FDDF2BE61EC100718929 /* Strings.strings in Resources */,
+				B306D7D92D3DDB6D00C71EBE /* GoogleService-Info.plist in Resources */,
 				B3DF8EDB2CC7AE1F0006F20E /* ColoredIcons.xcassets in Resources */,
 				B341FDE42BE61EC100718929 /* Assets.xcassets in Resources */,
 				B341FDE62BE61EC100718929 /* Settings.bundle in Resources */,
@@ -5167,6 +5183,7 @@
 			files = (
 				B35EEFE32C6C6D1A00EBD1A8 /* InfoPlist.strings in Resources */,
 				B35EEFE42C6C6D1A00EBD1A8 /* Strings.strings in Resources */,
+				B306D7DD2D3DDB6D00C71EBE /* GoogleService-Info.plist in Resources */,
 				B3E17E232CCF91B000732AEA /* AppStoreAssets-Lite.xcassets in Resources */,
 				B3DF8EE02CC7AE1F0006F20E /* ColoredIcons.xcassets in Resources */,
 				B35EEFE92C6C6D1A00EBD1A8 /* Settings.bundle in Resources */,
@@ -5188,6 +5205,7 @@
 			files = (
 				B394CDB82BDEE53A006B63E8 /* InfoPlist.strings in Resources */,
 				B394CDB92BDEE53A006B63E8 /* Strings.strings in Resources */,
+				B306D7E12D3DDB6D00C71EBE /* GoogleService-Info.plist in Resources */,
 				B3DF8EDE2CC7AE1F0006F20E /* ColoredIcons.xcassets in Resources */,
 				B394CDBF2BDEE53A006B63E8 /* Assets.xcassets in Resources */,
 				B394CDC12BDEE53A006B63E8 /* Settings.bundle in Resources */,
@@ -5464,6 +5482,29 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = ./Provenance/Resources/createVersionHeader.sh;
+		};
+		B306D7EB2D3DDD3300C71EBE /* Crashlytics */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			name = Crashlytics;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
 		};
 		B30E94842793B8BE00871E57 /* Test for CodeSigning.xcconfig */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -10981,6 +11022,14 @@
 				kind = branch;
 			};
 		};
+		B306D7E22D3DDC6B00C71EBE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.7.0;
+			};
+		};
 		B33B4F3E2C198F32007371C5 /* XCRemoteSwiftPackageReference "MBProgressHUD" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/jdg/MBProgressHUD.git";
@@ -11333,6 +11382,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */;
 			productName = PVLibrary;
+		};
+		B306D7E32D3DDC6B00C71EBE /* FirebaseAnalyticsWithoutAdIdSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B306D7E22D3DDC6B00C71EBE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsWithoutAdIdSupport;
+		};
+		B306D7E52D3DDC6B00C71EBE /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B306D7E22D3DDC6B00C71EBE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		B306D7E72D3DDC6B00C71EBE /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B306D7E22D3DDC6B00C71EBE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+		B306D7E92D3DDC6B00C71EBE /* FirebasePerformance */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B306D7E22D3DDC6B00C71EBE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebasePerformance;
 		};
 		B30ED0D62CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
