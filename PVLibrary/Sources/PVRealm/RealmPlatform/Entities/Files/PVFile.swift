@@ -197,7 +197,7 @@ public extension PVFile {
             DLOG("root=\(root)")
             var actualPartialPath = partialPath
             if root == .iCloud && partialPath.starts(with: "var/mobile/Containers/Data/Application/") {
-                DLOG("iCloud path, but partialPath does NOT contain iCloud path")
+                DLOG("iCloud path, but partialPath does NOT contain iCloud path, but instead local path")
                 var partialPathComponents = partialPath.components(separatedBy: "/")
                 let directoriesToRemove = partialPathComponents.count >= 7 ? 7 : partialPathComponents.count
                 partialPathComponents.removeFirst(directoriesToRemove)
