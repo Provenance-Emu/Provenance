@@ -590,6 +590,7 @@ class RomsSyncer: iCloudContainerSyncer {
     }
     
     override func deleteFromDatastore(_ file: URL) {
+        //TODO: remove cloud download, but keep in iCloud. this way the ROM isn't deleted from all devices
         guard let fileName = file.lastPathComponent.removingPercentEncoding,
               let parentDirectory = file.deletingLastPathComponent().lastPathComponent.removingPercentEncoding
         else {
