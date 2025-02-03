@@ -29,7 +29,9 @@ struct MarqueeText: View {
                     .fixedSize()
                     .background(GeometryReader { textGeometry in
                         Color.clear.onAppear {
-                            textWidth = textGeometry.size.width
+                            // Calculate text width with a small buffer
+                            let textSize = text.size(withAttributes: [.font: UIFont.systemFont(ofSize: 15, weight: .bold)])
+                            textWidth = textSize.width + 10 /// Add 10pt buffer
                             containerWidth = geometry.size.width
                             if textWidth > containerWidth {
                                 startAnimation()
@@ -37,7 +39,7 @@ struct MarqueeText: View {
                         }
                     })
                     .offset(x: offset)
-                    .animation(.linear(duration: (textWidth - containerWidth) / speed).delay(delay), value: offset)
+                    .animation(.linear(duration: Double(textWidth - containerWidth) / speed).delay(delay), value: offset)
                     .onChange(of: text) { _ in
                         offset = 0
                         startAnimation()
@@ -45,8 +47,10 @@ struct MarqueeText: View {
             }
             .frame(width: containerWidth, alignment: .leading)
             .clipped()
+            .contentShape(Rectangle())
         }
         .frame(height: 20) // Fixed height to prevent layout issues
+        .clipped()
     }
 
     private func startAnimation() {
