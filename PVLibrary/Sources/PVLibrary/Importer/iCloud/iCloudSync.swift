@@ -474,6 +474,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
         else {
             return
         }
+        //TODO: initially when importing icloud files, we should wait for ROMs to finish importing. when that completes, then we no longer have to wait for that, ie when syncing single changes say 2 devices are open at the same time and 1 save file is added from another device
         didFinishDownloadingAllFiles = false
         let jsonFiles = newFiles
         newFiles.removeAll()
