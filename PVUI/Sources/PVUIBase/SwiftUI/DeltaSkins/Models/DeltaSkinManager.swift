@@ -8,7 +8,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     public static let shared = DeltaSkinManager()
 
     /// Currently loaded skins
-    private var loadedSkins: [DeltaSkinProtocol] = []
+    @Published public private(set) var loadedSkins: [DeltaSkinProtocol] = []
 
     /// Queue for synchronizing skin operations
     private let queue = DispatchQueue(label: "com.provenance.deltaskin-manager")
@@ -47,38 +47,52 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
         // Create a new array to hold all skins
         var scannedSkins: [DeltaSkinProtocol] = []
 
-        // Keep track of existing skin identifiers
-        let existingIdentifiers = Set(loadedSkins.map { $0.identifier })
-
         for location in locations {
             DLOG("Examining location: \(location.path)")
-            var isDirectory: ObjCBool = false
-            guard FileManager.default.fileExists(atPath: location.path, isDirectory: &isDirectory) else { continue }
-            DLOG("Is directory: \(isDirectory.boolValue)")
 
-            if isDirectory.boolValue {
-                // Scan directory for .deltaskin files
-                if let contents = try? FileManager.default.contentsOfDirectory(
-                    at: location,
-                    includingPropertiesForKeys: nil,
-                    options: [.skipsHiddenFiles]
-                ).filter({ $0.pathExtension == "deltaskin" }) {
-                    for url in contents {
-                        if let skin = try? loadSkinFromURL(url) {
-                            // Only add if not already in scannedSkins
+            do {
+                let isDirectory = (try? location.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory ?? false
+                DLOG("Is directory: \(isDirectory)")
+
+                // Handle both directory formats:
+                // 1. A .deltaskin directory
+                // 2. A directory containing .deltaskin files/directories
+                if isDirectory {
+                    if location.lastPathComponent.hasSuffix(".deltaskin") {
+                        // This is a .deltaskin directory, load it directly
+                        if let skin = try? loadSkinFromURL(location) {
                             if !scannedSkins.contains(where: { $0.identifier == skin.identifier }) {
                                 scannedSkins.append(skin)
                             }
                         }
+                    } else {
+                        // This is a directory that might contain skins, scan it
+                        let contents = try FileManager.default.contentsOfDirectory(
+                            at: location,
+                            includingPropertiesForKeys: [.isDirectoryKey],
+                            options: [.skipsHiddenFiles]
+                        )
+
+                        for url in contents where url.lastPathComponent.hasSuffix(".deltaskin") {
+                            if let skin = try? loadSkinFromURL(url) {
+                                if !scannedSkins.contains(where: { $0.identifier == skin.identifier }) {
+                                    scannedSkins.append(skin)
+                                }
+                            }
+                        }
+                    }
+                } else if location.pathExtension == "deltaskin" {
+                    // This is a .deltaskin file (archive)
+                    if let skin = try? loadSkinFromURL(location) {
+                        if !scannedSkins.contains(where: { $0.identifier == skin.identifier }) {
+                            scannedSkins.append(skin)
+                        }
                     }
                 }
-            } else if location.pathExtension == "deltaskin" {
-                if let skin = try? loadSkinFromURL(location) {
-                    // Only add if not already in scannedSkins
-                    if !scannedSkins.contains(where: { $0.identifier == skin.identifier }) {
-                        scannedSkins.append(skin)
-                    }
-                }
+            } catch {
+                ELOG("Error scanning location \(location.path): \(error)")
+                // Continue scanning other locations
+                continue
             }
         }
 
@@ -92,7 +106,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             }
         }
 
-        // Update loadedSkins, preserving existing skins
+        // Update loadedSkins
         loadedSkins = scannedSkins
     }
 
@@ -122,10 +136,24 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     private func skinLocations() -> [URL] {
         var locations: [URL] = []
 
-        // Add bundle skins
-        if let bundleSkins = Bundle.main.urls(forResourcesWithExtension: "deltaskin", subdirectory: nil) {
+        // Add bundle skins from all bundles
+        let bundleSkins = Bundle.main.urls(forResourcesWithExtension: "deltaskin", subdirectory: nil) ?? []
+        locations.append(contentsOf: bundleSkins)
+
+        if !bundleSkins.isEmpty {
             DLOG("Found bundle skins: \(bundleSkins.map { $0.lastPathComponent })")
             locations.append(contentsOf: bundleSkins)
+        } else {
+            WLOG("No skinds found in any bundles")
+        }
+
+        // Add framework bundle skins
+        let frameworkSkins = Bundle.allFrameworks.flatMap { bundle in
+            bundle.urls(forResourcesWithExtension: "deltaskin", subdirectory: nil) ?? []
+        }
+        if !frameworkSkins.isEmpty {
+            DLOG("Found framework skins: \(frameworkSkins.map { $0.lastPathComponent })")
+            locations.append(contentsOf: frameworkSkins)
         }
 
         // Add Documents directory skins
@@ -178,12 +206,12 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
 
             // Remove existing file if needed
             if FileManager.default.fileExists(atPath: destinationURL.path) {
-                DLOG("Removing existing skin at: \(destinationURL.path)")
+                ILOG("Removing existing skin at: \(destinationURL.path)")
                 try FileManager.default.removeItem(at: destinationURL)
             }
 
             // Copy to skins directory
-            DLOG("Copying skin to: \(destinationURL.path)")
+            ILOG("Copying skin to: \(destinationURL.path)")
             try FileManager.default.copyItem(at: url, to: destinationURL)
 
             // Scan to reload all skins
@@ -191,6 +219,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
 
             // Return the imported skin
             guard let skin = self.loadedSkins.first(where: { $0.fileURL == destinationURL }) else {
+                ELOG("failed to load skin")
                 throw DeltaSkinError.invalidArchive
             }
 
@@ -201,7 +230,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     /// Check if a skin can be deleted (i.e., it's in the skins directory and not bundled)
     public func isDeletable(_ skin: DeltaSkinProtocol) -> Bool {
         guard let skinsDir = try? skinsDirectory else { return false }
-        return skin.fileURL.path.starts(with: skinsDir.path)
+        return skin.fileURL.path.contains(skinsDir.path)
     }
 
     /// Delete a skin by its identifier
@@ -221,8 +250,13 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             DLOG("Deleting skin at: \(skin.fileURL.path)")
             try FileManager.default.removeItem(at: skin.fileURL)
 
-            // Rescan skins
-            try self.scanForSkins()
+            // Update loadedSkins immediately
+            self.loadedSkins.removeAll { $0.identifier == identifier }
+
+            // Then rescan on main thread
+            Task { @MainActor in
+                self.objectWillChange.send()
+            }
         }
     }
 }
@@ -246,7 +280,7 @@ extension DispatchQueue {
 import UniformTypeIdentifiers
 
 // Add UTType for .deltaskin files
-extension UTType {
+public extension UTType {
     static var deltaSkin: UTType {
         UTType(exportedAs: "com.rileytestut.delta.skin")  // Delta's official UTType
     }

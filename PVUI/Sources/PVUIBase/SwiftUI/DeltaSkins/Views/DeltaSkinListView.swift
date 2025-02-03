@@ -1,5 +1,6 @@
 import SwiftUI
 import PVLogging
+import UniformTypeIdentifiers
 
 /// View for listing available skins
 private struct IdentifiableSkin: Identifiable, Hashable {
@@ -18,7 +19,7 @@ private struct IdentifiableSkin: Identifiable, Hashable {
 
 /// Grid view for browsing and selecting skins
 public struct DeltaSkinListView: View {
-    private let manager: DeltaSkinManagerProtocol
+    @ObservedObject var manager: DeltaSkinManager
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var showingFullscreenPreview = false
     @State private var traits: DeltaSkinTraits?
@@ -34,7 +35,7 @@ public struct DeltaSkinListView: View {
         return [GridItem(.adaptive(minimum: minWidth), spacing: 12)]
     }
 
-    public init(manager: DeltaSkinManagerProtocol) {
+    public init(manager: DeltaSkinManager = .shared) {
         self.manager = manager
     }
 
@@ -70,7 +71,7 @@ public struct DeltaSkinListView: View {
         #if !os(tvOS)
             .fileImporter(
                 isPresented: $showingDocumentPicker,
-                allowedContentTypes: [.deltaSkin],
+                allowedContentTypes: [UTType.deltaSkin],
                 allowsMultipleSelection: true
             ) { result in
                 Task {
@@ -114,16 +115,15 @@ public struct DeltaSkinListView: View {
 
 /// Grid view with loading and error states
 private struct SkinGridView: View {
-    var manager: DeltaSkinManagerProtocol
+    @ObservedObject var manager: DeltaSkinManager
     let columns: [GridItem]
 
-    @State private var skins: [DeltaSkinProtocol] = []
     @State private var isLoading = true
     @State private var error: Error?
 
-    // Group skins by game type
+    // Use manager's loadedSkins directly
     private var groupedSkins: [(String, [DeltaSkinProtocol])] {
-        let grouped = Dictionary(grouping: skins) { skin in
+        let grouped = Dictionary(grouping: manager.loadedSkins) { skin in
             skin.gameType.systemIdentifier?.fullName ?? skin.gameType.rawValue
         }
         return grouped.sorted { $0.key < $1.key }
@@ -131,19 +131,12 @@ private struct SkinGridView: View {
 
     // Create an ordered list that matches the visual grouping
     private var orderedSkins: [DeltaSkinProtocol] {
-        groupedSkins.flatMap { _, consoleSkins in
-            consoleSkins
-        }
-    }
-
-    public init(manager: DeltaSkinManagerProtocol, columns: [GridItem]) {
-        self.manager = manager
-        self.columns = columns
+        groupedSkins.flatMap { _, consoleSkins in consoleSkins }
     }
 
     var body: some View {
         Group {
-            switch (isLoading, error, skins.isEmpty) {
+            switch (isLoading, error, manager.loadedSkins.isEmpty) {
             case (true, _, _):
                 ProgressView("Loading skins...")
             case (_, let error?, _):
@@ -202,21 +195,21 @@ private struct SkinGridView: View {
         defer { isLoading = false }
 
         do {
-            skins = try await manager.availableSkins()
+            _ = try await manager.availableSkins()  // This will update loadedSkins
         } catch {
             self.error = error
         }
     }
 
     private func index(of skin: DeltaSkinProtocol) -> Int {
-        skins.firstIndex(where: { $0.identifier == skin.identifier }) ?? 0
+        manager.loadedSkins.firstIndex(where: { $0.identifier == skin.identifier }) ?? 0
     }
 }
 
 /// Preview cell for a skin with rubber-like design
 private struct SkinPreviewCell: View {
     let skin: DeltaSkinProtocol
-    let manager: DeltaSkinManagerProtocol
+    let manager: DeltaSkinManager
     @State private var showingDeleteAlert = false
     @State private var deleteError: Error?
     @State private var showingErrorAlert = false

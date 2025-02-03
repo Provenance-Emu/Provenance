@@ -6,7 +6,9 @@
 //
 
 /// Protocol for managing collections of skins
-public protocol DeltaSkinManagerProtocol {
+public protocol DeltaSkinManagerProtocol: ObservableObject {
+    var loadedSkins: [DeltaSkinProtocol] { get }
+
     /// Get all available skins
     func availableSkins() async throws -> [DeltaSkinProtocol]
 
