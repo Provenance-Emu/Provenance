@@ -22,6 +22,8 @@ struct GameItemViewCell: SwiftUI.View {
         if !game.isInvalidated {
             VStack(alignment: .leading, spacing: 3) {
                 GameItemThumbnail(artwork: artwork, gameTitle: game.title, boxartAspectRatio: game.boxartAspectRatio)
+                    .frame(maxWidth: .infinity)
+
                 if showGameTitles {
                     VStack(alignment: .leading, spacing: 0) {
                         GameItemTitle(text: game.title, viewType: viewType)
