@@ -21,8 +21,11 @@ struct GameItemViewCell: SwiftUI.View {
     var body: some SwiftUI.View {
         if !game.isInvalidated {
             VStack(alignment: .leading, spacing: 3) {
+                Spacer(minLength: 0)
+
                 GameItemThumbnail(artwork: artwork, gameTitle: game.title, boxartAspectRatio: game.boxartAspectRatio)
                     .frame(maxWidth: .infinity)
+                    .alignmentGuide(.bottom) { d in d[.bottom] }
 
                 if showGameTitles {
                     VStack(alignment: .leading, spacing: 0) {
@@ -30,10 +33,11 @@ struct GameItemViewCell: SwiftUI.View {
                         GameItemSubtitle(text: game.publishDate, viewType: viewType)
                     }
                     .frame(width: textMaxWidth)
+                    .alignmentGuide(.bottom) { d in d[.bottom] }
                 }
             }
             .if(constrainHeight) { view in
-                view.frame(height: PVRowHeight)
+                view.frame(height: PVRowHeight, alignment: .bottom)
             }
             .onPreferenceChange(ArtworkDynamicWidthPreferenceKey.self) {
                 textMaxWidth = $0
