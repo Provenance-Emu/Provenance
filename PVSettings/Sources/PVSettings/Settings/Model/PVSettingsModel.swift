@@ -133,7 +133,6 @@ public enum ButtonSound: String, Codable, Equatable, UserDefaultsRepresentable, 
     case click2 = "click2"
     case tap2 = "tap2"
     case click3 = "click3"
-    case tap3 = "tap3"
     case `switch` = "switch"
 
     public var description: String {
@@ -154,8 +153,6 @@ public enum ButtonSound: String, Codable, Equatable, UserDefaultsRepresentable, 
             return "Tap 2"
         case .click3:
             return "Click 3"
-        case .tap3:
-            return "Tap 3"
         case .switch:
             return "Switch"
         }
@@ -176,11 +173,9 @@ public enum ButtonSound: String, Codable, Equatable, UserDefaultsRepresentable, 
         case .click2:
             return "Mechanical click sound"
         case .tap2:
-            return "Soft tap sound"
+            return "Sharp tap sound"
         case .click3:
             return "Thudding click sound"
-        case .tap3:
-            return "Sharp tap sound"
         case .switch:
             return "Mechaniacal switch sound"
         }
@@ -203,8 +198,6 @@ public enum ButtonSound: String, Codable, Equatable, UserDefaultsRepresentable, 
             return "button-click3"
         case .tap2:
             return "button-tap2"
-        case .tap3:
-            return "button-tap3"
         case .switch:
             return "button-switch"
         }

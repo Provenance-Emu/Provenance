@@ -24,7 +24,7 @@ public final class ButtonSoundGenerator {
         for sound in ButtonSound.allCases where sound != .none {
             guard let url = Bundle.module.url(forResource: sound.filename,
                                             withExtension: "wav",
-                                            subdirectory: "ButtonSounds"),
+                                            subdirectory: "Sounds/ButtonSounds"),
                   let file = try? AVAudioFile(forReading: url) else {
                 ELOG("Failed to load sound file: \(sound.filename).wav")
                 continue
