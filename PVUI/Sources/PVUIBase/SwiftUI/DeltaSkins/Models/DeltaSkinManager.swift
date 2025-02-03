@@ -196,7 +196,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     }
 
     /// Import a skin from a URL, handling spaces in paths
-    public func importSkin(from url: URL) async throws -> DeltaSkinProtocol {
+    public func importSkin(from url: URL) async throws {
         DLOG("Starting skin import from: \(url.path)")
 
         return try await queue.asyncResult { [self] in
@@ -216,14 +216,6 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
 
             // Scan to reload all skins
             try self.scanForSkins()
-
-            // Return the imported skin
-            guard let skin = self.loadedSkins.first(where: { $0.fileURL == destinationURL }) else {
-                ELOG("failed to load skin")
-                throw DeltaSkinError.invalidArchive
-            }
-
-            return skin
         }
     }
 

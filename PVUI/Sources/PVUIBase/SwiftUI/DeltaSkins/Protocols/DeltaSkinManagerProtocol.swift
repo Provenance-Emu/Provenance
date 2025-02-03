@@ -16,7 +16,7 @@ public protocol DeltaSkinManagerProtocol: ObservableObject {
     func loadSkin(from url: URL) async throws -> DeltaSkinProtocol
 
     /// Import a skin from a URL, handling spaces in paths
-    func importSkin(from url: URL) async throws -> DeltaSkinProtocol
+    func importSkin(from url: URL) async throws
 
     /// Check if a skin can be deleted
     func isDeletable(_ skin: DeltaSkinProtocol) -> Bool
@@ -24,5 +24,6 @@ public protocol DeltaSkinManagerProtocol: ObservableObject {
     /// Delete a skin by its identifier
     func deleteSkin(_ identifier: String) async throws
 
+    /// Reload the list of skins in all available locations
     func reloadSkins() async
 }
