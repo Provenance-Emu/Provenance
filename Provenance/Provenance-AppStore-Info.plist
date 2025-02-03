@@ -591,7 +591,5 @@
 	</array>
 	<key>appcenter</key>
 	<string>862ca352-4607-4f8e-8c77-1248fa68ca3a</string>
-    <key>NSMotionUsageDescription</key>
-    <string>We use motion data to create a parallax effect on game covers</string>
 </dict>
 </plist>
