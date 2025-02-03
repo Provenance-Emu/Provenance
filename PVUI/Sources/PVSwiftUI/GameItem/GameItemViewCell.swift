@@ -30,6 +30,8 @@ struct GameItemViewCell: SwiftUI.View {
                 if showGameTitles {
                     VStack(alignment: .leading, spacing: 0) {
                         GameItemTitle(text: game.title, viewType: viewType)
+                            .frame(width: textMaxWidth)
+                            .clipped()
                         GameItemSubtitle(text: game.publishDate, viewType: viewType)
                     }
                     .frame(width: textMaxWidth)
