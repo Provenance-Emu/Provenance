@@ -10,6 +10,7 @@ struct MarqueeText: View {
     @State private var offset: CGFloat = 0
     @State private var textWidth: CGFloat = 0
     @State private var containerWidth: CGFloat = 0
+    @State private var isAnimating: Bool = false
 
     init(text: String, font: Font = .system(size: 15, weight: .bold, design: .monospaced), delay: Double = 1.0, speed: Double = 50.0, loop: Bool = true) {
         self.text = text
@@ -42,7 +43,7 @@ struct MarqueeText: View {
                         startAnimation()
                     }
             }
-            .frame(width: containerWidth)
+            .frame(width: containerWidth, alignment: .leading)
             .clipped()
         }
         .frame(height: 20) // Fixed height to prevent layout issues
@@ -51,14 +52,24 @@ struct MarqueeText: View {
     private func startAnimation() {
         guard textWidth > containerWidth else { return }
 
-        withAnimation(.linear(duration: (textWidth - containerWidth) / speed).delay(delay)) {
-            offset = -(textWidth - containerWidth)
-        }
+        // Initial pause
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            withAnimation(.linear(duration: Double(textWidth - containerWidth) / speed)) {
+                offset = -(textWidth - containerWidth)
+            }
 
-        if loop {
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay + (textWidth - containerWidth) / speed) {
-                offset = 0
-                startAnimation()
+            // Pause at end
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay + Double(textWidth - containerWidth) / speed) {
+                withAnimation(.linear(duration: Double(textWidth - containerWidth) / speed).delay(delay)) {
+                    offset = 0
+                }
+
+                if loop {
+                    // Pause at start before repeating
+                    DispatchQueue.main.asyncAfter(deadline: .now() + delay * 2 + Double(textWidth - containerWidth) * 2 / speed) {
+                        startAnimation()
+                    }
+                }
             }
         }
     }
