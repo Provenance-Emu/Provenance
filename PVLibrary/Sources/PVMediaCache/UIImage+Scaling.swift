@@ -49,91 +49,51 @@ public extension UIImage {
         let width = imgRef.width
         let height = imgRef.height
 
-        var tranform: CGAffineTransform = .identity
-        var bounds = CGRect(x: 0, y: 0, width: width, height: height)
+        // Calculate the aspect ratio
+        let aspectRatio = Double(width) / Double(height)
 
-        if width > maxResolution || height > maxResolution {
-            let ratio = Double(width) / Double(height)
-            if ratio > 1 {
-                bounds.size.width = Double(maxResolution)
-                bounds.size.height = bounds.size.width / ratio
-            } else {
-                bounds.size.height = Double(maxResolution)
-                bounds.size.width = bounds.size.height / ratio
+        // Determine new dimensions while maintaining aspect ratio
+        var newWidth = width
+        var newHeight = height
+
+        if width > height {
+            if width > maxResolution {
+                newWidth = maxResolution
+                newHeight = Int(Double(newWidth) / aspectRatio)
+            }
+        } else {
+            if height > maxResolution {
+                newHeight = maxResolution
+                newWidth = Int(Double(newHeight) * aspectRatio)
             }
         }
 
-        let scaleRatio: Double = bounds.size.width / Double(width)
-        let imageSize = CGSize(width: width, height: height)
+        // Create a new bitmap context with the correct size
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue)
 
-        var boundHeight: Double = 0
-
-        let orientation = imageOrientation
-        switch orientation {
-        case .up:
-            tranform = .identity
-        case .upMirrored:
-            tranform = tranform
-                .translatedBy(x: imageSize.width, y: 0.0)
-                .scaledBy(x: -1.0, y: 1.0)
-        case .down:
-            tranform = tranform
-                .translatedBy(x: imageSize.width, y: imageSize.height)
-                .rotated(by: Double.pi)
-        case .downMirrored:
-            tranform = tranform
-                .translatedBy(x: 0, y: imageSize.height)
-                .scaledBy(x: 1.0, y: -1.0)
-        case .leftMirrored:
-            boundHeight = bounds.size.height
-            bounds.size.height = bounds.size.width
-            bounds.size.width = boundHeight
-            tranform = tranform
-                .translatedBy(x: imageSize.height, y: imageSize.width)
-                .scaledBy(x: -1.0, y: 1.0)
-                .rotated(by: 3.0 * Double.pi / 2.0)
-        case .left:
-            boundHeight = bounds.size.height
-            bounds.size.height = bounds.size.width
-            bounds.size.width = boundHeight
-            tranform = tranform
-                .translatedBy(x: 0.0, y: imageSize.width)
-                .rotated(by: 3.0 * Double.pi / 2.0)
-        case .rightMirrored:
-            boundHeight = bounds.size.height
-            bounds.size.height = bounds.size.width
-            bounds.size.width = boundHeight
-            tranform = tranform
-                .scaledBy(x: -1.0, y: 1.0)
-                .rotated(by: Double.pi / 2.0)
-        case .right:
-            boundHeight = bounds.size.height
-            bounds.size.height = bounds.size.width
-            bounds.size.width = boundHeight
-            tranform = tranform
-                .translatedBy(x: imageSize.height, y: 0.0)
-                .rotated(by: 3.0 * Double.pi / 2.0)
-        @unknown default:
-            fatalError()
+        guard let context = CGContext(data: nil,
+                                      width: newWidth,
+                                      height: newHeight,
+                                      bitsPerComponent: 8,
+                                      bytesPerRow: 0,
+                                      space: colorSpace,
+                                      bitmapInfo: bitmapInfo.rawValue) else {
+            return nil
         }
 
-        UIGraphicsBeginImageContext(bounds.size)
-        guard let context = UIGraphicsGetCurrentContext() else { return nil }
+        // Set the quality level
+        context.interpolationQuality = .high
 
-        switch orientation {
-        case .left, .right:
-            context.scaleBy(x: -scaleRatio, y: scaleRatio)
-            context.translateBy(x: Double(-height), y: 0)
-        default:
-            context.scaleBy(x: scaleRatio, y: -scaleRatio)
-            context.translateBy(x: 0, y: Double(-height))
+        // Draw the image to the context
+        context.draw(imgRef, in: CGRect(x: 0, y: 0, width: newWidth, height: newHeight))
+
+        // Create a new image from the context
+        guard let scaledImageRef = context.makeImage() else {
+            return nil
         }
-        context.concatenate(tranform)
 
-        context.draw(imgRef, in: .init(x: 0, y: 0, width: width, height: height))
-        let imageCopy = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return imageCopy
+        return UIImage(cgImage: scaledImageRef)
     }
 }
 #else
