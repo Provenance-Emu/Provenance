@@ -4,17 +4,11 @@ import PVEmulatorCore
 import PVCoreBridge
 import PVLogging
 
-extension PVRetroArchCoreCore: CoreOptional {
-    @MainActor
-    public static var options: [PVCoreBridge.CoreOption] {
-        PVRetroArchCoreBridge.coreClassName = self.coreClassName
-        PVRetroArchCoreBridge.systemName = self.systemName
-
-        return PVRetroArchCoreBridge.options
-    }
-}
-
-extension PVRetroArchCoreBridge: CoreOptional {
+@objc public class PVRetroArchCoreOptions: NSObject, CoreOptions, @unchecked Sendable {
+    
+    static var coreClassName: String = ""
+    static var systemName: String = ""
+    
     static var gsOption: CoreOption {
          .enumeration(.init(title: "Graphics Handler",
                description: "(Requires Restart)",
@@ -187,10 +181,10 @@ extension PVRetroArchCoreBridge: CoreOptional {
             isDOS=true
             coreOptions.append(numKeyControllerOption)
         }
-        if let status = PVEmulatorCore.status["isOn"] as? Bool, status,
-           self.systemName.contains("appleII") {
-            coreOptions.append(apple2MachineOption)
-        }
+//        if let status = PVEmulatorCore.status["isOn"] as? Bool, status,
+//           self.systemName.contains("appleII") {
+//            coreOptions.append(apple2MachineOption)
+//        }
         analogKeyControllerOption = {
             .bool(.init(
                 title: ENABLE_ANALOG_KEY,
@@ -210,28 +204,53 @@ extension PVRetroArchCoreBridge: CoreOptional {
         options.append(contentsOf: [coreGroup])
         return options
     }
+
+}
+
+// MARK: - PVRetroArchCoreCore
+
+extension PVRetroArchCoreCore: CoreOptional {
+    @MainActor
+    public static var options: [PVCoreBridge.CoreOption] {
+        PVRetroArchCoreOptions.coreClassName = self.coreClassName
+        PVRetroArchCoreOptions.systemName = self.systemName
+
+        return PVRetroArchCoreOptions.options
+    }
+}
+
+// MARK: - PVRetroArchCoreBridge
+
+extension PVRetroArchCoreBridge: CoreOptional {
+    @MainActor
+    public static var options: [PVCoreBridge.CoreOption] {
+        PVRetroArchCoreOptions.coreClassName = self.coreClassName
+        PVRetroArchCoreOptions.systemName = self.systemName
+
+        return PVRetroArchCoreOptions.options
+    }
 }
 
 @objc public extension PVRetroArchCoreBridge {
     @objc var gs: Int {
-        PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.gsOption).asInt ?? 0
+        PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.gsOption).asInt ?? 0
     }
     @objc var retroControl: Bool {
-        PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.retroArchControllerOption).asBool
+        PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.retroArchControllerOption).asBool
     }
     @objc var secondScreen: Bool {
-        PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.secondScreenOption).asBool
+        PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.secondScreenOption).asBool
     }
     @objc func parseOptions() {
         var optionValues:String = ""
         var optionValuesFile: String = ""
         var optionOverwrite: Bool = false
         self.gsPreference = NSNumber(value: gs).int8Value
-        self.volume = NSNumber(value: PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.volumeOption).asInt ?? 100).int32Value
-        self.ffSpeed = NSNumber(value: PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.ffOption).asInt ?? 300).int32Value
-        self.smSpeed = NSNumber(value: PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.smOption).asInt ?? 300).int32Value
-        self.bindAnalogKeys = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.analogKeyControllerOption).asBool
-        self.bindAnalogDpad = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.analogDpadControllerOption).asBool
+        self.volume = NSNumber(value: PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.volumeOption).asInt ?? 100).int32Value
+        self.ffSpeed = NSNumber(value: PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.ffOption).asInt ?? 300).int32Value
+        self.smSpeed = NSNumber(value: PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.smOption).asInt ?? 300).int32Value
+        self.bindAnalogKeys = PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.analogKeyControllerOption).asBool
+        self.bindAnalogDpad = PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.analogDpadControllerOption).asBool
         self.bindNumKeys = false
         self.retroArchControls = true
         self.hasTouchControls=false
@@ -270,14 +289,14 @@ extension PVRetroArchCoreBridge: CoreOptional {
                 optionValues += "input_auto_game_focus = \"1\"\n"
                 self.retroArchControls = retroControl
                 self.hasTouchControls = true
-                self.bindNumKeys = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.numKeyControllerOption).asBool
+                self.bindNumKeys = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreOptions.numKeyControllerOption).asBool
             }
             if (systemIdentifier.contains("appleII")) {
                 optionValues += "input_auto_game_focus = \"1\"\n"
-                self.machineType = NSNumber(value: PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.apple2MachineOption).asInt ?? 201).int32Value
+                self.machineType = NSNumber(value: PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreOptions.apple2MachineOption).asInt ?? 201).int32Value
                 self.retroArchControls = retroControl
                 self.hasTouchControls = true
-                self.bindNumKeys = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.numKeyControllerOption).asBool
+                self.bindNumKeys = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreOptions.numKeyControllerOption).asBool
                 var bios:[String:[String:Int]] = [:]
                 if (self.machineType == 210) {
                     bios["apple2.zip"]=["4ae2d493f4729d38e66fdace56a73f6c":11870]
@@ -313,7 +332,7 @@ extension PVRetroArchCoreBridge: CoreOptional {
                 optionOverwrite = false
             }
             if (coreIdentifier.contains("mupen")) {
-                let rdpOpt = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.mupenRDPOption).asInt ?? 0
+                let rdpOpt = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreOptions.mupenRDPOption).asInt ?? 0
                 if (rdpOpt == 0) {
                     optionValues += "mupen64plus-rdp-plugin = \"angrylion\"\n"
                 } else {
@@ -334,7 +353,7 @@ extension PVRetroArchCoreBridge: CoreOptional {
                 optionValues += "mame_write_config = \"enabled\"\n"
                 optionValues += "mame_boot_to_bios = \"enabled\"\n"
                 optionValues += "mame_mame_paths_enable = \"enabled\"\n"
-                optionValues += "mame_boot_to_osd = \"" + (PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.mameOSDOption).asBool  ? "enabled" :
+                optionValues += "mame_boot_to_osd = \"" + (PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreOptions.mameOSDOption).asBool  ? "enabled" :
                 "disabled") + "\"\n"
                 optionValues += "mame_boot_from_cli = \"enabled\"\n"
                 optionValues += "mame_cheats_enable = \"enabled\"\n"
@@ -417,11 +436,11 @@ extension PVRetroArchCoreCore: GameWithCheat {
 
 extension PVRetroArchCoreCore: CoreActions {
     public var coreActions: [CoreAction]? {
-        return [CoreAction(title: "Game Options\n(RetroArch Options Menu)", options: nil, style:.default)]
+        return [CoreAction(title: "RetroArch Menu", options: nil, style:.default)]
     }
     public func selected(action: CoreAction) {
         switch action.title {
-            case "Game Options\n(RetroArch Options Menu)":
+            case "RetroArch Menu":
                 menuToggle()
                 break;
             default:
