@@ -365,7 +365,6 @@ public enum iCloudSync {
             }) {
                 DLOG("disposing saveStateSyncer")
                 saveStateSyncer = nil
-                
             }.disposed(by: disposeBag)
         
         var romsSyncer: RomsSyncer! = .init(notificationCenter: .default)
@@ -376,7 +375,6 @@ public enum iCloudSync {
                 ELOG(error.localizedDescription)
             }) {
                 DLOG("disposing romsSyncer")
-//                romsSyncer.removeObservers()
                 romsSyncer = nil
             }.disposed(by: disposeBag)
         //TODO: set the following to merge onto a single class that just does a query for icloud for all of those directories.
