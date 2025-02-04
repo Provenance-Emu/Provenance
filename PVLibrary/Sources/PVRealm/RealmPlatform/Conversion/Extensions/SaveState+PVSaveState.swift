@@ -63,8 +63,8 @@ extension SaveState: RealmRepresentable {
             } else {
                 object.core = core.asRealm()
             }
-
-            let path = game.file.fileName.saveStatePath.appendingPathComponent(file.fileName)
+            //we remove the extension in order to get the correct path
+            let path = game.file.fileName.saveStatePath.deletingPathExtension().appendingPathComponent(file.fileName)
             object.file = PVFile(withURL: path)
             DLOG("file path: \(path)")
             
