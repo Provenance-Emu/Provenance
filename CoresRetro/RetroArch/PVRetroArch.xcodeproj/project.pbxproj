@@ -241,6 +241,7 @@
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		B3632A522D15161300041145 /* PVRetroArchCore+Controls+DOS.m in Sources */ = {isa = PBXBuildFile; fileRef = B3632A512D15161300041145 /* PVRetroArchCore+Controls+DOS.m */; };
 		B364D5CB2CD2A8B70082D177 /* Unrar in Frameworks */ = {isa = PBXBuildFile; productRef = B364D5CA2CD2A8B70082D177 /* Unrar */; };
+		B37106F42D51AFC300688298 /* RetroArchCoreOptionsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37106F32D51AFC300688298 /* RetroArchCoreOptionsLoader.swift */; };
 		B37C00592BFF6A1000FEC6AC /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B37C00582BFF6A1000FEC6AC /* MoltenVK */; };
 		B3C439532BF442920021B9C3 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B3C439522BF442920021B9C3 /* PVSupport */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
@@ -837,6 +838,7 @@
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B3632A512D15161300041145 /* PVRetroArchCore+Controls+DOS.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+DOS.m"; sourceTree = "<group>"; };
+		B37106F32D51AFC300688298 /* RetroArchCoreOptionsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetroArchCoreOptionsLoader.swift; sourceTree = "<group>"; };
 		B39C4BEA2BF3430B00F199BB /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework; sourceTree = "<group>"; };
 		B3C7621020783162009950E4 /* PVRetroArch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVRetroArch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVRetroArch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVRetroArch.h; sourceTree = "<group>"; };
@@ -1659,6 +1661,7 @@
 		B30C8C872BF45AFA00C91991 /* Swift */ = {
 			isa = PBXGroup;
 			children = (
+				B37106F32D51AFC300688298 /* RetroArchCoreOptionsLoader.swift */,
 				B3FC974C2CB8D29100C6DB31 /* CorePlist.swift */,
 				B3FC974D2CB8D29100C6DB31 /* PVRetroArchCoreCore.swift */,
 				B30C8C852BF45AFA00C91991 /* PVRetroArchCore+Options.swift */,
@@ -2316,6 +2319,7 @@
 			files = (
 				936BFD8A2986AF03001FF097 /* cocoa_vk_ctx.m in Sources */,
 				93835811296CFAA700A23231 /* cocoa_common.m in Sources */,
+				B37106F42D51AFC300688298 /* RetroArchCoreOptionsLoader.swift in Sources */,
 				936B47FA2969798B00C7D2A3 /* platform_darwin.m in Sources */,
 				935E7D4B29A4ABDD00D92748 /* vulkan_common.c in Sources */,
 				B3632A522D15161300041145 /* PVRetroArchCore+Controls+DOS.m in Sources */,

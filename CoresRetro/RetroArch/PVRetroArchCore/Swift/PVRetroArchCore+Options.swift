@@ -39,7 +39,7 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
         if (systemName.contains("retroarch")) {
             coreOptions.append(numKeyControllerOption)
         }
-        
+
         if (systemName.contains("dos") ||
              systemName.contains("mac") ||
              systemName.contains("appleII") ||
@@ -63,15 +63,33 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
                                                 description: "Override options for \(identifier) Core"),
                                           subOptions: subCoreOptions)
         coreOptions.append(contentsOf: [subCoreGroup])
+
+//        // Load dynamic options from RetroArch core
+//        let frameworkIdentifier: String = identifier.replacingOccurrences(of: ".framework", with: "")
+//        let frameworkPath = Bundle.main.bundlePath + "/Frameworks/" + identifier
+//        let corePath = "\(frameworkPath)/\(frameworkIdentifier)"
+//        ILOG("frameworkIdentifier: \(frameworkIdentifier), frameworkPath: \(frameworkPath), corePath: \(corePath)")
+//        let loader = RetroArchCoreOptionsLoader(corePath: corePath)
+//        if let dynamicOptions = loader.loadCoreOptions() {
+//            let dynamicGroup: CoreOption = .group(
+//                .init(
+//                    title: "Dynamic Options",
+//                    description: "Options loaded from RetroArch core"
+//                ),
+//                subOptions: dynamicOptions
+//            )
+//            coreOptions.append(dynamicGroup)
+//        }
+
         return coreOptions
     }
 }
 
 @objc public class PVRetroArchCoreOptions: NSObject, CoreOptions, @unchecked Sendable {
-    
+
     public static var coreClassName: String = ""
     public static var systemName: String = ""
-    
+
     public static var options: [CoreOption] {
         var options = [CoreOption]()
         var coreOptions: [CoreOption] = [gsOption]
@@ -91,7 +109,7 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
         options.append(contentsOf: [coreGroup])
         return options
     }
-    
+
     static var gsOption: CoreOption {
          .enumeration(.init(title: "Graphics Handler",
                description: "(Requires Restart)",
@@ -236,7 +254,7 @@ extension PVRetroArchCoreCore: CoreOptional, SubCoreOptional {
 
         return PVRetroArchCoreOptions.options
     }
-    
+
     @MainActor
     public static func options(forSubcoreIdentifier identifier: String, systemName: String) -> [PVCoreBridge.CoreOption]? {
         PVRetroArchCoreOptions.options(forSubcoreIdentifier: identifier, systemName: systemName)
@@ -253,7 +271,7 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
 
         return PVRetroArchCoreOptions.options
     }
-    
+
     @MainActor
     public static func options(forSubcoreIdentifier identifier: String, systemName: String) -> [PVCoreBridge.CoreOption]? {
         PVRetroArchCoreOptions.options(forSubcoreIdentifier: identifier, systemName: systemName)
