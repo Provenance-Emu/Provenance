@@ -1,6 +1,21 @@
 import SwiftUI
 import PVCoreBridge
 import PVLibrary
+import PVThemes
+
+/// Struct to hold essential system data
+private struct SystemDisplayData: Identifiable {
+    let id: String
+    let name: String
+    let iconName: String
+}
+
+fileprivate extension PVSystem {
+    var iconName: String {
+        // Take the last segment of identifier seperated by .
+        return self.identifier.components(separatedBy: ".").last?.lowercased() ?? "prov_snes_icon"
+    }
+}
 
 /// A simple struct to hold core information for the list
 private struct CoreListItem: Identifiable {
@@ -8,12 +23,16 @@ private struct CoreListItem: Identifiable {
     let name: String
     let coreClass: CoreOptional.Type
     let optionCount: Int
+    let systems: [SystemDisplayData] /// Store system display data
 
     init(core: PVCore) {
         self.id = core.identifier
         self.name = core.projectName
         self.coreClass = NSClassFromString(core.principleClass) as! CoreOptional.Type
         self.optionCount = CoreListItem.countOptions(in: self.coreClass.options)
+        self.systems = core.supportedSystems.map {
+            SystemDisplayData(id: $0.identifier, name: $0.name, iconName: $0.iconName)
+        }
     }
 
     /// Recursively count all options, including those in groups
@@ -32,20 +51,52 @@ private struct CoreListItem: Identifiable {
 /// View that lists all cores that implement CoreOptional
 struct CoreOptionsListView: View {
     @StateObject private var viewModel = CoreOptionsViewModel()
+    @State private var searchText: String = ""
 
-    private var coreItems: [CoreListItem] {
-        viewModel.availableCores.compactMap { core in
+    private var filteredCoreItems: [CoreListItem] {
+        let allItems = viewModel.availableCores.compactMap { core -> CoreListItem? in
             guard let coreClass = NSClassFromString(core.principleClass) as? CoreOptional.Type else {
                 return nil
             }
-            
-            // Check if the core has any meaningful options
-            let hasOptions = hasValidOptions(in: coreClass.options)
-            guard hasOptions else {
+
+            let options: [CoreOption]
+            if let subCoreClass = coreClass as? SubCoreOptional.Type {
+                options = subCoreClass.options(forSubcoreIdentifier: core.identifier, systemName: core.supportedSystems.map { $0.identifier }.joined(separator: ",")) ?? subCoreClass.options
+            } else {
+                options = coreClass.options
+            }
+
+            guard hasValidOptions(in: options) else {
                 return nil
             }
 
             return CoreListItem(core: core)
+        }
+
+        /// Filter based on search text
+        guard !searchText.isEmpty else { return allItems }
+        let lowercasedSearch = searchText.lowercased()
+
+        return allItems.filter { item in
+            /// Check core name
+            if item.name.lowercased().contains(lowercasedSearch) {
+                return true
+            }
+
+            /// Check core identifier
+            if item.id.lowercased().contains(lowercasedSearch) {
+                return true
+            }
+
+            /// Check supported systems
+            if let core = viewModel.availableCores.first(where: { $0.identifier == item.id }) {
+                return core.supportedSystems.contains { system in
+                    system.identifier.lowercased().contains(lowercasedSearch) ||
+                    system.name.lowercased().contains(lowercasedSearch)
+                }
+            }
+
+            return false
         }
     }
 
@@ -67,40 +118,129 @@ struct CoreOptionsListView: View {
     }
 
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 8) {
-                ForEach(coreItems) { item in
-                    CoreListItemView(item: item)
-                }
+        #if os(tvOS)
+        VStack {
+            // Search field at the top
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(.secondary)
+                TextField("Search cores, systems, or options", text: $searchText)
+                    .padding(8)
+                    .cornerRadius(8)
             }
-            .padding(.vertical)
+            .padding()
+
+            ScrollView {
+                LazyVStack(spacing: 12) {
+                    ForEach(filteredCoreItems) { item in
+                        CoreListItemView(item: item)
+                    }
+                }
+                .padding()
+            }
         }
         .navigationTitle("Core Options")
+        #else
+        List {
+            ForEach(filteredCoreItems) { item in
+                CoreListItemView(item: item)
+            }
+        }
+        .searchable(text: $searchText, prompt: "Search cores, systems, or options")
+        .listStyle(GroupedListStyle())
+        .navigationTitle("Core Options")
+        #endif
     }
 }
 
 /// View for a single core item in the list
 private struct CoreListItemView: View {
     let item: CoreListItem
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     var body: some View {
-        NavigationLink {
-            CoreOptionsDetailView(coreClass: item.coreClass, title: item.name)
-        } label: {
+        VStack(alignment: .leading, spacing: 8) {
+            // Core name
+            Text(item.name)
+                .font(.headline)
+                .foregroundColor(themeManager.currentPalette.menuHeaderText.swiftUIColor)
+
+            // Supported systems
             VStack(alignment: .leading, spacing: 4) {
-                Text(item.name)
-                    .font(.headline)
-                Text("\(item.optionCount) option\(item.optionCount == 1 ? "" : "s")")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                ForEach(item.systems) { system in
+                    HStack {
+                        Image(system.iconName, bundle: PVUIBase.BundleLoader.myBundle)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 20, height: 20)
+                            .tint(themeManager.currentPalette.menuHeaderText.swiftUIColor)
+
+                        Text(system.name)
+                            .font(.subheadline)
+                            .foregroundColor(themeManager.currentPalette.menuHeaderText.swiftUIColor)
+                    }
+                }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding()
-#if !os(tvOS)
-            .background(Color(.secondarySystemGroupedBackground))
-#endif
-            .cornerRadius(10)
+
+            // Number of options
+            Text("\(item.optionCount) option\(item.optionCount == 1 ? "" : "s")")
+                .font(.subheadline)
+                .foregroundColor(themeManager.currentPalette.menuHeaderText.swiftUIColor.opacity(0.8))
         }
-        .padding(.horizontal)
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(themeManager.currentPalette.menuHeaderBackground.swiftUIColor)
+        )
+        .overlay(
+            NavigationLink(destination: CoreOptionsDetailView(coreClass: item.coreClass, title: item.name)) {
+                EmptyView()
+            }
+            .opacity(0)
+        )
+    }
+}
+
+/// Updated SearchBar component
+private struct SearchBar: View {
+    @Binding var text: String
+    @Binding var isSearching: Bool
+
+    var body: some View {
+        HStack {
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(.gray)
+
+                TextField("Search cores...", text: $text, onEditingChanged: { editing in
+                    isSearching = editing
+                })
+                .padding(8)
+
+                if !text.isEmpty {
+                    Button(action: {
+                        text = ""
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.gray)
+                            .padding(8)
+                    }
+                }
+            }
+            .background(Color(.systemGray6))
+            .cornerRadius(8)
+
+            if isSearching {
+                Button("Cancel") {
+                    text = ""
+                    isSearching = false
+                    /// Dismiss keyboard
+                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                }
+                .transition(.move(edge: .trailing).combined(with: .opacity))
+            }
+        }
+        .animation(.easeInOut, value: isSearching)
     }
 }

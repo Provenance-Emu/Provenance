@@ -8,6 +8,11 @@
 
 import Foundation
 
+public protocol SubCoreOptional: CoreOptional {
+//    associatedtype Parent: CoreOptional
+    static func options(forSubcoreIdentifier: String, systemName: String) -> [CoreOption]?
+}
+
 public protocol CoreOptional {//where Self: EmulatorCoreIOInterface {
     static var options: [CoreOption] { get }
 

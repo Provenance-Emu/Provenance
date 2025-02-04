@@ -10,9 +10,9 @@ import Foundation
 #if canImport(SwiftUI)
 import SwiftUI
 
-extension SwiftUI.View {
+public extension SwiftUI.View {
     @ViewBuilder
-    func `if`<Content: SwiftUI.View>(_ condition: @autoclosure () -> Bool, transform: (Self) -> Content) -> some SwiftUI.View {
+    public func `if`<Content: SwiftUI.View>(_ condition: @autoclosure () -> Bool, transform: (Self) -> Content) -> some SwiftUI.View {
        if condition() {
            transform(self)
        } else {
