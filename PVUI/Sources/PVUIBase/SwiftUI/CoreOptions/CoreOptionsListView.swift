@@ -23,8 +23,17 @@ private struct CoreListItem: Identifiable {
     let name: String
     let coreClass: CoreOptional.Type
     let optionCount: Int
-    let systems: [SystemDisplayData] /// Store system display data
+    let systems: [SystemDisplayData]
+        
     @Default(.unsupportedCores) private var unsupportedCores
+    
+    init(id: String, name: String, coreClass: CoreOptional.Type, optionCount: Int, systems: [SystemDisplayData]) {
+        self.id = id
+        self.name = name
+        self.coreClass = coreClass
+        self.optionCount = optionCount
+        self.systems = systems
+    }
 
     init(core: PVCore) {
         self.id = core.identifier
@@ -33,13 +42,15 @@ private struct CoreListItem: Identifiable {
         self.optionCount = CoreListItem.countOptions(in: self.coreClass.options)
 
         let isAppStore = AppState.shared.isAppStore
-        self.systems = core.supportedSystems.compactMap { system in
+        
+        let systems = core.supportedSystems.compactMap { system -> SystemDisplayData? in
             /// Hide system if it's app store disabled and we're in app store mode with unsupported cores off
-            if isAppStore && system.appStoreDisabled && !unsupportedCores {
+            if isAppStore && system.appStoreDisabled && !Defaults[.unsupportedCores] {
                 return nil
             }
             return SystemDisplayData(id: system.identifier, name: system.name, iconName: system.iconName)
         }
+        self.systems = Array(systems)
     }
 
     /// Recursively count all options, including those in groups
