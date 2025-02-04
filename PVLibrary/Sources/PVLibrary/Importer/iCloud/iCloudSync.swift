@@ -333,10 +333,7 @@ public enum iCloudSync {
             DLOG("attempted to turn on iCloud, but iCloud is NOT setup on the device")
             return
         }
-//        Task { @MainActor in
-//        DispatchQueue.main.async {
-            turnOn()
-//        }
+        turnOn()
     }
     
     static func turnOn() {
@@ -484,9 +481,8 @@ class SaveStateSyncer: iCloudContainerSyncer {
 
             Task.detached { // @MainActor in
                 await jsonFiles.concurrentForEach { @MainActor json in
-                    let realm = try! await Realm()
                     do {
-                        
+                        let realm = try await Realm()
                         let secureDoc = json.startAccessingSecurityScopedResource()
 
                         defer {
