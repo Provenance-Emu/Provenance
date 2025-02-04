@@ -7227,6 +7227,8 @@
 		<true/>
 		<key>PVRequiresBIOS</key>
 		<true/>
+		<key>PVAppStoreDisabled</key>
+		<true/>
 		<key>PVBIOSNames</key>
 		<array>
 			<dict>
@@ -7349,6 +7351,8 @@
 		<key>PVUsesCDs</key>
 		<false/>
 		<key>PVRequiresBIOS</key>
+		<true/>
+		<key>PVAppStoreDisabled</key>
 		<true/>
 		<key>PVBIOSNames</key>
 		<array>
