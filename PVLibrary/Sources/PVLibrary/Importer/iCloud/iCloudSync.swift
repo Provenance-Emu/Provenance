@@ -358,16 +358,15 @@ public enum iCloudSync {
         
         saveStateSyncer = .init(notificationCenter: .default)
         saveStateSyncer.loadAllFromICloud() {
-            saveStateSyncer.importNewSaves()
-        }.observe(on: MainScheduler.instance)
-        .subscribe(onCompleted: {
-        }, onError: { error in
-            ELOG(error.localizedDescription)
-        }) {
-            DLOG("disposing saveStateSyncer")
-            saveStateSyncer = nil
-            
-        }.disposed(by: disposeBag)
+                saveStateSyncer.importNewSaves()
+            }.observe(on: MainScheduler.instance)
+            .subscribe(onError: { error in
+                ELOG(error.localizedDescription)
+            }) {
+                DLOG("disposing saveStateSyncer")
+                saveStateSyncer = nil
+                
+            }.disposed(by: disposeBag)
         
         var romsSyncer: RomsSyncer! = .init(notificationCenter: .default)
         romsSyncer.loadAllFromICloud() {
