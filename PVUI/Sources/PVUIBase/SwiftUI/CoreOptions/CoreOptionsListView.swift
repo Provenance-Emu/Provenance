@@ -147,7 +147,7 @@ struct CoreOptionsListView: View {
             }
         }
         .searchable(text: $searchText, prompt: "Search cores, systems, or options")
-        .listStyle(GroupedListStyle())
+        .listStyle(InsetGroupedListStyle())
         .navigationTitle("Core Options")
         #endif
     }
@@ -159,46 +159,44 @@ private struct CoreListItemView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            // Core name
-            Text(item.name)
-                .font(.headline)
-                .foregroundColor(themeManager.currentPalette.menuHeaderText.swiftUIColor)
+        NavigationLink(destination: CoreOptionsDetailView(coreClass: item.coreClass, title: item.name)) {
+            VStack(alignment: .leading, spacing: 8) {
+                // Core name
+                Text(item.name)
+                    .font(.headline)
+                    .foregroundColor(Color.primary)
 
-            // Supported systems
-            VStack(alignment: .leading, spacing: 4) {
-                ForEach(item.systems) { system in
-                    HStack {
-                        Image(system.iconName, bundle: PVUIBase.BundleLoader.myBundle)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 20, height: 20)
-                            .tint(themeManager.currentPalette.menuHeaderText.swiftUIColor)
+                // Supported systems
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(item.systems) { system in
+                        HStack {
+                            Image(system.iconName, bundle: PVUIBase.BundleLoader.myBundle)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 20, height: 20)
+                                .tint(Color.primary)
 
-                        Text(system.name)
-                            .font(.subheadline)
-                            .foregroundColor(themeManager.currentPalette.menuHeaderText.swiftUIColor)
+                            Text(system.name)
+                                .font(.subheadline)
+                                .foregroundColor(Color.secondary)
+                        }
                     }
                 }
-            }
 
-            // Number of options
-            Text("\(item.optionCount) option\(item.optionCount == 1 ? "" : "s")")
-                .font(.subheadline)
-                .foregroundColor(themeManager.currentPalette.menuHeaderText.swiftUIColor.opacity(0.8))
-        }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(themeManager.currentPalette.menuHeaderBackground.swiftUIColor)
-        )
-        .overlay(
-            NavigationLink(destination: CoreOptionsDetailView(coreClass: item.coreClass, title: item.name)) {
-                EmptyView()
+                // Number of options
+                Text("\(item.optionCount) option\(item.optionCount == 1 ? "" : "s")")
+                    .font(.subheadline)
+                    .foregroundColor(Color.secondary)
             }
-            .opacity(0)
-        )
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color(.systemBackground))
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(themeManager.currentPalette.menuHeaderText.swiftUIColor, lineWidth: 3)
+            )
+        }
     }
 }
 
