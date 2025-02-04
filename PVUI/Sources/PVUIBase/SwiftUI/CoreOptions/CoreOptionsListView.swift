@@ -24,14 +24,21 @@ private struct CoreListItem: Identifiable {
     let coreClass: CoreOptional.Type
     let optionCount: Int
     let systems: [SystemDisplayData] /// Store system display data
+    @Default(.unsupportedCores) private var unsupportedCores
 
     init(core: PVCore) {
         self.id = core.identifier
         self.name = core.projectName
         self.coreClass = NSClassFromString(core.principleClass) as! CoreOptional.Type
         self.optionCount = CoreListItem.countOptions(in: self.coreClass.options)
-        self.systems = core.supportedSystems.map {
-            SystemDisplayData(id: $0.identifier, name: $0.name, iconName: $0.iconName)
+
+        let isAppStore = AppState.shared.isAppStore
+        self.systems = core.supportedSystems.compactMap { system in
+            /// Hide system if it's app store disabled and we're in app store mode with unsupported cores off
+            if isAppStore && system.appStoreDisabled && !unsupportedCores {
+                return nil
+            }
+            return SystemDisplayData(id: system.identifier, name: system.name, iconName: system.iconName)
         }
     }
 
