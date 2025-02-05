@@ -13,6 +13,7 @@ import PVLibrary
 import PVSupport
 import PVSettings
 import PVLogging
+import PVEmulatorCore
 
 #if !targetEnvironment(macCatalyst) && !os(macOS) && canImport(SteamController)
 import SteamController
@@ -811,7 +812,7 @@ public extension GCKeyboard {
         let controller = GCController.withExtendedGamepad()
         let gamepad = controller.extendedGamepad!
 
-        let emulationState = AppState.shared.emulationState
+        let emulationUIState = AppState.shared.emulationUIState
 
         controller.setValue(self.vendorName ?? "Keyboard", forKey: "vendorName")
 
@@ -863,7 +864,7 @@ public extension GCKeyboard {
             gamepad.valueChangedHandler?(gamepad, gamepad.dpad)
             
             // Bind / to select, rightShift to start
-            if let emulator = emulationState.emulator, let core = emulationState.core, core.isOn, core.isRunning {
+            if let emulator = emulationUIState.emulator, let core = emulationUIState.core, EmulationState.shared.isOn, core.isRunning {
                 if (isPressed(.slash)) {
                     print("Select Pressed\n")
                     emulator.controllerViewController?.pressSelect(forPlayer: 0)

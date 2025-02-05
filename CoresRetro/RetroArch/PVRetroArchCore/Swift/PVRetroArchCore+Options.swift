@@ -5,9 +5,8 @@ import PVCoreBridge
 import PVLogging
 
 extension PVRetroArchCoreOptions: SubCoreOptional {
-    @MainActor
-    public static func options(forSubcoreIdentifier identifier: String, systemName: String) -> [CoreOption]? {
-        var coreOptions = self.options
+    
+    public static func options(forSubcoreIdentifier identifier: String, systemName: String) async -> [CoreOption]? {
         var subCoreOptions: [CoreOption] = []
         var isDOS = false
 
@@ -34,10 +33,10 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
                       defaultValue: true)
             }()
         }
-        coreOptions.append(analogDpadControllerOption)
+        subCoreOptions.append(analogDpadControllerOption)
 
         if (systemName.contains("retroarch")) {
-            coreOptions.append(numKeyControllerOption)
+            subCoreOptions.append(numKeyControllerOption)
         }
 
         if (systemName.contains("dos") ||
@@ -45,12 +44,11 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
              systemName.contains("appleII") ||
              systemName.contains("pc98")) {
             isDOS=true
-            coreOptions.append(numKeyControllerOption)
+            subCoreOptions.append(numKeyControllerOption)
         }
-        if let status = PVEmulatorCore.status["isOn"] as? Bool,
-            status,
-            systemName.contains("appleII") {
-            coreOptions.append(apple2MachineOption)
+        if await EmulationState.shared.isOn,
+           systemName.contains("appleII") {
+            subCoreOptions.append(apple2MachineOption)
         }
         analogKeyControllerOption = {
             .bool(.init(
@@ -58,10 +56,14 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
                 description: nil,
                 requiresRestart: false),
                   defaultValue: !isDOS)}()
+        subCoreOptions.append(analogKeyControllerOption)
 
         let subCoreGroup:CoreOption = .group(.init(title: "Core Options",
                                                 description: "Override options for \(identifier) Core"),
                                           subOptions: subCoreOptions)
+
+        var coreOptions = self.options
+
         coreOptions.append(contentsOf: [subCoreGroup])
 
 //        // Load dynamic options from RetroArch core
@@ -87,16 +89,12 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
 
 @objc public class PVRetroArchCoreOptions: NSObject, CoreOptions, @unchecked Sendable {
 
-    public static var coreClassName: String = ""
-    public static var systemName: String = ""
-
     public static var options: [CoreOption] {
         var options = [CoreOption]()
         var coreOptions: [CoreOption] = [gsOption]
 
         coreOptions.append(retroArchControllerOption)
-        DLOG("Getting options for coreClassName: \(self.coreClassName) systemName:\(self.systemName)")
-
+        
         if (UIScreen.screens.count > 1 && UIDevice.current.userInterfaceIdiom == .pad) {
             coreOptions.append(secondScreenOption)
         }
@@ -249,32 +247,26 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
 extension PVRetroArchCoreCore: CoreOptional, SubCoreOptional {
     @MainActor
     public static var options: [PVCoreBridge.CoreOption] {
-        PVRetroArchCoreOptions.coreClassName = self.coreClassName
-        PVRetroArchCoreOptions.systemName = self.systemName
-
         return PVRetroArchCoreOptions.options
     }
 
     @MainActor
-    public static func options(forSubcoreIdentifier identifier: String, systemName: String) -> [PVCoreBridge.CoreOption]? {
-        PVRetroArchCoreOptions.options(forSubcoreIdentifier: identifier, systemName: systemName)
+    public static func options(forSubcoreIdentifier identifier: String, systemName: String) async -> [PVCoreBridge.CoreOption]? {
+        let identifier = EmulationState.shared.coreClassName
+        let systemName = EmulationState.shared.systemName
+        return await PVRetroArchCoreOptions.options(forSubcoreIdentifier: identifier, systemName: systemName)
     }
 }
 
 // MARK: - PVRetroArchCoreBridge
 
 extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
-    @MainActor
     public static var options: [PVCoreBridge.CoreOption] {
-        PVRetroArchCoreOptions.coreClassName = self.coreClassName
-        PVRetroArchCoreOptions.systemName = self.systemName
-
         return PVRetroArchCoreOptions.options
     }
 
-    @MainActor
-    public static func options(forSubcoreIdentifier identifier: String, systemName: String) -> [PVCoreBridge.CoreOption]? {
-        PVRetroArchCoreOptions.options(forSubcoreIdentifier: identifier, systemName: systemName)
+    public static func options(forSubcoreIdentifier identifier: String, systemName: String) async -> [PVCoreBridge.CoreOption]? {
+        await PVRetroArchCoreOptions.options(forSubcoreIdentifier: identifier, systemName: systemName)
     }
 }
 

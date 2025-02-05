@@ -68,7 +68,7 @@ open class FirstResponderViewController: UIViewController {
     private func handleAndForwardTouches(_ touches: Set<UITouch>, with event: UIEvent?) {
         // Handle the event here (e.g., send to emulator core)
         print("Handling touch event: \(event?.type.rawValue ?? -1)")
-        if let core = AppState.shared.emulationState.core {
+        if let core = AppState.shared.emulationUIState.core {
             core.sendEvent(event)
         }
     }
@@ -95,7 +95,7 @@ open class FirstResponderViewController: UIViewController {
     private func handleAndForwardMotion(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         // Handle the motion event here (e.g., send to emulator core)
         print("Handling motion event: \(motion.rawValue)")
-        if let core = AppState.shared.emulationState.core {
+        if let core = AppState.shared.emulationUIState.core {
             core.sendEvent(event)
         }
     }
@@ -107,7 +107,7 @@ open class FirstResponderViewController: UIViewController {
 
         // Forward the event to the next responder in the responder chain
         super.remoteControlReceived(with: event)
-        if let core = AppState.shared.emulationState.core {
+        if let core = AppState.shared.emulationUIState.core {
             core.sendEvent(event)
         }
     }

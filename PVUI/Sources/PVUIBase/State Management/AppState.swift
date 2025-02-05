@@ -37,7 +37,11 @@ public class AppState: ObservableObject {
 
     /// Hold the emulation core and other info
     @Published
-    public var emulationState :EmulationState = .init()
+    public var emulationUIState :EmulationUIState = .init()
+    
+    /// Hold the emulation core and other info
+    @Published
+    public var emulationState :EmulationState = .shared
 
     /// User default for UI preference
     @Published

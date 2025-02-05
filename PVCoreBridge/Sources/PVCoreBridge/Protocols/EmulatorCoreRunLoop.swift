@@ -22,8 +22,11 @@ import Foundation
     @objc dynamic var frontBufferLock: NSLock { get set }
     @objc dynamic var isFrontBufferReady: Bool { get set }
     
+    @MainActor
     @objc func stopEmulation()
+    @MainActor
     @objc func startEmulation()
+    @MainActor
     @objc optional func resetEmulation()
     @objc optional func emulationLoopThread()
 }

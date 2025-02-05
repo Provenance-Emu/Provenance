@@ -10,7 +10,7 @@ import Foundation
 
 public protocol SubCoreOptional: CoreOptional {
 //    associatedtype Parent: CoreOptional
-    static func options(forSubcoreIdentifier: String, systemName: String) -> [CoreOption]?
+    static func options(forSubcoreIdentifier: String, systemName: String) async -> [CoreOption]?
 }
 
 public protocol CoreOptional {//where Self: EmulatorCoreIOInterface {

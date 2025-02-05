@@ -132,7 +132,7 @@ extension UIApplication {
     /// The sendEvent that will be called
     @objc func pv_sendEvent(_ event: UIEvent) {
 //        print("Handling touch event: \(event.type.rawValue ?? -1)")
-        if let core = AppState.shared.emulationState.core {
+        if let core = AppState.shared.emulationUIState.core {
             core.sendEvent(event)
         }
 

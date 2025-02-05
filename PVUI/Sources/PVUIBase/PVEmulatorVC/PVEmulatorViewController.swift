@@ -53,13 +53,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 #warning("TODO: Use protocols instead")
     //    let core: any PVEmulatorCoreT
     let core: PVEmulatorCore
-    
+
     let game: PVGame
-    
+
     var batterySavesPath: URL { get {return PVEmulatorConfiguration.batterySavesPath(forGame: game) }}
     var BIOSPath: URL { get { return PVEmulatorConfiguration.biosPath(forGame: game) } }
     var menuButton: MenuButton?
-    
+
     var use_metal: Bool { Defaults[.useMetal] }
 
     private(set) lazy var gpuViewController: PVGPUViewController = {
@@ -71,16 +71,16 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         let controller = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
         return controller
     }()
-    
+
 
     var audioInited: Bool = false
     private(set) lazy var gameAudio: any AudioEngineProtocol = {
         audioInited = true
-        
+
         let engineOption = Defaults[.audioEngine]
         return engineOption.makeAudioEngine()
     }()
-    
+
     var fpsTimer: Timer?
     lazy var fpsLabel: UILabel = {
         let fpsLabel = UILabel()
@@ -102,7 +102,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     var secondaryScreen: UIScreen?
     var secondaryWindow: UIWindow?
     var menuGestureRecognizer: UITapGestureRecognizer?
-    
+
     var isShowingMenu: Bool = false {
         willSet {
             if newValue == true {
@@ -119,45 +119,48 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             }
         }
     }
-    
+
     let minimumPlayTimeToMakeAutosave: Double = 60
-    
+
     required init(game: PVGame, core: PVEmulatorCore) {
         self.core = core
         self.game = game
-        
+
         super.init(nibName: nil, bundle: nil)
-        
-        
-        let emulationState = AppState.shared.emulationState
-        emulationState.core = core
-        if (emulationState.emulator == nil) {
-            emulationState.emulator = self
+
+
+        let emulationUIState = AppState.shared.emulationUIState
+        emulationUIState.core = core
+        if (emulationUIState.emulator == nil) {
+            emulationUIState.emulator = self
         }
-        if let coreClass = type(of: core) as? OptionalCore.Type {
-            coreClass.coreClassName = core.coreIdentifier ?? ""
-            coreClass.systemName = core.systemIdentifier ?? ""
+        // Update the singleton state
+        Task {
+            await EmulationState.shared.update { state in
+                state.coreClassName = core.coreIdentifier ?? ""
+                state.systemName = core.systemIdentifier ?? ""
+                state.isOn = true
+            }
         }
-        PVEmulatorCore.status = ["isOn":true]
         PVControllerManager.shared.hasLayout=false
         if core.skipLayout {
             gpuViewController.dismiss(animated: false)
         } else if core.alwaysUseMetal && !core.alwaysUseGL {
             gpuViewController = PVMetalViewController(withEmulatorCore: core)
         }
-        
+
         staticSelf = self
-        
+
         if Defaults[.autoSave] {
             NSSetUncaughtExceptionHandler(uncaughtExceptionHandler)
         } else {
             NSSetUncaughtExceptionHandler(nil)
         }
-        
+
         // Add KVO watcher for isRunning state so we can update play time
         core.addObserver(self, forKeyPath: "isRunning", options: .new, context: nil)
     }
-    
+
     public override func observeValue(forKeyPath keyPath: String?, of _: Any?, change _: [NSKeyValueChangeKey: Any]?, context _: UnsafeMutableRawPointer?) {
         if keyPath == "isRunning" {
 #if os(tvOS) && canImport(SteamController)
@@ -175,15 +178,17 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             }
         }
     }
-    
+
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     deinit {
         // These need to be first or mutli-threaded cores can cause crashes on close
         NotificationCenter.default.removeObserver(self)
-        core.stopEmulation()
+        Task { @MainActor in
+            core.stopEmulation()
+        }
         // Leave emulation loop first
         if audioInited {
             gameAudio.stopAudio()
@@ -203,16 +208,16 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         if let menuGestureRecognizer = menuGestureRecognizer {
             view.removeGestureRecognizer(menuGestureRecognizer)
         }
-        
-        Task { @MainActor in
-            let emulationState = AppState.shared.emulationState
 
-            emulationState.core = nil
-            emulationState.emulator = nil
+        Task { @MainActor in
+            let emulationUIState = AppState.shared.emulationUIState
+
+            emulationUIState.core = nil
+            emulationUIState.emulator = nil
         }
         core.removeObserver(self, forKeyPath: "isRunning")
     }
-    
+
     private func initNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidEnterBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
@@ -225,13 +230,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerManagerControllerReassigned(_:)), name: .PVControllerManagerControllerReassigned, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handlePause(_:)), name: Notification.Name("PauseGame"), object: nil)
     }
-    
+
     private func initCore() {
         core.audioDelegate = self
         core.saveStatesPath = saveStatePath.path
         core.batterySavesPath = batterySavesPath.path
         core.BIOSPath = BIOSPath.path
-        
+
         core.controller1 = PVControllerManager.shared.player1
         core.controller2 = PVControllerManager.shared.player2
         core.controller3 = PVControllerManager.shared.player3
@@ -240,14 +245,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         core.controller6 = PVControllerManager.shared.player6
         core.controller7 = PVControllerManager.shared.player7
         core.controller8 = PVControllerManager.shared.player8
-        
+
         let md5Hash: String = game.md5Hash
         core.romMD5 = md5Hash
         core.romSerial = game.romSerial
-        
+
         core.initialize()
     }
-    
+
     private func addControllerOverlay() {
         if let aController = controllerViewController {
             addChild(aController)
@@ -259,7 +264,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
         controllerViewController?.didMove(toParent: self)
     }
-    
+
     private func initMenuButton() {
         let alpha: CGFloat = CGFloat(Defaults[.controllerOpacity])
         menuButton = MenuButton(type: .custom)
@@ -279,20 +284,20 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         menuButton?.addTarget(self, action: #selector(PVEmulatorViewController.showMenu(_:)), for: .touchUpInside)
         view.addSubview(menuButton!)
     }
-    
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         title = game.title
         view.backgroundColor = UIColor.black
         view.insetsLayoutMarginsFromSafeArea = true
-        
-        let emulationState = AppState.shared.emulationState
+
+        let emulationState = AppState.shared.emulationUIState
 
         emulationState.core = core
         if (emulationState.emulator == nil) {
             emulationState.emulator = self
         }
-        
+
         initNotificationObservers()
         do {
             try createEmulator()
@@ -302,7 +307,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             //                presentingViewController?.presentError(customError.localizedDescription, source: self.view)
         } catch {
             let neError = error as NSError
-            
+
             //                if let presentingViewController = presentingViewController {
             //                    Task { @MainActor in
             //                        presentingViewController.presentError(error.localizedDescription, source: self.view)
@@ -312,7 +317,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
                 let alert = UIAlertController(title: neError.localizedDescription,
                                               message: neError.localizedRecoverySuggestion,
                                               preferredStyle: .alert)
-                
+
                 alert.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
                 alert.popoverPresentationController?.sourceView = self.navigationItem.titleView ?? self.view
                 alert.addAction(UIAlertAction(title: "OK",
@@ -336,10 +341,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             return
         }
     }
-    
+
     private func createEmulator() throws {
         initCore()
-        
+
         // Load now. Moved here becauase Mednafen needed to know what kind of game it's working with in order
         // to provide the correct data for creating views.
         let m3uFile: URL? = PVEmulatorConfiguration.m3uFile(forGame: game)
@@ -348,19 +353,19 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         if romPathMaybe == nil {
             romPathMaybe = game.file.url
         }
-        
+
 #warning("should throw if nil?")
         guard let romPath = romPathMaybe else {
             throw CreateEmulatorError.gameHasNilRomPath
         }
-        
+
         // Extract Zip before loading the ROM
         romPathMaybe = handleArchives(atPath: romPathMaybe)
-        
+
         guard let romPath = romPathMaybe else {
             throw CreateEmulatorError.gameHasNilRomPath
         }
-        
+
         let path = romPath.path(percentEncoded: false)
         if needsDownload(romPath) {
             let hud = MBProgressHUD.showAdded(to: view, animated: true)
@@ -372,23 +377,23 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
         guard FileManager.default.fileExists(atPath: path), !needsDownload(romPath) else {
             ELOG("File doesn't exist at path \(path)")
-            
+
             // Copy path to Pasteboard
             #if !os(tvOS)
             UIPasteboard.general.string = path
             #endif
-            
+
             throw CreateEmulatorError.fileDoesNotExist(path: path)
         }
-        
+
         ILOG("Loading ROM: \(path)")
-        
+
         if let core = core as? any ObjCBridgedCore, let bridge = core.bridge as? EmulatorCoreIOInterface {
             try bridge.loadFile(atPath: path)
         } else {
             try core.loadFile(atPath: path)
         }
-        
+
 #warning("TODO: Handle multiple screens with UIScene")
         if UIScreen.screens.count > 1 && !core.skipLayout {
             secondaryScreen = UIScreen.screens[1]
@@ -418,20 +423,20 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         addControllerOverlay()
         initMenuButton()
 #endif
-        
+
         if Defaults[.showFPSCount] && !core.skipLayout {
             initFPSLabel()
         }
-        
+
         hideOrShowMenuButton()
-        
+
         convertOldSaveStatesToNewIfNeeded()
-        
+
         try gameAudio.setupAudioGraph(for: core)
         try startAudio()
-        
+
         core.startEmulation()
-        
+
 #if os(tvOS)
         // On tvOS the siri-remotes menu-button will default to go back in the hierachy (thus dismissing the emulator), we don't want that behaviour
         // (we'd rather pause the game), so we just install a tap-recognizer here (that doesn't do anything), and add our own logic in `setupPauseHandler`
@@ -447,30 +452,39 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             })
         }
         enableControllerInput(false)
+
+        // Update the singleton state
+        Task {
+            await EmulationState.shared.update { state in
+                state.coreClassName = core.coreIdentifier ?? ""
+                state.systemName = core.systemIdentifier ?? ""
+                state.isOn = true
+            }
+        }
     }
-    
+
     public override func viewDidAppear(_: Bool) {
         super.viewDidAppear(true)
         // Notifies UIKit that your view controller updated its preference regarding the visual indicator
-        
+
 #if os(iOS)
         setNeedsUpdateOfHomeIndicatorAutoHidden()
 #endif
-        
+
         if Defaults[.timedAutoSaves] {
             createAutosaveTimer()
         }
     }
-    
+
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         destroyAutosaveTimer()
     }
-    
+
     var autosaveTimer: Timer?
-    
+
     var gameStartTime: Date?
-    
+
 #if os(iOS) && !targetEnvironment(simulator)
     // Check Controller Manager if it has a Controller connected and thus if Home Indicator should hide…
     public override var prefersHomeIndicatorAutoHidden: Bool {
@@ -478,14 +492,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         return shouldHideHomeIndicator
     }
 #endif
-    
+
     public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 #if os(iOS)
         layoutMenuButton()
 #endif
     }
-    
+
     func documentsPath() -> String? {
 //#if os(tvOS)
 //        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
@@ -496,21 +510,21 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 //        return documentsDirectoryPath
         URL.documentsPath.path()
     }
-    
+
 #if os(iOS) && !targetEnvironment(macCatalyst)
     public override var prefersStatusBarHidden: Bool {
         return true
     }
-    
+
     public override var preferredScreenEdgesDeferringSystemGestures: UIRectEdge {
         return [.left, .right, .bottom]
     }
-    
+
     public override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .all
     }
 #endif
-    
+
     func enableControllerInput(_ enabled: Bool) {
 #if os(tvOS)
         controllerUserInteractionEnabled = enabled
@@ -523,9 +537,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         PVControllerManager.shared.controllerUserInteractionEnabled = enabled
 #endif
     }
-    
+
     typealias QuitCompletion = () -> Void
-    
+
     func quit(optionallySave canSave: Bool = true, completion: QuitCompletion? = nil) async {
         NotificationCenter.default.removeObserver(self)
         NSSetUncaughtExceptionHandler(nil)
@@ -553,19 +567,22 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         PVControllerManager.shared.controllers.forEach {
             $0.clearPauseHandler()
         }
-        
+
 #endif
         updatePlayedDuration()
         destroyAutosaveTimer()
         if let menuGestureRecognizer = menuGestureRecognizer {
             view.removeGestureRecognizer(menuGestureRecognizer)
         }
-        
-        let emulationState = AppState.shared.emulationState
 
-        emulationState.core = nil
-        emulationState.emulator = nil
-        PVEmulatorCore.status = [:]
+        let emulationUIState = AppState.shared.emulationUIState
+
+        emulationUIState.core = nil
+        emulationUIState.emulator = nil
+
+        let emulationState = AppState.shared.emulationState
+        emulationState.isOn = false
+
         fpsTimer?.invalidate()
         fpsTimer = nil
         dismiss(animated: true, completion: completion)
@@ -573,7 +590,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         self.removeFromParent()
         staticSelf = nil
     }
-    
+
     @objc
     func dismissNav() {
         presentedViewController?.dismiss(animated: true, completion: nil)
@@ -587,7 +604,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 extension PVEmulatorViewController: GameplayDurationTrackerUtil {}
 
 extension PVEmulatorViewController {
-    
+
     @objc func appWillEnterForeground(_: Notification?) {
         if (!core.isOn) {
             return;
@@ -596,9 +613,9 @@ extension PVEmulatorViewController {
             self.updateLastPlayedTime()
         }
     }
-    
+
     @objc func appDidEnterBackground(_: Notification?) {}
-    
+
     @objc func appWillResignActive(_: Notification?) {
         if (!core.isOn) {
             return;
@@ -618,7 +635,7 @@ extension PVEmulatorViewController {
         gameAudio.pauseAudio()
         showMenu(self)
     }
-    
+
     @objc func appDidBecomeActive(_: Notification?) {
         if (!core.isOn) {
             return;
@@ -627,7 +644,7 @@ extension PVEmulatorViewController {
             core.setPauseEmulation(false)
         }
         core.setPauseEmulation(true)
-        
+
         do {
             // TODO: Test if we need to recreate the audio graph
             try gameAudio.setupAudioGraph(for: core)
@@ -636,7 +653,7 @@ extension PVEmulatorViewController {
             ELOG("\(error.localizedDescription)")
         }
     }
-    
+
     fileprivate func startAudio() throws {
 //        gameAudio.outputDeviceID = 0
         gameAudio.setVolume(Defaults[.volume])
@@ -648,7 +665,7 @@ extension PVEmulatorViewController {
         }
         setMono()
     }
-    
+
     fileprivate func setMono() {
         if let gameAudio = gameAudio as? MonoAudioEngine {
             gameAudio.setMono(Defaults[.monoAudio])

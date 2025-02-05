@@ -39,6 +39,7 @@ import PVLogging
 
     @objc open var isSpeedModified: Bool { return gameSpeed != .normal }
 
+    @MainActor
     @objc open func stopEmulation() {
         stopHaptic()
         shouldStop = true
@@ -51,6 +52,7 @@ import PVLogging
         isOn = false
     }
 
+    @MainActor
     @objc open func stopEmulation(withMessage message: String? = nil) {
         stopEmulation()
 
@@ -59,7 +61,7 @@ import PVLogging
         }
     }
 
-
+    @MainActor
     @objc open func startEmulation() {
 //        screenRect
         guard type(of: self) != PVEmulatorCore.self else {
@@ -101,6 +103,7 @@ import PVLogging
         isOn = true
     }
 
+    @MainActor
     @objc open func resetEmulation() {
         bridge.resetEmulation?()
     }
