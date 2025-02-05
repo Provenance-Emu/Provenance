@@ -186,9 +186,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     deinit {
         // These need to be first or mutli-threaded cores can cause crashes on close
         NotificationCenter.default.removeObserver(self)
-        Task { @MainActor in
-            core.stopEmulation()
-        }
+//        Task { @MainActor in
+//            core.stopEmulation()
+//        }
         // Leave emulation loop first
         if audioInited {
             gameAudio.stopAudio()
