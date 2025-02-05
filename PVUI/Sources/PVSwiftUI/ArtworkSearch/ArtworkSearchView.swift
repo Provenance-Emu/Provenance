@@ -54,8 +54,9 @@ public struct ArtworkSearchView: View {
         initialSystem: SystemIdentifier? = nil,
         onSelect: @escaping (ArtworkSelectionData) -> Void
     ) {
-        DLOG("Initializing ArtworkSearchView with initial search: \(initialSearch), initialSystem: \(initialSystem)")
-        self._searchText = State(wrappedValue: initialSearch)
+        let cleanedSearch = initialSearch.cleanedForSearch()
+        DLOG("Initializing ArtworkSearchView with initial search: \(cleanedSearch), initialSystem: \(initialSystem)")
+        self._searchText = State(wrappedValue: cleanedSearch)
         self._selectedSystem = State(wrappedValue: initialSystem)
         self.onSelect = onSelect
     }
@@ -588,17 +589,17 @@ struct ArtworkTypeSelector: View {
                         }
                     }
                 }
-                
+
                 Divider()
-                
+
                 Button("Select All") {
                     selectedTypes = ArtworkType(allTypes)
                 }
-                
+
                 Button("Clear All") {
                     selectedTypes = []
                 }
-                
+
                 Button("Reset to Defaults") {
                     selectedTypes = .defaults
                 }
@@ -702,3 +703,37 @@ extension EnvironmentValues {
     ])
 }
 #endif
+
+extension String {
+    func cleanedForSearch() -> String {
+        var cleaned = self
+
+        // Remove text in brackets: [], (), {}
+        let bracketPatterns = [
+            "\\[.*?\\]",  // Square brackets
+            "\\(.*?\\)",  // Parentheses
+            "\\{.*?\\}"   // Curly braces
+        ]
+
+        for pattern in bracketPatterns {
+            cleaned = cleaned.replacingOccurrences(
+                of: pattern,
+                with: "",
+                options: .regularExpression
+            )
+        }
+
+        // Remove specific characters when surrounded by spaces
+        let charsToRemove = ",:;!^%&*+/-"
+        let spacePattern = "\\s[\(charsToRemove)]\\s"
+
+        cleaned = cleaned.replacingOccurrences(
+            of: spacePattern,
+            with: " ",
+            options: .regularExpression
+        )
+
+        // Trim whitespace and newlines
+        return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}
