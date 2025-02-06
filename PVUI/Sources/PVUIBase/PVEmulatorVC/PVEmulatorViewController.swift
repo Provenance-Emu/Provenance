@@ -25,7 +25,7 @@ import PVRealm
 import PVLogging
 import MBProgressHUD
 
-private weak var staticSelf: PVEmulatorViewController?
+private weak var staticSelf: PVEmualatorControllerProtocol?
 
 func uncaughtExceptionHandler(exception _: NSException?) {
     if let staticSelf = staticSelf, staticSelf.core.supportsSaveStates {
@@ -48,19 +48,14 @@ typealias PVEmulatorViewControllerRootClass = UIViewController
 #endif
 
 public
-final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelegate, PVSaveStatesViewControllerDelegate {
-    // TODO: Use protocols instead
-#warning("TODO: Use protocols instead")
-    //    let core: any PVEmulatorCoreT
-    let core: PVEmulatorCore
+final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmualatorControllerProtocol, PVAudioDelegate, PVSaveStatesViewControllerDelegate {
+    
+    public let core: PVEmulatorCore
+    public let game: PVGame
+    public internal(set) var autosaveTimer: Timer?
+    public internal(set) var gameStartTime: Date?
 
-    let game: PVGame
-
-    var batterySavesPath: URL { get {return PVEmulatorConfiguration.batterySavesPath(forGame: game) }}
-    var BIOSPath: URL { get { return PVEmulatorConfiguration.biosPath(forGame: game) } }
     var menuButton: MenuButton?
-
-    var use_metal: Bool { Defaults[.useMetal] }
 
     private(set) lazy var gpuViewController: PVGPUViewController = {
         let useMetal = (use_metal && !core.alwaysUseGL) || core.alwaysUseMetal
@@ -73,8 +68,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     }()
 
 
-    var audioInited: Bool = false
-    private(set) lazy var gameAudio: any AudioEngineProtocol = {
+    public var audioInited: Bool = false
+    public private(set) lazy var gameAudio: any AudioEngineProtocol = {
         audioInited = true
 
         let engineOption = Defaults[.audioEngine]
@@ -103,7 +98,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     var secondaryWindow: UIWindow?
     var menuGestureRecognizer: UITapGestureRecognizer?
 
-    var isShowingMenu: Bool = false {
+    public var isShowingMenu: Bool = false {
         willSet {
             if newValue == true {
                 if (!core.skipLayout) {
@@ -122,7 +117,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
     let minimumPlayTimeToMakeAutosave: Double = 60
 
-    required init(game: PVGame, core: PVEmulatorCore) {
+    required public init(game: PVGame, core: PVEmulatorCore) {
         self.core = core
         self.game = game
 
@@ -481,10 +476,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         destroyAutosaveTimer()
     }
 
-    var autosaveTimer: Timer?
-
-    var gameStartTime: Date?
-
 #if os(iOS) && !targetEnvironment(simulator)
     // Check Controller Manager if it has a Controller connected and thus if Home Indicator should hide…
     public override var prefersHomeIndicatorAutoHidden: Bool {
@@ -498,17 +489,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 #if os(iOS)
         layoutMenuButton()
 #endif
-    }
-
-    func documentsPath() -> String? {
-//#if os(tvOS)
-//        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
-//#else
-//        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-//#endif
-//        let documentsDirectoryPath: String = paths[0]
-//        return documentsDirectoryPath
-        URL.documentsPath.path()
     }
 
 #if os(iOS) && !targetEnvironment(macCatalyst)
@@ -525,22 +505,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     }
 #endif
 
-    func enableControllerInput(_ enabled: Bool) {
-#if os(tvOS)
-        controllerUserInteractionEnabled = enabled
-#else
-        // Can enable when we change to iOS 10 base
-        // and change super class to GCEventViewController
-        //    if (@available(iOS 10, *)) {
-        //        self.controllerUserInteractionEnabled = enabled;
-        //    }
-        PVControllerManager.shared.controllerUserInteractionEnabled = enabled
-#endif
-    }
-
-    typealias QuitCompletion = () -> Void
-
-    func quit(optionallySave canSave: Bool = true, completion: QuitCompletion? = nil) async {
+    public func quit(optionallySave canSave: Bool = true, completion: QuitCompletion? = nil) async {
         NotificationCenter.default.removeObserver(self)
         NSSetUncaughtExceptionHandler(nil)
         enableControllerInput(false)

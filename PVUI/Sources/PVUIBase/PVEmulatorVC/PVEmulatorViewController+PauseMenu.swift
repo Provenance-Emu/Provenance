@@ -159,7 +159,10 @@ extension PVEmulatorViewController {
         }
 #if os(iOS) || targetEnvironment(macCatalyst)
         actionSheet.addAction(UIAlertAction(title: "Save Screenshot", style: .default, handler: { action in
-            self.perform(#selector(self.takeScreenshot), with: nil, afterDelay: 0.1)
+            Task { @MainActor [weak self] in
+                try await Task.sleep(nanoseconds: 100_000_000) /// 0.1 second delay (100ms)
+                self?.takeScreenshot() /// Perform screenshot after delay
+            }
         }))
 #endif
         actionSheet.addAction(UIAlertAction(title: "Game Info", style: .default, handler: { action in
