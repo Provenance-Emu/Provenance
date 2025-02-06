@@ -37,10 +37,11 @@ extension Container {
 }
 
 public protocol SyncFileToiCloud: Container {
+    var fileManager: FileManager { get }
     var metadataQuery: NSMetadataQuery { get }
-    func syncToiCloud(completionHandler: @escaping (SyncResult) -> Void) // -> Single<SyncResult>
+    func syncToiCloud(completionHandler: @escaping (SyncResult) -> Void) async// -> Single<SyncResult>
     func queryFile(completionHandler: @escaping (URL?) -> Void) // -> Single<URL>
-    func downloadingFile(completionHandler: @escaping (SyncResult) -> Void) // -> Single<SyncResult>
+    func downloadingFile(completionHandler: @escaping (SyncResult) -> Void) async // -> Single<SyncResult>
 }
 
 public protocol iCloudTypeSyncer: Container {
@@ -66,7 +67,7 @@ final class NotificationObserver {
         observer = center.addObserver(forName: name, object: object, queue: queue, using: block)
     }
 
-    deinit {//because this was created inline, deinit gets called right away. does this ever need to be removed? shouldn't this be in the lifetime of the application?
+    deinit {//TODO: because this was created inline, deinit gets called right away. does this ever need to be removed? shouldn't this be in the lifetime of the application?
         //center.removeObserver(observer, name: name, object: object)
     }
 }
@@ -86,7 +87,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         DLOG("dying")
     }
     
-    var metadataQuery: NSMetadataQuery = .init()
+    let metadataQuery: NSMetadataQuery = .init()
     
     func insertDownloadingFile(_ file: URL) {
         //no-op
@@ -208,34 +209,64 @@ extension SyncFileToiCloud where Self: LocalFileInfoProvider {
             return containerURL.appendingPathComponent(url.relativePath)
         }.value
     }}
-
-    func syncToiCloud() async -> SyncResult {
+    
+    //TODO: refactor this on the syncer
+    func syncToiCloud(completionHandler: @escaping (SyncResult) -> Void) async {
         await Task {
+
+            DLOG("url: \(url)")
+            guard fileManager.fileExists(atPath: url.path),
+                  let actualContainerUrl = containerURL
+            else {
+                completionHandler(.fileNotExist)
+                return
+            }
             guard let destinationURL = await self.destinationURL else {
-                return SyncResult.denied
+                return completionHandler(.denied)
             }
+//            let url = self.url
+//
+//            self.metadataQuery.disableUpdates()
+//            defer {
+//                self.metadataQuery.enableUpdates()
+//            }
 
-            let url = self.url
-
-            self.metadataQuery.disableUpdates()
-            defer {
-                self.metadataQuery.enableUpdates()
-            }
-
-            let fm = FileManager.default
-            if fm.fileExists(atPath: url.path) {
-                try! await fm.removeItem(at: url)
-            }
-
-            do {
-                ILOG("Trying to set Ubiquitious from local (\(url.path)) to ICloud (\(destinationURL.path))")
-                try fm.setUbiquitous(true, itemAt: url, destinationURL: destinationURL)
-                return .success
-            } catch {
-                ELOG("iCloud failed to set Ubiquitous: \(error.localizedDescription)")
-                return .saveFailure
-            }
+            completionHandler(await moveFiles(at: url, container: actualContainerUrl))
         }.value
+    }
+    
+    func moveFiles(at current: URL, container: URL) async -> SyncResult {
+        do {
+            let subdirectories = try fileManager.subpathsOfDirectory(atPath: current.path)
+            DLOG("subdirectories of \(current): \(subdirectories)")
+            let directoryContents = try try fileManager.contentsOfDirectory(at: current, includingPropertiesForKeys: [])
+            DLOG("directoryContents of \(current): \(directoryContents)")
+            for currentItem in directoryContents {
+                var isDirectory: ObjCBool = false
+                let exists = fileManager.fileExists(atPath: currentItem.path, isDirectory: &isDirectory)
+                if exists && isDirectory.boolValue {
+                    //TODO: should we just ignore and try to move as many as we can? this could be if storage is low
+                    let resultSub = await moveFiles(at: currentItem, container: container)
+                    guard resultSub == .success
+                    else {
+                        return resultSub
+                    }
+                }
+                do {
+                    let destination = container.appendingPathComponent(currentItem.relativePath)
+                    ILOG("Trying to set Ubiquitious from local (\(current.path)) to ICloud (\(destination.path))")
+                    try fileManager.setUbiquitous(true, itemAt: currentItem, destinationURL: destination)
+                    try await fileManager.removeItem(at: current)
+                } catch {
+                    //this could indicate no more space is left
+                    ELOG("iCloud failed to set Ubiquitous: \(error.localizedDescription)")
+                }
+            }
+            return .success
+        } catch {
+            ELOG("failed to get directory contents: \(error.localizedDescription)")
+            return .saveFailure
+        }
     }
 
     /// - Parameter completionHandler: Non-main
@@ -307,11 +338,14 @@ enum iCloudError: Error {
 
 public enum iCloudSync {
     static var disposeBag: DisposeBag!
+    //syncers
     static var saveStateSyncer: SaveStateSyncer!
     static var biosSyncer: BiosSyncer!
     static var batterySavesSyncer: BatterySavesSyncer!
     static var screenshotsSyncer: ScreenshotsSyncer!
     static var gameImporter = GameImporter.shared
+    //initial uploaders
+//    static var /*saveStateUploader: SyncFileToiCloud = */
     
     public static func initICloudDocuments() {
         Task {
@@ -415,6 +449,9 @@ public enum iCloudSync {
         //TODO: remove iCloud downloads. do we also copy those files locally?
     }
 }
+
+//MARK: - iCloud syncers
+
 //TODO: perhaps 1 generic class since a lot of this code is similar and move the extension onto generic class. we could just add a protocol delegate dependency for ROMs and SaveState classes that does specific code
 class SaveStateSyncer: iCloudContainerSyncer {
     var didFinishDownloadingAllFiles = false
@@ -649,4 +686,12 @@ class ScreenshotsSyncer: iCloudContainerSyncer {
     convenience init() {
         self.init(directory: "Screenshots")
     }
+}
+
+//MARK: - iCloud initial container uploaders
+
+class SaveStateUploader: SyncFileToiCloud, LocalFileInfoProvider {
+    let fileManager = FileManager.default
+    let metadataQuery: NSMetadataQuery = .init()
+    let url: URL = URL.documentsDirectory.appendingPathComponent("Save States")
 }
