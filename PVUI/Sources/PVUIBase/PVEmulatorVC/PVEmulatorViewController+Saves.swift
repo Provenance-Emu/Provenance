@@ -19,12 +19,12 @@ import UIKit
 #endif
 
 public extension PVEmulatorViewController {
-    func destroyAutosaveTimer() {
+    public func destroyAutosaveTimer() {
         autosaveTimer?.invalidate()
         autosaveTimer = nil
     }
 
-    func createAutosaveTimer() {
+    public func createAutosaveTimer() {
         autosaveTimer?.invalidate()
         let interval = Defaults[.timedAutoSaveInterval]
         autosaveTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true, block: { _ in
@@ -46,7 +46,7 @@ public extension PVEmulatorViewController {
     }
 
     @MainActor
-    func loadSaveState(_ state: PVSaveState) async -> Bool {
+    public func loadSaveState(_ state: PVSaveState) async -> Bool {
         guard core.supportsSaveStates else {
             WLOG("Core \(core.description) doesn't support save states.")
             return false
@@ -137,7 +137,7 @@ public extension PVEmulatorViewController {
         }
     }
 
-    @objc func showSaveStateMenu() {
+    @objc public func showSaveStateMenu() {
         let frozenGame = game.freeze()
         Task.detached { [weak self] in
             guard let self = self else { return }

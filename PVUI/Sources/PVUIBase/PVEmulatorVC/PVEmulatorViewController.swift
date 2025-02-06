@@ -62,7 +62,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         return useMetal ? PVMetalViewController(withEmulatorCore: core) : PVGLViewController(withEmulatorCore: core)
     }()
 
-    private(set) lazy var controllerViewController: (UIViewController & StartSelectDelegate)? = {
+    private(set) lazy public var controllerViewController: (UIViewController & StartSelectDelegate)? = {
         let controller = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
         return controller
     }()
@@ -224,28 +224,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidDisconnect(_:)), name: UIScreen.didDisconnectNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerManagerControllerReassigned(_:)), name: .PVControllerManagerControllerReassigned, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handlePause(_:)), name: Notification.Name("PauseGame"), object: nil)
-    }
-
-    private func initCore() {
-        core.audioDelegate = self
-        core.saveStatesPath = saveStatePath.path
-        core.batterySavesPath = batterySavesPath.path
-        core.BIOSPath = BIOSPath.path
-
-        core.controller1 = PVControllerManager.shared.player1
-        core.controller2 = PVControllerManager.shared.player2
-        core.controller3 = PVControllerManager.shared.player3
-        core.controller4 = PVControllerManager.shared.player4
-        core.controller5 = PVControllerManager.shared.player5
-        core.controller6 = PVControllerManager.shared.player6
-        core.controller7 = PVControllerManager.shared.player7
-        core.controller8 = PVControllerManager.shared.player8
-
-        let md5Hash: String = game.md5Hash
-        core.romMD5 = md5Hash
-        core.romSerial = game.romSerial
-
-        core.initialize()
     }
 
     private func addControllerOverlay() {

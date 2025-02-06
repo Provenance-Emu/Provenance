@@ -23,13 +23,13 @@ extension PVEmulatorViewController {
     }
 #endif
     
-    @objc func hideMoreInfo() {
+    @objc public func hideMoreInfo() {
         dismiss(animated: true, completion: { () -> Void in
             self.hideMenu()
         })
     }
     
-    func hideMenu() {
+    public func hideMenu() {
         if (!core.isOn) {
             return;
         }
@@ -58,7 +58,7 @@ extension PVEmulatorViewController {
         core.setPauseEmulation(false)
     }
     
-    @objc func showSpeedMenu(_ sender:AnyObject?) {
+    @objc public func showSpeedMenu() {
         let actionSheet = UIAlertController(title: "Game Speed", message: nil, preferredStyle: .actionSheet)
         actionSheet.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
         actionSheet.popoverPresentationController?.sourceView = self.navigationItem.titleView ?? self.view
@@ -92,7 +92,7 @@ extension PVEmulatorViewController {
         })
     }
     
-    func showMoreInfo() {
+    public func showMoreInfo() {
         guard let moreInfoViewController = UIStoryboard(name: "Provenance", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "gameMoreInfoVC") as? PVGameMoreInfoViewController else { return }
         moreInfoViewController.game = self.game
         moreInfoViewController.showsPlayButton = false

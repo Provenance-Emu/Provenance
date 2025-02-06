@@ -30,6 +30,9 @@ public protocol PVEmualatorControllerProtocol: AnyObject {
     var autosaveTimer: Timer?  { get }
     var gameStartTime: Date?  { get }
     
+    var controllerViewController: (UIViewController & StartSelectDelegate)? { get }
+    func controllerPauseButtonPressed()
+
     // MARK: - Methods
     
     // MARK: Screenshots
@@ -37,6 +40,15 @@ public protocol PVEmualatorControllerProtocol: AnyObject {
     
     // MARK: Saves
     func quit(optionallySave canSave: Bool, completion: QuitCompletion?) async
+    
+    // MARK: Menus
+    func hideOrShowMenuButton()
+    func showCoreOptions()
+    func showMoreInfo()
+    func hideMoreInfo()
+    func hideMenu()
+    func showSpeedMenu()
+    func showSwapDiscsMenu()
 }
 
 public extension PVEmualatorControllerProtocol where Self: UIViewController {
@@ -81,7 +93,7 @@ public extension PVEmualatorControllerProtocol {
 
         core.initialize()
     }
-    
+
     var use_metal: Bool { Defaults[.useMetal] }
 }
 

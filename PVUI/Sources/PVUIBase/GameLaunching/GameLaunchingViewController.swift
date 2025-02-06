@@ -293,8 +293,8 @@ extension GameLaunchingViewController where Self: UIViewController {
         @ThreadSafe var core = core
         @ThreadSafe var saveState = saveState
 
-        guard !(presentedViewController is PVEmulatorViewController) else {
-            let currentGameVC = presentedViewController as! PVEmulatorViewController
+        guard !(presentedViewController is PVEmualatorControllerProtocol) else {
+            let currentGameVC = presentedViewController as! PVEmualatorControllerProtocol
             displayAndLogError(withTitle: "Cannot open new game", message: "A game is already running the game \(currentGameVC.game.title).")
             return
         }
@@ -440,7 +440,7 @@ extension GameLaunchingViewController where Self: UIViewController {
     @MainActor
     func openSaveState(_ saveState: PVSaveState) async {
 
-        if let gameVC = presentedViewController as? PVEmulatorViewController {
+        if let gameVC = presentedViewController as? PVEmualatorControllerProtocol {
             //            try? RomDatabase.sharedInstance.writeTransaction {
             try? saveState.realm!.write {
                 saveState.lastOpened = Date()

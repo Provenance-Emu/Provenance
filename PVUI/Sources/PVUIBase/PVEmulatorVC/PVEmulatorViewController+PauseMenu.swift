@@ -169,7 +169,10 @@ extension PVEmulatorViewController {
             self.showMoreInfo()
         }))
         actionSheet.addAction(UIAlertAction(title: "Game Speed", style: .default, handler: { action in
-            self.perform(#selector(self.showSpeedMenu(_:)), with: sender, afterDelay: 0.1)
+            Task { @MainActor [weak self] in
+                try await Task.sleep(nanoseconds: 1_000)
+                self?.showSpeedMenu()
+            }
         }))
         if core.supportsSaveStates {
             actionSheet.addAction(UIAlertAction(title: "Save States", style: .default, handler: { action in

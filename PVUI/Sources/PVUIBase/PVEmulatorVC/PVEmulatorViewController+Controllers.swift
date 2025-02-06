@@ -10,7 +10,8 @@ extension PVEmulatorViewController {
     @objc func handlePause(_ note: Notification?) {
         self.controllerPauseButtonPressed()
     }
-    func controllerPauseButtonPressed() {
+    
+    public func controllerPauseButtonPressed() {
         DispatchQueue.main.async(execute: { () -> Void in
             if !self.isShowingMenu {
                 self.showMenu(self)
@@ -20,7 +21,7 @@ extension PVEmulatorViewController {
         })
     }
 
-    func hideOrShowMenuButton() {
+    public func hideOrShowMenuButton() {
 
         // find out how many *real* controllers we have....
         let controllers = PVControllerManager.shared.controllers.filter { controller in

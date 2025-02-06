@@ -5,8 +5,7 @@
 //  Created by Joseph Mattiello on 8/10/24.
 //
 
-
-protocol StartSelectDelegate: AnyObject {
+public protocol StartSelectDelegate: AnyObject {
 	func pressStart(forPlayer player: Int)
 	func releaseStart(forPlayer player: Int)
 	func pressSelect(forPlayer player: Int)

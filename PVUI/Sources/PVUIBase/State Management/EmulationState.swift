@@ -20,6 +20,6 @@ public final class EmulationUIState: ObservableObject {
             DLOG("Set core to \(core?.debugDescription ?? "nil")")
         }
     }
-    public var emulator: PVEmulatorViewController?
+    public var emulator: PVEmualatorControllerProtocol?
     public var isInBackground: Bool = false
 }

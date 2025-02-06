@@ -57,29 +57,29 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     
     func layoutViews() {}
 
-    func pressStart(forPlayer _: Int) {
+    open func pressStart(forPlayer _: Int) {
         vibrate()
     }
 
-    func releaseStart(forPlayer _: Int) {}
+    open func releaseStart(forPlayer _: Int) {}
 
-    func pressSelect(forPlayer _: Int) {
+    open func pressSelect(forPlayer _: Int) {
         vibrate()
     }
 
-    func releaseSelect(forPlayer _: Int) {}
+    open func releaseSelect(forPlayer _: Int) {}
 
-    func pressAnalogMode(forPlayer _: Int) {}
+    open func pressAnalogMode(forPlayer _: Int) {}
 
-    func releaseAnalogMode(forPlayer _: Int) {}
+    open func releaseAnalogMode(forPlayer _: Int) {}
 
-    func pressL3(forPlayer _: Int) {}
+    open func pressL3(forPlayer _: Int) {}
 
-    func releaseL3(forPlayer _: Int) {}
+    open func releaseL3(forPlayer _: Int) {}
 
-    func pressR3(forPlayer _: Int) {}
+    open func pressR3(forPlayer _: Int) {}
 
-    func releaseR3(forPlayer _: Int) {}
+    open func releaseR3(forPlayer _: Int) {}
 
     func buttonPressed(_: JSButton) {
         vibrate()

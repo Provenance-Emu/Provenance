@@ -171,7 +171,7 @@ final class PVSaveStatesViewController: UICollectionViewController {
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        if let emulatorViewController = presentingViewController as? PVEmulatorViewController {
+        if let emulatorViewController = presentingViewController as? PVEmualatorControllerProtocol {
             emulatorViewController.core.setPauseEmulation(false)
             emulatorViewController.isShowingMenu = false
             emulatorViewController.enableControllerInput(false)
