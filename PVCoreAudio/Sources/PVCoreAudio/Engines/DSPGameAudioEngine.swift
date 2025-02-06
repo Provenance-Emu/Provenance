@@ -8,6 +8,10 @@ import CoreAudio
 import PVSettings
 import Accelerate
 
+#if !os(macOS)
+import MediaPlayer
+#endif
+
 @available(macOS 11.0, iOS 14.0, *)
 final public class DSPGameAudioEngine: AudioEngineProtocol {
 
@@ -19,10 +23,11 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
     private var src: AVAudioSourceNode?
     internal weak var gameCore: EmulatorCoreAudioDataSource!
     private var isRunning = false
+    private let muteSwitchMonitor = PVMuteSwitchMonitor()
 
     public var volume: Float = 1.0 {
         didSet {
-            engine.mainMixerNode.outputVolume = volume
+            updateOutputVolume()
         }
     }
 
@@ -41,7 +46,37 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
     }()
 
     public init() {
+        muteSwitchMonitor.startMonitoring { [weak self] isMuted in
+            self?.updateOutputVolume()
+        }
         configureAudioSession()
+
+        // Observe changes to respectMuteSwitch setting
+        Task {
+            for await newValue in Defaults.updates(Defaults.Keys.respectMuteSwitch) {
+                await MainActor.run { [weak self] in
+                    self?.configureAudioSession()
+                    self?.updateOutputVolume()
+                }
+            }
+        }
+
+        #if !os(macOS)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAudioRouteChange),
+            name: AVAudioSession.routeChangeNotification,
+            object: nil
+        )
+        #endif
+    }
+
+    deinit {
+        muteSwitchMonitor.stopMonitoring()
+        stopAudio()
+        #if !os(macOS)
+        NotificationCenter.default.removeObserver(self)
+        #endif
     }
 
     public func setVolume(_ volume: Float) {
@@ -103,7 +138,7 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
 
         let dspOption = Defaults[.audioEngineDSPAlgorithm]
         let read: DSPAudioEngineRenderBlock
-        
+
         switch dspOption {
             case .SIMD_LinearInterpolation:
                 read = readBlockForBuffer_SIMD_LinearInterpolation(gameCore.ringBuffer(atIndex: 0)!)
@@ -165,7 +200,7 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
 
         DLOG("Audio setup - Source rate: \(sourceRate)Hz, Target rate: \(targetRate)Hz, Rate ratio: \(rateRatio)")
 
-        engine.mainMixerNode.outputVolume = volume
+        updateOutputVolume()
     }
 
     public func startAudio() {
@@ -199,18 +234,89 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
     }
 
     private func configureAudioSession() {
-#if !os(macOS)
+        #if !os(macOS)
         do {
             let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.ambient,
-                                    mode: .default,
-                                    options: [.mixWithOthers])
+            // Use .playback category when ignoring mute switch, .ambient otherwise
+            let category: AVAudioSession.Category = Defaults[.respectMuteSwitch] ? .ambient : .playback
+            try session.setCategory(category,
+                                  mode: .default,
+                                  options: [.mixWithOthers])
             let bufferDuration = Defaults[.audioLatency] / 1000.0
             try session.setPreferredIOBufferDuration(bufferDuration)
             try session.setActive(true)
+            ILOG("Audio session configured to \(category.rawValue)")
         } catch {
             ELOG("Failed to configure audio session: \(error.localizedDescription)")
         }
-#endif
+        #endif
+    }
+
+    private func updateOutputVolume() {
+        #if !os(macOS)
+        let audioSession = AVAudioSession.sharedInstance()
+        let currentRoute = audioSession.currentRoute
+
+        if !isRunning {
+            engine.mainMixerNode.outputVolume = 0.0
+        } else if Defaults[.respectMuteSwitch] {
+            // Only mute if using internal speaker and mute switch is on
+            if muteSwitchMonitor.isMuted && !currentRoute.isOutputtingToExternalDevice {
+                engine.mainMixerNode.outputVolume = 0.0
+            } else {
+                engine.mainMixerNode.outputVolume = volume
+            }
+        } else {
+            // Ignore mute switch
+            engine.mainMixerNode.outputVolume = volume
+        }
+        #else
+        engine.mainMixerNode.outputVolume = volume
+        #endif
+    }
+
+    @objc private func handleAudioRouteChange(notification: Notification) {
+        #if !os(macOS)
+        guard let userInfo = notification.userInfo,
+              let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
+              let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue)
+        else { return }
+
+        switch reason {
+        case .newDeviceAvailable, .oldDeviceUnavailable:
+            do {
+                try configureAudioSession()
+                try startAudio()
+                updateOutputVolume() // Update volume based on new route
+            } catch {
+                handleAudioError(error)
+            }
+        default:
+            break
+        }
+        #endif
+    }
+
+    private func handleAudioError(_ error: Error) {
+        ELOG("Audio error occurred: \(error.localizedDescription)")
+
+        do {
+            stopAudio()
+            Thread.sleep(forTimeInterval: 0.1)
+
+            #if !os(macOS)
+            try configureAudioSession()
+            #endif
+
+            try startAudio()
+            DLOG("Successfully recovered from audio error")
+        } catch {
+            ELOG("Failed to recover from audio error: \(error.localizedDescription)")
+            NotificationCenter.default.post(
+                name: NSNotification.Name("AudioEngineErrorNotification"),
+                object: self,
+                userInfo: ["error": error]
+            )
+        }
     }
 }

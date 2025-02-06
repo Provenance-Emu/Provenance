@@ -414,15 +414,21 @@ private struct AudioSection: View {
     #if !os(tvOS)
     @Default(.volume) var volume
     @Default(.volumeHUD) var volumeHUD
+    @Default(.respectMuteSwitch) var respectMuteSwitch
     #endif
     var body: some View {
         Section(header: Text("Audio")) {
             #if !os(tvOS)
-            ThemedToggle(isOn: $volumeHUD) {
-                SettingsRow(title: "Volume HUD",
-                            subtitle: "Show volume indicator when changing volume.",
-                            icon: .sfSymbol("speaker.wave.2"))
+            ThemedToggle(isOn: $respectMuteSwitch) {
+                SettingsRow(title: "Respect Silent Mode",
+                            subtitle: respectMuteSwitch ? "Disable game audio when system ringer is muted. Does not apply to headphones or external audio destinations." : "Play game audio when system ringer is muted. Does not apply to headphones or external audio destinations.",
+                            icon: respectMuteSwitch ? .sfSymbol("speaker.slash.fill") : .sfSymbol("speaker.slash"))
             }
+//            ThemedToggle(isOn: $volumeHUD) {
+//                SettingsRow(title: "Volume HUD",
+//                            subtitle: "Show volume indicator when changing volume.",
+//                            icon: .sfSymbol("speaker.wave.2"))
+//            }
             HStack {
                 Text("Volume")
                 Slider(value: $volume, in: 0...1, step: 0.1) {
@@ -605,7 +611,7 @@ private struct OnScreenControllerSection: View {
                             subtitle: "Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'. Useful on iPad OS for systems with an analog joystick (N64, PSX, etc.)",
                             icon: .sfSymbol("keyboard.badge.eye"))
             }
-
+            #if false
             if FeatureFlag.advancedSkinFeatures.enabled {
                 // Button Sound Effect Picker
                 NavigationLink {
@@ -678,6 +684,7 @@ private struct OnScreenControllerSection: View {
                 }
 
             }
+            #endif
         }
     }
 

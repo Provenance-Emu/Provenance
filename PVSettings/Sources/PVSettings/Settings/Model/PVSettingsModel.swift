@@ -225,6 +225,8 @@ public extension Defaults.Keys {
     static let monoAudio = Key<Bool>("monoAudio", default: false)
 
     static let audioLatency = Key<TimeInterval>("audioLatency", default: 10.0)
+    
+    static let respectMuteSwitch = Key<Bool>("respectMuteSwitch", default: true)
 }
 
 // MARK: Beta Options

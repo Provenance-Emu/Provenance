@@ -12,9 +12,20 @@ import AVFoundation
 import CoreAudio
 import PVAudio
 import PVLogging
+import PVSettings
 
 #if SWIFT_PACKAGE
 import PVCoreBridge
+#endif
+
+#if !os(macOS)
+
+extension AVAudioSession {
+    var isMuted: Bool {
+        let currentVolume = self.outputVolume
+        return currentVolume > 0 && (self.outputVolume == 0)
+    }
+}
 #endif
 
 public typealias AudioDeviceID = UInt32
@@ -222,9 +233,16 @@ public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
     private var _outputDeviceID: UInt32 = 0
     @objc public var running: Bool = false
     internal var auMetaData: AUMetaData
+    private let muteSwitchMonitor = PVMuteSwitchMonitor()
 
     /// Volume control
     @objc public var volume: Float = 1.0 {
+        didSet {
+            volumeUpdated()
+        }
+    }
+
+    public var respectsSilentMode: Bool = true {
         didSet {
             volumeUpdated()
         }
@@ -237,10 +255,25 @@ public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
         _outputDeviceID = 0
         volume = 1
         setupAudioRouteChangeMonitoring()
+
+        // Start mute switch monitoring
+        muteSwitchMonitor.startMonitoring { [weak self] isMuted in
+            self?.volumeUpdated()
+        }
+
+        // Observe changes to respectMuteSwitch setting
+        Task {
+            for await newValue in Defaults.updates(Defaults.Keys.respectMuteSwitch) {
+                await MainActor.run { [weak self] in
+                    self?.volumeUpdated()
+                }
+            }
+        }
     }
 
     /// Cleanup resources
     deinit {
+        muteSwitchMonitor.stopMonitoring()
         let auMetaData = self.auMetaData
         Task { @MainActor in
             if let mGraph = auMetaData.mGraph {
@@ -286,11 +319,28 @@ public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
     }
 
     /// iOS audio session setup
+    private func configureAudioSession() {
+        #if !os(macOS)
+        do {
+            let session = AVAudioSession.sharedInstance()
+            // Use .playback category when ignoring mute switch, .ambient otherwise
+            let category: AVAudioSession.Category = Defaults[.respectMuteSwitch] ? .ambient : .playback
+            try session.setCategory(category,
+                                  mode: .default,
+                                  options: [.mixWithOthers])
+            let bufferDuration = Defaults[.audioLatency] / 1000.0
+            try session.setPreferredIOBufferDuration(bufferDuration)
+            try session.setActive(true)
+        } catch {
+            ELOG("Failed to configure audio session: \(error.localizedDescription)")
+        }
+        #endif
+    }
+
     private func setupAudioSession() throws {
         #if !os(macOS)
-        try AVAudioSession.sharedInstance().setCategory(.ambient)
-        try AVAudioSession.sharedInstance().setActive(true)
-        ILOG("Successfully set audio session to .ambient")
+        try configureAudioSession()
+        ILOG("Successfully set audio session to \(Defaults[.respectMuteSwitch] ? ".ambient" : ".playback")")
         #endif
     }
 
@@ -535,14 +585,29 @@ public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
     }
 
     /// Volume control methods
+    private func shouldMuteAudio() -> Bool {
+        #if os(macOS)
+        return false
+        #else
+        guard respectsSilentMode else { return false }
+
+        let audioSession = AVAudioSession.sharedInstance()
+        let currentRoute = audioSession.currentRoute
+
+        return audioSession.isSilentModeEnabled &&
+               !currentRoute.isOutputtingToExternalDevice
+        #endif
+    }
+
     private func volumeUpdated() {
-        if let mMixerUnit = auMetaData.mMixerUnit {
+        if running, let mMixerUnit = auMetaData.mMixerUnit {
+            let effectiveVolume = (Defaults[.respectMuteSwitch] && muteSwitchMonitor.isMuted) ? 0 : volume
             AudioUnitSetParameter(
                 mMixerUnit,
                 kMultiChannelMixerParam_Volume,
                 kAudioUnitScope_Input,
                 0,
-                volume,
+                effectiveVolume,
                 0
             )
         }
@@ -667,8 +732,9 @@ public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
         switch reason {
         case .newDeviceAvailable, .oldDeviceUnavailable:
             do {
-                try setupAudioSession()
+                try configureAudioSession()
                 try startAudio()
+                volumeUpdated() // Update volume based on new route
             } catch {
                 handleAudioError(error)
             }
