@@ -118,6 +118,7 @@ static bool _isOff = false;
     [[NSUserDefaults standardUserDefaults] setBool:self.enableShaderJIT forKey:@"use_shader_jit"];
     [[NSUserDefaults standardUserDefaults] setBool:self.swapScreen forKey:@"swap_screen"];
     [[NSUserDefaults standardUserDefaults] setBool:self.uprightScreen forKey:@"upright_screen"];
+    [[NSUserDefaults standardUserDefaults] setBool:self.customTextures forKey:@"custom_textures"];
     [[NSUserDefaults standardUserDefaults] setBool:self.preloadTextures forKey:@"preload_textures"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }

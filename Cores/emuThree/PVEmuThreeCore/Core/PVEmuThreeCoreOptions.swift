@@ -214,6 +214,14 @@ import PVCoreBridge
               defaultValue: false)
     }
     
+    static var customTexturesOption: CoreOption {
+        .bool(.init(
+            title: "Use Custom Textures",
+            description: nil,
+            requiresRestart: false),
+              defaultValue: false)
+    }
+    
     static var preloadTextuesOption: CoreOption {
         .bool(.init(
             title: "Preload Textures",
@@ -258,7 +266,7 @@ import PVCoreBridge
         let coreOptions: [CoreOption] = [
             resolutionOption, enableHLEOption, cpuClockOption, enableJITOption, enableLoggingOption, enableNew3DSOption, gsOption, enableAsyncShaderOption, enableAsyncPresentOption,
             shaderTypeOption, enableVSyncOption, enableShaderAccurateMulOption, enableShaderJITOption, portraitTypeOption, landscapeTypeOption, volumeOption,
-            stretchAudioOption, swapScreenOption, uprightScreenOption, preloadTextuesOption, stereoRenderOption, threedFactorOption
+            stretchAudioOption, swapScreenOption, uprightScreenOption, customTexturesOption, preloadTextuesOption, stereoRenderOption, threedFactorOption
         ]
         let coreGroup:CoreOption = .group(.init(title: "EmuThreeds Core",
                                                 description: "Global options for EmuThreeds"),
@@ -310,6 +318,7 @@ extension PVEmuThreeCoreOptions {
         self.swapScreen = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.swapScreenOption).asBool
         self.uprightScreen = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.uprightScreenOption).asBool
         self.preloadTextures = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.preloadTextuesOption).asBool
+        self.customTextures = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.customTexturesOption).asBool
         self.stereoRender = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.stereoRenderOption).asInt ?? 0).int8Value
         self.threedFactor = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.threedFactorOption).asInt ?? 100).int8Value
     }
