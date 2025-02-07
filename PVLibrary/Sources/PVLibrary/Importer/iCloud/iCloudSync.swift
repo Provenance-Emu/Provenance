@@ -388,6 +388,7 @@ public enum iCloudSync {
                 DLOG("romsUploader syncToiCloud result: \(completion)")
             }
         }
+        //TODO: first we upload anything pending, then we download anything that already exists and import those. we will have to update the locations of existing saves and ROMs in the db
         if 1==1 {
             return
         }
