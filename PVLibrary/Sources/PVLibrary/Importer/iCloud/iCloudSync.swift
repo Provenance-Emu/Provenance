@@ -241,15 +241,17 @@ extension SyncFileToiCloud where Self: LocalFileInfoProvider {
             DLOG("subdirectories of \(current): \(subdirectories)")
             for currentChild in subdirectories {
                 let currentItem = current.appendingPathComponent(currentChild)
-                let isDirectory = currentItem.pathExtension.allSatisfy({$0.isWhitespace})
-                DLOG("\(currentItem) isDirectory?\(isDirectory)")
+                
+                var isDirectory: ObjCBool = false
+                let exists = fileManager.fileExists(atPath: currentItem.path, isDirectory: &isDirectory)
+                DLOG("\(currentItem) isDirectory?\(isDirectory) exists?\(exists)")
                 let iCloudDestination = container.appendingPathComponent(currentChild)
                 DLOG("new iCloud directory: \(iCloudDestination)")
-                if isDirectory && !fileManager.fileExists(atPath: iCloudDestination.path) {
+                if isDirectory.boolValue && !fileManager.fileExists(atPath: iCloudDestination.path) {
                     DLOG("\(iCloudDestination) does NOT exist")
                     try fileManager.createDirectory(atPath: iCloudDestination.path, withIntermediateDirectories: false)
                 }
-                if isDirectory {
+                if isDirectory.boolValue {
                     continue
                 }
                 if fileManager.fileExists(atPath: iCloudDestination.path) {
@@ -347,7 +349,8 @@ public enum iCloudSync {
     static var screenshotsSyncer: ScreenshotsSyncer!
     static var gameImporter = GameImporter.shared
     //initial uploaders
-    static var saveStateUploader: SyncFileToiCloud = SaveStateUploader()
+    static var saveStateUploader = SaveStateUploader()
+    static var romsUploader = RomsUploader()
     
     public static func initICloudDocuments() {
         Task {
@@ -379,7 +382,10 @@ public enum iCloudSync {
         //TODO: move files from local to cloud container
         Task {
             await saveStateUploader.syncToiCloud { completion in
-                DLOG("syncToiCloud result: \(completion)")
+                DLOG("saveStateUploader syncToiCloud result: \(completion)")
+            }
+            await romsUploader.syncToiCloud { completion in
+                DLOG("romsUploader syncToiCloud result: \(completion)")
             }
         }
         if 1==1 {
@@ -704,4 +710,10 @@ class SaveStateUploader: SyncFileToiCloud, LocalFileInfoProvider {
     let fileManager = FileManager.default
     let metadataQuery: NSMetadataQuery = .init()
     let url: URL = URL.documentsDirectory.appendingPathComponent("Save States")
+}
+
+class RomsUploader: SyncFileToiCloud, LocalFileInfoProvider {
+    let fileManager = FileManager.default
+    let metadataQuery: NSMetadataQuery = .init()
+    let url: URL = URL.documentsDirectory.appendingPathComponent("ROMs")
 }
