@@ -557,6 +557,15 @@ public extension RomDatabase {
             realm.add(object, update: update ? .all : .error)
         }
     }
+    
+    @objc(addObjects:update:completion:)
+    func add(_ objects: [Object], update: Bool = false) throws {
+        try writeTransaction {
+            objects.forEach { object in
+                realm.add(object, update: update ? .all : .error)
+            }
+        }
+    }
 
     @objc
     func addAsync(_ object: Object, update: Bool = false) async throws {

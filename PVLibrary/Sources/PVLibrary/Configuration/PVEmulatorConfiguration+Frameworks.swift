@@ -123,42 +123,74 @@ public extension PVEmulatorConfiguration {
     }
     
     private static func updateSystemEntries(_ systems: [SystemPlistEntry]?) async {
-        await systems?.concurrentForEach(priority: .userInitiated) { system in
-            await updateOrCreateSystem(system)
-        }
-    }
-    
-    private static func updateOrCreateSystem(_ system: SystemPlistEntry) async {
-        let database = RomDatabase.sharedInstance
+        guard let systems = systems else { return }
         
-        if let existingSystem = database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.PVSystemIdentifier), !existingSystem.isInvalidated {
-            await updateExistingSystem(existingSystem, with: system, using: database)
-        } else {
-            await createNewSystem(from: system, using: database)
+        /// Create mapping of existing systems to their plist entries
+        let database = RomDatabase.sharedInstance
+        let systemMappings = systems.compactMap { system -> (PVSystem, SystemPlistEntry)? in
+            if let existingSystem = database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.PVSystemIdentifier),
+               !existingSystem.isInvalidated {
+                return (existingSystem, system)
+            }
+            return nil
         }
+        
+        /// Process updates and creations separately
+        await updateExistingSystems(systemMappings, using: database)
+        
+        /// Find systems that need to be created
+        let newSystems = systems.filter { system in
+            database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.PVSystemIdentifier) == nil
+        }
+        
+        await createNewSystems(from: newSystems, using: database)
     }
-    
-    private static func updateExistingSystem(_ existingSystem: PVSystem, with system: SystemPlistEntry, using database: RomDatabase) async {
+
+    private static func updateExistingSystems(_ systemMappings: [(PVSystem, SystemPlistEntry)], using database: RomDatabase = .sharedInstance) async {
         do {
             RomDatabase.refresh()
             try database.writeTransaction {
-                setPropertiesTo(pvSystem: existingSystem, fromSystemPlistEntry: system)
-                VLOG("Updated system for id \(system.PVSystemIdentifier)")
+                systemMappings.forEach { (existingSystem, system) in
+                    setPropertiesTo(pvSystem: existingSystem, fromSystemPlistEntry: system)
+                }
+                VLOG("Updated \(systemMappings.count) systems")
             }
         } catch {
-            ELOG("Failed to update system: \(error)")
+            ELOG("Failed to update systems: \(error)")
         }
     }
-    
-    private static func createNewSystem(from system: SystemPlistEntry, using database: RomDatabase) async {
-        let newSystem = PVSystem()
-        newSystem.identifier = system.PVSystemIdentifier
-        setPropertiesTo(pvSystem: newSystem, fromSystemPlistEntry: system)
+
+    private static func createNewSystems(from systems: [SystemPlistEntry], using database: RomDatabase) async {
+        RomDatabase.refresh()
+        let newSystems: [PVSystem] = systems.map { system in
+            let newSystem = PVSystem()
+            newSystem.identifier = system.PVSystemIdentifier
+            setPropertiesTo(pvSystem: newSystem, fromSystemPlistEntry: system)
+            return newSystem
+        }
         
         do {
-            RomDatabase.refresh()
-            try database.add(newSystem, update: true)
-            DLOG("Added new system for id \(system.PVSystemIdentifier)")
+            try database.add(newSystems, update: true)
+            DLOG("Added \(newSystems.count) new systems")
+        } catch {
+            ELOG("Failed to create new systems: \(error)")
+        }
+    }
+
+    
+    private static func createNewSystem(from systems: [SystemPlistEntry], using database: RomDatabase) async {
+        
+        RomDatabase.refresh()
+        let newSystems: [PVSystem] = systems.map { system in
+            let newSystem = PVSystem()
+            newSystem.identifier = system.PVSystemIdentifier
+            setPropertiesTo(pvSystem: newSystem, fromSystemPlistEntry: system)
+            return newSystem
+        }
+        
+        do {
+            try database.add(newSystems, update: true)
+            DLOG("Added new systems for ids \(systems.map(\.PVSystemIdentifier).joined(separator: ", "))")
         } catch {
             ELOG("Failed to create new system: \(error)")
         }
