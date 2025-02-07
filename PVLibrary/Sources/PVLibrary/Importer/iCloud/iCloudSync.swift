@@ -252,6 +252,10 @@ extension SyncFileToiCloud where Self: LocalFileInfoProvider {
                 if isDirectory {
                     continue
                 }
+                if fileManager.fileExists(atPath: iCloudDestination.path) {
+                    try fileManager.removeItem(atPath: currentItem.path)
+                    continue
+                }
                 do {
                     ILOG("Trying to set Ubiquitious from local (\(currentItem.path)) to ICloud (\(iCloudDestination.path))")
                     try fileManager.setUbiquitous(true, itemAt: currentItem, destinationURL: iCloudDestination)
