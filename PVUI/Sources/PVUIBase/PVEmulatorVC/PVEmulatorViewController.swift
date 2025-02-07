@@ -154,6 +154,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         // Add KVO watcher for isRunning state so we can update play time
         core.addObserver(self, forKeyPath: "isRunning", options: .new, context: nil)
+
+        // Setup screen handling at end of init
+        setupScreenNotifications()
     }
 
     public override func observeValue(forKeyPath keyPath: String?, of _: Any?, change _: [NSKeyValueChangeKey: Any]?, context _: UnsafeMutableRawPointer?) {
@@ -181,6 +184,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     deinit {
         // These need to be first or mutli-threaded cores can cause crashes on close
         NotificationCenter.default.removeObserver(self)
+        secondaryWindow = nil
+        secondaryScreen = nil
 //        Task { @MainActor in
 //            core.stopEmulation()
 //        }
@@ -260,6 +265,22 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
     public override func viewDidLoad() {
         super.viewDidLoad()
+
+        // Add game view
+        addChild(gpuViewController)
+        view.addSubview(gpuViewController.view)
+        gpuViewController.view.frame = view.bounds
+        gpuViewController.didMove(toParent: self)
+
+        // Add controls view on top
+        if let controllerVC = controllerViewController {
+            addChild(controllerVC)
+            view.addSubview(controllerVC.view)
+            controllerVC.view.frame = view.bounds
+            controllerVC.didMove(toParent: self)
+        }
+
+
         title = game.title
         view.backgroundColor = UIColor.black
         view.insetsLayoutMarginsFromSafeArea = true
@@ -272,6 +293,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
 
         initNotificationObservers()
+        tryCreateEmulator()
+    }
+
+    private func tryCreateEmulator() {
         do {
             try createEmulator()
             //            } catch is CreateEmulatorError {
@@ -464,8 +489,30 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     }
 #endif
 
+    private func updateViewLayout() {
+        if let secondaryWindow = secondaryWindow {
+            // Game view on secondary screen
+            gpuViewController.view?.frame = secondaryWindow.bounds
+            secondaryWindow.frame = secondaryScreen?.bounds ?? .zero
+        } else {
+            // Game view on main screen
+            gpuViewController.view?.frame = view.bounds
+        }
+
+        // Always keep controls on main screen
+        if let controlsView = controllerViewController?.view {
+            controlsView.frame = view.bounds
+            view.bringSubviewToFront(controlsView)
+        }
+
+        if let menuBtn = menuButton {
+            view.bringSubviewToFront(menuBtn)
+        }
+    }
+
     public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        updateViewLayout()
 #if os(iOS)
         layoutMenuButton()
 #endif

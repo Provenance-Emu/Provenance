@@ -63,48 +63,4 @@ extension PVEmulatorViewController {
         PVControllerManager.shared.setSteamControllersMode(core.isRunning ? .gameController : .keyboardAndMouse)
         #endif
     }
-
-    // MARK: - UIScreenNotifications
-
-    @objc func screenDidConnect(_ note: Notification?) {
-        ILOG("Screen did connect: \(note?.object ?? "")")
-        if secondaryScreen == nil {
-            secondaryScreen = UIScreen.screens[1]
-            if let aBounds = secondaryScreen?.bounds {
-                secondaryWindow = UIWindow(frame: aBounds)
-            }
-            if let aScreen = secondaryScreen {
-                secondaryWindow?.screen = aScreen
-            }
-            gpuViewController.view?.removeFromSuperview()
-            gpuViewController.removeFromParent()
-            secondaryWindow?.rootViewController = gpuViewController
-            gpuViewController.view?.frame = secondaryWindow?.bounds ?? .zero
-            if let aView = gpuViewController.view {
-                secondaryWindow?.addSubview(aView)
-            }
-            secondaryWindow?.isHidden = false
-            gpuViewController.view?.setNeedsLayout()
-        }
-        hideOrShowMenuButton()
-    }
-
-    @objc func screenDidDisconnect(_ note: Notification?) {
-        ILOG("Screen did disconnect: \(note?.object ?? "")")
-        let screen = note?.object as? UIScreen
-        if secondaryScreen == screen {
-            gpuViewController.view?.removeFromSuperview()
-            gpuViewController.removeFromParent()
-            addChild(gpuViewController)
-
-            if let aView = gpuViewController.view, let aView1 = controllerViewController?.view {
-                view.insertSubview(aView, belowSubview: aView1)
-            }
-
-            gpuViewController.view?.setNeedsLayout()
-            secondaryWindow = nil
-            secondaryScreen = nil
-        }
-        hideOrShowMenuButton()
-    }
 }
