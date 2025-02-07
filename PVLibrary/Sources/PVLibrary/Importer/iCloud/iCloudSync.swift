@@ -231,7 +231,7 @@ extension SyncFileToiCloud where Self: LocalFileInfoProvider {
 //                self.metadataQuery.enableUpdates()
 //            }
 
-            completionHandler(await moveFiles(at: url, container: actualContainerUrl.appendingPathComponent("Documents")))
+            completionHandler(await moveFiles(at: url, container: actualContainerUrl.appendingPathComponent("Documents").appendingPathComponent(url.lastPathComponent)))
         }.value
     }
     
@@ -239,36 +239,22 @@ extension SyncFileToiCloud where Self: LocalFileInfoProvider {
         do {
             let subdirectories = try fileManager.subpathsOfDirectory(atPath: current.path)
             DLOG("subdirectories of \(current): \(subdirectories)")
-            let directoryContents = try try fileManager.contentsOfDirectory(at: current, includingPropertiesForKeys: [])
-            DLOG("directoryContents of \(current): \(directoryContents)")
             for currentChild in subdirectories {
                 let currentItem = current.appendingPathComponent(currentChild)
-//                var isDirectory: ObjCBool = false
-//                let exists = fileManager.fileExists(atPath: currentItem.path, isDirectory: &isDirectory)
                 let isDirectory = currentItem.pathExtension.allSatisfy({$0.isWhitespace})
-//                DLOG("\(currentItem): isDirectory?\(isDirectory), exists?\(exists)")
                 DLOG("\(currentItem) isDirectory?\(isDirectory)")
                 let iCloudDestination = container.appendingPathComponent(currentChild)
                 DLOG("new iCloud directory: \(iCloudDestination)")
                 if isDirectory && !fileManager.fileExists(atPath: iCloudDestination.path) {
                     DLOG("\(iCloudDestination) does NOT exist")
-//                    try fileManager.createDirectory(atPath: iCloudDirectory.path, withIntermediateDirectories: false)
-//                if !exists || !isDirectory.boolValue {
-//                    //TODO: should we just ignore and try to move as many as we can? this could be if storage is low
-//                    let resultSub = await moveFiles(at: currentItem, container: container)
-//                    guard resultSub == .success
-//                    else {
-//                        return resultSub
-//                    }
+                    try fileManager.createDirectory(atPath: iCloudDestination.path, withIntermediateDirectories: false)
                 }
                 if isDirectory {
                     continue
                 }
                 do {
                     ILOG("Trying to set Ubiquitious from local (\(currentItem.path)) to ICloud (\(iCloudDestination.path))")
-                    //TODO: uncomment when ready
-//                    try fileManager.setUbiquitous(true, itemAt: currentItem, destinationURL: destination)
-//                    try await fileManager.removeItem(at: currentItem)
+                    try fileManager.setUbiquitous(true, itemAt: currentItem, destinationURL: iCloudDestination)
                 } catch {
                     //this could indicate no more space is left
                     ELOG("iCloud failed to set Ubiquitous: \(error.localizedDescription)")
