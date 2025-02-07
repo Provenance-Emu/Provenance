@@ -14,33 +14,33 @@ public protocol PVEmualatorControllerProtocol: AnyObject {
     typealias QuitCompletion = () -> Void
 
     init(game: PVGame, core: PVEmulatorCore)
-
+    
     // MARK: Memebers
     var core: PVEmulatorCore { get }
     var game: PVGame { get }
 
     // MARK: UI
     var isShowingMenu: Bool  { get set }
-
+    
     // MARK: Audio
     var audioInited: Bool { get }
     var gameAudio: any AudioEngineProtocol { get }
-
+    
     // MARK: Timers
     var autosaveTimer: Timer?  { get }
     var gameStartTime: Date?  { get }
-
+    
     var controllerViewController: (UIViewController & StartSelectDelegate)? { get }
     func controllerPauseButtonPressed(_ sender: Any?)
 
     // MARK: - Methods
-
+    
     // MARK: Screenshots
     func captureScreenshot() -> UIImage?
-
+    
     // MARK: Saves
     func quit(optionallySave canSave: Bool, completion: QuitCompletion?) async
-
+    
     // MARK: Menus
     func hideOrShowMenuButton()
     func showCoreOptions()
@@ -100,7 +100,7 @@ public extension PVEmualatorControllerProtocol {
 
 // MARK: Controllers
 public extension PVEmualatorControllerProtocol where Self: GCEventViewController {
-
+    
     @MainActor
     func enableControllerInput(_ enabled: Bool) {
 #if os(tvOS)
@@ -144,7 +144,7 @@ public extension PVEmualatorControllerProtocol {
 
 // MARK: Screenshots
 public extension PVEmualatorControllerProtocol {
-
+    
     @discardableResult
     @MainActor
     func autoSaveState() async throws -> Bool {
@@ -173,17 +173,17 @@ public extension PVEmualatorControllerProtocol {
         let image = captureScreenshot()
         return try await createNewSaveState(auto: true, screenshot: image)
     }
-
+    
 #if os(iOS)
     func takeScreenshot() {
         if let screenshot = captureScreenshot() {
             Task.detached {
                 UIImageWriteToSavedPhotosAlbum(screenshot, nil, nil, nil)
             }
-
+            
             if let pngData = screenshot.pngData() {
                 let dateString = PVEmulatorConfiguration.string(fromDate: Date())
-
+                
                 let fileName = self.game.title + " - " + dateString + ".png"
                 let imageURL = PVEmulatorConfiguration.screenshotsPath(forGame: self.game).appendingPathComponent(fileName, isDirectory: false)
                 do {
@@ -201,9 +201,9 @@ public extension PVEmualatorControllerProtocol {
         core.setPauseEmulation(false)
         isShowingMenu = false
     }
-
+    
 #endif
-
+    
     //    #error ("Use to https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/iCloud/iCloud.html to save files to iCloud from local url, and setup packages for bundles")
     @MainActor
     @discardableResult
@@ -241,32 +241,32 @@ public extension PVEmualatorControllerProtocol {
         }
 
         /// Save state on main thread since it interacts with core
-        try await core.saveState(toFileAtPath: saveURL.path)
+            try await core.saveState(toFileAtPath: saveURL.path)
         DLOG("Succeeded saving state, auto: \(auto)")
 
         /// Create the save state in database
         try await RomDatabase.sharedInstance.asyncWriteTransaction {
-            let realm = RomDatabase.sharedInstance.realm
+        let realm = RomDatabase.sharedInstance.realm
             /// Fetch fresh instances of core and game within the write transaction
             guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: coreIdentifier),
                   let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5) else {
                 ELOG("no core found for identifier: \(coreIdentifier)")
                 return
 //                throw SaveStateError.noCoreFound(coreIdentifier)
-            }
+        }
 
             /// Create and add the save state
             let saveState = PVSaveState(withGame: game, core: core, file: saveFile, image: imageFile, isAutosave: auto)
-            realm.add(saveState)
+                    realm.add(saveState)
 
             /// Store metadata asynchronously
             LibrarySerializer.storeMetadata(saveState) { result in
-                switch result {
+                    switch result {
                 case .success(let url):
-                    ILOG("Serialized save state metadata to (\(url.path))")
+                        ILOG("Serialized save state metadata to (\(url.path))")
                 case .error(let error):
-                    ELOG("Failed to serialize save metadata. \(error)")
-                }
+                        ELOG("Failed to serialize save metadata. \(error)")
+                    }
             }
             
             /// Handle cleanup if this is an auto-save
@@ -283,7 +283,7 @@ public extension PVEmualatorControllerProtocol {
         guard let autoSaves = game.thaw()?.autoSaves else { return }
         let realm = RomDatabase.sharedInstance.realm
 
-        if autoSaves.count > 5 {
+                if autoSaves.count > 5 {
             // Get saves to delete (keeping the 5 most recent)
             let savesToDelete = Array(autoSaves.sorted(byKeyPath: "date", ascending: false).suffix(from: 5))
             
@@ -323,7 +323,7 @@ public
 extension PVEmulatorViewController  {
     @objc func audioSampleRateDidChange() {
         gameAudio.stopAudio()
-
+        
         try? gameAudio.startAudio()
     }
 }

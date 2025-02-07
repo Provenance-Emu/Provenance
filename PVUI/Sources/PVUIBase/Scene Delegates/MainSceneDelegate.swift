@@ -23,10 +23,12 @@ class MainSceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
     }
 
+    #if !os(tvOS)
     func windowScene(_ windowScene: UIWindowScene, didUpdate previousCoordinateSpace: UICoordinateSpace, interfaceOrientation previousInterfaceOrientation: UIInterfaceOrientation, traitCollection previousTraitCollection: UITraitCollection) {
         // Handle screen orientation changes
         if windowScene.screen == .main {
             window?.frame = windowScene.coordinateSpace.bounds
         }
     }
+    #endif
 }

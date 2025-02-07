@@ -44,7 +44,7 @@ public
 typealias PVEmulatorViewControllerRootClass = GCEventViewController
 #else
 public
-typealias PVEmulatorViewControllerRootClass = UIViewController
+typealias PVEmulatorViewControllerRootClass = GCEventViewController
 #endif
 
 public

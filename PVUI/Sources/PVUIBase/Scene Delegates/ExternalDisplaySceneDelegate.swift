@@ -59,10 +59,12 @@ class ExternalDisplaySceneDelegate: UIResponder, UIWindowSceneDelegate {
         viewController.didMove(toParent: rootViewController)
     }
 
+    #if !os(tvOS)
     func windowScene(_ windowScene: UIWindowScene, didUpdate previousCoordinateSpace: UICoordinateSpace, interfaceOrientation previousInterfaceOrientation: UIInterfaceOrientation, traitCollection previousTraitCollection: UITraitCollection) {
         // Handle screen orientation changes
         if windowScene.screen != .main {
             window?.frame = windowScene.coordinateSpace.bounds
         }
     }
+    #endif
 }
