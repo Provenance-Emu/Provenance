@@ -56,6 +56,8 @@ extern int g_gs_preference;
 @implementation PVRetroArchCoreBridge {
 	NSString *autoLoadStatefileName;
 }
+@dynamic documentsDirectory;
+
 - (instancetype)init {
 	if (self = [super init]) {
         self.skipLayout = true;

@@ -11,6 +11,7 @@ import PVThemes
 import SwiftUI
 import UIKit
 import Perception
+import PVUIBase
 
 #if canImport(FreemiumKit)
 import FreemiumKit
@@ -26,64 +27,36 @@ struct UITestingApp: App {
     @State private var showGameMoreInfoRealm = false
     @State private var showArtworkSearch = false
     @State private var showFreeROMs = false
+    @State private var showDeltaSkinList = false
 
     @StateObject
     private var mockImportStatusDriverData = MockImportStatusDriverData()
 
     var body: some Scene {
         WindowGroup {
-            ZStack {
-                Color.secondary.ignoresSafeArea()
-
-                VStack(spacing: 20) {
-                    HStack {
-                        Button("Show Realm Driver") {
-                            showingRealmSheet = true
-                        }
-                        .buttonStyle(.borderedProminent)
-
-                        Button("Show Mock Driver") {
-                            showingMockSheet = true
-                        }
-                        .buttonStyle(.borderedProminent)
+            NavigationView {
+                List {
+                    Button("Test DeltaSkins List") {
+                        showDeltaSkinList = true
                     }
-                    HStack {
-                        Button("Show Settings") {
-                            showingSettings = true
-                        }
-                        .buttonStyle(.borderedProminent)
-
-                        Button("Show Import Queue") {
-                            showImportStatus = true
-                        }
-                        .buttonStyle(.borderedProminent)
+                    Button("Show Realm Driver") {
+                        showingRealmSheet = true
                     }
-                    HStack {
-                        Button("Show Game Info") {
-                            showGameMoreInfo = true
-                        }
-                        .buttonStyle(.borderedProminent)
-                        Button("Show Game Info Realm") {
-                            showGameMoreInfoRealm = true
-                        }
-                        .buttonStyle(.borderedProminent)
-
+                    Button("Show Mock Driver") {
+                        showingMockSheet = true
                     }
-                    HStack {
-                        Button("Show Artwork Search") {
-                            showArtworkSearch = true
-                        }
-                        .buttonStyle(.borderedProminent)
+                    Button("Show Settings") {
+                        showingSettings = true
                     }
-                    Button("Show Free ROMs") {
-                        showFreeROMs = true
+                    Button("Show Import Queue") {
+                        showImportStatus = true
                     }
-                    .buttonStyle(.borderedProminent)
                 }
+                .navigationTitle("UI Testing")
             }
             .sheet(isPresented: $showingRealmSheet) {
                 let testRealm = try! RealmSaveStateTestFactory.createInMemoryRealm()
-                let mockDriver = try! RealmSaveStateDriver(realm: testRealm)
+                let mockDriver = RealmSaveStateDriver(realm: testRealm)
 
                 /// Get the first game from realm for the view model
                 let game = testRealm.objects(PVGame.self).first!
@@ -121,15 +94,20 @@ struct UITestingApp: App {
                     .presentationBackground(.clear)
             }
             .sheet(isPresented: $showingSettings) {
-                let gameImporter = GameImporter.shared
-                let pvgamelibraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
-                let menuDelegate = MockPVMenuDelegate()
+                NavigationView {
+                    let gameImporter = GameImporter.shared
+                    let pvgamelibraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
+                    let menuDelegate = MockPVMenuDelegate()
 
-                PVSettingsView(
-                    conflictsController: pvgamelibraryUpdatesController,
-                    menuDelegate: menuDelegate) {
-                        print("PVSettingsView Closed")
+                    PVSettingsView(
+                        conflictsController: pvgamelibraryUpdatesController,
+                        menuDelegate: menuDelegate
+                    ) {
+                        showingSettings = false
                     }
+                    .navigationBarHidden(true)
+                }
+                .navigationViewStyle(.stack)
             }
             .sheet(isPresented: $showImportStatus) {
                 ImportStatusView(
@@ -161,13 +139,22 @@ struct UITestingApp: App {
                         showArtworkSearch = false
                     }
                     .navigationTitle("Artwork Search")
+                    #if !os(tvOS)
                     .background(Color(uiColor: .systemBackground))
+                    #endif
                 }
+                #if !os(tvOS)
                 .presentationBackground(Color(uiColor: .systemBackground))
+                #endif
             }
             .sheet(isPresented: $showFreeROMs) {
                 FreeROMsView { rom, url in
                     print("Downloaded ROM: \(rom.file) to: \(url)")
+                }
+            }
+            .sheet(isPresented: $showDeltaSkinList) {
+                NavigationView {
+                    DeltaSkinListView(manager: DeltaSkinManager.shared)
                 }
             }
             .onAppear {

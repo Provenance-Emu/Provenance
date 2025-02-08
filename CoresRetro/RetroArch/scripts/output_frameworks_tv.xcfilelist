@@ -43,6 +43,7 @@ $(SRCROOT)/CoresRetro/RetroArch/modules/ppsspp_libretro.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/prosystem_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/race_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/sameboy_libretro_tvos.framework
+$(SRCROOT)/CoresRetro/RetroArch/modules/same_cdi_libretro_tvos.framework
 #$(SRCROOT)/CoresRetro/RetroArch/modules/snes9x_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/stella2014_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/stella_libretro_tvos.framework

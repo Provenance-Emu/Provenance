@@ -9,7 +9,7 @@
 import GameController
 
 // MARK: ThumbSticks
-extension GCController {
+public extension GCController {
     var supportsThumbstickButtons: Bool {
         if let controller = self.extendedGamepad {
             return (controller.responds(to: #selector(getter: GCExtendedGamepad.leftThumbstickButton))) && controller.leftThumbstickButton != nil
@@ -21,7 +21,7 @@ extension GCController {
 }
 
 // MARK: Pause/Home
-extension GCController {
+public extension GCController {
     func setupPauseHandler(onPause: @escaping () -> Void) {
         var hasHandler = false
         // Use buttonHome for iOS/tvOS14 and later
@@ -63,15 +63,15 @@ extension GCController {
         controllerPausedHandler = nil
 	}
 
-    private var buttonMenu: GCControllerButtonInput? {
+    public var buttonMenu: GCControllerButtonInput? {
         return extendedGamepad?.buttonMenu ?? microGamepad?.buttonMenu
     }
 
-    private var buttonOptions: GCControllerButtonInput? {
+    public var buttonOptions: GCControllerButtonInput? {
         return extendedGamepad?.buttonOptions
     }
 
-    private var buttonHome: GCControllerButtonInput? {
+    public var buttonHome: GCControllerButtonInput? {
         if #available(iOS 14.0, tvOS 14.0, *) {
             return extendedGamepad?.buttonHome
         }

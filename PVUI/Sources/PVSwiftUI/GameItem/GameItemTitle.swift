@@ -15,10 +15,16 @@ struct GameItemTitle: SwiftUI.View {
     var viewType: GameItemViewType
 
     var body: some SwiftUI.View {
-        Text(text)
-            .font(.system(size: viewType.titleFontSize))
-            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-            .lineLimit(1)
-            .frame(maxWidth: .infinity, alignment: .leading)
+        GeometryReader { geometry in
+            MarqueeText(text: text,
+                        font: .system(size: viewType.titleFontSize),
+                        delay: 1.0,
+                        speed: 50.0,
+                        loop: true)
+                .frame(width: geometry.size.width, alignment: .leading)
+                .clipped()
+        }
+        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

@@ -6,6 +6,7 @@
 #include <cstdarg>
 #include <cstdlib>
 #include <cstdint>
+#include <iostream> // For std::cout
 
 #include "Common/CommonFuncs.h"
 #include "Common/DynamicLibrary.h"
@@ -47,8 +48,30 @@ static bool OpenVulkanLibrary()
     return true;
 
   // Use the libvulkan.dylib from the application bundle.
-  std::string filename = "@executable_path/Frameworks/libMoltenVK_Dolphin.dylib";
-  return s_vulkan_module.Open(filename.c_str());
+    const std::vector<std::string> vulkanPaths = {
+        File::GetBundleDirectory() + "/Frameworks/libMoltenVK_Dolphin.dylib",
+        File::GetBundleDirectory() + "/Frameworks/libMoltenVK.dylib",
+        File::GetBundleDirectory() + "/Frameworks/MoltenVK.framework/MoltenVK",
+        "@executable_path/Frameworks/MoltenVK.framework/MoltenVK"
+    };
+
+    for (const auto& path : vulkanPaths)
+    {
+        std::cout << "Attempting to load Vulkan library from: " << path << std::endl;
+        
+        if (s_vulkan_module.Open(path.c_str()))
+        {
+            std::cout << "Successfully loaded Vulkan library from: " << path << std::endl;
+            return true;
+        }
+        else
+        {
+            std::cout << "Failed to load Vulkan library from: " << path << std::endl;
+        }
+    }
+
+    std::cout << "Failed to load Vulkan library from any of the specified paths." << std::endl;
+    return false;
 #else
   std::string filename = Common::DynamicLibrary::GetVersionedFilename("vulkan", 1);
   if (s_vulkan_module.Open(filename.c_str()))

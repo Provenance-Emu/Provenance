@@ -278,6 +278,33 @@ extension ProvenanceApp: WhatsNewCollectionProvider {
                 hapticFeedback: .notification(.success)
             )
         )
+        WhatsNew(
+            version: "3.0.4",
+            title: "RetroArch Improvements",
+            features: [
+                .init(
+                    image: .init(systemName: "square.3.layers.3d.top.filled", foregroundColor: .blue),
+                    title: "3DS Graphics Enhancement",
+                    subtitle: "Fixed shadow rendering issues for improved visual quality in 3DS games"
+                ),
+                .init(
+                    image: .init(systemName: "list.bullet.rectangle.fill", foregroundColor: .orange),
+                    title: "RetroArch Menu Fix",
+                    subtitle: "Resolved issues with RetroArch menu display and navigation"
+                ),
+                .init(
+                    image: .init(systemName: "bolt.horizontal.circle.fill", foregroundColor: .green),
+                    title: "Core Performance",
+                    subtitle: "Enhanced stability and responsiveness across all RetroArch-based cores"
+                )
+            ],
+            primaryAction: .init(
+                title: "Continue",
+                backgroundColor: ThemeManager.shared.currentPalette.switchON?.swiftUIColor ?? .accentColor,
+                foregroundColor: ThemeManager.shared.currentPalette.switchThumb?.swiftUIColor ?? .white,
+                hapticFeedback: .notification(.success)
+            )
+        )
     }
 }
 #endif

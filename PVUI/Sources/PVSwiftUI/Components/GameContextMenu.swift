@@ -38,9 +38,11 @@ struct GameContextMenu: View {
         self.rootDelegate = rootDelegate
         self.contextMenuDelegate = contextMenuDelegate
 
+        let unsupportedCores = Defaults[.unsupportedCores]
+
         // Initialize computed properties
         _availableCores = State(initialValue: game.system?.cores.filter {
-            !(AppState.shared.isAppStore && $0.appStoreDisabled)
+            !(AppState.shared.isAppStore && $0.appStoreDisabled && !unsupportedCores)
         } ?? [])
         _hasSaveStates = State(initialValue: !game.saveStates.isEmpty)
     }

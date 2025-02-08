@@ -1,0 +1,143 @@
+{
+    "name": "GBA Test Skin",
+    "identifier": "com.provenance.test.gba",
+    "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+    "debug": false,
+    "representations": {
+        "iphone": {
+            "standard": {
+                "portrait": {
+                    "assets": {
+                        "resizable": "iphone_portrait.pdf"
+                    },
+                    "screens": [
+                        {
+                            "inputFrame": {
+                                "x": 0,
+                                "y": 0,
+                                "width": 240,
+                                "height": 160
+                            },
+                            "outputFrame": {
+                                "x": 0,
+                                "y": 50,
+                                "width": 414,
+                                "height": 276
+                            }
+                        }
+                    ],
+                    "mappingSize": {
+                        "width": 414,
+                        "height": 896
+                    }
+                },
+                "landscape": {
+                    "assets": {
+                        "resizable": "iphone_landscape.pdf"
+                    },
+                    "screens": [
+                        {
+                            "inputFrame": {
+                                "x": 0,
+                                "y": 0,
+                                "width": 240,
+                                "height": 160
+                            },
+                            "outputFrame": {
+                                "x": 50,
+                                "y": 0,
+                                "width": 796,
+                                "height": 414
+                            }
+                        }
+                    ],
+                    "mappingSize": {
+                        "width": 896,
+                        "height": 414
+                    }
+                }
+            }
+        },
+        "ipad": {
+            "standard": {
+                "portrait": {
+                    "assets": {
+                        "resizable": "ipad_portrait.pdf"
+                    },
+                    "screens": [
+                        {
+                            "inputFrame": {
+                                "x": 0,
+                                "y": 0,
+                                "width": 240,
+                                "height": 160
+                            },
+                            "outputFrame": {
+                                "x": 50,
+                                "y": 100,
+                                "width": 924,
+                                "height": 616
+                            },
+                            "filters": [
+                                {
+                                    "name": "CIGaussianBlur",
+                                    "parameters": {
+                                        "inputRadius": 0.5
+                                    }
+                                },
+                                {
+                                    "name": "CIColorControls",
+                                    "parameters": {
+                                        "inputSaturation": 1.2,
+                                        "inputContrast": 1.1
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "mappingSize": {
+                        "width": 1024,
+                        "height": 1366
+                    }
+                }
+            },
+            "splitView": {
+                "portrait": {
+                    "assets": {
+                        "resizable": "ipad_split_portrait.pdf"
+                    },
+                    "screens": [
+                        {
+                            "inputFrame": {
+                                "x": 0,
+                                "y": 0,
+                                "width": 240,
+                                "height": 160
+                            },
+                            "outputFrame": {
+                                "x": 20,
+                                "y": 20,
+                                "width": 460,
+                                "height": 307
+                            },
+                            "placement": "app",
+                            "filters": [
+                                {
+                                    "name": "CIVignette",
+                                    "parameters": {
+                                        "inputIntensity": 0.5,
+                                        "inputRadius": 1.0
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "mappingSize": {
+                        "width": 500,
+                        "height": 800
+                    }
+                }
+            }
+        }
+    }
+}

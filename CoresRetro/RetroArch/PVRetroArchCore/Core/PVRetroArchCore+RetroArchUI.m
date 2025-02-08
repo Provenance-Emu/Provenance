@@ -103,7 +103,7 @@ int argc =  1;
     }
     [self writeConfigFile];
     [self syncResources:self.BIOSPath
-                     to:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system" ]];
+                     to:[self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/system" ]];
 }
 
 - (void)startEmulation {
@@ -196,27 +196,27 @@ int argc =  1;
 void extract_bundles();
 -(void) writeConfigFile {
 	NSFileManager *fm = [[NSFileManager alloc] init];
-	NSString *fileName = [NSString stringWithFormat:@"%@/../../RetroArch/config/retroarch.cfg",
-						  self.batterySavesPath];
+	NSString *fileName = [NSString stringWithFormat:@"%@/RetroArch/config/retroarch.cfg",
+                          self.documentsDirectory];
     // TODO: Get the version # from core.plist
-    NSString *verFile = [NSString stringWithFormat:@"%@/../../RetroArch/config/1.27.1.cfg",
-                         self.batterySavesPath];
+    NSString *verFile = [NSString stringWithFormat:@"%@/RetroArch/config/1.27.1.cfg",
+                         self.documentsDirectory];
 	if (![fm fileExistsAtPath: fileName] || ![fm fileExistsAtPath: verFile] || [self shouldUpdateAssets]) {
         NSString *src = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"retroarch.cfg" ofType:nil];
         [self syncResource:src to:fileName];
         [self syncResource:src to:verFile];
         
         NSString *overlay_back = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"arrow.png" ofType:nil];
-        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/../../RetroArch/assets/xmb/flatui/png/arrow.png", self.batterySavesPath]];
-        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/../../RetroArch/assets/xmb/monochrome/png/arrow.png", self.batterySavesPath]];
-        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/../../RetroArch/assets/xmb/automatic/png/arrow.png", self.batterySavesPath]];
-        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/../../RetroArch/assets/xmb/pixel/png/arrow.png", self.batterySavesPath]];
-        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/../../RetroArch/assets/xmb/daite/png/arrow.png", self.batterySavesPath]];
-        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/../../RetroArch/assets/xmb/dot-art/png/arrow.png", self.batterySavesPath]];
-        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/../../RetroArch/assets/xmb/neoactive/png/arrow.png", self.batterySavesPath]];
-        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/../../RetroArch/assets/xmb/retroactive/png/arrow.png", self.batterySavesPath]];
-        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/../../RetroArch/assets/xmb/retrosystem/png/arrow.png", self.batterySavesPath]];
-        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/../../RetroArch/assets/xmb/systematic/png/arrow.png", self.batterySavesPath]];
+        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/flatui/png/arrow.png", self.documentsDirectory]];
+        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/monochrome/png/arrow.png", self.documentsDirectory]];
+        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/automatic/png/arrow.png", self.documentsDirectory]];
+        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/pixel/png/arrow.png", self.documentsDirectory]];
+        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/daite/png/arrow.png", self.documentsDirectory]];
+        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/dot-art/png/arrow.png", self.documentsDirectory]];
+        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/neoactive/png/arrow.png", self.documentsDirectory]];
+        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/retroactive/png/arrow.png", self.documentsDirectory]];
+        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/retrosystem/png/arrow.png", self.documentsDirectory]];
+        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/systematic/png/arrow.png", self.documentsDirectory]];
 		processing_init=true;
 	}
     // Additional Override Settings
@@ -228,13 +228,13 @@ void extract_bundles();
     else if (self.gsPreference == 2)
         content=@"video_driver = \"vulkan\"\n";
     [self syncResources:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"pv_ui_overlay" ofType:nil]
-                     to:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/overlays/pv_ui_overlay" ]];
+                     to:[self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/overlays/pv_ui_overlay" ]];
     [self syncResource:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"pv_ui_overlay/pv_ui.cfg" ofType:nil]
-                     to:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/overlays/pv_ui_overlay/pv_ui.cfg" ]];
+                     to:[self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/overlays/pv_ui_overlay/pv_ui.cfg" ]];
     [self syncResources:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"mame_plugins" ofType:nil]
-                     to:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system/mame/plugins" ]];
+                     to:[self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/system/mame/plugins" ]];
     [self syncResource:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"hatari.cfg" ofType:nil]
-                     to:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system/hatari.cfg" ]];
+                     to:[self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/system/hatari.cfg" ]];
 
     if (!self.retroArchControls) {
         content = [content stringByAppendingString:
@@ -242,7 +242,7 @@ void extract_bundles();
         ];
     }
     if (self.coreOptionConfigPath.length > 0 && self.coreOptionConfig.length > 0) {
-        fileName = [NSString stringWithFormat:@"%@/../../RetroArch/config/%@", self.batterySavesPath, self.coreOptionConfigPath];
+        fileName = [NSString stringWithFormat:@"%@/RetroArch/config/%@", self.documentsDirectory, self.coreOptionConfigPath];
         if (![fm fileExistsAtPath: fileName] || self.coreOptionOverwrite) {
             [fm createDirectoryAtPath:[fileName stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:nil];
             [self.coreOptionConfig writeToFile:fileName
@@ -255,7 +255,7 @@ void extract_bundles();
     }
     content = [content stringByAppendingString:
                [NSString stringWithFormat:@"cache_directory = \"%@\"\n", self.batterySavesPath]];
-    fileName = [NSString stringWithFormat:@"%@/../../RetroArch/config/opt.cfg", self.batterySavesPath];
+    fileName = [NSString stringWithFormat:@"%@/RetroArch/config/opt.cfg", self.documentsDirectory];
     [content writeToFile:fileName
               atomically:NO
                 encoding:NSStringEncodingConversionAllowLossy
@@ -267,7 +267,7 @@ void extract_bundles();
 #else
     // If assets were updated, refresh config
     NSFileManager *fm = [[NSFileManager alloc] init];
-    NSString *file=[NSString stringWithFormat:@"%@/../../RetroArch/assets/xmb/flatui/png/arrow.png", self.batterySavesPath];
+    NSString *file=[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/flatui/png/arrow.png", self.documentsDirectory];
     if ([fm fileExistsAtPath: file]) {
         unsigned long long fileSize = [[fm attributesOfItemAtPath:file error:nil] fileSize];
         if (fileSize == 1687) {
@@ -595,15 +595,17 @@ void extract_bundles();
 - (bool)setDisableDisplaySleep:(bool)disable { /* no-op for iOS */ return NO; }
 +(PVRetroArchCoreBridge *) get { self; }
 -(NSString*)documentsDirectory {
-	if (self.documentsDirectory == nil) {
+    static dispatch_once_t onceToken;
+    static NSString* _documentsDirectory;
+    dispatch_once(&onceToken, ^{
 #if TARGET_OS_IOS
-		NSArray *paths      = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSArray *paths      = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 #elif TARGET_OS_TV
-		NSArray *paths      = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        NSArray *paths      = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
 #endif
-		self.documentsDirectory = paths.firstObject;
-	}
-	return self.documentsDirectory;
+        _documentsDirectory = paths.firstObject;
+    });
+	return _documentsDirectory;
 }
 - (void)refreshSystemConfig {
 #if TARGET_OS_IOS && !TARGET_OS_TV
@@ -659,8 +661,8 @@ void extract_bundles();
 		if (!self.batterySavesPath) {
 			NSFileManager *fm = [[NSFileManager alloc] init];
 			self.batterySavesPath = [NSString stringWithFormat:@"%@/RetroArch/config", self.documentsDirectory];
-			NSString *fileName = [NSString stringWithFormat:@"%@/../../RetroArch/config/retroarch.cfg",
-								  self.batterySavesPath];
+			NSString *fileName = [NSString stringWithFormat:@"%@/RetroArch/config/retroarch.cfg",
+								  self.documentsDirectory];
 			if ([fm fileExistsAtPath: fileName]) {
 				//[fm removeItemAtPath:fileName error:nil];
 			}

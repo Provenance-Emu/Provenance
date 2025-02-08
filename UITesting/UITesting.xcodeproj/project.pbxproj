@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		B36DFC3E2CF1975B00BAE9BE /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B36DFC3D2CF1975B00BAE9BE /* PVUI */; };
+		B37444812D444B09002306B0 /* GBC-Sunrise.deltaskin in Resources */ = {isa = PBXBuildFile; fileRef = B374447F2D444B09002306B0 /* GBC-Sunrise.deltaskin */; };
+		B37444842D444B81002306B0 /* GBA-SharpX1.deltaskin in Resources */ = {isa = PBXBuildFile; fileRef = B37444822D444B81002306B0 /* GBA-SharpX1.deltaskin */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,11 +33,39 @@
 		B36DFC0F2CF196D700BAE9BE /* UITesting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UITesting.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36DFC1F2CF196D800BAE9BE /* UITestingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UITestingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36DFC292CF196D800BAE9BE /* UITestingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UITestingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B374447F2D444B09002306B0 /* GBC-Sunrise.deltaskin */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "GBC-Sunrise.deltaskin"; path = "UITesting/Resources/GBC-Sunrise.deltaskin"; sourceTree = "<group>"; };
+		B37444822D444B81002306B0 /* GBA-SharpX1.deltaskin */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "GBA-SharpX1.deltaskin"; path = "UITesting/Resources/GBA-SharpX1.deltaskin"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B374444B2D444327002306B0 /* Exceptions for "UITesting" folder in "UITesting" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+				"Resources/DS-Test.deltaskin/info.json",
+				"Resources/GBA-SharpX1.deltaskin/info.json",
+				"Resources/GBA-SharpX1.deltaskin/iphone_edgetoedge_landscape.pdf",
+				"Resources/GBA-SharpX1.deltaskin/iphone_edgetoedge_portrait.pdf",
+				"Resources/GBA-SharpX1.deltaskin/iphone_landscape.pdf",
+				"Resources/GBA-SharpX1.deltaskin/iphone_portrait.pdf",
+				"Resources/GBA-Test.deltaskin/info.json",
+				"Resources/GBC-Sunrise.deltaskin/info.json",
+				"Resources/GBC-Sunrise.deltaskin/iphone-e2e-portrait.png",
+				"Resources/GBC-Sunrise.deltaskin/iphone-portrait.png",
+				"Resources/Genesis-Test.deltaskin/info.json",
+				"Resources/N64-Test.deltaskin/info.json",
+				"Resources/SNES-Test.deltaskin/info.json",
+			);
+			target = B36DFC0E2CF196D700BAE9BE /* UITesting */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B36DFC112CF196D700BAE9BE /* UITesting */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B374444B2D444327002306B0 /* Exceptions for "UITesting" folder in "UITesting" target */,
+			);
 			path = UITesting;
 			sourceTree = "<group>";
 		};
@@ -80,6 +110,8 @@
 		B36DFC062CF196D700BAE9BE = {
 			isa = PBXGroup;
 			children = (
+				B37444822D444B81002306B0 /* GBA-SharpX1.deltaskin */,
+				B374447F2D444B09002306B0 /* GBC-Sunrise.deltaskin */,
 				B36DFC112CF196D700BAE9BE /* UITesting */,
 				B36DFC222CF196D800BAE9BE /* UITestingTests */,
 				B36DFC2C2CF196D800BAE9BE /* UITestingUITests */,
@@ -221,6 +253,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B37444842D444B81002306B0 /* GBA-SharpX1.deltaskin in Resources */,
+				B37444812D444B09002306B0 /* GBC-Sunrise.deltaskin in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -410,6 +444,7 @@
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = UITesting/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -422,9 +457,11 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.joemattiello.UITesting;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3";
 			};
 			name = Debug;
 		};
@@ -441,6 +478,7 @@
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = UITesting/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -453,9 +491,11 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.joemattiello.UITesting;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3";
 			};
 			name = Release;
 		};

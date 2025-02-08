@@ -41,7 +41,8 @@ https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/ppsspp_libretro.dy
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/prosystem_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/race_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/sameboy_libretro_tvos.dylib.zip
-https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/snes9x_libretro_tvos.dylib.zip
+https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/same_cdi_libretro_tvos.dylib.zip
+#https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/snes9x_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/stella2014_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/stella_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/vbam_libretro_tvos.dylib.zip
