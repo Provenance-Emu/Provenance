@@ -1395,6 +1395,45 @@ static void *cocoa_input_init(const char *joypad_driver)
    return apple;
 }
 
+static int16_t cocoa_pointer_state(cocoa_input_data_t *apple,
+      unsigned device, unsigned idx, unsigned id)
+{
+   const bool want_full = (device == RARCH_DEVICE_POINTER_SCREEN);
+
+   if ((idx == 0 || idx < apple->touch_count) && (idx < MAX_TOUCHES))
+   {
+      int16_t x, y;
+      const cocoa_touch_data_t *touch = (const cocoa_touch_data_t *)
+         &apple->touches[idx];
+       
+       if (!touch)
+           return 0;
+       
+      x = touch->fixed_x;
+      y = touch->fixed_y;
+      
+      if (want_full)
+      {
+         x = touch->full_x;
+         y = touch->full_y;
+      }
+
+      switch (id)
+      {
+         case RETRO_DEVICE_ID_POINTER_PRESSED:
+            return (x != -0x8000) && (y != -0x8000);
+         case RETRO_DEVICE_ID_POINTER_X:
+            return x;
+         case RETRO_DEVICE_ID_POINTER_Y:
+            return y;
+      }
+   }
+
+   return 0;
+}
+
+
+
 static void cocoa_input_poll(void *data)
 {
    uint32_t i;
@@ -1585,32 +1624,7 @@ static int16_t cocoa_input_state(
          break;
       case RETRO_DEVICE_POINTER:
       case RARCH_DEVICE_POINTER_SCREEN:
-         {
-
-            if (idx < apple->touch_count && (idx < MAX_TOUCHES))
-            {
-               const cocoa_touch_data_t *touch = (const cocoa_touch_data_t *)
-                  &apple->touches[idx];
-
-               if (touch)
-               {
-                  switch (id)
-                  {
-                     case RETRO_DEVICE_ID_POINTER_PRESSED:
-                        if (device == RARCH_DEVICE_POINTER_SCREEN)
-                           return (touch->full_x  != -0x8000) && (touch->full_y  != -0x8000); /* Inside? */
-                        return    (touch->fixed_x != -0x8000) && (touch->fixed_y != -0x8000); /* Inside? */
-                     case RETRO_DEVICE_ID_POINTER_X:
-                        return (device == RARCH_DEVICE_POINTER_SCREEN) ? touch->full_x : touch->fixed_x;
-                     case RETRO_DEVICE_ID_POINTER_Y:
-                        return (device == RARCH_DEVICE_POINTER_SCREEN) ? touch->full_y : touch->fixed_y;
-                     case RETRO_DEVICE_ID_POINTER_COUNT:
-                        return apple->touch_count;
-                  }
-               }
-            }
-         }
-         break;
+           return cocoa_pointer_state(apple, device, idx, id);
    }
 
    return 0;
