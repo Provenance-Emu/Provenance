@@ -1340,11 +1340,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 pipelineState = self.effectFilterPipeline
             }
         } else if useCRT {
-            if self.effectFilterShader?.name == "Complex CRT" {
+            if self.effectFilterShader?.name == "Complex CRT", let inputTexture = self.inputTexture {
                 let displayRect = SIMD4<Float>(Float(screenRect.origin.x), Float(screenRect.origin.y),
                                                Float(screenRect.width), Float(screenRect.height))
-                let emulatedImageSize = SIMD2<Float>(Float(self.inputTexture!.width),
-                                                     Float(self.inputTexture!.height))
+                let emulatedImageSize = SIMD2<Float>(Float(inputTexture.width),
+                                                     Float(inputTexture.height))
                 let finalRes = SIMD2<Float>(Float(view.drawableSize.width),
                                             Float(view.drawableSize.height))
                 var cbData = CRT_Data(
@@ -1354,10 +1354,10 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
                 encoder.setFragmentBytes(&cbData, length: MemoryLayout<CRT_Data>.stride, index: 0)
                 pipelineState = self.effectFilterPipeline
-            } else if self.effectFilterShader?.name == "Simple CRT" {
+            } else if self.effectFilterShader?.name == "Simple CRT", let inputTexture = self.inputTexture {
                 ILOG("Setting up Simple CRT pipeline")
                 let mameScreenSrcRect: SIMD4<Float> = SIMD4<Float>.init(0, 0, Float(screenRect.size.width), Float(screenRect.size.height))
-                let mameScreenDstRect: SIMD4<Float> = SIMD4<Float>.init(Float(inputTexture!.width), Float(inputTexture!.height), Float(view.drawableSize.width), Float(view.drawableSize.height))
+                let mameScreenDstRect: SIMD4<Float> = SIMD4<Float>.init(Float(inputTexture.width), Float(inputTexture.height), Float(view.drawableSize.width), Float(view.drawableSize.height))
 
                 var cbData = SimpleCrtUniforms(
                     mame_screen_dst_rect: mameScreenDstRect,
@@ -1374,13 +1374,13 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 encoder.setFragmentBytes(&cbData, length: MemoryLayout<SimpleCrtUniforms>.stride, index: 0)
                 pipelineState = self.effectFilterPipeline
                 ILOG("Effect filter pipeline state: \(self.effectFilterPipeline != nil)")
-            } else if self.effectFilterShader?.name == "Line Tron" {
+            } else if self.effectFilterShader?.name == "Line Tron", let inputTexture = self.inputTexture {
                 let time = Float(CACurrentMediaTime())
                 let sourceSize = SIMD4<Float>(
-                    Float(inputTexture!.width),
-                    Float(inputTexture!.height),
-                    1.0 / Float(inputTexture!.width),
-                    1.0 / Float(inputTexture!.height)
+                    Float(inputTexture.width),
+                    Float(inputTexture.height),
+                    1.0 / Float(inputTexture.width),
+                    1.0 / Float(inputTexture.height)
                 )
                 let outputSize = SIMD4<Float>(
                     Float(view.drawableSize.width),
@@ -1401,12 +1401,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 encoder.setFragmentBytes(&uniforms, length: MemoryLayout<LineTronUniforms>.stride, index: 0)
                 pipelineState = self.effectFilterPipeline
 
-            } else if self.effectFilterShader?.name == "Mega Tron" {
+            } else if self.effectFilterShader?.name == "Mega Tron", let inputTexture = self.inputTexture {
                 let sourceSize = SIMD4<Float>(
-                    Float(inputTexture!.width),
-                    Float(inputTexture!.height),
-                    1.0 / Float(inputTexture!.width),
-                    1.0 / Float(inputTexture!.height)
+                    Float(inputTexture.width),
+                    Float(inputTexture.height),
+                    1.0 / Float(inputTexture.width),
+                    1.0 / Float(inputTexture.height)
                 )
                 let outputSize = SIMD4<Float>(
                     Float(view.drawableSize.width),
@@ -1431,12 +1431,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 encoder.setFragmentBytes(&uniforms, length: MemoryLayout<MegaTronUniforms>.stride, index: 0)
                 pipelineState = self.effectFilterPipeline
 
-            } else if self.effectFilterShader?.name == "ulTron" {
+            } else if self.effectFilterShader?.name == "ulTron", let inputTexture = self.inputTexture {
                 let sourceSize = SIMD4<Float>(
-                    Float(inputTexture!.width),
-                    Float(inputTexture!.height),
-                    1.0 / Float(inputTexture!.width),
-                    1.0 / Float(inputTexture!.height)
+                    Float(inputTexture.width),
+                    Float(inputTexture.height),
+                    1.0 / Float(inputTexture.width),
+                    1.0 / Float(inputTexture.height)
                 )
                 let outputSize = SIMD4<Float>(
                     Float(view.drawableSize.width),
@@ -1464,12 +1464,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
                 encoder.setFragmentBytes(&uniforms, length: MemoryLayout<UlTronUniforms>.stride, index: 0)
                 pipelineState = self.effectFilterPipeline
-            } else if self.effectFilterShader?.name == "Game Boy" {
+            } else if self.effectFilterShader?.name == "Game Boy",  let inputTexture = self.inputTexture {
                 let sourceSize = SIMD4<Float>(
-                    Float(inputTexture!.width),
-                    Float(inputTexture!.height),
-                    1.0 / Float(inputTexture!.width),
-                    1.0 / Float(inputTexture!.height)
+                    Float(inputTexture.width),
+                    Float(inputTexture.height),
+                    1.0 / Float(inputTexture.width),
+                    1.0 / Float(inputTexture.height)
                 )
                 let outputSize = SIMD4<Float>(
                     Float(view.drawableSize.width),
@@ -1494,12 +1494,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
                 encoder.setFragmentBytes(&uniforms, length: MemoryLayout<GameBoyUniforms>.stride, index: 0)
                 pipelineState = self.effectFilterPipeline
-            } else if self.effectFilterShader?.name == "VHS" {
+            } else if self.effectFilterShader?.name == "VHS", let inputTexture = self.inputTexture {
                 let sourceSize = SIMD4<Float>(
-                    Float(inputTexture!.width),
-                    Float(inputTexture!.height),
-                    1.0 / Float(inputTexture!.width),
-                    1.0 / Float(inputTexture!.height)
+                    Float(inputTexture.width),
+                    Float(inputTexture.height),
+                    1.0 / Float(inputTexture.width),
+                    1.0 / Float(inputTexture.height)
                 )
                 let outputSize = SIMD4<Float>(
                     Float(view.drawableSize.width),
