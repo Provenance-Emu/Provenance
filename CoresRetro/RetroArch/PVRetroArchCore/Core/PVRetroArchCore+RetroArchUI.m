@@ -46,6 +46,7 @@
 #include "../../menu/menu_setting.h"
 #endif
 #import <AVFoundation/AVFoundation.h>
+#import <PVLogging/PVLoggingObjC.h>
 
 #define IS_IPHONE() ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone)
 
@@ -87,7 +88,7 @@ int argc =  1;
 - (void)initialize {
     [super initialize];
 //    [self setupEmulation];
-    NSLog(@"RetroArch: Extract %d\n", self.extractArchive);
+    ILOG(@"RetroArch: Extract %d\n", self.extractArchive);
 }
 
 - (void)setupEmulation {
@@ -126,13 +127,13 @@ int argc =  1;
     command_event(flag ? CMD_EVENT_PAUSE : CMD_EVENT_UNPAUSE, NULL);
     runloop_state_t *runloop_st = runloop_state_get_ptr();
     if (flag) {
-        NSLog(@"RetroArch: Pause\n");
+        ILOG(@"RetroArch: Pause\n");
         runloop_st->flags &= ~RUNLOOP_FLAG_FASTMOTION;
         runloop_st->flags &= ~RUNLOOP_FLAG_SLOWMOTION;
         runloop_st->flags |= RUNLOOP_FLAG_PAUSED;
         runloop_st->flags |= RUNLOOP_FLAG_IDLE;
     } else {
-        NSLog(@"RetroArch: UnPause\n");
+        ILOG(@"RetroArch: UnPause\n");
         runloop_st->flags &= ~RUNLOOP_FLAG_FASTMOTION;
         runloop_st->flags &= ~RUNLOOP_FLAG_SLOWMOTION;
         runloop_st->flags &= ~RUNLOOP_FLAG_PAUSED;
@@ -157,10 +158,10 @@ int argc =  1;
         settings->floats.slowmotion_ratio  = sm;
         settings->floats.fastforward_ratio = ff;
         if (self.gameSpeed > 1) {
-            NSLog(@"RetroArch:fast forward %f", ff);
+            ILOG(@"RetroArch:fast forward %f", ff);
             apple_direct_input_keyboard_event(true, (int)RETROK_F15, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
         } else if (self.gameSpeed < 1) {
-            NSLog(@"RetroArch:slow motion %f", sm);
+            ILOG(@"RetroArch:slow motion %f", sm);
             apple_direct_input_keyboard_event(true, (int)RETROK_F14, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
         }
     });
@@ -196,12 +197,19 @@ int argc =  1;
 void extract_bundles();
 -(void) writeConfigFile {
 	NSFileManager *fm = [[NSFileManager alloc] init];
-	NSString *fileName = [NSString stringWithFormat:@"%@/RetroArch/config/retroarch.cfg",
+    NSString *fileName = [NSString stringWithFormat:@"%@/RetroArch/config/retroarch.cfg",
                           self.documentsDirectory];
-    // TODO: Get the version # from core.plist
-    NSString *verFile = [NSString stringWithFormat:@"%@/RetroArch/config/1.27.1.cfg",
-                         self.documentsDirectory];
-	if (![fm fileExistsAtPath: fileName] || ![fm fileExistsAtPath: verFile] || [self shouldUpdateAssets]) {
+
+    // Get the version number from the app's Info.plist
+    NSString *appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+    if (!appVersion) {
+        appVersion = @"unknown";
+    }
+
+    NSString *verFile = [NSString stringWithFormat:@"%@/RetroArch/config/%@.cfg",
+                         self.documentsDirectory, appVersion];
+    
+    if (![fm fileExistsAtPath: fileName] || ![fm fileExistsAtPath: verFile] || [self shouldUpdateAssets]) {
         NSString *src = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"retroarch.cfg" ofType:nil];
         [self syncResource:src to:fileName];
         [self syncResource:src to:verFile];
@@ -289,7 +297,7 @@ void extract_bundles();
 - (void)syncResources:(NSString*)from to:(NSString*)to {
 	if (!from)
 		return;
-	NSLog(@"Syncing %@ to %@", from, to);
+    ILOG(@"Syncing %@ to %@", from, to);
 	NSError *error;
 	NSFileManager *fm = [[NSFileManager alloc] init];
 	NSArray* files = [fm contentsOfDirectoryAtPath:from error:&error];
@@ -299,7 +307,7 @@ void extract_bundles();
 	for (NSString *file in files) {
 		NSString *src=  [NSString stringWithFormat:@"%@/%@", from, file];
 		NSString *dst = [NSString stringWithFormat:@"%@/%@", to, file];
-        NSLog(@"Syncing %@ %@", src, dst);
+        ILOG(@"Syncing %@ %@", src, dst);
 		if (![fm fileExistsAtPath: dst]) {
 			[fm copyItemAtPath:src toPath:dst error:nil];
 		}
@@ -309,7 +317,7 @@ void extract_bundles();
 - (void)syncResource:(NSString*)from to:(NSString*)to {
     if (!from)
         return;
-    NSLog(@"Syncing %@ to %@", from, to);
+    ILOG(@"Syncing %@ to %@", from, to);
     NSError *error;
     NSFileManager *fm = [[NSFileManager alloc] init];
     NSData *fileData = [NSData dataWithContentsOfFile:from];
@@ -398,7 +406,7 @@ void extract_bundles();
 
 - (void)startVM:(UIView *)view {
 	apple_platform     = self;
-	NSLog(@"Starting VM\n");
+    ILOG(@"Starting VM\n");
 	NSString *optConfig = [NSString stringWithFormat:@"%@/../../RetroArch/config/opt.cfg",
 						  self.batterySavesPath];
     NSFileManager *fm = [[NSFileManager alloc] init];
@@ -409,7 +417,7 @@ void extract_bundles();
 		char *param[] = { "retroarch", "--appendconfig", optConfig.UTF8String, NULL };
         argc=3;
 		argv=param;
-		NSLog(@"Loading %s\n", param[0]);
+        ILOG(@"Loading %s\n", param[0]);
 	} else {
         NSBundle *mainBundle = [NSBundle mainBundle];
         NSString *mainBundlePath = mainBundle.bundlePath;
@@ -430,7 +438,7 @@ void extract_bundles();
         /// Check if the ROM is found at the expected path
 		if ([fm fileExistsAtPath: romPath]) {
             romPath=[self checkROM:romPath];
-			NSLog(@"Found Game %s\n", romPath.UTF8String);
+			WLOG(@"Found Game %s\n", romPath.UTF8String);
         } else {
             ELOG(@"No game found at path: %@", romPath);
         }
@@ -442,7 +450,7 @@ void extract_bundles();
             "--verbose", NULL };
 		argc=7;
 		argv=param;
-		NSLog(@"Loading %s %s\n", param[2], param[3]);
+        ILOG(@"Loading %s %s\n", param[2], param[3]);
 	}
     if (processing_init) {
         [self extractArchive:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"assets.zip" ofType:nil] toDestination:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch"] overwrite:true];
@@ -471,7 +479,7 @@ void extract_bundles();
     [self setupJoypad];
 }
 - (void)setupJoypad {
-    NSLog(@"Analog Dpad %d", self.bindAnalogDpad);
+    ILOG(@"Analog Dpad %d", self.bindAnalogDpad);
     if (self.bindAnalogDpad) {
         settings_t *settings = config_get_ptr();
         settings->uints.input_analog_dpad_mode[0]=ANALOG_DPAD_LSTICK_FORCED;
@@ -482,7 +490,7 @@ void extract_bundles();
 }
 
 - (void)setupWindow {
-    NSLog(@"Set:METAL VULKAN OPENGLES:Attaching View Controller\n");
+    ILOG(@"Set:METAL VULKAN OPENGLES:Attaching View Controller\n");
     if (m_view) {
         [m_view removeFromSuperview];
         m_view=nil;
@@ -567,7 +575,7 @@ void extract_bundles();
 	}
 }
 - (void)showGameView {
-	NSLog(@"In Show Game View now\n");
+    ILOG(@"In Show Game View now\n");
     [self setupWindow];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         [self setVolume];
@@ -713,7 +721,7 @@ static void rarch_draw_observer(CFRunLoopObserverRef observer,
    task_queue_check();
    if (ret == -1) {
 	   command_event(CMD_EVENT_MENU_SAVE_CURRENT_CONFIG, NULL);
-	   NSLog(@"exit loop\n");
+       ILOG(@"exit loop\n");
 	   return;
    }
    runloop_flags = runloop_get_flags();
@@ -733,9 +741,9 @@ void bundle_decompressed(retro_task_t *task,
 	  void *task_data,
 	  void *user_data, const char *err) {
    decompress_task_data_t *dec = (decompress_task_data_t*)task_data;
-   NSLog(@"Bundle Decompressed\n");
+    ILOG(@"Bundle Decompressed\n");
    if (err)
-	   NSLog(@"%s", err);
+	   ELOG(@"%s", err);
    if (dec) {
        [_current useRetroArchController:_current.retroArchControls];
        if (!err) {
@@ -766,7 +774,7 @@ void extract_bundles() {
 void main_msg_queue_push(const char *msg,
 	  unsigned prio, unsigned duration,
 	  bool flush) {
-	NSLog(@"MSGQ: %s\n", msg);
+	ILOG(@"MSGQ: %s\n", msg);
 }
 
 void menuToggle() {
