@@ -389,9 +389,11 @@ public enum iCloudSync {
             }
         }
         //TODO: first we upload anything pending, then we download anything that already exists and import those. we will have to update the locations of existing saves and ROMs in the db
+#if DEBUG
         if 1==1 {
             return
         }
+#endif
         let fm = FileManager.default
         if let currentiCloudToken = fm.ubiquityIdentityToken {
             do {
