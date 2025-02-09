@@ -48,23 +48,6 @@ public protocol iCloudTypeSyncer: Container {
     func setNewCloudFilesAvailable()
 }
 
-final class NotificationObserver {
-
-    var name: Notification.Name
-    var observer: NSObjectProtocol
-    var center = NotificationCenter.default
-    var object: Any?
-
-    init(forName name: Notification.Name, object: Any? = nil, queue: OperationQueue? = nil, block: @escaping (Notification) -> Void) {
-        self.name = name
-        observer = center.addObserver(forName: name, object: object, queue: queue, using: block)
-    }
-
-    deinit {//TODO: because this was created inline, deinit gets called right away. does this ever need to be removed? shouldn't this be in the lifetime of the application?
-        //center.removeObserver(observer, name: name, object: object)
-    }
-}
-
 enum iCloudSyncStatus {
     case initialUpload
     case filesAlreadyMoved
@@ -77,14 +60,18 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     let directory: String
     let fileManager = FileManager.default
     var status: iCloudSyncStatus = .initialUpload
+    let notificationCenter: NotificationCenter
     
-    init(directory: String) {
+    init(directory: String, notificationCenter: NotificationCenter) {
+        self.notificationCenter = notificationCenter
         self.directory = directory
     }
     
     deinit {
         metadataQuery.disableUpdates()
         metadataQuery.stop()
+        notificationCenter.removeObserver(self, name: .NSMetadataQueryDidFinishGathering, object: metadataQuery)
+        notificationCenter.removeObserver(self, name: .NSMetadataQueryDidUpdate, object: metadataQuery)
         DLOG("dying")
     }
     
@@ -137,7 +124,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         DLOG("directory: \(directory)")
         metadataQuery.predicate = NSPredicate(format: "%K CONTAINS[c] %@", NSMetadataItemPathKey, "/Documents/\(directory)/")
         //TODO: update to use Publishers.MergeMany
-        let _: NotificationObserver = .init(
+        notificationCenter.addObserver(
             forName: .NSMetadataQueryDidFinishGathering,
             object: metadataQuery,
             queue: nil) { [weak self] notification in
@@ -147,7 +134,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                 }
             }
         //listen for deletions and new files. what about conflicts?
-        let _: NotificationObserver = .init(
+        notificationCenter.addObserver(
             forName: .NSMetadataQueryDidUpdate,
             object: metadataQuery,
             queue: nil) { [weak self] notification in
@@ -351,7 +338,7 @@ public enum iCloudSync {
                 romsSyncer = nil
             }.disposed(by: disposeBag)
         //TODO: set the following to merge onto a single class that just does a query for icloud for all of those directories.
-        biosSyncer = .init()
+        biosSyncer = .init(notificationCenter: .default)
         biosSyncer.loadAllFromICloud()
             .observe(on: MainScheduler.instance)
             .subscribe(onError: { error in
@@ -360,7 +347,7 @@ public enum iCloudSync {
                 DLOG("disposing BiosSyncer")
                 biosSyncer = nil
             }.disposed(by: disposeBag)
-        batterySavesSyncer = .init()
+        batterySavesSyncer = .init(notificationCenter: .default)
         batterySavesSyncer.loadAllFromICloud()
             .observe(on: MainScheduler.instance)
             .subscribe(onError: { error in
@@ -369,7 +356,7 @@ public enum iCloudSync {
                 DLOG("disposing BatterySavesSyncer")
                 batterySavesSyncer = nil
             }.disposed(by: disposeBag)
-        screenshotsSyncer = .init()
+        screenshotsSyncer = .init(notificationCenter: .default)
         screenshotsSyncer.loadAllFromICloud()
             .observe(on: MainScheduler.instance)
             .subscribe(onError: { error in
@@ -394,11 +381,9 @@ public enum iCloudSync {
 //TODO: perhaps 1 generic class since a lot of this code is similar and move the extension onto generic class. we could just add a protocol delegate dependency for ROMs and SaveState classes that does specific code
 class SaveStateSyncer: iCloudContainerSyncer {
     var didFinishDownloadingAllFiles = false
-    let notificationCenter: NotificationCenter
     
     init(notificationCenter: NotificationCenter) {
-        self.notificationCenter = notificationCenter
-        super.init(directory: "Save States")
+        super.init(directory: "Save States", notificationCenter: notificationCenter)
         notificationCenter.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil) { [weak self] _ in
             self?.importNewSaves()
         }
@@ -549,10 +534,8 @@ class SaveStateSyncer: iCloudContainerSyncer {
 class RomsSyncer: iCloudContainerSyncer {
     let gameImporter = GameImporter.shared
     var didFinishDownloadingAllFiles = false
-    let notificationCenter: NotificationCenter
     init(notificationCenter: NotificationCenter) {
-        self.notificationCenter = notificationCenter
-        super.init(directory: "ROMs")
+        super.init(directory: "ROMs", notificationCenter: notificationCenter)
         notificationCenter.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil) { [weak self] _ in
             self?.importNewRomFiles()
         }
@@ -664,19 +647,19 @@ class RomsSyncer: iCloudContainerSyncer {
 }
 
 class BiosSyncer: iCloudContainerSyncer {
-    convenience init() {
-        self.init(directory: "BIOS")
+    convenience init(notificationCenter: NotificationCenter) {
+        self.init(directory: "BIOS", notificationCenter: notificationCenter)
     }
 }
 
 class BatterySavesSyncer: iCloudContainerSyncer {
-    convenience init() {
-        self.init(directory: "Battery Saves")
+    convenience init(notificationCenter: NotificationCenter) {
+        self.init(directory: "Battery Saves", notificationCenter: notificationCenter)
     }
 }
 
 class ScreenshotsSyncer: iCloudContainerSyncer {
-    convenience init() {
-        self.init(directory: "Screenshots")
+    convenience init(notificationCenter: NotificationCenter) {
+        self.init(directory: "Screenshots", notificationCenter: notificationCenter)
     }
 }
