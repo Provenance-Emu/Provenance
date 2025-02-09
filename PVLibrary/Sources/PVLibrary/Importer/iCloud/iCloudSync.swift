@@ -408,7 +408,6 @@ public enum iCloudSync {
         disposeBag = nil
         //reset ROMs path
         gameImporter.gameImporterDatabaseService.setRomsPath(url: gameImporter.romsPath)
-        //TODO: remove iCloud downloads. do we also copy those files locally?
     }
 }
 
