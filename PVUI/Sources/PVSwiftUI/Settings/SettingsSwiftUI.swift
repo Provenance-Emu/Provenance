@@ -567,7 +567,10 @@ private struct OnScreenControllerSection: View {
     @Default(.missingButtonsAlwaysOn) var missingButtonsAlwaysOn
     @Default(.onscreenJoypad) var onscreenJoypad
     @Default(.onscreenJoypadWithKeyboard) var onscreenJoypadWithKeyboard
-
+#if !os(tvOS)
+    @Default(.movableButtons) var movableButtons
+#endif
+    
     var body: some View {
         Section(header: Text("On-Screen Controller")) {
             HStack {
@@ -610,6 +613,11 @@ private struct OnScreenControllerSection: View {
                 SettingsRow(title: "On-Screen Joypad with keyboard",
                             subtitle: "Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'. Useful on iPad OS for systems with an analog joystick (N64, PSX, etc.)",
                             icon: .sfSymbol("keyboard.badge.eye"))
+            }
+            ThemedToggle(isOn: $movableButtons) {
+                SettingsRow(title: "Movable Buttons",
+                            subtitle: "Allow player to move on screen controller buttons. Tap with 3-fingers 3 times to toggle.",
+                            icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right"))
             }
             #if false
             if FeatureFlag.advancedSkinFeatures.enabled {
