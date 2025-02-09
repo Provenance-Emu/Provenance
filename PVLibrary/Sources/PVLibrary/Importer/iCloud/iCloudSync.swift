@@ -314,7 +314,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                     ILOG("Trying to move (\(currentItem.path)) to (\(destination.path))")
                     try moveClosure(currentItem, destination)
                     insertUploadedFile(destination)
-                } catch {
+                } catch {//TODO: failed to move: The file couldn’t be locked
                     //this could indicate no more space is left when moving to iCloud
                     ELOG("failed to move: \(error.localizedDescription)")
                 }
@@ -378,7 +378,7 @@ public enum iCloudSync {
 
         //TODO: should we pause when a game starts so we don't interfere with the game and continue listening when no game is running?
         disposeBag = DisposeBag()
-        var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery Saves", "Screenshots"], notificationCenter: .default)
+        var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots"], notificationCenter: .default)
         nonDatabaseFileSyncer.loadAllFromICloud()
             .observe(on: MainScheduler.instance)
             .subscribe(onError: { error in
