@@ -192,7 +192,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                             queue.sync {
                                 //in the case when we are initially turning on iCloud, we try to import any files already downloaded
                                 //TODO: this should only happen one time per turning on the iCloud switch to avoid doing this every time the app opens, comes back to the foreground
-                                if self?.status == .initialUpload {
+                                if !Defaults[.iCloudInitialSetupComplete] && self?.status == .initialUpload {
                                     self?.insertDownloadingFile(file)
                                 }
                                 filesDownloaded.insert(file)
@@ -638,6 +638,7 @@ class RomsSyncer: iCloudContainerSyncer {
         }
         didFinishDownloadingAllFiles = false
         status = .filesAlreadyMoved
+        Defaults[.iCloudInitialSetupComplete] = true
         let importPaths = [URL](newFiles)
         newFiles.removeAll()
         uploadedFiles.removeAll()

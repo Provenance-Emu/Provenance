@@ -217,6 +217,7 @@ public extension Defaults.Keys {
     static let useUIKit = Key<Bool>("useUIKit", default:false)
 #endif
     static let iCloudSync = Key<Bool>("iCloudSync", default: false)
+    static let iCloudInitialSetupComplete = Key<Bool>("iCloudInitialSetupComplete", default: false)
     static let unsupportedCores = Key<Bool>("unsupportedCores", default: false)
 #if os(tvOS)
     static let tvOSThemes = Key<Bool>("tvOSThemes", default: false)
