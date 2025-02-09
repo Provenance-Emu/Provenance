@@ -6,6 +6,7 @@ import PVSupport
 import PVThemes
 import RealmSwift
 import SwiftUI
+import PVLogging
 
 /// Struct to hold essential system data
 private struct SystemDisplayData: Identifiable {
@@ -29,10 +30,15 @@ private struct CoreListItem: Identifiable {
     let optionCount: Int
     let systems: [SystemDisplayData]
 
-    init(core: PVCore) async {
+    init?(core: PVCore) async {
         self.id = core.identifier
         self.name = core.projectName
-        self.coreClass = NSClassFromString(core.principleClass) as! CoreOptional.Type
+        guard let coreClass =  NSClassFromString(core.principleClass) as? CoreOptional.Type else {
+            ELOG("core.principleClass not a valid CoreOptional subclass: \(core.principleClass)")
+            return nil
+        }
+        DLOG("core.principleClass loading options: \(core.principleClass)")
+        self.coreClass = coreClass
         self.optionCount = CoreListItem.countOptions(in: self.coreClass.options)
 
         let isAppStore = await AppState.shared.isAppStore
@@ -85,8 +91,9 @@ struct CoreOptionsListView: View {
     private func loadCoreItems() async {
         var items: [CoreListItem] = []
         for core in cores {
-            let item = await CoreListItem(core: core)
-            items.append(item)
+            if let item = await CoreListItem(core: core) {
+                items.append(item)
+            }
         }
         coreItems = items
     }

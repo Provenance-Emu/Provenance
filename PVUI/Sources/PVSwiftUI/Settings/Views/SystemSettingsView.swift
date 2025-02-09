@@ -191,7 +191,7 @@ struct BIOSRow: View {
         }
 #endif
         .task {
-            biosStatus = await (bios as BIOSStatusProvider).status
+            biosStatus = (bios as BIOSStatusProvider).status
         }
         .uiKitAlert("MD5 Copied",
                     message: "The MD5 for \(bios.expectedFilename) has been copied to the pasteboard",

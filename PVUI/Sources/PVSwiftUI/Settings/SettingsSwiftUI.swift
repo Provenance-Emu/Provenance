@@ -227,12 +227,74 @@ private struct AppSection: View {
 }
 
 private struct CoreOptionsSection: View {
+    @State private var shouldShowResetButton = false
+    @State private var showResetConfirmation = false
+    @State private var resetError: String? = nil
+    @State private var showConfigEditor = false
+
     var body: some View {
         Section(header: Text("Core Options")) {
             NavigationLink(destination: CoreOptionsView()) {
                 SettingsRow(title: "Core Options",
                             subtitle: "Configure emulator core settings.",
                             icon: .sfSymbol("gearshape.2"))
+            }
+
+            NavigationLink(destination: RetroArchConfigEditorView()) {
+                SettingsRow(title: "Edit RetroArch Config",
+                            subtitle: "Modify advanced RetroArch settings.",
+                            icon: .sfSymbol("gearshape.2.fill"))
+            }
+
+            if shouldShowResetButton {
+                Button(action: { showResetConfirmation = true }) {
+                    SettingsRow(title: "Reset RetroArch Config",
+                                subtitle: "Restore default RetroArch configuration.",
+                                icon: .sfSymbol("arrow.uturn.backward.circle"))
+                }
+                .uiKitAlert(
+                    "Reset RetroArch Config",
+                    message: "This will overwrite your current RetroArch configuration with the default settings. Are you sure?",
+                    isPresented: $showResetConfirmation,
+                    preferredContentSize: CGSize(width: 500, height: 300)
+                ) {
+                    UIAlertAction(title: "Reset", style: .destructive) { _ in
+                        resetRetroArchConfig()
+                    }
+                    UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                        showResetConfirmation = false
+                    }
+                }
+            }
+        }
+        .task {
+            shouldShowResetButton = await PVRetroArchCoreManager.shared.shouldResetConfig()
+        }
+        .uiKitAlert(
+            "Reset Error",
+            message: resetError ?? "",
+            isPresented: .constant(resetError != nil),
+            preferredContentSize: CGSize(width: 500, height: 300)
+        ) {
+            UIAlertAction(title: "OK", style: .default) { _ in
+                resetError = nil
+            }
+        }
+    }
+
+    private func resetRetroArchConfig() {
+        Task {
+            guard let bundledURL = PVRetroArchCoreManager.shared.bundledConfigURL,
+                  let activeURL = PVRetroArchCoreManager.shared.activeConfigURL else {
+                return
+            }
+
+            do {
+                try await PVRetroArchCoreManager.shared.copyConfigFile(from: bundledURL, to: activeURL)
+                // Update the button state after successful reset
+                shouldShowResetButton = await PVRetroArchCoreManager.shared.shouldResetConfig()
+            } catch {
+                resetError = "Failed to reset RetroArch config: \(error.localizedDescription)"
             }
         }
     }
@@ -785,13 +847,15 @@ private struct FeatureFlagsDebugView: View {
         .task {
             await loadInitialConfiguration()
         }
-        .alert("Error", isPresented: .constant(errorMessage != nil)) {
-            Button("OK") {
+        .uiKitAlert(
+            "Error",
+            message: errorMessage ?? "",
+            isPresented: .constant(errorMessage != nil),
+            preferredContentSize: CGSize(width: 500, height: 300)
+        ) {
+            UIAlertAction(title: "OK", style: .default) { _ in
+                print("OK tapped")
                 errorMessage = nil
-            }
-        } message: {
-            if let error = errorMessage {
-                Text(error)
             }
         }
     }

@@ -39,8 +39,32 @@ import PVUIBase
 // Make the builder public
 @resultBuilder
 public struct UIKitAlertActionBuilder {
-    public static func buildBlock(_ components: UIAlertAction...) -> [UIAlertAction] {
-        components
+    public static func buildBlock(_ components: [UIAlertAction]...) -> [UIAlertAction] {
+        components.flatMap { $0 }
+    }
+
+    public static func buildExpression(_ expression: UIAlertAction) -> [UIAlertAction] {
+        [expression]
+    }
+
+    public static func buildExpression(_ expression: [UIAlertAction]) -> [UIAlertAction] {
+        expression
+    }
+
+    public static func buildEither(first: [UIAlertAction]) -> [UIAlertAction] {
+        first
+    }
+
+    public static func buildEither(second: [UIAlertAction]) -> [UIAlertAction] {
+        second
+    }
+
+    public static func buildOptional(_ component: [UIAlertAction]?) -> [UIAlertAction] {
+        component ?? []
+    }
+
+    public static func buildArray(_ components: [[UIAlertAction]]) -> [UIAlertAction] {
+        components.flatMap { $0 }
     }
 }
 
@@ -50,6 +74,7 @@ public struct UIKitAlertModifier: ViewModifier {
     let message: String
     @Binding var isPresented: Bool
     let preferredContentSize: CGSize
+    let textField: ((UITextField) -> Void)?
     let buttons: [UIAlertAction]
 
     public init(
@@ -57,12 +82,14 @@ public struct UIKitAlertModifier: ViewModifier {
         message: String,
         isPresented: Binding<Bool>,
         preferredContentSize: CGSize,
+        textField: ((UITextField) -> Void)? = nil,
         buttons: [UIAlertAction]
     ) {
         self.title = title
         self.message = message
         self._isPresented = isPresented
         self.preferredContentSize = preferredContentSize
+        self.textField = textField
         self.buttons = buttons
     }
 
@@ -73,7 +100,8 @@ public struct UIKitAlertModifier: ViewModifier {
                 message: message,
                 isPresented: $isPresented,
                 buttons: buttons,
-                preferredContentSize: preferredContentSize
+                preferredContentSize: preferredContentSize,
+                textField: textField
             )
         )
     }
@@ -86,6 +114,7 @@ struct UIKitAlertWrapper: UIViewControllerRepresentable {
     @Binding var isPresented: Bool
     let buttons: [UIAlertAction]
     let preferredContentSize : CGSize
+    let textField: ((UITextField) -> Void)?
 
     func makeUIViewController(context: Context) -> UIViewController {
         return UIViewController()
@@ -101,6 +130,11 @@ struct UIKitAlertWrapper: UIViewControllerRepresentable {
         }
 
         let alert = TVAlertController(title: title, message: message, preferredStyle: .alert)
+
+        if let textField = textField {
+            alert.addTextField(configurationHandler: textField)
+        }
+
         buttons.forEach { alert.addAction($0) }
 
         if uiViewController.presentedViewController == nil {
@@ -116,6 +150,7 @@ public extension View {
         message: String,
         isPresented: Binding<Bool>,
         preferredContentSize: CGSize = CGSize(width: 500, height: 300),
+        textField: ((UITextField) -> Void)? = nil,
         @UIKitAlertActionBuilder buttons: () -> [UIAlertAction]
     ) -> some View {
         modifier(UIKitAlertModifier(
@@ -123,6 +158,7 @@ public extension View {
             message: message,
             isPresented: isPresented,
             preferredContentSize: preferredContentSize,
+            textField: textField,
             buttons: buttons()
         ))
     }
