@@ -81,13 +81,17 @@ public extension SystemIdentifier {
         case 4922: self = .NGP
         case 4923: self = .NGPC
 
+        // Watara Systems
+        case 32: self = .Intellivision // Watara Intellivision
+
         // Other Systems
         case 31:  self = .ColecoVision // ColecoVision
         case 4927: self = .Odyssey2    // Magnavox Odyssey 2
         case 40:  self = .C64          // Commodore 64
         case 4929: self = .MSX         // MSX
         case 4913: self = .ZXSpectrum  // Sinclair ZX Spectrum
-
+        case 4939: self = .Vectrex
+            
         // Arcade Systems
         case 23: self = .MAME
             
