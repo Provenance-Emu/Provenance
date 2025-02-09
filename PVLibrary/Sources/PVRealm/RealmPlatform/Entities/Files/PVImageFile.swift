@@ -41,6 +41,10 @@ public final class PVImageFile: PVFile {
         self.init()
         self.relativeRoot = relativeRoot
         let partialPath = relativeRoot.createRelativePath(fromURL: url)
+        //TODO: remove
+        if doesPathContainParent(partialPath) {
+            DLOG("invalid path: \(partialPath)")
+        }
         self.partialPath = partialPath
 
         calculateSizeData()

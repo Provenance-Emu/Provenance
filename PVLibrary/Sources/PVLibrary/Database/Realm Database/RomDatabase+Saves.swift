@@ -198,8 +198,8 @@ public extension RomDatabase {
                         guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.coreIdentifier) else {
                             throw SaveStateError.noCoreFound(core.coreIdentifier ?? "null")
                         }
-                        let imgFile = PVImageFile(withURL:  URL(fileURLWithPath: url.path.replacingOccurrences(of: "svs", with: "jpg")))
-                        let saveFile = PVFile(withURL: url)
+                        let imgFile = PVImageFile(withURL:  URL(fileURLWithPath: url.path.replacingOccurrences(of: "svs", with: "jpg")), relativeRoot: .iCloud)
+                        let saveFile = PVFile(withURL: url, relativeRoot: .iCloud)
                         let newState = PVSaveState(withGame: game, core: core, file: saveFile, image: imgFile, isAutosave: false)
                         try realm.write {
                             realm.add(newState)

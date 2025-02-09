@@ -52,7 +52,12 @@ public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
     public convenience init(withURL url: URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault, size: Int = 0, md5: String? = nil) {
         self.init()
         self.relativeRoot = relativeRoot
+        //TODO: this isn't working to get the partial path in all cases
         partialPath = relativeRoot.createRelativePath(fromURL: url)
+        //TODO: remove
+        if doesPathContainParent(partialPath) {
+            DLOG("partialPath: \(partialPath)")
+        }
         self.md5Cache = md5
         if size > 0 {
             self.sizeCache = size
@@ -78,6 +83,7 @@ public extension PVFile {
 
     var url: URL {
         get {
+            //TODO: if relativeRoot == .iCloud, AND partialPath is NOT a partial path, then remove the prefix (cloudContainer/Documents), this will be older db entries
             let url2 = urlUpdate
             DLOG("url2=\(url2)\tpartialPath=\(partialPath)")
             if partialPath.contains("iCloud") || partialPath.contains("private") {
@@ -90,23 +96,36 @@ public extension PVFile {
                     let iCloudBase = URL.iCloudContainerDirectory
                     let url = (iCloudBase ?? RelativeRoot.documentsDirectory).appendingPathComponent(path)
                     DLOG("url:\(url)")
-                    return url2
+                    //TODO: new return url2
+                    if doesPathContainParent(url.path) {
+                        DLOG("invalid url:\(url)")
+                    }
+                    return url
                 } else {
                     if let iCloudBase = URL.iCloudDocumentsDirectory {
                         let appendedICloudBase = iCloudBase.appendingPathComponent(path)
                         DLOG("appendedICloudBase:\(appendedICloudBase))")
-                        return url2
+                        //TODO: new return url2
+                        if doesPathContainParent(appendedICloudBase.path) {
+                            DLOG("invalid url:\(appendedICloudBase)")
+                        }
+                        return appendedICloudBase
                     } else {
                         let appendedRelativeRoot = RelativeRoot.documentsDirectory.appendingPathComponent(path)
                         DLOG("appendedRelativeRoot:\(appendedRelativeRoot)")
-                        return url2
+                        //TODO: new return url2
+                        if doesPathContainParent(appendedRelativeRoot.path) {
+                            DLOG("invalid url:\(appendedRelativeRoot)")
+                        }
+                        return appendedRelativeRoot
                     }
                 }
             }
             let root = relativeRoot
             let resolvedURL = root.appendingPath(partialPath)
             DLOG("resolvedURL:\(resolvedURL))")
-            return url2
+            //TODO: new return url2
+            return resolvedURL
         }
     }
     var urlUpdate:URL {
@@ -195,6 +214,9 @@ public extension PVFile {
             }
             let root = relativeRoot
             DLOG("root=\(root)")
+            if doesPathContainParent(partialPath) {
+                DLOG("invalid path: \(partialPath)")
+            }
             var actualPartialPath = partialPath
             if root == .iCloud && partialPath.starts(with: "var/mobile/Containers/Data/Application/") {
                 DLOG("iCloud path, but partialPath does NOT contain iCloud path, but instead local path")
@@ -221,6 +243,13 @@ public extension PVFile {
              resolvedURL=file:///private/var/mobile/Library/Mobile%20Documents/iCloud~com~pqskapps~provenance/Documents/var/mobile/Containers/Data/Application/B8153B85-9BB5-44B6-A189-FDE9D8ABC29C/Documents/PVCache/F62D5AA941BB70E1913B787A65CD7EFC
              */
         }
+    }
+    
+    func doesPathContainParent(_ path: String) -> Bool {
+        return path.starts(with: "private/var/mobile/Library/Mobile")
+            || path.starts(with: "var/mobile/Containers/Data/Application")
+            || path.starts(with: "var/mobile/Containers/")
+            || path.starts(with: "private/var/mobile")
     }
 
     private func setURL(_ url: URL) {

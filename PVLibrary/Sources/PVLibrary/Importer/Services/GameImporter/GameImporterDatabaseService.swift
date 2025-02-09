@@ -135,7 +135,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             throw GameImporterError.noSystemMatched
         }
 
-        let file = PVFile(withURL: queueItem.destinationUrl!)
+        let file = PVFile(withURL: queueItem.destinationUrl!, relativeRoot: .iCloud)
         let game = PVGame(withFile: file, system: system)
         game.romPath = partialPath
         game.title = title
@@ -205,7 +205,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         }
         if PVMediaCache.fileExists(forKey: url) {
             if let localURL = PVMediaCache.filePath(forKey: url) {
-                let file = PVImageFile(withURL: localURL, relativeRoot: .iCloud)
+                let file = PVImageFile(withURL: localURL, relativeRoot: .documents)
                 game.originalArtworkFile = file
                 return game
             }
@@ -229,7 +229,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             if let artwork = NSImage(data: data) {
                 do {
                     let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: url)
-                    let file = PVImageFile(withURL: localURL, relativeRoot: .iCloud)
+                    let file = PVImageFile(withURL: localURL, relativeRoot: .documents)
                     game.originalArtworkFile = file
                 } catch { ELOG("\(error.localizedDescription)") }
             }
