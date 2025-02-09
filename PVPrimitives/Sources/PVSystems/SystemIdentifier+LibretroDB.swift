@@ -56,6 +56,8 @@ public extension SystemIdentifier {
         case .ZXSpectrum: return 64
         case ._3DO: return 73
         case ._3DS: return 21  // Nintendo 3DS
+        case .TIC80: return 26
+        case .NeoGeo: return 1
 //      case .Amiga: return 89
 
         // Systems we don't map (yet)
@@ -67,9 +69,7 @@ public extension SystemIdentifier {
                 .Macintosh,
                 .MegaDuck,
                 .Music,
-                .NeoGeo,
                 .PalmOS,
-                .TIC80,
                 .RetroArch,
                 .Unknown:
             return 0
@@ -149,14 +149,16 @@ public extension SystemIdentifier {
         // case 24: Satellaview
         // case 25: Atomiswave
         // case 26: TIC-80
+        case 26: return .TIC80
         // case 27: Handheld Electronic Game
         // case 30: Pokemon Mini
         // case 31: Quake III
         // case 32: Sufami Turbo
         // case 42: e-Reader
         // case 43: Arcadia 2001
-        // case 44: MAME
+        case 44: return .MAME
         // case 45: ZX Spectrum +3
+        case 45: return .ZXSpectrum
         // case 46: PV-1000
         // case 50: ZX 81
         // case 52: VIC-20
@@ -164,34 +166,43 @@ public extension SystemIdentifier {
         // case 54: Channel F
         // case 57: Loopy
         // case 58: MAME 2003
+        case 58: return .MAME
         // case 59: Wolfenstein 3D
         // case 60: Dinothawr
         // case 62: MAME 2016
+        case 62: return .MAME
         // case 65: MrBoom
         // case 66: MAME 2000
+        case 66: return .MAME
         // case 67: MOTO
         // case 68: Super Cassette Vision
         // case 70: Rick Dangerous
         // case 72: Uzebox
         // case 74: MAME 2015
+        case 74: return .MAME
         // case 80: CPC
         // case 81: MAME 2010
+        case 81: return .MAME
         // case 84: X68000
         // case 85: PC-98
         // case 87: GX4000
         // case 88: Cave Story
         // case 91: PICO
         // case 93: PlayStation Portable (PSN)
+        case 93: return .PSP
         // case 94: Leapster Learning Game System
         // case 95: Nintendo 64DD
+        case 95: return .N64
         // case 96: WASM-4
         // case 97: CreatiVision
         // case 98: Super Acan
         // case 102: Videopac+
         // case 103: Nintendo DSi
+        case 103: return .DS
         // case 104: V.Smile
         // case 105: Xbox
         // case 106: PlayStation 3 (PSN)
+        case 106: return .PS3
         // case 107: GP32
         // case 110: ChaiLove
         // case 111: LowRes NX

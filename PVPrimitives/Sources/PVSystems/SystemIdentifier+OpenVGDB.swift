@@ -98,6 +98,7 @@ public extension SystemIdentifier {
         case .RetroArch: return "openemu.system.retroarch"
         case ._3DS: return "openemu.system.3ds"
         case .AppleII: return "openemu.system.appleii"
+        case .CDi: return "openemu.system.cdi"
         default: return "unknown"
         }
     }
@@ -125,6 +126,7 @@ public extension SystemIdentifier {
         case "openemu.system.gba": self = .GBA
         case "openemu.system.gc": self = .GameCube
         case "openemu.system.n64": self = .N64
+        case "openemu.system.n64dd": self = .N64
         case "openemu.system.nds": self = .DS
         case "openemu.system.nes": self = .NES
         case "openemu.system.snes": self = .SNES
@@ -146,6 +148,7 @@ public extension SystemIdentifier {
         case "openemu.system.retroarch": self = .RetroArch
         case "openemu.system.3ds": self = ._3DS
         case "openemu.system.appleii": self = .AppleII
+        case "openemu.system.cdi": self = .CDi
         default: return nil
         }
     }
@@ -195,6 +198,7 @@ public extension SystemIdentifier {
         case 41: return .C64
         case 42: return .MSX
         case 43: return .MSX2
+//        case 44: return .pc98
         case 45: return .RetroArch
         case 46: return ._3DS
         case 47: return .AppleII
