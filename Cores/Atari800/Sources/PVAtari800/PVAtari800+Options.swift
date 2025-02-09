@@ -14,7 +14,7 @@ import libatari800
 import PVEmulatorCore
 
 extension PVAtari800: @preconcurrency CoreOptional {
-    @MainActor public static var options: [CoreOption] {
+    public static var options: [CoreOption] {
         var options = [CoreOption]()
  
         #warning("TODO: Impliment this the options")
@@ -37,52 +37,51 @@ extension PVAtari800: @preconcurrency CoreOptional {
     
     // MARK - atari800_sioaccel
     
-    @MainActor static let sioAccelerationOption = CoreOption.bool(.init(title: "SIO Acceleration",
-                                                      description: "This enables ALL SIO acceleration.  Enabled improves loading speed for Disk and Cassette images.  Disable only for protected disk (.ATX) and protected cassette images.  Reboot required if change made while loading a cassette image",
-                                                      requiresRestart: true), defaultValue: true)
+    static var sioAccelerationOption: CoreOption { CoreOption.bool(.init(title: "SIO Acceleration",
+                                                             description: "This enables ALL SIO acceleration.  Enabled improves loading speed for Disk and Cassette images.  Disable only for protected disk (.ATX) and protected cassette images.  Reboot required if change made while loading a cassette image",
+                                                             requiresRestart: true), defaultValue: true) }
     
     // MARK: ----- Video ------ //
     
     // MARK: - atari800_resolution
 
 #warning("TODO: Impliment this the options")
-    @MainActor static let videoScaleValues: [CoreOptionMultiValue] = CoreOptionMultiValue.values(fromArray:
-        [
-            "336x240",   // 0
-            "320x240",   // 1
-            "384x240",   // 2
-            "384x272",   // 3
-            "384x288",   // 4
-            "400x300",   // 5
-    ])
+    static var videoScaleValues: [CoreOptionMultiValue] { CoreOptionMultiValue.values(fromArray:
+                                                                                        [
+                                                                                            "336x240",   // 0
+                                                                                            "320x240",   // 1
+                                                                                            "384x240",   // 2
+                                                                                            "384x272",   // 3
+                                                                                            "384x288",   // 4
+                                                                                            "400x300",   // 5
+                                                                                        ])}
     
-    @MainActor static var videoScaleOption: CoreOption = {
+    static var videoScaleOption: CoreOption {
         .multi(.init(
                 title: "Video Scaling",
                 description: "Scale from the original screen size"),
             values: videoScaleValues)
-    }()
+    }
     
     
     // MARK: - atari800_artifacting_mode
 #warning("TODO: Impliment this the options")
-    @MainActor static let videoArtifcatingValues: [CoreOptionMultiValue] = CoreOptionMultiValue.values(fromArray:
-        [
-            "none",         // 0
-            "blue/brown 1", // 1
-            "blue/brown 2", // 2
-            "GTIA",         // 3
-            "CTIA",         // 4
-    ])
+    static var videoArtifcatingValues: [CoreOptionMultiValue] { CoreOptionMultiValue.values(fromArray:
+                                                                                                [
+                                                                                                    "none",         // 0
+                                                                                                    "blue/brown 1", // 1
+                                                                                                    "blue/brown 2", // 2
+                                                                                                    "GTIA",         // 3
+                                                                                                    "CTIA",         // 4
+                                                                                                ])}
     
-    @MainActor static var videoArtifcatingOption: CoreOption = {
+    static var videoArtifcatingOption: CoreOption {
         .multi(.init(
                 title: "Hi-Res Artifacting Mode",
                 description: "Set Hi-Res Artifacting mode used. Typically dependant on the actual emulated system. Pick the color combination that pleases you."),
             values: videoArtifcatingValues)
-    }()
+    }
 
-    @MainActor
     public func get(variable: String) -> Any? {
         switch variable {
         case "atari800_resolution":

@@ -22,7 +22,7 @@ import PVEmulatorCore
  */
 
 extension PVTGBDualCore: @preconcurrency CoreOptional {
-    @MainActor public static var options: [CoreOption] {
+    public static var options: [CoreOption] {
         var options = [CoreOption]()
 
         let consoleGroup = CoreOption.group(.init(title: "Console",
@@ -45,14 +45,14 @@ extension PVTGBDualCore: @preconcurrency CoreOptional {
     }
 
     // MARK: Link Cable
-    @MainActor static var linkCableEmulationOption: CoreOption {
+    static var linkCableEmulationOption: CoreOption {
         .bool(.init(title: "tgbdual_gblink_enable",
                     description: "Link cable emulation (reload)",
                     requiresRestart: true), defaultValue: false)
     }
 
     // MARK: Video
-    @MainActor static var screenPlacementOption: CoreOption {
+    static var screenPlacementOption: CoreOption {
         .enumeration(.init(title: "Screen layout"),
                      values: [
                         .init(title: "Left/Right", value: 0),
@@ -60,7 +60,7 @@ extension PVTGBDualCore: @preconcurrency CoreOptional {
                      ])
     }
 
-    @MainActor static var switchScreensOptions: CoreOption {
+    static var switchScreensOptions: CoreOption {
         .enumeration(.init(title: "Switch Screen"),
                      values: [
                         .init(title: "Normal", value: 0),
@@ -68,7 +68,7 @@ extension PVTGBDualCore: @preconcurrency CoreOptional {
                      ])
     }
 
-    @MainActor static var showPlayerScreensOption: CoreOption {
+    static var showPlayerScreensOption: CoreOption {
         .enumeration(.init(title: "Show player screens"),
                      values: [
                         .init(title: "Both Players", value: 0),
@@ -78,7 +78,7 @@ extension PVTGBDualCore: @preconcurrency CoreOptional {
     }
 
     // MARK: Audio
-    @MainActor static var audioOutputOption: CoreOption {
+    static var audioOutputOption: CoreOption {
         .enumeration(.init(title: "Audio output"),
                      values: [
                         .init(title: "Game Boy #1", value: 0),
@@ -87,7 +87,7 @@ extension PVTGBDualCore: @preconcurrency CoreOptional {
     }
 
 
-    @MainActor @objc(getVariable:)
+    @objc(getVariable:)
     public func get(variable: String) -> Any? {
         switch variable {
         case "tgbdual_gblink_enable":
