@@ -13,6 +13,7 @@ import UIKit
 #endif
 import PVLogging
 import PVSettings
+import PVThemes
 
 enum JSDPadDirection: Int, CaseIterable {
     case upLeft = 1
@@ -144,8 +145,11 @@ final class JSDPad: MovableButtonView {
 
     override var tintColor: UIColor? {
         didSet {
-//            guard analogMode else { return }
-            dPadImageView.tintColor = Defaults[.buttonTints] ? tintColor : .white
+            if Defaults[.buttonTints] {
+                dPadImageView.tintColor = tintColor
+            } else {
+                dPadImageView.tintColor = ThemeManager.shared.currentPalette.defaultTintColor ?? UIColor.white
+            }
         }
     }
 
