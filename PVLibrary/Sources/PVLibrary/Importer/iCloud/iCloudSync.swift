@@ -59,7 +59,6 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     lazy var uploadedFiles: Set<URL> = []
     let directory: String
     let fileManager = FileManager.default
-    var status: iCloudSyncStatus = .initialUpload
     let notificationCenter: NotificationCenter
     
     init(directory: String, notificationCenter: NotificationCenter) {
@@ -72,7 +71,18 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         metadataQuery.stop()
         notificationCenter.removeObserver(self, name: .NSMetadataQueryDidFinishGathering, object: metadataQuery)
         notificationCenter.removeObserver(self, name: .NSMetadataQueryDidUpdate, object: metadataQuery)
+        let removed = removeFromiCloud()
+        DLOG("removed: \(removed)")
         DLOG("dying")
+    }
+    
+    var iCloudDocumentsDirectory: URL? {
+        containerURL?.appendingPathComponent("Documents")
+            .appendingPathComponent(directory)
+    }
+    
+    var localDirectory: URL {
+        URL.documentsDirectory.appendingPathComponent(directory)
     }
     
     let metadataQuery: NSMetadataQuery = .init()
@@ -192,7 +202,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                             queue.sync {
                                 //in the case when we are initially turning on iCloud, we try to import any files already downloaded
                                 //TODO: this should only happen one time per turning on the iCloud switch to avoid doing this every time the app opens, comes back to the foreground
-                                if !Defaults[.iCloudInitialSetupComplete] && self?.status == .initialUpload {
+                                if !Defaults[.iCloudInitialSetupComplete] {
                                     self?.insertDownloadingFile(file)
                                 }
                                 filesDownloaded.insert(file)
@@ -209,47 +219,72 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     }
     
     func syncToiCloud() -> SyncResult {
-        let url = URL.documentsDirectory.appendingPathComponent(directory)
-        DLOG("url: \(url)")
-        guard fileManager.fileExists(atPath: url.path),
-              let actualContainerUrl = containerURL
+        guard let destination = iCloudDocumentsDirectory
+        else {
+            return .denied
+        }
+        return moveFiles(at: localDirectory,
+                         containerDestination: destination,
+                         existingClosure: { existing in
+            try fileManager.removeItem(atPath: existing.path)
+        }) { currentSource, currentDestination in
+            try fileManager.setUbiquitous(true, itemAt: currentSource, destinationURL: currentDestination)
+        }
+    }
+    
+    func removeFromiCloud() -> SyncResult {
+        guard let source = iCloudDocumentsDirectory
+        else {
+            return .denied
+        }
+        return moveFiles(at: source,
+                         containerDestination: localDirectory,
+                         existingClosure: { existing in
+            try fileManager.evictUbiquitousItem(at: existing)
+        }) { currentSource, currentDestination in
+            try fileManager.copyItem(at: currentSource, to: currentDestination)
+            try fileManager.evictUbiquitousItem(at: currentSource)
+        }
+    }
+    
+    func moveFiles(at source: URL,
+                   containerDestination: URL,
+                   existingClosure: ((URL) throws -> Void),
+                   moveClosure: (URL, URL) throws -> Void) -> SyncResult {
+        DLOG("source: \(source)")
+        guard fileManager.fileExists(atPath: source.path)
         else {
             return .fileNotExist
         }
-
-        return moveFiles(at: url, container: actualContainerUrl.appendingPathComponent("Documents").appendingPathComponent(url.lastPathComponent))
-    }
-    
-    func moveFiles(at current: URL, container: URL) -> SyncResult {
         do {
-            let subdirectories = try fileManager.subpathsOfDirectory(atPath: current.path)
-            DLOG("subdirectories of \(current): \(subdirectories)")
+            let subdirectories = try fileManager.subpathsOfDirectory(atPath: source.path)
+            DLOG("subdirectories of \(source): \(subdirectories)")
             for currentChild in subdirectories {
-                let currentItem = current.appendingPathComponent(currentChild)
+                let currentItem = source.appendingPathComponent(currentChild)
                 
                 var isDirectory: ObjCBool = false
                 let exists = fileManager.fileExists(atPath: currentItem.path, isDirectory: &isDirectory)
                 DLOG("\(currentItem) isDirectory?\(isDirectory) exists?\(exists)")
-                let iCloudDestination = container.appendingPathComponent(currentChild)
-                DLOG("new iCloud directory: \(iCloudDestination)")
-                if isDirectory.boolValue && !fileManager.fileExists(atPath: iCloudDestination.path) {
-                    DLOG("\(iCloudDestination) does NOT exist")
-                    try fileManager.createDirectory(atPath: iCloudDestination.path, withIntermediateDirectories: false)
+                let destination = containerDestination.appendingPathComponent(currentChild)
+                DLOG("new destination: \(destination)")
+                if isDirectory.boolValue && !fileManager.fileExists(atPath: destination.path) {
+                    DLOG("\(destination) does NOT exist")
+                    try fileManager.createDirectory(atPath: destination.path, withIntermediateDirectories: false)
                 }
                 if isDirectory.boolValue {
                     continue
                 }
-                if fileManager.fileExists(atPath: iCloudDestination.path) {
-                    try fileManager.removeItem(atPath: currentItem.path)
+                if fileManager.fileExists(atPath: destination.path) {
+                    try existingClosure(currentItem)
                     continue
                 }
                 do {
-                    ILOG("Trying to set Ubiquitious from local (\(currentItem.path)) to ICloud (\(iCloudDestination.path))")
-                    try fileManager.setUbiquitous(true, itemAt: currentItem, destinationURL: iCloudDestination)
-                    insertUploadedFile(iCloudDestination)
+                    ILOG("Trying to move (\(currentItem.path)) to (\(destination.path))")
+                    try moveClosure(currentItem, destination)
+                    insertUploadedFile(destination)
                 } catch {
-                    //this could indicate no more space is left
-                    ELOG("iCloud failed to set Ubiquitous: \(error.localizedDescription)")
+                    //this could indicate no more space is left when moving to iCloud
+                    ELOG("failed to move: \(error.localizedDescription)")
                 }
             }
             return .success
@@ -300,6 +335,7 @@ public enum iCloudSync {
         DLOG("turning on iCloud")
         //reset ROMs path
         gameImporter.gameImporterDatabaseService.setRomsPath(url: gameImporter.romsPath)
+        Defaults[.iCloudInitialSetupComplete] = false//TODO: when the app first opens, this shouldn't be done, only when the user taps the flag on
         
         let fm = FileManager.default
         if let currentiCloudToken = fm.ubiquityIdentityToken {
@@ -458,7 +494,6 @@ class SaveStateSyncer: iCloudContainerSyncer {
         }
         //TODO: initially when importing icloud files, we should wait for ROMs to finish importing. when that completes, then we no longer have to wait for that, ie when syncing single changes say 2 devices are open at the same time and 1 save file is added from another device
         didFinishDownloadingAllFiles = false
-        status = .filesAlreadyMoved
         let jsonFiles = newFiles
         newFiles.removeAll()
         uploadedFiles.removeAll()
@@ -637,7 +672,6 @@ class RomsSyncer: iCloudContainerSyncer {
             return
         }
         didFinishDownloadingAllFiles = false
-        status = .filesAlreadyMoved
         Defaults[.iCloudInitialSetupComplete] = true
         let importPaths = [URL](newFiles)
         newFiles.removeAll()
