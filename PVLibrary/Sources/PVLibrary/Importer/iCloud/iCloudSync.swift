@@ -417,8 +417,8 @@ public enum iCloudSync {
 class SaveStateSyncer: iCloudContainerSyncer {
     var didFinishDownloadingAllFiles = false
     
-    init(notificationCenter: NotificationCenter) {
-        super.init(directory: "Save States", notificationCenter: notificationCenter)
+    convenience init(notificationCenter: NotificationCenter) {
+        self.init(directory: "Save States", notificationCenter: notificationCenter)
         notificationCenter.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil) { [weak self] _ in
             self?.importNewSaves()
         }
@@ -568,8 +568,8 @@ class SaveStateSyncer: iCloudContainerSyncer {
 class RomsSyncer: iCloudContainerSyncer {
     let gameImporter = GameImporter.shared
     var didFinishDownloadingAllFiles = false
-    init(notificationCenter: NotificationCenter) {
-        super.init(directory: "ROMs", notificationCenter: notificationCenter)
+    convenience init(notificationCenter: NotificationCenter) {
+        self.init(directory: "ROMs", notificationCenter: notificationCenter)
         notificationCenter.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil) { [weak self] _ in
             self?.importNewRomFiles()
         }
