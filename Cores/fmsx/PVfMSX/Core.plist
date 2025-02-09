@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.fMSX</string>
 	<key>PVPrincipleClass</key>
-	<string>PVfMSX.PVfMSXCore</string>
+	<string>PVfMSX.PVfMSXEmuCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.msx</string>

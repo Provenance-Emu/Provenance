@@ -6,17 +6,18 @@
 //  Copyright © 2022 Provenance. All rights reserved.
 //
 
-#import "PVfMSXCore.h"
+#import "PVfMSXCoreBridge.h"
 #include <stdatomic.h>
+#include "libretro.h"
 //#import "PVfMSXCore+Controls.h"
 //#import "PVfMSXCore+Audio.h"
 //#import "PVfMSXCore+Video.h"
 //
 //#import "PVfMSXCore+Audio.h"
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 @import PVCoreBridge;
-#import <PVLogging/PVLogging.h>
+@import PVLoggingObjC;
 
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
 #import <OpenGL/gl3.h>
@@ -28,7 +29,7 @@
 #define OpenEmu 1
 
 #pragma mark - Private
-@interface PVfMSXCore() {
+@interface PVfMSXCoreBridge() {
 
 }
 
@@ -36,12 +37,14 @@
 
 #pragma mark - PVfMSXCore Begin
 
-@implementation PVfMSXCore
+@implementation PVfMSXCoreBridge
 {
 }
 
 - (instancetype)init {
 	if (self = [super init]) {
+		// Set pitch_shift to 1 for RGB565 (16-bit/2 bytes per pixel)
+		pitch_shift = 1;
 	}
 
 	_current = self;
@@ -53,29 +56,49 @@
 }
 
 #pragma mark - PVEmulatorCore
-//- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
-//	NSBundle *coreBundle = [NSBundle bundleForClass:[self class]];
-//	const char *dataPath;
-//
-//    [self initControllBuffers];
-//
-//	// TODO: Proper path
-//	NSString *configPath = self.saveStatesPath;
-//	dataPath = [[coreBundle resourcePath] fileSystemRepresentation];
-//
-//	[[NSFileManager defaultManager] createDirectoryAtPath:configPath
-//                              withIntermediateDirectories:YES
-//                                               attributes:nil
-//                                                    error:nil];
-//
-//	NSString *batterySavesDirectory = self.batterySavesPath;
-//	[[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory
-//                              withIntermediateDirectories:YES
-//                                               attributes:nil
-//                                                    error:NULL];
-//
-//    return YES;
-//}
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
+	// Get paths
+	NSBundle *coreBundle = [NSBundle bundleForClass:[self class]];
+    NSString *biosPath = self.BIOSPath;
+
+	// Create BIOS directory if it doesn't exist
+	[[NSFileManager defaultManager] createDirectoryAtPath:biosPath
+							  withIntermediateDirectories:YES
+									   attributes:nil
+											error:nil];
+
+	// List of BIOS files to copy
+	NSArray *biosFiles = @[
+		@"CARTS.SHA", @"CYRILLIC.FNT", @"DEFAULT.FNT", @"DISK.ROM",
+		@"FMPAC.ROM", @"FMPAC16.ROM", @"INTERNAT.FNT", @"ITALIC.FNT",
+		@"JAPANESE.FNT", @"KANJI.ROM", @"KOREAN.FNT", @"MSX.ROM",
+		@"MSX2.ROM", @"MSX2EXT.ROM", @"MSX2P.ROM", @"MSX2PEXT.ROM",
+		@"MSXDOS2.ROM", @"PAINTER.ROM", @"RS232.ROM"
+	];
+
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+
+	// Copy each BIOS file if it doesn't exist in target directory
+	for (NSString *filename in biosFiles) {
+		NSString *sourcePath = [coreBundle pathForResource:[filename stringByDeletingPathExtension]
+												  ofType:[filename pathExtension]];
+		NSString *destPath = [biosPath stringByAppendingPathComponent:filename];
+
+		// Only copy if source exists and destination doesn't
+		if (sourcePath && ![fileManager fileExistsAtPath:destPath]) {
+			ILOG(@"Copying BIOS file: %@", filename);
+			NSError *copyError = nil;
+			[fileManager copyItemAtPath:sourcePath toPath:destPath error:&copyError];
+
+			if (copyError) {
+				ELOG(@"Failed to copy BIOS file %@: %@", filename, copyError);
+			}
+		}
+	}
+
+	// Call super implementation
+	return [super loadFileAtPath:path error:error];
+}
 
 #pragma mark - Running
 //- (void)startEmulation {
@@ -126,20 +149,26 @@
 //- (BOOL)supportsRumble { return NO; }
 //- (BOOL)supportsCheatCode { return NO; }
 
-- (NSTimeInterval)frameInterval {
-    return 60;
+//- (NSTimeInterval)frameInterval {
+//    retro_system_av_info info;
+//    retro_get_system_av_info(&info);
+//    return info.timing.fps ?: 60;
+//}
+
+- (CGRect)screenRect {
+    return CGRectMake(0, 0, 272, 240);
 }
 
-- (CGSize)aspectSize {
-    return CGSizeMake(4, 3);
-}
+//- (CGSize)aspectSize {
+//    return CGSizeMake(4, 3);
+//}
 
 - (CGSize)bufferSize {
-    return CGSizeMake(1024, 768);
+    return CGSizeMake(272, 240);
 }
 
 - (GLenum)pixelFormat {
-    return GL_RGB;
+    return GL_RGB565;
 }
 
 - (GLenum)pixelType {
@@ -147,27 +176,16 @@
 }
 
 - (GLenum)internalPixelFormat {
-    // TODO: use struct retro_pixel_format var, set with, RETRO_ENVIRONMENT_SET_PIXEL_FORMAT
     return GL_RGB565;
 }
 
-
-//- (GLenum)pixelFormat {
-//    return GL_BGRA;
-//}
-//
-//- (GLenum)pixelType {
-//    return GL_UNSIGNED_BYTE;
-//}
-//
-//- (GLenum)internalPixelFormat {
-//    return GL_RGBA;
-//}
 # pragma mark - Audio
 
-- (double)audioSampleRate {
-    return 48000;
-}
+//- (double)audioSampleRate {
+//    retro_system_av_info info;
+//    retro_get_system_av_info(&info);
+//    return info.timing.sample_rate ?: 48000;
+//}
 
 #if 0
 const struct retro_variable vars[] = {
@@ -219,8 +237,8 @@ const struct retro_variable vars[] = {
 #pragma mark - Options
 - (void *)getVariable:(const char *)variable {
     ILOG(@"%s", variable);
-    
-    
+
+
     #define V(x) strcmp(variable, x) == 0
     if (V("fmsx_video_mode")) {
         // NTSC|PAL|Dynamic
@@ -250,14 +268,47 @@ const struct retro_variable vars[] = {
 //              "GameMaster2|"
 //              "FMPAC"
 //        },
-            char *value = strdup("FMPAC");
+            char *value = strdup("Guess");
             return value;
     } else {
         ELOG(@"Unprocessed var: %s", variable);
         return nil;
     }
-    
+
 #undef V
     return NULL;
 }
+
+- (void)didPushMSXButton:(PVMSXButton)button forPlayer:(NSInteger)player {
+    _pad[player][button] = 1;
+}
+
+-(void)didReleaseMSXButton:(enum PVMSXButton)button forPlayer:(NSInteger)player {
+    _pad[player][button] = 0;
+}
+
+- (void)didMoveMSXJoystickDirection:(enum PVMSXButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
+    /*
+     float xvalue = gamepad.leftThumbstick.xAxis.value;
+     s8 x=(s8)(xvalue*127);
+     joyx[0] = x;
+
+     float yvalue = gamepad.leftThumbstick.yAxis.value;
+     s8 y=(s8)(yvalue*127 * - 1); //-127 ... + 127 range
+     joyy[0] = y;
+     */
+}
+
+-(void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
+    [self didMoveMSXJoystickDirection:(enum PVMSXButton)button withValue:value forPlayer:player];
+}
+
+- (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {
+    [self didPushMSXButton:(PVMSXButton)button forPlayer:player];
+}
+
+- (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
+    [self didReleaseMSXButton:(PVMSXButton)button forPlayer:player];
+}
+
 @end
