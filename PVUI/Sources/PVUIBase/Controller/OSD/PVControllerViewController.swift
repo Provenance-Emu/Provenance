@@ -197,6 +197,9 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     }
 #endif
 
+    private var toggleButton: UIButton!
+    private var buttonsVisible = true
+
     required public init(controlLayout: [ControlLayoutEntry], system: PVSystem, responder: T) {
         emulatorCore = responder
         self.controlLayout = controlLayout
@@ -348,6 +351,9 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
 #endif // !macCatalyst
 #endif // os(iOS)
+
+        // Add toggle button
+        setupToggleButton()
     }
 
     @objc func tripleTapRecognized(_ gesture : UITapGestureRecognizer) {
@@ -1420,5 +1426,37 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         if !joyPad2.isCustomMoved { joyPad2.frame = joyPad2Frame }
     }
 #endif // os(iOS)
+
+    private func setupToggleButton() {
+        // Create and configure the toggle button
+        toggleButton = UIButton(type: .custom)
+        toggleButton.setImage(UIImage(systemName: "chevron.up.circle.fill"), for: .normal)
+        toggleButton.tintColor = .white
+        toggleButton.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        toggleButton.layer.cornerRadius = 25
+        toggleButton.layer.masksToBounds = true
+        toggleButton.addTarget(self, action: #selector(toggleButtons), for: .touchUpInside)
+
+        // Add constraints
+        toggleButton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(toggleButton)
+
+        NSLayoutConstraint.activate([
+            toggleButton.widthAnchor.constraint(equalToConstant: 50),
+            toggleButton.heightAnchor.constraint(equalToConstant: 50),
+            toggleButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            toggleButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
+        ])
+    }
+
+    @objc private func toggleButtons() {
+        buttonsVisible.toggle()
+
+        // Animate the visibility change
+        UIView.animate(withDuration: 0.3) {
+            self.allButtons.forEach { $0.alpha = self.buttonsVisible ? 1.0 : 0.0 }
+            self.toggleButton.setImage(UIImage(systemName: self.buttonsVisible ? "chevron.up.circle.fill" : "chevron.down.circle.fill"), for: .normal)
+        }
+    }
 }
 #endif // UIKit
