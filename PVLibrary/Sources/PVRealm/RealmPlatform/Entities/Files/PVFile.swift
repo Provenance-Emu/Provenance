@@ -83,7 +83,7 @@ public extension PVFile {
 
     var url: URL {
         get {
-            //TODO: if relativeRoot == .iCloud, AND partialPath is NOT a partial path, then remove the prefix (cloudContainer/Documents), this will be older db entries
+            //TODO: if partialPath is NOT a partial path, ie it has the prefix OR contains the app sandbox container OR contains or has the prefix (cloudContainer/Documents), then remove either of those, this will be older db entries from older versions that erronously don't remove the prefix
             let url2 = urlUpdate
             DLOG("url2=\(url2)\tpartialPath=\(partialPath)")
             if partialPath.contains("iCloud") || partialPath.contains("private") {
@@ -96,11 +96,11 @@ public extension PVFile {
                     let iCloudBase = URL.iCloudContainerDirectory
                     let url = (iCloudBase ?? RelativeRoot.documentsDirectory).appendingPathComponent(path)
                     DLOG("url:\(url)")
-                    //TODO: new return url2
                     if doesPathContainParent(url.path) {
                         DLOG("invalid url:\(url)")
                     }
-                    return url
+//                    return url
+                    return url2
                 } else {
                     if let iCloudBase = URL.iCloudDocumentsDirectory {
                         let appendedICloudBase = iCloudBase.appendingPathComponent(path)
@@ -113,19 +113,19 @@ public extension PVFile {
                     } else {
                         let appendedRelativeRoot = RelativeRoot.documentsDirectory.appendingPathComponent(path)
                         DLOG("appendedRelativeRoot:\(appendedRelativeRoot)")
-                        //TODO: new return url2
                         if doesPathContainParent(appendedRelativeRoot.path) {
                             DLOG("invalid url:\(appendedRelativeRoot)")
                         }
-                        return appendedRelativeRoot
+//                        return appendedRelativeRoot
+                        return url2
                     }
                 }
             }
             let root = relativeRoot
             let resolvedURL = root.appendingPath(partialPath)
             DLOG("resolvedURL:\(resolvedURL))")
-            //TODO: new return url2
-            return resolvedURL
+//            return resolvedURL
+            return url2
         }
     }
     var urlUpdate:URL {
