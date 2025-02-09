@@ -73,6 +73,7 @@ public struct UIKitAlertModifier: ViewModifier {
     let title: String
     let message: String
     @Binding var isPresented: Bool
+    @Binding var textValue: String?
     let preferredContentSize: CGSize
     let textField: ((UITextField) -> Void)?
     let buttons: [UIAlertAction]
@@ -81,6 +82,7 @@ public struct UIKitAlertModifier: ViewModifier {
         title: String,
         message: String,
         isPresented: Binding<Bool>,
+        textValue: Binding<String?>? = nil,
         preferredContentSize: CGSize,
         textField: ((UITextField) -> Void)? = nil,
         buttons: [UIAlertAction]
@@ -88,6 +90,7 @@ public struct UIKitAlertModifier: ViewModifier {
         self.title = title
         self.message = message
         self._isPresented = isPresented
+        self._textValue = textValue ?? .constant(nil)
         self.preferredContentSize = preferredContentSize
         self.textField = textField
         self.buttons = buttons
@@ -99,6 +102,7 @@ public struct UIKitAlertModifier: ViewModifier {
                 title: title,
                 message: message,
                 isPresented: $isPresented,
+                textValue: $textValue,
                 buttons: buttons,
                 preferredContentSize: preferredContentSize,
                 textField: textField
@@ -112,6 +116,7 @@ struct UIKitAlertWrapper: UIViewControllerRepresentable {
     let title: String
     let message: String
     @Binding var isPresented: Bool
+    @Binding var textValue: String?
     let buttons: [UIAlertAction]
     let preferredContentSize : CGSize
     let textField: ((UITextField) -> Void)?
@@ -131,14 +136,38 @@ struct UIKitAlertWrapper: UIViewControllerRepresentable {
 
         let alert = TVAlertController(title: title, message: message, preferredStyle: .alert)
 
-        if let textField = textField {
-            alert.addTextField(configurationHandler: textField)
+        if let textFieldConfig = textField {
+            alert.addTextField { textField in
+                textField.text = self.textValue
+                textFieldConfig(textField)
+                textField.addTarget(
+                    context.coordinator,
+                    action: #selector(Coordinator.textFieldDidChange(_:)),
+                    for: .editingChanged
+                )
+            }
         }
 
         buttons.forEach { alert.addAction($0) }
 
         if uiViewController.presentedViewController == nil {
             uiViewController.present(alert, animated: true)
+        }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(textValue: $textValue)
+    }
+
+    class Coordinator: NSObject {
+        @Binding var textValue: String?
+
+        init(textValue: Binding<String?>) {
+            self._textValue = textValue
+        }
+
+        @objc func textFieldDidChange(_ textField: UITextField) {
+            self.textValue = textField.text
         }
     }
 }
@@ -149,6 +178,7 @@ public extension View {
         _ title: String,
         message: String,
         isPresented: Binding<Bool>,
+        textValue: Binding<String?>? = nil,
         preferredContentSize: CGSize = CGSize(width: 500, height: 300),
         textField: ((UITextField) -> Void)? = nil,
         @UIKitAlertActionBuilder buttons: () -> [UIAlertAction]
@@ -157,6 +187,7 @@ public extension View {
             title: title,
             message: message,
             isPresented: isPresented,
+            textValue: textValue,
             preferredContentSize: preferredContentSize,
             textField: textField,
             buttons: buttons()

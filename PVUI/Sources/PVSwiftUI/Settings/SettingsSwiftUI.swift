@@ -240,10 +240,12 @@ private struct CoreOptionsSection: View {
                             icon: .sfSymbol("gearshape.2"))
             }
 
-            NavigationLink(destination: RetroArchConfigEditorView()) {
-                SettingsRow(title: "Edit RetroArch Config",
-                            subtitle: "Modify advanced RetroArch settings.",
-                            icon: .sfSymbol("gearshape.2.fill"))
+            NavigationLink(destination: RetroArchConfigEditorWrapper()) {
+                SettingsRow(
+                    title: "Edit RetroArch Config",
+                    subtitle: "Modify advanced RetroArch settings.",
+                    icon: .sfSymbol("gearshape.2.fill")
+                )
             }
 
             if shouldShowResetButton {

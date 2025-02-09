@@ -252,11 +252,11 @@ public extension Defaults.Keys {
     static let tvOSThemes = Key<Bool>("tvOSThemes", default: false)
 #endif
 #if os(macOS) || targetEnvironment(macCatalyst)
-    static let movableButtons = Key<Bool>("movableButtons", default: false)
+    static let movableButtons = Key<Bool>("movableButtons", default: true)
     static let onscreenJoypad = Key<Bool>("onscreenJoypad", default: false)
     static let onscreenJoypadWithKeyboard = Key<Bool>("onscreenJoypadWithKeyboard", default: false)
 #elseif os(iOS)
-    static let movableButtons = Key<Bool>("movableButtons", default: false)
+    static let movableButtons = Key<Bool>("movableButtons", default: true)
     static let onscreenJoypad = Key<Bool>("onscreenJoypad", default: true)
     static let onscreenJoypadWithKeyboard = Key<Bool>("onscreenJoypadWithKeyboard", default: true)
 #endif
