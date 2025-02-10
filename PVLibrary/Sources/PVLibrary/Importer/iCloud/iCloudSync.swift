@@ -245,7 +245,11 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             let moved = moveFiles(at: localDirectory,
                                   containerDestination: iCloudDirectory,
                                   existingClosure: { existing in
-                try fileManager.removeItem(atPath: existing.path)
+                do {
+                    try fileManager.removeItem(atPath: existing.path)
+                } catch {
+                    ELOG("error deleting existing file that already exists in iCloud: \(existing), \(error)")
+                }
             }) { currentSource, currentDestination in
                 try fileManager.setUbiquitous(true, itemAt: currentSource, destinationURL: currentDestination)
             }
@@ -267,10 +271,18 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             let moved = moveFiles(at: iCloudDirectory,
                              containerDestination: localDirectory,
                              existingClosure: { existing in
-                try fileManager.evictUbiquitousItem(at: existing)
+                do {
+                    try fileManager.evictUbiquitousItem(at: existing)
+                } catch {//this happens when a file is being presented on the UI (saved states image) and thus we can't remove the icloud download
+                    ELOG("error evicting iCloud file: \(existing), \(error)")
+                }
             }) { currentSource, currentDestination in
                 try fileManager.copyItem(at: currentSource, to: currentDestination)
-                try fileManager.evictUbiquitousItem(at: currentSource)
+                do {
+                    try fileManager.evictUbiquitousItem(at: currentSource)
+                } catch {//this happens when a file is being presented on the UI (saved states image) and thus we can't remove the icloud download
+                    ELOG("error evicting iCloud file: \(currentSource), \(error)")
+                }
             }
             if moved == .saveFailure {
                 moveResult = .saveFailure
@@ -281,8 +293,10 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     
     func moveFiles(at source: URL,
                    containerDestination: URL,
-                   existingClosure: ((URL) throws -> Void),
+                   existingClosure: ((URL) -> Void),
                    moveClosure: (URL, URL) throws -> Void) -> SyncResult {
+        getDeviceAvailableStorage()
+        getICloudAvailableStorage()
         DLOG("source: \(source)")
         guard fileManager.fileExists(atPath: source.path)
         else {
@@ -301,29 +315,75 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                 DLOG("new destination: \(destination)")
                 if isDirectory.boolValue && !fileManager.fileExists(atPath: destination.path) {
                     DLOG("\(destination) does NOT exist")
-                    try fileManager.createDirectory(atPath: destination.path, withIntermediateDirectories: true)
+                    do {
+                        try fileManager.createDirectory(atPath: destination.path, withIntermediateDirectories: true)
+                    } catch {
+                        DLOG("error creating directory: \(destination.path), \(error)")
+                    }
                 }
                 if isDirectory.boolValue {
                     continue
                 }
                 if fileManager.fileExists(atPath: destination.path) {
-                    try existingClosure(currentItem)
+                    existingClosure(currentItem)
                     continue
                 }
                 do {
-                    ILOG("Trying to move (\(currentItem.path)) to (\(destination.path))")
+                    ILOG("Trying to move \(currentItem.path) to \(destination.path)")
                     try moveClosure(currentItem, destination)
                     insertUploadedFile(destination)
-                } catch {//TODO: failed to move: The file couldn’t be locked
+                } catch {
                     //this could indicate no more space is left when moving to iCloud
-                    ELOG("failed to move: \(error.localizedDescription)")
+                    ELOG("failed to move \(currentItem.path) to \(destination.path): \(error)")
                 }
             }
             return .success
         } catch {
-            ELOG("failed to get directory contents: \(error.localizedDescription)")
+            ELOG("failed to get directory contents: \(error)")
             return .saveFailure
         }
+    }
+
+    func getICloudAvailableStorage() {
+        guard let iCloudContainer = containerURL
+        else {
+            ELOG("iCloud is not enabled.")
+            return
+        }
+        do {
+            let values = try iCloudContainer.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey])
+            if let availableSpace = values.volumeAvailableCapacityForImportantUsage {
+                ILOG("Available iCloud storage: \(availableSpace.toGb)")
+            } else {
+                ELOG("Could not retrieve available iCloud storage.")
+            }
+        } catch {
+            ELOG("Error retrieving iCloud storage info: \(error)")
+        }
+    }
+
+    func getDeviceAvailableStorage() {
+        guard let systemURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first
+        else {
+            ELOG("unable to determine available storage on device")
+            return
+        }
+        do {
+            let values = try systemURL.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey])
+            if let availableSpace = values.volumeAvailableCapacityForImportantUsage {
+                ILOG("Available device storage: \(availableSpace.toGb)")
+            } else {
+                ELOG("Could not retrieve available storage.")
+            }
+        } catch {
+            ELOG("Error retrieving storage info: \(error)")
+        }
+    }
+}
+
+extension Int64 {
+    var toGb: String {
+        String(format: "%.2f GBs", Double(self / (1024 * 1024 * 1024)))
     }
 }
 
@@ -370,7 +430,7 @@ public enum iCloudSync {
                 let newTokenData = try NSKeyedArchiver.archivedData(withRootObject: currentiCloudToken, requiringSecureCoding: false)
                 UserDefaults.standard.set(newTokenData, forKey: UbiquityIdentityTokenKey)
             } catch {
-                ELOG("\(error.localizedDescription)")
+                ELOG("error serializing iCloud token: \(error)")
             }
         } else {
             UserDefaults.standard.removeObject(forKey: UbiquityIdentityTokenKey)
@@ -479,7 +539,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
                 realm.delete(existingSave)
             }
         } catch {
-            ELOG(error.localizedDescription)
+            ELOG("error delating from database: \(error)")
         }
     }
     
@@ -545,7 +605,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
                                         existing.game = game
                                     }
                                 } catch {
-                                    ELOG("Failed to update game: \(error.localizedDescription)")
+                                    ELOG("Failed to update game: \(error)")
                                 }
                             }
                             // TODO: Maybe any other missing data updates or update values in general?
@@ -559,14 +619,14 @@ class SaveStateSyncer: iCloudContainerSyncer {
                                     realm.add(newSave, update: .all)
                                 }
                             } catch {
-                                ELOG(error.localizedDescription)
+                                ELOG("error adding new save: \(error)")
                             }
                         } else {
                             realm.add(newSave, update: .all)
                         }
                         ILOG("Added new save \(newSave.debugDescription)")
                     } catch {
-                        ELOG("Decode error: " + error.localizedDescription)
+                        ELOG("Decode error: \(error)")
                         return
                     }
                 }
@@ -628,7 +688,7 @@ class RomsSyncer: iCloudContainerSyncer {
                 return
             }
         } catch {
-            ELOG(error.localizedDescription)
+            ELOG("error searching existing ROM: \(error)")
         }
         
         newFiles.insert(file)
@@ -663,7 +723,7 @@ class RomsSyncer: iCloudContainerSyncer {
                 realm.delete(game)
             }
         } catch {
-            ELOG(error.localizedDescription)
+            ELOG("error deleting ROM from database: \(error)")
         }
     }
     
