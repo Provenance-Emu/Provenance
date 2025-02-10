@@ -127,12 +127,16 @@ public extension PVFile {
 
             // Cache the MD5 only if we're not frozen
             if !self.isFrozen, let realm = self.realm {
-                do {
-                    try realm.write {
-                        md5Cache = calculatedMD5
+                if !realm.isInWriteTransaction {
+                    do {
+                        try realm.write {
+                            md5Cache = calculatedMD5
+                        }
+                    } catch {
+                        ELOG("Failed to cache MD5: \(error)")
                     }
-                } catch {
-                    ELOG("Failed to cache MD5: \(error)")
+                } else {
+                    md5Cache = calculatedMD5
                 }
             }
 
