@@ -10,7 +10,7 @@ extension PVEmulatorViewController {
     @objc func handlePause(_ note: Notification?) {
         self.controllerPauseButtonPressed()
     }
-    
+
     public func controllerPauseButtonPressed() {
         DispatchQueue.main.async(execute: { () -> Void in
             if !self.isShowingMenu {
@@ -40,7 +40,9 @@ extension PVEmulatorViewController {
         menuButton?.isHidden = false; //controllers.count != 0
 
         #if os(iOS)
-            setNeedsUpdateOfHomeIndicatorAutoHidden()
+            self.setNeedsStatusBarAppearanceUpdate()
+            self.setNeedsUpdateOfHomeIndicatorAutoHidden()
+            self.setNeedsUpdateOfScreenEdgesDeferringSystemGestures()
         #endif
     }
 

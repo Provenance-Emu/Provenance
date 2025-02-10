@@ -49,7 +49,7 @@ typealias PVEmulatorViewControllerRootClass = UIViewController
 
 public
 final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmualatorControllerProtocol, PVAudioDelegate, PVSaveStatesViewControllerDelegate {
-    
+
     public let core: PVEmulatorCore
     public let game: PVGame
     public internal(set) var autosaveTimer: Timer?
@@ -440,9 +440,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         super.viewDidAppear(true)
         // Notifies UIKit that your view controller updated its preference regarding the visual indicator
 
-#if os(iOS)
+        #if os(iOS)
+        setNeedsStatusBarAppearanceUpdate()
         setNeedsUpdateOfHomeIndicatorAutoHidden()
-#endif
+        setNeedsUpdateOfScreenEdgesDeferringSystemGestures()
+        #endif
 
         if Defaults[.timedAutoSaves] {
             createAutosaveTimer()
