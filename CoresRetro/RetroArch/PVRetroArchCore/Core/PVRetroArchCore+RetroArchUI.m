@@ -196,45 +196,74 @@ int argc =  1;
 
 void extract_bundles();
 -(void) writeConfigFile {
-	NSFileManager *fm = [[NSFileManager alloc] init];
+    // Initialize file manager
+    NSFileManager *fm = [[NSFileManager alloc] init];
     NSString *fileName = [NSString stringWithFormat:@"%@/RetroArch/config/retroarch.cfg",
                           self.documentsDirectory];
+    ILOG(@"Expecting config file to be at %@", fileName);
 
     // Get the version number from the app's Info.plist
     NSString *appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
     if (!appVersion) {
         appVersion = @"unknown";
     }
+    ILOG(@"App version: %@", appVersion);
 
     NSString *verFile = [NSString stringWithFormat:@"%@/RetroArch/config/%@.cfg",
                          self.documentsDirectory, appVersion];
-    
-    if (![fm fileExistsAtPath: fileName] || ![fm fileExistsAtPath: verFile] || [self shouldUpdateAssets]) {
+    ILOG(@"Expecting version file to be at %@", verFile);
+
+    BOOL configFileExists = [fm fileExistsAtPath:fileName];
+    ILOG(@"Config file exists: %@", configFileExists ? @"YES" : @"NO");
+
+    BOOL versionFileExists = [fm fileExistsAtPath:verFile];
+    ILOG(@"Version file exists: %@", versionFileExists ? @"YES" : @"NO");
+
+    BOOL shouldUpdateAssets = [self shouldUpdateAssets];
+    ILOG(@"Should update assets: %@", shouldUpdateAssets ? @"YES" : @"NO");
+
+    if (!configFileExists || !versionFileExists || shouldUpdateAssets) {
+
+        ILOG(@"Writing config file to %@", fileName);
+
         NSString *src = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"retroarch.cfg" ofType:nil];
         [self syncResource:src to:fileName];
         [self syncResource:src to:verFile];
-        
+
         NSString *overlay_back = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"arrow.png" ofType:nil];
         [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/flatui/png/arrow.png", self.documentsDirectory]];
+
         [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/monochrome/png/arrow.png", self.documentsDirectory]];
+
         [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/automatic/png/arrow.png", self.documentsDirectory]];
+
         [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/pixel/png/arrow.png", self.documentsDirectory]];
+
         [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/daite/png/arrow.png", self.documentsDirectory]];
+
         [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/dot-art/png/arrow.png", self.documentsDirectory]];
+
         [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/neoactive/png/arrow.png", self.documentsDirectory]];
+
         [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/retroactive/png/arrow.png", self.documentsDirectory]];
+
         [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/retrosystem/png/arrow.png", self.documentsDirectory]];
+
         [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/systematic/png/arrow.png", self.documentsDirectory]];
-		processing_init=true;
-	}
+
+        processing_init=true;
+    }
     // Additional Override Settings
     NSString* content = @"video_driver = \"vulkan\"\n";
-    if (self.gsPreference == 0)
+    if (self.gsPreference == 0) {
         content=@"video_driver = \"metal\"\n";
-    else if (self.gsPreference == 1)
+    } else if (self.gsPreference == 1) {
         content=@"video_driver = \"gl\"\n";
-    else if (self.gsPreference == 2)
+    } else if (self.gsPreference == 2) {
         content=@"video_driver = \"vulkan\"\n";
+    }
+    ILOG(@"Video driver set to: %@", content);
+
     [self syncResources:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"pv_ui_overlay" ofType:nil]
                      to:[self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/overlays/pv_ui_overlay" ]];
     [self syncResource:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"pv_ui_overlay/pv_ui.cfg" ofType:nil]
@@ -248,6 +277,7 @@ void extract_bundles();
         content = [content stringByAppendingString:
                        @"input_overlay_enable = \"false\"\n"
         ];
+        ILOG(@"Input overlay disabled.");
     }
     if (self.coreOptionConfigPath.length > 0 && self.coreOptionConfig.length > 0) {
         fileName = [NSString stringWithFormat:@"%@/RetroArch/config/%@", self.documentsDirectory, self.coreOptionConfigPath];
@@ -257,33 +287,47 @@ void extract_bundles();
                                     atomically:NO
                                     encoding:NSStringEncodingConversionAllowLossy
                                         error:nil];
+            ILOG(@"Core option config written to %@", fileName);
         }
     } else if (self.coreOptionConfig.length > 0) {
         content=[content stringByAppendingString:self.coreOptionConfig];
     }
     content = [content stringByAppendingString:
                [NSString stringWithFormat:@"cache_directory = \"%@\"\n", self.batterySavesPath]];
+    ILOG(@"Cache directory set to: %@", self.batterySavesPath);
     fileName = [NSString stringWithFormat:@"%@/RetroArch/config/opt.cfg", self.documentsDirectory];
+    ILOG(@"Writing options config to %@", fileName);
+    NSError *error;
     [content writeToFile:fileName
               atomically:NO
                 encoding:NSStringEncodingConversionAllowLossy
-                   error:nil];
+                   error:&error];
+    if (error) {
+        ELOG(@"Error writing options config to %@: %@", fileName, error.localizedDescription);
+    } else {
+        ILOG(@"Options config written to %@", fileName);
+    }
 }
+
 - (bool)shouldUpdateAssets {
-#if DEBUG
-    return true;
-#else
+// #if DEBUG
+//     return true;
+// #else
     // If assets were updated, refresh config
     NSFileManager *fm = [[NSFileManager alloc] init];
     NSString *file=[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/flatui/png/arrow.png", self.documentsDirectory];
+    ILOG(@"Checking if assets exist at %@", file);
     if ([fm fileExistsAtPath: file]) {
         unsigned long long fileSize = [[fm attributesOfItemAtPath:file error:nil] fileSize];
+        ILOG(@"File size: %llu", fileSize);
         if (fileSize == 1687) {
+            ILOG(@"File size is 1687, returning false");
             return false;
         }
     }
+    ILOG(@"File does not exist or size is not 1687, returning true");
     return true;
-#endif
+// #endif
 }
 #pragma mark - Running
 
@@ -295,28 +339,46 @@ void extract_bundles();
 }
 
 - (void)syncResources:(NSString*)from to:(NSString*)to {
-	if (!from)
-		return;
+	if (!from) {
+        ELOG(@"From path is nil");
+        return;
+    }
     ILOG(@"Syncing %@ to %@", from, to);
 	NSError *error;
 	NSFileManager *fm = [[NSFileManager alloc] init];
 	NSArray* files = [fm contentsOfDirectoryAtPath:from error:&error];
     if (![fm fileExistsAtPath: to]) {
-        [fm createDirectoryAtPath:to withIntermediateDirectories:true attributes:nil error:nil];
+        ILOG(@"Creating directory at %@", to);
+
+        [fm createDirectoryAtPath:to withIntermediateDirectories:true attributes:nil error:&error];
+        if (error) {
+            ELOG(@"Error creating directory at %@: %@", to, error.localizedDescription);
+        } else {
+            ILOG(@"Directory created at %@", to);
+        }
     }
 	for (NSString *file in files) {
 		NSString *src=  [NSString stringWithFormat:@"%@/%@", from, file];
 		NSString *dst = [NSString stringWithFormat:@"%@/%@", to, file];
         ILOG(@"Syncing %@ %@", src, dst);
 		if (![fm fileExistsAtPath: dst]) {
-			[fm copyItemAtPath:src toPath:dst error:nil];
+            ILOG(@"Copying %@ to %@", src, dst);
+            NSError *error;
+			[fm copyItemAtPath:src toPath:dst error:&error];
+            if (error) {
+                ELOG(@"Error copying %@ to %@: %@", src, dst, error.localizedDescription);
+            } else {
+                ILOG(@"Copied %@ to %@", src, dst);
+            }
 		}
 	}
 }
 
 - (void)syncResource:(NSString*)from to:(NSString*)to {
-    if (!from)
+    if (!from) {
+        ELOG(@"From path is nil");
         return;
+    }
     ILOG(@"Syncing %@ to %@", from, to);
     NSError *error;
     NSFileManager *fm = [[NSFileManager alloc] init];
@@ -328,14 +390,14 @@ void extract_bundles();
 {
     if (vt == _vt)
         return;
-    
+
     _vt = vt;
     if (_renderView != nil)
     {
         [_renderView removeFromSuperview];
         _renderView = nil;
     }
-    
+
     switch (vt)
     {
 #ifdef HAVE_COCOA_METAL
@@ -381,7 +443,7 @@ void extract_bundles();
         default:
             return;
     }
-    
+
     _renderView.translatesAutoresizingMaskIntoConstraints = NO;
     UIView *rootView = [CocoaView get].view;
     [rootView addSubview:_renderView];
@@ -414,14 +476,18 @@ void extract_bundles();
         if (romPath != nil && romPath.length > 0 && [fm fileExistsAtPath: romPath]) {
             optConfig = romPath;
         }
-		char *param[] = { "retroarch", "--appendconfig", optConfig.UTF8String, NULL };
-        argc=3;
-		argv=param;
+		char *param[] = {
+            "retroarch",
+            "--appendconfig",
+            optConfig.UTF8String,
+            NULL};
+        argc = 3;
+		argv = param;
         ILOG(@"Loading %s\n", param[0]);
 	} else {
         NSBundle *mainBundle = [NSBundle mainBundle];
         NSString *mainBundlePath = mainBundle.bundlePath;
-        
+
         NSString *coreIdentifier = [self coreIdentifier];
         NSString *coreBinary = [coreIdentifier stringByDeletingPathExtension];
         NSString *resourceName = [NSString stringWithFormat:@"%@", coreIdentifier];
@@ -434,7 +500,7 @@ void extract_bundles();
         } else {
             ELOG(@"Error: No module found at %@\n", sysPath);
         }
-    
+
         /// Check if the ROM is found at the expected path
 		if ([fm fileExistsAtPath: romPath]) {
             romPath=[self checkROM:romPath];
@@ -478,6 +544,7 @@ void extract_bundles();
 	apple_gamecontroller_joypad_init(NULL);
     [self setupJoypad];
 }
+
 - (void)setupJoypad {
     ILOG(@"Analog Dpad %d", self.bindAnalogDpad);
     if (self.bindAnalogDpad) {
@@ -711,7 +778,97 @@ void rarch_stop_draw_observer(void)
 
 
 void ui_companion_cocoatouch_event_command(
-	  void *data, enum event_command cmd) { }
+	  void *data, enum event_command cmd) {
+
+    ILOG(@"Event command: %d", cmd);
+    if (cmd == CMD_EVENT_MENU_SAVE_CURRENT_CONFIG) {
+        ILOG(@"Saving current config");
+    } else if (cmd == CMD_EVENT_MENU_TOGGLE) {
+        ILOG(@"Toggling menu");
+    }
+
+}
+
+static struct string_list *ui_companion_cocoatouch_get_app_icons(void)
+{
+   static struct string_list *list = NULL;
+   static dispatch_once_t onceToken;
+
+   dispatch_once(&onceToken, ^{
+         union string_list_elem_attr attr;
+         attr.i = 0;
+         NSDictionary *iconfiles = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIcons"];
+         NSString *primary;
+         const char *cstr;
+#if TARGET_OS_TV
+         primary = iconfiles[@"CFBundlePrimaryIcon"];
+#else
+         primary = iconfiles[@"CFBundlePrimaryIcon"][@"CFBundleIconName"];
+#endif
+         list = string_list_new();
+         cstr = [primary cStringUsingEncoding:kCFStringEncodingUTF8];
+         if (cstr)
+            string_list_append(list, cstr, attr);
+
+         NSArray<NSString *> *alts;
+#if TARGET_OS_TV
+         alts = iconfiles[@"CFBundleAlternateIcons"];
+#else
+         alts = [iconfiles[@"CFBundleAlternateIcons"] allKeys];
+#endif
+         NSArray<NSString *> *sorted = [alts sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+         for (NSString *str in sorted)
+         {
+            cstr = [str cStringUsingEncoding:kCFStringEncodingUTF8];
+            if (cstr)
+               string_list_append(list, cstr, attr);
+         }
+      });
+
+   return list;
+}
+
+static void ui_companion_cocoatouch_set_app_icon(const char *iconName)
+{
+   NSString *str;
+   if (!string_is_equal(iconName, "Default"))
+      str = [NSString stringWithCString:iconName encoding:NSUTF8StringEncoding];
+   [[UIApplication sharedApplication] setAlternateIconName:str completionHandler:nil];
+}
+
+static uintptr_t ui_companion_cocoatouch_get_app_icon_texture(const char *icon)
+{
+   static NSMutableDictionary<NSString *, NSNumber *> *textures = nil;
+   static dispatch_once_t once;
+   dispatch_once(&once, ^{
+      textures = [NSMutableDictionary dictionaryWithCapacity:6];
+   });
+
+   NSString *iconName = [NSString stringWithUTF8String:icon];
+   if (!textures[iconName])
+   {
+      UIImage *img = [UIImage imageNamed:iconName];
+      if (!img)
+      {
+         RARCH_LOG("could not load %s\n", icon);
+         return 0;
+      }
+      NSData *png = UIImagePNGRepresentation(img);
+      if (!png)
+      {
+         RARCH_LOG("could not get png for %s\n", icon);
+         return 0;
+      }
+
+      uintptr_t item;
+      gfx_display_reset_textures_list_buffer(&item, TEXTURE_FILTER_MIPMAP_LINEAR,
+                                             (void*)[png bytes], (unsigned int)[png length], IMAGE_TYPE_PNG,
+                                             NULL, NULL);
+      textures[iconName] = [NSNumber numberWithUnsignedLong:item];
+   }
+
+   return [textures[iconName] unsignedLongValue];
+}
 
 static void rarch_draw_observer(CFRunLoopObserverRef observer,
 	CFRunLoopActivity activity, void *info)
@@ -797,9 +954,9 @@ ui_companion_driver_t ui_companion_cocoatouch = {
    NULL, /* get_main_window */
    NULL, /* log_msg */
    NULL, /* is_active */
-   NULL, // ui_companion_cocoatouch_get_app_icons,
-   NULL, // ui_companion_cocoatouch_set_app_icon,
-   NULL, // ui_companion_cocoatouch_get_app_icon_texture,
+   ui_companion_cocoatouch_get_app_icons,
+   ui_companion_cocoatouch_set_app_icon,
+   ui_companion_cocoatouch_get_app_icon_texture,
    NULL, /* browser_window */
    NULL, /* msg_window */
    NULL, /* window */
