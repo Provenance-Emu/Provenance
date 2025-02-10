@@ -19,8 +19,10 @@ import PVSettings
 import PVLogging
 
 extension PVEmulatorViewController {
-    @objc func showMenu(_ sender: AnyObject?) {
-        if (!core.isOn) {
+    @objc public func showMenu(_ sender: AnyObject?) {
+
+        if (!core.isOn) { // TODO: Should we just do this code anyway?
+            WLOG("Core isn't on, ignorig showMenu.")
             return;
         }
         enableControllerInput(true)

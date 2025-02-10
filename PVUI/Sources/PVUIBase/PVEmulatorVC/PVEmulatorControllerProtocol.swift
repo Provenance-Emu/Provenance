@@ -31,7 +31,7 @@ public protocol PVEmualatorControllerProtocol: AnyObject {
     var gameStartTime: Date?  { get }
 
     var controllerViewController: (UIViewController & StartSelectDelegate)? { get }
-    func controllerPauseButtonPressed()
+    func controllerPauseButtonPressed(_ sender: Any?)
 
     // MARK: - Methods
 
@@ -46,6 +46,7 @@ public protocol PVEmualatorControllerProtocol: AnyObject {
     func showCoreOptions()
     func showMoreInfo()
     func hideMoreInfo()
+    func showMenu(_ sender: AnyObject?)
     func hideMenu()
     func showSpeedMenu()
     func showSwapDiscsMenu()
@@ -191,17 +192,19 @@ public extension PVEmualatorControllerProtocol {
 #endif
 
     //    #error ("Use to https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/iCloud/iCloud.html to save files to iCloud from local url, and setup packages for bundles")
-    @discardableResult
     @MainActor
+    @discardableResult
     func createNewSaveState(auto: Bool, screenshot: UIImage?) async throws -> Bool {
         guard core.supportsSaveStates else {
             WLOG("Core \(core.description) doesn't support save states.")
             throw SaveStateError.saveStatesUnsupportedByCore
         }
 
+        let game = self.game.freeze()
+        
         /// Create temporary unmanaged copies of core and game for thread safety
         let coreIdentifier = self.core.coreIdentifier ?? ""
-        let gameMD5 = self.game.md5Hash
+        let gameMD5 = game.md5Hash
 
         let baseFilename = "\(gameMD5).\(Date().timeIntervalSinceReferenceDate)"
         let saveURL = saveStatePath.appendingPathComponent("\(baseFilename).svs", isDirectory: false)
@@ -269,6 +272,22 @@ public extension PVEmualatorControllerProtocol {
         }
     }
 
+}
+
+extension PVEmualatorControllerProtocol {
+    // Event when "pause" aka `menu` button is pressed
+    public func controllerPauseButtonPressed(_ sender: Any? = nil) {
+        // If option enabled, toggle the pause menu
+        if Defaults[.pauseButtonIsMenuButton] {
+            DispatchQueue.main.async(execute: { () -> Void in
+                if !self.isShowingMenu {
+                    self.showMenu(self)
+                } else {
+                    self.hideMenu()
+                }
+            })
+        }
+    }
 }
 
 // MARK: Paths
