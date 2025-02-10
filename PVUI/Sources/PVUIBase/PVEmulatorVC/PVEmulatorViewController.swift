@@ -252,7 +252,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         menuButton?.layer.shadowRadius = 3.0
         menuButton?.layer.shadowColor = UIColor.black.cgColor
         menuButton?.layer.shadowOpacity = 0.75
-        menuButton?.tintColor = UIColor.white
+        menuButton?.tintColor = ThemeManager.shared.currentPalette.defaultTintColor ?? UIColor.white
         menuButton?.alpha = alpha
         menuButton?.addTarget(self, action: #selector(PVEmulatorViewController.showMenu(_:)), for: .touchUpInside)
         view.addSubview(menuButton!)
