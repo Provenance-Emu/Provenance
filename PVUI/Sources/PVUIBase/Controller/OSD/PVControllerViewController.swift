@@ -37,7 +37,7 @@ let volumeHeight: CGFloat = 3
 #endif
 
 open class PVControllerViewController<T: ResponderClient> : UIViewController, ControllerVC {
-    
+
     enum ControlTag: Int {
         case dpad1 = 100
         case dpad2 = 101
@@ -54,7 +54,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         case leftAnalog = 501
         case rightAnalog = 502
     }
-    
+
     func layoutViews() {}
 
     open func pressStart(forPlayer _: Int) {
@@ -199,6 +199,12 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
     private var toggleButton: UIButton!
     private var buttonsVisible = true
+
+    // Add computed property to check if we should show the toggle button
+    private var shouldShowToggleButton: Bool {
+        /// Only show toggle button if we have controls to toggle
+        return !controlLayout.isEmpty && !inMoveMode
+    }
 
     required public init(controlLayout: [ControlLayoutEntry], system: PVSystem, responder: T) {
         emulatorCore = responder
@@ -466,17 +472,25 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
     open override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        if inMoveMode { return }
-        PVControllerManager.shared.hasLayout=false
-#if os(iOS) && !targetEnvironment(macCatalyst)
 
+        if inMoveMode { return }
+        PVControllerManager.shared.hasLayout = false
+
+#if os(iOS) && !targetEnvironment(macCatalyst)
         setupTouchControls()
         layoutViews()
+
+        /// Adjust D-Pad position if needed
+        adjustDPadPosition()
+
         if Defaults[.volumeHUD] {
             layoutVolume()
         }
         updateHideTouchControls()
 #endif
+
+        /// Update toggle button visibility
+        toggleButton.isHidden = !shouldShowToggleButton
     }
 
     func prelayoutSettings() {
@@ -503,6 +517,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
     @objc
     func hideTouchControls(for controller: GCController) {
+        ILOG("Hiding touch controls")
+
         dPad?.isHidden = true
         joyPad?.isHidden = true
         joyPad2?.isHidden = true
@@ -1427,35 +1443,66 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     }
 #endif // os(iOS)
 
+    // Modify the setupToggleButton method
     private func setupToggleButton() {
-        // Create and configure the toggle button
+        /// Create and configure the toggle button
         toggleButton = UIButton(type: .custom)
-        toggleButton.setImage(UIImage(systemName: "chevron.up.circle.fill"), for: .normal)
+        toggleButton.setImage(UIImage(systemName: "chevron.up.circle"), for: .normal) /// Use stroked version
         toggleButton.tintColor = .white
-        toggleButton.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        toggleButton.backgroundColor = UIColor.black.withAlphaComponent(0.4) /// More transparent
         toggleButton.layer.cornerRadius = 25
         toggleButton.layer.masksToBounds = true
         toggleButton.addTarget(self, action: #selector(toggleButtons), for: .touchUpInside)
+        toggleButton.isHidden = !shouldShowToggleButton /// Hide initially based on conditions
 
-        // Add constraints
+        /// Add constraints
         toggleButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(toggleButton)
 
+        /// Move to absolute bottom left in landscape
         NSLayoutConstraint.activate([
             toggleButton.widthAnchor.constraint(equalToConstant: 50),
             toggleButton.heightAnchor.constraint(equalToConstant: 50),
-            toggleButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            toggleButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
+            toggleButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0), /// Absolute left
+            toggleButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0) /// Absolute bottom
         ])
     }
 
+    // Add this method to adjust D-Pad position
+    private func adjustDPadPosition() {
+        guard let dPad = dPad else { return }
+        guard toggleButton != nil else { return } /// Ensure toggle button exists
+
+        /// Ensure D-Pad has enough spacing from toggle button
+        let minSpacing: CGFloat = 60
+        let dPadFrame = dPad.frame
+
+        /// Check if D-Pad is too close to toggle button
+        if dPadFrame.maxX > (toggleButton.frame.minX - minSpacing) {
+            /// Move D-Pad left to create space
+            var newFrame = dPadFrame
+            newFrame.origin.x = toggleButton.frame.minX - minSpacing - dPadFrame.width
+
+            /// Ensure we don't move the D-Pad off screen
+            if newFrame.origin.x < view.safeAreaInsets.left {
+                newFrame.origin.x = view.safeAreaInsets.left
+            }
+
+            dPad.frame = newFrame
+        }
+    }
+
+    // Update the toggleButtons method
     @objc private func toggleButtons() {
         buttonsVisible.toggle()
 
-        // Animate the visibility change
+        /// Animate the visibility change
         UIView.animate(withDuration: 0.3) {
             self.allButtons.forEach { $0.alpha = self.buttonsVisible ? 1.0 : 0.0 }
-            self.toggleButton.setImage(UIImage(systemName: self.buttonsVisible ? "chevron.up.circle.fill" : "chevron.down.circle.fill"), for: .normal)
+            self.toggleButton.setImage(
+                UIImage(systemName: self.buttonsVisible ? "chevron.up.circle.fill" : "chevron.down.circle.fill"),
+                for: .normal
+            )
         }
     }
 }
