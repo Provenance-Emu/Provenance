@@ -127,7 +127,7 @@ public extension PVEmulatorViewController {
     func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController) async throws -> Bool {
         try await createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
     }
-    func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState) async throws(SaveStateError) -> Bool {
+    func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState) async throws -> Bool {
         try await createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
     }
     func saveStatesViewController(_: PVSaveStatesViewController, load state: PVSaveState) {

@@ -14,33 +14,33 @@ public protocol PVEmualatorControllerProtocol: AnyObject {
     typealias QuitCompletion = () -> Void
 
     init(game: PVGame, core: PVEmulatorCore)
-    
+
     // MARK: Memebers
     var core: PVEmulatorCore { get }
     var game: PVGame { get }
 
     // MARK: UI
     var isShowingMenu: Bool  { get set }
-    
+
     // MARK: Audio
     var audioInited: Bool { get }
     var gameAudio: any AudioEngineProtocol { get }
-    
+
     // MARK: Timers
     var autosaveTimer: Timer?  { get }
     var gameStartTime: Date?  { get }
-    
+
     var controllerViewController: (UIViewController & StartSelectDelegate)? { get }
     func controllerPauseButtonPressed()
 
     // MARK: - Methods
-    
+
     // MARK: Screenshots
     func captureScreenshot() -> UIImage?
-    
+
     // MARK: Saves
     func quit(optionallySave canSave: Bool, completion: QuitCompletion?) async
-    
+
     // MARK: Menus
     func hideOrShowMenuButton()
     func showCoreOptions()
@@ -99,7 +99,7 @@ public extension PVEmualatorControllerProtocol {
 
 // MARK: Controllers
 public extension PVEmualatorControllerProtocol {
-    
+
     @MainActor
     func enableControllerInput(_ enabled: Bool) {
 #if os(tvOS)
@@ -131,12 +131,12 @@ public extension PVEmualatorControllerProtocol {
 
 // MARK: Screenshots
 public extension PVEmualatorControllerProtocol {
-    
+
     @discardableResult
-    func autoSaveState() async throws(SaveStateError) -> Bool {
+    func autoSaveState() async throws -> Bool {
         guard core.supportsSaveStates else {
             WLOG("Core \(core.description) doesn't support save states.")
-            throw .saveStatesUnsupportedByCore
+            throw SaveStateError.saveStatesUnsupportedByCore
         }
 
         /*
@@ -149,27 +149,27 @@ public extension PVEmualatorControllerProtocol {
 
         guard game.lastAutosaveAge == nil || game.lastAutosaveAge! > minutes(1) else {
             ILOG("Last autosave is too new to make new one")
-            throw .ineligibleError
+            throw SaveStateError.ineligibleError
         }
 
         if let latestManualSaveState = game.saveStates.sorted(byKeyPath: "date", ascending: true).last, (latestManualSaveState.date.timeIntervalSinceNow * -1) < minutes(1) {
             ILOG("Latest manual save state is too recent to make a new auto save")
-            throw .ineligibleError
+            throw SaveStateError.ineligibleError
         }
         let image = captureScreenshot()
         return try await createNewSaveState(auto: true, screenshot: image)
     }
-    
+
 #if os(iOS)
     func takeScreenshot() {
         if let screenshot = captureScreenshot() {
             Task.detached {
                 UIImageWriteToSavedPhotosAlbum(screenshot, nil, nil, nil)
             }
-            
+
             if let pngData = screenshot.pngData() {
                 let dateString = PVEmulatorConfiguration.string(fromDate: Date())
-                
+
                 let fileName = self.game.title + " - " + dateString + ".png"
                 let imageURL = PVEmulatorConfiguration.screenshotsPath(forGame: self.game).appendingPathComponent(fileName, isDirectory: false)
                 do {
@@ -187,19 +187,23 @@ public extension PVEmualatorControllerProtocol {
         core.setPauseEmulation(false)
         isShowingMenu = false
     }
-    
+
 #endif
-    
+
     //    #error ("Use to https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/iCloud/iCloud.html to save files to iCloud from local url, and setup packages for bundles")
     @discardableResult
-    func createNewSaveState(auto: Bool, screenshot: UIImage?) async throws(SaveStateError) -> Bool {
+    @MainActor
+    func createNewSaveState(auto: Bool, screenshot: UIImage?) async throws -> Bool {
         guard core.supportsSaveStates else {
             WLOG("Core \(core.description) doesn't support save states.")
-            throw .saveStatesUnsupportedByCore
+            throw SaveStateError.saveStatesUnsupportedByCore
         }
 
-        let baseFilename = "\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)"
+        /// Create temporary unmanaged copies of core and game for thread safety
+        let coreIdentifier = self.core.coreIdentifier ?? ""
+        let gameMD5 = self.game.md5Hash
 
+        let baseFilename = "\(gameMD5).\(Date().timeIntervalSinceReferenceDate)"
         let saveURL = saveStatePath.appendingPathComponent("\(baseFilename).svs", isDirectory: false)
         let saveFile = PVFile(withURL: saveURL, relativeRoot: .iCloud)
 
@@ -209,10 +213,7 @@ public extension PVEmualatorControllerProtocol {
                 let imageURL = saveStatePath.appendingPathComponent("\(baseFilename).jpg")
                 do {
                     try jpegData.write(to: imageURL)
-                    //                    try RomDatabase.sharedInstance.writeTransaction {
-                    //                        let newFile = PVImageFile(withURL: imageURL, relativeRoot: .iCloud)
-                    //                        game.screenShots.append(newFile)
-                    //                    }
+                    imageFile = PVImageFile(withURL: imageURL, relativeRoot: .iCloud)
                 } catch {
                     if let vc = self as? UIViewController {
                         Task { @MainActor in
@@ -220,65 +221,52 @@ public extension PVEmualatorControllerProtocol {
                         }
                     }
                 }
-
-                imageFile = PVImageFile(withURL: imageURL, relativeRoot: .iCloud)
             }
         }
 
-        do {
-            try await core.saveState(toFileAtPath: saveURL.path)
-        } catch {
-            throw .coreSaveError(error)
-        }
-
+        /// Save state on main thread since it interacts with core
+        try await core.saveState(toFileAtPath: saveURL.path)
         DLOG("Succeeded saving state, auto: \(auto)")
-        let realm = RomDatabase.sharedInstance.realm
-        guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: self.core.coreIdentifier) else {
-            throw .noCoreFound(self.core.coreIdentifier ?? "nil")
-        }
 
-//        Task {
-            do {
-                let realm = RomDatabase.sharedInstance.realm
+        /// Perform Realm operations in a write transaction
+        return try await withCheckedThrowingContinuation { continuation in
+            RomDatabase.sharedInstance.asyncWriteTransaction { realm in
+                do {
+                    /// Fetch fresh instances of core and game within the write transaction
+                    guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: coreIdentifier),
+                          let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5) else {
+                        throw SaveStateError.noCoreFound(coreIdentifier)
+                    }
 
-                var saveState: PVSaveState!
-
-                try realm.write {
-                    saveState = PVSaveState(withGame: self.game, core: core, file: saveFile, image: imageFile, isAutosave: auto)
+                    /// Create and add the save state
+                    let saveState = PVSaveState(withGame: game, core: core, file: saveFile, image: imageFile, isAutosave: auto)
                     realm.add(saveState)
-                }
 
-                LibrarySerializer.storeMetadata(saveState, completion: { result in
-                    switch result {
-                    case let .success(url):
-                        ILOG("Serialized save state metadata to (\(url.path))")
-                    case let .error(error):
-                        ELOG("Failed to serialize save metadata. \(error)")
+                    /// Clean up old auto-saves
+                    let autoSaves = game.autoSaves
+                    if autoSaves.count > 5 {
+                        autoSaves.suffix(from: 5).forEach {
+                            DLOG("Deleting old auto save of \($0.game.title) dated: \($0.date.description)")
+                            realm.delete($0)
+                        }
                     }
-                })
-            } catch {
-                throw SaveStateError.realmWriteError(error)
-            }
-//        }
 
-
-        do {
-            // Delete the oldest auto-saves over 5 count
-            try realm.write {
-                let autoSaves = self.game.autoSaves
-                if autoSaves.count > 5 {
-                    autoSaves.suffix(from: 5).forEach {
-                        DLOG("Deleting old auto save of \($0.game.title) dated: \($0.date.description)")
-                        realm.delete($0)
+                    /// Store metadata asynchronously
+                    LibrarySerializer.storeMetadata(saveState) { result in
+                        switch result {
+                        case .success(let url):
+                            ILOG("Serialized save state metadata to (\(url.path))")
+                        case .error(let error):
+                            ELOG("Failed to serialize save metadata. \(error)")
+                        }
                     }
+
+                    continuation.resume(returning: true)
+                } catch {
+                    continuation.resume(throwing: error)
                 }
             }
-        } catch {
-            throw .realmDeletionError(error)
         }
-
-        // All done successfully
-        return true
     }
 
 }
@@ -295,7 +283,7 @@ public
 extension PVEmulatorViewController  {
     @objc func audioSampleRateDidChange() {
         gameAudio.stopAudio()
-        
+
         try? gameAudio.startAudio()
     }
 }

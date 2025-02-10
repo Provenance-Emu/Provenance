@@ -550,6 +550,22 @@ public extension RomDatabase {
             }
         }
     }
+    
+    func asyncWriteTransaction(_ block: @escaping (Realm) -> Void) {
+        DispatchQueue.main.async {
+            let realm = self.realm
+            if realm.isInWriteTransaction {
+                block(realm)
+            } else {
+                realm.writeAsync {
+                    autoreleasepool {
+                        block(realm)
+                    }
+                }
+            }
+        }
+    }
+
 
     @objc
     func add(_ object: Object, update: Bool = false) throws {
