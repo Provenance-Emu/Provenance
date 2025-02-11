@@ -36,6 +36,15 @@ extension PVRootViewController: PVRootDelegate {
         await self.load(game.warmUp(), sender: sender, core: core?.warmUp(), saveState: saveState?.warmUp())
     }
 
+    public func root_loadPath(_ path: String, forGame game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async {
+        // Create a temporary game object with the new path
+        let tempGame = game.copy() as! PVGame
+        tempGame.romPath = path
+
+        // Load the temporary game
+        await self.load(tempGame.warmUp(), sender: sender, core: core?.warmUp(), saveState: saveState?.warmUp())
+    }
+
     public func root_openSaveState(_ saveState: PVSaveState) async {
         await self.openSaveState(saveState.warmUp())
     }
@@ -46,6 +55,21 @@ extension PVRootViewController: PVRootDelegate {
 
     public func root_presentCoreSelection(forGame game: PVGame, sender: Any?) {
         self.presentCoreSelection(forGame: game.warmUp(), sender: sender)
+    }
+
+    public func root_loadDisc(_ disc: PVFile, forGame game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async {
+        // Update the game's romPath to point to the selected disc
+        do {
+            try RomDatabase.sharedInstance.writeTransaction {
+                let thawedGame = game.thaw()
+                thawedGame?.romPath = disc.url.path
+            }
+
+            // Load the game with the updated romPath
+            await self.load(game.warmUp(), sender: sender, core: core?.warmUp(), saveState: saveState?.warmUp())
+        } catch {
+            self.presentError(error.localizedDescription, source: self.view)
+        }
     }
 
     public func attemptToDelete(game: PVGame, deleteSaves: Bool) {

@@ -134,6 +134,7 @@ public extension PVEmualatorControllerProtocol {
 public extension PVEmualatorControllerProtocol {
 
     @discardableResult
+    @MainActor
     func autoSaveState() async throws -> Bool {
         guard core.supportsSaveStates else {
             WLOG("Core \(core.description) doesn't support save states.")

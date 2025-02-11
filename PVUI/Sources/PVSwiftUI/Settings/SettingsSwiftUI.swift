@@ -240,12 +240,14 @@ private struct CoreOptionsSection: View {
                             icon: .sfSymbol("gearshape.2"))
             }
 
-            NavigationLink(destination: RetroArchConfigEditorWrapper()) {
-                SettingsRow(
-                    title: "Edit RetroArch Config",
-                    subtitle: "Modify advanced RetroArch settings.",
-                    icon: .sfSymbol("gearshape.2.fill")
-                )
+            if PVFeatureFlagsManager.shared.retroarchBuiltinEditor {
+                NavigationLink(destination: RetroArchConfigEditorWrapper()) {
+                    SettingsRow(
+                        title: "Edit RetroArch Config",
+                        subtitle: "Modify advanced RetroArch settings.",
+                        icon: .sfSymbol("gearshape.2.fill")
+                    )
+                }
             }
 
             if shouldShowResetButton {
@@ -268,6 +270,7 @@ private struct CoreOptionsSection: View {
                     }
                 }
             }
+
         }
         .task {
             shouldShowResetButton = await PVRetroArchCoreManager.shared.shouldResetConfig()
@@ -634,7 +637,7 @@ private struct OnScreenControllerSection: View {
 #if !os(tvOS)
     @Default(.movableButtons) var movableButtons
 #endif
-    
+
     var body: some View {
         Section(header: Text("On-Screen Controller")) {
             HStack {
@@ -972,7 +975,8 @@ private struct FeatureFlagStatus: View {
                 .foregroundColor(flag.enabled ? .green : .red)
 
             // Show debug override if present
-            if let override = featureFlags.debugOverrides[flag.key] {
+            if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key),
+               let override = featureFlags.debugOverrides[feature] {
                 Text("Override: \(override ? "On" : "Off")")
                     .font(.caption)
                     .foregroundColor(.blue)
@@ -998,11 +1002,16 @@ private struct FeatureFlagToggle: View {
     var body: some View {
         Toggle("", isOn: Binding(
             get: {
-                featureFlags.debugOverrides[flag.key] ?? flag.enabled
+                if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
+                    return featureFlags.debugOverrides[feature] ?? flag.enabled
+                }
+                return flag.enabled
             },
             set: { newValue in
                 print("Setting toggle to: \(newValue)")
-                featureFlags.setDebugOverride(feature: flag.key, enabled: newValue)
+                if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
+                    featureFlags.setDebugOverride(feature: feature, enabled: newValue)
+                }
             }
         ))
     }

@@ -4,7 +4,7 @@
 import Foundation
 
 /// Represents the type of app installation
-public enum PVAppType: String {
+public enum PVAppType: String, CaseIterable {
     /// Standard non-App Store version
     case standard = "standard"
     /// Lite non-App Store version
@@ -64,6 +64,14 @@ public struct FeatureFlag: Codable, Sendable {
         enabled: true,
         description: "Enables advanced skin features like filters and debug mode"
     )
+
+    /// Enables the built-in RetroArch editor
+    public static let retroarchBuiltinEditor = FeatureFlag(
+        enabled: false,
+        minVersion: "3.0.5",
+        allowedAppTypes: ["standard", "lite"],
+        description: "Enables the built-in RetroArch editor. Disabled for App Store builds."
+    )
 }
 
 /// Root structure for feature flags JSON
@@ -120,38 +128,29 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         print("Loaded confuration. \(configuration?.features.count ?? 0) features")
     }
 
-    /// Check if a feature is enabled
-    /// - Parameter featureKey: The key of the feature to check
-    /// - Returns: Boolean indicating if the feature is enabled
-    public func isEnabled(_ featureKey: String) -> Bool {
-        guard let feature = configuration?.features[featureKey] else {
-            print("Error: Feature Key \(featureKey) not found")
-            return false
-        }
+    /// Get current app type from Info.plist
+    public static func getCurrentAppType() -> PVAppType {
+        let appTypeString = Bundle.main.infoDictionary?["PVAppType"] as? String ?? "standard"
+        return PVAppType(rawValue: appTypeString) ?? .standard
+    }
 
-        // Check app type restrictions
-        if let allowedTypes = feature.allowedAppTypes,
-           !allowedTypes.contains(appType.rawValue) {
-            print("Feature: \(featureKey) is not allowed for app type \(appType.rawValue)")
-            return false
-        }
+    /// Get current build number from Info.plist
+    public static func getCurrentBuildNumber() -> String? {
+        Bundle.main.infoDictionary?["CFBundleVersion"] as? String
+    }
 
-        // Check build number requirement
-        if let minBuild = feature.minBuildNumber,
-           let currentBuild = buildNumber,
-           compareVersions(currentBuild, minBuild) < 0 {
-            print("Feature: \(featureKey) is not allowed for build \(currentBuild)")
-            return false
-        }
+    /// Get current app version from Info.plist
+    public static func getCurrentAppVersion() -> String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
+    }
 
-        // Check version requirement
-        if let minVersion = feature.minVersion,
-           compareVersions(appVersion, minVersion) < 0 {
-            print("Feature: \(featureKey) is not allowed for version \(appVersion)")
-            return false
-        }
-        print("Feature: \(featureKey) is enabled")
-        return feature.enabled
+    /// Enum representing all available feature flags
+    public enum PVFeature: String, CaseIterable {
+        case inAppFreeROMs = "inAppFreeROMs"
+        case romPathMigrator = "romPathMigrator"
+        case cheatsUseSwiftUI = "cheatsUseSwiftUI"
+        case retroarchBuiltinEditor = "retroarchBuiltinEditor"
+        case advancedSkinFeatures = "advancedSkinFeatures"
     }
 
     /// Helper function to compare version strings
@@ -174,22 +173,6 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         return 0
     }
 
-    /// Get current app type from Info.plist
-    public static func getCurrentAppType() -> PVAppType {
-        let appTypeString = Bundle.main.infoDictionary?["PVAppType"] as? String ?? "standard"
-        return PVAppType(rawValue: appTypeString) ?? .standard
-    }
-
-    /// Get current build number from Info.plist
-    public static func getCurrentBuildNumber() -> String? {
-        Bundle.main.infoDictionary?["CFBundleVersion"] as? String
-    }
-
-    /// Get current app version from Info.plist
-    public static func getCurrentAppVersion() -> String {
-        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
-    }
-
     /// Get all available feature flags and their current state (debug only)
     @MainActor public func getAllFeatureFlags() -> [(key: String, flag: FeatureFlag, enabled: Bool)] {
         guard let configuration = configuration else {
@@ -197,12 +180,27 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
             return []
         }
 
-        let allFlags = configuration.features.map { key, flag in
+        // Get all features from the enum
+        let allFlags = PVFeature.allCases.map { feature in
+            let key = feature.rawValue
+
+            // Get the flag from JSON or use the default
+            let flag = configuration.features[key] ?? {
+                switch feature {
+                case .advancedSkinFeatures:
+                    return FeatureFlag.advancedSkinFeatures
+                case .retroarchBuiltinEditor:
+                    return FeatureFlag.retroarchBuiltinEditor
+                default:
+                    return FeatureFlag(enabled: false)
+                }
+            }()
+
             // Get the base enabled state from the flag
             let baseEnabled = flag.enabled
 
             // Get any debug override
-            let debugEnabled = PVFeatureFlagsManager.shared.debugOverrides[key]
+            let debugEnabled = PVFeatureFlagsManager.shared.debugOverrides[feature]
 
             // Get restrictions
             let restrictions = getFeatureRestrictions(key)
@@ -251,6 +249,38 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     @MainActor public func setDebugConfiguration(features: [String: FeatureFlag]) {
         self.configuration = FeatureFlagsConfiguration(features: features)
     }
+
+    /// Check if a feature is enabled
+    public func isEnabled(_ feature: PVFeature) -> Bool {
+        guard let featureConfig = configuration?.features[feature.rawValue] else {
+            print("Error: Feature \(feature) not found")
+            return false
+        }
+
+        // Check app type restrictions
+        if let allowedTypes = featureConfig.allowedAppTypes,
+           !allowedTypes.contains(appType.rawValue) {
+            print("Feature: \(feature) is not allowed for app type \(appType.rawValue)")
+            return false
+        }
+
+        // Check build number requirement
+        if let minBuild = featureConfig.minBuildNumber,
+           let currentBuild = buildNumber,
+           compareVersions(currentBuild, minBuild) < 0 {
+            print("Feature: \(feature) is not allowed for build \(currentBuild)")
+            return false
+        }
+
+        // Check version requirement
+        if let minVersion = featureConfig.minVersion,
+           compareVersions(appVersion, minVersion) < 0 {
+            print("Feature: \(feature) is not allowed for version \(appVersion)")
+            return false
+        }
+        print("Feature: \(feature) is enabled")
+        return featureConfig.enabled
+    }
 }
 
 /// Observable class for managing feature flags in SwiftUI
@@ -262,18 +292,10 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     private let featureFlags: PVFeatureFlags
 
     /// Dictionary of cached feature states
-    @Published private var featureStates: [String: Bool] = [:]
+    @Published public private(set) var featureStates: [PVFeatureFlags.PVFeature: Bool] = [:]
 
     /// Dictionary to store debug overrides - persisted in UserDefaults
-    public var debugOverrides: [String: Bool] {
-        get {
-            UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides") as? [String: Bool] ?? [:]
-        }
-        set {
-            UserDefaults.standard.set(newValue, forKey: "PVFeatureFlagsDebugOverrides")
-            objectWillChange.send()
-        }
-    }
+    @Published public private(set) var debugOverrides: [PVFeatureFlags.PVFeature: Bool] = [:]
 
     /// Dictionary to store remote feature flags
     private var remoteFlags: [String: Bool] = [:]
@@ -309,13 +331,13 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     /// Whether the inAppFreeROMs feature is enabled
     public var inAppFreeROMs: Bool {
         /// Check debug override first
-        if let override = debugOverrides["inAppFreeROMs"] {
+        if let override = debugOverrides[.inAppFreeROMs] {
             print("Debug override active for inAppFreeROMs: \(override)")
             return override
         }
 
         /// Fall back to main feature flags system
-        let enabled = featureFlags.isEnabled("inAppFreeROMs")
+        let enabled = featureFlags.isEnabled(.inAppFreeROMs)
         print("No debug override, using feature flags system value for inAppFreeROMs: \(enabled)")
         return enabled
     }
@@ -323,19 +345,33 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     /// Whether the romPathMigrator feature is enabled
     public var romPathMigrator: Bool {
         /// Check debug override first
-        if let override = debugOverrides["romPathMigrator"] {
+        if let override = debugOverrides[.romPathMigrator] {
             print("Debug override active for romPathMigrator: \(override)")
             return override
         }
 
         /// Fall back to main feature flags system
-        let enabled = featureFlags.isEnabled("romPathMigrator")
+        let enabled = featureFlags.isEnabled(.romPathMigrator)
         print("No debug override, using feature flags system value for romPathMigrator: \(enabled)")
         return enabled
     }
 
+    /// Whether the retroarchBuiltinEditor feature is enabled
+    public var retroarchBuiltinEditor: Bool {
+        /// Check debug override first
+        if let override = debugOverrides[.retroarchBuiltinEditor] {
+            print("Debug override active for retroarchBuiltinEditor: \(override)")
+            return override
+        }
+
+        /// Fall back to main feature flags system
+        let enabled = featureFlags.isEnabled(.retroarchBuiltinEditor)
+        print("No debug override, using feature flags system value for retroarchBuiltinEditor: \(enabled)")
+        return enabled
+    }
+
     /// Set a debug override for a feature flag
-    public func setDebugOverride(feature: String, enabled: Bool) {
+    public func setDebugOverride(feature: PVFeatureFlags.PVFeature, enabled: Bool) {
         print("Setting debug override for \(feature) to: \(enabled)")
         var currentOverrides = debugOverrides
         currentOverrides[feature] = enabled
@@ -348,29 +384,30 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     /// Updates the cached feature states
     private func updateFeatureStates() {
         // Check debug override first
-        if let override = debugOverrides["inAppFreeROMs"] {
-            featureStates["inAppFreeROMs"] = override
+        if let override = debugOverrides[.inAppFreeROMs] {
+            featureStates[.inAppFreeROMs] = override
         } else {
-            featureStates["inAppFreeROMs"] = featureFlags.isEnabled("inAppFreeROMs")
+            featureStates[.inAppFreeROMs] = featureFlags.isEnabled(.inAppFreeROMs)
         }
     }
 
     /// Check if a feature is enabled
-    /// - Parameter featureKey: The key of the feature to check
+    /// - Parameter feature: The feature to check
     /// - Returns: Boolean indicating if the feature is enabled
-    public func isEnabled(_ featureKey: String) -> Bool {
+    public func isEnabled(_ feature: PVFeatureFlags.PVFeature) -> Bool {
+        let featureKey = feature.rawValue
         // Check debug override first
-        if let override = debugOverrides[featureKey] {
+        if let override = debugOverrides[feature] {
             print("Debug override for \(featureKey): \(override)")
             return override
         }
 
         // Fall back to cached state or feature flags system
-        if let cachedState = featureStates[featureKey] {
+        if let cachedState = featureStates[feature] {
             return cachedState
         }
-        let enabled = featureFlags.isEnabled(featureKey)
-        featureStates[featureKey] = enabled
+        let enabled = featureFlags.isEnabled(feature)
+        featureStates[feature] = enabled
         return enabled
     }
 
@@ -382,7 +419,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     }
 
     /// Clear specific debug override
-    public func clearDebugOverride(for feature: String) {
+    public func clearDebugOverride(for feature: PVFeatureFlags.PVFeature) {
         print("Clearing debug override for \(feature)")
         var currentOverrides = debugOverrides
         currentOverrides.removeValue(forKey: feature)
@@ -399,18 +436,21 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     public nonisolated func isFeatureEnabled(_ featureKey: String) -> Bool {
         // Since this is nonisolated, we need to be careful about thread safety
         DispatchQueue.main.sync {
-            if let override = debugOverrides[featureKey] {
+            if let feature = PVFeatureFlags.PVFeature(rawValue: featureKey), let override = debugOverrides[feature] {
                 print("Debug override for \(featureKey): \(override)")
                 return override
             }
 
-            if let cachedState = featureStates[featureKey] {
+            if let feature = PVFeatureFlags.PVFeature(rawValue: featureKey), let cachedState = featureStates[feature] {
                 return cachedState
             }
 
-            let enabled = featureFlags.isEnabled(featureKey)
-            featureStates[featureKey] = enabled
-            return enabled
+            if let feature = PVFeatureFlags.PVFeature(rawValue: featureKey) {
+                let enabled = featureFlags.isEnabled(feature)
+                featureStates[feature] = enabled
+                return enabled
+            }
+            return false
         }
     }
 

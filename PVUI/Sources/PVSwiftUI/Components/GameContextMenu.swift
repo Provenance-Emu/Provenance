@@ -50,6 +50,15 @@ struct GameContextMenu: View {
     var body: some View {
         Group {
             if !game.isInvalidated {
+                // Add multi-disc menu if game has related files
+                if Set(game.relatedFiles).count > 1 {
+                    Button {
+                        contextMenuDelegate?.gameContextMenu(self, didRequestDiscSelectionFor: game)
+                    } label: {
+                        Label("Select Disc", systemImage: "opticaldisc")
+                    }
+                }
+
                 if availableCores.count > 1 {
                     Button {
                         Task { @MainActor in
