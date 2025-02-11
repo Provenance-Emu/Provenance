@@ -320,10 +320,10 @@ void extract_bundles();
     if ([fm fileExistsAtPath: file]) {
         unsigned long long fileSize = [[fm attributesOfItemAtPath:file error:nil] fileSize];
         ILOG(@"File size: %llu", fileSize);
-        if (fileSize == 1687) {
-            ILOG(@"File size is 1687, returning false");
+//        if (fileSize == 1687) {
+//            ILOG(@"File size is 1687, returning false");
             return false;
-        }
+//        }
     }
     ILOG(@"File does not exist or size is not 1687, returning true");
     return true;
