@@ -72,6 +72,7 @@ https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/ppsspp_libretro.dyl
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/prboom_libretro.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/potator_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/pokemini_libretro_ios.dylib.zip
+https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/prboom_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/prosystem_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/puau_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/puau2021_libretro_ios.dylib.zip
@@ -80,7 +81,7 @@ https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/quicknes_libretro_i
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/race_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/sameboy_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/sameduck_libretro_ios.dylib.zip
-#https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/same_cdi_libretro_ios.dylib.zip
+https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/same_cdi_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/scummvm_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/smsplus_libretro_ios.dylib.zip
 #https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/snes9x_libretro_ios.dylib.zip
@@ -92,7 +93,7 @@ https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/squirreljme_libretr
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/stella2014_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/stella2023_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/stella_libretro_ios.dylib.zip
-#https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/tyrquake_libretro_ios.dylib.zip
+https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/tyrquake_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/vba_next_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/vbam_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/vecx_libretro_ios.dylib.zip
