@@ -784,6 +784,57 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
+			<string>mame2000.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.mame</string>
+				<string>com.provenance.neogeo</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>MAME 2000 (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/mame2000-libretro</string>
+			<key>PVProjectVersion</key>
+			<string>v0.139</string>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>mame2003.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.mame</string>
+				<string>com.provenance.neogeo</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>MAME 2003 (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/mame2003-libretro</string>
+			<key>PVProjectVersion</key>
+			<string>v0.139</string>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>mame2003.plus.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.mame</string>
+				<string>com.provenance.neogeo</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>MAME 2003 Plus (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/mame2003-libretro</string>
+			<key>PVProjectVersion</key>
+			<string>v0.139</string>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
 			<string>mame2010.libretro.framework</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
@@ -816,8 +867,6 @@
 			<string>https://docs.libretro.com/development/cores/core-specific/mame/</string>
 			<key>PVProjectVersion</key>
 			<string>v0.258</string>
-			<key>PVAppStoreDisabled</key>
-			<false/>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
