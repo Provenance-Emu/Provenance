@@ -7806,6 +7806,14 @@ void core_run(void)
       : current_core->poll_type;
    bool early_polling          = new_poll_type == POLL_TYPE_EARLY;
    bool late_polling           = new_poll_type == POLL_TYPE_LATE;
+
+
+   /// Check if core is still loaded
+   if (!(current_core->flags & RETRO_CORE_FLAG_INITED)) {
+      RARCH_WARN("[Core]: Attempted to run unloaded core, skipping...\n");
+      return;
+   }
+
 #ifdef HAVE_NETWORKING
    bool netplay_preframe       = netplay_driver_ctl(
          RARCH_NETPLAY_CTL_PRE_FRAME, NULL);
