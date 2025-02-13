@@ -679,6 +679,24 @@
 		B39D8F092D0CEC5300577667 /* Assets-Lite.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B39D8F082D0CEC5300577667 /* Assets-Lite.xcassets */; };
 		B39D8F0A2D0CEC5300577667 /* Assets-Lite.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B39D8F082D0CEC5300577667 /* Assets-Lite.xcassets */; };
 		B39DC77D279E79D40017E28D /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B39FAC192D5E7E690065B66B /* CONTRIBUTORS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC182D5E7E690065B66B /* CONTRIBUTORS.md */; };
+		B39FAC1A2D5E7E690065B66B /* CONTRIBUTORS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC182D5E7E690065B66B /* CONTRIBUTORS.md */; };
+		B39FAC1B2D5E7E690065B66B /* CONTRIBUTORS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC182D5E7E690065B66B /* CONTRIBUTORS.md */; };
+		B39FAC1C2D5E7E690065B66B /* CONTRIBUTORS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC182D5E7E690065B66B /* CONTRIBUTORS.md */; };
+		B39FAC1D2D5E7E690065B66B /* CONTRIBUTORS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC182D5E7E690065B66B /* CONTRIBUTORS.md */; };
+		B39FAC1E2D5E7E690065B66B /* CONTRIBUTORS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC182D5E7E690065B66B /* CONTRIBUTORS.md */; };
+		B39FAC1F2D5E7E690065B66B /* CONTRIBUTORS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC182D5E7E690065B66B /* CONTRIBUTORS.md */; };
+		B39FAC202D5E7E690065B66B /* CONTRIBUTORS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC182D5E7E690065B66B /* CONTRIBUTORS.md */; };
+		B39FAC212D5E7E690065B66B /* CONTRIBUTORS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC182D5E7E690065B66B /* CONTRIBUTORS.md */; };
+		B39FAC232D5E7F630065B66B /* SYSTEMS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC222D5E7F630065B66B /* SYSTEMS.md */; };
+		B39FAC242D5E7F630065B66B /* SYSTEMS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC222D5E7F630065B66B /* SYSTEMS.md */; };
+		B39FAC252D5E7F630065B66B /* SYSTEMS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC222D5E7F630065B66B /* SYSTEMS.md */; };
+		B39FAC262D5E7F630065B66B /* SYSTEMS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC222D5E7F630065B66B /* SYSTEMS.md */; };
+		B39FAC272D5E7F630065B66B /* SYSTEMS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC222D5E7F630065B66B /* SYSTEMS.md */; };
+		B39FAC282D5E7F630065B66B /* SYSTEMS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC222D5E7F630065B66B /* SYSTEMS.md */; };
+		B39FAC292D5E7F630065B66B /* SYSTEMS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC222D5E7F630065B66B /* SYSTEMS.md */; };
+		B39FAC2A2D5E7F630065B66B /* SYSTEMS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC222D5E7F630065B66B /* SYSTEMS.md */; };
+		B39FAC2B2D5E7F630065B66B /* SYSTEMS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC222D5E7F630065B66B /* SYSTEMS.md */; };
 		B3A186672CBCA4C000BB1FFE /* SpotlightImportExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3A186682CBCA4C500BB1FFE /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3A186712CBCA50B00BB1FFE /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -2093,6 +2111,8 @@
 		B39C4B682BF0A2AD00F199BB /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework; sourceTree = "<group>"; };
 		B39C4B6D2BF0AB6000F199BB /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = MoltenVK/MoltenVK/dynamic/dylib/macOS/libMoltenVK.dylib; sourceTree = "<group>"; };
 		B39D8F082D0CEC5300577667 /* Assets-Lite.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets-Lite.xcassets"; sourceTree = "<group>"; };
+		B39FAC182D5E7E690065B66B /* CONTRIBUTORS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTORS.md; sourceTree = "<group>"; };
+		B39FAC222D5E7F630065B66B /* SYSTEMS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = SYSTEMS.md; sourceTree = "<group>"; };
 		B3A186802CBCBA8100BB1FFE /* PVMupen64PlusBridge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusBridge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A186832CBCBA9E00BB1FFE /* PVMupen64PlusBridge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusBridge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A186842CBCBAC800BB1FFE /* PVMupen64PlusBridge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusBridge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3200,6 +3220,8 @@
 				B399119326C0F41300E54426 /* CHANGELOG.md */,
 				B399119126C0F41300E54426 /* LICENSE.md */,
 				B399119226C0F41300E54426 /* README.md */,
+				B39FAC182D5E7E690065B66B /* CONTRIBUTORS.md */,
+				B39FAC222D5E7F630065B66B /* SYSTEMS.md */,
 				B37769042CF6D47300A48B35 /* UITesting.xcodeproj */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
@@ -5033,7 +5055,9 @@
 				1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */,
 				B32C08EA2D0539230024A3E2 /* AppStoreAssets.xcassets in Resources */,
 				B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */,
+				B39FAC1F2D5E7E690065B66B /* CONTRIBUTORS.md in Resources */,
 				B32987D42B66198700728996 /* Cheats.storyboard in Resources */,
+				B39FAC262D5E7F630065B66B /* SYSTEMS.md in Resources */,
 				1F8D52481D91993000C29F90 /* licenses.html in Resources */,
 				B32987D22B66198300728996 /* Provenance.storyboard in Resources */,
 			);
@@ -5048,9 +5072,11 @@
 				B3F64ECA205CBD1200C273C7 /* licenses.html in Resources */,
 				B3296ECF26CABFDE0088AC32 /* Cheats.storyboard in Resources */,
 				B3296EBE26CABF9F0088AC32 /* Provenance.storyboard in Resources */,
+				B39FAC202D5E7E690065B66B /* CONTRIBUTORS.md in Resources */,
 				B3CEC5B22794D8DD004A7CC1 /* Strings.strings in Resources */,
 				B3296EC826CABFCA0088AC32 /* SaveStates.storyboard in Resources */,
 				555454442AC09998006A065F /* LaunchScreenTV.storyboard in Resources */,
+				B39FAC272D5E7F630065B66B /* SYSTEMS.md in Resources */,
 				1AD481C31BA350A400FDA50A /* TVAssets.xcassets in Resources */,
 				1AD482361BA35A2D00FDA50A /* Assets.xcassets in Resources */,
 				B3F43DD02168075200CDD40A /* Settings.bundle in Resources */,
@@ -5070,6 +5096,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B39FAC192D5E7E690065B66B /* CONTRIBUTORS.md in Resources */,
+				B39FAC242D5E7F630065B66B /* SYSTEMS.md in Resources */,
 				930499C92A93073800BF257F /* modules in Resources */,
 				930499CA2A93073800BF257F /* InfoPlist.strings in Resources */,
 				B394CDEC2BDF701A006B63E8 /* LaunchScreen.storyboard in Resources */,
@@ -5126,7 +5154,9 @@
 				B341FDF22BE61EC100718929 /* licenses.html in Resources */,
 				B341FDF72BE61EC100718929 /* SaveStates.storyboard in Resources */,
 				B341FDF82BE61EC100718929 /* Cheats.storyboard in Resources */,
+				B39FAC212D5E7E690065B66B /* CONTRIBUTORS.md in Resources */,
 				B341FDF92BE61EC100718929 /* Settings.storyboard in Resources */,
+				B39FAC2A2D5E7F630065B66B /* SYSTEMS.md in Resources */,
 				B341FDFA2BE61EC100718929 /* Provenance.storyboard in Resources */,
 				B341FDFC2BE61EC100718929 /* LaunchScreenTV.storyboard in Resources */,
 			);
@@ -5136,10 +5166,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B39FAC292D5E7F630065B66B /* SYSTEMS.md in Resources */,
 				B347B3662BC4CA98006A3B2D /* LaunchImageTV.png in Resources */,
 				B3DF8EDC2CC7AE1F0006F20E /* ColoredIcons.xcassets in Resources */,
 				B347B36F2BC4CA98006A3B2D /* licenses.html in Resources */,
 				B3E17E2B2CCF91B000732AEA /* AppStoreAssets-Lite.xcassets in Resources */,
+				B39FAC1B2D5E7E690065B66B /* CONTRIBUTORS.md in Resources */,
 				B347B3722BC4CA98006A3B2D /* Cheats.storyboard in Resources */,
 				B347B3732BC4CA98006A3B2D /* Provenance.storyboard in Resources */,
 				B347B3772BC4CA98006A3B2D /* Strings.strings in Resources */,
@@ -5189,7 +5221,9 @@
 				B39D8F092D0CEC5300577667 /* Assets-Lite.xcassets in Resources */,
 				B35EEFF52C6C6D1A00EBD1A8 /* SaveStates.storyboard in Resources */,
 				B35EEFF62C6C6D1A00EBD1A8 /* Cheats.storyboard in Resources */,
+				B39FAC1D2D5E7E690065B66B /* CONTRIBUTORS.md in Resources */,
 				B35EEFF72C6C6D1A00EBD1A8 /* Settings.storyboard in Resources */,
+				B39FAC282D5E7F630065B66B /* SYSTEMS.md in Resources */,
 				B35EEFF82C6C6D1A00EBD1A8 /* Provenance.storyboard in Resources */,
 				B35EEFF92C6C6D1A00EBD1A8 /* LaunchScreenTV.storyboard in Resources */,
 			);
@@ -5211,7 +5245,9 @@
 				B394CDCC2BDEE53A006B63E8 /* licenses.html in Resources */,
 				B3AED2F92BE355C3003A9290 /* SaveStates.storyboard in Resources */,
 				B3AED2FA2BE355C3003A9290 /* Cheats.storyboard in Resources */,
+				B39FAC1E2D5E7E690065B66B /* CONTRIBUTORS.md in Resources */,
 				B3AED2FB2BE355C3003A9290 /* Settings.storyboard in Resources */,
+				B39FAC2B2D5E7F630065B66B /* SYSTEMS.md in Resources */,
 				B3AED2FC2BE355C3003A9290 /* Provenance.storyboard in Resources */,
 				B3AED2F72BE355B7003A9290 /* LaunchScreenTV.storyboard in Resources */,
 			);
@@ -5254,9 +5290,11 @@
 				B3F7E3C5297736BE00362B92 /* InfoPlist.strings in Resources */,
 				B394CDEB2BDF701A006B63E8 /* LaunchScreen.storyboard in Resources */,
 				B3F7E3C6297736BE00362B92 /* Strings.strings in Resources */,
+				B39FAC1A2D5E7E690065B66B /* CONTRIBUTORS.md in Resources */,
 				B3F7E3CD297736BE00362B92 /* Settings.bundle in Resources */,
 				B3A3D0302CCCC62B00589F82 /* TVAssets.xcassets in Resources */,
 				B3F7E3D9297736BE00362B92 /* licenses.html in Resources */,
+				B39FAC252D5E7F630065B66B /* SYSTEMS.md in Resources */,
 				B36223302D1A0142003CAD92 /* LaunchImageTV.png in Resources */,
 				B3DF8EDD2CC7AE1F0006F20E /* ColoredIcons.xcassets in Resources */,
 				B39D8F0A2D0CEC5300577667 /* Assets-Lite.xcassets in Resources */,
@@ -5268,6 +5306,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B39FAC1C2D5E7E690065B66B /* CONTRIBUTORS.md in Resources */,
+				B39FAC232D5E7F630065B66B /* SYSTEMS.md in Resources */,
 				B3F7E552297736C200362B92 /* InfoPlist.strings in Resources */,
 				B394CDEA2BDF7018006B63E8 /* LaunchScreen.storyboard in Resources */,
 				B3A3D02F2CCCC62B00589F82 /* TVAssets.xcassets in Resources */,
