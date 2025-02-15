@@ -316,49 +316,50 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         else {
             return .fileNotExist
         }
+        let subdirectories: [String]
         do {
-            let subdirectories = try fileManager.subpathsOfDirectory(atPath: source.pathDecoded)
-            DLOG("subdirectories of \(source): \(subdirectories)")
-            for currentChild in subdirectories {
-                let currentItem = source.appendingPathComponent(currentChild)
-                
-                var isDirectory: ObjCBool = false
-                let exists = fileManager.fileExists(atPath: currentItem.pathDecoded, isDirectory: &isDirectory)
-                DLOG("\(currentItem) isDirectory?\(isDirectory) exists?\(exists)")
-                let destination = containerDestination.appendingPathComponent(currentChild)
-                DLOG("new destination: \(destination)")
-                if isDirectory.boolValue && !fileManager.fileExists(atPath: destination.pathDecoded) {
-                    DLOG("\(destination) does NOT exist")
-                    do {
-                        try fileManager.createDirectory(atPath: destination.pathDecoded, withIntermediateDirectories: true)
-                    } catch {
-                        errorHandler.handleError(error, file: destination)
-                        DLOG("error creating directory: \(destination.pathDecoded), \(error)")
-                    }
-                }
-                if isDirectory.boolValue {
-                    continue
-                }
-                if fileManager.fileExists(atPath: destination.pathDecoded) {
-                    existingClosure(currentItem)
-                    continue
-                }
-                do {
-                    ILOG("Trying to move \(currentItem.pathDecoded) to \(destination.pathDecoded)")
-                    try moveClosure(currentItem, destination)
-                    insertUploadedFile(destination)
-                } catch {
-                    errorHandler.handleError(error, file: currentItem)
-                    //this could indicate no more space is left when moving to iCloud
-                    ELOG("failed to move \(currentItem.pathDecoded) to \(destination.pathDecoded): \(error)")
-                }
-            }
-            return .success
+            subdirectories = try fileManager.subpathsOfDirectory(atPath: source.pathDecoded)
         } catch {
             errorHandler.handleError(error, file: source)
             ELOG("failed to get directory contents: \(error)")
             return .saveFailure
         }
+        DLOG("subdirectories of \(source): \(subdirectories)")
+        for currentChild in subdirectories {
+            let currentItem = source.appendingPathComponent(currentChild)
+            
+            var isDirectory: ObjCBool = false
+            let exists = fileManager.fileExists(atPath: currentItem.pathDecoded, isDirectory: &isDirectory)
+            DLOG("\(currentItem) isDirectory?\(isDirectory) exists?\(exists)")
+            let destination = containerDestination.appendingPathComponent(currentChild)
+            DLOG("new destination: \(destination)")
+            if isDirectory.boolValue && !fileManager.fileExists(atPath: destination.pathDecoded) {
+                DLOG("\(destination) does NOT exist")
+                do {
+                    try fileManager.createDirectory(atPath: destination.pathDecoded, withIntermediateDirectories: true)
+                } catch {
+                    errorHandler.handleError(error, file: destination)
+                    DLOG("error creating directory: \(destination.pathDecoded), \(error)")
+                }
+            }
+            if isDirectory.boolValue {
+                continue
+            }
+            if fileManager.fileExists(atPath: destination.pathDecoded) {
+                existingClosure(currentItem)
+                continue
+            }
+            do {
+                ILOG("Trying to move \(currentItem.pathDecoded) to \(destination.pathDecoded)")
+                try moveClosure(currentItem, destination)
+                insertUploadedFile(destination)
+            } catch {
+                errorHandler.handleError(error, file: currentItem)
+                //this could indicate no more space is left when moving to iCloud
+                ELOG("failed to move \(currentItem.pathDecoded) to \(destination.pathDecoded): \(error)")
+            }
+        }
+        return .success
     }
 }
 
@@ -455,7 +456,7 @@ public enum iCloudSync {
         
         var romsSyncer: RomsSyncer! = .init(notificationCenter: .default, errorHandler: iCloudErrorHandler.shared)
         romsSyncer.loadAllFromICloud() {
-                romsSyncer.importNewRomFiles()
+                romsSyncer.handleImportNewRomFiles()
             }.observe(on: MainScheduler.instance)
             .subscribe(onError: { error in
                 ELOG(error.localizedDescription)
@@ -639,7 +640,10 @@ class RomsSyncer: iCloudContainerSyncer {
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
         self.init(directories: ["ROMs"], notificationCenter: notificationCenter, errorHandler: errorHandler)
         notificationCenter.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil) { [weak self] _ in
-            self?.importNewRomFiles()
+            self?.handleImportNewRomFiles()
+        }
+        notificationCenter.addObserver(forName: .RomsFinishedImporting, object: nil, queue: nil) { [weak self] _ in
+            self?.handleImportNewRomFiles()
         }
     }
     
@@ -710,7 +714,7 @@ class RomsSyncer: iCloudContainerSyncer {
         }
     }
     
-    func importNewRomFiles() {
+    func handleImportNewRomFiles() {
         guard RomDatabase.databaseInitialized
         else {
             return
@@ -723,6 +727,23 @@ class RomsSyncer: iCloudContainerSyncer {
         else {
             return
         }
+        Task { @MainActor in
+            tryToImportNewRomFiles()
+        }
+    }
+    
+    func tryToImportNewRomFiles() {
+        //if the importer is currently importing files, we have to wait
+        guard gameImporter.processingState == .idle
+        else {
+            return
+        }
+        Task {
+            importNewRomFiles()
+        }
+    }
+    
+    func importNewRomFiles() {
         let importPaths = [URL](newFiles)
         newFiles.removeAll()
         uploadedFiles.removeAll()
