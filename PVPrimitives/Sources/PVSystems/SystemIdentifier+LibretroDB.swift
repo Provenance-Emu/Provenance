@@ -59,6 +59,13 @@ public extension SystemIdentifier {
         case .TIC80: return 26
         case .NeoGeo: return 1
 //      case .Amiga: return 89
+        case .Quake: return 23
+        case .Quake2: return 4
+        case .Wolf3D: return 59
+        case .DOOM: return 53
+        case .CPS1: return 41 // Arcade
+        case .CPS2: return 41 // Arcade
+        case .CPS3: return 41 // Arcade
 
         // Systems we don't map (yet)
         case
@@ -135,7 +142,7 @@ public extension SystemIdentifier {
         case 9: return .NGP            // Neo Geo Pocket
         // case 89: return .Amiga
         // Unsupported systems:
-        // case 4: Quake II
+        case 4:  return .Quake2
         // case 5: Game.com
         // case 7: Game Master
         // case 8: Adventure Vision
@@ -145,7 +152,7 @@ public extension SystemIdentifier {
         // case 17: RPG Maker
         // case 18: Lutro
         // case 19: Cannonball
-        // case 23: Quake
+        case 23: return .Quake
         // case 24: Satellaview
         // case 25: Atomiswave
         // case 26: TIC-80
@@ -162,12 +169,12 @@ public extension SystemIdentifier {
         // case 46: PV-1000
         // case 50: ZX 81
         // case 52: VIC-20
-        // case 53: DOOM
+        case 53: return .DOOM
         // case 54: Channel F
         // case 57: Loopy
         // case 58: MAME 2003
         case 58: return .MAME
-        // case 59: Wolfenstein 3D
+        case 59: return .Wolf3D
         // case 60: Dinothawr
         // case 62: MAME 2016
         case 62: return .MAME
@@ -224,6 +231,8 @@ extension SystemIdentifier {
     public var libretroDatabaseName: String {
         switch self {
         // Atari Systems
+        case .Atari8bit:     return "Atari - 8-bit"
+        case .AtariJaguarCD: return "Atari - Atari Jaguar" // Does not exist
         case .Atari2600:     return "Atari - 2600"
         case .Atari5200:     return "Atari - 5200"
         case .Atari7800:     return "Atari - 7800"
@@ -244,18 +253,22 @@ extension SystemIdentifier {
         case .FDS:           return "Nintendo - Family Computer Disk System"
 
         // Sega Systems
-        case .Genesis:       return "Sega - Mega Drive - Genesis"
-        case .SegaCD:        return "Sega - Mega-CD - Sega CD"
-        case .MasterSystem:  return "Sega - Master System - Mark III"
-        case .GameGear:      return "Sega - Game Gear"
-        case .Saturn:        return "Sega - Saturn"
-        case .Dreamcast:     return "Sega - Dreamcast"
-        case .SG1000:        return "Sega - SG-1000"
         //case .PICO:          return "Sega - PICO"
+        case .Dreamcast:     return "Sega - Dreamcast"
+        case .GameGear:      return "Sega - Game Gear"
+        case .Genesis:       return "Sega - Mega Drive - Genesis"
+        case .MasterSystem:  return "Sega - Master System - Mark III"
+        case .SG1000:        return "Sega - SG-1000"
+        case .Saturn:        return "Sega - Saturn"
+        case .Sega32X:       return "Sega - 32X"
+        case .SegaCD:        return "Sega - Mega-CD - Sega CD"
 
         // Sony Systems
         case .PSX:           return "Sony - PlayStation"
         case .PSP:           return "Sony - PlayStation Portable"
+        case .PS2:           return "Sony - PlayStation 2"
+        case .PS3:           return "Sony - PlayStation 3"
+        //case .PS4:           return "Sony - PlayStation 4"
 
         // NEC Systems
         case .PCE:          return "NEC - PC Engine - TurboGrafx 16"
@@ -276,33 +289,44 @@ extension SystemIdentifier {
         case .Intellivision:    return "Mattel - Intellivision"
         case .Odyssey2:         return "Magnavox - Odyssey2"
         case ._3DO:             return "The 3DO Company - 3DO"
-        case .CDi:             return "Philips - CD-i"
+        case .CDi:              return "Philips - CD-i"
+            
+        // Capcom
+        case .CPS1:         return "MAME"
+        case .CPS2:         return "MAME"
+        case .CPS3:         return "MAME"
+
+        // Id Softare
+        case .DOOM:         return "DOOM"
+        case .Quake:        return "Quake"
+        case .Quake2:       return "Quake II"
+       //case .Quake3:        return "Quake III"
+        case .Wolf3D:       return "Wolfenstein 3D"
+            
+        // Microsoft
+        case .MSX:          return "Microsoft - MSX"
+        case .MSX2:         return "Microsoft - MSX2"
+
+        // Apple
+        case .AppleII:      return "Apple - Apple II" // Does not exist
+        case .Macintosh:    return "Apple - Macintosh"
 
         // Unknown/Default
-        case .Unknown:      return "Unknown"
-        case ._3DS:         return "Nintendo - Nintendo 3DS"
-        case .AppleII:      return "Apple - Apple II" // Does not exist
-        case .Atari8bit:    return "Atari - 8-bit"
-        case .AtariJaguarCD: return "Atari - Atari Jaguar" // Does not exist
         case .C64:          return "Commodore - C64"
         case .DOS:          return "DOS"
         case .DS:           return "Nintendo - Nintendo DS"
         case .EP128:        return "Enterpise-128"
-        case .Macintosh:    return "Apple - Macintosh"
         case .MAME:         return "MAME"
         case .MegaDuck:     return "Welback Holdings - Mega Duck"
-        case .MSX:          return "Microsoft - MSX"
-        case .MSX2:         return "Microsoft - MSX2"
         case .Music:        return "Music"
         case .PalmOS:       return "Palm - PalmOS"
-        case .PS2:          return "Sony - PlayStation 2"
-        case .PS3:          return "Sony - PlayStation 3"
         case .RetroArch:    return "Retroarch"
-        case .Sega32X:      return "Sega - 32X"
         case .Supervision:  return "Watara - Supervision"
         case .TIC80:        return "TIC-80"
+        case .Unknown:      return "Unknown"
         case .Wii:          return "Nintendo - Wii"
         case .ZXSpectrum:   return "Sinclair - ZX Spectrum"
+        case ._3DS:         return "Nintendo - Nintendo 3DS"
         }
     }
 }

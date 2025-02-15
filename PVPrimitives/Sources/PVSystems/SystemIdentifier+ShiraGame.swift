@@ -27,7 +27,7 @@ public extension SystemIdentifier {
         case .PS3: return "SONY_PS3"
 //        case .PS4: return "SONY_PS4"
         case .PSP: return "SONY_PSP"
-
+//        case .Vita return "SONY_PSV"
         // Sega
         case .Genesis: return "SEGA_GEN"
         case .MasterSystem: return "SEGA_SMS"
@@ -69,8 +69,11 @@ public extension SystemIdentifier {
         case .Vectrex: return "GCE_VECTREX"
         case .Odyssey2: return "MAGNAVOX_O2"
         case ._3DO: return "PANASONIC_3DO"
-
+        case .CDi: return "PHILIPS_CDI"
+        case .Supervision: return "WATARA_SV"
+        
         default: return ""
+        
         }
     }
 
@@ -89,10 +92,13 @@ public extension SystemIdentifier {
         case "NINTENDO_GBC": return .GBC
         case "NINTENDO_GBA": return .GBA
         case "NINTENDO_NDS": return .DS
-//        case "NINTENDO_DSI": return .DSi
+        case "NINTENDO_DSI": return .DS //.DSi
         case "NINTENDO_3DS": return ._3DS
         case "NINTENDO_VB": return .VirtualBoy
         case "NINTENDO_FDS": return .FDS
+        
+        // Philips
+        case "PHILIPS_CDI":  return .CDi
 
         // Sony
         case "SONY_PSX": return .PSX
@@ -142,6 +148,7 @@ public extension SystemIdentifier {
         case "GCE_VECTREX": return .Vectrex
         case "MAGNAVOX_O2": return .Odyssey2
         case "PANASONIC_3DO": return ._3DO
+        case "WATARA_SV": return .Supervision
 
         default: return nil
         }

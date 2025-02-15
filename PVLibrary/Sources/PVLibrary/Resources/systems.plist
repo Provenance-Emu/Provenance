@@ -7233,37 +7233,37 @@
 		<array>
 			<dict>
 				<key>Description</key>
-				<string>cdi200.rom, cdi220b.rom and zx405042p__cdi_slave_2.0__b43t__zzmk9213.mc68hc705c8a_withtestrom.7206</string>
+				<string>CD-i BIOS</string>
 				<key>MD5</key>
-				<string>709acce6e9c4043b851ea7429b8e7eff</string>
+				<string>029a471ef924b1df5588dea806e440df</string>
 				<key>Name</key>
 				<string>cdibios.zip</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>474881</integer>
 				<key>Optional</key>
 				<true/>
 			</dict>
 			<dict>
 				<key>Description</key>
-				<string>cdi200.rom, cdi220.rom, cdi220b.rom, zx405037p__cdi_servo_2.1__b43t__llek9215.mc68hc705c8a_withtestrom.7201 and zx405042p__cdi_slave_2.0__b43t__zzmk9213.mc68hc705c8a_withtestrom.7206</string>
+				<string>CD-i Mono 1</string>
 				<key>MD5</key>
-				<string></string>
+				<string>5d4f7c4beee83bf535d2b15aa48ea0b0</string>
 				<key>Name</key>
 				<string>cdimono1.zip</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>660997</integer>
 				<key>Optional</key>
 				<false/>
 			</dict>
 			<dict>
 				<key>Description</key>
-				<string>cdi200.rom, cdi220.rom, cdi220b.rom, zx405037p__cdi_servo_2.1__b43t__llek9215.mc68hc705c8a_withtestrom.7201 and zx405042p__cdi_slave_2.0__b43t__zzmk9213.mc68hc705c8a_withtestrom.7206</string>
+				<string>CD-i Mono 2</string>
 				<key>MD5</key>
 				<string>97aa5f47030cd9fdb679d4fafbb0e332</string>
 				<key>Name</key>
 				<string>cdimono2.zip</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>244291</integer>
 				<key>Optional</key>
 				<true/>
 			</dict>

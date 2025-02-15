@@ -50,7 +50,7 @@ public extension SystemIdentifier {
         case .RetroArch: return 45
         case ._3DS: return 46
         case .AppleII: return 47
-        default: return 0
+        default: return -1
         }
     }
 

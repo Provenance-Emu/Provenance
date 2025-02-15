@@ -168,12 +168,21 @@ public extension SystemIdentifier {
         case .MSX: return 4929         // MSX
         case .ZXSpectrum: return 4913  // Sinclair ZX Spectrum
         case .MAME: return 23
+        case .CPS1: return 23
+        case .CPS2: return 23
+        case .CPS3: return 23
+
 
 //        default: return nil
         case .AppleII: return 4942
         case .Atari8bit: return 4943
         case .AtariJaguarCD: return 29
         case .DOS: return 1
+        case .DOOM: return 1
+        case .Quake: return 1
+        case .Quake2: return 1
+        case .Wolf3D: return 1
+
 //        case .EP128:
         case .Intellivision: return 32
         case .Macintosh: return 37
