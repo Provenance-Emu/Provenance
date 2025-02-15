@@ -258,6 +258,8 @@
 		B3FD53ED2CD17D8200175917 /* JITSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FD53EB2CD17D8200175917 /* JITSupport.m */; };
 		B3FD53FB2CD17E2200175917 /* dispserv_apple.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FD53FA2CD17E2200175917 /* dispserv_apple.m */; };
 		B3FD94832D60591A00397643 /* coremidi.c in Sources */ = {isa = PBXBuildFile; fileRef = B3FD94702D6016F700397643 /* coremidi.c */; };
+		B3FD94852D60698500397643 /* corelocation.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FD94842D60698500397643 /* corelocation.m */; };
+		B3FD94872D60708500397643 /* avfoundation.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FD94862D60708500397643 /* avfoundation.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -861,6 +863,8 @@
 		B3FD53FA2CD17E2200175917 /* dispserv_apple.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = dispserv_apple.m; sourceTree = "<group>"; };
 		B3FD53FC2CD1889700175917 /* griffin_cpp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = griffin_cpp.cpp; sourceTree = "<group>"; };
 		B3FD94702D6016F700397643 /* coremidi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = coremidi.c; sourceTree = "<group>"; };
+		B3FD94842D60698500397643 /* corelocation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = corelocation.m; sourceTree = "<group>"; };
+		B3FD94862D60708500397643 /* avfoundation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = avfoundation.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -1656,7 +1660,9 @@
 		B30C8C812BF45AE200C91991 /* retroarch */ = {
 			isa = PBXGroup;
 			children = (
+				B3FD94862D60708500397643 /* avfoundation.m */,
 				B3FD94702D6016F700397643 /* coremidi.c */,
+				B3FD94842D60698500397643 /* corelocation.m */,
 				B3FD53FC2CD1889700175917 /* griffin_cpp.cpp */,
 				B30C8C7D2BF45AE200C91991 /* griffin_slang.cpp */,
 				B30C8C7E2BF45AE200C91991 /* griffin.c */,
@@ -2290,7 +2296,9 @@
 			files = (
 				B30C8C842BF45AE200C91991 /* griffin.m in Sources */,
 				B30C8C822BF45AE200C91991 /* griffin_slang.cpp in Sources */,
+				B3FD94872D60708500397643 /* avfoundation.m in Sources */,
 				935E7D5329A4CA7F00D92748 /* griffin_cpp.cpp in Sources */,
+				B3FD94852D60698500397643 /* corelocation.m in Sources */,
 				B30C8C832BF45AE200C91991 /* griffin.c in Sources */,
 				B3FD94832D60591A00397643 /* coremidi.c in Sources */,
 			);
