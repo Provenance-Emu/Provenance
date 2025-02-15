@@ -697,6 +697,8 @@
 		B39FAC292D5E7F630065B66B /* SYSTEMS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC222D5E7F630065B66B /* SYSTEMS.md */; };
 		B39FAC2A2D5E7F630065B66B /* SYSTEMS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC222D5E7F630065B66B /* SYSTEMS.md */; };
 		B39FAC2B2D5E7F630065B66B /* SYSTEMS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC222D5E7F630065B66B /* SYSTEMS.md */; };
+		B39FAC462D6014010065B66B /* SDL2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39FAC452D6014000065B66B /* SDL2.xcframework */; };
+		B39FAC472D6014010065B66B /* SDL2.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39FAC452D6014000065B66B /* SDL2.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A186672CBCA4C000BB1FFE /* SpotlightImportExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3A186682CBCA4C500BB1FFE /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3A186712CBCA50B00BB1FFE /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -1343,6 +1345,7 @@
 				B3FAC936292B451F005E8B11 /* PVGME.framework in Embed Frameworks */,
 				B3FAC944292B4596005E8B11 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
 				B35AB4182CB6DC46003273D4 /* PVStella-Dynamic in Embed Frameworks */,
+				B39FAC472D6014010065B66B /* SDL2.xcframework in Embed Frameworks */,
 				B37CE7C2293F287D0010B746 /* PVFreeIntv.framework in Embed Frameworks */,
 				B35AB4282CB6E14D003273D4 /* PVCoreBridgeRetro.framework in Embed Frameworks */,
 				B35AB4032CB6D976003273D4 /* PVVirtualJaguar-Dynamic in Embed Frameworks */,
@@ -2113,6 +2116,7 @@
 		B39D8F082D0CEC5300577667 /* Assets-Lite.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets-Lite.xcassets"; sourceTree = "<group>"; };
 		B39FAC182D5E7E690065B66B /* CONTRIBUTORS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTORS.md; sourceTree = "<group>"; };
 		B39FAC222D5E7F630065B66B /* SYSTEMS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = SYSTEMS.md; sourceTree = "<group>"; };
+		B39FAC452D6014000065B66B /* SDL2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SDL2.xcframework; path = Dependencies/SDL2.xcframework; sourceTree = "<group>"; };
 		B3A186802CBCBA8100BB1FFE /* PVMupen64PlusBridge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusBridge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A186832CBCBA9E00BB1FFE /* PVMupen64PlusBridge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusBridge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A186842CBCBAC800BB1FFE /* PVMupen64PlusBridge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusBridge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2475,6 +2479,7 @@
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
 				B35AB43B2CB6E643003273D4 /* PVCoreAudio in Frameworks */,
 				B3FAC941292B4593005E8B11 /* PVMupen64Plus.framework in Frameworks */,
+				B39FAC462D6014010065B66B /* SDL2.xcframework in Frameworks */,
 				B35AB4142CB6DC20003273D4 /* PVTGBDual-Dynamic in Frameworks */,
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
 				B3FAC947292B459B005E8B11 /* PVMupen64PlusVideoRice.framework in Frameworks */,
@@ -3274,6 +3279,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B39FAC452D6014000065B66B /* SDL2.xcframework */,
 				B35197FB2D1A5EF100D2B413 /* PVGenesis.framework */,
 				B32C08F82D053FF60024A3E2 /* PVMupen64PlusBridge.framework */,
 				B32C08EB2D053DD50024A3E2 /* PVEmuThree.framework */,
