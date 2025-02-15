@@ -434,10 +434,19 @@ static void InitializeLogging() {
 }
 
 -(void) refreshSize:(CAMetalLayer *)surface {
+#if !TARGET_OS_TV
     if (CitraWrapper.sharedInstance.isRunning)
         [self orientationChanged:[[UIDevice currentDevice] orientation] with:surface];
+#else
+    if (CitraWrapper.sharedInstance.isRunning) {
+        NSInteger layoutOptionInteger = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"landscape_layout_option"]] unsignedIntValue];
+        Settings::values.layout_option.SetValue(layoutOptionInteger == 0 ? Settings::LayoutOption::MobilePortrait : (Settings::LayoutOption)layoutOptionInteger);
+        emu_window->OrientationChanged(false, (__bridge CA::MetalLayer*)surface);
+    }
+#endif
 }
 
+#if !TARGET_OS_TV
 -(void) orientationChanged:(UIDeviceOrientation)orientation with:(CAMetalLayer *)surface {
     if (CitraWrapper.sharedInstance.isRunning) {
         if (orientation == UIDeviceOrientationPortrait) {
@@ -450,6 +459,8 @@ static void InitializeLogging() {
         emu_window->OrientationChanged(orientation == UIDeviceOrientationPortrait, (__bridge CA::MetalLayer*)surface);
     }
 }
+#endif
+
 -(void) SaveState:(NSString *) savePath {
     std::string path=std::string([savePath UTF8String]);
     Core::SaveState(path, _title_id);

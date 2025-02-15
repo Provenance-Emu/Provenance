@@ -177,16 +177,20 @@ static bool _isOff = false;
 
 - (void)refreshScreenSize {
     NSLog(@"refreshScreenSize: Window Size %f %f\n", self.touchViewController.view.frame.size.width, self.touchViewController.view.frame.size.height);
+#if !TARGET_OS_TV
     if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationPortrait ||
         [[UIDevice currentDevice] orientation] == UIDeviceOrientationPortraitUpsideDown) {
         if (m_view.frame.size.width > m_view.frame.size.height) {
             m_view.frame =  CGRectMake(0, 0, m_view.frame.size.height, m_view.frame.size.width);
         }
     } else {
+#endif
         if (m_view.frame.size.width < m_view.frame.size.height) {
             m_view.frame =  CGRectMake(0, 0, m_view.frame.size.height, m_view.frame.size.width);
         }
+#if !TARGET_OS_TV
     }
+#endif
     [CitraWrapper.sharedInstance refreshSize:m_view.layer];
 }
 
@@ -228,7 +232,9 @@ static bool _isOff = false;
         }
         self.touchViewController.view.autoresizesSubviews=true;
         self.touchViewController.view.userInteractionEnabled=true;
+#if !TARGET_OS_TV
         self.touchViewController.view.multipleTouchEnabled=true;
+#endif
     } else {
         UIViewController *gl_view_controller = (UIViewController *)self.renderDelegate;
         auto screenBounds = [[UIScreen mainScreen] bounds];
