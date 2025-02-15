@@ -202,7 +202,7 @@ public extension PVEmualatorControllerProtocol {
         }
 
         let game = self.game.freeze()
-        
+
         /// Create temporary unmanaged copies of core and game for thread safety
         let coreIdentifier = self.core.coreIdentifier ?? ""
         let gameMD5 = game.md5Hash
@@ -232,47 +232,55 @@ public extension PVEmualatorControllerProtocol {
         try await core.saveState(toFileAtPath: saveURL.path)
         DLOG("Succeeded saving state, auto: \(auto)")
 
-        /// Perform Realm operations in a write transaction
-        return try await withCheckedThrowingContinuation { continuation in
-            RomDatabase.sharedInstance.asyncWriteTransaction { realm in
-                do {
-                    /// Fetch fresh instances of core and game within the write transaction
-                    guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: coreIdentifier),
-                          let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5) else {
-                        throw SaveStateError.noCoreFound(coreIdentifier)
-                    }
+        /// Create the save state in database
+        try await RomDatabase.sharedInstance.asyncWriteTransaction {
+            let realm = RomDatabase.sharedInstance.realm
+            /// Fetch fresh instances of core and game within the write transaction
+            guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: coreIdentifier),
+                  let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5) else {
+                ELOG("no core found for identifier: \(coreIdentifier)")
+                return
+//                throw SaveStateError.noCoreFound(coreIdentifier)
+            }
 
-                    /// Create and add the save state
-                    let saveState = PVSaveState(withGame: game, core: core, file: saveFile, image: imageFile, isAutosave: auto)
-                    realm.add(saveState)
+            /// Create and add the save state
+            let saveState = PVSaveState(withGame: game, core: core, file: saveFile, image: imageFile, isAutosave: auto)
+            realm.add(saveState)
 
-                    /// Clean up old auto-saves
-                    let autoSaves = game.autoSaves
-                    if autoSaves.count > 5 {
-                        autoSaves.suffix(from: 5).forEach {
-                            DLOG("Deleting old auto save of \($0.game.title) dated: \($0.date.description)")
-                            realm.delete($0)
-                        }
-                    }
-
-                    /// Store metadata asynchronously
-                    LibrarySerializer.storeMetadata(saveState) { result in
-                        switch result {
-                        case .success(let url):
-                            ILOG("Serialized save state metadata to (\(url.path))")
-                        case .error(let error):
-                            ELOG("Failed to serialize save metadata. \(error)")
-                        }
-                    }
-
-                    continuation.resume(returning: true)
-                } catch {
-                    continuation.resume(throwing: error)
+            /// Store metadata asynchronously
+            LibrarySerializer.storeMetadata(saveState) { result in
+                switch result {
+                case .success(let url):
+                    ILOG("Serialized save state metadata to (\(url.path))")
+                case .error(let error):
+                    ELOG("Failed to serialize save metadata. \(error)")
                 }
+            }
+            
+            /// Handle cleanup if this is an auto-save
+            if auto {
+                self.cleanupOldAutoSaves(for: game)
+            }
+        }
+
+        return true
+    }
+
+    /// Separate function to handle cleanup of old auto-saves
+    private func cleanupOldAutoSaves(for game: PVGame) {
+        guard let autoSaves = game.thaw()?.autoSaves else { return }
+        let realm = RomDatabase.sharedInstance.realm
+
+        if autoSaves.count > 5 {
+            // Get saves to delete (keeping the 5 most recent)
+            let savesToDelete = Array(autoSaves.sorted(byKeyPath: "date", ascending: false).suffix(from: 5))
+            
+            for saveState in savesToDelete {
+                DLOG("Deleting old auto save of \(saveState.game.title) dated: \(saveState.date.description)")
+                realm.delete(saveState)
             }
         }
     }
-
 }
 
 extension PVEmualatorControllerProtocol {
