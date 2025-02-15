@@ -402,7 +402,7 @@ static void coremidi_free(void *p) {
 
 /// CoreMIDI driver API
 midi_driver_t midi_coremidi = {
-    .ident = "CoreMIDI",
+    .ident = "coremidi",
     .init = coremidi_init,
     .free = coremidi_free,
     .set_input = coremidi_set_input,
