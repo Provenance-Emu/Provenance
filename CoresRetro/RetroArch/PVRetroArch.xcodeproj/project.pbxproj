@@ -861,7 +861,6 @@
 		B3FD53FA2CD17E2200175917 /* dispserv_apple.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = dispserv_apple.m; sourceTree = "<group>"; };
 		B3FD53FC2CD1889700175917 /* griffin_cpp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = griffin_cpp.cpp; sourceTree = "<group>"; };
 		B3FD94702D6016F700397643 /* coremidi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = coremidi.c; sourceTree = "<group>"; };
-		B3FD94812D60518B00397643 /* coremidi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = coremidi.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -1658,7 +1657,6 @@
 			isa = PBXGroup;
 			children = (
 				B3FD94702D6016F700397643 /* coremidi.c */,
-				B3FD94812D60518B00397643 /* coremidi.m */,
 				B3FD53FC2CD1889700175917 /* griffin_cpp.cpp */,
 				B30C8C7D2BF45AE200C91991 /* griffin_slang.cpp */,
 				B30C8C7E2BF45AE200C91991 /* griffin.c */,
