@@ -566,6 +566,22 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
+			<string>melondsds.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.ds</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>MelonDS DS (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/melonds_ds/</string>
+			<key>PVProjectVersion</key>
+			<string>git</string>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
 			<string>noods.libretro.framework</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
@@ -577,6 +593,22 @@
 			<string>NooDS (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/Hydr8gon/NooDS</string>
+			<key>PVProjectVersion</key>
+			<string>git</string>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>desmume.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.ds</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>DeSmuME (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/desmume/</string>
 			<key>PVProjectVersion</key>
 			<string>git</string>
 		</dict>
