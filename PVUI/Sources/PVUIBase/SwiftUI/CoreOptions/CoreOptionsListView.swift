@@ -7,15 +7,20 @@ import PVThemes
 import RealmSwift
 import SwiftUI
 import PVLogging
+import AsyncAlgorithms
 
 /// Struct to hold essential system data
 private struct SystemDisplayData: Identifiable {
+    /// The identifier of the system
     let id: String
+    /// The name of the system
     let name: String
+    /// The icon name of the system
     let iconName: String
 }
 
 fileprivate extension PVSystem {
+    /// Get the icon name from the identifier
     var iconName: String {
         // Take the last segment of identifier seperated by .
         return self.identifier.components(separatedBy: ".").last?.lowercased() ?? "prov_snes_icon"
@@ -24,31 +29,53 @@ fileprivate extension PVSystem {
 
 /// A simple struct to hold core information for the list
 private struct CoreListItem: Identifiable {
+    /// The identifier of the core
     let id: String
+    /// The name of the core
     let name: String
+    /// The class of the core
     let coreClass: CoreOptional.Type
+    /// The number of options in the core
     let optionCount: Int
+    /// The systems that the core supports
     let systems: [SystemDisplayData]
 
-    init?(core: PVCore) async {
-        self.id = core.identifier
-        self.name = core.projectName
-        guard let coreClass =  NSClassFromString(core.principleClass) as? CoreOptional.Type else {
-            ELOG("core.principleClass not a valid CoreOptional subclass: \(core.principleClass)")
+    /// Initialize the core list item
+    /// - Parameter core: The core to initialize the list item from
+    @MainActor
+    init?(core: PVCore) {
+        let id = core.identifier
+        let name = core.projectName
+        let principleClass = core.principleClass
+        self.id = id
+        self.name = name
+
+        ILOG("CoreOptions: Checking for options in \(principleClass)")
+        guard let coreClass = NSClassFromString(principleClass) as? CoreOptional.Type else {
+            ILOG("CoreOptions: core.principleClass not a valid CoreOptional subclass: \(core.principleClass)")
             return nil
         }
-        DLOG("core.principleClass loading options: \(core.principleClass)")
-        self.coreClass = coreClass
-        self.optionCount = CoreListItem.countOptions(in: self.coreClass.options)
 
-        let isAppStore = await AppState.shared.isAppStore
-        self.systems = core.supportedSystems.compactMap { system in
-            /// Hide system if it's app store disabled and we're in app store mode with unsupported cores off
+        DLOG("CoreOptions: \(principleClass) loading options...")
+        self.coreClass = coreClass
+
+        let optionCount = CoreListItem.countOptions(in: self.coreClass.options)
+        self.optionCount = optionCount
+
+        ILOG("CoreOptions: Found \(optionCount) options for core \(id)")
+        let isAppStore = AppState.shared.isAppStore
+
+        // Process systems synchronously since we're already in an async context
+        var systemsData: [SystemDisplayData] = []
+        for system in core.supportedSystems {
             if isAppStore && system.appStoreDisabled && !Defaults[.unsupportedCores] {
-                return nil
+                DLOG("CoreOptions: Hiding options for system \(system.identifier) as it's app store disabled")
+                continue
             }
-            return SystemDisplayData(id: system.identifier, name: system.name, iconName: system.iconName)
+            systemsData.append(SystemDisplayData(id: system.identifier, name: system.name, iconName: system.iconName))
         }
+
+        self.systems = systemsData
     }
 
     /// Recursively count all options, including those in groups
@@ -66,11 +93,18 @@ private struct CoreListItem: Identifiable {
 
 /// View that lists all cores that implement CoreOptional
 struct CoreOptionsListView: View {
+    /// The cores in the database
     @ObservedResults(PVCore.self) private var cores
+    /// The text in the search bar
     @State private var searchText = ""
+    /// Whether to show unsupported cores
     @Default(.unsupportedCores) private var unsupportedCores
+    /// The items in the list
     @State private var coreItems: [CoreListItem] = []
+    /// The theme manager
+    @ObservedObject private var themeManager = ThemeManager.shared
 
+    /// The body of the view
     var body: some View {
         List {
             ForEach(coreItems) { item in
@@ -84,26 +118,41 @@ struct CoreOptionsListView: View {
         .searchable(text: $searchText)
         .navigationTitle("Core Options")
         .task {
+            /// Load the core items
+            DLOG("CoreOptions: Loading core items for \(cores.count) cores")
             await loadCoreItems()
         }
     }
 
+    /// Load the core items
     private func loadCoreItems() async {
+        ILOG("CoreOptions: Loading core items for \(cores.count) cores")
         var items: [CoreListItem] = []
+
+        // Process each core sequentially
         for core in cores {
-            if let item = await CoreListItem(core: core) {
+            DLOG("CoreOptions: Processing core: \(core.identifier) (\(core.principleClass))")
+            if let item = await CoreListItem(core: core), item.optionCount > 0 {
+                DLOG("CoreOptions: Successfully created item for core: \(core.identifier)")
                 items.append(item)
+            } else {
+                DLOG("CoreOptions: Failed to create item for core or was empty: \(core.identifier)")
             }
         }
+
+        ILOG("CoreOptions: Loaded \(items.count) items")
         coreItems = items
     }
 }
 
 /// View for a single core item in the list
 private struct CoreListItemView: View {
+    /// The item in the list
     let item: CoreListItem
+    /// The theme manager
     @ObservedObject private var themeManager = ThemeManager.shared
 
+    /// The body of the view
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(item.name)
@@ -143,9 +192,12 @@ private struct CoreListItemView: View {
 
 /// Updated SearchBar component
 private struct SearchBar: View {
+    /// The text in the search bar
     @Binding var text: String
+    /// If in a search
     @Binding var isSearching: Bool
 
+    /// The body of the view
     var body: some View {
         HStack {
             HStack {

@@ -1,5 +1,6 @@
 import Foundation
 import PVCoreBridge
+import PVLogging
 
 /// Helper class to load RetroArch core options
 class RetroArchCoreOptionsLoader {
@@ -38,11 +39,13 @@ class RetroArchCoreOptionsLoader {
     private func getCoreOptions() -> [CoreOption]? {
         /// Get the retro_environment function pointer
         guard let retroEnvironment = getFunctionPointer(name: "retro_environment") as (@convention(c) (UInt32, UnsafeMutableRawPointer?) -> Bool)? else {
+            ELOG("Failed to find symbol for `retro_environment`, \(corePath)")
             return nil
         }
 
         /// Get the retro_set_environment function pointer
         guard let retroSetEnvironment = getFunctionPointer(name: "retro_set_environment") as (@convention(c) (@convention(c) (UInt32, UnsafeMutableRawPointer?) -> Bool) -> Void)? else {
+            ELOG("Failed to find symbol for `retro_set_environment`, \(corePath)")
             return nil
         }
 
@@ -80,6 +83,7 @@ private class EnvironmentCallbackHandler {
     var options: [CoreOption] = []
 
     func reset() {
+        ELOG("Resetting...")
         options.removeAll()
     }
 

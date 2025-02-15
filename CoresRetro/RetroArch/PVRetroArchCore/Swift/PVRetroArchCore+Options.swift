@@ -6,7 +6,7 @@ import PVLogging
 
 extension PVRetroArchCoreOptions: SubCoreOptional {
     
-    public static func options(forSubcoreIdentifier identifier: String, systemName: String) async -> [CoreOption]? {
+    public static func options(forSubcoreIdentifier identifier: String, systemName: String) -> [CoreOption]? {
         var subCoreOptions: [CoreOption] = []
         var isDOS = false
 
@@ -46,10 +46,10 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
             isDOS=true
             subCoreOptions.append(numKeyControllerOption)
         }
-        if await EmulationState.shared.isOn,
-           systemName.contains("appleII") {
-            subCoreOptions.append(apple2MachineOption)
-        }
+//        if EmulationState.shared.isOn,
+//           systemName.contains("appleII") {
+//            subCoreOptions.append(apple2MachineOption)
+//        }
         analogKeyControllerOption = {
             .bool(.init(
                 title: ENABLE_ANALOG_KEY,
@@ -66,22 +66,22 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
 
         coreOptions.append(contentsOf: [subCoreGroup])
 
-//        // Load dynamic options from RetroArch core
-//        let frameworkIdentifier: String = identifier.replacingOccurrences(of: ".framework", with: "")
-//        let frameworkPath = Bundle.main.bundlePath + "/Frameworks/" + identifier
-//        let corePath = "\(frameworkPath)/\(frameworkIdentifier)"
-//        ILOG("frameworkIdentifier: \(frameworkIdentifier), frameworkPath: \(frameworkPath), corePath: \(corePath)")
-//        let loader = RetroArchCoreOptionsLoader(corePath: corePath)
-//        if let dynamicOptions = loader.loadCoreOptions() {
-//            let dynamicGroup: CoreOption = .group(
-//                .init(
-//                    title: "Dynamic Options",
-//                    description: "Options loaded from RetroArch core"
-//                ),
-//                subOptions: dynamicOptions
-//            )
-//            coreOptions.append(dynamicGroup)
-//        }
+        // Load dynamic options from RetroArch core
+        let frameworkIdentifier: String = identifier.replacingOccurrences(of: ".framework", with: "")
+        let frameworkPath = Bundle.main.bundlePath + "/Frameworks/" + identifier
+        let corePath = "\(frameworkPath)/\(frameworkIdentifier)"
+        ILOG("frameworkIdentifier: \(frameworkIdentifier), frameworkPath: \(frameworkPath), corePath: \(corePath)")
+        let loader = RetroArchCoreOptionsLoader(corePath: corePath)
+        if let dynamicOptions = loader.loadCoreOptions() {
+            let dynamicGroup: CoreOption = .group(
+                .init(
+                    title: "Dynamic Options",
+                    description: "Options loaded from RetroArch core"
+                ),
+                subOptions: dynamicOptions
+            )
+            coreOptions.append(dynamicGroup)
+        }
 
         return coreOptions
     }
@@ -244,17 +244,17 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
 
 // MARK: - PVRetroArchCoreCore
 
-extension PVRetroArchCoreCore: CoreOptional, SubCoreOptional {
+extension PVRetroArchCoreCore: @preconcurrency CoreOptional, SubCoreOptional {
     @MainActor
     public static var options: [PVCoreBridge.CoreOption] {
         return PVRetroArchCoreOptions.options
     }
 
     @MainActor
-    public static func options(forSubcoreIdentifier identifier: String, systemName: String) async -> [PVCoreBridge.CoreOption]? {
+    public static func options(forSubcoreIdentifier identifier: String, systemName: String) -> [PVCoreBridge.CoreOption]? {
         let identifier = EmulationState.shared.coreClassName
         let systemName = EmulationState.shared.systemName
-        return await PVRetroArchCoreOptions.options(forSubcoreIdentifier: identifier, systemName: systemName)
+        return PVRetroArchCoreOptions.options(forSubcoreIdentifier: identifier, systemName: systemName)
     }
 }
 
