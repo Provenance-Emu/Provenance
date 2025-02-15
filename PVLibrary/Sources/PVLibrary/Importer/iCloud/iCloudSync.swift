@@ -61,10 +61,14 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     let fileManager = FileManager.default
     let notificationCenter: NotificationCenter
     var status: iCloudSyncStatus = .initialUpload
+    let errorHandler: ErrorHandler
     
-    init(directories: Set<String>, notificationCenter: NotificationCenter) {
+    init(directories: Set<String>,
+         notificationCenter: NotificationCenter,
+         errorHandler: ErrorHandler) {
         self.notificationCenter = notificationCenter
         self.directories = directories
+        self.errorHandler = errorHandler
     }
     
     deinit {
@@ -215,11 +219,12 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                             }
                             DLOG("Download started for: \(file)")
                         } catch {
+                            self?.errorHandler.handleError(error, file: file)
                             DLOG("Failed to start download: \(error)")
                         }
                     case NSMetadataUbiquitousItemDownloadingStatusCurrent:
                         DLOG("item up to date: \(file)")
-                        if !fileManager.fileExists(atPath: file.path) {
+                    if !fileManager.fileExists(atPath: file.pathDecoded) {
                             DLOG("file DELETED from iCloud: \(file)")
                             self?.deleteFromDatastore(file)
                         } else {
@@ -254,8 +259,9 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                                   containerDestination: iCloudDirectory,
                                   existingClosure: { existing in
                 do {
-                    try fileManager.removeItem(atPath: existing.path)
+                    try fileManager.removeItem(atPath: existing.pathDecoded)
                 } catch {
+                    errorHandler.handleError(error, file: existing)
                     ELOG("error deleting existing file that already exists in iCloud: \(existing), \(error)")
                 }
             }) { currentSource, currentDestination in
@@ -282,6 +288,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                 do {
                     try fileManager.evictUbiquitousItem(at: existing)
                 } catch {//this happens when a file is being presented on the UI (saved states image) and thus we can't remove the icloud download
+                    errorHandler.handleError(error, file: existing)
                     ELOG("error evicting iCloud file: \(existing), \(error)")
                 }
             }) { currentSource, currentDestination in
@@ -289,6 +296,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                 do {
                     try fileManager.evictUbiquitousItem(at: currentSource)
                 } catch {//this happens when a file is being presented on the UI (saved states image) and thus we can't remove the icloud download
+                    errorHandler.handleError(error, file: currentSource)
                     ELOG("error evicting iCloud file: \(currentSource), \(error)")
                 }
             }
@@ -304,47 +312,50 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                    existingClosure: ((URL) -> Void),
                    moveClosure: (URL, URL) throws -> Void) -> SyncResult {
         DLOG("source: \(source)")
-        guard fileManager.fileExists(atPath: source.path)
+        guard fileManager.fileExists(atPath: source.pathDecoded)
         else {
             return .fileNotExist
         }
         do {
-            let subdirectories = try fileManager.subpathsOfDirectory(atPath: source.path)
+            let subdirectories = try fileManager.subpathsOfDirectory(atPath: source.pathDecoded)
             DLOG("subdirectories of \(source): \(subdirectories)")
             for currentChild in subdirectories {
                 let currentItem = source.appendingPathComponent(currentChild)
                 
                 var isDirectory: ObjCBool = false
-                let exists = fileManager.fileExists(atPath: currentItem.path, isDirectory: &isDirectory)
+                let exists = fileManager.fileExists(atPath: currentItem.pathDecoded, isDirectory: &isDirectory)
                 DLOG("\(currentItem) isDirectory?\(isDirectory) exists?\(exists)")
                 let destination = containerDestination.appendingPathComponent(currentChild)
                 DLOG("new destination: \(destination)")
-                if isDirectory.boolValue && !fileManager.fileExists(atPath: destination.path) {
+                if isDirectory.boolValue && !fileManager.fileExists(atPath: destination.pathDecoded) {
                     DLOG("\(destination) does NOT exist")
                     do {
-                        try fileManager.createDirectory(atPath: destination.path, withIntermediateDirectories: true)
+                        try fileManager.createDirectory(atPath: destination.pathDecoded, withIntermediateDirectories: true)
                     } catch {
-                        DLOG("error creating directory: \(destination.path), \(error)")
+                        errorHandler.handleError(error, file: destination)
+                        DLOG("error creating directory: \(destination.pathDecoded), \(error)")
                     }
                 }
                 if isDirectory.boolValue {
                     continue
                 }
-                if fileManager.fileExists(atPath: destination.path) {
+                if fileManager.fileExists(atPath: destination.pathDecoded) {
                     existingClosure(currentItem)
                     continue
                 }
                 do {
-                    ILOG("Trying to move \(currentItem.path) to \(destination.path)")
+                    ILOG("Trying to move \(currentItem.pathDecoded) to \(destination.pathDecoded)")
                     try moveClosure(currentItem, destination)
                     insertUploadedFile(destination)
                 } catch {
+                    errorHandler.handleError(error, file: currentItem)
                     //this could indicate no more space is left when moving to iCloud
-                    ELOG("failed to move \(currentItem.path) to \(destination.path): \(error)")
+                    ELOG("failed to move \(currentItem.pathDecoded) to \(destination.pathDecoded): \(error)")
                 }
             }
             return .success
         } catch {
+            errorHandler.handleError(error, file: source)
             ELOG("failed to get directory contents: \(error)")
             return .saveFailure
         }
@@ -354,6 +365,13 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
 extension Int64 {
     var toGb: String {
         String(format: "%.2f GBs", Double(self / (1024 * 1024 * 1024)))
+    }
+}
+
+extension URL {
+    /// calls URL.path(percentEncoded: false) which is the same as the upcoming deprecation of URL.path
+    var pathDecoded: String {
+        path(percentEncoded: false)
     }
 }
 
@@ -368,6 +386,7 @@ public enum iCloudSync {
     static var disposeBag: DisposeBag!
     static var gameImporter = GameImporter.shared
     static var state: iCloudSync = .initialAppLoad
+    static let errorHandler: ErrorHandler = iCloudErrorHandler.shared
     
     public static func initICloudDocuments() {
         Task {
@@ -403,6 +422,7 @@ public enum iCloudSync {
                 let newTokenData = try NSKeyedArchiver.archivedData(withRootObject: currentiCloudToken, requiringSecureCoding: false)
                 UserDefaults.standard.set(newTokenData, forKey: UbiquityIdentityTokenKey)
             } catch {
+                errorHandler.handleError(error, file: nil)
                 ELOG("error serializing iCloud token: \(error)")
             }
         } else {
@@ -411,7 +431,9 @@ public enum iCloudSync {
 
         //TODO: should we pause when a game starts so we don't interfere with the game and continue listening when no game is running?
         disposeBag = DisposeBag()
-        var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots"], notificationCenter: .default)
+        var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots"],
+                                                                  notificationCenter: .default,
+                                                                  errorHandler: iCloudErrorHandler.shared)
         nonDatabaseFileSyncer.loadAllFromICloud()
             .observe(on: MainScheduler.instance)
             .subscribe(onError: { error in
@@ -420,7 +442,7 @@ public enum iCloudSync {
                 DLOG("disposing nonDatabaseFileSyncer")
                 nonDatabaseFileSyncer = nil
             }.disposed(by: disposeBag)
-        var saveStateSyncer: SaveStateSyncer! = .init(notificationCenter: .default)
+        var saveStateSyncer: SaveStateSyncer! = .init(notificationCenter: .default, errorHandler: iCloudErrorHandler.shared)
         saveStateSyncer.loadAllFromICloud() {
                 saveStateSyncer.importNewSaves()
             }.observe(on: MainScheduler.instance)
@@ -431,7 +453,7 @@ public enum iCloudSync {
                 saveStateSyncer = nil
             }.disposed(by: disposeBag)
         
-        var romsSyncer: RomsSyncer! = .init(notificationCenter: .default)
+        var romsSyncer: RomsSyncer! = .init(notificationCenter: .default, errorHandler: iCloudErrorHandler.shared)
         romsSyncer.loadAllFromICloud() {
                 romsSyncer.importNewRomFiles()
             }.observe(on: MainScheduler.instance)
@@ -474,8 +496,8 @@ public enum iCloudSync {
 //TODO: perhaps 1 generic class since a lot of this code is similar and move the extension onto generic class. we could just add a protocol delegate dependency for ROMs and SaveState classes that does specific code
 class SaveStateSyncer: iCloudContainerSyncer {
     let jsonDecorder = JSONDecoder()
-    convenience init(notificationCenter: NotificationCenter) {
-        self.init(directories: ["Save States"], notificationCenter: notificationCenter)
+    convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
+        self.init(directories: ["Save States"], notificationCenter: notificationCenter, errorHandler: errorHandler)
         jsonDecorder.dataDecodingStrategy = .deferredToData
         notificationCenter.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil) { [weak self] _ in
             self?.importNewSaves()
@@ -513,6 +535,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
                 realm.delete(existingSave)
             }
         } catch {
+            errorHandler.handleError(error, file: file)
             ELOG("error delating from database: \(error)")
         }
     }
@@ -526,7 +549,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
             }
         }
         
-        var dataMaybe = fileManager.contents(atPath: json.path)
+        var dataMaybe = fileManager.contents(atPath: json.pathDecoded)
         if dataMaybe == nil {
             dataMaybe = try Data(contentsOf: json, options: [.uncached])
         }
@@ -577,6 +600,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
                                         existing.game = game
                                     }
                                 } catch {
+                                    self?.errorHandler.handleError(error, file: json)
                                     ELOG("Failed to update game: \(error)")
                                 }
                             }
@@ -591,6 +615,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
                                     realm.add(newSave, update: .all)
                                 }
                             } catch {
+                                self?.errorHandler.handleError(error, file: json)
                                 ELOG("error adding new save: \(error)")
                             }
                         } else {
@@ -598,6 +623,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
                         }
                         ILOG("Added new save \(newSave.debugDescription)")
                     } catch {
+                        self?.errorHandler.handleError(error, file: json)
                         ELOG("Decode error: \(error)")
                         return
                     }
@@ -610,8 +636,8 @@ class SaveStateSyncer: iCloudContainerSyncer {
 class RomsSyncer: iCloudContainerSyncer {
     let gameImporter = GameImporter.shared
     
-    convenience init(notificationCenter: NotificationCenter) {
-        self.init(directories: ["ROMs"], notificationCenter: notificationCenter)
+    convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
+        self.init(directories: ["ROMs"], notificationCenter: notificationCenter, errorHandler: errorHandler)
         notificationCenter.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil) { [weak self] _ in
             self?.importNewRomFiles()
         }
@@ -647,6 +673,7 @@ class RomsSyncer: iCloudContainerSyncer {
                 return
             }
         } catch {
+            errorHandler.handleError(error, file: file)
             ELOG("error searching existing ROM: \(error)")
         }
         
@@ -678,6 +705,7 @@ class RomsSyncer: iCloudContainerSyncer {
                 realm.delete(game)
             }
         } catch {
+            errorHandler.handleError(error, file: file)
             ELOG("error deleting ROM from database: \(error)")
         }
     }
@@ -700,5 +728,84 @@ class RomsSyncer: iCloudContainerSyncer {
         uploadedFiles.removeAll()
         gameImporter.addImports(forPaths: importPaths)
         gameImporter.startProcessing()
+    }
+}
+
+struct iCloudSyncError {
+    let file: String?
+    var summary: String {
+        error.localizedDescription
+    }
+    let error: Error
+}
+
+protocol Queue {
+    associatedtype Entry
+    var count: Int { get }
+    mutating func enqueue(entry: Entry)
+    mutating func dequeue() -> Entry?
+    func peek() -> Entry?
+    mutating func clear()
+}
+
+struct iCloudErrorsQueue: Queue {
+    var errors = [iCloudSyncError]()
+    
+    var count: Int {
+        errors.count
+    }
+    
+    mutating func enqueue(entry: iCloudSyncError) {
+        errors.insert(entry, at: 0)
+    }
+    
+    mutating func dequeue() -> iCloudSyncError? {
+        guard !errors.isEmpty
+        else {
+            return nil
+        }
+        return errors.removeFirst()
+    }
+    
+    func peek() -> iCloudSyncError? {
+        errors.first
+    }
+    
+    mutating func clear() {
+        errors.removeAll()
+    }
+}
+
+protocol ErrorHandler {
+    var allErrorSummaries: [String] { get }
+    var allFullErrors: [String] { get }
+    var allErrors: [iCloudSyncError] { get }
+    func handleError(_ error: Error, file: URL?)
+    func clear()
+}
+
+class iCloudErrorHandler: ErrorHandler {
+    static let shared = iCloudErrorHandler()
+    var queue = iCloudErrorsQueue()
+    
+    var allErrorSummaries: [String] {
+        queue.errors.map { $0.summary }
+    }
+    
+    var allFullErrors: [String] {
+        queue.errors.map { "\($0.error)" }
+    }
+    
+    var allErrors: [iCloudSyncError] {
+        queue.errors
+    }
+    
+    func handleError(_ error: any Error, file: URL?) {
+        let syncError = iCloudSyncError(file: file?.path(percentEncoded: false), error: error)
+        queue.enqueue(entry: syncError)
+    }
+    
+    func clear() {
+        queue.clear()
     }
 }
