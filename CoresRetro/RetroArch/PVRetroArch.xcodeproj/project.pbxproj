@@ -243,6 +243,8 @@
 		B364D5CB2CD2A8B70082D177 /* Unrar in Frameworks */ = {isa = PBXBuildFile; productRef = B364D5CA2CD2A8B70082D177 /* Unrar */; };
 		B37106F42D51AFC300688298 /* RetroArchCoreOptionsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37106F32D51AFC300688298 /* RetroArchCoreOptionsLoader.swift */; };
 		B37C00592BFF6A1000FEC6AC /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B37C00582BFF6A1000FEC6AC /* MoltenVK */; };
+		B39FAC3F2D6013EC0065B66B /* SDL2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */; };
+		B39FAC422D6013F50065B66B /* SDL2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */; };
 		B3C439532BF442920021B9C3 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B3C439522BF442920021B9C3 /* PVSupport */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
@@ -255,6 +257,7 @@
 		B3FC975E2CB8D44400C6DB31 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3FC975D2CB8D44400C6DB31 /* PVPlists */; };
 		B3FD53ED2CD17D8200175917 /* JITSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FD53EB2CD17D8200175917 /* JITSupport.m */; };
 		B3FD53FB2CD17E2200175917 /* dispserv_apple.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FD53FA2CD17E2200175917 /* dispserv_apple.m */; };
+		B3FD94832D60591A00397643 /* coremidi.c in Sources */ = {isa = PBXBuildFile; fileRef = B3FD94702D6016F700397643 /* coremidi.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -840,6 +843,7 @@
 		B3632A512D15161300041145 /* PVRetroArchCore+Controls+DOS.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+DOS.m"; sourceTree = "<group>"; };
 		B37106F32D51AFC300688298 /* RetroArchCoreOptionsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetroArchCoreOptionsLoader.swift; sourceTree = "<group>"; };
 		B39C4BEA2BF3430B00F199BB /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework; sourceTree = "<group>"; };
+		B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SDL2.xcframework; path = ../../Dependencies/SDL2.xcframework; sourceTree = "<group>"; };
 		B3C7621020783162009950E4 /* PVRetroArch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVRetroArch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVRetroArch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVRetroArch.h; sourceTree = "<group>"; };
 		B3C7621420783162009950E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -856,6 +860,8 @@
 		B3FD53EB2CD17D8200175917 /* JITSupport.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JITSupport.m; sourceTree = "<group>"; };
 		B3FD53FA2CD17E2200175917 /* dispserv_apple.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = dispserv_apple.m; sourceTree = "<group>"; };
 		B3FD53FC2CD1889700175917 /* griffin_cpp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = griffin_cpp.cpp; sourceTree = "<group>"; };
+		B3FD94702D6016F700397643 /* coremidi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = coremidi.c; sourceTree = "<group>"; };
+		B3FD94812D60518B00397643 /* coremidi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = coremidi.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -890,6 +896,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B39FAC3F2D6013EC0065B66B /* SDL2.xcframework in Frameworks */,
 				93AA124F296DCE58007C9808 /* libiconv.tbd in Frameworks */,
 				93AA124D296DCE52007C9808 /* libz.tbd in Frameworks */,
 			);
@@ -941,6 +948,7 @@
 				B30C8C8C2BF45BDC00C91991 /* PVEmulatorCore in Frameworks */,
 				93B716E32965922200F4CDC7 /* MobileCoreServices.framework in Frameworks */,
 				93B716E02965921000F4CDC7 /* CoreVideo.framework in Frameworks */,
+				B39FAC422D6013F50065B66B /* SDL2.xcframework in Frameworks */,
 				93B716E12965921000F4CDC7 /* CoreText.framework in Frameworks */,
 				93B716DC296591EE00F4CDC7 /* CoreMedia.framework in Frameworks */,
 				93B716DD296591EE00F4CDC7 /* CoreAudioKit.framework in Frameworks */,
@@ -1649,6 +1657,8 @@
 		B30C8C812BF45AE200C91991 /* retroarch */ = {
 			isa = PBXGroup;
 			children = (
+				B3FD94702D6016F700397643 /* coremidi.c */,
+				B3FD94812D60518B00397643 /* coremidi.m */,
 				B3FD53FC2CD1889700175917 /* griffin_cpp.cpp */,
 				B30C8C7D2BF45AE200C91991 /* griffin_slang.cpp */,
 				B30C8C7E2BF45AE200C91991 /* griffin.c */,
@@ -1780,6 +1790,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */,
 				B3CC63152BEF0CD0002F3C8B /* MoltenVK.xcframework */,
 				B39C4BEA2BF3430B00F199BB /* MoltenVK.xcframework */,
 				93B3B1942A8CAB0E00B60325 /* liblzma.tbd */,
@@ -2075,6 +2086,9 @@
 					93B66BBF2967F05A00A621DD = {
 						CreatedOnToolsVersion = 14.2;
 					};
+					93B66C18296854C000A621DD = {
+						LastSwiftMigration = 1620;
+					};
 					93BC0F642A4C05E0003D97EC = {
 						CreatedOnToolsVersion = 15.0;
 					};
@@ -2280,6 +2294,7 @@
 				B30C8C822BF45AE200C91991 /* griffin_slang.cpp in Sources */,
 				935E7D5329A4CA7F00D92748 /* griffin_cpp.cpp in Sources */,
 				B30C8C832BF45AE200C91991 /* griffin.c in Sources */,
+				B3FD94832D60591A00397643 /* coremidi.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2563,6 +2578,7 @@
 			buildSettings = {
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+				CLANG_ENABLE_MODULES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEPS_DIR = ./RetroArch/deps;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
@@ -2600,6 +2616,7 @@
 					"$(DEPS_DIR)/glslang/glslang/glslang/OSDependent/Unix",
 					"$(DEPS_DIR)/glslang/glslang/SPIRV",
 					"$(DEPS_DIR)/glslang/glslang/glslang/MachineIndependent",
+					"\"$(SRCROOT)/RetroArch/deps/7zip\"",
 					./RetroArch/gfx/drivers/,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
@@ -2620,6 +2637,7 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
@@ -2877,6 +2895,7 @@
 					"./RetroArch/libretro-common/include/file",
 					"./RetroArch/libretro-common/include",
 					./RetroArch/input/include/GameController/,
+					"\"$(SRCROOT)/RetroArch/deps/7zip\"",
 					"$(SRCROOT)/PVRetroArchCore/Archive/LzhArchive",
 					"$(SRCROOT)/PVRetroArchCore/Archive/ZipArchive/SSZipArchive",
 					"$(SRCROOT)/PVRetroArchCore/Archive/RarArchive",
@@ -3093,6 +3112,7 @@
 					"./RetroArch/libretro-common/include/file",
 					"./RetroArch/libretro-common/include",
 					./RetroArch/input/include/GameController/,
+					"\"$(SRCROOT)/RetroArch/deps/7zip\"",
 					"$(SRCROOT)/PVRetroArchCore/Archive/LzhArchive",
 					"$(SRCROOT)/PVRetroArchCore/Archive/ZipArchive/SSZipArchive",
 					"$(SRCROOT)/PVRetroArchCore/Archive/RarArchive",
@@ -3155,6 +3175,7 @@
 			buildSettings = {
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+				CLANG_ENABLE_MODULES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEPS_DIR = ./RetroArch/deps;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
@@ -3191,6 +3212,7 @@
 					"$(DEPS_DIR)/glslang/glslang/glslang/OSDependent/Unix",
 					"$(DEPS_DIR)/glslang/glslang/SPIRV",
 					"$(DEPS_DIR)/glslang/glslang/glslang/MachineIndependent",
+					"\"$(SRCROOT)/RetroArch/deps/7zip\"",
 					./RetroArch/gfx/drivers/,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
@@ -3211,6 +3233,7 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
