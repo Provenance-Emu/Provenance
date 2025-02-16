@@ -295,17 +295,40 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     @Published public private(set) var featureStates: [PVFeatureFlags.PVFeature: Bool] = [:]
 
     /// Dictionary to store debug overrides - persisted in UserDefaults
-    @Published public private(set) var debugOverrides: [PVFeatureFlags.PVFeature: Bool] = [:]
+    private var _debugOverrides: [PVFeatureFlags.PVFeature: Bool] = [:] {
+        didSet {
+            // Convert PVFeature dictionary to string dictionary for storage
+            let stringDict = Dictionary(uniqueKeysWithValues: _debugOverrides.map { ($0.key.rawValue, $0.value) })
+            UserDefaults.standard.set(stringDict, forKey: "PVFeatureFlagsDebugOverrides")
+            objectWillChange.send()
+        }
+    }
+
+    public var debugOverrides: [PVFeatureFlags.PVFeature: Bool] {
+        get {
+            if _debugOverrides.isEmpty {
+                // Load from UserDefaults on first access
+                if let savedOverrides = UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides") as? [String: Bool] {
+                    _debugOverrides = Dictionary(uniqueKeysWithValues: savedOverrides.compactMap { key, value in
+                        if let feature = PVFeatureFlags.PVFeature(rawValue: key) {
+                            return (feature, value)
+                        }
+                        return nil
+                    })
+                }
+            }
+            return _debugOverrides
+        }
+        set {
+            _debugOverrides = newValue
+        }
+    }
 
     /// Dictionary to store remote feature flags
     private var remoteFlags: [String: Bool] = [:]
 
     private init() {
         self.featureFlags = PVFeatureFlags()
-        // Load any persisted debug overrides
-        if let savedOverrides = UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides") as? [String: Bool] {
-            print("Loaded debug overrides from UserDefaults: \(savedOverrides)")
-        }
     }
 
     /// Initialize with custom parameters for testing
@@ -375,7 +398,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         print("Setting debug override for \(feature) to: \(enabled)")
         var currentOverrides = debugOverrides
         currentOverrides[feature] = enabled
-        debugOverrides = currentOverrides
+        debugOverrides = currentOverrides  // This will trigger the setter and save to UserDefaults
         print("Current debug overrides: \(debugOverrides)")
         // Update cached states
         updateFeatureStates()
@@ -414,7 +437,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     /// Clear all debug overrides
     public func clearDebugOverrides() {
         print("Clearing all debug overrides")
-        debugOverrides = [:]
+        debugOverrides = [:]  // This will trigger the setter and save to UserDefaults
         updateFeatureStates()
     }
 
@@ -423,7 +446,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         print("Clearing debug override for \(feature)")
         var currentOverrides = debugOverrides
         currentOverrides.removeValue(forKey: feature)
-        debugOverrides = currentOverrides
+        debugOverrides = currentOverrides  // This will trigger the setter and save to UserDefaults
         updateFeatureStates()
     }
 
