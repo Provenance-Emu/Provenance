@@ -48,11 +48,13 @@ extension PVRootViewController: PVRootDelegate {
         self.presentCoreSelection(forGame: game.warmUp(), sender: sender)
     }
 
-    public func attemptToDelete(game: PVGame, deleteSaves: Bool) {
-        do {
-            try self.delete(game: game, deleteSaves: deleteSaves)
-        } catch {
-            self.presentError(error.localizedDescription, source: self.view)
+    public func attemptToDelete(game: PVGame, deleteSaves: Bool) {//TODO: add localization string
+        presentCancellableMessage("Are you sure you want to delete \"\(game.title)\"?", title: "Delete ROM?", source: view) {
+            do {
+                try self.delete(game: game, deleteSaves: deleteSaves)
+            } catch {
+                self.presentError(error.localizedDescription, source: self.view)
+            }
         }
     }
 
