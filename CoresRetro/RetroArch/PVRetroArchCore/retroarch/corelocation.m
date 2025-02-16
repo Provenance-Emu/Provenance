@@ -48,7 +48,7 @@
 }
 
 - (void)requestAuthorization {
-    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined) {
+    if (_locationManager.authorizationStatus == kCLAuthorizationStatusNotDetermined) {
         [_locationManager requestWhenInUseAuthorization];
     }
 }
@@ -99,7 +99,9 @@ static bool corelocation_start(void *data) {
     if (!corelocation || !corelocation->manager.authorized)
         return false;
 
+#if !TARGET_OS_TV
     [corelocation->manager.locationManager startUpdatingLocation];
+#endif
     return true;
 }
 
