@@ -84,7 +84,9 @@ struct PVSearchBar: View {
         HStack {
             TextField("Search", text: $text)
                 .padding(8)
+            #if !os(tvOS)
                 .background(Color(.systemGray6))
+            #endif
                 .cornerRadius(8)
                 .padding(.horizontal, 8)
 

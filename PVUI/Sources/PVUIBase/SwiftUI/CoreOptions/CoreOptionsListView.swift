@@ -181,7 +181,9 @@ private struct CoreListItemView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
+        #if !os(tvOS)
         .background(Color(.systemBackground))
+        #endif
         .cornerRadius(10)
         .overlay(
             RoundedRectangle(cornerRadius: 10)
@@ -219,7 +221,9 @@ private struct SearchBar: View {
                     }
                 }
             }
+            #if !os(tvOS)
             .background(Color(.systemGray6))
+            #endif
             .cornerRadius(8)
 
             if isSearching {

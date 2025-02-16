@@ -19,7 +19,11 @@ final class MenuButton: UIButton, HitAreaEnlarger {
         // Ensure the button stays within safe area bounds
         if let superview = superview {
             let safeArea = superview.safeAreaLayoutGuide.layoutFrame
+#if !os(tvOS)
             let isLandscape = UIDevice.current.orientation.isLandscape
+#else
+            let isLandscape = true
+#endif
             let minX = safeArea.minX + (isLandscape ? 20 : 10)
 
             if frame.minX < minX {

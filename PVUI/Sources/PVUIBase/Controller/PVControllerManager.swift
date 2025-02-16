@@ -557,7 +557,7 @@ public final class PVControllerManager: NSObject {
 
     // MARK: - Controller User Interaction (ie use controller to drive UX)
 
-#if os(iOS)
+#if !os(tvOS)
     //
     // make a *cheap* *simple* version of the FocusSystem
     // get controller input and turn it into button presses menu,select,up,down,left,right

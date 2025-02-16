@@ -99,7 +99,7 @@ public extension PVEmualatorControllerProtocol {
 }
 
 // MARK: Controllers
-public extension PVEmualatorControllerProtocol {
+public extension PVEmualatorControllerProtocol where Self: GCEventViewController {
 
     @MainActor
     func enableControllerInput(_ enabled: Bool) {
@@ -111,10 +111,22 @@ public extension PVEmualatorControllerProtocol {
         //    if (@available(iOS 10, *)) {
         //        self.controllerUserInteractionEnabled = enabled;
         //    }
+        controllerUserInteractionEnabled = enabled
         PVControllerManager.shared.controllerUserInteractionEnabled = enabled
 #endif
     }
 }
+
+public extension PVEmualatorControllerProtocol {
+
+    @MainActor
+    func enableControllerInput(_ enabled: Bool) {
+#if !os(tvOS)
+        PVControllerManager.shared.controllerUserInteractionEnabled = enabled
+#endif
+    }
+}
+
 
 // MARK: Paths
 public extension PVEmualatorControllerProtocol {

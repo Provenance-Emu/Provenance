@@ -87,12 +87,14 @@ struct GameItemViewCell: View {
                                 .opacity(glowIntensity)
                         )
                         .shadow(color: glowColor.opacity(0.5 * glowIntensity), radius: 10, x: 0, y: 0)
+                    #if !os(tvOS)
                         .onHover { hovering in
                             withAnimation(.easeInOut(duration: 0.2)) {
                                 hoverScale = hovering ? 1.05 : 1.0
                                 glowIntensity = hovering ? 1.0 : 0.0
                             }
                         }
+                    #endif
                 }
                 .padding(.bottom, 8) /// Add padding between artwork and text
                 

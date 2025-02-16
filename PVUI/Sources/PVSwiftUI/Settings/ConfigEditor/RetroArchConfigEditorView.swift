@@ -6,9 +6,9 @@ struct RetroArchConfigEditorView: View {
     @Binding var showImportPicker: Bool
     @ObservedObject var filterVM: ConfigFilterViewModel
     @ObservedObject var editVM: ConfigEditViewModel
-
+    
     @EnvironmentObject private var configEditor: RetroArchConfigEditorViewModel
-
+    
     var body: some View {
         ConfigListContent(
             filterVM: filterVM,
@@ -55,49 +55,70 @@ struct RetroArchConfigEditorView: View {
                     Label(
                         "Show Modified",
                         systemImage: filterVM.showOnlyModified ?
-                            "line.horizontal.3.decrease.circle.fill" :
+                        "line.horizontal.3.decrease.circle.fill" :
                             "line.horizontal.3.decrease.circle"
                     )
                 }
                 .disabled(filterVM.modifiedKeys.isEmpty)
-
-                Menu {
-                    #if !os(tvOS)
-                    Button(action: {
-                        showExportSheet = true
-                    }) {
-                        Label("Export Config", systemImage: "square.and.arrow.up")
-                    }
-
-                    Button(action: {
-                        showImportPicker = true
-                    }) {
-                        Label("Import Config", systemImage: "square.and.arrow.down")
-                    }
-
-                    Divider()
-                    #endif
-
-                    Button(action: {
-                        Task {
-                            await configEditor.reloadConfig()
+                
+                if #available(tvOS 17.0, *) {
+                    Menu {
+#if !os(tvOS)
+                        Button(action: {
+                            showExportSheet = true
+                        }) {
+                            Label("Export Config", systemImage: "square.and.arrow.up")
                         }
-                    }) {
-                        Label("Reload Current Config", systemImage: "arrow.clockwise")
-                    }
-                    .disabled(!configEditor.hasChanges)
-
-                    Button(action: {
-                        Task {
-                            await configEditor.reloadDefaultConfig()
+                        
+                        Button(action: {
+                            showImportPicker = true
+                        }) {
+                            Label("Import Config", systemImage: "square.and.arrow.down")
                         }
-                    }) {
-                        Label("Reload Default Config", systemImage: "arrow.counterclockwise")
+                        
+                        Divider()
+#endif
+                        
+                        Button(action: {
+                            Task {
+                                await configEditor.reloadConfig()
+                            }
+                        }) {
+                            Label("Reload Current Config", systemImage: "arrow.clockwise")
+                        }
+                        .disabled(!configEditor.hasChanges)
+                        
+                        Button(action: {
+                            Task {
+                                await configEditor.reloadDefaultConfig()
+                            }
+                        }) {
+                            Label("Reload Default Config", systemImage: "arrow.counterclockwise")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
                     }
-                } label: {
-                    Image(systemName: "ellipsis.circle")
+                } else {
+                    HStack {
+                        Button(action: {
+                            Task {
+                                await configEditor.reloadConfig()
+                            }
+                        }) {
+                            Label("Reload Current Config", systemImage: "arrow.clockwise")
+                        }
+                        .disabled(!configEditor.hasChanges)
+                        
+                        Button(action: {
+                            Task {
+                                await configEditor.reloadDefaultConfig()
+                            }
+                        }) {
+                            Label("Reload Default Config", systemImage: "arrow.counterclockwise")
+                        }
+                    }
                 }
-
+                
                 Button(action: {
                     Task {
                         await configEditor.saveChanges()
@@ -108,7 +129,7 @@ struct RetroArchConfigEditorView: View {
                 .disabled(!configEditor.hasChanges)
             }
         }
-        #if !os(tvOS)
+#if !os(tvOS)
         .sheet(isPresented: $showExportSheet, onDismiss: {
             showExportSheet = false
         }) {
@@ -133,6 +154,6 @@ struct RetroArchConfigEditorView: View {
                 print("Import error: \(error)")
             }
         }
-        #endif
+#endif
     }
 }
