@@ -305,6 +305,43 @@ extension ProvenanceApp: WhatsNewCollectionProvider {
                 hapticFeedback: .notification(.success)
             )
         )
+        WhatsNew(
+            version: "3.0.5",
+            title: "New Cores & System Improvements",
+            features: [
+                .init(
+                    image: .init(systemName: "gamecontroller.fill", foregroundColor: .blue),
+                    title: "New RetroArch Cores",
+                    subtitle: "Added Pokemini, BNES, BSNES HD, BSNES Mercury, GenesisPlus GX Wide, and improved FDS support with fceumm and nestopia"
+                ),
+                .init(
+                    image: .init(systemName: "music.note", foregroundColor: .purple),
+                    title: "Audio Improvements",
+                    subtitle: "Added CoreMIDI support, improved audio switching, and reduced audio glitching during gameplay"
+                ),
+                .init(
+                    image: .init(systemName: "gearshape.2.fill", foregroundColor: .orange),
+                    title: "Core Enhancements",
+                    subtitle: "Improved core options interface, better system compatibility, and enhanced feature flags system"
+                ),
+                .init(
+                    image: .init(systemName: "arrow.triangle.2.circlepath", foregroundColor: .red),
+                    title: "Performance & Stability",
+                    subtitle: "Faster system bootup, improved state management, and various crash fixes"
+                ),
+                .init(
+                    image: .init(systemName: "square.3.layers.3d.top.filled", foregroundColor: .green),
+                    title: "3DS Improvements",
+                    subtitle: "Added support for custom textures and improved graphics performance"
+                )
+            ],
+            primaryAction: .init(
+                title: "Continue",
+                backgroundColor: ThemeManager.shared.currentPalette.switchON?.swiftUIColor ?? .accentColor,
+                foregroundColor: ThemeManager.shared.currentPalette.switchThumb?.swiftUIColor ?? .white,
+                hapticFeedback: .notification(.success)
+            )
+        )
     }
 }
 #endif
