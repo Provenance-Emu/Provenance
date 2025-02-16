@@ -315,8 +315,11 @@ static void *avfoundation_init(const char *device, uint64_t caps,
         @autoreleasepool {
             setupSuccess = [avf->manager setupCameraSession];
             if (setupSuccess) {
-                [avf->manager.session startRunning];
-                RARCH_LOG("[Camera]: Started camera session\n");
+                // Start session on background thread
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    [avf->manager.session startRunning];
+                    RARCH_LOG("[Camera]: Started camera session\n");
+                });
             }
         }
     } else {
@@ -324,8 +327,11 @@ static void *avfoundation_init(const char *device, uint64_t caps,
             @autoreleasepool {
                 setupSuccess = [avf->manager setupCameraSession];
                 if (setupSuccess) {
-                    [avf->manager.session startRunning];
-                    RARCH_LOG("[Camera]: Started camera session\n");
+                    // Start session on background thread
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                        [avf->manager.session startRunning];
+                        RARCH_LOG("[Camera]: Started camera session\n");
+                    });
                 }
             }
         });
@@ -338,15 +344,15 @@ static void *avfoundation_init(const char *device, uint64_t caps,
         return NULL;
     }
 
-    // Add a check to verify the session is actually running
-    if (!avf->manager.session.isRunning) {
-        RARCH_ERR("[Camera]: Failed to start camera session\n");
-        free(avf->manager.frameBuffer);
-        free(avf);
-        return NULL;
-    }
+    // Wait a short time for the session to start
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)),
+                  dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        if (!avf->manager.session.isRunning) {
+            RARCH_ERR("[Camera]: Camera session failed to start\n");
+        }
+    });
 
-    RARCH_LOG("[Camera]: AVFoundation camera initialized and started successfully\n");
+    RARCH_LOG("[Camera]: AVFoundation camera initialized successfully\n");
     return avf;
 }
 
@@ -381,15 +387,14 @@ static bool avfoundation_start(void *data)
 
     RARCH_LOG("[Camera]: Starting AVFoundation camera\n");
 
-    if ([NSThread isMainThread]) {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [avf->manager.session startRunning];
-    } else {
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            [avf->manager.session startRunning];
-        });
-    }
+        RARCH_LOG("[Camera]: Camera session started on background thread\n");
+    });
 
-    // Verify the session actually started
+    // Give the session a moment to start
+    usleep(100000); // 100ms
+
     bool isRunning = avf->manager.session.isRunning;
     RARCH_LOG("[Camera]: Camera session running: %s\n", isRunning ? "YES" : "NO");
     return isRunning;
@@ -402,7 +407,11 @@ static void avfoundation_stop(void *data)
         return;
 
     RARCH_LOG("[Camera]: Stopping AVFoundation camera\n");
-    [avf->manager.session stopRunning];
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [avf->manager.session stopRunning];
+        RARCH_LOG("[Camera]: Camera session stopped on background thread\n");
+    });
 }
 
 static bool avfoundation_poll(void *data,
