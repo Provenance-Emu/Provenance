@@ -28,6 +28,14 @@
 #include "../../verbosity.h"
 #include "../ui_companion_driver.h"
 
+#ifdef HAVE_COREMOTION
+#import <CoreMotion/CoreMotion.h>
+static CMMotionManager *motionManager;
+#endif
+#ifdef HAVE_MFI
+#import <GameController/GameController.h>
+#endif
+
 #ifndef MAX_MFI_CONTROLLERS
 #define MAX_MFI_CONTROLLERS 16
 #endif
