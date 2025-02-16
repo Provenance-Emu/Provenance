@@ -833,6 +833,60 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
+			<string>fbalpha2012.cps1.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.cps1</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>FBAlpha CPS1 (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/fbalpha</string>
+			<key>PVProjectVersion</key>
+			<string>Nightly</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>fbalpha2012.cps2.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.cps2</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>FBAlpha CPS2 (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/fbalpha</string>
+			<key>PVProjectVersion</key>
+			<string>Nightly</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>fbalpha2012.cps3.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.cps3</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>FBAlpha CPS3 (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/fbalpha</string>
+			<key>PVProjectVersion</key>
+			<string>Nightly</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
 			<string>fbneo.libretro.framework</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
@@ -1310,6 +1364,132 @@
 			<string>VecX (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/vecx/</string>
+			<key>PVProjectVersion</key>
+			<string>Nightly</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>prboom.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.doom</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>prBoom (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/prboom/</string>
+			<key>PVProjectVersion</key>
+			<string>Nightly</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>ecwolf.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.wolf3d</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>ECWolf (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/ecwolf/</string>
+			<key>PVProjectVersion</key>
+			<string>Nightly</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>tyrquake.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.quake</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>TyrQuake (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/tyrquake/</string>
+			<key>PVProjectVersion</key>
+			<string>Nightly</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>vitaquake2.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.quake2</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>Vitaquake2 (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/vitaquake2</string>
+			<key>PVProjectVersion</key>
+			<string>Nightly</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>vitaquake2-rogue.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.quake2</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>Vitaquake2 (Rogue) (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/vitaquake2</string>
+			<key>PVProjectVersion</key>
+			<string>Nightly</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>vitaquake2-xatrix.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.quake2</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>Vitaquake2 (Xatrix) (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/vitaquake2</string>
+			<key>PVProjectVersion</key>
+			<string>Nightly</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>vitaquake2-zaero.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.quake2</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>Vitaquake2 (Zaero) (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/vitaquake2</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVAppStoreDisabled</key>
