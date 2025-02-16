@@ -26,6 +26,7 @@
 #import <UIKit/UIKit.h>
 #endif
 
+// TODO: Add an API to retroarch to allow selection of camera
 #ifndef CAMERA_PREFER_FRONTFACING
 #define CAMERA_PREFER_FRONTFACING 1  /// Default to front camera
 #endif
@@ -213,11 +214,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 
         // Determine rotation based on platform and camera type
         int rotationDegrees = 180; // Default 180-degree rotation for most cases
-#if CAMERA_MIRROR_FRONT_CAMERA
-        bool shouldMirror = true;
-#else
         bool shouldMirror = false;
-#endif
 
 #if TARGET_OS_IOS
         /// For camera rotation detection
@@ -227,7 +224,10 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
             // In portrait mode, adjust rotation based on camera type
             if (self.input.device.position == AVCaptureDevicePositionFront) {
                 rotationDegrees = 270;
+                #if CAMERA_MIRROR_FRONT_CAMERA
+                // TODO: Add an API to retroarch to allow for mirroring of front camera
                 shouldMirror = true; // Mirror front camera
+                #endif
                 RARCH_LOG("[Camera]: Using 270-degree rotation with mirroring for front camera in portrait mode\n");
             }
         }
@@ -297,17 +297,69 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
             }
         }
 
-        // Scale down to target size
-        err = vImageScale_ARGB8888(&rotatedBuffer, &dstBuffer, NULL, kvImageHighQualityResampling);
+        // Calculate aspect fill scaling
+        float sourceAspect = (float)rotatedBuffer.width / rotatedBuffer.height;
+        float targetAspect = (float)self.width / self.height;
 
-        // Free rotated/mirrored buffer as we don't need it anymore
-        free(rotatedBuffer.data);
-        free(intermediateBuffer);
+        vImage_Buffer scaledBuffer = {};
+        size_t scaledWidth, scaledHeight;
+
+        if (sourceAspect > targetAspect) {
+            // Source is wider - scale to match height
+            scaledHeight = self.height;
+            scaledWidth = (size_t)(self.height * sourceAspect);
+        } else {
+            // Source is taller - scale to match width
+            scaledWidth = self.width;
+            scaledHeight = (size_t)(self.width / sourceAspect);
+        }
+
+        RARCH_LOG("[Camera]: Aspect fill scaling from %zux%zu to %zux%zu\n",
+                  rotatedBuffer.width, rotatedBuffer.height, scaledWidth, scaledHeight);
+
+        scaledBuffer.data = malloc(scaledWidth * scaledHeight * 4);
+        if (!scaledBuffer.data) {
+            RARCH_ERR("[Camera]: Failed to allocate scaled buffer\n");
+            free(rotatedBuffer.data);
+            free(intermediateBuffer);
+            CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
+            return;
+        }
+
+        scaledBuffer.width = scaledWidth;
+        scaledBuffer.height = scaledHeight;
+        scaledBuffer.rowBytes = scaledWidth * 4;
+
+        // Scale maintaining aspect ratio
+        err = vImageScale_ARGB8888(&rotatedBuffer, &scaledBuffer, NULL, kvImageHighQualityResampling);
 
         if (err != kvImageNoError) {
             RARCH_ERR("[Camera]: Error scaling image: %ld\n", err);
+            free(scaledBuffer.data);
+            free(rotatedBuffer.data);
+            free(intermediateBuffer);
+            CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
+            return;
         }
 
+        // Center crop the scaled image into the destination buffer
+        size_t xOffset = (scaledWidth > self.width) ? (scaledWidth - self.width) / 2 : 0;
+        size_t yOffset = (scaledHeight > self.height) ? (scaledHeight - self.height) / 2 : 0;
+
+        // Copy the centered portion to the destination buffer
+        uint32_t *srcPtr = (uint32_t *)scaledBuffer.data;
+        uint32_t *dstPtr = (uint32_t *)self.frameBuffer;
+
+        for (size_t y = 0; y < self.height; y++) {
+            memcpy(dstPtr + y * self.width,
+                   srcPtr + (y + yOffset) * scaledWidth + xOffset,
+                   self.width * 4);
+        }
+
+        // Clean up
+        free(scaledBuffer.data);
+        free(rotatedBuffer.data);
+        free(intermediateBuffer);
         CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
     } // End of autorelease pool
 }
