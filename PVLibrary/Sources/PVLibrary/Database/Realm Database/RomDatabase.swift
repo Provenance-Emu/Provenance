@@ -727,9 +727,12 @@ public extension RomDatabase {
             game.recentPlays.forEach { try? $0.delete() }
             game.screenShots.forEach { try? $0.delete() }
             try game.delete()
+            RomDatabase.reloadGamesCache()
         } catch {
             // Delete the DB entry anyway if any of the above files couldn't be removed
-            do { try game.delete() } catch {
+            do { try game.delete()
+                RomDatabase.reloadGamesCache()
+            } catch {
                 ELOG("\(error.localizedDescription)")
             }
             ELOG("\(error.localizedDescription)")

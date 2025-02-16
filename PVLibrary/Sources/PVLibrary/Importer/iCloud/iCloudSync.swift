@@ -654,6 +654,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
 
 class RomsSyncer: iCloudContainerSyncer {
     let gameImporter = GameImporter.shared
+    var processingFiles = Set<URL>()
     
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
         self.init(directories: ["ROMs"], notificationCenter: notificationCenter, errorHandler: errorHandler)
@@ -725,6 +726,7 @@ class RomsSyncer: iCloudContainerSyncer {
                 game.recentPlays.forEach { try? $0.delete() }
                 game.screenShots.forEach { try? $0.delete() }
                 realm.delete(game)
+                RomDatabase.reloadGamesCache()
             }
         } catch {
             errorHandler.handleError(error, file: file)
@@ -737,6 +739,7 @@ class RomsSyncer: iCloudContainerSyncer {
         else {
             return
         }
+        clearProcessedFiles()
         guard !newFiles.isEmpty
         else {
             return
@@ -761,9 +764,13 @@ class RomsSyncer: iCloudContainerSyncer {
         }
     }
     
+    func clearProcessedFiles() {
+        gameImporter.removeSuccessfulImports(from: &processingFiles)
+    }
+    
     func importNewRomFiles() {
+        processingFiles = newFiles
         let importPaths = [URL](newFiles)
-        //"m3u", "cue"
         newFiles.removeAll()
         uploadedFiles.removeAll()
         gameImporter.addImports(forPaths: importPaths)
