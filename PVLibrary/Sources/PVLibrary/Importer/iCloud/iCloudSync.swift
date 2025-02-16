@@ -199,7 +199,15 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         var filesDownloaded: Set<URL> = []
         let queue = DispatchQueue(label: "com.provenance.newFiles")
         let removedObjects = notification.userInfo?[NSMetadataQueryUpdateRemovedItemsKey]
-        DLOG("\(directories): removedObjects: \(removedObjects)")
+        if let actualRemovedObjects = removedObjects as? [NSMetadataItem] {
+            DLOG("\(directories): actualRemovedObjects: (\(actualRemovedObjects.count)) \(actualRemovedObjects)")
+            await actualRemovedObjects.concurrentForEach { [weak self] item in
+                if let file = item.value(forAttribute: NSMetadataItemURLKey) as? URL {
+                    DLOG("file DELETED from iCloud: \(file)")
+                    self?.deleteFromDatastore(file)
+                }
+            }
+        }
         
         //accessing results automatically pauses updates and resumes after deallocated
         await metadataQuery.results.concurrentForEach { [weak self] item in
@@ -224,7 +232,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                         }
                     case NSMetadataUbiquitousItemDownloadingStatusCurrent:
                         DLOG("item up to date: \(file)")
-                    if !fileManager.fileExists(atPath: file.pathDecoded) {
+                        if !fileManager.fileExists(atPath: file.pathDecoded) {
                             DLOG("file DELETED from iCloud: \(file)")
                             self?.deleteFromDatastore(file)
                         } else {
@@ -520,20 +528,26 @@ class SaveStateSyncer: iCloudContainerSyncer {
     }
     
     override func deleteFromDatastore(_ file: URL) {
-        guard "jpg'".caseInsensitiveCompare(file.pathExtension) == .orderedSame
+        guard "jpg".caseInsensitiveCompare(file.pathExtension) == .orderedSame
         else {
             return
         }
-        do {//TODO: querying via the id will be better
+        do {
             let realm = try Realm()
             DLOG("attempting to query PVSaveState by file: \(file)")
-            let save = try getSaveFrom(file)
-            guard let existingSave = realm.object(ofType: PVSaveState.self, forPrimaryKey: save.id)
+            let gameDirectory = file.deletingLastPathComponent().lastPathComponent
+            let savesDirectory = file.deletingLastPathComponent().deletingLastPathComponent().lastPathComponent
+            let partialPath = "\(savesDirectory)/\(gameDirectory)/\(file.lastPathComponent)"
+            let imageField = NSExpression(forKeyPath: \PVSaveState.image.self).keyPath
+            let partialPathField = NSExpression(forKeyPath: \PVImageFile.partialPath.self).keyPath
+            let results = realm.objects(PVSaveState.self).filter(NSPredicate(format: "\(imageField).\(partialPathField) CONTAINS[c] %@", partialPath))
+            DLOG("saves found: \(results.count)")
+            guard let save: PVSaveState = results.first
             else {
                 return
             }
             try realm.write {
-                realm.delete(existingSave)
+                realm.delete(save)
             }
         } catch {
             errorHandler.handleError(error, file: file)
@@ -541,7 +555,11 @@ class SaveStateSyncer: iCloudContainerSyncer {
         }
     }
     
-    func getSaveFrom(_ json: URL) throws -> SaveState {
+    func getSaveFrom(_ json: URL) throws -> SaveState? {
+        guard fileManager.fileExists(atPath: json.pathDecoded)
+        else {
+            return nil
+        }
         let secureDoc = json.startAccessingSecurityScopedResource()
 
         defer {
@@ -745,6 +763,7 @@ class RomsSyncer: iCloudContainerSyncer {
     
     func importNewRomFiles() {
         let importPaths = [URL](newFiles)
+        //"m3u", "cue"
         newFiles.removeAll()
         uploadedFiles.removeAll()
         gameImporter.addImports(forPaths: importPaths)
