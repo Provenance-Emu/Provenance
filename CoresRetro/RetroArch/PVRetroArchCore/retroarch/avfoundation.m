@@ -228,7 +228,9 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
                 // TODO: Add an API to retroarch to allow for mirroring of front camera
                 shouldMirror = true; // Mirror front camera
                 #endif
+#ifdef DEBUG
                 RARCH_LOG("[Camera]: Using 270-degree rotation with mirroring for front camera in portrait mode\n");
+#endif
             }
         }
 #endif
