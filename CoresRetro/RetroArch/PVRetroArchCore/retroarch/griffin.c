@@ -325,9 +325,9 @@ VIDEO CONTEXT
 #endif
 
 #ifdef HAVE_VULKAN
-// Provenance Change
+// Provenance Change, we link our own
 //#include "../gfx/common/vulkan_common.c"
-#include "./vulkan_common.c"
+//#include "./vulkan_common.c"
 #include "../libretro-common/vulkan/vulkan_symbol_wrapper.c"
 #ifdef HAVE_VULKAN_DISPLAY
 #include "../gfx/drivers_context/khr_display_ctx.c"
@@ -1032,8 +1032,9 @@ FILTERS
 /*============================================================
 DYNAMIC
 ============================================================ */
+// Provenance change, we link our own
 //#include "../libretro-common/dynamic/dylib.c"
-#include "./dylib.c"
+//#include "./dylib.c"
 #ifdef HAVE_VIDEO_FILTER
 #include "../gfx/video_filter.c"
 #endif
