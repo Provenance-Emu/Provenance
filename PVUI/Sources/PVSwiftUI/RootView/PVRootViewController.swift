@@ -142,13 +142,13 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
             }
 
         // Set initial console and tab
-        if let console = gameLibrary.activeSystems.first {
-            consolesWrapperViewDelegate.selectedTab = console.identifier
-            viewModel.selectedConsole = console
-        } else {
-            consolesWrapperViewDelegate.selectedTab = "home"
-            viewModel.selectedConsole = nil
-        }
+//        if let console = gameLibrary.activeSystems.first {
+//            consolesWrapperViewDelegate.selectedTab = console.identifier
+//            viewModel.selectedConsole = console
+//        } else {
+//            consolesWrapperViewDelegate.selectedTab = "home"
+//            viewModel.selectedConsole = nil
+//        }
     }
 
     public func didTapHome() {
