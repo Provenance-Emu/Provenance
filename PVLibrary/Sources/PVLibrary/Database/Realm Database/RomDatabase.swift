@@ -782,6 +782,15 @@ public extension RomDatabase {
                 throw RomDeletionError.fileManagerDeletionError(error)
             }
         }
+        let jsonFile = actualSavePath.pathDecoded.appending(".json")
+        if FileManager.default.fileExists(atPath: jsonFile) {
+            do {
+                try FileManager.default.removeItem(atPath: jsonFile)
+            } catch {
+                ELOG("Unable to delete json at path: \(jsonFile) because: \(error.localizedDescription)")
+                throw RomDeletionError.fileManagerDeletionError(error)
+            }
+        }
     }
 
     func deleteRelatedFilesGame(_ game: PVGame) {

@@ -42,7 +42,12 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
     }
 
     func determineSystems(for item: ImportQueueItem) async throws -> [SystemIdentifier] {
-        // First try MD5 lookup
+        // if syncing from icloud, we have the system, so try to get the system this way
+        if let system = SystemIdentifier(rawValue: item.url.deletingLastPathComponent().lastPathComponent.lowercased()) {
+            DLOG("found system: \(system)")
+            return [system]
+        }
+        // next try MD5 lookup
         if let md5 = item.md5 {
             if let systemID = try await lookup.systemIdentifier(forRomMD5: md5, or: item.url.lastPathComponent) {
                 return [systemID]
