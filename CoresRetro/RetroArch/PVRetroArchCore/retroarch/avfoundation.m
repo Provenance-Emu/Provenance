@@ -314,9 +314,11 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
             scaledHeight = (size_t)(self.width / sourceAspect);
         }
 
+#ifdef DEBUG
         RARCH_LOG("[Camera]: Aspect fill scaling from %zux%zu to %zux%zu\n",
                   rotatedBuffer.width, rotatedBuffer.height, scaledWidth, scaledHeight);
-
+#endif
+        
         scaledBuffer.data = malloc(scaledWidth * scaledHeight * 4);
         if (!scaledBuffer.data) {
             RARCH_ERR("[Camera]: Failed to allocate scaled buffer\n");
