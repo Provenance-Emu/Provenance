@@ -2007,6 +2007,11 @@
 		B3631D202D61B25200ECD2ED /* MoltenVKShaderConverter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKShaderConverter.xcodeproj; sourceTree = "<group>"; };
 		B3631D3E2D61B25200ECD2ED /* ExternalDependencies.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ExternalDependencies.xcodeproj; sourceTree = "<group>"; };
 		B3631D422D61B25200ECD2ED /* MoltenVKPackaging.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKPackaging.xcodeproj; sourceTree = "<group>"; };
+		B36335552D61BDA800ECD2ED /* Cube.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Cube.xcodeproj; sourceTree = "<group>"; };
+		B36335F12D61BDA800ECD2ED /* MoltenVK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVK.xcodeproj; sourceTree = "<group>"; };
+		B363360F2D61BDA800ECD2ED /* MoltenVKShaderConverter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKShaderConverter.xcodeproj; sourceTree = "<group>"; };
+		B363362D2D61BDA800ECD2ED /* ExternalDependencies.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ExternalDependencies.xcodeproj; sourceTree = "<group>"; };
+		B36336312D61BDA800ECD2ED /* MoltenVKPackaging.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKPackaging.xcodeproj; sourceTree = "<group>"; };
 		B36455EB278E919500B6E87A /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36A8D422CCD53DB002357DD /* Provenance-Lite-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Provenance-Lite-Info.plist"; sourceTree = "<group>"; };
 		B36B84D429598F6600FDEA29 /* PVO2EM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVO2EM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4432,6 +4437,41 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		B36336372D61BDA800ECD2ED /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B36336392D61BDA800ECD2ED /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B363363B2D61BDA800ECD2ED /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B363363D2D61BDA800ECD2ED /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B363363F2D61BDA800ECD2ED /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		B37769052CF6D47300A48B35 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -5620,6 +5660,10 @@
 					ProjectRef = B3631C662D61B25200ECD2ED /* Cube.xcodeproj */;
 				},
 				{
+					ProductGroup = B36336392D61BDA800ECD2ED /* Products */;
+					ProjectRef = B36335552D61BDA800ECD2ED /* Cube.xcodeproj */;
+				},
+				{
 					ProductGroup = B3B60F4B2D618BCA003EC861 /* Products */;
 					ProjectRef = B3B60F3B2D618BCA003EC861 /* ExternalDependencies.xcodeproj */;
 				},
@@ -5630,6 +5674,10 @@
 				{
 					ProductGroup = B3FD95DE2D613D2B00397643 /* Products */;
 					ProjectRef = B3FD95CB2D613D2B00397643 /* ExternalDependencies.xcodeproj */;
+				},
+				{
+					ProductGroup = B363363B2D61BDA800ECD2ED /* Products */;
+					ProjectRef = B363362D2D61BDA800ECD2ED /* ExternalDependencies.xcodeproj */;
 				},
 				{
 					ProductGroup = B3631D4C2D61B25200ECD2ED /* Products */;
@@ -5656,12 +5704,20 @@
 					ProjectRef = B3B60EFF2D618BCA003EC861 /* MoltenVK.xcodeproj */;
 				},
 				{
+					ProductGroup = B36336372D61BDA800ECD2ED /* Products */;
+					ProjectRef = B36335F12D61BDA800ECD2ED /* MoltenVK.xcodeproj */;
+				},
+				{
 					ProductGroup = B390BD052D6168DD00BDE397 /* Products */;
 					ProjectRef = B390BCBB2D6168DD00BDE397 /* MoltenVK.xcodeproj */;
 				},
 				{
 					ProductGroup = B361977A2D618B980069D3BE /* Products */;
 					ProjectRef = B361976E2D618B980069D3BE /* MoltenVKPackaging.xcodeproj */;
+				},
+				{
+					ProductGroup = B3631D482D61B25200ECD2ED /* Products */;
+					ProjectRef = B3631D422D61B25200ECD2ED /* MoltenVKPackaging.xcodeproj */;
 				},
 				{
 					ProductGroup = B3FD95DA2D613D2B00397643 /* Products */;
@@ -5672,8 +5728,8 @@
 					ProjectRef = B390BCFB2D6168DD00BDE397 /* MoltenVKPackaging.xcodeproj */;
 				},
 				{
-					ProductGroup = B3631D482D61B25200ECD2ED /* Products */;
-					ProjectRef = B3631D422D61B25200ECD2ED /* MoltenVKPackaging.xcodeproj */;
+					ProductGroup = B363363D2D61BDA800ECD2ED /* Products */;
+					ProjectRef = B36336312D61BDA800ECD2ED /* MoltenVKPackaging.xcodeproj */;
 				},
 				{
 					ProductGroup = B3B60F452D618BCA003EC861 /* Products */;
@@ -5694,6 +5750,10 @@
 				{
 					ProductGroup = B3631D502D61B25200ECD2ED /* Products */;
 					ProjectRef = B3631D202D61B25200ECD2ED /* MoltenVKShaderConverter.xcodeproj */;
+				},
+				{
+					ProductGroup = B363363F2D61BDA800ECD2ED /* Products */;
+					ProjectRef = B363360F2D61BDA800ECD2ED /* MoltenVKShaderConverter.xcodeproj */;
 				},
 				{
 					ProductGroup = B36197742D618B980069D3BE /* Products */;
