@@ -7984,6 +7984,7 @@
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>wl6</string>
+			<string>WL6</string>
 			<string>n3d</string>
 			<string>sod</string>
 			<string>sdm</string>
