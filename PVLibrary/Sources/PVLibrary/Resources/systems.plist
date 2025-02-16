@@ -1398,6 +1398,8 @@
 				<string>neogeo.zip</string>
 				<key>Size</key>
 				<integer>1859335</integer>
+				<key>Optional</key>
+				<true/>
 			</dict>
 		</array>
 		<key>PVSupportedExtensions</key>
@@ -1647,6 +1649,8 @@
 				<string>neogeo.zip</string>
 				<key>Size</key>
 				<integer>1859335</integer>
+				<key>Optional</key>
+				<true/>
 			</dict>
 		</array>
 		<key>PVSupportedExtensions</key>
