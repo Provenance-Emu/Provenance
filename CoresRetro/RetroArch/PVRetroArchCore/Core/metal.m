@@ -2441,13 +2441,18 @@ static void metal_set_rotation(void *data, unsigned rotation)
 static void metal_viewport_info(void *data, struct video_viewport *vp)
 {
    MetalDriver *md = (__bridge MetalDriver *)data;
-   *vp = *md.viewport;
+    if(md)
+        *vp = *md.viewport;
 }
 
 static bool metal_read_viewport(void *data, uint8_t *buffer, bool is_idle)
 {
    MetalDriver *md = (__bridge MetalDriver *)data;
-   return [md.frameView readViewport:buffer isIdle:is_idle];
+    if(md) {
+        return [md.frameView readViewport:buffer isIdle:is_idle];
+    } else {
+        return false;
+    }
 }
 
 static void* metal_read_frame_raw(void *data, unsigned *width,
