@@ -1,10 +1,38 @@
+/*  RetroArch - A frontend for libretro.
+ *  Copyright (C) 2025      - Joseph Mattiello
+ *
+ *  RetroArch is free software: you can redistribute it and/or modify it under the terms
+ *  of the GNU General Public License as published by the Free Software Found-
+ *  ation, either version 3 of the License, or (at your option) any later version.
+ *
+ *  RetroArch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *  PURPOSE.  See the GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along with RetroArch.
+ *  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include <TargetConditionals.h>
 #include <Foundation/Foundation.h>
 #include <AVFoundation/AVFoundation.h>
 #include "../../libretro.h"
 #include "../camera/camera_driver.h"
 #include "../verbosity.h"
+/// For image scaling and color space DSP
 #import <Accelerate/Accelerate.h>
+#if TARGET_OS_IOS
+/// For camera rotation detection
+#import <UIKit/UIKit.h>
+#endif
+
+#ifndef CAMERA_PREFER_FRONTFACING
+#define CAMERA_PREFER_FRONTFACING 1  /// Default to front camera
+#endif
+
+#ifndef CAMERA_MIRROR_FRONT_CAMERA
+#define CAMERA_MIRROR_FRONT_CAMERA 1
+#endif
 
 @interface AVCameraManager : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
 @property (strong, nonatomic) AVCaptureSession *session;
@@ -74,118 +102,311 @@
 - (void)captureOutput:(AVCaptureOutput *)output
 didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
        fromConnection:(AVCaptureConnection *)connection {
-    if (!self.frameBuffer)
-        return;
+    @autoreleasepool {
+        if (!self.frameBuffer)
+            return;
 
-    CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-    CVPixelBufferLockBaseAddress(imageBuffer, 0);
-
-    size_t sourceWidth = CVPixelBufferGetWidth(imageBuffer);
-    size_t sourceHeight = CVPixelBufferGetHeight(imageBuffer);
-    OSType pixelFormat = CVPixelBufferGetPixelFormatType(imageBuffer);
-
-    RARCH_LOG("[Camera]: Processing frame %zux%zu format: %u\n", sourceWidth, sourceHeight, (unsigned int)pixelFormat);
-
-    // Setup vImage buffers
-    vImage_Buffer srcBuffer = {}, dstBuffer = {};
-    vImage_Error err = kvImageNoError;
-
-    // Setup destination buffer (our frameBuffer)
-    dstBuffer.data = self.frameBuffer;
-    dstBuffer.width = self.width;
-    dstBuffer.height = self.height;
-    dstBuffer.rowBytes = self.width * 4;
-
-    // Calculate aspect fill scaling
-    float sourceAspect = (float)sourceWidth / sourceHeight;
-    float targetAspect = (float)self.width / self.height;
-    float scale;
-    size_t scaledWidth, scaledHeight;
-
-    if (sourceAspect > targetAspect) {
-        // Source is wider - scale to match height
-        scale = (float)self.height / sourceHeight;
-        scaledWidth = sourceWidth * scale;
-        scaledHeight = self.height;
-    } else {
-        // Source is taller - scale to match width
-        scale = (float)self.width / sourceWidth;
-        scaledWidth = self.width;
-        scaledHeight = sourceHeight * scale;
-    }
-
-    // Calculate centering offsets
-    size_t xOffset = (scaledWidth - self.width) / 2;
-    size_t yOffset = (scaledHeight - self.height) / 2;
-
-    RARCH_LOG("[Camera]: Scaling from %zux%zu to %zux%zu (offset: %zu,%zu)\n",
-              sourceWidth, sourceHeight, scaledWidth, scaledHeight, xOffset, yOffset);
-
-    switch (pixelFormat) {
-        case kCVPixelFormatType_32BGRA: {
-            // Direct BGRA conversion
-            srcBuffer.data = CVPixelBufferGetBaseAddress(imageBuffer);
-            srcBuffer.width = sourceWidth;
-            srcBuffer.height = sourceHeight;
-            srcBuffer.rowBytes = CVPixelBufferGetBytesPerRow(imageBuffer);
-
-            // Convert BGRA to RGBA
-            uint8_t permuteMap[4] = {2, 1, 0, 3}; // BGRA -> RGBA
-            err = vImagePermuteChannels_ARGB8888(&srcBuffer, &dstBuffer, permuteMap, kvImageNoFlags);
-            break;
+        CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+        if (!imageBuffer) {
+            RARCH_ERR("[Camera]: Failed to get image buffer\n");
+            return;
         }
 
-        case kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange:
-        case kCVPixelFormatType_420YpCbCr8BiPlanarFullRange: {
-            // YUV to RGB conversion
-            vImage_Buffer srcY = {}, srcCbCr = {};
+        CVPixelBufferLockBaseAddress(imageBuffer, 0);
 
-            srcY.data = CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 0);
-            srcY.width = sourceWidth;
-            srcY.height = sourceHeight;
-            srcY.rowBytes = CVPixelBufferGetBytesPerRowOfPlane(imageBuffer, 0);
+        size_t sourceWidth = CVPixelBufferGetWidth(imageBuffer);
+        size_t sourceHeight = CVPixelBufferGetHeight(imageBuffer);
+        OSType pixelFormat = CVPixelBufferGetPixelFormatType(imageBuffer);
 
-            srcCbCr.data = CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 1);
-            srcCbCr.width = sourceWidth / 2;
-            srcCbCr.height = sourceHeight / 2;
-            srcCbCr.rowBytes = CVPixelBufferGetBytesPerRowOfPlane(imageBuffer, 1);
+#ifdef DEBUG
+        RARCH_LOG("[Camera]: Processing frame %zux%zu format: %u\n", sourceWidth, sourceHeight, (unsigned int)pixelFormat);
+#endif
+        // Create intermediate buffer for full-size converted image
+        uint32_t *intermediateBuffer = (uint32_t*)malloc(sourceWidth * sourceHeight * 4);
+        if (!intermediateBuffer) {
+            RARCH_ERR("[Camera]: Failed to allocate intermediate buffer\n");
+            CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
+            return;
+        }
 
-            vImage_YpCbCrToARGB info;
-            vImage_YpCbCrPixelRange pixelRange =
-                (pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange) ?
-                    (vImage_YpCbCrPixelRange){16, 128, 235, 240} :  // Video range
-                    (vImage_YpCbCrPixelRange){0, 128, 255, 255};    // Full range
+        vImage_Buffer srcBuffer = {}, intermediateVBuffer = {}, dstBuffer = {};
+        vImage_Error err = kvImageNoError;
 
-            err = vImageConvert_YpCbCrToARGB_GenerateConversion(kvImage_YpCbCrToARGBMatrix_ITU_R_601_4,
-                                                               &pixelRange,
-                                                               &info,
-                                                               kvImage420Yp8_CbCr8,
-                                                               kvImageARGB8888,
-                                                               kvImageNoFlags);
+        // Setup intermediate buffer
+        intermediateVBuffer.data = intermediateBuffer;
+        intermediateVBuffer.width = sourceWidth;
+        intermediateVBuffer.height = sourceHeight;
+        intermediateVBuffer.rowBytes = sourceWidth * 4;
+
+        // Setup destination buffer
+        dstBuffer.data = self.frameBuffer;
+        dstBuffer.width = self.width;
+        dstBuffer.height = self.height;
+        dstBuffer.rowBytes = self.width * 4;
+
+        // Convert source format to RGBA
+        switch (pixelFormat) {
+            case kCVPixelFormatType_32BGRA: {
+                srcBuffer.data = CVPixelBufferGetBaseAddress(imageBuffer);
+                srcBuffer.width = sourceWidth;
+                srcBuffer.height = sourceHeight;
+                srcBuffer.rowBytes = CVPixelBufferGetBytesPerRow(imageBuffer);
+
+                uint8_t permuteMap[4] = {2, 1, 0, 3}; // BGRA -> RGBA
+                err = vImagePermuteChannels_ARGB8888(&srcBuffer, &intermediateVBuffer, permuteMap, kvImageNoFlags);
+                break;
+            }
+
+            case kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange:
+            case kCVPixelFormatType_420YpCbCr8BiPlanarFullRange: {
+                // YUV to RGB conversion
+                vImage_Buffer srcY = {}, srcCbCr = {};
+
+                srcY.data = CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 0);
+                srcY.width = sourceWidth;
+                srcY.height = sourceHeight;
+                srcY.rowBytes = CVPixelBufferGetBytesPerRowOfPlane(imageBuffer, 0);
+
+                srcCbCr.data = CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 1);
+                srcCbCr.width = sourceWidth / 2;
+                srcCbCr.height = sourceHeight / 2;
+                srcCbCr.rowBytes = CVPixelBufferGetBytesPerRowOfPlane(imageBuffer, 1);
+
+                vImage_YpCbCrToARGB info;
+                vImage_YpCbCrPixelRange pixelRange =
+                    (pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange) ?
+                        (vImage_YpCbCrPixelRange){16, 128, 235, 240} :  // Video range
+                        (vImage_YpCbCrPixelRange){0, 128, 255, 255};    // Full range
+
+                err = vImageConvert_YpCbCrToARGB_GenerateConversion(kvImage_YpCbCrToARGBMatrix_ITU_R_601_4,
+                                                                   &pixelRange,
+                                                                   &info,
+                                                                   kvImage420Yp8_CbCr8,
+                                                                   kvImageARGB8888,
+                                                                   kvImageNoFlags);
+
+                if (err == kvImageNoError) {
+                    err = vImageConvert_420Yp8_CbCr8ToARGB8888(&srcY,
+                                                              &srcCbCr,
+                                                              &intermediateVBuffer,
+                                                              &info,
+                                                              NULL,
+                                                              255,
+                                                              kvImageNoFlags);
+                }
+                break;
+            }
+
+            default:
+                RARCH_ERR("[Camera]: Unsupported pixel format: %u\n", (unsigned int)pixelFormat);
+                free(intermediateBuffer);
+                CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
+                return;
+        }
+
+        if (err != kvImageNoError) {
+            RARCH_ERR("[Camera]: Error converting color format: %ld\n", err);
+            free(intermediateBuffer);
+            CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
+            return;
+        }
+
+        // Determine rotation based on platform and camera type
+        int rotationDegrees = 180; // Default 180-degree rotation for most cases
+#if CAMERA_MIRROR_FRONT_CAMERA
+        bool shouldMirror = true;
+#else
+        bool shouldMirror = false;
+#endif
+
+#if TARGET_OS_IOS
+        /// For camera rotation detection
+        UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+        if (orientation == UIDeviceOrientationPortrait ||
+            orientation == UIDeviceOrientationPortraitUpsideDown) {
+            // In portrait mode, adjust rotation based on camera type
+            if (self.input.device.position == AVCaptureDevicePositionFront) {
+                rotationDegrees = 270;
+                shouldMirror = true; // Mirror front camera
+                RARCH_LOG("[Camera]: Using 270-degree rotation with mirroring for front camera in portrait mode\n");
+            }
+        }
+#endif
+
+        // Rotate image
+        vImage_Buffer rotatedBuffer = {};
+        rotatedBuffer.data = malloc(sourceWidth * sourceHeight * 4);
+        if (!rotatedBuffer.data) {
+            RARCH_ERR("[Camera]: Failed to allocate rotation buffer\n");
+            free(intermediateBuffer);
+            CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
+            return;
+        }
+
+        // Set dimensions based on rotation angle
+        if (rotationDegrees == 90 || rotationDegrees == 270) {
+            rotatedBuffer.width = sourceHeight;
+            rotatedBuffer.height = sourceWidth;
+        } else {
+            rotatedBuffer.width = sourceWidth;
+            rotatedBuffer.height = sourceHeight;
+        }
+        rotatedBuffer.rowBytes = rotatedBuffer.width * 4;
+
+        const Pixel_8888 backgroundColor = {0, 0, 0, 255};
+
+        err = vImageRotate90_ARGB8888(&intermediateVBuffer,
+                                     &rotatedBuffer,
+                                     rotationDegrees / 90,
+                                     backgroundColor,
+                                     kvImageNoFlags);
+
+        if (err != kvImageNoError) {
+            RARCH_ERR("[Camera]: Error rotating image: %ld\n", err);
+            free(rotatedBuffer.data);
+            free(intermediateBuffer);
+            CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
+            return;
+        }
+
+        // Mirror the image if needed
+        if (shouldMirror) {
+            vImage_Buffer mirroredBuffer = {};
+            mirroredBuffer.data = malloc(rotatedBuffer.height * rotatedBuffer.rowBytes);
+            if (!mirroredBuffer.data) {
+                RARCH_ERR("[Camera]: Failed to allocate mirror buffer\n");
+                free(rotatedBuffer.data);
+                free(intermediateBuffer);
+                CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
+                return;
+            }
+
+            mirroredBuffer.width = rotatedBuffer.width;
+            mirroredBuffer.height = rotatedBuffer.height;
+            mirroredBuffer.rowBytes = rotatedBuffer.rowBytes;
+
+            err = vImageHorizontalReflect_ARGB8888(&rotatedBuffer, &mirroredBuffer, kvImageNoFlags);
 
             if (err == kvImageNoError) {
-                err = vImageConvert_420Yp8_CbCr8ToARGB8888(&srcY,
-                                                          &srcCbCr,
-                                                          &dstBuffer,
-                                                          &info,
-                                                          NULL,
-                                                          255,
-                                                          kvImageNoFlags);
+                // Free rotated buffer and use mirrored buffer for scaling
+                free(rotatedBuffer.data);
+                rotatedBuffer = mirroredBuffer;
+            } else {
+                RARCH_ERR("[Camera]: Error mirroring image: %ld\n", err);
+                free(mirroredBuffer.data);
             }
-            break;
         }
 
-        default:
-            RARCH_ERR("[Camera]: Unsupported pixel format: %u\n", (unsigned int)pixelFormat);
-            err = kvImageUnknownFlagsBit;
-            break;
+        // Scale down to target size
+        err = vImageScale_ARGB8888(&rotatedBuffer, &dstBuffer, NULL, kvImageHighQualityResampling);
+
+        // Free rotated/mirrored buffer as we don't need it anymore
+        free(rotatedBuffer.data);
+        free(intermediateBuffer);
+
+        if (err != kvImageNoError) {
+            RARCH_ERR("[Camera]: Error scaling image: %ld\n", err);
+        }
+
+        CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
+    } // End of autorelease pool
+}
+
+- (AVCaptureDevice *)selectCameraDevice {
+    RARCH_LOG("[Camera]: Selecting camera device\n");
+
+    NSArray<AVCaptureDevice *> *devices;
+
+#if TARGET_OS_OSX
+    // On macOS, use default discovery method
+    // Could probably due the same as iOS but need to test.
+    devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+#else
+    // On iOS/tvOS use modern discovery session
+    NSArray<AVCaptureDeviceType> *deviceTypes;
+    if (@available(iOS 17.0, *)) {
+        deviceTypes = @[
+            AVCaptureDeviceTypeExternal,
+            AVCaptureDeviceTypeBuiltInWideAngleCamera,
+            AVCaptureDeviceTypeBuiltInTelephotoCamera,
+            AVCaptureDeviceTypeBuiltInUltraWideCamera,
+            //        AVCaptureDeviceTypeBuiltInDualCamera,
+            //        AVCaptureDeviceTypeBuiltInDualWideCamera,
+            //        AVCaptureDeviceTypeBuiltInTripleCamera,
+            //        AVCaptureDeviceTypeBuiltInTrueDepthCamera,
+            //        AVCaptureDeviceTypeBuiltInLiDARDepthCamera,
+            //        AVCaptureDeviceTypeContinuityCamera,
+        ];
+    } else {
+        deviceTypes = @[
+            AVCaptureDeviceTypeBuiltInWideAngleCamera,
+            AVCaptureDeviceTypeBuiltInTelephotoCamera,
+            AVCaptureDeviceTypeBuiltInUltraWideCamera,
+            //        AVCaptureDeviceTypeBuiltInDualCamera,
+            //        AVCaptureDeviceTypeBuiltInDualWideCamera,
+            //        AVCaptureDeviceTypeBuiltInTripleCamera,
+            //        AVCaptureDeviceTypeBuiltInTrueDepthCamera,
+            //        AVCaptureDeviceTypeBuiltInLiDARDepthCamera,
+            //        AVCaptureDeviceTypeContinuityCamera,
+        ];
+    }
+    AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession
+                                                         discoverySessionWithDeviceTypes:deviceTypes
+                                                         mediaType:AVMediaTypeVideo
+                                                         position:AVCaptureDevicePositionUnspecified];
+
+    devices = discoverySession.devices;
+#endif
+
+    if (devices.count == 0) {
+        RARCH_ERR("[Camera]: No camera devices found\n");
+        return nil;
     }
 
-    if (err != kvImageNoError) {
-        RARCH_ERR("[Camera]: Error processing frame: %ld\n", err);
+    // Log available devices
+    for (AVCaptureDevice *device in devices) {
+        RARCH_LOG("[Camera]: Found device: %s - Position: %d\n",
+                  [device.localizedName UTF8String],
+                  (int)device.position);
     }
 
-    CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
+#if TARGET_OS_OSX
+    // macOS: Just use the first available camera if only one exists
+    if (devices.count == 1) {
+        RARCH_LOG("[Camera]: Using only available camera: %s\n",
+                  [devices.firstObject.localizedName UTF8String]);
+        return devices.firstObject;
+    }
+
+    // Try to match by name for built-in cameras
+    for (AVCaptureDevice *device in devices) {
+        BOOL isFrontFacing = [device.localizedName containsString:@"FaceTime"] ||
+                            [device.localizedName containsString:@"Front"];
+        if (CAMERA_PREFER_FRONTFACING == isFrontFacing) {
+            RARCH_LOG("[Camera]: Selected macOS camera: %s\n",
+                      [device.localizedName UTF8String]);
+            return device;
+        }
+    }
+#else
+    // iOS: Use position property
+    AVCaptureDevicePosition preferredPosition = CAMERA_PREFER_FRONTFACING ?
+        AVCaptureDevicePositionFront : AVCaptureDevicePositionBack;
+
+    // Try to find preferred camera
+    for (AVCaptureDevice *device in devices) {
+        if (device.position == preferredPosition) {
+            RARCH_LOG("[Camera]: Selected iOS camera position: %d\n",
+                      (int)preferredPosition);
+            return device;
+        }
+    }
+#endif
+
+    // Fallback to first available camera
+    RARCH_LOG("[Camera]: Using fallback camera: %s\n",
+              [devices.firstObject.localizedName UTF8String]);
+    return devices.firstObject;
 }
 
 - (bool)setupCameraSession {
@@ -193,7 +414,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     self.session = [[AVCaptureSession alloc] init];
 
     // Get camera device
-    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    AVCaptureDevice *device = [self selectCameraDevice];
     if (!device) {
         RARCH_ERR("[Camera]: No camera device found\n");
         return false;
@@ -315,11 +536,8 @@ static void *avfoundation_init(const char *device, uint64_t caps,
         @autoreleasepool {
             setupSuccess = [avf->manager setupCameraSession];
             if (setupSuccess) {
-                // Start session on background thread
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    [avf->manager.session startRunning];
-                    RARCH_LOG("[Camera]: Started camera session\n");
-                });
+                [avf->manager.session startRunning];
+                RARCH_LOG("[Camera]: Started camera session\n");
             }
         }
     } else {
@@ -327,11 +545,8 @@ static void *avfoundation_init(const char *device, uint64_t caps,
             @autoreleasepool {
                 setupSuccess = [avf->manager setupCameraSession];
                 if (setupSuccess) {
-                    // Start session on background thread
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                        [avf->manager.session startRunning];
-                        RARCH_LOG("[Camera]: Started camera session\n");
-                    });
+                    [avf->manager.session startRunning];
+                    RARCH_LOG("[Camera]: Started camera session\n");
                 }
             }
         });
@@ -344,15 +559,15 @@ static void *avfoundation_init(const char *device, uint64_t caps,
         return NULL;
     }
 
-    // Wait a short time for the session to start
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)),
-                  dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if (!avf->manager.session.isRunning) {
-            RARCH_ERR("[Camera]: Camera session failed to start\n");
-        }
-    });
+    // Add a check to verify the session is actually running
+    if (!avf->manager.session.isRunning) {
+        RARCH_ERR("[Camera]: Failed to start camera session\n");
+        free(avf->manager.frameBuffer);
+        free(avf);
+        return NULL;
+    }
 
-    RARCH_LOG("[Camera]: AVFoundation camera initialized successfully\n");
+    RARCH_LOG("[Camera]: AVFoundation camera initialized and started successfully\n");
     return avf;
 }
 
@@ -436,7 +651,9 @@ static bool avfoundation_poll(void *data,
         return false;
     }
 
+#ifdef DEBUG
     RARCH_LOG("[Camera]: Delivering camera frame\n");
+#endif
     frame_raw_cb(avf->manager.frameBuffer, avf->width, avf->height, avf->width * 4);
     return true;
 }
