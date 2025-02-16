@@ -95,6 +95,7 @@ OTHER_CFLAGS = $(inherited) -DHAVE_CORETEXT
 OTHER_CFLAGS = $(inherited) -DHAVE_SDL2
 OTHER_CFLAGS = $(inherited) -DHAVE_AVFOUNDATION
 OTHER_CFLAGS = $(inherited) -DHAVE_FFMPEG
+OTHER_CFLAGS = $(inherited) -DHAVE_WIFI
 //OTHER_CFLAGS = $(inherited) -DHAVE_COREAUDIO3 // Very buggy, don't use
 //OTHER_CFLAGS[configuration=Debug] = $(inherited) -DDEBUG
 //OTHER_CFLAGS[configuration=Release] = $(inherited) -DNDEBUG
