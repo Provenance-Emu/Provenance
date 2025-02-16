@@ -496,10 +496,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 ELOG("AutoSave error: \(error.localizedDescription)")
             }
         }
-        core.stopEmulation()
         if audioInited {
             gameAudio.stopAudio()
         }
+        core.stopEmulation()
         gpuViewController.dismiss(animated: false)
         if let view = controllerViewController?.view {
             for subview in view.subviews {
