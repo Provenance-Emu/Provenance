@@ -53,15 +53,26 @@ public final class PVRetroArchCoreManager {
 
     /// Returns the active config file URL in Documents directory
     public var activeConfigURL: URL? {
+        #if os(tvOS)
+        let documentsURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+        return documentsURL?.appendingPathComponent("RetroArch/config/retroarch.cfg")
+        #else
         let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
         return documentsURL?.appendingPathComponent("RetroArch/config/retroarch.cfg")
+        #endif
     }
 
     /// Returns the version string of the newest retroarch.cfg in Documents
     public var newestConfigVersion: String? {
+        #if os(tvOS)
+        guard let documentsURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else {
+            return nil
+        }
+        #else
         guard let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
             return nil
         }
+        #endif
 
         let configURL = documentsURL.appendingPathComponent("RetroArch/config")
         guard let contents = try? FileManager.default.contentsOfDirectory(at: configURL, includingPropertiesForKeys: nil) else {
