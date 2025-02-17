@@ -108,6 +108,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                     gpuViewController.isPaused = true
                 }
             }
+//            core.setPauseEmulation(newValue)
+
         }
         didSet {
             if isShowingMenu == false {
@@ -115,7 +117,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                     gpuViewController.isPaused = false
                 }
             }
-            core.setPauseEmulation(isShowingMenu)
+//            core.setPauseEmulation(isShowingMenu)
         }
     }
 
