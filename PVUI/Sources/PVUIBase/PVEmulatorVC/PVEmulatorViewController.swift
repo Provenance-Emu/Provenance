@@ -384,11 +384,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             }
             secondaryWindow?.isHidden = false
         } else if (!core.skipLayout) {
+            gpuViewController.willMove(toParent: self)
             addChild(gpuViewController)
             // Note: This also initilaizes the view
             // using viewIfLoaded will crash.
             // Should probably imporve this?
             if let aView = gpuViewController.view {
+                aView.frame = view.bounds
                 view.addSubview(aView)
             }
             gpuViewController.didMove(toParent: self)
