@@ -16,8 +16,14 @@ final class MenuButton: UIButton, HitAreaEnlarger {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        preferredMenuElementOrder = .priority
+        if #available(iOS 16.0, tvOS 17.0, *) {
+            preferredMenuElementOrder = .priority
+        } else {
+            // Fallback on earlier versions
+        }
+        #if !os(tvOS)
         preferredBehavioralStyle = .pad
+        #endif
         
         // Ensure the button stays within safe area bounds
         if let superview = superview {
