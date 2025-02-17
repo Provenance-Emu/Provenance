@@ -218,6 +218,9 @@ extension CocoaView {
 #if !os(tvOS)
 		view.isMultipleTouchEnabled = true;
         mouseHandler = EmulatorTouchMouseHandler(view: view, delegate: self as? EmulatorTouchMouseHandlerDelegate)
+        
+//        let pointerInterction = UIPointerInteraction(delegate: self)
+//        view.addInteraction(pointerInterction)
 #endif
 	}
 
@@ -246,6 +249,15 @@ extension CocoaView {
 	}
 }
 
+#if !os(tvOS)
+extension CocoaView: UIPointerInteractionDelegate {
+    public func pointerInteraction(_ interaction: UIPointerInteraction, styleFor region: UIPointerRegion) -> UIPointerStyle? {
+        let shape: UIPointerShape = .path(.init(ovalIn: .init(origin: .zero, size: .init(width: 20, height: 20))))
+        let style: UIPointerStyle = .init(shape: shape, constrainedAxes: .both)
+        return style
+    }
+}
+#endif
 
 extension CocoaView {
 	var leftKeyboardModel: EmulatorKeyboardViewModel {
@@ -1510,7 +1522,7 @@ import UIKit
 @objc public protocol EmulatorTouchMouseHandlerDelegate: AnyObject {
    func handleMouseClick(isLeftClick: Bool, isPressed: Bool)
    func handleMouseMove(x: CGFloat, y: CGFloat)
-   func handlePointerMove(x: CGFloat, y: CGFloat)
+   @objc optional func handlePointerMove(x: CGFloat, y: CGFloat)
 }
 
 @objcMembers public class EmulatorTouchMouseHandler: NSObject, UIPointerInteractionDelegate {
@@ -1529,7 +1541,11 @@ import UIKit
       let holdState: MouseHoldState
    }
 
-   var enabled = false
+    var enabled = false {
+        didSet {
+            print("EmulatorTouchMouseHandler `enabled` \(enabled ? "Yes" : "No")")
+        }
+    }
    
    let view: UIView
    weak var delegate: EmulatorTouchMouseHandlerDelegate?
@@ -1566,7 +1582,7 @@ import UIKit
          // get pointer interactions
          let pointerInteraction = UIPointerInteraction(delegate: self)
          self.view.addInteraction(pointerInteraction)
-         self.view.isUserInteractionEnabled=true
+         self.view.isUserInteractionEnabled = true
       }
    }
    
@@ -1609,7 +1625,7 @@ import UIKit
    public func touchesBegan(touches: Set<UITouch>, event: UIEvent?) {
       guard enabled, let touch = touches.first else {
          if #available(iOS 13.4, *), let _ = touches.first {
-            let isLeftClick=(event?.buttonMask == UIEvent.ButtonMask.primary)
+            let isLeftClick = (event?.buttonMask == UIEvent.ButtonMask.primary)
             delegate?.handleMouseClick(isLeftClick: isLeftClick, isPressed: true)
          }
          return
@@ -1627,7 +1643,7 @@ import UIKit
    public func touchesEnded(touches: Set<UITouch>, event: UIEvent?) {
       guard enabled else {
          if #available(iOS 13.4, *) {
-             let isLeftClick=(event?.buttonMask == UIEvent.ButtonMask.primary)
+             let isLeftClick = (event?.buttonMask == UIEvent.ButtonMask.primary)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
                self?.delegate?.handleMouseClick(isLeftClick: isLeftClick, isPressed: false)
             }
@@ -1672,7 +1688,7 @@ import UIKit
    public func touchesCancelled(touches: Set<UITouch>, event: UIEvent?) {
       guard enabled else {
          if #available(iOS 13.4, *) {
-            let isLeftClick=(event?.buttonMask == UIEvent.ButtonMask.primary)
+            let isLeftClick = (event?.buttonMask == UIEvent.ButtonMask.primary)
             delegate?.handleMouseClick(isLeftClick: isLeftClick, isPressed: false)
          }
          return
@@ -1700,8 +1716,33 @@ import UIKit
      ) -> UIPointerRegion? {
         guard !enabled else { return defaultRegion }
         let location = request.location;
-        delegate?.handlePointerMove(x: location.x, y: location.y)
+        delegate?.handlePointerMove?(x: location.x, y: location.y)
         return defaultRegion
    }
+    
+    @available(iOS 13.4, *)
+    public func pointerInteraction(_ interaction: UIPointerInteraction, styleFor region: UIPointerRegion) -> UIPointerStyle? {
+        let cursorPath = UIBezierPath()
+
+        // Start at the tip of the cursor
+        cursorPath.move(to: CGPoint(x: 0, y: 0))
+
+        // Draw the main triangle shape
+        cursorPath.addLine(to: CGPoint(x: 14, y: 14))
+        cursorPath.addLine(to: CGPoint(x: 8, y: 14))
+        cursorPath.addLine(to: CGPoint(x: 11, y: 20))
+        cursorPath.addLine(to: CGPoint(x: 9, y: 20))
+        cursorPath.addLine(to: CGPoint(x: 6, y: 14))
+        cursorPath.addLine(to: CGPoint(x: 0, y: 14))
+
+        // Close the path
+        cursorPath.close()
+        
+        // let oval: UIBezierPath = .init(ovalIn: .init(origin: .zero, size: .init(width: 20, height: 20)))
+
+        let shape: UIPointerShape = .path(cursorPath)
+        let style: UIPointerStyle = .init(shape: shape, constrainedAxes: .both)
+        return style
+    }
 }
 #endif

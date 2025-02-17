@@ -387,6 +387,45 @@ void cocoa_file_load_with_detect_core(const char *filename);
       apple_direct_input_keyboard_event(false, code, 0, 0, RETRO_DEVICE_KEYBOARD);
    });
 }
+#elif TARGET_OS_IOS
+
+-(void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    if (event.allTouches.anyObject.type == UITouchTypeIndirectPointer) {
+        CGPoint location = [event.allTouches.anyObject locationInView:self.view];
+        NSLog(@"Mouse moved to %f, %f", location.x, location.y);
+        // Use this location to update your custom cursor
+    }
+}
+
+- (void)pressesBegan:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event {
+    for (UIPress *press in presses) {
+        switch(press.type) {
+            case UIPressTypeLeftArrow:
+                NSLog(@"Press event type UIPressTypeLeftArrow");
+                break;
+            case UIPressTypeRightArrow:
+                NSLog(@"Press event type UIPressTypeSelect");
+                break;
+            case UIPressTypeUpArrow:
+                NSLog(@"Press event type UIPressTypeUpArrow");
+                break;
+            case UIPressTypeDownArrow:
+                NSLog(@"Press event type UIPressTypeDownArrow");
+                break;
+            case UIPressTypeSelect:
+                NSLog(@"Press event type UIPressTypeSelect");
+                break;
+            case UIPressTypeMenu:
+                NSLog(@"Press event type UIPressTypeMenu");
+                break;
+            case UIPressTypePlayPause:
+                NSLog(@"Press event type UIPressTypePlayPause");
+                break;
+
+        }
+    }
+}
+
 #endif
 
 #if TARGET_OS_IOS
@@ -731,8 +770,7 @@ void cocoa_file_load_with_detect_core(const char *filename);
 
 #pragma mark EmulatorTouchMouseHandlerDelegate
 
--(void)handleMouseClickWithIsLeftClick:(BOOL)isLeftClick isPressed:(BOOL)isPressed
-{
+-(void)handleMouseClickWithIsLeftClick:(BOOL)isLeftClick isPressed:(BOOL)isPressed {
     cocoa_input_data_t *apple = (cocoa_input_data_t*) input_state_get_ptr()->current_data;
     if (!apple)
         return;
@@ -743,8 +781,7 @@ void cocoa_file_load_with_detect_core(const char *filename);
         apple->mouse_buttons &= ~(1 << buttonIndex);
 }
 
--(void)handleMouseMoveWithX:(CGFloat)x y:(CGFloat)y
-{
+-(void)handleMouseMoveWithX:(CGFloat)x y:(CGFloat)y {
    cocoa_input_data_t *apple = (cocoa_input_data_t*) input_state_get_ptr()->current_data;
    if (!apple)
       return;
@@ -758,11 +795,27 @@ void cocoa_file_load_with_detect_core(const char *filename);
    }
 }
 
+-(void)handlePointerMoveWithX:(CGFloat)x y:(CGFloat)y {
+   cocoa_input_data_t *apple = (cocoa_input_data_t*) input_state_get_ptr()->current_data;
+   if (!apple)
+      return;
+    
+//    BOOL mouseGrabbed = apple->mouse_grabbed;
+//    NSLog(@"handlePointerMoveWithX: %f, Y: %f, MouseGrabbed: %i", x, y, mouseGrabbed);
+//   apple->mouse_rel_x = (int16_t)x;
+//   apple->mouse_rel_y = (int16_t)y;
+   /* use location position to track pointer */
+   if (@available(iOS 13.4, *))
+   {
+      apple->window_pos_x = (int16_t)x;
+      apple->window_pos_y = (int16_t)y;
+   }
+}
+
 #endif
 
 #pragma mark GCDWebServerDelegate
-- (void)webServerDidCompleteBonjourRegistration:(GCDWebServer*)server
-{
+- (void)webServerDidCompleteBonjourRegistration:(GCDWebServer*)server {
     NSMutableString *servers = [[NSMutableString alloc] init];
     if (server.serverURL != nil)
         [servers appendString:[NSString stringWithFormat:@"%@",server.serverURL]];
@@ -807,14 +860,12 @@ void cocoa_file_load_with_detect_core(const char *filename);
 @end
 
 #if TARGET_OS_IOS
-void ios_show_file_sheet(void)
-{
+void ios_show_file_sheet(void) {
    [[CocoaView get] showDocumentPicker];
 }
 #endif
 
-void *cocoa_screen_get_chosen(void)
-{
+void *cocoa_screen_get_chosen(void) {
     unsigned monitor_index;
     settings_t *settings = config_get_ptr();
     NSArray *screens     = [RAScreen screens];
