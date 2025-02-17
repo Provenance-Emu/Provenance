@@ -1670,6 +1670,19 @@ import UIKit
       }
       delegate?.handleMouseMove(x: 0, y: 0)
    }
+    
+//    public func pressesMoved(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+//        guard let press = presses.first else { return }
+//        
+//        if #available(iOS 13.4, *) {
+//            if press.type == .pageDown || press.type == .pageUp {
+//                // Handle mouse movement
+//                if let location = press.location(in: view) {
+//                    delegate?.handleMouseMove(x: location.x, y: location.y)
+//                }
+//            }
+//        }
+//    }
    
    public func touchesMoved(touches: Set<UITouch>) {
       guard enabled else { return }
@@ -1717,7 +1730,8 @@ import UIKit
         guard !enabled else { return defaultRegion }
         let location = request.location;
         delegate?.handlePointerMove?(x: location.x, y: location.y)
-        return defaultRegion
+//        return defaultRegion
+         return nil // Prevent snapbacks?
    }
     
     @available(iOS 13.4, *)
@@ -1741,7 +1755,7 @@ import UIKit
         // let oval: UIBezierPath = .init(ovalIn: .init(origin: .zero, size: .init(width: 20, height: 20)))
 
         let shape: UIPointerShape = .path(cursorPath)
-        let style: UIPointerStyle = .init(shape: shape, constrainedAxes: .both)
+        let style: UIPointerStyle = .init(shape: shape, constrainedAxes: [])
         return style
     }
 }
