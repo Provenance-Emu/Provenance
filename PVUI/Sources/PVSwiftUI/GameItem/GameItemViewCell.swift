@@ -85,6 +85,7 @@ struct GameItemViewCell: View {
                                     lineWidth: 2
                                 )
                                 .opacity(glowIntensity)
+                                .scaleEffect(hoverScale)
                         )
                         .shadow(color: glowColor.opacity(0.5 * glowIntensity), radius: 10, x: 0, y: 0)
                     #if !os(tvOS)
