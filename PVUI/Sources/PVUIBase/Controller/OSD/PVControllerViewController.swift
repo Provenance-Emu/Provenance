@@ -1446,7 +1446,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     // Modify the setupToggleButton method
     private func setupToggleButton() {
         /// Create and configure the toggle button
-        toggleButton = UIButton(type: .custom)
+        toggleButton = MenuButton(type: .custom)
         toggleButton.setImage(UIImage(systemName: "chevron.up.circle"), for: .normal) /// Use stroked version
         toggleButton.tintColor = .white
         toggleButton.backgroundColor = UIColor.black.withAlphaComponent(0.4) /// More transparent
@@ -1454,7 +1454,10 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         toggleButton.layer.masksToBounds = true
         toggleButton.addTarget(self, action: #selector(toggleButtons), for: .touchUpInside)
         toggleButton.isHidden = !shouldShowToggleButton /// Hide initially based on conditions
-
+        #if !os(tvOS)
+        toggleButton.isPointerInteractionEnabled = true
+        #endif
+        
         /// Add constraints
         toggleButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(toggleButton)
