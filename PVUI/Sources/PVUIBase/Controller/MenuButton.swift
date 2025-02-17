@@ -16,6 +16,9 @@ final class MenuButton: UIButton, HitAreaEnlarger {
     override func layoutSubviews() {
         super.layoutSubviews()
 
+        preferredMenuElementOrder = .priority
+        preferredBehavioralStyle = .pad
+        
         // Ensure the button stays within safe area bounds
         if let superview = superview {
             let safeArea = superview.safeAreaLayoutGuide.layoutFrame
