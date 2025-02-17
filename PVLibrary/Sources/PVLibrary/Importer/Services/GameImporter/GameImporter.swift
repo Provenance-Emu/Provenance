@@ -429,13 +429,14 @@ public final class GameImporter: GameImporting, ObservableObject {
             importQueueLock.unlock()
         }
         var removed = [URL]()
-        importQueue.enumerated().forEach { index, item in
+        let offsets = IndexSet(importQueue.enumerated().compactMap { index, item in
             if item.status == .success && files.contains(item.url) {
                 files.remove(item.url)
-                importQueue.remove(at: index)
-                
+                return index
             }
-        }
+            return nil
+        })
+        importQueue.remove(atOffsets: offsets)
     }
 
     // Public method to manually start processing if needed

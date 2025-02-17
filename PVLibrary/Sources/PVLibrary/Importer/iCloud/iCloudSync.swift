@@ -25,6 +25,7 @@ public enum SyncResult {
     case saveFailure
     case fileNotExist
     case success
+    case indeterminate
 }
 
 public protocol Container {
@@ -53,6 +54,11 @@ enum iCloudSyncStatus {
     case filesAlreadyMoved
 }
 
+enum GamePurgeStatus {
+    case incomplete
+    case complete
+}
+
 class iCloudContainerSyncer: iCloudTypeSyncer {
     lazy var pendingFilesToDownload: Set<String> = []
     lazy var newFiles: Set<URL> = []
@@ -62,6 +68,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     let notificationCenter: NotificationCenter
     var status: iCloudSyncStatus = .initialUpload
     let errorHandler: ErrorHandler
+    var initialSyncResult: SyncResult = .indeterminate
     
     init(directories: Set<String>,
          notificationCenter: NotificationCenter,
@@ -87,7 +94,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         else {
             return alliCloudDirectories
         }
-        let parentContainer = actualContainrUrl.appendingPathComponent("Documents")
+        let parentContainer = actualContainrUrl.appendDocumentsDirectory
         directories.forEach { directory in
             alliCloudDirectories[URL.documentsDirectory.appendingPathComponent(directory)] = parentContainer.appendingPathComponent(directory)
         }
@@ -139,10 +146,10 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             return
         }
         
-        let completion = syncToiCloud()
-        DLOG("saveStateUploader syncToiCloud result: \(completion)")
-        guard completion != .saveFailure,
-              completion != .denied
+        initialSyncResult = syncToiCloud()
+        DLOG("syncToiCloud result: \(initialSyncResult)")
+        guard initialSyncResult != .saveFailure,
+              initialSyncResult != .denied
         else {
             ELOG("error moving files to iCloud container")
             return
@@ -382,6 +389,22 @@ extension URL {
     var pathDecoded: String {
         path(percentEncoded: false)
     }
+    var appendDocumentsDirectory: URL {
+        appendingPathComponent("Documents")
+    }
+}
+
+extension Realm {
+    func deleteGame(_ game: PVGame) throws {
+        try write {
+            game.saveStates.forEach { try? $0.delete() }
+            game.cheats.forEach { try? $0.delete() }
+            game.recentPlays.forEach { try? $0.delete() }
+            game.screenShots.forEach { try? $0.delete() }
+            delete(game)
+            RomDatabase.reloadGamesCache()
+        }
+    }
 }
 
 enum iCloudError: Error {
@@ -424,6 +447,7 @@ public enum iCloudSync {
         DLOG("turning on iCloud")
         //reset ROMs path
         gameImporter.gameImporterDatabaseService.setRomsPath(url: gameImporter.romsPath)
+        errorHandler.clear()
         let fm = FileManager.default
         if let currentiCloudToken = fm.ubiquityIdentityToken {
             do {
@@ -475,6 +499,7 @@ public enum iCloudSync {
     
     static func turnOff() {
         DLOG("turning off iCloud")
+        errorHandler.clear()
         disposeBag = nil
         //reset ROMs path
         gameImporter.gameImporterDatabaseService.setRomsPath(url: gameImporter.romsPath)
@@ -636,10 +661,12 @@ class SaveStateSyncer: iCloudContainerSyncer {
 class RomsSyncer: iCloudContainerSyncer {
     let gameImporter = GameImporter.shared
     var processingFiles = Set<URL>()
+    var purgeStatus: GamePurgeStatus = .incomplete
     
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
         self.init(directories: ["ROMs"], notificationCenter: notificationCenter, errorHandler: errorHandler)
         notificationCenter.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil) { [weak self] _ in
+            self?.removeGamesDeletedWhileApplicationClosed()
             self?.handleImportNewRomFiles()
         }
         notificationCenter.addObserver(forName: .RomsFinishedImporting, object: nil, queue: nil) { [weak self] _ in
@@ -649,6 +676,44 @@ class RomsSyncer: iCloudContainerSyncer {
     
     deinit {
         notificationCenter.removeObserver(self)
+    }
+    
+    func removeGamesDeletedWhileApplicationClosed() {
+        guard purgeStatus == .incomplete,
+              initialSyncResult == .success,
+           errorHandler.numberOfErrors == 0
+        else {
+            return
+        }
+        
+        defer {
+            purgeStatus = .complete
+        }
+        guard let actualContainrUrl = containerURL,
+              let romsDirectoryName = directories.first
+        else {
+            return
+        }
+        let romsPath = actualContainrUrl.appendDocumentsDirectory.appendingPathComponent(romsDirectoryName)
+        DLOG("romsPath: \(romsPath)")
+        let realm: Realm
+        do {
+            realm = try Realm()
+        } catch {
+            ELOG("error removing game entries that do NOT exist in the cloud container")
+            return
+        }
+        var games = realm.objects(PVGame.self)
+        games.forEach { game in
+            let gameUrl = romsPath.appendingPathComponent(game.romPath)
+            if !fileManager.fileExists(atPath: gameUrl.pathDecoded) {
+                do {
+                    try realm.deleteGame(game)
+                } catch {
+                    ELOG("error deleting \(gameUrl), \(error)")
+                }
+            }
+        }
     }
     
     override func insertDownloadedFile(_ file: URL) {
@@ -701,14 +766,7 @@ class RomsSyncer: iCloudContainerSyncer {
                 return
             }
             
-            try realm.write {
-                game.saveStates.forEach { try? $0.delete() }
-                game.cheats.forEach { try? $0.delete() }
-                game.recentPlays.forEach { try? $0.delete() }
-                game.screenShots.forEach { try? $0.delete() }
-                realm.delete(game)
-                RomDatabase.reloadGamesCache()
-            }
+            try realm.deleteGame(game)
         } catch {
             errorHandler.handleError(error, file: file)
             ELOG("error deleting ROM from database: \(error)")
@@ -808,6 +866,7 @@ protocol ErrorHandler {
     var allErrorSummaries: [String] { get }
     var allFullErrors: [String] { get }
     var allErrors: [iCloudSyncError] { get }
+    var numberOfErrors: Int { get }
     func handleError(_ error: Error, file: URL?)
     func clear()
 }
@@ -826,6 +885,10 @@ class iCloudErrorHandler: ErrorHandler {
     
     var allErrors: [iCloudSyncError] {
         queue.errors
+    }
+    
+    var numberOfErrors: Int {
+        queue.count
     }
     
     func handleError(_ error: any Error, file: URL?) {
