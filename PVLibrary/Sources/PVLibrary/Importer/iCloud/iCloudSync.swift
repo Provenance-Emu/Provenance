@@ -399,7 +399,6 @@ public enum iCloudSync {
     
     public static func initICloudDocuments() {
         Task {
-            printDeviceAvailableStorage()
             for await value in Defaults.updates(.iCloudSync) {
                 iCloudSyncChanged(value)
             }
@@ -479,24 +478,6 @@ public enum iCloudSync {
         disposeBag = nil
         //reset ROMs path
         gameImporter.gameImporterDatabaseService.setRomsPath(url: gameImporter.romsPath)
-    }
-    
-    static func printDeviceAvailableStorage() {
-        guard let systemURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-        else {
-            ELOG("unable to determine available storage on device")
-            return
-        }
-        do {
-            let values = try systemURL.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey])
-            if let availableSpace = values.volumeAvailableCapacityForImportantUsage {
-                ILOG("available device storage: \(availableSpace.toGb)")
-            } else {
-                ELOG("could not retrieve available storage.")
-            }
-        } catch {
-            ELOG("error retrieving storage available: \(error)")
-        }
     }
 }
 
