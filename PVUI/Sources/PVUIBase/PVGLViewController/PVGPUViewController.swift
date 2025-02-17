@@ -95,7 +95,8 @@ public class PVGPUViewController: BaseViewController {
     
     #if os(iOS)
     public override var prefersHomeIndicatorAutoHidden: Bool {
-        return true
+        let shouldHideHomeIndicator: Bool = PVControllerManager.shared.hasControllers
+        return shouldHideHomeIndicator
     }
     
     public override func viewDidAppear(_ animated: Bool) {
