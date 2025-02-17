@@ -8074,7 +8074,7 @@
 		<key>PVRequiresBIOS</key>
 		<false/>
 		<key>PVAppStoreDisabled</key>
-		<true/>
+		<false/>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>wad</string>
