@@ -1,7 +1,4 @@
-//
-//  Untitled.swift
-//  PVUI
-//
-//  Created by Pablo Arista on 2/16/25.
-//
-
+"DeleteGameTitle" = "Delete Game?";
+"DeleteGameBody" = "Are you sure you want to delete game \"%@\"?";
+"OK" = "OK";
+"Cancel" = "Cancel";
