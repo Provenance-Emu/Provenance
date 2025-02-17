@@ -43,7 +43,7 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
 
     func determineSystems(for item: ImportQueueItem) async throws -> [SystemIdentifier] {
         // if syncing from icloud, we have the system, so try to get the system this way
-        if let system = SystemIdentifier(rawValue: item.url.deletingLastPathComponent().lastPathComponent.lowercased()) {
+        if let system = SystemIdentifier(rawValue: item.url.deletingLastPathComponent().lastPathComponent) {
             DLOG("found system: \(system)")
             return [system]
         }

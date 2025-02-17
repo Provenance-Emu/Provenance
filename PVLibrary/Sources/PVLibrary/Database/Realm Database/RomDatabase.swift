@@ -329,7 +329,6 @@ public final class RomDatabase {
             ILOG("Database initialization completed")
             databaseInitialized = true
             NotificationCenter.default.post(name: .RomDatabaseInitialized, object: nil, userInfo: nil)
-            
         } else {
             ILOG("Database already initialized")
         }
@@ -720,6 +719,9 @@ public extension RomDatabase {
 #if os(iOS)
         deleteFromSpotlight(game: game)
 #endif
+        defer {
+            RomDatabase.reloadGamesCache()
+        }
         do {
             deleteRelatedFilesGame(game)
             game.saveStates.forEach { try? $0.delete() }
@@ -727,11 +729,9 @@ public extension RomDatabase {
             game.recentPlays.forEach { try? $0.delete() }
             game.screenShots.forEach { try? $0.delete() }
             try game.delete()
-            RomDatabase.reloadGamesCache()
         } catch {
             // Delete the DB entry anyway if any of the above files couldn't be removed
             do { try game.delete()
-                RomDatabase.reloadGamesCache()
             } catch {
                 ELOG("\(error.localizedDescription)")
             }
@@ -837,7 +837,11 @@ public extension RomDatabase {
             let currentExtension = currentChildUrl.pathExtension
             let currentChildFileName = currentChildUrl.deletingPathExtension().lastPathComponent
             DLOG("current extension: \(currentExtension), current file name: \(currentChildFileName), current url: \(currentChildUrl)")
-            if !currentExtension.allSatisfy({$0.isWhitespace}) && currentChildFileName == fileName {
+            if !currentExtension.isEmpty
+                && (currentChildFileName == fileName
+                    || currentChildFileName.starts(with: "\(fileName) (Track ")
+                    || currentChildFileName.starts(with: "\(fileName) (Disc ")
+                    ) {
                 do {
                     try fileManager.removeItem(at: currentChildUrl)
                 } catch {
