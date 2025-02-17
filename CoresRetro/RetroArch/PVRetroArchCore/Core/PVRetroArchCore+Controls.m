@@ -28,7 +28,7 @@
 #include "../../verbosity.h"
 #include "../ui_companion_driver.h"
 
-#ifdef HAVE_COREMOTION
+#ifdef HAVE_COREMOTION && !TARGET_OS_TV
 #import <CoreMotion/CoreMotion.h>
 static CMMotionManager *motionManager;
 #endif

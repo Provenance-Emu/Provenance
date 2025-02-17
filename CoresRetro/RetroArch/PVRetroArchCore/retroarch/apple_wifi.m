@@ -53,6 +53,9 @@ typedef struct
 }
 
 - (NSDictionary *)currentNetwork {
+#if TARGET_OS_TV
+    return nil;
+#else
     RARCH_LOG("[WiFi] Querying current network info\n");
     NSArray *interfaces = (__bridge_transfer NSArray *)CNCopySupportedInterfaces();
     for (NSString *interface in interfaces) {
@@ -65,6 +68,7 @@ typedef struct
     }
     RARCH_LOG("[WiFi] No active network found\n");
     return nil;
+#endif
 }
 
 - (NSArray<NSDictionary *> *)availableNetworks {
