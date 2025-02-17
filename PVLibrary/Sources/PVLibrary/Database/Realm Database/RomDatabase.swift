@@ -811,6 +811,40 @@ public extension RomDatabase {
                 NSLog(error.localizedDescription)
             }
         }
+        //attempt to delete files with the same name. There's an issue when importing that the files do NOT get associated, so if we assume the user imported properly, the name should just be the same with different extensions.
+        let parentDirectory = game.file.url.deletingLastPathComponent()
+        let fileManager: FileManager = .default
+        guard fileManager.fileExists(atPath: parentDirectory.pathDecoded)
+        else {
+            return
+        }
+        let children: [String]
+        do {
+            children = try fileManager.subpathsOfDirectory(atPath: parentDirectory.pathDecoded)
+        } catch {
+            ELOG("error retrieving files at directory: \(parentDirectory), \(error)")
+            return
+        }
+        guard !children.isEmpty
+        else {
+            return
+        }
+        DLOG("children: \(children)")
+        let fileName = game.file.url.deletingPathExtension().lastPathComponent
+        DLOG("fileName without extension: \(fileName)")
+        children.forEach { child in
+            let currentChildUrl = parentDirectory.appendingPathComponent(child)
+            let currentExtension = currentChildUrl.pathExtension
+            let currentChildFileName = currentChildUrl.deletingPathExtension().lastPathComponent
+            DLOG("current extension: \(currentExtension), current file name: \(currentChildFileName), current url: \(currentChildUrl)")
+            if !currentExtension.allSatisfy({$0.isWhitespace}) && currentChildFileName == fileName {
+                do {
+                    try fileManager.removeItem(at: currentChildUrl)
+                } catch {
+                    ELOG("error deleting file: \(currentChildUrl)")
+                }
+            }
+        }
     }
 }
 
