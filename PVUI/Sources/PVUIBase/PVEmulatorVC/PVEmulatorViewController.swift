@@ -112,6 +112,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                     gpuViewController.isPaused = false
                 }
             }
+            core.setPauseEmulation(isShowingMenu)
         }
     }
 
