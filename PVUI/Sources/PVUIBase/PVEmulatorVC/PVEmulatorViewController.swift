@@ -68,7 +68,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     }()
 
     #if os(tvOS)
-    public var preferredUserInterfaceStyle: UIUserInterfaceStyle { ThemeManager.shared.currentPalette.dark ? .dark : .light }
+    public override var preferredUserInterfaceStyle: UIUserInterfaceStyle { ThemeManager.shared.currentPalette.dark ? .dark : .light }
     #endif
 
     public var audioInited: Bool = false
@@ -389,7 +389,29 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 secondaryWindow?.addSubview(aView)
             }
             secondaryWindow?.isHidden = false
-        } else if (!core.skipLayout) {
+        } else {
+            #if os(tvOS)
+            if core.skipLayout {
+                // Special handling for RetroArch cores on tvOS
+                addChild(gpuViewController)
+                if let gpuView = gpuViewController.view {
+                    gpuView.frame = view.bounds
+                    gpuView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+                    view.addSubview(gpuView)
+                }
+                gpuViewController.didMove(toParent: self)
+            } else {
+                // Keep existing behavior for non-skipLayout cores
+                gpuViewController.willMove(toParent: self)
+                addChild(gpuViewController)
+                if let aView = gpuViewController.view {
+                    aView.frame = view.bounds
+                    view.addSubview(aView)
+                }
+                gpuViewController.didMove(toParent: self)
+            }
+            #else
+            // Keep existing iOS behavior unchanged
             gpuViewController.willMove(toParent: self)
             addChild(gpuViewController)
             // Note: This also initilaizes the view
@@ -400,6 +422,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 view.addSubview(aView)
             }
             gpuViewController.didMove(toParent: self)
+            #endif
         }
 #if os(iOS) && !targetEnvironment(macCatalyst) && !os(macOS)
         addControllerOverlay()
