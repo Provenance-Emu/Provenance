@@ -67,6 +67,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         return controller
     }()
 
+    #if os(tvOS)
+    public var preferredUserInterfaceStyle: UIUserInterfaceStyle { ThemeManager.shared.currentPalette.dark ? .dark : .light }
+    #endif
 
     public var audioInited: Bool = false
     public private(set) lazy var gameAudio: any AudioEngineProtocol = {
@@ -256,6 +259,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         menuButton?.tintColor = ThemeManager.shared.currentPalette.defaultTintColor ?? UIColor.white
         menuButton?.alpha = alpha
         menuButton?.addTarget(self, action: #selector(PVEmulatorViewController.showMenu(_:)), for: .touchUpInside)
+        #if !os(tvOS)
+        menuButton?.isPointerInteractionEnabled = true
+        #endif
         view.addSubview(menuButton!)
     }
 
