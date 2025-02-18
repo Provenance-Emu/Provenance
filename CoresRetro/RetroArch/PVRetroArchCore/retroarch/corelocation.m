@@ -14,8 +14,6 @@
  */
 
 #import <CoreLocation/CoreLocation.h>
-//#include "cocoa_common.h"
-//#include "apple_platform.h"
 #include "location_driver.h"
 #include "../../verbosity.h"
 @interface CoreLocationManager : NSObject <CLLocationManagerDelegate>

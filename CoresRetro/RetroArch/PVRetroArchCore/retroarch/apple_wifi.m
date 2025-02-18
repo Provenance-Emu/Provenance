@@ -80,7 +80,7 @@ typedef struct
 
 - (BOOL)hasExtendedPermissions {
     /// Check if the app has the required entitlements for extended WiFi access
-#if TARGET_OS_SIMULATOR
+#if TARGET_OS_SIMULATOR || TARGET_OS_TV
     RARCH_LOG("[WiFi] Simulator doesn't support these features\n");
     return NO; /// Simulator doesn't support these features
 #else
@@ -123,6 +123,9 @@ typedef struct
 }
 
 - (NSArray<NSDictionary *> *)availableNetworks {
+#if TARGET_OS_TV
+    return  @[];
+#else
     RARCH_LOG("[WiFi] Scanning for available networks\n");
 
     if ([self hasExtendedPermissions]) {
@@ -159,6 +162,7 @@ typedef struct
         RARCH_LOG("[WiFi] No active network found\n");
     }
     return currentNetwork ? @[currentNetwork] : @[];
+#endif
 }
 
 @end
@@ -402,7 +406,7 @@ static bool nmcli_connect_ssid(void *data, const wifi_network_info_t *netinfo)
         return false;
     }
 
-#if defined(IOS)
+#if defined(IOS) && !TARGET_OS_TV
     if (@available(iOS 14.0, *)) {
         RARWiFiManager *wifiManager = [RARWiFiManager shared];
         if ([wifiManager hasExtendedPermissions]) {
@@ -454,6 +458,8 @@ static bool nmcli_connect_ssid(void *data, const wifi_network_info_t *netinfo)
 
     RARCH_LOG("[WiFi] Successfully connected to network: %s\n", netinfo->ssid);
     return success;
+#else
+    return false;
 #endif
 }
 
@@ -464,7 +470,7 @@ static bool nmcli_disconnect_ssid(void *data, const wifi_network_info_t *netinfo
         return false;
     }
 
-#if defined(IOS)
+#if defined(IOS) && !TARGET_OS_TV
     if (@available(iOS 14.0, *)) {
         RARWiFiManager *wifiManager = [RARWiFiManager shared];
         if ([wifiManager hasExtendedPermissions]) {
@@ -496,12 +502,14 @@ static bool nmcli_disconnect_ssid(void *data, const wifi_network_info_t *netinfo
 
     RARCH_LOG("[WiFi] Successfully disconnected from network\n");
     return success;
+#else
+    return false;
 #endif
 }
 
 static void nmcli_tether_start_stop(void *data, bool start, char *ssid)
 {
-#if defined(IOS)
+#if defined(IOS) && !TARGET_OS_TV
     if (@available(iOS 14.0, *)) {
         RARWiFiManager *wifiManager = [RARWiFiManager shared];
         if ([wifiManager hasExtendedPermissions]) {

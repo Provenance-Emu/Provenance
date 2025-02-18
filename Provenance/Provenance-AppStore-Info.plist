@@ -597,7 +597,5 @@
 	<string>Some games may use location data to enhance emulated location gameplay features</string>
     <key>NSLocalNetworkUsageDescription</key>
     <string>RetroArch needs access to WiFi networks for enhanced emulated WiFi network features.</string>
-    <key>NEHotspotHelperSupported</key>
-    <true/>
 </dict>
 </plist>

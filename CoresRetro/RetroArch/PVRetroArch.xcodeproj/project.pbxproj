@@ -240,7 +240,7 @@
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		B3632A522D15161300041145 /* PVRetroArchCore+Controls+DOS.m in Sources */ = {isa = PBXBuildFile; fileRef = B3632A512D15161300041145 /* PVRetroArchCore+Controls+DOS.m */; };
-		B363390E2D6286FA00ECD2ED /* apple_wifi.m in Sources */ = {isa = PBXBuildFile; fileRef = B363390D2D6286FA00ECD2ED /* apple_wifi.m */; };
+		B363390E2D6286FA00ECD2ED /* apple_wifi.m in Sources */ = {isa = PBXBuildFile; fileRef = B363390D2D6286FA00ECD2ED /* apple_wifi.m */; platformFilters = (ios, maccatalyst, watchos, ); };
 		B363394D2D63E82B00ECD2ED /* coreaudio_mic.m in Sources */ = {isa = PBXBuildFile; fileRef = B363394C2D63E82B00ECD2ED /* coreaudio_mic.m */; };
 		B364D5CB2CD2A8B70082D177 /* Unrar in Frameworks */ = {isa = PBXBuildFile; productRef = B364D5CA2CD2A8B70082D177 /* Unrar */; };
 		B37106F42D51AFC300688298 /* RetroArchCoreOptionsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37106F32D51AFC300688298 /* RetroArchCoreOptionsLoader.swift */; };
