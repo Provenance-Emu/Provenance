@@ -46,7 +46,7 @@ public extension CoreOptions {
     }
 }
 
-public enum CoreOption {
+public enum CoreOption: Sendable {
     case bool(_ display: CoreOptionValueDisplay, defaultValue: Bool = false)
     case range(_ display: CoreOptionValueDisplay, range: CoreOptionRange<Int>, defaultValue: Int)
 	case rangef(_ display: CoreOptionValueDisplay, range: CoreOptionRange<Float>, defaultValue: Float)

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct CoreOptionMultiValue {
+public struct CoreOptionMultiValue: Sendable {
     public let title: String
     public let description: String?
     public let isDefault: Bool

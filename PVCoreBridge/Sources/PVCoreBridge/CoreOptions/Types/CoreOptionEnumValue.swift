@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct CoreOptionEnumValue {
+public struct CoreOptionEnumValue: Sendable {
     public let title: String
     public let description: String?
     public let value: Int

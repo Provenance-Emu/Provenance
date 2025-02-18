@@ -108,7 +108,7 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
         return options
     }
 
-    static var gsOption: CoreOption {
+    public static var gsOption: CoreOption {
          .enumeration(.init(title: "Graphics Handler",
                description: "(Requires Restart)",
                requiresRestart: true),
@@ -119,21 +119,21 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
           ],
           defaultValue: 0)
     }
-    static var retroArchControllerOption: CoreOption {
+    public static var retroArchControllerOption: CoreOption {
         .bool(.init(
             title: USE_RETROARCH_CONTROLLER,
             description: nil,
             requiresRestart: false),
               defaultValue: false)
     }
-    static var secondScreenOption: CoreOption {
+    public static var secondScreenOption: CoreOption {
         .bool(.init(
             title: USE_SECOND_SCREEN,
             description: nil,
             requiresRestart: false),
               defaultValue: false)
     }
-    static var mupenRDPOption: CoreOption {
+    public static var mupenRDPOption: CoreOption {
           .enumeration(.init(title: "Mupen RDP Plugin",
                description: "(Requires Restart)",
                requiresRestart: true),
@@ -143,7 +143,7 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
           ],
           defaultValue: 0)
     }
-    static var apple2MachineOption: CoreOption {
+    public static var apple2MachineOption: CoreOption {
           .enumeration(.init(title: "System Model",
                description: "(Requires Restart)",
                requiresRestart: true),
@@ -158,7 +158,7 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
           ],
           defaultValue: 212)
     }
-    static var volumeOption: CoreOption {
+    public static var volumeOption: CoreOption {
         .enumeration(.init(title: "Audio Volume",
                            description: "",
                            requiresRestart: false),
@@ -177,7 +177,7 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
                      ],
                      defaultValue: 80)
     }
-    static var ffOption: CoreOption {
+    public static var ffOption: CoreOption {
         .enumeration(.init(title: "Fast Forward Speed",
                            description: "",
                            requiresRestart: false),
@@ -196,7 +196,7 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
                      ],
                      defaultValue: 125)
     }
-    static var smOption: CoreOption {
+    public static var smOption: CoreOption {
         .enumeration(.init(title: "Slow Motion Speed",
                            description: "",
                            requiresRestart: false),
@@ -213,27 +213,27 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
                      ],
                      defaultValue: 125)
     }
-    static var analogKeyControllerOption: CoreOption = {
+    public static var analogKeyControllerOption: CoreOption = {
         .bool(.init(
             title: ENABLE_ANALOG_KEY,
             description: nil,
             requiresRestart: false),
               defaultValue: true)}()
-    static var analogDpadControllerOption: CoreOption = {
+    public static var analogDpadControllerOption: CoreOption = {
         .bool(.init(
             title: ENABLE_ANALOG_DPAD,
             description: nil,
             requiresRestart: false),
               defaultValue: false)
     }()
-    static var numKeyControllerOption: CoreOption {
+    public static var numKeyControllerOption: CoreOption {
         .bool(.init(
             title: ENABLE_NUM_KEY,
             description: nil,
             requiresRestart: false),
               defaultValue: false)
     }
-    static var mameOSDOption: CoreOption {
+    public static var mameOSDOption: CoreOption {
         .bool(.init(
             title: "Launch into OSD",
             description: nil,
@@ -243,18 +243,25 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
 }
 
 // MARK: - PVRetroArchCoreCore
-
 extension PVRetroArchCoreCore: @preconcurrency CoreOptional, SubCoreOptional {
     @MainActor
     public static var options: [PVCoreBridge.CoreOption] {
-        return PVRetroArchCoreOptions.options
+        return PVRetroArchCoreOptions.options + (options(forSubcoreIdentifier: identifier, systemName: systemName) ?? [])
     }
 
     @MainActor
     public static func options(forSubcoreIdentifier identifier: String, systemName: String) -> [PVCoreBridge.CoreOption]? {
-        let identifier = EmulationState.shared.coreClassName
-        let systemName = EmulationState.shared.systemName
-        return PVRetroArchCoreOptions.options(forSubcoreIdentifier: identifier, systemName: systemName)
+        return PVRetroArchCoreOptions.options(forSubcoreIdentifier: identifier.isEmpty ? self.identifier : identifier, systemName: systemName.isEmpty ? self.systemName : systemName)
+    }
+    
+    @MainActor
+    private static var identifier: String {
+        EmulationState.shared.coreClassName.isEmpty ? "retroarch" : EmulationState.shared.coreClassName
+    }
+    
+    @MainActor
+    private static var systemName: String {
+        EmulationState.shared.systemName.isEmpty ? "retroarch" : EmulationState.shared.systemName
     }
 }
 
