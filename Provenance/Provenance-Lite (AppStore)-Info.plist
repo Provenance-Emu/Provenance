@@ -236,6 +236,10 @@
 	<string>Provenance can set custom artworks from your photos or save screenshots to the Photo Library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Provenance can set custom artworks from your photos or save screenshots to the Photo Library.</string>
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>RetroArch needs access to WiFi networks for network features.</string>
+    <key>NEHotspotHelperSupported</key>
+    <true/>
 	<key>NSServices</key>
 	<array>
 		<dict/>

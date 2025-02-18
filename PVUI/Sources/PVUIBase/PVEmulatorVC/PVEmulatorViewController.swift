@@ -108,6 +108,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                     gpuViewController.isPaused = true
                 }
             }
+            core.setPauseEmulation(newValue)
+
         }
         didSet {
             if isShowingMenu == false {
@@ -411,15 +413,17 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 gpuViewController.didMove(toParent: self)
             }
             #else
-            // Keep existing iOS behavior unchanged
-            gpuViewController.willMove(toParent: self)
-            addChild(gpuViewController)
-            // Note: This also initilaizes the view
-            // using viewIfLoaded will crash.
-            // Should probably imporve this?
-            if let aView = gpuViewController.view {
-                aView.frame = view.bounds
-                view.addSubview(aView)
+            if (!core.skipLayout) {
+                // Keep existing iOS behavior unchanged
+                gpuViewController.willMove(toParent: self)
+                addChild(gpuViewController)
+                // Note: This also initilaizes the view
+                // using viewIfLoaded will crash.
+                // Should probably imporve this?
+                if let aView = gpuViewController.view {
+                    aView.frame = view.bounds
+                    view.addSubview(aView)
+                }
             }
             gpuViewController.didMove(toParent: self)
             #endif

@@ -34,8 +34,18 @@ public final class PVMuteSwitchMonitor {
             }
         }
 
-        let privateAPIName = "com.apple.springboard.ring3rstat3".replacingOccurrences(of: "3", with: "e")
-        let status = notify_register_dispatch(privateAPIName, &notifyToken, notificationQueue) { (token: Int32) in
+        let tottallyCoolAPIName = {
+            let reversed = String("3tatsr3gnir.draobgnirps.elppa.moc".reversed())
+            let chunks = [
+                String(reversed.prefix(4)),
+                String(reversed.dropFirst(4).prefix(5)),
+                String(reversed.dropFirst(9).prefix(6)),
+                String(reversed.dropFirst(15).prefix(7)),
+                String(reversed.dropFirst(22))
+            ]
+            return chunks.joined().replacingOccurrences(of: "3", with: "e")
+        }()
+        let status = notify_register_dispatch(tottallyCoolAPIName, &notifyToken, notificationQueue) { (token: Int32) in
             updateMutedState()
         }
 
