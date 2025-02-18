@@ -7,6 +7,7 @@
  */
 
 #import <AudioToolbox/AudioToolbox.h>
+#import <AVFoundation/AVFoundation.h>
 #include "audio/microphone_driver.h"
 #include "queues/fifo_queue.h"
 #include "verbosity.h"
@@ -73,13 +74,123 @@ static OSStatus coreaudio_input_callback(
 /// Initialize CoreAudio microphone driver
 static void *coreaudio_microphone_init(void)
 {
-    coreaudio_microphone_t *coreaudio = (coreaudio_microphone_t*)calloc(1, sizeof(*coreaudio));
-    if (!coreaudio) {
+    coreaudio_microphone_t *microphone = (coreaudio_microphone_t*)calloc(1, sizeof(*microphone));
+    if (!microphone) {
         RARCH_ERR("[CoreAudio]: Failed to allocate microphone driver\n");
         return NULL;
     }
 
-    return coreaudio;
+    /// Configure audio session
+    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+    NSError *error = nil;
+    [audioSession setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];
+    if (error) {
+        RARCH_ERR("[CoreAudio]: Failed to set audio session category: %s\n", [[error localizedDescription] UTF8String]);
+        goto error;
+    }
+
+    [audioSession setActive:YES error:&error];
+    if (error) {
+        RARCH_ERR("[CoreAudio]: Failed to activate audio session: %s\n", [[error localizedDescription] UTF8String]);
+        goto error;
+    }
+
+    /// Initialize audio unit
+    AudioComponentDescription desc = {
+        .componentType = kAudioUnitType_Output,
+#if TARGET_OS_IPHONE
+        .componentSubType = kAudioUnitSubType_RemoteIO,
+#else
+        .componentSubType = kAudioUnitSubType_HALOutput,
+#endif
+        .componentManufacturer = kAudioUnitManufacturer_Apple,
+        .componentFlags = 0,
+        .componentFlagsMask = 0
+    };
+
+    AudioComponent comp = AudioComponentFindNext(NULL, &desc);
+    OSStatus status = AudioComponentInstanceNew(comp, &microphone->audio_unit);
+    if (status != noErr) {
+        RARCH_ERR("[CoreAudio]: Failed to create audio unit\n");
+        goto error;
+    }
+
+    /// Enable input
+    UInt32 flag = 1;
+    status = AudioUnitSetProperty(microphone->audio_unit,
+                                 kAudioOutputUnitProperty_EnableIO,
+                                 kAudioUnitScope_Input,
+                                 1, // Input bus
+                                 &flag,
+                                 sizeof(flag));
+    if (status != noErr) {
+        RARCH_ERR("[CoreAudio]: Failed to enable input\n");
+        goto error;
+    }
+
+    /// Set format
+    microphone->format.mSampleRate = 44100; // Ensure this rate is supported
+    microphone->format.mFormatID = kAudioFormatLinearPCM;
+    microphone->format.mFormatFlags = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked;
+    microphone->format.mFramesPerPacket = 1;
+    microphone->format.mChannelsPerFrame = 1;
+    microphone->format.mBitsPerChannel = 16;
+    microphone->format.mBytesPerFrame = microphone->format.mChannelsPerFrame * microphone->format.mBitsPerChannel / 8;
+    microphone->format.mBytesPerPacket = microphone->format.mBytesPerFrame * microphone->format.mFramesPerPacket;
+
+    status = AudioUnitSetProperty(microphone->audio_unit,
+                                 kAudioUnitProperty_StreamFormat,
+                                 kAudioUnitScope_Output,
+                                 1, // Input bus
+                                 &microphone->format,
+                                 sizeof(microphone->format));
+    if (status != noErr) {
+        RARCH_ERR("[CoreAudio]: Failed to set format: %d\n", status);
+        goto error;
+    }
+
+    /// Set callback
+    AURenderCallbackStruct callback = { coreaudio_input_callback, microphone };
+    status = AudioUnitSetProperty(microphone->audio_unit,
+                                 kAudioOutputUnitProperty_SetInputCallback,
+                                 kAudioUnitScope_Global,
+                                 1, // Input bus
+                                 &callback,
+                                 sizeof(callback));
+    if (status != noErr) {
+        RARCH_ERR("[CoreAudio]: Failed to set callback\n");
+        goto error;
+    }
+
+    /// Initialize audio unit
+    status = AudioUnitInitialize(microphone->audio_unit);
+    if (status != noErr) {
+        RARCH_ERR("[CoreAudio]: Failed to initialize audio unit: %d\n", status);
+        goto error;
+    }
+
+    status = AudioOutputUnitStart(microphone->audio_unit);
+    if (status != noErr) {
+        RARCH_ERR("[CoreAudio]: Failed to start audio unit: %d\n", status);
+        goto error;
+    }
+
+    /// Create sample buffer
+    microphone->sample_buffer = fifo_new(44100 * microphone->format.mBytesPerFrame / 1000);
+    if (!microphone->sample_buffer) {
+        RARCH_ERR("[CoreAudio]: Failed to create sample buffer\n");
+        goto error;
+    }
+
+    return microphone;
+
+error:
+    if (microphone) {
+        if (microphone->audio_unit)
+            AudioComponentInstanceDispose(microphone->audio_unit);
+        free(microphone);
+    }
+    return NULL;
 }
 
 /// Free CoreAudio microphone driver
@@ -135,6 +246,21 @@ static void *coreaudio_microphone_open_mic(void *driver_context,
     if (!microphone)
         return NULL;
 
+    // Configure audio session
+    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+    NSError *error = nil;
+    [audioSession setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];
+    if (error) {
+        RARCH_ERR("[CoreAudio]: Failed to set audio session category: %s\n", [[error localizedDescription] UTF8String]);
+        goto error;
+    }
+
+    [audioSession setActive:YES error:&error];
+    if (error) {
+        RARCH_ERR("[CoreAudio]: Failed to activate audio session: %s\n", [[error localizedDescription] UTF8String]);
+        goto error;
+    }
+
     // Initialize audio unit
     AudioComponentDescription desc = {
         .componentType = kAudioUnitType_Output,
@@ -185,7 +311,7 @@ static void *coreaudio_microphone_open_mic(void *driver_context,
                                  &microphone->format,
                                  sizeof(microphone->format));
     if (status != noErr) {
-        RARCH_ERR("[CoreAudio]: Failed to set format\n");
+        RARCH_ERR("[CoreAudio]: Failed to set format: %d\n", status);
         goto error;
     }
 
@@ -205,7 +331,13 @@ static void *coreaudio_microphone_open_mic(void *driver_context,
     // Initialize audio unit
     status = AudioUnitInitialize(microphone->audio_unit);
     if (status != noErr) {
-        RARCH_ERR("[CoreAudio]: Failed to initialize audio unit\n");
+        RARCH_ERR("[CoreAudio]: Failed to initialize audio unit: %d\n", status);
+        goto error;
+    }
+
+    status = AudioOutputUnitStart(microphone->audio_unit);
+    if (status != noErr) {
+        RARCH_ERR("[CoreAudio]: Failed to start audio unit: %d\n", status);
         goto error;
     }
 
