@@ -1057,7 +1057,12 @@ private struct DebugControlsSection: View {
     @Binding var flags: [(key: String, flag: FeatureFlag, enabled: Bool)]
     @Binding var isLoading: Bool
     @Binding var errorMessage: String?
+    #if os(tvOS)
+    // TODO: Make the konami code work on tvOS
+    @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = true
+    #else
     @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = false
+    #endif
 
     var body: some View {
         Section(header: Text("Debug Controls")) {
@@ -1167,7 +1172,7 @@ private struct AppearanceSection: View {
 }
 
 private struct SecretDPadView: View {
-    enum Direction {
+    enum Direction: String {
         case up, down, left, right
     }
 
@@ -1181,7 +1186,19 @@ private struct SecretDPadView: View {
     var body: some View {
         VStack {
             if showDPad {
-                // D-Pad Layout
+                #if os(tvOS)
+                Text("Enter Konami Code")
+                    .font(.title)
+                    .padding()
+
+                Text(sequenceText)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding()
+
+                Spacer()
+                #else
+                // iOS D-Pad Layout
                 VStack(spacing: 0) {
                     // Up button
                     Button(action: { pressButton(.up) }) {
@@ -1219,15 +1236,35 @@ private struct SecretDPadView: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .padding(.top)
+                #endif
+            } else {
+                #if DEBUG
+                Text("Press and hold the main button for 5 seconds to enable Konami code input")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding()
+                #endif
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        #if os(tvOS)
+        .onLongPressGesture(minimumDuration: 5) {
+            withAnimation {
+                showDPad = true
+            }
+        }
+        .onMoveCommand { direction in
+            guard showDPad else { return }
+            handleDirection(direction)
+        }
+        #else
         .contentShape(Rectangle())
         .onLongPressGesture(minimumDuration: 5) {
             withAnimation {
                 showDPad = true
             }
         }
+        #endif
     }
 
     private var sequenceText: String {
@@ -1243,7 +1280,31 @@ private struct SecretDPadView: View {
 
     private func pressButton(_ direction: Direction) {
         pressedButtons.append(direction)
+        checkKonamiCode()
+    }
 
+    #if os(tvOS)
+    private func handleDirection(_ direction: MoveCommandDirection) {
+        let newDirection: Direction
+        switch direction {
+        case .up:
+            newDirection = .up
+        case .down:
+            newDirection = .down
+        case .left:
+            newDirection = .left
+        case .right:
+            newDirection = .right
+        default:
+            return
+        }
+
+        pressedButtons.append(newDirection)
+        checkKonamiCode()
+    }
+    #endif
+
+    private func checkKonamiCode() {
         // Check if the sequence matches the Konami code
         if pressedButtons.count >= konamiCode.count {
             let lastEight = Array(pressedButtons.suffix(konamiCode.count))
@@ -1280,12 +1341,14 @@ private struct SecretSettingsRow: View {
                                icon: .sfSymbol("flag.fill"))
                 }
             } else {
-                SettingsRow(title: "About",
-                           subtitle: "Version information",
-                           icon: .sfSymbol("info.circle"))
-                    .onTapGesture {
-                        showSecretView = true
-                    }
+                Button(action: {
+                    showSecretView = true
+                }) {
+                    SettingsRow(title: "About",
+                               subtitle: "Version information",
+                               icon: .sfSymbol("info.circle"))
+                }
+                .buttonStyle(PlainButtonStyle()) /// Preserves the row styling
             }
             #endif
         }
