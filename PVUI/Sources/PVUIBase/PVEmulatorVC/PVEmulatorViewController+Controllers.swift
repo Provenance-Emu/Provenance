@@ -2,25 +2,17 @@
 import PVLogging
 import GameController
 import PVSupport
+import PVSettings
 #if canImport(SteamController)
 import SteamController
 #endif
 
 extension PVEmulatorViewController {
     @objc func handlePause(_ note: Notification?) {
-        self.controllerPauseButtonPressed()
-    }
-    func controllerPauseButtonPressed() {
-        DispatchQueue.main.async(execute: { () -> Void in
-            if !self.isShowingMenu {
-                self.showMenu(self)
-            } else {
-                self.hideMenu()
-            }
-        })
+        self.controllerPauseButtonPressed(note)
     }
 
-    func hideOrShowMenuButton() {
+    public func hideOrShowMenuButton() {
 
         // find out how many *real* controllers we have....
         let controllers = PVControllerManager.shared.controllers.filter { controller in
@@ -39,7 +31,9 @@ extension PVEmulatorViewController {
         menuButton?.isHidden = false; //controllers.count != 0
 
         #if os(iOS)
-            setNeedsUpdateOfHomeIndicatorAutoHidden()
+            self.setNeedsStatusBarAppearanceUpdate()
+            self.setNeedsUpdateOfHomeIndicatorAutoHidden()
+            self.setNeedsUpdateOfScreenEdgesDeferringSystemGestures()
         #endif
     }
 
@@ -92,6 +86,7 @@ extension PVEmulatorViewController {
             secondaryWindow?.isHidden = false
             gpuViewController.view?.setNeedsLayout()
         }
+        hideOrShowMenuButton()
     }
 
     @objc func screenDidDisconnect(_ note: Notification?) {
@@ -110,5 +105,6 @@ extension PVEmulatorViewController {
             secondaryWindow = nil
             secondaryScreen = nil
         }
+        hideOrShowMenuButton()
     }
 }

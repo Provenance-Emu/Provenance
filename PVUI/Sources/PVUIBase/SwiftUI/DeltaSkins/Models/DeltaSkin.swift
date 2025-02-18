@@ -820,6 +820,8 @@ public enum DeltaSkinError: Error {
     case invalidScreenConfiguration
     case invalidButtonConfiguration
     case accessDenied
+    case notFound
+    case deletionNotAllowed
 }
 
 extension Archive {

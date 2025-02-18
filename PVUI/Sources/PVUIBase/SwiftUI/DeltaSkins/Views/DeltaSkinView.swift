@@ -27,7 +27,7 @@ public struct DeltaSkinView: View {
     #if !os(tvOS)
     private let impactGenerator = UIImpactFeedbackGenerator(style: .rigid)
     #endif
-    
+
     // Audio engine for positional audio
     private static let audioEngine = AudioEngine()
 
@@ -252,20 +252,92 @@ public struct DeltaSkinView: View {
 
     private func logLayoutInfo(geometry: GeometryProxy, layout: SkinLayout) {
         let debugInfo = """
-        Container size: \(geometry.size)
-        Mapping size: \(skin.mappingSize(for: traits) ?? .zero)
-        Layout:
-          - scale: \(layout.scale)
-          - width: \(layout.width)
-          - height: \(layout.height)
-          - xOffset: \(layout.xOffset)
-          - yOffset: \(layout.yOffset)
-        Skin buttons:
-        \(skin.buttons(for: traits)?.map { "  - \($0.id): \($0.frame)" }.joined(separator: "\n") ?? "none")
-        Screen frame: \(skin.screens(for: traits)?.first?.outputFrame ?? .zero)
+        ===== DeltaSkinView Layout Info =====
+        Device: \(traits.device.rawValue)
+        Display Type: \(traits.displayType.rawValue)
+        Orientation: \(traits.orientation.rawValue)
+
+        Container Info:
+          Size: \(geometry.size)
+          Safe Area: \(geometry.safeAreaInsets)
+          Frame: \(geometry.frame(in: .global))
+          Local Frame: \(geometry.frame(in: .local))
+
+        Skin Info:
+          Name: \(skin.name)
+          Mapping Size: \(skin.mappingSize(for: traits) ?? .zero)
+          Has Screen Position: \(hasScreenPosition(for: traits))
+          Screen Frame: \(skin.screens(for: traits)?.first?.outputFrame ?? .zero)
+
+        Layout Calculations:
+          Scale: \(layout.scale)
+          Width: \(layout.width)
+          Height: \(layout.height)
+          X Offset: \(layout.xOffset)
+          Y Offset: \(layout.yOffset)
+
+        Position Calculations:
+          Bottom Edge: \(layout.yOffset + layout.height)
+          Screen Bottom: \(geometry.size.height)
+          Safe Area Bottom: \(geometry.size.height - geometry.safeAreaInsets.bottom)
+          Center Y Position: \(geometry.size.height - (layout.height / 2) - geometry.safeAreaInsets.bottom)
+          Final Frame: \(CGRect(x: layout.xOffset, y: layout.yOffset, width: layout.width, height: layout.height))
+
+        Screen Layer Info:
+          Container Height: \(geometry.size.height)
+          Available Space: \(geometry.size.height - layout.height)
+          Screen Dimensions: \(calculateScreenDimensions(in: geometry))
+
+        Button Layout:
+        \(skin.buttons(for: traits)?.enumerated().map { index, button in
+            """
+              Button \(index): \(button.id)
+                Frame: \(button.frame)
+                Scaled Frame: \(scaledButtonFrame(button.frame, layout: layout, in: geometry))
+                Extended Edges: \(button.extendedEdges ?? .zero)
+            """
+        }.joined(separator: "\n") ?? "No buttons")
+
+        Parent Context:
+          Safe Area Insets: \(UIApplication.shared.windows.first?.safeAreaInsets ?? .zero)
+          Screen Bounds: \(UIScreen.main.bounds)
+          Scale: \(UIScreen.main.scale)
+        =================================
         """
 
-        DLOG("DeltaSkinView frame info:\n\(debugInfo)")
+        DLOG("Layout Debug:\n\(debugInfo)")
+    }
+
+    // Helper function to calculate scaled button frames
+    private func scaledButtonFrame(_ frame: CGRect, layout: SkinLayout, in geometry: GeometryProxy) -> CGRect {
+        CGRect(
+            x: frame.minX * layout.scale + layout.xOffset,
+            y: frame.minY * layout.scale + layout.yOffset,
+            width: frame.width * layout.scale,
+            height: frame.height * layout.scale
+        )
+    }
+
+    // Helper function to calculate screen dimensions
+    private func calculateScreenDimensions(in geometry: GeometryProxy) -> String {
+        guard let mappingSize = skin.mappingSize(for: traits) else { return "No mapping size" }
+
+        let availableWidth = geometry.size.width
+        let availableHeight = geometry.size.height
+        let aspectRatio = mappingSize.width / mappingSize.height
+
+        let maxWidth = availableWidth
+        let maxHeight = availableHeight
+
+        let width = min(maxWidth, maxHeight * aspectRatio)
+        let height = width / aspectRatio
+
+        return """
+        Width: \(width)
+        Height: \(height)
+        Aspect Ratio: \(aspectRatio)
+        Available Space: \(availableWidth)x\(availableHeight)
+        """
     }
 
     public var body: some View {
@@ -349,8 +421,21 @@ public struct DeltaSkinView: View {
                     }
                     .environment(\.skinLayout, layout)
                     .onAppear {
+                        DLOG("DeltaSkinView appeared")
                         logLayoutInfo(geometry: geometry, layout: layout)
                     }
+                }
+            }
+            .onChange(of: geometry.size) { newSize in
+                DLOG("Container size changed to: \(newSize)")
+                if let layout = calculateLayout(for: geometry) {
+                    logLayoutInfo(geometry: geometry, layout: layout)
+                }
+            }
+            .onChange(of: traits) { newTraits in
+                DLOG("Traits changed to: \(newTraits)")
+                if let layout = calculateLayout(for: geometry) {
+                    logLayoutInfo(geometry: geometry, layout: layout)
                 }
             }
             #if !os(tvOS)

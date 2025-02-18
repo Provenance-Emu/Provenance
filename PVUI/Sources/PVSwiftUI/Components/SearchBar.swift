@@ -15,7 +15,7 @@ class SearchBar: NSObject, ObservableObject {
 
     @Published var text: String = ""
     let searchController: UISearchController
-    
+
 
     #if os(tvOS)
     // Cannot be nil on tvOS,
@@ -32,7 +32,7 @@ class SearchBar: NSObject, ObservableObject {
         searchController = UISearchController(searchResultsController: searchResultsController)
         searchController.searchBar.searchTextField.textColor = ThemeManager.shared.currentPalette.menuHeaderText
 //        searchController.searchBar.searchTextField.defaultTextAttributes = [.foregroundColor: ThemeManager.shared.currentPalette.menuHeaderText]
-        
+
         super.init()
 
         self.searchController.obscuresBackgroundDuringPresentation = false
@@ -74,5 +74,32 @@ struct SearchBarModifier: ViewModifier {
 extension SwiftUI.View {
     func add(_ searchBar: SearchBar) -> some SwiftUI.View {
         return self.modifier(SearchBarModifier(searchBar: searchBar))
+    }
+}
+
+struct PVSearchBar: View {
+    @Binding var text: String
+
+    var body: some View {
+        HStack {
+            TextField("Search", text: $text)
+                .padding(8)
+            #if !os(tvOS)
+                .background(Color(.systemGray6))
+            #endif
+                .cornerRadius(8)
+                .padding(.horizontal, 8)
+
+            if !text.isEmpty {
+                Button(action: {
+                    text = ""
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.gray)
+                }
+                .padding(.trailing, 8)
+            }
+        }
+        .padding(.vertical, 8)
     }
 }

@@ -30,7 +30,25 @@ extension EnvironmentValues {
 
 @available(iOS 14, tvOS 14, *)
 class ConsolesWrapperViewDelegate: ObservableObject {
-    @Published var selectedTab = ""
+    private static let tabKey = "PVLastSelectedConsoleTab"
+
+    @Published var selectedTab: String {
+        didSet {
+            UserDefaults.standard.set(selectedTab, forKey: Self.tabKey)
+            print("Tab saved to UserDefaults: \(selectedTab)")
+        }
+    }
+
+    init() {
+        // Load the saved tab on init
+        selectedTab = UserDefaults.standard.string(forKey: Self.tabKey) ?? "home"
+        print("ConsolesWrapperViewDelegate initialized with tab: \(selectedTab)")
+    }
+
+    func setTab(_ tab: String) {
+        selectedTab = tab
+        print("Tab changed to: \(tab)")
+    }
 }
 
 @available(iOS 14, tvOS 14, *)
@@ -132,7 +150,12 @@ struct ConsolesWrapperView: SwiftUI.View {
     }
 
     private func showConsoles() -> some View {
-        TabView(selection: $delegate.selectedTab) {
+        let binding = Binding(
+            get: { delegate.selectedTab },
+            set: { delegate.setTab($0) }
+        )
+
+        return TabView(selection: binding) {
             HomeView(
                 gameLibrary: rootDelegate.gameLibrary!,
                 delegate: rootDelegate,
@@ -159,7 +182,8 @@ struct ConsolesWrapperView: SwiftUI.View {
                 .ignoresSafeArea(.all, edges: .bottom)
             }
         }
-        .onChange(of: delegate.selectedTab) { _ in
+        .onChange(of: delegate.selectedTab) { newValue in
+            print("Tab changed in view: \(newValue)")
             #if !os(tvOS)
             Haptics.impact(style: .soft)
             #endif

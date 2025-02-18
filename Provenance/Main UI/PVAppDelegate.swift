@@ -430,7 +430,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
     
     // TODO: Move to ProvenanceApp
     func saveCoreState() async throws {
-        if let core = appState?.emulationState.core, core.isOn, let emulator = appState?.emulationState.emulator {
+        if let core = appState?.emulationUIState.core, core.isOn, let emulator = appState?.emulationUIState.emulator {
             if Defaults[.autoSave], core.supportsSaveStates {
                 ILOG("PVAppDelegate: Saving Core State\n")
                 try await emulator.autoSaveState()
@@ -445,7 +445,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
     
     // TODO: Move to ProvenanceApp
     func pauseCore() {
-        if let core = appState?.emulationState.core, core.isOn && core.isRunning {
+        if let core = appState?.emulationUIState.core, core.isOn && core.isRunning {
             ILOG("PVAppDelegate: Pausing Core\n")
             core.setPauseEmulation(true)
         }
@@ -458,7 +458,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
     
     // TODO: Move to ProvenanceApp
     func stopCore() {
-        if let core = appState?.emulationState.core, core.isOn {
+        if let core = appState?.emulationUIState.core, core.isOn {
             ILOG("PVAppDelegate: Stopping Core\n")
             core.stopEmulation()
         }
@@ -466,7 +466,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
     
     
     func applicationWillResignActive(_ application: UIApplication) {
-        let emulationState = appState?.emulationState
+        let emulationState = appState?.emulationUIState
         emulationState?.isInBackground = true
         pauseCore()
         sleep(1)
@@ -477,7 +477,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
     
     // TODO: Move to ProvenanceApp
     func applicationDidEnterBackground(_ application: UIApplication) {
-        appState?.emulationState.isInBackground = true
+        appState?.emulationUIState.isInBackground = true
         pauseCore()
     }
     
@@ -485,7 +485,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
     
     // TODO: Move to ProvenanceApp
     func applicationDidBecomeActive(_ application: UIApplication) {
-        appState?.emulationState.isInBackground = false
+        appState?.emulationUIState.isInBackground = false
     }
     
     // TODO: Move to ProvenanceApp

@@ -14,12 +14,12 @@ import Perception
 @MainActor
 //@Observable
 @Perceptible
-public final class EmulationState: ObservableObject {
+public final class EmulationUIState: ObservableObject {
     public var core: PVEmulatorCore? {
         didSet {
             DLOG("Set core to \(core?.debugDescription ?? "nil")")
         }
     }
-    public var emulator: PVEmulatorViewController?
+    public var emulator: PVEmualatorControllerProtocol?
     public var isInBackground: Bool = false
 }

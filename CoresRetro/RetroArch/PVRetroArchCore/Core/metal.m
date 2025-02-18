@@ -726,7 +726,7 @@ font_renderer_t metal_raster_font = {
 -(void)setPixelFormat:(MTLPixelFormat)pixelFormat {
     NSLog(@"setPixelFormat: %i", pixelFormat);
     ((CAMetalLayer*)self.layer).pixelFormat = pixelFormat;
-    
+
 }
 
 -(CGSize) naturalDrawableSizeMVK {
@@ -2441,14 +2441,84 @@ static void metal_set_rotation(void *data, unsigned rotation)
 static void metal_viewport_info(void *data, struct video_viewport *vp)
 {
    MetalDriver *md = (__bridge MetalDriver *)data;
-   *vp = *md.viewport;
+    if(md)
+        *vp = *md.viewport;
 }
 
 static bool metal_read_viewport(void *data, uint8_t *buffer, bool is_idle)
 {
    MetalDriver *md = (__bridge MetalDriver *)data;
-   return [md.frameView readViewport:buffer isIdle:is_idle];
+    if(md) {
+        return [md.frameView readViewport:buffer isIdle:is_idle];
+    } else {
+        return false;
+    }
 }
+
+static void* metal_read_frame_raw(void *data, unsigned *width,
+                                  unsigned *height, size_t *pitch)
+{
+    MetalDriver *md = (__bridge MetalDriver *)data;
+    if (!md)
+        return NULL;
+
+    /// Get the current frame dimensions
+    *width = md.viewport->full_width;
+    *height = md.viewport->full_height;
+
+    /// Determine pixel format and bytes per pixel
+    MTLPixelFormat format = md.frameView.format;
+    size_t bpp = 4; /// Default to 4 bytes per pixel (BGRA8)
+
+    switch (format) {
+        case MTLPixelFormatBGRA8Unorm:
+        case MTLPixelFormatRGBA8Unorm:
+            bpp = 4;
+            break;
+        case MTLPixelFormatBGR5A1Unorm:
+#if TARGET_OS_OSX
+        case MTLPixelFormatRGB5A1Unorm:
+#endif
+            bpp = 2;
+            break;
+        case MTLPixelFormatB5G6R5Unorm:
+            bpp = 2;
+            break;
+        default:
+            /// Unsupported format, fall back to BGRA8
+            bpp = 4;
+            break;
+    }
+
+    *pitch = *width * bpp;
+
+    /// Allocate buffer for raw frame data
+    void *buffer = malloc(*height * *pitch);
+    if (!buffer)
+        return NULL;
+
+    /// Read the frame data from the Metal view
+    bool success = [md.frameView readViewport:(uint8_t *)buffer isIdle:YES];
+    if (!success) {
+        free(buffer);
+        return NULL;
+    }
+
+    /// If the format is BGRA8, we might need to swizzle the channels
+    if (format == MTLPixelFormatBGRA8Unorm) {
+        uint32_t *pixels = (uint32_t *)buffer;
+        for (size_t i = 0; i < (*width * *height); i++) {
+            uint32_t pixel = pixels[i];
+            /// Swap R and B channels
+            pixels[i] = (pixel & 0xFF00FF00) |
+                       ((pixel & 0x00FF0000) >> 16) |
+                       ((pixel & 0x000000FF) << 16);
+        }
+    }
+
+    return buffer;
+}
+
 
 static uintptr_t metal_load_texture(void *video_data, void *data,
       bool threaded, enum texture_filter_type filter_type)
@@ -2681,12 +2751,12 @@ video_driver_t video_metal = {
    metal_set_rotation,
    metal_viewport_info,
    metal_read_viewport,
-   NULL, /* read_frame_raw */
+   metal_read_frame_raw, /// Added read_frame_raw implementation
 #ifdef HAVE_OVERLAY
    metal_get_overlay_interface,
 #endif
    metal_get_poke_interface,
-   NULL, /* wrap_type_to_enum */
+   NULL, /// wrap_type_to_enum
 #ifdef HAVE_GFX_WIDGETS
    metal_widgets_enabled
 #endif

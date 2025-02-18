@@ -19,10 +19,12 @@ public protocol PVRootDelegate: AnyObject {
     // the following methods call their equivalent GameLaunchingViewController methods with thawed objects
     func root_canLoad(_ game: PVGame) async throws
     func root_load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async
+    func root_loadPath(_ path: String, forGame game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async
     func root_openSaveState(_ saveState: PVSaveState) async
     func root_updateRecentGames(_ game: PVGame)
     func root_presentCoreSelection(forGame game: PVGame, sender: Any?)
     func showMessage(_ message: String, title: String)
+    func root_loadDisc(_ disc: PVFile, forGame game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async
 
     var gameLibrary: PVGameLibrary<RealmDatabaseDriver>! { get }
 }
@@ -43,6 +45,11 @@ public extension PVRootDelegate {
             return
         }
         await root_load(game, sender: nil, core: nil, saveState: nil)
+    }
+
+    /// Load a specific disc for a game
+    public func root_loadDisc(_ disc: PVFile, forGame game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async {
+        await root_loadPath(disc.url.path, forGame: game, sender: sender, core: core, saveState: saveState)
     }
 }
 

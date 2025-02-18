@@ -19,8 +19,10 @@ import PVSettings
 import PVLogging
 
 extension PVEmulatorViewController {
-    @objc func showMenu(_ sender: AnyObject?) {
-        if (!core.isOn) {
+    @objc public func showMenu(_ sender: AnyObject?) {
+
+        if (!core.isOn) { // TODO: Should we just do this code anyway?
+            WLOG("Core isn't on, ignorig showMenu.")
             return;
         }
         enableControllerInput(true)
@@ -159,14 +161,20 @@ extension PVEmulatorViewController {
         }
 #if os(iOS) || targetEnvironment(macCatalyst)
         actionSheet.addAction(UIAlertAction(title: "Save Screenshot", style: .default, handler: { action in
-            self.perform(#selector(self.takeScreenshot), with: nil, afterDelay: 0.1)
+            Task { @MainActor [weak self] in
+                try await Task.sleep(nanoseconds: 100_000_000) /// 0.1 second delay (100ms)
+                self?.takeScreenshot() /// Perform screenshot after delay
+            }
         }))
 #endif
         actionSheet.addAction(UIAlertAction(title: "Game Info", style: .default, handler: { action in
             self.showMoreInfo()
         }))
         actionSheet.addAction(UIAlertAction(title: "Game Speed", style: .default, handler: { action in
-            self.perform(#selector(self.showSpeedMenu(_:)), with: sender, afterDelay: 0.1)
+            Task { @MainActor [weak self] in
+                try await Task.sleep(nanoseconds: 1_000)
+                self?.showSpeedMenu()
+            }
         }))
         if core.supportsSaveStates {
             actionSheet.addAction(UIAlertAction(title: "Save States", style: .default, handler: { action in
@@ -235,7 +243,7 @@ extension PVEmulatorViewController {
 
         // make sure this item is marked .cancel so it will be called even if user dismises popup
         let resumeAction = UIAlertAction(title: "Resume", style: .cancel, handler: { action in
-            if AppState.shared.emulationState.isInBackground {
+            if AppState.shared.emulationUIState.isInBackground {
                 return // don't resume if in background
             }
 

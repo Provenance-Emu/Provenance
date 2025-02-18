@@ -130,6 +130,10 @@ public enum ButtonSound: String, Codable, Equatable, UserDefaultsRepresentable, 
     case click = "click"
     case tap = "tap"
     case pop = "pop"
+    case click2 = "click2"
+    case tap2 = "tap2"
+    case click3 = "click3"
+    case `switch` = "switch"
 
     public var description: String {
         switch self {
@@ -143,6 +147,14 @@ public enum ButtonSound: String, Codable, Equatable, UserDefaultsRepresentable, 
             return "Tap"
         case .pop:
             return "Pop"
+        case .click2:
+            return "Click 2"
+        case .tap2:
+            return "Tap 2"
+        case .click3:
+            return "Click 3"
+        case .switch:
+            return "Switch"
         }
     }
 
@@ -158,6 +170,14 @@ public enum ButtonSound: String, Codable, Equatable, UserDefaultsRepresentable, 
             return "Soft tap sound"
         case .pop:
             return "Bubble pop sound"
+        case .click2:
+            return "Mechanical click sound"
+        case .tap2:
+            return "Sharp tap sound"
+        case .click3:
+            return "Thudding click sound"
+        case .switch:
+            return "Mechaniacal switch sound"
         }
     }
 
@@ -172,12 +192,20 @@ public enum ButtonSound: String, Codable, Equatable, UserDefaultsRepresentable, 
             return "button-tap"
         case .pop:
             return "button-pop"
+        case .click2:
+            return "button-click2"
+        case .click3:
+            return "button-click3"
+        case .tap2:
+            return "button-tap2"
+        case .switch:
+            return "button-switch"
         }
     }
     
     public var hasReleaseSample: Bool {
         switch self {
-        case .click, .pop: return true
+        case .click, .pop, .switch: return true
         default: return false
         }
     }
@@ -197,6 +225,8 @@ public extension Defaults.Keys {
     static let monoAudio = Key<Bool>("monoAudio", default: false)
 
     static let audioLatency = Key<TimeInterval>("audioLatency", default: 10.0)
+    
+    static let respectMuteSwitch = Key<Bool>("respectMuteSwitch", default: true)
 }
 
 // MARK: Beta Options
@@ -222,11 +252,11 @@ public extension Defaults.Keys {
     static let tvOSThemes = Key<Bool>("tvOSThemes", default: false)
 #endif
 #if os(macOS) || targetEnvironment(macCatalyst)
-    static let movableButtons = Key<Bool>("movableButtons", default: false)
+    static let movableButtons = Key<Bool>("movableButtons", default: true)
     static let onscreenJoypad = Key<Bool>("onscreenJoypad", default: false)
     static let onscreenJoypadWithKeyboard = Key<Bool>("onscreenJoypadWithKeyboard", default: false)
 #elseif os(iOS)
-    static let movableButtons = Key<Bool>("movableButtons", default: false)
+    static let movableButtons = Key<Bool>("movableButtons", default: true)
     static let onscreenJoypad = Key<Bool>("onscreenJoypad", default: true)
     static let onscreenJoypadWithKeyboard = Key<Bool>("onscreenJoypadWithKeyboard", default: true)
 #endif

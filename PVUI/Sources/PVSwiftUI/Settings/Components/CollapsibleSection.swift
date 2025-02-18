@@ -8,6 +8,7 @@
 import SwiftUI
 import PVSettings
 import Defaults
+import PVLogging
 
 internal struct CollapsibleSection<Content: View>: View {
     let title: String
@@ -19,7 +20,7 @@ internal struct CollapsibleSection<Content: View>: View {
         self.title = title
         self.content = content()
         self._isExpanded = State(initialValue: !Defaults[.collapsedSections].contains(title))
-        print("Init CollapsibleSection '\(title)' - collapsed sections: \(Defaults[.collapsedSections])")
+        VLOG("Init CollapsibleSection '\(title)' - collapsed sections: \(Defaults[.collapsedSections])")
     }
 
     var body: some View {

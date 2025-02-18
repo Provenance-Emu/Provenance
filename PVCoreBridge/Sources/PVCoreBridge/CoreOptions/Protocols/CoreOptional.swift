@@ -8,6 +8,7 @@
 
 import Foundation
 
+
 public protocol CoreOptional {//where Self: EmulatorCoreIOInterface {
     static var options: [CoreOption] { get }
 
@@ -15,6 +16,11 @@ public protocol CoreOptional {//where Self: EmulatorCoreIOInterface {
 //    static func int(forOption option: String) -> Int
 //    static func float(forOption option: String) -> Float
 //    static func string(forOption option: String) -> String?
+}
+
+public protocol SubCoreOptional: CoreOptional {
+//    associatedtype Parent: CoreOptional
+    static func options(forSubcoreIdentifier: String, systemName: String) async -> [CoreOption]?
 }
 
 // public extension CoreOptional {

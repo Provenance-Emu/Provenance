@@ -90,7 +90,7 @@ let package = Package(
             dependencies: ["PVEmulatorCore"]
         )
     ],
-    swiftLanguageModes: [.v5, .v6],
+    swiftLanguageModes: [.v6],
     cLanguageStandard: .gnu2x,
     cxxLanguageStandard: .gnucxx20
 )

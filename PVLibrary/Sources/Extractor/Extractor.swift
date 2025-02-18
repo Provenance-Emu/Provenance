@@ -108,8 +108,8 @@ public final actor Extractor {
     }
 
     private func decompress(entries: [ZipEntry]) async throws -> [DecompressedEntry] {
-        await Task {
-            let result = await entries.asyncCompactMap { entry -> DecompressedEntry? in
+        let r = await Task {
+            let result = await entries.async.compactMap { entry -> DecompressedEntry? in
                 guard let data = entry.data else {
                     ELOG("Nil data")
                     return nil
@@ -128,5 +128,6 @@ public final actor Extractor {
             }
             return result
         }.value
+        return await Array(r)
     }
 }

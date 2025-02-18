@@ -187,3 +187,6 @@
 [submodule "CoresRetro/RetroArch/ZipArchive"]
 	path = CoresRetro/RetroArch/ZipArchive
 	url = https://github.com/ZipArchive/ZipArchive.git
+[submodule "Dependencies/SwiftSDL2"]
+	path = Dependencies/SwiftSDL2
+	url = https://github.com/ctreffs/SwiftSDL2.git

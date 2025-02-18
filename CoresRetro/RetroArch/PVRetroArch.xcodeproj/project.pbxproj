@@ -240,8 +240,12 @@
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		B3632A522D15161300041145 /* PVRetroArchCore+Controls+DOS.m in Sources */ = {isa = PBXBuildFile; fileRef = B3632A512D15161300041145 /* PVRetroArchCore+Controls+DOS.m */; };
+		B363390E2D6286FA00ECD2ED /* apple_wifi.m in Sources */ = {isa = PBXBuildFile; fileRef = B363390D2D6286FA00ECD2ED /* apple_wifi.m */; };
 		B364D5CB2CD2A8B70082D177 /* Unrar in Frameworks */ = {isa = PBXBuildFile; productRef = B364D5CA2CD2A8B70082D177 /* Unrar */; };
+		B37106F42D51AFC300688298 /* RetroArchCoreOptionsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37106F32D51AFC300688298 /* RetroArchCoreOptionsLoader.swift */; };
 		B37C00592BFF6A1000FEC6AC /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B37C00582BFF6A1000FEC6AC /* MoltenVK */; };
+		B39FAC3F2D6013EC0065B66B /* SDL2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */; };
+		B39FAC422D6013F50065B66B /* SDL2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */; };
 		B3C439532BF442920021B9C3 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B3C439522BF442920021B9C3 /* PVSupport */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
@@ -254,6 +258,16 @@
 		B3FC975E2CB8D44400C6DB31 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3FC975D2CB8D44400C6DB31 /* PVPlists */; };
 		B3FD53ED2CD17D8200175917 /* JITSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FD53EB2CD17D8200175917 /* JITSupport.m */; };
 		B3FD53FB2CD17E2200175917 /* dispserv_apple.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FD53FA2CD17E2200175917 /* dispserv_apple.m */; };
+		B3FD94832D60591A00397643 /* coremidi.c in Sources */ = {isa = PBXBuildFile; fileRef = B3FD94702D6016F700397643 /* coremidi.c */; platformFilters = (ios, maccatalyst, watchos, ); };
+		B3FD94852D60698500397643 /* corelocation.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FD94842D60698500397643 /* corelocation.m */; };
+		B3FD94872D60708500397643 /* avfoundation.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FD94862D60708500397643 /* avfoundation.m */; };
+		B3FD96862D613FD600397643 /* libavcodec.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD967D2D613FD600397643 /* libavcodec.xcframework */; };
+		B3FD96882D613FD600397643 /* libavdevice.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD967E2D613FD600397643 /* libavdevice.xcframework */; };
+		B3FD968A2D613FD600397643 /* libavfilter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD967F2D613FD600397643 /* libavfilter.xcframework */; };
+		B3FD968C2D613FD600397643 /* libavformat.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD96802D613FD600397643 /* libavformat.xcframework */; };
+		B3FD968E2D613FD600397643 /* libavutil.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD96812D613FD600397643 /* libavutil.xcframework */; };
+		B3FD96902D613FD600397643 /* libswresample.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD96822D613FD600397643 /* libswresample.xcframework */; };
+		B3FD96922D613FD700397643 /* libswscale.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD96832D613FD600397643 /* libswscale.xcframework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -837,7 +851,10 @@
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B3632A512D15161300041145 /* PVRetroArchCore+Controls+DOS.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+DOS.m"; sourceTree = "<group>"; };
+		B363390D2D6286FA00ECD2ED /* apple_wifi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = apple_wifi.m; sourceTree = "<group>"; };
+		B37106F32D51AFC300688298 /* RetroArchCoreOptionsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetroArchCoreOptionsLoader.swift; sourceTree = "<group>"; };
 		B39C4BEA2BF3430B00F199BB /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework; sourceTree = "<group>"; };
+		B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SDL2.xcframework; path = ../../Dependencies/SDL2.xcframework; sourceTree = "<group>"; };
 		B3C7621020783162009950E4 /* PVRetroArch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVRetroArch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVRetroArch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVRetroArch.h; sourceTree = "<group>"; };
 		B3C7621420783162009950E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -854,6 +871,30 @@
 		B3FD53EB2CD17D8200175917 /* JITSupport.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JITSupport.m; sourceTree = "<group>"; };
 		B3FD53FA2CD17E2200175917 /* dispserv_apple.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = dispserv_apple.m; sourceTree = "<group>"; };
 		B3FD53FC2CD1889700175917 /* griffin_cpp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = griffin_cpp.cpp; sourceTree = "<group>"; };
+		B3FD94702D6016F700397643 /* coremidi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = coremidi.c; sourceTree = "<group>"; };
+		B3FD94842D60698500397643 /* corelocation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = corelocation.m; sourceTree = "<group>"; };
+		B3FD94862D60708500397643 /* avfoundation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = avfoundation.m; sourceTree = "<group>"; };
+		B3FD94882D61316C00397643 /* libswscale.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libswscale.framework; path = "../../../../../Downloads/ffmpeg-kit-video-6.0.LTS-ios-framework/libswscale.framework"; sourceTree = "<group>"; };
+		B3FD94892D61316C00397643 /* libavcodec.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libavcodec.framework; path = "../../../../../Downloads/ffmpeg-kit-video-6.0.LTS-ios-framework/libavcodec.framework"; sourceTree = "<group>"; };
+		B3FD948A2D61316C00397643 /* ffmpegkit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ffmpegkit.framework; path = "../../../../../Downloads/ffmpeg-kit-video-6.0.LTS-ios-framework/ffmpegkit.framework"; sourceTree = "<group>"; };
+		B3FD948B2D61316C00397643 /* libavdevice.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libavdevice.framework; path = "../../../../../Downloads/ffmpeg-kit-video-6.0.LTS-ios-framework/libavdevice.framework"; sourceTree = "<group>"; };
+		B3FD948C2D61316C00397643 /* libavutil.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libavutil.framework; path = "../../../../../Downloads/ffmpeg-kit-video-6.0.LTS-ios-framework/libavutil.framework"; sourceTree = "<group>"; };
+		B3FD948D2D61316C00397643 /* libavformat.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libavformat.framework; path = "../../../../../Downloads/ffmpeg-kit-video-6.0.LTS-ios-framework/libavformat.framework"; sourceTree = "<group>"; };
+		B3FD948E2D61316C00397643 /* libswresample.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libswresample.framework; path = "../../../../../Downloads/ffmpeg-kit-video-6.0.LTS-ios-framework/libswresample.framework"; sourceTree = "<group>"; };
+		B3FD948F2D61316C00397643 /* libavfilter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libavfilter.framework; path = "../../../../../Downloads/ffmpeg-kit-video-6.0.LTS-ios-framework/libavfilter.framework"; sourceTree = "<group>"; };
+		B3FD94A12D6131CB00397643 /* libavcodec.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavcodec.xcframework; path = ../../Cores/emuThree/lib/libavcodec.xcframework; sourceTree = "<group>"; };
+		B3FD94A22D6131CB00397643 /* libavformat.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavformat.xcframework; path = ../../Cores/emuThree/lib/libavformat.xcframework; sourceTree = "<group>"; };
+		B3FD94A32D6131CB00397643 /* libavutil.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavutil.xcframework; path = ../../Cores/emuThree/lib/libavutil.xcframework; sourceTree = "<group>"; };
+		B3FD94AA2D61324D00397643 /* libswscale.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libswscale.xcframework; path = ../../Cores/emuThree/lib/libswscale.xcframework; sourceTree = "<group>"; };
+		B3FD94AD2D61325B00397643 /* libswresample.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libswresample.xcframework; path = ../../Cores/emuThree/lib/libswresample.xcframework; sourceTree = "<group>"; };
+		B3FD967C2D613FD600397643 /* ffmpegkit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ffmpegkit.xcframework; path = ../../Dependencies/FFMpeg/xcframeworks/ffmpegkit.xcframework; sourceTree = "<group>"; };
+		B3FD967D2D613FD600397643 /* libavcodec.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavcodec.xcframework; path = ../../Dependencies/FFMpeg/xcframeworks/libavcodec.xcframework; sourceTree = "<group>"; };
+		B3FD967E2D613FD600397643 /* libavdevice.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavdevice.xcframework; path = ../../Dependencies/FFMpeg/xcframeworks/libavdevice.xcframework; sourceTree = "<group>"; };
+		B3FD967F2D613FD600397643 /* libavfilter.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavfilter.xcframework; path = ../../Dependencies/FFMpeg/xcframeworks/libavfilter.xcframework; sourceTree = "<group>"; };
+		B3FD96802D613FD600397643 /* libavformat.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavformat.xcframework; path = ../../Dependencies/FFMpeg/xcframeworks/libavformat.xcframework; sourceTree = "<group>"; };
+		B3FD96812D613FD600397643 /* libavutil.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavutil.xcframework; path = ../../Dependencies/FFMpeg/xcframeworks/libavutil.xcframework; sourceTree = "<group>"; };
+		B3FD96822D613FD600397643 /* libswresample.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libswresample.xcframework; path = ../../Dependencies/FFMpeg/xcframeworks/libswresample.xcframework; sourceTree = "<group>"; };
+		B3FD96832D613FD600397643 /* libswscale.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libswscale.xcframework; path = ../../Dependencies/FFMpeg/xcframeworks/libswscale.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -888,6 +929,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B39FAC3F2D6013EC0065B66B /* SDL2.xcframework in Frameworks */,
 				93AA124F296DCE58007C9808 /* libiconv.tbd in Frameworks */,
 				93AA124D296DCE52007C9808 /* libz.tbd in Frameworks */,
 			);
@@ -932,29 +974,37 @@
 				93B3B2722A8CC8C200B60325 /* libRarArchive_RetroArch.a in Frameworks */,
 				93B3B1932A8CAA7800B60325 /* libZipArchive_RetroArch.a in Frameworks */,
 				939AAF6B2A791E7A007709E5 /* libretroarch.a in Frameworks */,
+				B3FD96862D613FD600397643 /* libavcodec.xcframework in Frameworks */,
 				93BC0FA62A4C063F003D97EC /* libRetroWebServer.a in Frameworks */,
 				936E9A212A35AC6100B1D0F8 /* CFNetwork.framework in Frameworks */,
 				936E99EA2A35A3E600B1D0F8 /* CoreGraphics.framework in Frameworks */,
+				B3FD968A2D613FD600397643 /* libavfilter.xcframework in Frameworks */,
 				936E99E82A35A3A400B1D0F8 /* Metal.framework in Frameworks */,
 				B30C8C8C2BF45BDC00C91991 /* PVEmulatorCore in Frameworks */,
 				93B716E32965922200F4CDC7 /* MobileCoreServices.framework in Frameworks */,
 				93B716E02965921000F4CDC7 /* CoreVideo.framework in Frameworks */,
+				B39FAC422D6013F50065B66B /* SDL2.xcframework in Frameworks */,
 				93B716E12965921000F4CDC7 /* CoreText.framework in Frameworks */,
 				93B716DC296591EE00F4CDC7 /* CoreMedia.framework in Frameworks */,
 				93B716DD296591EE00F4CDC7 /* CoreAudioKit.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3F8DFFF2CB3741500017D1B /* PVCoreObjCBridge in Frameworks */,
+				B3FD96902D613FD600397643 /* libswresample.xcframework in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				933CC5FF2951FB9F0070CF1D /* GLKit.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
 				936E99EC2A35A94900B1D0F8 /* PVLogging in Frameworks */,
+				B3FD968E2D613FD600397643 /* libavutil.xcframework in Frameworks */,
+				B3FD968C2D613FD600397643 /* libavformat.xcframework in Frameworks */,
+				B3FD96922D613FD700397643 /* libswscale.xcframework in Frameworks */,
 				B34A8EF7295848360000D110 /* libz.tbd in Frameworks */,
 				B348E0022CD1B66400DBB0F4 /* PVCoreBridge in Frameworks */,
 				B3E2AA6B2CB65E9A00E2636D /* PVLogging in Frameworks */,
 				B37C00592BFF6A1000FEC6AC /* MoltenVK in Frameworks */,
 				B3FC975E2CB8D44400C6DB31 /* PVPlists in Frameworks */,
 				93B716F2296595F600F4CDC7 /* AppKit.framework in Frameworks */,
+				B3FD96882D613FD600397643 /* libavdevice.xcframework in Frameworks */,
 				B3C439532BF442920021B9C3 /* PVSupport in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
@@ -1647,6 +1697,10 @@
 		B30C8C812BF45AE200C91991 /* retroarch */ = {
 			isa = PBXGroup;
 			children = (
+				B363390D2D6286FA00ECD2ED /* apple_wifi.m */,
+				B3FD94862D60708500397643 /* avfoundation.m */,
+				B3FD94702D6016F700397643 /* coremidi.c */,
+				B3FD94842D60698500397643 /* corelocation.m */,
 				B3FD53FC2CD1889700175917 /* griffin_cpp.cpp */,
 				B30C8C7D2BF45AE200C91991 /* griffin_slang.cpp */,
 				B30C8C7E2BF45AE200C91991 /* griffin.c */,
@@ -1659,6 +1713,7 @@
 		B30C8C872BF45AFA00C91991 /* Swift */ = {
 			isa = PBXGroup;
 			children = (
+				B37106F32D51AFC300688298 /* RetroArchCoreOptionsLoader.swift */,
 				B3FC974C2CB8D29100C6DB31 /* CorePlist.swift */,
 				B3FC974D2CB8D29100C6DB31 /* PVRetroArchCoreCore.swift */,
 				B30C8C852BF45AFA00C91991 /* PVRetroArchCore+Options.swift */,
@@ -1777,6 +1832,28 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3FD94AD2D61325B00397643 /* libswresample.xcframework */,
+				B3FD94AA2D61324D00397643 /* libswscale.xcframework */,
+				B3FD94A12D6131CB00397643 /* libavcodec.xcframework */,
+				B3FD94A22D6131CB00397643 /* libavformat.xcframework */,
+				B3FD94A32D6131CB00397643 /* libavutil.xcframework */,
+				B3FD948A2D61316C00397643 /* ffmpegkit.framework */,
+				B3FD94892D61316C00397643 /* libavcodec.framework */,
+				B3FD948B2D61316C00397643 /* libavdevice.framework */,
+				B3FD948F2D61316C00397643 /* libavfilter.framework */,
+				B3FD948D2D61316C00397643 /* libavformat.framework */,
+				B3FD948C2D61316C00397643 /* libavutil.framework */,
+				B3FD948E2D61316C00397643 /* libswresample.framework */,
+				B3FD967C2D613FD600397643 /* ffmpegkit.xcframework */,
+				B3FD967D2D613FD600397643 /* libavcodec.xcframework */,
+				B3FD967E2D613FD600397643 /* libavdevice.xcframework */,
+				B3FD967F2D613FD600397643 /* libavfilter.xcframework */,
+				B3FD96802D613FD600397643 /* libavformat.xcframework */,
+				B3FD96812D613FD600397643 /* libavutil.xcframework */,
+				B3FD96822D613FD600397643 /* libswresample.xcframework */,
+				B3FD96832D613FD600397643 /* libswscale.xcframework */,
+				B3FD94882D61316C00397643 /* libswscale.framework */,
+				B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */,
 				B3CC63152BEF0CD0002F3C8B /* MoltenVK.xcframework */,
 				B39C4BEA2BF3430B00F199BB /* MoltenVK.xcframework */,
 				93B3B1942A8CAB0E00B60325 /* liblzma.tbd */,
@@ -2072,6 +2149,9 @@
 					93B66BBF2967F05A00A621DD = {
 						CreatedOnToolsVersion = 14.2;
 					};
+					93B66C18296854C000A621DD = {
+						LastSwiftMigration = 1620;
+					};
 					93BC0F642A4C05E0003D97EC = {
 						CreatedOnToolsVersion = 15.0;
 					};
@@ -2275,8 +2355,12 @@
 			files = (
 				B30C8C842BF45AE200C91991 /* griffin.m in Sources */,
 				B30C8C822BF45AE200C91991 /* griffin_slang.cpp in Sources */,
+				B3FD94872D60708500397643 /* avfoundation.m in Sources */,
 				935E7D5329A4CA7F00D92748 /* griffin_cpp.cpp in Sources */,
+				B3FD94852D60698500397643 /* corelocation.m in Sources */,
 				B30C8C832BF45AE200C91991 /* griffin.c in Sources */,
+				B3FD94832D60591A00397643 /* coremidi.c in Sources */,
+				B363390E2D6286FA00ECD2ED /* apple_wifi.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2316,6 +2400,7 @@
 			files = (
 				936BFD8A2986AF03001FF097 /* cocoa_vk_ctx.m in Sources */,
 				93835811296CFAA700A23231 /* cocoa_common.m in Sources */,
+				B37106F42D51AFC300688298 /* RetroArchCoreOptionsLoader.swift in Sources */,
 				936B47FA2969798B00C7D2A3 /* platform_darwin.m in Sources */,
 				935E7D4B29A4ABDD00D92748 /* vulkan_common.c in Sources */,
 				B3632A522D15161300041145 /* PVRetroArchCore+Controls+DOS.m in Sources */,
@@ -2559,6 +2644,7 @@
 			buildSettings = {
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+				CLANG_ENABLE_MODULES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEPS_DIR = ./RetroArch/deps;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
@@ -2596,6 +2682,7 @@
 					"$(DEPS_DIR)/glslang/glslang/glslang/OSDependent/Unix",
 					"$(DEPS_DIR)/glslang/glslang/SPIRV",
 					"$(DEPS_DIR)/glslang/glslang/glslang/MachineIndependent",
+					"\"$(SRCROOT)/RetroArch/deps/7zip\"",
 					./RetroArch/gfx/drivers/,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
@@ -2616,6 +2703,7 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
@@ -2873,6 +2961,7 @@
 					"./RetroArch/libretro-common/include/file",
 					"./RetroArch/libretro-common/include",
 					./RetroArch/input/include/GameController/,
+					"\"$(SRCROOT)/RetroArch/deps/7zip\"",
 					"$(SRCROOT)/PVRetroArchCore/Archive/LzhArchive",
 					"$(SRCROOT)/PVRetroArchCore/Archive/ZipArchive/SSZipArchive",
 					"$(SRCROOT)/PVRetroArchCore/Archive/RarArchive",
@@ -3089,6 +3178,7 @@
 					"./RetroArch/libretro-common/include/file",
 					"./RetroArch/libretro-common/include",
 					./RetroArch/input/include/GameController/,
+					"\"$(SRCROOT)/RetroArch/deps/7zip\"",
 					"$(SRCROOT)/PVRetroArchCore/Archive/LzhArchive",
 					"$(SRCROOT)/PVRetroArchCore/Archive/ZipArchive/SSZipArchive",
 					"$(SRCROOT)/PVRetroArchCore/Archive/RarArchive",
@@ -3151,6 +3241,7 @@
 			buildSettings = {
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+				CLANG_ENABLE_MODULES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEPS_DIR = ./RetroArch/deps;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
@@ -3187,6 +3278,7 @@
 					"$(DEPS_DIR)/glslang/glslang/glslang/OSDependent/Unix",
 					"$(DEPS_DIR)/glslang/glslang/SPIRV",
 					"$(DEPS_DIR)/glslang/glslang/glslang/MachineIndependent",
+					"\"$(SRCROOT)/RetroArch/deps/7zip\"",
 					./RetroArch/gfx/drivers/,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
@@ -3207,6 +3299,7 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};

@@ -23,4 +23,5 @@ protocol GameContextMenuDelegate {
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame)
+    func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame)
 }

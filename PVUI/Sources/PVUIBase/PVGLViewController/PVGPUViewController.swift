@@ -92,6 +92,18 @@ public class PVGPUViewController: BaseViewController {
     public var framesPerSecond: Double = 0
     public var timeSinceLastDraw: TimeInterval = 0
     #endif
+    
+    #if os(iOS)
+    public override var prefersHomeIndicatorAutoHidden: Bool {
+        let shouldHideHomeIndicator: Bool = PVControllerManager.shared.hasControllers
+        return shouldHideHomeIndicator
+    }
+    
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        setNeedsUpdateOfHomeIndicatorAutoHidden()
+    }
+    #endif
 }
 
 @usableFromInline

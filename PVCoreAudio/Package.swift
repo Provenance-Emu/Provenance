@@ -45,7 +45,12 @@ let package = Package(
                 "PVSettings",
                 "Defaults",
                 .product(name: "PVAudio", package: "PVAudio"),
-                .product(name: "PVLogging", package: "PVLogging")
+                .product(name: "PVLogging", package: "PVLogging"),
+//                "NotifyWrapper"
+            ],
+            path: "Sources/PVCoreAudio",
+            cSettings: [
+                .headerSearchPath("Utilities"),
             ]
         ),
 

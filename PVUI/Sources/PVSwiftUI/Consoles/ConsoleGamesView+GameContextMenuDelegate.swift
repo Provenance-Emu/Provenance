@@ -152,4 +152,8 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         gameToUpdateCover = game
         showArtworkSourceAlert = true
     }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
+        gamesViewModel.presentDiscSelectionAlert(for: game, rootDelegate: rootDelegate)
+    }
 }

@@ -203,7 +203,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                 $0.status == .queued || $0.userChosenSystem != nil
             }) {
                 importAutoStartDelayTask?.cancel()
-                importAutoStartDelayTask = Task {
+                importAutoStartDelayTask = Task.detached {
                     await try? Task.sleep(for: .seconds(1))
                     self.startProcessing()
                 }
@@ -382,12 +382,13 @@ public final class GameImporter: GameImporting, ObservableObject {
         importQueueLock.lock()
         defer { importQueueLock.unlock() }
 
-        for path in paths {
-            self.addImportItemToQueue(ImportQueueItem(url: path, fileType: .unknown))
+        Task.detached {
+            for path in paths {
+                self.addImportItemToQueue(ImportQueueItem(url: path, fileType: .unknown))
+            }
         }
     }
 
-    @MainActor
     public func addImports(forPaths paths: [URL], targetSystem: SystemIdentifier) {
         importQueueLock.lock()
         defer { importQueueLock.unlock() }
@@ -450,32 +451,33 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
 
-    //MARK: Processing functions
-    @MainActor
+    // MARK: Processing functions
+//    @MainActor
     private func preProcessQueue() async {
-        importQueueLock.lock()
-        defer { importQueueLock.unlock() }
+        Task {
+//            importQueueLock.lock()
+//            defer { importQueueLock.unlock() }
 
-        //determine the type for all items in the queue
-        for importItem in self.importQueue {
-            //ideally this wouldn't be needed here
-            do {
-                importItem.fileType = try determineImportType(importItem)
-            } catch {
-                ELOG("Caught error trying to assign file type \(error.localizedDescription)")
-                //caught an error trying to assign file type
+            //determine the type for all items in the queue
+            await self.importQueue.asyncForEach { importItem in
+                //ideally this wouldn't be needed here
+                do {
+                    importItem.fileType = try determineImportType(importItem)
+                } catch {
+                    ELOG("Caught error trying to assign file type \(error.localizedDescription)")
+                    //caught an error trying to assign file type
+                }
             }
 
+            //sort the queue to make sure m3us go first
+            importQueue = sortImportQueueItems(importQueue)
+
+            //thirdly, we need to parse the queue and find any children for cue files
+            organizeCueAndBinFiles(in: &importQueue)
+
+            //lastly, move and cue (and child bin) files under the parent m3u (if they exist)
+            organizeM3UFiles(in: &importQueue)
         }
-
-        //sort the queue to make sure m3us go first
-        importQueue = sortImportQueueItems(importQueue)
-
-        //thirdly, we need to parse the queue and find any children for cue files
-        organizeCueAndBinFiles(in: &importQueue)
-
-        //lastly, move and cue (and child bin) files under the parent m3u (if they exist)
-        organizeM3UFiles(in: &importQueue)
     }
 
     public func clearCompleted() {
@@ -671,7 +673,6 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
     // Processes each ImportItem in the queue sequentially
-    @MainActor
     private func processQueue() async {
         defer {
             NotificationCenter.default.post(name: .RomsFinishedImporting, object: nil)
@@ -693,7 +694,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             self.processingState = .processing
         }
 
-        for item in itemsToProcess {
+        await itemsToProcess.asyncForEach { item in
             // If there's a user-chosen system, ensure the item is queued
             if item.userChosenSystem != nil {
                 item.status = .queued
@@ -753,7 +754,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
 
-    @MainActor
+//    @MainActor
     private func performImport(for item: ImportQueueItem) async throws {
         ILOG("Starting import for file: \(item.url.lastPathComponent)")
 
@@ -767,7 +768,9 @@ public final class GameImporter: GameImporting, ObservableObject {
             do {
                 try await gameImporterDatabaseService.importBIOSIntoDatabase(queueItem: item)
                 ILOG("Successfully imported BIOS file")
-                item.status = .success
+                Task { @MainActor in
+                    item.status = .success
+                }
                 return
             } catch {
                 ELOG("Failed to import BIOS file: \(error)")
@@ -778,7 +781,9 @@ public final class GameImporter: GameImporting, ObservableObject {
         if item.fileType == .artwork {
             //TODO: what do i do with the PVGame result here?
             if let _ = await gameImporterArtworkImporter.importArtworkItem(item) {
-                item.status = .success
+                Task { @MainActor in
+                    item.status = .success
+                }
             } else {
                 item.status = .failure
             }

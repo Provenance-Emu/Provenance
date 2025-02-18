@@ -1,5 +1,6 @@
 import SwiftUI
 import PVLogging
+import UniformTypeIdentifiers
 
 /// View for listing available skins
 private struct IdentifiableSkin: Identifiable, Hashable {
@@ -18,7 +19,7 @@ private struct IdentifiableSkin: Identifiable, Hashable {
 
 /// Grid view for browsing and selecting skins
 public struct DeltaSkinListView: View {
-    @ObservedObject private var manager: DeltaSkinManager
+    @ObservedObject var manager: DeltaSkinManager
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var showingFullscreenPreview = false
     @State private var traits: DeltaSkinTraits?
@@ -70,7 +71,7 @@ public struct DeltaSkinListView: View {
         #if !os(tvOS)
             .fileImporter(
                 isPresented: $showingDocumentPicker,
-                allowedContentTypes: [.deltaSkin],
+                allowedContentTypes: [UTType.deltaSkin],
                 allowsMultipleSelection: true
             ) { result in
                 Task {
@@ -95,6 +96,7 @@ public struct DeltaSkinListView: View {
         for url in urls {
             // Start accessing the security-scoped resource
             guard url.startAccessingSecurityScopedResource() else {
+                ELOG("Failed to start accessing security-scoped resource")
                 throw DeltaSkinError.accessDenied
             }
 
@@ -116,13 +118,12 @@ private struct SkinGridView: View {
     @ObservedObject var manager: DeltaSkinManager
     let columns: [GridItem]
 
-    @State private var skins: [DeltaSkinProtocol] = []
     @State private var isLoading = true
     @State private var error: Error?
 
-    // Group skins by game type
+    // Use manager's loadedSkins directly
     private var groupedSkins: [(String, [DeltaSkinProtocol])] {
-        let grouped = Dictionary(grouping: skins) { skin in
+        let grouped = Dictionary(grouping: manager.loadedSkins) { skin in
             skin.gameType.systemIdentifier?.fullName ?? skin.gameType.rawValue
         }
         return grouped.sorted { $0.key < $1.key }
@@ -130,19 +131,12 @@ private struct SkinGridView: View {
 
     // Create an ordered list that matches the visual grouping
     private var orderedSkins: [DeltaSkinProtocol] {
-        groupedSkins.flatMap { _, consoleSkins in
-            consoleSkins
-        }
-    }
-
-    public init(manager: DeltaSkinManager = .shared, columns: [GridItem]) {
-        self.manager = manager
-        self.columns = columns
+        groupedSkins.flatMap { _, consoleSkins in consoleSkins }
     }
 
     var body: some View {
         Group {
-            switch (isLoading, error, skins.isEmpty) {
+            switch (isLoading, error, manager.loadedSkins.isEmpty) {
             case (true, _, _):
                 ProgressView("Loading skins...")
             case (_, let error?, _):
@@ -179,7 +173,7 @@ private struct SkinGridView: View {
                                                 initialIndex: orderedSkins.firstIndex(where: { $0.identifier == skin.identifier }) ?? 0
                                             )
                                         } label: {
-                                            SkinPreviewCell(skin: skin)
+                                            SkinPreviewCell(skin: skin, manager: manager)
                                         }
                                     }
                                 }
@@ -201,20 +195,24 @@ private struct SkinGridView: View {
         defer { isLoading = false }
 
         do {
-            skins = try await manager.availableSkins()
+            _ = try await manager.availableSkins()  // This will update loadedSkins
         } catch {
             self.error = error
         }
     }
 
     private func index(of skin: DeltaSkinProtocol) -> Int {
-        skins.firstIndex(where: { $0.identifier == skin.identifier }) ?? 0
+        manager.loadedSkins.firstIndex(where: { $0.identifier == skin.identifier }) ?? 0
     }
 }
 
 /// Preview cell for a skin with rubber-like design
 private struct SkinPreviewCell: View {
     let skin: DeltaSkinProtocol
+    let manager: DeltaSkinManager
+    @State private var showingDeleteAlert = false
+    @State private var deleteError: Error?
+    @State private var showingErrorAlert = false
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.colorScheme) private var colorScheme
 
@@ -254,6 +252,47 @@ private struct SkinPreviewCell: View {
     }
 
     var body: some View {
+        ZStack {
+            // Preview content with disabled interaction
+            content
+                .allowsHitTesting(false)  // Disable interaction on the preview content
+
+            // Transparent overlay to capture context menu
+            Color.clear
+                .contentShape(Rectangle())  // Make entire area tappable
+        }
+        .contextMenu {
+            if manager.isDeletable(skin) {
+                Button(role: .destructive) {
+                    showingDeleteAlert = true
+                } label: {
+                    Label("Delete", systemImage: "trash")
+                }
+            }
+        }
+        .alert("Delete Skin?", isPresented: $showingDeleteAlert) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) {
+                Task {
+                    do {
+                        try await manager.deleteSkin(skin.identifier)
+                    } catch {
+                        deleteError = error
+                        showingErrorAlert = true
+                    }
+                }
+            }
+        } message: {
+            Text("Are you sure you want to delete '\(skin.name)'? This cannot be undone.")
+        }
+        .alert("Delete Error", isPresented: $showingErrorAlert, presenting: deleteError) { _ in
+            Button("OK", role: .cancel) { }
+        } message: { error in
+            Text(error.localizedDescription)
+        }
+    }
+
+    private var content: some View {
         VStack(alignment: .leading, spacing: 8) {
             // Preview
             PreviewContainer {

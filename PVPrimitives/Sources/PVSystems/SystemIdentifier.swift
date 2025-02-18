@@ -21,6 +21,10 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
     case C64 = "com.provenance.c64"
     case CDi = "com.provenance.cdi"
     case ColecoVision = "com.provenance.colecovision"
+    case CPS1 = "com.provenance.cps1"
+    case CPS2 = "com.provenance.cps2"
+    case CPS3 = "com.provenance.cps3"
+    case DOOM = "com.provenance.doom"
     case DOS = "com.provenance.dos"
     case Dreamcast = "com.provenance.dreamcast"
     case DS = "com.provenance.ds"
@@ -56,6 +60,8 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
     case PS3 = "com.provenance.ps3"
     case PSP = "com.provenance.psp"
     case PSX = "com.provenance.psx"
+    case Quake = "com.provenance.quake"
+    case Quake2 = "com.provenance.quake2"
     case RetroArch = "com.provenance.retroarch"
     case Saturn = "com.provenance.saturn"
     case Sega32X = "com.provenance.32X"
@@ -68,6 +74,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
     case Vectrex = "com.provenance.vectrex"
     case VirtualBoy = "com.provenance.vb"
     case Wii = "com.provenance.wii"
+    case Wolf3D = "com.provenance.wolf3d"
     case WonderSwan = "com.provenance.ws"
     case WonderSwanColor = "com.provenance.wsc"
     case ZXSpectrum = "com.provenance.zxspectrum"
@@ -78,8 +85,8 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
     var isBeta: Bool {
         switch self {
             
-        case ._3DO: true
-        case ._3DS: true
+        case ._3DO: false
+        case ._3DS: false
         case .AppleII: true
         case .Atari2600: false
         case .Atari5200: false
@@ -90,10 +97,12 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         case .AtariST: true
         case .C64: true
         case .CDi: true
+        case .CPS1, .CPS2, .CPS3: true
         case .ColecoVision: false
-        case .DOS: true
+        case .DOS: false
+        case .DOOM: true
         case .Dreamcast: true
-        case .DS: true
+        case .DS: false
         case .EP128: true
         case .FDS: false
         case .GameCube: true
@@ -126,6 +135,8 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         case .PS3: true
         case .PSP: false
         case .PSX: false
+        case .Quake: true
+        case .Quake2: true
         case .Saturn: false
         case .Sega32X: false
         case .SegaCD: false
@@ -141,6 +152,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         case .WonderSwanColor: false
         case .ZXSpectrum: true
         case .Unknown: true
+        case .Wolf3D: true
         case .RetroArch: false
         }
     }
@@ -150,6 +162,8 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         switch self {
         case .SNES: return 16
         case .NES: return 16
+//        case .Atari7800: return 128
+//        case .Lynx: return 64
         default: return 0
         }
     }
@@ -241,6 +255,10 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
             return "Philips"
         case .MAME, .Music, .RetroArch, .TIC80:
             return "Various"
+        case .CPS1, .CPS2, .CPS3:
+            return "Capcom"
+        case .DOOM, .Wolf3D, .Quake, .Quake2:
+            return "Id Software"
         case .Unknown:
             return "Unknown"
         }
@@ -312,6 +330,13 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         case .TIC80:         return "TIC-80"
         case .Wii:           return "Wii"
         case .ZXSpectrum:    return "ZX Spectrum"
+        case .CPS1:           return "CPS/1"
+        case .CPS2:           return "CPS/2"
+        case .CPS3:           return "CPS/3"
+        case .Quake:         return "Quake 1"
+        case .Quake2:        return "Quake 2"
+        case .DOOM:           return "Doom"
+        case .Wolf3D:         return "Wolfenstein 3D"
         case .Unknown:       return "Unknown"
         }
     }

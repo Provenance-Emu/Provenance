@@ -13,7 +13,7 @@ import PVCoreBridge
 import SwiftUI
 
 extension PVEmulatorViewController {
-    func showCoreOptions() {
+    public func showCoreOptions() {
         guard let coreClass = type(of: core) as? CoreOptional.Type else { return }
 
         // Create the SwiftUI view

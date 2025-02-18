@@ -4,17 +4,110 @@ import PVEmulatorCore
 import PVCoreBridge
 import PVLogging
 
-extension PVRetroArchCoreCore: CoreOptional {
-    @MainActor
-    public static var options: [PVCoreBridge.CoreOption] {
-        PVRetroArchCoreBridge.coreClassName = self.coreClassName
-        PVRetroArchCoreBridge.systemName = self.systemName
+extension PVRetroArchCoreOptions: SubCoreOptional {
+    
+    public static func options(forSubcoreIdentifier identifier: String, systemName: String) -> [CoreOption]? {
+        var subCoreOptions: [CoreOption] = []
+        var isDOS = false
 
-        return PVRetroArchCoreBridge.options
+        DLOG("Getting options for forSubcoreIdentifier: \(identifier), systemName: \(systemName)")
+
+        if (identifier.contains("mupen")) {
+            subCoreOptions.append(mupenRDPOption)
+        }
+        if (identifier.contains("mame_libretro")) {
+            subCoreOptions.append(mameOSDOption)
+        }
+        if (systemName.contains("psx") ||
+            systemName.contains("snes") ||
+            systemName.contains("nes") ||
+            systemName.contains("saturn") ||
+            systemName.contains("dreamcast") ||
+            systemName.contains("gb")
+        ) {
+            analogDpadControllerOption = {
+                .bool(.init(
+                    title: ENABLE_ANALOG_DPAD,
+                    description: nil,
+                    requiresRestart: false),
+                      defaultValue: true)
+            }()
+        }
+        subCoreOptions.append(analogDpadControllerOption)
+
+        if (systemName.contains("retroarch")) {
+            subCoreOptions.append(numKeyControllerOption)
+        }
+
+        if (systemName.contains("dos") ||
+             systemName.contains("mac") ||
+             systemName.contains("appleII") ||
+             systemName.contains("pc98")) {
+            isDOS=true
+            subCoreOptions.append(numKeyControllerOption)
+        }
+//        if EmulationState.shared.isOn,
+//           systemName.contains("appleII") {
+//            subCoreOptions.append(apple2MachineOption)
+//        }
+        analogKeyControllerOption = {
+            .bool(.init(
+                title: ENABLE_ANALOG_KEY,
+                description: nil,
+                requiresRestart: false),
+                  defaultValue: !isDOS)}()
+        subCoreOptions.append(analogKeyControllerOption)
+
+        let subCoreGroup:CoreOption = .group(.init(title: "Core Options",
+                                                description: "Override options for \(identifier) Core"),
+                                          subOptions: subCoreOptions)
+
+        var coreOptions = self.options
+
+        coreOptions.append(contentsOf: [subCoreGroup])
+
+        // Load dynamic options from RetroArch core
+        let frameworkIdentifier: String = identifier.replacingOccurrences(of: ".framework", with: "")
+        let frameworkPath = Bundle.main.bundlePath + "/Frameworks/" + identifier
+        let corePath = "\(frameworkPath)/\(frameworkIdentifier)"
+        ILOG("frameworkIdentifier: \(frameworkIdentifier), frameworkPath: \(frameworkPath), corePath: \(corePath)")
+        let loader = RetroArchCoreOptionsLoader(corePath: corePath)
+        if let dynamicOptions = loader.loadCoreOptions() {
+            let dynamicGroup: CoreOption = .group(
+                .init(
+                    title: "Dynamic Options",
+                    description: "Options loaded from RetroArch core"
+                ),
+                subOptions: dynamicOptions
+            )
+            coreOptions.append(dynamicGroup)
+        }
+
+        return coreOptions
     }
 }
 
-extension PVRetroArchCoreBridge: CoreOptional {
+@objc public class PVRetroArchCoreOptions: NSObject, CoreOptions, @unchecked Sendable {
+
+    public static var options: [CoreOption] {
+        var options = [CoreOption]()
+        var coreOptions: [CoreOption] = [gsOption]
+
+        coreOptions.append(retroArchControllerOption)
+        
+        if (UIScreen.screens.count > 1 && UIDevice.current.userInterfaceIdiom == .pad) {
+            coreOptions.append(secondScreenOption)
+        }
+        coreOptions.append(volumeOption)
+        coreOptions.append(ffOption)
+        coreOptions.append(smOption)
+        let coreGroup:CoreOption = .group(.init(title: "RetroArch Core",
+                                                description: "Override options for RetroArch Core"),
+                                          subOptions: coreOptions)
+        options.append(contentsOf: [coreGroup])
+        return options
+    }
+
     static var gsOption: CoreOption {
          .enumeration(.init(title: "Graphics Handler",
                description: "(Requires Restart)",
@@ -147,91 +240,56 @@ extension PVRetroArchCoreBridge: CoreOptional {
             requiresRestart: false),
               defaultValue: false)
     }
+}
 
-    public static var options: [CoreOption] {
-        var options = [CoreOption]()
-        var coreOptions: [CoreOption] = [gsOption]
-        var isDOS=false
-        coreOptions.append(retroArchControllerOption)
-        DLOG("Getting options for coreClassName: \(self.coreClassName) systemName:\(self.systemName)")
-        if (self.coreClassName.contains("mupen")) {
-            coreOptions.append(mupenRDPOption)
-        }
-        if (self.coreClassName.contains("mame_libretro")) {
-            coreOptions.append(mameOSDOption)
-        }
-        if (self.systemName.contains("psx") ||
-            self.systemName.contains("snes") ||
-            self.systemName.contains("nes") ||
-            self.systemName.contains("saturn") ||
-            self.systemName.contains("dreamcast") ||
-            self.systemName.contains("gb")
-        ) {
-            analogDpadControllerOption = {
-                .bool(.init(
-                    title: ENABLE_ANALOG_DPAD,
-                    description: nil,
-                    requiresRestart: false),
-                      defaultValue: true)
-            }()
-        }
-        coreOptions.append(analogDpadControllerOption)
-        if (self.systemName.contains("retroarch")) {
-            coreOptions.append(numKeyControllerOption)
-        }
-        
-        if (self.systemName.contains("dos") ||
-             self.systemName.contains("mac") ||
-             self.systemName.contains("appleII") ||
-             self.systemName.contains("pc98")) {
-            isDOS=true
-            coreOptions.append(numKeyControllerOption)
-        }
-        if let status = PVEmulatorCore.status["isOn"] as? Bool, status,
-           self.systemName.contains("appleII") {
-            coreOptions.append(apple2MachineOption)
-        }
-        analogKeyControllerOption = {
-            .bool(.init(
-                title: ENABLE_ANALOG_KEY,
-                description: nil,
-                requiresRestart: false),
-                  defaultValue: !isDOS)}()
-        coreOptions.append(analogKeyControllerOption)
-        if (UIScreen.screens.count > 1 && UIDevice.current.userInterfaceIdiom == .pad) {
-            coreOptions.append(secondScreenOption)
-        }
-        coreOptions.append(volumeOption)
-        coreOptions.append(ffOption)
-        coreOptions.append(smOption)
-        let coreGroup:CoreOption = .group(.init(title: "RetroArch Core",
-                                                description: "Override options for RetroArch Core"),
-                                          subOptions: coreOptions)
-        options.append(contentsOf: [coreGroup])
-        return options
+// MARK: - PVRetroArchCoreCore
+
+extension PVRetroArchCoreCore: @preconcurrency CoreOptional, SubCoreOptional {
+    @MainActor
+    public static var options: [PVCoreBridge.CoreOption] {
+        return PVRetroArchCoreOptions.options
+    }
+
+    @MainActor
+    public static func options(forSubcoreIdentifier identifier: String, systemName: String) -> [PVCoreBridge.CoreOption]? {
+        let identifier = EmulationState.shared.coreClassName
+        let systemName = EmulationState.shared.systemName
+        return PVRetroArchCoreOptions.options(forSubcoreIdentifier: identifier, systemName: systemName)
+    }
+}
+
+// MARK: - PVRetroArchCoreBridge
+
+extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
+    public static var options: [PVCoreBridge.CoreOption] {
+        return PVRetroArchCoreOptions.options
+    }
+
+    public static func options(forSubcoreIdentifier identifier: String, systemName: String) async -> [PVCoreBridge.CoreOption]? {
+        await PVRetroArchCoreOptions.options(forSubcoreIdentifier: identifier, systemName: systemName)
     }
 }
 
 @objc public extension PVRetroArchCoreBridge {
     @objc var gs: Int {
-        PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.gsOption).asInt ?? 0
+        PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.gsOption).asInt ?? 0
     }
     @objc var retroControl: Bool {
-        PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.retroArchControllerOption).asBool
+        PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.retroArchControllerOption).asBool
     }
     @objc var secondScreen: Bool {
-        PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.secondScreenOption).asBool
+        PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.secondScreenOption).asBool
     }
     @objc func parseOptions() {
         var optionValues:String = ""
         var optionValuesFile: String = ""
         var optionOverwrite: Bool = false
         self.gsPreference = NSNumber(value: gs).int8Value
-        self.volume = NSNumber(value: PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.volumeOption).asInt ?? 100).int32Value
-        self.ffSpeed = NSNumber(value: PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.ffOption).asInt ?? 300).int32Value
-        self.smSpeed = NSNumber(value: PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.smOption).asInt ?? 300).int32Value
-        self.bindAnalogKeys = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.analogKeyControllerOption).asBool
-        self.bindAnalogDpad = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.analogDpadControllerOption).asBool
+        self.volume = NSNumber(value: PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.volumeOption).asInt ?? 100).int32Value
+        self.ffSpeed = NSNumber(value: PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.ffOption).asInt ?? 300).int32Value
+        self.smSpeed = NSNumber(value: PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.smOption).asInt ?? 300).int32Value
+        self.bindAnalogKeys = PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.analogKeyControllerOption).asBool
+        self.bindAnalogDpad = PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.analogDpadControllerOption).asBool
         self.bindNumKeys = false
         self.retroArchControls = true
         self.hasTouchControls=false
@@ -270,14 +328,14 @@ extension PVRetroArchCoreBridge: CoreOptional {
                 optionValues += "input_auto_game_focus = \"1\"\n"
                 self.retroArchControls = retroControl
                 self.hasTouchControls = true
-                self.bindNumKeys = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.numKeyControllerOption).asBool
+                self.bindNumKeys = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreOptions.numKeyControllerOption).asBool
             }
             if (systemIdentifier.contains("appleII")) {
                 optionValues += "input_auto_game_focus = \"1\"\n"
-                self.machineType = NSNumber(value: PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.apple2MachineOption).asInt ?? 201).int32Value
+                self.machineType = NSNumber(value: PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreOptions.apple2MachineOption).asInt ?? 201).int32Value
                 self.retroArchControls = retroControl
                 self.hasTouchControls = true
-                self.bindNumKeys = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.numKeyControllerOption).asBool
+                self.bindNumKeys = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreOptions.numKeyControllerOption).asBool
                 var bios:[String:[String:Int]] = [:]
                 if (self.machineType == 210) {
                     bios["apple2.zip"]=["4ae2d493f4729d38e66fdace56a73f6c":11870]
@@ -313,7 +371,7 @@ extension PVRetroArchCoreBridge: CoreOptional {
                 optionOverwrite = false
             }
             if (coreIdentifier.contains("mupen")) {
-                let rdpOpt = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.mupenRDPOption).asInt ?? 0
+                let rdpOpt = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreOptions.mupenRDPOption).asInt ?? 0
                 if (rdpOpt == 0) {
                     optionValues += "mupen64plus-rdp-plugin = \"angrylion\"\n"
                 } else {
@@ -334,7 +392,7 @@ extension PVRetroArchCoreBridge: CoreOptional {
                 optionValues += "mame_write_config = \"enabled\"\n"
                 optionValues += "mame_boot_to_bios = \"enabled\"\n"
                 optionValues += "mame_mame_paths_enable = \"enabled\"\n"
-                optionValues += "mame_boot_to_osd = \"" + (PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.mameOSDOption).asBool  ? "enabled" :
+                optionValues += "mame_boot_to_osd = \"" + (PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreOptions.mameOSDOption).asBool  ? "enabled" :
                 "disabled") + "\"\n"
                 optionValues += "mame_boot_from_cli = \"enabled\"\n"
                 optionValues += "mame_cheats_enable = \"enabled\"\n"
@@ -417,11 +475,11 @@ extension PVRetroArchCoreCore: GameWithCheat {
 
 extension PVRetroArchCoreCore: CoreActions {
     public var coreActions: [CoreAction]? {
-        return [CoreAction(title: "Game Options\n(RetroArch Options Menu)", options: nil, style:.default)]
+        return [CoreAction(title: "RetroArch Menu", options: nil, style:.default)]
     }
     public func selected(action: CoreAction) {
         switch action.title {
-            case "Game Options\n(RetroArch Options Menu)":
+            case "RetroArch Menu":
                 menuToggle()
                 break;
             default:

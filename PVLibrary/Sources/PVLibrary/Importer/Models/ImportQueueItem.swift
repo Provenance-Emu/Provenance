@@ -114,7 +114,7 @@ public class ImportQueueItem: Identifiable, ObservableObject {
         var md5: String?
     }
 
-    @MainActor
+//    @MainActor
     public func targetSystem() -> SystemIdentifier? {
         guard !systems.isEmpty else {
             return nil
@@ -126,12 +126,8 @@ public class ImportQueueItem: Identifiable, ObservableObject {
 
         if let chosenSystem = userChosenSystem {
 
-            var target:SystemIdentifier? = nil
-
-            for system in systems {
-                if chosenSystem == system {
-                    target = system
-                }
+            var target:SystemIdentifier? = systems.first { systemIdentifier in
+                chosenSystem == systemIdentifier
             }
 
             return target

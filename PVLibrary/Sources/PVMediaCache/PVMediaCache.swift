@@ -144,7 +144,7 @@ public final class PVMediaCache: NSObject, Sendable {
         }
 
         if let newImage = image.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)),
-            let imageData = newImage.jpegData(compressionQuality: 0.85) {
+            let imageData = newImage.jpegData(compressionQuality: 0.95) {
             DLOG("Image scaled and converted to JPEG data")
             return try writeData(toDisk: imageData, withKey: key)
         } else {

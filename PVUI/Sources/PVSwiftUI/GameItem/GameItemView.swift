@@ -27,6 +27,16 @@ struct GameItemView: SwiftUI.View {
     @State private var artwork: SwiftImage?
     var action: () -> Void
 
+    private var discCount: Int {
+        let allFiles = game.relatedFiles.toArray()
+        let uniqueFiles = Set(allFiles.compactMap { $0.url.path })
+        return uniqueFiles.count
+    }
+
+    private var shouldShowDiscIndicator: Bool {
+        discCount > 1
+    }
+
     private var shouldShowFocus: Bool {
         gamepadManager.isControllerConnected && isFocused
     }
@@ -39,6 +49,12 @@ struct GameItemView: SwiftUI.View {
                 switch viewType {
                 case .cell:
                     GameItemViewCell(game: game, artwork: artwork, constrainHeight: constrainHeight, viewType: viewType)
+                        .overlay(alignment: .topTrailing) {
+                            if shouldShowDiscIndicator {
+                                DiscIndicatorView(count: discCount)
+                                    .padding(4)
+                            }
+                        }
                 case .row:
                     GameItemViewRow(game: game, artwork: artwork, constrainHeight: constrainHeight, viewType: viewType)
                 }
@@ -72,5 +88,20 @@ struct GameItemView: SwiftUI.View {
                 self.artwork = artwork
             }
         }
+    }
+}
+
+struct DiscIndicatorView: View {
+    let count: Int
+
+    var body: some View {
+        HStack(spacing: 2) {
+            Image(systemName: "opticaldisc")
+            Text("\(count)")
+        }
+        .font(.system(size: 12, weight: .bold))
+        .padding(4)
+        .background(Material.ultraThin)
+        .clipShape(Capsule())
     }
 }

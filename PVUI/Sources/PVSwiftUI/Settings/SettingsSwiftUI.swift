@@ -227,12 +227,79 @@ private struct AppSection: View {
 }
 
 private struct CoreOptionsSection: View {
+    @State private var shouldShowResetButton = false
+    @State private var showResetConfirmation = false
+    @State private var resetError: String? = nil
+    @State private var showConfigEditor = false
+
     var body: some View {
         Section(header: Text("Core Options")) {
             NavigationLink(destination: CoreOptionsView()) {
                 SettingsRow(title: "Core Options",
                             subtitle: "Configure emulator core settings.",
                             icon: .sfSymbol("gearshape.2"))
+            }
+
+            if PVFeatureFlagsManager.shared.retroarchBuiltinEditor {
+                NavigationLink(destination: RetroArchConfigEditorWrapper()) {
+                    SettingsRow(
+                        title: "Edit RetroArch Config",
+                        subtitle: "Modify advanced RetroArch settings.",
+                        icon: .sfSymbol("gearshape.2.fill")
+                    )
+                }
+            }
+
+            if shouldShowResetButton {
+                Button(action: { showResetConfirmation = true }) {
+                    SettingsRow(title: "Reset RetroArch Config",
+                                subtitle: "Restore default RetroArch configuration.",
+                                icon: .sfSymbol("arrow.uturn.backward.circle"))
+                }
+                .uiKitAlert(
+                    "Reset RetroArch Config",
+                    message: "This will overwrite your current RetroArch configuration with the default settings. Are you sure?",
+                    isPresented: $showResetConfirmation,
+                    preferredContentSize: CGSize(width: 500, height: 300)
+                ) {
+                    UIAlertAction(title: "Reset", style: .destructive) { _ in
+                        resetRetroArchConfig()
+                    }
+                    UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                        showResetConfirmation = false
+                    }
+                }
+            }
+
+        }
+        .task {
+            shouldShowResetButton = await PVRetroArchCoreManager.shared.shouldResetConfig()
+        }
+        .uiKitAlert(
+            "Reset Error",
+            message: resetError ?? "",
+            isPresented: .constant(resetError != nil),
+            preferredContentSize: CGSize(width: 500, height: 300)
+        ) {
+            UIAlertAction(title: "OK", style: .default) { _ in
+                resetError = nil
+            }
+        }
+    }
+
+    private func resetRetroArchConfig() {
+        Task {
+            guard let bundledURL = PVRetroArchCoreManager.shared.bundledConfigURL,
+                  let activeURL = PVRetroArchCoreManager.shared.activeConfigURL else {
+                return
+            }
+
+            do {
+                try await PVRetroArchCoreManager.shared.copyConfigFile(from: bundledURL, to: activeURL)
+                // Update the button state after successful reset
+                shouldShowResetButton = await PVRetroArchCoreManager.shared.shouldResetConfig()
+            } catch {
+                resetError = "Failed to reset RetroArch config: \(error.localizedDescription)"
             }
         }
     }
@@ -414,15 +481,21 @@ private struct AudioSection: View {
     #if !os(tvOS)
     @Default(.volume) var volume
     @Default(.volumeHUD) var volumeHUD
+    @Default(.respectMuteSwitch) var respectMuteSwitch
     #endif
     var body: some View {
         Section(header: Text("Audio")) {
             #if !os(tvOS)
-            ThemedToggle(isOn: $volumeHUD) {
-                SettingsRow(title: "Volume HUD",
-                            subtitle: "Show volume indicator when changing volume.",
-                            icon: .sfSymbol("speaker.wave.2"))
+            ThemedToggle(isOn: $respectMuteSwitch) {
+                SettingsRow(title: "Respect Silent Mode",
+                            subtitle: respectMuteSwitch ? "Disable game audio when system ringer is muted. Does not apply to headphones or external audio destinations." : "Play game audio when system ringer is muted. Does not apply to headphones or external audio destinations.",
+                            icon: respectMuteSwitch ? .sfSymbol("speaker.slash.fill") : .sfSymbol("speaker.slash"))
             }
+//            ThemedToggle(isOn: $volumeHUD) {
+//                SettingsRow(title: "Volume HUD",
+//                            subtitle: "Show volume indicator when changing volume.",
+//                            icon: .sfSymbol("speaker.wave.2"))
+//            }
             HStack {
                 Text("Volume")
                 Slider(value: $volume, in: 0...1, step: 0.1) {
@@ -561,6 +634,9 @@ private struct OnScreenControllerSection: View {
     @Default(.missingButtonsAlwaysOn) var missingButtonsAlwaysOn
     @Default(.onscreenJoypad) var onscreenJoypad
     @Default(.onscreenJoypadWithKeyboard) var onscreenJoypadWithKeyboard
+#if !os(tvOS)
+    @Default(.movableButtons) var movableButtons
+#endif
 
     var body: some View {
         Section(header: Text("On-Screen Controller")) {
@@ -605,7 +681,12 @@ private struct OnScreenControllerSection: View {
                             subtitle: "Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'. Useful on iPad OS for systems with an analog joystick (N64, PSX, etc.)",
                             icon: .sfSymbol("keyboard.badge.eye"))
             }
-
+            ThemedToggle(isOn: $movableButtons) {
+                SettingsRow(title: "Movable Buttons",
+                            subtitle: "Allow player to move on screen controller buttons. Tap with 3-fingers 3 times to toggle.",
+                            icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right"))
+            }
+            #if false
             if FeatureFlag.advancedSkinFeatures.enabled {
                 // Button Sound Effect Picker
                 NavigationLink {
@@ -678,6 +759,7 @@ private struct OnScreenControllerSection: View {
                 }
 
             }
+            #endif
         }
     }
 
@@ -770,13 +852,15 @@ private struct FeatureFlagsDebugView: View {
         .task {
             await loadInitialConfiguration()
         }
-        .alert("Error", isPresented: .constant(errorMessage != nil)) {
-            Button("OK") {
+        .uiKitAlert(
+            "Error",
+            message: errorMessage ?? "",
+            isPresented: .constant(errorMessage != nil),
+            preferredContentSize: CGSize(width: 500, height: 300)
+        ) {
+            UIAlertAction(title: "OK", style: .default) { _ in
+                print("OK tapped")
                 errorMessage = nil
-            }
-        } message: {
-            if let error = errorMessage {
-                Text(error)
             }
         }
     }
@@ -891,7 +975,8 @@ private struct FeatureFlagStatus: View {
                 .foregroundColor(flag.enabled ? .green : .red)
 
             // Show debug override if present
-            if let override = featureFlags.debugOverrides[flag.key] {
+            if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key),
+               let override = featureFlags.debugOverrides[feature] {
                 Text("Override: \(override ? "On" : "Off")")
                     .font(.caption)
                     .foregroundColor(.blue)
@@ -917,11 +1002,16 @@ private struct FeatureFlagToggle: View {
     var body: some View {
         Toggle("", isOn: Binding(
             get: {
-                featureFlags.debugOverrides[flag.key] ?? flag.enabled
+                if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
+                    return featureFlags.debugOverrides[feature] ?? flag.enabled
+                }
+                return flag.enabled
             },
             set: { newValue in
                 print("Setting toggle to: \(newValue)")
-                featureFlags.setDebugOverride(feature: flag.key, enabled: newValue)
+                if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
+                    featureFlags.setDebugOverride(feature: feature, enabled: newValue)
+                }
             }
         ))
     }

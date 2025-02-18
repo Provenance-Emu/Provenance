@@ -93,8 +93,8 @@ final class CoreOptionsTableViewController: QuickTableViewController {
             return NavigationRow(text: pvcore.projectName,
                                  detailText: .none,
                                  icon: nil, customization: nil, action: { [weak self] row in
-                coreClass.coreClassName = pvcore.identifier
-                coreClass.systemName = (pvcore.supportedSystems.map { $0.identifier }).joined(separator: ",")
+                EmulationState.shared.coreClassName = pvcore.identifier
+                EmulationState.shared.systemName = (pvcore.supportedSystems.map { $0.identifier }).joined(separator: ",")
                 let coreOptionsVC = CoreOptionsViewController(withCore: coreClass)
                 coreOptionsVC.title = row.text
                 self?.navigationController?.pushViewController(coreOptionsVC, animated: true)

@@ -19,6 +19,8 @@ class ConsoleGamesViewModel: ObservableObject {
 
     @Published var focusedSection: HomeSectionType?
     @Published var focusedItemInSection: String?
+    @Published var showDiscSelectionAlert = false
+    @Published var discSelectionAlert: DiscSelectionAlert?
 
     init(console: PVSystem) {
         self.console = console
@@ -36,5 +38,18 @@ class ConsoleGamesViewModel: ObservableObject {
 
     func getCurrentItem() -> String? {
         return focusedItemInSection
+    }
+
+    func presentDiscSelectionAlert(for game: PVGame, rootDelegate: PVRootDelegate?) {
+        let discs = game.relatedFiles.toArray()
+        let alertDiscs = discs.compactMap { disc -> DiscSelectionAlert.Disc? in
+            return DiscSelectionAlert.Disc(fileName: disc.fileName, path: disc.url.path)
+        }
+
+        self.discSelectionAlert = DiscSelectionAlert(
+            game: game,
+            discs: alertDiscs
+        )
+        self.showDiscSelectionAlert = true
     }
 }

@@ -17,10 +17,6 @@ internal struct AdvancedTogglesView: View {
     @Default(.webDavAlwaysOn) var webDavAlwaysOn
     @Default(.unsupportedCores) var unsupportedCores
 
-#if !os(tvOS)
-    @Default(.movableButtons) var movableButtons
-#endif
-
     /// Check if the app is from the App Store
     let isAppStore: Bool = {
         guard let appType = Bundle.main.infoDictionary?["PVAppType"] as? String else { return false }
@@ -67,13 +63,6 @@ internal struct AdvancedTogglesView: View {
                             icon: .sfSymbol("switch.2"))
             }
 
-#if !os(tvOS)
-            PremiumThemedToggle(isOn: $movableButtons) {
-                SettingsRow(title: "Movable Buttons",
-                            subtitle: "Allow player to move on screen controller buttons. Tap with 3-fingers 3 times to toggle.",
-                            icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right"))
-            }
-#endif
             PremiumThemedToggle(isOn: $webDavAlwaysOn) {
                 SettingsRow(title: "WebDAV Always On",
                             subtitle: "Keep WebDAV server running in background.",

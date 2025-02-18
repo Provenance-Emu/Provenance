@@ -591,5 +591,9 @@
 	</array>
 	<key>appcenter</key>
 	<string>862ca352-4607-4f8e-8c77-1248fa68ca3a</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Some games may use location data to enhance gameplay features</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Some games may use location data to enhance gameplay features</string>
 </dict>
 </plist>
