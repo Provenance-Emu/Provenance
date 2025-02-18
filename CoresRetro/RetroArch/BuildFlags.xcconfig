@@ -95,6 +95,7 @@ OTHER_CFLAGS = $(inherited) -DHAVE_AVFOUNDATION
 OTHER_CFLAGS = $(inherited) -DHAVE_FFMPEG
 OTHER_CFLAGS = $(inherited) -DHAVE_WIFI
 OTHER_CFLAGS = $(inherited) -DHAVE_COREAUDIO3 // Very buggy, don't use
+OTHER_CFLAGS = $(inherited) -DHAVE_MICROPHONE
 
 // CoreMIDI is only on iOS and macOS
 OTHER_CFLAGS[sdk=iphonesimulator*] = $(inherited) -DHAVE_COREMIDI -DHAVE_COREMOTION
