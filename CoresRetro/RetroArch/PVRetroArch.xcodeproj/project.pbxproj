@@ -241,7 +241,7 @@
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		B3632A522D15161300041145 /* PVRetroArchCore+Controls+DOS.m in Sources */ = {isa = PBXBuildFile; fileRef = B3632A512D15161300041145 /* PVRetroArchCore+Controls+DOS.m */; };
 		B363390E2D6286FA00ECD2ED /* apple_wifi.m in Sources */ = {isa = PBXBuildFile; fileRef = B363390D2D6286FA00ECD2ED /* apple_wifi.m */; };
-		B363394D2D63E82B00ECD2ED /* coreaudio_mic.c in Sources */ = {isa = PBXBuildFile; fileRef = B363394C2D63E82B00ECD2ED /* coreaudio_mic.c */; };
+		B363394D2D63E82B00ECD2ED /* coreaudio_mic.m in Sources */ = {isa = PBXBuildFile; fileRef = B363394C2D63E82B00ECD2ED /* coreaudio_mic.m */; };
 		B364D5CB2CD2A8B70082D177 /* Unrar in Frameworks */ = {isa = PBXBuildFile; productRef = B364D5CA2CD2A8B70082D177 /* Unrar */; };
 		B37106F42D51AFC300688298 /* RetroArchCoreOptionsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37106F32D51AFC300688298 /* RetroArchCoreOptionsLoader.swift */; };
 		B37C00592BFF6A1000FEC6AC /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B37C00582BFF6A1000FEC6AC /* MoltenVK */; };
@@ -853,7 +853,7 @@
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B3632A512D15161300041145 /* PVRetroArchCore+Controls+DOS.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+DOS.m"; sourceTree = "<group>"; };
 		B363390D2D6286FA00ECD2ED /* apple_wifi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = apple_wifi.m; sourceTree = "<group>"; };
-		B363394C2D63E82B00ECD2ED /* coreaudio_mic.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = coreaudio_mic.c; sourceTree = "<group>"; };
+		B363394C2D63E82B00ECD2ED /* coreaudio_mic.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = coreaudio_mic.m; sourceTree = "<group>"; };
 		B37106F32D51AFC300688298 /* RetroArchCoreOptionsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetroArchCoreOptionsLoader.swift; sourceTree = "<group>"; };
 		B39C4BEA2BF3430B00F199BB /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework; sourceTree = "<group>"; };
 		B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SDL2.xcframework; path = ../../Dependencies/SDL2.xcframework; sourceTree = "<group>"; };
@@ -1701,7 +1701,7 @@
 			children = (
 				B363390D2D6286FA00ECD2ED /* apple_wifi.m */,
 				B3FD94862D60708500397643 /* avfoundation.m */,
-				B363394C2D63E82B00ECD2ED /* coreaudio_mic.c */,
+				B363394C2D63E82B00ECD2ED /* coreaudio_mic.m */,
 				B3FD94702D6016F700397643 /* coremidi.c */,
 				B3FD94842D60698500397643 /* corelocation.m */,
 				B3FD53FC2CD1889700175917 /* griffin_cpp.cpp */,
@@ -2364,7 +2364,7 @@
 				B30C8C832BF45AE200C91991 /* griffin.c in Sources */,
 				B3FD94832D60591A00397643 /* coremidi.c in Sources */,
 				B363390E2D6286FA00ECD2ED /* apple_wifi.m in Sources */,
-				B363394D2D63E82B00ECD2ED /* coreaudio_mic.c in Sources */,
+				B363394D2D63E82B00ECD2ED /* coreaudio_mic.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
