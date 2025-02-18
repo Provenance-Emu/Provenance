@@ -429,7 +429,6 @@ public final class GameImporter: GameImporting, ObservableObject {
         defer {
             importQueueLock.unlock()
         }
-        var removed = [URL]()
         let offsets = IndexSet(importQueue.enumerated().compactMap { index, item in
             if item.status == .success && files.contains(item.url) {
                 files.remove(item.url)
