@@ -603,6 +603,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
             return
         }
         let jsonFiles = newFiles
+        //TODO: process 10 at a time, do it like the RomsSyncer
         newFiles.removeAll()
         uploadedFiles.removeAll()
         Task {
