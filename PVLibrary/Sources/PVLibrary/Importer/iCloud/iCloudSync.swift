@@ -69,6 +69,8 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     var status: iCloudSyncStatus = .initialUpload
     let errorHandler: ErrorHandler
     var initialSyncResult: SyncResult = .indeterminate
+    let queue = DispatchQueue(label: "com.provenance.newFiles")
+    let fileImportQueueMaxCount = 10
     
     init(directories: Set<String>,
          notificationCenter: NotificationCenter,
@@ -204,7 +206,6 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         let fileManager = FileManager.default
         var files: Set<URL> = []
         var filesDownloaded: Set<URL> = []
-        let queue = DispatchQueue(label: "com.provenance.newFiles")
         let removedObjects = notification.userInfo?[NSMetadataQueryUpdateRemovedItemsKey]
         if let actualRemovedObjects = removedObjects as? [NSMetadataItem] {
             DLOG("\(directories): actualRemovedObjects: (\(actualRemovedObjects.count)) \(actualRemovedObjects)")
@@ -228,7 +229,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                     case  NSMetadataUbiquitousItemDownloadingStatusNotDownloaded:
                         do {
                             try fileManager.startDownloadingUbiquitousItem(at: file)
-                            queue.sync {
+                            self?.queue.async(flags: .barrier) {
                                 files.insert(file)
                                 self?.insertDownloadingFile(file)
                             }
@@ -243,7 +244,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                             DLOG("file DELETED from iCloud: \(file)")
                             self?.deleteFromDatastore(file)
                         } else {
-                            queue.sync {
+                            self?.queue.async(flags: .barrier) {
                                 //in the case when we are initially turning on iCloud or the app is opened and coming into the foreground for the first time, we try to import any files already downloaded
                                 if self?.status == .initialUpload {
                                     self?.insertDownloadingFile(file)
@@ -808,10 +809,13 @@ class RomsSyncer: iCloudContainerSyncer {
     }
     
     func importNewRomFiles() {
-        processingFiles = newFiles
-        let importPaths = [URL](newFiles)
-        newFiles.removeAll()
-        uploadedFiles.removeAll()
+        let nextFilesToProcess = newFiles.prefix(fileImportQueueMaxCount)
+        newFiles.subtract(nextFilesToProcess)
+        processingFiles.formUnion(nextFilesToProcess)
+        let importPaths = [URL](nextFilesToProcess)
+        if newFiles.isEmpty {//TODO: does this make sense?
+            uploadedFiles.removeAll()
+        }
         gameImporter.addImports(forPaths: importPaths)
         gameImporter.startProcessing()
     }
