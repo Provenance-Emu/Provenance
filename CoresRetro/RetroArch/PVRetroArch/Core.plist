@@ -904,6 +904,22 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
+			<string>geolith.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.neogeo</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>Geolith (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/geolith-libretro</string>
+			<key>PVProjectVersion</key>
+			<string>2015.02.16</string>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
 			<string>mednafen.gba.libretro.framework</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
