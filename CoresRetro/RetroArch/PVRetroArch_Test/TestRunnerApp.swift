@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-private import class PVRetroArch.PVRetroArchCoreBridge
+import class PVRetroArch.PVRetroArchCoreBridge
 import PVCoreBridge
 
 class AppState: ObservableObject {
@@ -17,7 +17,7 @@ class AppState: ObservableObject {
         
     }
     
-    fileprivate weak var core: PVRetroArchCoreBridge?
+    weak var core: PVRetroArchCoreBridge?
 
     @Published var isRunning: Bool = false
     @Published var sendEventWasSwizzled: Bool = false

@@ -158,7 +158,6 @@
 		B3EEFB6B2D66C7630080CA51 /* PVRetroArchCore+Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C852BF45AFA00C91991 /* PVRetroArchCore+Options.swift */; };
 		B3EEFB6C2D66C7630080CA51 /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FC974C2CB8D29100C6DB31 /* CorePlist.swift */; };
 		B3EEFB6D2D66C7630080CA51 /* PVRetroArchCoreCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FC974D2CB8D29100C6DB31 /* PVRetroArchCoreCore.swift */; };
-		B3EEFB6E2D66C7800080CA51 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 93D6B0C4296A0DAE00D5EE11 /* main.m */; };
 		B3EEFB7D2D66C8690080CA51 /* libavdevice.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD967E2D613FD600397643 /* libavdevice.xcframework */; };
 		B3EEFB7E2D66C8690080CA51 /* libavdevice.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD967E2D613FD600397643 /* libavdevice.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3EEFB7F2D66C8690080CA51 /* libavfilter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD967F2D613FD600397643 /* libavfilter.xcframework */; };
@@ -188,6 +187,10 @@
 		B3EEFBA02D66C9900080CA51 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EEFB9E2D66C9820080CA51 /* CoreGraphics.framework */; };
 		B3EEFBA22D66C9A80080CA51 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EEFBA12D66C9A80080CA51 /* QuartzCore.framework */; };
 		B3EEFBA32D66C9C10080CA51 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EEFBA12D66C9A80080CA51 /* QuartzCore.framework */; };
+		B3EEFBA82D66DFC60080CA51 /* libRetroWebServer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93BC0F652A4C05E0003D97EC /* libRetroWebServer.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		B3EEFBAB2D66E05F0080CA51 /* PVWebServer in Frameworks */ = {isa = PBXBuildFile; productRef = B3EEFBAA2D66E05F0080CA51 /* PVWebServer */; };
+		B3EEFBB02D66E1500080CA51 /* WebServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EEFBAF2D66E1500080CA51 /* WebServer.swift */; };
+		B3EEFBB12D66E30C0080CA51 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 93D6B0C4296A0DAE00D5EE11 /* main.m */; };
 		B3F8DFFF2CB3741500017D1B /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8DFFE2CB3741500017D1B /* PVCoreObjCBridge */; };
 		B3FC975E2CB8D44400C6DB31 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3FC975D2CB8D44400C6DB31 /* PVPlists */; };
 		B3FD53ED2CD17D8200175917 /* JITSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FD53EB2CD17D8200175917 /* JITSupport.m */; };
@@ -416,7 +419,6 @@
 		B3CC2E0B2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+PS2.m"; sourceTree = "<group>"; };
 		B3CC63152BEF0CD0002F3C8B /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../MoltenVK/MoltenVK/MoltenVK.xcframework; sourceTree = "<group>"; };
 		B3EEF06F2D66AF400080CA51 /* PVRetroArchCoreBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVRetroArchCoreBridge.swift; sourceTree = "<group>"; };
-		B3EEFB562D66B7C40080CA51 /* TestRunnerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRunnerApp.swift; sourceTree = "<group>"; };
 		B3EEFB5E2D66B9ED0080CA51 /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3EEFB8B2D66C8B00080CA51 /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = System/Library/Frameworks/CoreHaptics.framework; sourceTree = SDKROOT; };
 		B3EEFB8E2D66C8CF0080CA51 /* CoreHID.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHID.framework; path = System/Library/Frameworks/CoreHID.framework; sourceTree = SDKROOT; };
@@ -428,6 +430,11 @@
 		B3EEFB982D66C94B0080CA51 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		B3EEFB9E2D66C9820080CA51 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		B3EEFBA12D66C9A80080CA51 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		B3EEFBA62D66DB9A0080CA51 /* PVRetroArch_Test.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PVRetroArch_Test.entitlements; sourceTree = "<group>"; };
+		B3EEFBA72D66DBF00080CA51 /* PVRetroArch-Test-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "PVRetroArch-Test-Info.plist"; sourceTree = SOURCE_ROOT; };
+		B3EEFBAC2D66E1130080CA51 /* TestRunnerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRunnerApp.swift; sourceTree = "<group>"; };
+		B3EEFBAE2D66E1500080CA51 /* PVRetroArch_Test-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVRetroArch_Test-Bridging-Header.h"; sourceTree = "<group>"; };
+		B3EEFBAF2D66E1500080CA51 /* WebServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebServer.swift; sourceTree = "<group>"; };
 		B3FC974C2CB8D29100C6DB31 /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
 		B3FC974D2CB8D29100C6DB31 /* PVRetroArchCoreCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVRetroArchCoreCore.swift; sourceTree = "<group>"; };
 		B3FD53EA2CD17D8200175917 /* JITSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JITSupport.h; sourceTree = "<group>"; };
@@ -486,9 +493,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3EEFBA82D66DFC60080CA51 /* libRetroWebServer.a in Frameworks */,
 				B3EEFB812D66C8690080CA51 /* libswscale.xcframework in Frameworks */,
 				B3EEFB662D66C1970080CA51 /* PVCoreBridge in Frameworks */,
 				93AA1253296DCEE8007C9808 /* VideoToolbox.framework in Frameworks */,
+				B3EEFBAB2D66E05F0080CA51 /* PVWebServer in Frameworks */,
 				B3EEFB9B2D66C94B0080CA51 /* OpenGL.framework in Frameworks */,
 				B3EEFB7F2D66C8690080CA51 /* libavfilter.xcframework in Frameworks */,
 				B3EEFB552D66B6490080CA51 /* MoltenVK in Frameworks */,
@@ -690,8 +699,12 @@
 		93D6B0B1296A0DAB00D5EE11 /* PVRetroArch_Test */ = {
 			isa = PBXGroup;
 			children = (
-				B3EEFB562D66B7C40080CA51 /* TestRunnerApp.swift */,
+				B3EEFBAC2D66E1130080CA51 /* TestRunnerApp.swift */,
+				B3EEFBA72D66DBF00080CA51 /* PVRetroArch-Test-Info.plist */,
+				B3EEFBA62D66DB9A0080CA51 /* PVRetroArch_Test.entitlements */,
 				93D6B0C4296A0DAE00D5EE11 /* main.m */,
+				B3EEFBAF2D66E1500080CA51 /* WebServer.swift */,
+				B3EEFBAE2D66E1500080CA51 /* PVRetroArch_Test-Bridging-Header.h */,
 			);
 			path = PVRetroArch_Test;
 			sourceTree = "<group>";
@@ -1006,6 +1019,7 @@
 				B3EEFB582D66B94E0080CA51 /* PVEmulatorCore */,
 				B3EEFB5C2D66B9580080CA51 /* PVCoreObjCBridge */,
 				B3EEFB652D66C1970080CA51 /* PVCoreBridge */,
+				B3EEFBAA2D66E05F0080CA51 /* PVWebServer */,
 			);
 			productName = PVRetroArch_Test;
 			productReference = 93D6B0B0296A0DAB00D5EE11 /* PVRetroArch_Test.app */;
@@ -1105,6 +1119,7 @@
 				B364D5C92CD2A8B70082D177 /* XCRemoteSwiftPackageReference "Unrar.swift" */,
 				B3EEF5DE2D66B0850080CA51 /* XCRemoteSwiftPackageReference "SwiftSDL2" */,
 				B3EEF5E12D66B0D00080CA51 /* XCLocalSwiftPackageReference "../../Dependencies/ZipArchive" */,
+				B3EEFBA92D66E05F0080CA51 /* XCLocalSwiftPackageReference "../../PVWebServer" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -1207,6 +1222,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3EEFBB12D66E30C0080CA51 /* main.m in Sources */,
+				B3EEFBB02D66E1500080CA51 /* WebServer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1254,7 +1271,6 @@
 				B3EEF0702D66AF440080CA51 /* PVRetroArchCoreBridge.swift in Sources */,
 				93C372692A8B68000007671D /* PVRetroArchCore+Controls+3DO.m in Sources */,
 				93FF38262965FF9C00772659 /* PVRetroArchCore+Saves.mm in Sources */,
-				B3EEFB6E2D66C7800080CA51 /* main.m in Sources */,
 				93C372682A8B68000007671D /* PVRetroArchCore+Controls+Dreamcast.m in Sources */,
 				93C3726C2A8B68000007671D /* PVRetroArchCore+Controls+GBA.m in Sources */,
 				93FF38282965FF9C00772659 /* PVRetroArchCore+Controls.m in Sources */,
@@ -1402,7 +1418,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_ENTITLEMENTS = PVRetroArch_Test/PVRetroArch_Test.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = NO;
@@ -1426,7 +1442,9 @@
 					./RetroArch/gfx/common/,
 				);
 				INFOPLIST_EXPAND_BUILD_SETTINGS = YES;
+				INFOPLIST_FILE = "PVRetroArch-Test-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = RetroArchCore;
+				INFOPLIST_KEY_GCSupportsControllerUserInteraction = YES;
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -1452,6 +1470,7 @@
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "PVRetroArch_Test/PVRetroArch_Test-Bridging-Header.h";
 				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6,7";
@@ -1983,7 +2002,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_ENTITLEMENTS = PVRetroArch_Test/PVRetroArch_Test.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = NO;
@@ -2007,7 +2026,9 @@
 					./RetroArch/gfx/common/,
 				);
 				INFOPLIST_EXPAND_BUILD_SETTINGS = YES;
+				INFOPLIST_FILE = "PVRetroArch-Test-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = RetroArchCore;
+				INFOPLIST_KEY_GCSupportsControllerUserInteraction = YES;
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -2033,6 +2054,7 @@
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "PVRetroArch_Test/PVRetroArch_Test-Bridging-Header.h";
 				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6,7";
@@ -2148,6 +2170,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../Dependencies/ZipArchive;
 		};
+		B3EEFBA92D66E05F0080CA51 /* XCLocalSwiftPackageReference "../../PVWebServer" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVWebServer;
+		};
 		B3F8DFFD2CB3741500017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreObjCBridge;
@@ -2236,6 +2262,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B30E9AB82C6F241200C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */;
 			productName = PVCoreBridge;
+		};
+		B3EEFBAA2D66E05F0080CA51 /* PVWebServer */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVWebServer;
 		};
 		B3F8DFFE2CB3741500017D1B /* PVCoreObjCBridge */ = {
 			isa = XCSwiftPackageProductDependency;

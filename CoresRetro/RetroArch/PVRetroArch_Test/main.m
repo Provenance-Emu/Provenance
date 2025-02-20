@@ -3,6 +3,8 @@
 #import <PVRetroArch/PVRetroArch-Swift.h>
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <PVRetroArch_Test-Swift.h>
+#import "PVRetroArch_Test-Swift.h"
 
 /// Test runner application delegate for RetroArch core testing
 @interface TestRunner : UIApplication<UIApplicationDelegate>
@@ -52,6 +54,8 @@ static PVRetroArchCoreBridge *core;
         NSLog(@"Starting emulation on main thread");
         [core startEmulation];
     });
+
+    [[RetroWebServer shared] start];
 
     return YES;
 }
