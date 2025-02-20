@@ -60,6 +60,14 @@ static PVRetroArchCoreBridge *core;
     return YES;
 }
 
+- (void)applicationDidBecomeActive:(NSNotification *)notification {
+    [core setPauseEmulation:false];
+ }
+
+ - (void)applicationDidResignActive:(NSNotification *)notification {
+     [core setPauseEmulation:true];
+ }
+
 - (void)sendEvent:(UIEvent *)event {
     if (core != nil) {
         [core sendEvent:event];
