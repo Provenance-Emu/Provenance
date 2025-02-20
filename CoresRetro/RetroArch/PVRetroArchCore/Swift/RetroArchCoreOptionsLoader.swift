@@ -1,7 +1,9 @@
 import Foundation
-import PVCoreBridge
 import PVLogging
-import PVCoreBridgeRetro
+internal import enum PVCoreBridge.CoreOption
+internal import struct PVCoreBridge.CoreOptionValueDisplay
+internal import struct PVCoreBridge.CoreOptionEnumValue
+//import PVCoreBridgeRetro
 
 /// Helper class to load RetroArch core options
 class RetroArchCoreOptionsLoader {
@@ -18,7 +20,7 @@ class RetroArchCoreOptionsLoader {
     }
 
     /// Load the core and get its options
-    func loadCoreOptions() -> [CoreOption]? {
+    func loadCoreOptions() -> [PVCoreBridge.CoreOption]? {
         guard loadCore() else { return nil }
         defer { unloadCore() }
 
@@ -416,7 +418,7 @@ public struct retro_system_timing {
 
 extension CoreOption {
     /// Create a CoreOption from RetroArch variable
-    static func fromRetroVariable(_ variable: retro_variable) -> CoreOption? {
+    fileprivate static func fromRetroVariable(_ variable: retro_variable) -> CoreOption? {
         guard let key = variable.key, let value = variable.value else {
             return nil
         }

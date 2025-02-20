@@ -19,7 +19,7 @@
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
 #import <QuartzCore/QuartzCore.h>
-#import <PVRetroArch/RetroArch-Swift.h>
+#import <PVRetroArch/PVRetroArch-Swift.h>
 
 #include <stdio.h>
 #include <stdint.h>

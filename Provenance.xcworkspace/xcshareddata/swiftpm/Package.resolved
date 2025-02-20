@@ -515,15 +515,6 @@
         }
       },
       {
-        "package": "ZipArchive",
-        "repositoryURL": "https://github.com/ZipArchive/ZipArchive.git",
-        "state": {
-          "branch": "master",
-          "revision": "168f9e2f19df89f7f1f479aa867960128a94bcf7",
-          "version": null
-        }
-      },
-      {
         "package": "ZIPFoundation",
         "repositoryURL": "https://github.com/weichsel/ZIPFoundation.git",
         "state": {

@@ -1,9 +1,7 @@
 #import <Foundation/Foundation.h>
 #import "PVRetroArchCoreBridge+Archive.h"
-
-#import "ZipArchive.h"
-#import "LzhArchive.h"
-#import "URKArchive.h"
+@import LzhArchive;
+@import ZipArchive;
 
 @interface PVRetroArchCoreBridge (Archive)
 @end
@@ -60,15 +58,6 @@
                        completionHandler:nil];
 }
 
--(BOOL)extractRAR:(NSString *)atPath toDestination:(NSString *)toDestination overwrite:(BOOL)overwrite {
-    NSError *error = nil;
-    URKArchive *archive = [[URKArchive alloc] initWithPath:atPath error:&error];
-    NSArray<NSString*> *filesInArchive = [archive listFilenames:&error];
-    for (NSString *name in filesInArchive) {
-        NSLog(@"Archived file: %@\n", name);
-    }
-    return [archive extractFilesTo:toDestination overwrite:overwrite error:nil];
-}
 -(BOOL)isArchive:(NSString *)atPath {
     return ([atPath localizedCaseInsensitiveContainsString:@".zip"] ||
             [atPath localizedCaseInsensitiveContainsString:@".lzh"] ||

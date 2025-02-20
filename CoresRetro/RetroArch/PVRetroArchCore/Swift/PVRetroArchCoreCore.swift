@@ -18,6 +18,7 @@ import PVLogging
 import PVAudio
 import PVEmulatorCore
 import PVCoreObjCBridge
+internal import enum PVCoreBridge.PVDSButton
 //import PVCoreBridge
 
 @objc
