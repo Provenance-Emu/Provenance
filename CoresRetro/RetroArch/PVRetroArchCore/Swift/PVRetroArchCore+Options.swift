@@ -8,7 +8,7 @@ internal import struct PVCoreBridge.CoreOptionEnumValue
 
 extension PVRetroArchCoreOptions: SubCoreOptional {
     
-    public static func options(forSubcoreIdentifier identifier: String, systemName: String) -> [CoreOption]? {
+    nonisolated(unsafe) public static func options(forSubcoreIdentifier identifier: String, systemName: String) -> [CoreOption]? {
         var subCoreOptions: [CoreOption] = []
         var isDOS = false
 
@@ -17,7 +17,7 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
         if (identifier.contains("mupen")) {
             subCoreOptions.append(mupenRDPOption)
         }
-        if (identifier.contains("mame_libretro")) {
+        if (identifier.contains("mame")) {
             subCoreOptions.append(mameOSDOption)
         }
         if (systemName.contains("psx") ||
@@ -25,6 +25,7 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
             systemName.contains("nes") ||
             systemName.contains("saturn") ||
             systemName.contains("dreamcast") ||
+            systemName.contains("neogeo") ||
             systemName.contains("gb")
         ) {
             analogDpadControllerOption = {
@@ -44,14 +45,16 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
         if (systemName.contains("dos") ||
              systemName.contains("mac") ||
              systemName.contains("appleII") ||
+            systemName.contains("xt") ||
+            systemName.contains("st") ||
              systemName.contains("pc98")) {
             isDOS=true
             subCoreOptions.append(numKeyControllerOption)
         }
-//        if EmulationState.shared.isOn,
-//           systemName.contains("appleII") {
-//            subCoreOptions.append(apple2MachineOption)
-//        }
+        if EmulationState.shared.isOn,
+           systemName.contains("appleII") {
+            subCoreOptions.append(apple2MachineOption)
+        }
         analogKeyControllerOption = {
             .bool(.init(
                 title: ENABLE_ANALOG_KEY,
