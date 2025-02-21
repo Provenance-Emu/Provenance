@@ -55,7 +55,9 @@ public extension PVEmulatorConfiguration {
                                         url: subCore.projectURL,
                                         version: subCore.projectVersion,
                                         disabled: subCore.disabled,
-                                        appStoreDisabled: subCore.appStoreDisabled)
+                                        appStoreDisabled: subCore.appStoreDisabled,
+                                        contentless: subCore.contentless
+                )
                 //                database.refresh()
                 try newSubCore.add(update: true)
             } catch let error as DecodingError {

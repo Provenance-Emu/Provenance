@@ -20,7 +20,7 @@ import AsyncAlgorithms
 import PVSystems
 import PVMediaCache
 
-let schemaVersion: UInt64 = 14
+let schemaVersion: UInt64 = 16
 
 public enum RomDeletionError: Error {
     case relatedFiledDeletionError
@@ -163,6 +163,19 @@ public final class RealmConfiguration {
                 migration.enumerateObjects(ofType: PVSaveState.className()) { oldObject, newObject in
                     newObject!["isPinned"] = false
                     newObject!["isFavorite"] = false
+                }
+            }
+            if oldSchemaVersion < 15 {
+                migration.enumerateObjects(ofType: PVCore.className()) { oldObject, newObject in
+                    newObject!["contentless"] = false
+                }
+                migration.enumerateObjects(ofType: PVGame.className()) { oldObject, newObject in
+                    newObject!["contentless"] = false
+                }
+            }
+            if oldSchemaVersion < 16 {
+                migration.enumerateObjects(ofType: PVGame.className()) { oldObject, newObject in
+                    newObject!["contentless"] = false
                 }
             }
         }
@@ -681,7 +694,7 @@ public extension RomDatabase {
                 game.genres = "hidden"
             }
         } catch {
-            NSLog("Failed to hide game \(game.title)\n\(error.localizedDescription)")
+            ELOG("Failed to hide game \(game.title)\n\(error.localizedDescription)")
         }
     }
     
@@ -825,7 +838,7 @@ public extension RomDatabase {
                     try FileManager.default.removeItem(at: file)
                 }
             } catch {
-                NSLog(error.localizedDescription)
+                ELOG(error.localizedDescription)
             }
         }
     }

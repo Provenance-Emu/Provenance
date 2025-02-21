@@ -350,10 +350,16 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     /// Initializes core plists
     fileprivate func initCorePlists() async {
-        let corePlists: [EmulatorCoreInfoPlist]  = CoreLoader.getCorePlists()
         let bundle = ThisBundle
-        await PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
-        await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
+
+//        await Task {
+            await PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
+//        }
+//        await Task {
+            let corePlists: [EmulatorCoreInfoPlist]  = CoreLoader.getCorePlists()
+
+            await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
+//        }
     }
 
     public func getArtwork(forGame game: PVGame) async -> PVGame {

@@ -11,6 +11,7 @@ import RealmSwift
 import AsyncAlgorithms
 import PVPrimitives
 import PVFileSystem
+import PVSystems
 
 @objcMembers
 public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
@@ -54,6 +55,8 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     // If the user has set 'always use' for a specfic core
     // We don't use PVCore incase cores are removed / deleted
     @Persisted public var userPreferredCoreID: String?
+    
+    @Persisted public var contentless: Bool = false
 
     /* Links to other objects */
     @Persisted(originProperty: "game") public var saveStates: LinkingObjects<PVSaveState>
@@ -78,7 +81,7 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
         }
     }
 
-    /* Extra metadata from OpenBG */
+    /* Extra metadata from OpenVGDB */
     @Persisted public var gameDescription: String?
     @Persisted public var boxBackArtworkURL: String?
     @Persisted public var developer: String?
@@ -104,6 +107,19 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
             game.publishDate = String("\(1980 + count)")
             return game
         }
+    }
+    
+    public static func contentlessGenerate(core: PVCore, title: String? = nil) -> PVGame {
+        let systemIdentifier = core.supportedSystems.first?.identifier ?? SystemIdentifier.RetroArch.rawValue
+        let game = PVGame()
+        game.title = core.projectName
+        game.systemIdentifier = systemIdentifier
+        game.md5Hash = core.identifier // Mock MD5 hash
+        game.publishDate = core.projectVersion
+        game.userPreferredCoreID = core.identifier
+        game.contentless = true
+        game.file = PVFile.init(withPartialPath: "", relativeRoot: .caches, size: 0, md5: core.identifier)
+        return game
     }
 }
 

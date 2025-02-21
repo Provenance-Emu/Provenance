@@ -153,9 +153,6 @@ public class AppState: ObservableObject {
         ILOG("AppState: Starting GameImporter.shared.initSystems()")
         await GameImporter.shared.initSystems()
         ILOG("AppState: GameImporter.shared.initSystems() completed")
-        ILOG("AppState: Reloading RomDatabase cache")
-        await RomDatabase.reloadCache()
-        ILOG("AppState: RomDatabase cache reloaded")
 
         // Initialize gameLibrary
         self.gameLibrary = PVGameLibrary<RealmDatabaseDriver>(database: RomDatabase.sharedInstance)
@@ -168,6 +165,13 @@ public class AppState: ObservableObject {
         // Initialize libraryUpdatesController with the gameImporter
         self.libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: self.gameImporter!)
         ILOG("AppState: LibraryUpdatesController initialized")
+        
+        ILOG("AppState: RomDatabase Loading dummy cores")
+        await try? RomDatabase.addContentlessCores(overwrite: true)
+        ILOG("AppState: RomDatabase dummy cores loaded")
+        ILOG("AppState: Reloading RomDatabase cache")
+        await RomDatabase.reloadCache()
+        ILOG("AppState: RomDatabase cache reloaded")
 
         await finalizeBootup()
     }

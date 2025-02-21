@@ -21,7 +21,7 @@ public extension Core {
         let project = CoreProject(name: core.projectName, url: url, version: core.projectVersion)
         let systems = Array(core.supportedSystems.map { $0.asDomain() })
         
-        self.init(identifier: identifier, principleClass: principleClass, disabled: disabled, systems: systems, project: project)
+        self.init(identifier: identifier, principleClass: principleClass, disabled: disabled, systems: systems, project: project, contentless: core.contentless)
     }
 }
 
@@ -51,6 +51,7 @@ extension Core: RealmRepresentable {
             object.projectVersion = project.version
             object.projectURL = project.url.absoluteString
             object.disabled = disabled
+            object.contentless = contentless
 
             Task {
                 let realm = try! await Realm()
