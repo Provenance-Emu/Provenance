@@ -1011,7 +1011,6 @@
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.mame</string>
-				<string>com.provenance.neogeo</string>
 			</array>
 			<key>PVProjectName</key>
 			<string>MAME 2000 (RetroArch)</string>
@@ -1028,7 +1027,6 @@
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.mame</string>
-				<string>com.provenance.neogeo</string>
 			</array>
 			<key>PVProjectName</key>
 			<string>MAME 2003 (RetroArch)</string>
@@ -1045,7 +1043,6 @@
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.mame</string>
-				<string>com.provenance.neogeo</string>
 			</array>
 			<key>PVProjectName</key>
 			<string>MAME 2003 Plus (RetroArch)</string>
@@ -1062,7 +1059,6 @@
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.mame</string>
-				<string>com.provenance.neogeo</string>
 			</array>
 			<key>PVProjectName</key>
 			<string>MAME 2010 (RetroArch)</string>
