@@ -39,7 +39,8 @@ public extension PVEmulatorConfiguration {
                                  url: core.projectURL,
                                  version: core.projectVersion,
                                  disabled: core.disabled,
-                                 appStoreDisabled: core.appStoreDisabled)
+                                 appStoreDisabled: core.appStoreDisabled,
+                                 contentless: core.contentless)
             //            database.refresh()
             try newCore.add(update: true)
         }
