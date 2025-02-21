@@ -191,6 +191,7 @@
 		B3EEFBAB2D66E05F0080CA51 /* PVWebServer in Frameworks */ = {isa = PBXBuildFile; productRef = B3EEFBAA2D66E05F0080CA51 /* PVWebServer */; };
 		B3EEFBB02D66E1500080CA51 /* WebServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EEFBAF2D66E1500080CA51 /* WebServer.swift */; };
 		B3EEFBB12D66E30C0080CA51 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 93D6B0C4296A0DAE00D5EE11 /* main.m */; };
+		B3EEFBB42D6807FB0080CA51 /* PVRetroArchCore+Controls+Jaguar.m in Sources */ = {isa = PBXBuildFile; fileRef = B3EEFBB32D6807FB0080CA51 /* PVRetroArchCore+Controls+Jaguar.m */; };
 		B3F8DFFF2CB3741500017D1B /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8DFFE2CB3741500017D1B /* PVCoreObjCBridge */; };
 		B3FC975E2CB8D44400C6DB31 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3FC975D2CB8D44400C6DB31 /* PVPlists */; };
 		B3FD53ED2CD17D8200175917 /* JITSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FD53EB2CD17D8200175917 /* JITSupport.m */; };
@@ -435,6 +436,7 @@
 		B3EEFBAC2D66E1130080CA51 /* TestRunnerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRunnerApp.swift; sourceTree = "<group>"; };
 		B3EEFBAE2D66E1500080CA51 /* PVRetroArch_Test-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVRetroArch_Test-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3EEFBAF2D66E1500080CA51 /* WebServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebServer.swift; sourceTree = "<group>"; };
+		B3EEFBB32D6807FB0080CA51 /* PVRetroArchCore+Controls+Jaguar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+Jaguar.m"; sourceTree = "<group>"; };
 		B3FC974C2CB8D29100C6DB31 /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
 		B3FC974D2CB8D29100C6DB31 /* PVRetroArchCoreCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVRetroArchCoreCore.swift; sourceTree = "<group>"; };
 		B3FD53EA2CD17D8200175917 /* JITSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JITSupport.h; sourceTree = "<group>"; };
@@ -784,6 +786,7 @@
 				93C372642A8B68000007671D /* PVRetroArchCore+Controls+GB.m */,
 				93C372652A8B68000007671D /* PVRetroArchCore+Controls+GBA.m */,
 				93C372602A8B67FF0007671D /* PVRetroArchCore+Controls+Genesis.m */,
+				B3EEFBB32D6807FB0080CA51 /* PVRetroArchCore+Controls+Jaguar.m */,
 				93A727842AAEB1C60052B279 /* PVRetroArchCore+Controls+MAME.m */,
 				93C372632A8B68000007671D /* PVRetroArchCore+Controls+N64.m */,
 				93A727892AAEB1C60052B279 /* PVRetroArchCore+Controls+NeoGeo.m */,
@@ -1248,6 +1251,7 @@
 				93814F922AAAACAF00DEB9B9 /* PVRetroArchCore+Archive+MAME.m in Sources */,
 				93B3B1972A8CBA1B00B60325 /* PVRetroArchCore+Archive+PC98.m in Sources */,
 				93C3726A2A8B68000007671D /* PVRetroArchCore+Controls+N64.m in Sources */,
+				B3EEFBB42D6807FB0080CA51 /* PVRetroArchCore+Controls+Jaguar.m in Sources */,
 				93654F7B298F4A2D0046503F /* PVRetroArchCore+Controls+DS.m in Sources */,
 				93C3726D2A8B68000007671D /* PVRetroArchCore+Controls+NES.m in Sources */,
 				93B66B9F2967DB7600A621DD /* menu_pipeline.metal in Sources */,

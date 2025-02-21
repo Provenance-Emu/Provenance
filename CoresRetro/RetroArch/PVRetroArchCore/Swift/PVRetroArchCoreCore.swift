@@ -112,7 +112,27 @@ extension PVRetroArchCoreCore: PVJaguarSystemResponderClient {
     public func didRelease(jaguarButton button: PVCoreBridge.PVJaguarButton, forPlayer player: Int) {
         (_bridge as! PVJaguarSystemResponderClient).didRelease(jaguarButton: button, forPlayer: player)
     }
+    public func didPush(_ button: PVCoreBridge.PVJaguarButton, forPlayer player: Int) {
+        (_bridge as! PVJaguarSystemResponderClient).didPush(jaguarButton: button, forPlayer: player)
+    }
+    public func didRelease(_ button: PVCoreBridge.PVJaguarButton, forPlayer player: Int) {
+        (_bridge as! PVJaguarSystemResponderClient).didRelease(jaguarButton: button, forPlayer: player)
+    }
 }
+
+// MARK: NeoGeo PVNeoGeoSystemResponderClient
+extension PVRetroArchCoreCore: PVNeoGeoSystemResponderClient {
+    public func didMoveJoystick(_ button: PVCoreBridge.PVNeoGeoButton, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
+        (_bridge as! PVNeoGeoSystemResponderClient).didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
+    }
+    public func didPush(_ button: PVCoreBridge.PVNeoGeoButton, forPlayer player: Int) {
+        (_bridge as! PVNeoGeoSystemResponderClient).didPush(button, forPlayer: player)
+    }
+    public func didRelease(_ button: PVCoreBridge.PVNeoGeoButton, forPlayer player: Int) {
+        (_bridge as! PVNeoGeoSystemResponderClient).didRelease(button, forPlayer: player)
+    }
+}
+
 // MARK: NES
 extension PVRetroArchCoreCore: PVNESSystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PVNESButton, forPlayer player: Int) {
