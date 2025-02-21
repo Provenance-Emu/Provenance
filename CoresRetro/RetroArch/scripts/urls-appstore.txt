@@ -2,7 +2,7 @@ https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/81_libretro_ios.dyl
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/2048_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/a5200_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/atari800_libretro_ios.dylib.zip
-https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/bluemsx_mercury_accuracy_libretro_ios.dylib.zip
+https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/bluemsx_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/bsnes_hd_beta_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/bsnes_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/bsnes_mercury_accuracy_libretro_ios.dylib.zip

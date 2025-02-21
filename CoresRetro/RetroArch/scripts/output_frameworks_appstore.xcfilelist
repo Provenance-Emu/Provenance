@@ -1,5 +1,6 @@
 $(SRCROOT)/CoresRetro/RetroArch/modules/a5200_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/atari800_libretro_ios.framework
+$(SRCROOT)/CoresRetro/RetroArch/modules/bluemsx_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/bsnes_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/bsnes_mercury_accuracy_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/desmume_libretro_ios.framework
