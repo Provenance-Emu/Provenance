@@ -609,7 +609,7 @@
 				<string>com.provenance.dos</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>DosBox Pure (RetroArch)</string>
+			<string>DosBox-Pure (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/schellingb/dosbox-pure</string>
 			<key>PVProjectVersion</key>
@@ -1362,7 +1362,7 @@
 				<string>com.provenance.palmos</string>
 			</array>
 			<key>PVProjectName</key>
-			<string>Mu (RetroArch)</string>
+			<string>PalmOS (Mu) (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/mu/</string>
 			<key>PVProjectVersion</key>
@@ -1743,6 +1743,50 @@
 			<string>Sinclair - ZX Spectrum (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/fuse</string>
+			<key>PVProjectVersion</key>
+			<string>Nightly</string>
+			<key>PVAppStoreDisabled</key>
+			<false/>
+			<key>PVContentless</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>bluemsx.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.retroarch</string>
+				<string>com.provenance.colecovision</string>
+				<string>com.provenance.msx</string>
+				<string>com.provenance.msx2</string>
+				<string>com.provenance.sg1000</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>MSX/SVI/ColecoVision/SG-1000 (blueMSX) (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/blueMSX</string>
+			<key>PVProjectVersion</key>
+			<string>Nightly</string>
+			<key>PVAppStoreDisabled</key>
+			<false/>
+			<key>PVContentless</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>numero.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.retroarch</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>TI-83 (Numero) (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/numero</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVAppStoreDisabled</key>
