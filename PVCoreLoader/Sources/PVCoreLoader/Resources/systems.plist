@@ -7469,7 +7469,7 @@
 		<key>PVBit</key>
 		<string>64</string>
 		<key>PVPortable</key>
-		<true/>
+		<false/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.retroarch</string>
 		<key>PVScreenType</key>
@@ -7485,6 +7485,7 @@
 			<string>opt</string>
 			<string>cfg</string>
 			<string>CFG</string>
+			<string></string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
