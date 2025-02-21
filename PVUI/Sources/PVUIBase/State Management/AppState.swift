@@ -53,12 +53,16 @@ public class AppState: ObservableObject {
     /// Optional properties for game-related functionalities
     @Published
     public var gameImporter: GameImporter?
+   
     /// Optional property for the game library
+    @Published
     public var gameLibrary: PVGameLibrary<RealmDatabaseDriver>?
+    
     /// Optional property for the library updates controller
     @Published
     public var libraryUpdatesController: PVGameLibraryUpdatesController?
 
+    /// Coordinator for Popover HUD
     public let hudCoordinator = HUDCoordinator()
 
     /// Whether the app has been initialized
@@ -166,9 +170,6 @@ public class AppState: ObservableObject {
         self.libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: self.gameImporter!)
         ILOG("AppState: LibraryUpdatesController initialized")
         
-        ILOG("AppState: RomDatabase Loading dummy cores")
-        await try? RomDatabase.addContentlessCores(overwrite: true)
-        ILOG("AppState: RomDatabase dummy cores loaded")
         ILOG("AppState: Reloading RomDatabase cache")
         await RomDatabase.reloadCache()
         ILOG("AppState: RomDatabase cache reloaded")
@@ -207,11 +208,17 @@ public class AppState: ObservableObject {
         }
         #endif
 
+        ILOG("AppState: RomDatabase Loading dummy cores...")
+        await try? RomDatabase.addContentlessCores(overwrite: true)
+        ILOG("AppState: RomDatabase dummy cores loaded.")
+
+        ILOG("AppState: Bootup state transitioning to completed...")
         bootupStateManager.transition(to: .completed)
-        ILOG("AppState: Bootup state transitioned to completed")
+        ILOG("AppState: Bootup state transitioned to completed.")
         ILOG("AppState: Bootup finalized")
 
-        Task.detached {
+
+        Task { @MainActor in
             try? await self.withTimeout(seconds: 15) {
                 await self.setupShortcutsListener()
             }
