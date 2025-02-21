@@ -50,7 +50,10 @@ public final class PVImageFile: PVFile {
     }
 
     private func calculateSizeData() { // async {
-        let path = url.path
+        guard let path = url?.path else {
+            cgsize = .zero
+            return
+        }
 
 //        let size = await Task { () -> CGSize in
             #if canImport(UIKit)

@@ -15,7 +15,7 @@ public final class PVCheats: Object, CheatFile, LocalFileProvider {
     public dynamic var game: PVGame!
     public dynamic var core: PVCore!
     public dynamic var code: String!
-    public dynamic var file: PVFile!
+    public dynamic var file: PVFile?
     public dynamic var date: Date = Date()
     public dynamic var lastOpened: Date?
     public dynamic var type: String!
@@ -55,7 +55,7 @@ public extension Cheats {
         let date = cheat.date
         let lastOpened = cheat.lastOpened
         let enabled = cheat.enabled
-        let file = FileInfo(fileName: cheat.file.fileName, size: cheat.file.size, md5: cheat.file.md5, online: cheat.file.online, local: true)
+        let file = FileInfo(fileName: cheat.file?.fileName ?? "", size: cheat.file?.size ?? 0, md5: cheat.file?.md5 ?? "", online: cheat.file?.online ?? true, local: true)
         
         self.init(id: id, game: game, core: core, code: code, type: type, date: date, lastOpened: lastOpened, enabled: enabled, file: file)
     }

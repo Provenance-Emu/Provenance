@@ -25,7 +25,7 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     // The other option is to only use the filename and then path(forGame:) would determine the
     // fully qualified path, but if we add network / cloud storage that may or may not change that.
     @Persisted public var romPath: String = ""
-    @Persisted public var file: PVFile!
+    @Persisted public var file: PVFile?
     @Persisted public private(set) var relatedFiles: List<PVFile>
 
     @Persisted public var customArtworkURL: String = ""
@@ -119,6 +119,7 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
         game.userPreferredCoreID = core.identifier
         game.contentless = true
         game.file = PVFile.init(withPartialPath: "", relativeRoot: .caches, size: 0, md5: core.identifier)
+        game.system = core.supportedSystems.first!
         return game
     }
 }
@@ -203,7 +204,11 @@ public extension Game {
         let regionName = game.regionName
         let systemShortName = game.systemShortName
         let language = game.language
-        let file = FileInfo(fileName: game.file.fileName, size: game.file.size, md5: game.file.md5, online: game.file.online, local: true)
+        let file = FileInfo(fileName: game.file?.fileName ?? "",
+                            size: game.file?.size ?? 0,
+                            md5: game.file?.md5 ?? "",
+                            online: game.file?.online ?? true,
+                            local: true)
         let gameDescription = game.gameDescription
         let publishDate = game.publishDate
         // TODO: Screenshots

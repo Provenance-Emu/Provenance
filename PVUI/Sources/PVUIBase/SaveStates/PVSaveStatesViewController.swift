@@ -63,8 +63,8 @@ final class PVSaveStatesViewController: UICollectionViewController {
         var didDeleteSave: Bool = false
         allSaves.forEach { save in
             guard !save.isInvalidated else { return }
-            let path = save.file.url.path
-            if !FileManager.default.fileExists(atPath: path) {
+            
+            if let path = save.file?.url?.path, !FileManager.default.fileExists(atPath: path) {
                 do {
                     try PVSaveState.delete(save)
                     didDeleteSave = true

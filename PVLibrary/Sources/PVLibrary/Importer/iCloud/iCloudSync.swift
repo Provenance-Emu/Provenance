@@ -179,8 +179,8 @@ extension iCloudTypeSyncer {
 extension SyncFileToiCloud where Self: LocalFileInfoProvider {
     private var destinationURL: URL? { get async {
         await Task {
-            guard let containerURL = containerURL else { return nil }
-            return containerURL.appendingPathComponent(url.relativePath)
+            guard let containerURL = containerURL, let relativePath = url?.relativePath else { return nil }
+            return containerURL.appendingPathComponent(relativePath)
         }.value
     }}
 
@@ -198,13 +198,15 @@ extension SyncFileToiCloud where Self: LocalFileInfoProvider {
             }
 
             let fm = FileManager.default
-            if fm.fileExists(atPath: url.path) {
+            if let url = url, fm.fileExists(atPath: url.path) {
                 try! await fm.removeItem(at: url)
             }
 
             do {
-                ILOG("Trying to set Ubiquitious from local (\(url.path)) to ICloud (\(destinationURL.path))")
-                try fm.setUbiquitous(true, itemAt: url, destinationURL: destinationURL)
+                ILOG("Trying to set Ubiquitious from local (\(url?.path ?? "")) to ICloud (\(destinationURL.path))")
+                if let url = url {
+                    try fm.setUbiquitous(true, itemAt: url, destinationURL: destinationURL)
+                }
                 return .success
             } catch {
                 ELOG("iCloud failed to set Ubiquitous: \(error.localizedDescription)")

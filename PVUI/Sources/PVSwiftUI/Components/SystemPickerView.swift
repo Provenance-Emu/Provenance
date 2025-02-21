@@ -54,7 +54,10 @@ struct SystemPickerView: View {
         DLOG("Moving game '\(game.title)' to system: \(newSystem.name)")
 
         do {
-            let sourceURL = PVEmulatorConfiguration.path(forGame: game)
+            guard let sourceURL = PVEmulatorConfiguration.path(forGame: game) else {
+                ELOG("Cannot move game with no path")
+                return
+            }
             let destinationURL = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: newSystem.identifier)
                 .appendingPathComponent(sourceURL.lastPathComponent)
 

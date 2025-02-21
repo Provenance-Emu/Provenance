@@ -43,7 +43,7 @@ class ConsoleGamesViewModel: ObservableObject {
     func presentDiscSelectionAlert(for game: PVGame, rootDelegate: PVRootDelegate?) {
         let discs = game.relatedFiles.toArray()
         let alertDiscs = discs.compactMap { disc -> DiscSelectionAlert.Disc? in
-            return DiscSelectionAlert.Disc(fileName: disc.fileName, path: disc.url.path)
+            return DiscSelectionAlert.Disc(fileName: disc.fileName, path: disc.url!.path)
         }
 
         self.discSelectionAlert = DiscSelectionAlert(

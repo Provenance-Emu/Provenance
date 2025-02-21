@@ -9,10 +9,10 @@ import Foundation
 
 public protocol Filed {
     associatedtype LocalFileProviderType: LocalFileProvider
-    var file: LocalFileProviderType! { get }
+    var file: LocalFileProviderType? { get }
 }
 
 extension LocalFileProvider where Self: Filed {
-    public var url: URL { get { return file.url } }
+    public var url: URL? { get { return file?.url } }
     public var fileInfo: Self.LocalFileProviderType? { return file }
 }

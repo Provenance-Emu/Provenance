@@ -202,7 +202,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
             var cheats:[String:Bool]=[:]
             game.realm?.refresh()
             for code in game.cheats {
-                await cheats[code.file.url.lastPathComponent.lowercased()] = true
+                await cheats[code.file!.url!.lastPathComponent.lowercased()] = true
                 cheats[code.id]=true;
             }
             for url in directoryContents {

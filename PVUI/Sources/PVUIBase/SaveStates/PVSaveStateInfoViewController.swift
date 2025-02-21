@@ -87,8 +87,8 @@ final class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewCo
         }
 
         Task {
-            if let image = saveState.image {
-                imageView.image = UIImage(contentsOfFile: image.url.path)
+            if let image = saveState.image, let path = image.url?.path {
+                imageView.image = UIImage(contentsOfFile: path)
             } else {
                 imageView.image = nil
             }

@@ -257,7 +257,7 @@ public final class ROMLocationMigrator {
         // Create lookup of filename -> [PVGame] for quick matching
         var gamesByFilename: [String: [PVGame]] = [:]
         for game in games {
-            let filename = game.file?.url.lastPathComponent ?? ""
+            let filename = game.file?.url?.lastPathComponent ?? ""
             if !filename.isEmpty {
                 gamesByFilename[filename, default: []].append(game)
             }
@@ -281,8 +281,8 @@ public final class ROMLocationMigrator {
                     }
 
                     // First check if the file exists at its expected location
-                    DLOG("Checking if file exists at expected location: \(gameFile.url.path)")
-                    if fileManager.fileExists(atPath: gameFile.url.path) {
+                    DLOG("Checking if file exists at expected location: \(gameFile.url?.path)")
+                    if let path = gameFile.url?.path, fileManager.fileExists(atPath: path) {
                         DLOG("File already exists at expected location, skipping")
                         continue
                     }
@@ -378,17 +378,17 @@ public final class ROMLocationMigrator {
                     DLOG("Fixing path: \(currentPath) -> \(newPath)")
 
                     try realm.write {
-                        game.file.partialPath = newPath
+                        game.file?.partialPath = newPath
                     }
                     fixCount += 1
                     ILOG("Fixed partial path for \(game.title)")
                 } else {
                     // If it's just a filename, add full path
-                    let newPath = "\(romsPrefix)\(game.systemIdentifier)/\(file.url.lastPathComponent)"
+                    let newPath = "\(romsPrefix)\(game.systemIdentifier)/\(file.url?.lastPathComponent)"
                     DLOG("Fixing path: \(currentPath) -> \(newPath)")
 
                     try realm.write {
-                        game.file.partialPath = newPath
+                        game.file?.partialPath = newPath
                     }
                     fixCount += 1
                     ILOG("Fixed partial path for \(game.title)")

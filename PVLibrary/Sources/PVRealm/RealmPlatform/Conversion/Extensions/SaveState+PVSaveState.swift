@@ -16,7 +16,11 @@ public extension SaveState {
         let id = saveState.id
         let game = saveState.game.asDomain()
         let core = saveState.core.asDomain()
-        let file = FileInfo(fileName: saveState.file.fileName, size: saveState.file.size, md5: saveState.file.md5, online: saveState.file.online, local: true)
+        let file = FileInfo(fileName: saveState.file?.fileName ?? "",
+                            size: saveState.file?.size ?? 0,
+                            md5: saveState.file?.md5 ?? "",
+                            online: saveState.file?.online ?? true,
+                            local: true)
         let date = saveState.date
         let lastOpened = saveState.lastOpened
 

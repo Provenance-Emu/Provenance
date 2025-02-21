@@ -62,7 +62,7 @@ extension PVRootViewController: PVRootDelegate {
         do {
             try RomDatabase.sharedInstance.writeTransaction {
                 let thawedGame = game.thaw()
-                thawedGame?.romPath = disc.url.path
+                thawedGame?.romPath = disc.url!.path
             }
 
             // Load the game with the updated romPath

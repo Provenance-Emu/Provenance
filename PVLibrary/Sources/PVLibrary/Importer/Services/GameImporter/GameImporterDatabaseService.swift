@@ -342,7 +342,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
             // Try filename lookup if MD5 failed
             if resultsMaybe == nil || resultsMaybe!.isEmpty {
-                let fileName = game.file.url.lastPathComponent
+                let fileName = game.file?.url?.lastPathComponent ?? game.title
                 // Remove any extraneous stuff in the rom name
                 let nonCharRange: NSRange = (fileName as NSString).rangeOfCharacter(from: _GameImporterDatabaseServiceCharset)
                 var gameTitleLen: Int

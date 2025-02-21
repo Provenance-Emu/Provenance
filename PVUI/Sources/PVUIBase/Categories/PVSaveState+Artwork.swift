@@ -10,7 +10,8 @@ import UIKit
 
 public extension PVSaveState {
     public func fetchUIImage() -> UIImage?  {
-        guard let path: String = image?.url.standardizedFileURL.path else { return nil }
+        guard let url = image?.url else { return nil }
+        let path: String = url.standardizedFileURL.path
         return  UIImage(contentsOfFile: path)
     }
 }
