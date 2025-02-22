@@ -20,6 +20,8 @@ public final class PVRootViewNavigationController: UINavigationController {
         static let cornerRadius: CGFloat = 16
         static let borderWidth: CGFloat = 4
         static let backgroundOpacity: CGFloat = 0.2
+        static let horizontalPadding: CGFloat = 16 // Increased padding
+        static let verticalExtension: CGFloat = 8  // How far to extend beyond the nav bar
     }
 
     /// Custom background view that provides the retro styling
@@ -39,7 +41,15 @@ public final class PVRootViewNavigationController: UINavigationController {
 
         private func setup() {
             backgroundColor = .clear
+
+            // Initialize border layer
+            borderLayer.fillColor = nil
+            borderLayer.lineCap = .round
+            borderLayer.lineJoin = .round
+            borderLayer.masksToBounds = true
+
             layer.addSublayer(borderLayer)
+            layer.masksToBounds = false // Allow shadow to extend outside bounds
         }
 
         func updateStyle(with palette: any UXThemePalette) {
@@ -48,10 +58,15 @@ public final class PVRootViewNavigationController: UINavigationController {
             // Background with opacity
             backgroundColor = palette.gameLibraryBackground.withAlphaComponent(Constants.backgroundOpacity)
 
-            // Update border
+            // Update border with glow effect
             borderLayer.strokeColor = palette.defaultTintColor?.cgColor
-            borderLayer.fillColor = UIColor.clear.cgColor
             borderLayer.lineWidth = Constants.borderWidth
+
+            // Add subtle glow effect
+            layer.shadowColor = palette.defaultTintColor?.cgColor
+            layer.shadowOffset = .zero
+            layer.shadowRadius = 2
+            layer.shadowOpacity = 0.5
 
             setNeedsLayout()
         }
@@ -60,12 +75,15 @@ public final class PVRootViewNavigationController: UINavigationController {
             super.layoutSubviews()
 
             // Create path for rounded corners
-            let path = UIBezierPath(roundedRect: bounds.insetBy(dx: Constants.borderWidth / 2, dy: Constants.borderWidth / 2),
-                                  cornerRadius: Constants.cornerRadius)
+            let pathRect = bounds.insetBy(dx: Constants.borderWidth / 2, dy: Constants.borderWidth / 2)
+            let path = UIBezierPath(roundedRect: pathRect, cornerRadius: Constants.cornerRadius)
+
+            // Update border layer
+            borderLayer.frame = bounds
             borderLayer.path = path.cgPath
 
-            // Ensure border is on top
-            layer.insertSublayer(borderLayer, at: 1)
+            // Update shadow path
+            layer.shadowPath = path.cgPath
         }
     }
 
@@ -78,12 +96,12 @@ public final class PVRootViewNavigationController: UINavigationController {
         navigationBar.addSubview(retroBackgroundView)
         retroBackgroundView.translatesAutoresizingMaskIntoConstraints = false
 
-        // Extend background below navigation bar
+        // Extend background below navigation bar with adjusted constraints
         NSLayoutConstraint.activate([
-            retroBackgroundView.leadingAnchor.constraint(equalTo: navigationBar.leadingAnchor, constant: 8),
-            retroBackgroundView.trailingAnchor.constraint(equalTo: navigationBar.trailingAnchor, constant: -8),
-            retroBackgroundView.topAnchor.constraint(equalTo: navigationBar.topAnchor, constant: -44), // Extend above
-            retroBackgroundView.bottomAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: 8)
+            retroBackgroundView.leadingAnchor.constraint(equalTo: navigationBar.leadingAnchor, constant: Constants.horizontalPadding),
+            retroBackgroundView.trailingAnchor.constraint(equalTo: navigationBar.trailingAnchor, constant: -Constants.horizontalPadding),
+            retroBackgroundView.topAnchor.constraint(equalTo: navigationBar.topAnchor, constant: -Constants.verticalExtension),
+            retroBackgroundView.bottomAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: Constants.verticalExtension)
         ])
 
         // Send background view to back
