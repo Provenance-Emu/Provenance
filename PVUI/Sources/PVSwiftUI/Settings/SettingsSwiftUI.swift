@@ -1162,7 +1162,69 @@ private struct AppearanceSection: View {
                             subtitle: "Display favorites section.",
                             icon: .sfSymbol("star"))
             }
+
+            // Add the new navigation link wrapped in PaidFeatureView
+            PaidFeatureView {
+                NavigationLink(destination: MissingArtworkStyleView()) {
+                    SettingsRow(title: "Missing Artwork Style",
+                                subtitle: "Choose style for games without artwork.",
+                                icon: .sfSymbol("photo.artframe"))
+                }
+            } lockedView: {
+                SettingsRow(title: "Missing Artwork Style",
+                            subtitle: "Unlock to customize missing artwork style.",
+                            icon: .sfSymbol("lock.fill"))
+            }
         }
+    }
+}
+
+// Add the new view for selecting missing artwork style
+private struct MissingArtworkStyleView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
+    @Default(.missingArtworkStyle) private var selectedStyle
+
+    var body: some View {
+        List {
+            ForEach(RetroTestPattern.allCases, id: \.self) { style in
+                Button(action: { selectedStyle = style }) {
+                    HStack {
+                        // Preview of the style
+                        Image(uiImage: UIImage.missingArtworkImage(
+                            gameTitle: "Preview",
+                            ratio: 1.0,
+                            pattern: style
+                        ))
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 80, height: 80)
+                        .cornerRadius(8)
+
+                        // Style description
+                        VStack(alignment: .leading) {
+                            Text(style.description)
+                                .font(.headline)
+                            Text(style.subtitle)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(.leading, 8)
+
+                        HomeDividerView()
+
+                        // Selection indicator
+                        if selectedStyle == style {
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor, lineWidth: 2)
+                                .frame(width: 80, height: 80)
+                        }
+                    }
+                }
+                .buttonStyle(PlainButtonStyle())
+                .padding(.vertical, 4)
+            }
+        }
+        .navigationTitle("Missing Artwork Style")
     }
 }
 

@@ -20,6 +20,49 @@ struct HomeContinueItemView: SwiftUI.View {
 
     @State private var showDeleteAlert = false
 
+    /// Constants for CRT effects
+    private enum CRTEffects {
+        static let scanlineSpacing: CGFloat = 2.0
+        static let scanlineOpacity: CGFloat = 0.1
+        static let bloomIntensity: CGFloat = 0.4
+        static let blurRadius: CGFloat = 0.5
+        static let barrelDistortion: CGFloat = 0.15
+        static let vignetteIntensity: CGFloat = 0.2
+        static let glowRadius: CGFloat = 3.0
+        static let glowOpacity: CGFloat = 0.3
+    }
+
+    /// Custom ViewModifier for CRT scanline effect
+    private struct CRTScanlineModifier: ViewModifier {
+        func body(content: Content) -> some View {
+            content.overlay(
+                GeometryReader { geometry in
+                    Path { path in
+                        let lineCount = Int(geometry.size.height / CRTEffects.scanlineSpacing)
+                        for i in 0...lineCount {
+                            let y = CGFloat(i) * CRTEffects.scanlineSpacing
+                            path.move(to: CGPoint(x: 0, y: y))
+                            path.addLine(to: CGPoint(x: geometry.size.width, y: y))
+                        }
+                    }
+                    .stroke(Color.black, lineWidth: 0.5)
+                    .opacity(CRTEffects.scanlineOpacity)
+                }
+            )
+        }
+    }
+
+    /// Custom ViewModifier for CRT barrel distortion effect
+    private struct CRTBarrelDistortionModifier: ViewModifier {
+        func body(content: Content) -> some View {
+            content
+                .distortionEffect(
+                    .barrel(radius: CRTEffects.barrelDistortion, intensity: CRTEffects.barrelDistortion),
+                    maxSampleOffset: .zero
+                )
+        }
+    }
+
     var body: some SwiftUI.View {
         if !continueState.isInvalidated {
             Button {
@@ -36,6 +79,28 @@ struct HomeContinueItemView: SwiftUI.View {
                             .frame(height: height, alignment: .top)
                             .frame(maxWidth: .infinity)
                             .clipped()
+                            // Apply CRT effects
+                            .modifier(CRTScanlineModifier())
+                            .modifier(CRTBarrelDistortionModifier())
+                            .blur(radius: CRTEffects.blurRadius)
+                            // Add bloom effect
+                            .overlay(
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .blur(radius: CRTEffects.glowRadius)
+                                    .opacity(CRTEffects.glowOpacity)
+                            )
+                            // Add vignette effect
+                            .overlay(
+                                RadialGradient(
+                                    gradient: Gradient(colors: [.clear, .black]),
+                                    center: .center,
+                                    startRadius: 0,
+                                    endRadius: height
+                                )
+                                .opacity(CRTEffects.vignetteIntensity)
+                            )
                     } else {
                         Image(uiImage: UIImage.missingArtworkImage(gameTitle: continueState.game?.title ?? "Deleted", ratio: 1))
                             .resizable()
@@ -43,6 +108,20 @@ struct HomeContinueItemView: SwiftUI.View {
                             .frame(height: height, alignment: .top)
                             .frame(maxWidth: .infinity)
                             .clipped()
+                            // Apply CRT effects to placeholder image
+                            .modifier(CRTScanlineModifier())
+                            .modifier(CRTBarrelDistortionModifier())
+                            .blur(radius: CRTEffects.blurRadius)
+                            // Add vignette effect
+                            .overlay(
+                                RadialGradient(
+                                    gradient: Gradient(colors: [.clear, .black]),
+                                    center: .center,
+                                    startRadius: 0,
+                                    endRadius: height
+                                )
+                                .opacity(CRTEffects.vignetteIntensity)
+                            )
                             .id(themeManager.currentPalette.name)
                     }
                 }
@@ -80,5 +159,31 @@ struct HomeContinueItemView: SwiftUI.View {
                 }
             }
         }
+    }
+}
+
+/// Extension to add barrel distortion effect
+extension View {
+    func distortionEffect(_ effect: DistortionEffect, maxSampleOffset: CGSize) -> some View {
+        self.modifier(DistortionEffectModifier(effect: effect))
+    }
+}
+
+/// Barrel distortion effect implementation
+struct DistortionEffect {
+    let radius: CGFloat
+    let intensity: CGFloat
+
+    static func barrel(radius: CGFloat, intensity: CGFloat) -> DistortionEffect {
+        DistortionEffect(radius: radius, intensity: intensity)
+    }
+}
+
+/// ViewModifier for applying barrel distortion
+struct DistortionEffectModifier: ViewModifier {
+    let effect: DistortionEffect
+
+    func body(content: Content) -> some View {
+        content.drawingGroup() // Use Metal rendering
     }
 }

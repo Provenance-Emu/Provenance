@@ -278,7 +278,7 @@ struct HomeContinueSection: SwiftUI.View {
                 .frame(height: adjustedHeight)
 
                 // Footer and page indicator overlay
-                ZStack {
+                ZStack(alignment: .bottom) {
                     // Footer at bottom
                     ContinuesFooterView(
                         saveState: viewModel.currentSaveState,
@@ -293,7 +293,7 @@ struct HomeContinueSection: SwiftUI.View {
                             currentPage: viewModel.currentPage
                         )
                         .zIndex(1) // Ensure indicator is in front
-                        .offset(y: -5) // Position it over the footer
+                        .offset(y: 0) // Position it over the footer
                     }
                 }
             }
