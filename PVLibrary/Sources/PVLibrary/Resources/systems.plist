@@ -1386,7 +1386,7 @@
 		<key>PVPortable</key>
 		<false/>
 		<key>PVRequiresBIOS</key>
-		<true/>
+		<false/>
 		<key>PVBIOSNames</key>
 		<array>
 			<dict>
