@@ -171,7 +171,7 @@ struct ConsolesWrapperView: SwiftUI.View {
                 showGameInfo: showGameInfo
             )
             .tabItem {
-                if #available(iOS 17.0, *) {
+                if #available(iOS 17.0, tvOS 17.0, *) {
                     Label(console.name, image: ImageResource(name: console.iconName, bundle: PVUIBase.BundleLoader.myBundle))
                         .blur(radius: 10)
                         .opacity(0.3)
