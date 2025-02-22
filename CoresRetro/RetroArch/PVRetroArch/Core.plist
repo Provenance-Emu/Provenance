@@ -650,7 +650,7 @@
 			<key>PVProjectVersion</key>
 			<string>git</string>
 			<key>PVContentless</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
