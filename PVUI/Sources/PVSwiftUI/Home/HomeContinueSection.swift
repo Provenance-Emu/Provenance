@@ -119,6 +119,7 @@ private struct ContinuesFooterView: View {
             .frame(height: Constants.overlayHeight)
             .background(.ultraThinMaterial)
             .frame(maxWidth: .infinity)
+            .allowsHitTesting(false)
         }
     }
 }
@@ -177,6 +178,7 @@ private struct CustomPageIndicator: View {
                         }
                     }
                 }
+                .allowsHitTesting(false)
             }
         }
         .frame(height: Constants.indicatorHeight + 16)

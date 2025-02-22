@@ -24,7 +24,6 @@ struct HomeContinueItemView: SwiftUI.View {
         // Scanline effects
         static let scanlineOpacity: CGFloat = 0.3
         static let lcdOpacity: CGFloat = 0.1
-        static let subpixelOpacity: CGFloat = 0.2
 
         // Image presentation
         static let zoomFactor: CGFloat = 1.15
@@ -129,20 +128,6 @@ private struct RetroEffects: View {
                     }
                 }
                 .stroke(.black.opacity(HomeContinueItemView.CRTEffects.lcdOpacity), lineWidth: 1)
-            }
-
-            // Subpixel effect
-            GeometryReader { geometry in
-                HStack(spacing: 0) {
-                    ForEach(0..<Int(geometry.size.width), id: \.self) { x in
-                        VStack(spacing: 0) {
-                            Color.red.opacity(HomeContinueItemView.CRTEffects.subpixelOpacity)
-                            Color.green.opacity(HomeContinueItemView.CRTEffects.subpixelOpacity)
-                            Color.blue.opacity(HomeContinueItemView.CRTEffects.subpixelOpacity)
-                        }
-                        .frame(width: 1)
-                    }
-                }
             }
         }
         .allowsHitTesting(false)
