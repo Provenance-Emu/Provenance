@@ -829,8 +829,8 @@ public extension RomDatabase {
                 throw RomDeletionError.fileManagerDeletionError(error)
             }
         }
-        let jsonFile = actualSavePath.pathDecoded.appending(".json")
-        if FileManager.default.fileExists(atPath: jsonFile) {
+        if let jsonFile = actualSavePath?.pathDecoded.appending(".json"),
+           FileManager.default.fileExists(atPath: jsonFile) {
             do {
                 try FileManager.default.removeItem(atPath: jsonFile)
             } catch {
@@ -856,8 +856,12 @@ public extension RomDatabase {
             }
         }
         //attempt to delete files with the same name. There's an issue when importing that the files do NOT get associated, so if we assume the user imported properly, the name should just be the same with different extensions.
-        let parentDirectory = game.file.url.deletingLastPathComponent()
         let fileManager: FileManager = .default
+        guard let gameFileUrl = game.file?.url
+        else {
+            return
+        }
+        let parentDirectory = gameFileUrl.deletingLastPathComponent()
         guard fileManager.fileExists(atPath: parentDirectory.pathDecoded)
         else {
             return
@@ -874,7 +878,7 @@ public extension RomDatabase {
             return
         }
         DLOG("children: \(children)")
-        let fileName = game.file.url.deletingPathExtension().lastPathComponent
+        let fileName = gameFileUrl.deletingPathExtension().lastPathComponent
         DLOG("fileName without extension: \(fileName)")
         children.forEach { child in
             let currentChildUrl = parentDirectory.appendingPathComponent(child)
