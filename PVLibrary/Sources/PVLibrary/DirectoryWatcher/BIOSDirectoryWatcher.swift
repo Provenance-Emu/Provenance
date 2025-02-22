@@ -154,7 +154,10 @@ public final class BIOSWatcher: ObservableObject {
     @MainActor
     public func processBIOSFiles(_ files: [URL]) async {
         ILOG("Processing BIOS files: \(files.map { $0.lastPathComponent })")
-        let realm = try! await Realm()
+        guard let realm = try? await Realm() else {
+            ELOG("No realm")
+            return
+        }
 
         // Get all BIOS entries that don't have files
         let biosEntries = realm.objects(PVBIOS.self).filter("file == nil")

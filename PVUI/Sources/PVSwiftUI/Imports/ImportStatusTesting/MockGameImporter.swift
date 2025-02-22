@@ -5,7 +5,6 @@
 //  Created by Joseph Mattiello on 11/27/24.
 //
 
-#if DEBUG
 import PVSwiftUI
 import SwiftUI
 import Combine
@@ -137,4 +136,3 @@ class MockGameImporter: GameImporting, ObservableObject {
         })
     }
 }
-#endif

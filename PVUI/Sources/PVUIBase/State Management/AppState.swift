@@ -32,13 +32,15 @@ public class AppState: ObservableObject {
 
     /// Computed property to access current bootup state
     public var bootupState: AppBootupState.State {
-        bootupStateManager.currentState
+        get {
+            bootupStateManager.currentState
+        }
     }
 
     /// Hold the emulation core and other info
     @Published
     public var emulationUIState :EmulationUIState = .init()
-    
+
     /// Hold the emulation core and other info
     @Published
     public var emulationState :EmulationState = .shared
@@ -48,16 +50,20 @@ public class AppState: ObservableObject {
     public var useUIKit: Bool = Defaults[.useUIKit]
 
     /// Instance of AppBootupState to manage bootup process
-    public let bootupStateManager = AppBootupState()
+    @Published public private(set) var bootupStateManager: AppBootupState = AppBootupState() {
+        willSet {
+            objectWillChange.send()
+        }
+    }
 
     /// Optional properties for game-related functionalities
     @Published
     public var gameImporter: GameImporter?
-   
+
     /// Optional property for the game library
     @Published
     public var gameLibrary: PVGameLibrary<RealmDatabaseDriver>?
-    
+
     /// Optional property for the library updates controller
     @Published
     public var libraryUpdatesController: PVGameLibraryUpdatesController?
@@ -66,12 +72,18 @@ public class AppState: ObservableObject {
     public let hudCoordinator = HUDCoordinator()
 
     /// Whether the app has been initialized
-    @Published
-    public var isInitialized = false {
+    @Published public var isInitialized = false {
+        willSet {
+            objectWillChange.send()
+        }
         didSet {
             ILOG("AppState: isInitialized changed to \(isInitialized)")
             if isInitialized {
                 ILOG("AppState: Bootup sequence completed, UI should update now")
+                /// Force a UI update when initialization completes
+                DispatchQueue.main.async {
+                    self.objectWillChange.send()
+                }
             }
         }
     }
@@ -169,7 +181,7 @@ public class AppState: ObservableObject {
         // Initialize libraryUpdatesController with the gameImporter
         self.libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: self.gameImporter!)
         ILOG("AppState: LibraryUpdatesController initialized")
-        
+
         ILOG("AppState: Reloading RomDatabase cache")
         await RomDatabase.reloadCache()
         ILOG("AppState: RomDatabase cache reloaded")
