@@ -56,6 +56,7 @@ struct BiosesView: View {
             .offset(y: dragOffset)
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isExpanded)
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: dragOffset)
+            #if !os(tvOS)
             .gesture(
                 DragGesture()
                     .onChanged { value in
@@ -75,6 +76,7 @@ struct BiosesView: View {
                         dragOffset = 0
                     }
             )
+            #endif
             .onTapGesture {
                 withAnimation {
                     isExpanded.toggle()
