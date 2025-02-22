@@ -342,6 +342,48 @@ extension ProvenanceApp: WhatsNewCollectionProvider {
                 hapticFeedback: .notification(.success)
             )
         )
+        WhatsNew(
+            version: "3.0.6",
+            title: "System Enhancements & Hardware Features",
+            features: [
+                .init(
+                    image: .init(systemName: "plus.circle.fill", foregroundColor: .blue),
+                    title: "Expanded Gaming Support",
+                    subtitle: "Added support for classic PC games including DOOM, Quake, Quake II, and Wolf3D, plus Neo Geo .neo format support and additional DS emulator options"
+                ),
+                .init(
+                    image: .init(systemName: "camera.fill", foregroundColor: .green),
+                    title: "Hardware Integration",
+                    subtitle: "Added camera support for DS games and improved MIDI device compatibility for DOSBox enhanced gameplay features"
+                ),
+                .init(
+                    image: .init(systemName: "gamecontroller", foregroundColor: .orange),
+                    title: "Controller Improvements",
+                    subtitle: "New on-screen controls toggle button, improved gamepad support, and enhanced mouse input for iPad"
+                ),
+                .init(
+                    image: .init(systemName: "arrow.triangle.2.circlepath", foregroundColor: .purple),
+                    title: "Interface Improvements",
+                    subtitle: "Updated UI designs with modern styling, enhanced homepage organization, and new menu pause control options"
+                ),
+                .init(
+                    image: .init(systemName: "bolt.horizontal.circle.fill", foregroundColor: .red),
+                    title: "Performance Optimizations",
+                    subtitle: "Parallel system bootup with faster initialization, improved import queue processing, and silent mode ignore support"
+                ),
+                .init(
+                    image: .init(systemName: "wrench.and.screwdriver.fill", foregroundColor: .gray),
+                    title: "System Refinements",
+                    subtitle: "Enhanced BIOS management, improved database handling, and various stability fixes"
+                )
+            ],
+            primaryAction: .init(
+                title: "Continue",
+                backgroundColor: ThemeManager.shared.currentPalette.switchON?.swiftUIColor ?? .accentColor,
+                foregroundColor: ThemeManager.shared.currentPalette.switchThumb?.swiftUIColor ?? .white,
+                hapticFeedback: .notification(.success)
+            )
+        )
     }
 }
 #endif
