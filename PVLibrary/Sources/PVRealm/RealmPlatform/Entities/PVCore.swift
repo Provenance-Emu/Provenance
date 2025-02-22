@@ -22,6 +22,7 @@ public final class PVCore: RealmSwift.Object, Identifiable {
     @Persisted public var projectVersion = ""
     @Persisted public var disabled = false
     @Persisted public var appStoreDisabled = false
+    @Persisted public var contentless = false
 
     public var hasCoreClass: Bool {
         let _class: AnyClass? = NSClassFromString(principleClass)
@@ -32,7 +33,7 @@ public final class PVCore: RealmSwift.Object, Identifiable {
     // Reverse links
     @Persisted(originProperty: "core") public var saveStates: LinkingObjects<PVSaveState>
 
-    public convenience init(withIdentifier identifier: String, principleClass: String, supportedSystems: [PVSystem], name: String, url: String, version: String, disabled: Bool =  false, appStoreDisabled: Bool = false) {
+    public convenience init(withIdentifier identifier: String, principleClass: String, supportedSystems: [PVSystem], name: String, url: String, version: String, disabled: Bool =  false, appStoreDisabled: Bool = false, contentless:Bool = false) {
         self.init()
         self.identifier = identifier
         self.principleClass = principleClass
@@ -43,6 +44,7 @@ public final class PVCore: RealmSwift.Object, Identifiable {
         projectVersion = version
         self.disabled = disabled
         self.appStoreDisabled = appStoreDisabled
+        self.contentless = contentless
     }
 
     public override class func ignoredProperties() -> [String] {

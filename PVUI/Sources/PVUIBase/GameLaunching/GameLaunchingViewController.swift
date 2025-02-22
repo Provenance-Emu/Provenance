@@ -300,10 +300,10 @@ extension GameLaunchingViewController where Self: UIViewController {
         }
 
         if saveState != nil {
-            let path = saveState!.file.url.path
+            let path = saveState!.file!.url!.path
             ILOG("Opening with save state at path: \(path)")
             do {
-                try await downloadFileIfNeeded(saveState!.file.url)
+                try await downloadFileIfNeeded(saveState!.file!.url!)
             } catch {
                 ELOG("Save state was not downloaded")
                 // TODO: Re-throw
@@ -312,13 +312,13 @@ extension GameLaunchingViewController where Self: UIViewController {
         }
 
         // Check if file exists
-        let offline: Bool = !(game.file.online)
+        let offline: Bool = !(game.file?.online ?? true)
         if  offline {
             do {
-                try await downloadFileIfNeeded(game.file.url)
+                try await downloadFileIfNeeded(game.file?.url)
             } catch {
                 displayAndLogError(withTitle: "Cannot open game",
-                                   message: "The ROM file for this game cannot be found. Try re-importing the file for this game.\n\(game.file.fileName)")
+                                   message: "The ROM file for this game cannot be found. Try re-importing the file for this game.\n\(game.file?.fileName ?? "null")")
                 return
             }
         }
@@ -331,7 +331,9 @@ extension GameLaunchingViewController where Self: UIViewController {
 
         do {
             ///
-            try await downloadFileIfNeeded(game.file.url)
+            if let url = game.file?.url {
+                try await downloadFileIfNeeded(url)
+            }
 
             try await canLoad(game)
             VLOG("canLoad \(game.title)")
@@ -460,8 +462,9 @@ extension GameLaunchingViewController where Self: UIViewController {
             gameVC.core.setPauseEmulation(true)
 
             do {
-                let path = saveState.file.url.path
-                try await gameVC.core.loadState(fromFileAtPath: path)
+                if let path = saveState.file?.url?.path {
+                    try await gameVC.core.loadState(fromFileAtPath: path)
+                }
                 gameVC.core.setPauseEmulation(false)
             } catch {
                 let description = error.localizedDescription
@@ -663,8 +666,8 @@ extension GameLaunchingViewController where Self: UIViewController {
 
         let saveState : PVSaveState? = await Task {
             for save in saves {
-                let path = await save.file.url.path
-                if !foundSave && FileManager.default.fileExists(atPath: path) && save.core.identifier == core.identifier {
+                if let path = await save.file?.url?.path,
+                   !foundSave && FileManager.default.fileExists(atPath: path) && save.core.identifier == core.identifier {
                     foundSave = true
                     return save
                 }

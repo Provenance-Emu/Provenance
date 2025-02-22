@@ -54,8 +54,11 @@ public final class PVImageFile: PVFile {
     }
 
     private func calculateSizeData() { // async {
+        guard let path = url?.path else {
+            cgsize = .zero
+            return
+        }
         //TODO: path is wrong when switching to iCloud
-        let path = url.path
         if doesPathContainParent(path) {
             ELOG("invalid path: \(path)")
         }

@@ -11,7 +11,7 @@ import PVRealm
 public protocol Packageable {
     associatedtype PackageType: Package
     var packageType: SerializerPackageType { get }
-    func toPackage() async throws -> PackageType
+    func toPackage() async throws -> PackageType?
 }
 
 public typealias JSONMetadataSerialable = DomainConvertibleType & LocalFileInfoProvider & DataProvider
@@ -27,7 +27,7 @@ public typealias JSONMetadataSerialable = DomainConvertibleType & LocalFileInfoP
 //}
 
 public extension Packageable where Self: JSONMetadataSerialable {
-    internal func packageParts() async throws -> (Data, Self.DomainType) {
+    internal func packageParts() async throws -> (Data?, Self.DomainType) {
         let data = try await readData()
         return (data, asDomain())
     }
@@ -37,8 +37,9 @@ extension PVSaveState: Packageable {
     public var packageType: SerializerPackageType { return .saveState }
 
     public typealias PackageType = SavePackage
-    public func toPackage() async throws -> PackageType {
+    public func toPackage() async throws -> PackageType? {
         let (data, metadata) = try await packageParts()
+        guard let data = data else { return nil }
         return SavePackage(data: data, metadata: metadata)
     }
 }
@@ -47,11 +48,13 @@ extension PVGame: Packageable {
     public var packageType: SerializerPackageType { return .game }
 
     public typealias PackageType = GamePackage
-    public func toPackage() async throws -> GamePackage {
+    public func toPackage() async throws -> PackageType? {
         let (data, metadata) = try await packageParts()
+        guard let data = data else { return nil }
         let saveStatesArray = Array(saveStates)
-        let saves = await saveStatesArray.asyncMap { save async -> SavePackage in
-            let data = try! Data(contentsOf: save.file.url)
+        let saves = await saveStatesArray.asyncCompactMap { save async -> SavePackage? in
+            guard let url = save.file?.url else { return nil }
+            guard let data = try? Data(contentsOf: url) else { return nil }
             let metadata = save.asDomain()
             return SavePackage(data: data, metadata: metadata)
         }

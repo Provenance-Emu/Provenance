@@ -113,7 +113,7 @@ struct ConsolesWrapperView: SwiftUI.View {
     var body: some View {
         AnyView(
             Group {
-                if consoles.isEmpty {
+                if consoles.isEmpty || (consoles.count == 1 && consoles.first!.identifier == SystemIdentifier.RetroArch.rawValue) {
                     showNoConsolesView()
                 } else {
                     showConsoles()
@@ -142,11 +142,26 @@ struct ConsolesWrapperView: SwiftUI.View {
     }
 
     private func showNoConsolesView() -> some View {
-        NoConsolesView(delegate: rootDelegate as! PVMenuDelegate)
-            .tabItem {
-                Label("No Consoles", systemImage: "xmark.circle")
+        TabView {
+            NoConsolesView(delegate: rootDelegate as! PVMenuDelegate)
+                .tabItem {
+                    Label("No Consoles", systemImage: "xmark.circle")
+                }
+                .tag("noConsoles")
+            ForEach(sortedConsoles(), id: \.self) { console in
+                ConsoleGamesView(
+                    console: console,
+                    viewModel: viewModel,
+                    rootDelegate: rootDelegate,
+                    showGameInfo: showGameInfo
+                )
+                .tabItem {
+                    Label(console.name, systemImage: console.iconName)
+                }
+                .tag(console.identifier)
+                .ignoresSafeArea(.all, edges: .bottom)
             }
-            .tag("noConsoles")
+        }
     }
 
     private func showConsoles() -> some View {

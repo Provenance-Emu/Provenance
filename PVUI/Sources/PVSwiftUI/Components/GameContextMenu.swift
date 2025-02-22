@@ -109,17 +109,19 @@ struct GameContextMenu: View {
                     } label: { Label("Clear Custom Artwork", systemImage: "xmark.circle") }
                 }
                 Divider()
-                Button {
-                    DLOG("GameContextMenu: Move to System button tapped")
-                    contextMenuDelegate?.gameContextMenu(self, didRequestMoveToSystemFor: game)
-                } label: { Label("Move to System", systemImage: "folder.fill.badge.plus") }
-                if #available(iOS 15, tvOS 15, macOS 12, *) {
+                if !game.contentless {
+                    Button {
+                        DLOG("GameContextMenu: Move to System button tapped")
+                        contextMenuDelegate?.gameContextMenu(self, didRequestMoveToSystemFor: game)
+                    } label: { Label("Move to System", systemImage: "folder.fill.badge.plus") }
+                }
+                if #available(iOS 15, tvOS 15, macOS 12, *), !game.contentless {
                     Button(role: .destructive) {
                         Task.detached { @MainActor in
                             rootDelegate?.attemptToDelete(game: game, deleteSaves: false)
                         }
                     } label: { Label("Delete", systemImage: "trash") }
-                } else {
+                } else if !game.contentless {
                     Button {
                         Task.detached { @MainActor in
                             rootDelegate?.attemptToDelete(game: game, deleteSaves: false)

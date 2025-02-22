@@ -58,8 +58,7 @@ final class PVSaveStateCollectionViewCell: UICollectionViewCell {
     private func didSet(saveState: PVSaveState?) {
         if let saveState = saveState {
             Task {
-                if let image = saveState.image {
-                    let url = image.url
+                if let image = saveState.image, let url = image.url {
                     imageView.image = UIImage(contentsOfFile: url.path)
                 }
             }

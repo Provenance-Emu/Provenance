@@ -15,9 +15,9 @@ import SwiftUI
  */
 
 /// Main actor for managing emulation state
-@MainActor
+//@MainActor
 public final class EmulationState: ObservableObject {
-    public static let shared = EmulationState()
+    nonisolated(unsafe) public static let shared = EmulationState()
 
     private init() {}
 
@@ -57,20 +57,20 @@ public final class EmulationState: ObservableObject {
 /// Convenience methods for state access
 extension EmulationState {
     public func setCoreClassName(_ value: String) async {
-        await MainActor.run {
+//        await MainActor.run {
             coreClassName = value
-        }
+//        }
     }
 
     public func setSystemName(_ value: String) async {
-        await MainActor.run {
+//        await MainActor.run {
             systemName = value
-        }
+//        }
     }
 
     public func setIsOn(_ value: Bool) async {
-        await MainActor.run {
+//        await MainActor.run {
             isOn = value
-        }
+//        }
     }
 }

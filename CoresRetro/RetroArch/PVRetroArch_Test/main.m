@@ -1,41 +1,86 @@
+#import <PVRetroArch/PVRetroArch.h>
 #import <PVRetroArch/PVRetroArchCoreBridge.h>
-#import <PVRetroArch/RetroArch-Swift.h>
+#import <PVRetroArch/PVRetroArch-Swift.h>
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <PVRetroArch_Test-Swift.h>
+#import "PVRetroArch_Test-Swift.h"
+
+/// Test runner application delegate for RetroArch core testing
 @interface TestRunner : UIApplication<UIApplicationDelegate>
-@property (nonatomic) UIWindow* window;
-@property (nonatomic) UIView* view;
-@end
-PVRetroArchCoreBridge *core;
-@implementation TestRunner
-- (void)applicationDidFinishLaunching:(UIApplication *)application
-{
-    NSLog(@"Launching TestRunner\n");
-    [self setDelegate:self];
-    CGRect bounds=[[UIScreen mainScreen] bounds];
-    self.window = [[UIWindow alloc] initWithFrame:bounds];
-    [self.window makeKeyAndVisible];
-    UIViewController *view_controller=[[UIViewController alloc] initWithNibName:nil bundle:nil];
-    view_controller.view.frame=bounds;
-    self.view=view_controller.view;
-    [self.window setRootViewController:view_controller];
-    core=[PVRetroArchCoreBridge alloc];
-    [core setRootView:true];
-    [core startEmulation];
-}
-- (void)sendEvent:(UIEvent *)event
-{
-    if (core != NULL)
-        [core sendEvent:event];
-    [super sendEvent:event];
-}
+
+/// Main window of the application
+@property (nonatomic, strong) UIWindow *window;
+
+/// Main view of the application
+@property (nonatomic, strong) UIView *view;
+
 @end
 
-int main(int argc, char *argv[])
-{
-   @autoreleasepool {
-      return UIApplicationMain(argc, argv,
-        NSStringFromClass([TestRunner class]),
-        NSStringFromClass([TestRunner class]));
-   }
+/// Global core instance
+static PVRetroArchCoreBridge *core;
+
+@implementation TestRunner
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    NSLog(@"Launching TestRunner");
+
+    [self setDelegate:self];
+
+    // Setup window
+    UIWindowScene *scene = (UIWindowScene *)[[[UIApplication sharedApplication] connectedScenes] anyObject];
+    self.window = [[UIWindow alloc] initWithWindowScene:scene];
+
+    // Create and configure view controller
+    UIViewController *viewController = [[UIViewController alloc] init];
+    viewController.view.backgroundColor = [UIColor blackColor];
+
+    // Set root view controller
+    self.window.rootViewController = viewController;
+    self.view.translatesAutoresizingMaskIntoConstraints = true;
+    self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.view = viewController.view;
+    self.view.frame = self.window.bounds;
+
+    // Make window visible
+    [self.window makeKeyAndVisible];
+
+    // Configure core
+    core = [PVRetroArchCoreBridge new];
+    [core setRootView:YES];
+
+    // Start emulation on a background thread
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSLog(@"Starting emulation on main thread");
+        [core startEmulation];
+    });
+
+    [[RetroWebServer shared] start];
+
+    return YES;
+}
+
+- (void)applicationDidBecomeActive:(NSNotification *)notification {
+    [core setPauseEmulation:false];
+ }
+
+ - (void)applicationDidResignActive:(NSNotification *)notification {
+     [core setPauseEmulation:true];
+ }
+
+- (void)sendEvent:(UIEvent *)event {
+    if (core != nil) {
+        [core sendEvent:event];
+    }
+    [super sendEvent:event];
+}
+
+@end
+
+int main(int argc, char *argv[]) {
+    @autoreleasepool {
+        return UIApplicationMain(argc, argv,
+                               NSStringFromClass([TestRunner class]),
+                               NSStringFromClass([TestRunner class]));
+    }
 }

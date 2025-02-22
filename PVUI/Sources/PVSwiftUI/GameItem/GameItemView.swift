@@ -29,7 +29,7 @@ struct GameItemView: SwiftUI.View {
 
     private var discCount: Int {
         let allFiles = game.relatedFiles.toArray()
-        let uniqueFiles = Set(allFiles.compactMap { $0.url.path })
+        let uniqueFiles = Set(allFiles.compactMap { $0.url?.path })
         return uniqueFiles.count
     }
 

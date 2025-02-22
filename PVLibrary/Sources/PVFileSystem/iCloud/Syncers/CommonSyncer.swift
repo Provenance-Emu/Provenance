@@ -49,8 +49,8 @@ public func needsDownload(_ url: URL) -> Bool {
     }
 }
 
-public func downloadFileIfNeeded(_ url: URL) async throws {
-    guard isICloudFile(url) else {
+public func downloadFileIfNeeded(_ url: URL?) async throws {
+    guard let url = url, isICloudFile(url) else {
         return // Not an iCloud file, no need to download
     }
     

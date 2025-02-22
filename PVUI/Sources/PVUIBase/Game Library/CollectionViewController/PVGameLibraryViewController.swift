@@ -436,7 +436,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
             .combineLatest(showSaveStates, gameLibrary.saveStates) { (shouldShowSaveStates: Bool, saveStates: [PVSaveState]) in
                 if shouldShowSaveStates {
                     return saveStates.filter { saveState in
-                        let url = saveState.file.url
+                        guard let url = saveState.file?.url else { return false }
                         return FileManager.default.fileExists(atPath: url.path)
                     }
                 } else {
@@ -1338,11 +1338,13 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
         var discs:[PVFile] = await game.relatedFiles.toArray().asyncFilter {
             await system.supportedExtensions.contains($0.pathExtension)
         }
-        if await discs.asyncFilter({ return await $0.url.lastPathComponent == game.file.url.lastPathComponent }).count == 0 {
-            discs.append(game.file)
+        if await discs.asyncFilter({ return await $0.url?.lastPathComponent == game.file?.url?.lastPathComponent }).count == 0 {
+            if let file = game.file {
+                discs.append(file)
+            }
         }
         discs = discs.sorted(by: { (obj1, obj2) in
-            return obj1.url.lastPathComponent < obj2.url.lastPathComponent
+            return obj1.url?.lastPathComponent ?? "" < obj2.url?.lastPathComponent ?? ""
         })
 
         let coreChoiceAlert = UIAlertController(title: "Please Select the Disc to Launch",
@@ -1362,7 +1364,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
                 if url.lastPathComponent == url.lastPathComponent {
                     coreChoiceAlert.preferredAction = action
                 }
-            } else if await url.lastPathComponent == game.file.url.lastPathComponent {
+            } else if await url?.lastPathComponent == game.file?.url?.lastPathComponent {
                 coreChoiceAlert.preferredAction = action
             }
             coreChoiceAlert.addAction(action)

@@ -105,7 +105,7 @@ public class RealmSaveStateDriver: SaveStateDriver {
 
     public func share(saveStateId: String) -> URL? {
         guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateId) else { return nil }
-        return saveState.file.url
+        return saveState.file?.url
     }
 
     public func update(saveState: SaveStateRowViewModel) {

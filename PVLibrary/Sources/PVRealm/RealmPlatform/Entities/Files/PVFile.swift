@@ -81,7 +81,7 @@ public extension PVFile {
         }
     }
 
-    var url: URL {
+    var url: URL? {
         get {
             //TODO: if partialPath is NOT a partial path, ie it has the prefix OR contains the app sandbox container OR contains or has the prefix (cloudContainer/Documents), then remove either of those, this will be older db entries from older versions that erronously don't remove the prefix
             let url2 = urlUpdate
@@ -268,6 +268,7 @@ public extension PVFile {
             if let md5 = md5Cache {
                 return md5
             }
+            guard let url = url else { return nil }
             let path = url.path
             // Lazy make MD5
             guard let calculatedMD5 = FileManager.default.md5ForFile(atPath: path, fromOffset: 0) else {
@@ -328,6 +329,7 @@ public extension PVFile {
                 return UInt64(sizeCache)
             }
 
+            guard let url = url else { return 0 }
             // Otherwise check the file system
             let path = url.path
             guard FileManager.default.fileExists(atPath: path) else {
@@ -361,21 +363,23 @@ public extension PVFile {
 
     // TODO: Make this live update and observable
     var online: Bool { get {
+        guard let url = url else { return true }
+
         let exists = FileManager.default.fileExists(atPath: url.path)
         let needsDownload = isICloudFile(url) && needsDownload(url)
         return exists && !needsDownload
     }}
 
     var pathExtension: String {get {
-        return url.pathExtension
+        return url?.pathExtension ?? ""
     }}
 
     nonisolated(unsafe)
     var fileName: String {get {
-        return url.lastPathComponent
+        return url?.lastPathComponent ?? ""
     }}
 
     var fileNameWithoutExtension: String {get {
-        return url.deletingPathExtension().lastPathComponent
+        return url?.deletingPathExtension().lastPathComponent ?? ""
     }}
 }

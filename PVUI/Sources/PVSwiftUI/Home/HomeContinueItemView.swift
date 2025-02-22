@@ -28,7 +28,8 @@ struct HomeContinueItemView: SwiftUI.View {
                 ZStack(alignment: .bottom) {
                     if let screenshot = continueState.image,
                        !screenshot.isInvalidated,
-                       let image = UIImage(contentsOfFile: screenshot.url.path) {
+                       let url = screenshot.url,
+                       let image = UIImage(contentsOfFile: url.path) {
                         Image(uiImage: image)
                             .resizable()
                             .aspectRatio(contentMode: .fit)

@@ -28,7 +28,7 @@ public protocol PVGameLibraryEntry: PVLibraryEntry {
        dynamic var id: String { get }
 
        dynamic var romPath: String { get }
-       dynamic var file: PVFile! { get }
+       dynamic var file: PVFile? { get }
        var relatedFiles: List<PVFile> { get }
 
        dynamic var customArtworkURL: String { get set }

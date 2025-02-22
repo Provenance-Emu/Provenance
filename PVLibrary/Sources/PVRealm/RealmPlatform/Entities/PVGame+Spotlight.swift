@@ -25,8 +25,8 @@ typealias UIImage = NSImage
 // import UIKit
 
 public extension PVGame {
-    var url: URL { get {
-        return file.url
+    var url: URL? { get {
+        return file?.url
     }}
 
 #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)

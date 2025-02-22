@@ -27,21 +27,26 @@ public struct Core: Codable, Sendable {
     /// The project that this core is associated
     public let project: CoreProject
     
-    public init(identifier: String, principleClass: String, disabled: Bool, systems: [System], project: CoreProject) {
+    /// Is the core a contentless core, can it run without a rom?
+    public let contentless: Bool
+    
+    public init(identifier: String, principleClass: String, disabled: Bool = false, systems: [System], project: CoreProject, contentless: Bool = false) {
         self.identifier = identifier
         self.principleClass = principleClass
         self.disabled = disabled
         self.systems = systems
         self.project = project
+        self.contentless = contentless
     }
     
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.identifier = try container.decode(String.self, forKey: .identifier)
         self.principleClass = try container.decode(String.self, forKey: .principleClass)
-        self.disabled = try container.decode(Bool.self, forKey: .disabled)
+        self.disabled = try container.decodeIfPresent(Bool.self, forKey: .disabled) ?? false
         self.systems = try container.decode([System].self, forKey: .systems)
         self.project = try container.decode(CoreProject.self, forKey: .project)
+        self.contentless = try container.decodeIfPresent(Bool.self, forKey: .contentless) ?? false
     }
 }
 

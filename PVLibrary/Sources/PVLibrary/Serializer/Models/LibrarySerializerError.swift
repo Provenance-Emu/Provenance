@@ -9,5 +9,6 @@
 import Foundation
 
 public enum LibrarySerializerError: Error {
+    case noFile
     case noDataAtPath(URL)
 }

@@ -225,7 +225,7 @@
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Provenance uses the local network to find and communicate with Web Server.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Provenance uses the microphone for systems that support audio input (eg. Famicom).</string>
+	<string>Provenance uses the microphone for systems that support audio input (eg. Famicom, Nintendo DS).</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Provenance can set custom artworks from your photos or save screenshots to the Photo Library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -592,8 +592,10 @@
 	<key>appcenter</key>
 	<string>862ca352-4607-4f8e-8c77-1248fa68ca3a</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Some games may use location data to enhance gameplay features</string>
+	<string>Some games may use location data to enhance emulated location gameplay features</string>
 	<key>NSLocationUsageDescription</key>
-	<string>Some games may use location data to enhance gameplay features</string>
+	<string>Some games may use location data to enhance emulated location gameplay features</string>
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>RetroArch needs access to WiFi networks for enhanced emulated WiFi network features.</string>
 </dict>
 </plist>

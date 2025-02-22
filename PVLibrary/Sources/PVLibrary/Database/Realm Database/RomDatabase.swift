@@ -20,7 +20,7 @@ import AsyncAlgorithms
 import PVSystems
 import PVMediaCache
 
-let schemaVersion: UInt64 = 14
+let schemaVersion: UInt64 = 16
 
 public enum RomDeletionError: Error {
     case relatedFiledDeletionError
@@ -163,6 +163,19 @@ public final class RealmConfiguration {
                 migration.enumerateObjects(ofType: PVSaveState.className()) { oldObject, newObject in
                     newObject!["isPinned"] = false
                     newObject!["isFavorite"] = false
+                }
+            }
+            if oldSchemaVersion < 15 {
+                migration.enumerateObjects(ofType: PVCore.className()) { oldObject, newObject in
+                    newObject!["contentless"] = false
+                }
+                migration.enumerateObjects(ofType: PVGame.className()) { oldObject, newObject in
+                    newObject!["contentless"] = false
+                }
+            }
+            if oldSchemaVersion < 16 {
+                migration.enumerateObjects(ofType: PVGame.className()) { oldObject, newObject in
+                    newObject!["contentless"] = false
                 }
             }
         }
@@ -682,7 +695,7 @@ public extension RomDatabase {
                 game.genres = "hidden"
             }
         } catch {
-            NSLog("Failed to hide game \(game.title)\n\(error.localizedDescription)")
+            ELOG("Failed to hide game \(game.title)\n\(error.localizedDescription)")
         }
     }
     
@@ -736,7 +749,7 @@ public extension RomDatabase {
                 }
             }
         }
-        if FileManager.default.fileExists(atPath: romURL.path) {
+        if let romURL = romURL, FileManager.default.fileExists(atPath: romURL.path) {
             do {
                 try FileManager.default.removeItem(at: romURL)
             } catch {
@@ -744,7 +757,7 @@ public extension RomDatabase {
                 throw RomDeletionError.fileManagerDeletionError(error)
             }
         } else {
-            ELOG("No rom found at path: \(romURL.path)")
+            ELOG("No rom found at path: \(romURL?.path ?? "")")
         }
         // Delete from Spotlight search
 #if os(iOS)
@@ -774,7 +787,7 @@ public extension RomDatabase {
     /// Deletes a save state and its associated files
     func delete(saveState: PVSaveState) throws {
         // Get the actual save state file path from the PVFile
-        let actualSavePath = saveState.file.url
+        let actualSavePath = saveState.file?.url
         let imageURL = saveState.image?.url
         
         // Create a thread-safe reference to the save state
@@ -797,7 +810,7 @@ public extension RomDatabase {
         }
         
         // After successful database deletion, delete the files
-        if FileManager.default.fileExists(atPath: actualSavePath.path) {
+        if let actualSavePath = actualSavePath, FileManager.default.fileExists(atPath: actualSavePath.path) {
             do {
                 try FileManager.default.removeItem(at: actualSavePath)
             } catch {
@@ -839,7 +852,7 @@ public extension RomDatabase {
                     try FileManager.default.removeItem(at: file)
                 }
             } catch {
-                NSLog(error.localizedDescription)
+                ELOG(error.localizedDescription)
             }
         }
         //attempt to delete files with the same name. There's an issue when importing that the files do NOT get associated, so if we assume the user imported properly, the name should just be the same with different extensions.

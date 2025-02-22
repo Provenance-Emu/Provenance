@@ -2132,12 +2132,25 @@
 				<key>Optional</key>
 				<true/>
 			</dict>
+			<dict>
+				<key>Description</key>
+				<string>NeoGeo AES BIOS</string>
+				<key>MD5</key>
+				<string>ad9585c72130c56f04ae26aae87c289d</string>
+				<key>Name</key>
+				<string>aes.zip</string>
+				<key>Size</key>
+				<integer>850311</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
 		</array>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>ng</string>
 			<string>zip</string>
 			<string>cmd</string>
+			<string>neo</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>

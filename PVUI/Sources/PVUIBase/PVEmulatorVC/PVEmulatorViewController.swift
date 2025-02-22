@@ -108,6 +108,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                     gpuViewController.isPaused = true
                 }
             }
+            core.setPauseEmulation(newValue)
+
         }
         didSet {
             if isShowingMenu == false {
@@ -331,23 +333,22 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // TODO: Why are we using `UserDefaults`? @JoeMatt
         var romPathMaybe: URL? = UserDefaults.standard.url(forKey: game.romPath) ?? m3uFile
         if romPathMaybe == nil {
-            romPathMaybe = game.file.url
+            romPathMaybe = game.file?.url
         }
 
 #warning("should throw if nil?")
-        guard let romPath = romPathMaybe else {
-            throw CreateEmulatorError.gameHasNilRomPath
-        }
+//        guard let romPath = romPathMaybe else {
+//            throw CreateEmulatorError.gameHasNilRomPath
+//        }
 
         // Extract Zip before loading the ROM
         romPathMaybe = handleArchives(atPath: romPathMaybe)
 
-        guard let romPath = romPathMaybe else {
-            throw CreateEmulatorError.gameHasNilRomPath
-        }
+//        guard let romPath = romPathMaybe else {
+//            throw CreateEmulatorError.gameHasNilRomPath
+//        }
 
-        let path = romPath.path(percentEncoded: false)
-        if needsDownload(romPath) {
+        if let romPath = romPathMaybe, needsDownload(romPath) {
             let hud = MBProgressHUD.showAdded(to: view, animated: true)
             hud.label.text = "Downloading \(romPath.lastPathComponent) from iCloud..."
             Task {
@@ -355,23 +356,26 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             }
             hud.hide(animated: true)
         }
-        guard FileManager.default.fileExists(atPath: path), !needsDownload(romPath) else {
-            ELOG("File doesn't exist at path \(path)")
 
-            // Copy path to Pasteboard
-            #if !os(tvOS)
-            UIPasteboard.general.string = path
-            #endif
+        if let path = romPathMaybe?.path {
+            guard FileManager.default.fileExists(atPath: path), !needsDownload(romPathMaybe!) else {
+                ELOG("File doesn't exist at path \(path)")
 
-            throw CreateEmulatorError.fileDoesNotExist(path: path)
+                // Copy path to Pasteboard
+                #if !os(tvOS)
+                UIPasteboard.general.string = path
+                #endif
+
+                throw CreateEmulatorError.fileDoesNotExist(path: path)
+            }
         }
 
-        ILOG("Loading ROM: \(path)")
+        ILOG("Loading ROM: \(romPathMaybe?.path ?? "null")")
 
         if let core = core as? any ObjCBridgedCore, let bridge = core.bridge as? EmulatorCoreIOInterface {
-            try bridge.loadFile(atPath: path)
+            try bridge.loadFile(atPath: romPathMaybe?.path ?? "")
         } else {
-            try core.loadFile(atPath: path)
+            try core.loadFile(atPath: romPathMaybe?.path ?? "")
         }
 
 #warning("TODO: Handle multiple screens with UIScene")
@@ -411,15 +415,17 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 gpuViewController.didMove(toParent: self)
             }
             #else
-            // Keep existing iOS behavior unchanged
-            gpuViewController.willMove(toParent: self)
-            addChild(gpuViewController)
-            // Note: This also initilaizes the view
-            // using viewIfLoaded will crash.
-            // Should probably imporve this?
-            if let aView = gpuViewController.view {
-                aView.frame = view.bounds
-                view.addSubview(aView)
+            if (!core.skipLayout) {
+                // Keep existing iOS behavior unchanged
+                gpuViewController.willMove(toParent: self)
+                addChild(gpuViewController)
+                // Note: This also initilaizes the view
+                // using viewIfLoaded will crash.
+                // Should probably imporve this?
+                if let aView = gpuViewController.view {
+                    aView.frame = view.bounds
+                    view.addSubview(aView)
+                }
             }
             gpuViewController.didMove(toParent: self)
             #endif
@@ -539,7 +545,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             }
         }
         controllerViewController?.dismiss(animated: false)
-        core.touchViewController=nil
+        core.touchViewController = nil
 #if os(iOS)
         PVControllerManager.shared.controllers.forEach {
             $0.clearPauseHandler()

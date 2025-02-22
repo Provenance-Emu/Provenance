@@ -49,7 +49,7 @@ public extension PVRootDelegate {
 
     /// Load a specific disc for a game
     public func root_loadDisc(_ disc: PVFile, forGame game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async {
-        await root_loadPath(disc.url.path, forGame: game, sender: sender, core: core, saveState: saveState)
+        await root_loadPath(disc.url?.path ?? "", forGame: game, sender: sender, core: core, saveState: saveState)
     }
 }
 

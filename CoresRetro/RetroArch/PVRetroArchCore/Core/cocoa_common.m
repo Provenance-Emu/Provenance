@@ -33,7 +33,7 @@
 #import "../../../pkg/apple/WebServer/GCDWebUploader/GCDWebUploader.h"
 #import "WebServer.h"
 #ifdef HAVE_IOS_SWIFT
-#import <PVRetroArch/RetroArch-Swift.h>
+#import <PVRetroArch/PVRetroArch-Swift.h>
 #endif
 #if TARGET_OS_TV
 #import <TVServices/TVServices.h>

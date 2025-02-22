@@ -185,7 +185,7 @@
 	path = Cores/mGBA/Sources/libmGBA
 	url = https://github.com/Provenance-Emu/mGBA-Core.git
 [submodule "CoresRetro/RetroArch/ZipArchive"]
-	path = CoresRetro/RetroArch/ZipArchive
+	path = Dependencies/ZipArchive
 	url = https://github.com/ZipArchive/ZipArchive.git
 [submodule "Dependencies/SwiftSDL2"]
 	path = Dependencies/SwiftSDL2

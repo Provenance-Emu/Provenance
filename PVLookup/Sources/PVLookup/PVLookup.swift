@@ -125,8 +125,10 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
 #if canImport(ShiraGame)
         // Initialize ShiraGame
         do {
+            DLOG("Initializing ShiraGame DB...")
             let game = try await ShiraGame()
             self.shiraGame = game
+            DLOG("ShiraGame DB initialized successfully")
         } catch {
             ELOG("Failed to initialize ShiraGame: \(error)")
         }

@@ -378,7 +378,7 @@ public final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBas
         #endif
 
         nameLabel.text = game?.title ?? ""
-        let fileName = game?.file.fileName ?? ""
+        let fileName = game?.file?.fileName ?? ""
         Task.detached { @MainActor [weak self] in
             guard let self = self else { return }
             filenameLabel.text = fileName

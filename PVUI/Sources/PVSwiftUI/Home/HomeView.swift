@@ -344,24 +344,24 @@ struct HomeView: SwiftUI.View {
             .receive(on: DispatchQueue.main)
             .sink { event in
                 guard !viewModel.isMenuVisible else {
-                    print("🎮 HomeView: Ignoring input - menu visible")
+                    DLOG("🎮 HomeView: Ignoring input - menu visible")
                     return
                 }
                 
-                print("🎮 HomeView: Received event: \(event)")
+                DLOG("🎮 HomeView: Received event: \(event)")
                 
                 switch event {
                 case .buttonPress(true):
-                    print("🎮 HomeView: Button press detected")
+                    DLOG("🎮 HomeView: Button press detected")
                     handleButtonPress()
                 case .verticalNavigation(let value, true):
-                    print("🎮 HomeView: Vertical navigation: \(value)")
-                    print("🎮 HomeView: Current section: \(String(describing: focusedSection))")
-                    print("🎮 HomeView: Current item: \(String(describing: focusedItemInSection))")
-                    print("🎮 HomeView: Available sections: \(availableSections)")
+                    DLOG("🎮 HomeView: Vertical navigation: \(value)")
+                    DLOG("🎮 HomeView: Current section: \(String(describing: focusedSection))")
+                    DLOG("🎮 HomeView: Current item: \(String(describing: focusedItemInSection))")
+                    DLOG("🎮 HomeView: Available sections: \(availableSections)")
                     handleVerticalNavigation(value)
                 case .horizontalNavigation(let value, true):
-                    print("🎮 HomeView: Horizontal navigation: \(value)")
+                    DLOG("🎮 HomeView: Horizontal navigation: \(value)")
                     handleHorizontalNavigation(value)
                 default:
                     break
@@ -535,10 +535,10 @@ struct HomeView: SwiftUI.View {
     }
     
     private func handleVerticalNavigation(_ yValue: Float) {
-        print("🎮 HomeView: Vertical navigation: \(yValue)")
+        DLOG("🎮 HomeView: Vertical navigation: \(yValue)")
         
         guard let currentSection = focusedSection else {
-            print("🎮 HomeView: No section focused, setting initial focus")
+            DLOG("🎮 HomeView: No section focused, setting initial focus")
             setInitialFocus()
             return
         }
@@ -555,20 +555,20 @@ struct HomeView: SwiftUI.View {
                     let newIndex = currentIndex - itemsPerRow
                     if newIndex >= 0 {
                         focusedItemInSection = items[newIndex]
-                        print("🎮 HomeView: Moving up in grid to index: \(newIndex)")
+                        DLOG("🎮 HomeView: Moving up in grid to index: \(newIndex)")
                         return
                     }
                     // If we can't move up in the grid, try moving to previous section
                     if let prevSection = getPreviousSection(from: currentSection) {
                         focusedSection = prevSection
                         focusedItemInSection = getLastItemInSection(prevSection)
-                        print("🎮 HomeView: Moving to previous section: \(prevSection)")
+                        DLOG("🎮 HomeView: Moving to previous section: \(prevSection)")
                     }
                 } else { // Moving down
                     let newIndex = currentIndex + itemsPerRow
                     if newIndex < items.count {
                         focusedItemInSection = items[newIndex]
-                        print("🎮 HomeView: Moving down in grid to index: \(newIndex)")
+                        DLOG("🎮 HomeView: Moving down in grid to index: \(newIndex)")
                     }
                 }
             } else {
@@ -1069,7 +1069,7 @@ extension HomeView: GameContextMenuDelegate {
     func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
         // Only show disc selection if there are multiple associated files
         let associatedFiles = game.relatedFiles.toArray()
-        let uniqueFiles = Set(associatedFiles.compactMap { $0.url.path })
+        let uniqueFiles = Set(associatedFiles.compactMap { $0.url?.path })
         
         guard uniqueFiles.count > 1 else {
             return
@@ -1081,11 +1081,11 @@ extension HomeView: GameContextMenuDelegate {
     private func presentDiscSelectionAlert(for game: PVGame, rootDelegate: PVRootDelegate?) {
         let discs = game.relatedFiles.toArray()
         let alertDiscs: [DiscSelectionAlert.Disc] = discs.compactMap { (disc: PVFile?) -> DiscSelectionAlert.Disc? in
-            guard let disc = disc else {
+            guard let disc = disc, let url = disc.url else {
                 WLOG("nil file for disc")
                 return nil
             }
-            return DiscSelectionAlert.Disc(fileName: disc.fileName, path: disc.url.path)
+            return DiscSelectionAlert.Disc(fileName: disc.fileName, path: url.path)
         }
         
         self.discSelectionAlert = DiscSelectionAlert(

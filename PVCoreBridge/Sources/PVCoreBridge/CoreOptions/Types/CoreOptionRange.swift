@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct CoreOptionRange<T:Numeric> {
+public struct CoreOptionRange<T:Numeric> : Sendable where T: Sendable {
     public let defaultValue: T
     public let min: T
     public let max: T

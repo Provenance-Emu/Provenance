@@ -63,7 +63,7 @@ extension PVEmulatorViewController {
         }
 
         let controllerManager = PVControllerManager.shared
-        let wantsStartSelectInMenu: Bool = PVEmulatorConfiguration.systemIDWantsStartAndSelectInMenu(game.system.identifier)
+        let wantsStartSelectInMenu: Bool = PVEmulatorConfiguration.systemIDWantsStartAndSelectInMenu(game.system?.identifier ?? SystemIdentifier.RetroArch.rawValue)
         var hideP1MenuActions = false
         if let player1: GCController = controllerManager.player1 {
 #if os(iOS)

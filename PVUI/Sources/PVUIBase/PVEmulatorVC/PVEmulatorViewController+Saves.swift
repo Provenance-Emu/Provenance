@@ -66,7 +66,7 @@ public extension PVEmulatorViewController {
             try! realm.write {
                 state.lastOpened = Date()
             }
-            if !FileManager.default.fileExists(atPath: state.file.url.path) {
+            if let url = state.file!.url, !FileManager.default.fileExists(atPath: url.path) {
                 return false
             }
 
@@ -77,7 +77,7 @@ public extension PVEmulatorViewController {
             }
 
             do {
-                try await self.core.loadState(fromFileAtPath: state.file.url.path)
+                try await self.core.loadState(fromFileAtPath: state.file!.url!.path)
                 completion()
                 return true
             } catch {
@@ -89,7 +89,7 @@ public extension PVEmulatorViewController {
             }
         }
 
-        if !FileManager.default.fileExists(atPath: state.file.url.path) {
+        if let url = state.file?.url, !FileManager.default.fileExists(atPath: url.path) {
             let message =
                 """
                 Save State is not valid

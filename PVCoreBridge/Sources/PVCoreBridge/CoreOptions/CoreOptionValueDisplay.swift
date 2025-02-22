@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct CoreOptionValueDisplay {
+public struct CoreOptionValueDisplay: Sendable {
     public let title: String
     public let description: String?
     public let requiresRestart: Bool

@@ -17,7 +17,7 @@ public final class PVSaveState: RealmSwift.Object, Identifiable, Filed, LocalFil
     @Persisted(wrappedValue: UUID().uuidString, primaryKey: true) public var id: String
     @Persisted public var game: PVGame!
     @Persisted public var core: PVCore!
-    @Persisted public var file: PVFile!
+    @Persisted public var file: PVFile?
     @Persisted public var date: Date = Date()
     @Persisted public var lastOpened: Date?
     @Persisted public var image: PVImageFile?
@@ -45,12 +45,12 @@ public final class PVSaveState: RealmSwift.Object, Identifiable, Filed, LocalFil
     }
 
     public static func == (lhs: PVSaveState, rhs: PVSaveState) -> Bool {
-        return lhs.file.url == rhs.file.url
+        return lhs.file?.url == rhs.file?.url
     }
 }
 
 public extension PVSaveState {
     var size: UInt64 {
-        file.size + (image?.size ?? 0)
+        (file?.size ?? 0) + (image?.size ?? 0)
     }
 }

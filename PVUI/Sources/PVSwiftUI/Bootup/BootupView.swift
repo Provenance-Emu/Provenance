@@ -56,6 +56,8 @@ public struct BootupView: View {
     }
 }
 
+#if DEBUG
 #Preview {
     BootupView()
 }
+#endif
