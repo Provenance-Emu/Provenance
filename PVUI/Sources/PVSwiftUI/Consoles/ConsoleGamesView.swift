@@ -163,12 +163,14 @@ struct ConsoleGamesView: SwiftUI.View {
                                         .id("section_continues")
                                     favoritesSection()
                                         .id("section_favorites")
+                                        .padding(.horizontal, 10)
                                     recentlyPlayedSection()
                                         .id("section_recent")
+                                        .padding(.horizontal, 10)
                                     gamesSection()
                                         .id("section_allgames")
+                                        .padding(.horizontal, 10)
                                 }
-                                .padding(.horizontal, 10)
                                 /// Add padding at bottom to account for BiosesView if needed
                                 .padding(.bottom, !console.bioses.isEmpty ? 120 : 44)
                                 .onChange(of: gamesViewModel.focusedSection) { newSection in
