@@ -27,7 +27,6 @@ struct BiosesView: View {
     /// Constants for the view
     private enum Constants {
         static let tabHeight: CGFloat = 30
-        static let cornerRadius: CGFloat = 16
         static let borderWidth: CGFloat = 4
         static let dragThreshold: CGFloat = 50
     }
@@ -47,12 +46,19 @@ struct BiosesView: View {
                 }
             }
             .background(Color.black.opacity(0.2))
-            .overlay(
-                RoundedRectangle(cornerRadius: Constants.cornerRadius)
-                    .stroke(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor,
-                           lineWidth: Constants.borderWidth)
-            )
-            .cornerRadius(Constants.cornerRadius)
+            // Replace rounded rectangle with top and bottom borders
+            .overlay(alignment: .top) {
+                Rectangle()
+                    .fill(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
+                    .frame(height: Constants.borderWidth)
+                    .edgesIgnoringSafeArea(.horizontal)
+            }
+            .overlay(alignment: .bottom) {
+                Rectangle()
+                    .fill(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
+                    .frame(height: Constants.borderWidth)
+                    .edgesIgnoringSafeArea(.horizontal)
+            }
             .offset(y: dragOffset)
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isExpanded)
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: dragOffset)

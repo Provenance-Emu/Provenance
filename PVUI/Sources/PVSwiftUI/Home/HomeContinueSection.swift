@@ -135,23 +135,51 @@ private struct CustomPageIndicator: View {
         static let defaultWidth: CGFloat = 20
         static let selectedWidth: CGFloat = 32
         static let cornerRadius: CGFloat = 2
-        static let bottomOffset: CGFloat = 100 // Increased offset to position ¾ down
+        static let bottomOffset: CGFloat = 100
+        static let maxVisibleIndicators = 7 // Maximum number of indicators to show at once
     }
 
     var body: some View {
-        HStack(spacing: Constants.spacing) {
-            ForEach(0..<numberOfPages, id: \.self) { index in
-                Capsule()
-                    .fill(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
-                    .opacity(currentPage == index ? 1.0 : 0.5)
-                    .frame(
-                        width: currentPage == index ? Constants.selectedWidth : Constants.defaultWidth,
-                        height: Constants.indicatorHeight
-                    )
-                    .animation(.spring(response: 0.3), value: currentPage)
+        GeometryReader { geometry in
+            ScrollViewReader { scrollProxy in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: Constants.spacing) {
+                        ForEach(0..<numberOfPages, id: \.self) { index in
+                            Capsule()
+                                .fill(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
+                                .opacity(currentPage == index ? 1.0 : 0.5)
+                                .frame(
+                                    width: currentPage == index ? Constants.selectedWidth : Constants.defaultWidth,
+                                    height: Constants.indicatorHeight
+                                )
+                                .id(index)
+                                .animation(.spring(response: 0.3), value: currentPage)
+                        }
+                    }
+                    .frame(minWidth: geometry.size.width)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: Constants.indicatorHeight + 16) // Add padding for touch area
+                }
+                .onChange(of: currentPage) { newPage in
+                    // Calculate visible range and scroll if needed
+                    let halfVisible = Constants.maxVisibleIndicators / 2
+                    if newPage >= halfVisible && newPage < numberOfPages - halfVisible {
+                        withAnimation {
+                            scrollProxy.scrollTo(newPage, anchor: .center)
+                        }
+                    } else if newPage < halfVisible {
+                        withAnimation {
+                            scrollProxy.scrollTo(0, anchor: .leading)
+                        }
+                    } else {
+                        withAnimation {
+                            scrollProxy.scrollTo(numberOfPages - 1, anchor: .trailing)
+                        }
+                    }
+                }
             }
         }
-        .padding(.vertical, 8)
+        .frame(height: Constants.indicatorHeight + 16)
     }
 }
 
@@ -278,7 +306,7 @@ struct HomeContinueSection: SwiftUI.View {
                 .frame(height: adjustedHeight)
 
                 // Footer and page indicator overlay
-                ZStack(alignment: .bottom) {
+                ZStack {
                     // Footer at bottom
                     ContinuesFooterView(
                         saveState: viewModel.currentSaveState,
@@ -293,17 +321,23 @@ struct HomeContinueSection: SwiftUI.View {
                             currentPage: viewModel.currentPage
                         )
                         .zIndex(1) // Ensure indicator is in front
-                        .offset(y: 0) // Position it over the footer
+                        .offset(y: -35) // Position it over the footer
                     }
                 }
             }
-            .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius))
-            .overlay(
-                RoundedRectangle(cornerRadius: Constants.cornerRadius)
-                    .stroke(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor,
-                           lineWidth: Constants.borderWidth)
-            )
-            .padding(.horizontal, Constants.containerPadding)
+            // Replace rounded rectangle with top and bottom borders
+            .overlay(alignment: .top) {
+                Rectangle()
+                    .fill(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
+                    .frame(height: Constants.borderWidth)
+                    .edgesIgnoringSafeArea(.horizontal)
+            }
+            .overlay(alignment: .bottom) {
+                Rectangle()
+                    .fill(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
+                    .frame(height: Constants.borderWidth)
+                    .edgesIgnoringSafeArea(.horizontal)
+            }
             .padding(.top, 4) // Add top padding to the bordered container
         }
         .onAppear {

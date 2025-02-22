@@ -10,7 +10,6 @@ import PVThemes
 import RealmSwift
 
 struct HomeContinueItemView: SwiftUI.View {
-
     @ObservedRealmObject var continueState: PVSaveState
     @ObservedObject private var themeManager = ThemeManager.shared
     let height: CGFloat
@@ -21,46 +20,14 @@ struct HomeContinueItemView: SwiftUI.View {
     @State private var showDeleteAlert = false
 
     /// Constants for CRT effects
-    private enum CRTEffects {
-        static let scanlineSpacing: CGFloat = 2.0
-        static let scanlineOpacity: CGFloat = 0.1
-        static let bloomIntensity: CGFloat = 0.4
-        static let blurRadius: CGFloat = 0.5
-        static let barrelDistortion: CGFloat = 0.15
-        static let vignetteIntensity: CGFloat = 0.2
-        static let glowRadius: CGFloat = 3.0
-        static let glowOpacity: CGFloat = 0.3
-    }
+    internal enum CRTEffects {
+        // Scanline effects
+        static let scanlineOpacity: CGFloat = 0.3
+        static let lcdOpacity: CGFloat = 0.1
+        static let subpixelOpacity: CGFloat = 0.2
 
-    /// Custom ViewModifier for CRT scanline effect
-    private struct CRTScanlineModifier: ViewModifier {
-        func body(content: Content) -> some View {
-            content.overlay(
-                GeometryReader { geometry in
-                    Path { path in
-                        let lineCount = Int(geometry.size.height / CRTEffects.scanlineSpacing)
-                        for i in 0...lineCount {
-                            let y = CGFloat(i) * CRTEffects.scanlineSpacing
-                            path.move(to: CGPoint(x: 0, y: y))
-                            path.addLine(to: CGPoint(x: geometry.size.width, y: y))
-                        }
-                    }
-                    .stroke(Color.black, lineWidth: 0.5)
-                    .opacity(CRTEffects.scanlineOpacity)
-                }
-            )
-        }
-    }
-
-    /// Custom ViewModifier for CRT barrel distortion effect
-    private struct CRTBarrelDistortionModifier: ViewModifier {
-        func body(content: Content) -> some View {
-            content
-                .distortionEffect(
-                    .barrel(radius: CRTEffects.barrelDistortion, intensity: CRTEffects.barrelDistortion),
-                    maxSampleOffset: .zero
-                )
-        }
+        // Image presentation
+        static let zoomFactor: CGFloat = 1.15
     }
 
     var body: some SwiftUI.View {
@@ -73,58 +40,24 @@ struct HomeContinueItemView: SwiftUI.View {
                        !screenshot.isInvalidated,
                        let url = screenshot.url,
                        let image = UIImage(contentsOfFile: url.path) {
-                        Image(uiImage: image)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(height: height, alignment: .top)
-                            .frame(maxWidth: .infinity)
-                            .clipped()
-                            // Apply CRT effects
-                            .modifier(CRTScanlineModifier())
-                            .modifier(CRTBarrelDistortionModifier())
-                            .blur(radius: CRTEffects.blurRadius)
-                            // Add bloom effect
-                            .overlay(
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .blur(radius: CRTEffects.glowRadius)
-                                    .opacity(CRTEffects.glowOpacity)
-                            )
-                            // Add vignette effect
-                            .overlay(
-                                RadialGradient(
-                                    gradient: Gradient(colors: [.clear, .black]),
-                                    center: .center,
-                                    startRadius: 0,
-                                    endRadius: height
-                                )
-                                .opacity(CRTEffects.vignetteIntensity)
-                            )
+                        baseImageLayer(image)
+                            .drawingGroup() // Use Metal rendering
+                            .overlay(RetroEffects())
                     } else {
                         Image(uiImage: UIImage.missingArtworkImage(gameTitle: continueState.game?.title ?? "Deleted", ratio: 1))
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                            .frame(height: height, alignment: .top)
+                            .frame(height: height * CRTEffects.zoomFactor)
                             .frame(maxWidth: .infinity)
+                            .scaleEffect(CRTEffects.zoomFactor)
                             .clipped()
-                            // Apply CRT effects to placeholder image
-                            .modifier(CRTScanlineModifier())
-                            .modifier(CRTBarrelDistortionModifier())
-                            .blur(radius: CRTEffects.blurRadius)
-                            // Add vignette effect
-                            .overlay(
-                                RadialGradient(
-                                    gradient: Gradient(colors: [.clear, .black]),
-                                    center: .center,
-                                    startRadius: 0,
-                                    endRadius: height
-                                )
-                                .opacity(CRTEffects.vignetteIntensity)
-                            )
+                            .drawingGroup() // Use Metal rendering
+                            .overlay(RetroEffects())
                             .id(themeManager.currentPalette.name)
                     }
                 }
+                .frame(height: height)
+                .clipShape(Rectangle())
                 .overlay(
                     RoundedRectangle(cornerRadius: 4)
                         .stroke(themeManager.currentPalette.gameLibraryText.swiftUIColor, lineWidth: isFocused ? 4 : 0)
@@ -160,30 +93,58 @@ struct HomeContinueItemView: SwiftUI.View {
             }
         }
     }
-}
 
-/// Extension to add barrel distortion effect
-extension View {
-    func distortionEffect(_ effect: DistortionEffect, maxSampleOffset: CGSize) -> some View {
-        self.modifier(DistortionEffectModifier(effect: effect))
+    private func baseImageLayer(_ image: UIImage) -> some View {
+        Image(uiImage: image)
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .frame(height: height * CRTEffects.zoomFactor)
+            .frame(maxWidth: .infinity)
+            .scaleEffect(CRTEffects.zoomFactor)
+            .clipped()
     }
 }
 
-/// Barrel distortion effect implementation
-struct DistortionEffect {
-    let radius: CGFloat
-    let intensity: CGFloat
+/// Combined retro effects overlay
+private struct RetroEffects: View {
+    var body: some View {
+        ZStack {
+            // Scanlines
+            GeometryReader { geometry in
+                Path { path in
+                    stride(from: 0, to: geometry.size.height, by: 2).forEach { y in
+                        path.move(to: CGPoint(x: 0, y: y))
+                        path.addLine(to: CGPoint(x: geometry.size.width, y: y))
+                    }
+                }
+                .stroke(.black.opacity(HomeContinueItemView.CRTEffects.scanlineOpacity), lineWidth: 1)
+            }
 
-    static func barrel(radius: CGFloat, intensity: CGFloat) -> DistortionEffect {
-        DistortionEffect(radius: radius, intensity: intensity)
-    }
-}
+            // LCD effect (vertical lines)
+            GeometryReader { geometry in
+                Path { path in
+                    stride(from: 0, to: geometry.size.width, by: 3).forEach { x in
+                        path.move(to: CGPoint(x: x, y: 0))
+                        path.addLine(to: CGPoint(x: x, y: geometry.size.height))
+                    }
+                }
+                .stroke(.black.opacity(HomeContinueItemView.CRTEffects.lcdOpacity), lineWidth: 1)
+            }
 
-/// ViewModifier for applying barrel distortion
-struct DistortionEffectModifier: ViewModifier {
-    let effect: DistortionEffect
-
-    func body(content: Content) -> some View {
-        content.drawingGroup() // Use Metal rendering
+            // Subpixel effect
+            GeometryReader { geometry in
+                HStack(spacing: 0) {
+                    ForEach(0..<Int(geometry.size.width), id: \.self) { x in
+                        VStack(spacing: 0) {
+                            Color.red.opacity(HomeContinueItemView.CRTEffects.subpixelOpacity)
+                            Color.green.opacity(HomeContinueItemView.CRTEffects.subpixelOpacity)
+                            Color.blue.opacity(HomeContinueItemView.CRTEffects.subpixelOpacity)
+                        }
+                        .frame(width: 1)
+                    }
+                }
+            }
+        }
+        .allowsHitTesting(false)
     }
 }

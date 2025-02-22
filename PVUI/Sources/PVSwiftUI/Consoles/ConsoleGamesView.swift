@@ -185,11 +185,11 @@ struct ConsoleGamesView: SwiftUI.View {
                         }
                         .padding(.bottom, 4)
                     }
-                    
+
                     /// Position BiosesView above the tab bar
                     if !console.bioses.isEmpty {
                         BiosesView(console: console)
-                            .padding(.horizontal)
+                            .padding(.horizontal, 0)
                             .padding(.bottom, 66) // Account for tab bar height
                     } else {
                         // Empty paddview view
