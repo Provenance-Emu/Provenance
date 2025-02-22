@@ -14,6 +14,7 @@ import Perception
 struct MainView: View {
     @EnvironmentObject
     private var appState: AppState
+
     let appDelegate: PVAppDelegate
 
     init(appDelegate: PVAppDelegate) {

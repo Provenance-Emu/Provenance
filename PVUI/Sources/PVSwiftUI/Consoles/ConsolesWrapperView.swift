@@ -114,9 +114,9 @@ struct ConsolesWrapperView: SwiftUI.View {
         AnyView(
             Group {
                 if consoles.isEmpty || (consoles.count == 1 && consoles.first!.identifier == SystemIdentifier.RetroArch.rawValue) {
-                    showNoConsolesView()
+                    noConsolesView
                 } else {
-                    showConsoles()
+                    consolesTabView
                         .sheet(item: $gameInfoState) { state in
                             NavigationView {
                                 makeGameMoreInfoView(for: state)
@@ -140,31 +140,64 @@ struct ConsolesWrapperView: SwiftUI.View {
     private func sortedConsoles() -> [PVSystem] {
         viewModel.sortConsolesAscending ? consoles.map { $0 } : consoles.reversed()
     }
-
-    private func showNoConsolesView() -> some View {
-        TabView {
-            NoConsolesView(delegate: rootDelegate as! PVMenuDelegate)
-                .tabItem {
-                    Label("No Consoles", systemImage: "xmark.circle")
-                }
-                .tag("noConsoles")
-            ForEach(sortedConsoles(), id: \.self) { console in
-                ConsoleGamesView(
-                    console: console,
-                    viewModel: viewModel,
-                    rootDelegate: rootDelegate,
-                    showGameInfo: showGameInfo
-                )
-                .tabItem {
-                    Label(console.name, systemImage: console.iconName)
-                }
-                .tag(console.identifier)
-                .ignoresSafeArea(.all, edges: .bottom)
-            }
+    
+    private var glowColor: Color {
+        switch themeManager.currentPalette {
+        case is DarkThemePalette:
+            return .cyan
+        case is LightThemePalette:
+            return .blue
+        default:
+            return .purple
         }
     }
 
-    private func showConsoles() -> some View {
+    @ViewBuilder
+    private var noConsolesView: some View {
+        NoConsolesView(delegate: rootDelegate as! PVMenuDelegate)
+            .tabItem {
+                Label("No Consoles", systemImage: "xmark.circle")
+            }
+            .tag("noConsoles")
+    }
+    
+    @ViewBuilder
+    var consolesList: some View {
+        ForEach(sortedConsoles(), id: \.self) { console in
+            ConsoleGamesView(
+                console: console,
+                viewModel: viewModel,
+                rootDelegate: rootDelegate,
+                showGameInfo: showGameInfo
+            )
+            .tabItem {
+                if #available(iOS 17.0, *) {
+                    Label(console.name, image: ImageResource(name: console.iconName, bundle: PVUIBase.BundleLoader.myBundle))
+                        .blur(radius: 10)
+                        .opacity(0.3)
+                        .overlay(
+                            LinearGradient(
+                                gradient: Gradient(colors: [
+                                    .clear,
+                                    glowColor.opacity(0.3),
+                                    .clear
+                                ]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                            .blendMode(.screen)
+                        )
+                } else {
+//                    Label(console.name, image: Image(console.iconName, bundle: PVUIBase.BundleLoader.myBundle))
+                }
+            }
+            .tag(console.identifier)
+            .ignoresSafeArea(.all, edges: .bottom)
+        }
+    }
+
+    @ViewBuilder
+    var consolesTabView: some View {
         let binding = Binding(
             get: { delegate.selectedTab },
             set: { delegate.setTab($0) }
@@ -183,19 +216,7 @@ struct ConsolesWrapperView: SwiftUI.View {
             .tag("home")
             .ignoresSafeArea(.all, edges: .bottom)
 
-            ForEach(sortedConsoles(), id: \.self) { console in
-                ConsoleGamesView(
-                    console: console,
-                    viewModel: viewModel,
-                    rootDelegate: rootDelegate,
-                    showGameInfo: showGameInfo
-                )
-                .tabItem {
-                    Label(console.name, systemImage: console.iconName)
-                }
-                .tag(console.identifier)
-                .ignoresSafeArea(.all, edges: .bottom)
-            }
+            consolesList
         }
         .onChange(of: delegate.selectedTab) { newValue in
             print("Tab changed in view: \(newValue)")

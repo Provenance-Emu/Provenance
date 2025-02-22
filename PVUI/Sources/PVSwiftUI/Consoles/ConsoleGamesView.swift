@@ -167,10 +167,10 @@ struct ConsoleGamesView: SwiftUI.View {
                                         .id("section_recent")
                                     gamesSection()
                                         .id("section_allgames")
-                                    BiosesView(console: console)
                                 }
                                 .padding(.horizontal, 10)
-                                .padding(.bottom, 44)
+                                /// Add padding at bottom to account for BiosesView if needed
+                                .padding(.bottom, !console.bioses.isEmpty ? 120 : 44)
                                 .onChange(of: gamesViewModel.focusedSection) { newSection in
                                     if let section = newSection {
                                         withAnimation {
@@ -180,10 +180,22 @@ struct ConsoleGamesView: SwiftUI.View {
                                     }
                                 }
                             }
-                        }.refreshable {
-                            ILOG("Refreshing game library")
-                            await AppState.shared.libraryUpdatesController?.importROMDirectories()
                         }
+                        .padding(.bottom, 4)
+                    }
+                    
+                    /// Position BiosesView above the tab bar
+                    if !console.bioses.isEmpty {
+                        BiosesView(console: console)
+                            .padding(.horizontal)
+                            .padding(.bottom, 66) // Account for tab bar height
+                    } else {
+                        // Empty paddview view
+                        HStack {
+                            Text("")
+                        }
+                        .padding(.horizontal)
+                        .padding(.bottom, 44) // Account for tab bar height
                     }
                 }
                 .edgesIgnoringSafeArea(.bottom)

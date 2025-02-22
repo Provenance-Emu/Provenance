@@ -1935,6 +1935,16 @@
 		B327719A2D6816D2009C728C /* MoltenVKShaderConverter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKShaderConverter.xcodeproj; sourceTree = "<group>"; };
 		B32771B82D6816D2009C728C /* ExternalDependencies.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ExternalDependencies.xcodeproj; sourceTree = "<group>"; };
 		B32771BC2D6816D2009C728C /* MoltenVKPackaging.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKPackaging.xcodeproj; sourceTree = "<group>"; };
+		B328A4342D695BB0005ABA6F /* Cube.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Cube.xcodeproj; sourceTree = "<group>"; };
+		B328A4D02D695BB0005ABA6F /* MoltenVK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVK.xcodeproj; sourceTree = "<group>"; };
+		B328A4EE2D695BB0005ABA6F /* MoltenVKShaderConverter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKShaderConverter.xcodeproj; sourceTree = "<group>"; };
+		B328A50C2D695BB0005ABA6F /* ExternalDependencies.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ExternalDependencies.xcodeproj; sourceTree = "<group>"; };
+		B328A5102D695BB0005ABA6F /* MoltenVKPackaging.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKPackaging.xcodeproj; sourceTree = "<group>"; };
+		B328AA762D6996A6005ABA6F /* Cube.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Cube.xcodeproj; sourceTree = "<group>"; };
+		B328AB122D6996A6005ABA6F /* MoltenVK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVK.xcodeproj; sourceTree = "<group>"; };
+		B328AB302D6996A6005ABA6F /* MoltenVKShaderConverter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKShaderConverter.xcodeproj; sourceTree = "<group>"; };
+		B328AB4E2D6996A6005ABA6F /* ExternalDependencies.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ExternalDependencies.xcodeproj; sourceTree = "<group>"; };
+		B328AB522D6996A6005ABA6F /* MoltenVKPackaging.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKPackaging.xcodeproj; sourceTree = "<group>"; };
 		B329030528740D920037BA1C /* PVBeetlePSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBeetlePSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3296EA926CABE760088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		B3296EBF26CABF9F0088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Provenance.storyboard; sourceTree = "<group>"; };
@@ -2284,6 +2294,16 @@
 		B3E5DA1B2959841000907CFB /* PVBeetlePSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBeetlePSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E799EE2C92E16E007D86A6 /* PVProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E79B272C93C6C4007D86A6 /* PVProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3EE4E9C2D694B630089FCB4 /* Cube.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Cube.xcodeproj; sourceTree = "<group>"; };
+		B3EE4F382D694B630089FCB4 /* MoltenVK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVK.xcodeproj; sourceTree = "<group>"; };
+		B3EE4F562D694B630089FCB4 /* MoltenVKShaderConverter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKShaderConverter.xcodeproj; sourceTree = "<group>"; };
+		B3EE4F742D694B630089FCB4 /* ExternalDependencies.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ExternalDependencies.xcodeproj; sourceTree = "<group>"; };
+		B3EE4F782D694B630089FCB4 /* MoltenVKPackaging.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKPackaging.xcodeproj; sourceTree = "<group>"; };
+		B3EE571E2D69590E0089FCB4 /* Cube.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Cube.xcodeproj; sourceTree = "<group>"; };
+		B3EE57BA2D69590E0089FCB4 /* MoltenVK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVK.xcodeproj; sourceTree = "<group>"; };
+		B3EE57D82D69590E0089FCB4 /* MoltenVKShaderConverter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKShaderConverter.xcodeproj; sourceTree = "<group>"; };
+		B3EE57F62D69590E0089FCB4 /* ExternalDependencies.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ExternalDependencies.xcodeproj; sourceTree = "<group>"; };
+		B3EE57FA2D69590E0089FCB4 /* MoltenVKPackaging.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKPackaging.xcodeproj; sourceTree = "<group>"; };
 		B3EEED5F2920AEB6008E2603 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
 		B3EEED622920AEBA008E2603 /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActivityMonitorExtension.swift; sourceTree = "<group>"; };
 		B3EEED642920AEBA008E2603 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -4423,6 +4443,76 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		B328A5182D695BB0005ABA6F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B328A51A2D695BB0005ABA6F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B328A51C2D695BB0005ABA6F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B328A51E2D695BB0005ABA6F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B328A5202D695BB0005ABA6F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B328AB5A2D6996A6005ABA6F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B328AB5C2D6996A6005ABA6F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B328AB5E2D6996A6005ABA6F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B328AB602D6996A6005ABA6F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B328AB622D6996A6005ABA6F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		B33E26962D681DA1005AD177 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -4961,6 +5051,76 @@
 				B3E21D6F203211BE009939D3 /* Info.plist */,
 			);
 			path = Spotlight;
+			sourceTree = "<group>";
+		};
+		B3EE4F802D694B630089FCB4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B3EE4F822D694B630089FCB4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B3EE4F842D694B630089FCB4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B3EE4F862D694B630089FCB4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B3EE4F882D694B630089FCB4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B3EE58022D69590E0089FCB4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B3EE58042D69590E0089FCB4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B3EE58062D69590E0089FCB4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B3EE58082D69590E0089FCB4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B3EE580A2D69590E0089FCB4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		B3EEED612920AEBA008E2603 /* ActivityMonitorExtension */ = {
@@ -6154,6 +6314,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = B3EE58062D69590E0089FCB4 /* Products */;
+					ProjectRef = B3EE571E2D69590E0089FCB4 /* Cube.xcodeproj */;
+				},
+				{
 					ProductGroup = B33E2C672D682386005AD177 /* Products */;
 					ProjectRef = B33E2B7D2D682386005AD177 /* Cube.xcodeproj */;
 				},
@@ -6174,6 +6338,10 @@
 					ProjectRef = B3B60E632D618BCA003EC861 /* Cube.xcodeproj */;
 				},
 				{
+					ProductGroup = B328A51E2D695BB0005ABA6F /* Products */;
+					ProjectRef = B328A4342D695BB0005ABA6F /* Cube.xcodeproj */;
+				},
+				{
 					ProductGroup = B32771CC2D6816D2009C728C /* Products */;
 					ProjectRef = B32770E02D6816D2009C728C /* Cube.xcodeproj */;
 				},
@@ -6190,6 +6358,10 @@
 					ProjectRef = B33E25B22D681DA1005AD177 /* Cube.xcodeproj */;
 				},
 				{
+					ProductGroup = B3EE4F862D694B630089FCB4 /* Products */;
+					ProjectRef = B3EE4E9C2D694B630089FCB4 /* Cube.xcodeproj */;
+				},
+				{
 					ProductGroup = B390BD012D6168DD00BDE397 /* Products */;
 					ProjectRef = B390BC1F2D6168DD00BDE397 /* Cube.xcodeproj */;
 				},
@@ -6204,6 +6376,10 @@
 				{
 					ProductGroup = B36336392D61BDA800ECD2ED /* Products */;
 					ProjectRef = B36335552D61BDA800ECD2ED /* Cube.xcodeproj */;
+				},
+				{
+					ProductGroup = B328AB622D6996A6005ABA6F /* Products */;
+					ProjectRef = B328AA762D6996A6005ABA6F /* Cube.xcodeproj */;
 				},
 				{
 					ProductGroup = B39CD92D2D684E6F00BA949A /* Products */;
@@ -6238,8 +6414,20 @@
 					ProjectRef = B3EEF29A2D66AFB10080CA51 /* ExternalDependencies.xcodeproj */;
 				},
 				{
+					ProductGroup = B3EE58022D69590E0089FCB4 /* Products */;
+					ProjectRef = B3EE57F62D69590E0089FCB4 /* ExternalDependencies.xcodeproj */;
+				},
+				{
 					ProductGroup = B33E269E2D681DA1005AD177 /* Products */;
 					ProjectRef = B33E268A2D681DA1005AD177 /* ExternalDependencies.xcodeproj */;
+				},
+				{
+					ProductGroup = B3EE4F822D694B630089FCB4 /* Products */;
+					ProjectRef = B3EE4F742D694B630089FCB4 /* ExternalDependencies.xcodeproj */;
+				},
+				{
+					ProductGroup = B328AB5E2D6996A6005ABA6F /* Products */;
+					ProjectRef = B328AB4E2D6996A6005ABA6F /* ExternalDependencies.xcodeproj */;
 				},
 				{
 					ProductGroup = B32771C82D6816D2009C728C /* Products */;
@@ -6302,6 +6490,10 @@
 					ProjectRef = B390BCF72D6168DD00BDE397 /* ExternalDependencies.xcodeproj */;
 				},
 				{
+					ProductGroup = B328A5182D695BB0005ABA6F /* Products */;
+					ProjectRef = B328A50C2D695BB0005ABA6F /* ExternalDependencies.xcodeproj */;
+				},
+				{
 					ProductGroup = B3631D4C2D61B25200ECD2ED /* Products */;
 					ProjectRef = B3631D3E2D61B25200ECD2ED /* ExternalDependencies.xcodeproj */;
 				},
@@ -6346,6 +6538,10 @@
 					ProjectRef = B33E2C192D682386005AD177 /* MoltenVK.xcodeproj */;
 				},
 				{
+					ProductGroup = B3EE4F882D694B630089FCB4 /* Products */;
+					ProjectRef = B3EE4F382D694B630089FCB4 /* MoltenVK.xcodeproj */;
+				},
+				{
 					ProductGroup = B390BD052D6168DD00BDE397 /* Products */;
 					ProjectRef = B390BCBB2D6168DD00BDE397 /* MoltenVK.xcodeproj */;
 				},
@@ -6362,6 +6558,10 @@
 					ProjectRef = B3EEF25E2D66AFB10080CA51 /* MoltenVK.xcodeproj */;
 				},
 				{
+					ProductGroup = B3EE58042D69590E0089FCB4 /* Products */;
+					ProjectRef = B3EE57BA2D69590E0089FCB4 /* MoltenVK.xcodeproj */;
+				},
+				{
 					ProductGroup = B36197762D618B980069D3BE /* Products */;
 					ProjectRef = B361972E2D618B980069D3BE /* MoltenVK.xcodeproj */;
 				},
@@ -6374,12 +6574,24 @@
 					ProjectRef = B3A743842D63EF4100B945A3 /* MoltenVK.xcodeproj */;
 				},
 				{
+					ProductGroup = B328A51C2D695BB0005ABA6F /* Products */;
+					ProjectRef = B328A4D02D695BB0005ABA6F /* MoltenVK.xcodeproj */;
+				},
+				{
 					ProductGroup = B31AF2AC2D66A511007AD40E /* Products */;
 					ProjectRef = B31AF2612D66A511007AD40E /* MoltenVK.xcodeproj */;
 				},
 				{
 					ProductGroup = B3A751842D6435C500B945A3 /* Products */;
 					ProjectRef = B3A7513E2D6435C500B945A3 /* MoltenVK.xcodeproj */;
+				},
+				{
+					ProductGroup = B328AB602D6996A6005ABA6F /* Products */;
+					ProjectRef = B328AB122D6996A6005ABA6F /* MoltenVK.xcodeproj */;
+				},
+				{
+					ProductGroup = B328AB5A2D6996A6005ABA6F /* Products */;
+					ProjectRef = B328AB522D6996A6005ABA6F /* MoltenVKPackaging.xcodeproj */;
 				},
 				{
 					ProductGroup = B3631D482D61B25200ECD2ED /* Products */;
@@ -6398,6 +6610,14 @@
 					ProjectRef = B3EEFE7C2D6812CE0080CA51 /* MoltenVKPackaging.xcodeproj */;
 				},
 				{
+					ProductGroup = B3EE4F802D694B630089FCB4 /* Products */;
+					ProjectRef = B3EE4F782D694B630089FCB4 /* MoltenVKPackaging.xcodeproj */;
+				},
+				{
+					ProductGroup = B3EE580A2D69590E0089FCB4 /* Products */;
+					ProjectRef = B3EE57FA2D69590E0089FCB4 /* MoltenVKPackaging.xcodeproj */;
+				},
+				{
 					ProductGroup = B3A9FA1A2D64443F00288D1E /* Products */;
 					ProjectRef = B3A9FA122D64443F00288D1E /* MoltenVKPackaging.xcodeproj */;
 				},
@@ -6412,6 +6632,10 @@
 				{
 					ProductGroup = B3EEF2AA2D66AFB10080CA51 /* Products */;
 					ProjectRef = B3EEF29E2D66AFB10080CA51 /* MoltenVKPackaging.xcodeproj */;
+				},
+				{
+					ProductGroup = B328A5202D695BB0005ABA6F /* Products */;
+					ProjectRef = B328A5102D695BB0005ABA6F /* MoltenVKPackaging.xcodeproj */;
 				},
 				{
 					ProductGroup = B3FD95DA2D613D2B00397643 /* Products */;
@@ -6510,6 +6734,14 @@
 					ProjectRef = B33E2C372D682386005AD177 /* MoltenVKShaderConverter.xcodeproj */;
 				},
 				{
+					ProductGroup = B3EE4F842D694B630089FCB4 /* Products */;
+					ProjectRef = B3EE4F562D694B630089FCB4 /* MoltenVKShaderConverter.xcodeproj */;
+				},
+				{
+					ProductGroup = B328A51A2D695BB0005ABA6F /* Products */;
+					ProjectRef = B328A4EE2D695BB0005ABA6F /* MoltenVKShaderConverter.xcodeproj */;
+				},
+				{
 					ProductGroup = B3A7518C2D6435C500B945A3 /* Products */;
 					ProjectRef = B3A7515C2D6435C500B945A3 /* MoltenVKShaderConverter.xcodeproj */;
 				},
@@ -6522,6 +6754,10 @@
 					ProjectRef = B3EEF27C2D66AFB10080CA51 /* MoltenVKShaderConverter.xcodeproj */;
 				},
 				{
+					ProductGroup = B328AB5C2D6996A6005ABA6F /* Products */;
+					ProjectRef = B328AB302D6996A6005ABA6F /* MoltenVKShaderConverter.xcodeproj */;
+				},
+				{
 					ProductGroup = B33E26962D681DA1005AD177 /* Products */;
 					ProjectRef = B33E266C2D681DA1005AD177 /* MoltenVKShaderConverter.xcodeproj */;
 				},
@@ -6532,6 +6768,10 @@
 				{
 					ProductGroup = B3631D502D61B25200ECD2ED /* Products */;
 					ProjectRef = B3631D202D61B25200ECD2ED /* MoltenVKShaderConverter.xcodeproj */;
+				},
+				{
+					ProductGroup = B3EE58082D69590E0089FCB4 /* Products */;
+					ProjectRef = B3EE57D82D69590E0089FCB4 /* MoltenVKShaderConverter.xcodeproj */;
 				},
 				{
 					ProductGroup = 934BE9A7296F177A00FB9933 /* Products */;

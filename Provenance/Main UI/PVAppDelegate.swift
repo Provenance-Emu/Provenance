@@ -55,7 +55,7 @@ import FreemiumKit
 //#else
 //@Observable
 //#endif
-final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationDelegate, ObservableObject {
+final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationDelegate {
     /// This is set by the UIApplicationDelegateAdaptor
     internal var window: UIWindow? = nil
     
@@ -64,9 +64,6 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
     }
     
     var shortcutItemGame: PVGame?
-    var bootupState: AppBootupState? {
-        appState?.bootupStateManager
-    }
     
     /// This is set by the ContentView
     var appState: AppState? {
@@ -109,31 +106,30 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
         /// Reimport the library
         NotificationCenter.default.publisher(for: .PVReimportLibrary)
             .flatMap { _ in
-                
                 Future<Void, Never> { promise in
-                    Task.detached { @MainActor in
+                    Task.detached {  @MainActor [self] in
                         RomDatabase.refresh()
-                        if let _ = self.gameLibraryViewController {
-                            self.gameLibraryViewController?.checkROMs(false)
+                        if let _ = await self.gameLibraryViewController {
+                            await self.gameLibraryViewController?.checkROMs(false)
                         } else {
                             if let updates = await self.appState?.libraryUpdatesController {
                                 await updates.importROMDirectories()
                             }
                         }
                         RomDatabase.sharedInstance.recoverAllSaveStates()
-                        if PVFeatureFlagsManager.shared.romPathMigrator {
+                        if await PVFeatureFlagsManager.shared.romPathMigrator {
                             Task {
                                 do {
-                                    try await AppState.shared.gameLibrary?.romMigrator.fixOrphanedFiles()
-                                    try await AppState.shared.gameLibrary?.romMigrator.fixPartialPaths()
+                                    try await self.appState?.gameLibrary?.romMigrator.fixOrphanedFiles()
+                                    try await self.appState?.gameLibrary?.romMigrator.fixPartialPaths()
                                     
                                 } catch {
                                     ELOG("Error: \(error.localizedDescription)")
                                 }
                             }
                         }
+                        promise(.success(()))
                     }
-                    promise(.success(()))
                 }
             }
             .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
@@ -143,22 +139,26 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
         NotificationCenter.default.publisher(for: .PVRefreshLibrary)
             .flatMap { _ in
                 Future<Void, Error> { promise in
-                    Task { @MainActor in
+                    Task {
                         do {
                             //                            try RomDatabase.sharedInstance.deleteAllGames()
-                            if let _ = self.gameLibraryViewController {
-                                self.gameLibraryViewController?.checkROMs(false)
-                            } else {
-                                if let updates = await self.appState?.libraryUpdatesController {
-                                    await updates.importROMDirectories()
+                            Task { @MainActor in
+                                if let _ = self.gameLibraryViewController {
+                                    self.gameLibraryViewController?.checkROMs(false)
+                                } else {
+                                    if let updates = self.appState?.libraryUpdatesController {
+                                        await updates.importROMDirectories()
+                                    }
                                 }
                             }
-                            RomDatabase.sharedInstance.recoverAllSaveStates()
+                            Task.detached {
+                                RomDatabase.sharedInstance.recoverAllSaveStates()
+                            }
                             if PVFeatureFlagsManager.shared.romPathMigrator {
-                                Task {
+                                Task.detached {
                                     do {
-                                        try await AppState.shared.gameLibrary?.romMigrator.fixOrphanedFiles()
-                                        try await AppState.shared.gameLibrary?.romMigrator.fixPartialPaths()
+                                        try await self.appState?.gameLibrary?.romMigrator.fixOrphanedFiles()
+                                        try await self.appState?.gameLibrary?.romMigrator.fixPartialPaths()
                                     } catch {
                                         ELOG("Error: \(error.localizedDescription)")
                                     }
@@ -187,7 +187,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
                             if let _ = self.gameLibraryViewController {
                                 self.gameLibraryViewController?.checkROMs(false)
                             } else {
-                                if let updates = await self.appState?.libraryUpdatesController {
+                                if let updates = self.appState?.libraryUpdatesController {
                                     await updates.importROMDirectories()
                                 }
                             }
@@ -226,10 +226,10 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
             switch (isIpad, traits.horizontalSizeClass) {
             case (true, .regular):   return 0.3  // iPad regular
             case (true, .compact):   return 0.3  // iPad compact (rare but possible)
-            case (true, .unspecified): return 0.3  // iPad fallback
+            case (true, .unspecified), (true, _): return 0.3  // iPad fallback
             case (false, .compact):  return 0.7  // iPhone portrait
             case (false, .regular):  return 0.4  // iPhone landscape
-            case (false, .unspecified): return 0.7  // iPhone fallback
+            case (false, .unspecified), (false, _): return 0.7  // iPhone fallback
             }
         }()
         
@@ -258,6 +258,8 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
                 case (false, .compact):  return 0.3  // iPhone portrait
                 case (false, .regular):  return 0.4  // iPhone landscape
                 case (false, .unspecified): return 0.3  // iPhone fallback
+                case (_, _):
+                    return 0.3
                 }
             }()
             sideNav.updateSideMenuWidth(percent: newWidth)
@@ -411,16 +413,18 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
             currentThemeObservation =   withPerceptionTracking {
                 _ = ThemeManager.shared.currentPalette
             } onChange: { [unowned self] in
-                let newPaletteName = ThemeManager.shared.currentPalette.name
-                ILOG("Theme changed to: \(newPaletteName)")
-                if newPaletteName != oldPalette?.name {
-                    oldPalette = ThemeManager.shared.currentPalette
-                    Task { @MainActor in
-                        self._initUITheme()
-                        if self.isAppStore == true {
-#if !os(tvOS)
-                            self.appRatingSignifigantEvent()
-#endif
+                Task { @MainActor in
+                    let newPaletteName = ThemeManager.shared.currentPalette.name
+                    ILOG("Theme changed to: \(newPaletteName)")
+                    if newPaletteName != oldPalette?.name {
+                        oldPalette = ThemeManager.shared.currentPalette
+                        Task { @MainActor in
+                            self._initUITheme()
+                            if self.isAppStore == true {
+    #if !os(tvOS)
+                                self.appRatingSignifigantEvent()
+    #endif
+                            }
                         }
                     }
                 }
