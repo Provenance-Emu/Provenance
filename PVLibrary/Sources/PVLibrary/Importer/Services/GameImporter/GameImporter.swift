@@ -681,6 +681,7 @@ public final class GameImporter: GameImporting, ObservableObject {
     private func processQueue() async {
         defer {
             DispatchQueue.main.async {
+                self.processingState = .idle
                 NotificationCenter.default.post(name: .RomsFinishedImporting, object: nil)
             }
         }
@@ -690,9 +691,6 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
 
         guard !itemsToProcess.isEmpty else {
-            DispatchQueue.main.async {
-                self.processingState = .idle
-            }
             return
         }
 
@@ -709,9 +707,6 @@ public final class GameImporter: GameImporting, ObservableObject {
             await processItem(item)
         }
 
-        DispatchQueue.main.async {
-            self.processingState = .idle
-        }
         ILOG("GameImportQueue - processQueue complete Import Processing")
     }
 
