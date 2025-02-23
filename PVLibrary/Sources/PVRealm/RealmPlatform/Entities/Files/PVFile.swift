@@ -123,7 +123,7 @@ public extension PVFile {
             }
             let root = relativeRoot
             let resolvedURL = root.appendingPath(partialPath)
-            DLOG("resolvedURL:\(resolvedURL))")
+            DLOG("resolvedURL:\(resolvedURL)")
 //            return resolvedURL
             return url2
         }
