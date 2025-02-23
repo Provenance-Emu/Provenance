@@ -247,7 +247,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                             DLOG("Download started for: \(file)")
                         } catch {
                             self?.errorHandler.handleError(error, file: file)
-                            DLOG("Failed to start download: \(error)")
+                            ELOG("Failed to start download on file \(file): \(error)")
                         }
                     case NSMetadataUbiquitousItemDownloadingStatusCurrent:
                         DLOG("item up to date: \(file)")
@@ -289,7 +289,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                     try fileManager.removeItem(atPath: existing.pathDecoded)
                 } catch {
                     errorHandler.handleError(error, file: existing)
-                    ELOG("error deleting existing file that already exists in iCloud: \(existing), \(error)")
+                    ELOG("error deleting existing file \(existing) that already exists in iCloud: \(error)")
                 }
             }) { currentSource, currentDestination in
                 try fileManager.setUbiquitous(true, itemAt: currentSource, destinationURL: currentDestination)
@@ -348,7 +348,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             subdirectories = try fileManager.subpathsOfDirectory(atPath: source.pathDecoded)
         } catch {
             errorHandler.handleError(error, file: source)
-            ELOG("failed to get directory contents: \(error)")
+            ELOG("failed to get directory contents \(source): \(error)")
             return .saveFailure
         }
         DLOG("subdirectories of \(source): \(subdirectories)")
@@ -366,7 +366,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                     try fileManager.createDirectory(atPath: destination.pathDecoded, withIntermediateDirectories: true)
                 } catch {
                     errorHandler.handleError(error, file: destination)
-                    DLOG("error creating directory: \(destination.pathDecoded), \(error)")
+                    ELOG("error creating directory: \(destination), \(error)")
                 }
             }
             if isDirectory.boolValue {
@@ -542,10 +542,11 @@ class SaveStateSyncer: iCloudContainerSyncer {
             return
         }
         DLOG("downloaded save file: \(file)")
-        queue.sync { [weak self] in
+        let newFilesCount: Int = queue.sync { [weak self] in
             self?.newFiles.insert(file)
+            return self?.newFiles.count ?? 0
         }
-        if newFiles.count >= fileImportQueueMaxCount {
+        if newFilesCount >= fileImportQueueMaxCount {
             importNewSaves()
         }
     }
@@ -574,7 +575,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
             }
         } catch {
             errorHandler.handleError(error, file: file)
-            ELOG("error delating from database: \(error)")
+            ELOG("error delating \(file) from database: \(error)")
         }
     }
     
@@ -648,7 +649,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
                                     }
                                 } catch {
                                     self?.errorHandler.handleError(error, file: json)
-                                    ELOG("Failed to update game: \(error)")
+                                    ELOG("Failed to update game \(json): \(error)")
                                 }
                             }
                             // TODO: Maybe any other missing data updates or update values in general?
@@ -663,7 +664,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
                                 }
                             } catch {
                                 self?.errorHandler.handleError(error, file: json)
-                                ELOG("error adding new save: \(error)")
+                                ELOG("error adding new save \(json): \(error)")
                             }
                         } else {
                             realm.add(newSave, update: .all)
@@ -671,7 +672,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
                         ILOG("Added new save \(newSave.debugDescription)")
                     } catch {
                         self?.errorHandler.handleError(error, file: json)
-                        ELOG("Decode error: \(error)")
+                        ELOG("Decode error on \(json): \(error)")
                         return
                     }
                 }
@@ -722,7 +723,7 @@ class RomsSyncer: iCloudContainerSyncer {
         do {
             realm = try Realm()
         } catch {
-            ELOG("error removing game entries that do NOT exist in the cloud container")
+            ELOG("error removing game entries that do NOT exist in the cloud container \(romsPath)")
             return
         }
         var games = realm.objects(PVGame.self)
@@ -766,10 +767,12 @@ class RomsSyncer: iCloudContainerSyncer {
             }
         } catch {
             errorHandler.handleError(error, file: file)
-            ELOG("error searching existing ROM: \(error)")
+            ELOG("error searching existing ROM \(file): \(error)")
         }
         DLOG("\(file) does NOT exist in database, adding to import set")
-        newFiles.insert(file)
+        queue.async(flags: .barrier) { [weak self] in
+            self?.newFiles.insert(file)
+        }
     }
     
     override func deleteFromDatastore(_ file: URL) {
@@ -792,7 +795,7 @@ class RomsSyncer: iCloudContainerSyncer {
             try realm.deleteGame(game)
         } catch {
             errorHandler.handleError(error, file: file)
-            ELOG("error deleting ROM from database: \(error)")
+            ELOG("error deleting ROM \(file) from database: \(error)")
         }
     }
     
@@ -817,9 +820,10 @@ class RomsSyncer: iCloudContainerSyncer {
         else {
             return
         }
-        Task {
-            importNewRomFiles()
+        queue.async(flags: .barrier) { [weak self] in
+            self?.importNewRomFiles()
         }
+    
     }
     
     func clearProcessedFiles() {
