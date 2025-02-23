@@ -218,7 +218,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         }
         
         //accessing results automatically pauses updates and resumes after deallocated
-        await metadataQuery.results.concurrentForEach { [weak self] item in
+        /*await*/ metadataQuery.results.forEach/*concurrentForEach*/ { [weak self] item in
             if let fileItem = item as? NSMetadataItem,
                let file = fileItem.value(forAttribute: NSMetadataItemURLKey) as? URL,
                let isDirectory = try? file.resourceValues(forKeys: [.isDirectoryKey]).isDirectory,
@@ -229,10 +229,10 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                     case  NSMetadataUbiquitousItemDownloadingStatusNotDownloaded:
                         do {
                             try fileManager.startDownloadingUbiquitousItem(at: file)
-                            self?.queue.async(flags: .barrier) {
+                            //self?.queue.async(flags: .barrier) {
                                 files.insert(file)
                                 self?.insertDownloadingFile(file)
-                            }
+                            //}
                             DLOG("Download started for: \(file)")
                         } catch {
                             self?.errorHandler.handleError(error, file: file)
@@ -244,14 +244,14 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                             DLOG("file DELETED from iCloud: \(file)")
                             self?.deleteFromDatastore(file)
                         } else {
-                            self?.queue.async(flags: .barrier) {
+                            //self?.queue.async(flags: .barrier) {
                                 //in the case when we are initially turning on iCloud or the app is opened and coming into the foreground for the first time, we try to import any files already downloaded
                                 if self?.status == .initialUpload {
                                     self?.insertDownloadingFile(file)
                                 }
                                 filesDownloaded.insert(file)
                                 self?.insertDownloadedFile(file)
-                            }
+                            //}
                         }
                     default: DLOG("\(file): download status: \(downloadStatus)")
                 }
@@ -606,6 +606,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
         //TODO: process 10 at a time, do it like the RomsSyncer
         newFiles.removeAll()
         uploadedFiles.removeAll()
+        //TODO: try to change this to a single task and can we do this on a background thread instead of the main?
         Task {
             Task.detached { // @MainActor in
                 await jsonFiles.concurrentForEach { @MainActor [weak self] json in
@@ -725,7 +726,7 @@ class RomsSyncer: iCloudContainerSyncer {
         }
         
         let parentDirectory = file.deletingLastPathComponent().lastPathComponent
-        DLOG("adding file to game import queue: \(file), parent directory: \(parentDirectory)")
+        DLOG("attempting to add file to game import queue: \(file), parent directory: \(parentDirectory)")
         //we should only add to the import queue files that are actual ROMs, anything else can be ignored.
         guard parentDirectory.range(of: "com.provenance.",
                                     options: [.caseInsensitive, .anchored]) != nil,
@@ -741,13 +742,14 @@ class RomsSyncer: iCloudContainerSyncer {
             let results = realm.objects(PVGame.self).filter(NSPredicate(format: "\(NSExpression(forKeyPath: \PVGame.romPath.self).keyPath) == %@", romPath))
             guard results.first == nil
             else {
+                DLOG("\(file) already exists in database")
                 return
             }
         } catch {
             errorHandler.handleError(error, file: file)
             ELOG("error searching existing ROM: \(error)")
         }
-        
+        DLOG("\(file) does NOT exist in database, adding to import set")
         newFiles.insert(file)
     }
     
@@ -785,10 +787,10 @@ class RomsSyncer: iCloudContainerSyncer {
         else {
             return
         }
-        guard pendingFilesToDownload.isEmpty
-        else {
-            return
-        }
+//        guard pendingFilesToDownload.isEmpty
+//        else {
+//            return
+//        }
         Task { @MainActor in
             tryToImportNewRomFiles()
         }
@@ -810,9 +812,13 @@ class RomsSyncer: iCloudContainerSyncer {
     }
     
     func importNewRomFiles() {
+        DLOG("newFiles: (\(newFiles.count)): \(newFiles)")
         let nextFilesToProcess = newFiles.prefix(fileImportQueueMaxCount)
         newFiles.subtract(nextFilesToProcess)
+        DLOG("newFiles minus processing files: (\(newFiles.count)): \(newFiles)")
+        DLOG("processingFiles: (\(processingFiles.count)): \(processingFiles)")
         processingFiles.formUnion(nextFilesToProcess)
+        DLOG("processingFiles plus new files: (\(processingFiles.count)): \(processingFiles)")
         let importPaths = [URL](nextFilesToProcess)
         if newFiles.isEmpty {//TODO: does this make sense?
             uploadedFiles.removeAll()
