@@ -133,6 +133,17 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         //no-op
     }
     
+    func prepareNextBatchToProcess() -> any Collection<URL> {
+        DLOG("newFiles: (\(newFiles.count)): \(newFiles)")
+        let nextFilesToProcess = newFiles.prefix(fileImportQueueMaxCount)
+        newFiles.subtract(nextFilesToProcess)
+        DLOG("newFiles minus processing files: (\(newFiles.count)): \(newFiles)")
+        if newFiles.isEmpty {
+            uploadedFiles.removeAll()
+        }
+        return nextFilesToProcess
+    }
+    
     func loadAllFromICloud(iterationComplete: (() -> Void)? = nil) -> Completable {
         return Completable.create { [weak self] completable in
             self?.setupObservers(completable: completable, iterationComplete: iterationComplete)
@@ -531,7 +542,12 @@ class SaveStateSyncer: iCloudContainerSyncer {
             return
         }
         DLOG("downloaded save file: \(file)")
-        newFiles.insert(file)
+        queue.sync { [weak self] in
+            self?.newFiles.insert(file)
+        }
+        if newFiles.count >= fileImportQueueMaxCount {
+            importNewSaves()
+        }
     }
     
     override func deleteFromDatastore(_ file: URL) {
@@ -598,14 +614,17 @@ class SaveStateSyncer: iCloudContainerSyncer {
         else {
             return
         }
-        guard pendingFilesToDownload.isEmpty
-        else {
-            return
+        queue.async(flags: .barrier) { [weak self] in
+            guard let jsonFiles = self?.prepareNextBatchToProcess(),
+                  !jsonFiles.isEmpty
+            else {
+                return
+            }
+            self?.processJsonFiles(jsonFiles)
         }
-        let jsonFiles = newFiles
-        //TODO: process 10 at a time, do it like the RomsSyncer
-        newFiles.removeAll()
-        uploadedFiles.removeAll()
+    }
+    
+    func processJsonFiles(_ jsonFiles: any Collection<URL>) {
         //TODO: try to change this to a single task and can we do this on a background thread instead of the main?
         Task {
             Task.detached { // @MainActor in
@@ -787,10 +806,6 @@ class RomsSyncer: iCloudContainerSyncer {
         else {
             return
         }
-//        guard pendingFilesToDownload.isEmpty
-//        else {
-//            return
-//        }
         Task { @MainActor in
             tryToImportNewRomFiles()
         }
@@ -812,10 +827,7 @@ class RomsSyncer: iCloudContainerSyncer {
     }
     
     func importNewRomFiles() {
-        DLOG("newFiles: (\(newFiles.count)): \(newFiles)")
-        let nextFilesToProcess = newFiles.prefix(fileImportQueueMaxCount)
-        newFiles.subtract(nextFilesToProcess)
-        DLOG("newFiles minus processing files: (\(newFiles.count)): \(newFiles)")
+        let nextFilesToProcess = prepareNextBatchToProcess()
         DLOG("processingFiles: (\(processingFiles.count)): \(processingFiles)")
         processingFiles.formUnion(nextFilesToProcess)
         DLOG("processingFiles plus new files: (\(processingFiles.count)): \(processingFiles)")
