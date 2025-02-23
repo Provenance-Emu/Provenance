@@ -680,7 +680,9 @@ public final class GameImporter: GameImporting, ObservableObject {
     // Processes each ImportItem in the queue sequentially
     private func processQueue() async {
         defer {
-            NotificationCenter.default.post(name: .RomsFinishedImporting, object: nil)
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: .RomsFinishedImporting, object: nil)
+            }
         }
         // Check for items that are either queued or have a user-chosen system
         let itemsToProcess = importQueue.filter {
