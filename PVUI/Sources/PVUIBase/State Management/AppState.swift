@@ -101,7 +101,6 @@ public class AppState: ObservableObject {
         #endif
     }
 
-
     public var sendEventWasSwizzled = false
 
     private let disposeBag = DisposeBag()
@@ -220,9 +219,15 @@ public class AppState: ObservableObject {
         }
         #endif
 
-        ILOG("AppState: RomDatabase Loading dummy cores...")
-        await try? RomDatabase.addContentlessCores(overwrite: true)
-        ILOG("AppState: RomDatabase dummy cores loaded.")
+        if PVFeatureFlagsManager.shared.isEnabled(.contentlessCores) {
+            ILOG("AppState: RomDatabase Loading dummy cores...")
+            await try? RomDatabase.addContentlessCores(overwrite: true)
+            ILOG("AppState: RomDatabase dummy cores loaded.")
+        } else {
+            ILOG("AppState: RomDatabase Clearing dummy cores...")
+            await try? RomDatabase.clearContentlessCores()
+            ILOG("AppState: RomDatabase dummy cores cleared.")
+        }
 
         ILOG("AppState: Bootup state transitioning to completed...")
         bootupStateManager.transition(to: .completed)

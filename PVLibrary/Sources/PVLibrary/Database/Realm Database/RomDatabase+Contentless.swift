@@ -15,6 +15,20 @@ import RealmSwift
 
 public extension RomDatabase {
     @MainActor
+    static func clearContentlessCores() async throws {
+        /// Get the realm instance
+        let realm = try await Realm()
+
+        /// Get all existing contentless games
+        let existingContentlessGames = realm.objects(PVGame.self).filter("contentless == true")
+        ILOG("Removing \(existingContentlessGames.count) existing contentless PVGames")
+
+        try await realm.asyncWrite {
+            realm.delete(existingContentlessGames)
+        }
+    }
+
+    @MainActor
     static func addContentlessCores(overwrite: Bool = false) async throws {
         /// Get the realm instance
         let realm = try await Realm()
@@ -25,11 +39,7 @@ public extension RomDatabase {
 
         /// If overwriting, first delete all existing contentless games
         if overwrite {
-            let existingContentlessGames = realm.objects(PVGame.self).filter("contentless == true")
-            ILOG("Overwrite request: removing \(existingContentlessGames.count) existing contentless PVGames")
-            try await realm.asyncWrite {
-                realm.delete(existingContentlessGames)
-            }
+            try await clearContentlessCores()
         }
 
         /// Create array to hold new games that need to be added
