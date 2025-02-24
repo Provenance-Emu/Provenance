@@ -27,7 +27,7 @@ struct BiosesView: View {
     /// Constants for the view
     private enum Constants {
         static let tabHeight: CGFloat = 30
-        static let borderWidth: CGFloat = 4
+        static let borderWidth: CGFloat = 2
         static let dragThreshold: CGFloat = 50
     }
 
