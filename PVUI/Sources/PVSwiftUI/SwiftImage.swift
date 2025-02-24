@@ -113,7 +113,7 @@ extension SwiftImage {
         // Text layout
         static let maxLinesOfText: Int = 3
         static let lineSpacing: CGFloat = 4.0
-        static let defaultMinFontSize: CGFloat = 8.0  // Changed default to 8pt
+        static let defaultMinFontSize: CGFloat = 12.0
         static let maxFontSize: CGFloat = 24.0
     }
 
