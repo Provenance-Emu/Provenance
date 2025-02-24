@@ -7652,42 +7652,74 @@
 				<key>PVControlType</key>
 				<string>PVButtonGroup</string>
 				<key>PVControlSize</key>
-				<string>{180,180}</string>
+				<string>{180, 180}</string>
 				<key>PVGroupedButtons</key>
 				<array>
 					<dict>
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>1</string>
+						<string>A</string>
 						<key>PVControlFrame</key>
-						<string>{{10,70},{60,70}}</string>
+						<string>{{116,60},{60,60}}</string>
 						<key>PVControlTint</key>
-						<string>#f96763</string>
+						<string>#fe6768</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>2</string>
+						<string>B</string>
 						<key>PVControlFrame</key>
-						<string>{{90,70},{60,70}}</string>
+						<string>{{60,116},{60,60}}</string>
 						<key>PVControlTint</key>
-						<string>#f96763</string>
+						<string>#7cb2e5</string>
+					</dict>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>X</string>
+						<key>PVControlFrame</key>
+						<string>{{60,4},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#45e2a3</string>
+					</dict>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>Y</string>
+						<key>PVControlFrame</key>
+						<string>{{4,60},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#fe6af4</string>
 					</dict>
 				</array>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
-				<string>PVStartButton</string>
+				<string>PVDPad</string>
+				<key>PVControlSize</key>
+				<string>{180,180}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVJoyPad</string>
+				<key>PVControlSize</key>
+				<string>{180,180}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVSelectButton</string>
 				<key>PVControlTitle</key>
-				<string>Reset</string>
+				<string>Select</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
-				<string>PVSelectButton</string>
+				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
 				<string>Start</string>
 				<key>PVControlSize</key>
@@ -7695,9 +7727,51 @@
 			</dict>
 			<dict>
 				<key>PVControlType</key>
-				<string>PVDPad</string>
+				<string>PVRightShoulderButton</string>
+				<key>PVControlTitle</key>
+				<string>R1</string>
 				<key>PVControlSize</key>
-				<string>{180,180}</string>
+				<string>{60,42}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVRightShoulderButton</string>
+				<key>PVControlTitle</key>
+				<string>R2</string>
+				<key>PVControlSize</key>
+				<string>{60,42}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVRightAnalogButton</string>
+				<key>PVControlTitle</key>
+				<string>R3</string>
+				<key>PVControlSize</key>
+				<string>{60,42}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVLeftShoulderButton</string>
+				<key>PVControlTitle</key>
+				<string>L1</string>
+				<key>PVControlSize</key>
+				<string>{60,42}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVLeftShoulderButton</string>
+				<key>PVControlTitle</key>
+				<string>L2</string>
+				<key>PVControlSize</key>
+				<string>{60,42}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVLeftAnalogButton</string>
+				<key>PVControlTitle</key>
+				<string>L3</string>
+				<key>PVControlSize</key>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
