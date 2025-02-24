@@ -70,7 +70,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     let errorHandler: ErrorHandler
     var initialSyncResult: SyncResult = .indeterminate
     let queue = DispatchQueue(label: "com.provenance.newFiles")
-    let fileImportQueueMaxCount = 10
+    let fileImportQueueMaxCount = 100
     
     init(directories: Set<String>,
          notificationCenter: NotificationCenter,
@@ -88,6 +88,10 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         let removed = removeFromiCloud()
         DLOG("removed: \(removed)")
         DLOG("dying")
+    }
+    
+    func printCurrentThread(function: String = #function) {
+        DLOG("\(function): current thread main? \(Thread.isMainThread)")
     }
     
     var localAndCloudDirectories: [URL: URL] {
@@ -134,10 +138,12 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     }
     
     func prepareNextBatchToProcess() -> any Collection<URL> {
-        DLOG("newFiles: (\(newFiles.count)): \(newFiles)")
+        DLOG("\(directories): newFiles: (\(newFiles.count)):")
+        DLOG("\(directories): \(newFiles)")
         let nextFilesToProcess = newFiles.prefix(fileImportQueueMaxCount)
         newFiles.subtract(nextFilesToProcess)
-        DLOG("newFiles minus processing files: (\(newFiles.count)): \(newFiles)")
+        DLOG("\(directories): newFiles minus processing files: (\(newFiles.count)):")
+        DLOG("\(directories): \(newFiles)")
         if newFiles.isEmpty {
             uploadedFiles.removeAll()
         }
@@ -227,7 +233,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                 }
             }
         }
-        
+        DLOG("\(directories) -> number of items: \(metadataQuery.results.count)")
         //accessing results automatically pauses updates and resumes after deallocated
         /*await*/ metadataQuery.results.forEach/*concurrentForEach*/ { [weak self] item in
             if let fileItem = item as? NSMetadataItem,
@@ -689,11 +695,15 @@ class RomsSyncer: iCloudContainerSyncer {
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
         self.init(directories: ["ROMs"], notificationCenter: notificationCenter, errorHandler: errorHandler)
         notificationCenter.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil) { [weak self] _ in
-            self?.removeGamesDeletedWhileApplicationClosed()
-            self?.handleImportNewRomFiles()
+            Task {
+                self?.removeGamesDeletedWhileApplicationClosed()
+                self?.handleImportNewRomFiles()
+            }
         }
         notificationCenter.addObserver(forName: .RomsFinishedImporting, object: nil, queue: nil) { [weak self] _ in
-            self?.handleImportNewRomFiles()
+            Task {
+                self?.handleImportNewRomFiles()
+            }
         }
     }
     
@@ -717,6 +727,7 @@ class RomsSyncer: iCloudContainerSyncer {
         else {
             return
         }
+        printCurrentThread()
         let romsPath = actualContainrUrl.appendDocumentsDirectory.appendingPathComponent(romsDirectoryName)
         DLOG("romsPath: \(romsPath)")
         let realm: Realm
@@ -756,6 +767,7 @@ class RomsSyncer: iCloudContainerSyncer {
         }
         
         do {
+            printCurrentThread()
             let realm = try Realm()
             let romPath = "\(parentDirectory)/\(fileName)"
             DLOG("attempting to query PVGame by romPath: \(romPath)")
@@ -770,8 +782,12 @@ class RomsSyncer: iCloudContainerSyncer {
             ELOG("error searching existing ROM \(file): \(error)")
         }
         DLOG("\(file) does NOT exist in database, adding to import set")
-        queue.async(flags: .barrier) { [weak self] in
+        let newFilesCount: Int = queue.sync(flags: .barrier) { [weak self] in
             self?.newFiles.insert(file)
+            return self?.newFiles.count ?? 0
+        }
+        if newFilesCount >= fileImportQueueMaxCount {
+            handleImportNewRomFiles()
         }
     }
     
@@ -809,9 +825,7 @@ class RomsSyncer: iCloudContainerSyncer {
         else {
             return
         }
-        Task { @MainActor in
-            tryToImportNewRomFiles()
-        }
+        tryToImportNewRomFiles()
     }
     
     func tryToImportNewRomFiles() {
@@ -820,6 +834,7 @@ class RomsSyncer: iCloudContainerSyncer {
         else {
             return
         }
+        printCurrentThread()
         queue.async(flags: .barrier) { [weak self] in
             self?.importNewRomFiles()
         }
@@ -831,12 +846,15 @@ class RomsSyncer: iCloudContainerSyncer {
     }
     
     func importNewRomFiles() {
+        printCurrentThread()
         let nextFilesToProcess = prepareNextBatchToProcess()
-        DLOG("processingFiles: (\(processingFiles.count)): \(processingFiles)")
+        DLOG("\(directories): processingFiles: (\(processingFiles.count)):")
+        DLOG("\(processingFiles)")
         processingFiles.formUnion(nextFilesToProcess)
-        DLOG("processingFiles plus new files: (\(processingFiles.count)): \(processingFiles)")
+        DLOG("\(directories): processingFiles plus new files: (\(processingFiles.count)):")
+        DLOG("\(directories): \(processingFiles)")
         let importPaths = [URL](nextFilesToProcess)
-        if newFiles.isEmpty {//TODO: does this make sense?
+        if newFiles.isEmpty {
             uploadedFiles.removeAll()
         }
         gameImporter.addImports(forPaths: importPaths)
