@@ -23,6 +23,7 @@ $(SRCROOT)/CoresRetro/RetroArch/modules/gambatte_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/gearcoleco_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/genesis_plus_gx_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/genesis_plus_gx_wide_libretro_ios.dylib
+$(SRCROOT)/CoresRetro/RetroArch/modules/geolith_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/gme_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/gpsp_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/handy_libretro_ios.dylib

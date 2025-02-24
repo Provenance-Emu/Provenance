@@ -9,12 +9,13 @@ $(SRCROOT)/CoresRetro/RetroArch/modules/fceumm_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/flycast_libretro.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/fuse_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/gambatte_libretro_tvos.framework
+$(SRCROOT)/CoresRetro/RetroArch/modules/geolith_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/gearcoleco_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/genesis_plus_gx_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/gme_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/hatari_libretro_tvos.framework
-#$(SRCROOT)/CoresRetro/RetroArch/modules/mame2010_libretro_tvos.framework
-#$(SRCROOT)/CoresRetro/RetroArch/modules/mame_libretro_tvos.framework
+$(SRCROOT)/CoresRetro/RetroArch/modules/mame2010_libretro_tvos.framework
+$(SRCROOT)/CoresRetro/RetroArch/modules/mame_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/mednafen_gba_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/mednafen_lynx_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/mednafen_ngp_libretro_tvos.framework
