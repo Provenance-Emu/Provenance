@@ -341,6 +341,7 @@ public final class RomDatabase {
             
             ILOG("Database initialization completed")
             databaseInitialized = true
+            NotificationCenter.default.post(name: .RomDatabaseInitialized, object: nil, userInfo: nil)
         } else {
             ILOG("Database already initialized")
         }
@@ -762,6 +763,9 @@ public extension RomDatabase {
 #if os(iOS)
         deleteFromSpotlight(game: game)
 #endif
+        defer {
+            RomDatabase.reloadGamesCache()
+        }
         do {
             deleteRelatedFilesGame(game)
             game.saveStates.forEach { try? $0.delete() }
@@ -771,7 +775,8 @@ public extension RomDatabase {
             try game.delete()
         } catch {
             // Delete the DB entry anyway if any of the above files couldn't be removed
-            do { try game.delete() } catch {
+            do { try game.delete()
+            } catch {
                 ELOG("\(error.localizedDescription)")
             }
             ELOG("\(error.localizedDescription)")
@@ -824,6 +829,15 @@ public extension RomDatabase {
                 throw RomDeletionError.fileManagerDeletionError(error)
             }
         }
+        if let jsonFile = actualSavePath?.pathDecoded.appending(".json"),
+           FileManager.default.fileExists(atPath: jsonFile) {
+            do {
+                try FileManager.default.removeItem(atPath: jsonFile)
+            } catch {
+                ELOG("Unable to delete json at path: \(jsonFile) because: \(error.localizedDescription)")
+                throw RomDeletionError.fileManagerDeletionError(error)
+            }
+        }
     }
     
     func deleteRelatedFilesGame(_ game: PVGame) {
@@ -839,6 +853,48 @@ public extension RomDatabase {
                 }
             } catch {
                 ELOG(error.localizedDescription)
+            }
+        }
+        //attempt to delete files with the same name. There's an issue when importing that the files do NOT get associated, so if we assume the user imported properly, the name should just be the same with different extensions.
+        let fileManager: FileManager = .default
+        guard let gameFileUrl = game.file?.url
+        else {
+            return
+        }
+        let parentDirectory = gameFileUrl.deletingLastPathComponent()
+        guard fileManager.fileExists(atPath: parentDirectory.pathDecoded)
+        else {
+            return
+        }
+        let children: [String]
+        do {
+            children = try fileManager.subpathsOfDirectory(atPath: parentDirectory.pathDecoded)
+        } catch {
+            ELOG("error retrieving files at directory: \(parentDirectory), \(error)")
+            return
+        }
+        guard !children.isEmpty
+        else {
+            return
+        }
+        DLOG("children: \(children)")
+        let fileName = gameFileUrl.deletingPathExtension().lastPathComponent
+        DLOG("fileName without extension: \(fileName)")
+        children.forEach { child in
+            let currentChildUrl = parentDirectory.appendingPathComponent(child)
+            let currentExtension = currentChildUrl.pathExtension
+            let currentChildFileName = currentChildUrl.deletingPathExtension().lastPathComponent
+            DLOG("current extension: \(currentExtension), current file name: \(currentChildFileName), current url: \(currentChildUrl)")
+            if !currentExtension.isEmpty
+                && (currentChildFileName == fileName
+                    || currentChildFileName.starts(with: "\(fileName) (Track ")
+                    || currentChildFileName.starts(with: "\(fileName) (Disc ")
+                    ) {
+                do {
+                    try fileManager.removeItem(at: currentChildUrl)
+                } catch {
+                    ELOG("error deleting file: \(currentChildUrl)")
+                }
             }
         }
     }

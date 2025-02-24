@@ -354,15 +354,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
     
     func _initICloud() {
         PVEmulatorConfiguration.initICloud()
-        DispatchQueue.global(qos: .background).async {
-            let useiCloud = Defaults[.iCloudSync] && URL.supportsICloud
-            if useiCloud {
-                DispatchQueue.main.async {
-                    iCloudSync.initICloudDocuments()
-                    iCloudSync.importNewSaves()
-                }
-            }
-        }
+        iCloudSync.initICloudDocuments()
     }
     
     var currentThemeObservation: Any? // AnyCancellable?

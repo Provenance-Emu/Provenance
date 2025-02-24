@@ -25,6 +25,7 @@ public enum SyncResult {
     case saveFailure
     case fileNotExist
     case success
+    case indeterminate
 }
 
 public protocol Container {
@@ -36,244 +37,390 @@ extension Container {
     var documentsURL: URL? { get { return URL.iCloudDocumentsDirectory }}
 }
 
-public protocol SyncFileToiCloud: Container {
-    var metadataQuery: NSMetadataQuery { get }
-    func syncToiCloud(completionHandler: @escaping (SyncResult) -> Void) // -> Single<SyncResult>
-    func queryFile(completionHandler: @escaping (URL?) -> Void) // -> Single<URL>
-    func downloadingFile(completionHandler: @escaping (SyncResult) -> Void) // -> Single<SyncResult>
-}
-
 public protocol iCloudTypeSyncer: Container {
+    var directories: Set<String> { get }
     var metadataQuery: NSMetadataQuery { get }
-    var metadataQueryPredicate: NSPredicate { get } // ex NSPredicate(format: "%K like 'PHOTO*'", NSMetadataItemFSNameKey)
 
-    func loadAllFromICloud() -> Completable
-    func removeAllFromICloud() -> Completable
+    func loadAllFromICloud(iterationComplete: (() -> Void)?) -> Completable
+    func insertDownloadingFile(_ file: URL)
+    func insertDownloadedFile(_ file: URL)
+    func insertUploadedFile(_ file: URL)
+    func deleteFromDatastore(_ file: URL)
+    func setNewCloudFilesAvailable()
 }
 
-final class NotificationObserver {
+enum iCloudSyncStatus {
+    case initialUpload
+    case filesAlreadyMoved
+}
 
-    var name: Notification.Name
-    var observer: NSObjectProtocol
-    var center = NotificationCenter.default
-    var object: Any?
+enum GamePurgeStatus {
+    case incomplete
+    case complete
+}
 
-    init(forName name: Notification.Name, object: Any? = nil, queue: OperationQueue? = nil, block: @escaping (Notification) -> Void) {
-        self.name = name
-        observer = center.addObserver(forName: name, object: object, queue: queue, using: block)
+class iCloudContainerSyncer: iCloudTypeSyncer {
+    lazy var pendingFilesToDownload: Set<String> = []
+    lazy var newFiles: Set<URL> = []
+    lazy var uploadedFiles: Set<URL> = []
+    let directories: Set<String>
+    let fileManager = FileManager.default
+    let notificationCenter: NotificationCenter
+    var status: iCloudSyncStatus = .initialUpload
+    let errorHandler: ErrorHandler
+    var initialSyncResult: SyncResult = .indeterminate
+    let queue = DispatchQueue(label: "com.provenance.newFiles")
+    let fileImportQueueMaxCount = 100
+    
+    init(directories: Set<String>,
+         notificationCenter: NotificationCenter,
+         errorHandler: ErrorHandler) {
+        self.notificationCenter = notificationCenter
+        self.directories = directories
+        self.errorHandler = errorHandler
     }
-
+    
     deinit {
-        center.removeObserver(observer, name: name, object: object)
+        metadataQuery.disableUpdates()
+        metadataQuery.stop()
+        notificationCenter.removeObserver(self, name: .NSMetadataQueryDidFinishGathering, object: metadataQuery)
+        notificationCenter.removeObserver(self, name: .NSMetadataQueryDidUpdate, object: metadataQuery)
+        let removed = removeFromiCloud()
+        DLOG("removed: \(removed)")
+        DLOG("dying")
     }
-}
-
-extension iCloudTypeSyncer {
-    public func loadAllFromICloud() -> Completable {
-        return Completable.create { completable in
-            Task {
-                guard self.containerURL != nil else {
-                    completable(.error(SyncError.noUbiquityURL))
-                    return Disposables.create {}
-                }
-                return Disposables.create {}
-            }
-            //        metadataQuery = NSMetadataQuery()
-            self.metadataQuery.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
-            self.metadataQuery.predicate = self.metadataQueryPredicate
-
-            let _: NotificationObserver = .init(
-                forName: Notification.Name.NSMetadataQueryDidFinishGathering,
-                object: self.metadataQuery,
-                queue: nil) {[self] notification in
-                    self.queryFinished(notification: notification)
-                    completable(.completed)
-                }
-
-            self.metadataQuery.start()
-            return Disposables.create {}
+    
+    func printCurrentThread(function: String = #function) {
+        DLOG("\(function): current thread main? \(Thread.isMainThread)")
+    }
+    
+    var localAndCloudDirectories: [URL: URL] {
+        var alliCloudDirectories = [URL: URL]()
+        guard let actualContainrUrl = containerURL
+        else {
+            return alliCloudDirectories
         }
-    }
-
-    public func removeAllFromICloud() -> Completable {
-        return Completable.create { completable in
-            Task {
-
-                guard self.containerURL != nil else {
-                    completable(.error(SyncError.noUbiquityURL))
-                    return Disposables.create {}
-                }
-                return Disposables.create {}
-            }
-            //        metadataQuery = NSMetadataQuery()
-            self.metadataQuery.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
-            self.metadataQuery.predicate = self.metadataQueryPredicate
-
-            let token: NSObjectProtocol? = NotificationCenter.default.addObserver(
-                forName: Notification.Name.NSMetadataQueryDidFinishGathering,
-                object: self.metadataQuery,
-                queue: nil) { notification in
-                    self.removeQueryFinished(notification: notification)
-//                    if let token = token {
-//                        NotificationCenter.default.removeObserver(token)
-//                    }
-                    completable(.completed)
-                }
-
-//            token = NotificationCenter.default.addObserver(
-//                forName: Notification.Name.NSMetadataQueryDidUpdate,
-//                object: self.metadataQuery,
-//                queue: nil) { notification in
-//                    self.queryFinished(notification: notification)
-//                }
-            self.metadataQuery.start()
-            return Disposables.create {
-                if let token = token {
-                    NotificationCenter.default.removeObserver(token)
-                }
-            }
+        let parentContainer = actualContainrUrl.appendDocumentsDirectory
+        directories.forEach { directory in
+            alliCloudDirectories[URL.documentsDirectory.appendingPathComponent(directory)] = parentContainer.appendingPathComponent(directory)
         }
+        return alliCloudDirectories
     }
-
-    func removeQueryFinished(notification: Notification) {
-        let mq = notification.object as! NSMetadataQuery
-        mq.disableUpdates()
-        mq.stop()
-
-        for i in 0..<mq.resultCount {
-            let result = mq.result(at: i) as! NSMetadataItem
-            let url = result.value(forAttribute: NSMetadataItemURLKey) as! URL
-
-            // Remove all items in icloud
-            do {
-                try FileManager.default.removeItem(at: url)
-            } catch {
-                ELOG("error: \(error.localizedDescription)")
-            }
-        }
-    }
-
-    func queryFinished(notification: Notification) {
-        let mq = notification.object as! NSMetadataQuery
-        mq.disableUpdates()
-        mq.stop()
-
-        //        for i in 0 ..< mq.resultCount {
-        //            let result = mq.result(at: i) as! NSMetadataItem
-        //            let name = result.value(forAttribute: NSMetadataItemFSNameKey) as! String
-        //            let url = result.value(forAttribute: NSMetadataItemURLKey) as! URL
-        // TODO: Some kind of observable rx?
-        //            let document: Self.Type! = DocumentPhoto(fileURL: url)
-        //            document?.open(completionHandler: {(success) -> Void in
-        //
-        //                if (success) {
-        //                    print("Image loaded with name \(name)")
-        //                    self.cells.append(document.image)
-        //                    self.collectionView.reloadData()
-        //                }
-        //            })
-        //        }
-    }
-}
-
-extension SyncFileToiCloud where Self: LocalFileInfoProvider {
-    private var destinationURL: URL? { get async {
-        await Task {
-            guard let containerURL = containerURL, let relativePath = url?.relativePath else { return nil }
-            return containerURL.appendingPathComponent(relativePath)
-        }.value
-    }}
-
-    func syncToiCloud() async -> SyncResult {
-        await Task {
-            guard let destinationURL = await self.destinationURL else {
-                return SyncResult.denied
-            }
-
-            let url = self.url
-
-            self.metadataQuery.disableUpdates()
-            defer {
-                self.metadataQuery.enableUpdates()
-            }
-
-            let fm = FileManager.default
-            if let url = url, fm.fileExists(atPath: url.path) {
-                try! await fm.removeItem(at: url)
-            }
-
-            do {
-                ILOG("Trying to set Ubiquitious from local (\(url?.path ?? "")) to ICloud (\(destinationURL.path))")
-                if let url = url {
-                    try fm.setUbiquitous(true, itemAt: url, destinationURL: destinationURL)
-                }
-                return .success
-            } catch {
-                ELOG("iCloud failed to set Ubiquitous: \(error.localizedDescription)")
-                return .saveFailure
-            }
-        }.value
-    }
-
-    /// - Parameter completionHandler: Non-main
-    func queryFile(completionHandler: @escaping (URL?) -> Void) {
-        metadataQuery.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
-
-        let center = NotificationCenter.default
-
-        center.addObserver(forName: .NSMetadataQueryDidFinishGathering, object: metadataQuery, queue: nil) { _ in
-            //            guard let `self` = self else {return}
-
-            self.metadataQuery.disableUpdates()
-            defer {
-                self.metadataQuery.enableUpdates()
-            }
-
-            guard self.metadataQuery.resultCount >= 1,
-                  let item = self.metadataQuery.results.first as? NSMetadataItem,
-                  let fileURL = item.value(forAttribute: NSMetadataItemURLKey) as? URL
-            else {
-                self.metadataQuery.enableUpdates()
-                return completionHandler(nil)
-            }
-
-            completionHandler(fileURL)
-            self.metadataQuery.enableUpdates()
-        }
-
-        metadataQuery.start()
-    }
-
-    /// - Parameters:
-    ///   - completionHandler: Non-main
-    func downloadingFile(completionHandler: @escaping (SyncResult) -> Void) async {
-        guard let destinationURL = await destinationURL else {
-            completionHandler(.denied)
+    
+    let metadataQuery: NSMetadataQuery = .init()
+    
+    func insertDownloadingFile(_ file: URL) {
+        guard !uploadedFiles.contains(file)
+        else {
             return
         }
-
-        DispatchQueue.global(qos: .utility).async {
-            if !FileManager.default.isUbiquitousItem(at: destinationURL) {
-                completionHandler(.fileNotExist)
-                return
+        pendingFilesToDownload.insert(file.absoluteString)
+    }
+    
+    func insertDownloadedFile(_ file: URL) {
+        pendingFilesToDownload.remove(file.absoluteString)
+    }
+    
+    func insertUploadedFile(_ file: URL) {
+        uploadedFiles.insert(file)
+    }
+    
+    func setNewCloudFilesAvailable() {
+        if pendingFilesToDownload.isEmpty {
+            status = .filesAlreadyMoved
+            DLOG("set status to \(status) and removing all uploaded files in \(directories)")
+            uploadedFiles.removeAll()
+        }
+    }
+    
+    func deleteFromDatastore(_ file: URL) {
+        //no-op
+    }
+    
+    func prepareNextBatchToProcess() -> any Collection<URL> {
+        DLOG("\(directories): newFiles: (\(newFiles.count)):")
+        DLOG("\(directories): \(newFiles)")
+        let nextFilesToProcess = newFiles.prefix(fileImportQueueMaxCount)
+        newFiles.subtract(nextFilesToProcess)
+        DLOG("\(directories): newFiles minus processing files: (\(newFiles.count)):")
+        DLOG("\(directories): \(newFiles)")
+        if newFiles.isEmpty {
+            uploadedFiles.removeAll()
+        }
+        return nextFilesToProcess
+    }
+    
+    func loadAllFromICloud(iterationComplete: (() -> Void)? = nil) -> Completable {
+        return Completable.create { [weak self] completable in
+            self?.setupObservers(completable: completable, iterationComplete: iterationComplete)
+            return Disposables.create()
+        }
+    }
+    
+    func setupObservers(completable: PrimitiveSequenceType.CompletableObserver, iterationComplete: (() -> Void)? = nil) {
+        guard containerURL != nil,
+              directories.count > 0
+        else {
+            completable(.error(SyncError.noUbiquityURL))
+            return
+        }
+        
+        initialSyncResult = syncToiCloud()
+        DLOG("syncToiCloud result: \(initialSyncResult)")
+        guard initialSyncResult != .saveFailure,
+              initialSyncResult != .denied
+        else {
+            ELOG("error moving files to iCloud container")
+            return
+        }
+        
+        metadataQuery.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
+        DLOG("directories: \(directories)")
+        var predicateFormat = ""
+        var predicateArgs = [CVarArg]()
+        directories.forEach { directory in
+            if !predicateFormat.isEmpty {
+                predicateFormat += " OR "
             }
-
-            self.metadataQuery.disableUpdates()
-            defer {
-                self.metadataQuery.enableUpdates()
+            predicateFormat += "%K CONTAINS[c] %@"
+            predicateArgs.append(NSMetadataItemPathKey)
+            predicateArgs.append("/Documents/\(directory)/")
+        }
+        metadataQuery.predicate = NSPredicate(format: predicateFormat, argumentArray: predicateArgs)
+        //TODO: update to use Publishers.MergeMany
+        notificationCenter.addObserver(
+            forName: .NSMetadataQueryDidFinishGathering,
+            object: metadataQuery,
+            queue: nil) { [weak self] notification in
+                Task {
+                    await self?.queryFinished(notification: notification)
+                    iterationComplete?()
+                }
             }
-
-            let fm = FileManager.default
-
+        //listen for deletions and new files. what about conflicts?
+        notificationCenter.addObserver(
+            forName: .NSMetadataQueryDidUpdate,
+            object: metadataQuery,
+            queue: nil) { [weak self] notification in
+                Task {
+                    await self?.queryFinished(notification: notification)
+                    iterationComplete?()
+                }
+            }
+        //TODO: unsure if the Task doesn't work with NSMetadataQuery or if there's some other issue.
+//        Task { @MainActor [weak self] in
+        DispatchQueue.main.async { [weak self] in
+            self?.metadataQuery.start()
+        }
+    }
+    
+    func queryFinished(notification: Notification) async {
+        DLOG("directories: \(directories)")
+        guard (notification.object as? NSMetadataQuery) == metadataQuery
+        else {
+            return
+        }
+        let fileManager = FileManager.default
+        var files: Set<URL> = []
+        var filesDownloaded: Set<URL> = []
+        let removedObjects = notification.userInfo?[NSMetadataQueryUpdateRemovedItemsKey]
+        if let actualRemovedObjects = removedObjects as? [NSMetadataItem] {
+            DLOG("\(directories): actualRemovedObjects: (\(actualRemovedObjects.count)) \(actualRemovedObjects)")
+            await actualRemovedObjects.concurrentForEach { [weak self] item in
+                if let file = item.value(forAttribute: NSMetadataItemURLKey) as? URL {
+                    DLOG("file DELETED from iCloud: \(file)")
+                    self?.deleteFromDatastore(file)
+                }
+            }
+        }
+        DLOG("\(directories) -> number of items: \(metadataQuery.results.count)")
+        //accessing results automatically pauses updates and resumes after deallocated
+        /*await*/ metadataQuery.results.forEach/*concurrentForEach*/ { [weak self] item in
+            if let fileItem = item as? NSMetadataItem,
+               let file = fileItem.value(forAttribute: NSMetadataItemURLKey) as? URL,
+               let isDirectory = try? file.resourceValues(forKeys: [.isDirectoryKey]).isDirectory,
+               !isDirectory,//we only
+               let downloadStatus = fileItem.value(forAttribute: NSMetadataUbiquitousItemDownloadingStatusKey) as? String {
+                DLOG("Found: \(file), download status: \(downloadStatus)")
+                switch downloadStatus {
+                    case  NSMetadataUbiquitousItemDownloadingStatusNotDownloaded:
+                        do {
+                            try fileManager.startDownloadingUbiquitousItem(at: file)
+                            //self?.queue.async(flags: .barrier) {
+                                files.insert(file)
+                                self?.insertDownloadingFile(file)
+                            //}
+                            DLOG("Download started for: \(file)")
+                        } catch {
+                            self?.errorHandler.handleError(error, file: file)
+                            ELOG("Failed to start download on file \(file): \(error)")
+                        }
+                    case NSMetadataUbiquitousItemDownloadingStatusCurrent:
+                        DLOG("item up to date: \(file)")
+                        if !fileManager.fileExists(atPath: file.pathDecoded) {
+                            DLOG("file DELETED from iCloud: \(file)")
+                            self?.deleteFromDatastore(file)
+                        } else {
+                            //self?.queue.async(flags: .barrier) {
+                                //in the case when we are initially turning on iCloud or the app is opened and coming into the foreground for the first time, we try to import any files already downloaded
+                                if self?.status == .initialUpload {
+                                    self?.insertDownloadingFile(file)
+                                }
+                                filesDownloaded.insert(file)
+                                self?.insertDownloadedFile(file)
+                            //}
+                        }
+                    default: DLOG("\(file): download status: \(downloadStatus)")
+                }
+            }
+        }
+        //TODO: for ROMs and saves, perhaps we need to store the downloaded files that need to be process in the case of a crash or the user puts the app in the background.
+        setNewCloudFilesAvailable()
+        DLOG("\(directories): current iteration: files pending to be downloaded: \(files.count), files downloaded : \(filesDownloaded.count)")
+    }
+    
+    func syncToiCloud() -> SyncResult {
+        let allDirectories = localAndCloudDirectories
+        guard allDirectories.count > 0
+        else {
+            return .denied
+        }
+        var moveResult: SyncResult? = nil
+        allDirectories.forEach { (localDirectory: URL, iCloudDirectory: URL) in
+            
+            let moved = moveFiles(at: localDirectory,
+                                  containerDestination: iCloudDirectory,
+                                  existingClosure: { existing in
+                do {
+                    try fileManager.removeItem(atPath: existing.pathDecoded)
+                } catch {
+                    errorHandler.handleError(error, file: existing)
+                    ELOG("error deleting existing file \(existing) that already exists in iCloud: \(error)")
+                }
+            }) { currentSource, currentDestination in
+                try fileManager.setUbiquitous(true, itemAt: currentSource, destinationURL: currentDestination)
+            }
+            if moved == .saveFailure {
+                moveResult = .saveFailure
+            }
+        }
+        return moveResult ?? .success
+    }
+    
+    func removeFromiCloud() -> SyncResult {
+        let allDirectories = localAndCloudDirectories
+        guard allDirectories.count > 0
+        else {
+            return .denied
+        }
+        var moveResult: SyncResult?
+        allDirectories.forEach { (localDirectory: URL, iCloudDirectory: URL) in
+            let moved = moveFiles(at: iCloudDirectory,
+                             containerDestination: localDirectory,
+                             existingClosure: { existing in
+                do {
+                    try fileManager.evictUbiquitousItem(at: existing)
+                } catch {//this happens when a file is being presented on the UI (saved states image) and thus we can't remove the icloud download
+                    errorHandler.handleError(error, file: existing)
+                    ELOG("error evicting iCloud file: \(existing), \(error)")
+                }
+            }) { currentSource, currentDestination in
+                try fileManager.copyItem(at: currentSource, to: currentDestination)
+                do {
+                    try fileManager.evictUbiquitousItem(at: currentSource)
+                } catch {//this happens when a file is being presented on the UI (saved states image) and thus we can't remove the icloud download
+                    errorHandler.handleError(error, file: currentSource)
+                    ELOG("error evicting iCloud file: \(currentSource), \(error)")
+                }
+            }
+            if moved == .saveFailure {
+                moveResult = .saveFailure
+            }
+        }
+        return moveResult ?? .success
+    }
+    
+    func moveFiles(at source: URL,
+                   containerDestination: URL,
+                   existingClosure: ((URL) -> Void),
+                   moveClosure: (URL, URL) throws -> Void) -> SyncResult {
+        DLOG("source: \(source)")
+        guard fileManager.fileExists(atPath: source.pathDecoded)
+        else {
+            return .fileNotExist
+        }
+        let subdirectories: [String]
+        do {
+            subdirectories = try fileManager.subpathsOfDirectory(atPath: source.pathDecoded)
+        } catch {
+            errorHandler.handleError(error, file: source)
+            ELOG("failed to get directory contents \(source): \(error)")
+            return .saveFailure
+        }
+        DLOG("subdirectories of \(source): \(subdirectories)")
+        for currentChild in subdirectories {
+            let currentItem = source.appendingPathComponent(currentChild)
+            
+            var isDirectory: ObjCBool = false
+            let exists = fileManager.fileExists(atPath: currentItem.pathDecoded, isDirectory: &isDirectory)
+            DLOG("\(currentItem) isDirectory?\(isDirectory) exists?\(exists)")
+            let destination = containerDestination.appendingPathComponent(currentChild)
+            DLOG("new destination: \(destination)")
+            if isDirectory.boolValue && !fileManager.fileExists(atPath: destination.pathDecoded) {
+                DLOG("\(destination) does NOT exist")
+                do {
+                    try fileManager.createDirectory(atPath: destination.pathDecoded, withIntermediateDirectories: true)
+                } catch {
+                    errorHandler.handleError(error, file: destination)
+                    ELOG("error creating directory: \(destination), \(error)")
+                }
+            }
+            if isDirectory.boolValue {
+                continue
+            }
+            if fileManager.fileExists(atPath: destination.pathDecoded) {
+                existingClosure(currentItem)
+                continue
+            }
             do {
-                // TODO: Should really wait and listen for it to finish downloading, this call is async
-                try fm.startDownloadingUbiquitousItem(at: destinationURL)
-                completionHandler(.success)
+                ILOG("Trying to move \(currentItem.pathDecoded) to \(destination.pathDecoded)")
+                try moveClosure(currentItem, destination)
+                insertUploadedFile(destination)
             } catch {
-                ELOG("iCloud Download error: \(error.localizedDescription)")
-                completionHandler(.saveFailure)
-                return
+                errorHandler.handleError(error, file: currentItem)
+                //this could indicate no more space is left when moving to iCloud
+                ELOG("failed to move \(currentItem.pathDecoded) to \(destination.pathDecoded): \(error)")
             }
+        }
+        return .success
+    }
+}
+
+extension Int64 {
+    var toGb: String {
+        String(format: "%.2f GBs", Double(self / (1024 * 1024 * 1024)))
+    }
+}
+
+extension URL {
+    /// calls URL.path(percentEncoded: false) which is the same as the upcoming deprecation of URL.path
+    var pathDecoded: String {
+        path(percentEncoded: false)
+    }
+    var appendDocumentsDirectory: URL {
+        appendingPathComponent("Documents")
+    }
+}
+
+extension Realm {
+    func deleteGame(_ game: PVGame) throws {
+        try write {
+            game.saveStates.forEach { try? $0.delete() }
+            game.cheats.forEach { try? $0.delete() }
+            game.recentPlays.forEach { try? $0.delete() }
+            game.screenShots.forEach { try? $0.delete() }
+            delete(game)
+            RomDatabase.reloadGamesCache()
         }
     }
 }
@@ -283,123 +430,219 @@ enum iCloudError: Error {
 }
 
 public enum iCloudSync {
-    static var disposeBag: DisposeBag?
+    case initialAppLoad
+    case appLoaded
+    
+    static var disposeBag: DisposeBag!
+    static var gameImporter = GameImporter.shared
+    static var state: iCloudSync = .initialAppLoad
+    static let errorHandler: ErrorHandler = iCloudErrorHandler.shared
+    
     public static func initICloudDocuments() {
+        Task {
+            for await value in Defaults.updates(.iCloudSync) {
+                iCloudSyncChanged(value)
+            }
+        }
+    }
+    
+    static func iCloudSyncChanged(_ newValue: Bool) {
+        DLOG("new iCloudSync value: \(newValue)")
+        guard newValue
+        else {
+            turnOff()
+            return
+        }
+
+        guard URL.supportsICloud else {
+            DLOG("attempted to turn on iCloud, but iCloud is NOT setup on the device")
+            return
+        }
+        turnOn()
+    }
+    
+    static func turnOn() {
+        DLOG("turning on iCloud")
+        //reset ROMs path
+        gameImporter.gameImporterDatabaseService.setRomsPath(url: gameImporter.romsPath)
+        errorHandler.clear()
         let fm = FileManager.default
         if let currentiCloudToken = fm.ubiquityIdentityToken {
             do {
                 let newTokenData = try NSKeyedArchiver.archivedData(withRootObject: currentiCloudToken, requiringSecureCoding: false)
                 UserDefaults.standard.set(newTokenData, forKey: UbiquityIdentityTokenKey)
             } catch {
-                ELOG("\(error.localizedDescription)")
+                errorHandler.handleError(error, file: nil)
+                ELOG("error serializing iCloud token: \(error)")
             }
         } else {
             UserDefaults.standard.removeObject(forKey: UbiquityIdentityTokenKey)
         }
 
-        let saveStateSyncer = SaveStateSyncer()
-        let disposeBag = DisposeBag()
-        self.disposeBag = disposeBag
-        saveStateSyncer.loadAllFromICloud()
+        //TODO: should we pause when a game starts so we don't interfere with the game and continue listening when no game is running?
+        disposeBag = DisposeBag()
+        var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots"],
+                                                                  notificationCenter: .default,
+                                                                  errorHandler: iCloudErrorHandler.shared)
+        nonDatabaseFileSyncer.loadAllFromICloud()
             .observe(on: MainScheduler.instance)
-            .subscribe(onCompleted: {
-                importNewSaves()
-                self.disposeBag = nil
-            }) { error in
-                ELOG("\(error.localizedDescription)")
+            .subscribe(onError: { error in
+                ELOG(error.localizedDescription)
+            }) {
+                DLOG("disposing nonDatabaseFileSyncer")
+                nonDatabaseFileSyncer = nil
+            }.disposed(by: disposeBag)
+        var saveStateSyncer: SaveStateSyncer! = .init(notificationCenter: .default, errorHandler: iCloudErrorHandler.shared)
+        saveStateSyncer.loadAllFromICloud() {
+                saveStateSyncer.importNewSaves()
+            }.observe(on: MainScheduler.instance)
+            .subscribe(onError: { error in
+                ELOG(error.localizedDescription)
+            }) {
+                DLOG("disposing saveStateSyncer")
+                saveStateSyncer = nil
+            }.disposed(by: disposeBag)
+        
+        var romsSyncer: RomsSyncer! = .init(notificationCenter: .default, errorHandler: iCloudErrorHandler.shared)
+        romsSyncer.loadAllFromICloud() {
+                romsSyncer.handleImportNewRomFiles()
+            }.observe(on: MainScheduler.instance)
+            .subscribe(onError: { error in
+                ELOG(error.localizedDescription)
+            }) {
+                DLOG("disposing romsSyncer")
+                romsSyncer = nil
             }.disposed(by: disposeBag)
     }
+    
+    static func turnOff() {
+        DLOG("turning off iCloud")
+        errorHandler.clear()
+        disposeBag = nil
+        //reset ROMs path
+        gameImporter.gameImporterDatabaseService.setRomsPath(url: gameImporter.romsPath)
+    }
+}
 
-    public static func importNewSaves() {
-        if !RomDatabase.databaseInitialized {
-            // Keep trying // TODO: Add a notification for this
-            // instead of dumb loop
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                self.importNewSaves()
-            }
+//MARK: - iCloud syncers
+
+//TODO: perhaps 1 generic class since a lot of this code is similar and move the extension onto generic class. we could just add a protocol delegate dependency for ROMs and SaveState classes that does specific code
+class SaveStateSyncer: iCloudContainerSyncer {
+    let jsonDecorder = JSONDecoder()
+    convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
+        self.init(directories: ["Save States"], notificationCenter: notificationCenter, errorHandler: errorHandler)
+        jsonDecorder.dataDecodingStrategy = .deferredToData
+        notificationCenter.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil) { [weak self] _ in
+            self?.importNewSaves()
+        }
+    }
+    
+    deinit {
+        notificationCenter.removeObserver(self)
+    }
+    
+    override func insertDownloadedFile(_ file: URL) {
+        guard let _ = pendingFilesToDownload.remove(file.absoluteString),
+              "json".caseInsensitiveCompare(file.pathExtension) == .orderedSame
+        else {
             return
         }
-
-        Task {
-            let savesDirectory = Paths.saveSavesPath
-            let legacySavesDirectory = Paths.Legacy.saveSavesPath
-            let fm = FileManager.default
-            guard let subDirs = try? fm.contentsOfDirectory(at: savesDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else {
-                ELOG("Failed to read saves path: \(savesDirectory.path)")
+        DLOG("downloaded save file: \(file)")
+        let newFilesCount: Int = queue.sync { [weak self] in
+            self?.newFiles.insert(file)
+            return self?.newFiles.count ?? 0
+        }
+        if newFilesCount >= fileImportQueueMaxCount {
+            importNewSaves()
+        }
+    }
+    
+    override func deleteFromDatastore(_ file: URL) {
+        guard "jpg".caseInsensitiveCompare(file.pathExtension) == .orderedSame
+        else {
+            return
+        }
+        do {
+            let realm = try Realm()
+            DLOG("attempting to query PVSaveState by file: \(file)")
+            let gameDirectory = file.deletingLastPathComponent().lastPathComponent
+            let savesDirectory = file.deletingLastPathComponent().deletingLastPathComponent().lastPathComponent
+            let partialPath = "\(savesDirectory)/\(gameDirectory)/\(file.lastPathComponent)"
+            let imageField = NSExpression(forKeyPath: \PVSaveState.image.self).keyPath
+            let partialPathField = NSExpression(forKeyPath: \PVImageFile.partialPath.self).keyPath
+            let results = realm.objects(PVSaveState.self).filter(NSPredicate(format: "\(imageField).\(partialPathField) CONTAINS[c] %@", partialPath))
+            DLOG("saves found: \(results.count)")
+            guard let save: PVSaveState = results.first
+            else {
                 return
             }
-
-            let saveFiles = subDirs.compactMap {
-                try? fm.contentsOfDirectory(at: $0, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-            }.joined()
-            let jsonFiles = saveFiles.filter { $0.pathExtension == "json" }
-            let jsonDecorder = JSONDecoder()
-            jsonDecorder.dataDecodingStrategy = .deferredToData
-
-            let legacySubDirs: [URL]?
-            do {
-                legacySubDirs = try fm.contentsOfDirectory(at: legacySavesDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-            } catch {
-                ELOG("\(error.localizedDescription)")
-                legacySubDirs = nil
+            try realm.write {
+                realm.delete(save)
             }
+        } catch {
+            errorHandler.handleError(error, file: file)
+            ELOG("error delating \(file) from database: \(error)")
+        }
+    }
+    
+    func getSaveFrom(_ json: URL) throws -> SaveState? {
+        guard fileManager.fileExists(atPath: json.pathDecoded)
+        else {
+            return nil
+        }
+        let secureDoc = json.startAccessingSecurityScopedResource()
 
-            await legacySubDirs?.asyncForEach {
-                do {
-                    let destinationURL = Paths.saveSavesPath.appendingPathComponent($0.lastPathComponent, isDirectory: true)
-                    if !fm.isUbiquitousItem(at: destinationURL) {
-                        try fm.setUbiquitous(true,
-                                             itemAt: $0,
-                                             destinationURL: destinationURL)
-                    } else {
-                        //                        var resultURL: NSURL?
-                        //                        try fm.replaceItem(at: destinationURL, withItemAt: $0, backupItemName: nil, resultingItemURL: &resultURL)
-                        //                        try fm.evictUbiquitousItem(at: destinationURL)
-                        try fm.startDownloadingUbiquitousItem(at: destinationURL)
-                    }
-                } catch {
-                    ELOG("Error: \(error)")
-                }
+        defer {
+            if secureDoc {
+                json.stopAccessingSecurityScopedResource()
             }
-            //        let saves = realm.objects(PVSaveState.self)
-            //        saves.forEach {
-            //            fm.setUbiquitous(true, itemAt: $0.file.url, destinationURL: Paths.saveSavesPath.appendingPathComponent($0.game.file.fileNameWithoutExtension, isDirectory: true).app)
-            //        }
-            Task.detached {
-                jsonFiles.forEach { json in
-                    do {
-                        try FileManager.default.startDownloadingUbiquitousItem(at: json)
-                    } catch {
-                        ELOG("Download error: " + error.localizedDescription)
-                    }
-                }
-            }
+        }
+        
+        var dataMaybe = fileManager.contents(atPath: json.pathDecoded)
+        if dataMaybe == nil {
+            dataMaybe = try Data(contentsOf: json, options: [.uncached])
+        }
+        guard let data = dataMaybe else {
+            throw iCloudError.dataReadFail
+        }
 
+        DLOG("Data read \(String(data: data, encoding: .utf8) ?? "Nil")")
+        let save = try jsonDecorder.decode(SaveState.self, from: data)
+        DLOG("Read JSON data at (\(json.absoluteString)")
+        return save
+    }
+    
+    func importNewSaves() {
+        guard RomDatabase.databaseInitialized
+        else {
+            return
+        }
+        guard !newFiles.isEmpty
+        else {
+            return
+        }
+        queue.async(flags: .barrier) { [weak self] in
+            guard let jsonFiles = self?.prepareNextBatchToProcess(),
+                  !jsonFiles.isEmpty
+            else {
+                return
+            }
+            self?.processJsonFiles(jsonFiles)
+        }
+    }
+    
+    func processJsonFiles(_ jsonFiles: any Collection<URL>) {
+        //TODO: try to change this to a single task and can we do this on a background thread instead of the main?
+        Task {
             Task.detached { // @MainActor in
-                await jsonFiles.concurrentForEach { @MainActor json in
-                    let realm = try! await Realm()
+                await jsonFiles.concurrentForEach { @MainActor [weak self] json in
                     do {
-                        
-                        let secureDoc = json.startAccessingSecurityScopedResource()
-
-                        defer {
-                            if secureDoc {
-                                json.stopAccessingSecurityScopedResource()
-                            }
+                        let realm = try await Realm()
+                        guard let save = try self?.getSaveFrom(json)
+                        else {
+                            return
                         }
                         
-                        var dataMaybe = FileManager.default.contents(atPath: json.path)
-                        if dataMaybe == nil {
-                            dataMaybe = try Data(contentsOf: json, options: [.uncached])
-                        }
-                        guard let data = dataMaybe else {
-                            throw iCloudError.dataReadFail
-                        }
-
-                        DLOG("Data read \(String(data: data, encoding: .utf8) ?? "Nil")")
-                        let save = try jsonDecorder.decode(SaveState.self, from: data)
-                        DLOG("Read JSON data at (\(json.absoluteString)")
-
                         let existing = realm.object(ofType: PVSaveState.self, forPrimaryKey: save.id)
                         if let existing = existing {
                             // Skip if Save already exists
@@ -411,7 +654,8 @@ public enum iCloudSync {
                                         existing.game = game
                                     }
                                 } catch {
-                                    ELOG("Failed to update game: \(error.localizedDescription)")
+                                    self?.errorHandler.handleError(error, file: json)
+                                    ELOG("Failed to update game \(json): \(error)")
                                 }
                             }
                             // TODO: Maybe any other missing data updates or update values in general?
@@ -425,14 +669,16 @@ public enum iCloudSync {
                                     realm.add(newSave, update: .all)
                                 }
                             } catch {
-                                ELOG(error.localizedDescription)
+                                self?.errorHandler.handleError(error, file: json)
+                                ELOG("error adding new save \(json): \(error)")
                             }
                         } else {
                             realm.add(newSave, update: .all)
                         }
                         ILOG("Added new save \(newSave.debugDescription)")
                     } catch {
-                        ELOG("Decode error: " + error.localizedDescription)
+                        self?.errorHandler.handleError(error, file: json)
+                        ELOG("Decode error on \(json): \(error)")
                         return
                     }
                 }
@@ -441,9 +687,261 @@ public enum iCloudSync {
     }
 }
 
-class SaveStateSyncer: iCloudTypeSyncer {
-    public var metadataQuery: NSMetadataQuery = .init()
-    public var metadataQueryPredicate: NSPredicate {
-        return NSPredicate(format: "%K CONTAINS[c] 'Save States'", NSMetadataItemPathKey)
+class RomsSyncer: iCloudContainerSyncer {
+    let gameImporter = GameImporter.shared
+    var processingFiles = Set<URL>()
+    var purgeStatus: GamePurgeStatus = .incomplete
+    
+    convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
+        self.init(directories: ["ROMs"], notificationCenter: notificationCenter, errorHandler: errorHandler)
+        notificationCenter.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil) { [weak self] _ in
+            Task {
+                self?.removeGamesDeletedWhileApplicationClosed()
+                self?.handleImportNewRomFiles()
+            }
+        }
+        notificationCenter.addObserver(forName: .RomsFinishedImporting, object: nil, queue: nil) { [weak self] _ in
+            Task {
+                self?.handleImportNewRomFiles()
+            }
+        }
+    }
+    
+    deinit {
+        notificationCenter.removeObserver(self)
+    }
+    
+    func removeGamesDeletedWhileApplicationClosed() {
+        guard purgeStatus == .incomplete,
+              initialSyncResult == .success,
+           errorHandler.numberOfErrors == 0
+        else {
+            return
+        }
+        
+        defer {
+            purgeStatus = .complete
+        }
+        guard let actualContainrUrl = containerURL,
+              let romsDirectoryName = directories.first
+        else {
+            return
+        }
+        printCurrentThread()
+        let romsPath = actualContainrUrl.appendDocumentsDirectory.appendingPathComponent(romsDirectoryName)
+        DLOG("romsPath: \(romsPath)")
+        let realm: Realm
+        do {
+            realm = try Realm()
+        } catch {
+            ELOG("error removing game entries that do NOT exist in the cloud container \(romsPath)")
+            return
+        }
+        var games = realm.objects(PVGame.self)
+        games.forEach { game in
+            let gameUrl = romsPath.appendingPathComponent(game.romPath)
+            if !fileManager.fileExists(atPath: gameUrl.pathDecoded) {
+                do {
+                    try realm.deleteGame(game)
+                } catch {
+                    ELOG("error deleting \(gameUrl), \(error)")
+                }
+            }
+        }
+    }
+    
+    override func insertDownloadedFile(_ file: URL) {
+        guard let _ = pendingFilesToDownload.remove(file.absoluteString)
+        else {
+            return
+        }
+        
+        let parentDirectory = file.deletingLastPathComponent().lastPathComponent
+        DLOG("attempting to add file to game import queue: \(file), parent directory: \(parentDirectory)")
+        //we should only add to the import queue files that are actual ROMs, anything else can be ignored.
+        guard parentDirectory.range(of: "com.provenance.",
+                                    options: [.caseInsensitive, .anchored]) != nil,
+              let fileName = file.lastPathComponent.removingPercentEncoding
+        else {
+            return
+        }
+        
+        do {
+            printCurrentThread()
+            let realm = try Realm()
+            let romPath = "\(parentDirectory)/\(fileName)"
+            DLOG("attempting to query PVGame by romPath: \(romPath)")
+            let results = realm.objects(PVGame.self).filter(NSPredicate(format: "\(NSExpression(forKeyPath: \PVGame.romPath.self).keyPath) == %@", romPath))
+            guard results.first == nil
+            else {
+                DLOG("\(file) already exists in database")
+                return
+            }
+        } catch {
+            errorHandler.handleError(error, file: file)
+            ELOG("error searching existing ROM \(file): \(error)")
+        }
+        DLOG("\(file) does NOT exist in database, adding to import set")
+        let newFilesCount: Int = queue.sync(flags: .barrier) { [weak self] in
+            self?.newFiles.insert(file)
+            return self?.newFiles.count ?? 0
+        }
+        if newFilesCount >= fileImportQueueMaxCount {
+            handleImportNewRomFiles()
+        }
+    }
+    
+    override func deleteFromDatastore(_ file: URL) {
+        //TODO: remove cloud download, but keep in iCloud. this way the ROM isn't deleted from all devices
+        guard let fileName = file.lastPathComponent.removingPercentEncoding,
+              let parentDirectory = file.deletingLastPathComponent().lastPathComponent.removingPercentEncoding
+        else {
+            return
+        }
+        do {
+            let realm = try Realm()
+            let romPath = "\(parentDirectory)/\(fileName)"
+            DLOG("attempting to query PVGame by romPath: \(romPath)")
+            let results = realm.objects(PVGame.self).filter(NSPredicate(format: "\(NSExpression(forKeyPath: \PVGame.romPath.self).keyPath) == %@", romPath))
+            guard let game: PVGame = results.first
+            else {
+                return
+            }
+            
+            try realm.deleteGame(game)
+        } catch {
+            errorHandler.handleError(error, file: file)
+            ELOG("error deleting ROM \(file) from database: \(error)")
+        }
+    }
+    
+    func handleImportNewRomFiles() {
+        guard RomDatabase.databaseInitialized
+        else {
+            return
+        }
+        clearProcessedFiles()
+        guard !newFiles.isEmpty
+        else {
+            return
+        }
+        tryToImportNewRomFiles()
+    }
+    
+    func tryToImportNewRomFiles() {
+        //if the importer is currently importing files, we have to wait
+        guard gameImporter.processingState == .idle
+        else {
+            return
+        }
+        printCurrentThread()
+        queue.async(flags: .barrier) { [weak self] in
+            self?.importNewRomFiles()
+        }
+    
+    }
+    
+    func clearProcessedFiles() {
+        gameImporter.removeSuccessfulImports(from: &processingFiles)
+    }
+    
+    func importNewRomFiles() {
+        printCurrentThread()
+        let nextFilesToProcess = prepareNextBatchToProcess()
+        DLOG("\(directories): processingFiles: (\(processingFiles.count)):")
+        DLOG("\(processingFiles)")
+        processingFiles.formUnion(nextFilesToProcess)
+        DLOG("\(directories): processingFiles plus new files: (\(processingFiles.count)):")
+        DLOG("\(directories): \(processingFiles)")
+        let importPaths = [URL](nextFilesToProcess)
+        if newFiles.isEmpty {
+            uploadedFiles.removeAll()
+        }
+        gameImporter.addImports(forPaths: importPaths)
+        gameImporter.startProcessing()
+    }
+}
+
+struct iCloudSyncError {
+    let file: String?
+    var summary: String {
+        error.localizedDescription
+    }
+    let error: Error
+}
+
+protocol Queue {
+    associatedtype Entry
+    var count: Int { get }
+    mutating func enqueue(entry: Entry)
+    mutating func dequeue() -> Entry?
+    func peek() -> Entry?
+    mutating func clear()
+}
+
+struct iCloudErrorsQueue: Queue {
+    var errors = [iCloudSyncError]()
+    
+    var count: Int {
+        errors.count
+    }
+    
+    mutating func enqueue(entry: iCloudSyncError) {
+        errors.insert(entry, at: 0)
+    }
+    
+    mutating func dequeue() -> iCloudSyncError? {
+        guard !errors.isEmpty
+        else {
+            return nil
+        }
+        return errors.removeFirst()
+    }
+    
+    func peek() -> iCloudSyncError? {
+        errors.first
+    }
+    
+    mutating func clear() {
+        errors.removeAll()
+    }
+}
+
+protocol ErrorHandler {
+    var allErrorSummaries: [String] { get }
+    var allFullErrors: [String] { get }
+    var allErrors: [iCloudSyncError] { get }
+    var numberOfErrors: Int { get }
+    func handleError(_ error: Error, file: URL?)
+    func clear()
+}
+
+class iCloudErrorHandler: ErrorHandler {
+    static let shared = iCloudErrorHandler()
+    var queue = iCloudErrorsQueue()
+    
+    var allErrorSummaries: [String] {
+        queue.errors.map { $0.summary }
+    }
+    
+    var allFullErrors: [String] {
+        queue.errors.map { "\($0.error)" }
+    }
+    
+    var allErrors: [iCloudSyncError] {
+        queue.errors
+    }
+    
+    var numberOfErrors: Int {
+        queue.count
+    }
+    
+    func handleError(_ error: any Error, file: URL?) {
+        let syncError = iCloudSyncError(file: file?.path(percentEncoded: false), error: error)
+        queue.enqueue(entry: syncError)
+    }
+    
+    func clear() {
+        queue.clear()
     }
 }
