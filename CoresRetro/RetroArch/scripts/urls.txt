@@ -47,6 +47,7 @@ https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mesen-s_libretro_io
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mesen_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mgba_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/minivmac_libretro_ios.dylib.zip
+https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mrboom_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mu_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mupen64plus_next_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/nekop2_libretro_ios.dylib.zip
@@ -62,6 +63,7 @@ https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/play_libretro_ios.d
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/pcsx_rearmed_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/ppsspp_libretro.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/potator_libretro_ios.dylib.zip
+https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/prboom_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/prosystem_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/race_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/sameboy_libretro_ios.dylib.zip

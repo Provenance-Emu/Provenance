@@ -39,6 +39,8 @@ https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/np2kai_libretro_tv
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/numero_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/o2em_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/opera_libretro_tvos.dylib.zip
+https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/mrboom_libretro_tvos.dylib.zip
+https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/prboom_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/parallel_n64_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/pcsx_rearmed_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/potator_libretro_tvos.dylib.zip
