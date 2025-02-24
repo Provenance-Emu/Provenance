@@ -40,7 +40,7 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     @Persisted public private(set) var importDate: Date = Date()
 
     @Persisted(indexed: true) public var systemIdentifier: String = ""
-    @Persisted public var system: PVSystem!
+    @Persisted public var system: PVSystem?
 
     /*
      Primary key must be set at import time and can't be changed after.

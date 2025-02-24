@@ -34,7 +34,7 @@ extension PVEmulatorViewController {
                                 var hasCue:Bool = false;
                                 var cueFile:URL?
                                 for file in unzippedFiles {
-                                    if self.game.system.supportedExtensions.contains( file.pathExtension.lowercased() ) {
+                                    if let system = self.game.system, system.supportedExtensions.contains( file.pathExtension.lowercased() ) {
                                         romPathMaybe = file;
                                         if (file.pathExtension.lowercased() == "cue") {
                                             cueFile = file;

@@ -588,7 +588,7 @@ extension GameLaunchingViewController where Self: UIViewController {
         guard let core = RomDatabase.sharedInstance.realm.object(ofType: PVCore.self, forPrimaryKey: core.identifier) else {
             return
         }
-        guard let coreInstance = core.createInstance(forSystem: game.system) else {
+        guard let system = game.system, let coreInstance = core.createInstance(forSystem: system) else {
             displayAndLogError(withTitle: "Cannot open game", message: "Failed to create instance of core '\(core.projectName)'.")
             ELOG("Failed to init core instance")
             return
@@ -617,7 +617,7 @@ extension GameLaunchingViewController where Self: UIViewController {
 
         present(emulatorViewController, animated: true) { () -> Void in
 
-            emulatorViewController.gpuViewController.screenType = game.system.screenType.rawValue
+            emulatorViewController.gpuViewController.screenType = (game.system?.screenType ?? .unknown).rawValue
 
             // Open the save state after a bootup delay if the user selected one
             // Use a timer loop on ios 10+ to check if the emulator has started running

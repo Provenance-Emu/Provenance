@@ -126,14 +126,19 @@ struct HomeView: SwiftUI.View {
                 ScrollViewReader { proxy in
                     LazyVStack {
                         continuesSection()
-                        recentlyPlayedSection()
+                            .id("section_continues")
                         favoritesSection()
+                            .id("section_favorites")
+                        recentlyPlayedSection()
+                            .id("section_recent")
                         mostPlayedSection()
                         displayOptionsView()
                         if viewModel.viewGamesAsGrid {
                             showGamesGrid(allGames)
+                                .id("section_allgames")
                         } else {
                             showGamesList(allGames)
+                                .id("section_allgames")
                         }
                     }
                     .onChange(of: focusedItemInSection) { newValue in
@@ -204,7 +209,7 @@ struct HomeView: SwiftUI.View {
         .sheet(isPresented: $showArtworkSearch) {
             ArtworkSearchView(
                 initialSearch: gameToUpdateCover?.title ?? "",
-                initialSystem: gameToUpdateCover?.system.enumValue
+                initialSystem: gameToUpdateCover?.system?.enumValue ?? SystemIdentifier.Unknown
             ) { selection in
                 if let game = gameToUpdateCover {
                     Task {
@@ -253,7 +258,7 @@ struct HomeView: SwiftUI.View {
                 let viewModel = ContinuesMagementViewModel(
                     driver: driver,
                     gameTitle: game.title,
-                    systemTitle: game.system.name,
+                    systemTitle: game.system?.name ?? "",
                     numberOfSaves: game.saveStates.count,
                     onLoadSave: { saveID in
                         continuesManagementState = nil

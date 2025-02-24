@@ -209,7 +209,7 @@ struct HomeContinueSection: SwiftUI.View {
     #if !os(tvOS)
     @State private var hapticGenerator = UIImpactFeedbackGenerator(style: .light)
     #endif
-    
+
     /// Constants for styling
     private enum Constants {
         static let cornerRadius: CGFloat = 16
@@ -289,7 +289,7 @@ struct HomeContinueSection: SwiftUI.View {
                             ForEach(0..<pageCount, id: \.self) { pageIndex in
                                 SaveStatesGridView(
                                     pageIndex: pageIndex,
-                                    filteredSaveStates: filteredSaveStates,
+                                    filteredSaveStates: Array(filteredSaveStates), // Convert to Array to prevent Realm threading issues
                                     isLandscapePhone: isLandscapePhone,
                                     gridColumns: gridColumns,
                                     adjustedHeight: adjustedHeight,
@@ -299,6 +299,7 @@ struct HomeContinueSection: SwiftUI.View {
                                     parentFocusedItem: $parentFocusedItem,
                                     viewModel: viewModel
                                 )
+                                .id(pageIndex)
                                 .tag(pageIndex)
                             }
                         } else {
@@ -351,12 +352,18 @@ struct HomeContinueSection: SwiftUI.View {
             #endif
         }
         .onDisappear {
+            // Cancel all tasks and subscriptions
             gamepadCancellable?.cancel()
             delayTask?.cancel()
             continuousNavigationTask?.cancel()
         }
         .onChange(of: filteredSaveStates) { newValue in
-            viewModel.updateSaveStates(Array(newValue), isLandscape: isLandscapePhone)
+            // Use weak self to prevent retain cycles
+            Task {
+                await MainActor.run {
+                    self.viewModel.updateSaveStates(Array(newValue), isLandscape: self.isLandscapePhone)
+                }
+            }
         }
         .onChange(of: viewModel.currentPage) { newPage in
             handlePageChange(newPage)
@@ -368,20 +375,23 @@ struct HomeContinueSection: SwiftUI.View {
     }
 
     private func setupGamepadHandling() {
-        DLOG("HomeContinueSection: Setting up gamepad handling")
+        // Cancel existing handler if it exists
+        gamepadCancellable?.cancel()
+
+        // Use weak self to prevent retain cycles
         gamepadCancellable = GamepadManager.shared.eventPublisher
             .receive(on: DispatchQueue.main)
-            .sink { [self] event in
-                DLOG("HomeContinueSection: Received gamepad event: \(event)")
+            .sink { event in
+                // Only handle events if this view is currently visible
+                guard !viewModel.isControllerConnected else { return }
+
                 switch event {
                 case .buttonPress(let isPressed):
                     if isPressed {
-                        DLOG("HomeContinueSection: Button pressed")
                         handleButtonPress()
                     }
                 case .horizontalNavigation(let value, let isPressed):
                     if isPressed {
-                        DLOG("HomeContinueSection: Horizontal navigation: \(value)")
                         handleHorizontalNavigation(value)
                     }
                 default:
@@ -487,7 +497,7 @@ struct HomeContinueSection: SwiftUI.View {
 // Create a new struct for the grid view
 private struct SaveStatesGridView: View {
     let pageIndex: Int
-    let filteredSaveStates: Results<PVSaveState>
+    let filteredSaveStates: [PVSaveState]
     let isLandscapePhone: Bool
     let gridColumns: [GridItem]
     let adjustedHeight: CGFloat

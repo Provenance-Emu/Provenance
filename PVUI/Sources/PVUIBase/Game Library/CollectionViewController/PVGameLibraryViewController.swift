@@ -1168,7 +1168,11 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
         if game.relatedFiles.count > 0 {
             actionSheet.addAction(UIAlertAction(title: "Choose Disc…", symbol: "opticaldiscdrive", style: .default, handler: { (_: UIAlertAction) -> Void in
                 Task { @MainActor in
-                    await self.discSelection(forGame: game, system: game.system, sender: sender)
+                    guard let system = game.system else {
+                        ELOG("Nil system")
+                        return
+                    }
+                    await self.discSelection(forGame: game, system: system, sender: sender)
                 }
             }))
         }

@@ -260,7 +260,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     let viewModel = ContinuesMagementViewModel(
                         driver: driver,
                         gameTitle: game.title,
-                        systemTitle: game.system.name,
+                        systemTitle: game.system?.name ?? "",
                         numberOfSaves: game.saveStates.count,
                         onLoadSave: { saveID in
                             continuesManagementState = nil

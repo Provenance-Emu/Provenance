@@ -192,7 +192,7 @@ private final class RealmGameWrapper: GameMoreInfoViewModelDataSource, ArtworkOb
     }
 
     var system: String? {
-        get { game.system.name }
+        get { game.system?.name }
         set { /* Handled by driver */ }
     }
 

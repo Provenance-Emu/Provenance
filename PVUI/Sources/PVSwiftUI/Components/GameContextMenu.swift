@@ -89,7 +89,7 @@ struct GameContextMenu: View {
                     promptUserMD5CopiedToClipboard(forGame: game)
                 } label: { Label("Copy MD5 URL", systemImage: "number.square") }
 
-                if game.userPreferredCoreID != nil || game.system.userPreferredCoreID != nil {
+                if game.userPreferredCoreID != nil || game.system?.userPreferredCoreID != nil {
                     Button {
                         resetCorePreferences(forGame: game)
                     } label: { Label("Reset Core Preferences", systemImage: "arrow.counterclockwise") }
@@ -261,7 +261,7 @@ extension GameContextMenu {
     private func resetCorePreferences(forGame game: PVGame) {
         guard !game.isInvalidated else { return }
         let hasGamePreference = game.userPreferredCoreID != nil
-        let hasSystemPreference = game.system.userPreferredCoreID != nil
+        let hasSystemPreference = game.system?.userPreferredCoreID != nil
 
         let alert = UIAlertController(title: "Reset Core Preferences",
                                     message: "Which core preference would you like to reset?",
@@ -278,7 +278,7 @@ extension GameContextMenu {
         if hasSystemPreference {
             alert.addAction(UIAlertAction(title: "System Preference", style: .default) { _ in
                 try! Realm().write {
-                    game.system.thaw()?.userPreferredCoreID = nil
+                    game.system?.thaw()?.userPreferredCoreID = nil
                 }
             })
         }
@@ -287,7 +287,7 @@ extension GameContextMenu {
             alert.addAction(UIAlertAction(title: "Both", style: .default) { _ in
                 try! Realm().write {
                     game.thaw()?.userPreferredCoreID = nil
-                    game.system.thaw()?.userPreferredCoreID = nil
+                    game.system?.thaw()?.userPreferredCoreID = nil
                 }
             })
         }
