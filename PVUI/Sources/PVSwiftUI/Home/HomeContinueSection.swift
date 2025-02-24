@@ -206,8 +206,10 @@ struct HomeContinueSection: SwiftUI.View {
 
     @StateObject private var viewModel = ContinuesSectionViewModel()
 
+    #if !os(tvOS)
     @State private var hapticGenerator = UIImpactFeedbackGenerator(style: .light)
-
+    #endif
+    
     /// Constants for styling
     private enum Constants {
         static let cornerRadius: CGFloat = 16
@@ -344,7 +346,9 @@ struct HomeContinueSection: SwiftUI.View {
         }
         .onAppear {
             setupGamepadHandling()
+            #if !os(tvOS)
             hapticGenerator.prepare()
+            #endif
         }
         .onDisappear {
             gamepadCancellable?.cancel()

@@ -341,7 +341,9 @@ private struct FullScreenPreview: View {
                 .shadow(color: .black.opacity(0.3), radius: 20)
             }
             .navigationTitle("Preview")
+            #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
