@@ -77,15 +77,15 @@ public class ImportQueueItem: Identifiable, ObservableObject {
     public var status: ImportStatus = .queued {
         didSet {
             if status == .failure {
-                Task { @MainActor in
-                    updateSystems()
-                }
+                updateSystems()
             }
         }
     }
 
     private func updateSystems() {
-        systems = PVEmulatorConfiguration.availableSystemIdentifiers
+        Task { @MainActor in
+            systems = PVEmulatorConfiguration.availableSystemIdentifiers
+        }
     }
 
     private let md5Provider: MD5Provider

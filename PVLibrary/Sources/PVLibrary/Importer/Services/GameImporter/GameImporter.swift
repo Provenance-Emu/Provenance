@@ -429,7 +429,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         // Only start processing if it's not already active
         guard processingState == .idle else { return }
         self.processingState = .processing
-        Task { @MainActor in
+        Task.detached { [self] in
             await preProcessQueue()
             await processQueue()
         }
@@ -690,33 +690,43 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
     // Process a single ImportItem and update its status
-    @MainActor
+//    @MainActor
     private func processItem(_ item: ImportQueueItem) async {
         ILOG("GameImportQueue - processing item in queue: \(item.url)")
-        item.status = .processing
+        Task { @MainActor in
+            item.status = .processing
+        }
         updateImporterStatus("Importing \(item.url.lastPathComponent)")
 
         do {
             // Simulate file processing
             try await performImport(for: item)
-            item.status = .success
+            Task { @MainActor in
+                item.status = .success
+            }
             updateImporterStatus("Completed \(item.url.lastPathComponent)")
             ILOG("GameImportQueue - processing item in queue: \(item.url) completed.")
         } catch let error as GameImporterError {
             switch error {
             case .conflictDetected:
-                item.status = .conflict
+                Task { @MainActor in
+                    item.status = .conflict
+                }
                 updateImporterStatus("Conflict for \(item.url.lastPathComponent). User action needed.")
                 WLOG("GameImportQueue - processing item in queue: \(item.url) restuled in conflict.")
             default:
-                item.status = .failure
-                item.errorValue = error.localizedDescription
+                Task { @MainActor in
+                    item.status = .failure
+                    item.errorValue = error.localizedDescription
+                }
                 updateImporterStatus("Failed \(item.url.lastPathComponent) with error: \(error.localizedDescription)")
                 ELOG("GameImportQueue - processing item in queue: \(item.url) restuled in error: \(error.localizedDescription)")
             }
         } catch {
             ILOG("GameImportQueue - processing item in queue: \(item.url) caught error... \(error.localizedDescription)")
-            item.status = .failure
+            Task { @MainActor in
+                item.status = .failure
+            }
             updateImporterStatus("Failed \(item.url.lastPathComponent) with error: \(error.localizedDescription)")
             ELOG("GameImportQueue - processing item in queue: \(item.url) restuled in error: \(error.localizedDescription)")
         }
@@ -766,7 +776,9 @@ public final class GameImporter: GameImporting, ObservableObject {
                     item.status = .success
                 }
             } else {
-                item.status = .failure
+                Task { @MainActor in
+                    item.status = .failure
+                }
             }
             return
         }
