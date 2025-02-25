@@ -71,6 +71,7 @@ https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/same_cdi_libretro_i
 #https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/snes9x_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/stella2014_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/stella_libretro_ios.dylib.zip
+https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/tyrquake_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/vbam_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/virtualjaguar_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/yabause_libretro_ios.dylib.zip
