@@ -102,6 +102,17 @@ public final class RealmGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDa
         }
     }
 
+    public func updateGameRating(id: String, value: Int) {
+        assert(-1 ... 5 ~= value, "Rating must be between -1 and 5")
+        guard let game = try? Realm().object(ofType: PVGame.self, forPrimaryKey: id) else {
+            return
+        }
+
+        updateGame(id: id) { game in
+            game.rating = value
+        }
+    }
+
     // MARK: - Private Helpers
 
     private func updateGame(id: String, update: @escaping (PVGame) -> Void) {
@@ -258,6 +269,11 @@ private final class RealmGameWrapper: GameMoreInfoViewModelDataSource, ArtworkOb
         get { game.debugDescription }
         set { /* Handled by driver */ }
     }
+
+    public var rating: Int {
+        get { game.rating }
+        set { /* Handled by driver */ }
+    }
 }
 
 // MARK: - Preview Helpers
@@ -300,6 +316,7 @@ public extension RealmGameLibraryDriver {
                     game.genres = "Action, Adventure"
                     game.regionName = ["USA", "Japan", "Europe"][i % 3]
                     game.playCount = Int.random(in: 0...100)
+                    game.rating = Int.random(in: 0...5)
                     game.timeSpentInGame = Int.random(in: 0...10000)
                     game.originalArtworkURL = "https://example.com/\(identifier)/game\(i).jpg"
                     game.boxBackArtworkURL = "https://example.com/\(identifier)/game\(i)_back.jpg"

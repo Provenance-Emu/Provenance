@@ -28,6 +28,8 @@ public protocol GameMoreInfoViewModelDataSource: ObservableObject {
     var debugDescription: String? { get }
     /// Game description text if available
     var gameDescription: String? { get }
+    /// Game rating (-1 for unrated, 0-5 for rated)
+    var rating: Int { get set }
 }
 
 /// Mock implementation of PVGameLibraryEntry for previews

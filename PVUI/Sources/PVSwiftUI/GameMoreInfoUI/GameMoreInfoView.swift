@@ -22,6 +22,47 @@ protocol ArtworkObservable: AnyObject {
     func backArtworkPublisher() -> AnyPublisher<UIImage?, Never>
 }
 
+/// Star rating view component that shows 5 stars and handles user interaction
+struct StarRatingView: View {
+    let rating: Int
+    let maxRating: Int
+    let onRatingChanged: (Int) -> Void
+    let size: CGFloat
+    let spacing: CGFloat
+    let color: Color
+
+    init(
+        rating: Int,
+        maxRating: Int = 5,
+        onRatingChanged: @escaping (Int) -> Void,
+        size: CGFloat = 30,
+        spacing: CGFloat = 8,
+        color: Color = .yellow
+    ) {
+        self.rating = rating
+        self.maxRating = maxRating
+        self.onRatingChanged = onRatingChanged
+        self.size = size
+        self.spacing = spacing
+        self.color = color
+    }
+
+    var body: some View {
+        HStack(spacing: spacing) {
+            ForEach(1...maxRating, id: \.self) { index in
+                Image(systemName: index <= rating ? "star.fill" : "star")
+                    .foregroundColor(color)
+                    .font(.system(size: size))
+                    #if !os(tvOS)
+                    .onTapGesture {
+                        onRatingChanged(index)
+                    }
+                    #endif
+            }
+        }
+    }
+}
+
 class GameMoreInfoViewModel: ObservableObject {
     @Published private var driver: any GameLibraryDriver
     private let gameId: String
@@ -183,12 +224,34 @@ class GameMoreInfoViewModel: ObservableObject {
     var gameDescription: String? {
         game?.gameDescription
     }
+
+    /// Rating (0-5, -1 means unrated)
+    var rating: Int {
+        get { game?.rating ?? -1 }
+        set {
+            driver.updateGameRating(id: gameId, value: newValue)
+        }
+    }
+
+    /// Format rating for display
+    var formattedRating: String {
+        if rating == -1 {
+            return "Not Rated"
+        } else {
+            return "\(rating) of 5 Stars"
+        }
+    }
 }
 
 
 // MARK: - Game Info View
 struct GameMoreInfoView: View {
-    @StateObject var viewModel: GameMoreInfoViewModel
+    @ObservedObject var viewModel: GameMoreInfoViewModel
+    @Environment(\.dismiss) private var dismiss
+    /// Tracks if the rating has been modified but not saved
+    @State private var hasUnsavedRating: Bool = false
+    /// Stores the original rating before modification
+    @State private var originalRating: Int = 0
     @State private var editingField: EditableField?
     @State private var editingValue: String = ""
 
@@ -271,14 +334,6 @@ struct GameMoreInfoView: View {
                         }
                     )
 
-                    if let playCount = viewModel.plays {
-                        LabelRowView(
-                            label: "Play Count",
-                            value: "\(playCount)",
-                            isEditable: false
-                        )
-                    }
-
                     if let timeSpent = viewModel.timeSpent {
                         LabelRowView(
                             label: "Time Spent",
@@ -286,6 +341,59 @@ struct GameMoreInfoView: View {
                             isEditable: false
                         )
                     }
+
+                    // Star rating section
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Rating")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+
+                        HStack {
+                            StarRatingView(
+                                rating: max(0, viewModel.rating),
+                                onRatingChanged: { newRating in
+                                    if !hasUnsavedRating {
+                                        originalRating = viewModel.rating
+                                        hasUnsavedRating = true
+                                    }
+                                    #if !os(tvOS)
+                                    Haptics.impact(style: .light)
+                                    #endif
+                                    viewModel.rating = newRating
+                                }
+                            )
+
+                            Spacer()
+
+                            Text(viewModel.formattedRating)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+
+                        if hasUnsavedRating {
+                            HStack {
+                                Button(action: {
+                                    viewModel.rating = originalRating
+                                    hasUnsavedRating = false
+                                }) {
+                                    Text("Reset")
+                                        .foregroundColor(.red)
+                                }
+
+                                Spacer()
+
+                                Button(action: {
+                                    // Rating is already updated in the viewModel
+                                    hasUnsavedRating = false
+                                }) {
+                                    Text("Save")
+                                        .bold()
+                                }
+                            }
+                            .padding(.top, 8)
+                        }
+                    }
+                    .padding(.vertical, 4)
 
                     if viewModel.plays != nil || viewModel.timeSpent != nil {
                         Button("Reset Stats") {
