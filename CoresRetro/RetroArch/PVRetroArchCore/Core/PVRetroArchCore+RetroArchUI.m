@@ -80,6 +80,44 @@ int argc =  1;
 
 #pragma mark - PVRetroArchCoreBridge Begin
 
+#ifdef HAVE_COCOA_METAL
+@implementation MetalLayerView
+
++ (Class)layerClass {
+    return [CAMetalLayer class];
+}
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        [self setupMetalLayer];
+    }
+    return self;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self setupMetalLayer];
+    }
+    return self;
+}
+
+- (CAMetalLayer *)metalLayer {
+    return (CAMetalLayer *)self.layer;
+}
+
+- (void)setupMetalLayer {
+    self.metalLayer.device = MTLCreateSystemDefaultDevice();
+    self.metalLayer.contentsScale = cocoa_screen_get_native_scale();
+    self.metalLayer.opaque = YES;
+}
+
+@end
+#endif
+
+#pragma mark - PVRetroArchCoreBridge Begin
+
 @interface PVRetroArchCoreBridge (RetroArchUI)
 @end
 
