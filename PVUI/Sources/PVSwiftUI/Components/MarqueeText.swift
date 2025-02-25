@@ -163,7 +163,7 @@ struct MarqueeText: View {
                 guard isVisible else { return }
                 withAnimation(.linear(duration: Double(textWidth - containerWidth) / speed)) {
                     offset = -(textWidth - containerWidth)
-                    logger.debug("Scrolling to end for '\(text)'")
+//                    logger.debug("Scrolling to end for '\(text)'")
                 }
 
                 // Pause at end
@@ -171,7 +171,7 @@ struct MarqueeText: View {
                     guard isVisible else { return }
                     withAnimation(.linear(duration: Double(textWidth - containerWidth) / speed).delay(delay)) {
                         offset = 0
-                        logger.debug("Resetting to start for '\(text)'")
+//                        logger.debug("Resetting to start for '\(text)'")
                     }
 
                     if loop {
@@ -179,7 +179,7 @@ struct MarqueeText: View {
                         DispatchQueue.main.asyncAfter(deadline: .now() + delay * 2 + Double(textWidth - containerWidth) * 2 / speed) {
                             guard isVisible else { return }
                             startAnimation()
-                            logger.debug("Restarting animation cycle for '\(text)'")
+//                            logger.debug("Restarting animation cycle for '\(text)'")
                         }
                     }
                 }
