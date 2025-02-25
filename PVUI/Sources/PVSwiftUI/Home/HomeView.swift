@@ -151,6 +151,7 @@ struct HomeView: SwiftUI.View {
                 }
             }
             .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+            .padding(.bottom, 64)
         }
         .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
         .onAppear {
