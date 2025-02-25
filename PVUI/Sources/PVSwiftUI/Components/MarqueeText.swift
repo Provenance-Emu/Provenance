@@ -27,7 +27,7 @@ struct MarqueeText: View {
 
     init(
         text: String,
-        font: Font = .system(size: 15, weight: .bold, design: .monospaced),
+        font: Font = .system(size: 14, weight: .bold, design: .monospaced),
         delay: Double = 1.0,
         speed: Double = 50.0,
         loop: Bool = true
@@ -62,21 +62,27 @@ struct MarqueeText: View {
     /// Calculate accurate text width with proper attributes
     private func calculateTextWidth(text: String, font: UIFont) -> CGFloat {
         let attributes: [NSAttributedString.Key: Any] = [
-            .font: font,
-            .kern: 0  // Ensure no extra kerning is applied
+            .font: font
         ]
 
         // Use NSAttributedString for more accurate measurement
         let attributedString = NSAttributedString(string: text, attributes: attributes)
-        let boundingRect = attributedString.boundingRect(
-            with: CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude),
-            options: [.usesLineFragmentOrigin, .usesFontLeading],
-            context: nil
-        )
 
-        // Add a small proportional buffer (2% of text width)
-        let buffer = ceil(boundingRect.width * 0.02)
-        return ceil(boundingRect.width + buffer)
+        // Create a layout manager for precise width calculation
+        let layoutManager = NSLayoutManager()
+        let textContainer = NSTextContainer(size: CGSize(width: CGFloat.greatestFiniteMagnitude, height: .greatestFiniteMagnitude))
+        let textStorage = NSTextStorage(attributedString: attributedString)
+
+        layoutManager.addTextContainer(textContainer)
+        textStorage.addLayoutManager(layoutManager)
+
+        // Get the precise used rect
+        let glyphRange = layoutManager.glyphRange(for: textContainer)
+        let usedRect = layoutManager.usedRect(for: textContainer)
+
+        // Add a small buffer (0.5% of text width) to prevent tight fit
+        let buffer = ceil(usedRect.width * 0.005)
+        return ceil(usedRect.width + buffer)
     }
 
     var body: some View {
@@ -98,16 +104,12 @@ struct MarqueeText: View {
                                 logger.debug("Text measurements: text='\(text)', width=\(textWidth), container=\(containerWidth), fontSize=\(uiFont.pointSize)")
 
                                 if textWidth > containerWidth && isVisible {
-//                                    logger.debug("Starting animation for text: '\(text)'")
                                     startAnimation()
                                 }
                             }
                         }
                     )
                     .offset(x: offset)
-//                    .onChange(of: offset) { newOffset in
-//                        logger.debug("Offset changed for '\(text)': \(newOffset)")
-//                    }
             }
             .frame(width: containerWidth, alignment: .leading)
             .clipped()
@@ -116,25 +118,21 @@ struct MarqueeText: View {
         .frame(height: 20)
         .clipped()
         .onAppear {
-            logger.debug("MarqueeText appeared: '\(text)'")
             isVisible = true
             if textWidth > containerWidth {
                 startAnimation()
             }
         }
         .onDisappear {
-            logger.debug("MarqueeText disappeared: '\(text)'")
             stopAnimation()
             isVisible = false
         }
         .onChange(of: text) { newText in
-            logger.debug("Text changed from '\(text)' to '\(newText)'")
             resetAnimation()
         }
     }
 
     private func stopAnimation() {
-        logger.debug("Stopping animation for '\(text)'")
         animationWorkItem?.cancel()
         animationWorkItem = nil
         withAnimation(.linear(duration: 0.2)) {
@@ -155,15 +153,12 @@ struct MarqueeText: View {
         // Cancel any existing animation
         stopAnimation()
 
-        logger.debug("Animation cycle starting for '\(text)'")
-
         let workItem = DispatchWorkItem { [self] in
             // Initial pause
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 guard isVisible else { return }
                 withAnimation(.linear(duration: Double(textWidth - containerWidth) / speed)) {
                     offset = -(textWidth - containerWidth)
-//                    logger.debug("Scrolling to end for '\(text)'")
                 }
 
                 // Pause at end
@@ -171,7 +166,6 @@ struct MarqueeText: View {
                     guard isVisible else { return }
                     withAnimation(.linear(duration: Double(textWidth - containerWidth) / speed).delay(delay)) {
                         offset = 0
-//                        logger.debug("Resetting to start for '\(text)'")
                     }
 
                     if loop {
@@ -179,7 +173,6 @@ struct MarqueeText: View {
                         DispatchQueue.main.asyncAfter(deadline: .now() + delay * 2 + Double(textWidth - containerWidth) * 2 / speed) {
                             guard isVisible else { return }
                             startAnimation()
-//                            logger.debug("Restarting animation cycle for '\(text)'")
                         }
                     }
                 }
