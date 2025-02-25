@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 # This script scans iOS frameworks and dylibs for binary information
 # It can be used to check if a binary is code signed, if it's a fat binary,
@@ -90,6 +90,11 @@ def scan_frameworks(folder_path):
 def print_results(results, missing_binaries, verbose=False):
     """Print the scan results and any issues found"""
     issues_found = False
+    dylibs_with_issues = {
+        'code_signed': [],
+        'missing_encryption': [],
+        'other_issues': []
+    }
 
     # Print missing binaries
     if missing_binaries:
@@ -102,6 +107,7 @@ def print_results(results, missing_binaries, verbose=False):
     binaries_with_issues = []
     for result in results:
         has_issues = bool(result['errors'] or result['warnings'])
+        is_dylib = result['path'].endswith('.dylib')
 
         if verbose or has_issues:
             print(f"\nBinary: {result['path']}")
@@ -119,19 +125,48 @@ def print_results(results, missing_binaries, verbose=False):
                 print("  Errors:")
                 for error in result['errors']:
                     print(f"    - {error}")
+                    if is_dylib and "missing encryption info" in error.lower():
+                        dylibs_with_issues['missing_encryption'].append(result['path'])
 
             if result['warnings']:
                 print("  Warnings:")
                 for warning in result['warnings']:
                     print(f"    - {warning}")
+                    if is_dylib and "should not be code signed" in warning.lower():
+                        dylibs_with_issues['code_signed'].append(result['path'])
 
             binaries_with_issues.append(result['path'])
+
+            # Track dylibs with other types of issues
+            if is_dylib and not any(
+                ["missing encryption info" in e.lower() for e in result['errors']] +
+                ["should not be code signed" in w.lower() for w in result['warnings']]
+            ):
+                dylibs_with_issues['other_issues'].append(result['path'])
 
     # Print summary
     print(f"\n=== Summary ===")
     print(f"Total binaries scanned: {len(results)}")
     print(f"Binaries with issues: {len(binaries_with_issues)}")
     print(f"Missing binaries: {len(missing_binaries)}")
+
+    # Print dylib-specific summary if there are any issues
+    if any(dylibs_with_issues.values()):
+        print("\n=== Dylib Issues Summary ===")
+        if dylibs_with_issues['code_signed']:
+            print("\nCode Signed Dylibs (Should be unsigned):")
+            for dylib in dylibs_with_issues['code_signed']:
+                print(f"  - {os.path.basename(dylib)}")
+
+        if dylibs_with_issues['missing_encryption']:
+            print("\nDylibs Missing Encryption Info:")
+            for dylib in dylibs_with_issues['missing_encryption']:
+                print(f"  - {os.path.basename(dylib)}")
+
+        if dylibs_with_issues['other_issues']:
+            print("\nDylibs with Other Issues:")
+            for dylib in dylibs_with_issues['other_issues']:
+                print(f"  - {os.path.basename(dylib)}")
 
     if not issues_found and verbose:
         print("\nNo issues found in any binaries.")

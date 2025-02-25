@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 # This script strips the code signing from a dylib file.
 # It can be used to remove the code signing from a dylib file that is not signed.
