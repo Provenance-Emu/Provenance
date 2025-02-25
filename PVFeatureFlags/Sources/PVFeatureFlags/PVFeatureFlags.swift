@@ -423,6 +423,9 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         } else {
             featureStates[.inAppFreeROMs] = featureFlags.isEnabled(.inAppFreeROMs)
         }
+        
+        // Post notification of change
+        NotificationCenter.default.post(name: .featureFlagDidChange, object: nil)
     }
 
     /// Check if a feature is enabled
@@ -535,62 +538,10 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     }
 }
 
-/// Property wrapper for easy access to feature flags in SwiftUI views
-@propertyWrapper
-public struct FeatureFlag: DynamicProperty {
-    private let feature: PVFeatureFlags.PVFeature
-    @StateObject private var observable: FeatureFlagObservable
-
-    /// Initialize with a feature flag
-    /// - Parameter feature: The feature flag to observe
-    public init(_ feature: PVFeatureFlags.PVFeature) {
-        self.feature = feature
-        self._observable = StateObject(wrappedValue: FeatureFlagObservable(feature))
-    }
-
-    /// The current value of the feature flag
-    public var wrappedValue: Bool {
-        get { observable.value }
-        nonmutating set {
-            // Set debug override when value is changed
-            PVFeatureFlagsManager.shared.setDebugOverride(feature: feature, enabled: newValue)
-        }
-    }
-
-    /// Binding to the feature flag value
-    public var projectedValue: Binding<Bool> {
-        Binding(
-            get: { observable.value },
-            set: { PVFeatureFlagsManager.shared.setDebugOverride(feature: feature, enabled: $0) }
-        )
-    }
-}
-
 // Add notification for feature flag changes
 extension Notification.Name {
     /// Notification sent when a feature flag changes
     public static let featureFlagDidChange = Notification.Name("featureFlagDidChange")
-}
-
-// Extension to PVFeatureFlagsManager to post notifications
-extension PVFeatureFlagsManager {
-    /// Override the existing setDebugOverride to post notifications
-    public func setDebugOverride(feature: PVFeatureFlags.PVFeature, enabled: Bool) {
-        var currentOverrides = debugOverrides
-        currentOverrides[feature] = enabled
-        debugOverrides = currentOverrides
-
-        // Post notification of change
-        NotificationCenter.default.post(name: .featureFlagDidChange, object: nil)
-    }
-}
-
-// Convenience extension for KeyPath-based initialization
-extension FeatureFlag {
-    /// Initialize with a keypath to a PVFeature
-    public init(_ keyPath: KeyPath<PVFeatureFlags.PVFeature.Type, PVFeatureFlags.PVFeature>) {
-        self.init(PVFeatureFlags.PVFeature.self[keyPath: keyPath])
-    }
 }
 
 // MARK: - Environment Values

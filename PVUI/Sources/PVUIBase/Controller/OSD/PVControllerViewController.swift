@@ -38,23 +38,6 @@ let volumeHeight: CGFloat = 3
 
 open class PVControllerViewController<T: ResponderClient> : UIViewController, ControllerVC {
 
-    enum ControlTag: Int {
-        case dpad1 = 100
-        case dpad2 = 101
-        case joypad1 = 102
-        case joypad2 = 103
-        case buttonGroup = 200
-        case leftShoulder = 301
-        case rightShoulder = 302
-        case leftShoulder2 = 303
-        case rightShoulder2 = 304
-        case zTrigger = 305
-        case start = 401
-        case select = 402
-        case leftAnalog = 501
-        case rightAnalog = 502
-    }
-
     func layoutViews() {}
 
     open func pressStart(forPlayer _: Int) {
@@ -685,7 +668,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                     let groupedButtons = control.PVGroupedButtons
                     groupedButtons?.forEach { groupedButton in
                         let buttonFrame: CGRect = NSCoder.cgRect(for: groupedButton.PVControlFrame)
-                        let button = JSButton(frame: buttonFrame)
+                        let button = JSButton(frame: buttonFrame, label: groupedButton.PVControlTitle)
 
                         button.titleLabel?.text = groupedButton.PVControlTitle
 
@@ -826,7 +809,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             rightShoulderFrame.origin.y = (leftShoulderButton?.frame)!.origin.y
         }
         if rightShoulderButton == nil {
-            let rightShoulderButton = JSButton(frame: rightShoulderFrame)
+            let rightShoulderButton = JSButton(frame: rightShoulderFrame, label: control.PVControlTitle)
             rightShoulderButton.tag = ControlTag.rightShoulder.rawValue
             if let tintColor = control.PVControlTint {
                 rightShoulderButton.tintColor = UIColor(hex: tintColor)
@@ -853,7 +836,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         if rightShoulderButton2 == nil, (control.PVControlType == Keys.RightShoulderButton2 || control.PVControlTitle  == "R2") {
             var rightShoulderFrame2 = rightShoulderFrame
             rightShoulderFrame2!.origin.y -= controlSize.height
-            let rightShoulderButton2 = JSButton(frame: rightShoulderFrame2!)
+            let rightShoulderButton2 = JSButton(frame: rightShoulderFrame2!, label: control.PVControlTitle)
             rightShoulderButton2.tag = ControlTag.rightShoulder2.rawValue
             if let tintColor = control.PVControlTint {
                 rightShoulderButton2.tintColor = UIColor(hex: tintColor)
@@ -901,7 +884,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 zTriggerButton.frame = zTriggerFrame
             }
         } else {
-            let zTriggerButton = JSButton(frame: zTriggerFrame)
+            let zTriggerButton = JSButton(frame: zTriggerFrame, label: control.PVControlTitle)
             zTriggerButton.tag = ControlTag.zTrigger.rawValue
             if let tintColor = control.PVControlTint {
                 zTriggerButton.tintColor = UIColor(hex: tintColor)
@@ -946,7 +929,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         }
         leftShoulderFrame.origin.y -= controlSize.height
         if leftShoulderButton == nil {
-            let leftShoulderButton = JSButton(frame: leftShoulderFrame)
+            let leftShoulderButton = JSButton(frame: leftShoulderFrame, label: control.PVControlTitle)
             leftShoulderButton.tag = ControlTag.leftShoulder.rawValue
             self.leftShoulderButton = leftShoulderButton
             leftShoulderButton.titleLabel?.text = control.PVControlTitle
@@ -972,7 +955,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         if leftShoulderButton2 == nil, (control.PVControlType == Keys.LeftShoulderButton2 || control.PVControlTitle  == "L2") {
             var leftShoulderFrame2 = leftShoulderFrame;
             leftShoulderFrame2!.origin.y -= controlSize.height
-            let leftShoulderButton2 = JSButton(frame: leftShoulderFrame2!)
+            let leftShoulderButton2 = JSButton(frame: leftShoulderFrame2!, label: control.PVControlTitle)
             leftShoulderButton2.tag = ControlTag.leftShoulder2.rawValue
             if let tintColor = control.PVControlTint {
                 leftShoulderButton2.tintColor = UIColor(hex: tintColor)
@@ -1041,7 +1024,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 selectButton.frame = selectFrame
             }
         } else {
-            let selectButton = JSButton(frame: selectFrame)
+            let selectButton = JSButton(frame: selectFrame, label: control.PVControlTitle)
             selectButton.tag = ControlTag.select.rawValue
             if let tintColor = control.PVControlTint {
                 selectButton.tintColor = UIColor(hex: tintColor)
@@ -1110,7 +1093,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 startButton.frame = startFrame
             }
         } else {
-            let startButton = JSButton(frame: startFrame)
+            let startButton = JSButton(frame: startFrame, label: control.PVControlTitle)
             startButton.tag = ControlTag.start.rawValue
             if let tintColor = control.PVControlTint {
                 startButton.tintColor = UIColor(hex: tintColor)
@@ -1175,7 +1158,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 leftAnalogButton.frame = leftAnalogFrame
             }
         } else {
-            let leftAnalogButton = JSButton(frame: leftAnalogFrame)
+            let leftAnalogButton = JSButton(frame: leftAnalogFrame, label: control.PVControlTitle)
             leftAnalogButton.tag = ControlTag.leftAnalog.rawValue
             if let tintColor = control.PVControlTint {
                 leftAnalogButton.tintColor = UIColor(hex: tintColor)
@@ -1235,7 +1218,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 rightAnalogButton.frame = rightAnalogFrame
             }
         } else {
-            let rightAnalogButton = JSButton(frame: rightAnalogFrame)
+            let rightAnalogButton = JSButton(frame: rightAnalogFrame, label: control.PVControlTitle)
             rightAnalogButton.tag = ControlTag.rightAnalog.rawValue
             if let tintColor = control.PVControlTint {
                 rightAnalogButton.tintColor = UIColor(hex: tintColor)

@@ -6,7 +6,6 @@
 //  Copyright © 2024 Provenance Emu. All rights reserved.
 //
 
-// Import necessary modules
 import SwiftUI
 import PVLibrary
 import PVSupport
@@ -18,6 +17,7 @@ import PVLogging
 import Combine
 import Observation
 import RxSwift
+import PVFeatureFlags
 #if canImport(CoreSpotlight)
 import CoreSpotlight
 #endif
