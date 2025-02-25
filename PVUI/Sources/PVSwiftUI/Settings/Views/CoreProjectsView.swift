@@ -16,11 +16,13 @@ struct CoreProjectsView: View {
     @Default(.unsupportedCores) private var unsupportedCores
     @ObservedObject private var themeManager = ThemeManager.shared
     @State private var searchText = ""
-    
+    /// State to force view updates when unsupportedCores changes
+    @State private var viewUpdateTrigger = false
+
     init() {
         let isAppStore = AppState.shared.isAppStore
         let allCores = RomDatabase.sharedInstance.all(PVCore.self, sortedByKeyPath: #keyPath(PVCore.projectName)).toArray()
-        
+
         self.cores = allCores.filter { core in
             // Keep core if:
             // 1. It's not disabled, OR unsupportedCores is true
@@ -41,7 +43,7 @@ struct CoreProjectsView: View {
             }
         }
     }
-    
+
     var body: some View {
         List {
             ForEach(filteredCores, id: \.self) { core in
@@ -50,5 +52,11 @@ struct CoreProjectsView: View {
         }
         .searchable(text: $searchText, prompt: "Search cores or systems")
         .navigationTitle("Emulator Cores")
+        .onChange(of: unsupportedCores) { _ in
+            /// Force view to update by toggling state
+            viewUpdateTrigger.toggle()
+        }
+        /// Add id modifier that depends on both unsupportedCores and viewUpdateTrigger
+        .id("\(unsupportedCores)_\(viewUpdateTrigger)")
     }
 }
