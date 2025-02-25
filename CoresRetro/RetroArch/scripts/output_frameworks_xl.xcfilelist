@@ -11,6 +11,7 @@ $(SRCROOT)/CoresRetro/RetroArch/modules/fuse_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/gambatte_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/gearcoleco_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/geolith_libretro_ios.framework
+$(SRCROOT)/CoresRetro/RetroArch/modules/galaksija_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/genesis_plus_gx_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/gme_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/hatari_libretro_ios.framework

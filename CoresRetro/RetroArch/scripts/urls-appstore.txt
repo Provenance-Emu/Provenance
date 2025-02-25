@@ -21,11 +21,12 @@ https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/fmsx_libretro.dylib
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/freeintv_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/fuse_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/gambatte_libretro_ios.dylib.zip
+https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/galaksija_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/gearcoleco_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/genesis_plus_gx_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/genesis_plus_gx_wide_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/gme_libretro_ios.dylib.zip
-#https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/geolith_libretro_ios.dylib.zip
+https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/geolith_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/gpsp_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/hatari_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/handy_libretro_ios.dylib.zip

@@ -8,6 +8,7 @@ $(SRCROOT)/CoresRetro/RetroArch/modules/fbneo_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/fceumm_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/flycast_libretro.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/fuse_libretro_tvos.dylib
+$(SRCROOT)/CoresRetro/RetroArch/modules/galaksija_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/gambatte_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/gearcoleco_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/genesis_plus_gx_libretro_tvos.dylib

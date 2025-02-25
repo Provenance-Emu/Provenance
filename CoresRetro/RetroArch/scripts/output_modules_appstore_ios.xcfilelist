@@ -19,6 +19,7 @@ $(SRCROOT)/CoresRetro/RetroArch/modules/fceumm_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/fmsx_libretro.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/freeintv_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/fuse_libretro_ios.dylib
+$(SRCROOT)/CoresRetro/RetroArch/modules/galaksija_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/gambatte_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/gearcoleco_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/genesis_plus_gx_libretro_ios.dylib
