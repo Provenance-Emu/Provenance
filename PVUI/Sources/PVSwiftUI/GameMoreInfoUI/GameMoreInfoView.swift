@@ -31,6 +31,11 @@ struct StarRatingView: View {
     let spacing: CGFloat
     let color: Color
 
+    @State private var focusedStar: Int?
+    @State private var isFocused: Bool = false
+    @State private var dragOffset: CGFloat = 0
+    @FocusState private var isFocusedState: Bool
+
     init(
         rating: Int,
         maxRating: Int = 5,
@@ -50,16 +55,76 @@ struct StarRatingView: View {
     var body: some View {
         HStack(spacing: spacing) {
             ForEach(1...maxRating, id: \.self) { index in
-                Image(systemName: index <= rating ? "star.fill" : "star")
-                    .foregroundColor(color)
-                    .font(.system(size: size))
-                    #if !os(tvOS)
-                    .onTapGesture {
-                        onRatingChanged(index)
-                    }
-                    #endif
+                starButton(for: index)
             }
         }
+        #if os(tvOS)
+        .focusable()
+        .focused($isFocusedState)
+        .onChange(of: isFocusedState) { focused in
+            isFocused = focused
+            if focused {
+                focusedStar = rating > 0 ? rating : 1
+            } else {
+                focusedStar = nil
+            }
+        }
+        #endif
+#if !os(tvOS)
+        .gesture(
+            DragGesture()
+                .onChanged { value in
+                    dragOffset = value.translation.width
+                    let starWidth = size + spacing
+                    let starIndex = min(max(1, Int(round(dragOffset / starWidth)) + (focusedStar ?? 1)), maxRating)
+                    focusedStar = starIndex
+                }
+                .onEnded { _ in
+                    if let star = focusedStar {
+                        handleTap(star)
+                    }
+                    dragOffset = 0
+                }
+        )
+#endif
+    }
+
+    private func starButton(for index: Int) -> some View {
+        Button(action: {
+            handleTap(index)
+        }) {
+            Image(systemName: index <= rating ? "star.fill" : "star")
+                .foregroundColor(color)
+                .font(.system(size: size))
+                #if os(tvOS)
+                .scaleEffect(focusedStar == index ? 1.2 : 1.0)
+                .shadow(color: focusedStar == index ? color : .clear, radius: focusedStar == index ? 10 : 0)
+                .animation(.spring(), value: focusedStar == index)
+                #endif
+        }
+        .buttonStyle(StarButtonStyle())
+        .id("star-\(index)-\(rating)") // Force view refresh when rating changes
+    }
+
+    private func handleTap(_ index: Int) {
+        #if !os(tvOS)
+        Haptics.impact(style: .light)
+        #endif
+
+        if index == rating {
+            onRatingChanged(0) // Toggle off if tapping the same star
+        } else {
+            onRatingChanged(index)
+        }
+    }
+}
+
+/// Custom button style to prevent unwanted animations and state changes
+private struct StarButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .contentShape(Rectangle())
+            .animation(nil, value: configuration.isPressed) // Disable press animation
     }
 }
 
@@ -354,8 +419,8 @@ struct GameMoreInfoView: View {
                                 onRatingChanged: { newRating in
                                     if !hasUnsavedRating {
                                         originalRating = viewModel.rating
-                                        hasUnsavedRating = true
                                     }
+                                    hasUnsavedRating = true
                                     #if !os(tvOS)
                                     Haptics.impact(style: .light)
                                     #endif
