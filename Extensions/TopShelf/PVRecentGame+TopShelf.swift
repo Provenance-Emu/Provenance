@@ -13,20 +13,25 @@ import TVServices
 
 // Top shelf extensions
 extension PVRecentGame {
-    public func contentItem(with containerIdentifier: TVContentIdentifier) -> TVContentItem? {
+    public func contentItem() -> TVTopShelfSectionedItem? {
         guard let game = game else {
             return nil
         }
 
-        let identifier = TVContentIdentifier(identifier: game.md5Hash, container: containerIdentifier)
-        let item = TVContentItem(contentIdentifier: identifier)
+        let item = TVTopShelfSectionedItem(identifier: game.md5Hash)
 
         item.title = game.title
-        let imageURl = URL(string: game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL)
-        item.setImageURL(imageURl, forTraits: [.screenScale1x, .screenScale2x, .userInterfaceStyleDark, .userInterfaceStyleLight])
-        item.imageShape = game.system?.imageType ?? .square
-        item.displayURL = displayURL
-        item.lastAccessedDate = lastPlayedDate
+
+        // Set image URL if available
+        let artworkURLString = game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL
+        if !artworkURLString.isEmpty,
+           let imageURL = URL(string: artworkURLString) {
+            item.setImageURL(imageURL, for: .screenScale1x)
+            item.imageShape = game.system?.imageType ?? .square
+        }
+
+        // Set play action with deep link
+        item.playAction = TVTopShelfAction(url: displayURL)
 
         return item
     }

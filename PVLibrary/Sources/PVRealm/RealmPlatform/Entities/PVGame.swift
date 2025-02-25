@@ -31,6 +31,11 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     @Persisted public var customArtworkURL: String = ""
     @Persisted public var originalArtworkURL: String = ""
     @Persisted public var originalArtworkFile: PVImageFile?
+    
+    public var artworkURL: String {
+        get { customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL }
+        set { customArtworkURL = newValue }
+    }
 
     @Persisted public var requiresSync: Bool = true
     @Persisted(indexed: true) public var isFavorite: Bool = false
