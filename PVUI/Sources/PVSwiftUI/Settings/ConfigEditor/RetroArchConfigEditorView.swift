@@ -6,9 +6,9 @@ struct RetroArchConfigEditorView: View {
     @Binding var showImportPicker: Bool
     @ObservedObject var filterVM: ConfigFilterViewModel
     @ObservedObject var editVM: ConfigEditViewModel
-    
+
     @EnvironmentObject private var configEditor: RetroArchConfigEditorViewModel
-    
+
     var body: some View {
         ConfigListContent(
             filterVM: filterVM,
@@ -60,25 +60,27 @@ struct RetroArchConfigEditorView: View {
                     )
                 }
                 .disabled(filterVM.modifiedKeys.isEmpty)
-                
+
                 if #available(tvOS 17.0, *) {
                     Menu {
 #if !os(tvOS)
                         Button(action: {
+                            configEditor.prepareExport()
                             showExportSheet = true
                         }) {
                             Label("Export Config", systemImage: "square.and.arrow.up")
                         }
-                        
+
                         Button(action: {
+                            configEditor.startImport()
                             showImportPicker = true
                         }) {
                             Label("Import Config", systemImage: "square.and.arrow.down")
                         }
-                        
+
                         Divider()
 #endif
-                        
+
                         Button(action: {
                             Task {
                                 await configEditor.reloadConfig()
@@ -87,7 +89,7 @@ struct RetroArchConfigEditorView: View {
                             Label("Reload Current Config", systemImage: "arrow.clockwise")
                         }
                         .disabled(!configEditor.hasChanges)
-                        
+
                         Button(action: {
                             Task {
                                 await configEditor.reloadDefaultConfig()
@@ -108,7 +110,7 @@ struct RetroArchConfigEditorView: View {
                             Label("Reload Current Config", systemImage: "arrow.clockwise")
                         }
                         .disabled(!configEditor.hasChanges)
-                        
+
                         Button(action: {
                             Task {
                                 await configEditor.reloadDefaultConfig()
@@ -118,7 +120,7 @@ struct RetroArchConfigEditorView: View {
                         }
                     }
                 }
-                
+
                 Button(action: {
                     Task {
                         await configEditor.saveChanges()
@@ -130,19 +132,42 @@ struct RetroArchConfigEditorView: View {
             }
         }
 #if !os(tvOS)
-        .sheet(isPresented: $showExportSheet, onDismiss: {
-            showExportSheet = false
-        }) {
-            if let configURL = configEditor.exportConfig() {
-                ActivityViewController(activityItems: [configURL])
+        .sheet(isPresented: Binding(
+            get: { configEditor.isExporting },
+            set: { if !$0 { configEditor.finishExport() } }
+        )) {
+            if let configURL = configEditor.exportURL {
+                ActivityViewController(
+                    activityItems: [configURL],
+                    applicationActivities: nil,
+                    excludedActivityTypes: [
+                        UIActivity.ActivityType.assignToContact,
+                        UIActivity.ActivityType.addToReadingList,
+                        UIActivity.ActivityType.openInIBooks,
+                        UIActivity.ActivityType.postToWeibo,
+                        UIActivity.ActivityType.postToVimeo,
+                        UIActivity.ActivityType.postToFlickr,
+                        UIActivity.ActivityType.postToTwitter,
+                        UIActivity.ActivityType.postToFacebook,
+                        UIActivity.ActivityType.postToTencentWeibo
+                    ]
+                )
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
+                .interactiveDismissDisabled(true)
+                .onDisappear {
+                    configEditor.finishExport()
+                }
             }
         }
         .fileImporter(
-            isPresented: $showImportPicker,
+            isPresented: Binding(
+                get: { configEditor.isImporting },
+                set: { if !$0 { configEditor.finishImport() } }
+            ),
             allowedContentTypes: [.plainText],
             allowsMultipleSelection: false
         ) { result in
-            showImportPicker = false
             switch result {
             case .success(let urls):
                 if let url = urls.first {
@@ -151,9 +176,24 @@ struct RetroArchConfigEditorView: View {
                     }
                 }
             case .failure(let error):
-                print("Import error: \(error)")
+                ELOG("Import error: \(error)")
+                configEditor.error = error
             }
         }
 #endif
+        .alert(
+            "Error",
+            isPresented: Binding(
+                get: { configEditor.error != nil },
+                set: { if !$0 { configEditor.error = nil } }
+            ),
+            presenting: configEditor.error
+        ) { _ in
+            Button("OK") {
+                configEditor.error = nil
+            }
+        } message: { error in
+            Text(error.localizedDescription)
+        }
     }
 }

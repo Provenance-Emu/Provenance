@@ -1,0 +1,47 @@
+<key>UIFileSharingEnabled</key>
+<true/>
+<key>LSSupportsOpeningDocumentsInPlace</key>
+<true/>
+<key>CFBundleDocumentTypes</key>
+<array>
+    <dict>
+        <key>CFBundleTypeName</key>
+        <string>RetroArch Configuration</string>
+        <key>LSHandlerRank</key>
+        <string>Owner</string>
+        <key>LSItemContentTypes</key>
+        <array>
+            <string>public.plain-text</string>
+            <string>com.provenance.retroarch.config</string>
+        </array>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>LSIsAppleDefaultForType</key>
+        <false/>
+    </dict>
+</array>
+<key>UTExportedTypeDeclarations</key>
+<array>
+    <dict>
+        <key>UTTypeIdentifier</key>
+        <string>com.provenance.retroarch.config</string>
+        <key>UTTypeDescription</key>
+        <string>RetroArch Configuration File</string>
+        <key>UTTypeConformsTo</key>
+        <array>
+            <string>public.plain-text</string>
+            <string>public.text</string>
+        </array>
+        <key>UTTypeTagSpecification</key>
+        <dict>
+            <key>public.filename-extension</key>
+            <array>
+                <string>cfg</string>
+            </array>
+            <key>public.mime-type</key>
+            <array>
+                <string>text/plain</string>
+            </array>
+        </dict>
+    </dict>
+</array>

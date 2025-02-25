@@ -7,4 +7,6 @@ protocol ConfigEditorProtocol: ObservableObject {
     func loadConfig() async
     func saveChanges() async
     func reloadConfig() async
+    func markAsChanged()
+    func markAsUnchanged()
 }
