@@ -138,7 +138,7 @@ public final class PVControllerManager: NSObject, ObservableObject {
     public var hasControllers: Bool {
         return player1 != nil || player2 != nil || player3 != nil || player4 != nil  || player5 != nil || player6 != nil || player7 != nil || player8 != nil
     }
-    var isKeyboardConnected: Bool {
+    public var isKeyboardConnected: Bool {
         return keyboardController != nil
 //        if #available(iOS 14.0, *) {
 //            return GCKeyboard.coalesced != nil

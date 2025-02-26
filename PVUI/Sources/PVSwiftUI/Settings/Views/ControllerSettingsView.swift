@@ -34,45 +34,67 @@ struct ControllerSettingsView: View {
 
     /// Keyboard mapping documentation
     private let keyboardMappingDocs = """
-    ## Keyboard Controls
+    # 🎮 Keyboard Controls
 
-    The following keyboard controls are available when a keyboard is connected:
+    ```
+    ┌───────────────────────────────────┐
+    │       KEYBOARD MAPPING GUIDE      │
+    └───────────────────────────────────┘
+    ```
 
-    ### Main Controls
-    - **WASD**: D-Pad / Left Stick
-    - **Arrow Keys**: D-Pad / Right Stick
-    - **Space** or **Return**: A Button
-    - **F** or **Escape**: B Button
-    - **Q**: X Button
-    - **E**: Y Button
+    ## 🕹️ Main Controls
 
-    ### Shoulder Buttons
-    - **Tab** or **Caps Lock**: L1 (Left Shoulder)
-    - **Left Shift**: L2 (Left Trigger)
-    - **R**: R1 (Right Shoulder)
-    - **V**: R2 (Right Trigger)
+    | Key(s) | Function |
+    |:------:|:---------|
+    | `W A S D` | 🎮 D-Pad / Left Stick |
+    | `↑ ← ↓ →` | 🎮 D-Pad / Right Stick |
+    | `Space/Return` | 🔵 A Button |
+    | `F/Esc` | 🔴 B Button |
+    | `Q` | 🟡 X Button |
+    | `E` | 🟢 Y Button |
 
-    ### Special Buttons
-    - **Tilde (~)**: Menu Button
-    - **1** or **U**: Options Button
-    - **X**: L3 (Left Stick Click)
-    - **C**: R3 (Right Stick Click)
+    ## 🛡️ Shoulder Controls
 
-    ### Additional Controls
-    - **[=]**: Right Stick Up
-    - **-**: Right Stick Down
-    - **[**: Right Stick Left
-    - **]**: Right Stick Right
+    ```
+    ┌───────┐ ╭─────────╮ ┌───┐
+    │  Tab  │-│SHOULDERS│-│ R │  ◀── L1/R1
+    │L-Shift│-│TRIGGERS │-│ V │  ◀── L2/R2
+    └───────┘ ╰─────────╯ └───┘
+    ```
 
-    ### Alternate Controls
-    - **;**: Right Stick Left
-    - **K**: Right Stick Left
-    - **L**: Right Stick Down
-    - **O**: Right Stick Up
+    ## 🎯 Special Buttons
 
-    ### Special Functions
-    - **/** (Forward Slash): Select Button
-    - **Right Shift**: Start Button
+    | Button | Key | Description |
+    |:------:|:---:|:-----------|
+    | `~` | Tilde | 📱 Menu |
+    | `1/U` | One/U | ⚙️ Options |
+    | `X` | X | 🕹️ L3 (Left Stick) |
+    | `C` | C | 🕹️ R3 (Right Stick) |
+
+    ## 🎮 Right Stick Controls
+
+    ```
+    ╭───────────╮
+    │     O     │  ◀── Up
+    │  [ K L ]  │  ◀── Left/Right
+    │     -     │  ◀── Down
+    ╰───────────╯
+    ```
+
+    ## ⚡ Quick Actions
+
+    | Key | Action |
+    |:---:|:-------|
+    | `/` | Select |
+    | `R-Shift` | Start |
+
+    > 💡 **Pro Tip**: Use the arrow keys for precise D-pad control and WASD for analog stick movement.
+
+    ```
+    ┌──────────────────────────────────────┐
+    │ HAPPY GAMING! 👾 PRESS START TO PLAY │
+    └──────────────────────────────────────┘
+    ```
     """
 
     /// Helper to get player's controller
@@ -194,30 +216,34 @@ struct ControllerSettingsView: View {
                 }
             }
 
-            // Add keyboard mapping documentation as a new section
+            // Update the markdown view styling
 //            if controllerManager.isKeyboardConnected {
                 Section {
                     #if os(tvOS)
                     Button(action: {}) {
                         MarkdownView(text: keyboardMappingDocs)
-                            .font(.system(size: 14, weight: .regular), for: .body)
-                            .font(.system(size: 24, weight: .bold), for: .h2)
-                            .font(.system(size: 18, weight: .semibold), for: .h3)
+                            .font(.custom("Menlo", size: 14), for: .body)
+                            .font(.custom("Menlo", size: 24), for: .h1)
+                            .font(.custom("Menlo", size: 20), for: .h2)
+                            .font(.custom("Menlo", size: 16), for: .h3)
+                            .font(.custom("Menlo", size: 14), for: .codeBlock)
                             .tint(accentColor)
                     }
                     .buttonStyle(.card)
                     .focusable()
                     #else
                     MarkdownView(text: keyboardMappingDocs)
-                        .font(.system(size: 14, weight: .regular), for: .body)
-                        .font(.system(size: 24, weight: .bold), for: .h2)
-                        .font(.system(size: 18, weight: .semibold), for: .h3)
+                        .font(.custom("Menlo", size: 14), for: .body)
+                        .font(.custom("Menlo", size: 24), for: .h1)
+                        .font(.custom("Menlo", size: 20), for: .h2)
+                        .font(.custom("Menlo", size: 16), for: .h3)
+                        .font(.custom("Menlo", size: 14), for: .codeBlock)
                         .tint(accentColor)
                     #endif
                 } header: {
                     HStack {
                         Image(systemName: "keyboard")
-                        Text("Keyboard Controls")
+                        Text("⌨️ Keyboard Controls")
                     }
                     .font(.headline)
                 }
