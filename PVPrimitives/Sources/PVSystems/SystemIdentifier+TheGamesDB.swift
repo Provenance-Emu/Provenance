@@ -175,7 +175,7 @@ public extension SystemIdentifier {
 
 //        default: return nil
         case .AppleII: return 4942
-        case .Atari8bit: return 4943
+        case .Atari8bit: return 4943 // Atari-800
         case .AtariJaguarCD: return 29
         case .DOS: return 1
         case .DOOM: return 1
