@@ -217,7 +217,7 @@ import PVCoreBridge
     static var customTexturesOption: CoreOption {
         .bool(.init(
             title: "Use Custom Textures",
-            description: nil,
+            description: "Replace textures with PNG files. Textures are loaded from provenance/load/textures/[Title ID].",
             requiresRestart: false),
               defaultValue: false)
     }
