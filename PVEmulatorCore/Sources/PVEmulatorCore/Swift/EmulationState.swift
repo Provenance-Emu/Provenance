@@ -16,10 +16,12 @@ import SwiftUI
 
 /// Main actor for managing emulation state
 //@MainActor
-public final class EmulationState: ObservableObject {
+@objc
+public final class EmulationState: NSObject, ObservableObject {
+    @objc
     nonisolated(unsafe) public static let shared = EmulationState()
 
-    private init() {}
+    private override init() {}
 
     /// State model for emulation
     @Published public private(set) var state = State()
@@ -31,16 +33,19 @@ public final class EmulationState: ObservableObject {
     }
 
     // Computed properties for direct access
+    @objc
     public var coreClassName: String {
         get { state.coreClassName }
         set { state.coreClassName = newValue }
     }
 
+    @objc
     public var systemName: String {
         get { state.systemName }
         set { state.systemName = newValue }
     }
 
+    @objc
     public var isOn: Bool {
         get { state.isOn }
         set { state.isOn = newValue }
@@ -55,19 +60,23 @@ public final class EmulationState: ObservableObject {
 }
 
 /// Convenience methods for state access
+@objc
 extension EmulationState {
+    @objc
     public func setCoreClassName(_ value: String) async {
 //        await MainActor.run {
             coreClassName = value
 //        }
     }
 
+    @objc
     public func setSystemName(_ value: String) async {
 //        await MainActor.run {
             systemName = value
 //        }
     }
 
+    @objc
     public func setIsOn(_ value: Bool) async {
 //        await MainActor.run {
             isOn = value

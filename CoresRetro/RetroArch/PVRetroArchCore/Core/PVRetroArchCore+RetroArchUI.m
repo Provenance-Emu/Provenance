@@ -81,6 +81,8 @@ int argc =  1;
 #pragma mark - PVRetroArchCoreBridge Begin
 
 #ifdef HAVE_COCOA_METAL
+// TODO: Use me in Vulkan mode and change the code I edited in the past
+// to workaround this not being the layer @JoeMatt
 @implementation MetalLayerView
 
 + (Class)layerClass {
@@ -159,7 +161,8 @@ int argc =  1;
 }
 
 - (void)setPauseEmulation:(BOOL)flag {
-    if (!self.isOn) {
+    if (!EmulationState.shared.isOn) {
+        WLOG(@"Core isn't set to \"on\", skipping set pause : %i", flag);
         return;
     }
     command_event(flag ? CMD_EVENT_PAUSE : CMD_EVENT_UNPAUSE, NULL);

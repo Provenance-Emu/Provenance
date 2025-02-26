@@ -50,6 +50,14 @@ import PVLogging
         
         bridge.stopEmulation()
         isOn = false
+        // Update the singleton state
+        Task {
+            await EmulationState.shared.update { state in
+                state.coreClassName = ""
+                state.systemName = ""
+                state.isOn = false
+            }
+        }
     }
 
     @MainActor
@@ -101,6 +109,14 @@ import PVLogging
         isRunning = true
         shouldStop = false
         isOn = true
+        // Update the singleton state
+        Task {
+            await EmulationState.shared.update { state in
+                state.coreClassName = self.coreIdentifier ?? ""
+                state.systemName = self.systemIdentifier ?? ""
+                state.isOn = true
+            }
+        }
     }
 
     @MainActor
