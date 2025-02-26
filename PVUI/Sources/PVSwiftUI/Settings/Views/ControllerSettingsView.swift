@@ -9,6 +9,7 @@ import SwiftUI
 import PVUIBase
 import GameController
 import PVThemes
+import MarkdownView
 #if canImport(PVUI_IOS)
 import PVUI_IOS
 #endif
@@ -30,6 +31,49 @@ struct ControllerSettingsView: View {
     @State private var connectionAnimation = false
     /// Current window for iCade setup
     @State private var window: UIWindow?
+
+    /// Keyboard mapping documentation
+    private let keyboardMappingDocs = """
+    ## Keyboard Controls
+
+    The following keyboard controls are available when a keyboard is connected:
+
+    ### Main Controls
+    - **WASD**: D-Pad / Left Stick
+    - **Arrow Keys**: D-Pad / Right Stick
+    - **Space** or **Return**: A Button
+    - **F** or **Escape**: B Button
+    - **Q**: X Button
+    - **E**: Y Button
+
+    ### Shoulder Buttons
+    - **Tab** or **Caps Lock**: L1 (Left Shoulder)
+    - **Left Shift**: L2 (Left Trigger)
+    - **R**: R1 (Right Shoulder)
+    - **V**: R2 (Right Trigger)
+
+    ### Special Buttons
+    - **Tilde (~)**: Menu Button
+    - **1** or **U**: Options Button
+    - **X**: L3 (Left Stick Click)
+    - **C**: R3 (Right Stick Click)
+
+    ### Additional Controls
+    - **[=]**: Right Stick Up
+    - **-**: Right Stick Down
+    - **[**: Right Stick Left
+    - **]**: Right Stick Right
+
+    ### Alternate Controls
+    - **;**: Right Stick Left
+    - **K**: Right Stick Left
+    - **L**: Right Stick Down
+    - **O**: Right Stick Up
+
+    ### Special Functions
+    - **/** (Forward Slash): Select Button
+    - **Right Shift**: Start Button
+    """
 
     /// Helper to get player's controller
     private func controller(for player: Int) -> GCController? {
@@ -74,6 +118,7 @@ struct ControllerSettingsView: View {
     }
 
     private var backgroundColor: Color {
+        themeManager.currentPalette.tableViewBackgroundColor?.swiftUIColor ??
         themeManager.currentPalette.gameLibraryBackground.swiftUIColor
     }
 
@@ -148,6 +193,35 @@ struct ControllerSettingsView: View {
                     }
                 }
             }
+
+            // Add keyboard mapping documentation as a new section
+//            if controllerManager.isKeyboardConnected {
+                Section {
+                    #if os(tvOS)
+                    Button(action: {}) {
+                        MarkdownView(text: keyboardMappingDocs)
+                            .font(.system(size: 14, weight: .regular), for: .body)
+                            .font(.system(size: 24, weight: .bold), for: .h2)
+                            .font(.system(size: 18, weight: .semibold), for: .h3)
+                            .tint(accentColor)
+                    }
+                    .buttonStyle(.card)
+                    .focusable()
+                    #else
+                    MarkdownView(text: keyboardMappingDocs)
+                        .font(.system(size: 14, weight: .regular), for: .body)
+                        .font(.system(size: 24, weight: .bold), for: .h2)
+                        .font(.system(size: 18, weight: .semibold), for: .h3)
+                        .tint(accentColor)
+                    #endif
+                } header: {
+                    HStack {
+                        Image(systemName: "keyboard")
+                        Text("Keyboard Controls")
+                    }
+                    .font(.headline)
+                }
+//            }
         }
         #if os(tvOS)
         .listStyle(.plain)
