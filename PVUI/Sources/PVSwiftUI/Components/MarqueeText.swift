@@ -39,6 +39,32 @@ struct MarqueeText: View {
         self.loop = loop
     }
 
+    /// Calculate accurate text width with proper attributes
+    private func calculateTextWidth(text: String, font: UIFont) -> CGFloat {
+        // Check if font is monospaced
+        if font.isMonospaced {
+            // For monospaced fonts, we can calculate width directly
+            // Get width of a single character (using 'M' as reference)
+            let charWidth = ("M" as NSString).size(withAttributes: [.font: font]).width
+            // Multiply by string length for total width
+            return ceil(charWidth * CGFloat(text.count))
+        }
+
+        // Fallback to boundingRect for non-monospaced fonts
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: font
+        ]
+
+        let size = (text as NSString).boundingRect(
+            with: CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude),
+            options: [.usesFontLeading, .usesLineFragmentOrigin],
+            attributes: attributes,
+            context: nil
+        )
+
+        return ceil(size.width)
+    }
+
     /// Convert SwiftUI font to UIFont with proper scaling
     private func scaledFont(from swiftUIFont: Font) -> UIFont {
         // Extract size and weight from SwiftUI font if possible, or use defaults
@@ -57,32 +83,6 @@ struct MarqueeText: View {
             return baseFont.withSize(minimumFontSize)
         }
         return scaledFont
-    }
-
-    /// Calculate accurate text width with proper attributes
-    private func calculateTextWidth(text: String, font: UIFont) -> CGFloat {
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: font
-        ]
-
-        // Use NSAttributedString for more accurate measurement
-        let attributedString = NSAttributedString(string: text, attributes: attributes)
-
-        // Create a layout manager for precise width calculation
-        let layoutManager = NSLayoutManager()
-        let textContainer = NSTextContainer(size: CGSize(width: CGFloat.greatestFiniteMagnitude, height: .greatestFiniteMagnitude))
-        let textStorage = NSTextStorage(attributedString: attributedString)
-
-        layoutManager.addTextContainer(textContainer)
-        textStorage.addLayoutManager(layoutManager)
-
-        // Get the precise used rect
-        let glyphRange = layoutManager.glyphRange(for: textContainer)
-        let usedRect = layoutManager.usedRect(for: textContainer)
-
-        // Add a small buffer (0.5% of text width) to prevent tight fit
-        let buffer = ceil(usedRect.width * 0.005)
-        return ceil(usedRect.width + buffer)
     }
 
     var body: some View {
@@ -196,3 +196,12 @@ struct MarqueeText_Previews: PreviewProvider {
     }
 }
 #endif
+
+// Add extension for UIFont to check if monospaced
+private extension UIFont {
+    var isMonospaced: Bool {
+        // Check font traits for monospace
+        let traits = fontDescriptor.symbolicTraits
+        return traits.contains(.traitMonoSpace)
+    }
+}
