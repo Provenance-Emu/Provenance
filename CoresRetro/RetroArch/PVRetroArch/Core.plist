@@ -1638,6 +1638,7 @@
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.retroarch</string>
+				<string>com.provenance.c64</string>
 			</array>
 			<key>PVProjectName</key>
 			<string>Commodore - C64 (RetroArch)</string>
@@ -1738,6 +1739,7 @@
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.retroarch</string>
+				<string>com.provenance.zxspectrum</string>
 			</array>
 			<key>PVProjectName</key>
 			<string>Sinclair - ZX Spectrum (RetroArch)</string>
