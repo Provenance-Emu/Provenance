@@ -5,9 +5,9 @@
 ## Summary
 
 - **Total Contributors**: 93
-- **Total Commits**: 5974
-- **Total Lines Added**: 13141306
-- **Total Lines Removed**: 5747818
+- **Total Commits**: 6161
+- **Total Lines Added**: 13932801
+- **Total Lines Removed**: 5799865
 
 ## Contributor Details
 
@@ -18,9 +18,9 @@
 ![Joseph Mattiello](https://www.gravatar.com/avatar/79585fbd531fa1438a73a53fb2c9eacd?s=100&d=identicon)
 
 - **Emails Used**: git@joemattiello.com, jmattiello@MacBook-Pro-M2.local, jmattiello@hearst.com, joe.mattiello@salido.com, mail@joemattiello.com
-- **Commits**: `4381`
-- **Lines Added**: `10935325`
-- **Lines Removed**: `4959968`
+- **Commits**: `4568`
+- **Lines Added**: `11726820`
+- **Lines Removed**: `5012015`
 - **Most Active File**: `Provenance.xcodeproj/project.pbxproj`
 - **Activity**: `▰▰▰▰▰▰▰▰▰▰`
 
