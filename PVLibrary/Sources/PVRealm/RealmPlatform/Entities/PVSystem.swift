@@ -263,20 +263,13 @@ public extension PVSystem {
                 return .square
             case .N64, .SNES:
                 return .HDTV
-            case .CPS1:
-                return .square
-            case .CPS2:
-                return .square
-            case .CPS3:
-                return .square
-            case .DOOM:
-                return .poster
-            case .Quake:
-                return .poster
-            case .Quake2:
-                return .poster
-            case .Wolf3D:
-                return .poster
+            case .CPS1:   return .square
+            case .CPS2:   return .square
+            case .CPS3:   return .square
+            case .DOOM:   return .poster
+            case .Quake:  return .poster
+            case .Quake2: return .poster
+            case .Wolf3D: return .poster
             }
         }
     #endif
