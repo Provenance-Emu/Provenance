@@ -51,7 +51,7 @@ extension NSImage {
 #if os(tvOS)
     public let PVThumbnailMaxResolution: Float = 800.0
 #else
-    public let PVThumbnailMaxResolution: Float = 200.0
+    public let PVThumbnailMaxResolution: Float = 600.00
 #endif
 
 let kPVCachePath = "PVCache"
@@ -161,7 +161,7 @@ public final class PVMediaCache: NSObject, Sendable {
         }
 
         if let newImage = image.scaled(withMaxResolution: Int(PVThumbnailMaxResolution)) {
-            let imageData = newImage.jpegData(compressionQuality: 0.85)
+            let imageData = newImage.jpegData(compressionQuality: 0.95)
             return try writeData(toDisk: imageData, withKey: key)
         } else {
             throw MediaCacheError.failedToScaleImage

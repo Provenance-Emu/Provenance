@@ -79,7 +79,7 @@ public extension PVGame {
             if let p = pathOfCachedImage?.path,
                let t = UIImage(contentsOfFile: p),
                let s = t.scaledImage(withMaxResolution: 270) {
-                contentSet.thumbnailData = s.jpegData(compressionQuality: 0.85)
+                contentSet.thumbnailData = s.jpegData(compressionQuality: 0.95)
             }
             return contentSet
         }
