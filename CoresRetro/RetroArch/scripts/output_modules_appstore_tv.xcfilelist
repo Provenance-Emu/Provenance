@@ -12,6 +12,8 @@ $(SRCROOT)/CoresRetro/RetroArch/modules/bluemsx_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/bsnes_hd_beta_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/bsnes_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/bsnes_mercury_accuracy_libretro_tvos.dylib
+$(SRCROOT)/CoresRetro/RetroArch/modules/bsnes_mercury_balanced_libretro_tvos.dylib
+$(SRCROOT)/CoresRetro/RetroArch/modules/bsnes_performance_accuracy_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/cap32_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/desmume_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/dice_libretro_tvos.dylib
