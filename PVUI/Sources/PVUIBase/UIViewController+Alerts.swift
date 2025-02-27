@@ -13,7 +13,33 @@ import PVLogging
 
 public
 extension UIViewController {
-    func presentMessage(_ message: String, title: String, source: UIView, completion _: (() -> Swift.Void)? = nil) {
+    func presentMessage(_ message: String, title: String, source: UIView, completion: (() -> Swift.Void)? = nil) {
+        presentMessage(message,
+                       title: title,
+                       source: source,
+                       completion: completion)
+    }
+    
+    func presentCancellableMessage(_ message: String, title: String, source: UIView, completion: (() -> Swift.Void)? = nil) {
+        presentMessage(message, title: title,
+                       source: source,
+                       secondaryActionTitle: NSLocalizedString("Cancel", comment: ""),
+                       secondaryActionStyle: .cancel,
+                       secondaryCompletion: nil,
+                       defaultActionTitle: NSLocalizedString("Delete", comment: ""),
+                       defaultActionStyle: .destructive,
+                       completion: completion)
+    }
+    
+    func presentMessage(_ message: String,
+                        title: String,
+                        source: UIView,
+                        secondaryActionTitle: String? = nil,
+                        secondaryActionStyle: UIAlertAction.Style = .cancel,
+                        secondaryCompletion: ((UIAlertAction) -> Void)? = nil,
+                        defaultActionTitle: String = NSLocalizedString("OK", comment: ""),
+                        defaultActionStyle: UIAlertAction.Style = .default,
+                        completion: (() -> Swift.Void)? = nil) {
         NSLog("Title: %@ Message: %@", title, message);
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.preferredContentSize = CGSize(width: 300, height: 300)
@@ -22,7 +48,12 @@ extension UIViewController {
         alert.popoverPresentationController?.sourceView = source
         alert.popoverPresentationController?.sourceRect = UIScreen.main.bounds
         
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: defaultActionTitle, style: defaultActionStyle) { _ in
+            completion?()
+        })
+        if let actualSecondaryActionTitle = secondaryActionTitle {
+            alert.addAction(UIAlertAction(title: actualSecondaryActionTitle, style: secondaryActionStyle, handler: secondaryCompletion))
+        }
         
         let presentingVC = presentedViewController ?? self
         

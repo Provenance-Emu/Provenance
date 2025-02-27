@@ -10,4 +10,6 @@ import Foundation
 public extension Notification.Name {
     static let DatabaseMigrationStarted = Notification.Name("DatabaseMigrarionStarted")
     static let DatabaseMigrationFinished = Notification.Name("DatabaseMigrarionFinished")
+    static let RomDatabaseInitialized = Notification.Name("RomDatabaseInitialized")
+    static let RomsFinishedImporting = Notification.Name("RomsFinishedImporting")
 }

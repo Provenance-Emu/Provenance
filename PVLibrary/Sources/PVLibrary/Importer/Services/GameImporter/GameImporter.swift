@@ -423,6 +423,27 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         importQueue.remove(atOffsets: offsets)
     }
+    
+    /// Searches for successful imports filtered by files and removes from importQueue and files. This is so that only files imported by iCloud can be removed
+    /// - Parameter files: set of files to check
+    public func removeSuccessfulImports(from files: inout Set<URL>) {
+        guard !files.isEmpty
+        else {
+            return
+        }
+        importQueueLock.lock()
+        defer {
+            importQueueLock.unlock()
+        }
+        let offsets = IndexSet(importQueue.enumerated().compactMap { index, item in
+            if item.status == .success && files.contains(item.url) {
+                files.remove(item.url)
+                return index
+            }
+            return nil
+        })
+        importQueue.remove(atOffsets: offsets)
+    }
 
     // Public method to manually start processing if needed
     public func startProcessing() {
@@ -658,6 +679,9 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     // Processes each ImportItem in the queue sequentially
     private func processQueue() async {
+        defer {
+            NotificationCenter.default.post(name: .RomsFinishedImporting, object: nil)
+        }
         // Check for items that are either queued or have a user-chosen system
         let itemsToProcess = importQueue.filter {
             $0.status == .queued || $0.userChosenSystem != nil

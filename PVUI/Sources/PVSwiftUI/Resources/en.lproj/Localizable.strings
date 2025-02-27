@@ -1,0 +1,4 @@
+"DeleteGameTitle" = "Delete Game?";
+"DeleteGameBody" = "Are you sure you want to delete game \"%@\"?";
+"OK" = "OK";
+"Cancel" = "Cancel";

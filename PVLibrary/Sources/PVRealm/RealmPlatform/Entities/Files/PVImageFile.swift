@@ -41,6 +41,10 @@ public final class PVImageFile: PVFile {
         self.init()
         self.relativeRoot = relativeRoot
         let partialPath = relativeRoot.createRelativePath(fromURL: url)
+        //TODO: remove
+        if doesPathContainParent(partialPath) {
+            DLOG("invalid path: \(partialPath)")
+        }
         self.partialPath = partialPath
 
         calculateSizeData()
@@ -53,6 +57,11 @@ public final class PVImageFile: PVFile {
         guard let path = url?.path else {
             cgsize = .zero
             return
+        }
+        //TODO: path is wrong when switching to iCloud
+        let path = url.path
+        if doesPathContainParent(path) {
+            ELOG("invalid path: \(path)")
         }
 
 //        let size = await Task { () -> CGSize in

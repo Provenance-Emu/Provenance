@@ -40,13 +40,15 @@ internal struct AdvancedTogglesView: View {
                             icon: .sfSymbol("lock.open"))
             }
 
-            if !isAppStore {
+//            if !isAppStore {
+            #warning("TODO: Wrap this in a feature flag toggle")
+            // TODO: Wrap this in a feature flag toggle
                 PremiumThemedToggle(isOn: $iCloudSync) {
                     SettingsRow(title: "iCloud Sync",
                                 subtitle: "Sync save states and settings across devices.",
                                 icon: .sfSymbol("icloud"))
                 }
-            }
+//            }
 
             PremiumThemedToggle(isOn: Binding(
                 get: { !useMetalRenderer },
