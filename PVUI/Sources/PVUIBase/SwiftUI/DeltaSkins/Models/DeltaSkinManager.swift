@@ -107,7 +107,9 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
         }
 
         // Update loadedSkins
-        loadedSkins = scannedSkins
+        Task { @MainActor in
+            loadedSkins = scannedSkins
+        }
     }
 
     /// Load a skin from URL and add to loadedSkins
@@ -119,7 +121,9 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             ILOG("Successfully loaded skin: \(skin.name) (type: \(skin.gameType.rawValue))")
 
             DLOG("Current loaded skins count: \(loadedSkins.count)")
-            loadedSkins.append(skin)
+            Task { @MainActor in
+                loadedSkins.append(skin)
+            }
             DLOG("New loaded skins count: \(loadedSkins.count)")
 
             return skin

@@ -121,6 +121,12 @@ private struct SkinGridView: View {
     @State private var isLoading = true
     @State private var error: Error?
 
+    /// Stores the expanded state of each console section as a comma-separated list of expanded section names
+    @AppStorage("deltaSkinSectionStates") private var expandedSectionsString: String = ""
+
+    /// Set of expanded section names for faster lookup
+    @State private var expandedSections: Set<String> = []
+
     // Use manager's loadedSkins directly
     private var groupedSkins: [(String, [DeltaSkinProtocol])] {
         let grouped = Dictionary(grouping: manager.loadedSkins) { skin in
@@ -132,6 +138,14 @@ private struct SkinGridView: View {
     // Create an ordered list that matches the visual grouping
     private var orderedSkins: [DeltaSkinProtocol] {
         groupedSkins.flatMap { _, consoleSkins in consoleSkins }
+    }
+
+    /// Custom transition for section content
+    private var sectionTransition: AnyTransition {
+        .asymmetric(
+            insertion: .opacity.combined(with: .scale(scale: 0.95)).combined(with: .offset(y: -20)),
+            removal: .opacity.combined(with: .scale(scale: 0.95)).combined(with: .offset(y: -20))
+        )
     }
 
     var body: some View {
@@ -158,26 +172,46 @@ private struct SkinGridView: View {
                     VStack(spacing: 24) {
                         ForEach(groupedSkins, id: \.0) { consoleName, consoleSkins in
                             VStack(alignment: .leading, spacing: 12) {
-                                // Section header
-                                Text(consoleName)
-                                    .font(.title2)
-                                    .fontWeight(.bold)
-                                    .padding(.horizontal)
+                                // Section header with disclosure button
+                                Button {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                        toggleSection(consoleName)
+                                    }
+                                } label: {
+                                    HStack {
+                                        Text(consoleName)
+                                            .font(.title2)
+                                            .fontWeight(.bold)
 
-                                // Grid of skins for this console
-                                LazyVGrid(columns: columns, spacing: 12) {
-                                    ForEach(consoleSkins, id: \.identifier) { skin in
-                                        NavigationLink {
-                                            PagedSkinTestView(
-                                                skins: orderedSkins,  // Use ordered list
-                                                initialIndex: orderedSkins.firstIndex(where: { $0.identifier == skin.identifier }) ?? 0
-                                            )
-                                        } label: {
-                                            SkinPreviewCell(skin: skin, manager: manager)
-                                        }
+                                        Spacer()
+
+                                        Image(systemName: isExpanded(consoleName) ? "chevron.down" : "chevron.right")
+                                            .foregroundStyle(.secondary)
+                                            .font(.headline)
+                                            .rotationEffect(.degrees(isExpanded(consoleName) ? 0 : -90))
+                                            .animation(.spring(response: 0.3, dampingFraction: 0.8), value: isExpanded(consoleName))
                                     }
                                 }
+                                .buttonStyle(.plain)
                                 .padding(.horizontal)
+
+                                // Grid of skins for this console
+                                if isExpanded(consoleName) {
+                                    LazyVGrid(columns: columns, spacing: 12) {
+                                        ForEach(consoleSkins, id: \.identifier) { skin in
+                                            NavigationLink {
+                                                PagedSkinTestView(
+                                                    skins: orderedSkins,
+                                                    initialIndex: orderedSkins.firstIndex(where: { $0.identifier == skin.identifier }) ?? 0
+                                                )
+                                            } label: {
+                                                SkinPreviewCell(skin: skin, manager: manager)
+                                            }
+                                        }
+                                    }
+                                    .padding(.horizontal)
+                                    .transition(sectionTransition)
+                                }
                             }
                         }
                     }
@@ -187,7 +221,41 @@ private struct SkinGridView: View {
         .background(Color.systemGroupedBackground)
         .task {
             await loadSkins()
+            initializeSectionStates()
         }
+        .onChange(of: expandedSections) { newValue in
+            expandedSectionsString = newValue.sorted().joined(separator: ",")
+        }
+    }
+
+    /// Initialize section states to expanded by default
+    private func initializeSectionStates() {
+        // Convert stored string to Set
+        let storedSections = Set(expandedSectionsString.split(separator: ",").map(String.init))
+
+        // If we have stored states, use them
+        if !expandedSectionsString.isEmpty {
+            expandedSections = storedSections
+        } else {
+            // Otherwise, initialize all sections as expanded
+            expandedSections = Set(groupedSkins.map { $0.0 })
+            // Update stored string
+            expandedSectionsString = expandedSections.sorted().joined(separator: ",")
+        }
+    }
+
+    /// Toggle the expanded state of a section
+    private func toggleSection(_ consoleName: String) {
+        if expandedSections.contains(consoleName) {
+            expandedSections.remove(consoleName)
+        } else {
+            expandedSections.insert(consoleName)
+        }
+    }
+
+    /// Check if a section is expanded
+    private func isExpanded(_ consoleName: String) -> Bool {
+        expandedSections.contains(consoleName)
     }
 
     private func loadSkins() async {
@@ -213,6 +281,7 @@ private struct SkinPreviewCell: View {
     @State private var showingDeleteAlert = false
     @State private var deleteError: Error?
     @State private var showingErrorAlert = false
+    @State private var showingShareSheet = false
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.colorScheme) private var colorScheme
 
@@ -262,6 +331,12 @@ private struct SkinPreviewCell: View {
                 .contentShape(Rectangle())  // Make entire area tappable
         }
         .contextMenu {
+            Button {
+                showingShareSheet = true
+            } label: {
+                Label("Share", systemImage: "square.and.arrow.up")
+            }
+
             if manager.isDeletable(skin) {
                 Button(role: .destructive) {
                     showingDeleteAlert = true
@@ -289,6 +364,9 @@ private struct SkinPreviewCell: View {
             Button("OK", role: .cancel) { }
         } message: { error in
             Text(error.localizedDescription)
+        }
+        .sheet(isPresented: $showingShareSheet) {
+            ShareSheet(activityItems: [skin.fileURL])
         }
     }
 
@@ -475,4 +553,19 @@ private struct PagedSkinTestView: View {
             }
         }
     }
+}
+
+/// ShareSheet wrapper for UIActivityViewController
+private struct ShareSheet: UIViewControllerRepresentable {
+    let activityItems: [Any]
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let controller = UIActivityViewController(
+            activityItems: activityItems,
+            applicationActivities: nil
+        )
+        return controller
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }

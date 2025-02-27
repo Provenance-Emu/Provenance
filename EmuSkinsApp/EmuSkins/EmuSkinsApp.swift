@@ -7,12 +7,81 @@
 
 import SwiftUI
 import PVUIBase
+import PVLogging
+import UniformTypeIdentifiers
 
 @main
 struct EmuSkinsApp: App {
+    /// Shared DeltaSkinManager instance
+    @StateObject private var skinManager = DeltaSkinManager.shared
+
+    /// State to track any import errors
+    @State private var importError: Error?
+    @State private var showingImportError = false
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(skinManager)
+                // Handle URLs opened with our custom scheme
+                .onOpenURL { url in
+                    handleIncomingURL(url)
+                }
+                // Handle files opened from Finder/Files app
+                .onDrop(of: [UTType.deltaSkin], isTargeted: nil) { providers in
+                    Task {
+                        await handleDroppedItems(providers)
+                    }
+                    return true
+                }
+                .alert("Import Error", isPresented: $showingImportError) {
+                    Button("OK", role: .cancel) { }
+                } message: {
+                    Text(importError?.localizedDescription ?? "Failed to import skin")
+                }
+        }
+    }
+
+    /// Handle URLs opened with our custom scheme or universal links
+    private func handleIncomingURL(_ url: URL) {
+        Task {
+            do {
+                // Start accessing the security-scoped resource if needed
+                if url.startAccessingSecurityScopedResource() {
+                    defer { url.stopAccessingSecurityScopedResource() }
+                }
+
+                try await skinManager.importSkin(from: url)
+                await skinManager.reloadSkins()
+            } catch {
+                ELOG("Failed to import skin from URL: \(error)")
+                importError = error
+                showingImportError = true
+            }
+        }
+    }
+
+    /// Handle files dropped onto the app
+    private func handleDroppedItems(_ providers: [NSItemProvider]) async {
+        for provider in providers {
+            do {
+                // Load the dropped file URL
+                guard let url = try await provider.loadItem(forTypeIdentifier: UTType.deltaSkin.identifier) as? URL else {
+                    continue
+                }
+
+                // Start accessing the security-scoped resource if needed
+                if url.startAccessingSecurityScopedResource() {
+                    defer { url.stopAccessingSecurityScopedResource() }
+                }
+
+                try await skinManager.importSkin(from: url)
+                await skinManager.reloadSkins()
+            } catch {
+                ELOG("Failed to import dropped skin: \(error)")
+                importError = error
+                showingImportError = true
+            }
         }
     }
 }
