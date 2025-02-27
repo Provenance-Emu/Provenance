@@ -69,7 +69,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     var status: iCloudSyncStatus = .initialUpload
     let errorHandler: ErrorHandler
     var initialSyncResult: SyncResult = .indeterminate
-    
+
     init(directories: Set<String>,
          notificationCenter: NotificationCenter,
          errorHandler: ErrorHandler) {
@@ -77,17 +77,25 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         self.directories = directories
         self.errorHandler = errorHandler
     }
-    
+
     deinit {
+        /// First stop and disable the metadata query
         metadataQuery.disableUpdates()
         metadataQuery.stop()
+
+        /// Remove specific observers
         notificationCenter.removeObserver(self, name: .NSMetadataQueryDidFinishGathering, object: metadataQuery)
         notificationCenter.removeObserver(self, name: .NSMetadataQueryDidUpdate, object: metadataQuery)
+
+        /// Remove all observers for this object to ensure no leaks
+        notificationCenter.removeObserver(self)
+
+        /// Handle iCloud cleanup
         let removed = removeFromiCloud()
         DLOG("removed: \(removed)")
         DLOG("dying")
     }
-    
+
     var localAndCloudDirectories: [URL: URL] {
         var alliCloudDirectories = [URL: URL]()
         guard let actualContainrUrl = containerURL
@@ -100,9 +108,9 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         }
         return alliCloudDirectories
     }
-    
+
     let metadataQuery: NSMetadataQuery = .init()
-    
+
     func insertDownloadingFile(_ file: URL) {
         guard !uploadedFiles.contains(file)
         else {
@@ -110,15 +118,15 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         }
         pendingFilesToDownload.insert(file.absoluteString)
     }
-    
+
     func insertDownloadedFile(_ file: URL) {
         pendingFilesToDownload.remove(file.absoluteString)
     }
-    
+
     func insertUploadedFile(_ file: URL) {
         uploadedFiles.insert(file)
     }
-    
+
     func setNewCloudFilesAvailable() {
         if pendingFilesToDownload.isEmpty {
             status = .filesAlreadyMoved
@@ -126,18 +134,24 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             uploadedFiles.removeAll()
         }
     }
-    
+
     func deleteFromDatastore(_ file: URL) {
         //no-op
     }
-    
+
     func loadAllFromICloud(iterationComplete: (() -> Void)? = nil) -> Completable {
         return Completable.create { [weak self] completable in
-            self?.setupObservers(completable: completable, iterationComplete: iterationComplete)
+            guard let self = self else {
+                /// If self is nil, complete with an error to avoid memory leaks
+                completable(.error(NSError(domain: "com.provenance.icloud", code: 1003, userInfo: [NSLocalizedDescriptionKey: "iCloud syncer was deallocated"])))
+                return Disposables.create()
+            }
+
+            self.setupObservers(completable: completable, iterationComplete: iterationComplete)
             return Disposables.create()
         }
     }
-    
+
     func setupObservers(completable: PrimitiveSequenceType.CompletableObserver, iterationComplete: (() -> Void)? = nil) {
         guard containerURL != nil,
               directories.count > 0
@@ -145,16 +159,22 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             completable(.error(SyncError.noUbiquityURL))
             return
         }
-        
+
         initialSyncResult = syncToiCloud()
         DLOG("syncToiCloud result: \(initialSyncResult)")
         guard initialSyncResult != .saveFailure,
               initialSyncResult != .denied
         else {
             ELOG("error moving files to iCloud container")
+            /// Complete with appropriate error based on the result
+            if initialSyncResult == .saveFailure {
+                completable(.error(NSError(domain: "com.provenance.icloud", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Failed to save files to iCloud container"])))
+            } else if initialSyncResult == .denied {
+                completable(.error(NSError(domain: "com.provenance.icloud", code: 1002, userInfo: [NSLocalizedDescriptionKey: "Access to iCloud container denied"])))
+            }
             return
         }
-        
+
         metadataQuery.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
         DLOG("directories: \(directories)")
         var predicateFormat = ""
@@ -194,7 +214,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             self?.metadataQuery.start()
         }
     }
-    
+
     func queryFinished(notification: Notification) async {
         DLOG("directories: \(directories)")
         guard (notification.object as? NSMetadataQuery) == metadataQuery
@@ -215,7 +235,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                 }
             }
         }
-        
+
         //accessing results automatically pauses updates and resumes after deallocated
         await metadataQuery.results.concurrentForEach { [weak self] item in
             if let fileItem = item as? NSMetadataItem,
@@ -260,7 +280,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         setNewCloudFilesAvailable()
         DLOG("\(directories): current iteration: files pending to be downloaded: \(files.count), files downloaded : \(filesDownloaded.count)")
     }
-    
+
     func syncToiCloud() -> SyncResult {
         let allDirectories = localAndCloudDirectories
         guard allDirectories.count > 0
@@ -269,7 +289,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         }
         var moveResult: SyncResult? = nil
         allDirectories.forEach { (localDirectory: URL, iCloudDirectory: URL) in
-            
+
             let moved = moveFiles(at: localDirectory,
                                   containerDestination: iCloudDirectory,
                                   existingClosure: { existing in
@@ -288,7 +308,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         }
         return moveResult ?? .success
     }
-    
+
     func removeFromiCloud() -> SyncResult {
         let allDirectories = localAndCloudDirectories
         guard allDirectories.count > 0
@@ -321,7 +341,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         }
         return moveResult ?? .success
     }
-    
+
     func moveFiles(at source: URL,
                    containerDestination: URL,
                    existingClosure: ((URL) -> Void),
@@ -342,7 +362,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         DLOG("subdirectories of \(source): \(subdirectories)")
         for currentChild in subdirectories {
             let currentItem = source.appendingPathComponent(currentChild)
-            
+
             var isDirectory: ObjCBool = false
             let exists = fileManager.fileExists(atPath: currentItem.pathDecoded, isDirectory: &isDirectory)
             DLOG("\(currentItem) isDirectory?\(isDirectory) exists?\(exists)")
@@ -414,12 +434,16 @@ enum iCloudError: Error {
 public enum iCloudSync {
     case initialAppLoad
     case appLoaded
-    
+    case iCloudSyncChanged
+
     static var disposeBag: DisposeBag!
     static var gameImporter = GameImporter.shared
     static var state: iCloudSync = .initialAppLoad
     static let errorHandler: ErrorHandler = iCloudErrorHandler.shared
-    
+
+    /// Strong references to syncers to prevent premature deallocation
+    private static var activeSyncers: [Any] = []
+
     public static func initICloudDocuments() {
         Task {
             for await value in Defaults.updates(.iCloudSync) {
@@ -427,7 +451,8 @@ public enum iCloudSync {
             }
         }
     }
-    
+
+    /// This is called when the iCloudSync value is changed in UserDefaults
     static func iCloudSyncChanged(_ newValue: Bool) {
         DLOG("new iCloudSync value: \(newValue)")
         guard newValue
@@ -442,39 +467,77 @@ public enum iCloudSync {
         }
         turnOn()
     }
-    
+
     static func turnOn() {
         DLOG("turning on iCloud")
         //reset ROMs path
         gameImporter.gameImporterDatabaseService.setRomsPath(url: gameImporter.romsPath)
         errorHandler.clear()
         let fm = FileManager.default
+
+        /// Check if the iCloud identity token has changed
+        let previousTokenData = UserDefaults.standard.data(forKey: UbiquityIdentityTokenKey)
+        var tokenChanged = false
+
         if let currentiCloudToken = fm.ubiquityIdentityToken {
             do {
                 let newTokenData = try NSKeyedArchiver.archivedData(withRootObject: currentiCloudToken, requiringSecureCoding: false)
+
+                /// If we have previous token data, check if it's different from the current token
+                if let previousData = previousTokenData {
+                    tokenChanged = !previousData.elementsEqual(newTokenData)
+                    if tokenChanged {
+                        ILOG("iCloud account changed - resetting sync state")
+                        /// Clear any cached state that might be tied to the previous account
+                        errorHandler.clear()
+                        /// Additional cleanup could be added here if needed
+                    }
+                }
+
                 UserDefaults.standard.set(newTokenData, forKey: UbiquityIdentityTokenKey)
             } catch {
                 errorHandler.handleError(error, file: nil)
                 ELOG("error serializing iCloud token: \(error)")
             }
         } else {
+            /// No iCloud account available
             UserDefaults.standard.removeObject(forKey: UbiquityIdentityTokenKey)
+
+            #if os(iOS)
+            /// On iOS, we can show an alert to the user
+            DispatchQueue.main.async {
+                WLOG("No iCloud account available - iCloud sync will be disabled")
+            }
+            #endif
         }
 
         //TODO: should we pause when a game starts so we don't interfere with the game and continue listening when no game is running?
         disposeBag = DisposeBag()
-        var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots"],
-                                                                  notificationCenter: .default,
-                                                                  errorHandler: iCloudErrorHandler.shared)
+
+        /// Clear previous syncers
+        activeSyncers.removeAll()
+
+        /// Create and store strong references to syncers
+        let nonDatabaseFileSyncer = iCloudContainerSyncer(directories: ["BIOS", "Battery States", "Screenshots"],
+                                                          notificationCenter: .default,
+                                                          errorHandler: iCloudErrorHandler.shared)
+        activeSyncers.append(nonDatabaseFileSyncer)
+
         nonDatabaseFileSyncer.loadAllFromICloud()
             .observe(on: MainScheduler.instance)
             .subscribe(onError: { error in
                 ELOG(error.localizedDescription)
             }) {
                 DLOG("disposing nonDatabaseFileSyncer")
-                nonDatabaseFileSyncer = nil
+                /// Remove from active syncers when completed
+                if let index = activeSyncers.firstIndex(where: { $0 as? iCloudContainerSyncer === nonDatabaseFileSyncer }) {
+                    activeSyncers.remove(at: index)
+                }
             }.disposed(by: disposeBag)
-        var saveStateSyncer: SaveStateSyncer! = .init(notificationCenter: .default, errorHandler: iCloudErrorHandler.shared)
+
+        let saveStateSyncer = SaveStateSyncer(notificationCenter: .default, errorHandler: iCloudErrorHandler.shared)
+        activeSyncers.append(saveStateSyncer)
+
         saveStateSyncer.loadAllFromICloud() {
                 saveStateSyncer.importNewSaves()
             }.observe(on: MainScheduler.instance)
@@ -482,10 +545,15 @@ public enum iCloudSync {
                 ELOG(error.localizedDescription)
             }) {
                 DLOG("disposing saveStateSyncer")
-                saveStateSyncer = nil
+                /// Remove from active syncers when completed
+                if let index = activeSyncers.firstIndex(where: { $0 as? SaveStateSyncer === saveStateSyncer }) {
+                    activeSyncers.remove(at: index)
+                }
             }.disposed(by: disposeBag)
-        
-        var romsSyncer: RomsSyncer! = .init(notificationCenter: .default, errorHandler: iCloudErrorHandler.shared)
+
+        let romsSyncer = RomsSyncer(notificationCenter: .default, errorHandler: iCloudErrorHandler.shared)
+        activeSyncers.append(romsSyncer)
+
         romsSyncer.loadAllFromICloud() {
                 romsSyncer.handleImportNewRomFiles()
             }.observe(on: MainScheduler.instance)
@@ -493,14 +561,19 @@ public enum iCloudSync {
                 ELOG(error.localizedDescription)
             }) {
                 DLOG("disposing romsSyncer")
-                romsSyncer = nil
+                /// Remove from active syncers when completed
+                if let index = activeSyncers.firstIndex(where: { $0 as? RomsSyncer === romsSyncer }) {
+                    activeSyncers.remove(at: index)
+                }
             }.disposed(by: disposeBag)
     }
-    
+
     static func turnOff() {
         DLOG("turning off iCloud")
         errorHandler.clear()
         disposeBag = nil
+        /// Clear active syncers
+        activeSyncers.removeAll()
         //reset ROMs path
         gameImporter.gameImporterDatabaseService.setRomsPath(url: gameImporter.romsPath)
     }
@@ -518,11 +591,14 @@ class SaveStateSyncer: iCloudContainerSyncer {
             self?.importNewSaves()
         }
     }
-    
+
     deinit {
+        /// Call super.deinit implicitly by letting it run after this method
+        /// Make sure we remove all observers for this object
         notificationCenter.removeObserver(self)
+        DLOG("SaveStateSyncer deinit")
     }
-    
+
     override func insertDownloadedFile(_ file: URL) {
         guard let _ = pendingFilesToDownload.remove(file.absoluteString),
               "json".caseInsensitiveCompare(file.pathExtension) == .orderedSame
@@ -532,7 +608,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
         DLOG("downloaded save file: \(file)")
         newFiles.insert(file)
     }
-    
+
     override func deleteFromDatastore(_ file: URL) {
         guard "jpg".caseInsensitiveCompare(file.pathExtension) == .orderedSame
         else {
@@ -560,7 +636,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
             ELOG("error delating from database: \(error)")
         }
     }
-    
+
     func getSaveFrom(_ json: URL) throws -> SaveState? {
         guard fileManager.fileExists(atPath: json.pathDecoded)
         else {
@@ -573,7 +649,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
                 json.stopAccessingSecurityScopedResource()
             }
         }
-        
+
         var dataMaybe = fileManager.contents(atPath: json.pathDecoded)
         if dataMaybe == nil {
             dataMaybe = try Data(contentsOf: json, options: [.uncached])
@@ -587,7 +663,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
         DLOG("Read JSON data at (\(json.absoluteString)")
         return save
     }
-    
+
     func importNewSaves() {
         guard RomDatabase.databaseInitialized
         else {
@@ -613,7 +689,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
                         else {
                             return
                         }
-                        
+
                         let existing = realm.object(ofType: PVSaveState.self, forPrimaryKey: save.id)
                         if let existing = existing {
                             // Skip if Save already exists
@@ -662,7 +738,7 @@ class RomsSyncer: iCloudContainerSyncer {
     let gameImporter = GameImporter.shared
     var processingFiles = Set<URL>()
     var purgeStatus: GamePurgeStatus = .incomplete
-    
+
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
         self.init(directories: ["ROMs"], notificationCenter: notificationCenter, errorHandler: errorHandler)
         notificationCenter.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil) { [weak self] _ in
@@ -673,11 +749,11 @@ class RomsSyncer: iCloudContainerSyncer {
             self?.handleImportNewRomFiles()
         }
     }
-    
+
     deinit {
         notificationCenter.removeObserver(self)
     }
-    
+
     func removeGamesDeletedWhileApplicationClosed() {
         guard purgeStatus == .incomplete,
               initialSyncResult == .success,
@@ -685,7 +761,7 @@ class RomsSyncer: iCloudContainerSyncer {
         else {
             return
         }
-        
+
         defer {
             purgeStatus = .complete
         }
@@ -715,13 +791,13 @@ class RomsSyncer: iCloudContainerSyncer {
             }
         }
     }
-    
+
     override func insertDownloadedFile(_ file: URL) {
         guard let _ = pendingFilesToDownload.remove(file.absoluteString)
         else {
             return
         }
-        
+
         let parentDirectory = file.deletingLastPathComponent().lastPathComponent
         DLOG("adding file to game import queue: \(file), parent directory: \(parentDirectory)")
         //we should only add to the import queue files that are actual ROMs, anything else can be ignored.
@@ -731,7 +807,7 @@ class RomsSyncer: iCloudContainerSyncer {
         else {
             return
         }
-        
+
         do {
             let realm = try Realm()
             let romPath = "\(parentDirectory)/\(fileName)"
@@ -745,10 +821,10 @@ class RomsSyncer: iCloudContainerSyncer {
             errorHandler.handleError(error, file: file)
             ELOG("error searching existing ROM: \(error)")
         }
-        
+
         newFiles.insert(file)
     }
-    
+
     override func deleteFromDatastore(_ file: URL) {
         //TODO: remove cloud download, but keep in iCloud. this way the ROM isn't deleted from all devices
         guard let fileName = file.lastPathComponent.removingPercentEncoding,
@@ -765,14 +841,14 @@ class RomsSyncer: iCloudContainerSyncer {
             else {
                 return
             }
-            
+
             try realm.deleteGame(game)
         } catch {
             errorHandler.handleError(error, file: file)
             ELOG("error deleting ROM from database: \(error)")
         }
     }
-    
+
     func handleImportNewRomFiles() {
         guard RomDatabase.databaseInitialized
         else {
@@ -791,7 +867,7 @@ class RomsSyncer: iCloudContainerSyncer {
             tryToImportNewRomFiles()
         }
     }
-    
+
     func tryToImportNewRomFiles() {
         //if the importer is currently importing files, we have to wait
         guard gameImporter.processingState == .idle
@@ -802,11 +878,11 @@ class RomsSyncer: iCloudContainerSyncer {
             importNewRomFiles()
         }
     }
-    
+
     func clearProcessedFiles() {
         gameImporter.removeSuccessfulImports(from: &processingFiles)
     }
-    
+
     func importNewRomFiles() {
         processingFiles = newFiles
         let importPaths = [URL](newFiles)
@@ -836,15 +912,15 @@ protocol Queue {
 
 struct iCloudErrorsQueue: Queue {
     var errors = [iCloudSyncError]()
-    
+
     var count: Int {
         errors.count
     }
-    
+
     mutating func enqueue(entry: iCloudSyncError) {
         errors.insert(entry, at: 0)
     }
-    
+
     mutating func dequeue() -> iCloudSyncError? {
         guard !errors.isEmpty
         else {
@@ -852,11 +928,11 @@ struct iCloudErrorsQueue: Queue {
         }
         return errors.removeFirst()
     }
-    
+
     func peek() -> iCloudSyncError? {
         errors.first
     }
-    
+
     mutating func clear() {
         errors.removeAll()
     }
@@ -874,28 +950,28 @@ protocol ErrorHandler {
 class iCloudErrorHandler: ErrorHandler {
     static let shared = iCloudErrorHandler()
     var queue = iCloudErrorsQueue()
-    
+
     var allErrorSummaries: [String] {
         queue.errors.map { $0.summary }
     }
-    
+
     var allFullErrors: [String] {
         queue.errors.map { "\($0.error)" }
     }
-    
+
     var allErrors: [iCloudSyncError] {
         queue.errors
     }
-    
+
     var numberOfErrors: Int {
         queue.count
     }
-    
+
     func handleError(_ error: any Error, file: URL?) {
         let syncError = iCloudSyncError(file: file?.path(percentEncoded: false), error: error)
         queue.enqueue(entry: syncError)
     }
-    
+
     func clear() {
         queue.clear()
     }
