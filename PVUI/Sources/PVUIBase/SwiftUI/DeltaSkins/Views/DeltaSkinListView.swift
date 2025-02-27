@@ -281,7 +281,9 @@ private struct SkinPreviewCell: View {
     @State private var showingDeleteAlert = false
     @State private var deleteError: Error?
     @State private var showingErrorAlert = false
+    #if !os(tvOS)
     @State private var showingShareSheet = false
+    #endif
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.colorScheme) private var colorScheme
 
@@ -331,11 +333,13 @@ private struct SkinPreviewCell: View {
                 .contentShape(Rectangle())  // Make entire area tappable
         }
         .contextMenu {
+            #if !os(tvOS)
             Button {
                 showingShareSheet = true
             } label: {
                 Label("Share", systemImage: "square.and.arrow.up")
             }
+            #endif
 
             if manager.isDeletable(skin) {
                 Button(role: .destructive) {
@@ -365,9 +369,11 @@ private struct SkinPreviewCell: View {
         } message: { error in
             Text(error.localizedDescription)
         }
+        #if !os(tvOS)
         .sheet(isPresented: $showingShareSheet) {
             ShareSheet(activityItems: [skin.fileURL])
         }
+        #endif
     }
 
     private var content: some View {
@@ -555,6 +561,7 @@ private struct PagedSkinTestView: View {
     }
 }
 
+#if !os(tvOS)
 /// ShareSheet wrapper for UIActivityViewController
 private struct ShareSheet: UIViewControllerRepresentable {
     let activityItems: [Any]
@@ -569,3 +576,4 @@ private struct ShareSheet: UIViewControllerRepresentable {
 
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
+#endif
