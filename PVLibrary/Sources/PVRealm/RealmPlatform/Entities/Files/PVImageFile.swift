@@ -26,17 +26,17 @@ public final class PVImageFile: PVFile {
     @Persisted public var width: Int = 0
     @Persisted public var height: Int = 0
     @Persisted public var layout: String = ""
-
+    
     public convenience init(withPartialPath partialPath: String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
         self.init()
         self.relativeRoot = relativeRoot
         self.partialPath = partialPath
-//        Task {
-//            await calculateSizeData()
-//        }
+        //        Task {
+        //            await calculateSizeData()
+        //        }
         calculateSizeData()
     }
-
+    
     public convenience init(withURL url: URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
         self.init()
         self.relativeRoot = relativeRoot
@@ -46,49 +46,48 @@ public final class PVImageFile: PVFile {
             DLOG("invalid path: \(partialPath)")
         }
         self.partialPath = partialPath
-
+        
         calculateSizeData()
-//        Task{
-//            await calculateSizeData()
-//        }
+        //        Task{
+        //            await calculateSizeData()
+        //        }
     }
-
+    
     private func calculateSizeData() { // async {
         guard let path = url?.path else {
             cgsize = .zero
             return
         }
         //TODO: path is wrong when switching to iCloud
-        let path = url.path
         if doesPathContainParent(path) {
             ELOG("invalid path: \(path)")
         }
-
-//        let size = await Task { () -> CGSize in
-            #if canImport(UIKit)
-            guard let image = UIImage(contentsOfFile: path) else {
-                ELOG("Failed to create UIImage from path <\(path)>")
-//                return .zero
-                cgsize = .zero
-                return
-            }
-            #else
-            let path = await url.path
-            guard let image = NSImage(contentsOfFile: path) else {
-                ELOG("Failed to create UIImage from path <\(path)>")
-                return .zero
-            }
-            #endif
-            let size = image.size
-//            return size
-//        }.value
-//#if !os(macOS)
-//        try? await Realm().write {
-            cgsize = size
-//        }
-//#endif
+        
+        //        let size = await Task { () -> CGSize in
+#if canImport(UIKit)
+        guard let image = UIImage(contentsOfFile: path) else {
+            ELOG("Failed to create UIImage from path <\(path)>")
+            //                return .zero
+            cgsize = .zero
+            return
+        }
+#else
+        let path = await url.path
+        guard let image = NSImage(contentsOfFile: path) else {
+            ELOG("Failed to create UIImage from path <\(path)>")
+            return .zero
+        }
+#endif
+        let size = image.size
+        //            return size
+        //        }.value
+        //#if !os(macOS)
+        //        try? await Realm().write {
+        cgsize = size
+        //        }
+        //#endif
     }
-
+    
 #if !os(macOS)
     public private(set) var cgsize: CGSize {
         get {
