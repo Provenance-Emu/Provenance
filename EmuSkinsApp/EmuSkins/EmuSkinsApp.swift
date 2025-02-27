@@ -46,12 +46,28 @@ struct EmuSkinsApp: App {
     private func handleIncomingURL(_ url: URL) {
         Task {
             do {
-                // Start accessing the security-scoped resource if needed
-                if url.startAccessingSecurityScopedResource() {
-                    defer { url.stopAccessingSecurityScopedResource() }
+                // Create a temporary URL for the copy
+                let tempURL = FileManager.default.temporaryDirectory
+                    .appendingPathComponent(UUID().uuidString)
+                    .appendingPathExtension("deltaskin")
+
+                // Start accessing the security-scoped resource
+                guard url.startAccessingSecurityScopedResource() else {
+                    ELOG("Failed to start accessing security-scoped resource")
+                    throw DeltaSkinError.accessDenied
                 }
 
-                try await skinManager.importSkin(from: url)
+                defer {
+                    url.stopAccessingSecurityScopedResource()
+                    // Clean up temporary file
+                    try? FileManager.default.removeItem(at: tempURL)
+                }
+
+                // Copy the file to temporary storage
+                try FileManager.default.copyItem(at: url, to: tempURL)
+
+                // Import the skin from the temporary location
+                try await skinManager.importSkin(from: tempURL)
                 await skinManager.reloadSkins()
             } catch {
                 ELOG("Failed to import skin from URL: \(error)")
@@ -70,12 +86,28 @@ struct EmuSkinsApp: App {
                     continue
                 }
 
-                // Start accessing the security-scoped resource if needed
-                if url.startAccessingSecurityScopedResource() {
-                    defer { url.stopAccessingSecurityScopedResource() }
+                // Create a temporary URL for the copy
+                let tempURL = FileManager.default.temporaryDirectory
+                    .appendingPathComponent(UUID().uuidString)
+                    .appendingPathExtension("deltaskin")
+
+                // Start accessing the security-scoped resource
+                guard url.startAccessingSecurityScopedResource() else {
+                    ELOG("Failed to start accessing security-scoped resource")
+                    throw DeltaSkinError.accessDenied
                 }
 
-                try await skinManager.importSkin(from: url)
+                defer {
+                    url.stopAccessingSecurityScopedResource()
+                    // Clean up temporary file
+                    try? FileManager.default.removeItem(at: tempURL)
+                }
+
+                // Copy the file to temporary storage
+                try FileManager.default.copyItem(at: url, to: tempURL)
+
+                // Import the skin from the temporary location
+                try await skinManager.importSkin(from: tempURL)
                 await skinManager.reloadSkins()
             } catch {
                 ELOG("Failed to import dropped skin: \(error)")
