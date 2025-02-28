@@ -328,4 +328,73 @@ public final class PVMediaCache: NSObject, Sendable {
         return operation
     }
     #endif
+
+    /// Invalidate the cache for a specific URL
+    /// - Parameter url: The URL to invalidate in the cache
+    public static func invalidateCache(forURL url: String) {
+        guard !url.isEmpty else { return }
+
+        /// Get the shared instance and remove the item from the cache
+        let cache = PVMediaCache.shareInstance()
+        cache.removeFromCache(forKey: url)
+
+        /// Log the invalidation
+        DLOG("Invalidated cache for URL: \(url)")
+    }
+
+    /// Remove an item from the cache
+    /// - Parameter key: The key to remove from the cache
+    private func removeFromCache(forKey key: String) {
+        guard !key.isEmpty else { return }
+
+        let keyHash = key.md5Hash
+        Task { @MainActor in
+            PVMediaCache.memCache.removeObject(forKey: keyHash as NSString)
+        }
+
+        // Also remove from disk if needed
+        let cachePath = PVMediaCache.cachePath.appendingPathComponent(keyHash, isDirectory: false)
+        if FileManager.default.fileExists(atPath: cachePath.path) {
+            try? FileManager.default.removeItem(at: cachePath)
+        }
+    }
+
+    /// Preload multiple images into the cache
+    /// - Parameters:
+    ///   - keys: Array of keys to preload
+    ///   - completion: Optional completion handler called when all images are loaded
+    public func preloadImages(forKeys keys: [String], completion: (() -> Void)? = nil) {
+        let group = DispatchGroup()
+
+        for key in keys {
+            guard !key.isEmpty else { continue }
+
+            group.enter()
+
+            // Use existing image method with a completion handler
+            _ = image(forKey: key) { _, _ in
+                group.leave()
+            }
+        }
+
+        // Call completion handler when all images are loaded
+        if let completion = completion {
+            group.notify(queue: .main) {
+                completion()
+            }
+        }
+    }
+
+    /// Async version of preloading multiple images
+    public func preloadImages(forKeys keys: [String]) async {
+        for key in keys {
+            guard !key.isEmpty else { continue }
+
+            // Load each image in sequence, but we don't need to wait for the result
+            _ = await image(forKey: key)
+
+            // Small delay to prevent overwhelming the system
+            try? await Task.sleep(nanoseconds: 5_000_000) // 5ms delay
+        }
+    }
 }
