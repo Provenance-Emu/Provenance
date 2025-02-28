@@ -23,6 +23,8 @@ struct GameArtworkView: View {
     @State private var showArtworkSourceAlert = false
     @State private var showImagePicker = false
     @State private var showArtworkSearch = false
+    /// State to track the current artwork URL for change detection
+    @State private var currentArtworkURL: String = ""
 
     weak var rootDelegate: PVRootDelegate?
     var contextMenuDelegate: GameContextMenuDelegate?
@@ -46,6 +48,7 @@ struct GameArtworkView: View {
         self.game = game
         self.rootDelegate = rootDelegate
         self.contextMenuDelegate = contextMenuDelegate
+        self._currentArtworkURL = State(initialValue: game?.trueArtworkURL ?? "")
     }
 
     private var canShowBackArt: Bool {
@@ -111,6 +114,32 @@ struct GameArtworkView: View {
             // Reset to front on appear
             showingFrontArt = true
             isAnimating = false
+
+            // Store initial artwork URL for change detection
+            if let game = game {
+                currentArtworkURL = game.trueArtworkURL
+            }
+
+            // Setup notification observer for artwork changes
+            NotificationCenter.default.addObserver(forName: .gameLibraryDidUpdate, object: nil, queue: .main) { _ in
+                if let game = game, game.trueArtworkURL != currentArtworkURL {
+                    currentArtworkURL = game.trueArtworkURL
+                    // Force view to refresh
+                    showingFrontArt = true
+                }
+            }
+        }
+        .onDisappear {
+            // Remove notification observer
+            NotificationCenter.default.removeObserver(self)
+
+            // Reset all state variables
+            showingFrontArt = true
+            isAnimating = false
+            showingFullscreen = false
+            showArtworkSourceAlert = false
+            showImagePicker = false
+            showArtworkSearch = false
         }
         .fullScreenCover(isPresented: $showingFullscreen) {
             FullscreenArtworkView(
@@ -147,16 +176,14 @@ struct GameArtworkView: View {
             isPresented: $showArtworkSourceAlert,
             buttons: {
                 UIAlertAction(title: "Select from Photos", style: .default) { _ in
-                    if let game = game, let contextMenuDelegate = contextMenuDelegate {
-                        contextMenuDelegate.gameContextMenu(GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: contextMenuDelegate), didRequestShowImagePickerFor: game)
-                    }
+                    handleArtworkSourceSelection(sourceType: .photoLibrary)
                 }
                 UIAlertAction(title: "Search Online", style: .default) { _ in
-                    if let game = game, let contextMenuDelegate = contextMenuDelegate {
-                        contextMenuDelegate.gameContextMenu(GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: contextMenuDelegate), didRequestShowArtworkSearchFor: game)
-                    }
+                    handleArtworkSourceSelection(sourceType: .onlineSearch)
                 }
-                UIAlertAction(title: "Cancel", style: .cancel)
+                UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                    showArtworkSourceAlert = false
+                }
             }
         )
     }
@@ -247,5 +274,32 @@ struct GameArtworkView: View {
             DLOG("Failed to clear custom artwork: \(error.localizedDescription)")
             rootDelegate?.showMessage("Failed to clear custom artwork: \(error.localizedDescription)", title: "Error")
         }
+    }
+
+    /// Handle artwork source selection
+    private func handleArtworkSourceSelection(sourceType: ArtworkSourceType) {
+        guard let game = game, let contextMenuDelegate = contextMenuDelegate else { return }
+
+        switch sourceType {
+        case .photoLibrary:
+            contextMenuDelegate.gameContextMenu(
+                GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: contextMenuDelegate),
+                didRequestShowImagePickerFor: game
+            )
+        case .onlineSearch:
+            contextMenuDelegate.gameContextMenu(
+                GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: contextMenuDelegate),
+                didRequestShowArtworkSearchFor: game
+            )
+        }
+
+        // Always reset the alert state
+        showArtworkSourceAlert = false
+    }
+
+    /// Artwork source types
+    private enum ArtworkSourceType {
+        case photoLibrary
+        case onlineSearch
     }
 }

@@ -1,10 +1,12 @@
 import Foundation
-import RealmSwift
 import PVRealm
+import PVMediaCache
+import PVLogging
+import SwiftUI
+import Combine
+import RealmSwift
 import PVLibrary
 import UIKit
-import PVLogging
-import Combine
 
 /// A Realm-based implementation of GameLibraryDriver
 @MainActor
@@ -136,6 +138,10 @@ private final class RealmGameWrapper: GameMoreInfoViewModelDataSource, ArtworkOb
     @ObservedRealmObject private var game: PVGame
     @Published private(set) var frontArtwork: UIImage?
     @Published private(set) var backArtwork: UIImage?
+    /// Track the current artwork URL to detect changes
+    private var currentArtworkURL: String = ""
+    /// Cancellation token for observation
+    private var cancellables = Set<AnyCancellable>()
 
     /// Access to the underlying PVGame object
     var pvGame: PVGame? {
@@ -156,14 +162,32 @@ private final class RealmGameWrapper: GameMoreInfoViewModelDataSource, ArtworkOb
 
     init(game: PVGame) {
         self._game = ObservedRealmObject(wrappedValue: game)
+        self.currentArtworkURL = game.trueArtworkURL
+
         // Don't set placeholder immediately anymore
         Task { await loadArtwork() }
+
+        // Setup notification observer for artwork changes
+        NotificationCenter.default.publisher(for: .gameLibraryDidUpdate)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                guard let self = self else { return }
+                // Check if artwork URL has changed
+                if self.game.trueArtworkURL != self.currentArtworkURL {
+                    self.currentArtworkURL = self.game.trueArtworkURL
+                    Task { await self.loadArtwork() }
+                }
+            }
+            .store(in: &cancellables)
     }
 
     private func loadArtwork() async {
         // Try to load front artwork
         let artworkURL = game.trueArtworkURL
         if !artworkURL.isEmpty {
+            // Clear existing artwork first to ensure UI updates
+            await MainActor.run { self.frontArtwork = nil }
+
             if let image = await PVMediaCache.shareInstance().image(forKey: artworkURL) {
                 await MainActor.run { self.frontArtwork = image }
             } else {
@@ -177,6 +201,9 @@ private final class RealmGameWrapper: GameMoreInfoViewModelDataSource, ArtworkOb
         // Try to load back artwork
         if let backURL = game.boxBackArtworkURL,
            !backURL.isEmpty {
+            // Clear existing back artwork first
+            await MainActor.run { self.backArtwork = nil }
+
             // First try to load from cache
             if let image = await PVMediaCache.shareInstance().image(forKey: backURL) {
                 await MainActor.run { self.backArtwork = image }
@@ -195,6 +222,11 @@ private final class RealmGameWrapper: GameMoreInfoViewModelDataSource, ArtworkOb
                 }
             }
         }
+    }
+
+    deinit {
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
     }
 
     var name: String? {

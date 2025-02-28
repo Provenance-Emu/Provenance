@@ -746,12 +746,32 @@ public struct PagedGameMoreInfoView: View {
                 }
 
                 await MainActor.run {
+                    // Post notification to trigger UI updates
+                    NotificationCenter.default.post(name: .gameLibraryDidUpdate, object: nil)
+
+                    // Clear the ArtworkLoader cache for this game to force reload
+                    ArtworkLoader.shared.cancelLoading(for: game.id)
+
+                    // Update the cache with the new image
+//                    PVMediaCache.shareInstance().setImage(image, forKey: key)
+
+                    // Show success message
                     viewModel.rootDelegate?.showMessage("Artwork has been saved for \(game.title).", title: "Artwork Saved")
+
+                    // Reset state variables
+                    gameToUpdateCover = nil
+                    showImagePicker = false
+                    showArtworkSearch = false
                 }
             } catch {
                 await MainActor.run {
                     DLOG("Failed to set custom artwork: \(error.localizedDescription)")
                     viewModel.rootDelegate?.showMessage("Failed to set custom artwork: \(error.localizedDescription)", title: "Error")
+
+                    // Reset state variables even on error
+                    gameToUpdateCover = nil
+                    showImagePicker = false
+                    showArtworkSearch = false
                 }
             }
         }
@@ -810,7 +830,10 @@ public struct PagedGameMoreInfoView: View {
                 }
             }
         }
-        .sheet(isPresented: $showImagePicker) {
+        .sheet(isPresented: $showImagePicker, onDismiss: {
+            // Reset state when sheet is dismissed
+            gameToUpdateCover = nil
+        }) {
 #if !os(tvOS)
             ImagePicker(sourceType: .photoLibrary) { image in
                 if let game = gameToUpdateCover {
@@ -821,7 +844,10 @@ public struct PagedGameMoreInfoView: View {
             }
 #endif
         }
-        .sheet(isPresented: $showArtworkSearch) {
+        .sheet(isPresented: $showArtworkSearch, onDismiss: {
+            // Reset state when sheet is dismissed
+            gameToUpdateCover = nil
+        }) {
             if let game = gameToUpdateCover {
                 ArtworkSearchView(
                     initialSearch: game.title,
@@ -840,6 +866,11 @@ public struct PagedGameMoreInfoView: View {
                             }
                         } catch {
                             DLOG("Failed to load artwork image: \(error)")
+                            // Make sure to reset state even on error
+                            await MainActor.run {
+                                showArtworkSearch = false
+                                gameToUpdateCover = nil
+                            }
                         }
                     }
                 }
