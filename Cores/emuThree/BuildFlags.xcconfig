@@ -11,6 +11,8 @@ OTHER_CFLAGS = $(inherited) -frename-registers
 OTHER_CFLAGS = $(inherited) -fsingle-precision-constant
 OTHER_CFLAGS = $(inherited) -ftree-vectorize
 
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_AUDIOTOOLBOX
+
 // Experimental
 OTHER_CFLAGS = $(inherited) -Wl,--gc-sections
 //OTHER_CFLAGS = $(inherited) -fdata-sections
