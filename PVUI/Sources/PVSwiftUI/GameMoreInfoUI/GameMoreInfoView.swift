@@ -334,6 +334,8 @@ struct GameMoreInfoView: View {
     @State private var originalRating: Int = 0
     @State private var editingField: EditableField?
     @State private var editingValue: String = ""
+    /// Context menu delegate for handling artwork selection
+    var contextMenuDelegate: GameContextMenuDelegate?
 
     private enum EditableField: Identifiable {
         case name
@@ -364,7 +366,7 @@ struct GameMoreInfoView: View {
                     backArtwork: viewModel.backArtwork,
                     game: viewModel.pvGame,
                     rootDelegate: viewModel.rootDelegate,
-                    contextMenuDelegate: viewModel.contextMenuDelegate
+                    contextMenuDelegate: contextMenuDelegate
                 )
 
                 // Game information section
@@ -578,13 +580,16 @@ struct GameMoreInfoView: View {
 
 // MARK: - Paged Game Info View Model
 public class PagedGameMoreInfoViewModel: ObservableObject {
-    @Published var currentIndex: Int
-    private let driver: (any GameLibraryDriver & PagedGameLibraryDataSource)
+    @Published var currentIndex: Int = 0
+    @Published var showingWebView: Bool = false
+    let driver: any (GameLibraryDriver & PagedGameLibraryDataSource)
     let playGameCallback: ((String) async -> Void)?
     @Published var isDebugExpanded = false
 
-    // Navigation bar item states
-    @Published var showingWebView = false
+    /// Access to the root delegate for passing to views
+    var rootDelegate: PVRootDelegate? {
+        return driver as? PVRootDelegate
+    }
 
     public init(driver: any GameLibraryDriver & PagedGameLibraryDataSource,
                initialGameId: String? = nil,
@@ -650,15 +655,113 @@ public struct PagedGameMoreInfoView: View {
     @StateObject var viewModel: PagedGameMoreInfoViewModel
     @Environment(\.dismiss) private var dismiss
 
+    /// State for handling image picker and artwork search
+    @State private var showImagePicker = false
+    @State private var showArtworkSearch = false
+    @State private var gameToUpdateCover: PVGame?
+    @State private var selectedImage: UIImage?
+
     public init(viewModel: PagedGameMoreInfoViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
+    }
+
+    /// Coordinator to handle context menu actions
+    class Coordinator: GameContextMenuDelegate {
+        var parent: PagedGameMoreInfoView
+
+        init(parent: PagedGameMoreInfoView) {
+            self.parent = parent
+        }
+
+        func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame) {
+            /// Delegate to driver if available
+            parent.viewModel.driver.gameContextMenu(menu, didRequestRenameFor: game)
+        }
+
+        func gameContextMenu(_ menu: GameContextMenu, didRequestChooseCoverFor game: PVGame) {
+            /// Delegate to driver if available
+            parent.viewModel.driver.gameContextMenu(menu, didRequestChooseCoverFor: game)
+        }
+
+        func gameContextMenu(_ menu: GameContextMenu, didRequestMoveToSystemFor game: PVGame) {
+            /// Delegate to driver if available
+            parent.viewModel.driver.gameContextMenu(menu, didRequestMoveToSystemFor: game)
+        }
+
+        func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
+            /// Delegate to driver if available
+            parent.viewModel.driver.gameContextMenu(menu, didRequestShowSaveStatesFor: game)
+        }
+
+        func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor gameId: String) {
+            /// Delegate to driver if available
+            parent.viewModel.driver.gameContextMenu(menu, didRequestShowGameInfoFor: gameId)
+        }
+
+        func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame) {
+            /// Handle locally
+            parent.gameToUpdateCover = game
+            parent.showImagePicker = true
+        }
+
+        func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame) {
+            /// Handle locally
+            parent.gameToUpdateCover = game
+            parent.showArtworkSearch = true
+        }
+
+        func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
+            /// Delegate to driver if available
+            parent.viewModel.driver.gameContextMenu(menu, didRequestChooseArtworkSourceFor: game)
+        }
+
+        func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
+            /// Delegate to driver if available
+            parent.viewModel.driver.gameContextMenu(menu, didRequestDiscSelectionFor: game)
+        }
+    }
+
+    /// Create a coordinator instance
+    private func makeCoordinator() -> Coordinator {
+        Coordinator(parent: self)
+    }
+
+    /// Save artwork for a game
+    private func saveArtwork(image: UIImage, forGame game: PVGame) {
+        Task {
+            do {
+                let uniqueID = UUID().uuidString
+                let key = "artwork_\(game.md5)_\(uniqueID)"
+
+                // Write image to disk asynchronously
+                try await Task.detached(priority: .background) {
+                    try PVMediaCache.writeImage(toDisk: image, withKey: key)
+                }.value
+
+                // Update Realm on main thread
+                try await RomDatabase.sharedInstance.asyncWriteTransaction {
+                    if let thawedGame = game.thaw() {
+                        thawedGame.customArtworkURL = key
+                    }
+                }
+
+                await MainActor.run {
+                    viewModel.rootDelegate?.showMessage("Artwork has been saved for \(game.title).", title: "Artwork Saved")
+                }
+            } catch {
+                await MainActor.run {
+                    DLOG("Failed to set custom artwork: \(error.localizedDescription)")
+                    viewModel.rootDelegate?.showMessage("Failed to set custom artwork: \(error.localizedDescription)", title: "Error")
+                }
+            }
+        }
     }
 
     public var body: some View {
         TabView(selection: $viewModel.currentIndex) {
             ForEach(0..<viewModel.gameCount, id: \.self) { index in
                 if let gameViewModel = viewModel.makeGameViewModel(for: index) {
-                    GameMoreInfoView(viewModel: gameViewModel)
+                    GameMoreInfoView(viewModel: gameViewModel, contextMenuDelegate: makeCoordinator())
                         .tag(index)
                 }
             }
@@ -703,6 +806,41 @@ public struct PagedGameMoreInfoView: View {
                         }
                     } label: {
                         Image(systemName: "play.fill")
+                    }
+                }
+            }
+        }
+        .sheet(isPresented: $showImagePicker) {
+#if !os(tvOS)
+            ImagePicker(sourceType: .photoLibrary) { image in
+                if let game = gameToUpdateCover {
+                    saveArtwork(image: image, forGame: game)
+                }
+                showImagePicker = false
+                gameToUpdateCover = nil
+            }
+#endif
+        }
+        .sheet(isPresented: $showArtworkSearch) {
+            if let game = gameToUpdateCover {
+                ArtworkSearchView(
+                    initialSearch: game.title,
+                    initialSystem: game.system?.enumValue ?? .Unknown
+                ) { selection in
+                    Task {
+                        do {
+                            // Load image data from URL
+                            let (data, _) = try await URLSession.shared.data(from: selection.metadata.url)
+                            if let uiImage = UIImage(data: data) {
+                                await MainActor.run {
+                                    saveArtwork(image: uiImage, forGame: game)
+                                    showArtworkSearch = false
+                                    gameToUpdateCover = nil
+                                }
+                            }
+                        } catch {
+                            DLOG("Failed to load artwork image: \(error)")
+                        }
                     }
                 }
             }
@@ -759,3 +897,43 @@ struct SafariWebView: UIViewControllerRepresentable {
 }
 
 #endif
+
+// MARK: - GameLibraryDriver Extension
+extension GameLibraryDriver {
+    /// Helper method to forward context menu actions to the driver if it implements GameContextMenuDelegate
+    func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame) {
+        (self as? GameContextMenuDelegate)?.gameContextMenu(menu, didRequestRenameFor: game)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestChooseCoverFor game: PVGame) {
+        (self as? GameContextMenuDelegate)?.gameContextMenu(menu, didRequestChooseCoverFor: game)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestMoveToSystemFor game: PVGame) {
+        (self as? GameContextMenuDelegate)?.gameContextMenu(menu, didRequestMoveToSystemFor: game)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
+        (self as? GameContextMenuDelegate)?.gameContextMenu(menu, didRequestShowSaveStatesFor: game)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor gameId: String) {
+        (self as? GameContextMenuDelegate)?.gameContextMenu(menu, didRequestShowGameInfoFor: gameId)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame) {
+        (self as? GameContextMenuDelegate)?.gameContextMenu(menu, didRequestShowImagePickerFor: game)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame) {
+        (self as? GameContextMenuDelegate)?.gameContextMenu(menu, didRequestShowArtworkSearchFor: game)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
+        (self as? GameContextMenuDelegate)?.gameContextMenu(menu, didRequestChooseArtworkSourceFor: game)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
+        (self as? GameContextMenuDelegate)?.gameContextMenu(menu, didRequestDiscSelectionFor: game)
+    }
+}
