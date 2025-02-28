@@ -422,29 +422,58 @@ public final class PVMediaCache: NSObject, Sendable {
         let uniqueKeys = Array(Set(keys))
 
         /// Process in smaller batches to avoid overwhelming the system
-        let batchSize = 10
-        for i in stride(from: 0, to: uniqueKeys.count, by: batchSize) {
-            let end = min(i + batchSize, uniqueKeys.count)
-            let batch = Array(uniqueKeys[i..<end])
+        let batchSize = 5
+
+        /// Track successful loads to avoid redundant work
+        var loadedKeys = Set<String>()
+
+        /// First check which images are already in memory cache
+        for key in uniqueKeys {
+            let keyHash = key.md5Hash
+            if Thread.isMainThread, PVMediaCache.memCache.object(forKey: keyHash as NSString) != nil {
+                loadedKeys.insert(key)
+            }
+        }
+
+        /// Filter out already loaded keys
+        let keysToLoad = uniqueKeys.filter { !loadedKeys.contains($0) }
+
+        /// Process remaining keys in batches
+        for i in stride(from: 0, to: keysToLoad.count, by: batchSize) {
+            let end = min(i + batchSize, keysToLoad.count)
+            let batch = Array(keysToLoad[i..<end])
 
             /// Create a task group for concurrent loading within the batch
             await withTaskGroup(of: Void.self) { group in
                 for key in batch {
                     group.addTask {
-                        /// Load each image but don't wait for the result
-                        _ = await self.image(forKey: key)
+                        /// Check if the file exists on disk before loading
+                        let keyHash = key.md5Hash
+                        let cachePath = PVMediaCache.cachePath.appendingPathComponent(keyHash, isDirectory: false).path
+
+                        if FileManager.default.fileExists(atPath: cachePath) {
+                            /// If on disk, just load it into memory cache
+                            if let image = UIImage(contentsOfFile: cachePath) {
+                                await MainActor.run {
+                                    self.storeInMemoryCache(image: image, forKey: keyHash)
+                                }
+                            }
+                        } else {
+                            /// Otherwise load from network
+                            _ = await self.image(forKey: key)
+                        }
                     }
                 }
             }
 
-            /// Small delay between batches
-            if end < uniqueKeys.count {
-                try? await Task.sleep(nanoseconds: 100_000_000) // 100ms delay between batches
+            /// Small delay between batches to avoid overwhelming the system
+            if end < keysToLoad.count {
+                try? await Task.sleep(nanoseconds: 50_000_000) // 50ms delay between batches
             }
         }
 
         /// Trim disk cache after large preload operations
-        if uniqueKeys.count > 20 {
+        if uniqueKeys.count > 10 {
             trimDiskCache()
         }
     }
