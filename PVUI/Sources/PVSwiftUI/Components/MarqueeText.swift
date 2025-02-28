@@ -11,6 +11,8 @@ struct MarqueeText: View {
     let delay: Double
     let speed: Double
     let loop: Bool
+    /// Initial delay before the first animation starts, allowing time for the user to read the beginning of the text
+    let initialDelay: Double
 
     /// Minimum font size we'll allow after scaling
     private let minimumFontSize: CGFloat = 8.0
@@ -25,18 +27,28 @@ struct MarqueeText: View {
     @State private var animationWorkItem: DispatchWorkItem?
     private let id = UUID()
 
+    /// Creates a marquee text view that scrolls when content is too long
+    /// - Parameters:
+    ///   - text: The text to display
+    ///   - font: The font to use for the text
+    ///   - delay: The delay between animations (pause at each end)
+    ///   - speed: The speed of the animation (pixels per second)
+    ///   - loop: Whether to loop the animation continuously
+    ///   - initialDelay: The delay before the first animation starts, allowing the user to read the beginning of the text before it starts scrolling
     init(
         text: String,
         font: Font = .system(size: 14, weight: .bold, design: .monospaced),
         delay: Double = 1.0,
         speed: Double = 50.0,
-        loop: Bool = true
+        loop: Bool = true,
+        initialDelay: Double = 2.0 /// Default initial delay of 2 seconds
     ) {
         self.text = text
         self.font = font
         self.delay = delay
         self.speed = speed
         self.loop = loop
+        self.initialDelay = initialDelay
     }
 
     /// Calculate accurate text width with proper attributes
@@ -154,8 +166,14 @@ struct MarqueeText: View {
         stopAnimation()
 
         let workItem = DispatchWorkItem { [self] in
+            // Use initialDelay for the first animation, then regular delay for subsequent ones
+            let currentDelay = (offset == 0) ? initialDelay : delay
+
+            /// Log the animation start with appropriate delay
+            DLOG("Starting marquee animation for '\(text.prefix(20))...' with \(offset == 0 ? "initial" : "regular") delay of \(currentDelay)s")
+
             // Initial pause
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + currentDelay) {
                 guard isVisible else { return }
                 withAnimation(.linear(duration: Double(textWidth - containerWidth) / speed)) {
                     offset = -(textWidth - containerWidth)
@@ -189,8 +207,19 @@ struct MarqueeText_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 20) {
             MarqueeText(text: "Short text")
-            MarqueeText(text: "This is a very long text that should scroll because it doesn't fit")
-            MarqueeText(text: "Another long text", loop: false)
+                .background(Color.gray.opacity(0.2))
+
+            MarqueeText(text: "This is a very long text that should scroll because it doesn't fit",
+                       initialDelay: 1.0)
+                .background(Color.gray.opacity(0.2))
+
+            MarqueeText(text: "Another long text with default initial delay (2s)",
+                       loop: false)
+                .background(Color.gray.opacity(0.2))
+
+            MarqueeText(text: "This text has a longer initial delay of 4 seconds",
+                       initialDelay: 4.0)
+                .background(Color.gray.opacity(0.2))
         }
         .padding()
     }
