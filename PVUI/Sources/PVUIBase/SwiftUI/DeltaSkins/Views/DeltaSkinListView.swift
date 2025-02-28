@@ -153,6 +153,7 @@ private struct SkinGridView: View {
             switch (isLoading, error, manager.loadedSkins.isEmpty) {
             case (true, _, _):
                 ProgressView("Loading skins...")
+                    .backgroundStyle(.blendMode(.darken))
             case (_, let error?, _):
                 ErrorView(error: error)
             case (_, _, true):
