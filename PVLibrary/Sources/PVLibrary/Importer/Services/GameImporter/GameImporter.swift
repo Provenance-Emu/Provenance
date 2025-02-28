@@ -101,6 +101,12 @@ public typealias GameImporterFinishedImportingGameHandler = (_ md5Hash: String, 
 /// Type alias for a closure that handles the finish of getting artwork
 public typealias GameImporterFinishedGettingArtworkHandler = (_ artworkURL: String?) -> Void
 
+public enum ProcessingState {
+    case idle
+    case processing
+    case paused
+}
+
 public protocol GameImporting {
 
     typealias ImportQueueItemType = ImportQueueItem
@@ -119,6 +125,13 @@ public protocol GameImporting {
 
     func removeImports(at offsets: IndexSet)
     func startProcessing()
+
+    /// Pauses the import processing
+    /// Items can still be added to or removed from the queue while paused
+    func pause()
+
+    /// Resumes the import processing if it was paused
+    func resume()
 
     func clearCompleted()
 
@@ -144,7 +157,7 @@ public protocol GameImporting {
 
 //#if !os(tvOS)
 //@Observable
-//#else
+//#els
 @Perceptible
 //#endif
 public final class GameImporter: GameImporting, ObservableObject {
@@ -426,8 +439,15 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     // Public method to manually start processing if needed
     public func startProcessing() {
-        // Only start processing if it's not already active
-        guard processingState == .idle else { return }
+        // Only start processing if it's idle (not processing or paused)
+        guard processingState == .idle else {
+            // If we're paused, resume processing
+            if processingState == .paused {
+                resume()
+            }
+            return
+        }
+
         self.processingState = .processing
         Task.detached { [self] in
             await preProcessQueue()
@@ -665,17 +685,30 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         guard !itemsToProcess.isEmpty else {
             DispatchQueue.main.async {
-                self.processingState = .idle
+                // Only change to idle if we're not paused
+                if self.processingState != .paused {
+                    self.processingState = .idle
+                }
             }
             return
         }
 
         ILOG("GameImportQueue - processQueue beginning Import Processing")
-        DispatchQueue.main.async {
-            self.processingState = .processing
+
+        // Only update to processing if we're not paused
+        if processingState != .paused {
+            DispatchQueue.main.async {
+                self.processingState = .processing
+            }
         }
 
-        await itemsToProcess.asyncForEach { item in
+        for item in itemsToProcess {
+            // Check if we've been paused before processing each item
+            if await checkIfPaused() {
+                ILOG("GameImportQueue - processing paused, waiting for resume")
+                return
+            }
+
             // If there's a user-chosen system, ensure the item is queued
             if item.userChosenSystem != nil {
                 item.status = .queued
@@ -684,7 +717,10 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
 
         DispatchQueue.main.async {
-            self.processingState = .idle
+            // Only change to idle if we're not paused
+            if self.processingState != .paused {
+                self.processingState = .idle
+            }
         }
         ILOG("GameImportQueue - processQueue complete Import Processing")
     }
@@ -732,7 +768,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
 
-    private func determineImportType(_ item: ImportQueueItem) throws -> FileType {
+    private func determineImportType(_ item: ImportQueueItem) throws -> ImportQueueItem.FileType {
         //detect type for updating UI and later processing
         if (try isBIOS(item)) { //this can throw
             return .bios
@@ -885,5 +921,43 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         importQueue.append(item)
         ILOG("GameImportQueue - add ImportItem to import queue with url: \(item.url) and id: \(item.id)")
+    }
+
+    /// Pauses the import processing
+    /// Items can still be added to or removed from the queue while paused
+    public func pause() {
+        guard processingState == .processing else { return }
+
+        ILOG("GameImportQueue - Pausing import processing")
+        DispatchQueue.main.async {
+            self.processingState = .paused
+            self.updateImporterStatus("Import processing paused")
+        }
+    }
+
+    /// Resumes the import processing if it was paused
+    public func resume() {
+        guard processingState == .paused else { return }
+
+        ILOG("GameImportQueue - Resuming import processing")
+        DispatchQueue.main.async {
+            self.processingState = .processing
+            self.updateImporterStatus("Resuming import processing")
+        }
+
+        // Restart processing
+        Task.detached { [self] in
+            await processQueue()
+        }
+    }
+
+    // Add a helper method to check if processing is paused
+    private func checkIfPaused() async -> Bool {
+        // Check if we're paused
+        var isPaused = false
+        await MainActor.run {
+            isPaused = self.processingState == .paused
+        }
+        return isPaused
     }
 }
