@@ -14,6 +14,12 @@ import Perception
 import PVFileSystem
 import RealmSwift
 
+/// A dedicated actor for file system operations to keep them off the main thread
+@globalActor actor FileSystemActor {
+    static let shared = FileSystemActor()
+    private init() {}
+}
+
 @Perceptible
 public final class BIOSWatcher: ObservableObject {
     public static let shared = BIOSWatcher()
@@ -21,6 +27,15 @@ public final class BIOSWatcher: ObservableObject {
     private let biosPath: URL
     private var directoryWatcher: DirectoryWatcher?
     private var newBIOSFilesContinuation: AsyncStream<[URL]>.Continuation?
+
+    /// Task group for managing concurrent file operations
+    private var fileOperationTasks = Set<Task<Void, Never>>()
+
+    /// Serial queue for file operations that need to be sequential
+    private let fileOperationQueue = DispatchQueue(label: "com.provenance.biosWatcher.fileOperations", qos: .utility)
+
+    /// Concurrent queue for parallel file scanning
+    private let fileScanQueue = DispatchQueue(label: "com.provenance.biosWatcher.fileScan", qos: .utility, attributes: .concurrent)
 
     public var newBIOSFilesSequence: AsyncStream<[URL]> {
         AsyncStream { continuation in
@@ -48,6 +63,9 @@ public final class BIOSWatcher: ObservableObject {
             directoryWatcher = nil
         }
 
+        // Cancel any ongoing file operation tasks
+        cancelAllFileOperations()
+
         // Watch BIOS directory and its subdirectories, but exclude sibling directories
         let options = DirectoryWatcherOptions(
             includeSubdirectories: true,  // We do want to watch BIOS subdirectories
@@ -59,16 +77,9 @@ public final class BIOSWatcher: ObservableObject {
         directoryWatcher = DirectoryWatcher(directory: biosPath, options: options)
         ILOG("Created new DirectoryWatcher for path: \(biosPath.path)")
 
-        // Create system-specific subdirectories if they don't exist
-        for system in SystemIdentifier.allCases where system != .Unknown {
-            let systemPath = biosPath.appendingPathComponent(system.rawValue)
-            do {
-                try FileManager.default.createDirectory(at: systemPath,
-                                                      withIntermediateDirectories: true)
-                ILOG("Ensured BIOS directory exists for system: \(system.rawValue)")
-            } catch {
-                ELOG("Failed to create BIOS directory for system \(system.rawValue): \(error)")
-            }
+        // Create system-specific subdirectories in background
+        Task.detached(priority: .utility) {
+            await self.createSystemDirectories()
         }
 
         do {
@@ -96,11 +107,45 @@ public final class BIOSWatcher: ObservableObject {
         )
     }
 
+    /// Creates system-specific subdirectories off the main thread
+    @FileSystemActor
+    private func createSystemDirectories() async {
+        for system in SystemIdentifier.allCases where system != .Unknown {
+            let systemPath = biosPath.appendingPathComponent(system.rawValue)
+            do {
+                try FileManager.default.createDirectory(at: systemPath,
+                                                      withIntermediateDirectories: true)
+                ILOG("Ensured BIOS directory exists for system: \(system.rawValue)")
+            } catch {
+                ELOG("Failed to create BIOS directory for system \(system.rawValue): \(error)")
+            }
+        }
+    }
+
+    /// Cancels all ongoing file operation tasks
+    private func cancelAllFileOperations() {
+        for task in fileOperationTasks {
+            task.cancel()
+        }
+        fileOperationTasks.removeAll()
+    }
+
     /// Scans for BIOS files and updates database entries
-    @MainActor
     public func scanForBIOSFiles() async {
         ILOG("Starting BIOS file scan")
 
+        // Perform file scanning off the main thread
+        let biosFiles = await scanFileSystem()
+
+        ILOG("Found \(biosFiles.count) potential BIOS files")
+
+        // Process files on a background thread, then update DB on main thread
+        await processBIOSFiles(biosFiles)
+    }
+
+    /// Scans the file system for BIOS files off the main thread
+    @FileSystemActor
+    private func scanFileSystem() async -> [URL] {
         let fileManager = FileManager.default
         var biosFiles = [URL]()
 
@@ -109,32 +154,51 @@ public final class BIOSWatcher: ObservableObject {
         let exists = fileManager.fileExists(atPath: biosPath.path, isDirectory: &isDirectory)
         ILOG("BIOS directory exists: \(exists), isDirectory: \(isDirectory.boolValue)")
 
-        // List all subdirectories first
-        if let contents = try? fileManager.contentsOfDirectory(at: biosPath, includingPropertiesForKeys: nil) {
-            ILOG("BIOS root directory contents:")
-            for item in contents {
-                var isDir: ObjCBool = false
-                fileManager.fileExists(atPath: item.path, isDirectory: &isDir)
-                ILOG("  - \(item.lastPathComponent) (isDirectory: \(isDir.boolValue))")
-
-                if isDir.boolValue {
-                    // For system directories, scan their contents
-                    if let subContents = try? fileManager.contentsOfDirectory(at: item, includingPropertiesForKeys: nil) {
-                        ILOG("    Contents of \(item.lastPathComponent):")
-                        for subItem in subContents {
-                            ILOG("      - \(subItem.lastPathComponent)")
-                            biosFiles.append(subItem)
-                        }
-                    }
-                } else {
-                    // Also collect files in root BIOS directory
-                    biosFiles.append(item)
-                }
-            }
+        guard exists && isDirectory.boolValue else {
+            return []
         }
 
-        ILOG("Found \(biosFiles.count) potential BIOS files")
-        await processBIOSFiles(biosFiles)
+        // Use async/await with Task groups for concurrent directory scanning
+        return await withTaskGroup(of: [URL].self) { group in
+            do {
+                // Get top-level contents
+                let contents = try fileManager.contentsOfDirectory(at: biosPath, includingPropertiesForKeys: nil)
+
+                ILOG("BIOS root directory contents: \(contents.count) items")
+
+                // Add root-level files directly
+                for item in contents {
+                    var isDir: ObjCBool = false
+                    fileManager.fileExists(atPath: item.path, isDirectory: &isDir)
+
+                    if !isDir.boolValue {
+                        biosFiles.append(item)
+                    } else {
+                        // For directories, scan them concurrently
+                        group.addTask {
+                            do {
+                                let subContents = try fileManager.contentsOfDirectory(at: item, includingPropertiesForKeys: nil)
+                                ILOG("Scanned directory \(item.lastPathComponent): found \(subContents.count) files")
+                                return subContents
+                            } catch {
+                                ELOG("Error scanning directory \(item.path): \(error)")
+                                return []
+                            }
+                        }
+                    }
+                }
+
+                // Collect results from all concurrent tasks
+                for await result in group {
+                    biosFiles.append(contentsOf: result)
+                }
+
+                return biosFiles
+            } catch {
+                ELOG("Error scanning BIOS directory: \(error)")
+                return []
+            }
+        }
     }
 
     /// Updates a PVBIOS entry with a new file
@@ -151,37 +215,79 @@ public final class BIOSWatcher: ObservableObject {
     }
 
     /// Process a collection of potential BIOS files
-    @MainActor
     public func processBIOSFiles(_ files: [URL]) async {
-        ILOG("Processing BIOS files: \(files.map { $0.lastPathComponent })")
-        guard let realm = try? await Realm() else {
-            ELOG("No realm")
-            return
-        }
+        // First perform matching off the main thread
+        let matchResults = await matchBIOSFilesToEntries(files)
 
-        // Get all BIOS entries that don't have files
-        let biosEntries = realm.objects(PVBIOS.self).filter("file == nil")
-        ILOG("Found \(biosEntries.count) BIOS entries without files")
+        // Then update the database on the main thread
+        await MainActor.run {
+            Task {
+                ILOG("Processing \(matchResults.count) BIOS file matches")
 
-        // Log all expected filenames for debugging
-//        DLOG("Expected BIOS filenames: \(biosEntries.map { $0.expectedFilename })")
-
-        for file in files {
-            let filename = file.lastPathComponent
-            ILOG("Checking BIOS file: \(filename)")
-
-            // Look for matching BIOS entries by filename
-            if let matchingBios = biosEntries.first(where: { $0.expectedFilename.lowercased() == filename.lowercased() }) {
-                ILOG("Found matching BIOS entry for \(filename)")
-                do {
-                    try updateBIOSEntry(matchingBios, withFileAt: file)
-                } catch {
-                    ELOG("Failed to update BIOS entry for \(filename): \(error.localizedDescription)")
+                guard let realm = try? await Realm() else {
+                    ELOG("Failed to open Realm")
+                    return
                 }
-            } else {
-                ILOG("No matching BIOS entry found for \(filename)")
+
+                for (bios, fileURL) in matchResults {
+                    do {
+                        try updateBIOSEntry(bios, withFileAt: fileURL)
+                    } catch {
+                        ELOG("Failed to update BIOS entry for \(fileURL.lastPathComponent): \(error.localizedDescription)")
+                    }
+                }
             }
         }
+    }
+
+    /// Matches BIOS files to entries off the main thread
+    private func matchBIOSFilesToEntries(_ files: [URL]) async -> [(PVBIOS, URL)] {
+        await Task.detached(priority: .utility) {
+            var results: [(PVBIOS, URL)] = []
+
+            // Get realm and BIOS entries on the main thread
+            let (biosEntries, realm): (Results<PVBIOS>?, Realm?) = await MainActor.run {
+                guard let realm = try? Realm() else {
+                    return (nil, nil)
+                }
+                let entries = realm.objects(PVBIOS.self).filter("file == nil")
+                // Freeze the results so we can use them off the main thread
+                return (entries.freeze(), realm)
+            }
+
+            guard let biosEntries = biosEntries, let _ = realm else {
+                return []
+            }
+
+            // Process files in batches to avoid overwhelming the system
+            let batchSize = 10
+            for i in stride(from: 0, to: files.count, by: batchSize) {
+                let end = min(i + batchSize, files.count)
+                let batch = Array(files[i..<end])
+
+                // Process each file in the batch
+                for file in batch {
+                    let filename = file.lastPathComponent.lowercased()
+
+                    // Find matching BIOS entry
+                    if let matchingBios = biosEntries.first(where: {
+                        $0.expectedFilename.lowercased() == filename
+                    }) {
+                        results.append((matchingBios, file))
+                    }
+
+                    // Check for cancellation between files
+                    if Task.isCancelled {
+                        return results
+                    }
+                }
+
+                // Small delay between batches to prevent CPU spikes
+                try? await Task.sleep(nanoseconds: 1_000_000) // 1ms
+            }
+
+            return results
+        }.value
     }
 
     private func watchForNewBIOSFiles() async {
@@ -194,39 +300,80 @@ public final class BIOSWatcher: ObservableObject {
         for await files in directoryWatcher.completedFilesSequence {
             ILOG("Received \(files.count) new files from DirectoryWatcher")
 
-            // Process each file, including those in subdirectories
-            let filesToProcess = files.filter { file in
-                // Only process files that are either:
-                // 1. Directly in BIOS directory
-                // 2. One level deep in a system directory
-                let relativePath = file.path.replacingOccurrences(of: biosPath.path, with: "")
-                let components = relativePath.components(separatedBy: "/").filter { !$0.isEmpty }
-                let isValidDepth = components.count <= 2 // Allow root or one subdirectory
+            // Process files off the main thread
+            let task = Task.detached(priority: .utility) {
+                // Filter files based on path depth
+                let filesToProcess = await self.filterFilesByDepth(files)
 
-                ILOG("Checking path depth for \(file.path): components=\(components), valid=\(isValidDepth)")
-                return isValidDepth
-            }
-
-            if !filesToProcess.isEmpty {
-                let realm = try! await Realm()
-                let biosEntries = realm.objects(PVBIOS.self)
-
-                let newFiles = filesToProcess.filter { file in
-                    let fileName = file.lastPathComponent
-                    // Check if this file is not already attached to any BIOS entry
-                    let isAttached = biosEntries.contains { bios in
-                        bios.file?.fileName == fileName
-                    }
-                    ILOG("Checking file \(fileName) - already attached to BIOS: \(isAttached)")
-                    return !isAttached
+                if filesToProcess.isEmpty {
+                    return
                 }
+
+                // Check which files are new (not already attached to BIOS entries)
+                let newFiles = await self.filterNewFiles(filesToProcess)
 
                 if !newFiles.isEmpty {
                     ILOG("Processing \(newFiles.count) new BIOS files")
-                    await processBIOSFiles(newFiles)
-                    newBIOSFilesContinuation?.yield(newFiles)
+                    await self.processBIOSFiles(newFiles)
+
+                    // Notify observers on the main thread
+                    await MainActor.run {
+                        self.newBIOSFilesContinuation?.yield(newFiles)
+                    }
                 }
             }
+
+            // Store the task for potential cancellation
+            fileOperationTasks.insert(task)
+
+            // Set up cleanup when task completes
+            Task {
+                await task.value
+                self.fileOperationTasks.remove(task)
+            }
+        }
+    }
+
+    /// Filters files based on path depth off the main thread
+    @FileSystemActor
+    private func filterFilesByDepth(_ files: [URL]) async -> [URL] {
+        files.filter { file in
+            // Only process files that are either:
+            // 1. Directly in BIOS directory
+            // 2. One level deep in a system directory
+            let relativePath = file.path.replacingOccurrences(of: biosPath.path, with: "")
+            let components = relativePath.components(separatedBy: "/").filter { !$0.isEmpty }
+            let isValidDepth = components.count <= 2 // Allow root or one subdirectory
+
+            return isValidDepth
+        }
+    }
+
+    /// Filters files to find ones not already attached to BIOS entries
+    private func filterNewFiles(_ files: [URL]) async -> [URL] {
+        // Get realm and BIOS entries on the main thread
+        let biosEntries = await MainActor.run { () -> Results<PVBIOS>? in
+            do {
+                let realm = try Realm()
+                return realm.objects(PVBIOS.self).freeze()
+            } catch {
+                ELOG("Failed to open Realm: \(error)")
+                return nil
+            }
+        }
+
+        guard let entries = biosEntries else {
+            return []
+        }
+
+        // Filter files off the main thread
+        return files.filter { file in
+            let fileName = file.lastPathComponent
+            // Check if this file is not already attached to any BIOS entry
+            let isAttached = entries.contains { bios in
+                bios.file?.fileName == fileName
+            }
+            return !isAttached
         }
     }
 
@@ -236,6 +383,7 @@ public final class BIOSWatcher: ObservableObject {
         directoryWatcher = nil
         directoryWatchingTask?.cancel()
         directoryWatchingTask = nil
+        cancelAllFileOperations()
         setupDirectoryWatcher()
     }
 
@@ -255,68 +403,134 @@ public final class BIOSWatcher: ObservableObject {
         return hasWatcher
     }
 
-    @MainActor
     public func checkBIOSFile(at path: URL) async -> Bool {
-        let realm = try! await Realm()
-        let fileName = path.lastPathComponent
+        // Perform file checking off the main thread
+        let result = await Task.detached(priority: .utility) {
+            let fileName = path.lastPathComponent.lowercased()
 
-        // First check if there's a BIOS entry expecting this file
-        if let biosEntry = realm.objects(PVBIOS.self).first(where: { $0.expectedFilename.lowercased() == fileName.lowercased() }) {
-            ILOG("Found BIOS entry for \(fileName)")
+            // Get matching BIOS entry on the main thread
+            let matchingBios = await MainActor.run {
+                do {
+                    let realm = try Realm()
+                    return realm.objects(PVBIOS.self)
+                        .filter("expectedFilename CONTAINS[c] %@", fileName)
+                        .first?
+                        .freeze()
+                } catch {
+                    ELOG("Failed to open Realm: \(error)")
+                    return nil
+                }
+            }
 
-            // Check if it's already attached
-            if biosEntry.file != nil {
+            guard let bios = matchingBios else {
+                ILOG("No BIOS entry found for \(fileName)")
+                return false
+            }
+
+            // Check if already attached
+            if bios.file != nil {
                 ILOG("BIOS file already attached for \(fileName)")
                 return true
             }
 
-            // If not attached, try to attach it
-            do {
-                try updateBIOSEntry(biosEntry, withFileAt: path)
-                ILOG("Successfully attached BIOS file \(fileName)")
-                return true
-            } catch {
-                ELOG("Failed to attach BIOS file \(fileName): \(error)")
-                return false
+            return false
+        }.value
+
+        // If we found a match but it's not attached, attach it on the main thread
+        if result == false {
+            return await MainActor.run {
+                do {
+                    let realm = try Realm()
+                    let fileName = path.lastPathComponent.lowercased()
+
+                    if let biosEntry = realm.objects(PVBIOS.self)
+                        .filter("expectedFilename CONTAINS[c] %@", fileName)
+                        .first {
+
+                        try updateBIOSEntry(biosEntry, withFileAt: path)
+                        ILOG("Successfully attached BIOS file \(fileName)")
+                        return true
+                    }
+                    return false
+                } catch {
+                    ELOG("Failed to attach BIOS file: \(error)")
+                    return false
+                }
             }
         }
 
-        ILOG("No BIOS entry found for \(fileName)")
-        return false
+        return result
     }
 
     // Add a method to manually trigger a rescan of a specific directory
-    @MainActor
     public func rescanDirectory(_ directory: URL? = nil) async {
         ILOG("Manually rescanning directory: \(directory?.path ?? "all")")
 
         let directoryToScan = directory ?? biosPath
-        let fileManager = FileManager.default
 
-        var files = [URL]()
-
-        if directoryToScan == biosPath {
-            // Full scan
-            await scanForBIOSFiles()
-        } else {
-            // Scan specific directory
-            do {
-                let contents = try fileManager.contentsOfDirectory(at: directoryToScan,
-                                                                 includingPropertiesForKeys: nil)
-                files = contents
-                ILOG("Found \(files.count) files in \(directoryToScan.path)")
-                await processBIOSFiles(files)
-            } catch {
-                ELOG("Failed to scan directory \(directoryToScan.path): \(error)")
+        // Perform scanning off the main thread
+        let task = Task.detached(priority: .utility) {
+            if directoryToScan == self.biosPath {
+                // Full scan
+                await self.scanForBIOSFiles()
+            } else {
+                // Scan specific directory
+                let files = await self.scanSpecificDirectory(directoryToScan)
+                if !files.isEmpty {
+                    await self.processBIOSFiles(files)
+                }
             }
+        }
+
+        // Store the task for potential cancellation
+        fileOperationTasks.insert(task)
+
+        // Set up cleanup when task completes
+        Task {
+            await task.value
+            self.fileOperationTasks.remove(task)
+        }
+    }
+
+    /// Scans a specific directory for BIOS files off the main thread
+    @FileSystemActor
+    private func scanSpecificDirectory(_ directory: URL) async -> [URL] {
+        do {
+            let contents = try FileManager.default.contentsOfDirectory(
+                at: directory,
+                includingPropertiesForKeys: nil
+            )
+            ILOG("Found \(contents.count) files in \(directory.path)")
+            return contents
+        } catch {
+            ELOG("Failed to scan directory \(directory.path): \(error)")
+            return []
         }
     }
 
     @objc private func handleBIOSFileFound(_ notification: Notification) {
         guard let fileURL = notification.object as? URL else { return }
 
-        Task {
-            await processBIOSFiles([fileURL])
+        // Process the file off the main thread
+        let task = Task.detached(priority: .utility) {
+            await self.processBIOSFiles([fileURL])
         }
+
+        // Store the task for potential cancellation
+        fileOperationTasks.insert(task)
+
+        // Set up cleanup when task completes
+        Task {
+            await task.value
+            self.fileOperationTasks.remove(task)
+        }
+    }
+
+    deinit {
+        // Clean up resources
+        directoryWatcher?.stopMonitoring()
+        directoryWatchingTask?.cancel()
+        cancelAllFileOperations()
+        NotificationCenter.default.removeObserver(self)
     }
 }
