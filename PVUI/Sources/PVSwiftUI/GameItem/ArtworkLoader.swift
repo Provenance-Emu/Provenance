@@ -22,6 +22,18 @@ class ArtworkLoader: ObservableObject {
     /// Active loading tasks by game ID to prevent duplicate loads
     private var loadingTasks: [String: Task<UIImage?, Error>] = [:]
 
+    /// Recently accessed game IDs to prioritize caching
+    private var recentlyAccessedIds = Set<String>()
+
+    /// Maximum number of recent IDs to track
+    private let maxRecentIds = 50
+
+    /// Queue for managing background preloading tasks
+    private let preloadQueue = DispatchQueue(label: "com.provenance.artworkPreloader", qos: .utility, attributes: .concurrent)
+
+    /// Semaphore to limit concurrent preloading operations
+    private let preloadSemaphore = DispatchSemaphore(value: 4)
+
     /// Initialize the loader with default settings
     init() {}
 
@@ -39,6 +51,9 @@ class ArtworkLoader: ObservableObject {
         guard !artworkURL.isEmpty else {
             return nil
         }
+
+        // Track this game ID as recently accessed
+        updateRecentlyAccessed(gameId: game.id)
 
         // If there's already a task loading this artwork, join it
         if let existingTask = loadingTasks[game.id] {
@@ -80,6 +95,21 @@ class ArtworkLoader: ObservableObject {
         }
     }
 
+    /// Update the recently accessed game IDs set
+    private func updateRecentlyAccessed(gameId: String) {
+        recentlyAccessedIds.insert(gameId)
+
+        // Trim if we exceed the maximum size
+        if recentlyAccessedIds.count > maxRecentIds {
+            // Remove oldest entries (approximation by removing random elements)
+            while recentlyAccessedIds.count > maxRecentIds {
+                if let first = recentlyAccessedIds.first {
+                    recentlyAccessedIds.remove(first)
+                }
+            }
+        }
+    }
+
     /// Cancel loading for a specific game
     func cancelLoading(for gameId: String) {
         loadingTasks[gameId]?.cancel()
@@ -90,9 +120,24 @@ class ArtworkLoader: ObservableObject {
     /// - Parameter games: The games to preload artwork for
     /// - Parameter priority: The priority to use for preloading
     func preloadArtwork(for games: [PVGame], priority: TaskPriority = .low) {
+        // Prioritize games that were recently accessed
+        let prioritizedGames = games.sorted { game1, game2 in
+            let isRecent1 = recentlyAccessedIds.contains(game1.id)
+            let isRecent2 = recentlyAccessedIds.contains(game2.id)
+
+            if isRecent1 && !isRecent2 {
+                return true
+            } else if !isRecent1 && isRecent2 {
+                return false
+            } else {
+                // Secondary sort by title for stable ordering
+                return game1.title < game2.title
+            }
+        }
+
         Task(priority: priority) {
             // Extract valid artwork URLs
-            let artworkURLs = games.compactMap { game -> String? in
+            let artworkURLs = prioritizedGames.compactMap { game -> String? in
                 let url = game.trueArtworkURL
                 return url.isEmpty ? nil : url
             }
