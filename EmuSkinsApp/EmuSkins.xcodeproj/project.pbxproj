@@ -1,0 +1,616 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B34D0D012D6FE3B900627FCA /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B34D0D002D6FE3B900627FCA /* PVUI */; };
+		B34D0D042D6FE40200627FCA /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B34D0D032D6FE40200627FCA /* PVUI */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B34D0CCE2D6FE2A200627FCA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B34D0CB12D6FE2A100627FCA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B34D0CB82D6FE2A100627FCA;
+			remoteInfo = EmuSkins;
+		};
+		B34D0CD82D6FE2A200627FCA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B34D0CB12D6FE2A100627FCA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B34D0CB82D6FE2A100627FCA;
+			remoteInfo = EmuSkins;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		B34D0CB92D6FE2A100627FCA /* EmuSkins.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EmuSkins.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B34D0CCD2D6FE2A200627FCA /* EmuSkinsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EmuSkinsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B34D0CD72D6FE2A200627FCA /* EmuSkinsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EmuSkinsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B34D0CDF2D6FE2A200627FCA /* Exceptions for "EmuSkins" folder in "EmuSkins" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B34D0CB82D6FE2A100627FCA /* EmuSkins */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		B34D0CBB2D6FE2A100627FCA /* EmuSkins */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B34D0CDF2D6FE2A200627FCA /* Exceptions for "EmuSkins" folder in "EmuSkins" target */,
+			);
+			path = EmuSkins;
+			sourceTree = "<group>";
+		};
+		B34D0CD02D6FE2A200627FCA /* EmuSkinsTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = EmuSkinsTests;
+			sourceTree = "<group>";
+		};
+		B34D0CDA2D6FE2A200627FCA /* EmuSkinsUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = EmuSkinsUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B34D0CB62D6FE2A100627FCA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B34D0D042D6FE40200627FCA /* PVUI in Frameworks */,
+				B34D0D012D6FE3B900627FCA /* PVUI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B34D0CCA2D6FE2A200627FCA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B34D0CD42D6FE2A200627FCA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B34D0CB02D6FE2A100627FCA = {
+			isa = PBXGroup;
+			children = (
+				B34D0CBB2D6FE2A100627FCA /* EmuSkins */,
+				B34D0CD02D6FE2A200627FCA /* EmuSkinsTests */,
+				B34D0CDA2D6FE2A200627FCA /* EmuSkinsUITests */,
+				B34D0CBA2D6FE2A100627FCA /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B34D0CBA2D6FE2A100627FCA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B34D0CB92D6FE2A100627FCA /* EmuSkins.app */,
+				B34D0CCD2D6FE2A200627FCA /* EmuSkinsTests.xctest */,
+				B34D0CD72D6FE2A200627FCA /* EmuSkinsUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B34D0CB82D6FE2A100627FCA /* EmuSkins */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B34D0CE02D6FE2A200627FCA /* Build configuration list for PBXNativeTarget "EmuSkins" */;
+			buildPhases = (
+				B34D0CB52D6FE2A100627FCA /* Sources */,
+				B34D0CB62D6FE2A100627FCA /* Frameworks */,
+				B34D0CB72D6FE2A100627FCA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				B34D0CBB2D6FE2A100627FCA /* EmuSkins */,
+			);
+			name = EmuSkins;
+			packageProductDependencies = (
+				B34D0D002D6FE3B900627FCA /* PVUI */,
+				B34D0D032D6FE40200627FCA /* PVUI */,
+			);
+			productName = EmuSkins;
+			productReference = B34D0CB92D6FE2A100627FCA /* EmuSkins.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B34D0CCC2D6FE2A200627FCA /* EmuSkinsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B34D0CE52D6FE2A200627FCA /* Build configuration list for PBXNativeTarget "EmuSkinsTests" */;
+			buildPhases = (
+				B34D0CC92D6FE2A200627FCA /* Sources */,
+				B34D0CCA2D6FE2A200627FCA /* Frameworks */,
+				B34D0CCB2D6FE2A200627FCA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B34D0CCF2D6FE2A200627FCA /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				B34D0CD02D6FE2A200627FCA /* EmuSkinsTests */,
+			);
+			name = EmuSkinsTests;
+			packageProductDependencies = (
+			);
+			productName = EmuSkinsTests;
+			productReference = B34D0CCD2D6FE2A200627FCA /* EmuSkinsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B34D0CD62D6FE2A200627FCA /* EmuSkinsUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B34D0CE82D6FE2A200627FCA /* Build configuration list for PBXNativeTarget "EmuSkinsUITests" */;
+			buildPhases = (
+				B34D0CD32D6FE2A200627FCA /* Sources */,
+				B34D0CD42D6FE2A200627FCA /* Frameworks */,
+				B34D0CD52D6FE2A200627FCA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B34D0CD92D6FE2A200627FCA /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				B34D0CDA2D6FE2A200627FCA /* EmuSkinsUITests */,
+			);
+			name = EmuSkinsUITests;
+			packageProductDependencies = (
+			);
+			productName = EmuSkinsUITests;
+			productReference = B34D0CD72D6FE2A200627FCA /* EmuSkinsUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B34D0CB12D6FE2A100627FCA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1620;
+				LastUpgradeCheck = 1620;
+				TargetAttributes = {
+					B34D0CB82D6FE2A100627FCA = {
+						CreatedOnToolsVersion = 16.2;
+					};
+					B34D0CCC2D6FE2A200627FCA = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = B34D0CB82D6FE2A100627FCA;
+					};
+					B34D0CD62D6FE2A200627FCA = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = B34D0CB82D6FE2A100627FCA;
+					};
+				};
+			};
+			buildConfigurationList = B34D0CB42D6FE2A100627FCA /* Build configuration list for PBXProject "EmuSkins" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = B34D0CB02D6FE2A100627FCA;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B34D0D022D6FE40200627FCA /* XCLocalSwiftPackageReference "../PVUI" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = B34D0CBA2D6FE2A100627FCA /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B34D0CB82D6FE2A100627FCA /* EmuSkins */,
+				B34D0CCC2D6FE2A200627FCA /* EmuSkinsTests */,
+				B34D0CD62D6FE2A200627FCA /* EmuSkinsUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B34D0CB72D6FE2A100627FCA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B34D0CCB2D6FE2A200627FCA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B34D0CD52D6FE2A200627FCA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B34D0CB52D6FE2A100627FCA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B34D0CC92D6FE2A200627FCA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B34D0CD32D6FE2A200627FCA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B34D0CCF2D6FE2A200627FCA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B34D0CB82D6FE2A100627FCA /* EmuSkins */;
+			targetProxy = B34D0CCE2D6FE2A200627FCA /* PBXContainerItemProxy */;
+		};
+		B34D0CD92D6FE2A200627FCA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B34D0CB82D6FE2A100627FCA /* EmuSkins */;
+			targetProxy = B34D0CD82D6FE2A200627FCA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		B34D0CE12D6FE2A200627FCA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = EmuSkins/EmuSkins.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"EmuSkins/Preview Content\"";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EmuSkins/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "EmuSkins!";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.EmuSkins";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B34D0CE22D6FE2A200627FCA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = EmuSkins/EmuSkins.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"EmuSkins/Preview Content\"";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EmuSkins/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "EmuSkins!";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.EmuSkins";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B34D0CE32D6FE2A200627FCA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		B34D0CE42D6FE2A200627FCA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B34D0CE62D6FE2A200627FCA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.EmuSkinsTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EmuSkins.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/EmuSkins";
+			};
+			name = Debug;
+		};
+		B34D0CE72D6FE2A200627FCA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.EmuSkinsTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EmuSkins.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/EmuSkins";
+			};
+			name = Release;
+		};
+		B34D0CE92D6FE2A200627FCA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.EmuSkinsUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = EmuSkins;
+			};
+			name = Debug;
+		};
+		B34D0CEA2D6FE2A200627FCA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.EmuSkinsUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = EmuSkins;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B34D0CB42D6FE2A100627FCA /* Build configuration list for PBXProject "EmuSkins" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B34D0CE32D6FE2A200627FCA /* Debug */,
+				B34D0CE42D6FE2A200627FCA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B34D0CE02D6FE2A200627FCA /* Build configuration list for PBXNativeTarget "EmuSkins" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B34D0CE12D6FE2A200627FCA /* Debug */,
+				B34D0CE22D6FE2A200627FCA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B34D0CE52D6FE2A200627FCA /* Build configuration list for PBXNativeTarget "EmuSkinsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B34D0CE62D6FE2A200627FCA /* Debug */,
+				B34D0CE72D6FE2A200627FCA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B34D0CE82D6FE2A200627FCA /* Build configuration list for PBXNativeTarget "EmuSkinsUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B34D0CE92D6FE2A200627FCA /* Debug */,
+				B34D0CEA2D6FE2A200627FCA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B34D0D022D6FE40200627FCA /* XCLocalSwiftPackageReference "../PVUI" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../PVUI;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B34D0D002D6FE3B900627FCA /* PVUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVUI;
+		};
+		B34D0D032D6FE40200627FCA /* PVUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVUI;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = B34D0CB12D6FE2A100627FCA /* Project object */;
+}

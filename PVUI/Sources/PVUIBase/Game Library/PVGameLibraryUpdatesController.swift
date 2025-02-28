@@ -50,7 +50,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         self.biosWatcher = .shared
 
         // Perform initial BIOS scan
-        Task {
+        Task.detached(priority: .background) { [self] in
             ILOG("Performing initial BIOS scan")
             await biosWatcher.scanForBIOSFiles()
         }
@@ -102,7 +102,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         DLOG("Starting extraction status observer task: \(taskID)")
         statusExtractionSateObserver?.cancel()
 
-        statusExtractionSateObserver = Task {
+        statusExtractionSateObserver = Task(priority: .utility) {
             defer { DLOG("Ending extraction status observer task: \(taskID)") }
 
             var hideTask: Task<Void, Never>?
@@ -120,7 +120,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                         return
                     }
 
-                    Task {
+                    Task { @MainActor in
                         let hudState = Self.handleExtractionStatus(status)
                         await self.hudCoordinator.updateHUD(hudState)
                     }
@@ -170,7 +170,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         let taskID = UUID()
         DLOG("Starting completed files observer task: \(taskID)")
 
-        Task {
+        Task.detached(priority: .background) { [self] in
             defer { DLOG("Ending completed files observer task: \(taskID)") }
 
             for await completedFiles in directoryWatcher.completedFilesSequence {
@@ -184,7 +184,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         DLOG("Creating extraction status stream: \(streamID)")
 
         return AsyncStream { continuation in
-            let task = Task {
+            let task = Task(priority: .background) {
                 defer { DLOG("Ending extraction status stream task: \(streamID)") }
 
                 if #available(iOS 17.0, tvOS 17.0, *) {
@@ -464,7 +464,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     var biosTask: Task<Void, Never>?
     private func setupBIOSObserver() {
         biosTask?.cancel()
-        biosTask = Task {
+        biosTask = Task(priority: .utility) {
             for await newBIOSFiles in biosWatcher.newBIOSFilesSequence {
                 await processBIOSFiles(newBIOSFiles)
             }

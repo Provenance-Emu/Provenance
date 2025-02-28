@@ -104,6 +104,9 @@ struct ProvenanceApp: App {
                     appState.sendEventWasSwizzled = true
                 }
             }
+
+            // Handle scene phase changes for import pausing
+            appState.handleScenePhaseChange(newPhase)
         }
     }
 }

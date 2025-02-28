@@ -88,6 +88,18 @@ public class AppState: ObservableObject {
         }
     }
 
+    /// Tracks whether imports should be paused
+    @Published private var shouldPauseImports: Bool = true
+
+    /// Cancellable storage for Combine subscriptions
+    private var importPauseSubscriptions = Set<AnyCancellable>()
+
+    /// Timer for auto-resuming imports after initial delay
+    private var initialImportResumeTimer: Timer?
+
+    /// Initial delay before auto-resuming imports (in seconds)
+    private let initialImportResumeDelay: TimeInterval = 10.0
+
     public var isAppStore: Bool {
         guard let appType = Bundle.main.infoDictionary?["PVAppType"] as? String else { return false }
         return appType.lowercased().contains("appstore")
@@ -124,6 +136,131 @@ public class AppState: ObservableObject {
         }
 
         ILOG("AppState: Initialization completed")
+
+        // Set up import pause monitoring
+        setupImportPauseMonitoring()
+    }
+
+    /// Deinitializer
+    deinit {
+        // Clean up subscriptions
+        importPauseSubscriptions.forEach { $0.cancel() }
+        importPauseSubscriptions.removeAll()
+
+        // Cancel timer
+        initialImportResumeTimer?.invalidate()
+        initialImportResumeTimer = nil
+
+        // Cancel task
+        useUIKitObservationTask?.cancel()
+
+        ILOG("AppState: Deinitialized")
+    }
+
+    /// Sets up monitoring of conditions that should pause imports
+    private func setupImportPauseMonitoring() {
+        ILOG("AppState: Setting up import pause monitoring")
+
+        // Monitor emulation state - pause imports when emulation is active
+        $emulationUIState
+            .map { $0.core?.isOn == true }
+            .removeDuplicates()
+            .sink { [weak self] isEmulationActive in
+                if isEmulationActive {
+                    ILOG("AppState: Pausing imports due to active emulation")
+                    self?.pauseImports(reason: "Emulation active")
+                } else {
+                    ILOG("AppState: Emulation inactive, can resume imports")
+                    self?.resumeImportsIfNoOtherConditions(previousCondition: "Emulation")
+                }
+            }
+            .store(in: &importPauseSubscriptions)
+
+        // Monitor app background state
+        $emulationUIState
+            .map { $0.isInBackground }
+            .removeDuplicates()
+            .sink { [weak self] isInBackground in
+                if isInBackground {
+                    ILOG("AppState: Pausing imports due to app entering background")
+                    self?.pauseImports(reason: "App in background")
+                } else {
+                    ILOG("AppState: App in foreground, can resume imports")
+                    self?.resumeImportsIfNoOtherConditions(previousCondition: "Background")
+                }
+            }
+            .store(in: &importPauseSubscriptions)
+
+        // Schedule timer to auto-resume imports after initial delay
+        scheduleInitialImportResume()
+    }
+
+    /// Schedules a timer to automatically resume imports after the initial delay
+    private func scheduleInitialImportResume() {
+        ILOG("AppState: Scheduling initial import resume after \(initialImportResumeDelay) seconds")
+
+        // Cancel any existing timer
+        initialImportResumeTimer?.invalidate()
+
+        // Create new timer
+        initialImportResumeTimer = Timer.scheduledTimer(withTimeInterval: initialImportResumeDelay, repeats: false) { [weak self] _ in
+            ILOG("AppState: Initial import resume timer fired")
+            self?.resumeImportsIfNoOtherConditions(previousCondition: "Initial delay")
+        }
+    }
+
+    /// Pauses imports with a specific reason
+    /// - Parameter reason: The reason for pausing imports
+    public func pauseImports(reason: String) {
+        ILOG("AppState: Pausing imports - Reason: \(reason)")
+        shouldPauseImports = true
+        gameImporter?.pause()
+    }
+
+    /// Resumes imports if there are no other conditions requiring them to be paused
+    /// - Parameter previousCondition: The condition that was previously preventing imports
+    public func resumeImportsIfNoOtherConditions(previousCondition: String) {
+        // Check if there are any other conditions that require imports to be paused
+        let emulationActive = emulationUIState.core?.isOn == true
+        let isInBackground = emulationUIState.isInBackground
+        let isInitialDelayActive = initialImportResumeTimer != nil && initialImportResumeTimer!.isValid
+
+        if !emulationActive && !isInBackground && !isInitialDelayActive {
+            ILOG("AppState: Resuming imports - \(previousCondition) condition cleared and no other blocking conditions")
+            shouldPauseImports = false
+            gameImporter?.resume()
+        } else {
+            var reasons = [String]()
+            if emulationActive { reasons.append("Emulation active") }
+            if isInBackground { reasons.append("App in background") }
+            if isInitialDelayActive { reasons.append("Initial delay not expired") }
+
+            ILOG("AppState: Not resuming imports - other conditions still active: \(reasons.joined(separator: ", "))")
+        }
+    }
+
+    /// Manually forces imports to resume regardless of conditions
+    public func forceResumeImports() {
+        ILOG("AppState: Force resuming imports")
+        shouldPauseImports = false
+        cancelInitialImportResumeTimer()
+        gameImporter?.resume()
+    }
+
+    /// Cancels the initial import resume timer
+    public func cancelInitialImportResumeTimer() {
+        if initialImportResumeTimer?.isValid == true {
+            ILOG("AppState: Cancelling initial import resume timer")
+            initialImportResumeTimer?.invalidate()
+            initialImportResumeTimer = nil
+        }
+    }
+
+    /// Manually forces imports to pause
+    public func forcePauseImports() {
+        ILOG("AppState: Force pausing imports")
+        shouldPauseImports = true
+        gameImporter?.pause()
     }
 
     /// Method to start the bootup sequence
@@ -175,7 +312,9 @@ public class AppState: ObservableObject {
 
         // Initialize gameImporter
         self.gameImporter = GameImporter.shared
-        ILOG("AppState: GameImporter set")
+        // Ensure the importer starts in a paused state
+        self.gameImporter?.pause()
+        ILOG("AppState: GameImporter set and initially paused")
 
         // Initialize libraryUpdatesController with the gameImporter
         self.libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: self.gameImporter!)
@@ -221,11 +360,11 @@ public class AppState: ObservableObject {
 
         if PVFeatureFlagsManager.shared.isEnabled(.contentlessCores) {
             ILOG("AppState: RomDatabase Loading dummy cores...")
-            await try? RomDatabase.addContentlessCores(overwrite: true)
+            try? await RomDatabase.addContentlessCores(overwrite: true)
             ILOG("AppState: RomDatabase dummy cores loaded.")
         } else {
             ILOG("AppState: RomDatabase Clearing dummy cores...")
-            await try? RomDatabase.clearContentlessCores()
+            try? await RomDatabase.clearContentlessCores()
             ILOG("AppState: RomDatabase dummy cores cleared.")
         }
 
@@ -278,6 +417,32 @@ public class AppState: ObservableObject {
         })
         .disposed(by: disposeBag)
 #endif
+    }
+
+    /// Handles app state changes (active, inactive, background)
+    /// - Parameter scenePhase: The new scene phase
+    public func handleScenePhaseChange(_ scenePhase: ScenePhase) {
+        ILOG("AppState: Scene phase changed to \(scenePhase)")
+
+        switch scenePhase {
+        case .active:
+            // App is active/in foreground
+            emulationUIState.isInBackground = false
+            // Don't automatically resume imports here - let the monitoring system handle it
+
+        case .background:
+            // App is in background
+            emulationUIState.isInBackground = true
+            pauseImports(reason: "App entered background")
+
+        case .inactive:
+            // App is inactive but not in background
+            // We might want to pause imports here too
+            pauseImports(reason: "App became inactive")
+
+        @unknown default:
+            WLOG("AppState: Unknown scene phase: \(scenePhase)")
+        }
     }
 }
 

@@ -28,7 +28,7 @@ class MockGameImporter: GameImporting, ObservableObject {
         self.finishedArtworkHandler = finishedArtworkHandler
         self.spotlightCompletionHandler = spotlightCompletionHandler
         self.spotlightFinishedImportHandler = spotlightFinishedImportHandler
-        
+
         if self.importQueue.isEmpty {
             self.importQueue = [{
                 let item = ImportQueueItem(url: .init(fileURLWithPath: "test.bin"), fileType: .unknown)
@@ -44,7 +44,7 @@ class MockGameImporter: GameImporting, ObservableObject {
             ]
         }
     }
-    
+
     public func initSystems() async {
         // Mock implementation - no real systems to initialize
         importStatus = "Systems initialized"
@@ -56,7 +56,7 @@ class MockGameImporter: GameImporting, ObservableObject {
             importStatus = "Added \(item.url.lastPathComponent) to queue"
         }
     }
-    
+
     @MainActor
     public func addImports(forPaths paths: [URL], targetSystem: SystemIdentifier) {
         for path in paths {
@@ -75,7 +75,7 @@ class MockGameImporter: GameImporting, ObservableObject {
         }
         importStatus = "Added \(paths.count) items to queue"
     }
-    
+
     public func removeImports(at offsets: IndexSet) {
         importQueue.remove(atOffsets: offsets)
         importStatus = "Removed \(offsets.count) items from queue"
@@ -86,23 +86,52 @@ class MockGameImporter: GameImporting, ObservableObject {
             importStatus = "No items in queue"
             return
         }
-        
+
+        // Don't start processing if we're paused
+        if processingState == .paused {
+            importStatus = "Processing is paused. Resume to start processing."
+            return
+        }
+
         processingState = .processing
-        
+
         // Simulate processing by marking all items as successful after a delay
         Task {
             importStatus = "Processing \(importQueue.count) items..."
-            
+
             // Simulate some processing time
             try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
-            
-            for index in importQueue.indices {
-                importQueue[index].status = ImportStatus(rawValue: index % ImportStatus.allCases.count)!
+
+            // Only continue if we're not paused
+            if self.processingState != .paused {
+                for index in importQueue.indices {
+                    importQueue[index].status = ImportQueueItem.ImportStatus(rawValue: index % ImportQueueItem.ImportStatus.allCases.count)!
+                }
+
+                processingState = .idle
+                importStatus = "Completed processing \(importQueue.count) items"
             }
-            
-            processingState = .idle
-            importStatus = "Completed processing \(importQueue.count) items"
         }
+    }
+
+    /// Pauses the import processing
+    /// Items can still be added to or removed from the queue while paused
+    public func pause() {
+        guard processingState == .processing else { return }
+
+        processingState = .paused
+        importStatus = "Import processing paused"
+    }
+
+    /// Resumes the import processing if it was paused
+    public func resume() {
+        guard processingState == .paused else { return }
+
+        processingState = .processing
+        importStatus = "Resuming import processing"
+
+        // Restart processing
+        startProcessing()
     }
 
     public func sortImportQueueItems(_ importQueueItems: [ImportQueueItem]) -> [ImportQueueItem] {
@@ -112,7 +141,7 @@ class MockGameImporter: GameImporting, ObservableObject {
     public func importQueueContainsDuplicate(_ queue: [ImportQueueItem], ofItem queueItem: ImportQueueItem) -> Bool {
         queue.contains(where: { $0.url == queueItem.url })
     }
-    
+
     public var importStartedHandler: GameImporterImportStartedHandler? = nil
     /// Closure called when import completes
     public var completionHandler: GameImporterCompletionHandler? = nil
@@ -120,13 +149,13 @@ class MockGameImporter: GameImporting, ObservableObject {
     public var finishedImportHandler: GameImporterFinishedImportingGameHandler? = nil
     /// Closure called when artwork finishes downloading
     public var finishedArtworkHandler: GameImporterFinishedGettingArtworkHandler? = nil
-    
+
     /// Spotlight Handerls
     /// Closure called when spotlight completes
     public var spotlightCompletionHandler: GameImporterCompletionHandler? = nil
     /// Closure called when a game finishes importing
     public var spotlightFinishedImportHandler: GameImporterFinishedImportingGameHandler? = nil
-    
+
     public func clearCompleted() {
         self.importQueue = self.importQueue.filter({
             switch $0.status {

@@ -16,6 +16,9 @@ import PVUIBase
 import PVRealm
 import PVThemes
 import Combine
+#if !os(tvOS)
+import UIKit
+#endif
 
 private struct PVRootDelegateKey: EnvironmentKey {
     static let defaultValue: PVRootDelegate? = nil
@@ -65,6 +68,12 @@ struct ConsolesWrapperView: SwiftUI.View {
     @ObservedResults(PVSystem.self) private var consoles: Results<PVSystem>
     @ObservedObject private var themeManager = ThemeManager.shared
 
+    /// Track if view is currently visible
+    @State private var isVisible: Bool = false
+
+    /// Track the previous tab for comparison
+    @State private var previousTab: String = ""
+
     /// State for game info presentation
     struct GameInfoState: Identifiable {
         let id: String
@@ -111,24 +120,33 @@ struct ConsolesWrapperView: SwiftUI.View {
     }
 
     var body: some View {
-        AnyView(
-            Group {
-                if consoles.isEmpty || (consoles.count == 1 && consoles.first!.identifier == SystemIdentifier.RetroArch.rawValue) {
-                    noConsolesView
-                } else {
-                    consolesTabView
-                        .sheet(item: $gameInfoState) { state in
-                            NavigationView {
-                                makeGameMoreInfoView(for: state)
-                                #if !os(tvOS)
-                                    .navigationBarTitleDisplayMode(.inline)
-                                #endif
-                            }
+        Group {
+            if consoles.isEmpty || (consoles.count == 1 && consoles.first!.identifier == SystemIdentifier.RetroArch.rawValue) {
+                noConsolesView
+            } else {
+                consolesTabView
+                    .sheet(item: $gameInfoState) { state in
+                        NavigationView {
+                            makeGameMoreInfoView(for: state)
+                            #if !os(tvOS)
+                                .navigationBarTitleDisplayMode(.inline)
+                            #endif
                         }
-                }
+                    }
             }
-        )
+        }
         .environment(\.rootDelegate, rootDelegate)
+        .onAppear {
+            isVisible = true
+
+            // Preload artwork for visible consoles
+            if let selectedConsole = consoles.first(where: { $0.identifier == delegate.selectedTab }) {
+                preloadArtworkForConsole(selectedConsole)
+            }
+        }
+        .onDisappear {
+            isVisible = false
+        }
     }
 
     // MARK: - Helper Methods
@@ -140,7 +158,7 @@ struct ConsolesWrapperView: SwiftUI.View {
     private func sortedConsoles() -> [PVSystem] {
         viewModel.sortConsolesAscending ? consoles.map { $0 } : consoles.reversed()
     }
-    
+
     private var glowColor: Color {
         switch themeManager.currentPalette {
         case is DarkThemePalette:
@@ -152,6 +170,17 @@ struct ConsolesWrapperView: SwiftUI.View {
         }
     }
 
+    /// Preload artwork for a console's games
+    private func preloadArtworkForConsole(_ console: PVSystem) {
+        Task(priority: .low) {
+            // Get the first 20 games for this console
+            let games = Array(console.games.prefix(20))
+
+            // Preload their artwork
+            ArtworkLoader.shared.preloadArtwork(for: games)
+        }
+    }
+
     @ViewBuilder
     private var noConsolesView: some View {
         NoConsolesView(delegate: rootDelegate as! PVMenuDelegate)
@@ -160,7 +189,7 @@ struct ConsolesWrapperView: SwiftUI.View {
             }
             .tag("noConsoles")
     }
-    
+
     @ViewBuilder
     var consolesList: some View {
         ForEach(sortedConsoles(), id: \.self) { console in
@@ -172,23 +201,11 @@ struct ConsolesWrapperView: SwiftUI.View {
             )
             .tabItem {
                 if #available(iOS 17.0, tvOS 17.0, *) {
+                    // Simplified tab item to reduce rendering overhead
                     Label(console.name, image: ImageResource(name: console.iconName, bundle: PVUIBase.BundleLoader.myBundle))
-                        .blur(radius: 10)
-                        .opacity(0.3)
-                        .overlay(
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    .clear,
-                                    glowColor.opacity(0.3),
-                                    .clear
-                                ]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                            .blendMode(.screen)
-                        )
                 } else {
-//                    Label(console.name, image: Image(console.iconName, bundle: PVUIBase.BundleLoader.myBundle))
+                    // Fallback for older iOS versions
+                    Label(console.name, systemImage: "gamecontroller")
                 }
             }
             .tag(console.identifier)
@@ -200,7 +217,25 @@ struct ConsolesWrapperView: SwiftUI.View {
     var consolesTabView: some View {
         let binding = Binding(
             get: { delegate.selectedTab },
-            set: { delegate.setTab($0) }
+            set: { newTab in
+                // Store the previous tab before changing
+                previousTab = delegate.selectedTab
+
+                // Set the new tab
+                delegate.setTab(newTab)
+
+                // Preload artwork for the selected console
+                if let selectedConsole = consoles.first(where: { console in console.identifier == newTab }) {
+                    preloadArtworkForConsole(selectedConsole)
+                }
+
+                // Trigger haptic feedback for user-initiated tab changes
+                #if !os(tvOS)
+                if isVisible && previousTab != newTab {
+                    Haptics.impact(style: .soft)
+                }
+                #endif
+            }
         )
 
         return TabView(selection: binding) {
@@ -219,9 +254,8 @@ struct ConsolesWrapperView: SwiftUI.View {
             consolesList
         }
         .onChange(of: delegate.selectedTab) { newValue in
+            #if DEBUG
             print("Tab changed in view: \(newValue)")
-            #if !os(tvOS)
-            Haptics.impact(style: .soft)
             #endif
         }
         .tabViewStyle(.page)
