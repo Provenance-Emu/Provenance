@@ -368,6 +368,7 @@ struct ConsoleGamesView: SwiftUI.View {
         return count
     }
     
+    @ViewBuilder
     private func showGamesGrid(_ games: [PVGame]) -> some View {
         let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: itemsPerRow)
         return LazyVGrid(columns: columns, spacing: 10) {
@@ -394,6 +395,7 @@ struct ConsoleGamesView: SwiftUI.View {
         .padding(.horizontal, 10)
     }
     
+    @ViewBuilder
     private func showGamesGrid(_ games: Results<PVGame>) -> some View {
         let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: itemsPerRow)
         return ScrollViewReader { proxy in
@@ -436,6 +438,7 @@ struct ConsoleGamesView: SwiftUI.View {
         }
     }
     
+    @ViewBuilder
     private func showGamesList(_ games: [PVGame]) -> some View {
         LazyVStack(spacing: 0) {
             ForEach(games.filter{!$0.isInvalidated}, id: \.self) { game in
@@ -464,6 +467,7 @@ struct ConsoleGamesView: SwiftUI.View {
         }
     }
     
+    @ViewBuilder
     private func showGamesList(_ games: Results<PVGame>) -> some View {
         LazyVStack(spacing: 8) {
             ForEach(games, id: \.self) { game in
