@@ -551,7 +551,7 @@ struct ArtworkGridItem: View {
                 image = Image(uiImage: uiImage)
             }
         } catch {
-            print("Error loading image: \(error)")
+            ELOG("Error loading image: \(error)")
         }
     }
 }
