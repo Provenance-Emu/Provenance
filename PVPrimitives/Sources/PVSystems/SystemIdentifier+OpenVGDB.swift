@@ -5,6 +5,9 @@ public extension SystemIdentifier {
     var openVGDBID: Int {
         switch self {
         case ._3DO: return 1
+        case .CPS1: return 2
+        case .CPS2: return 2
+        case .CPS3: return 2
         case .MAME: return 2
         case .Atari2600: return 3
         case .Atari5200: return 4
