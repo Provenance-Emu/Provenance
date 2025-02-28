@@ -30,6 +30,8 @@ public protocol GameMoreInfoViewModelDataSource: ObservableObject {
     var gameDescription: String? { get }
     /// Game rating (-1 for unrated, 0-5 for rated)
     var rating: Int { get set }
+    /// Access to the underlying PVGame object if available
+    var pvGame: PVGame? { get }
 }
 
 /// Mock implementation of PVGameLibraryEntry for previews
@@ -104,4 +106,7 @@ internal class MockGameLibraryEntry: Identifiable, ObservableObject, GameMoreInf
         Import Date: \(importDate)
         """
     }
+
+    /// Access to the underlying PVGame object
+    var pvGame: PVGame? { nil }
 }

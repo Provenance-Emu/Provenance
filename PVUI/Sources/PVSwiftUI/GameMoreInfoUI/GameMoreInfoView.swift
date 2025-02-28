@@ -140,6 +140,21 @@ class GameMoreInfoViewModel: ObservableObject {
     /// Back Artwork with published wrapper
     @Published private(set) var backArtwork: UIImage?
 
+    /// Access to the driver for passing to views
+    var rootDelegate: PVRootDelegate? {
+        return driver as? PVRootDelegate
+    }
+
+    /// Access to the context menu delegate for passing to views
+    var contextMenuDelegate: GameContextMenuDelegate? {
+        return driver as? GameContextMenuDelegate
+    }
+
+    /// Access to the underlying PVGame object if available
+    var pvGame: PVGame? {
+        return game?.pvGame
+    }
+
     init(driver: any GameLibraryDriver, gameId: String) {
         self.driver = driver
         self.gameId = gameId
@@ -346,7 +361,10 @@ struct GameMoreInfoView: View {
                 // Artwork section with direct binding to published properties
                 GameArtworkView(
                     frontArtwork: viewModel.frontArtwork,
-                    backArtwork: viewModel.backArtwork
+                    backArtwork: viewModel.backArtwork,
+                    game: viewModel.pvGame,
+                    rootDelegate: viewModel.rootDelegate,
+                    contextMenuDelegate: viewModel.contextMenuDelegate
                 )
 
                 // Game information section
