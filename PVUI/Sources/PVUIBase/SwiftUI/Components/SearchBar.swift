@@ -11,15 +11,14 @@ import Foundation
 import SwiftUI
 import PVThemes
 
-class SearchBar: NSObject, ObservableObject {
+public class SearchBar: NSObject, ObservableObject {
 
-    @Published var text: String = ""
+    @Published public var text: String = ""
     let searchController: UISearchController
-
-
+    
     #if os(tvOS)
     // Cannot be nil on tvOS,
-    required init(searchResultsController: UIViewController) {
+    public required init(searchResultsController: UIViewController) {
         searchController = UISearchController(searchResultsController: searchResultsController)
 
         super.init()
@@ -28,7 +27,7 @@ class SearchBar: NSObject, ObservableObject {
         self.searchController.searchResultsUpdater = self
     }
     #else
-    required init(searchResultsController: UIViewController? = nil) {
+    public required init(searchResultsController: UIViewController? = nil) {
         searchController = UISearchController(searchResultsController: searchResultsController)
         searchController.searchBar.searchTextField.textColor = ThemeManager.shared.currentPalette.menuHeaderText
 //        searchController.searchBar.searchTextField.defaultTextAttributes = [.foregroundColor: ThemeManager.shared.currentPalette.menuHeaderText]
@@ -43,7 +42,7 @@ class SearchBar: NSObject, ObservableObject {
 
 extension SearchBar: UISearchResultsUpdating {
 
-    func updateSearchResults(for searchController: UISearchController) {
+    public func updateSearchResults(for searchController: UISearchController) {
 
         // Publish search bar text changes.
         if let searchBarText = searchController.searchBar.text {
@@ -52,11 +51,15 @@ extension SearchBar: UISearchResultsUpdating {
     }
 }
 
-struct SearchBarModifier: ViewModifier {
+public struct SearchBarModifier: ViewModifier {
 
-    let searchBar: SearchBar
+    public let searchBar: SearchBar
+    
+    public init(searchBar: SearchBar) {
+        self.searchBar = searchBar
+    }
 
-    func body(content: Content) -> some SwiftUI.View {
+    public func body(content: Content) -> some SwiftUI.View {
         content
             .overlay(
                 ViewControllerResolver { viewController in
@@ -71,16 +74,20 @@ struct SearchBarModifier: ViewModifier {
     }
 }
 
-extension SwiftUI.View {
+public extension SwiftUI.View {
     func add(_ searchBar: SearchBar) -> some SwiftUI.View {
         return self.modifier(SearchBarModifier(searchBar: searchBar))
     }
 }
 
-struct PVSearchBar: View {
-    @Binding var text: String
-
-    var body: some View {
+public struct PVSearchBar: View {
+    @Binding public var text: String
+    
+    public init(text: Binding<String>) {
+        _text = text
+    }
+    
+    public var body: some View {
         HStack {
             TextField("Search", text: $text)
                 .padding(8)

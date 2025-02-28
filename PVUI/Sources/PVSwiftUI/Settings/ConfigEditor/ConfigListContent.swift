@@ -1,4 +1,6 @@
 import SwiftUI
+import PVUIBase
+import struct PVUIBase.PVSearchBar
 
 struct ConfigListContent: View {
     @ObservedObject var filterVM: ConfigFilterViewModel

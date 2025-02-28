@@ -17,8 +17,6 @@ public typealias SwiftImage = UIImage
 #endif
 
 public extension Defaults.Keys {
-    static let showFavorites = Key<Bool>("showFavorites", default: true)
-
     // Missing artwork style setting
     static let missingArtworkStyle = Key<RetroTestPattern>("missingArtworkStyle", default: .rainbowNoise)
 }
@@ -59,8 +57,8 @@ public enum RetroTestPattern: String, CaseIterable, Codable, Equatable, UserDefa
 
 extension SwiftImage {
     /// Constants for styling
-    private enum RetroStyle {
-        static let colorBars: [UIColor] = [
+    public enum RetroStyle {
+        public static let colorBars: [UIColor] = [
             .init(red: 0.75, green: 0.75, blue: 0.75, alpha: 1.0), // Gray
             .init(red: 0.75, green: 0.75, blue: 0.0, alpha: 1.0),  // Yellow
             .init(red: 0.0, green: 0.75, blue: 0.75, alpha: 1.0),  // Cyan
@@ -70,16 +68,16 @@ extension SwiftImage {
             .init(red: 0.0, green: 0.0, blue: 0.75, alpha: 1.0)    // Blue
         ]
 
-        static let gridColor = UIColor(red: 0.2, green: 0.8, blue: 1.0, alpha: 0.3)
-        static let gridLineWidth: CGFloat = 1.0
-        static let gridSpacing: CGFloat = 20.0
+        public static let gridColor = UIColor(red: 0.2, green: 0.8, blue: 1.0, alpha: 0.3)
+        public static let gridLineWidth: CGFloat = 1.0
+        public static let gridSpacing: CGFloat = 20.0
 
-        static let noiseIntensity: CGFloat = 0.1
-        static let scanlineSpacing: CGFloat = 2.0
-        static let scanlineOpacity: CGFloat = 0.2
+        public static let noiseIntensity: CGFloat = 0.1
+        public static let scanlineSpacing: CGFloat = 2.0
+        public static let scanlineOpacity: CGFloat = 0.2
 
         /// Font styling
-        static let titleFont: UIFont = {
+        public static let titleFont: UIFont = {
             // Try to get the preferred retro font, fall back to system monospaced if not available
             let fontSize = 24.0
             let fontNames = [
@@ -101,20 +99,20 @@ extension SwiftImage {
             return UIFont.monospacedSystemFont(ofSize: fontSize, weight: .bold)
         }()
 
-        static let titleShadowOffset = CGSize(width: 2, height: 2)
-        static let titleShadowBlur: CGFloat = 3.0
-        static let titleShadowColor = UIColor.black.withAlphaComponent(0.5)
+        public static let titleShadowOffset = CGSize(width: 2, height: 2)
+        public static let titleShadowBlur: CGFloat = 3.0
+        public static let titleShadowColor = UIColor.black.withAlphaComponent(0.5)
 
         // Text container styling
-        static let textContainerPadding: CGFloat = 20.0
-        static let textBackgroundOpacity: CGFloat = 0.85
-        static let textGradientLocations: [CGFloat] = [0.0, 0.15, 0.85, 1.0]
+        public static let textContainerPadding: CGFloat = 20.0
+        public static let textBackgroundOpacity: CGFloat = 0.85
+        public static let textGradientLocations: [CGFloat] = [0.0, 0.15, 0.85, 1.0]
 
         // Text layout
-        static let maxLinesOfText: Int = 3
-        static let lineSpacing: CGFloat = 4.0
-        static let defaultMinFontSize: CGFloat = 12.0
-        static let maxFontSize: CGFloat = 24.0
+        public static let maxLinesOfText: Int = 3
+        public static let lineSpacing: CGFloat = 4.0
+        public static let defaultMinFontSize: CGFloat = 12.0
+        public static let maxFontSize: CGFloat = 24.0
     }
 
     private static func calculateOptimalFontSize(
@@ -172,7 +170,7 @@ extension SwiftImage {
         return (finalFont, lineCount)
     }
 
-    static func missingArtworkImage(
+    public static func missingArtworkImage(
         gameTitle: String,
         ratio: CGFloat,
         pattern: RetroTestPattern = .smpteColorBars,
@@ -424,19 +422,19 @@ extension SwiftImage {
 }
 
 // Add a new SwiftUI View for missing artwork with pattern selection
-struct MissingArtworkView: View {
+public struct MissingArtworkView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     let gameTitle: String
     let ratio: CGFloat
     let pattern: RetroTestPattern
 
-    init(gameTitle: String, ratio: CGFloat, pattern: RetroTestPattern = .smpteColorBars) {
+    public init(gameTitle: String, ratio: CGFloat, pattern: RetroTestPattern = .smpteColorBars) {
         self.gameTitle = gameTitle
         self.ratio = ratio
         self.pattern = pattern
     }
 
-    var body: some View {
+    public var body: some View {
         GeometryReader { geometry in
             Image(uiImage: SwiftImage.missingArtworkImage(
                 gameTitle: gameTitle,
@@ -452,7 +450,7 @@ struct MissingArtworkView: View {
 }
 
 // Extension to SwiftUI Image to create a missing artwork image
-extension Image {
+public extension Image {
     static func missingArtwork(
         gameTitle: String,
         ratio: CGFloat,

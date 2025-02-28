@@ -10,12 +10,17 @@ import PVThemes
 import PVLogging
 
 #if !os(tvOS)
-struct ImagePicker: UIViewControllerRepresentable {
+public struct ImagePicker: UIViewControllerRepresentable {
     @Environment(\.presentationMode) private var presentationMode
     var sourceType = UIImagePickerController.SourceType.photoLibrary
     var onImageSelected: ((UIImage) -> Void)?
+    
+    public init(sourceType: UIImagePickerController.SourceType = UIImagePickerController.SourceType.photoLibrary, onImageSelected: ( (UIImage) -> Void)? = nil) {
+        self.sourceType = sourceType
+        self.onImageSelected = onImageSelected
+    }
 
-    func makeUIViewController(context: UIViewControllerRepresentableContext<ImagePicker>) -> UIImagePickerController {
+    public func makeUIViewController(context: UIViewControllerRepresentableContext<ImagePicker>) -> UIImagePickerController {
         DLOG("ImagePicker: makeUIViewController called")
         let imagePicker = UIImagePickerController()
         imagePicker.navigationBar.tintColor = ThemeManager.shared.currentPalette.barButtonItemTint
@@ -26,17 +31,17 @@ struct ImagePicker: UIViewControllerRepresentable {
         return imagePicker
     }
 
-    func updateUIViewController(_ uiViewController: UIImagePickerController,
+    public func updateUIViewController(_ uiViewController: UIImagePickerController,
                                 context: UIViewControllerRepresentableContext<ImagePicker>) {
         DLOG("ImagePicker: updateUIViewController called")
     }
 
-    func makeCoordinator() -> Coordinator {
+    public func makeCoordinator() -> Coordinator {
         DLOG("ImagePicker: makeCoordinator called")
         return Coordinator(self)
     }
 
-    class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    public class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         let parent: ImagePicker
 
         init(_ parent: ImagePicker) {
@@ -45,7 +50,7 @@ struct ImagePicker: UIViewControllerRepresentable {
             DLOG("ImagePicker: Coordinator initialized")
         }
 
-        func imagePickerController(_ picker: UIImagePickerController,
+        public func imagePickerController(_ picker: UIImagePickerController,
                                    didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             DLOG("ImagePicker: imagePickerController(_:didFinishPickingMediaWithInfo:) called")
             if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
@@ -58,7 +63,7 @@ struct ImagePicker: UIViewControllerRepresentable {
             DLOG("ImagePicker: ImagePicker dismissed")
         }
 
-        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
             DLOG("ImagePicker: imagePickerControllerDidCancel(_:) called")
             parent.presentationMode.wrappedValue.dismiss()
             DLOG("ImagePicker: ImagePicker cancelled and dismissed")

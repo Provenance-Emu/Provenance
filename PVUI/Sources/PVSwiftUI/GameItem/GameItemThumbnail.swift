@@ -8,6 +8,7 @@
 import SwiftUI
 import PVThemes
 import PVMediaCache
+import struct PVUIBase.ArtworkImageBaseView
 
 struct GameItemThumbnail: SwiftUI.View {
 

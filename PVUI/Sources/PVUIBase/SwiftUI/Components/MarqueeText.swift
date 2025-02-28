@@ -5,7 +5,7 @@ import os
 private let logger = Logger(subsystem: "com.provenance.pvui", category: "MarqueeText")
 
 /// A text view that automatically scrolls when content is too long
-struct MarqueeText: View {
+public struct MarqueeText: View {
     let text: String
     let font: Font
     let delay: Double
@@ -35,7 +35,7 @@ struct MarqueeText: View {
     ///   - speed: The speed of the animation (pixels per second)
     ///   - loop: Whether to loop the animation continuously
     ///   - initialDelay: The delay before the first animation starts, allowing the user to read the beginning of the text before it starts scrolling
-    init(
+    public init(
         text: String,
         font: Font = .system(size: 14, weight: .bold, design: .monospaced),
         delay: Double = 1.0,
@@ -97,7 +97,7 @@ struct MarqueeText: View {
         return scaledFont
     }
 
-    var body: some View {
+    public var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
                 Text(text)

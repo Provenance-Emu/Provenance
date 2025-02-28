@@ -1,4 +1,5 @@
 import SwiftUI
+import struct PVUIBase.NeumorphismView
 
 enum AppIconOption: String, CaseIterable {
     case `default` = "AppIcon"

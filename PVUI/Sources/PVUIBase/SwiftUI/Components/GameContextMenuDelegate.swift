@@ -14,7 +14,7 @@ import PVRealm
 import PVLogging
 import PVUIBase
 
-protocol GameContextMenuDelegate {
+public protocol GameContextMenuDelegate {
     func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestChooseCoverFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestMoveToSystemFor game: PVGame)

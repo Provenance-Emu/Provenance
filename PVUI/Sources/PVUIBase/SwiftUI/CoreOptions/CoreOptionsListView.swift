@@ -192,8 +192,8 @@ private struct CoreListItemView: View {
     }
 }
 
-/// Updated SearchBar component
-private struct SearchBar: View {
+/// Updated CoreSearchBar component
+fileprivate struct CoreSearchBar: View {
     /// The text in the search bar
     @Binding var text: String
     /// If in a search

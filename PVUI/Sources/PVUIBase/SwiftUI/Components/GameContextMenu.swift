@@ -16,7 +16,7 @@ import PVLogging
 import PVUIBase
 
 /// A SwiftUI context menu for game-related actions
-struct GameContextMenu: View {
+public struct GameContextMenu: View {
     // Use a frozen game to avoid Realm threading issues
     let game: PVGame
 
@@ -32,7 +32,7 @@ struct GameContextMenu: View {
     @State private var showArtworkSourceAlert = false
     @State private var gameToUpdateCover: PVGame?
 
-    init(game: PVGame, rootDelegate: PVRootDelegate?, contextMenuDelegate: GameContextMenuDelegate?) {
+    public init(game: PVGame, rootDelegate: PVRootDelegate?, contextMenuDelegate: GameContextMenuDelegate?) {
         // Ensure we're working with a frozen copy
         self.game = game.isFrozen ? game : game.freeze()
         self.rootDelegate = rootDelegate
@@ -47,7 +47,7 @@ struct GameContextMenu: View {
         _hasSaveStates = State(initialValue: !game.saveStates.isEmpty)
     }
 
-    var body: some View {
+    public var body: some View {
         Group {
             if !game.isInvalidated {
                 // Add multi-disc menu if game has related files
@@ -150,7 +150,7 @@ struct GameContextMenu: View {
     private func toggleFavorite() {
         Task {
             // Perform Realm write on background thread
-            try await RomDatabase.sharedInstance.asyncWriteTransaction {
+            try RomDatabase.sharedInstance.asyncWriteTransaction {
                 if let thawedGame = game.thaw() {
                     thawedGame.isFavorite.toggle()
                 }

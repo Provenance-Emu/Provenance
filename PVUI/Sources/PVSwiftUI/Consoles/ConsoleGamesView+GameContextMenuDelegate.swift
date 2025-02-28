@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import protocol PVUIBase.GameContextMenuDelegate
+import struct PVUIBase.GameContextMenu
 
 internal struct SystemMoveState: Identifiable {
     var id: String {

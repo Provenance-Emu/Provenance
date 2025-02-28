@@ -13,6 +13,7 @@ import PVUIBase
 import PVRealm
 import PVSettings
 import Combine
+import struct PVUIBase.DiscSelectionAlert
 
 class ConsoleGamesViewModel: ObservableObject {
     let console: PVSystem

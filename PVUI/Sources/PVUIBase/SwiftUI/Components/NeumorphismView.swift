@@ -8,25 +8,29 @@
 
 import SwiftUI
 
-struct NeumorphismView<Content: View>: View {
+public struct NeumorphismView<Content: View>: View {
     let content: () -> Content
     let baseColor: Color
 
     /// Initialize with content and optional base color
-    init(baseColor: Color = Color(red: 0.16290172934532166, green: 0.16290172934532166, blue: 0.16290172934532166),
+    public init(baseColor: Color = Color(red: 0.16290172934532166, green: 0.16290172934532166, blue: 0.16290172934532166),
          @ViewBuilder content: @escaping () -> Content) {
         self.content = content
         self.baseColor = baseColor
     }
 
-    var body: some View {
+    public var body: some View {
         content()
             .modifier(NeumorphismModifier(baseColor: baseColor))
     }
 }
 
-struct NeumorphismModifier: ViewModifier {
-    let baseColor: Color
+public struct NeumorphismModifier: ViewModifier {
+    public let baseColor: Color
+
+    public init(baseColor: Color) {
+        self.baseColor = baseColor
+    }
 
     /// Calculate shadow colors based on base color
     private var lightShadowColor: Color {
@@ -45,7 +49,7 @@ struct NeumorphismModifier: ViewModifier {
         )
     }
 
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .foregroundStyle(foregroundGradient)
             .shadow(color: lightShadowColor, radius: 2.99, x: 2.74, y: 2.74)

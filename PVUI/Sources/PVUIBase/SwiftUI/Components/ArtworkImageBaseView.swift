@@ -9,7 +9,7 @@ import SwiftUI
 import PVThemes
 import Defaults
 
-struct ArtworkImageBaseView: SwiftUI.View {
+public struct ArtworkImageBaseView: SwiftUI.View {
     /// Observe theme changes to trigger re-renders
     @ObservedObject private var themeManager = ThemeManager.shared
     @Default(.missingArtworkStyle) private var missingArtworkStyle
@@ -18,13 +18,13 @@ struct ArtworkImageBaseView: SwiftUI.View {
     var gameTitle: String
     var boxartAspectRatio: PVGameBoxArtAspectRatio
 
-    init(artwork: SwiftImage?, gameTitle: String, boxartAspectRatio: PVGameBoxArtAspectRatio) {
+    public init(artwork: SwiftImage?, gameTitle: String, boxartAspectRatio: PVGameBoxArtAspectRatio) {
         self.artwork = artwork
         self.gameTitle = gameTitle
         self.boxartAspectRatio = boxartAspectRatio
     }
 
-    var body: some SwiftUI.View {
+    public var body: some SwiftUI.View {
         if let artwork = artwork {
             SwiftUI.Image(uiImage: artwork)
                 .resizable()

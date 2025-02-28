@@ -13,6 +13,7 @@ import RealmSwift
 import PVLibrary
 import PVThemes
 import Combine
+import PVUIBase
 
 enum HomeSectionType: Int, CaseIterable, Sendable {
     case recentSaveStates

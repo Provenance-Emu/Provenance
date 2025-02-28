@@ -14,9 +14,14 @@ import PVRealm
 import PVLogging
 import PVUIBase
 
-struct SystemPickerView: View {
+public struct SystemPickerView: View {
     let game: PVGame
     @Binding var isPresented: Bool
+    
+    public init(game: PVGame, isPresented: Binding<Bool>) {
+        _isPresented = isPresented
+        self.game = game
+    }
 
     private var availableSystems: [PVSystem] {
         PVEmulatorConfiguration.systems.filter {
@@ -25,7 +30,7 @@ struct SystemPickerView: View {
         }
     }
 
-    var body: some View {
+    public var body: some View {
         if !availableSystems.isEmpty {
             NavigationView {
                 List {
@@ -89,10 +94,14 @@ struct SystemPickerView: View {
     }
 }
 
-struct SystemRowView: View {
+public struct SystemRowView: View {
     let system: PVSystem
+    
+    public init(system: PVSystem) {
+        self.system = system
+    }
 
-    var body: some View {
+    public var body: some View {
         HStack {
             Text(system.name)
                 .foregroundColor(.primary)
