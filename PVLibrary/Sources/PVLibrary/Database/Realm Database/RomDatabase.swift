@@ -844,8 +844,11 @@ public extension RomDatabase {
         //            ELOG("Game \(game.title) belongs to an unknown system \(game.systemIdentifier)")
         //            return
         //        }
+        DLOG("\(game.romPath) related files: \(game.relatedFiles)")
+        //TODO: try to find the file name that does NOT contain track or disc in the title
         game.relatedFiles.forEach {
             do {
+                DLOG("\(game.romPath) current related file: \($0.url?.pathDecoded)")
                 let file = PVEmulatorConfiguration.path(forGame: game, url: $0.url)
                 if FileManager.default.fileExists(atPath: file.path) {
                     try FileManager.default.removeItem(at: file)
@@ -878,6 +881,10 @@ public extension RomDatabase {
         }
         DLOG("children: \(children)")
         let fileName = gameFileUrl.deletingPathExtension().lastPathComponent
+        //if fileName contains (Disc or (Track, we should remove that
+        if fileName.contains("(Disc ") || fileName.contains("(Track ") {
+            //TODO: we have to get the prefix because there will be some files not deleted if we don't
+        }
         DLOG("fileName without extension: \(fileName)")
         children.forEach { child in
             let currentChildUrl = parentDirectory.appendingPathComponent(child)
@@ -887,8 +894,7 @@ public extension RomDatabase {
             if !currentExtension.isEmpty
                 && (currentChildFileName == fileName
                     || currentChildFileName.starts(with: "\(fileName) (Track ")
-                    || currentChildFileName.starts(with: "\(fileName) (Disc ")
-                    ) {
+                    || currentChildFileName.starts(with: "\(fileName) (Disc ")) {
                 do {
                     try fileManager.removeItem(at: currentChildUrl)
                 } catch {
