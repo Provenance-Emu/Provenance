@@ -2,3 +2,6 @@
 "DeleteGameBody" = "Are you sure you want to delete game \"%@\"?";
 "OK" = "OK";
 "Cancel" = "Cancel";
+"Delete" = "Delete";
+"Error" = "Error";
+"Warning" = "Warning";

@@ -13,20 +13,20 @@ import PVLogging
 
 public
 extension UIViewController {
-    func presentMessage(_ message: String, title: String, source: UIView, completion: (() -> Swift.Void)? = nil) {
+    func presentMessage(_ message: String, title: String, source: UIView, completion: (() -> Void)? = nil) {
         presentMessage(message,
                        title: title,
                        source: source,
                        completion: completion)
     }
     
-    func presentCancellableMessage(_ message: String, title: String, source: UIView, completion: (() -> Swift.Void)? = nil) {
+    func presentDeleteMessage(_ message: String, title: String, source: UIView, completion: (() -> Void)? = nil) {
         presentMessage(message, title: title,
                        source: source,
-                       secondaryActionTitle: NSLocalizedString("Cancel", comment: ""),
+                       secondaryActionTitle: NSLocalizedString("Cancel", bundle: Bundle.module, comment: ""),
                        secondaryActionStyle: .cancel,
                        secondaryCompletion: nil,
-                       defaultActionTitle: NSLocalizedString("Delete", comment: ""),
+                       defaultActionTitle: NSLocalizedString("Delete", bundle: Bundle.module, comment: ""),
                        defaultActionStyle: .destructive,
                        completion: completion)
     }
@@ -36,23 +36,25 @@ extension UIViewController {
                         source: UIView,
                         secondaryActionTitle: String? = nil,
                         secondaryActionStyle: UIAlertAction.Style = .cancel,
-                        secondaryCompletion: ((UIAlertAction) -> Void)? = nil,
-                        defaultActionTitle: String = NSLocalizedString("OK", comment: ""),
+                        secondaryCompletion: (() -> Void)? = nil,
+                        defaultActionTitle: String? = nil,
                         defaultActionStyle: UIAlertAction.Style = .default,
-                        completion: (() -> Swift.Void)? = nil) {
-        NSLog("Title: %@ Message: %@", title, message);
+                        completion: (() -> Void)? = nil) {
+        DLOG("Title: \(title) Message: \(message) secondaryActionTitle: \(secondaryActionTitle) defaultActionTitle: \(defaultActionTitle)")
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.preferredContentSize = CGSize(width: 300, height: 300)
         
         alert.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
         alert.popoverPresentationController?.sourceView = source
         alert.popoverPresentationController?.sourceRect = UIScreen.main.bounds
-        
-        alert.addAction(UIAlertAction(title: defaultActionTitle, style: defaultActionStyle) { _ in
+        let actualDefaultActionTitle = defaultActionTitle ?? NSLocalizedString("OK", bundle: Bundle.module, comment: "")
+        alert.addAction(UIAlertAction(title: actualDefaultActionTitle, style: defaultActionStyle) { _ in
             completion?()
         })
         if let actualSecondaryActionTitle = secondaryActionTitle {
-            alert.addAction(UIAlertAction(title: actualSecondaryActionTitle, style: secondaryActionStyle, handler: secondaryCompletion))
+            alert.addAction(UIAlertAction(title: actualSecondaryActionTitle, style: secondaryActionStyle) { _ in
+                secondaryCompletion?()
+            })
         }
         
         let presentingVC = presentedViewController ?? self
@@ -66,13 +68,13 @@ extension UIViewController {
         }
     }
 
-    func presentError(_ message: String, source: UIView, completion: (() -> Swift.Void)? = nil) {
+    func presentError(_ message: String, source: UIView, completion: (() -> Void)? = nil) {
         ELOG("\(message)")
-        presentMessage(message, title: "Error", source: source, completion: completion)
+        presentMessage(message, title: NSLocalizedString("Error", bundle: Bundle.module, comment: ""), source: source, completion: completion)
     }
 
-    func presentWarning(_ message: String, source: UIView, completion: (() -> Swift.Void)? = nil) {
+    func presentWarning(_ message: String, source: UIView, completion: (() -> Void)? = nil) {
         WLOG("\(message)")
-        presentMessage(message, title: "Warning", source: source, completion: completion)
+        presentMessage(message, title: NSLocalizedString("Warning", bundle: Bundle.module, comment: ""), source: source, completion: completion)
     }
 }
