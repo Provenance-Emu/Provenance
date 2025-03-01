@@ -1,6 +1,55 @@
 import SwiftUI
 import PVLogging
 
+/// Actor to handle text width calculations asynchronously
+private actor TextWidthCalculator {
+    /// Calculate accurate text width with proper attributes
+    func calculateTextWidth(text: String, font: UIFont) -> CGFloat {
+        // Check if font is monospaced
+        if font.isMonospaced {
+            // For monospaced fonts, we can calculate width directly
+            // Get width of a single character (using 'M' as reference)
+            let charWidth = ("M" as NSString).size(withAttributes: [.font: font]).width
+            // Multiply by string length for total width
+            return ceil(charWidth * CGFloat(text.count))
+        }
+
+        // Fallback to boundingRect for non-monospaced fonts
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: font
+        ]
+
+        let size = (text as NSString).boundingRect(
+            with: CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude),
+            options: [.usesFontLeading, .usesLineFragmentOrigin],
+            attributes: attributes,
+            context: nil
+        )
+
+        return ceil(size.width)
+    }
+
+    /// Convert SwiftUI font to UIFont with proper scaling
+    func scaledFont(from swiftUIFont: Font, textStyle: UIFont.TextStyle, minimumFontSize: CGFloat) -> UIFont {
+        // Extract size and weight from SwiftUI font if possible, or use defaults
+        let baseSize: CGFloat = 14
+        let baseWeight: UIFont.Weight = .bold
+
+        // Create base monospaced font
+        let baseFont = UIFont.monospacedSystemFont(ofSize: baseSize, weight: baseWeight)
+
+        // Create metrics with our text style
+        let metrics = UIFontMetrics(forTextStyle: textStyle)
+
+        // Scale the font but ensure it doesn't go below our minimum
+        let scaledFont = metrics.scaledFont(for: baseFont)
+        if scaledFont.pointSize < minimumFontSize {
+            return baseFont.withSize(minimumFontSize)
+        }
+        return scaledFont
+    }
+}
+
 /// A text view that automatically scrolls when content is too long
 public struct MarqueeText: View {
     let text: String
@@ -28,7 +77,11 @@ public struct MarqueeText: View {
     @Environment(\.scenePhase) private var scenePhase
     /// Track if text width has been calculated
     @State private var hasCalculatedWidth: Bool = false
+    @State private var isCalculatingWidth: Bool = false
     private let id = UUID()
+
+    /// Shared actor for text width calculations
+    private let widthCalculator = TextWidthCalculator()
 
     /// Creates a marquee text view that scrolls when content is too long
     /// - Parameters:
@@ -54,52 +107,6 @@ public struct MarqueeText: View {
         self.initialDelay = initialDelay
     }
 
-    /// Calculate accurate text width with proper attributes
-    private func calculateTextWidth(text: String, font: UIFont) -> CGFloat {
-        // Check if font is monospaced
-        if font.isMonospaced {
-            // For monospaced fonts, we can calculate width directly
-            // Get width of a single character (using 'M' as reference)
-            let charWidth = ("M" as NSString).size(withAttributes: [.font: font]).width
-            // Multiply by string length for total width
-            return ceil(charWidth * CGFloat(text.count))
-        }
-
-        // Fallback to boundingRect for non-monospaced fonts
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: font
-        ]
-
-        let size = (text as NSString).boundingRect(
-            with: CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude),
-            options: [.usesFontLeading, .usesLineFragmentOrigin],
-            attributes: attributes,
-            context: nil
-        )
-
-        return ceil(size.width)
-    }
-
-    /// Convert SwiftUI font to UIFont with proper scaling
-    private func scaledFont(from swiftUIFont: Font) -> UIFont {
-        // Extract size and weight from SwiftUI font if possible, or use defaults
-        let baseSize: CGFloat = 14
-        let baseWeight: UIFont.Weight = .bold
-
-        // Create base monospaced font
-        let baseFont = UIFont.monospacedSystemFont(ofSize: baseSize, weight: baseWeight)
-
-        // Create metrics with our text style
-        let metrics = UIFontMetrics(forTextStyle: textStyle)
-
-        // Scale the font but ensure it doesn't go below our minimum
-        let scaledFont = metrics.scaledFont(for: baseFont)
-        if scaledFont.pointSize < minimumFontSize {
-            return baseFont.withSize(minimumFontSize)
-        }
-        return scaledFont
-    }
-
     /// Check if the animation should be running based on all visibility factors
     private var shouldAnimationRun: Bool {
         /// Animation should run only if:
@@ -123,10 +130,10 @@ public struct MarqueeText: View {
                                 containerWidth = geometry.size.width
 
                                 /// Calculate text width immediately when geometry is available
-                                ensureTextWidthCalculated()
+                                Task {
+                                    await ensureTextWidthCalculated()
 
-                                /// Start animation after a brief delay to ensure layout is complete
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    /// Start animation after width calculation is complete
                                     if shouldAnimationRun {
                                         startAnimation()
                                     }
@@ -147,8 +154,11 @@ public struct MarqueeText: View {
             isInViewHierarchy = true
 
             /// Start animation if needed - this might be too early, geometry might not be ready
-            if shouldAnimationRun {
-                startAnimation()
+            Task {
+                await ensureTextWidthCalculated()
+                if shouldAnimationRun {
+                    startAnimation()
+                }
             }
 
             // DLOG("MarqueeText appeared: '\(text.prefix(20))...'")
@@ -221,33 +231,35 @@ public struct MarqueeText: View {
     }
 
     /// Calculate text width if it hasn't been calculated yet
-    private func ensureTextWidthCalculated() {
-        if !hasCalculatedWidth && containerWidth > 0 {  /// Only calculate if container width is valid
-            /// Get properly scaled font
-            let uiFont = scaledFont(from: font)
+    private func ensureTextWidthCalculated() async {
+        /// Avoid multiple concurrent calculations
+        guard !isCalculatingWidth && !hasCalculatedWidth && containerWidth > 0 else { return }
 
-            /// Calculate accurate text width
-            textWidth = calculateTextWidth(text: text, font: uiFont)
-            hasCalculatedWidth = true
+        isCalculatingWidth = true
 
-            // DLOG("Text measurements: text='\(text)', width=\(textWidth), container=\(containerWidth), fontSize=\(uiFont.pointSize)")
-        }
+        /// Get properly scaled font and calculate text width using the actor
+        let uiFont = await widthCalculator.scaledFont(from: font, textStyle: textStyle, minimumFontSize: minimumFontSize)
+        textWidth = await widthCalculator.calculateTextWidth(text: text, font: uiFont)
+
+        isCalculatingWidth = false
+        hasCalculatedWidth = true
+
+        // DLOG("Text measurements: text='\(text)', width=\(textWidth), container=\(containerWidth), fontSize=\(uiFont.pointSize)")
     }
 
     private func startAnimation() {
         /// Ensure we have valid measurements before attempting animation
-        if containerWidth <= 0 {
-            /// Retry after a short delay if container width isn't ready
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+        if containerWidth <= 0 || !hasCalculatedWidth {
+            /// Retry after a short delay if container width isn't ready or text width hasn't been calculated
+            Task {
+                try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
+                await ensureTextWidthCalculated()
                 if shouldAnimationRun {
                     startAnimation()
                 }
             }
             return
         }
-
-        /// Calculate text width if needed
-        ensureTextWidthCalculated()
 
         guard shouldAnimationRun else {
             // DLOG("MarqueeText animation not started (conditions not met): '\(text.prefix(20))...'")
@@ -266,9 +278,6 @@ public struct MarqueeText: View {
         let workItem = DispatchWorkItem { [self] in
             /// Use initialDelay for the first animation, then regular delay for subsequent ones
             let currentDelay = (offset == 0) ? initialDelay : delay
-
-            /// Log the animation start with appropriate delay
-            // DLOG("Starting marquee animation for '\(text.prefix(20))...' with \(offset == 0 ? "initial" : "regular") delay of \(currentDelay)s")
 
             /// Initial pause
             DispatchQueue.main.asyncAfter(deadline: .now() + currentDelay) {
