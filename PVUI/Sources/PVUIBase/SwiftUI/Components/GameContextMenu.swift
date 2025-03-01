@@ -193,10 +193,10 @@ extension GameContextMenu {
     func promptUserMD5CopiedToClipboard(forGame game: PVGame) {
         guard !game.isInvalidated else { return }
         // Get the MD5 of the game
-        let md5 = game.md5
+        let md5 = game.md5Hash
         // Copy to pasteboard
 #if !os(tvOS)
-        UIPasteboard.general.string = md5
+        UIPasteboard.general.string = "provenance://open?md5=\(md5)"
 #endif
         rootDelegate?.showMessage("The MD5 hash for \(game.title) has been copied to the clipboard.", title: "MD5 Copied")
     }
