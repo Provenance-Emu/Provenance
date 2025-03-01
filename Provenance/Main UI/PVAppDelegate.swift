@@ -308,7 +308,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         _initThemeListener()
     }
 
-    private func configureApplication(_ application: UIApplication,  launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) {
+    func configureApplication(_ application: UIApplication,  launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) {
         // Handle if started from shortcut
 #if !os(tvOS)
         if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem,

@@ -46,6 +46,7 @@ public class AppState: ObservableObject {
     }
     
     /// Action to be performed after bootup
+    @Published
     public var appOpenAction: AppOpenAction = .none
 
     /// Hold the emulation core and other info

@@ -21,22 +21,6 @@ import SteamController
 import UIKit
 #endif
 
-public enum AppURLKeys: String, Codable {
-    case open
-    case save
-
-    public enum OpenKeys: String, Codable {
-        case md5Key = "PVGameMD5Key"
-        case system
-        case title
-    }
-    public enum SaveKeys: String, Codable {
-        case lastQuickSave
-        case lastAnySave
-        case lastManualSave
-    }
-}
-
 extension Array<URLQueryItem> {
     subscript(key: String) -> String? {
         get {
@@ -82,7 +66,7 @@ extension PVAppDelegate {
         }
     }
 
-    func application(_: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+    func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         #if !os(tvOS) && canImport(SiriusRating)
         if isAppStore {
             appRatingSignifigantEvent()
@@ -198,6 +182,14 @@ extension PVAppDelegate {
         let sendingAppID = options[.sourceApplication]
         ILOG("App with id <\(sendingAppID ?? "nil")> requested to open url \(url.absoluteString)")
 
+        // Debug log the URL structure in detail
+        DLOG("URL scheme: \(components.scheme ?? "nil"), host: \(components.host ?? "nil"), path: \(components.path)")
+        if let queryItems = components.queryItems {
+            DLOG("Query items: \(queryItems.map { "\($0.name)=\($0.value ?? "nil")" }.joined(separator: ", "))")
+        } else {
+            DLOG("No query items found in URL")
+        }
+
         guard let action = AppURLKeys(rawValue: components.host ?? "") else {
             ELOG("Invalid host/action: \(components.host ?? "nil")")
             return false
@@ -231,12 +223,31 @@ extension PVAppDelegate {
         case .open:
 
             guard let queryItems = components.queryItems, !queryItems.isEmpty else {
+                ELOG("No query items found for open action")
                 return false
             }
 
+            DLOG("Processing open action with \(queryItems.count) query items")
+
+            // Check for direct md5 parameter (provenance://open?md5=...)
+            if let md5Value = queryItems.first(where: { $0.name == "md5" })?.value, !md5Value.isEmpty {
+                DLOG("Found direct md5 parameter: \(md5Value)")
+                if let matchedGame = fetchGame(byMD5: md5Value) {
+                    ILOG("Opening game by direct md5 parameter: \(md5Value)")
+                    AppState.shared.appOpenAction = .openGame(matchedGame)
+                    return true
+                } else {
+                    ELOG("Game not found for direct md5 parameter: \(md5Value)")
+                    return false
+                }
+            }
+
+            // Fall back to the original parameter names if direct md5 not found
             let md5QueryItem = queryItems["PVGameMD5Key"]
             let systemItem = queryItems["system"]
             let nameItem = queryItems["title"]
+
+            DLOG("Fallback parameters - PVGameMD5Key: \(md5QueryItem ?? "nil"), system: \(systemItem ?? "nil"), title: \(nameItem ?? "nil")")
 
             if let value = md5QueryItem, !value.isEmpty,
                let matchedGame = fetchGame(byMD5: value) {
