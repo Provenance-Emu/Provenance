@@ -73,8 +73,8 @@ extension PVRootViewController: PVRootDelegate {
     }
 
     public func attemptToDelete(game: PVGame, deleteSaves: Bool) {
-        let title = NSLocalizedString("DeleteGameTitle", bundle: Bundle.module, comment: "")
-        let message = String(format: NSLocalizedString("DeleteGameBody", bundle: Bundle.module, comment: ""), game.title)
+        let title = Bundle.module.localized("DeleteGameTitle")
+        let message = Bundle.module.localized("DeleteGameBody", game.title)
         presentDeleteMessage(message, title: title, source: view) {
             do {
                 try self.delete(game: game, deleteSaves: deleteSaves)

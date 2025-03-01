@@ -23,10 +23,10 @@ extension UIViewController {
     func presentDeleteMessage(_ message: String, title: String, source: UIView, completion: (() -> Void)? = nil) {
         presentMessage(message, title: title,
                        source: source,
-                       secondaryActionTitle: NSLocalizedString("Cancel", bundle: Bundle.module, comment: ""),
+                       secondaryActionTitle: Bundle.module.localized("Cancel"),
                        secondaryActionStyle: .cancel,
                        secondaryCompletion: nil,
-                       defaultActionTitle: NSLocalizedString("Delete", bundle: Bundle.module, comment: ""),
+                       defaultActionTitle: Bundle.module.localized("Delete"),
                        defaultActionStyle: .destructive,
                        completion: completion)
     }
@@ -47,7 +47,7 @@ extension UIViewController {
         alert.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
         alert.popoverPresentationController?.sourceView = source
         alert.popoverPresentationController?.sourceRect = UIScreen.main.bounds
-        let actualDefaultActionTitle = defaultActionTitle ?? NSLocalizedString("OK", bundle: Bundle.module, comment: "")
+        let actualDefaultActionTitle = defaultActionTitle ?? Bundle.module.localized("OK")
         alert.addAction(UIAlertAction(title: actualDefaultActionTitle, style: defaultActionStyle) { _ in
             completion?()
         })
@@ -70,11 +70,21 @@ extension UIViewController {
 
     func presentError(_ message: String, source: UIView, completion: (() -> Void)? = nil) {
         ELOG("\(message)")
-        presentMessage(message, title: NSLocalizedString("Error", bundle: Bundle.module, comment: ""), source: source, completion: completion)
+        presentMessage(message, title: Bundle.module.localized("Error"), source: source, completion: completion)
     }
 
     func presentWarning(_ message: String, source: UIView, completion: (() -> Void)? = nil) {
         WLOG("\(message)")
-        presentMessage(message, title: NSLocalizedString("Warning", bundle: Bundle.module, comment: ""), source: source, completion: completion)
+        presentMessage(message, title: Bundle.module.localized("Warning"), source: source, completion: completion)
+    }
+}
+
+public extension Bundle {
+    func localized(_ key: String) -> String {
+        NSLocalizedString(key, bundle: self, comment: "")
+    }
+    
+    func localized(_ key: String,  _ arguments: any CVarArg...) -> String {
+        String(format: NSLocalizedString(key, bundle: self, comment: ""), arguments)
     }
 }
