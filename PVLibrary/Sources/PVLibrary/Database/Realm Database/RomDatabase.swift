@@ -840,29 +840,37 @@ public extension RomDatabase {
     }
     
     func deleteRelatedFilesGame(_ game: PVGame) {
-        //        guard let system = game.system else {
-        //            ELOG("Game \(game.title) belongs to an unknown system \(game.systemIdentifier)")
-        //            return
-        //        }
         DLOG("\(game.romPath) related files: \(game.relatedFiles)")
-        //TODO: try to find the file name that does NOT contain track or disc in the title
         game.relatedFiles.forEach {
-            do {
-                DLOG("\(game.romPath) current related file: \($0.url?.pathDecoded)")
-                let file = PVEmulatorConfiguration.path(forGame: game, url: $0.url)
-                if FileManager.default.fileExists(atPath: file.path) {
-                    try FileManager.default.removeItem(at: file)
-                }
-            } catch {
-                ELOG(error.localizedDescription)
-            }
+            self.handlDeletionOfRelatedFile($0.url, game: game)
         }
-        //attempt to delete files with the same name. There's an issue when importing that the files do NOT get associated, so if we assume the user imported properly, the name should just be the same with different extensions.
-        let fileManager: FileManager = .default
+        
         guard let gameFileUrl = game.file?.url
         else {
             return
         }
+        deleteFilesWithSimilarTitle(gameFileUrl)
+    }
+    
+    func handlDeletionOfRelatedFile(_ relatedFile: URL?, game: PVGame) {
+        let fileManager: FileManager = .default
+        do {
+            DLOG("\(game.romPath) current related file: \(relatedFile?.pathDecoded)")
+            let file = PVEmulatorConfiguration.path(forGame: game, url: relatedFile)
+            if fileManager.fileExists(atPath: file.path) {
+                try fileManager.removeItem(at: file)
+            }
+            //for multi-disc ROMs, after deletion sometimes some files do NOT get deleted, so if we just try to find similar file names on each iteration it's easier than doing string parsing to remove (Track or (Disc
+            deleteFilesWithSimilarTitle(file)
+        } catch {
+            ELOG(error.localizedDescription)
+        }
+    }
+    
+    /// attempt to delete files with the same name. There's an issue when importing that some of the files do NOT get associated, so this function attempts to find similar files and deletes them. Anything that has the same name, regardless of extension and/or same tile but a suffix of "(Track " or "(Disc ".
+    /// - Parameter gameFileUrl: file to use to try to delete similarly named file names
+    func deleteFilesWithSimilarTitle(_ gameFileUrl: URL) {
+        let fileManager: FileManager = .default
         let parentDirectory = gameFileUrl.deletingLastPathComponent()
         guard fileManager.fileExists(atPath: parentDirectory.pathDecoded)
         else {
@@ -881,10 +889,6 @@ public extension RomDatabase {
         }
         DLOG("children: \(children)")
         let fileName = gameFileUrl.deletingPathExtension().lastPathComponent
-        //if fileName contains (Disc or (Track, we should remove that
-        if fileName.contains("(Disc ") || fileName.contains("(Track ") {
-            //TODO: we have to get the prefix because there will be some files not deleted if we don't
-        }
         DLOG("fileName without extension: \(fileName)")
         children.forEach { child in
             let currentChildUrl = parentDirectory.appendingPathComponent(child)
