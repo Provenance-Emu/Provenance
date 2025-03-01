@@ -423,6 +423,7 @@ struct HomeView: SwiftUI.View {
         DLOG("Menu toggle requested")
     }
 
+    @ViewBuilder
     private func displayOptionsView() -> some View {
         GamesDisplayOptionsView(
             sortAscending: viewModel.sortGamesAscending,
@@ -435,6 +436,7 @@ struct HomeView: SwiftUI.View {
         .padding(.bottom, 16)
     }
 
+    @ViewBuilder
     private func showGamesList(_ games: Results<PVGame>) -> some View {
         LazyVStack(spacing: 8) {
             ForEach(games, id: \.self) { game in
@@ -468,6 +470,7 @@ struct HomeView: SwiftUI.View {
         }
     }
 
+    @ViewBuilder
     private func showGamesGrid(_ games: Results<PVGame>) -> some View {
         var gameLibraryItemsPerRow: Int {
             let gamesPerRow = min(8, games.count)
@@ -949,6 +952,7 @@ struct HomeView: SwiftUI.View {
 extension HomeView: GameContextMenuDelegate {
 
 #if !os(tvOS)
+    @ViewBuilder
     internal func imagePickerView() -> some View {
         ImagePicker(sourceType: .photoLibrary) { image in
             if let game = gameToUpdateCover {
@@ -960,6 +964,7 @@ extension HomeView: GameContextMenuDelegate {
     }
 #endif
 
+    @ViewBuilder
     internal func renameAlertView() -> some View {
         Group {
             TextField("New name", text: $newGameTitle)

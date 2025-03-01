@@ -93,6 +93,7 @@ struct HomeContinueItemView: SwiftUI.View {
         }
     }
 
+    @ViewBuilder
     private func baseImageLayer(_ image: UIImage) -> some View {
         Image(uiImage: image)
             .resizable()

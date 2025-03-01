@@ -321,6 +321,7 @@ public struct ArtworkSearchView: View {
         UserDefaults.standard.set(newHistory, forKey: "artworkSearchHistory")
     }
 
+    @ViewBuilder
     private func artworkGridItem(_ artwork: ArtworkMetadata) -> some View {
         VStack {
             Group {

@@ -13,6 +13,7 @@ import PVThemes
 struct SwitchThemedToggleStyle: ToggleStyle {
     let tint: Color
 
+    @ViewBuilder
     func makeBody(configuration: Configuration) -> some View {
         HStack {
             configuration.label

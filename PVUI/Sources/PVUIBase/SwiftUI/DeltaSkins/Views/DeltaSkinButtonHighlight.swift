@@ -10,6 +10,7 @@ struct DeltaSkinButtonHighlight: View {
 
     @State private var isAnimating = false
 
+    @ViewBuilder
     private func createHighlightEffect(size: CGSize) -> some View {
         let radialGradient = CIImage(color: CIColor(color: UIColor.white))
             .cropped(to: CGRect(origin: .zero, size: size))

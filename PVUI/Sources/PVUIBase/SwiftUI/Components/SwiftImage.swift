@@ -451,6 +451,7 @@ public struct MissingArtworkView: View {
 
 // Extension to SwiftUI Image to create a missing artwork image
 public extension Image {
+    @ViewBuilder
     static func missingArtwork(
         gameTitle: String,
         ratio: CGFloat,

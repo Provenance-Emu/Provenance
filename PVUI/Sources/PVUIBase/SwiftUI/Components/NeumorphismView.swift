@@ -49,6 +49,7 @@ public struct NeumorphismModifier: ViewModifier {
         )
     }
 
+    @ViewBuilder
     public func body(content: Content) -> some View {
         content
             .foregroundStyle(foregroundGradient)

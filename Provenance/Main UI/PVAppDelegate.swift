@@ -55,15 +55,13 @@ import FreemiumKit
 //#else
 //@Observable
 //#endif
-final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationDelegate {
+final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     /// This is set by the UIApplicationDelegateAdaptor
     internal var window: UIWindow? = nil
 
     static func main() {
         UIApplicationMain(CommandLine.argc, CommandLine.unsafeArgv, NSStringFromClass(PVApplication.self), NSStringFromClass(PVAppDelegate.self))
     }
-
-    var shortcutItemGame: PVGame?
 
     /// This is set by the ContentView
     var appState: AppState? {
@@ -310,14 +308,14 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
         _initThemeListener()
     }
 
-    private func configureApplication(_ application: UIApplication,  launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) {
+    func configureApplication(_ application: UIApplication,  launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) {
         // Handle if started from shortcut
 #if !os(tvOS)
         if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem,
            shortcut.type == "kRecentGameShortcut",
            let md5Value = shortcut.userInfo?["PVGameHash"] as? String,
-           let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
-            shortcutItemGame = matchedGame
+           let matchedGame = fetchGame(byMD5: md5Value) {
+            AppState.shared.appOpenAction = .openGame(matchedGame)
         }
 #endif
 
