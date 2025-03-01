@@ -121,6 +121,16 @@ public struct MarqueeText: View {
                             Color.clear.onAppear {
                                 // Store the container width for later use
                                 containerWidth = geometry.size.width
+
+                                /// Calculate text width immediately when geometry is available
+                                ensureTextWidthCalculated()
+
+                                /// Start animation after a brief delay to ensure layout is complete
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    if shouldAnimationRun {
+                                        startAnimation()
+                                    }
+                                }
                             }
                         }
                     )
@@ -136,7 +146,7 @@ public struct MarqueeText: View {
             /// Mark the view as in the hierarchy
             isInViewHierarchy = true
 
-            /// Start animation if needed
+            /// Start animation if needed - this might be too early, geometry might not be ready
             if shouldAnimationRun {
                 startAnimation()
             }
@@ -212,7 +222,7 @@ public struct MarqueeText: View {
 
     /// Calculate text width if it hasn't been calculated yet
     private func ensureTextWidthCalculated() {
-        if !hasCalculatedWidth {
+        if !hasCalculatedWidth && containerWidth > 0 {  /// Only calculate if container width is valid
             /// Get properly scaled font
             let uiFont = scaledFont(from: font)
 
@@ -225,13 +235,24 @@ public struct MarqueeText: View {
     }
 
     private func startAnimation() {
-        guard shouldAnimationRun else {
-            // DLOG("MarqueeText animation not started (conditions not met): '\(text.prefix(20))...'")
+        /// Ensure we have valid measurements before attempting animation
+        if containerWidth <= 0 {
+            /// Retry after a short delay if container width isn't ready
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                if shouldAnimationRun {
+                    startAnimation()
+                }
+            }
             return
         }
 
         /// Calculate text width if needed
         ensureTextWidthCalculated()
+
+        guard shouldAnimationRun else {
+            // DLOG("MarqueeText animation not started (conditions not met): '\(text.prefix(20))...'")
+            return
+        }
 
         /// Check if text actually needs scrolling after width calculation
         if textWidth <= containerWidth {
