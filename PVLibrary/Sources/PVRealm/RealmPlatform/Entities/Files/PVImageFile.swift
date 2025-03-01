@@ -54,7 +54,9 @@ public final class PVImageFile: PVFile {
     }
 
     private func calculateSizeData() { // async {
-        guard let path = url?.path else {
+        guard let path = url?.path,
+              FileManager.default.fileExists(atPath: path)
+        else {
             cgsize = .zero
             return
         }

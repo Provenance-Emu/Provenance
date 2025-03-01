@@ -763,7 +763,7 @@ public extension RomDatabase {
 #if os(iOS)
         deleteFromSpotlight(game: game)
 #endif
-        defer {
+        defer {//reload the cache, so if this ROM is added again, it can be added
             RomDatabase.reloadGamesCache()
         }
         do {
@@ -775,8 +775,7 @@ public extension RomDatabase {
             try game.delete()
         } catch {
             // Delete the DB entry anyway if any of the above files couldn't be removed
-            do { try game.delete()
-            } catch {
+            do { try game.delete() } catch {
                 ELOG("\(error.localizedDescription)")
             }
             ELOG("\(error.localizedDescription)")

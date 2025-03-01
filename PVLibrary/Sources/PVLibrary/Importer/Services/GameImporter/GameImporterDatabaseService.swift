@@ -117,7 +117,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 //    @MainActor
     internal func importToDatabaseROM(forItem queueItem: ImportQueueItem, system: SystemIdentifier, relatedFiles: [URL]?) async throws {
 
-        guard let _ = queueItem.destinationUrl else {
+        guard let destinationUrl = queueItem.destinationUrl else {
             //how did we get here, throw?
             throw GameImporterError.incorrectDestinationURL
         }
@@ -135,7 +135,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             throw GameImporterError.noSystemMatched
         }
 
-        let file = PVFile(withURL: queueItem.destinationUrl!, relativeRoot: .iCloud)
+        let file = PVFile(withURL: destinationUrl, relativeRoot: .iCloud)
         let game = PVGame(withFile: file, system: system)
         game.romPath = partialPath
         game.title = title
