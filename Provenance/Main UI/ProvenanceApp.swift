@@ -93,6 +93,53 @@ struct ProvenanceApp: App {
                 #endif
             #endif
                 }
+                .onOpenURL { url in
+                    // Handle the URL
+                    let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+
+                    ILOG("ProvenanceApp: Received URL to open: \(url.absoluteString)")
+
+                    // Debug log the URL structure in detail
+                    if let components = components {
+                        DLOG("ProvenanceApp: URL scheme: \(components.scheme ?? "nil"), host: \(components.host ?? "nil"), path: \(components.path)")
+                        if let queryItems = components.queryItems {
+                            DLOG("ProvenanceApp: Query items: \(queryItems.map { "\($0.name)=\($0.value ?? "nil")" }.joined(separator: ", "))")
+                        } else {
+                            DLOG("ProvenanceApp: No query items found in URL")
+                        }
+                    }
+
+                    if url.isFileURL {
+                        ILOG("ProvenanceApp: Handling file URL")
+                        return handle(fileURL: url)
+                    }
+                    else if let scheme = url.scheme, scheme.lowercased() == PVAppURLKey {
+                        ILOG("ProvenanceApp: Handling app URL with scheme: \(scheme)")
+
+                        // Check for direct md5 parameter in the URL
+                        if let components = components,
+                           components.host?.lowercased() == "open",
+                           let queryItems = components.queryItems,
+                           let md5Value = queryItems.first(where: { $0.name == "md5" })?.value,
+                           !md5Value.isEmpty {
+                            ILOG("ProvenanceApp: Found direct md5 parameter in URL: \(md5Value)")
+                            AppState.shared.appOpenAction = .openMD5(md5Value)
+                            return
+                        }
+
+                        handle(appURL: url)
+                    } else if let components = components,
+                              components.path == PVGameControllerKey,
+                              let first = components.queryItems?.first,
+                              first.name == PVGameMD5Key,
+                              let md5Value = first.value {
+                        ILOG("ProvenanceApp: Found game controller path with MD5: \(md5Value)")
+                        AppState.shared.appOpenAction = .openMD5(md5Value)
+                        return
+                    } else {
+                        WLOG("ProvenanceApp: Unrecognized URL format: \(url.absoluteString)")
+                    }
+                }
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
@@ -140,6 +187,169 @@ extension UIApplication {
         }
 
         originalSendEvent(event)
+    }
+}
+
+
+// MARK: - URL Handling
+extension ProvenanceApp {
+    func handle(appURL url: URL) -> Bool {
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+
+        guard let components = components else {
+            ELOG("Failed to parse url <\(url.absoluteString)>")
+            return false
+        }
+
+        ILOG("App to open url \(url.absoluteString). Parsed components: \(String(describing: components))")
+
+        // Debug log the URL structure in detail
+        DLOG("URL scheme: \(components.scheme ?? "nil"), host: \(components.host ?? "nil"), path: \(components.path)")
+        if let queryItems = components.queryItems {
+            DLOG("Query items: \(queryItems.map { "\($0.name)=\($0.value ?? "nil")" }.joined(separator: ", "))")
+        } else {
+            DLOG("No query items found in URL")
+        }
+
+        guard let action = AppURLKeys(rawValue: components.host ?? "") else {
+            ELOG("Invalid host/action: \(components.host ?? "nil")")
+            return false
+        }
+
+        switch action {
+        case .save:
+            guard let queryItems = components.queryItems, !queryItems.isEmpty else {
+                ELOG("Query items is nil")
+                return false
+            }
+
+            guard let a = queryItems["action"] else {
+                return false
+            }
+
+            let md5QueryItem = queryItems["PVGameMD5Key"]
+            let systemItem = queryItems["system"]
+            let nameItem = queryItems["title"]
+
+            if let md5QueryItem = md5QueryItem {
+
+            }
+            if let systemItem = systemItem {
+
+            }
+            if let nameItem = nameItem {
+
+            }
+            return false
+            // .filter("systemIdentifier == %@ AND title == %@", matchedSystem.identifier, gameName)
+        case .open:
+            guard let queryItems = components.queryItems, !queryItems.isEmpty else {
+                ELOG("No query items found for open action")
+                return false
+            }
+
+            DLOG("Processing open action with \(queryItems.count) query items")
+
+            // Check for direct md5 parameter (provenance://open?md5=...)
+            if let md5Value = queryItems.first(where: { $0.name == "md5" })?.value, !md5Value.isEmpty {
+                DLOG("Found direct md5 parameter: \(md5Value)")
+                if let matchedGame = fetchGame(byMD5: md5Value) {
+                    ILOG("Opening game by direct md5 parameter: \(md5Value)")
+                    AppState.shared.appOpenAction = .openGame(matchedGame)
+                    return true
+                } else {
+                    ELOG("Game not found for direct md5 parameter: \(md5Value)")
+                    return false
+                }
+            }
+
+            // Fall back to the original parameter names if direct md5 not found
+            let md5QueryItem = queryItems["PVGameMD5Key"]
+            let systemItem = queryItems["system"]
+            let nameItem = queryItems["title"]
+
+            DLOG("Fallback parameters - PVGameMD5Key: \(md5QueryItem ?? "nil"), system: \(systemItem ?? "nil"), title: \(nameItem ?? "nil")")
+
+            if let value = md5QueryItem, !value.isEmpty,
+               let matchedGame = fetchGame(byMD5: value) {
+                // Match by md5
+                ILOG("Open by md5 \(value)")
+                AppState.shared.appOpenAction = .openGame(matchedGame)
+                return true
+            } else if let gameName = nameItem, !gameName.isEmpty {
+                if let value = systemItem {
+                    // Match by name and system
+                    if !value.isEmpty,
+                       let matchedSystem = fetchSystem(byIdentifier: value) {
+                        if let matchedGame = RomDatabase.sharedInstance.all(PVGame.self).filter("systemIdentifier == %@ AND title == %@", matchedSystem.identifier, gameName).first {
+                            ILOG("Open by system \(value), name: \(gameName)")
+                            AppState.shared.appOpenAction = .openGame(matchedGame)
+                            return true
+                        } else {
+                            ELOG("Failed to open by system \(value), name: \(gameName)")
+                            return false
+                        }
+                    } else {
+                        ELOG("Invalid system id \(systemItem ?? "nil")")
+                        return false
+                    }
+                } else {
+                    if let matchedGame = RomDatabase.sharedInstance.all(PVGame.self, where: #keyPath(PVGame.title), value: gameName).first {
+                        ILOG("Open by name: \(gameName)")
+                        AppState.shared.appOpenAction = .openGame(matchedGame)
+                        return true
+                    } else {
+                        ELOG("Failed to open by name: \(gameName)")
+                        return false
+                    }
+                }
+            } else {
+                ELOG("Open Query didn't have acceptable values")
+                return false
+            }
+        }
+    }
+
+    func handle(fileURL url: URL) {
+        let filename = url.lastPathComponent
+        let destinationPath = Paths.romsImportPath.appendingPathComponent(filename, isDirectory: false)
+        var secureDocument = false
+        do {
+            defer {
+                if secureDocument {
+                    url.stopAccessingSecurityScopedResource()
+                }
+
+            }
+
+            // Doesn't seem we need access in dev builds?
+            secureDocument = url.startAccessingSecurityScopedResource()
+
+//            if let openInPlace = options[.openInPlace] as? Bool, openInPlace {
+                try FileManager.default.copyItem(at: url, to: destinationPath)
+//            } else {
+//                try FileManager.default.moveItem(at: url, to: destinationPath)
+//            }
+        } catch {
+            ELOG("Unable to move file from \(url.path) to \(destinationPath.path) because \(error.localizedDescription)")
+            return
+        }
+
+        return
+    }
+
+    /// Helper method to safely fetch a game from Realm by its MD5 hash
+    /// - Parameter md5: The MD5 hash of the game
+    /// - Returns: The game if found, nil otherwise
+    private func fetchGame(byMD5 md5: String) -> PVGame? {
+        return RomDatabase.sharedInstance.object(ofType: PVGame.self, wherePrimaryKeyEquals: md5)
+    }
+
+    /// Helper method to safely fetch a system from Realm by its identifier
+    /// - Parameter identifier: The system identifier
+    /// - Returns: The system if found, nil otherwise
+    private func fetchSystem(byIdentifier identifier: String) -> PVSystem? {
+        return RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: identifier)
     }
 }
 

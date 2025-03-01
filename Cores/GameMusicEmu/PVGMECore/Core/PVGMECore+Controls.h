@@ -10,7 +10,7 @@
 
 @import PVCoreObjCBridge;
 
-typedef enum PVNESButton: NSInteger PVDOSButton;
+typedef enum PVNESButton: NSInteger PVNESButton;
 
 NS_ASSUME_NONNULL_BEGIN
 

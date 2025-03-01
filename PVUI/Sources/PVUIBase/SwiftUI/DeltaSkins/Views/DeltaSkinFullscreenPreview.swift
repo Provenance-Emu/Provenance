@@ -244,6 +244,7 @@ private struct DeltaSkinInfoSheet: View {
         }
     }
 
+    @ViewBuilder
     private func deviceSection(_ device: DeltaSkinDevice) -> some View {
         #if !os(tvOS)
         DisclosureGroup(device.rawValue) {
@@ -258,6 +259,7 @@ private struct DeltaSkinInfoSheet: View {
         #endif
     }
 
+    @ViewBuilder
     private func displayTypeSection(_ type: DeltaSkinDisplayType, for device: DeltaSkinDevice) -> some View {
         #if !os(tvOS)
         DisclosureGroup(type.rawValue) {

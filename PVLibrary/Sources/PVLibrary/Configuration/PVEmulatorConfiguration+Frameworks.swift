@@ -68,9 +68,14 @@ public extension PVEmulatorConfiguration {
         }
     }
     
+    private static var coresInitialized = false
     /// Parse all core classes
     class func updateCores(fromPlists plists: [EmulatorCoreInfoPlist]) async {
         typealias CorePlistEntries = [CorePlistEntry]
+        guard !coresInitialized else { return }
+        defer {
+            coresInitialized = true
+        }
         
         await plists.concurrentForEach { corePlist in
             do {
@@ -86,8 +91,13 @@ public extension PVEmulatorConfiguration {
         #endif
     }
     
+    private static var systemsInitialized = false
     /// Parse plists to update PVSystems
     class func updateSystems(fromPlists plists: [URL]) async {
+        guard !systemsInitialized else { return }
+        defer {
+            systemsInitialized = true
+        }
         typealias SystemPlistEntries = [SystemPlistEntry]
         let decoder = PropertyListDecoder()
         

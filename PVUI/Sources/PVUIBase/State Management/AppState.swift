@@ -23,10 +23,18 @@ import CoreSpotlight
 #endif
 import Defaults
 
+
 // Main AppState class
 @MainActor
 public class AppState: ObservableObject {
 
+    public enum AppOpenAction {
+        case none
+        case openFile(URL)
+        case openMD5(String)
+        case openGame(PVGame)
+    }
+    
     @ObservedObject
     public static private(set) var shared: AppState = .init()
 
@@ -36,6 +44,10 @@ public class AppState: ObservableObject {
             bootupStateManager.currentState
         }
     }
+    
+    /// Action to be performed after bootup
+    @Published
+    public var appOpenAction: AppOpenAction = .none
 
     /// Hold the emulation core and other info
     @Published

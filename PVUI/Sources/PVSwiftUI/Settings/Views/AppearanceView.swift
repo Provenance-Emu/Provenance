@@ -308,6 +308,7 @@ private struct StyleOptionRow: View {
 private struct StyleOptionButtonStyle: ButtonStyle {
     let isSelected: Bool
 
+    @ViewBuilder
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .background(
