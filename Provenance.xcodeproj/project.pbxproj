@@ -1663,6 +1663,11 @@
 		1180B31B2492A95400636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS13.4.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		14C8EF2121D9443E001B7E37 /* PVTGBDual.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVTGBDual.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1A241DE32D6A69F4005B1313 /* Cube.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Cube.xcodeproj; sourceTree = "<group>"; };
+		1A241E882D6A69F4005B1313 /* MoltenVK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVK.xcodeproj; sourceTree = "<group>"; };
+		1A241EA52D6A69F4005B1313 /* MoltenVKShaderConverter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKShaderConverter.xcodeproj; sourceTree = "<group>"; };
+		1A241EC32D6A69F4005B1313 /* ExternalDependencies.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ExternalDependencies.xcodeproj; sourceTree = "<group>"; };
+		1A241EC72D6A69F4005B1313 /* MoltenVKPackaging.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKPackaging.xcodeproj; sourceTree = "<group>"; };
 		1A2A95A917F7682400F1CB0D /* libstdc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.dylib"; path = "usr/lib/libstdc++.dylib"; sourceTree = SDKROOT; };
 		1A2B0E8A1AD187F4005FB77C /* testdata.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testdata.txt; sourceTree = "<group>"; };
 		1A2B0E8D1AD18961005FB77C /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
@@ -1681,6 +1686,11 @@
 		1A4869D917C8D60B0019F6D2 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		1A4869DB17C8D60C0019F6D2 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		1A4869DC17C8D60C0019F6D2 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		1A50BC802D6AC0EA00A5B7A7 /* Cube.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Cube.xcodeproj; sourceTree = "<group>"; };
+		1A50BD252D6AC0EA00A5B7A7 /* MoltenVK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVK.xcodeproj; sourceTree = "<group>"; };
+		1A50BD422D6AC0EA00A5B7A7 /* MoltenVKShaderConverter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKShaderConverter.xcodeproj; sourceTree = "<group>"; };
+		1A50BD602D6AC0EA00A5B7A7 /* ExternalDependencies.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ExternalDependencies.xcodeproj; sourceTree = "<group>"; };
+		1A50BD642D6AC0EA00A5B7A7 /* MoltenVKPackaging.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKPackaging.xcodeproj; sourceTree = "<group>"; };
 		1AD481B41BA350A400FDA50A /* Provenance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Provenance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AD481C21BA350A400FDA50A /* TVAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = TVAssets.xcassets; sourceTree = "<group>"; };
 		1AD4BC6E1BFD38D6007D6C7C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -3729,6 +3739,41 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1A241ECF2D6A69F4005B1313 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1A241ED12D6A69F4005B1313 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1A241ED32D6A69F4005B1313 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1A241ED52D6A69F4005B1313 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1A241ED72D6A69F4005B1313 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
@@ -4300,6 +4345,41 @@
 				1A3D409717B2DCE4004DFFFC /* UIKit.framework */,
 			);
 			name = iOS;
+			sourceTree = "<group>";
+		};
+		1A50BD6C2D6AC0EA00A5B7A7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1A50BD6E2D6AC0EA00A5B7A7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1A50BD702D6AC0EA00A5B7A7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1A50BD722D6AC0EA00A5B7A7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1A50BD742D6AC0EA00A5B7A7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		1AD481B51BA350A400FDA50A /* ProvenanceTV */ = {
@@ -6382,6 +6462,10 @@
 					ProjectRef = B328AA762D6996A6005ABA6F /* Cube.xcodeproj */;
 				},
 				{
+					ProductGroup = 1A241ED12D6A69F4005B1313 /* Products */;
+					ProjectRef = 1A241DE32D6A69F4005B1313 /* Cube.xcodeproj */;
+				},
+				{
 					ProductGroup = B39CD92D2D684E6F00BA949A /* Products */;
 					ProjectRef = B39CD8492D684E6F00BA949A /* Cube.xcodeproj */;
 				},
@@ -6396,6 +6480,10 @@
 				{
 					ProductGroup = B3A923172D669A4B00288D1E /* Products */;
 					ProjectRef = B3A9222D2D669A4B00288D1E /* Cube.xcodeproj */;
+				},
+				{
+					ProductGroup = 1A50BD6C2D6AC0EA00A5B7A7 /* Products */;
+					ProjectRef = 1A50BC802D6AC0EA00A5B7A7 /* Cube.xcodeproj */;
 				},
 				{
 					ProductGroup = B3A751862D6435C500B945A3 /* Products */;
@@ -6466,6 +6554,10 @@
 					ProjectRef = B3A9FA0E2D64443F00288D1E /* ExternalDependencies.xcodeproj */;
 				},
 				{
+					ProductGroup = 1A50BD702D6AC0EA00A5B7A7 /* Products */;
+					ProjectRef = 1A50BD602D6AC0EA00A5B7A7 /* ExternalDependencies.xcodeproj */;
+				},
+				{
 					ProductGroup = B3EEFE8A2D6812CE0080CA51 /* Products */;
 					ProjectRef = B3EEFE782D6812CE0080CA51 /* ExternalDependencies.xcodeproj */;
 				},
@@ -6480,6 +6572,10 @@
 				{
 					ProductGroup = B33E2C612D682386005AD177 /* Products */;
 					ProjectRef = B33E2C552D682386005AD177 /* ExternalDependencies.xcodeproj */;
+				},
+				{
+					ProductGroup = 1A241ECF2D6A69F4005B1313 /* Products */;
+					ProjectRef = 1A241EC32D6A69F4005B1313 /* ExternalDependencies.xcodeproj */;
 				},
 				{
 					ProductGroup = B361977C2D618B980069D3BE /* Products */;
@@ -6522,6 +6618,10 @@
 					ProjectRef = B39CD8E52D684E6F00BA949A /* MoltenVK.xcodeproj */;
 				},
 				{
+					ProductGroup = 1A241ED52D6A69F4005B1313 /* Products */;
+					ProjectRef = 1A241E882D6A69F4005B1313 /* MoltenVK.xcodeproj */;
+				},
+				{
 					ProductGroup = B3FD255B2D6435EC000D2191 /* Products */;
 					ProjectRef = B3FD25152D6435EC000D2191 /* MoltenVK.xcodeproj */;
 				},
@@ -6532,6 +6632,10 @@
 				{
 					ProductGroup = B3631D4E2D61B25200ECD2ED /* Products */;
 					ProjectRef = B3631D022D61B25200ECD2ED /* MoltenVK.xcodeproj */;
+				},
+				{
+					ProductGroup = 1A50BD6E2D6AC0EA00A5B7A7 /* Products */;
+					ProjectRef = 1A50BD252D6AC0EA00A5B7A7 /* MoltenVK.xcodeproj */;
 				},
 				{
 					ProductGroup = B33E2C652D682386005AD177 /* Products */;
@@ -6598,6 +6702,10 @@
 					ProjectRef = B3631D422D61B25200ECD2ED /* MoltenVKPackaging.xcodeproj */;
 				},
 				{
+					ProductGroup = 1A241ED32D6A69F4005B1313 /* Products */;
+					ProjectRef = 1A241EC72D6A69F4005B1313 /* MoltenVKPackaging.xcodeproj */;
+				},
+				{
 					ProductGroup = B3A743CE2D63EF4100B945A3 /* Products */;
 					ProjectRef = B3A743C42D63EF4100B945A3 /* MoltenVKPackaging.xcodeproj */;
 				},
@@ -6636,6 +6744,10 @@
 				{
 					ProductGroup = B328A5202D695BB0005ABA6F /* Products */;
 					ProjectRef = B328A5102D695BB0005ABA6F /* MoltenVKPackaging.xcodeproj */;
+				},
+				{
+					ProductGroup = 1A50BD742D6AC0EA00A5B7A7 /* Products */;
+					ProjectRef = 1A50BD642D6AC0EA00A5B7A7 /* MoltenVKPackaging.xcodeproj */;
 				},
 				{
 					ProductGroup = B3FD95DA2D613D2B00397643 /* Products */;
@@ -6682,6 +6794,10 @@
 					ProjectRef = B33E268E2D681DA1005AD177 /* MoltenVKPackaging.xcodeproj */;
 				},
 				{
+					ProductGroup = 1A241ED72D6A69F4005B1313 /* Products */;
+					ProjectRef = 1A241EA52D6A69F4005B1313 /* MoltenVKShaderConverter.xcodeproj */;
+				},
+				{
 					ProductGroup = B3FD95D82D613D2B00397643 /* Products */;
 					ProjectRef = B3FD95AD2D613D2B00397643 /* MoltenVKShaderConverter.xcodeproj */;
 				},
@@ -6700,6 +6816,10 @@
 				{
 					ProductGroup = B363363F2D61BDA800ECD2ED /* Products */;
 					ProjectRef = B363360F2D61BDA800ECD2ED /* MoltenVKShaderConverter.xcodeproj */;
+				},
+				{
+					ProductGroup = 1A50BD722D6AC0EA00A5B7A7 /* Products */;
+					ProjectRef = 1A50BD422D6AC0EA00A5B7A7 /* MoltenVKShaderConverter.xcodeproj */;
 				},
 				{
 					ProductGroup = B32771C42D6816D2009C728C /* Products */;
