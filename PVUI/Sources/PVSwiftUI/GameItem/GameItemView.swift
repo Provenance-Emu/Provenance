@@ -117,6 +117,7 @@ struct GameItemView: SwiftUI.View {
 struct FocusEffectsModifier: ViewModifier {
     let isFocused: Bool
 
+    @ViewBuilder
     func body(content: Content) -> some View {
         if isFocused {
             content

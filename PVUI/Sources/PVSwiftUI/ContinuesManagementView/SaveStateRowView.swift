@@ -336,6 +336,7 @@ public struct SaveStateRowView: View {
 
 /// Custom toggle style for selection
 private struct SelectionToggleStyle: ToggleStyle {
+    @ViewBuilder
     func makeBody(configuration: Configuration) -> some View {
         Button(action: {
             configuration.isOn.toggle()

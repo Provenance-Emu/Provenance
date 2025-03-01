@@ -102,7 +102,7 @@ struct ConsolesWrapperView: SwiftUI.View {
     }
 
     // MARK: - Body
-
+    @ViewBuilder
     private func makeGameMoreInfoView(for state: GameInfoState) -> some View {
         do {
             let driver = try RealmGameLibraryDriver()

@@ -290,6 +290,7 @@ public struct MarqueeText: View {
 struct VisibilityAwareModifier: ViewModifier {
     let onVisibilityChanged: (Bool) -> Void
 
+    @ViewBuilder
     func body(content: Content) -> some View {
         content
             .background(
