@@ -37,20 +37,22 @@ class ConsolesWrapperViewDelegate: ObservableObject {
 
     @Published var selectedTab: String {
         didSet {
-            UserDefaults.standard.set(selectedTab, forKey: Self.tabKey)
-            print("Tab saved to UserDefaults: \(selectedTab)")
+            Task.detached(priority: .low) { [self] in
+                UserDefaults.standard.set(selectedTab, forKey: Self.tabKey)
+                DLOG("Tab saved to UserDefaults: \(selectedTab)")
+            }
         }
     }
 
     init() {
         // Load the saved tab on init
         selectedTab = UserDefaults.standard.string(forKey: Self.tabKey) ?? "home"
-        print("ConsolesWrapperViewDelegate initialized with tab: \(selectedTab)")
+        DLOG("ConsolesWrapperViewDelegate initialized with tab: \(selectedTab)")
     }
 
     func setTab(_ tab: String) {
         selectedTab = tab
-        print("Tab changed to: \(tab)")
+        DLOG("Tab changed to: \(tab)")
     }
 }
 
@@ -139,9 +141,11 @@ struct ConsolesWrapperView: SwiftUI.View {
         .onAppear {
             isVisible = true
 
-            // Preload artwork for visible consoles
-            if let selectedConsole = consoles.first(where: { $0.identifier == delegate.selectedTab }) {
-                preloadArtworkForConsole(selectedConsole)
+            Task(priority: .userInitiated) {
+                // Preload artwork for visible consoles
+                if let selectedConsole = consoles.first(where: { $0.identifier == delegate.selectedTab }) {
+                    preloadArtworkForConsole(selectedConsole)
+                }
             }
         }
         .onDisappear {
@@ -166,7 +170,7 @@ struct ConsolesWrapperView: SwiftUI.View {
         case is LightThemePalette:
             return .blue
         default:
-            return .purple
+            return themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .purple
         }
     }
 
@@ -218,23 +222,27 @@ struct ConsolesWrapperView: SwiftUI.View {
         let binding = Binding(
             get: { delegate.selectedTab },
             set: { newTab in
-                // Store the previous tab before changing
-                previousTab = delegate.selectedTab
+                Task {
+                    // Store the previous tab before changing
+                    previousTab = delegate.selectedTab
 
-                // Set the new tab
-                delegate.setTab(newTab)
+                    // Set the new tab
+                    delegate.setTab(newTab)
 
-                // Preload artwork for the selected console
-                if let selectedConsole = consoles.first(where: { console in console.identifier == newTab }) {
-                    preloadArtworkForConsole(selectedConsole)
+                    // Preload artwork for the selected console
+                    if let selectedConsole = consoles.first(where: { console in console.identifier == newTab }) {
+                        preloadArtworkForConsole(selectedConsole)
+                    }
                 }
-
-                // Trigger haptic feedback for user-initiated tab changes
-                #if !os(tvOS)
-                if isVisible && previousTab != newTab {
-                    Haptics.impact(style: .soft)
+                
+                Task {
+                    // Trigger haptic feedback for user-initiated tab changes
+                    #if !os(tvOS)
+                    if isVisible && previousTab != newTab {
+                        Haptics.impact(style: .soft)
+                    }
+                    #endif
                 }
-                #endif
             }
         )
 
@@ -254,9 +262,7 @@ struct ConsolesWrapperView: SwiftUI.View {
             consolesList
         }
         .onChange(of: delegate.selectedTab) { newValue in
-            #if DEBUG
-            print("Tab changed in view: \(newValue)")
-            #endif
+            DLOG("Tab changed in view: \(newValue)")
         }
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .interactive))
