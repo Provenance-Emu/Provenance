@@ -139,7 +139,7 @@ public extension GameSharingViewController where Self: UIViewController {
             files.append(contentsOf: batterySaves)
         }
         
-        let zipPath = tempDirURL.appendingPathComponent("\(game.title)-\(game.system.shortNameAlt ?? game.system.shortName).zip", isDirectory: false)
+        let zipPath = tempDirURL.appendingPathComponent("\(game.title)-\(game.system?.shortNameAlt ?? game.system?.shortName ?? "Unknown").zip", isDirectory: false)
         let paths: [String] = files.map { $0.path }
         
         Task { @MainActor in

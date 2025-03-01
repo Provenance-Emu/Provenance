@@ -22,6 +22,112 @@ protocol ArtworkObservable: AnyObject {
     func backArtworkPublisher() -> AnyPublisher<UIImage?, Never>
 }
 
+/// Star rating view component that shows 5 stars and handles user interaction
+struct StarRatingView: View {
+    let rating: Int
+    let maxRating: Int
+    let onRatingChanged: (Int) -> Void
+    let size: CGFloat
+    let spacing: CGFloat
+    let color: Color
+
+    @State private var focusedStar: Int?
+    @State private var isFocused: Bool = false
+    @State private var dragOffset: CGFloat = 0
+    @FocusState private var isFocusedState: Bool
+
+    init(
+        rating: Int,
+        maxRating: Int = 5,
+        onRatingChanged: @escaping (Int) -> Void,
+        size: CGFloat = 30,
+        spacing: CGFloat = 8,
+        color: Color = .yellow
+    ) {
+        self.rating = rating
+        self.maxRating = maxRating
+        self.onRatingChanged = onRatingChanged
+        self.size = size
+        self.spacing = spacing
+        self.color = color
+    }
+
+    var body: some View {
+        HStack(spacing: spacing) {
+            ForEach(1...maxRating, id: \.self) { index in
+                starButton(for: index)
+            }
+        }
+        #if os(tvOS)
+        .focusable()
+        .focused($isFocusedState)
+        .onChange(of: isFocusedState) { focused in
+            isFocused = focused
+            if focused {
+                focusedStar = rating > 0 ? rating : 1
+            } else {
+                focusedStar = nil
+            }
+        }
+        #endif
+#if !os(tvOS)
+        .gesture(
+            DragGesture()
+                .onChanged { value in
+                    dragOffset = value.translation.width
+                    let starWidth = size + spacing
+                    let starIndex = min(max(1, Int(round(dragOffset / starWidth)) + (focusedStar ?? 1)), maxRating)
+                    focusedStar = starIndex
+                }
+                .onEnded { _ in
+                    if let star = focusedStar {
+                        handleTap(star)
+                    }
+                    dragOffset = 0
+                }
+        )
+#endif
+    }
+
+    private func starButton(for index: Int) -> some View {
+        Button(action: {
+            handleTap(index)
+        }) {
+            Image(systemName: index <= rating ? "star.fill" : "star")
+                .foregroundColor(color)
+                .font(.system(size: size))
+                #if os(tvOS)
+                .scaleEffect(focusedStar == index ? 1.2 : 1.0)
+                .shadow(color: focusedStar == index ? color : .clear, radius: focusedStar == index ? 10 : 0)
+                .animation(.spring(), value: focusedStar == index)
+                #endif
+        }
+        .buttonStyle(StarButtonStyle())
+        .id("star-\(index)-\(rating)") // Force view refresh when rating changes
+    }
+
+    private func handleTap(_ index: Int) {
+        #if !os(tvOS)
+        Haptics.impact(style: .light)
+        #endif
+
+        if index == rating {
+            onRatingChanged(0) // Toggle off if tapping the same star
+        } else {
+            onRatingChanged(index)
+        }
+    }
+}
+
+/// Custom button style to prevent unwanted animations and state changes
+private struct StarButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .contentShape(Rectangle())
+            .animation(nil, value: configuration.isPressed) // Disable press animation
+    }
+}
+
 class GameMoreInfoViewModel: ObservableObject {
     @Published private var driver: any GameLibraryDriver
     private let gameId: String
@@ -183,12 +289,34 @@ class GameMoreInfoViewModel: ObservableObject {
     var gameDescription: String? {
         game?.gameDescription
     }
+
+    /// Rating (0-5, -1 means unrated)
+    var rating: Int {
+        get { game?.rating ?? -1 }
+        set {
+            driver.updateGameRating(id: gameId, value: newValue)
+        }
+    }
+
+    /// Format rating for display
+    var formattedRating: String {
+        if rating == -1 {
+            return "Not Rated"
+        } else {
+            return "\(rating) of 5 Stars"
+        }
+    }
 }
 
 
 // MARK: - Game Info View
 struct GameMoreInfoView: View {
-    @StateObject var viewModel: GameMoreInfoViewModel
+    @ObservedObject var viewModel: GameMoreInfoViewModel
+    @Environment(\.dismiss) private var dismiss
+    /// Tracks if the rating has been modified but not saved
+    @State private var hasUnsavedRating: Bool = false
+    /// Stores the original rating before modification
+    @State private var originalRating: Int = 0
     @State private var editingField: EditableField?
     @State private var editingValue: String = ""
 
@@ -271,14 +399,6 @@ struct GameMoreInfoView: View {
                         }
                     )
 
-                    if let playCount = viewModel.plays {
-                        LabelRowView(
-                            label: "Play Count",
-                            value: "\(playCount)",
-                            isEditable: false
-                        )
-                    }
-
                     if let timeSpent = viewModel.timeSpent {
                         LabelRowView(
                             label: "Time Spent",
@@ -286,6 +406,59 @@ struct GameMoreInfoView: View {
                             isEditable: false
                         )
                     }
+
+                    // Star rating section
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Rating")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+
+                        HStack {
+                            StarRatingView(
+                                rating: max(0, viewModel.rating),
+                                onRatingChanged: { newRating in
+                                    if !hasUnsavedRating {
+                                        originalRating = viewModel.rating
+                                    }
+                                    hasUnsavedRating = true
+                                    #if !os(tvOS)
+                                    Haptics.impact(style: .light)
+                                    #endif
+                                    viewModel.rating = newRating
+                                }
+                            )
+
+                            Spacer()
+
+                            Text(viewModel.formattedRating)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+
+                        if hasUnsavedRating {
+                            HStack {
+                                Button(action: {
+                                    viewModel.rating = originalRating
+                                    hasUnsavedRating = false
+                                }) {
+                                    Text("Reset")
+                                        .foregroundColor(.red)
+                                }
+
+                                Spacer()
+
+                                Button(action: {
+                                    // Rating is already updated in the viewModel
+                                    hasUnsavedRating = false
+                                }) {
+                                    Text("Save")
+                                        .bold()
+                                }
+                            }
+                            .padding(.top, 8)
+                        }
+                    }
+                    .padding(.vertical, 4)
 
                     if viewModel.plays != nil || viewModel.timeSpent != nil {
                         Button("Reset Stats") {

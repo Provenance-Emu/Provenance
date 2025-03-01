@@ -10,7 +10,6 @@ import PVThemes
 import RealmSwift
 
 struct HomeContinueItemView: SwiftUI.View {
-
     @ObservedRealmObject var continueState: PVSaveState
     @ObservedObject private var themeManager = ThemeManager.shared
     let height: CGFloat
@@ -20,57 +19,44 @@ struct HomeContinueItemView: SwiftUI.View {
 
     @State private var showDeleteAlert = false
 
+    /// Constants for CRT effects
+    internal enum CRTEffects {
+        // Scanline effects
+        static let scanlineOpacity: CGFloat = 0.3
+        static let lcdOpacity: CGFloat = 0.1
+
+        // Image presentation
+        static let zoomFactor: CGFloat = 1.15
+    }
+
     var body: some SwiftUI.View {
         if !continueState.isInvalidated {
             Button {
                 action()
             } label: {
-                ZStack(alignment: .bottom) {
+                ZStack(alignment: .top) {
                     if let screenshot = continueState.image,
                        !screenshot.isInvalidated,
                        let url = screenshot.url,
                        let image = UIImage(contentsOfFile: url.path) {
-                        Image(uiImage: image)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: height)
-                            .frame(maxWidth: .infinity)
+                        baseImageLayer(image)
+                            .drawingGroup() // Use Metal rendering
+                            .overlay(RetroEffects())
                     } else {
                         Image(uiImage: UIImage.missingArtworkImage(gameTitle: continueState.game?.title ?? "Deleted", ratio: 1))
                             .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: height)
+                            .aspectRatio(contentMode: .fill)
+                            .frame(height: height * CRTEffects.zoomFactor)
                             .frame(maxWidth: .infinity)
+                            .scaleEffect(CRTEffects.zoomFactor)
+                            .clipped()
+                            .drawingGroup() // Use Metal rendering
+                            .overlay(RetroEffects())
                             .id(themeManager.currentPalette.name)
                     }
-
-                    HStack {
-                        VStack(alignment: .leading, spacing: 2) {
-                            if let core = continueState.core {
-                                Text("\(core.projectName): Continue...")
-                                    .font(.system(size: 10))
-                                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                            } else {
-                                Text("Continue...")
-                                    .font(.system(size: 10))
-                                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                            }
-                            Text(continueState.game?.isInvalidated == true ? "Deleted" : (continueState.game?.title ?? "Deleted"))
-                                .font(.system(size: 13))
-                                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                        }
-                        Spacer()
-                        if !hideSystemLabel, let system = continueState.game?.system, !system.isInvalidated {
-                            Text(system.name)
-                                .font(.system(size: 8))
-                                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                        }
-                    }
-                    .padding(.vertical, 10)
-                    .padding(.horizontal, 10)
-                    .background(.ultraThinMaterial)
-                    .frame(maxWidth: .infinity)
                 }
+                .frame(height: height)
+                .clipShape(Rectangle())
                 .overlay(
                     RoundedRectangle(cornerRadius: 4)
                         .stroke(themeManager.currentPalette.gameLibraryText.swiftUIColor, lineWidth: isFocused ? 4 : 0)
@@ -105,5 +91,45 @@ struct HomeContinueItemView: SwiftUI.View {
                 }
             }
         }
+    }
+
+    private func baseImageLayer(_ image: UIImage) -> some View {
+        Image(uiImage: image)
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .frame(height: height * CRTEffects.zoomFactor)
+            .frame(maxWidth: .infinity)
+            .scaleEffect(CRTEffects.zoomFactor)
+            .clipped()
+    }
+}
+
+/// Combined retro effects overlay
+private struct RetroEffects: View {
+    var body: some View {
+        ZStack {
+            // Scanlines
+            GeometryReader { geometry in
+                Path { path in
+                    stride(from: 0, to: geometry.size.height, by: 2).forEach { y in
+                        path.move(to: CGPoint(x: 0, y: y))
+                        path.addLine(to: CGPoint(x: geometry.size.width, y: y))
+                    }
+                }
+                .stroke(.black.opacity(HomeContinueItemView.CRTEffects.scanlineOpacity), lineWidth: 1)
+            }
+
+            // LCD effect (vertical lines)
+            GeometryReader { geometry in
+                Path { path in
+                    stride(from: 0, to: geometry.size.width, by: 3).forEach { x in
+                        path.move(to: CGPoint(x: x, y: 0))
+                        path.addLine(to: CGPoint(x: x, y: geometry.size.height))
+                    }
+                }
+                .stroke(.black.opacity(HomeContinueItemView.CRTEffects.lcdOpacity), lineWidth: 1)
+            }
+        }
+        .allowsHitTesting(false)
     }
 }

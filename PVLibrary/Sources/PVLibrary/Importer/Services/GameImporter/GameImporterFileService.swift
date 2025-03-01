@@ -22,7 +22,7 @@ class GameImporterFileService : GameImporterFileServicing {
 
     }
 
-    @MainActor
+//    @MainActor
     package func moveImportItem(toAppropriateSubfolder queueItem: ImportQueueItem) async throws {
         switch (queueItem.fileType) {
 
@@ -161,7 +161,7 @@ class GameImporterFileService : GameImporterFileServicing {
     //MARK: - Normal ROMs and CDROMs
 
     /// Moves an ImportQueueItem to the appropriate subfolder
-    @MainActor
+//    @MainActor
     internal func processQueueItem(_ queueItem: ImportQueueItem) async throws {
         guard queueItem.fileType == .game || queueItem.fileType == .cdRom else {
             throw GameImporterError.unsupportedFile

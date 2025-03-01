@@ -32,15 +32,15 @@ typealias iCadeListenCompletion = () -> Void
     let isSimulator = false
 #endif
 
-public final class PVControllerManager: NSObject {
-    
+public final class PVControllerManager: NSObject, ObservableObject {
+
     // a filtered and augmented version of CGControllers.controllers()
 //    public var allLiveControllers: [Int: GCController] {
 //        return controllers.reduce(into: [:]) { (result, controller) in
 //            result[controller.playerIndex.rawValue] = controller
 //        }
 //    }
-    
+
     public var allLiveControllers: [Int: GCController] {
         var allLiveControllers = [Int: GCController]()
         if let player1 = player1 {
@@ -138,7 +138,7 @@ public final class PVControllerManager: NSObject {
     public var hasControllers: Bool {
         return player1 != nil || player2 != nil || player3 != nil || player4 != nil  || player5 != nil || player6 != nil || player7 != nil || player8 != nil
     }
-    var isKeyboardConnected: Bool {
+    public var isKeyboardConnected: Bool {
         return keyboardController != nil
 //        if #available(iOS 14.0, *) {
 //            return GCKeyboard.coalesced != nil
@@ -217,7 +217,7 @@ public final class PVControllerManager: NSObject {
     @MainActor
     override init() {
         super.init()
-        
+
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleKeyboardConnect(_:)), name: .GCKeyboardDidConnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleKeyboardDisconnect(_:)), name: .GCKeyboardDidDisconnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleControllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
@@ -233,7 +233,7 @@ public final class PVControllerManager: NSObject {
         NotificationCenter.default.removeObserver(self)
         UserDefaults.standard.removeObserver(self, forKeyPath: "kICadeControllerSettingKey")
     }
-    
+
     func isAssigned(_ controller: GCController) -> Bool {
         return allLiveControllers.contains(where: { (_, existingController) -> Bool in
             controller == existingController
@@ -277,7 +277,7 @@ public final class PVControllerManager: NSObject {
         setupICade()
     }
 #endif
-    
+
     @MainActor
     @objc func handleControllerDidConnect(_ note: Notification?) {
         guard !PVControllerManager.shared.skipControllerBinding else {
@@ -289,24 +289,26 @@ public final class PVControllerManager: NSObject {
         }
         PVControllerManager.shared.connectController(controller);
     }
-    
+
     @MainActor
     @objc func connectController(_ controller:GCController) {
         guard !PVControllerManager.shared.skipControllerBinding else {
             return
         }
+
         // ignore the bogus controller in the simulator
         if isSimulator && (controller.vendorName == nil || controller.vendorName == "Gamepad") {
             return
         }
 
+        let wrapper = getRemappableController(for: controller)
+        wrapper.loadMappings() // Load any saved mappings
+
 #if !targetEnvironment(macCatalyst) && canImport(SteamController)  && !os(macOS)
         if let steamController = controller as? SteamController {
             #if os(tvOS)
-            // PVEmulatorViewController will set to controller mode if game is running
             steamController.steamControllerMode = .keyboardAndMouse
             #endif
-            // combinations for mode toggles
             steamController.steamButtonCombinationHandler = { (controller, button, down) in
                 if down {
                     self.handleSteamControllerCombination(controller: controller, button: button)
@@ -314,15 +316,16 @@ public final class PVControllerManager: NSObject {
             }
         }
 #endif
+
         ILOG("Controller connected: \(controller.vendorName ?? "No Vendor")")
         controller.setupPauseHandler(onPause: {
             NotificationCenter.default.post(name: NSNotification.Name("PauseGame"), object: nil)
         })
         assign(controller)
         #if os(iOS)
-            if self.controllerUserInteractionEnabled {
-                self.controllerUserInteractionEnabled = true
-            }
+        if self.controllerUserInteractionEnabled {
+            self.controllerUserInteractionEnabled = true
+        }
         #endif
     }
 
@@ -343,6 +346,9 @@ public final class PVControllerManager: NSObject {
         guard !PVControllerManager.shared.skipControllerBinding else {
             return
         }
+
+        removeRemappableController(for: controller)
+
         if controller == player1 {
             player1 = nil
         } else if controller == player2 {
@@ -360,20 +366,18 @@ public final class PVControllerManager: NSObject {
         } else if controller == player8 {
             player8 = nil
         }
+
         var assigned = false
         if controller is PViCade8BitdoController || controller is PViCade8BitdoZeroController {
-            // For 8Bitdo, we set to listen again for controllers after disconnecting
-            // so we can detect when they connect again
             if iCadeController != nil {
                 Task.detached { @MainActor in
                     self.listenForICadeControllers()
                 }
             }
         } else {
-            // Reassign any controller which we are unassigned
-            // (we don't do this for 8Bitdo, instead we listen for them to connect)
             assigned = assignControllers()
         }
+
         if !assigned {
             NotificationCenter.default.post(name: NSNotification.Name.PVControllerManagerControllerReassigned, object: self)
         }
@@ -387,7 +391,7 @@ public final class PVControllerManager: NSObject {
             return
         }
         if let controller = GCKeyboard.coalesced?.createController() {
-            
+
             keyboardController = controller
             PVControllerManager.shared.connectController(controller);
             NotificationCenter.default.post(name:Notification.Name("HideTouchControls"), object:nil)
@@ -476,13 +480,13 @@ public final class PVControllerManager: NSObject {
         } else if player == 8 {
             player8 = controller
         }
-        
+
         if let controller = controller {
             ILOG("Controller [\(controller.vendorName ?? "No Vendor")] assigned to player \(player)")
         }
     }
 
-    func controller(forPlayer player: Int) -> GCController? {
+    public func controller(forPlayer player: Int) -> GCController? {
         return allLiveControllers[player]
     }
 
@@ -862,7 +866,7 @@ public extension GCKeyboard {
 
             // the system does not call this handler in setValue, so call it with the dpad
             gamepad.valueChangedHandler?(gamepad, gamepad.dpad)
-            
+
             // Bind / to select, rightShift to start
             if let emulator = emulationUIState.emulator, let core = emulationUIState.core, EmulationState.shared.isOn, core.isRunning {
                 if (isPressed(.slash)) {
@@ -904,4 +908,40 @@ public final class SortOptionsTableViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+
+/// Dictionary to store remappable controller wrappers
+private var remappableControllers: [GCController: PVRemappableController] = [:]
+
+/// Get or create a remappable controller wrapper
+private func getRemappableController(for controller: GCController) -> PVRemappableController {
+    if let existing = remappableControllers[controller] {
+        return existing
+    }
+    let wrapper = PVRemappableController(wrapping: controller)
+    remappableControllers[controller] = wrapper
+    return wrapper
+}
+
+/// Clear wrapper when controller disconnects
+private func removeRemappableController(for controller: GCController) {
+    remappableControllers.removeValue(forKey: controller)
+}
+
+// MARK: - Public remapping interface
+public func remap(button source: ButtonIdentifier, to destination: ButtonIdentifier, forController controller: GCController) {
+    let wrapper = getRemappableController(for: controller)
+    wrapper.remap(button: source, to: destination)
+    wrapper.saveMappings()
+}
+
+public func clearMappings(for controller: GCController) {
+    let wrapper = getRemappableController(for: controller)
+    wrapper.clearAllMappings()
+    wrapper.saveMappings()
+}
+
+public func loadSavedMappings(for controller: GCController) {
+    let wrapper = getRemappableController(for: controller)
+    wrapper.loadMappings()
 }

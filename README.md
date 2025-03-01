@@ -243,6 +243,48 @@ Please consider supporting those you love or want to see improved!
 
 Visit our wiki on [Importing ROMs](https://wiki.provenance-emu.com/installation-and-usage/roms/importing-roms) to learn how to load ROMs into Provenance.
 
+## Controls
+
+### Keyboard Controls
+
+The following keyboard controls are available when a keyboard is connected:
+
+#### Main Controls
+- **WASD**: D-Pad / Left Stick
+- **Arrow Keys**: D-Pad / Right Stick
+- **Space** or **Return**: A Button
+- **F** or **Escape**: B Button
+- **Q**: X Button
+- **E**: Y Button
+
+#### Shoulder Buttons
+- **Tab** or **Caps Lock**: L1 (Left Shoulder)
+- **Left Shift**: L2 (Left Trigger)
+- **R**: R1 (Right Shoulder)
+- **V**: R2 (Right Trigger)
+
+#### Special Buttons
+- **Tilde (~)**: Menu Button
+- **1** or **U**: Options Button
+- **X**: L3 (Left Stick Click)
+- **C**: R3 (Right Stick Click)
+
+#### Additional Controls
+- **[=]**: Right Stick Up
+- **-**: Right Stick Down
+- **[**: Right Stick Left
+- **]**: Right Stick Right
+
+#### Alternate Controls
+- **;**: Right Stick Left
+- **K**: Right Stick Left
+- **L**: Right Stick Down
+- **O**: Right Stick Up
+
+#### Special Functions
+- **/** (Forward Slash): Select Button
+- **Right Shift**: Start Button
+
 ### <a id="contributions-footnote"></a>Contributions
 
 [![GitHub open issues](https://img.shields.io/github/issues-raw/provenance-emu/Provenance.svg?style=flat-square)](https://github.com/provenance-emu/Provenance/issues)

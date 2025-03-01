@@ -53,38 +53,60 @@ public final class TheGamesDB: ArtworkLookupService, ROMMetadataProvider, @unche
     ) async throws -> [ArtworkMetadata]? {
         let platformId = systemID?.theGamesDBID
 
+        DLOG("TheGamesDB searchArtwork:")
+        DLOG("- Game name: \(name)")
+        DLOG("- System ID: \(String(describing: systemID))")
+        DLOG("- Platform ID: \(String(describing: platformId))")
+        DLOG("- Artwork types: \(String(describing: artworkTypes))")
+
         do {
             let games = try schema.searchGames(name: name, platformId: platformId)
+            DLOG("TheGamesDB: Found \(games.count) games matching name")
+
             var artworks: [ArtworkMetadata] = []
 
             for game in games {
                 guard let gameId = game["id"] as? Int,
                       let gameTitle = game["game_title"] as? String,
                       let platformId = game["platform"] as? Int else {
+                    DLOG("TheGamesDB: Missing required game data")
                     continue
                 }
 
+                DLOG("TheGamesDB: Processing game ID \(gameId): \(gameTitle)")
+
+                let types = artworkTypes?.theGamesDBTypes
+                DLOG("TheGamesDB: Requesting image types: \(String(describing: types))")
+
                 let images = try schema.getImages(
                     gameId: gameId,
-                    types: artworkTypes?.theGamesDBTypes
+                    types: types
                 )
 
+                DLOG("TheGamesDB: Found \(images.count) images for game")
+
                 for image in images {
-                    if let metadata = try createArtworkMetadata(
-                        from: image,
-                        gameTitle: gameTitle,
-                        platformId: platformId
-                    ) {
-                        artworks.append(metadata)
+                    do {
+                        if let metadata = try createArtworkMetadata(
+                            from: image,
+                            gameTitle: gameTitle,
+                            platformId: platformId
+                        ) {
+                            DLOG("TheGamesDB: Adding artwork: \(metadata.url)")
+                            artworks.append(metadata)
+                        }
+                    } catch {
+                        DLOG("TheGamesDB: Error creating artwork metadata: \(error)")
+                        // Continue with next image instead of throwing
                     }
                 }
             }
 
+            DLOG("TheGamesDB: Total artworks found: \(artworks.count)")
             return artworks.isEmpty ? nil : artworks
-        } catch let error as TheGamesDBError {
+        } catch let error {
+            DLOG("TheGamesDB: Error in searchArtwork: \(error)")
             throw error
-        } catch {
-            throw TheGamesDBError.queryError(error)
         }
     }
 
@@ -93,35 +115,58 @@ public final class TheGamesDB: ArtworkLookupService, ROMMetadataProvider, @unche
         gameTitle: String,
         platformId: Int
     ) throws -> ArtworkMetadata? {
-        do {
-            guard let filename = image["filename"] as? String,
-                  let type = image["type"] as? String,
-                  let artworkType = ArtworkType(fromTheGamesDB: type, side: image["side"] as? String) else {
-                throw TheGamesDBError.invalidImageData
-            }
+        // Add debug logging
+        DLOG("TheGamesDB createArtworkMetadata:")
+        DLOG("- Image data: \(image)")
+        DLOG("- Game title: \(gameTitle)")
+        DLOG("- Platform ID: \(platformId)")
 
-            guard let systemID = SystemIdentifier(theGamesDBID: platformId) else {
-                throw TheGamesDBError.invalidPlatformID
-            }
+        guard let filename = image["filename"] as? String,
+              let type = image["type"] as? String else {
+            DLOG("TheGamesDB: Missing required image data (filename or type)")
+            return nil
+        }
 
-            let urlString = "https://cdn.thegamesdb.net/images/original/\(filename)"
-            guard let url = URL(string: urlString) else {
-                throw TheGamesDBError.invalidURL
-            }
+        // Get artwork type, with more detailed logging
+        let side = image["side"] as? String
+        DLOG("TheGamesDB: Converting type '\(type)' with side '\(side ?? "nil")'")
 
+        guard let artworkType = ArtworkType(fromTheGamesDB: type, side: side) else {
+            DLOG("TheGamesDB: Failed to convert to ArtworkType")
+            return nil
+        }
+
+        DLOG("TheGamesDB: Converted to artwork type: \(artworkType)")
+
+        guard let systemID = SystemIdentifier(theGamesDBID: platformId) else {
+            DLOG("TheGamesDB: Platform ID \(platformId) not mapped to a SystemIdentifier, using .Unknown")
+            // Instead of returning nil, use .Unknown for unmapped platform IDs
             return ArtworkMetadata(
-                url: url,
+                url: URL(string: "https://cdn.thegamesdb.net/images/original/\(filename)")!,
                 type: artworkType,
                 resolution: image["resolution"] as? String,
                 description: gameTitle,
                 source: "TheGamesDB",
-                systemID: systemID
+                systemID: .Unknown  // Use Unknown instead of failing
             )
-        } catch let error as TheGamesDBError {
-            throw error
-        } catch {
-            throw TheGamesDBError.queryError(error)
         }
+
+        let urlString = "https://cdn.thegamesdb.net/images/original/\(filename)"
+        guard let url = URL(string: urlString) else {
+            DLOG("TheGamesDB: Invalid URL from filename: \(filename)")
+            return nil
+        }
+
+        DLOG("TheGamesDB: Created artwork metadata with URL: \(url)")
+
+        return ArtworkMetadata(
+            url: url,
+            type: artworkType,
+            resolution: image["resolution"] as? String,
+            description: gameTitle,
+            source: "TheGamesDB",
+            systemID: systemID
+        )
     }
 
     public func getArtwork(

@@ -3,6 +3,8 @@ $(SRCROOT)/CoresRetro/RetroArch/modules/atari800_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/bluemsx_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/bsnes_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/bsnes_mercury_accuracy_libretro_ios.framework
+$(SRCROOT)/CoresRetro/RetroArch/modules/bsnes_mercury_balanced_libretro_ios.framework
+$(SRCROOT)/CoresRetro/RetroArch/modules/bsnes_performance_accuracy_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/desmume_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/dosbox_pure_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/fbalpha2012_cps1_libretro_ios.framework
@@ -17,6 +19,8 @@ $(SRCROOT)/CoresRetro/RetroArch/modules/freeintv_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/fuse_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/gambatte_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/gearcoleco_libretro_ios.framework
+$(SRCROOT)/CoresRetro/RetroArch/modules/geolith_libretro_ios.framework
+$(SRCROOT)/CoresRetro/RetroArch/modules/galaksija_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/genesis_plus_gx_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/gme_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/hatari_libretro_ios.framework

@@ -1,14 +1,42 @@
 import Combine
 import SwiftUI
+import struct PVUIBase.ActivityViewController
 
 struct RetroArchConfigEditorView: View {
     @Binding var showExportSheet: Bool
     @Binding var showImportPicker: Bool
     @ObservedObject var filterVM: ConfigFilterViewModel
     @ObservedObject var editVM: ConfigEditViewModel
-    
     @EnvironmentObject private var configEditor: RetroArchConfigEditorViewModel
-    
+
+    /// Single source of truth for sheet presentation
+    @State private var presentationState: PresentationState?
+    @State private var showFileImporter = false
+
+    /// Enum to manage all possible presentation states
+    private enum PresentationState: Identifiable, Equatable {
+        case export(URL)
+        case error(Error)
+
+        var id: String {
+            switch self {
+            case .export: return "export"
+            case .error: return "error"
+            }
+        }
+
+        static func == (lhs: PresentationState, rhs: PresentationState) -> Bool {
+            switch (lhs, rhs) {
+            case (.export(let lhsURL), .export(let rhsURL)):
+                return lhsURL == rhsURL
+            case (.error(let lhsError), .error(let rhsError)):
+                return lhsError.localizedDescription == rhsError.localizedDescription
+            default:
+                return false
+            }
+        }
+    }
+
     var body: some View {
         ConfigListContent(
             filterVM: filterVM,
@@ -60,25 +88,27 @@ struct RetroArchConfigEditorView: View {
                     )
                 }
                 .disabled(filterVM.modifiedKeys.isEmpty)
-                
+
                 if #available(tvOS 17.0, *) {
                     Menu {
 #if !os(tvOS)
                         Button(action: {
-                            showExportSheet = true
+                            Task {
+                                await handleExport()
+                            }
                         }) {
                             Label("Export Config", systemImage: "square.and.arrow.up")
                         }
-                        
+
                         Button(action: {
-                            showImportPicker = true
+                            handleImport()
                         }) {
                             Label("Import Config", systemImage: "square.and.arrow.down")
                         }
-                        
+
                         Divider()
 #endif
-                        
+
                         Button(action: {
                             Task {
                                 await configEditor.reloadConfig()
@@ -87,7 +117,7 @@ struct RetroArchConfigEditorView: View {
                             Label("Reload Current Config", systemImage: "arrow.clockwise")
                         }
                         .disabled(!configEditor.hasChanges)
-                        
+
                         Button(action: {
                             Task {
                                 await configEditor.reloadDefaultConfig()
@@ -108,7 +138,7 @@ struct RetroArchConfigEditorView: View {
                             Label("Reload Current Config", systemImage: "arrow.clockwise")
                         }
                         .disabled(!configEditor.hasChanges)
-                        
+
                         Button(action: {
                             Task {
                                 await configEditor.reloadDefaultConfig()
@@ -118,7 +148,7 @@ struct RetroArchConfigEditorView: View {
                         }
                     }
                 }
-                
+
                 Button(action: {
                     Task {
                         await configEditor.saveChanges()
@@ -130,19 +160,45 @@ struct RetroArchConfigEditorView: View {
             }
         }
 #if !os(tvOS)
-        .sheet(isPresented: $showExportSheet, onDismiss: {
-            showExportSheet = false
-        }) {
-            if let configURL = configEditor.exportConfig() {
-                ActivityViewController(activityItems: [configURL])
+        // Sheet presentation for export and error states
+        .sheet(item: $presentationState) { state in
+            Group {
+                switch state {
+                case .export(let url):
+                    ActivityViewController(
+                        activityItems: [url],
+                        applicationActivities: nil,
+                        excludedActivityTypes: [
+                            .assignToContact,
+                            .addToReadingList,
+                            .openInIBooks,
+                            .postToWeibo,
+                            .postToVimeo,
+                            .postToFlickr,
+                            .postToTwitter,
+                            .postToFacebook,
+                            .postToTencentWeibo
+                        ]
+                    )
+                    .presentationDetents([.medium])
+                    .presentationDragIndicator(.visible)
+                    .interactiveDismissDisabled(true)
+                    .onDisappear {
+                        configEditor.finishExport()
+                        presentationState = nil
+                    }
+                case .error(let error):
+                    Text(error.localizedDescription)
+                        .padding()
+                }
             }
         }
+        // Separate file importer
         .fileImporter(
-            isPresented: $showImportPicker,
+            isPresented: $showFileImporter,
             allowedContentTypes: [.plainText],
             allowsMultipleSelection: false
         ) { result in
-            showImportPicker = false
             switch result {
             case .success(let urls):
                 if let url = urls.first {
@@ -151,9 +207,22 @@ struct RetroArchConfigEditorView: View {
                     }
                 }
             case .failure(let error):
-                print("Import error: \(error)")
+                presentationState = .error(error)
             }
+            configEditor.finishImport()
         }
 #endif
+    }
+
+    private func handleExport() async {
+        configEditor.prepareExport()
+        if let exportURL = configEditor.exportURL {
+            presentationState = .export(exportURL)
+        }
+    }
+
+    private func handleImport() {
+        configEditor.startImport()
+        showFileImporter = true
     }
 }

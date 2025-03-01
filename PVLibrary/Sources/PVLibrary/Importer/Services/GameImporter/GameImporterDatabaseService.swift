@@ -60,7 +60,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         romsPath = url
     }
 
-    @MainActor
+//    @MainActor
     internal func importGameIntoDatabase(queueItem: ImportQueueItem) async throws {
         guard queueItem.fileType != .bios else {
             return
@@ -95,7 +95,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         }
     }
 
-    @MainActor
+//    @MainActor
     func importBIOSIntoDatabase(queueItem: ImportQueueItem) async throws {
         ILOG("Starting BIOS database import for: \(queueItem.url.lastPathComponent)")
 
@@ -114,7 +114,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     }
 
     /// Imports a ROM to the database
-    @MainActor
+//    @MainActor
     internal func importToDatabaseROM(forItem queueItem: ImportQueueItem, system: SystemIdentifier, relatedFiles: [URL]?) async throws {
 
         guard let _ = queueItem.destinationUrl else {

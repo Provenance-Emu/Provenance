@@ -1,6 +1,6 @@
 import PVLogging
 
-class ConfigEditViewModel: ObservableObject {
+final class ConfigEditViewModel: ObservableObject {
     @Published var selectedKey: String = ""
     @Published var editedValue: String? = nil
     @Published var showValueEditor = false
@@ -30,6 +30,7 @@ class ConfigEditViewModel: ObservableObject {
         ILOG("Editing \(key) of type \(valueType)")
     }
 
+    @MainActor
     func handleEditCompletion(newValue: String) {
         if let configEditor = configEditor as? RetroArchConfigEditorViewModel {
             let quotedValue = configEditor.addQuotes(to: newValue)
@@ -38,13 +39,14 @@ class ConfigEditViewModel: ObservableObject {
         showValueEditor = false
     }
 
+    @MainActor
     func setEditedValue(_ newValue: String) {
         guard configEditor.configValues[selectedKey] != newValue else {
             DLOG("Value for \(selectedKey) unchanged")
             return
         }
         configEditor.configValues[selectedKey] = newValue
-        (configEditor as? RetroArchConfigEditorViewModel)?.hasChanges = true
+        (configEditor as? RetroArchConfigEditorViewModel)?.markAsChanged()
         ILOG("Updated value for \(selectedKey) to \(newValue)")
     }
 

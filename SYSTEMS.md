@@ -16,13 +16,20 @@
 | Atari Jaguar CD | Atari | 1993 | 32 | ✗ | ✗ | ✗ | ✗ |
 | WonderSwan | Bandai | 1999 | 16 | ✓ | ✗ | ✗ | ✗ |
 | WonderSwan | Bandai | 2000 | 16 | ✓ | ✗ | ✗ | ✗ |
+| CPS-1 | Capcom | 0000 | 32 | ✗ | ✗ | ✗ | ✗ |
+| CPS-2 | Capcom | 0000 | 32 | ✗ | ✗ | ✗ | ✗ |
+| CPS-3 | Capcom | 0000 | 32 | ✗ | ✗ | ✗ | ✗ |
 | CBS ColecoVision | CBS | 1982 | 8 | ✗ | ✗ | ✗ | [✓](#bios-cbs-colecovision) |
 | Commodore 64 | Commodore International | 1982 | 8 | ✗ | ✗ | ✗ | ✗ |
 | Enterprise 128 | Enterprise | 1985 | 8 | ✗ | ✗ | ✗ | ✗ |
 | IBM PC DOS | IBM | 1980 | 32 | ✗ | ✗ | ✗ | ✗ |
+| Wolfenstein 3D | Id Software | 1992 | 32 | ✗ | ✗ | ✗ | ✗ |
+| Doom | Id Software | 1993 | 32 | ✗ | ✗ | ✗ | ✗ |
+| Quake | Id Software | 1996 | 32 | ✗ | ✗ | ✗ | ✗ |
+| Quake II | Id Software | 1996 | 32 | ✗ | ✗ | ✗ | ✗ |
 | RetroArch | Libretro | 2010 | 64 | ✓ | ✗ | ✓ | ✗ |
 | Magnavox Odyssey2 | Magnavox | 1978 | 8 | ✗ | ✗ | ✗ | [✓](#bios-magnavox-odyssey2) |
-| MAME | MAME | 1997 | 32 | ✗ | ✗ | ✗ | [✓](#bios-mame) |
+| MAME | MAME | 1997 | 32 | ✗ | ✗ | ✗ | ✗ |
 | Mattel Intellivision | Mattel | 1979 | 8 | ✗ | ✗ | ✗ | [✓](#bios-mattel-intellivision) |
 | MSX | Microsoft | 1983 | 16 | ✗ | ✗ | ✗ | [✓](#bios-msx) |
 | MSX2 | Microsoft | 1983 | 16 | ✗ | ✗ | ✗ | [✓](#bios-msx2) |
@@ -99,11 +106,18 @@
 | Atari Jaguar CD | [BIOS] Atari Jaguar CD (World).j64 | [77cd95c7ad06a39f4c59995094aa10f9](https://www.google.com/search?q=77cd95c7ad06a39f4c59995094aa10f9) | Jaguar CD BIOS | ✗ |
 <a name="bios-wonderswan"></a>
 <a name="bios-wonderswan"></a>
+<a name="bios-cps-1"></a>
+<a name="bios-cps-2"></a>
+<a name="bios-cps-3"></a>
 <a name="bios-cbs-colecovision"></a>
 | CBS ColecoVision | coleco.rom | [2c66f5911e5b42b8ebe113403548eee7](https://www.google.com/search?q=2c66f5911e5b42b8ebe113403548eee7) | ColecoVision BIOS | ✓ |
 <a name="bios-commodore-64"></a>
 <a name="bios-enterprise-128"></a>
 <a name="bios-ibm-pc-dos"></a>
+<a name="bios-wolfenstein-3d"></a>
+<a name="bios-doom"></a>
+<a name="bios-quake"></a>
+<a name="bios-quake-ii"></a>
 <a name="bios-retroarch"></a>
 <a name="bios-magnavox-odyssey2"></a>
 | Magnavox Odyssey2 | o2rom.bin | [562d5ebf9e030a40d6fabfc2f33139fd](https://www.google.com/search?q=562d5ebf9e030a40d6fabfc2f33139fd) | Odyssey2 BIOS - G7000 model BIOS | ✓ |
@@ -111,7 +125,7 @@
 | Magnavox Odyssey2 | g7400.bin | [c500ff71236068e0dc0d0603d265ae76](https://www.google.com/search?q=c500ff71236068e0dc0d0603d265ae76) | Videopac+ European BIOS - G7400 model | ✗ |
 | Magnavox Odyssey2 | jopac.bin | [279008e4a0db2dc5f1c048853b033828](https://www.google.com/search?q=279008e4a0db2dc5f1c048853b033828) | Videopac+ French BIOS - G7400 model | ✗ |
 <a name="bios-mame"></a>
-| MAME | neogeo.zip | [00dad01abdbf8ea9e79ad2fe11bdb182](https://www.google.com/search?q=00dad01abdbf8ea9e79ad2fe11bdb182) | NeoGeo BIOS (MAME 0.258 BIOS) | ✓ |
+| MAME | neogeo.zip | [00dad01abdbf8ea9e79ad2fe11bdb182](https://www.google.com/search?q=00dad01abdbf8ea9e79ad2fe11bdb182) | NeoGeo BIOS (MAME 0.258 BIOS) | ✗ |
 <a name="bios-mattel-intellivision"></a>
 | Mattel Intellivision | exec.bin | [62e761035cb657903761800f4437b8af](https://www.google.com/search?q=62e761035cb657903761800f4437b8af) | Executive ROM | ✓ |
 | Mattel Intellivision | grom.bin | [0cd5946c6473e42e8e4c2137785e427f](https://www.google.com/search?q=0cd5946c6473e42e8e4c2137785e427f) | Graphics ROM | ✓ |
@@ -180,9 +194,9 @@
 | 3DO | panafz10-patched.bin | [1477bda80dc33731a65468c1f5bcbee9](https://www.google.com/search?q=1477bda80dc33731a65468c1f5bcbee9) | 3DO Patches BIOS | ✗ |
 | 3DO | rom2.rom | [428577250f43edc902ea239c50d2240d](https://www.google.com/search?q=428577250f43edc902ea239c50d2240d) | Japanese Character ROM | ✗ |
 <a name="bios-cd-i"></a>
-| CD-i | cdibios.zip | [709acce6e9c4043b851ea7429b8e7eff](https://www.google.com/search?q=709acce6e9c4043b851ea7429b8e7eff) | cdi200.rom, cdi220b.rom and zx405042p__cdi_slave_2.0__b43t__zzmk9213.mc68hc705c8a_withtestrom.7206 | ✗ |
-| CD-i | cdimono1.zip |  | cdi200.rom, cdi220.rom, cdi220b.rom, zx405037p__cdi_servo_2.1__b43t__llek9215.mc68hc705c8a_withtestrom.7201 and zx405042p__cdi_slave_2.0__b43t__zzmk9213.mc68hc705c8a_withtestrom.7206 | ✓ |
-| CD-i | cdimono2.zip | [97aa5f47030cd9fdb679d4fafbb0e332](https://www.google.com/search?q=97aa5f47030cd9fdb679d4fafbb0e332) | cdi200.rom, cdi220.rom, cdi220b.rom, zx405037p__cdi_servo_2.1__b43t__llek9215.mc68hc705c8a_withtestrom.7201 and zx405042p__cdi_slave_2.0__b43t__zzmk9213.mc68hc705c8a_withtestrom.7206 | ✗ |
+| CD-i | cdibios.zip | [029a471ef924b1df5588dea806e440df](https://www.google.com/search?q=029a471ef924b1df5588dea806e440df) | CD-i BIOS | ✗ |
+| CD-i | cdimono1.zip | [5d4f7c4beee83bf535d2b15aa48ea0b0](https://www.google.com/search?q=5d4f7c4beee83bf535d2b15aa48ea0b0) | CD-i Mono 1 | ✓ |
+| CD-i | cdimono2.zip | [97aa5f47030cd9fdb679d4fafbb0e332](https://www.google.com/search?q=97aa5f47030cd9fdb679d4fafbb0e332) | CD-i Mono 2 | ✗ |
 <a name="bios-sg-1000"></a>
 <a name="bios-master-system"></a>
 <a name="bios-genesis"></a>
@@ -203,7 +217,8 @@
 | Dreamcast | dc_flashJ.bin | [69c036adfca4ebea0b0c6fa4acfc8538](https://www.google.com/search?q=69c036adfca4ebea0b0c6fa4acfc8538) | Dreamcast Flash Japan | ✗ |
 <a name="bios-smith-engineering-vectrex"></a>
 <a name="bios-neo-geo"></a>
-| Neo Geo | neogeo.zip | [00dad01abdbf8ea9e79ad2fe11bdb182](https://www.google.com/search?q=00dad01abdbf8ea9e79ad2fe11bdb182) | NeoGeo BIOS (MAME 0.258 BIOS) | ✓ |
+| Neo Geo | neogeo.zip | [00dad01abdbf8ea9e79ad2fe11bdb182](https://www.google.com/search?q=00dad01abdbf8ea9e79ad2fe11bdb182) | NeoGeo BIOS (MAME 0.258 BIOS) | ✗ |
+| Neo Geo | aes.zip | [ad9585c72130c56f04ae26aae87c289d](https://www.google.com/search?q=ad9585c72130c56f04ae26aae87c289d) | NeoGeo AES BIOS | ✗ |
 <a name="bios-neo-geo-pocket"></a>
 <a name="bios-neo-geo-pocket-color"></a>
 <a name="bios-playstation"></a>
@@ -226,3 +241,4 @@
 
 ---
 Generated with ❤️ using [Provenance](https://provenance-emu.com) 🕹️
+

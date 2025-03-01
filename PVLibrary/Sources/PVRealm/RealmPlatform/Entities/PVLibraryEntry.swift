@@ -43,7 +43,7 @@ public protocol PVGameLibraryEntry: PVLibraryEntry {
        dynamic var importDate: Date { get }
 
        dynamic var systemIdentifier: String { get }
-       dynamic var system: PVSystem! { get }
+       dynamic var system: PVSystem? { get }
 
        dynamic var md5Hash: String { get }
        dynamic var crc: String { get }

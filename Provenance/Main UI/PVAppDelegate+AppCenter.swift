@@ -20,14 +20,16 @@ extension PVAppDelegate {
             ELOG("No value for Info.plist key 'appcenter'")
             return
         }
-//        AppCenter.start(withAppSecret:"ios={Your iOS App Secret};macos={Your macOS App Secret}", services: [Analytics.self, Crashes.self])
-        AppCenter.configure(withAppSecret: secretKey)
-        if AppCenter.isConfigured {
-            AppCenter.startService(Analytics.self)
-            //AppCenter.startService(Crashes.self)
-            ILOG("AppCenter initialized.")
-        } else {
-            ELOG("AppCenter not configured.")
+        if AppState.shared.isAppStore {
+            //        AppCenter.start(withAppSecret:"ios={Your iOS App Secret};macos={Your macOS App Secret}", services: [Analytics.self, Crashes.self])
+            AppCenter.configure(withAppSecret: secretKey)
+            if AppCenter.isConfigured {
+                AppCenter.startService(Analytics.self)
+                AppCenter.startService(Crashes.self)
+                ILOG("AppCenter initialized.")
+            } else {
+                ELOG("AppCenter not configured.")
+            }
         }
     }
 }

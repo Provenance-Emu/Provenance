@@ -25,6 +25,7 @@ struct GameItemView: SwiftUI.View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @ObservedObject private var gamepadManager = GamepadManager.shared
     @State private var artwork: SwiftImage?
+    @State private var isVisible: Bool = false
     var action: () -> Void
 
     private var discCount: Int {
@@ -60,33 +61,77 @@ struct GameItemView: SwiftUI.View {
                 }
             }
             .onAppear {
-                updateArtwork()
+                isVisible = true
+                loadArtworkIfNeeded()
+            }
+            .onDisappear {
+                isVisible = false
+                // Cancel artwork loading if it's still in progress when view disappears
+                ArtworkLoader.shared.cancelLoading(for: game.id)
             }
             .onChange(of: game.trueArtworkURL) { _ in
-                updateArtwork()
+                loadArtworkIfNeeded()
             }
-            .scaleEffect(shouldShowFocus ? 1.05 : 1.0)
-            .brightness(shouldShowFocus ? 0.1 : 0)
-    #if os(tvOS)
-            .shadow(color: shouldShowFocus ? .white.opacity(0.5) : .clear, radius: shouldShowFocus ? 10 : 0)
-    #endif
-            .overlay(
-                Rectangle()
-                    .stroke(shouldShowFocus ? themeManager.currentPalette.menuIconTint.swiftUIColor : .clear, lineWidth: 2)
-            )
-            .animation(.easeInOut(duration: 0.15), value: shouldShowFocus)
+            .onChange(of: isFocused) { newValue in
+                // Prioritize loading artwork for focused items
+                if newValue && artwork == nil {
+                    loadArtworkWithPriority(.high)
+                }
+            }
+            // Apply focus effects conditionally to improve performance
+            .modifier(FocusEffectsModifier(isFocused: shouldShowFocus))
         }
     }
 
-    private func updateArtwork() {
-        guard !game.isInvalidated else {
-            return
-        }
+    private func loadArtworkIfNeeded() {
+        guard isVisible && !game.isInvalidated else { return }
+
+        // If artwork is already loaded, no need to reload
+        if artwork != nil { return }
+
+        // Determine priority based on focus and visibility
+        let priority: TaskPriority = isFocused ? .high : .medium
+
+        loadArtworkWithPriority(priority)
+    }
+
+    private func loadArtworkWithPriority(_ priority: TaskPriority) {
         Task {
-            let artwork = await game.fetchArtworkFromCache()
-            await MainActor.run {
-                self.artwork = artwork
+            let image = await ArtworkLoader.shared.loadArtwork(
+                for: game,
+                priority: priority,
+                isVisible: isVisible
+            )
+
+            // Only update if the view is still visible
+            if isVisible {
+                await MainActor.run {
+                    self.artwork = image
+                }
             }
+        }
+    }
+}
+
+/// Separate modifier for focus effects to improve performance
+struct FocusEffectsModifier: ViewModifier {
+    let isFocused: Bool
+
+    func body(content: Content) -> some View {
+        if isFocused {
+            content
+                .scaleEffect(1.05)
+                .brightness(0.1)
+            #if os(tvOS)
+                .shadow(color: .white.opacity(0.5), radius: 10, x: 0, y: 0)
+            #endif
+                .overlay(
+                    Rectangle()
+                        .stroke(Color.white, lineWidth: 2)
+                )
+                .animation(.easeInOut(duration: 0.15), value: isFocused)
+        } else {
+            content
         }
     }
 }

@@ -566,22 +566,6 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>fuse.libretro.framework</string>
-			<key>PVPrincipleClass</key>
-			<string>PVRetroArch.PVRetroArchCoreCore</string>
-			<key>PVProjectName</key>
-			<string>Fuse (RetroArch)</string>
-			<key>PVSupportedSystems</key>
-			<array>
-				<string>com.provenance.zxspectrum</string>
-			</array>
-			<key>PVProjectURL</key>
-			<string>https://github.com/libretro/fuse-libretro</string>
-			<key>PVProjectVersion</key>
-			<string>1.6.0</string>
-		</dict>
-		<dict>
-			<key>PVCoreIdentifier</key>
 			<string>minivmac.libretro.framework</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
@@ -1638,6 +1622,7 @@
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.retroarch</string>
+				<string>com.provenance.c64</string>
 			</array>
 			<key>PVProjectName</key>
 			<string>Commodore - C64 (RetroArch)</string>
@@ -1738,6 +1723,7 @@
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.retroarch</string>
+				<string>com.provenance.zxspectrum</string>
 			</array>
 			<key>PVProjectName</key>
 			<string>Sinclair - ZX Spectrum (RetroArch)</string>

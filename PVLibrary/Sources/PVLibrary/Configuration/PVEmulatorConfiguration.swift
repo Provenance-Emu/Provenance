@@ -293,7 +293,7 @@ public extension PVEmulatorConfiguration {
     }
 
     class func screenshotsPath(forGame game: PVGame) -> URL {
-        let screenshotsPath = Paths.screenShotsPath.appendingPathComponent(game.system.shortName, isDirectory: true).appendingPathComponent(game.title, isDirectory: true)
+        let screenshotsPath = Paths.screenShotsPath.appendingPathComponent(game.system?.shortName ?? "", isDirectory: true).appendingPathComponent(game.title, isDirectory: true)
 
         do {
             try FileManager.default.createDirectory(at: screenshotsPath, withIntermediateDirectories: true, attributes: nil)
@@ -328,7 +328,7 @@ public extension PVEmulatorConfiguration {
     @objc
     class func m3uFile(forGame game: PVGame) -> URL? {
         guard let gamePath = path(forGame: game) else { return nil }
-        return m3uFile(forURL: gamePath, identifier: game.system.identifier)
+        return m3uFile(forURL: gamePath, identifier: game.system?.identifier ?? SystemIdentifier.RetroArch.rawValue)
     }
 
     @objc

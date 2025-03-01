@@ -43,10 +43,10 @@ struct DarkThemePalette: UXThemePalette {
     public var switchThumb: UIColor? { .grey.gEEE }
 
     public var gameLibraryBackground: UIColor { .black }
-    public var gameLibraryText: UIColor { .grey.g6F}
+    public var gameLibraryText: UIColor { .Provenance.blue }
 
     public var gameLibraryHeaderBackground: UIColor { UIColor.black }
-    public var gameLibraryHeaderText: UIColor { .grey.g333}
+    public var gameLibraryHeaderText: UIColor { .Provenance.blue }
 
     public var barButtonItemTint: UIColor? { Colors.lightBlue }
     public var navigationBarBackgroundColor: UIColor? { .grey.g1C }

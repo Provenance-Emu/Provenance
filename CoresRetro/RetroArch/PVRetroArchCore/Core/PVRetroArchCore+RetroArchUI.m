@@ -80,6 +80,46 @@ int argc =  1;
 
 #pragma mark - PVRetroArchCoreBridge Begin
 
+#ifdef HAVE_COCOA_METAL
+// TODO: Use me in Vulkan mode and change the code I edited in the past
+// to workaround this not being the layer @JoeMatt
+@implementation MetalLayerView
+
++ (Class)layerClass {
+    return [CAMetalLayer class];
+}
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        [self setupMetalLayer];
+    }
+    return self;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self setupMetalLayer];
+    }
+    return self;
+}
+
+- (CAMetalLayer *)metalLayer {
+    return (CAMetalLayer *)self.layer;
+}
+
+- (void)setupMetalLayer {
+    self.metalLayer.device = MTLCreateSystemDefaultDevice();
+    self.metalLayer.contentsScale = cocoa_screen_get_native_scale();
+    self.metalLayer.opaque = YES;
+}
+
+@end
+#endif
+
+#pragma mark - PVRetroArchCoreBridge Begin
+
 @interface PVRetroArchCoreBridge (RetroArchUI)
 @end
 
@@ -121,7 +161,8 @@ int argc =  1;
 }
 
 - (void)setPauseEmulation:(BOOL)flag {
-    if (!self.isOn) {
+    if (!EmulationState.shared.isOn) {
+        WLOG(@"Core isn't set to \"on\", skipping set pause : %i", flag);
         return;
     }
     command_event(flag ? CMD_EVENT_PAUSE : CMD_EVENT_UNPAUSE, NULL);

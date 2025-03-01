@@ -100,7 +100,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         case .CPS1, .CPS2, .CPS3: true
         case .ColecoVision: false
         case .DOS: false
-        case .DOOM: true
+        case .DOOM: false
         case .Dreamcast: true
         case .DS: false
         case .EP128: true
@@ -114,7 +114,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         case .Intellivision: false
         case .Lynx: false
         case .Macintosh: true
-        case .MAME: true
+        case .MAME: false
         case .MasterSystem: false
         case .MegaDuck: true
         case .MSX: true
@@ -145,14 +145,14 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         case .SNES: false
         case .Supervision: false
         case .TIC80: true
-        case .Vectrex: false
+        case .Vectrex: true
         case .VirtualBoy: false
         case .Wii: true
         case .WonderSwan: false
         case .WonderSwanColor: false
         case .ZXSpectrum: true
         case .Unknown: true
-        case .Wolf3D: true
+        case .Wolf3D: false
         case .RetroArch: false
         }
     }

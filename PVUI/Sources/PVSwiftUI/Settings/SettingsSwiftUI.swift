@@ -16,6 +16,10 @@ import RealmSwift
 import Perception
 import PVFeatureFlags
 import Defaults
+import AudioToolbox
+#if os(tvOS)
+import GameController
+#endif
 
 #if canImport(FreemiumKit)
 import FreemiumKit
@@ -908,7 +912,7 @@ private struct LoadingSection: View {
 
 private struct FeatureFlagsSection: View {
     let flags: [(key: String, flag: FeatureFlag, enabled: Bool)]
-    let featureFlags: PVFeatureFlagsManager
+    @ObservedObject var featureFlags: PVFeatureFlagsManager
 
     var body: some View {
         Section(header: Text("Feature Flags Status")) {
@@ -926,19 +930,57 @@ private struct FeatureFlagsSection: View {
 
 private struct FeatureFlagRow: View {
     let flag: (key: String, flag: FeatureFlag, enabled: Bool)
-    let featureFlags: PVFeatureFlagsManager
+    @ObservedObject var featureFlags: PVFeatureFlagsManager
+    @State private var isEnabled: Bool
+
+    init(flag: (key: String, flag: FeatureFlag, enabled: Bool), featureFlags: PVFeatureFlagsManager) {
+        self.flag = flag
+        self.featureFlags = featureFlags
+        // Initialize state with current value
+        if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
+            _isEnabled = State(initialValue: featureFlags.debugOverrides[feature] ?? flag.enabled)
+        } else {
+            _isEnabled = State(initialValue: flag.enabled)
+        }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 FeatureFlagInfo(flag: flag)
                 Spacer()
-                FeatureFlagStatus(flag: flag, featureFlags: featureFlags)
-                FeatureFlagToggle(flag: flag, featureFlags: featureFlags)
+                FeatureFlagStatus(flag: flag, featureFlags: featureFlags, isEnabled: isEnabled)
+                #if os(tvOS)
+                Button(action: {
+                    if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
+                        isEnabled.toggle()
+                        featureFlags.setDebugOverride(feature: feature, enabled: isEnabled)
+                    }
+                }) {
+                    Text(isEnabled ? "On" : "Off")
+                        .foregroundColor(isEnabled ? .green : .red)
+                }
+                #else
+                Toggle("", isOn: Binding(
+                    get: { isEnabled },
+                    set: { newValue in
+                        if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
+                            isEnabled = newValue
+                            featureFlags.setDebugOverride(feature: feature, enabled: newValue)
+                        }
+                    }
+                ))
+                #endif
             }
             FeatureFlagDetails(flag: flag.flag)
         }
         .padding(.vertical, 4)
+        .onChange(of: featureFlags.debugOverrides) { _ in
+            // Update state when debug overrides change
+            if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
+                isEnabled = featureFlags.debugOverrides[feature] ?? flag.enabled
+            }
+        }
     }
 }
 
@@ -960,7 +1002,8 @@ private struct FeatureFlagInfo: View {
 
 private struct FeatureFlagStatus: View {
     let flag: (key: String, flag: FeatureFlag, enabled: Bool)
-    let featureFlags: PVFeatureFlagsManager
+    @ObservedObject var featureFlags: PVFeatureFlagsManager
+    let isEnabled: Bool
 
     var body: some View {
         VStack(alignment: .trailing) {
@@ -970,9 +1013,9 @@ private struct FeatureFlagStatus: View {
                 .foregroundColor(flag.flag.enabled ? .green : .red)
 
             // Show effective state
-            Text("Effective: \(flag.enabled ? "On" : "Off")")
+            Text("Effective: \(isEnabled ? "On" : "Off")")
                 .font(.caption)
-                .foregroundColor(flag.enabled ? .green : .red)
+                .foregroundColor(isEnabled ? .green : .red)
 
             // Show debug override if present
             if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key),
@@ -992,28 +1035,6 @@ private struct FeatureFlagStatus: View {
                 }
             }
         }
-    }
-}
-
-private struct FeatureFlagToggle: View {
-    let flag: (key: String, flag: FeatureFlag, enabled: Bool)
-    let featureFlags: PVFeatureFlagsManager
-
-    var body: some View {
-        Toggle("", isOn: Binding(
-            get: {
-                if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
-                    return featureFlags.debugOverrides[feature] ?? flag.enabled
-                }
-                return flag.enabled
-            },
-            set: { newValue in
-                print("Setting toggle to: \(newValue)")
-                if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
-                    featureFlags.setDebugOverride(feature: feature, enabled: newValue)
-                }
-            }
-        ))
     }
 }
 
@@ -1162,101 +1183,69 @@ private struct AppearanceSection: View {
                             subtitle: "Display favorites section.",
                             icon: .sfSymbol("star"))
             }
+
+            // Add the new navigation link wrapped in PaidFeatureView
+            PaidFeatureView {
+                NavigationLink(destination: MissingArtworkStyleView()) {
+                    SettingsRow(title: "Missing Artwork Style",
+                                subtitle: "Choose style for games without artwork.",
+                                icon: .sfSymbol("photo.artframe"))
+                }
+            } lockedView: {
+                SettingsRow(title: "Missing Artwork Style",
+                            subtitle: "Unlock to customize missing artwork style.",
+                            icon: .sfSymbol("lock.fill"))
+            }
         }
     }
 }
 
-private struct SecretDPadView: View {
-    enum Direction {
-        case up, down, left, right
-    }
-
-    let onComplete: () -> Void
-    @State private var pressedButtons: [Direction] = []
-    @State private var showDPad = false
-    @Environment(\.dismiss) private var dismiss
-
-    private let konamiCode: [Direction] = [.up, .up, .down, .down, .left, .right, .left, .right]
+// Add the new view for selecting missing artwork style
+private struct MissingArtworkStyleView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
+    @Default(.missingArtworkStyle) private var selectedStyle
 
     var body: some View {
-        VStack {
-            if showDPad {
-                // D-Pad Layout
-                VStack(spacing: 0) {
-                    // Up button
-                    Button(action: { pressButton(.up) }) {
-                        Image(systemName: "arrow.up.circle.fill")
-                            .resizable()
-                            .frame(width: 60, height: 60)
-                    }
+        List {
+            ForEach(RetroTestPattern.allCases, id: \.self) { style in
+                Button(action: { selectedStyle = style }) {
+                    HStack {
+                        // Preview of the style
+                        Image(uiImage: UIImage.missingArtworkImage(
+                            gameTitle: "Preview",
+                            ratio: 1.0,
+                            pattern: style
+                        ))
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 80, height: 80)
+                        .cornerRadius(8)
 
-                    // Middle row (Left, Right)
-                    HStack(spacing: 60) {
-                        Button(action: { pressButton(.left) }) {
-                            Image(systemName: "arrow.left.circle.fill")
-                                .resizable()
-                                .frame(width: 60, height: 60)
+                        // Style description
+                        VStack(alignment: .leading) {
+                            Text(style.description)
+                                .font(.headline)
+                            Text(style.subtitle)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                         }
+                        .padding(.leading, 8)
 
-                        Button(action: { pressButton(.right) }) {
-                            Image(systemName: "arrow.right.circle.fill")
-                                .resizable()
-                                .frame(width: 60, height: 60)
+                        HomeDividerView()
+
+                        // Selection indicator
+                        if selectedStyle == style {
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor, lineWidth: 2)
+                                .frame(width: 80, height: 80)
                         }
-                    }
-
-                    // Down button
-                    Button(action: { pressButton(.down) }) {
-                        Image(systemName: "arrow.down.circle.fill")
-                            .resizable()
-                            .frame(width: 60, height: 60)
                     }
                 }
-                .foregroundColor(.accentColor)
-
-                // Show current sequence
-                Text(sequenceText)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .padding(.top)
+                .buttonStyle(PlainButtonStyle())
+                .padding(.vertical, 4)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .contentShape(Rectangle())
-        .onLongPressGesture(minimumDuration: 5) {
-            withAnimation {
-                showDPad = true
-            }
-        }
-    }
-
-    private var sequenceText: String {
-        pressedButtons.map { direction in
-            switch direction {
-            case .up: return "↑"
-            case .down: return "↓"
-            case .left: return "←"
-            case .right: return "→"
-            }
-        }.joined(separator: " ")
-    }
-
-    private func pressButton(_ direction: Direction) {
-        pressedButtons.append(direction)
-
-        // Check if the sequence matches the Konami code
-        if pressedButtons.count >= konamiCode.count {
-            let lastEight = Array(pressedButtons.suffix(konamiCode.count))
-            if lastEight == konamiCode {
-                onComplete()
-                dismiss()
-            }
-        }
-
-        // Limit the stored sequence length
-        if pressedButtons.count > 16 {
-            pressedButtons.removeFirst(8)
-        }
+        .navigationTitle("Missing Artwork Style")
     }
 }
 
@@ -1280,12 +1269,14 @@ private struct SecretSettingsRow: View {
                                icon: .sfSymbol("flag.fill"))
                 }
             } else {
-                SettingsRow(title: "About",
-                           subtitle: "Version information",
-                           icon: .sfSymbol("info.circle"))
-                    .onTapGesture {
-                        showSecretView = true
-                    }
+                Button {
+                    showSecretView = true
+                } label: {
+                    SettingsRow(title: "About",
+                               subtitle: "Version information",
+                               icon: .sfSymbol("info.circle"))
+                }
+                .buttonStyle(.plain)
             }
             #endif
         }
@@ -1294,6 +1285,216 @@ private struct SecretSettingsRow: View {
                 showFeatureFlagsDebug = true
             }
         }
+    }
+}
+
+private struct SecretDPadView: View {
+    enum Direction {
+        case up, down, left, right
+    }
+
+    let onComplete: () -> Void
+    @State private var pressedButtons: [Direction] = []
+    @State private var showDPad = false
+    @FocusState private var isFocused: Bool
+    @Environment(\.dismiss) private var dismiss
+    #if os(tvOS)
+    @State private var controller: GCController?
+    @State private var isHandlingX = false
+    @State private var isHandlingY = false
+    #endif
+
+    private let konamiCode: [Direction] = [.up, .up, .down, .down, .left, .right, .left, .right]
+
+    var body: some View {
+        VStack {
+            if showDPad {
+                #if os(tvOS)
+                // tvOS: Show instructions and handle Siri Remote gestures
+                VStack {
+                    Text("Use Siri Remote to enter the code")
+                        .font(.headline)
+                        .padding()
+
+                    // Show current sequence with better visibility
+                    Text(sequenceText.isEmpty ? "No input yet" : sequenceText)
+                        .font(.title)
+                        .foregroundColor(.primary)
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.secondary.opacity(0.2))
+                        )
+                        .padding()
+
+                    // Show hint about remaining inputs needed
+                    Text("\(konamiCode.count - (pressedButtons.count % konamiCode.count)) more inputs needed")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .padding(.top)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                #else
+                // iOS: Show D-Pad buttons
+                VStack(spacing: 0) {
+                    Button(action: { pressButton(.up) }) {
+                        Image(systemName: "arrow.up.circle.fill")
+                            .resizable()
+                            .frame(width: 60, height: 60)
+                    }
+
+                    HStack(spacing: 60) {
+                        Button(action: { pressButton(.left) }) {
+                            Image(systemName: "arrow.left.circle.fill")
+                                .resizable()
+                                .frame(width: 60, height: 60)
+                        }
+
+                        Button(action: { pressButton(.right) }) {
+                            Image(systemName: "arrow.right.circle.fill")
+                                .resizable()
+                                .frame(width: 60, height: 60)
+                        }
+                    }
+
+                    Button(action: { pressButton(.down) }) {
+                        Image(systemName: "arrow.down.circle.fill")
+                            .resizable()
+                            .frame(width: 60, height: 60)
+                    }
+                }
+                .foregroundColor(.accentColor)
+
+                Text(sequenceText)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.top)
+                #endif
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .contentShape(Rectangle())
+        #if os(tvOS)
+        .focusable()
+        .focused($isFocused)
+        .onLongPressGesture(minimumDuration: 5) {
+            DLOG("[SecretDPadView] Long press detected")
+            withAnimation(.easeInOut) {
+                showDPad = true
+                isFocused = true
+                setupController()
+            }
+        }
+        .onChange(of: showDPad) { newValue in
+            DLOG("[SecretDPadView] showDPad changed to: \(newValue)")
+            if newValue {
+                setupController()
+            }
+        }
+        .onChange(of: isFocused) { focused in
+            DLOG("[SecretDPadView] Focus changed to: \(focused)")
+            if !focused {
+                pressedButtons.removeAll()
+                removeController()
+            } else if showDPad {
+                setupController()
+            }
+        }
+        .onDisappear {
+            removeController()
+        }
+        #else
+        // iOS: Handle long press gesture
+        .onLongPressGesture(minimumDuration: 5) {
+            withAnimation {
+                showDPad = true
+            }
+        }
+        #endif
+    }
+
+    #if os(tvOS)
+    private func setupController() {
+        DLOG("[SecretDPadView] Setting up controller")
+        // Get the first connected controller (Siri Remote)
+        controller = GCController.controllers().first
+
+        controller?.microGamepad?.dpad.valueChangedHandler = { [self] dpad, xValue, yValue in
+            DLOG("[SecretDPadView] Dpad input - x: \(xValue), y: \(yValue)")
+
+            // Handle X-axis (left/right)
+            if xValue == 1.0 && !isHandlingX {
+                isHandlingX = true
+                pressButton(.right)
+            } else if xValue == -1.0 && !isHandlingX {
+                isHandlingX = true
+                pressButton(.left)
+            } else if xValue == 0 {
+                isHandlingX = false
+            }
+
+            // Handle Y-axis (up/down)
+            if yValue == 1.0 && !isHandlingY {
+                isHandlingY = true
+                pressButton(.up)
+            } else if yValue == -1.0 && !isHandlingY {
+                isHandlingY = true
+                pressButton(.down)
+            } else if yValue == 0 {
+                isHandlingY = false
+            }
+        }
+
+        // Enable basic gamepad input profile for Siri Remote
+        controller?.microGamepad?.reportsAbsoluteDpadValues = false
+    }
+
+    private func removeController() {
+        DLOG("[SecretDPadView] Removing controller")
+        controller?.microGamepad?.dpad.valueChangedHandler = nil
+        controller = nil
+        isHandlingX = false
+        isHandlingY = false
+    }
+    #endif
+
+    private var sequenceText: String {
+        pressedButtons.map { direction in
+            switch direction {
+            case .up: return "↑"
+            case .down: return "↓"
+            case .left: return "←"
+            case .right: return "→"
+            }
+        }.joined(separator: " ")
+    }
+
+    private func pressButton(_ direction: Direction) {
+        DLOG("[SecretDPadView] Button pressed: \(direction)")
+        pressedButtons.append(direction)
+
+        #if os(tvOS)
+        // Use AudioServicesPlaySystemSound for tvOS feedback
+        AudioServicesPlaySystemSound(1519) // Standard system sound
+        #endif
+
+        // Check if the sequence matches the Konami code
+        if pressedButtons.count >= konamiCode.count {
+            let lastEight = Array(pressedButtons.suffix(konamiCode.count))
+            DLOG("[SecretDPadView] Checking sequence: \(lastEight) against \(konamiCode)")
+            if lastEight == konamiCode {
+                DLOG("[SecretDPadView] Konami code matched!")
+                onComplete()
+                dismiss()
+            }
+        }
+
+        // Limit the stored sequence length
+        if pressedButtons.count > 16 {
+            pressedButtons.removeFirst(8)
+        }
+
+        DLOG("[SecretDPadView] Current sequence: \(sequenceText)")
     }
 }
 

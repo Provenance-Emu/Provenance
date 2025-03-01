@@ -92,7 +92,10 @@ final class PVSaveStateCollectionViewCell: UICollectionViewCell {
                 ELOG("Something wrong with save state object. game nil? \(gameNil), system nil? \(systemNil), no cores? \(noCores)")
 
                 let errorLabel: String
-                if saveState.game == nil { errorLabel = "Missing Game!" } else if saveState.game.system == nil { errorLabel = "Missing System!" } else if saveState.game.system.cores.isEmpty { errorLabel = "Missing Cores!" } else { errorLabel = "Missing Data!" }
+                if saveState.game == nil { errorLabel = "Missing Game!" }
+                else if saveState.game?.system == nil { errorLabel = "Missing System!" }
+                else if saveState.game!.system!.cores.isEmpty { errorLabel = "Missing Cores!" }
+                else { errorLabel = "Missing Data!" }
 
                 if saveState.game == nil {
                     titleLabel.text = errorLabel

@@ -63,7 +63,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     }()
 
     private(set) lazy public var controllerViewController: (UIViewController & StartSelectDelegate)? = {
-        let controller = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
+        guard let system = game.system else {
+            ELOG("Nil system for \(game.title)")
+            return nil
+        }
+        let controller = PVCoreFactory.controllerViewController(forSystem: system, core: core)
         return controller
     }()
 

@@ -383,7 +383,7 @@ public final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBas
             guard let self = self else { return }
             filenameLabel.text = fileName
         }
-        systemLabel.text = game?.system.name ?? ""
+        systemLabel.text = game?.system?.name ?? ""
         developerLabel.text = game?.developer ?? ""
         publishDateLabel.text = game?.publishDate ?? ""
         genresLabel.text = game?.genres?.components(separatedBy: ",").joined(separator: ", ") ?? ""

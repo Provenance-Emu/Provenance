@@ -6,6 +6,8 @@
 //  Copyright © 2024 Provenance Emu. All rights reserved.
 //
 
+import PVLibrary
+import PVLogging
 import FileProvider
 
 class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {

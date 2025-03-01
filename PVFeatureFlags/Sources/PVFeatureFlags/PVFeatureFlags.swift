@@ -72,6 +72,14 @@ public struct FeatureFlag: Codable, Sendable {
         allowedAppTypes: ["standard", "lite"],
         description: "Enables the built-in RetroArch editor. Disabled for App Store builds."
     )
+
+    /// Enables contentless cores like DOOM, Quake, etc
+    public static let contentlessCores = FeatureFlag(
+        enabled: false,
+        minVersion: "3.0.5",
+        allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
+        description: "Enables contentless cores like DOOM, Quake, etc. Disabled for App Store builds."
+    )
 }
 
 /// Root structure for feature flags JSON
@@ -151,6 +159,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         case cheatsUseSwiftUI = "cheatsUseSwiftUI"
         case retroarchBuiltinEditor = "retroarchBuiltinEditor"
         case advancedSkinFeatures = "advancedSkinFeatures"
+        case contentlessCores = "contentlessCores"
     }
 
     /// Helper function to compare version strings
@@ -191,6 +200,8 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
                     return FeatureFlag.advancedSkinFeatures
                 case .retroarchBuiltinEditor:
                     return FeatureFlag.retroarchBuiltinEditor
+                case .contentlessCores:
+                    return FeatureFlag.contentlessCores
                 default:
                     return FeatureFlag(enabled: false)
                 }
@@ -412,6 +423,9 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         } else {
             featureStates[.inAppFreeROMs] = featureFlags.isEnabled(.inAppFreeROMs)
         }
+        
+        // Post notification of change
+        NotificationCenter.default.post(name: .featureFlagDidChange, object: nil)
     }
 
     /// Check if a feature is enabled
@@ -495,6 +509,39 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     public func getAllFeatureFlags() -> [(key: String, flag: FeatureFlag, enabled: Bool)] {
         return featureFlags.getAllFeatureFlags()
     }
+}
+
+/// Observable class for feature flag changes
+@MainActor final class FeatureFlagObservable: ObservableObject {
+    @Published var value: Bool
+    private let feature: PVFeatureFlags.PVFeature
+
+    init(_ feature: PVFeatureFlags.PVFeature) {
+        self.feature = feature
+        self.value = PVFeatureFlagsManager.shared.isEnabled(feature)
+
+        // Setup observation of feature flag changes
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(featureFlagDidChange),
+            name: .featureFlagDidChange,
+            object: nil
+        )
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    @objc private func featureFlagDidChange() {
+        value = PVFeatureFlagsManager.shared.isEnabled(feature)
+    }
+}
+
+// Add notification for feature flag changes
+extension Notification.Name {
+    /// Notification sent when a feature flag changes
+    public static let featureFlagDidChange = Notification.Name("featureFlagDidChange")
 }
 
 // MARK: - Environment Values
