@@ -103,17 +103,48 @@ struct CoreOptionsListView: View {
     @State private var coreItems: [CoreListItem] = []
     /// The theme manager
     @ObservedObject private var themeManager = ThemeManager.shared
+    /// Whether to show the reset confirmation alert
+    @State private var showResetAllConfirmation = false
+    /// Track scroll offset to hide/show the reset button
+    @State private var scrollOffset: CGFloat = 0
+    /// Previous scroll offset to determine direction
+    @State private var previousScrollOffset: CGFloat = 0
+    /// Whether the button is visible
+    @State private var isButtonVisible = true
+    /// Threshold for hiding/showing the button
+    private let scrollThreshold: CGFloat = 20
 
     /// The body of the view
     var body: some View {
-        List {
-            ForEach(coreItems) { item in
-                NavigationLink {
-                    CoreOptionsDetailView(coreClass: item.coreClass, title: item.name)
-                } label: {
-                    CoreListItemView(item: item)
+        ZStack(alignment: .top) {
+            // Main content
+            ScrollViewWithOffset(
+                axes: .vertical,
+                showsIndicators: true,
+                offsetChanged: { offset in
+                    handleScrollOffset(offset)
                 }
+            ) {
+                LazyVStack {
+                    // Spacer to account for the floating button
+                    Color.clear.frame(height: 70)
+
+                    ForEach(coreItems) { item in
+                        NavigationLink {
+                            CoreOptionsDetailView(coreClass: item.coreClass, title: item.name)
+                        } label: {
+                            CoreListItemView(item: item)
+                        }
+                        .padding(.horizontal)
+                        .padding(.vertical, 4)
+                    }
+                }
+                .padding(.bottom)
             }
+
+            // Floating reset button
+            resetButton
+                .zIndex(1) // Ensure button stays on top
         }
         .searchable(text: $searchText)
         .navigationTitle("Core Options")
@@ -122,6 +153,83 @@ struct CoreOptionsListView: View {
             DLOG("CoreOptions: Loading core items for \(cores.count) cores")
             await loadCoreItems()
         }
+        .uiKitAlert(
+            "Reset All Core Options",
+            message: "Are you sure you want to reset ALL options for ALL cores to their default values? This cannot be undone.",
+            isPresented: $showResetAllConfirmation
+        ) {
+            UIAlertAction(title: "Reset All", style: .destructive) { _ in
+                resetAllCoreOptions()
+                showResetAllConfirmation = false
+            }
+
+            UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                showResetAllConfirmation = false
+            }
+        }
+    }
+
+    /// Handle scroll offset changes to show/hide the button
+    private func handleScrollOffset(_ offset: CGFloat) {
+        // Only show button when at or near the top of the content
+        let isAtTop = offset >= -10 // Allow a small threshold for "top" position
+
+        // If we're at the top, always show the button
+        if isAtTop && !isButtonVisible {
+            withAnimation(.spring(response: 0.3)) {
+                isButtonVisible = true
+            }
+        }
+        // If we're scrolling down and button is visible, hide it
+        else if !isAtTop && isButtonVisible && offset < previousScrollOffset {
+            withAnimation(.spring(response: 0.3)) {
+                isButtonVisible = false
+            }
+        }
+
+        // Update previous offset for next comparison
+        previousScrollOffset = offset
+    }
+
+    /// The reset button view
+    private var resetButton: some View {
+        Button(action: {
+            showResetAllConfirmation = true
+        }) {
+            HStack {
+                Image(systemName: "arrow.counterclockwise")
+                Text("Reset All Core Options")
+            }
+            .padding()
+            .frame(maxWidth: .infinity)
+            #if os(tvOS)
+            // Use tvOS-specific styling
+            .background(Color.red.opacity(0.7))
+            .foregroundColor(.white)
+            .cornerRadius(5)
+            .padding(.horizontal, 40)
+            .focusable(true)
+            .buttonStyle(.card)
+            #else
+            // Use iOS-specific styling
+            .background(Color.red.opacity(0.8))
+            .foregroundColor(.white)
+            .cornerRadius(10)
+            .padding(.horizontal)
+            #endif
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(
+            Rectangle()
+                .fill(Color(.systemBackground))
+                .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 2)
+        )
+        // Use both scale and opacity for a more dramatic effect
+        .opacity(isButtonVisible ? 1 : 0)
+        .scaleEffect(isButtonVisible ? 1 : 0.5, anchor: .top)
+        // Add a slight vertical offset when hiding
+        .offset(y: isButtonVisible ? 0 : -20)
     }
 
     /// Load the core items
@@ -142,6 +250,74 @@ struct CoreOptionsListView: View {
 
         ILOG("CoreOptions: Loaded \(items.count) items")
         coreItems = items
+    }
+
+    /// Reset all options for all cores
+    private func resetAllCoreOptions() {
+        ILOG("CoreOptions: Resetting ALL options for ALL cores")
+
+        // Reset options for each core
+        for item in coreItems {
+            DLOG("CoreOptions: Resetting options for core: \(item.id)")
+            item.coreClass.resetAllOptions()
+        }
+
+        // Show a toast or notification that reset is complete
+        #if !os(tvOS)
+        NotificationCenter.default.post(
+            name: NSNotification.Name("ShowToast"),
+            object: nil,
+            userInfo: ["message": "All core options have been reset to defaults"]
+        )
+        #endif
+
+        ILOG("CoreOptions: All core options have been reset")
+    }
+}
+
+/// A ScrollView that reports its content offset
+struct ScrollViewWithOffset<Content: View>: View {
+    let axes: Axis.Set
+    let showsIndicators: Bool
+    let offsetChanged: (CGFloat) -> Void
+    let content: Content
+
+    init(
+        axes: Axis.Set = .vertical,
+        showsIndicators: Bool = true,
+        offsetChanged: @escaping (CGFloat) -> Void,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.axes = axes
+        self.showsIndicators = showsIndicators
+        self.offsetChanged = offsetChanged
+        self.content = content()
+    }
+
+    var body: some View {
+        ScrollView(axes, showsIndicators: showsIndicators) {
+            GeometryReader { geometry in
+                Color.clear.preference(
+                    key: ScrollOffsetPreferenceKey.self,
+                    value: geometry.frame(in: .named("scrollView")).origin.y
+                )
+            }
+            .frame(width: 0, height: 0)
+
+            content
+        }
+        .coordinateSpace(name: "scrollView")
+        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
+            offsetChanged(offset)
+        }
+    }
+}
+
+/// Preference key for tracking scroll offset
+struct ScrollOffsetPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
     }
 }
 
