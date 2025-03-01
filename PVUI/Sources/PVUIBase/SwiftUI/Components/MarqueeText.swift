@@ -141,14 +141,14 @@ public struct MarqueeText: View {
                 startAnimation()
             }
 
-            DLOG("MarqueeText appeared: '\(text.prefix(20))...'")
+            // DLOG("MarqueeText appeared: '\(text.prefix(20))...'")
         }
         .onDisappear {
             /// Mark the view as not in the hierarchy and stop animation
             isInViewHierarchy = false
             stopAnimation()
 
-            DLOG("MarqueeText disappeared: '\(text.prefix(20))...'")
+            // DLOG("MarqueeText disappeared: '\(text.prefix(20))...'")
         }
         .onChange(of: text) { newText in
             // Reset width calculation flag when text changes
@@ -180,11 +180,11 @@ public struct MarqueeText: View {
             if shouldAnimationRun {
                 startAnimation()
             }
-            DLOG("MarqueeText scene active: '\(text.prefix(20))...'")
+            // DLOG("MarqueeText scene active: '\(text.prefix(20))...'")
         case .inactive, .background:
             /// App went to background, pause animation
             stopAnimation()
-            DLOG("MarqueeText scene inactive/background: '\(text.prefix(20))...'")
+            // DLOG("MarqueeText scene inactive/background: '\(text.prefix(20))...'")
         @unknown default:
             break
         }
@@ -200,7 +200,7 @@ public struct MarqueeText: View {
             offset = 0
         }
 
-        DLOG("MarqueeText animation stopped: '\(text.prefix(20))...'")
+        // DLOG("MarqueeText animation stopped: '\(text.prefix(20))...'")
     }
 
     private func resetAnimation() {
@@ -220,13 +220,13 @@ public struct MarqueeText: View {
             textWidth = calculateTextWidth(text: text, font: uiFont)
             hasCalculatedWidth = true
 
-            DLOG("Text measurements: text='\(text)', width=\(textWidth), container=\(containerWidth), fontSize=\(uiFont.pointSize)")
+            // DLOG("Text measurements: text='\(text)', width=\(textWidth), container=\(containerWidth), fontSize=\(uiFont.pointSize)")
         }
     }
 
     private func startAnimation() {
         guard shouldAnimationRun else {
-            DLOG("MarqueeText animation not started (conditions not met): '\(text.prefix(20))...'")
+            // DLOG("MarqueeText animation not started (conditions not met): '\(text.prefix(20))...'")
             return
         }
 
@@ -235,7 +235,7 @@ public struct MarqueeText: View {
 
         /// Check if text actually needs scrolling after width calculation
         if textWidth <= containerWidth {
-            DLOG("MarqueeText animation not needed (text fits): '\(text.prefix(20))...'")
+            // DLOG("MarqueeText animation not needed (text fits): '\(text.prefix(20))...'")
             return
         }
 
@@ -247,7 +247,7 @@ public struct MarqueeText: View {
             let currentDelay = (offset == 0) ? initialDelay : delay
 
             /// Log the animation start with appropriate delay
-            DLOG("Starting marquee animation for '\(text.prefix(20))...' with \(offset == 0 ? "initial" : "regular") delay of \(currentDelay)s")
+            // DLOG("Starting marquee animation for '\(text.prefix(20))...' with \(offset == 0 ? "initial" : "regular") delay of \(currentDelay)s")
 
             /// Initial pause
             DispatchQueue.main.asyncAfter(deadline: .now() + currentDelay) {
@@ -282,7 +282,7 @@ public struct MarqueeText: View {
         animationWorkItem = workItem
         DispatchQueue.main.async(execute: workItem)
 
-        DLOG("MarqueeText animation started: '\(text.prefix(20))...'")
+        // DLOG("MarqueeText animation started: '\(text.prefix(20))...'")
     }
 }
 
