@@ -714,9 +714,6 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
 
         guard !itemsToProcess.isEmpty else {
-            DispatchQueue.main.async {
-                
-            }
             return
         }
 
