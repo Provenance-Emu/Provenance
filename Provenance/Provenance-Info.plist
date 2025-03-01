@@ -92,7 +92,7 @@
 			<key>CFBundleURLIconFile</key>
 			<string>URLIcon-83.5@2x</string>
 			<key>CFBundleURLName</key>
-			<string>org.provenance-emu.provenance</string>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>provenance</string>
@@ -238,8 +238,8 @@
 	</dict>
 	<key>NSUserActivityTypes</key>
 	<array>
-		<string>org.provenance-emu.game.play</string>
-		<string>org.provenance-emu.webserver</string>
+		<string>$(ORG_PREFIX).game.play</string>
+		<string>$(ORG_PREFIX).webserver</string>
 	</array>
 	<key>PVAppType</key>
 	<string>standard</string>
