@@ -10,6 +10,7 @@ import CoreSpotlight
 import RealmSwift
 import RxSwift
 import UIKit
+import Intents
 
 // Import custom modules for Provenance-specific functionality
 import PVSupport
@@ -306,6 +307,13 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         _initICloud()
         _initUITheme()
         _initThemeListener()
+
+        // Register intent handler for Siri shortcuts
+        #if os(iOS)
+        if #available(iOS 14.0, *) {
+            registerIntentHandler()
+        }
+        #endif
     }
 
     func configureApplication(_ application: UIApplication,  launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) {
@@ -623,11 +631,4 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
-
-    //    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-    //        let sceneConfig = UISceneConfiguration(name: nil, sessionRole: connectingSceneSession.role)
-    //        sceneConfig.delegateClass = PVSceneDelegate.self
-    //        return sceneConfig
-    //    }
-
 }
