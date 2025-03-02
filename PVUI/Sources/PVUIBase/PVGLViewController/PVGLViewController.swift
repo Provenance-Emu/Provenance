@@ -137,12 +137,14 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         renderSettings.metalFilterMode = Defaults[.metalFilterMode]
         renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
         renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
+        renderSettings.nativeScaleEnabled = Defaults[.nativeScaleEnabled]
         
         Task {
             for await value in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing]) {
                 renderSettings.metalFilterMode = Defaults[.metalFilterMode]
                 renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
                 renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
+                renderSettings.nativeScaleEnabled = Defaults[.nativeScaleEnabled]
             }
         }
     }
