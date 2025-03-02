@@ -54,11 +54,6 @@ enum iCloudSyncStatus {
     case filesAlreadyMoved
 }
 
-enum GamePurgeStatus {
-    case incomplete
-    case complete
-}
-
 class iCloudContainerSyncer: iCloudTypeSyncer {
     lazy var pendingFilesToDownload: Set<String> = []
     lazy var newFiles: Set<URL> = []
@@ -70,6 +65,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     let errorHandler: ErrorHandler
     var initialSyncResult: SyncResult = .indeterminate
     let queue = DispatchQueue(label: "com.provenance.newFiles")
+    //process in batch numbers
     let fileImportQueueMaxCount = 100
     
     init(directories: Set<String>,
@@ -88,10 +84,6 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         let removed = removeFromiCloud()
         DLOG("removed: \(removed)")
         DLOG("dying")
-    }
-    
-    func printCurrentThread(function: String = #function) {
-        DLOG("\(function): current thread main? \(Thread.isMainThread)")
     }
     
     var localAndCloudDirectories: [URL: URL] {
@@ -274,7 +266,6 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                 }
             }
         }
-        //TODO: for ROMs and saves, perhaps we need to store the downloaded files that need to be process in the case of a crash or the user puts the app in the background.
         setNewCloudFilesAvailable()
         DLOG("\(directories): current iteration: files pending to be downloaded: \(files.count), files downloaded : \(filesDownloaded.count)")
     }
@@ -439,6 +430,15 @@ public enum iCloudSync {
     static let errorHandler: ErrorHandler = iCloudErrorHandler.shared
     
     public static func initICloudDocuments() {
+        NotificationCenter.default.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil) { _ in
+            Task {
+                guard Defaults[.iCloudSync]
+                else {
+                    return
+                }
+                turnOn()
+            }
+        }
         Task {
             for await value in Defaults.updates(.iCloudSync) {
                 iCloudSyncChanged(value)
@@ -453,15 +453,18 @@ public enum iCloudSync {
             turnOff()
             return
         }
-
-        guard URL.supportsICloud else {
-            DLOG("attempted to turn on iCloud, but iCloud is NOT setup on the device")
-            return
-        }
         turnOn()
     }
     
     static func turnOn() {
+        guard URL.supportsICloud else {
+            DLOG("attempted to turn on iCloud, but iCloud is NOT setup on the device")
+            return
+        }
+        guard RomDatabase.databaseInitialized
+        else {
+            return
+        }
         DLOG("turning on iCloud")
         //reset ROMs path
         gameImporter.gameImporterDatabaseService.setRomsPath(url: gameImporter.romsPath)
@@ -526,19 +529,11 @@ public enum iCloudSync {
 
 //MARK: - iCloud syncers
 
-//TODO: perhaps 1 generic class since a lot of this code is similar and move the extension onto generic class. we could just add a protocol delegate dependency for ROMs and SaveState classes that does specific code
 class SaveStateSyncer: iCloudContainerSyncer {
     let jsonDecorder = JSONDecoder()
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
         self.init(directories: ["Save States"], notificationCenter: notificationCenter, errorHandler: errorHandler)
         jsonDecorder.dataDecodingStrategy = .deferredToData
-        notificationCenter.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil) { [weak self] _ in
-            self?.importNewSaves()
-        }
-    }
-    
-    deinit {
-        notificationCenter.removeObserver(self)
     }
     
     override func insertDownloadedFile(_ file: URL) {
@@ -565,8 +560,8 @@ class SaveStateSyncer: iCloudContainerSyncer {
         do {
             let realm = try Realm()
             DLOG("attempting to query PVSaveState by file: \(file)")
-            let gameDirectory = file.deletingLastPathComponent().lastPathComponent
-            let savesDirectory = file.deletingLastPathComponent().deletingLastPathComponent().lastPathComponent
+            let gameDirectory = file.parentPathComponent
+            let savesDirectory = file.deletingLastPathComponent().parentPathComponent
             let partialPath = "\(savesDirectory)/\(gameDirectory)/\(file.lastPathComponent)"
             let imageField = NSExpression(forKeyPath: \PVSaveState.image.self).keyPath
             let partialPathField = NSExpression(forKeyPath: \PVImageFile.partialPath.self).keyPath
@@ -632,7 +627,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
     }
     
     func processJsonFiles(_ jsonFiles: any Collection<URL>) {
-        //TODO: try to change this to a single task and can we do this on a background thread instead of the main?
+        //for some reason doing this code in a Task just down't work, it only works with this nesting of Tasks and doing the concurrentForEach.
         Task {
             Task.detached { // @MainActor in
                 await jsonFiles.concurrentForEach { @MainActor [weak self] json in
@@ -687,6 +682,16 @@ class SaveStateSyncer: iCloudContainerSyncer {
     }
 }
 
+enum GamePurgeStatus {
+    case incomplete
+    case complete
+}
+
+enum GameStatus {
+    case gameExists
+    case gameDoesNotExist
+}
+
 class RomsSyncer: iCloudContainerSyncer {
     let gameImporter = GameImporter.shared
     var processingFiles = Set<URL>()
@@ -694,12 +699,6 @@ class RomsSyncer: iCloudContainerSyncer {
     
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
         self.init(directories: ["ROMs"], notificationCenter: notificationCenter, errorHandler: errorHandler)
-        notificationCenter.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil) { [weak self] _ in
-            Task {
-                self?.removeGamesDeletedWhileApplicationClosed()
-                self?.handleImportNewRomFiles()
-            }
-        }
         notificationCenter.addObserver(forName: .RomsFinishedImporting, object: nil, queue: nil) { [weak self] _ in
             Task {
                 self?.handleImportNewRomFiles()
@@ -711,10 +710,22 @@ class RomsSyncer: iCloudContainerSyncer {
         notificationCenter.removeObserver(self)
     }
     
+    override func loadAllFromICloud(iterationComplete: (() -> Void)?) -> Completable {
+        //ensure that the games are cached so we do NOT hit the database so much when checking for existence of games
+        RomDatabase.reloadGamesCache()
+        return super.loadAllFromICloud(iterationComplete: iterationComplete)
+    }
+    
+    /// The only time that we don't know if files have been deleted by the user is when it happens while the app is closed. so we have to query the db and check
     func removeGamesDeletedWhileApplicationClosed() {
         guard purgeStatus == .incomplete,
               initialSyncResult == .success,
-           errorHandler.numberOfErrors == 0
+              //if we have errors, it's better to just assume something happened while importing, so instead of creating a bigger mess, just NOT delete any files
+              errorHandler.numberOfErrors == 0,
+              //we have to ensure that everything has been downloaded/imported before attempting to remove anything
+              pendingFilesToDownload.count == 0,
+              newFiles.count == 0,
+              processingFiles.count == 0
         else {
             return
         }
@@ -727,7 +738,7 @@ class RomsSyncer: iCloudContainerSyncer {
         else {
             return
         }
-        printCurrentThread()
+        
         let romsPath = actualContainrUrl.appendDocumentsDirectory.appendingPathComponent(romsDirectoryName)
         DLOG("romsPath: \(romsPath)")
         let realm: Realm
@@ -756,7 +767,7 @@ class RomsSyncer: iCloudContainerSyncer {
             return
         }
         
-        let parentDirectory = file.deletingLastPathComponent().lastPathComponent
+        let parentDirectory = file.parentPathComponent
         DLOG("attempting to add file to game import queue: \(file), parent directory: \(parentDirectory)")
         //we should only add to the import queue files that are actual ROMs, anything else can be ignored.
         guard parentDirectory.range(of: "com.provenance.",
@@ -765,21 +776,10 @@ class RomsSyncer: iCloudContainerSyncer {
         else {
             return
         }
-        
-        do {
-            printCurrentThread()
-            let realm = try Realm()
-            let romPath = "\(parentDirectory)/\(fileName)"
-            DLOG("attempting to query PVGame by romPath: \(romPath)")
-            let results = realm.objects(PVGame.self).filter(NSPredicate(format: "\(NSExpression(forKeyPath: \PVGame.romPath.self).keyPath) == %@", romPath))
-            guard results.first == nil
-            else {
-                DLOG("\(file) already exists in database")
-                return
-            }
-        } catch {
-            errorHandler.handleError(error, file: file)
-            ELOG("error searching existing ROM \(file): \(error)")
+        guard getGameStatus(of: file) == .gameDoesNotExist
+        else {
+            DLOG("\(file) already exists in database. skipping...")
+            return
         }
         DLOG("\(file) does NOT exist in database, adding to import set")
         let newFilesCount: Int = queue.sync(flags: .barrier) { [weak self] in
@@ -791,10 +791,34 @@ class RomsSyncer: iCloudContainerSyncer {
         }
     }
     
+    /// Checks if game exists in game cache
+    /// - Parameter file: file to check against
+    /// - Returns: whether or not game exists in game cache
+    func getGameStatus(of file: URL) -> GameStatus {
+        let parentDirectory = file.parentPathComponent
+        guard let system = SystemIdentifier(rawValue: parentDirectory),
+              let parentUrl = URL(string: parentDirectory)
+        else {
+            DLOG("error obtaining existence of \(file) in game cache.")
+            return .gameDoesNotExist
+        }
+        let partialPath = parentUrl.appendingPathComponent(file.fileName)
+        DLOG("system: \(system), partialPath: \(partialPath)")
+        let similarName = RomDatabase.altName(file, systemIdentifier: system)
+        let gamesCache = RomDatabase.gamesCache
+        let partialPathAsString = partialPath.absoluteString
+        DLOG("partialPathAsString: \(partialPathAsString), similarName: \(similarName)")
+        guard let existingGame = gamesCache[partialPathAsString] ?? gamesCache[similarName],
+           system.rawValue == existingGame.systemIdentifier
+        else {
+            return .gameDoesNotExist
+        }
+        return .gameExists
+    }
+    
     override func deleteFromDatastore(_ file: URL) {
-        //TODO: remove cloud download, but keep in iCloud. this way the ROM isn't deleted from all devices
         guard let fileName = file.lastPathComponent.removingPercentEncoding,
-              let parentDirectory = file.deletingLastPathComponent().lastPathComponent.removingPercentEncoding
+              let parentDirectory = file.parentPathComponent.removingPercentEncoding
         else {
             return
         }
@@ -821,6 +845,7 @@ class RomsSyncer: iCloudContainerSyncer {
             return
         }
         clearProcessedFiles()
+        removeGamesDeletedWhileApplicationClosed()
         guard !newFiles.isEmpty
         else {
             return
@@ -836,7 +861,8 @@ class RomsSyncer: iCloudContainerSyncer {
         else {
             return
         }
-        printCurrentThread()
+        //give the UI a moment to finish updating, otherwise we get real bad app hangs non-stop and the user can't even get into a game or navigate through the UI. this is more of a hack, but it works for now when importing large libraries. not perfect, but allows the UI to breathe a little bit which is better than having the UI freeze because the user's reaction would prolly be to just shut down the app and reopen and then the user would go in an endless loop of not being able to use the app at all
+        sleep(60)
         queue.async(flags: .barrier) { [weak self] in
             self?.importNewRomFiles()
         }
@@ -848,7 +874,6 @@ class RomsSyncer: iCloudContainerSyncer {
     }
     
     func importNewRomFiles() {
-        printCurrentThread()
         let nextFilesToProcess = prepareNextBatchToProcess()
         DLOG("\(directories): processingFiles: (\(processingFiles.count)):")
         DLOG("\(processingFiles)")
@@ -945,5 +970,15 @@ class iCloudErrorHandler: ErrorHandler {
     
     func clear() {
         queue.clear()
+    }
+}
+
+extension URL {
+    var parentPathComponent: String {
+        deletingLastPathComponent().lastPathComponent
+    }
+    
+    var fileName: String {
+        lastPathComponent.removingPercentEncoding ?? lastPathComponent
     }
 }
