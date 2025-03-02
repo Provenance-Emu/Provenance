@@ -173,6 +173,19 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
     }
 
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        
+        // Invalidate cached values to force recalculation of the viewport on rotation.
+        lastScreenBounds = .zero
+        lastBufferSize = .zero
+        lastNativeScaleEnabled = false
+
+        coordinator.animate(alongsideTransition: { _ in
+            self.view.setNeedsLayout()
+        })
+    }
+    
     override func loadView() {
         /// Create MTKView with initial frame from screen bounds
         let screenBounds = UIScreen.main.bounds
