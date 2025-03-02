@@ -34,9 +34,9 @@ extension Defaults.Keys {
 
     static let buttonVibration = Key<Bool>("buttonVibration", default: true)
 #if os(iOS) || os(watchOS) || targetEnvironment(macCatalyst)
-    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: false)
+    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: true)
 #else
-    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: false)
+    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: true)
 #endif
     static let imageSmoothing = Key<Bool>("imageSmoothing", default: false)
 
