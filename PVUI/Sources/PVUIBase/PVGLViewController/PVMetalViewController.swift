@@ -1468,18 +1468,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 pipelineState = self.effectFilterPipeline
 
             } else if self.effectFilterShader?.name == "Mega Tron", let inputTexture = self.inputTexture {
-                let sourceSize = SIMD4<Float>(
-                    Float(inputTexture.width),
-                    Float(inputTexture.height),
-                    1.0 / Float(inputTexture.width),
-                    1.0 / Float(inputTexture.height)
-                )
-                let outputSize = SIMD4<Float>(
-                    Float(view.drawableSize.width),
-                    Float(view.drawableSize.height),
-                    1.0 / Float(view.drawableSize.width),
-                    1.0 / Float(view.drawableSize.height)
-                )
+                let sourceSize = SIMD4<Float>.init(0, 0, Float(screenRect.size.width), Float(screenRect.size.height))
+                let outputSize = SIMD4<Float>.init(Float(inputTexture.width), Float(inputTexture.height), Float(view.drawableSize.width), Float(view.drawableSize.height))
 
                 var uniforms = MegaTronUniforms(
                     SourceSize: sourceSize,
@@ -1490,8 +1480,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                     SCAN_BLUR: 2.5,         /// Scanline blur
                     CURVATURE: 0.02,        /// Screen curvature
                     TRINITRON_CURVE: 1.0,   /// 0=normal curve, 1=trinitron style
-                    CORNER: 0.02,           /// Corner size
-                    CRT_GAMMA: 2.4          /// CRT gamma correction
+                    CORNER: 1.0,           /// Corner size
+                    CRT_GAMMA: 2.2          /// CRT gamma correction
                 )
 
                 encoder.setFragmentBytes(&uniforms, length: MemoryLayout<MegaTronUniforms>.stride, index: 0)
