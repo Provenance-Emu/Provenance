@@ -220,11 +220,13 @@ struct CoreOptionsListView: View {
         }
         .padding(.top, 8)
         .padding(.bottom, 4)
+        #if !os(tvOS)
         .background(
             Rectangle()
                 .fill(Color(.systemBackground))
                 .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 2)
         )
+        #endif
         // Use both scale and opacity for a more dramatic effect
         .opacity(isButtonVisible ? 1 : 0)
         .scaleEffect(isButtonVisible ? 1 : 0.5, anchor: .top)
