@@ -2,7 +2,7 @@
 //  PVAppDelegate+Intents.swift
 //  Provenance
 //
-//  Created by Claude on behalf of Joseph Mattiello
+//  Created by Joseph Mattiello
 //  Copyright © 2025 Provenance Emu. All rights reserved.
 //
 
