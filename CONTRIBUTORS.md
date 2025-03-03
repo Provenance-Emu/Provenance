@@ -5,9 +5,9 @@
 ## Summary
 
 - **Total Contributors**: 93
-- **Total Commits**: 6161
-- **Total Lines Added**: 13932801
-- **Total Lines Removed**: 5799865
+- **Total Commits**: 6258
+- **Total Lines Added**: 13941547
+- **Total Lines Removed**: 5802041
 
 ## Contributor Details
 
@@ -18,9 +18,9 @@
 ![Joseph Mattiello](https://www.gravatar.com/avatar/79585fbd531fa1438a73a53fb2c9eacd?s=100&d=identicon)
 
 - **Emails Used**: git@joemattiello.com, jmattiello@MacBook-Pro-M2.local, jmattiello@hearst.com, joe.mattiello@salido.com, mail@joemattiello.com
-- **Commits**: `4568`
-- **Lines Added**: `11726820`
-- **Lines Removed**: `5012015`
+- **Commits**: `4654`
+- **Lines Added**: `11735185`
+- **Lines Removed**: `5014081`
 - **Most Active File**: `Provenance.xcodeproj/project.pbxproj`
 - **Activity**: `▰▰▰▰▰▰▰▰▰▰`
 
@@ -57,9 +57,9 @@
 ![MrJs](https://www.gravatar.com/avatar/7d1650cb09f7b37c7060f99ee2cf5e02?s=100&d=identicon)
 
 - **Emails Used**: 30782821+mrjschulte@users.noreply.github.com
-- **Commits**: `104`
-- **Lines Added**: `152976`
-- **Lines Removed**: `423050`
+- **Commits**: `111`
+- **Lines Added**: `153287`
+- **Lines Removed**: `423144`
 - **Most Active File**: `Cores/Mednafen/MednafenGameCore.mm`
 - **Activity**: `▰▰▰▰▰▰▰▰▰▰`
 
@@ -416,6 +416,19 @@
 
 ---
 
+### pabloarista
+
+![pabloarista](https://www.gravatar.com/avatar/a009f6501a8521c845519c8c39d75461?s=100&d=identicon)
+
+- **Emails Used**: 3964831+pabloarista@users.noreply.github.com
+- **Commits**: `4`
+- **Lines Added**: `125`
+- **Lines Removed**: `40`
+- **Most Active File**: `Cores/Atari800/Sources/PVAtari800Bridge/PVAtari800Bridge.m`
+- **Activity**: `▰▰▰▰▱▱▱▱▱▱`
+
+---
+
 ### James
 
 ![James](https://www.gravatar.com/avatar/367bcb37d4f6244a32adb8f488c95ff8?s=100&d=identicon)
@@ -546,19 +559,6 @@
 
 ---
 
-### pabloarista
-
-![pabloarista](https://www.gravatar.com/avatar/a009f6501a8521c845519c8c39d75461?s=100&d=identicon)
-
-- **Emails Used**: 3964831+pabloarista@users.noreply.github.com
-- **Commits**: `2`
-- **Lines Added**: `57`
-- **Lines Removed**: `26`
-- **Most Active File**: `Cores/Atari800/Sources/PVAtari800Bridge/PVAtari800Bridge.m`
-- **Activity**: `▰▰▱▱▱▱▱▱▱▱`
-
----
-
 ### Simone Civetta
 
 ![Simone Civetta](https://www.gravatar.com/avatar/3f309c992e2b1a5c3c014e63810a2f68?s=100&d=identicon)
@@ -572,6 +572,19 @@
 
 ---
 
+### yippeeeyay
+
+![yippeeeyay](https://www.gravatar.com/avatar/e1a842c258c76faf970e6bd73483766e?s=100&d=identicon)
+
+- **Emails Used**: thelastblud@gmail.com
+- **Commits**: `9`
+- **Lines Added**: `42`
+- **Lines Removed**: `21`
+- **Most Active File**: `Cores/emuThree/PVEmuThreeCore/Core/PVEmuThreeCoreOptions.swift`
+- **Activity**: `▰▰▰▰▰▰▰▰▰▱`
+
+---
+
 ### Antique
 
 ![Antique](https://www.gravatar.com/avatar/761056caa48dec01d2b4a4b8460d36a9?s=100&d=identicon)
@@ -582,19 +595,6 @@
 - **Lines Removed**: `23`
 - **Most Active File**: `Provenance/Emulator/PVEmulatorViewController~iOS.swift`
 - **Activity**: `▰▰▰▱▱▱▱▱▱▱`
-
----
-
-### yippeeeyay
-
-![yippeeeyay](https://www.gravatar.com/avatar/e1a842c258c76faf970e6bd73483766e?s=100&d=identicon)
-
-- **Emails Used**: thelastblud@gmail.com
-- **Commits**: `7`
-- **Lines Added**: `40`
-- **Lines Removed**: `19`
-- **Most Active File**: `Cores/emuThree/PVEmuThreeCore/Core/PVEmuThreeCoreOptions.swift`
-- **Activity**: `▰▰▰▰▰▰▰▱▱▱`
 
 ---
 
