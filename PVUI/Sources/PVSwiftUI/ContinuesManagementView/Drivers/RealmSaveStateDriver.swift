@@ -32,6 +32,7 @@ public class RealmSaveStateDriver: SaveStateDriver {
 
     /// The Realm configuration to use for creating Realm instances
     private let realmConfiguration: Realm.Configuration
+
     private var notificationToken: NotificationToken?
 
     /// Cache for save state view models to avoid repeated conversions
@@ -84,7 +85,7 @@ public class RealmSaveStateDriver: SaveStateDriver {
         self.realmConfiguration = realm.configuration
         setupFilteredObservers()
         isInitialSetupComplete = true
-        updateSaveStates()
+//        updateSaveStates()
     }
 
     /// Initialize with a Realm configuration
@@ -93,7 +94,7 @@ public class RealmSaveStateDriver: SaveStateDriver {
         self.realmConfiguration = configuration
         setupFilteredObservers()
         isInitialSetupComplete = true
-        updateSaveStates()
+//        updateSaveStates()
     }
 
     /// Default initializer that uses the default Realm configuration
@@ -101,6 +102,7 @@ public class RealmSaveStateDriver: SaveStateDriver {
         self.init(configuration: Realm.Configuration.defaultConfiguration)
     }
 
+    /// Deinitialize the driver
     deinit {
         notificationToken?.invalidate()
         currentConversionTask?.cancel()
@@ -175,6 +177,11 @@ public class RealmSaveStateDriver: SaveStateDriver {
     }
 
     /// Clear caches only for the affected objects
+    /// - Parameters:
+    ///   - deletions: The indices of the deletions
+    ///   - insertions: The indices of the insertions
+    ///   - modifications: The indices of the modifications
+    ///   - results: The results of the query
     private func clearCachesForChanges(deletions: [Int], insertions: [Int], modifications: [Int], from results: Results<PVSaveState>) {
         cacheLock.lock()
         defer { cacheLock.unlock() }
@@ -217,6 +224,8 @@ public class RealmSaveStateDriver: SaveStateDriver {
     }
 
     /// Calculate the total size for a set of save state IDs
+    /// - Parameter ids: The IDs of the save states to calculate the total size for
+    /// - Returns: The total size of the save states in bytes
     private func calculateTotalSize(for ids: [String]) -> UInt64 {
         cacheLock.lock()
         defer { cacheLock.unlock() }
@@ -253,6 +262,7 @@ public class RealmSaveStateDriver: SaveStateDriver {
 
     /// Calculate sizes asynchronously for a set of save state IDs
     /// - Parameter ids: The IDs of the save states to calculate sizes for
+    /// - Returns: A dictionary of save state IDs and their sizes
     private func calculateSizesAsync(for ids: [String]) async {
         let realm = self.realm()
         let saveStates = realm.objects(PVSaveState.self).filter("id IN %@", ids)
@@ -320,6 +330,7 @@ public class RealmSaveStateDriver: SaveStateDriver {
         }
     }
 
+    /// Update the save states
     private func updateSaveStates() {
         // Skip updates during initialization to avoid redundant work
         guard isInitialSetupComplete else { return }
@@ -354,6 +365,8 @@ public class RealmSaveStateDriver: SaveStateDriver {
         }
     }
 
+    /// Get all save states
+    /// - Returns: An array of SaveStateRowViewModel objects
     public func getAllSaveStates() -> [SaveStateRowViewModel] {
         // Get the filtered query
         let results = getFilteredQuery()
@@ -363,6 +376,8 @@ public class RealmSaveStateDriver: SaveStateDriver {
     }
 
     /// Synchronous version of convertRealmResults for backward compatibility
+    /// - Parameter results: The Realm results to convert
+    /// - Returns: An array of SaveStateRowViewModel objects
     private func convertRealmResultsSync(_ results: Results<PVSaveState>) -> [SaveStateRowViewModel] {
         // Filter out save states with no game
         let validResults = results.filter { $0.game != nil }
@@ -461,12 +476,19 @@ public class RealmSaveStateDriver: SaveStateDriver {
         }
     }
 
+    /// Get save states for a specific game ID
+    /// - Parameter gameID: The ID of the game to get save states for
+    /// - Returns: An array of SaveStateRowViewModel objects
     public func getSaveStates(forGameId gameID: String) -> [SaveStateRowViewModel] {
         // Get a thread-local Realm instance
         let realm = self.realm()
         return convertRealmResultsSync(realm.objects(PVSaveState.self).filter("game.id == %@", gameID))
     }
 
+    /// Update the description of a save state
+    /// - Parameters:
+    ///   - saveStateId: The ID of the save state to update
+    ///   - description: The new description
     public func updateDescription(saveStateId: String, description: String?) {
         processingQueue.async { [weak self] in
             guard let self = self else { return }
@@ -484,7 +506,7 @@ public class RealmSaveStateDriver: SaveStateDriver {
             cacheLock.lock()
             var shouldUpdateUI = false
             if var cachedViewModel = viewModelCache[saveStateId] {
-                cachedViewModel.description = description
+                cachedViewModel.description = description ?? ""
                 viewModelCache[saveStateId] = cachedViewModel
                 shouldUpdateUI = true
             }
@@ -493,12 +515,21 @@ public class RealmSaveStateDriver: SaveStateDriver {
             // Update UI on main thread if needed
             if shouldUpdateUI {
                 Task { @MainActor in
-                    self.saveStatesSubject.send(self.saveStatesSubject.value)
+                    // Instead of sending the entire value, update just the affected item
+                    var currentSaveStates = self.saveStatesSubject.value
+                    if let index = currentSaveStates.firstIndex(where: { $0.id == saveStateId }) {
+                        currentSaveStates[index].description = description ?? ""
+                        self.saveStatesSubject.send(currentSaveStates)
+                    }
                 }
             }
         }
     }
 
+    /// Set the pin status of a save state
+    /// - Parameters:
+    ///   - saveStateId: The ID of the save state to update
+    ///   - isPinned: The new pin status
     public func setPin(saveStateId: String, isPinned: Bool) {
         processingQueue.async { [weak self] in
             guard let self = self else { return }
@@ -525,12 +556,21 @@ public class RealmSaveStateDriver: SaveStateDriver {
             // Update UI on main thread if needed
             if shouldUpdateUI {
                 Task { @MainActor in
-                    self.saveStatesSubject.send(self.saveStatesSubject.value)
+                    // Instead of sending the entire value, update just the affected item
+                    var currentSaveStates = self.saveStatesSubject.value
+                    if let index = currentSaveStates.firstIndex(where: { $0.id == saveStateId }) {
+                        currentSaveStates[index].isPinned = isPinned
+                        self.saveStatesSubject.send(currentSaveStates)
+                    }
                 }
             }
         }
     }
 
+    /// Set the favorite status of a save state
+    /// - Parameters:
+    ///   - saveStateId: The ID of the save state to update
+    ///   - isFavorite: The new favorite status
     public func setFavorite(saveStateId: String, isFavorite: Bool) {
         processingQueue.async { [weak self] in
             guard let self = self else { return }
@@ -545,21 +585,26 @@ public class RealmSaveStateDriver: SaveStateDriver {
             }
 
             // Update cache if entry exists
-            cacheLock.lock()
-            var shouldUpdateUI = false
-            if var cachedViewModel = viewModelCache[saveStateId] {
-                Task { @MainActor in
+            Task { @MainActor in
+                self.cacheLock.lock()
+                var shouldUpdateUI = false
+                if var cachedViewModel = self.viewModelCache[saveStateId] {
                     cachedViewModel.isFavorite = isFavorite
                     self.viewModelCache[saveStateId] = cachedViewModel
+                    shouldUpdateUI = true
                 }
-                shouldUpdateUI = true
-            }
-            cacheLock.unlock()
+                self.cacheLock.unlock()
 
-            // Update UI on main thread if needed
-            if shouldUpdateUI {
-                Task { @MainActor in
-                    self.saveStatesSubject.send(self.saveStatesSubject.value)
+                // Update UI on main thread if needed
+                if shouldUpdateUI {
+                    Task { @MainActor in
+                        // Instead of sending the entire value, update just the affected item
+                        var currentSaveStates = self.saveStatesSubject.value
+                        if let index = currentSaveStates.firstIndex(where: { $0.id == saveStateId }) {
+                            currentSaveStates[index].isFavorite = isFavorite
+                            self.saveStatesSubject.send(currentSaveStates)
+                        }
+                    }
                 }
             }
         }
@@ -590,13 +635,17 @@ public class RealmSaveStateDriver: SaveStateDriver {
 
             // Update cache
             cacheLock.lock()
-            defer { cacheLock.unlock() }
-
             viewModelCache[saveState.id] = saveState
+            cacheLock.unlock()
 
             // Update UI on main thread
             Task { @MainActor in
-                self.saveStatesSubject.send(self.saveStatesSubject.value)
+                // Instead of sending the entire value, update just the affected item
+                var currentSaveStates = self.saveStatesSubject.value
+                if let index = currentSaveStates.firstIndex(where: { $0.id == saveState.id }) {
+                    currentSaveStates[index] = saveState
+                    self.saveStatesSubject.send(currentSaveStates)
+                }
             }
         }
     }
@@ -723,15 +772,17 @@ public class RealmSaveStateDriver: SaveStateDriver {
             for i in 0..<viewModels.count {
                 let id = viewModels[i].id
                 if let updates = updatedModels[id] {
-                    if let image = updates.image {
-                        viewModels[i].thumbnail = image
-                    }
-                    viewModels[i].size = updates.size
+                    Task { @MainActor in
+                        if let image = updates.image {
+                            viewModels[i].thumbnail = image
+                        }
+                        viewModels[i].size = updates.size
 
-                    // Update cache
-                    self.cacheLock.lock()
-                    self.viewModelCache[id] = viewModels[i]
-                    self.cacheLock.unlock()
+                        // Update cache
+                        self.cacheLock.lock()
+                        self.viewModelCache[id] = viewModels[i]
+                        self.cacheLock.unlock()
+                    }
                 }
             }
         }
