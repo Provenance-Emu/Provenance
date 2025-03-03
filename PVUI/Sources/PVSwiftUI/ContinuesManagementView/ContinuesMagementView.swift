@@ -92,6 +92,7 @@ public class ContinuesMagementViewModel: ObservableObject {
     private func setupObservers() {
         /// Observe editing state changes
         controlsViewModel.$isEditing
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] isEditing in
                 self?.saveStates.forEach { $0.isEditing = isEditing }
                 if !isEditing {
@@ -157,7 +158,7 @@ public class ContinuesMagementViewModel: ObservableObject {
             // Apply search filter
             if !searchText.isEmpty {
                 filtered = filtered.filter {
-                    guard let description = $0.description else { return false }
+                    let description = $0.description ?? $0.gameTitle
                     return description.localizedCaseInsensitiveContains(searchText)
                 }
             }
@@ -179,7 +180,7 @@ public class ContinuesMagementViewModel: ObservableObject {
             // Apply search filter
             if !searchText.isEmpty {
                 filtered = filtered.filter {
-                    guard let description = $0.description else { return false }
+                    let description = $0.description ?? $0.gameTitle
                     return description.localizedCaseInsensitiveContains(searchText)
                 }
             }
@@ -275,6 +276,7 @@ public class ContinuesMagementViewModel: ObservableObject {
     private func observeRowViewModel(_ viewModel: SaveStateRowViewModel) {
         /// Observe pin changes
         viewModel.$isPinned
+            .receive(on: DispatchQueue.main)
             .dropFirst()
             .sink { [weak self] isPinned in
                 self?.driver.setPin(saveStateId: viewModel.id, isPinned: isPinned)
@@ -284,6 +286,7 @@ public class ContinuesMagementViewModel: ObservableObject {
 
         /// Observe favorite changes
         viewModel.$isFavorite
+            .receive(on: DispatchQueue.main)
             .dropFirst()
             .sink { [weak self] isFavorite in
                 self?.driver.setFavorite(saveStateId: viewModel.id, isFavorite: isFavorite)
@@ -293,6 +296,7 @@ public class ContinuesMagementViewModel: ObservableObject {
 
         /// Observe description changes
         viewModel.$description
+            .receive(on: DispatchQueue.main)
             .dropFirst()
             .sink { [weak self] description in
                 self?.driver.updateDescription(saveStateId: viewModel.id, description: description)
