@@ -11,16 +11,37 @@
       "filename" : "Provenance iMessage.sticker"
     },
     {
+      "filename" : "Provenance NES Cart.sticker"
+    },
+    {
+      "filename" : "Provenance GMB.sticker"
+    },
+    {
+      "filename" : "Provenance Floppy.sticker"
+    },
+    {
+      "filename" : "Provenance SDCard.sticker"
+    },
+    {
+      "filename" : "Provenance CD Cover.sticker"
+    },
+    {
+      "filename" : "Provenance Jewel Case.sticker"
+    },
+    {
+      "filename" : "Provenance CD.sticker"
+    },
+    {
+      "filename" : "Provenance Photo.sticker"
+    },
+    {
       "filename" : "Provenance BluRay Case.sticker"
     },
     {
       "filename" : "Provenance Booklet.sticker"
     },
     {
-      "filename" : "Provenance CD Cover.sticker"
-    },
-    {
-      "filename" : "Provenance CD.sticker"
+      "filename" : "Provenance Folder Embossed.sticker"
     },
     {
       "filename" : "Provenance Drive.sticker"
@@ -35,22 +56,7 @@
       "filename" : "Provenance Film.sticker"
     },
     {
-      "filename" : "Provenance Floppy.sticker"
-    },
-    {
-      "filename" : "Provenance Folder Embossed.sticker"
-    },
-    {
-      "filename" : "Provenance GMB.sticker"
-    },
-    {
-      "filename" : "Provenance Jewel Case.sticker"
-    },
-    {
-      "filename" : "Provenance NES Cart.sticker"
-    },
-    {
-      "filename" : "Provenance Photo.sticker"
+      "filename" : "Provenance Tilted.sticker"
     },
     {
       "filename" : "Provenance Portrait.sticker"
@@ -65,9 +71,6 @@
       "filename" : "Provenance Round.sticker"
     },
     {
-      "filename" : "Provenance SDCard.sticker"
-    },
-    {
       "filename" : "Provenance Square.sticker"
     },
     {
@@ -77,43 +80,16 @@
       "filename" : "Provenance Stamp.sticker"
     },
     {
-      "filename" : "Provenance Tilted.sticker"
-    },
-    {
       "filename" : "Provenance V-Card.sticker"
-    },
-    {
-      "filename" : "tv.sticker"
     },
     {
       "filename" : "413-4138875_large-text-box-speech-bubbles-bubble-text-png.sticker"
     },
     {
-      "filename" : "tic80.sticker"
-    },
-    {
       "filename" : "sgb-icon-256.sticker"
     },
     {
-      "filename" : "ppsspp.sticker"
-    },
-    {
-      "filename" : "Icon-512.sticker"
-    },
-    {
-      "filename" : "SameDuck.sticker"
-    },
-    {
       "filename" : "gb-icon-256.sticker"
-    },
-    {
-      "filename" : "iconfile.sticker"
-    },
-    {
-      "filename" : "Stella.sticker"
-    },
-    {
-      "filename" : "ColorCartridge.sticker"
     }
   ]
 }
