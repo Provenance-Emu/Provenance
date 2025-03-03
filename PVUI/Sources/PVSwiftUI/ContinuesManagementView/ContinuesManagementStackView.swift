@@ -9,6 +9,7 @@ import SwiftUI
 import PVThemes
 
 /// Class to hold edit state that won't cause view hierarchy changes
+@MainActor
 public class SaveStateEditState: ObservableObject {
     /// The text being edited
     @Published
@@ -45,9 +46,6 @@ public struct ContinuesManagementStackView: View {
     @State private var currentUserInteractionCellID: String? = nil
     @State private var searchBarVisible = true
 
-    /// State for editing fields - using a reference type to avoid view hierarchy changes
-    @State private var editState = SaveStateEditState()
-
     /// Create a bindable wrapper for the edit state
     @ObservedObject private var bindableEditState: SaveStateEditState = .init()
 
@@ -55,7 +53,7 @@ public struct ContinuesManagementStackView: View {
 
     /// Function to handle edit requests from save state rows
     private func handleEdit(_ field: SaveStateEditField, saveState: SaveStateRowViewModel, initialValue: String?) {
-        editState.startEditing(field, saveState: saveState, initialValue: initialValue)
+        bindableEditState.startEditing(field, saveState: saveState, initialValue: initialValue)
     }
 
     public var body: some View {
@@ -104,22 +102,22 @@ public struct ContinuesManagementStackView: View {
             }
         }
         .alert("Edit Description", isPresented: Binding(
-            get: { editState.field == .description },
-            set: { if !$0 { editState.field = nil } }
+            get: { bindableEditState.field == .description },
+            set: { if !$0 { bindableEditState.field = nil } }
         )) {
             TextField("Description", text: $bindableEditState.text)
                 #if !os(tvOS)
                 .textInputAutocapitalization(.words)
                 #endif
             Button("Cancel", role: .cancel) {
-                editState.reset()
+                bindableEditState.reset()
             }
             Button("Save") {
-                if let saveState = editState.saveState {
-                    saveState.description = editState.text
+                if let saveState = bindableEditState.saveState {
+                    saveState.description = bindableEditState.text
                     viewModel.updateSaveState(saveState)
                 }
-                editState.reset()
+                bindableEditState.reset()
             }
         }
     }
