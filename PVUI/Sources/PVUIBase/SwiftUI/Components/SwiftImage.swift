@@ -9,12 +9,144 @@ import SwiftUI
 import PVThemes
 import PVSettings
 import Defaults
+import Foundation
 
 #if os(macOS)
 public typealias SwiftImage = NSImage
 #else
 public typealias SwiftImage = UIImage
 #endif
+
+/// Manages both memory and disk caching for missing artwork images
+public class MissingArtworkCacheManager {
+    /// Shared instance for the cache manager
+    public static let shared = MissingArtworkCacheManager()
+
+    /// In-memory cache for quick access
+    private let memoryCache = NSCache<NSString, SwiftImage>()
+
+    /// URL for the disk cache directory
+    private let diskCacheURL: URL
+
+    /// Maximum number of disk-cached images to keep
+    private let maxDiskCachedImages = 100
+
+    private init() {
+        // Set up memory cache limits
+        memoryCache.countLimit = 50
+
+        // Create disk cache directory in the caches folder
+        let cachesDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        diskCacheURL = cachesDirectory.appendingPathComponent("MissingArtworkCache", isDirectory: true)
+
+        // Create directory if it doesn't exist
+        if !FileManager.default.fileExists(atPath: diskCacheURL.path) {
+            try? FileManager.default.createDirectory(at: diskCacheURL, withIntermediateDirectories: true)
+        }
+    }
+
+    /// Generate a cache key for missing artwork images
+    private func cacheKey(gameTitle: String, ratio: CGFloat, pattern: RetroTestPattern, minFontSize: CGFloat) -> String {
+        return "\(gameTitle)_\(ratio)_\(pattern.rawValue)_\(minFontSize)"
+    }
+
+    /// Get the disk URL for a cache key
+    private func diskURL(for key: String) -> URL {
+        // Create a safe filename from the key
+        let safeKey = key.replacingOccurrences(of: "/", with: "_")
+                         .replacingOccurrences(of: ":", with: "_")
+                         .replacingOccurrences(of: " ", with: "_")
+        return diskCacheURL.appendingPathComponent("\(safeKey).png")
+    }
+
+    /// Get an image from cache (memory or disk)
+    public func getImage(gameTitle: String, ratio: CGFloat, pattern: RetroTestPattern, minFontSize: CGFloat) -> SwiftImage? {
+        let key = cacheKey(gameTitle: gameTitle, ratio: ratio, pattern: pattern, minFontSize: minFontSize) as NSString
+
+        // Check memory cache first
+        if let cachedImage = memoryCache.object(forKey: key) {
+            return cachedImage
+        }
+
+        // If not in memory, check disk cache
+        let fileURL = diskURL(for: key as String)
+        if FileManager.default.fileExists(atPath: fileURL.path),
+           let data = try? Data(contentsOf: fileURL),
+           let image = SwiftImage(data: data) {
+            // Store in memory cache for faster access next time
+            memoryCache.setObject(image, forKey: key)
+            return image
+        }
+
+        return nil
+    }
+
+    /// Store an image in both memory and disk cache
+    public func storeImage(_ image: SwiftImage, gameTitle: String, ratio: CGFloat, pattern: RetroTestPattern, minFontSize: CGFloat) {
+        let key = cacheKey(gameTitle: gameTitle, ratio: ratio, pattern: pattern, minFontSize: minFontSize) as NSString
+
+        // Store in memory cache
+        memoryCache.setObject(image, forKey: key)
+
+        // Store in disk cache
+        let fileURL = diskURL(for: key as String)
+        if let data = image.pngData() {
+            try? data.write(to: fileURL)
+        }
+
+        // Clean up disk cache if needed
+        cleanupDiskCache()
+    }
+
+    /// Clean up disk cache if it exceeds the maximum number of files
+    private func cleanupDiskCache() {
+        do {
+            let fileURLs = try FileManager.default.contentsOfDirectory(
+                at: diskCacheURL,
+                includingPropertiesForKeys: [.contentModificationDateKey],
+                options: .skipsHiddenFiles
+            )
+
+            if fileURLs.count > maxDiskCachedImages {
+                // Sort by modification date (oldest first)
+                let sortedURLs = try fileURLs.sorted { url1, url2 in
+                    let date1 = try url1.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate ?? Date.distantPast
+                    let date2 = try url2.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate ?? Date.distantPast
+                    return date1 < date2
+                }
+
+                // Remove oldest files to get back under the limit
+                let filesToRemove = sortedURLs.prefix(fileURLs.count - maxDiskCachedImages)
+                for fileURL in filesToRemove {
+                    try FileManager.default.removeItem(at: fileURL)
+                }
+            }
+        } catch {
+            print("Error cleaning up disk cache: \(error)")
+        }
+    }
+
+    /// Clear all caches (memory and disk)
+    public func clearAllCaches() {
+        // Clear memory cache
+        memoryCache.removeAllObjects()
+
+        // Clear disk cache
+        do {
+            let fileURLs = try FileManager.default.contentsOfDirectory(
+                at: diskCacheURL,
+                includingPropertiesForKeys: nil,
+                options: .skipsHiddenFiles
+            )
+
+            for fileURL in fileURLs {
+                try FileManager.default.removeItem(at: fileURL)
+            }
+        } catch {
+            print("Error clearing disk cache: \(error)")
+        }
+    }
+}
 
 // Add a cache for missing artwork images
 private let missingArtworkCache = NSCache<NSString, SwiftImage>()
@@ -173,32 +305,19 @@ extension SwiftImage {
         return (finalFont, lineCount)
     }
 
-    /// Generate a cache key for missing artwork images
-    private static func missingArtworkCacheKey(
-        gameTitle: String,
-        ratio: CGFloat,
-        pattern: RetroTestPattern,
-        minFontSize: CGFloat
-    ) -> String {
-        return "\(gameTitle)_\(ratio)_\(pattern.rawValue)_\(minFontSize)"
-    }
-
     public static func missingArtworkImage(
         gameTitle: String,
         ratio: CGFloat,
         pattern: RetroTestPattern = Defaults[.missingArtworkStyle],
         minFontSize: CGFloat = RetroStyle.defaultMinFontSize
     ) -> SwiftImage {
-        // Generate cache key
-        let cacheKey = missingArtworkCacheKey(
+        // Try to get the image from the cache manager first
+        if let cachedImage = MissingArtworkCacheManager.shared.getImage(
             gameTitle: gameTitle,
             ratio: ratio,
             pattern: pattern,
             minFontSize: minFontSize
-        ) as NSString
-
-        // Check if image is in cache
-        if let cachedImage = missingArtworkCache.object(forKey: cacheKey) {
+        ) {
             return cachedImage
         }
 
@@ -327,7 +446,14 @@ extension SwiftImage {
 
         // Store in cache
         if let finalImage = image {
-            missingArtworkCache.setObject(finalImage, forKey: cacheKey)
+            // Store in both memory and disk cache
+            MissingArtworkCacheManager.shared.storeImage(
+                finalImage,
+                gameTitle: gameTitle,
+                ratio: ratio,
+                pattern: pattern,
+                minFontSize: minFontSize
+            )
             return finalImage
         }
 
