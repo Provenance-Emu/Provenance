@@ -21,6 +21,7 @@ import PVRealm
 import Perception
 import SwiftUI
 import PVLookupTypes
+import RealmSwift
 
 public protocol GameImporterDatabaseServicing {
     typealias GameType = PVGame
@@ -435,7 +436,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     /// Saves a game to the database
     func saveGame(_ game: PVGame) throws {
         let database = RomDatabase.sharedInstance
-        let realm = RomDatabase.sharedInstance.realm
+        let realm = try Realm()
 
         // Get system reference
         guard let system = realm.object(ofType: PVSystem.self, forPrimaryKey: game.systemIdentifier) else {

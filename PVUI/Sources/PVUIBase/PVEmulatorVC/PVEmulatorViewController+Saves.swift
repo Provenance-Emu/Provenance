@@ -52,7 +52,10 @@ public extension PVEmulatorViewController {
             return false
         }
 
-        let realm = RomDatabase.sharedInstance.realm
+        guard let realm = try? await Realm() else {
+            ELOG("Realm() failed")
+            return false
+        }
         guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.coreIdentifier) else {
             presentError("No core in database with id \(self.core.coreIdentifier ?? "null")", source: self.view)
             return false
@@ -184,8 +187,11 @@ public extension PVEmulatorViewController {
             }
         }
 
-        let realm = RomDatabase.sharedInstance.realm
-
+        guard let realm = try? Realm() else {
+            ELOG("Realm() failed")
+            return
+        }
+        
         if fileManager.fileExists(atPath: autoSaveURL.path) {
             do {
                 guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.coreIdentifier) else {

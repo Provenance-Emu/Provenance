@@ -601,10 +601,16 @@ extension GameLaunchingViewController where Self: UIViewController {
     }
 
     @MainActor private func presentEMU(withCore core: PVCore, forGame game: PVGame, fromSaveState saveState: PVSaveState? = nil, source: UIView?) async {
-        guard let game = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) else {
+        guard let realm = await try? Realm() else {
+            ELOG("Realm initialization failed")
             return
         }
-        guard let core = RomDatabase.sharedInstance.realm.object(ofType: PVCore.self, forPrimaryKey: core.identifier) else {
+        guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) else {
+            ELOG("No game found for id: \(game.md5Hash)")
+            return
+        }
+        guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.identifier) else {
+            ELOG("No core found for id: \(core.identifier)")
             return
         }
         guard let system = game.system, let coreInstance = core.createInstance(forSystem: system) else {

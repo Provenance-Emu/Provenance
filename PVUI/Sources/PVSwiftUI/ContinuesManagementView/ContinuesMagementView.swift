@@ -198,6 +198,7 @@ public class ContinuesMagementViewModel: ObservableObject {
 
         // Observe save states size
         driver.savesSizePublisher
+            .receive(on: DispatchQueue.main)
             .map { Int($0) }
             .receive(on: DispatchQueue.main)
             .assign(to: \.savesTotalSize, on: headerViewModel)
@@ -299,6 +300,7 @@ public class ContinuesMagementViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
+    @MainActor
     private func refilterStates() {
         objectWillChange.send()
         let states = saveStates
@@ -380,6 +382,12 @@ public class ContinuesMagementViewModel: ObservableObject {
     private func deleteSelectedSaveStates() {
         let selectedStates = saveStates.filter { $0.isSelected }
         driver.delete(saveStates: selectedStates)
+    }
+
+    /// Update a save state with new values
+    public func updateSaveState(_ saveState: SaveStateRowViewModel) {
+        /// Forward the update to the driver
+        driver.update(saveState: saveState)
     }
 
     /// Subscribe to driver's save states publisher
@@ -513,7 +521,7 @@ struct RoundedCorners: Shape {
     }
 }
 
-private struct EmptyStateView: View {
+internal struct EmptyStateView: View {
     var body: some View {
         VStack(spacing: 16) {
             Image(systemName: "tray.fill")

@@ -84,7 +84,7 @@ struct UITestingApp: App {
                     driver: mockDriver,
                     gameTitle: mockDriver.gameTitle,
                     systemTitle: mockDriver.systemTitle,
-                    numberOfSaves: mockDriver.getAllSaveStates().count,
+                    numberOfSaves: await mockDriver.getAllSaveStates().count,
                     gameUIImage: mockDriver.gameUIImage
                 )
 
