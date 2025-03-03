@@ -6,6 +6,8 @@ import SwiftUI
 import PVUIBase
 import PVMediaCache
 import AsyncAlgorithms
+import PVSettings
+import Defaults
 
 public class RealmSaveStateDriver: SaveStateDriver {
     /// The game ID to filter save states by
@@ -412,40 +414,42 @@ public class RealmSaveStateDriver: SaveStateDriver {
                 } else {
                     // Use the game title for the missing artwork
                     let gameTitle = realmSaveState.game?.title ?? "Deleted"
+                    let ratio = 1.0
 
-                    // Generate a cache key for the missing artwork
-                    let missingArtworkKey = "missing_artwork_\(gameTitle)_1.0_rainbowNoise"
-
-                    // Check if the missing artwork is already in PVMediaCache
-                    if PVMediaCache.fileExists(forKey: missingArtworkKey) {
-                        var cachedImage: UIImage?
-                        let semaphore = DispatchSemaphore(value: 0)
-
-                        PVMediaCache.shareInstance().image(forKey: missingArtworkKey) { _, image in
-                            cachedImage = image
-                            semaphore.signal()
-                        }
-
-                        _ = semaphore.wait(timeout: .now() + 0.5)
-
-                        if let image = cachedImage {
-                            thumbnailImage = .init(uiImage: image)
-                        } else {
-                            // Fallback to generating a new image
-                            let missingImage = UIImage.missingArtworkImage(gameTitle: gameTitle, ratio: 1)
-                            thumbnailImage = .init(uiImage: missingImage)
-
-                            // Cache the generated image
-                            try? PVMediaCache.writeImage(toDisk: missingImage, withKey: missingArtworkKey)
-                        }
-                    } else {
+//                    // Generate a cache key for the missing artwork
+//                    let artworkStyle = Defaults[.missingArtworkStyle].description
+//                    let missingArtworkKey = "missing_artwork_\(gameTitle)_\(ratio)_\(artworkStyle)"
+//
+//                    // Check if the missing artwork is already in PVMediaCache
+//                    if PVMediaCache.fileExists(forKey: missingArtworkKey) {
+//                        var cachedImage: UIImage?
+//                        let semaphore = DispatchSemaphore(value: 0)
+//
+//                        PVMediaCache.shareInstance().image(forKey: missingArtworkKey) { _, image in
+//                            cachedImage = image
+//                            semaphore.signal()
+//                        }
+//
+//                        _ = semaphore.wait(timeout: .now() + 0.5)
+//
+//                        if let image = cachedImage {
+//                            thumbnailImage = .init(uiImage: image)
+//                        } else {
+//                            // Fallback to generating a new image
+//                            let missingImage = UIImage.missingArtworkImage(gameTitle: gameTitle, ratio: 1)
+//                            thumbnailImage = .init(uiImage: missingImage)
+//
+//                            // Cache the generated image
+//                            try? PVMediaCache.writeImage(toDisk: missingImage, withKey: missingArtworkKey)
+//                        }
+//                    } else {
                         // Generate a new missing artwork image
-                        let missingImage = UIImage.missingArtworkImage(gameTitle: gameTitle, ratio: 1)
+                    let missingImage = UIImage.missingArtworkImage(gameTitle: gameTitle, ratio: ratio)
                         thumbnailImage = .init(uiImage: missingImage)
 
                         // Cache the generated image
-                        try? PVMediaCache.writeImage(toDisk: missingImage, withKey: missingArtworkKey)
-                    }
+//                        try? PVMediaCache.writeImage(toDisk: missingImage, withKey: missingArtworkKey)
+//                    }
 
                     cacheLock.lock()
                     imageCache[realmSaveState.id] = thumbnailImage
