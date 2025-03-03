@@ -325,6 +325,8 @@ public final class PVMediaCache: NSObject, Sendable {
 
     /// Trim disk cache to prevent excessive storage usage
     public func trimDiskCache() {
+        #if false
+        // TODO: Fix me to only delete files we're not using anymore
         Task.detached(priority: .background) {
             let fileManager = FileManager.default
             let cachePath = PVMediaCache.cachePath
@@ -369,6 +371,7 @@ public final class PVMediaCache: NSObject, Sendable {
                 ELOG("Error trimming disk cache: \(error.localizedDescription)")
             }
         }
+        #endif
     }
 
     /// Async version of image fetching with improved caching
