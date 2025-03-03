@@ -192,8 +192,9 @@ struct GameArtworkView: View {
     private func saveArtwork(image: UIImage, forGame game: PVGame) {
         Task {
             do {
-                let uniqueID = UUID().uuidString
-                let key = "artwork_\(game.md5)_\(uniqueID)"
+                let uniqueID: String = UUID().uuidString
+                let md5: String = game.md5 ?? ""
+                let key = "artwork_\(md5)_\(uniqueID)"
 
                 // Write image to disk asynchronously
                 try await Task.detached(priority: .background) {
