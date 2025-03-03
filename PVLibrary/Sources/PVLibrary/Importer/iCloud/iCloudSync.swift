@@ -741,12 +741,12 @@ class RomsSyncer: iCloudContainerSyncer {
         let romsPath = actualContainrUrl.appendDocumentsDirectory.appendingPathComponent(romsDirectoryName)
         DLOG("romsPath: \(romsPath)")
         var realm: Realm! = nil
-        RomDatabase.gamesCache.forEach { (key: String, game: PVGame) in
+        RomDatabase.gamesCache.forEach { (_, game: PVGame) in
             let gameUrl = romsPath.appendingPathComponent(game.romPath)
             if !fileManager.fileExists(atPath: gameUrl.pathDecoded) {
                 do {
                     if realm == nil {
-                        do {//lazy load in case there is nothing to delete
+                        do {//lazy load so we only instantiate if there's a match found
                             realm = try Realm()
                         } catch {
                             ELOG("error removing game entries that do NOT exist in the cloud container \(romsPath)")
@@ -756,17 +756,6 @@ class RomsSyncer: iCloudContainerSyncer {
                     if let gameToDelete = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) {
                         try realm.deleteGame(gameToDelete)
                     }
-                } catch {
-                    ELOG("error deleting \(gameUrl), \(error)")
-                }
-            }
-        }
-        var games = realm.objects(PVGame.self)
-        games.forEach { game in
-            let gameUrl = romsPath.appendingPathComponent(game.romPath)
-            if !fileManager.fileExists(atPath: gameUrl.pathDecoded) {
-                do {
-                    try realm.deleteGame(game)
                 } catch {
                     ELOG("error deleting \(gameUrl), \(error)")
                 }
@@ -808,12 +797,21 @@ class RomsSyncer: iCloudContainerSyncer {
     /// - Parameter file: file to check against
     /// - Returns: whether or not game exists in game cache
     func getGameStatus(of file: URL) -> GameStatus {
+        guard let (existingGame, system) = getGameFromCache(of: file),
+           system.rawValue == existingGame.systemIdentifier
+        else {
+            return .gameDoesNotExist
+        }
+        return .gameExists
+    }
+    
+    func getGameFromCache(of file: URL) -> (PVGame, SystemIdentifier)? {
         let parentDirectory = file.parentPathComponent
         guard let system = SystemIdentifier(rawValue: parentDirectory),
               let parentUrl = URL(string: parentDirectory)
         else {
             DLOG("error obtaining existence of \(file) in game cache.")
-            return .gameDoesNotExist
+            return nil
         }
         let partialPath = parentUrl.appendingPathComponent(file.fileName)
         DLOG("system: \(system), partialPath: \(partialPath)")
@@ -821,12 +819,11 @@ class RomsSyncer: iCloudContainerSyncer {
         let gamesCache = RomDatabase.gamesCache
         let partialPathAsString = partialPath.absoluteString
         DLOG("partialPathAsString: \(partialPathAsString), similarName: \(similarName)")
-        guard let existingGame = gamesCache[partialPathAsString] ?? gamesCache[similarName],
-           system.rawValue == existingGame.systemIdentifier
+        guard let existingGame = gamesCache[partialPathAsString] ?? gamesCache[similarName]
         else {
-            return .gameDoesNotExist
+            return nil
         }
-        return .gameExists
+        return (existingGame, system)
     }
     
     override func deleteFromDatastore(_ file: URL) {
@@ -836,12 +833,14 @@ class RomsSyncer: iCloudContainerSyncer {
             return
         }
         do {
-            //TODO: use game cache
+            guard let (existingGame, _) = getGameFromCache(of: file)
+            else {
+                return
+            }
             let realm = try Realm()
             let romPath = "\(parentDirectory)/\(fileName)"
             DLOG("attempting to query PVGame by romPath: \(romPath)")
-            let results = realm.objects(PVGame.self).filter(NSPredicate(format: "\(NSExpression(forKeyPath: \PVGame.romPath.self).keyPath) == %@", romPath))
-            guard let game: PVGame = results.first
+            guard let game: PVGame = realm.object(ofType: PVGame.self, forPrimaryKey: existingGame.md5Hash)
             else {
                 return
             }
