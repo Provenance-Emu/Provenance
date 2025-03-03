@@ -14,9 +14,12 @@ public class RealmSaveStateDriver: SaveStateDriver {
     public var gameId: String? {
         didSet {
             if oldValue != gameId {
-                // Update observers when the filter changes
-                setupFilteredObservers()
-                updateSaveStates()
+                // Only set up observers if we're actually changing the filter
+                // and if initial setup is complete
+                if isInitialSetupComplete {
+                    setupFilteredObservers()
+                    updateSaveStates()
+                }
             }
         }
     }
@@ -25,9 +28,12 @@ public class RealmSaveStateDriver: SaveStateDriver {
     private var systemId: String = "" {
         didSet {
             if oldValue != systemId {
-                // Update observers when the filter changes
-                setupFilteredObservers()
-                updateSaveStates()
+                // Only set up observers if we're actually changing the filter
+                // and if initial setup is complete
+                if isInitialSetupComplete {
+                    setupFilteredObservers()
+                    updateSaveStates()
+                }
             }
         }
     }
@@ -77,6 +83,21 @@ public class RealmSaveStateDriver: SaveStateDriver {
     /// Task for current conversion operation
     private var currentConversionTask: Task<Void, Never>?
 
+    /// ID for the current task to track which task is active
+    private var currentTaskId = UUID()
+
+    /// Lock for task ID access
+    private let taskLock = NSLock()
+
+    /// Check if a task with the given ID is still the current task and not cancelled
+    private func isTaskActive(_ taskId: UUID) -> Bool {
+        taskLock.lock()
+        defer { taskLock.unlock() }
+
+        guard let currentTask = currentConversionTask else { return false }
+        return taskId == currentTaskId && !currentTask.isCancelled
+    }
+
     /// Flag to indicate if initial setup is complete
     private var isInitialSetupComplete = false
 
@@ -85,18 +106,20 @@ public class RealmSaveStateDriver: SaveStateDriver {
     public init(realm: Realm) {
         /// Store the configuration from the provided Realm
         self.realmConfiguration = realm.configuration
-        setupFilteredObservers()
+
+        // Don't set up observers or update save states until explicitly requested
+        // This prevents loading all save states on initialization
         isInitialSetupComplete = true
-//        updateSaveStates()
     }
 
     /// Initialize with a Realm configuration
     /// - Parameter configuration: The Realm configuration to use
     public init(configuration: Realm.Configuration) {
         self.realmConfiguration = configuration
-        setupFilteredObservers()
+
+        // Don't set up observers or update save states until explicitly requested
+        // This prevents loading all save states on initialization
         isInitialSetupComplete = true
-//        updateSaveStates()
     }
 
     /// Default initializer that uses the default Realm configuration
@@ -107,7 +130,11 @@ public class RealmSaveStateDriver: SaveStateDriver {
     /// Deinitialize the driver
     deinit {
         notificationToken?.invalidate()
+
+        taskLock.lock()
         currentConversionTask?.cancel()
+        currentConversionTask = nil
+        taskLock.unlock()
     }
 
     /// Get a thread-specific Realm instance using the stored configuration
@@ -340,31 +367,58 @@ public class RealmSaveStateDriver: SaveStateDriver {
         // Cancel any ongoing conversion task
         currentConversionTask?.cancel()
 
+        // Generate a new task ID
+        let taskId = UUID()
+        taskLock.lock()
+        currentTaskId = taskId
+        taskLock.unlock()
+
         // Create a new task for this update
-        currentConversionTask = Task { [weak self] in
+        let task = Task { [weak self] in
             guard let self = self else { return }
 
             // Get the filtered query
             @ThreadSafe
             var results = self.getFilteredQuery()
 
+            // Check if the task is still active
+            if !self.isTaskActive(taskId) { return }
+
             // First send quick results without images
             let initialViewModels = self.convertRealmResultsSync(results!)
+
+            // Check if the task is still active
+            if !self.isTaskActive(taskId) { return }
+
             await MainActor.run {
-                self.saveStatesSubject.send(initialViewModels)
+                // Only update if this task is still active
+                if self.isTaskActive(taskId) {
+                    self.saveStatesSubject.send(initialViewModels)
+                }
             }
 
-            // Then convert results to view models asynchronously with images
-            let viewModels = await self.convertRealmResults(results!)
+            // Check if the task is still active before proceeding with expensive image loading
+            if !self.isTaskActive(taskId) { return }
 
-            // Check if task was cancelled before updating UI
-            if Task.isCancelled { return }
+            // Then convert results to view models asynchronously with images
+            let viewModels = await self.convertRealmResults(results!, taskId: taskId)
+
+            // Check if the task is still active
+            if !self.isTaskActive(taskId) { return }
 
             // Update the subject on the main thread with complete data
             await MainActor.run {
-                self.saveStatesSubject.send(viewModels)
+                // Only update if this task is still active
+                if self.isTaskActive(taskId) {
+                    self.saveStatesSubject.send(viewModels)
+                }
             }
         }
+
+        // Store the task reference
+        taskLock.lock()
+        currentConversionTask = task
+        taskLock.unlock()
     }
 
     /// Get all save states
@@ -689,7 +743,15 @@ public class RealmSaveStateDriver: SaveStateDriver {
 
             // Set game ID filter - this will trigger setupFilteredObservers via the property observer
             Task { @MainActor in
-                self.gameId = gameID
+                // Only set up observers if we're changing the game ID
+                if self.gameId != gameID {
+                    self.gameId = gameID
+
+                    // If property observer didn't trigger (e.g., if we're setting to the same value),
+                    // explicitly set up observers and update
+                    self.setupFilteredObservers()
+                    self.updateSaveStates()
+                }
             }
         }
     }
@@ -702,27 +764,56 @@ public class RealmSaveStateDriver: SaveStateDriver {
 
             // Clear any game ID filter and set system ID on the main thread
             Task { @MainActor in
+                let gameIdChanged = self.gameId != nil
+                let systemIdChanged = self.systemId != systemID
+
                 // Clear game ID first to avoid redundant updates
                 self.gameId = nil
 
                 // Set system ID - this will trigger setupFilteredObservers via the property observer
+                // only if the system ID is different
                 self.systemId = systemID
+
+                // If neither property observer triggered (e.g., if we're setting to the same values),
+                // explicitly set up observers and update
+                if !gameIdChanged && !systemIdChanged {
+                    self.setupFilteredObservers()
+                    self.updateSaveStates()
+                }
             }
         }
     }
 
     /// Asynchronously convert Realm results to view models
     /// - Parameter results: The Realm results to convert
+    /// - Parameter taskId: The ID of the task to track the task
     /// - Returns: An array of SaveStateRowViewModel objects
-    private func convertRealmResults(_ results: Results<PVSaveState>) async -> [SaveStateRowViewModel] {
+    private func convertRealmResults(_ results: Results<PVSaveState>, taskId: UUID) async -> [SaveStateRowViewModel] {
         // First get basic models without images (fast)
         var viewModels = convertRealmResultsSync(results)
 
+        // Check if task was cancelled before proceeding with expensive image loading
+        if !self.isTaskActive(taskId) { return viewModels }
+
         // Then load images and update sizes asynchronously
         await withTaskGroup(of: (String, SwiftUI.Image?, UInt64).self) { group in
+            // Limit the number of concurrent image loading tasks to avoid overwhelming the system
+            let maxConcurrentTasks = 5
+            var tasksAdded = 0
+
             for (index, viewModel) in viewModels.enumerated() {
+                // Check for cancellation before adding each task
+                if !self.isTaskActive(taskId) { break }
+
+                // Limit the number of concurrent tasks
+                if tasksAdded >= maxConcurrentTasks { break }
+                tasksAdded += 1
+
                 group.addTask { [weak self] in
                     guard let self = self else { return (viewModel.id, nil, 0) }
+
+                    // Check for cancellation before processing
+                    if !self.isTaskActive(taskId) { return (viewModel.id, nil, viewModel.size) }
 
                     // Check if we already have the image in cache
                     self.cacheLock.lock()
@@ -733,6 +824,9 @@ public class RealmSaveStateDriver: SaveStateDriver {
                         // Use cached image
                         return (viewModel.id, cachedImage, viewModel.size)
                     } else {
+                        // Check for cancellation before loading image from disk
+                        if !self.isTaskActive(taskId) { return (viewModel.id, nil, viewModel.size) }
+
                         // Load image from disk
                         let realm = self.realm()
                         guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: viewModel.id) else {
@@ -746,14 +840,23 @@ public class RealmSaveStateDriver: SaveStateDriver {
                            let uiImage = UIImage(contentsOfFile: url.path) {
                             image = SwiftUI.Image(uiImage: uiImage)
 
+                            // Check for cancellation before caching
+                            if !self.isTaskActive(taskId) { return (viewModel.id, image, viewModel.size) }
+
                             // Cache the image
                             self.cacheLock.lock()
                             self.imageCache[viewModel.id] = image
                             self.cacheLock.unlock()
                         }
 
+                        // Check for cancellation before getting size
+                        if !self.isTaskActive(taskId) { return (viewModel.id, image, viewModel.size) }
+
                         // Get accurate size
                         let size = await saveState.sizeAsync()
+
+                        // Check for cancellation before caching size
+                        if !self.isTaskActive(taskId) { return (viewModel.id, image, size) }
 
                         // Cache the size
                         self.cacheLock.lock()
@@ -769,24 +872,31 @@ public class RealmSaveStateDriver: SaveStateDriver {
             var updatedModels = [String: (image: SwiftUI.Image?, size: UInt64)]()
 
             for await (id, image, size) in group {
+                // Check for cancellation before processing each result
+                if !self.isTaskActive(taskId) { break }
+
                 updatedModels[id] = (image, size)
             }
+
+            // Check for cancellation before updating view models
+            if !self.isTaskActive(taskId) { return }
 
             // Update view models with loaded images and sizes
             for i in 0..<viewModels.count {
                 let id = viewModels[i].id
                 if let updates = updatedModels[id] {
-                    Task { @MainActor in
-                        if let image = updates.image {
-                            viewModels[i].thumbnail = image
-                        }
-                        viewModels[i].size = updates.size
+                    // Check for cancellation before each update
+                    if !self.isTaskActive(taskId) { break }
 
-                        // Update cache
-                        self.cacheLock.lock()
-                        self.viewModelCache[id] = viewModels[i]
-                        self.cacheLock.unlock()
+                    if let image = updates.image {
+                        viewModels[i].thumbnail = image
                     }
+                    viewModels[i].size = updates.size
+
+                    // Update cache
+                    self.cacheLock.lock()
+                    self.viewModelCache[id] = viewModels[i]
+                    self.cacheLock.unlock()
                 }
             }
         }
