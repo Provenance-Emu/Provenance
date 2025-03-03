@@ -85,8 +85,8 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
         // I think it's looking for the image path
         if typeIdentifier == (kUTTypeImage as String) {
             let md5 = itemIdentifier.components(separatedBy: ".").last ?? ""
-
-            if let game = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: md5), let artworkURL = game.pathOfCachedImage {
+            let realm = try Realm()
+            if let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5), let artworkURL = game.pathOfCachedImage {
                 return artworkURL
             } else {
                 throw SpotlightError.notFound
