@@ -18,6 +18,7 @@
 // - Added in custom Display Gamma control and use that as opposed to the c2/sqrt2 optimization. Defaults to the accurate Gamma on TV's or the current Top iPhone Display tier using a Pow function.
 // - Lowered min brightness level to visually match the minimum brightness level of a CRT. This may go away at one point and just be set to 0.0 .
 // - Reduced warping effect by 1/3
+// - updated 250301 to remove scanline check
 
 #include <metal_stdlib>
 using namespace metal;
@@ -53,7 +54,6 @@ struct CRT_Data
 #define BLOOM_AMOUNT 2.0
 #define MIN_BRIGHTNESS 0.0005
 #define ROWS_OF_RESOLUTION 480.0
-#define SCANLINES_ALLOWED ( FINAL_RES.y >= ROWS_OF_RESOLUTION / 2.0 * 4.0 )
 #define SCANLINE_HARDNESS 4.0
 #define SCANLINE_MIN_BRIGHTNESS float3( 0.25, 0.25, 0.25 )
 #define SHADOW_MASK_HARDNESS 16.0
@@ -133,7 +133,6 @@ float3 sampleRGB( texture2d<float> EmulatedImage, sampler Sampler, constant CRT_
     
     float3 scanlineMultiplier = float3( 1.0 );
 #if USE_SCANLINES
-    if ( SCANLINES_ALLOWED )
     {
         float scanlineY = mod( warpedUV.y, 2.0 / ROWS_OF_RESOLUTION ) / ( 2.0 / ROWS_OF_RESOLUTION );
         float scanlineDistance = abs( scanlineY - 0.5 ) / 0.5;
@@ -168,7 +167,6 @@ float3 crtFilter( texture2d<float> EmulatedImage, sampler Sampler, constant CRT_
     float edgeMask = clamp( 1.0 - exp2( ( 1.0 - max( abs( warpedUV.x - 0.5 ), abs( warpedUV.y - 0.5 ) ) / 0.5 ) * -WARP_EDGE_HARDNESS ), 0.0, 1.0);
     float bloomAmount = BLOOM_AMOUNT;
 #if USE_SCANLINES
-    if ( SCANLINES_ALLOWED )
     {
         bloomAmount *= 2.0;
     }

@@ -95,6 +95,12 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         view.addSubview(hud)
 
         setupHUDObserver(hud: hud)
+
+        // Listen for bootup state changes
+        setupBootupStateObserver()
+
+        // Listen for app open actions
+        setupAppOpenActionObserver()
     }
 
     public override func viewWillAppear(_ animated: Bool) {
@@ -107,6 +113,26 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         NotificationCenter.default.removeObserver(controllerObserver as Any)
         continuousNavigationTask?.cancel()
         gameController = nil
+    }
+
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        // If bootup is already completed, handle app open events
+        if AppState.shared.bootupState == .completed {
+            ILOG("PVRootViewController: Bootup already completed, checking for app open events")
+
+            // Get the current app open action
+            let currentAction = AppState.shared.appOpenAction
+            if case .none = currentAction {
+                DLOG("PVRootViewController: No app open action to handle on view appear")
+            } else {
+                ILOG("PVRootViewController: Found app open action to handle on view appear")
+                Task { @MainActor in
+                    await handleAppOpenEvents(currentAction)
+                }
+            }
+        }
     }
 
     private var cancellables = Set<AnyCancellable>()
@@ -178,6 +204,69 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         self.addChildViewController(newVC, toContainerView: self.containerView)
         self.fillParentView(child: newVC.view, parent: self.containerView)
         closeMenu()
+    }
+
+    /// Sets up an observer for app open actions to handle them when they change
+    private func setupAppOpenActionObserver() {
+        Task { @MainActor in
+            for await action in await AppState.shared.$appOpenAction.values {
+                // Skip empty actions
+                if case .none = action {
+                    continue
+                }
+
+                ILOG("PVRootViewController: Detected new app open action: \(String(describing: action))")
+
+                // Only process if bootup is completed
+                if AppState.shared.bootupState == .completed {
+                    ILOG("PVRootViewController: Processing app open action immediately")
+                    await handleAppOpenEvents(action)
+                } else {
+                    ILOG("PVRootViewController: Bootup not completed, action will be handled after bootup")
+                    // The action will be handled by the bootup state observer when bootup completes
+                }
+            }
+        }
+    }
+
+    private func handleAppOpenEvents(_ state: AppState.AppOpenAction) async {
+        ILOG("PVRootViewController: Handling app open action: \(String(describing: state))")
+
+        // Store the current state to process
+        let currentState = state
+
+        // Reset the app open action to none immediately to avoid processing it multiple times
+        if case .none = state {
+            // Already none, no need to reset
+        } else {
+            AppState.shared.appOpenAction = .none
+            DLOG("PVRootViewController: Reset appOpenAction to .none")
+        }
+
+        switch currentState {
+        case .openFile(let url):
+            ILOG("PVRootViewController: Opening file at URL: \(url.path)")
+            // TODO: Find if we have the file by md5, or if the path is in our PVGame paths
+            // if the path is outside the app folders, we need to import and then somehow
+            // load the game. Ideally we could force import the game with a single import method
+            // that's async
+            break
+        case .openMD5(let md5):
+            ILOG("PVRootViewController: Opening game by MD5: \(md5)")
+            guard let game = RomDatabase.sharedInstance.object(ofType: PVGame.self, wherePrimaryKeyEquals: md5) else {
+                ELOG("PVRootViewController: No game found with md5: \(md5)")
+                return
+            }
+            ILOG("PVRootViewController: Found game '\(game.title)' for MD5: \(md5), loading...")
+            await root_load(game, sender: self, core: nil, saveState: nil)
+            break
+        case .openGame(let game):
+            ILOG("PVRootViewController: Opening game directly: \(game.title) (MD5: \(game.md5Hash))")
+            await root_load(game, sender: self, core: nil, saveState: nil)
+        case .none:
+            DLOG("PVRootViewController: No app open action to handle")
+            break
+        }
     }
 
     private var gamepadCancellable: AnyCancellable?
@@ -283,6 +372,34 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
                 // Go to next console
                 consolesWrapperViewDelegate.selectedTab = allConsoles[currentIndex + 1].identifier
                 self.viewModel.selectedConsole = allConsoles[currentIndex + 1]
+            }
+        }
+    }
+
+    /// Sets up an observer for the bootup state to handle app open events when bootup completes
+    private func setupBootupStateObserver() {
+        Task { @MainActor in
+            for await _ in await AppState.shared.bootupStateManager.$currentState.values {
+                if AppState.shared.bootupState == .completed {
+                    ILOG("PVRootViewController: Bootup state completed, waiting before handling app open events")
+                    // Add a slight delay to ensure everything is fully initialized
+                    try? await Task.sleep(for: .milliseconds(500))
+
+                    // Check if the task wasn't cancelled during the delay
+                    if !Task.isCancelled {
+                        ILOG("PVRootViewController: Now handling app open events after bootup completion")
+                        // Get the current app open action at the time bootup completes
+                        let currentAction = AppState.shared.appOpenAction
+                        if case .none = currentAction {
+                            DLOG("PVRootViewController: No app open action to handle after bootup")
+                        } else {
+                            await handleAppOpenEvents(currentAction)
+                        }
+                    }
+
+                    // Break the loop since we only need to handle this once
+                    break
+                }
             }
         }
     }

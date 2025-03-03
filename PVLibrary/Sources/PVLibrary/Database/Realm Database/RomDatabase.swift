@@ -762,6 +762,9 @@ public extension RomDatabase {
 #if os(iOS)
         deleteFromSpotlight(game: game)
 #endif
+        defer {//reload the cache, so if this ROM is added again, it can be added
+            RomDatabase.reloadGamesCache()
+        }
         do {
             deleteRelatedFilesGame(game)
             game.saveStates.forEach { try? $0.delete() }
@@ -824,21 +827,82 @@ public extension RomDatabase {
                 throw RomDeletionError.fileManagerDeletionError(error)
             }
         }
+        if let jsonFile = actualSavePath?.pathDecoded.appending(".json"),
+           FileManager.default.fileExists(atPath: jsonFile) {
+            do {
+                try FileManager.default.removeItem(atPath: jsonFile)
+            } catch {
+                ELOG("Unable to delete json at path: \(jsonFile) because: \(error.localizedDescription)")
+                throw RomDeletionError.fileManagerDeletionError(error)
+            }
+        }
     }
     
     func deleteRelatedFilesGame(_ game: PVGame) {
-        //        guard let system = game.system else {
-        //            ELOG("Game \(game.title) belongs to an unknown system \(game.systemIdentifier)")
-        //            return
-        //        }
+        DLOG("\(game.romPath) related files: \(game.relatedFiles)")
         game.relatedFiles.forEach {
-            do {
-                let file = PVEmulatorConfiguration.path(forGame: game, url: $0.url)
-                if FileManager.default.fileExists(atPath: file.path) {
-                    try FileManager.default.removeItem(at: file)
+            self.handlDeletionOfRelatedFile($0.url, game: game)
+        }
+        
+        guard let gameFileUrl = game.file?.url
+        else {
+            return
+        }
+        deleteFilesWithSimilarTitle(gameFileUrl)
+    }
+    
+    func handlDeletionOfRelatedFile(_ relatedFile: URL?, game: PVGame) {
+        let fileManager: FileManager = .default
+        do {
+            DLOG("\(game.romPath) current related file: \(relatedFile?.pathDecoded)")
+            let file = PVEmulatorConfiguration.path(forGame: game, url: relatedFile)
+            if fileManager.fileExists(atPath: file.path) {
+                try fileManager.removeItem(at: file)
+            }
+            //for multi-disc ROMs, after deletion sometimes some files do NOT get deleted, so if we just try to find similar file names on each iteration it's easier than doing string parsing to remove (Track or (Disc
+            deleteFilesWithSimilarTitle(file)
+        } catch {
+            ELOG(error.localizedDescription)
+        }
+    }
+    
+    /// attempt to delete files with the same name. There's an issue when importing that some of the files do NOT get associated, so this function attempts to find similar files and deletes them. Anything that has the same name, regardless of extension and/or same tile but a suffix of "(Track " or "(Disc ".
+    /// - Parameter gameFileUrl: file to use to try to delete similarly named file names
+    func deleteFilesWithSimilarTitle(_ gameFileUrl: URL) {
+        let fileManager: FileManager = .default
+        let parentDirectory = gameFileUrl.deletingLastPathComponent()
+        guard fileManager.fileExists(atPath: parentDirectory.pathDecoded)
+        else {
+            return
+        }
+        let children: [String]
+        do {
+            children = try fileManager.subpathsOfDirectory(atPath: parentDirectory.pathDecoded)
+        } catch {
+            ELOG("error retrieving files at directory: \(parentDirectory), \(error)")
+            return
+        }
+        guard !children.isEmpty
+        else {
+            return
+        }
+        DLOG("children: \(children)")
+        let fileName = gameFileUrl.deletingPathExtension().lastPathComponent
+        DLOG("fileName without extension: \(fileName)")
+        children.forEach { child in
+            let currentChildUrl = parentDirectory.appendingPathComponent(child)
+            let currentExtension = currentChildUrl.pathExtension
+            let currentChildFileName = currentChildUrl.deletingPathExtension().lastPathComponent
+            DLOG("current extension: \(currentExtension), current file name: \(currentChildFileName), current url: \(currentChildUrl)")
+            if !currentExtension.isEmpty
+                && (currentChildFileName == fileName
+                    || currentChildFileName.starts(with: "\(fileName) (Track ")
+                    || currentChildFileName.starts(with: "\(fileName) (Disc ")) {
+                do {
+                    try fileManager.removeItem(at: currentChildUrl)
+                } catch {
+                    ELOG("error deleting file: \(currentChildUrl)")
                 }
-            } catch {
-                ELOG(error.localizedDescription)
             }
         }
     }

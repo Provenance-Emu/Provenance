@@ -732,6 +732,11 @@
 		B3AFCF982977A80C00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF972977A80C00A01010 /* PVLogging */; };
 		B3B925A22C6141BC006317EC /* PVVirtualJaguar-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3B925A12C6141BC006317EC /* PVVirtualJaguar-Dynamic */; };
 		B3B925A32C614208006317EC /* PVVirtualJaguar-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3B925A12C6141BC006317EC /* PVVirtualJaguar-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B3BD3A1C2D729007000FBB11 /* Provenance Stickers.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3BE9FD02C7988BD006D989E /* Provenance Stickers.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3BD3A232D7298BB000FBB11 /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B3BD3A222D7298BB000FBB11 /* PVLibrary */; };
+		B3BD3A252D7298FA000FBB11 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B3BD3A242D7298FA000FBB11 /* Defaults */; };
+		B3BD3A262D72A2C3000FBB11 /* SpotlightImportExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3BD3A292D72A2CD000FBB11 /* Spotlight.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3BDD4022D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		B3BDD41A2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		B3BDD41B2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
@@ -1198,6 +1203,27 @@
 			remoteGlobalIDString = BE9FDCB61C210B9E0046DF0E;
 			remoteInfo = TopShelf;
 		};
+		B3BD3A1D2D729008000FBB11 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3BE9FCF2C7988BD006D989E;
+			remoteInfo = "Provenance Stickers";
+		};
+		B3BD3A272D72A2C3000FBB11 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B355E0102920AA9700E4C858;
+			remoteInfo = SpotlightImportExtension;
+		};
+		B3BD3A2A2D72A2CD000FBB11 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3E21D6A203211BE009939D3;
+			remoteInfo = Spotlight;
+		};
 		B3F7E297297736BE00362B92 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -1516,14 +1542,17 @@
 		};
 		B394CD6A2BDEE53A006B63E8 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 8;
+			buildActionMask = 12;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				B3BD3A1C2D729007000FBB11 /* Provenance Stickers.appex in Embed Foundation Extensions */,
+				B3BD3A292D72A2CD000FBB11 /* Spotlight.appex in Embed Foundation Extensions */,
 				B38C69B42BEB2CB300AE4F86 /* TopShelf.appex in Embed Foundation Extensions */,
+				B3BD3A262D72A2C3000FBB11 /* SpotlightImportExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B39DC780279E79D40017E28D /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -2129,6 +2158,11 @@
 		B380EAC32759D69A001B8532 /* CodeSigning.xcconfig.sample */ = {isa = PBXFileReference; lastKnownFileType = text; path = CodeSigning.xcconfig.sample; sourceTree = "<group>"; };
 		B3816E142CA92AC700DBA1A0 /* PVGenesis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGenesis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B381A27B292639E200305322 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/System/iOSSupport/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		B38264BC2D7260520038A0E8 /* Cube.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Cube.xcodeproj; sourceTree = "<group>"; };
+		B38265582D7260520038A0E8 /* MoltenVK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVK.xcodeproj; sourceTree = "<group>"; };
+		B38265762D7260520038A0E8 /* MoltenVKShaderConverter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKShaderConverter.xcodeproj; sourceTree = "<group>"; };
+		B38265942D7260520038A0E8 /* ExternalDependencies.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ExternalDependencies.xcodeproj; sourceTree = "<group>"; };
+		B38265982D7260520038A0E8 /* MoltenVKPackaging.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKPackaging.xcodeproj; sourceTree = "<group>"; };
 		B3834C612D6E889600D8C4C8 /* Cube.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Cube.xcodeproj; sourceTree = "<group>"; };
 		B3834CFD2D6E889600D8C4C8 /* MoltenVK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVK.xcodeproj; sourceTree = "<group>"; };
 		B3834D1B2D6E889600D8C4C8 /* MoltenVKShaderConverter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKShaderConverter.xcodeproj; sourceTree = "<group>"; };
@@ -2285,6 +2319,16 @@
 		B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Provenance-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ProvenanceTV-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3BA902129583A1600142E32 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3BD31862D7267A6000FBB11 /* Cube.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Cube.xcodeproj; sourceTree = "<group>"; };
+		B3BD32222D7267A6000FBB11 /* MoltenVK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVK.xcodeproj; sourceTree = "<group>"; };
+		B3BD32402D7267A6000FBB11 /* MoltenVKShaderConverter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKShaderConverter.xcodeproj; sourceTree = "<group>"; };
+		B3BD325E2D7267A6000FBB11 /* ExternalDependencies.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ExternalDependencies.xcodeproj; sourceTree = "<group>"; };
+		B3BD32622D7267A6000FBB11 /* MoltenVKPackaging.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKPackaging.xcodeproj; sourceTree = "<group>"; };
+		B3BD35E52D727629000FBB11 /* Cube.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Cube.xcodeproj; sourceTree = "<group>"; };
+		B3BD36812D727629000FBB11 /* MoltenVK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVK.xcodeproj; sourceTree = "<group>"; };
+		B3BD369F2D727629000FBB11 /* MoltenVKShaderConverter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKShaderConverter.xcodeproj; sourceTree = "<group>"; };
+		B3BD36BD2D727629000FBB11 /* ExternalDependencies.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ExternalDependencies.xcodeproj; sourceTree = "<group>"; };
+		B3BD36C12D727629000FBB11 /* MoltenVKPackaging.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKPackaging.xcodeproj; sourceTree = "<group>"; };
 		B3BE9FA42C7987B1006D989E /* ROM File Provider.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "ROM File Provider.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3BE9FB32C7987B1006D989E /* ROM File ProviderUI.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "ROM File ProviderUI.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3BE9FD02C7988BD006D989E /* Provenance Stickers.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Provenance Stickers.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3687,6 +3731,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3BD3A252D7298FA000FBB11 /* Defaults in Frameworks */,
+				B3BD3A232D7298BB000FBB11 /* PVLibrary in Frameworks */,
 				B3BE9FA52C7987B1006D989E /* UniformTypeIdentifiers.framework in Frameworks */,
 				B3BDD4252D349220005F5AF9 /* (null) in Frameworks */,
 			);
@@ -5309,6 +5355,41 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		B38265A02D7260520038A0E8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B38265A22D7260520038A0E8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B38265A42D7260520038A0E8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B38265A62D7260520038A0E8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B38265A82D7260520038A0E8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		B3834D452D6E889600D8C4C8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -5863,6 +5944,76 @@
 			sourceTree = "<group>";
 		};
 		B3B679FD2D6E8E0B00A35E09 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B3BD326A2D7267A6000FBB11 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B3BD326C2D7267A6000FBB11 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B3BD326E2D7267A6000FBB11 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B3BD32702D7267A6000FBB11 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B3BD32722D7267A6000FBB11 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B3BD36C92D727629000FBB11 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B3BD36CB2D727629000FBB11 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B3BD36CD2D727629000FBB11 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B3BD36CF2D727629000FBB11 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B3BD36D12D727629000FBB11 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 			);
@@ -7080,7 +7231,6 @@
 				B3CC2E0D2CBC0D4F00D90EB1 /* Script: Generate Frameworks */,
 				B394CDB62BDEE53A006B63E8 /* Resources */,
 				B394CDDA2BDEE53A006B63E8 /* Script: Set Build Number */,
-				93DB4BBC9C6D487AAA130B02 /* Upload Debug Symbols to Sentry */,
 				B306D7EB2D3DDD3300C71EBE /* Crashlytics */,
 			);
 			buildRules = (
@@ -7088,6 +7238,9 @@
 			dependencies = (
 				B394CC572BDEE53A006B63E8 /* PBXTargetDependency */,
 				B38C69B62BEB2CB300AE4F86 /* PBXTargetDependency */,
+				B3BD3A1E2D729008000FBB11 /* PBXTargetDependency */,
+				B3BD3A282D72A2C3000FBB11 /* PBXTargetDependency */,
+				B3BD3A2B2D72A2CD000FBB11 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				B39436502CCDEC9D004D5DFB /* Main UI */,
@@ -7159,6 +7312,8 @@
 			);
 			name = "ROM File Provider";
 			packageProductDependencies = (
+				B3BD3A222D7298BB000FBB11 /* PVLibrary */,
+				B3BD3A242D7298FA000FBB11 /* Defaults */,
 			);
 			productName = "ROM File Provider";
 			productReference = B3BE9FA42C7987B1006D989E /* ROM File Provider.appex */;
@@ -7617,6 +7772,10 @@
 					ProjectRef = B3A9F9362D64443F00288D1E /* Cube.xcodeproj */;
 				},
 				{
+					ProductGroup = B38265A82D7260520038A0E8 /* Products */;
+					ProjectRef = B38264BC2D7260520038A0E8 /* Cube.xcodeproj */;
+				},
+				{
 					ProductGroup = B3EE4F862D694B630089FCB4 /* Products */;
 					ProjectRef = B3EE4E9C2D694B630089FCB4 /* Cube.xcodeproj */;
 				},
@@ -7669,6 +7828,10 @@
 					ProjectRef = B3C2F02A2D711CFE00BA7631 /* Cube.xcodeproj */;
 				},
 				{
+					ProductGroup = B3BD326C2D7267A6000FBB11 /* Products */;
+					ProjectRef = B3BD31862D7267A6000FBB11 /* Cube.xcodeproj */;
+				},
+				{
 					ProductGroup = B3C3F5832D7191A7004BA4BC /* Products */;
 					ProjectRef = B3C3F4972D7191A7004BA4BC /* Cube.xcodeproj */;
 				},
@@ -7679,6 +7842,10 @@
 				{
 					ProductGroup = B3834D492D6E889600D8C4C8 /* Products */;
 					ProjectRef = B3834C612D6E889600D8C4C8 /* Cube.xcodeproj */;
+				},
+				{
+					ProductGroup = B3BD36CF2D727629000FBB11 /* Products */;
+					ProjectRef = B3BD35E52D727629000FBB11 /* Cube.xcodeproj */;
 				},
 				{
 					ProductGroup = B3A751862D6435C500B945A3 /* Products */;
@@ -7821,6 +7988,10 @@
 					ProjectRef = B361976A2D618B980069D3BE /* ExternalDependencies.xcodeproj */;
 				},
 				{
+					ProductGroup = B3BD36D12D727629000FBB11 /* Products */;
+					ProjectRef = B3BD36BD2D727629000FBB11 /* ExternalDependencies.xcodeproj */;
+				},
+				{
 					ProductGroup = B396B7B42D7124A400A391E9 /* Products */;
 					ProjectRef = B396B7A02D7124A400A391E9 /* ExternalDependencies.xcodeproj */;
 				},
@@ -7855,6 +8026,10 @@
 				{
 					ProductGroup = B3EEFE8A2D6812CE0080CA51 /* Products */;
 					ProjectRef = B3EEFE782D6812CE0080CA51 /* ExternalDependencies.xcodeproj */;
+				},
+				{
+					ProductGroup = B38265A22D7260520038A0E8 /* Products */;
+					ProjectRef = B38265942D7260520038A0E8 /* ExternalDependencies.xcodeproj */;
 				},
 				{
 					ProductGroup = B3DA4D8D2D70EA3E007D3776 /* Products */;
@@ -7899,6 +8074,10 @@
 				{
 					ProductGroup = B3FD95DE2D613D2B00397643 /* Products */;
 					ProjectRef = B3FD95CB2D613D2B00397643 /* ExternalDependencies.xcodeproj */;
+				},
+				{
+					ProductGroup = B3BD32702D7267A6000FBB11 /* Products */;
+					ProjectRef = B3BD325E2D7267A6000FBB11 /* ExternalDependencies.xcodeproj */;
 				},
 				{
 					ProductGroup = B3C2F1162D711CFE00BA7631 /* Products */;
@@ -7989,6 +8168,10 @@
 					ProjectRef = B3631D3E2D61B25200ECD2ED /* ExternalDependencies.xcodeproj */;
 				},
 				{
+					ProductGroup = B38265A42D7260520038A0E8 /* Products */;
+					ProjectRef = B38265582D7260520038A0E8 /* MoltenVK.xcodeproj */;
+				},
+				{
 					ProductGroup = B39CD92F2D684E6F00BA949A /* Products */;
 					ProjectRef = B39CD8E52D684E6F00BA949A /* MoltenVK.xcodeproj */;
 				},
@@ -8003,6 +8186,10 @@
 				{
 					ProductGroup = B3631D4E2D61B25200ECD2ED /* Products */;
 					ProjectRef = B3631D022D61B25200ECD2ED /* MoltenVK.xcodeproj */;
+				},
+				{
+					ProductGroup = B3BD36CD2D727629000FBB11 /* Products */;
+					ProjectRef = B3BD36812D727629000FBB11 /* MoltenVK.xcodeproj */;
 				},
 				{
 					ProductGroup = B3DC5B2F2D6A1F8D00BF1362 /* Products */;
@@ -8075,6 +8262,10 @@
 				{
 					ProductGroup = B3EEF8A42D66B5F10080CA51 /* Products */;
 					ProjectRef = B3EEF8542D66B5F10080CA51 /* MoltenVK.xcodeproj */;
+				},
+				{
+					ProductGroup = B3BD326A2D7267A6000FBB11 /* Products */;
+					ProjectRef = B3BD32222D7267A6000FBB11 /* MoltenVK.xcodeproj */;
 				},
 				{
 					ProductGroup = B38EF8AF2D6E72A900690C3D /* Products */;
@@ -8205,6 +8396,10 @@
 					ProjectRef = B328AB122D6996A6005ABA6F /* MoltenVK.xcodeproj */;
 				},
 				{
+					ProductGroup = B38265A62D7260520038A0E8 /* Products */;
+					ProjectRef = B38265982D7260520038A0E8 /* MoltenVKPackaging.xcodeproj */;
+				},
+				{
 					ProductGroup = B3F9E1BB2D6EF2A600FA88A0 /* Products */;
 					ProjectRef = B3F9E1AD2D6EF2A600FA88A0 /* MoltenVKPackaging.xcodeproj */;
 				},
@@ -8333,6 +8528,10 @@
 					ProjectRef = B39DA7B82D6D6221001C2FE1 /* MoltenVKPackaging.xcodeproj */;
 				},
 				{
+					ProductGroup = B3BD326E2D7267A6000FBB11 /* Products */;
+					ProjectRef = B3BD32622D7267A6000FBB11 /* MoltenVKPackaging.xcodeproj */;
+				},
+				{
 					ProductGroup = B3CDE3CA2D6E96FA0002D76B /* Products */;
 					ProjectRef = B3CDE3BA2D6E96F90002D76B /* MoltenVKPackaging.xcodeproj */;
 				},
@@ -8375,6 +8574,10 @@
 				{
 					ProductGroup = B3EEF2AA2D66AFB10080CA51 /* Products */;
 					ProjectRef = B3EEF29E2D66AFB10080CA51 /* MoltenVKPackaging.xcodeproj */;
+				},
+				{
+					ProductGroup = B3BD36CB2D727629000FBB11 /* Products */;
+					ProjectRef = B3BD36C12D727629000FBB11 /* MoltenVKPackaging.xcodeproj */;
 				},
 				{
 					ProductGroup = B3C3F57F2D7191A7004BA4BC /* Products */;
@@ -8437,6 +8640,10 @@
 					ProjectRef = B3EEF8722D66B5F10080CA51 /* MoltenVKShaderConverter.xcodeproj */;
 				},
 				{
+					ProductGroup = B3BD36C92D727629000FBB11 /* Products */;
+					ProjectRef = B3BD369F2D727629000FBB11 /* MoltenVKShaderConverter.xcodeproj */;
+				},
+				{
 					ProductGroup = B386D1932D6E8B6C00FA14AE /* Products */;
 					ProjectRef = B386D1672D6E8B6C00FA14AE /* MoltenVKShaderConverter.xcodeproj */;
 				},
@@ -8455,6 +8662,10 @@
 				{
 					ProductGroup = B3C215702D6FB9F400D9A2DC /* Products */;
 					ProjectRef = B3C215442D6FB9F400D9A2DC /* MoltenVKShaderConverter.xcodeproj */;
+				},
+				{
+					ProductGroup = B38265A02D7260520038A0E8 /* Products */;
+					ProjectRef = B38265762D7260520038A0E8 /* MoltenVKShaderConverter.xcodeproj */;
 				},
 				{
 					ProductGroup = B3EEFE862D6812CE0080CA51 /* Products */;
@@ -8515,6 +8726,10 @@
 				{
 					ProductGroup = B3C3F57D2D7191A7004BA4BC /* Products */;
 					ProjectRef = B3C3F5512D7191A7004BA4BC /* MoltenVKShaderConverter.xcodeproj */;
+				},
+				{
+					ProductGroup = B3BD32722D7267A6000FBB11 /* Products */;
+					ProjectRef = B3BD32402D7267A6000FBB11 /* MoltenVKShaderConverter.xcodeproj */;
 				},
 				{
 					ProductGroup = B390BD092D6168DD00BDE397 /* Products */;
@@ -9134,21 +9349,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/bin/sh \"${SRCROOT}/CoresRetro/RetroArch/scripts/get-modules.sh\"\n";
-		};
-		93DB4BBC9C6D487AAA130B02 /* Upload Debug Symbols to Sentry */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
-			);
-			name = "Upload Debug Symbols to Sentry";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which sentry-cli >/dev/null; then\nexport SENTRY_ORG=provenance-emu\nexport SENTRY_PROJECT=provenance\nexport SENTRY_AUTH_TOKEN=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\nERROR=$(sentry-cli debug-files upload \\ \n\"$DWARF_DSYM_FOLDER_PATH\" 2>&1 >/dev/null)\nif [ ! $? -eq 0 ]; then\necho \"warning: sentry-cli - $ERROR\"\nfi\nelse\necho \"warning: sentry-cli not installed, download from https://github.com/getsentry/sentry-cli/releases\"\nfi\n";
 		};
 		B300F064212512310010299E /* Create Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -9829,6 +10029,30 @@
 			isa = PBXTargetDependency;
 			target = BE9FDCB61C210B9E0046DF0E /* TopShelf */;
 			targetProxy = B3B4C953279E69AD00505424 /* PBXContainerItemProxy */;
+		};
+		B3BD3A1E2D729008000FBB11 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilter = ios;
+			target = B3BE9FCF2C7988BD006D989E /* Provenance Stickers */;
+			targetProxy = B3BD3A1D2D729008000FBB11 /* PBXContainerItemProxy */;
+		};
+		B3BD3A282D72A2C3000FBB11 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+			);
+			target = B355E0102920AA9700E4C858 /* SpotlightImportExtension */;
+			targetProxy = B3BD3A272D72A2C3000FBB11 /* PBXContainerItemProxy */;
+		};
+		B3BD3A2B2D72A2CD000FBB11 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+			);
+			target = B3E21D6A203211BE009939D3 /* Spotlight */;
+			targetProxy = B3BD3A2A2D72A2CD000FBB11 /* PBXContainerItemProxy */;
 		};
 		B3F7E296297736BE00362B92 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -11619,7 +11843,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -11636,7 +11859,6 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ThumbnailExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -11668,7 +11890,6 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -11686,7 +11907,6 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ThumbnailExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -11717,7 +11937,6 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -11735,7 +11954,6 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ThumbnailExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -11765,7 +11983,6 @@
 				CODE_SIGN_ENTITLEMENTS = Extensions/SpotlightImportExtension/SpotlightImportExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
@@ -11784,7 +12001,6 @@
 					"@executable_path/../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.4;
-				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.SpotlightImportExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -11817,7 +12033,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
@@ -11837,7 +12052,6 @@
 					"@executable_path/../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.4;
-				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.SpotlightImportExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -11869,7 +12083,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
@@ -11889,7 +12102,6 @@
 					"@executable_path/../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.4;
-				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.SpotlightImportExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -12665,7 +12877,6 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=200 -Xfrontend -warn-long-expression-type-checking=200";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(SPOTLIGHT_PRODUCT_BUNDLE_IDENTIFIER)";
@@ -13074,7 +13285,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = "ROM File Provider/ROM_File_Provider.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "Extensions/ROM File Provider/ROM_File_Provider.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -13085,20 +13296,20 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "ROM File Provider/Info.plist";
+				INFOPLIST_FILE = "Extensions/ROM File Provider/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "ROM File Provider";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ROM-File-Provider";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
@@ -13123,7 +13334,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = "ROM File Provider/ROM_File_Provider.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "Extensions/ROM File Provider/ROM_File_Provider.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
@@ -13136,20 +13347,20 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "ROM File Provider/Info.plist";
+				INFOPLIST_FILE = "Extensions/ROM File Provider/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "ROM File Provider";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ROM-File-Provider";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -13172,7 +13383,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = "ROM File Provider/ROM_File_Provider.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "Extensions/ROM File Provider/ROM_File_Provider.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
@@ -13185,20 +13396,20 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "ROM File Provider/Info.plist";
+				INFOPLIST_FILE = "Extensions/ROM File Provider/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "ROM File Provider";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ROM-File-Provider";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -13221,6 +13432,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "Extensions/ROM File Provider/ROM_File_Provider.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -13234,17 +13446,17 @@
 				INFOPLIST_FILE = "ROM File ProviderUI/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "ROM File ProviderUI";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ROM-File-ProviderUI";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
@@ -13269,6 +13481,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "Extensions/ROM File Provider/ROM_File_Provider.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
@@ -13284,17 +13497,17 @@
 				INFOPLIST_FILE = "ROM File ProviderUI/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "ROM File ProviderUI";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ROM-File-ProviderUI";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -13317,6 +13530,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "Extensions/ROM File Provider/ROM_File_Provider.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
@@ -13332,17 +13546,17 @@
 				INFOPLIST_FILE = "ROM File ProviderUI/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "ROM File ProviderUI";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ROM-File-ProviderUI";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -13366,10 +13580,12 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -13378,14 +13594,13 @@
 				INFOPLIST_FILE = "Extensions/Provenance Stickers/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Stickers";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.stickers";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				PROVISIONING_PROFILE_SPECIFIER_MAC = "";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -13407,11 +13622,13 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -13421,14 +13638,13 @@
 				INFOPLIST_FILE = "Extensions/Provenance Stickers/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Stickers";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.stickers";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				PROVISIONING_PROFILE_SPECIFIER_MAC = "";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -13450,11 +13666,13 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -13464,14 +13682,13 @@
 				INFOPLIST_FILE = "Extensions/Provenance Stickers/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Stickers";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.stickers";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				PROVISIONING_PROFILE_SPECIFIER_MAC = "";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -13496,7 +13713,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -13509,7 +13726,6 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=200 -Xfrontend -warn-long-expression-type-checking=200";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(SPOTLIGHT_PRODUCT_BUNDLE_IDENTIFIER)";
@@ -13548,7 +13764,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -13562,7 +13778,6 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=200 -Xfrontend -warn-long-expression-type-checking=200";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(SPOTLIGHT_PRODUCT_BUNDLE_IDENTIFIER)";
@@ -15877,6 +16092,16 @@
 		B3B925A12C6141BC006317EC /* PVVirtualJaguar-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = "PVVirtualJaguar-Dynamic";
+		};
+		B3BD3A222D7298BB000FBB11 /* PVLibrary */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */;
+			productName = PVLibrary;
+		};
+		B3BD3A242D7298FA000FBB11 /* Defaults */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3EE55DF2C66EC09004D06E4 /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = Defaults;
 		};
 		B3BE9F9A2C79869F006D989E /* PVSettings */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -216,6 +216,7 @@
 	</dict>
 	<key>NSUserActivityTypes</key>
 	<array>
+		<string>PVOpenIntent</string>
 		<string>org.provenance-emu.game.play</string>
 		<string>org.provenance-emu.webserver</string>
 	</array>

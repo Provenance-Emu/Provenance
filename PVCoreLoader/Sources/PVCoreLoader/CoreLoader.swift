@@ -27,6 +27,22 @@ public final class CoreLoader: Sendable {
 
     fileprivate let ThisBundle: Bundle = Bundle.module
 
+    /// Cache for core plists to avoid repeated file system operations
+    nonisolated(unsafe) private static var cachedCorePlists: [EmulatorCoreInfoPlist]?
+
+    /// Lock for thread-safe access to the cache
+    private static let cacheLock = NSLock()
+
+    /// Clears the cached core plists, forcing a reload on next getCorePlists() call
+    /// This is primarily useful for testing or in rare cases where cores might change during runtime
+    static public func clearCoreListCache() {
+        cacheLock.lock()
+        defer { cacheLock.unlock() }
+
+        cachedCorePlists = nil
+        ILOG("Core plists cache cleared")
+    }
+
 //    public func parseCoresPlists(plists: [URL]) async -> [EmulatorCoreInfoPlist] {
 //        // Loading cores and calling `.corePlist` property on the `Class.self`
 //        let corePlistsStructs = plists.compactMap {
@@ -41,6 +57,29 @@ public final class CoreLoader: Sendable {
 //    }
 
     static public func getCorePlists() -> [EmulatorCoreInfoPlist] {
+        cacheLock.lock()
+
+        /// Check if we have cached data while holding the lock
+        if let cachedPlists = cachedCorePlists {
+            cacheLock.unlock()
+            DLOG("Returning cached core plists (\(cachedPlists.count) items)")
+            return cachedPlists
+        }
+
+        /// Otherwise load and cache the result
+        ILOG("Loading core plists from file system...")
+        let plists = loadCorePlists()
+
+        /// Update cache while still holding the lock
+        cachedCorePlists = plists
+        cacheLock.unlock()
+
+        ILOG("Cached \(plists.count) core plists for future use")
+        return plists
+    }
+
+    /// Internal method that actually loads the core plists
+    static private func loadCorePlists() -> [EmulatorCoreInfoPlist] {
 //        if #available(iOS 17, *) {
 //            return getCorePlistsFromDyload()
 //        } else {

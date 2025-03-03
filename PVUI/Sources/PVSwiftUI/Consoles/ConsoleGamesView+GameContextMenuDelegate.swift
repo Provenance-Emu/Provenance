@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import protocol PVUIBase.GameContextMenuDelegate
+import struct PVUIBase.GameContextMenu
 
 internal struct SystemMoveState: Identifiable {
     var id: String {
@@ -28,6 +30,7 @@ internal struct ContinuesManagementState: Identifiable {
 extension ConsoleGamesView: GameContextMenuDelegate {
 
 #if !os(tvOS)
+    @ViewBuilder
     internal func imagePickerView() -> some View {
         ImagePicker(sourceType: .photoLibrary) { image in
             if let game = gameToUpdateCover {
@@ -39,6 +42,7 @@ extension ConsoleGamesView: GameContextMenuDelegate {
     }
 #endif
 
+    @ViewBuilder
     internal func renameAlertView() -> some View {
         Group {
             TextField("New name", text: $newGameTitle)

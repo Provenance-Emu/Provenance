@@ -89,6 +89,7 @@ struct StarRatingView: View {
 #endif
     }
 
+    @ViewBuilder
     private func starButton(for index: Int) -> some View {
         Button(action: {
             handleTap(index)
@@ -121,6 +122,7 @@ struct StarRatingView: View {
 
 /// Custom button style to prevent unwanted animations and state changes
 private struct StarButtonStyle: ButtonStyle {
+    @ViewBuilder
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .contentShape(Rectangle())

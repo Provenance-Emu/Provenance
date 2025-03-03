@@ -57,7 +57,6 @@ struct ConsoleGamesView: SwiftUI.View {
     @Default(.showFavorites) internal var showFavorites
     @Default(.showRecentGames) internal var showRecentGames
     
-    
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     
@@ -437,7 +436,7 @@ struct ConsoleGamesView: SwiftUI.View {
             }
         }
     }
-    
+
     @ViewBuilder
     private func showGamesList(_ games: [PVGame]) -> some View {
         LazyVStack(spacing: 0) {
@@ -577,6 +576,7 @@ struct ConsoleGamesView: SwiftUI.View {
         }
     }
     
+    @ViewBuilder
     private func makeGameMoreInfoView(for game: PVGame) -> some View {
         do {
             let driver = try RealmGameLibraryDriver()

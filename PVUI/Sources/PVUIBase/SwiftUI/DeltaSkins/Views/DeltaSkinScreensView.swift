@@ -59,6 +59,7 @@ public struct DeltaSkinScreensView: View {
         }
     }
 
+    @ViewBuilder
     private func screenGroup(_ group: DeltaSkinScreenGroup, in geometry: GeometryProxy) -> some View {
         ZStack {
             // Translucent background if needed
@@ -74,6 +75,7 @@ public struct DeltaSkinScreensView: View {
         }
     }
 
+    @ViewBuilder
     private func screenView(_ screen: DeltaSkinScreen, in geometry: GeometryProxy) -> some View {
         guard let outputFrame = screen.outputFrame else {
             return AnyView(EmptyView())

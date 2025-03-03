@@ -141,6 +141,7 @@ private extension ButtonStyle where Self == TVCardButtonStyle {
 private struct TVCardButtonStyle: ButtonStyle {
     @ObservedObject private var themeManager = ThemeManager.shared
 
+    @ViewBuilder
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .background(

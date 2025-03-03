@@ -268,9 +268,26 @@ public extension GameLaunchingViewController {
     }
 }
 
+import Intents
+
 public
 extension GameLaunchingViewController where Self: UIViewController {
 
+
+    func donateShortcut(forGame game: PVGame) {
+        let activity = NSUserActivity(activityType: "com.provenance-emu.provenance.openMD5")
+        activity.title = "Open \(game.title) in Provenance"
+        activity.userInfo = ["url": "provenance://open?md5=\(game.md5)"]
+        activity.isEligibleForSearch = true
+        #if !os(tvOS)
+        activity.isEligibleForPrediction = true
+        activity.persistentIdentifier = NSUserActivityPersistentIdentifier("com.provenance-emu.provenance.openMD5")
+        #endif
+        
+        self.userActivity = activity
+        self.userActivity?.becomeCurrent()
+    }
+    
     @MainActor
     func load(_ game: PVGame, sender: Any? = nil, core: PVCore? = nil, saveState: PVSaveState? = nil) async {
         guard game.realm != nil else {
@@ -292,6 +309,8 @@ extension GameLaunchingViewController where Self: UIViewController {
         @ThreadSafe var game: PVGame! = game
         @ThreadSafe var core = core
         @ThreadSafe var saveState = saveState
+        
+        donateShortcut(forGame: game)
 
         guard !(presentedViewController is PVEmualatorControllerProtocol) else {
             let currentGameVC = presentedViewController as! PVEmualatorControllerProtocol

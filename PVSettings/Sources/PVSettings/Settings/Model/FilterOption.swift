@@ -109,7 +109,7 @@ public enum MetalFilterSelectionOption: String, CustomStringConvertible, CaseIte
     case lcd
 //    case lineTron
     case megaTron
-//    case ulTron
+    case ulTron
     case gameBoy
     case vhs
     public enum ScreenType: String, CaseIterable {
@@ -125,7 +125,7 @@ public enum MetalFilterSelectionOption: String, CustomStringConvertible, CaseIte
         case .lcd: return .lcd
 //        case .lineTron: return .crt
         case .megaTron: return .crt
-//        case .ulTron: return .crt
+        case .ulTron: return .crt
         case .gameBoy: return .crt
         case .vhs: return .crt
         }
@@ -141,7 +141,7 @@ public enum MetalFilterSelectionOption: String, CustomStringConvertible, CaseIte
         case .lcd: return "LCD"
 //        case .lineTron: return "Line Tron"
         case .megaTron: return "Mega Tron"
-//        case .ulTron: return "ulTron"
+        case .ulTron: return "ulTron"
         case .gameBoy: return "Game Boy"
         case .vhs: return "VHS"
         }

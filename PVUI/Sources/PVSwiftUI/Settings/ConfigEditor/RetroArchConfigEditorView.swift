@@ -1,5 +1,8 @@
 import Combine
 import SwiftUI
+#if !os(tvOS)
+import struct PVUIBase.ActivityViewController
+#endif
 
 struct RetroArchConfigEditorView: View {
     @Binding var showExportSheet: Bool

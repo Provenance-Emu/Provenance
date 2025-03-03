@@ -96,6 +96,7 @@ public struct ContinuesManagementStackView: View {
 }
 
 extension View {
+    @ViewBuilder
     func onScroll(perform: @escaping (CGPoint) -> Void) -> some View {
         self.background(
             GeometryReader { geometry in

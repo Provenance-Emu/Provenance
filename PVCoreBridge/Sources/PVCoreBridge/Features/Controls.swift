@@ -625,6 +625,7 @@ import UIKit
     case swap
     case rotate
     case analogMode
+    case home
     case count
 }
 

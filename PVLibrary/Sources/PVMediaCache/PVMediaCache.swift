@@ -51,7 +51,7 @@ extension NSImage {
 #if os(tvOS)
     public let PVThumbnailMaxResolution: Float = 800.0
 #else
-    public let PVThumbnailMaxResolution: Float = 600.00
+    public let PVThumbnailMaxResolution: Float = 600.0
 #endif
 
 let kPVCachePath = "PVCache"
