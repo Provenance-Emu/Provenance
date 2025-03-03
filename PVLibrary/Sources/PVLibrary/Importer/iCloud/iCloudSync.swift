@@ -866,6 +866,16 @@ class RomsSyncer: iCloudContainerSyncer {
         tryToImportNewRomFiles()
     }
     
+    var deviceModelIdentifier: String? {
+        var size: size_t = 0
+        sysctlbyname("hw.model", nil, &size, nil, 0)
+        
+        var model = [CChar](repeating: 0, count: size)
+        sysctlbyname("hw.model", &model, &size, nil, 0)
+        
+        return String(cString: model)
+    }
+    
     func tryToImportNewRomFiles() {
         //if the importer is currently importing files, we have to wait
         let importState = gameImporter.processingState
@@ -874,6 +884,11 @@ class RomsSyncer: iCloudContainerSyncer {
         else {
             return
         }
+        let processInfo = ProcessInfo.processInfo
+        let coreCount = processInfo.processorCount
+        let totalMemory = processInfo.physicalMemory
+        //TODO: batch should be based on the chip. on the iphone xs max, import freezes the screen even with the 1 minute sleep. on the ipad mini 6th gen, it allows the cpu/ui to breath with batch of 100 and sleep of 1 minute. so older chips need to find out what is a good batch size. if we have to, we could do 1 at a time. maybe put the batch on the system settings?
+        ILOG("CPU Cores: \(coreCount), Total Physical Memory: \(totalMemory / (1024 * 1024 * 1024)) GB, deviceModel: \(deviceModelIdentifier)")
         //give the UI a moment to finish updating, otherwise we get real bad app hangs non-stop and the user can't even get into a game or navigate through the UI. this is more of a hack, but it works for now when importing large libraries. not perfect, but allows the UI to breathe a little bit which is better than having the UI freeze because the user's reaction would prolly be to just shut down the app and reopen and then the user would go in an endless loop of not being able to use the app at all
         sleep(60)
         queue.async(flags: .barrier) { [weak self] in
@@ -898,6 +913,7 @@ class RomsSyncer: iCloudContainerSyncer {
             uploadedFiles.removeAll()
         }
         gameImporter.addImports(forPaths: importPaths)
+        ILOG("ROMs: downloading: \(pendingFilesToDownload.count), pending to process: \(newFiles.count), processing: \(processingFiles.count)")
         gameImporter.startProcessing()
     }
 }
