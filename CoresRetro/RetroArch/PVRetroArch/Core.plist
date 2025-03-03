@@ -1528,6 +1528,49 @@
 			<key>PVContentless</key>
 			<true/>
 		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>mesen.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVProjectName</key>
+			<string>Mesen (RetroArch)</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.nes</string>
+				<string>com.provenance.fds</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/mesen</string>
+			<key>PVProjectVersion</key>
+			<string>Nightly</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
+			<key>PVContentless</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>mesen-s.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.gb</string>
+				<string>com.provenance.gbc</string>
+				<string>com.provenance.snes</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>Mesen-S (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/mesen</string>
+			<key>PVProjectVersion</key>
+			<string>Nightly</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
+			<key>PVContentless</key>
+			<false/>
+		</dict>
 	</array>
 </dict>
 </plist>
