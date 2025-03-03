@@ -16,6 +16,7 @@ struct HomeContinueItemView: SwiftUI.View {
     let hideSystemLabel: Bool
     var action: () -> Void
     let isFocused: Bool
+    weak var rootDelegate: PVRootDelegate?
 
     @State private var showDeleteAlert = false
 
@@ -66,6 +67,34 @@ struct HomeContinueItemView: SwiftUI.View {
                 .animation(.easeInOut(duration: 0.15), value: isFocused)
             }
             .contextMenu {
+                Button {
+                    action()
+                } label: {
+                    Label("Load Save", systemImage: "play.fill")
+                }
+
+                if let game = continueState.game, !game.isInvalidated {
+                    if let system = continueState.game.system {
+                        Button {
+                            /// Show the continues management view for all games
+                            Task { @MainActor in
+                                rootDelegate?.root_showContinuesManagement(forSystemID: system.identifier)
+                            }
+                        } label: {
+                            Label("Manage All \(system.shortName) Save States", systemImage: "clock.arrow.circlepath")
+                        }
+                    }
+                    
+                    Button {
+                        /// Show the continues management view for this specific game
+                        Task { @MainActor in
+                            rootDelegate?.root_showContinuesManagement(game)
+                        }
+                    } label: {
+                        Label("Manage Game Save States", systemImage: "gamecontroller")
+                    }
+                }
+
                 Button(role: .destructive) {
                     showDeleteAlert = true
                 } label: {

@@ -403,6 +403,86 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
             }
         }
     }
+
+    public func root_showContinuesManagement(_ game: PVGame? = nil) {
+        DLOG("Showing continues management for game: \(game?.title ?? "All Games")")
+
+        // Create the driver
+        let driver = RealmSaveStateDriver(realm: RomDatabase.sharedInstance.realm)
+
+        // Create the view model with appropriate parameters
+        let viewModel = ContinuesMagementViewModel(
+            driver: driver,
+            gameTitle: game?.title ?? "All Games",
+            systemTitle: game?.system?.name ?? "All Systems",
+            numberOfSaves: game?.saveStates.count ?? RomDatabase.sharedInstance.realm.objects(PVSaveState.self).count,
+//            gameUIImage: game?.boxArtImage ?? UIImage(systemName: "gamecontroller")!,
+            onLoadSave: { [weak self] saveStateId in
+                guard let self = self else { return }
+                Task { @MainActor in
+                    await self.root_openSaveState(saveStateId)
+                }
+            }
+        )
+
+        // If a specific game is provided, filter the save states
+        if let game = game {
+            driver.loadSaveStates(forGameId: game.id)
+        } else {
+            // When no specific game is provided, load all save states across all systems
+            driver.loadAllSaveStates(forSystemID: "")
+        }
+
+        // Create and present the view
+        let continuesView = ContinuesMagementView(viewModel: viewModel)
+        let hostingController = UIHostingController(rootView: continuesView)
+
+        // Present as a sheet
+        hostingController.modalPresentationStyle = .formSheet
+        hostingController.preferredContentSize = CGSize(width: 600, height: 800)
+
+        self.present(hostingController, animated: true)
+    }
+
+    /// Show continues management for a specific system
+    /// - Parameter systemID: The system identifier to filter save states by
+    public func root_showContinuesManagement(forSystemID systemID: String) {
+        DLOG("Showing continues management for system ID: \(systemID)")
+
+        // Create the driver
+        let driver = RealmSaveStateDriver(realm: RomDatabase.sharedInstance.realm)
+
+        // Get the system name for display
+        let systemName = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: systemID)?.name ?? systemID
+
+        // Create the view model with appropriate parameters
+        let viewModel = ContinuesMagementViewModel(
+            driver: driver,
+            gameTitle: "All Games",
+            systemTitle: systemName,
+            numberOfSaves: RomDatabase.sharedInstance.realm.objects(PVSaveState.self)
+                .filter("game.systemIdentifier == %@", systemID).count,
+            onLoadSave: { [weak self] saveStateId in
+                guard let self = self else { return }
+                Task { @MainActor in
+                    await self.root_openSaveState(saveStateId)
+                }
+            }
+        )
+
+        // Load all save states for the specified system
+        driver.loadAllSaveStates(forSystemID: systemID)
+
+        // Create and present the view
+        let continuesView = ContinuesMagementView(viewModel: viewModel)
+        let hostingController = UIHostingController(rootView: continuesView)
+
+        // Present as a sheet
+        hostingController.modalPresentationStyle = .formSheet
+        hostingController.preferredContentSize = CGSize(width: 600, height: 800)
+
+        self.present(hostingController, animated: true)
+    }
 }
 
 // MARK: - HUD State

@@ -25,6 +25,10 @@ public protocol PVRootDelegate: AnyObject {
     func root_presentCoreSelection(forGame game: PVGame, sender: Any?)
     func showMessage(_ message: String, title: String)
     func root_loadDisc(_ disc: PVFile, forGame game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async
+    /// Shows the continues management view
+    /// - Parameter game: Optional game to filter save states. If nil, shows all save states.
+    func root_showContinuesManagement(_ game: PVGame?)
+    func root_showContinuesManagement(forSystemID systemID: String)
 
     var gameLibrary: PVGameLibrary<RealmDatabaseDriver>! { get }
 }

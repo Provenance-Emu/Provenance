@@ -531,7 +531,8 @@ private struct SaveStatesGridView: View {
                             )
                         }
                     },
-                    isFocused: (parentFocusedSection == .recentSaveStates && parentFocusedItem == saveState.id) && viewModel.isControllerConnected
+                    isFocused: (parentFocusedSection == .recentSaveStates && parentFocusedItem == saveState.id) && viewModel.isControllerConnected,
+                    rootDelegate: rootDelegate
                 )
                 .focusableIfAvailable()
                 .onChange(of: parentFocusedItem) { newValue in

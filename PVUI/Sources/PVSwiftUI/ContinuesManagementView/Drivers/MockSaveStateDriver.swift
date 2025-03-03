@@ -51,15 +51,20 @@ public class MockSaveStateDriver: SaveStateDriver {
     public let savesTotalSize: Int
     public let gameUIImage: UIImage?
 
+    /// System identifier for filtering
+    private var systemIdentifier: String
+
     public init(mockData: Bool = true,
                 gameTitle: String = "Bomber Man",
                 systemTitle: String = "Game Boy",
                 savesTotalSize: Int = 2048,
-                gameUIImage: UIImage? = nil) {
+                gameUIImage: UIImage? = nil,
+                systemIdentifier: String = "com.provenance.gameboy") {
         self.gameTitle = gameTitle
         self.systemTitle = systemTitle
         self.savesTotalSize = savesTotalSize
         self.gameUIImage = gameUIImage
+        self.systemIdentifier = systemIdentifier
 
         if mockData {
             let mockStates = (0..<10).map { index -> SaveStateRowViewModel in
@@ -83,11 +88,12 @@ public class MockSaveStateDriver: SaveStateDriver {
         }
     }
 
-    public init(mockSaveStates: [SaveStateRowViewModel] = []) {
+    public init(mockSaveStates: [SaveStateRowViewModel] = [], systemIdentifier: String = "com.provenance.gameboy") {
         self.gameTitle = "Test Game"
         self.systemTitle = "Test System"
         self.savesTotalSize = 0
         self.gameUIImage = nil
+        self.systemIdentifier = systemIdentifier
         self.allSaveStates = mockSaveStates
         // Initialize mock sizes for provided save states
         mockSaveStates.forEach { state in
@@ -160,5 +166,29 @@ public class MockSaveStateDriver: SaveStateDriver {
     public func share(saveStateId: String) -> URL? {
         // Mock implementation returns nil
         return nil
+    }
+
+    /// Load save states for a specific game
+    public func loadSaveStates(forGameId gameID: String) {
+        // Set the game ID filter and update save states
+        self.gameId = gameID
+        // updateSaveStates() is called by the gameId property observer
+    }
+
+    /// Load all save states for a specific system
+    /// If systemID is empty, load save states for all systems
+    public func loadAllSaveStates(forSystemID systemID: String) {
+        // Clear any game ID filter
+        self.gameId = nil
+
+        // In a real implementation, we would filter by system ID
+        // For the mock, we'll just pretend all save states belong to the requested system
+        // In a more sophisticated mock, we could store system IDs with each save state
+
+        // For now, we'll just update the system identifier and return all save states
+        self.systemIdentifier = systemID
+
+        // updateSaveStates() is called by the gameId property observer
+        // which will send all save states since gameId is nil
     }
 }
