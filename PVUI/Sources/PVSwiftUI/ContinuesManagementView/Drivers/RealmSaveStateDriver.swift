@@ -881,24 +881,32 @@ public class RealmSaveStateDriver: SaveStateDriver {
             // Check for cancellation before updating view models
             if !self.isTaskActive(taskId) { return }
 
-            // Update view models with loaded images and sizes
-            for i in 0..<viewModels.count {
-                let id = viewModels[i].id
-                if let updates = updatedModels[id] {
-                    // Check for cancellation before each update
-                    if !self.isTaskActive(taskId) { break }
+            // Create a copy of the view models to update
+            var updatedViewModels = viewModels
 
-                    if let image = updates.image {
-                        viewModels[i].thumbnail = image
+            // Update view models with loaded images and sizes on the main thread
+            await MainActor.run {
+                for i in 0..<updatedViewModels.count {
+                    let id = updatedViewModels[i].id
+                    if let updates = updatedModels[id] {
+                        // Check for cancellation before each update
+                        if !self.isTaskActive(taskId) { break }
+
+                        if let image = updates.image {
+                            updatedViewModels[i].thumbnail = image
+                        }
+                        updatedViewModels[i].size = updates.size
+
+                        // Update cache
+                        self.cacheLock.lock()
+                        self.viewModelCache[id] = updatedViewModels[i]
+                        self.cacheLock.unlock()
                     }
-                    viewModels[i].size = updates.size
-
-                    // Update cache
-                    self.cacheLock.lock()
-                    self.viewModelCache[id] = viewModels[i]
-                    self.cacheLock.unlock()
                 }
             }
+
+            // Update the original view models array with the updated values
+            viewModels = updatedViewModels
         }
 
         // Return updated view models

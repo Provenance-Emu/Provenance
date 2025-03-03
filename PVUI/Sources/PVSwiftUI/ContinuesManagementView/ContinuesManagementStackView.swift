@@ -47,13 +47,15 @@ public struct ContinuesManagementStackView: View {
     @State private var searchBarVisible = true
 
     /// Create a bindable wrapper for the edit state
-    @ObservedObject private var bindableEditState: SaveStateEditState = .init()
+    @StateObject private var bindableEditState = SaveStateEditState()
 
     private let searchBarHeight: CGFloat = 52
 
     /// Function to handle edit requests from save state rows
     private func handleEdit(_ field: SaveStateEditField, saveState: SaveStateRowViewModel, initialValue: String?) {
-        bindableEditState.startEditing(field, saveState: saveState, initialValue: initialValue)
+        Task { @MainActor in
+            bindableEditState.startEditing(field, saveState: saveState, initialValue: initialValue)
+        }
     }
 
     public var body: some View {
@@ -102,22 +104,46 @@ public struct ContinuesManagementStackView: View {
             }
         }
         .alert("Edit Description", isPresented: Binding(
-            get: { bindableEditState.field == .description },
-            set: { if !$0 { bindableEditState.field = nil } }
+            get: {
+                // Access the field property on the main actor
+                let field = bindableEditState.field
+                return field == .description
+            },
+            set: { isPresented in
+                if !isPresented {
+                    Task { @MainActor in
+                        bindableEditState.field = nil
+                    }
+                }
+            }
         )) {
-            TextField("Description", text: $bindableEditState.text)
+            // Use a local state variable for the text field to avoid actor isolation issues
+            let textBinding = Binding(
+                get: { bindableEditState.text },
+                set: { newValue in
+                    Task { @MainActor in
+                        bindableEditState.text = newValue
+                    }
+                }
+            )
+
+            TextField("Description", text: textBinding)
                 #if !os(tvOS)
                 .textInputAutocapitalization(.words)
                 #endif
             Button("Cancel", role: .cancel) {
-                bindableEditState.reset()
+                Task { @MainActor in
+                    bindableEditState.reset()
+                }
             }
             Button("Save") {
-                if let saveState = bindableEditState.saveState {
-                    saveState.description = bindableEditState.text
-                    viewModel.updateSaveState(saveState)
+                Task { @MainActor in
+                    if let saveState = bindableEditState.saveState {
+                        saveState.description = bindableEditState.text
+                        viewModel.updateSaveState(saveState)
+                    }
+                    bindableEditState.reset()
                 }
-                bindableEditState.reset()
             }
         }
     }
