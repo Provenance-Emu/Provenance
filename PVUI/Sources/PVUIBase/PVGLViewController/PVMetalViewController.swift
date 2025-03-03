@@ -1333,9 +1333,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             case .megaTron:
                 useLCD = false
                 useCRT = true
-                //            case .ulTron:
-                //                useLCD = false
-                //                useCRT = true
+           case .ulTron:
+               useLCD = false
+               useCRT = true
             case .gameBoy:
                 useLCD = true
                 useCRT = false
@@ -1488,18 +1488,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 pipelineState = self.effectFilterPipeline
 
             } else if self.effectFilterShader?.name == "ulTron", let inputTexture = self.inputTexture {
-                let sourceSize = SIMD4<Float>(
-                    Float(inputTexture.width),
-                    Float(inputTexture.height),
-                    1.0 / Float(inputTexture.width),
-                    1.0 / Float(inputTexture.height)
-                )
-                let outputSize = SIMD4<Float>(
-                    Float(view.drawableSize.width),
-                    Float(view.drawableSize.height),
-                    1.0 / Float(view.drawableSize.width),
-                    1.0 / Float(view.drawableSize.height)
-                )
+                let sourceSize = SIMD4<Float>.init(0, 0, Float(screenRect.size.width), Float(screenRect.size.height))
+                let outputSize = SIMD4<Float>.init(Float(inputTexture.width), Float(inputTexture.height), Float(view.drawableSize.width), Float(view.drawableSize.height))
 
                 var uniforms = UlTronUniforms(
                     SourceSize: sourceSize,
