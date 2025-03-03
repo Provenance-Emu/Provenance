@@ -280,24 +280,24 @@ public class ContinuesMagementViewModel: ObservableObject {
             .dropFirst()
             .sink { [weak self] isPinned in
                 self?.driver.setPin(saveStateId: viewModel.id, isPinned: isPinned)
-                self?.refilterStates()
+//                self?.refilterStates()
             }
             .store(in: &cancellables)
 
         /// Observe favorite changes
         viewModel.$isFavorite
-            .receive(on: DispatchQueue.main)
             .dropFirst()
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] isFavorite in
                 self?.driver.setFavorite(saveStateId: viewModel.id, isFavorite: isFavorite)
-                self?.refilterStates()
+//                self?.refilterStates()
             }
             .store(in: &cancellables)
 
         /// Observe description changes
         viewModel.$description
-            .receive(on: DispatchQueue.main)
             .dropFirst()
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] description in
                 self?.driver.updateDescription(saveStateId: viewModel.id, description: description)
             }

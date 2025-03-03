@@ -556,6 +556,9 @@ public class RealmSaveStateDriver: SaveStateDriver {
 
             guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateId) else { return }
 
+            // Only update if the value is actually changing
+            guard saveState.userDescription != description else { return }
+
             try? realm.write {
                 saveState.userDescription = description
             }
@@ -597,6 +600,9 @@ public class RealmSaveStateDriver: SaveStateDriver {
 
             guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateId) else { return }
 
+            // Only update if the value is actually changing
+            guard saveState.isPinned != isPinned else { return }
+
             try? realm.write {
                 saveState.isPinned = isPinned
             }
@@ -637,6 +643,9 @@ public class RealmSaveStateDriver: SaveStateDriver {
             let realm = self.realm()
 
             guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateId) else { return }
+
+            // Only update if the value is actually changing
+            guard saveState.isFavorite != isFavorite else { return }
 
             try? realm.write {
                 saveState.isFavorite = isFavorite
@@ -685,10 +694,24 @@ public class RealmSaveStateDriver: SaveStateDriver {
 
             guard let realmSaveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveState.id) else { return }
 
+            // Check if any values are actually changing
+            let descriptionChanged = realmSaveState.userDescription != saveState.description
+            let isPinnedChanged = realmSaveState.isPinned != saveState.isPinned
+            let isFavoriteChanged = realmSaveState.isFavorite != saveState.isFavorite
+
+            // Only update if something has changed
+            guard descriptionChanged || isPinnedChanged || isFavoriteChanged else { return }
+
             try? realm.write {
-                realmSaveState.userDescription = saveState.description
-                realmSaveState.isPinned = saveState.isPinned
-                realmSaveState.isFavorite = saveState.isFavorite
+                if descriptionChanged {
+                    realmSaveState.userDescription = saveState.description
+                }
+                if isPinnedChanged {
+                    realmSaveState.isPinned = saveState.isPinned
+                }
+                if isFavoriteChanged {
+                    realmSaveState.isFavorite = saveState.isFavorite
+                }
             }
 
             // Update cache
