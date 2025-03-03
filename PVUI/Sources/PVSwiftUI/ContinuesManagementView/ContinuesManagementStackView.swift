@@ -87,7 +87,6 @@ public struct ContinuesManagementStackView: View {
             Button("Save") {
                 if let saveState = editingSaveState {
                     saveState.description = editText
-                    viewModel.updateSaveState(saveState)
                 }
                 editingField = nil
             }

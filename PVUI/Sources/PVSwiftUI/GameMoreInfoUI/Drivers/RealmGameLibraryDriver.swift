@@ -1,4 +1,5 @@
 import Foundation
+import PVUIBase
 import PVRealm
 import PVMediaCache
 import PVLogging
@@ -379,47 +380,47 @@ public extension Notification.Name {
 // MARK: - GameContextMenuDelegate Implementation
 extension RealmGameLibraryDriver: GameContextMenuDelegate {
     /// Implementation of GameContextMenuDelegate methods
-    func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame) {
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame) {
         /// This method would be implemented by the parent view controller
         DLOG("RealmGameLibraryDriver: Rename requested for game \(game.title)")
     }
 
-    func gameContextMenu(_ menu: GameContextMenu, didRequestChooseCoverFor game: PVGame) {
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestChooseCoverFor game: PVGame) {
         /// This method would be implemented by the parent view controller
         DLOG("RealmGameLibraryDriver: Choose cover requested for game \(game.title)")
     }
 
-    func gameContextMenu(_ menu: GameContextMenu, didRequestMoveToSystemFor game: PVGame) {
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestMoveToSystemFor game: PVGame) {
         /// This method would be implemented by the parent view controller
         DLOG("RealmGameLibraryDriver: Move to system requested for game \(game.title)")
     }
 
-    func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
         /// This method would be implemented by the parent view controller
         DLOG("RealmGameLibraryDriver: Show save states requested for game \(game.title)")
     }
 
-    func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor gameId: String) {
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor gameId: String) {
         /// This method would be implemented by the parent view controller
         DLOG("RealmGameLibraryDriver: Show game info requested for game ID \(gameId)")
     }
 
-    func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame) {
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame) {
         /// This method would be implemented by the parent view controller
         DLOG("RealmGameLibraryDriver: Show image picker requested for game \(game.title)")
     }
 
-    func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame) {
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame) {
         /// This method would be implemented by the parent view controller
         DLOG("RealmGameLibraryDriver: Show artwork search requested for game \(game.title)")
     }
 
-    func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
         /// This method would be implemented by the parent view controller
         DLOG("RealmGameLibraryDriver: Choose artwork source requested for game \(game.title)")
     }
 
-    func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
         /// This method would be implemented by the parent view controller
         DLOG("RealmGameLibraryDriver: Disc selection requested for game \(game.title)")
     }
