@@ -82,6 +82,7 @@ public struct SaveStateRowView: View {
     @State private var showingLoadAlert = false
     @State private var editText: String = ""
     @Binding var currentUserInteractionCellID: String?
+    var onEdit: ((SaveStateEditField, SaveStateRowViewModel, String?) -> Void)?
 
     /// Computed property for display title
     private var displayTitle: String {
@@ -113,8 +114,7 @@ public struct SaveStateRowView: View {
                 /// Labels
                 VStack(alignment: .leading, spacing: 4) {
                     Button {
-                        editText = viewModel.description ?? ""
-                        showingEditDialog = true
+                        onEdit?(.description, viewModel, viewModel.description)
                     } label: {
                         Text(displayTitle)
                             .font(.headline)

@@ -389,12 +389,36 @@ public class ContinuesMagementViewModel: ObservableObject {
     }
 }
 
+// Add an EditField enum similar to GameMoreInfoView
+public enum SaveStateEditField: Identifiable {
+    case description
+
+    public var id: String {
+        switch self {
+        case .description:
+            return "description"
+        }
+    }
+}
+
 public struct ContinuesMagementView: View {
     /// Main view model
     @StateObject private var viewModel: ContinuesMagementViewModel
 
+    /// State for editing fields
+    @State private var editingField: SaveStateEditField?
+    @State private var editText: String = ""
+    @State private var editingSaveState: SaveStateRowViewModel?
+
     public init(viewModel: ContinuesMagementViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
+    }
+
+    /// Function to show edit field alert
+    private func editField(_ field: SaveStateEditField, saveState: SaveStateRowViewModel, initialValue: String?) {
+        editingField = field
+        editText = initialValue ?? ""
+        editingSaveState = saveState
     }
 
     public var body: some View {
@@ -456,6 +480,21 @@ public struct ContinuesMagementView: View {
         }
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
+        .alert("Edit Description", isPresented: Binding(
+            get: { editingField == .description },
+            set: { if !$0 { editingField = nil } }
+        )) {
+            TextField("Description", text: $editText)
+            Button("Cancel") {
+                editingField = nil
+            }
+            Button("Save") {
+                if let saveState = editingSaveState {
+                    saveState.description = editText
+                }
+                editingField = nil
+            }
+        }
     }
 }
 

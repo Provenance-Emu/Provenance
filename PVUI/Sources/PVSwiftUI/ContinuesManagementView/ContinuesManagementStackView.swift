@@ -14,7 +14,19 @@ public struct ContinuesManagementStackView: View {
     @State private var currentUserInteractionCellID: String? = nil
     @State private var searchBarVisible = true
 
+    /// State for editing fields
+    @State private var editingField: SaveStateEditField?
+    @State private var editText: String = ""
+    @State private var editingSaveState: SaveStateRowViewModel?
+
     private let searchBarHeight: CGFloat = 52
+
+    /// Function to handle edit requests from save state rows
+    private func handleEdit(_ field: SaveStateEditField, saveState: SaveStateRowViewModel, initialValue: String?) {
+        editingField = field
+        editText = initialValue ?? ""
+        editingSaveState = saveState
+    }
 
     public var body: some View {
         ScrollViewReader { proxy in
@@ -31,7 +43,8 @@ public struct ContinuesManagementStackView: View {
                         ForEach(viewModel.filteredAndSortedSaveStates) { saveState in
                             SaveStateRowView(
                                 viewModel: saveState,
-                                currentUserInteractionCellID: $currentUserInteractionCellID)
+                                currentUserInteractionCellID: $currentUserInteractionCellID,
+                                onEdit: handleEdit)
                                 .id(saveState.id)
                         }
                     }
@@ -58,6 +71,25 @@ public struct ContinuesManagementStackView: View {
                         searchBarVisible = true
                     }
                 }
+            }
+        }
+        .alert("Edit Description", isPresented: Binding(
+            get: { editingField == .description },
+            set: { if !$0 { editingField = nil } }
+        )) {
+            TextField("Description", text: $editText)
+                #if !os(tvOS)
+                .textInputAutocapitalization(.words)
+                #endif
+            Button("Cancel", role: .cancel) {
+                editingField = nil
+            }
+            Button("Save") {
+                if let saveState = editingSaveState {
+                    saveState.description = editText
+                    viewModel.updateSaveState(saveState)
+                }
+                editingField = nil
             }
         }
     }
