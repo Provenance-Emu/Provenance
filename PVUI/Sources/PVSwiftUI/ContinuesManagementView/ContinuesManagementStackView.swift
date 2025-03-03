@@ -6,26 +6,56 @@
 //
 
 import SwiftUI
-import PVSwiftUI
 import PVThemes
+
+/// Class to hold edit state that won't cause view hierarchy changes
+public class SaveStateEditState: ObservableObject {
+    /// The text being edited
+    @Published
+    var text: String = ""
+    /// The save state being edited
+    @Published
+    var saveState: SaveStateRowViewModel?
+    /// The field being edited
+    @Published
+    var field: SaveStateEditField?
+
+    /// Computed property to check if editing is active
+    var isEditing: Bool {
+        field != nil
+    }
+
+    /// Reset the edit state
+    func reset() {
+        text = ""
+        saveState = nil
+        field = nil
+    }
+
+    /// Start editing a field
+    func startEditing(_ field: SaveStateEditField, saveState: SaveStateRowViewModel, initialValue: String?) {
+        self.field = field
+        self.saveState = saveState
+        self.text = initialValue ?? ""
+    }
+}
 
 public struct ContinuesManagementStackView: View {
     @ObservedObject var viewModel: ContinuesMagementViewModel
     @State private var currentUserInteractionCellID: String? = nil
     @State private var searchBarVisible = true
 
-    /// State for editing fields
-    @State private var editingField: SaveStateEditField?
-    @State private var editText: String = ""
-    @State private var editingSaveState: SaveStateRowViewModel?
+    /// State for editing fields - using a reference type to avoid view hierarchy changes
+    @State private var editState = SaveStateEditState()
+
+    /// Create a bindable wrapper for the edit state
+    @ObservedObject private var bindableEditState: SaveStateEditState = .init()
 
     private let searchBarHeight: CGFloat = 52
 
     /// Function to handle edit requests from save state rows
     private func handleEdit(_ field: SaveStateEditField, saveState: SaveStateRowViewModel, initialValue: String?) {
-        editingField = field
-        editText = initialValue ?? ""
-        editingSaveState = saveState
+        editState.startEditing(field, saveState: saveState, initialValue: initialValue)
     }
 
     public var body: some View {
@@ -74,21 +104,22 @@ public struct ContinuesManagementStackView: View {
             }
         }
         .alert("Edit Description", isPresented: Binding(
-            get: { editingField == .description },
-            set: { if !$0 { editingField = nil } }
+            get: { editState.field == .description },
+            set: { if !$0 { editState.field = nil } }
         )) {
-            TextField("Description", text: $editText)
+            TextField("Description", text: $bindableEditState.text)
                 #if !os(tvOS)
                 .textInputAutocapitalization(.words)
                 #endif
             Button("Cancel", role: .cancel) {
-                editingField = nil
+                editState.reset()
             }
             Button("Save") {
-                if let saveState = editingSaveState {
-                    saveState.description = editText
+                if let saveState = editState.saveState {
+                    saveState.description = editState.text
+                    viewModel.updateSaveState(saveState)
                 }
-                editingField = nil
+                editState.reset()
             }
         }
     }

@@ -20,6 +20,12 @@ public class SaveStateRowViewModel: ObservableObject, Identifiable, Equatable {
     public let saveDate: Date
     public let thumbnailImage: Image
 
+    /// Size of the save state in bytes
+    @Published public var size: UInt64 = 0
+
+    /// Thumbnail image that can be updated
+    @Published public var thumbnail: Image
+
     @Published var isEditing: Bool = false
     @Published var isSelected: Bool = false
 
@@ -46,7 +52,8 @@ public class SaveStateRowViewModel: ObservableObject, Identifiable, Equatable {
         lhs.isPinned == rhs.isPinned &&
         lhs.isFavorite == rhs.isFavorite &&
         lhs.isEditing == rhs.isEditing &&
-        lhs.isSelected == rhs.isSelected
+        lhs.isSelected == rhs.isSelected &&
+        lhs.size == rhs.size
     }
 
     public init(
@@ -59,6 +66,7 @@ public class SaveStateRowViewModel: ObservableObject, Identifiable, Equatable {
         isAutoSave: Bool = false,
         isPinned: Bool = false,
         isFavorite: Bool = false,
+        size: UInt64 = 0,
         onDelete: (() -> Void)? = nil,
         onLoad: (() -> Void)? = nil
     ) {
@@ -67,10 +75,12 @@ public class SaveStateRowViewModel: ObservableObject, Identifiable, Equatable {
         self.gameTitle = gameTitle
         self.saveDate = saveDate
         self.thumbnailImage = thumbnailImage
+        self.thumbnail = thumbnailImage
         self.description = description
         self.isAutoSave = isAutoSave
         self.isPinned = isPinned
         self.isFavorite = isFavorite
+        self.size = size
         self.onDelete = onDelete
         self.onLoad = onLoad
     }

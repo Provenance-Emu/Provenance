@@ -12,12 +12,15 @@ struct ContinuesSearchBar: View {
     var body: some View {
         HStack {
             Image(systemName: "magnifyingglass")
-                .foregroundColor(currentPalette.settingsCellText?.swiftUIColor ?? .gray)
+                .foregroundColor(currentPalette.defaultTintColor?.swiftUIColor ?? .gray)
             
             TextField("Search", text: $text)
                 .textFieldStyle(PlainTextFieldStyle())
                 .focused($isFocused)
+            #if !os(tvOS)
                 .foregroundColor(currentPalette.settingsCellText?.swiftUIColor)
+                .background(currentPalette.settingsCellBackground?.swiftUIColor ?? Color(.systemGray6))
+            #endif
             
             if !text.isEmpty {
                 Button(action: {

@@ -403,20 +403,23 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
             }
         }
     }
-
+    
+    @MainActor
     public func root_showContinuesManagement(_ game: PVGame? = nil) {
         DLOG("Showing continues management for game: \(game?.title ?? "All Games")")
-
+        guard let realm = try? Realm() else {
+            ELOG("Realm() failed")
+            return
+        }
         // Create the driver
-        let driver = RealmSaveStateDriver(realm: RomDatabase.sharedInstance.realm)
+        let driver = RealmSaveStateDriver(realm: realm)
 
         // Create the view model with appropriate parameters
         let viewModel = ContinuesMagementViewModel(
             driver: driver,
             gameTitle: game?.title ?? "All Games",
             systemTitle: game?.system?.name ?? "All Systems",
-            numberOfSaves: game?.saveStates.count ?? RomDatabase.sharedInstance.realm.objects(PVSaveState.self).count,
-//            gameUIImage: game?.boxArtImage ?? UIImage(systemName: "gamecontroller")!,
+            numberOfSaves: game?.saveStates.count ?? realm.objects(PVSaveState.self).count,
             onLoadSave: { [weak self] saveStateId in
                 guard let self = self else { return }
                 Task { @MainActor in
@@ -435,6 +438,18 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 
         // Create and present the view
         let continuesView = ContinuesMagementView(viewModel: viewModel)
+                            .onAppear {
+                                if let game = game {
+                                    /// Set the game ID filter
+                                    driver.gameId = game.id
+
+                                    let game = game.freeze()
+                                    Task { @MainActor in
+                                        let image: UIImage? = await game.fetchArtworkFromCache()
+                                        viewModel.gameUIImage = image
+                                    }
+                                }
+                            }
         let hostingController = UIHostingController(rootView: continuesView)
 
         // Present as a sheet
@@ -446,21 +461,24 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 
     /// Show continues management for a specific system
     /// - Parameter systemID: The system identifier to filter save states by
+    @MainActor
     public func root_showContinuesManagement(forSystemID systemID: String) {
         DLOG("Showing continues management for system ID: \(systemID)")
-
+        guard let realm = try? Realm() else {
+            return
+        }
         // Create the driver
-        let driver = RealmSaveStateDriver(realm: RomDatabase.sharedInstance.realm)
+        let driver = RealmSaveStateDriver(realm: realm)
 
         // Get the system name for display
-        let systemName = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: systemID)?.name ?? systemID
+        let systemName = realm.object(ofType: PVSystem.self, forPrimaryKey: systemID)?.name ?? systemID
 
         // Create the view model with appropriate parameters
         let viewModel = ContinuesMagementViewModel(
             driver: driver,
             gameTitle: "All Games",
             systemTitle: systemName,
-            numberOfSaves: RomDatabase.sharedInstance.realm.objects(PVSaveState.self)
+            numberOfSaves: realm.objects(PVSaveState.self)
                 .filter("game.systemIdentifier == %@", systemID).count,
             onLoadSave: { [weak self] saveStateId in
                 guard let self = self else { return }
@@ -472,9 +490,20 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 
         // Load all save states for the specified system
         driver.loadAllSaveStates(forSystemID: systemID)
-
+        
         // Create and present the view
         let continuesView = ContinuesMagementView(viewModel: viewModel)
+            .onAppear {
+                // Use system icon
+                Task { @MainActor in
+                    guard let console = RomDatabase.sharedInstance.realm.object(ofType: PVSystem.self, forPrimaryKey: systemID) else {
+                        ELOG("No system for id: \(systemID)")
+                        return
+                    }
+                    let image: UIImage? = UIImage(named: console.iconName, in: PVUIBase.BundleLoader.myBundle, compatibleWith: nil)
+                    viewModel.gameUIImage = image
+                }
+            }
         let hostingController = UIHostingController(rootView: continuesView)
 
         // Present as a sheet

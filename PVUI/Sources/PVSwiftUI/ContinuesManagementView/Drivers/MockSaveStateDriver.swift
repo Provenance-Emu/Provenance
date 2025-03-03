@@ -34,9 +34,7 @@ public class MockSaveStateDriver: SaveStateDriver {
     public var savesSizePublisher: AnyPublisher<UInt64, Never> {
         saveStatesPublisher.map { states in
             states.reduce(into: 0) { total, state in
-                if let size = self.mockSaveSizes[state.id] {
-                    total += size
-                }
+                total += state.size
             }
         }.eraseToAnyPublisher()
     }
@@ -70,7 +68,7 @@ public class MockSaveStateDriver: SaveStateDriver {
             let mockStates = (0..<10).map { index -> SaveStateRowViewModel in
                 let id = UUID().uuidString
                 // Generate random size between 1MB and 10MB
-                mockSaveSizes[id] = UInt64.random(in: 1_000_000...10_000_000)
+                let randomSize = UInt64.random(in: 1_000_000...10_000_000)
                 return SaveStateRowViewModel(
                     id: id,
                     gameID: "1",
@@ -80,7 +78,8 @@ public class MockSaveStateDriver: SaveStateDriver {
                     description: "Save State \(index + 1)",
                     isAutoSave: index % 3 == 0,
                     isPinned: index < 2,
-                    isFavorite: index % 2 == 0
+                    isFavorite: index % 2 == 0,
+                    size: randomSize
                 )
             }
             allSaveStates = mockStates
@@ -95,9 +94,11 @@ public class MockSaveStateDriver: SaveStateDriver {
         self.gameUIImage = nil
         self.systemIdentifier = systemIdentifier
         self.allSaveStates = mockSaveStates
-        // Initialize mock sizes for provided save states
-        mockSaveStates.forEach { state in
-            mockSaveSizes[state.id] = UInt64.random(in: 1_000_000...10_000_000)
+        // Initialize sizes for provided save states if not already set
+        for i in 0..<self.allSaveStates.count {
+            if self.allSaveStates[i].size == 0 {
+                self.allSaveStates[i].size = UInt64.random(in: 1_000_000...10_000_000)
+            }
         }
         updateSaveStates()
     }
