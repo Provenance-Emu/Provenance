@@ -113,6 +113,7 @@ public struct ArtworkSearchView: View {
                 TextField("Search artwork...", text: $searchText)
                 #if !os(tvOS)
                     .textFieldStyle(.roundedBorder)
+                    .textInputAutocapitalization(.never)
                 #endif
                     .onSubmit {
                         Task {
