@@ -17,6 +17,7 @@ import PVUIBase
 import PVRealm
 import PVSettings
 import Combine
+import RealmSwift
 
 struct ConsoleGamesFilterModeFlags: OptionSet {
     let rawValue: Int
@@ -565,9 +566,10 @@ struct ConsoleGamesView: SwiftUI.View {
     }
     
     private func showOptionsMenu(for gameId: String) {
+        let realm = try! Realm()
         // Implement context menu showing logic here
         // This would show the same menu as the long-press context menu
-        if let game = RomDatabase.sharedInstance.realm.objects(PVGame.self).filter("id == %@", gameId).first {
+        if let game = realm.objects(PVGame.self).filter("id == %@", gameId).first {
             GameContextMenu(
                 game: game,
                 rootDelegate: rootDelegate,

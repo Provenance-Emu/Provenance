@@ -9,6 +9,7 @@ import PVLibrary
 import Foundation
 import PVRealm
 import PVLogging
+import RealmSwift
 
 // MARK: - PVRootDelegate
 
@@ -35,7 +36,11 @@ public protocol PVRootDelegate: AnyObject {
 
 public extension PVRootDelegate {
     public func root_openSaveState(_ saveStateId: String) async {
-        guard let saveState: PVSaveState = RomDatabase.sharedInstance.realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateId)?.freeze() else {
+        guard let realm = try? await Realm() else {
+            ELOG("Realm() failed")
+            return
+        }
+        guard let saveState: PVSaveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateId)?.freeze() else {
             showMessage("Failed to load Save State with id: \(saveStateId)", title: "Fail to Load Save State")
             return
         }
@@ -44,7 +49,11 @@ public extension PVRootDelegate {
 
     /// Load a game by its MD5 hash (primary key)
     public func root_loadGame(byMD5Hash md5: String) async {
-        guard let game: PVGame = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: md5)?.freeze() else {
+        guard let realm = try? await Realm() else {
+            ELOG("Realm() failed")
+            return
+        }
+        guard let game: PVGame = realm.object(ofType: PVGame.self, forPrimaryKey: md5)?.freeze() else {
             showMessage("Failed to load game with MD5: \(md5)", title: "Failed to Load Game")
             return
         }
