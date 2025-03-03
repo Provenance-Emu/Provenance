@@ -632,12 +632,11 @@ class SaveStateSyncer: iCloudContainerSyncer {
             Task.detached { // @MainActor in
                 await jsonFiles.concurrentForEach { @MainActor [weak self] json in
                     do {
-                        let realm = try await Realm()
                         guard let save = try self?.getSaveFrom(json)
                         else {
                             return
                         }
-                        
+                        let realm = try await Realm()
                         let existing = realm.object(ofType: PVSaveState.self, forPrimaryKey: save.id)
                         if let existing = existing {
                             // Skip if Save already exists
@@ -741,12 +740,26 @@ class RomsSyncer: iCloudContainerSyncer {
         
         let romsPath = actualContainrUrl.appendDocumentsDirectory.appendingPathComponent(romsDirectoryName)
         DLOG("romsPath: \(romsPath)")
-        let realm: Realm
-        do {
-            realm = try Realm()
-        } catch {
-            ELOG("error removing game entries that do NOT exist in the cloud container \(romsPath)")
-            return
+        var realm: Realm! = nil
+        RomDatabase.gamesCache.forEach { (key: String, game: PVGame) in
+            let gameUrl = romsPath.appendingPathComponent(game.romPath)
+            if !fileManager.fileExists(atPath: gameUrl.pathDecoded) {
+                do {
+                    if realm == nil {
+                        do {//lazy load in case there is nothing to delete
+                            realm = try Realm()
+                        } catch {
+                            ELOG("error removing game entries that do NOT exist in the cloud container \(romsPath)")
+                            return
+                        }
+                    }
+                    if let gameToDelete = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) {
+                        try realm.deleteGame(gameToDelete)
+                    }
+                } catch {
+                    ELOG("error deleting \(gameUrl), \(error)")
+                }
+            }
         }
         var games = realm.objects(PVGame.self)
         games.forEach { game in
@@ -823,6 +836,7 @@ class RomsSyncer: iCloudContainerSyncer {
             return
         }
         do {
+            //TODO: use game cache
             let realm = try Realm()
             let romPath = "\(parentDirectory)/\(fileName)"
             DLOG("attempting to query PVGame by romPath: \(romPath)")
