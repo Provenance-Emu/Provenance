@@ -17,6 +17,7 @@ import Perception
 import PVFeatureFlags
 import Defaults
 import AudioToolbox
+import MarkdownView
 #if os(tvOS)
 import GameController
 #endif
@@ -1260,7 +1261,16 @@ private struct SecretSettingsRow: View {
                 SettingsRow(title: "Feature Flags Debug",
                            subtitle: "Override feature flags for testing",
                            icon: .sfSymbol("flag.fill"))
+                
             }
+            Button {
+                showSecretView = true
+            } label: {
+                SettingsRow(title: "About",
+                           subtitle: "Version information",
+                           icon: .sfSymbol("info.circle"))
+            }
+            .buttonStyle(.plain)
             #else
             if showFeatureFlagsDebug {
                 NavigationLink(destination: FeatureFlagsDebugView()) {
@@ -1370,6 +1380,15 @@ private struct SecretDPadView: View {
                     .foregroundColor(.secondary)
                     .padding(.top)
                 #endif
+            } else {
+                ScrollView {
+                    if let markdownPath = Bundle.main.path(forResource: "CONTRIBUTORS", ofType: "md"),
+                       let markdown = FileManager.default.contents(atPath: markdownPath) {
+                        MarkdownView(text: String(data: markdown, encoding: .utf8) ?? "# CONTRIBUTORS\n\nNo CONTRIBUTORS file found.", baseURL: nil)
+                    } else {
+                        MarkdownView(text: "# CONTRIBUTORS\n\nNo CONTRIBUTORS file found.", baseURL: nil)
+                    }
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
