@@ -182,7 +182,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         self.mtlView = metalView
 
 #if DEBUG
-        ILOG("Initial MTKView frame: \(metalView.frame)")
+        DLOG("Initial MTKView frame: \(metalView.frame)")
 #endif
     }
 
@@ -306,7 +306,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                     ELOG("Failed to setup effect filter shader: \(error)")
                 }
             } else {
-                ILOG("No filter shader selected for mode: \(renderSettings.metalFilterMode)")
+                ELOG("No filter shader selected for mode: \(renderSettings.metalFilterMode)")
             }
         }
 
@@ -517,11 +517,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         //        VLOG("Updating input texture with screenRect: \(screenRect), pixelFormat: \(pixelFormat)")
 
-#if targetEnvironment(simulator)
+        #if targetEnvironment(simulator)
         var mtlPixelFormat: MTLPixelFormat = .astc_6x5_srgb
-#else
+        #else
         var mtlPixelFormat: MTLPixelFormat = pixelFormat
-#endif
+        #endif
         if emulatorCore.rendersToOpenGL {
             mtlPixelFormat = .rgba8Unorm
             // TODO: Part of this is a copy paste,
@@ -563,13 +563,13 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 if emulatorCore.pixelFormat == GLenum(GL_RGB565) ||
                    emulatorCore.pixelType == GLenum(GL_UNSIGNED_SHORT_5_6_5) {
                     textureDescriptor.pixelFormat = .b5g6r5Unorm  // Use BGR565 for RGB565 input
-//                    ILOG("Using B5G6R5 format for RGB565 input")
+//                    DLOG("Using B5G6R5 format for RGB565 input")
                 } else if emulatorCore.pixelFormat == GLenum(GL_BGRA) {
                     textureDescriptor.pixelFormat = .bgra8Unorm
-//                    ILOG("Using BGRA8 format")
+//                    DLOG("Using BGRA8 format")
                 } else {
                     textureDescriptor.pixelFormat = .rgba8Unorm
-//                    ILOG("Using RGBA8 format")
+//                    DLOG("Using RGBA8 format")
                 }
 
                 textureDescriptor.usage = [.shaderRead, .shaderWrite, .pixelFormatView]
@@ -640,7 +640,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         linearDesc.tAddressMode = .clampToZero
         linearDesc.rAddressMode = .clampToZero
 
-        linearSampler = device  .makeSamplerState(descriptor: linearDesc)
+        linearSampler = device.makeSamplerState(descriptor: linearDesc)
     }
 
     func getByteWidth(for pixelFormat: Int32, type pixelType: Int32) -> UInt {
@@ -958,7 +958,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         let constants = MTLFunctionConstantValues()
         var flipY = emulatorCore.rendersToOpenGL
         constants.setConstantValue(&flipY, type: .bool, withName: "FlipY")
-        ILOG("FlipY value: \(flipY)")
+        DLOG("FlipY value: \(flipY)")
 
         let lib: MTLLibrary
         do {
@@ -1143,7 +1143,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             ELOG("Failed to create command buffer")
             return
         }
-        self.previousCommandBuffer = commandBuffer
+            self.previousCommandBuffer = commandBuffer
 
         let screenRect = emulatorCore.screenRect
 
@@ -1154,19 +1154,25 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             let bufferSize = emulatorCore.bufferSize
             let actualSize = emulatorCore.aspectSize  // This is the actual visible area
             let bytesPerPixel = emulatorCore.pixelType == GLenum(GL_UNSIGNED_BYTE) ? 4 : 4
-            
+
             // Calculate aligned bytes per row for the full buffer width
             let sourceBytesPerRow = alignedBytesPerRow(Int(bufferSize.width), bytesPerPixel: bytesPerPixel)
             let totalBufferSize = sourceBytesPerRow * Int(bufferSize.height)
-            
+
             // Ensure upload buffer is large enough for the full buffer
             if uploadBuffer == nil || uploadBuffer?.length ?? 0 < totalBufferSize,
                let device = device {
                 uploadBuffer = device.makeBuffer(length: totalBufferSize,
-                                                 options: .storageModeShared)
-                ILOG("Created new upload buffer with size: \(totalBufferSize)")
+                                               options: .storageModeShared)
+
+                // Update cached values
+                lastBufferSize = bufferSize
+                lastPixelFormat = emulatorCore.pixelFormat
+                lastPixelType = emulatorCore.pixelType
+
+                DLOG("Created new upload buffer with size: \(totalBufferSize)")
             }
-            
+
             // Copy the video buffer to the upload buffer
             if let videoBuffer = emulatorCore.videoBuffer,
                let uploadBuffer = uploadBuffer {
@@ -1174,14 +1180,14 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                        videoBuffer,
                        totalBufferSize)
             }
-            
+
             // Create a blit command encoder instead of using render command encoder
             if let blitEncoder = commandBuffer.makeBlitCommandEncoder(),
                let uploadBuffer = uploadBuffer {
                 let sourceSize = MTLSize(width: Int(screenRect.width),
                                          height: Int(screenRect.height),
                                          depth: 1)
-                
+
                 // Calculate bytes per pixel based on format
                 let bytesPerPixel: Int
                 if emulatorCore.pixelFormat == GLenum(GL_RGB565) ||
@@ -1190,19 +1196,19 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 } else {
                     bytesPerPixel = 4  // RGBA/BGRA is 32-bit (4 bytes) per pixel
                 }
-                
+
                 // Calculate the actual bytes per row of the source buffer
                 let actualBytesPerRow = Int(bufferSize.width) * bytesPerPixel
                 // Align it for Metal and match the core's pitch
                 let alignedSourceBytesPerRow = Int(emulatorCore.bufferSize.width) * bytesPerPixel  // Use videoWidth instead of bufferSize.width
-                
+
                 // Calculate offsets
                 let xOffset = Int(screenRect.origin.x)
                 let yOffset = Int(screenRect.origin.y)
-                
+
                 // Calculate the source offset in bytes
                 let sourceOffset = (yOffset * actualBytesPerRow) + (xOffset * bytesPerPixel)
-                
+
 //                ILOG("""
 //            Metal copy details:
 //            - Buffer size: \(bufferSize)
@@ -1215,7 +1221,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 //            - Source size: \(sourceSize)
 //            - Source offset in bytes: \(sourceOffset)
 //            """)
-                
+
                 blitEncoder.copy(from: uploadBuffer,
                                  sourceOffset: sourceOffset,
                                  sourceBytesPerRow: Int(emulatorCore.bufferSize.width) * bytesPerPixel,  // Use core's buffer width
@@ -1225,7 +1231,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                                  destinationSlice: 0,
                                  destinationLevel: 0,
                                  destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
-                
+
                 blitEncoder.endEncoding()
             }
         }
@@ -1373,7 +1379,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
                 encoder.setFragmentBytes(&cbData, length: MemoryLayout<SimpleCrtUniforms>.stride, index: 0)
                 pipelineState = self.effectFilterPipeline
-                ILOG("Effect filter pipeline state: \(self.effectFilterPipeline != nil)")
+                DLOG("Effect filter pipeline state: \(self.effectFilterPipeline != nil)")
             } else if self.effectFilterShader?.name == "Line Tron", let inputTexture = self.inputTexture {
                 let time = Float(CACurrentMediaTime())
                 let sourceSize = SIMD4<Float>(
