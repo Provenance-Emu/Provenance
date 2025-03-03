@@ -550,32 +550,33 @@ public class RealmSaveStateDriver: SaveStateDriver {
     public func updateDescription(saveStateId: String, description: String?) {
         processingQueue.async { [weak self] in
             guard let self = self else { return }
-
+            
             // Get a thread-local Realm instance
             let realm = self.realm()
-
+            
             guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateId) else { return }
-
+            
             // Only update if the value is actually changing
             guard saveState.userDescription != description else { return }
-
+            
             try? realm.write {
                 saveState.userDescription = description
             }
-
-            // Update cache if entry exists
-            cacheLock.lock()
-            var shouldUpdateUI = false
-            if var cachedViewModel = viewModelCache[saveStateId] {
-                cachedViewModel.description = description ?? ""
-                viewModelCache[saveStateId] = cachedViewModel
-                shouldUpdateUI = true
-            }
-            cacheLock.unlock()
-
-            // Update UI on main thread if needed
-            if shouldUpdateUI {
-                Task { @MainActor in
+            
+            Task { @MainActor [weak self] in
+                guard let self = self else { return }
+                // Update cache if entry exists
+                cacheLock.lock()
+                var shouldUpdateUI = false
+                if var cachedViewModel = viewModelCache[saveStateId] {
+                    cachedViewModel.description = description ?? ""
+                    viewModelCache[saveStateId] = cachedViewModel
+                    shouldUpdateUI = true
+                }
+                cacheLock.unlock()
+                
+                // Update UI on main thread if needed
+                if shouldUpdateUI {
                     // Instead of sending the entire value, update just the affected item
                     var currentSaveStates = self.saveStatesSubject.value
                     if let index = currentSaveStates.firstIndex(where: { $0.id == saveStateId }) {
@@ -608,18 +609,20 @@ public class RealmSaveStateDriver: SaveStateDriver {
             }
 
             // Update cache if entry exists
-            cacheLock.lock()
-            var shouldUpdateUI = false
-            if var cachedViewModel = viewModelCache[saveStateId] {
-                cachedViewModel.isPinned = isPinned
-                viewModelCache[saveStateId] = cachedViewModel
-                shouldUpdateUI = true
-            }
-            cacheLock.unlock()
-
-            // Update UI on main thread if needed
-            if shouldUpdateUI {
-                Task { @MainActor in
+            Task { @MainActor [weak self] in
+                guard let self = self else { return }
+                
+                cacheLock.lock()
+                var shouldUpdateUI = false
+                if var cachedViewModel = viewModelCache[saveStateId] {
+                    cachedViewModel.isPinned = isPinned
+                    viewModelCache[saveStateId] = cachedViewModel
+                    shouldUpdateUI = true
+                }
+                cacheLock.unlock()
+                
+                // Update UI on main thread if needed
+                if shouldUpdateUI {
                     // Instead of sending the entire value, update just the affected item
                     var currentSaveStates = self.saveStatesSubject.value
                     if let index = currentSaveStates.firstIndex(where: { $0.id == saveStateId }) {
