@@ -16,6 +16,9 @@ public typealias SwiftImage = NSImage
 public typealias SwiftImage = UIImage
 #endif
 
+// Add a cache for missing artwork images
+private let missingArtworkCache = NSCache<NSString, SwiftImage>()
+
 public extension Defaults.Keys {
     // Missing artwork style setting
     static let missingArtworkStyle = Key<RetroTestPattern>("missingArtworkStyle", default: .rainbowNoise)
@@ -170,12 +173,36 @@ extension SwiftImage {
         return (finalFont, lineCount)
     }
 
+    /// Generate a cache key for missing artwork images
+    private static func missingArtworkCacheKey(
+        gameTitle: String,
+        ratio: CGFloat,
+        pattern: RetroTestPattern,
+        minFontSize: CGFloat
+    ) -> String {
+        return "\(gameTitle)_\(ratio)_\(pattern.rawValue)_\(minFontSize)"
+    }
+
     public static func missingArtworkImage(
         gameTitle: String,
         ratio: CGFloat,
-        pattern: RetroTestPattern = .smpteColorBars,
+        pattern: RetroTestPattern = Defaults[.missingArtworkStyle],
         minFontSize: CGFloat = RetroStyle.defaultMinFontSize
     ) -> SwiftImage {
+        // Generate cache key
+        let cacheKey = missingArtworkCacheKey(
+            gameTitle: gameTitle,
+            ratio: ratio,
+            pattern: pattern,
+            minFontSize: minFontSize
+        ) as NSString
+
+        // Check if image is in cache
+        if let cachedImage = missingArtworkCache.object(forKey: cacheKey) {
+            return cachedImage
+        }
+
+        // Generate the image if not in cache
         let height: CGFloat = CGFloat(PVThumbnailMaxResolution)
         let width: CGFloat = height * ratio
         let size = CGSize(width: width, height: height)
@@ -298,7 +325,13 @@ extension SwiftImage {
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
 
-        return image ?? SwiftImage()
+        // Store in cache
+        if let finalImage = image {
+            missingArtworkCache.setObject(finalImage, forKey: cacheKey)
+            return finalImage
+        }
+
+        return SwiftImage()
     }
 
     private static func drawSMPTEColorBars(in context: CGContext, size: CGSize) {
