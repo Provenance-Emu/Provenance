@@ -28,6 +28,14 @@ import UniformTypeIdentifiers
 
 @available(iOS 14, tvOS 14, *)
 extension PVRootViewController: PVRootDelegate {
+    @MainActor
+    public func dismissPresentedViews() async {
+        // Dismiss any presented view controllers
+        if let presented = self.presentedViewController {
+            await presented.dismiss(animated: true)
+        }
+    }
+
     public func root_canLoad(_ game: PVGame) async throws {
         try await self.canLoad(game.warmUp())
     }
@@ -46,7 +54,21 @@ extension PVRootViewController: PVRootDelegate {
     }
 
     public func root_openSaveState(_ saveState: PVSaveState) async {
-        await self.openSaveState(saveState.warmUp())
+        // First, dismiss any presented views
+        await dismissPresentedViews()
+
+        // Check if a game is already running
+        if let gameVC = presentedViewController as? PVEmualatorControllerProtocol {
+            // If a game is already running, use the existing openSaveState method
+            await self.openSaveState(saveState.warmUp())
+        } else {
+            // If no game is running, first load the game, then the save state
+            guard let game = saveState.game else {
+                ELOG("nil game")
+                return
+            }
+            await self.load(game.warmUp(), sender: nil, core: nil, saveState: saveState.warmUp())
+        }
     }
 
     public func root_updateRecentGames(_ game: PVGame) {
