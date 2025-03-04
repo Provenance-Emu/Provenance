@@ -110,6 +110,20 @@ struct GameArtworkView: View {
                 showingFrontArt.toggle()
             }
         }
+        .overlay(
+            VStack {
+                Spacer()
+                Text(canShowBackArt ? "Tap to flip • Double-tap to enlarge • Hold for options" : "Double-tap to enlarge • Hold for options")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.bottom, 8)
+                    .padding(.horizontal)
+                    .multilineTextAlignment(.center)
+                    .background(Color(.systemBackground).opacity(0.7))
+                    .cornerRadius(4)
+            }
+            .padding(.bottom, 16)
+        )
         .onAppear {
             // Reset to front on appear
             showingFrontArt = true

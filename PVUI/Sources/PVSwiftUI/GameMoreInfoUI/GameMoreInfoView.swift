@@ -326,6 +326,7 @@ class GameMoreInfoViewModel: ObservableObject {
 }
 
 
+
 // MARK: - Game Info View
 struct GameMoreInfoView: View {
     @ObservedObject var viewModel: GameMoreInfoViewModel
@@ -373,6 +374,13 @@ struct GameMoreInfoView: View {
 
                 // Game information section
                 VStack(spacing: 8) {
+                    // Add instruction text at the top
+                    Text("Tap any field with a pencil icon to edit")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.bottom, 8)
+
                     LabelRowView(
                         label: "Name",
                         value: viewModel.name
