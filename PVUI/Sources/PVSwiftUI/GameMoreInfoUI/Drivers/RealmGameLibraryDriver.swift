@@ -209,18 +209,31 @@ private final class RealmGameWrapper: GameMoreInfoViewModelDataSource, ArtworkOb
             if let image = await PVMediaCache.shareInstance().image(forKey: backURL) {
                 await MainActor.run { self.backArtwork = image }
             } else {
-                // If not in cache, try to download
-                guard let url = URL(string: backURL) else { return }
-                do {
-                    let (data, _) = try await URLSession.shared.data(from: url)
-                    if let image = UIImage(data: data) {
-                        // Save to cache for later
-                        try? PVMediaCache.writeData(toDisk: data, withKey: backURL)
-                        await MainActor.run { self.backArtwork = image }
-                    }
-                } catch {
-                    ELOG("Failed to download back artwork: \(error.localizedDescription)")
+                await MainActor.run {
+                    self.frontArtwork = UIImage.image(withText: game.title, ratio: boxArtAspectRatio)
                 }
+                // Suddenly this is crashing, probalby not needed right now @JoeMatt
+                // If not in cache, try to download
+//                guard let url = URL(string: backURL) else { return }
+//                do {
+//                    // Create a strong reference to the data that won't be deallocated
+//                    // until we're done processing it
+//                    let (downloadedData, _) = try await URLSession.shared.data(from: url)
+//
+//                    // Make a copy of the data to ensure it stays in memory
+//                    let dataCopy = Data(downloadedData)
+//
+//                    // Create the image on the main thread to avoid thread safety issues
+//                    if let image = await MainActor.run(resultType: UIImage?.self) { UIImage(data: dataCopy) } {
+//                        // Save to cache for later
+//                        try? PVMediaCache.writeData(toDisk: dataCopy, withKey: backURL)
+//
+//                        // Update UI on main thread
+//                        await MainActor.run { self.backArtwork = image }
+//                    }
+//                } catch {
+//                    ELOG("Failed to download back artwork: \(error.localizedDescription)")
+//                }
             }
         }
     }
