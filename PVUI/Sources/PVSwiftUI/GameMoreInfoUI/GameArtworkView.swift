@@ -101,8 +101,11 @@ struct GameArtworkView: View {
             axis: (x: 0.0, y: 1.0, z: 0.0)
         )
         .animation(.easeInOut(duration: isAnimating ? 0.4 : 0), value: showingFrontArt)
+        // Only enable double tap gesture when artwork is available
         .onTapGesture(count: 2) {
-            showingFullscreen = true
+            if frontArtwork != nil {
+                showingFullscreen = true
+            }
         }
         .onTapGesture {
             if canShowBackArt {
@@ -110,19 +113,38 @@ struct GameArtworkView: View {
                 showingFrontArt.toggle()
             }
         }
+        // Only show overlay with instructions when artwork is available
         .overlay(
-            VStack {
-                Spacer()
-                Text(canShowBackArt ? "Tap to flip • Double-tap to enlarge • Hold for options" : "Double-tap to enlarge • Hold for options")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .padding(.bottom, 8)
-                    .padding(.horizontal)
-                    .multilineTextAlignment(.center)
-                    .background(Color(.systemBackground).opacity(0.7))
-                    .cornerRadius(4)
+            Group {
+                if frontArtwork != nil {
+                    VStack {
+                        Spacer()
+                        Text(canShowBackArt ? "Tap to flip • Double-tap to enlarge • Hold for options" : "Double-tap to enlarge • Hold for options")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .padding(.bottom, 8)
+                            .padding(.horizontal)
+                            .multilineTextAlignment(.center)
+                            .background(Color(.systemBackground).opacity(0.7))
+                            .cornerRadius(4)
+                    }
+                    .padding(.bottom, 16)
+                } else {
+                    // Show a different message for placeholder artwork
+                    VStack {
+                        Spacer()
+                        Text("Hold to add artwork")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .padding(.bottom, 8)
+                            .padding(.horizontal)
+                            .multilineTextAlignment(.center)
+                            .background(Color(.systemBackground).opacity(0.7))
+                            .cornerRadius(4)
+                    }
+                    .padding(.bottom, 16)
+                }
             }
-            .padding(.bottom, 16)
         )
         .onAppear {
             // Reset to front on appear
