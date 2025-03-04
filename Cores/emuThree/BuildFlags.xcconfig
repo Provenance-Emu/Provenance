@@ -24,8 +24,9 @@ OTHER_CFLAGS = $(inherited) -fomit-frame-pointer
 //OTHER_CFLAGS = $(inherited) -fstrict-aliasing
 OTHER_CFLAGS = $(inherited) -funsafe-math-optimizations
 OTHER_CFLAGS = $(inherited) -fvectorize
-OTHER_CFLAGS = $(inherited) -march=armv8-a+simd
-OTHER_CFLAGS = $(inherited) -mcpu=apple-a15
+OTHER_CFLAGS = $(inherited) -mcpu=apple-a12
+//OTHER_CFLAGS = $(inherited) -mcpu=apple-a15
+//OTHER_CFLAGS = $(inherited) -march=armv8-a+simd
 
 //OTHER_CPPFLAGS = $(inherited) -fmodules -fcxx-modules
 OTHER_LDFLAGS = $(inherited) -ObjC -DIPHONEOS
