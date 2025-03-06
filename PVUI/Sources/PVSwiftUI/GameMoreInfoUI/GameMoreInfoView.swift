@@ -660,6 +660,20 @@ public class PagedGameMoreInfoViewModel: ObservableObject {
     }
 }
 
+// MARK: - Lazy View Wrapper
+/// A wrapper view that defers the creation of its content until it's needed
+private struct LazyView<Content: View>: View {
+    let build: () -> Content
+
+    init(_ build: @escaping () -> Content) {
+        self.build = build
+    }
+
+    var body: Content {
+        build()
+    }
+}
+
 // MARK: - Paged Game Info View
 public struct PagedGameMoreInfoView: View {
     @StateObject var viewModel: PagedGameMoreInfoViewModel
@@ -671,69 +685,103 @@ public struct PagedGameMoreInfoView: View {
     @State private var gameToUpdateCover: PVGame?
     @State private var selectedImage: UIImage?
 
+    /// Cache for created view models to avoid recreating them
+    @State private var viewModelCache: [Int: GameMoreInfoViewModel] = [:]
+
+    /// Reference to the coordinator
+    @State private var coordinatorRef: Coordinator?
+
     public init(viewModel: PagedGameMoreInfoViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     /// Coordinator to handle context menu actions
     class Coordinator: GameContextMenuDelegate {
-        var parent: PagedGameMoreInfoView
+        weak var viewModel: PagedGameMoreInfoViewModel?
+        var parent: PagedGameMoreInfoView?
 
-        init(parent: PagedGameMoreInfoView) {
+        init(parent: PagedGameMoreInfoView, viewModel: PagedGameMoreInfoViewModel) {
             self.parent = parent
+            self.viewModel = viewModel
         }
 
         func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame) {
             /// Delegate to driver if available
-            parent.viewModel.driver.gameContextMenu(menu, didRequestRenameFor: game)
+            viewModel?.driver.gameContextMenu(menu, didRequestRenameFor: game)
         }
 
         func gameContextMenu(_ menu: GameContextMenu, didRequestChooseCoverFor game: PVGame) {
             /// Delegate to driver if available
-            parent.viewModel.driver.gameContextMenu(menu, didRequestChooseCoverFor: game)
+            viewModel?.driver.gameContextMenu(menu, didRequestChooseCoverFor: game)
         }
 
         func gameContextMenu(_ menu: GameContextMenu, didRequestMoveToSystemFor game: PVGame) {
             /// Delegate to driver if available
-            parent.viewModel.driver.gameContextMenu(menu, didRequestMoveToSystemFor: game)
+            viewModel?.driver.gameContextMenu(menu, didRequestMoveToSystemFor: game)
         }
 
         func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
             /// Delegate to driver if available
-            parent.viewModel.driver.gameContextMenu(menu, didRequestShowSaveStatesFor: game)
+            viewModel?.driver.gameContextMenu(menu, didRequestShowSaveStatesFor: game)
         }
 
         func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor gameId: String) {
             /// Delegate to driver if available
-            parent.viewModel.driver.gameContextMenu(menu, didRequestShowGameInfoFor: gameId)
+            viewModel?.driver.gameContextMenu(menu, didRequestShowGameInfoFor: gameId)
         }
 
         func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame) {
             /// Handle locally
-            parent.gameToUpdateCover = game
-            parent.showImagePicker = true
+            parent?.gameToUpdateCover = game
+            parent?.showImagePicker = true
         }
 
         func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame) {
             /// Handle locally
-            parent.gameToUpdateCover = game
-            parent.showArtworkSearch = true
+            parent?.gameToUpdateCover = game
+            parent?.showArtworkSearch = true
         }
 
         func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
             /// Delegate to driver if available
-            parent.viewModel.driver.gameContextMenu(menu, didRequestChooseArtworkSourceFor: game)
+            viewModel?.driver.gameContextMenu(menu, didRequestChooseArtworkSourceFor: game)
         }
 
         func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
             /// Delegate to driver if available
-            parent.viewModel.driver.gameContextMenu(menu, didRequestDiscSelectionFor: game)
+            viewModel?.driver.gameContextMenu(menu, didRequestDiscSelectionFor: game)
         }
     }
 
-    /// Create a coordinator instance
+    /// Create a new coordinator if needed
     private func makeCoordinator() -> Coordinator {
-        Coordinator(parent: self)
+        let coordinator = Coordinator(parent: self, viewModel: viewModel)
+        DispatchQueue.main.async {
+            self.coordinatorRef = coordinator
+        }
+        return coordinator
+    }
+
+    /// Get or create the coordinator
+    private func getCoordinator() -> Coordinator {
+        return coordinatorRef ?? makeCoordinator()
+    }
+
+    /// Get or create a view model for the given index
+    private func getViewModel(for index: Int) -> GameMoreInfoViewModel? {
+        // Check if we already have a cached view model
+        if let cachedViewModel = viewModelCache[index] {
+            return cachedViewModel
+        }
+
+        // Create a new view model if needed
+        if let newViewModel = viewModel.makeGameViewModel(for: index) {
+            // Cache the new view model
+            viewModelCache[index] = newViewModel
+            return newViewModel
+        }
+
+        return nil
     }
 
     /// Save artwork for a game
@@ -788,64 +836,83 @@ public struct PagedGameMoreInfoView: View {
         }
     }
 
-    public var body: some View {
-        TabView(selection: $viewModel.currentIndex) {
-            ForEach(0..<viewModel.gameCount, id: \.self) { index in
-                if let gameViewModel = viewModel.makeGameViewModel(for: index) {
-                    GameMoreInfoView(viewModel: gameViewModel, contextMenuDelegate: makeCoordinator())
-                        .tag(index)
-                }
-            }
-        }
-        .onChange(of: viewModel.currentIndex) { _ in
-#if !os(tvOS)
-            Haptics.impact(style: .soft)
-            #endif
-        }
-        .tabViewStyle(.page)
-        .indexViewStyle(.page(backgroundDisplayMode: .always))
-        .navigationTitle(viewModel.currentGameName)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button("Done") {
-                    dismiss()
-                }
-            }
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-#if canImport(SafariServices)
-                if let game = viewModel.currentGame,
-                   let urlString = game.referenceURL?.absoluteString,
-                   let url = URL(string: urlString) {
-                    Button {
-                        viewModel.openWebView()
-                    } label: {
-                        Image(systemName: "book")
-                    }
-                    .sheet(isPresented: $viewModel.showingWebView) {
-                        GameReferenceWebView(url: url)
-                    }
-                }
-#endif
+    // MARK: - View Builders
 
-                if viewModel.playGameCallback != nil {
-                    Button {
-                        dismiss()  // Dismiss first
-                        Task {
-                            if let gameId = viewModel.currentGameId {
-                                await viewModel.playGameCallback?(gameId)
-                            }
-                        }
-                    } label: {
-                        Image(systemName: "play.fill")
+    /// Build the content for a specific tab index
+    @ViewBuilder
+    private func tabContent(for index: Int) -> some View {
+        if let gameViewModel = getViewModel(for: index) {
+            GameMoreInfoView(
+                viewModel: gameViewModel,
+                contextMenuDelegate: getCoordinator()
+            )
+        } else {
+            // Placeholder view if view model creation fails
+            placeholderView()
+        }
+    }
+
+    /// Build a placeholder view for when a game can't be loaded
+    @ViewBuilder
+    private func placeholderView() -> some View {
+        VStack {
+            Text("Unable to load game information")
+                .font(.headline)
+                .foregroundColor(.secondary)
+                .padding()
+
+            ProgressView()
+                .padding()
+        }
+    }
+
+    /// Build the web view button if a reference URL is available
+    @ViewBuilder
+    private func webViewButton() -> some View {
+        #if canImport(SafariServices)
+        if let game = viewModel.currentGame,
+           let urlString = game.referenceURL?.absoluteString,
+           let url = URL(string: urlString) {
+            Button {
+                viewModel.openWebView()
+            } label: {
+                Image(systemName: "book")
+            }
+            .sheet(isPresented: $viewModel.showingWebView) {
+                GameReferenceWebView(url: url)
+            }
+        } else {
+            EmptyView()
+        }
+        #else
+        EmptyView()
+        #endif
+    }
+
+    /// Build the play button if a callback is available
+    @ViewBuilder
+    private func playButton() -> some View {
+        if viewModel.playGameCallback != nil {
+            Button {
+                dismiss()  // Dismiss first
+                Task {
+                    if let gameId = viewModel.currentGameId {
+                        await viewModel.playGameCallback?(gameId)
                     }
                 }
+            } label: {
+                Image(systemName: "play.fill")
             }
+        } else {
+            EmptyView()
         }
-        .sheet(isPresented: $showImagePicker, onDismiss: {
-            // Reset state when sheet is dismissed
-            gameToUpdateCover = nil
-        }) {
-#if !os(tvOS)
+    }
+
+    /// Build the image picker sheet
+    @ViewBuilder
+    private func imagePickerSheet() -> some View {
+        #if !os(tvOS)
+        if showImagePicker {
             ImagePicker(sourceType: .photoLibrary) { image in
                 if let game = gameToUpdateCover {
                     saveArtwork(image: image, forGame: game)
@@ -853,39 +920,90 @@ public struct PagedGameMoreInfoView: View {
                 showImagePicker = false
                 gameToUpdateCover = nil
             }
-#endif
+        } else {
+            EmptyView()
+        }
+        #else
+        EmptyView()
+        #endif
+    }
+
+    /// Build the artwork search sheet
+    @ViewBuilder
+    private func artworkSearchSheet() -> some View {
+        if showArtworkSearch, let game = gameToUpdateCover {
+            ArtworkSearchView(
+                initialSearch: game.title,
+                initialSystem: game.system?.enumValue ?? .Unknown
+            ) { selection in
+                Task {
+                    do {
+                        // Load image data from URL
+                        let (data, _) = try await URLSession.shared.data(from: selection.metadata.url)
+                        if let uiImage = UIImage(data: data) {
+                            await MainActor.run {
+                                saveArtwork(image: uiImage, forGame: game)
+                                showArtworkSearch = false
+                                gameToUpdateCover = nil
+                            }
+                        }
+                    } catch {
+                        DLOG("Failed to load artwork image: \(error)")
+                        // Make sure to reset state even on error
+                        await MainActor.run {
+                            showArtworkSearch = false
+                            gameToUpdateCover = nil
+                        }
+                    }
+                }
+            }
+        } else {
+            EmptyView()
+        }
+    }
+
+    public var body: some View {
+        TabView(selection: $viewModel.currentIndex) {
+            ForEach(0..<viewModel.gameCount, id: \.self) { index in
+                // Use LazyView to defer creation of content until needed
+                LazyView {
+                    tabContent(for: index)
+                }
+                .tag(index)
+            }
+        }
+        .onChange(of: viewModel.currentIndex) { _ in
+            #if !os(tvOS)
+            Haptics.impact(style: .soft)
+            #endif
+        }
+        .tabViewStyle(.page)
+        .indexViewStyle(.page(backgroundDisplayMode: .always))
+        .navigationTitle(viewModel.currentGameName)
+        .toolbar {
+            SwiftUI.ToolbarItem(placement: .navigationBarLeading) {
+                Button("Done") {
+                    dismiss()
+                }
+            }
+
+            SwiftUI.ToolbarItemGroup(placement: .navigationBarTrailing) {
+                webViewButton()
+
+                playButton()
+            }
+        }
+        .sheet(isPresented: $showImagePicker, onDismiss: {
+            // Reset state when sheet is dismissed
+            gameToUpdateCover = nil
+        }) {
+            imagePickerSheet()
         }
         .sheet(isPresented: $showArtworkSearch, onDismiss: {
             // Reset state when sheet is dismissed
             gameToUpdateCover = nil
         }) {
-            if let game = gameToUpdateCover {
-                ArtworkSearchView(
-                    initialSearch: game.title,
-                    initialSystem: game.system?.enumValue ?? .Unknown
-                ) { selection in
-                    Task {
-                        do {
-                            // Load image data from URL
-                            let (data, _) = try await URLSession.shared.data(from: selection.metadata.url)
-                            if let uiImage = UIImage(data: data) {
-                                await MainActor.run {
-                                    saveArtwork(image: uiImage, forGame: game)
-                                    showArtworkSearch = false
-                                    gameToUpdateCover = nil
-                                }
-                            }
-                        } catch {
-                            DLOG("Failed to load artwork image: \(error)")
-                            // Make sure to reset state even on error
-                            await MainActor.run {
-                                showArtworkSearch = false
-                                gameToUpdateCover = nil
-                            }
-                        }
-                    }
-                }
-            }
+            artworkSearchSheet()
         }
     }
 }
