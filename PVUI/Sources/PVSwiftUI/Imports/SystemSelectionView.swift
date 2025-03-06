@@ -9,38 +9,44 @@ import SwiftUI
 import PVLibrary
 import Perception
 import PVSystems
+import PVThemes
 
 struct SystemSelectionView: View {
     @ObservedObject var item: ImportQueueItem
     @Environment(\.presentationMode) var presentationMode
-    
+    @ObservedObject private var themeManager = ThemeManager.shared
+
+    // Replace delegate with callback
+    var onSystemSelected: ((SystemIdentifier, ImportQueueItem) -> Void)?
+
     var body: some View {
-        WithPerceptionTracking {
         List {
             ForEach(item.systems.sorted(), id: \.self) { system in
                 Button(action: {
-                    // Set the chosen system and update the status
+                    // Set the chosen system
                     item.userChosenSystem = system
-                    item.status = .queued
+
+                    // Call the callback
+                    onSystemSelected?(system, item)
+
                     // Dismiss the view
                     presentationMode.wrappedValue.dismiss()
                 }) {
                     Text(system.fullName)
-                        .font(.headline)
-                        .padding()
+                        .foregroundColor(themeManager.currentPalette.menuText.swiftUIColor)
                 }
             }
         }
         .navigationTitle("Select System")
-        }
+        .background(themeManager.currentPalette.menuBackground.swiftUIColor)
     }
 }
 
 #if DEBUG
 import PVPrimitives
 #Preview {
-    
-    
+
+
     let item: ImportQueueItem = {
         let systems: [SystemIdentifier] = [
             .AtariJaguar, .AtariJaguarCD
@@ -51,7 +57,7 @@ import PVPrimitives
         item.systems = systems
         return item
     }()
-    
+
     List {
         SystemSelectionView(item: item)
     }

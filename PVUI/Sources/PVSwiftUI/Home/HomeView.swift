@@ -311,19 +311,19 @@ struct HomeView: SwiftUI.View {
             ),
             preferredContentSize: CGSize(width: 500, height: 300)
         ) {
-            guard let alert = discSelectionAlert else {
-                return [UIAlertAction(title: "Cancel", style: .cancel)]
-            }
-
-            let actions = alert.discs.map { (disc: DiscSelectionAlert.Disc) -> UIAlertAction in
-                UIAlertAction(title: disc.fileName, style: .default) { _ in
-                    Task {
-                        await rootDelegate?.root_loadPath(disc.path, forGame: alert.game, sender: nil, core: nil, saveState: nil)
+            if let alert = discSelectionAlert, let game = alert.game {
+                let actions = alert.discs.map { (disc: DiscSelectionAlert.Disc) -> UIAlertAction in
+                    UIAlertAction(title: disc.fileName, style: .default) { _ in
+                        Task {
+                            await rootDelegate?.root_loadPath(disc.path, forGame: game, sender: nil, core: nil, saveState: nil)
+                        }
                     }
                 }
-            }
 
-            return actions + [UIAlertAction(title: "Cancel", style: .cancel)]
+                actions + [UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel)]
+            } else {
+                [UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel)]
+            }
         }
         .uiKitAlert(
             "Choose Artwork Source",
@@ -339,7 +339,7 @@ struct HomeView: SwiftUI.View {
                     gameToUpdateCover = game
                     showArtworkSearch = true
                 }
-                UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
                     showArtworkSourceAlert = false
                 }
             }
@@ -972,7 +972,7 @@ extension HomeView: GameContextMenuDelegate {
                 .textInputAutocapitalization(.words)
                 .disableAutocorrection(true)
 
-            Button("Cancel", role: .cancel) { showingRenameAlert = false }
+            Button(NSLocalizedString("Cancel", comment: "Cancel"), role: .cancel) { showingRenameAlert = false }
             Button("OK") { submitRename() }
         }
     }

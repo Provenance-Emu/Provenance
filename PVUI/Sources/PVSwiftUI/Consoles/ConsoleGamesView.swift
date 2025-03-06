@@ -311,19 +311,19 @@ struct ConsoleGamesView: SwiftUI.View {
                 ),
                 preferredContentSize: CGSize(width: 500, height: 300),
                 buttons: {
-                    guard let alert = gamesViewModel.discSelectionAlert else {
-                        return [UIAlertAction(title: "Cancel", style: .cancel)]
-                    }
-                    
-                    let actions = alert.discs.map { (disc: DiscSelectionAlert.Disc) -> UIAlertAction in
-                        UIAlertAction(title: disc.fileName, style: .default) { _ in
-                            Task {
-                                await rootDelegate?.root_loadPath(disc.path, forGame: alert.game, sender: nil, core: nil, saveState: nil)
+                    if let alert = gamesViewModel.discSelectionAlert, let game = alert.game  {
+                        let actions = alert.discs.map { (disc: DiscSelectionAlert.Disc) -> UIAlertAction in
+                            UIAlertAction(title: disc.fileName, style: .default) { _ in
+                                Task {
+                                    await rootDelegate?.root_loadPath(disc.path, forGame: game, sender: nil, core: nil, saveState: nil)
+                                }
                             }
                         }
+                        
+                        actions + [UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel)]
+                    } else {
+                        [UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel)]
                     }
-                    
-                    return actions + [UIAlertAction(title: "Cancel", style: .cancel)]
                 }
             )
             .uiKitAlert(
@@ -340,7 +340,7 @@ struct ConsoleGamesView: SwiftUI.View {
                         gameToUpdateCover = game  // Preserve the game reference
                         showArtworkSearch = true
                     }
-                    UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                    UIAlertAction(title:  NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
                         showArtworkSourceAlert = false
                     }
                 }

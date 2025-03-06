@@ -14,7 +14,7 @@ public class MockImportStatusDriverData: ObservableObject {
     public let pvgamelibraryUpdatesController: PVGameLibraryUpdatesController
 
     public var isPresent: Bool = false
-    
+
     @MainActor
     public init() {
         pvgamelibraryUpdatesController = .init(gameImporter: gameImporter)
@@ -23,9 +23,9 @@ public class MockImportStatusDriverData: ObservableObject {
 
 extension MockImportStatusDriverData: ImportStatusDelegate {
     public func dismissAction() {
-        
+
     }
-    
+
     public func addImportsAction() {
         let importItems: [ImportQueueItem] = [
             .init(url: .init(string: "test.jag")!, fileType: .unknown)
@@ -34,8 +34,20 @@ extension MockImportStatusDriverData: ImportStatusDelegate {
             gameImporter.addImport($0)
         }
     }
-    
+
     public func forceImportsAction() {
         gameImporter.startProcessing()
+    }
+
+    public func didSelectSystem(_ system: SystemIdentifier, for item: ImportQueueItem) {
+        if gameImporter.processingState == .idle {
+            gameImporter.startProcessing()
+        } else if gameImporter.processingState == .paused {
+            if let concreteImporter = gameImporter as? GameImporter {
+                Task {
+                    await concreteImporter.processItem(item)
+                }
+            }
+        }
     }
 }
