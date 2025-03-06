@@ -777,7 +777,9 @@ public struct PagedGameMoreInfoView: View {
         // Create a new view model if needed
         if let newViewModel = viewModel.makeGameViewModel(for: index) {
             // Cache the new view model
-            viewModelCache[index] = newViewModel
+            Task { @MainActor in
+                self.viewModelCache[index] = newViewModel
+            }
             return newViewModel
         }
 
