@@ -72,21 +72,21 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
         coreOptions.append(contentsOf: [subCoreGroup])
 
         // Load dynamic options from RetroArch core
-        let frameworkIdentifier: String = identifier.replacingOccurrences(of: ".framework", with: "")
-        let frameworkPath = Bundle.main.bundlePath + "/Frameworks/" + identifier
-        let corePath = "\(frameworkPath)/\(frameworkIdentifier)"
-        ILOG("frameworkIdentifier: \(frameworkIdentifier), frameworkPath: \(frameworkPath), corePath: \(corePath)")
-        let loader = RetroArchCoreOptionsLoader(corePath: corePath)
-        if let dynamicOptions = loader.loadCoreOptions() {
-            let dynamicGroup: CoreOption = .group(
-                .init(
-                    title: "Dynamic Options",
-                    description: "Options loaded from RetroArch core"
-                ),
-                subOptions: dynamicOptions
-            )
-            coreOptions.append(dynamicGroup)
-        }
+//        let frameworkIdentifier: String = identifier.replacingOccurrences(of: ".framework", with: "")
+//        let frameworkPath = Bundle.main.bundlePath + "/Frameworks/" + identifier
+//        let corePath = "\(frameworkPath)/\(frameworkIdentifier)"
+//        ILOG("frameworkIdentifier: \(frameworkIdentifier), frameworkPath: \(frameworkPath), corePath: \(corePath)")
+//        let loader = RetroArchCoreOptionsLoader(corePath: corePath)
+//        if let dynamicOptions = loader.loadCoreOptions() {
+//            let dynamicGroup: CoreOption = .group(
+//                .init(
+//                    title: "Dynamic Options",
+//                    description: "Options loaded from RetroArch core"
+//                ),
+//                subOptions: dynamicOptions
+//            )
+//            coreOptions.append(dynamicGroup)
+//        }
 
         return coreOptions
     }
@@ -448,6 +448,123 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
         }
 
         return processedOptions
+    }
+
+    /// Synchronizes all stored option values with RetroArch's internal option system
+    /// Call this when initializing the core to ensure RetroArch has the correct option values
+    @objc public static func synchronizeOptionsWithRetroArch() {
+        guard let optionsPtr: UnsafeMutablePointer<core_option_manager_t> = getOptions() else {
+            WLOG("Failed to get RetroArch options manager")
+            return
+        }
+
+        // Get all options including dynamic ones
+        let allOptions = PVRetroArchCoreOptions.options
+
+        // Create a map of option keys to their CoreOption objects for quick lookup
+        var optionMap: [String: CoreOption] = [:]
+
+        // Helper function to recursively process options and build the map
+        func processOptions(_ options: [CoreOption]) {
+            for option in options {
+                optionMap[option.key] = option
+
+                // If it's a group, process its suboptions
+                if case let .group(_, subOptions) = option {
+                    processOptions(subOptions)
+                }
+            }
+        }
+
+        // Build the option map
+        processOptions(allOptions)
+
+        // Get the core_option_manager struct
+        let optionsManager = optionsPtr.pointee
+
+        // Iterate through all RetroArch options
+        for i in 0..<optionsManager.size {
+            let optionPtr = optionsManager.opts.advanced(by: Int(i))
+            let option = optionPtr.pointee
+
+            // Get option key
+            guard let key = option.key.map({ String(cString: $0) }) else {
+                continue
+            }
+
+            // Find the corresponding CoreOption
+            guard let coreOption = optionMap[key] else {
+                continue
+            }
+
+            // Get the stored value for this option
+            let optionValue: CoreOptionValue = PVRetroArchCoreOptions.valueForOption(coreOption)
+
+            // Find the option index in RetroArch
+            var optIdx: size_t = 0
+            guard core_option_manager_get_idx(optionsPtr, key, &optIdx) else {
+                continue
+            }
+
+            // Set the value based on its type
+            switch optionValue {
+            case .bool(let value):
+                // For boolean values, convert to 0/1
+                core_option_manager_set_val(optionsPtr, optIdx, value ? 1 : 0, false)
+
+            case .int(let value):
+                // For integer values, use directly
+                core_option_manager_set_val(optionsPtr, optIdx, size_t(value), false)
+
+            case .string(let value):
+                // For string values, find the matching option
+                if let valsList = option.vals {
+                    let valsCount = valsList.pointee.size
+
+                    for j in 0..<valsCount {
+                        guard let valStr = valsList.pointee.elems.advanced(by: Int(j)).pointee.data else {
+                            continue
+                        }
+
+                        let valueStr = String(cString: valStr)
+                        if valueStr == value {
+                            core_option_manager_set_val(optionsPtr, optIdx, j, false)
+                            break
+                        }
+                    }
+                }
+
+            case .float(let value):
+                // For float values, convert to string and find matching option
+                let valueStr = String(value)
+                if let valsList = option.vals {
+                    let valsCount = valsList.pointee.size
+
+                    for j in 0..<valsCount {
+                        guard let valStr = valsList.pointee.elems.advanced(by: Int(j)).pointee.data else {
+                            continue
+                        }
+
+                        let optionValueStr = String(cString: valStr)
+                        if optionValueStr == valueStr {
+                            core_option_manager_set_val(optionsPtr, optIdx, j, false)
+                            break
+                        }
+                    }
+                }
+
+            case .notFound:
+                // If no value is found, set to default
+                core_option_manager_set_default(optionsPtr, optIdx, false)
+            }
+        }
+
+        // After setting all options, flush the changes to ensure they're applied
+        if let conf = optionsManager.conf {
+            core_option_manager_flush(optionsPtr, conf)
+        }
+
+        ILOG("Synchronized all options with RetroArch")
     }
 }
 

@@ -232,11 +232,15 @@ int argc =  1;
     [[[[UIApplication sharedApplication] delegate] window] makeKeyAndVisible];
 }
 - (void)setOptionValues {
+    [PVRetroArchCoreBridge synchronizeOptionsWithRetroArch];
 	g_gs_preference = self.gsPreference;
 }
 
 void extract_bundles();
 -(void) writeConfigFile {
+    
+    [PVRetroArchCoreBridge synchronizeOptionsWithRetroArch];
+    
     // Initialize file manager
     NSFileManager *fm = [[NSFileManager alloc] init];
     NSString *fileName = [NSString stringWithFormat:@"%@/RetroArch/config/retroarch.cfg",
