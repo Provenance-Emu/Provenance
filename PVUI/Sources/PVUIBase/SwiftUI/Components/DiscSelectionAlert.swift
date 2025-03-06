@@ -1,7 +1,9 @@
 import Foundation
+import RealmSwift
 
 public struct DiscSelectionAlert {
-    public let game: PVGame
+    @ThreadSafe
+    public var game: PVGame?
     public let discs: [Disc]
     public let title: String = "Select Disc"
     public let message: String = "Choose which disc to load"
