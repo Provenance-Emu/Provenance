@@ -125,7 +125,11 @@ struct GameArtworkView: View {
                             .padding(.bottom, 8)
                             .padding(.horizontal)
                             .multilineTextAlignment(.center)
+                        #if !os(tvOS)
                             .background(Color(.systemBackground).opacity(0.7))
+                        #else
+                            .background(Color(.systemGray).opacity(0.7))
+                        #endif
                             .cornerRadius(4)
                     }
                     .padding(.bottom, 16)
@@ -139,7 +143,11 @@ struct GameArtworkView: View {
                             .padding(.bottom, 8)
                             .padding(.horizontal)
                             .multilineTextAlignment(.center)
+                        #if !os(tvOS)
                             .background(Color(.systemBackground).opacity(0.7))
+                        #else
+                            .background(Color(.systemGray).opacity(0.7))
+                        #endif
                             .cornerRadius(4)
                     }
                     .padding(.bottom, 16)

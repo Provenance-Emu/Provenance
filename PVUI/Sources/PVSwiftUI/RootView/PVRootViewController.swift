@@ -453,7 +453,11 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         let hostingController = UIHostingController(rootView: continuesView)
 
         // Present as a sheet
+        #if os(tvOS)
+        hostingController.modalPresentationStyle = .blurOverFullScreen
+        #else
         hostingController.modalPresentationStyle = .formSheet
+        #endif
         hostingController.preferredContentSize = CGSize(width: 600, height: 800)
 
         self.present(hostingController, animated: true)
@@ -507,7 +511,11 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         let hostingController = UIHostingController(rootView: continuesView)
 
         // Present as a sheet
+        #if os(tvOS)
+        hostingController.modalPresentationStyle = .blurOverFullScreen
+        #else
         hostingController.modalPresentationStyle = .formSheet
+        #endif
         hostingController.preferredContentSize = CGSize(width: 600, height: 800)
 
         self.present(hostingController, animated: true)
