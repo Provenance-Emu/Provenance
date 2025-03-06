@@ -282,7 +282,7 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
     }
 
     public static func processRetroOptions() -> [CoreOption] {
-        guard let options: UnsafeMutablePointer<core_option_manager_t> = PVRetroArchCoreBridge.getOptions() else {
+        guard let optionsPtr: UnsafeMutablePointer<core_option_manager_t> = PVRetroArchCoreBridge.getOptions() else {
             return []
         }
 
@@ -290,7 +290,7 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
         var processedOptions: [CoreOption] = []
 
         /// Get the core_option_manager struct
-        let optionsManager = options.pointee
+        let optionsManager = optionsPtr.pointee
 
         /// Process categories first
         var categoryMap: [String: [CoreOption]] = [:]
@@ -358,6 +358,31 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 requiresRestart: false
             )
 
+            /// Create a value handler closure that will update the RetroArch option
+            let valueHandler: (OptionValueRepresentable) -> Void = { newValue in
+                var valIdx: size_t = 0
+
+                // Find the option index
+                if core_option_manager_get_idx(optionsPtr, key, &valIdx) {
+                    // Convert the new value to the appropriate index
+                    if let intValue = newValue as? Int {
+                        // For enumeration values, use the integer directly
+                        core_option_manager_set_val(optionsPtr, valIdx, size_t(intValue), true)
+                    } else if let boolValue = newValue as? Bool {
+                        // For boolean values, convert to 0/1
+                        core_option_manager_set_val(optionsPtr, valIdx, boolValue ? 1 : 0, true)
+                    } else if let stringValue = newValue as? String {
+                        // For string values, find the matching option
+                        for (idx, value) in values.enumerated() {
+                            if value.title == stringValue || value.description == stringValue {
+                                core_option_manager_set_val(optionsPtr, valIdx, size_t(idx), true)
+                                break
+                            }
+                        }
+                    }
+                }
+            }
+
             /// Create appropriate option type based on values
             if values.count == 2
                 &&
@@ -367,13 +392,13 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                (values[0].title.lowercased() == "disabled" || values[0].title.lowercased() == "off" || values[0].title.lowercased() == "false")
             {
                 /// This is likely a boolean option
-                coreOption = .bool(display, defaultValue: Int(option.default_index) == 0)
+                coreOption = .bool(display, defaultValue: Int(option.default_index) == 0, valueHandler: valueHandler)
             } else if values.count > 0 {
                 /// This is an enumeration option
-                coreOption = .enumeration(display, values: values, defaultValue: Int(option.default_index))
+                coreOption = .enumeration(display, values: values, defaultValue: Int(option.default_index), valueHandler: valueHandler)
             } else {
                 /// Fallback to string option
-                coreOption = .string(display, defaultValue: "")
+                coreOption = .string(display, defaultValue: "", valueHandler: valueHandler)
             }
 
             /// Add to category map if it has a category

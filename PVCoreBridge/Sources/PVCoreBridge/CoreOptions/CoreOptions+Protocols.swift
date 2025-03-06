@@ -30,7 +30,7 @@ public protocol EnumCOption: COption {
     var options: [(key: String, title: String, description: String?)] { get }
 }
 
-public protocol OptionValueRepresentable: Codable {}
+public protocol OptionValueRepresentable: Codable, Sendable {}
 
 extension Array: OptionValueRepresentable where Self.Element: OptionValueRepresentable { }
 extension Set: OptionValueRepresentable where Self.Element: OptionValueRepresentable { }

@@ -55,17 +55,17 @@ final class CoreOptionsViewModel: ObservableObject {
         guard let coreClass = selectedCore?.coreClass else { return nil }
 
         switch option {
-        case .bool(_, let defaultValue):
+        case .bool(_, let defaultValue, _):
             return coreClass.storedValueForOption(Bool.self, option.key) ?? defaultValue
-        case .string(_, let defaultValue):
+        case .string(_, let defaultValue, _):
             return coreClass.storedValueForOption(String.self, option.key) ?? defaultValue
-        case .enumeration(_, _, let defaultValue):
+        case .enumeration(_, _, let defaultValue, _):
             return coreClass.storedValueForOption(Int.self, option.key) ?? defaultValue
-        case .range(_, _, let defaultValue):
+        case .range(_, _, let defaultValue, _):
             return coreClass.storedValueForOption(Int.self, option.key) ?? defaultValue
-        case .rangef(_, _, let defaultValue):
+        case .rangef(_, _, let defaultValue, _):
             return coreClass.storedValueForOption(Float.self, option.key) ?? defaultValue
-        case .multi(_, let values):
+        case .multi(_, let values, _):
             return coreClass.storedValueForOption(String.self, option.key) ?? values.first?.title
         case .group(_, _):
             return nil
