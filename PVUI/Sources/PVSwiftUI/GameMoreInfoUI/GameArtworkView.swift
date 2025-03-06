@@ -225,7 +225,7 @@ struct GameArtworkView: View {
                 UIAlertAction(title: "Search Online", style: .default) { _ in
                     handleArtworkSourceSelection(sourceType: .onlineSearch)
                 }
-                UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
                     showArtworkSourceAlert = false
                 }
             }

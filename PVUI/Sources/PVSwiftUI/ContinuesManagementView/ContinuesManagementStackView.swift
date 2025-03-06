@@ -131,7 +131,7 @@ public struct ContinuesManagementStackView: View {
                 #if !os(tvOS)
                 .textInputAutocapitalization(.words)
                 #endif
-            Button("Cancel", role: .cancel) {
+            Button(NSLocalizedString("Cancel", comment: "Cancel"), role: .cancel) {
                 Task { @MainActor in
                     bindableEditState.reset()
                 }

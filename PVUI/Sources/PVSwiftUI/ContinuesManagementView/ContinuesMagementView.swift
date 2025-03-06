@@ -497,7 +497,7 @@ public struct ContinuesMagementView: View {
             set: { if !$0 { editingField = nil } }
         )) {
             TextField("Description", text: $editText)
-            Button("Cancel") {
+            Button(NSLocalizedString("Cancel", comment: "Cancel")) {
                 editingField = nil
             }
             Button("Save") {
