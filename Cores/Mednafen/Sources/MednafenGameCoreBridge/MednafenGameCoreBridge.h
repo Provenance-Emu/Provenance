@@ -35,7 +35,7 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /// Forward Declerations
 @protocol ObjCBridgedCoreBridge, GameWithCheat;
-@protocol PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient, PVSaturnSystemResponderClient;
+@protocol PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient, PVSaturnSystemResponderClient, DiscSwappable;
 typedef enum PVGBAButton: NSInteger PVGBAButton;
 typedef enum PVGBButton: NSInteger PVGBButton;
 typedef enum PVGenesisButton: NSInteger PVGenesisButton;
@@ -54,7 +54,7 @@ typedef enum PVWSButton: NSInteger PVWSButton;
 __attribute__((visibility("default")))
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
-@interface MednafenGameCoreBridge: PVCoreObjCBridge <ObjCBridgedCoreBridge, PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient, PVSaturnSystemResponderClient>
+@interface MednafenGameCoreBridge: PVCoreObjCBridge <ObjCBridgedCoreBridge, PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient, PVSaturnSystemResponderClient, DiscSwappable>
 #pragma clang diagnostic pop
 {
     uint32_t *inputBuffer[13];

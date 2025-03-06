@@ -314,15 +314,20 @@ struct ConsoleGamesView: SwiftUI.View {
                     if let alert = gamesViewModel.discSelectionAlert, let game = alert.game  {
                         let actions = alert.discs.map { (disc: DiscSelectionAlert.Disc) -> UIAlertAction in
                             UIAlertAction(title: disc.fileName, style: .default) { _ in
+                                gamesViewModel.discSelectionAlert = nil
                                 Task {
                                     await rootDelegate?.root_loadPath(disc.path, forGame: game, sender: nil, core: nil, saveState: nil)
                                 }
                             }
                         }
                         
-                        actions + [UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel)]
+                        actions + [UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
+                            gamesViewModel.discSelectionAlert = nil
+                        }]
                     } else {
-                        [UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel)]
+                        [UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
+                            gamesViewModel.discSelectionAlert = nil
+                        }]
                     }
                 }
             )

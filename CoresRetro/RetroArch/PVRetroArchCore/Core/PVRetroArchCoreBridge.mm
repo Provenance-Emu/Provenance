@@ -36,6 +36,7 @@
 #include "../../input/drivers/cocoa_input.h"
 #include "../../input/drivers_keyboard/keyboard_event_apple.h"
 #include "../../retroarch.h"
+#include "../../command.h"
 #include "../../verbosity.h"
 
 #ifdef HAVE_MENU
@@ -179,5 +180,117 @@ extern int g_gs_preference;
     Process action=[actions objectForKey:key];
     if (action)
         action();
+}
+@end
+
+@implementation PVRetroArchCoreBridge (CoreOptions)
+
++ (core_option_manager_t  * _Nullable ) getOptions {
+    struct core_option *option      = NULL;
+    core_option_manager_t *coreopts = NULL;
+    retroarch_ctl(RARCH_CTL_CORE_OPTIONS_LIST_GET, &coreopts);
+
+    if (coreopts) {
+        int numberOfGroups = coreopts->cats_size;
+        int numberOfRootOptions = coreopts->size;
+    }
+    return coreopts;
+}
+
+@end
+
+// Disc swap
+@implementation PVRetroArchCoreBridge (DiscSwappable)
+
+- (unsigned long) numberOfDiscs {
+    unsigned images               = 0;
+    unsigned current              = 0;
+    rarch_system_info_t *sys_info = &runloop_state_get_ptr()->system;
+
+    if (!sys_info)
+       return 1;
+
+    if (!disk_control_enabled(&sys_info->disk_control))
+       return 1;
+
+    images  = disk_control_get_num_images(&sys_info->disk_control);
+    return images;
+}
+
+- (BOOL) currentGameSupportsMultipleDiscs {
+    unsigned images               = 0;
+    unsigned current              = 0;
+    rarch_system_info_t *sys_info = &runloop_state_get_ptr()->system;
+
+    if (!sys_info)
+       return NO;
+
+    if (!disk_control_enabled(&sys_info->disk_control))
+       return NO;
+
+    images  = disk_control_get_num_images(&sys_info->disk_control);
+    current = disk_control_get_image_index(&sys_info->disk_control);
+    return images > 1;
+}
+
+- (void) swapDiscWithNumber:(NSUInteger)number {
+    unsigned disk_index = number - 1;
+    
+    [self setEjected:true];
+    BOOL success = runloop_environment_cb(CMD_EVENT_DISK_INDEX, &disk_index);
+    MAKEWEAK(self);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        MAKESTRONG_RETURN_IF_NIL(self);
+        [self setEjected:false];
+    });
+}
+
+- (void)toggleEjectState {
+    rarch_system_info_t *sys_info = &runloop_state_get_ptr()->system;
+
+    if (!sys_info)
+       return;
+
+    if (disk_control_enabled(&sys_info->disk_control))
+    {
+        bool eject                      = !disk_control_get_eject_state(
+                                                                        &sys_info->disk_control);
+ 
+        
+        bool verbose = true;
+        bool success = disk_control_set_eject_state(
+                                     &sys_info->disk_control, eject, verbose);
+        
+#ifdef HAVE_AUDIOMIXER
+      audio_driver_mixer_play_menu_sound(AUDIO_MIXER_SYSTEM_SLOT_OK);
+#endif
+    }
+}
+
+- (void)setEjected:(BOOL)eject {
+    rarch_system_info_t *sys_info = &runloop_state_get_ptr()->system;
+
+    if (!sys_info)
+       return;
+
+    if (disk_control_enabled(&sys_info->disk_control))
+    {
+        bool verbose = true;
+        disk_control_set_eject_state(
+                                     &sys_info->disk_control, eject, verbose);
+        
+#ifdef HAVE_AUDIOMIXER
+      audio_driver_mixer_play_menu_sound(AUDIO_MIXER_SYSTEM_SLOT_OK);
+#endif
+    }
+}
+
+- (BOOL) isEjected {
+    rarch_system_info_t *sys_info = &runloop_state_get_ptr()->system;
+
+    if (!sys_info)
+       return NO;
+    
+    return disk_control_get_eject_state(&sys_info->disk_control);
 }
 @end

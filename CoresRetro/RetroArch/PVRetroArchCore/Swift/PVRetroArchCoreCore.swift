@@ -40,6 +40,19 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
 extension PVRetroArchCoreCore: PVRetroArchCoreResponderClient {
 }
 
+extension PVRetroArchCoreCore: DiscSwappable {
+    public var currentGameSupportsMultipleDiscs: Bool {
+        return _bridge.currentGameSupportsMultipleDiscs
+    }
+    
+    public var numberOfDiscs: UInt {
+        return _bridge.numberOfDiscs
+    }
+    public func swapDisc(number: UInt) {
+        _bridge.swapDisc(withNumber: number)
+    }
+}
+
 // MARK: GameBoy
 extension PVRetroArchCoreCore: PVGBSystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PVGBButton, forPlayer player: Int) {

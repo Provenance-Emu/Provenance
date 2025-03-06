@@ -108,7 +108,7 @@
 		93F66E9B29669AE900203EB3 /* PVRetroArchCore+RetroArchUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 93F66E9A29669AE900203EB3 /* PVRetroArchCore+RetroArchUI.m */; };
 		93F66EC52966D6E100203EB3 /* cocoa_common.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FF38392966337100772659 /* cocoa_common.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		93FF381A2965FF9C00772659 /* cocoa_gl_ctx.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BA743D2965B96D00A49D66 /* cocoa_gl_ctx.m */; };
-		93FF38202965FF9C00772659 /* PVRetroArchCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVRetroArchCore.mm */; settings = {COMPILER_FLAGS = "-Wno-module-import-in-extern-c"; }; };
+		93FF38202965FF9C00772659 /* PVRetroArchCoreBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVRetroArchCoreBridge.mm */; settings = {COMPILER_FLAGS = "-Wno-module-import-in-extern-c"; }; };
 		93FF38212965FF9C00772659 /* PVRetroArchCoreBridge+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EB1218BC69700557ACE /* PVRetroArchCoreBridge+Audio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		93FF38222965FF9C00772659 /* PVRetroArchCore+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVRetroArchCore+Audio.mm */; };
 		93FF38232965FF9C00772659 /* PVRetroArchCoreBridge+Video.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EAD218BC5C500557ACE /* PVRetroArchCoreBridge+Video.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -137,6 +137,29 @@
 		B3632A522D15161300041145 /* PVRetroArchCore+Controls+DOS.m in Sources */ = {isa = PBXBuildFile; fileRef = B3632A512D15161300041145 /* PVRetroArchCore+Controls+DOS.m */; };
 		B363390E2D6286FA00ECD2ED /* apple_wifi.m in Sources */ = {isa = PBXBuildFile; fileRef = B363390D2D6286FA00ECD2ED /* apple_wifi.m */; platformFilters = (ios, maccatalyst, watchos, ); };
 		B363394D2D63E82B00ECD2ED /* coreaudio_mic.m in Sources */ = {isa = PBXBuildFile; fileRef = B363394C2D63E82B00ECD2ED /* coreaudio_mic.m */; };
+		B36B5B942D7965C800BABCA3 /* command.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5B932D7965C800BABCA3 /* command.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36B5B972D796A7B00BABCA3 /* core_option_manager.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5B952D796A7B00BABCA3 /* core_option_manager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36B5B982D796A7B00BABCA3 /* runloop.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5B962D796A7B00BABCA3 /* runloop.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36B5B9C2D796C5900BABCA3 /* disk_control_interface.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5B992D796C5900BABCA3 /* disk_control_interface.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36B5B9D2D796C5900BABCA3 /* disk_index_file.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5B9A2D796C5900BABCA3 /* disk_index_file.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36B5B9E2D796C5900BABCA3 /* dynamic.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5B9B2D796C5900BABCA3 /* dynamic.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36B5BA72D7973A100BABCA3 /* content.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5BA22D7973A100BABCA3 /* content.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36B5BA82D7973A100BABCA3 /* core.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5BA32D7973A100BABCA3 /* core.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36B5BA92D7973A100BABCA3 /* core_info.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5BA42D7973A100BABCA3 /* core_info.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36B5BAA2D7973A100BABCA3 /* core_updater_list.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5BA52D7973A100BABCA3 /* core_updater_list.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36B5BAB2D7973A100BABCA3 /* defaults.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5BA62D7973A100BABCA3 /* defaults.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36B5BAC2D7973A100BABCA3 /* autosave.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5B9F2D7973A100BABCA3 /* autosave.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36B5BAD2D7973A100BABCA3 /* cheat_manager.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5BA02D7973A100BABCA3 /* cheat_manager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36B5BAE2D7973A100BABCA3 /* configuration.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5BA12D7973A100BABCA3 /* configuration.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36B5BB02D79817600BABCA3 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B36B5BAF2D79817600BABCA3 /* PVLogging */; };
+		B36B5BB22D7982E300BABCA3 /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B36B5BB12D7982E300BABCA3 /* PVCoreObjCBridge */; };
+		B36B5BB42D79832A00BABCA3 /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B36B5BB32D79832A00BABCA3 /* PVEmulatorCore */; };
+		B36B5BB62D79833B00BABCA3 /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B36B5BB52D79833B00BABCA3 /* PVCoreBridge */; };
+		B36B5BB82D79833F00BABCA3 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B36B5BB72D79833F00BABCA3 /* PVPlists */; };
+		B36B5BBA2D79836800BABCA3 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B36B5BB92D79836800BABCA3 /* PVSupport */; };
+		B36B5BBC2D798B2200BABCA3 /* audio_driver.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5BBB2D798B2200BABCA3 /* audio_driver.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36B5BBF2D798BBC00BABCA3 /* audio_defines.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5BBD2D798BBC00BABCA3 /* audio_defines.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36B5BC02D798BBC00BABCA3 /* audio_thread_wrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5BBE2D798BBC00BABCA3 /* audio_thread_wrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B37C00592BFF6A1000FEC6AC /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B37C00582BFF6A1000FEC6AC /* MoltenVK */; };
 		B39FAC3F2D6013EC0065B66B /* SDL2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */; };
 		B39FAC422D6013F50065B66B /* SDL2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */; };
@@ -406,6 +429,23 @@
 		B3632A512D15161300041145 /* PVRetroArchCore+Controls+DOS.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+DOS.m"; sourceTree = "<group>"; };
 		B363390D2D6286FA00ECD2ED /* apple_wifi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = apple_wifi.m; sourceTree = "<group>"; };
 		B363394C2D63E82B00ECD2ED /* coreaudio_mic.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = coreaudio_mic.m; sourceTree = "<group>"; };
+		B36B5B932D7965C800BABCA3 /* command.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = command.h; path = RetroArch/command.h; sourceTree = SOURCE_ROOT; };
+		B36B5B952D796A7B00BABCA3 /* core_option_manager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = core_option_manager.h; path = RetroArch/core_option_manager.h; sourceTree = SOURCE_ROOT; };
+		B36B5B962D796A7B00BABCA3 /* runloop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = runloop.h; path = RetroArch/runloop.h; sourceTree = SOURCE_ROOT; };
+		B36B5B992D796C5900BABCA3 /* disk_control_interface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = disk_control_interface.h; path = RetroArch/disk_control_interface.h; sourceTree = SOURCE_ROOT; };
+		B36B5B9A2D796C5900BABCA3 /* disk_index_file.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = disk_index_file.h; path = RetroArch/disk_index_file.h; sourceTree = SOURCE_ROOT; };
+		B36B5B9B2D796C5900BABCA3 /* dynamic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = dynamic.h; path = RetroArch/dynamic.h; sourceTree = SOURCE_ROOT; };
+		B36B5B9F2D7973A100BABCA3 /* autosave.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = autosave.h; path = RetroArch/autosave.h; sourceTree = SOURCE_ROOT; };
+		B36B5BA02D7973A100BABCA3 /* cheat_manager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cheat_manager.h; path = RetroArch/cheat_manager.h; sourceTree = SOURCE_ROOT; };
+		B36B5BA12D7973A100BABCA3 /* configuration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = configuration.h; path = RetroArch/configuration.h; sourceTree = SOURCE_ROOT; };
+		B36B5BA22D7973A100BABCA3 /* content.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = content.h; path = RetroArch/content.h; sourceTree = SOURCE_ROOT; };
+		B36B5BA32D7973A100BABCA3 /* core.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = core.h; path = RetroArch/core.h; sourceTree = SOURCE_ROOT; };
+		B36B5BA42D7973A100BABCA3 /* core_info.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = core_info.h; path = RetroArch/core_info.h; sourceTree = SOURCE_ROOT; };
+		B36B5BA52D7973A100BABCA3 /* core_updater_list.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = core_updater_list.h; path = RetroArch/core_updater_list.h; sourceTree = SOURCE_ROOT; };
+		B36B5BA62D7973A100BABCA3 /* defaults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = defaults.h; path = RetroArch/defaults.h; sourceTree = SOURCE_ROOT; };
+		B36B5BBB2D798B2200BABCA3 /* audio_driver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = audio_driver.h; path = RetroArch/audio/audio_driver.h; sourceTree = SOURCE_ROOT; };
+		B36B5BBD2D798BBC00BABCA3 /* audio_defines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = audio_defines.h; path = RetroArch/audio/audio_defines.h; sourceTree = SOURCE_ROOT; };
+		B36B5BBE2D798BBC00BABCA3 /* audio_thread_wrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = audio_thread_wrapper.h; path = RetroArch/audio/audio_thread_wrapper.h; sourceTree = SOURCE_ROOT; };
 		B37106F32D51AFC300688298 /* RetroArchCoreOptionsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetroArchCoreOptionsLoader.swift; sourceTree = "<group>"; };
 		B39C4BEA2BF3430B00F199BB /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework; sourceTree = "<group>"; };
 		B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SDL2.xcframework; path = ../../Dependencies/SDL2.xcframework; sourceTree = "<group>"; };
@@ -415,7 +455,7 @@
 		B3C7621C20783243009950E4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		B3C7621E2078325C009950E4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3C76223207833DE009950E4 /* PVRetroArchCoreBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVRetroArchCoreBridge.h; sourceTree = "<group>"; };
-		B3C76224207833DE009950E4 /* PVRetroArchCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVRetroArchCore.mm; sourceTree = "<group>"; };
+		B3C76224207833DE009950E4 /* PVRetroArchCoreBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVRetroArchCoreBridge.mm; sourceTree = "<group>"; };
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B3CC2E0B2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+PS2.m"; sourceTree = "<group>"; };
 		B3CC63152BEF0CD0002F3C8B /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../MoltenVK/MoltenVK/MoltenVK.xcframework; sourceTree = "<group>"; };
@@ -480,7 +520,13 @@
 			files = (
 				B39FAC3F2D6013EC0065B66B /* SDL2.xcframework in Frameworks */,
 				93AA124F296DCE58007C9808 /* libiconv.tbd in Frameworks */,
+				B36B5BB62D79833B00BABCA3 /* PVCoreBridge in Frameworks */,
+				B36B5BBA2D79836800BABCA3 /* PVSupport in Frameworks */,
+				B36B5BB42D79832A00BABCA3 /* PVEmulatorCore in Frameworks */,
+				B36B5BB02D79817600BABCA3 /* PVLogging in Frameworks */,
+				B36B5BB82D79833F00BABCA3 /* PVPlists in Frameworks */,
 				93AA124D296DCE52007C9808 /* libz.tbd in Frameworks */,
+				B36B5BB22D7982E300BABCA3 /* PVCoreObjCBridge in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -592,12 +638,29 @@
 		93B66E422968602E00A621DD /* libretroarch */ = {
 			isa = PBXGroup;
 			children = (
-				935E7D5129A4CA7E00D92748 /* griffin_cpp.cpp */,
-				935E7D5029A4CA7E00D92748 /* griffin_glslang.cpp */,
-				932A5CC029686AEB0032C168 /* retroarch.h */,
-				932A5CBE29686A8D0032C168 /* libretro.h */,
-				93B66E5C296860F700A621DD /* Swift Modules */,
 				932A5CB6296866A60032C168 /* RetroArch */,
+				935E7D5129A4CA7E00D92748 /* griffin_cpp.cpp */,
+				B36B5BBB2D798B2200BABCA3 /* audio_driver.h */,
+				935E7D5029A4CA7E00D92748 /* griffin_glslang.cpp */,
+				B36B5BBD2D798BBC00BABCA3 /* audio_defines.h */,
+				B36B5BBE2D798BBC00BABCA3 /* audio_thread_wrapper.h */,
+				B36B5B9F2D7973A100BABCA3 /* autosave.h */,
+				B36B5BA02D7973A100BABCA3 /* cheat_manager.h */,
+				B36B5B932D7965C800BABCA3 /* command.h */,
+				B36B5BA12D7973A100BABCA3 /* configuration.h */,
+				B36B5BA22D7973A100BABCA3 /* content.h */,
+				B36B5BA42D7973A100BABCA3 /* core_info.h */,
+				B36B5B952D796A7B00BABCA3 /* core_option_manager.h */,
+				B36B5BA52D7973A100BABCA3 /* core_updater_list.h */,
+				B36B5BA32D7973A100BABCA3 /* core.h */,
+				B36B5BA62D7973A100BABCA3 /* defaults.h */,
+				B36B5B992D796C5900BABCA3 /* disk_control_interface.h */,
+				B36B5B9A2D796C5900BABCA3 /* disk_index_file.h */,
+				B36B5B9B2D796C5900BABCA3 /* dynamic.h */,
+				932A5CBE29686A8D0032C168 /* libretro.h */,
+				932A5CC029686AEB0032C168 /* retroarch.h */,
+				B36B5B962D796A7B00BABCA3 /* runloop.h */,
+				93B66E5C296860F700A621DD /* Swift Modules */,
 			);
 			path = libretroarch;
 			sourceTree = "<group>";
@@ -771,7 +834,7 @@
 				936B47F92969798B00C7D2A3 /* platform_darwin.m */,
 				938E5BB4298B31D400F8596C /* PVDebug.c */,
 				B3447EA0218B881000557ACE /* PVRetroArch.mm */,
-				B3C76224207833DE009950E4 /* PVRetroArchCore.mm */,
+				B3C76224207833DE009950E4 /* PVRetroArchCoreBridge.mm */,
 				93B3B19A2A8CBC7100B60325 /* PVRetroArchCore+Archive.m */,
 				93814F8B2AAA9E9800DEB9B9 /* PVRetroArchCore+Archive+AppleII.m */,
 				93814F912AAAACAF00DEB9B9 /* PVRetroArchCore+Archive+MAME.m */,
@@ -952,10 +1015,27 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B36B5B972D796A7B00BABCA3 /* core_option_manager.h in Headers */,
+				B36B5B982D796A7B00BABCA3 /* runloop.h in Headers */,
 				93FF38232965FF9C00772659 /* PVRetroArchCoreBridge+Video.h in Headers */,
+				B36B5B9C2D796C5900BABCA3 /* disk_control_interface.h in Headers */,
+				B36B5B9D2D796C5900BABCA3 /* disk_index_file.h in Headers */,
+				B36B5B9E2D796C5900BABCA3 /* dynamic.h in Headers */,
 				93FF38252965FF9C00772659 /* PVRetroArchCoreBridge+Saves.h in Headers */,
+				B36B5BBC2D798B2200BABCA3 /* audio_driver.h in Headers */,
 				93FF38212965FF9C00772659 /* PVRetroArchCoreBridge+Audio.h in Headers */,
+				B36B5BA72D7973A100BABCA3 /* content.h in Headers */,
+				B36B5BA82D7973A100BABCA3 /* core.h in Headers */,
+				B36B5BA92D7973A100BABCA3 /* core_info.h in Headers */,
+				B36B5BAA2D7973A100BABCA3 /* core_updater_list.h in Headers */,
+				B36B5BAB2D7973A100BABCA3 /* defaults.h in Headers */,
+				B36B5BAC2D7973A100BABCA3 /* autosave.h in Headers */,
+				B36B5BAD2D7973A100BABCA3 /* cheat_manager.h in Headers */,
+				B36B5BAE2D7973A100BABCA3 /* configuration.h in Headers */,
+				B36B5BBF2D798BBC00BABCA3 /* audio_defines.h in Headers */,
+				B36B5BC02D798BBC00BABCA3 /* audio_thread_wrapper.h in Headers */,
 				93FF38272965FF9C00772659 /* PVRetroArchCoreBridge+Controls.h in Headers */,
+				B36B5B942D7965C800BABCA3 /* command.h in Headers */,
 				B3135B9C26E4CC290047F338 /* PVRetroArchCoreBridge.h in Headers */,
 				932A5CC129686AEB0032C168 /* retroarch.h in Headers */,
 				932A5CBF29686A8E0032C168 /* libretro.h in Headers */,
@@ -1261,7 +1341,7 @@
 				93654F7A298F4A2D0046503F /* PVRetroArchCore+Controls+PCE.m in Sources */,
 				93F66E9B29669AE900203EB3 /* PVRetroArchCore+RetroArchUI.m in Sources */,
 				93B3B19B2A8CBC7100B60325 /* PVRetroArchCore+Archive.m in Sources */,
-				93FF38202965FF9C00772659 /* PVRetroArchCore.mm in Sources */,
+				93FF38202965FF9C00772659 /* PVRetroArchCoreBridge.mm in Sources */,
 				93A7278A2AAEB1C60052B279 /* PVRetroArchCore+Controls+MAME.m in Sources */,
 				9319F10A2976C15900A7414A /* PVRetroArchCore+Controls+SNES.m in Sources */,
 				B30C8C892BF45AFB00C91991 /* PVRetroArchCore+Controls.swift in Sources */,
@@ -2215,6 +2295,36 @@
 		B30C8C8B2BF45BDC00C91991 /* PVEmulatorCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVEmulatorCore;
+		};
+		B36B5BAF2D79817600BABCA3 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3E2AA692CB65E9A00E2636D /* XCLocalSwiftPackageReference "../../PVLogging" */;
+			productName = PVLogging;
+		};
+		B36B5BB12D7982E300BABCA3 /* PVCoreObjCBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3F8DFFD2CB3741500017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */;
+			productName = PVCoreObjCBridge;
+		};
+		B36B5BB32D79832A00BABCA3 /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B30C8C8A2BF45BDC00C91991 /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */;
+			productName = PVEmulatorCore;
+		};
+		B36B5BB52D79833B00BABCA3 /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B30E9AB82C6F241200C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */;
+			productName = PVCoreBridge;
+		};
+		B36B5BB72D79833F00BABCA3 /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3FC975C2CB8D44400C6DB31 /* XCLocalSwiftPackageReference "../../PVPlists" */;
+			productName = PVPlists;
+		};
+		B36B5BB92D79836800BABCA3 /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3C439512BF442920021B9C3 /* XCLocalSwiftPackageReference "../../PVSupport" */;
+			productName = PVSupport;
 		};
 		B37C00582BFF6A1000FEC6AC /* MoltenVK */ = {
 			isa = XCSwiftPackageProductDependency;

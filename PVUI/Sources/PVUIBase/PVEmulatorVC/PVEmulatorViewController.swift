@@ -335,7 +335,25 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // to provide the correct data for creating views.
         let m3uFile: URL? = PVEmulatorConfiguration.m3uFile(forGame: game)
         // TODO: Why are we using `UserDefaults`? @JoeMatt
-        var romPathMaybe: URL? = UserDefaults.standard.url(forKey: game.romPath) ?? m3uFile
+        // Now I know why, this is how the old library VC would set selected disc
+        
+        
+        var romPathMaybe: URL?
+        
+        // First check if the user selected a specific related file
+        if let selectedDiscFilename = game.selectedDiscFilename {
+            let url = URL(fileURLWithPath: selectedDiscFilename, relativeTo: PVEmulatorConfiguration.romDirectory(forSystemIdentifier: game.system?.systemIdentifier ?? .RetroArch))
+            if FileManager.default.fileExists(atPath: url.path(percentEncoded: false)) {
+                romPathMaybe = url
+            }
+        }
+        
+        // Check for m3uFile or user default set path
+        if romPathMaybe == nil {
+            romPathMaybe = UserDefaults.standard.url(forKey: game.romPath) ?? m3uFile
+        }
+        
+        // Finally settle on the single file
         if romPathMaybe == nil {
             romPathMaybe = game.file?.url
         }
