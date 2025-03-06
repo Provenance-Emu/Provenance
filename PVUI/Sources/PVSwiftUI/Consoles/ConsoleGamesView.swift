@@ -303,6 +303,30 @@ struct ConsoleGamesView: SwiftUI.View {
                 }
             }
             .uiKitAlert(
+                "Select Disc",
+                message: "Choose which disc to load",
+                isPresented: Binding(
+                    get: { gamesViewModel.discSelectionAlert != nil },
+                    set: { if !$0 { gamesViewModel.discSelectionAlert = nil } }
+                ),
+                preferredContentSize: CGSize(width: 500, height: 300),
+                buttons: {
+                    guard let alert = gamesViewModel.discSelectionAlert else {
+                        return [UIAlertAction(title: "Cancel", style: .cancel)]
+                    }
+                    
+                    let actions = alert.discs.map { (disc: DiscSelectionAlert.Disc) -> UIAlertAction in
+                        UIAlertAction(title: disc.fileName, style: .default) { _ in
+                            Task {
+                                await rootDelegate?.root_loadPath(disc.path, forGame: alert.game, sender: nil, core: nil, saveState: nil)
+                            }
+                        }
+                    }
+                    
+                    return actions + [UIAlertAction(title: "Cancel", style: .cancel)]
+                }
+            )
+            .uiKitAlert(
                 "Choose Artwork Source",
                 message: "Select artwork from your photo library or search online sources",
                 isPresented: $showArtworkSourceAlert,
