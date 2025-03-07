@@ -152,6 +152,24 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
+			<string>flycast-jitless.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVProjectName</key>
+			<string>Flycast JIT-less (RetroArch)</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.dreamcast</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://github.com/flyinghead/flycast</string>
+			<key>PVProjectVersion</key>
+			<string>2.0</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
 			<string>flycast.libretro.11.9.framework</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
