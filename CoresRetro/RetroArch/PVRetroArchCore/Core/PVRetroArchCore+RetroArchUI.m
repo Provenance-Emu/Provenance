@@ -523,10 +523,11 @@ void extract_bundles();
         }
 		char *param[] = {
             "retroarch",
+            CORE_TYPE_PLAIN,
             "--appendconfig",
             optConfig.UTF8String,
             NULL};
-        argc = 3;
+        argc = 4;
 		argv = param;
         ILOG(@"Loading %s\n", param[0]);
 	} else {
@@ -576,6 +577,8 @@ void extract_bundles();
 //     AVAudioSessionCategoryOptionAllowBluetoothA2DP |
 //     AVAudioSessionCategoryOptionMixWithOthers
 //     error:&error];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAudioSessionInterruption:) name:AVAudioSessionInterruptionNotification object:[AVAudioSession sharedInstance]];
+    
 	[self refreshSystemConfig];
 	[self showGameView];
 	rarch_main(argc, argv, NULL);
@@ -688,6 +691,13 @@ void extract_bundles();
 }
 - (void)showGameView {
     ILOG(@"In Show Game View now\n");
+    
+#if TARGET_OS_IOS
+//    [self.touchViewController.navigationController setToolbarHidden:true animated:NO];
+   [[UIApplication sharedApplication] setStatusBarHidden:true withAnimation:UIStatusBarAnimationNone];
+   [[UIApplication sharedApplication] setIdleTimerDisabled:true];
+#endif
+    
     [self setupWindow];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         [self setVolume];
@@ -696,6 +706,25 @@ void extract_bundles();
         [self useRetroArchController:self.retroArchControls];
 	});
 }
+
+- (void)handleAudioSessionInterruption:(NSNotification *)notification
+{
+   NSNumber *type = notification.userInfo[AVAudioSessionInterruptionTypeKey];
+   if (![type isKindOfClass:[NSNumber class]])
+      return;
+
+   if ([type unsignedIntegerValue] == AVAudioSessionInterruptionTypeBegan)
+   {
+      RARCH_LOG("AudioSession Interruption Began\n");
+      audio_driver_stop();
+   }
+   else if ([type unsignedIntegerValue] == AVAudioSessionInterruptionTypeEnded)
+   {
+      RARCH_LOG("AudioSession Interruption Ended\n");
+      audio_driver_start(false);
+   }
+}
+
 #pragma mark - ApplePlatform
 -(id)renderView { return _renderView; }
 -(bool)hasFocus { return YES; }

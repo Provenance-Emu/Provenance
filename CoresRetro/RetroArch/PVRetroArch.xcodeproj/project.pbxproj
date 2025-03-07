@@ -24,7 +24,6 @@
 		931A43F9296A26B400D27F9D /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621020783162009950E4 /* PVRetroArch.framework */; platformFilters = (ios, tvos, ); };
 		931A43FA296A26B400D27F9D /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621020783162009950E4 /* PVRetroArch.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9328B14F2A3196D10094C712 /* PVRetroArchCore+Controls+PSP.m in Sources */ = {isa = PBXBuildFile; fileRef = 9328B14E2A3196D10094C712 /* PVRetroArchCore+Controls+PSP.m */; };
-		932A5CBF29686A8E0032C168 /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = 932A5CBE29686A8D0032C168 /* libretro.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		932A5CC129686AEB0032C168 /* retroarch.h in Headers */ = {isa = PBXBuildFile; fileRef = 932A5CC029686AEB0032C168 /* retroarch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		93323F862AAB891200EB0C43 /* mame_plugins in Resources */ = {isa = PBXBuildFile; fileRef = 93323F812AAB891100EB0C43 /* mame_plugins */; };
 		933CC5FF2951FB9F0070CF1D /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 933CC5FE2951FB9F0070CF1D /* GLKit.framework */; platformFilters = (ios, tvos, watchos, ); };
@@ -143,7 +142,7 @@
 		B36B5B9C2D796C5900BABCA3 /* disk_control_interface.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5B992D796C5900BABCA3 /* disk_control_interface.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36B5B9D2D796C5900BABCA3 /* disk_index_file.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5B9A2D796C5900BABCA3 /* disk_index_file.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36B5B9E2D796C5900BABCA3 /* dynamic.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5B9B2D796C5900BABCA3 /* dynamic.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B36B5BA72D7973A100BABCA3 /* content.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5BA22D7973A100BABCA3 /* content.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36B5BA72D7973A100BABCA3 /* content.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5BA22D7973A100BABCA3 /* content.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B36B5BA82D7973A100BABCA3 /* core.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5BA32D7973A100BABCA3 /* core.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36B5BA92D7973A100BABCA3 /* core_info.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5BA42D7973A100BABCA3 /* core_info.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36B5BAA2D7973A100BABCA3 /* core_updater_list.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5BA52D7973A100BABCA3 /* core_updater_list.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -151,15 +150,11 @@
 		B36B5BAC2D7973A100BABCA3 /* autosave.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5B9F2D7973A100BABCA3 /* autosave.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36B5BAD2D7973A100BABCA3 /* cheat_manager.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5BA02D7973A100BABCA3 /* cheat_manager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36B5BAE2D7973A100BABCA3 /* configuration.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5BA12D7973A100BABCA3 /* configuration.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B36B5BB02D79817600BABCA3 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B36B5BAF2D79817600BABCA3 /* PVLogging */; };
-		B36B5BB22D7982E300BABCA3 /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B36B5BB12D7982E300BABCA3 /* PVCoreObjCBridge */; };
-		B36B5BB42D79832A00BABCA3 /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B36B5BB32D79832A00BABCA3 /* PVEmulatorCore */; };
-		B36B5BB62D79833B00BABCA3 /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B36B5BB52D79833B00BABCA3 /* PVCoreBridge */; };
-		B36B5BB82D79833F00BABCA3 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B36B5BB72D79833F00BABCA3 /* PVPlists */; };
-		B36B5BBA2D79836800BABCA3 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B36B5BB92D79836800BABCA3 /* PVSupport */; };
 		B36B5BBC2D798B2200BABCA3 /* audio_driver.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5BBB2D798B2200BABCA3 /* audio_driver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36B5BBF2D798BBC00BABCA3 /* audio_defines.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5BBD2D798BBC00BABCA3 /* audio_defines.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36B5BC02D798BBC00BABCA3 /* audio_thread_wrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5BBE2D798BBC00BABCA3 /* audio_thread_wrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36B5BC32D7A779200BABCA3 /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = 932A5CBE29686A8D0032C168 /* libretro.h */; };
+		B36B5BC72D7A95F500BABCA3 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B36B5BC52D7A95F500BABCA3 /* GCDWebDAVServer.m */; };
 		B37C00592BFF6A1000FEC6AC /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B37C00582BFF6A1000FEC6AC /* MoltenVK */; };
 		B39FAC3F2D6013EC0065B66B /* SDL2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */; };
 		B39FAC422D6013F50065B66B /* SDL2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */; };
@@ -446,6 +441,8 @@
 		B36B5BBB2D798B2200BABCA3 /* audio_driver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = audio_driver.h; path = RetroArch/audio/audio_driver.h; sourceTree = SOURCE_ROOT; };
 		B36B5BBD2D798BBC00BABCA3 /* audio_defines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = audio_defines.h; path = RetroArch/audio/audio_defines.h; sourceTree = SOURCE_ROOT; };
 		B36B5BBE2D798BBC00BABCA3 /* audio_thread_wrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = audio_thread_wrapper.h; path = RetroArch/audio/audio_thread_wrapper.h; sourceTree = SOURCE_ROOT; };
+		B36B5BC42D7A95F500BABCA3 /* GCDWebDAVServer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GCDWebDAVServer.h; sourceTree = "<group>"; };
+		B36B5BC52D7A95F500BABCA3 /* GCDWebDAVServer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GCDWebDAVServer.m; sourceTree = "<group>"; };
 		B37106F32D51AFC300688298 /* RetroArchCoreOptionsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetroArchCoreOptionsLoader.swift; sourceTree = "<group>"; };
 		B39C4BEA2BF3430B00F199BB /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework; sourceTree = "<group>"; };
 		B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SDL2.xcframework; path = ../../Dependencies/SDL2.xcframework; sourceTree = "<group>"; };
@@ -520,13 +517,7 @@
 			files = (
 				B39FAC3F2D6013EC0065B66B /* SDL2.xcframework in Frameworks */,
 				93AA124F296DCE58007C9808 /* libiconv.tbd in Frameworks */,
-				B36B5BB62D79833B00BABCA3 /* PVCoreBridge in Frameworks */,
-				B36B5BBA2D79836800BABCA3 /* PVSupport in Frameworks */,
-				B36B5BB42D79832A00BABCA3 /* PVEmulatorCore in Frameworks */,
-				B36B5BB02D79817600BABCA3 /* PVLogging in Frameworks */,
-				B36B5BB82D79833F00BABCA3 /* PVPlists in Frameworks */,
 				93AA124D296DCE52007C9808 /* libz.tbd in Frameworks */,
-				B36B5BB22D7982E300BABCA3 /* PVCoreObjCBridge in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -683,6 +674,7 @@
 		93BC0F6E2A4C0614003D97EC /* WebServer */ = {
 			isa = PBXGroup;
 			children = (
+				B36B5BC62D7A95F500BABCA3 /* GCDWebDAVServer */,
 				93BC0F6F2A4C0614003D97EC /* GCDWebServer */,
 				93BC0F8F2A4C0614003D97EC /* WebServer.h */,
 				93BC0F902A4C0614003D97EC /* WebServer.m */,
@@ -879,6 +871,15 @@
 			path = Core;
 			sourceTree = "<group>";
 		};
+		B36B5BC62D7A95F500BABCA3 /* GCDWebDAVServer */ = {
+			isa = PBXGroup;
+			children = (
+				B36B5BC42D7A95F500BABCA3 /* GCDWebDAVServer.h */,
+				B36B5BC52D7A95F500BABCA3 /* GCDWebDAVServer.m */,
+			);
+			path = GCDWebDAVServer;
+			sourceTree = "<group>";
+		};
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
@@ -1026,6 +1027,7 @@
 				93FF38212965FF9C00772659 /* PVRetroArchCoreBridge+Audio.h in Headers */,
 				B36B5BA72D7973A100BABCA3 /* content.h in Headers */,
 				B36B5BA82D7973A100BABCA3 /* core.h in Headers */,
+				B36B5BC32D7A779200BABCA3 /* libretro.h in Headers */,
 				B36B5BA92D7973A100BABCA3 /* core_info.h in Headers */,
 				B36B5BAA2D7973A100BABCA3 /* core_updater_list.h in Headers */,
 				B36B5BAB2D7973A100BABCA3 /* defaults.h in Headers */,
@@ -1038,7 +1040,6 @@
 				B36B5B942D7965C800BABCA3 /* command.h in Headers */,
 				B3135B9C26E4CC290047F338 /* PVRetroArchCoreBridge.h in Headers */,
 				932A5CC129686AEB0032C168 /* retroarch.h in Headers */,
-				932A5CBF29686A8E0032C168 /* libretro.h in Headers */,
 				93F66EC52966D6E100203EB3 /* cocoa_common.h in Headers */,
 				B3135BA126E4CC620047F338 /* PVRetroArch.h in Headers */,
 				93B3B1992A8CBA5F00B60325 /* PVRetroArchCoreBridge+Archive.h in Headers */,
@@ -1192,13 +1193,10 @@
 			mainGroup = B3C7620620783162009950E4;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				B3C439512BF442920021B9C3 /* XCLocalSwiftPackageReference "../../PVSupport" */,
 				B30C8C8A2BF45BDC00C91991 /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
 				B37C00572BFF6A1000FEC6AC /* XCLocalSwiftPackageReference "../../MoltenVK" */,
 				B30E9AB82C6F241200C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
 				B3F8DFFD2CB3741500017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
-				B3E2AA692CB65E9A00E2636D /* XCLocalSwiftPackageReference "../../PVLogging" */,
-				B3FC975C2CB8D44400C6DB31 /* XCLocalSwiftPackageReference "../../PVPlists" */,
 				B364D5C92CD2A8B70082D177 /* XCRemoteSwiftPackageReference "Unrar.swift" */,
 				B3EEF5DE2D66B0850080CA51 /* XCRemoteSwiftPackageReference "SwiftSDL2" */,
 				B3EEF5E12D66B0D00080CA51 /* XCLocalSwiftPackageReference "../../Dependencies/ZipArchive" */,
@@ -1293,6 +1291,7 @@
 				93BC0F9B2A4C0615003D97EC /* GCDWebServerFileResponse.m in Sources */,
 				93BC0F992A4C0615003D97EC /* GCDWebServerConnection.m in Sources */,
 				93BC0F9D2A4C0615003D97EC /* GCDWebServerStreamedResponse.m in Sources */,
+				B36B5BC72D7A95F500BABCA3 /* GCDWebDAVServer.m in Sources */,
 				93BC0F9E2A4C0615003D97EC /* GCDWebServerURLEncodedFormRequest.m in Sources */,
 				93BC0F952A4C0615003D97EC /* GCDWebServerResponse.m in Sources */,
 				93BC0F972A4C0615003D97EC /* GCDWebServerFunctions.m in Sources */,
@@ -1413,6 +1412,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/RetroArch\"",
 					.,
 					./PVRetroArchCore/Core,
 					"./cmake/FFmpeg-iOS/include",
@@ -2022,6 +2022,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/RetroArch\"",
 					.,
 					./PVRetroArchCore/Core,
 					"./cmake/FFmpeg-iOS/include",
@@ -2242,14 +2243,6 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../MoltenVK;
 		};
-		B3C439512BF442920021B9C3 /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../PVSupport;
-		};
-		B3E2AA692CB65E9A00E2636D /* XCLocalSwiftPackageReference "../../PVLogging" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../PVLogging;
-		};
 		B3EEF5E12D66B0D00080CA51 /* XCLocalSwiftPackageReference "../../Dependencies/ZipArchive" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../Dependencies/ZipArchive;
@@ -2261,10 +2254,6 @@
 		B3F8DFFD2CB3741500017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreObjCBridge;
-		};
-		B3FC975C2CB8D44400C6DB31 /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../PVPlists;
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -2295,36 +2284,6 @@
 		B30C8C8B2BF45BDC00C91991 /* PVEmulatorCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVEmulatorCore;
-		};
-		B36B5BAF2D79817600BABCA3 /* PVLogging */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3E2AA692CB65E9A00E2636D /* XCLocalSwiftPackageReference "../../PVLogging" */;
-			productName = PVLogging;
-		};
-		B36B5BB12D7982E300BABCA3 /* PVCoreObjCBridge */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3F8DFFD2CB3741500017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */;
-			productName = PVCoreObjCBridge;
-		};
-		B36B5BB32D79832A00BABCA3 /* PVEmulatorCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B30C8C8A2BF45BDC00C91991 /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */;
-			productName = PVEmulatorCore;
-		};
-		B36B5BB52D79833B00BABCA3 /* PVCoreBridge */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B30E9AB82C6F241200C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */;
-			productName = PVCoreBridge;
-		};
-		B36B5BB72D79833F00BABCA3 /* PVPlists */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3FC975C2CB8D44400C6DB31 /* XCLocalSwiftPackageReference "../../PVPlists" */;
-			productName = PVPlists;
-		};
-		B36B5BB92D79836800BABCA3 /* PVSupport */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3C439512BF442920021B9C3 /* XCLocalSwiftPackageReference "../../PVSupport" */;
-			productName = PVSupport;
 		};
 		B37C00582BFF6A1000FEC6AC /* MoltenVK */ = {
 			isa = XCSwiftPackageProductDependency;

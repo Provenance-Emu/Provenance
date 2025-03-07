@@ -18,6 +18,7 @@ OTHER_CFLAGS = $(inherited) -DHAVE_ACCESSIBILITY
 OTHER_CFLAGS = $(inherited) -DHAVE_AL
 OTHER_CFLAGS = $(inherited) -DHAVE_AUDIOMIXER
 OTHER_CFLAGS = $(inherited) -DHAVE_AVFOUNDATION
+OTHER_CFLAGS = $(inherited) -DHAVE_AVF
 OTHER_CFLAGS = $(inherited) -DHAVE_BSV_MOVIE
 OTHER_CFLAGS = $(inherited) -DHAVE_BUILTINGLSLANG
 OTHER_CFLAGS = $(inherited) -DHAVE_BUILTINMBEDTLS
@@ -30,7 +31,7 @@ OTHER_CFLAGS = $(inherited) -DHAVE_CLOUDSYNC
 OTHER_CFLAGS = $(inherited) -DHAVE_COCOA_METAL
 OTHER_CFLAGS = $(inherited) -DHAVE_CONFIGFILE
 OTHER_CFLAGS = $(inherited) -DHAVE_COREAUDIO
-OTHER_CFLAGS = $(inherited) -DHAVE_COREAUDIO3 // Very buggy, don't use
+//OTHER_CFLAGS = $(inherited) -DHAVE_COREAUDIO3 // Very buggy, don't use
 OTHER_CFLAGS = $(inherited) -DHAVE_CORETEXT
 OTHER_CFLAGS = $(inherited) -DHAVE_CORE_INFO_CACHE
 OTHER_CFLAGS = $(inherited) -DHAVE_DSP_FILTER
@@ -97,7 +98,7 @@ OTHER_CFLAGS = $(inherited) -DWANT_SUBCODE=1
 OTHER_CFLAGS = $(inherited) -D_7ZIP_ST
 OTHER_CFLAGS = $(inherited) -D__LIBRETRO__
 
-OTHER_CFLAGS = $(inherited) -Wno-module-import-in-extern-c
+OTHER_CFLAGS = $(inherited) -Wno-module-import-in-extern-c -flto
 
 // CoreMIDI is only on iOS and macOS
 OTHER_CFLAGS[sdk=iphonesimulator*] = $(inherited) -DHAVE_COREMIDI -DHAVE_COREMOTION -DHAVE_WIFI
@@ -112,6 +113,21 @@ OTHER_CFLAGS[arch=arm64] = $(inherited) -D__ARM_NEON__ -DHAVE_NEON
 
 OTHER_CFLAGS[config=Debug] = $(inherited) -DDEBUG=1
 OTHER_CFLAGS[config=Release] = $(inherited) -DNDEBUG -DNS_BLOCK_ASSERTIONS=1
+
+// MacOS
+OTHER_CFLAGS[sdk=macosx*] = $(inherited) -DGL_SILENCE_DEPRECATION
+OTHER_CFLAGS[sdk=macosx*] = $(inherited) -DHAVE_COMMAND
+OTHER_CFLAGS[sdk=macosx*] = $(inherited) -DHAVE_COREAUDIO3
+OTHER_CFLAGS[sdk=macosx*] = $(inherited) -DHAVE_DISCORD
+OTHER_CFLAGS[sdk=macosx*] = $(inherited) -DHAVE_DYLIB
+OTHER_CFLAGS[sdk=macosx*] = $(inherited) -DHAVE_GETOPT_LONG
+OTHER_CFLAGS[sdk=macosx*] = $(inherited) -DHAVE_IOHIDMANAGER
+OTHER_CFLAGS[sdk=macosx*] = $(inherited) -DHAVE_MATERIALUI
+OTHER_CFLAGS[sdk=macosx*] = $(inherited) -DHAVE_NETWORK_CMD
+OTHER_CFLAGS[sdk=macosx*] = $(inherited) -DHAVE_OPENGL_CORE
+OTHER_CFLAGS[sdk=macosx*] = $(inherited) -DHAVE_PRESENCE
+OTHER_CFLAGS[sdk=macosx*] = $(inherited) -DHAVE_STDIN_CMD
+OTHER_CFLAGS[sdk=macosx*] = $(inherited) -DOSX
 
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=*] = *
 INCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=*] = PVDebug.c

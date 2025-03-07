@@ -27,7 +27,7 @@ FOUNDATION_EXPORT const unsigned char PVRetroArchVersionString[];
 #import <PVRetroArch/cheat_manager.h>
 #import <PVRetroArch/command.h>
 #import <PVRetroArch/configuration.h>
-#import <PVRetroArch/content.h>
+//#import <PVRetroArch/content.h>
 #import <PVRetroArch/core.h>
 #import <PVRetroArch/core_info.h>
 #import <PVRetroArch/core_option_manager.h>
@@ -36,7 +36,7 @@ FOUNDATION_EXPORT const unsigned char PVRetroArchVersionString[];
 #import <PVRetroArch/disk_control_interface.h>
 #import <PVRetroArch/disk_index_file.h>
 #import <PVRetroArch/dynamic.h>
-#import <PVRetroArch/libretro.h>
+//#import <PVRetroArch/libretro.h>
 #import <PVRetroArch/retroarch.h>
 #import <PVRetroArch/runloop.h>
 #pragma clang diagnostic pop
