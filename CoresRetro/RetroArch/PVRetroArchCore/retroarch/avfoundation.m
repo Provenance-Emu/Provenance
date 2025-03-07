@@ -16,7 +16,8 @@
 #include <TargetConditionals.h>
 #include <Foundation/Foundation.h>
 #include <AVFoundation/AVFoundation.h>
-#include "../../libretro.h"
+#include <UIKit/UIDevice.h>
+#include <libretro.h>
 #include "../camera/camera_driver.h"
 #include "../verbosity.h"
 /// For image scaling and color space DSP
@@ -213,11 +214,15 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         }
 
         // Determine rotation based on platform and camera type
+#if TARGET_OS_OSX
+        int rotationDegrees = 0; // Default 0-degree rotation for most cases
+        bool shouldMirror = true;
+#else
         int rotationDegrees = 180; // Default 180-degree rotation for most cases
         bool shouldMirror = false;
 
-#if TARGET_OS_IOS
         /// For camera rotation detection
+#if !TARGET_OS_TV
         UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
         if (orientation == UIDeviceOrientationPortrait ||
             orientation == UIDeviceOrientationPortraitUpsideDown) {
@@ -228,11 +233,10 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
                 // TODO: Add an API to retroarch to allow for mirroring of front camera
                 shouldMirror = true; // Mirror front camera
                 #endif
-#ifdef DEBUG
                 RARCH_LOG("[Camera]: Using 270-degree rotation with mirroring for front camera in portrait mode\n");
-#endif
             }
         }
+#endif
 #endif
 
         // Rotate image
@@ -316,11 +320,9 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
             scaledHeight = (size_t)(self.width / sourceAspect);
         }
 
-#ifdef DEBUG
         RARCH_LOG("[Camera]: Aspect fill scaling from %zux%zu to %zux%zu\n",
                   rotatedBuffer.width, rotatedBuffer.height, scaledWidth, scaledHeight);
-#endif
-        
+
         scaledBuffer.data = malloc(scaledWidth * scaledHeight * 4);
         if (!scaledBuffer.data) {
             RARCH_ERR("[Camera]: Failed to allocate scaled buffer\n");
@@ -556,12 +558,14 @@ static void *avfoundation_init(const char *device, uint64_t caps,
     if ([NSThread isMainThread]) {
         RARCH_LOG("[Camera]: Initializing on main thread\n");
         // Direct initialization on main thread
-        AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
-        if (status != AVAuthorizationStatusAuthorized) {
-            RARCH_ERR("[Camera]: Camera access not authorized (status: %d)\n", (int)status);
-            free(avf);
-            return NULL;
-        }
+        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+            AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+            if (status != AVAuthorizationStatusAuthorized) {
+                RARCH_ERR("[Camera]: Camera access not authorized (status: %d)\n", (int)status);
+                free(avf);
+                return;
+            }
+        }];
     } else {
         RARCH_LOG("[Camera]: Initializing on background thread\n");
         // Use dispatch_sync to run authorization check on main thread
