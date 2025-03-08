@@ -125,6 +125,7 @@ struct UIKitAlertWrapper: UIViewControllerRepresentable {
         return UIViewController()
     }
 
+    @MainActor
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         guard isPresented else {
             // Ensure any presented controller is dismissed

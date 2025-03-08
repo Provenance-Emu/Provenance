@@ -1148,7 +1148,7 @@ static const FileExtensionSpecStruct KnownExtensions[] =
 
 using namespace MDFN_IEN_PCFX;
 
-MDFN_HIDE extern const MDFNGI EmulatedPCFX =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedPCFX =
 {
  "pcfx",
  "PC-FX",

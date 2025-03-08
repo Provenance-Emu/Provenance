@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import <PVLogging/PVLogging.h>
+#import <PVLogging/PVLoggingObjC.h>
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
 #import <UIKit/UIKit.h>
@@ -12,10 +12,11 @@
 
 @protocol PVRetroArchCoreResponderClient;
 @protocol ObjCBridgedCoreBridge;
+@protocol DiscSwappable;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
-@interface PVRetroArchCoreBridge : PVCoreObjCBridge <ObjCBridgedCoreBridge, PVRetroArchCoreResponderClient, UIApplicationDelegate> {
+@interface PVRetroArchCoreBridge : PVCoreObjCBridge <ObjCBridgedCoreBridge, PVRetroArchCoreResponderClient, UIApplicationDelegate, DiscSwappable> {
 #pragma clang diagnostic pop
     int videoWidth;
     int videoHeight;
@@ -377,3 +378,24 @@ void menuToggle();
 #define ENABLE_ANALOG_DPAD "Enable Joypad Analog -> Dpad Bindings"
 #define RETROARCH_PVOVERLAY "/RetroArch/overlays/pv_ui_overlay/pv_ui.cfg"
 #define RETROARCH_DEFAULT_OVERLAY "/RetroArch/overlays/gamepads/neo-retropad/neo-retropad-clear.cfg"
+
+// Disc swap
+@interface PVRetroArchCoreBridge (DiscSwappable)
+@property (readonly) unsigned long numberOfDiscs;
+@property (readonly) BOOL currentGameSupportsMultipleDiscs;
+- (void) swapDiscWithNumber:(NSUInteger)number;
+
+- (void)toggleEjectState;
+- (void)setEjected:(BOOL)eject;
+- (BOOL)isEjected;
+@end
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated"
+#pragma clang diagnostic ignored "-Wnone"
+#pragma clang diagnostic ignored "-Wmodule-import-in-extern-c"
+#import <PVRetroArch/core_option_manager.h>
+#pragma clang diagnostic pop
+@interface PVRetroArchCoreBridge (CoreOptions)
++ (core_option_manager_t  * _Nullable ) getOptions;
+@end

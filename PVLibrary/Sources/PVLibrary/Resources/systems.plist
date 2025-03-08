@@ -8159,9 +8159,24 @@
 		<key>PVDatabaseID</key>
 		<string>-1</string>
 		<key>PVRequiresBIOS</key>
-		<false/>
+		<true/>
 		<key>PVAppStoreDisabled</key>
 		<false/>
+		<key>PVBIOSNames</key>
+		<array>
+			<dict>
+				<key>Description</key>
+				<string>prBoom resources</string>
+				<key>MD5</key>
+				<string>23afd6143cb1ffec99a46755f9209ea6</string>
+				<key>Name</key>
+				<string>prboom.wad</string>
+				<key>Size</key>
+				<integer>228743</integer>
+				<key>Optional</key>
+				<false/>
+			</dict>
+		</array>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>wad</string>

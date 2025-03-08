@@ -38,17 +38,23 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
 
     static func setValue(_ value: Encodable?, forOption option: CoreOption, andMD5 md5: String? = nil) {
         let className: String = "\(String(describing: Self.self))"
-		let key: String
-		if let md5 = md5, !md5.isEmpty {
-			key = "\(className).\(md5).\(option.key)"
-		} else {
-			key = "\(className).\(option.key)"
-		}
+        let key: String
+        if let md5 = md5, !md5.isEmpty {
+            key = "\(className).\(md5).\(option.key)"
+        } else {
+            key = "\(className).\(option.key)"
+        }
 
         // TODO: Make sure the value matches the option type
         DLOG("Options: Setting key: \(key) to value: \(value ?? "nil")")
         UserDefaults.standard.set(value, forKey: key)
         UserDefaults.standard.synchronize()
+
+        // Call the value handler if available
+        if let valueHandler = option.valueHandler, let value = value as? OptionValueRepresentable {
+            valueHandler(value)
+        }
+
         let broadcast = NotificationCenter.default
         let info:Dictionary=[option.key: "\(value ?? "nil")"]
         broadcast.post(name: Notification.Name("OptionUpdated"), object: nil, userInfo:info)
@@ -57,30 +63,30 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
     static func valueForOption(_ option: CoreOption) -> Bool {
         return valueForOption(option).asBool
     }
-    
+
     static func valueForOption(_ option: CoreOption) -> String {
         return valueForOption(option).asString
     }
-    
+
     static func valueForOption(_ option: CoreOption) -> Int? {
         return valueForOption(option).asInt ?? option.defaultValue as? Int
     }
-    
+
     static func valueForOption(_ option: CoreOption) -> Float? {
         return valueForOption(option).asFloat ?? option.defaultValue as? Float
     }
-    
+
     static func valueForOption(_ option: CoreOption) -> Int {
         return valueForOption(option).asInt ?? option.defaultValue as! Int
     }
-    
+
     static func valueForOption(_ option: CoreOption) -> Float {
         return valueForOption(option).asFloat ?? option.defaultValue as! Float
     }
-    
+
     static func valueForOption(_ option: CoreOption) -> CoreOptionValue {
         switch option {
-        case let .bool(_, defaultValue):
+        case let .bool(_, defaultValue, _):
             guard let value = storedValueForOption(Bool.self, option.key) else { return .bool(defaultValue) }
             return .bool(value)
         case .string:
@@ -89,13 +95,13 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
             } else {
                 return .notFound
             }
-        case let .range(_, _, defaultValue):
+        case let .range(_, _, defaultValue, _):
             if let value = storedValueForOption(Int.self, option.key) {
                 return .int(value)
             } else {
                 return .int(defaultValue)
             }
-        case let .rangef(_, _, defaultValue):
+        case let .rangef(_, _, defaultValue, _):
             if let value = storedValueForOption(Float.self, option.key) {
                 return .float(value)
             } else {
@@ -109,7 +115,7 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
             } else {
                 return .notFound
             }
-        case let .enumeration(_, _, defaultValue):
+        case let .enumeration(_, _, defaultValue, _):
             if let value = storedValueForOption(Int.self, option.key) {
                 return .int(value)
             } else if let value = storedValueForOption(String.self, option.key) {

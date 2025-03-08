@@ -559,8 +559,8 @@ void MDFNI_CloseGame(void)
 /*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedSASPlay;
 #endif
 
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedCDPlay;
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedDEMO;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedCDPlay;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedDEMO;
 
 namespace Mednafen
 {

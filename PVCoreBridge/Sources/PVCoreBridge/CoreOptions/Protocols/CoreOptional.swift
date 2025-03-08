@@ -26,7 +26,7 @@ public protocol SubCoreOptional: CoreOptional {
     ///   - forSubcoreIdentifier: The identifier of the subcore
     ///   - systemName: The name of the system
     /// - Returns: The options for the subcore, or nil if none are available
-    static func options(forSubcoreIdentifier: String, systemName: String) async -> [CoreOption]?
+    static func options(forSubcoreIdentifier: String, systemName: String) -> [CoreOption]?
 }
 
 public extension CoreOptional {

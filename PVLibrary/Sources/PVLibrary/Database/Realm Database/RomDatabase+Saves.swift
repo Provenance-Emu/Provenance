@@ -8,6 +8,7 @@
 import PVCoreBridge
 import PVFileSystem
 import PVLogging
+import RealmSwift
 
 /// Save state purging and recoovery
 public extension RomDatabase {
@@ -182,7 +183,8 @@ public extension RomDatabase {
                     let date1 = try $1.promisedItemResourceValues(forKeys:[.contentModificationDateKey]).contentModificationDate!
                     return date0.compare(date1) == .orderedAscending
                 })
-            let realm = RomDatabase.sharedInstance.realm
+            let realm = try Realm()
+            
             var saves:[String:Int]=[:]
             for saveState in game.saveStates {
                 saves[saveState.file!.url!.lastPathComponent.lowercased()] = 1;

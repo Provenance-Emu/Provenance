@@ -737,7 +737,7 @@ static const CheatInfoStruct CheatInfo =
 
 }
 
-MDFN_HIDE extern const MDFNGI EmulatedNES =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedNES =
 {
  "nes",
  "Nintendo Entertainment System/Famicom",

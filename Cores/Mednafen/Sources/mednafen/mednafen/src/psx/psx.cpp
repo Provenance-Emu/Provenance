@@ -2402,7 +2402,7 @@ static const MDFNSetting PSXSettings[] =
 // Note for the future: If we ever support PSX emulation with non-8-bit RGB color components, or add a new linear RGB colorspace to MDFN_PixelFormat, we'll need
 // to buffer the intermediate 24-bit non-linear RGB calculation into an array and pass that into the GPULineHook stuff, otherwise netplay could break when
 // an emulated GunCon is used.
-MDFN_HIDE extern const MDFNGI EmulatedPSX =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedPSX =
 {
  "psx",
  "Sony PlayStation",

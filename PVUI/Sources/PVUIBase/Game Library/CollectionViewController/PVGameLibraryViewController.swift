@@ -1555,7 +1555,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
 
         dismiss(animated: true) { () -> Void in }
         let image = info[convertFromUIImagePickerControllerInfoKey(UIImagePickerController.InfoKey.originalImage)] as? UIImage
-        if let image = image, let scaledImage = image.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)), let imageData = scaledImage.jpegData(compressionQuality: 0.85) {
+        if let image = image, let scaledImage = image.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)), let imageData = scaledImage.jpegData(compressionQuality: 0.95) {
             let hash = (imageData as NSData).md5
 
             do {

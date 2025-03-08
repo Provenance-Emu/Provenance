@@ -12,6 +12,7 @@ import PVSupport
 import PVLogging
 import AsyncAlgorithms
 import PVFileSystem
+import RealmSwift
 
 /// Handles migration of ROM and BIOS files from old documents directory to new shared container directory
 public final class ROMLocationMigrator {
@@ -250,7 +251,8 @@ public final class ROMLocationMigrator {
         DLOG("Found \(rootFiles.count) files in root directory")
 
         // Get all games from the database
-        let realm = RomDatabase.sharedInstance.realm
+        let realm = try await Realm()
+        
         let games = realm.objects(PVGame.self)
         DLOG("Found \(games.count) games in database")
 
@@ -356,7 +358,7 @@ public final class ROMLocationMigrator {
     public func fixPartialPaths() async throws {
         DLOG("Starting fixPartialPaths")
 
-        let realm = RomDatabase.sharedInstance.realm
+        let realm = try await Realm()
         let games = realm.objects(PVGame.self)
         DLOG("Found \(games.count) games to check")
 

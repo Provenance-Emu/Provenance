@@ -176,7 +176,7 @@ struct IDIISG : public std::vector<InputDeviceInputInfoStruct>
  uint32 InputByteSize;
 };
 
-MDFN_HIDE extern const IDIISG IDII_Empty;
+/*MDFN_HIDE*/ extern const IDIISG IDII_Empty;
 
 static INLINE constexpr InputDeviceInputInfoStruct IDIIS_Button(const char* sname, const char* name, int16 co, const char* exn = nullptr)
 {

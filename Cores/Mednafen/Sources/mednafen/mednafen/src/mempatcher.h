@@ -15,8 +15,8 @@ struct SUBCHEAT
 	int compare; // < 0 on no compare
 };
 
-MDFN_HIDE extern std::vector<SUBCHEAT> SubCheats[8];
-MDFN_HIDE extern bool SubCheatsOn;
+/*MDFN_HIDE*/ extern std::vector<SUBCHEAT> SubCheats[8];
+/*MDFN_HIDE*/ extern bool SubCheatsOn;
 
 
 void MDFNMP_Init(uint32 ps, uint32 numpages) MDFN_COLD;

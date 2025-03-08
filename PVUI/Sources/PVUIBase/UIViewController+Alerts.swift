@@ -11,14 +11,7 @@ import UIKit
 #endif
 import PVLogging
 
-public
-extension UIViewController {
-    func presentMessage(_ message: String, title: String, source: UIView, completion: (() -> Void)? = nil) {
-        presentMessage(message,
-                       title: title,
-                       source: source,
-                       completion: completion)
-    }
+public extension UIViewController {
     
     func presentDeleteMessage(_ message: String, title: String, source: UIView, completion: (() -> Void)? = nil) {
         presentMessage(message, title: title,

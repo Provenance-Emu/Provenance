@@ -17,6 +17,7 @@ import PVUIBase
 import PVRealm
 import PVSettings
 import Combine
+import RealmSwift
 
 struct ConsoleGamesFilterModeFlags: OptionSet {
     let rawValue: Int
@@ -302,6 +303,35 @@ struct ConsoleGamesView: SwiftUI.View {
                 }
             }
             .uiKitAlert(
+                "Select Disc",
+                message: "Choose which disc to load",
+                isPresented: Binding(
+                    get: { gamesViewModel.discSelectionAlert != nil },
+                    set: { if !$0 { gamesViewModel.discSelectionAlert = nil } }
+                ),
+                preferredContentSize: CGSize(width: 500, height: 300),
+                buttons: {
+                    if let alert = gamesViewModel.discSelectionAlert, let game = alert.game  {
+                        let actions = alert.discs.map { (disc: DiscSelectionAlert.Disc) -> UIAlertAction in
+                            UIAlertAction(title: disc.fileName, style: .default) { _ in
+                                gamesViewModel.discSelectionAlert = nil
+                                Task {
+                                    await rootDelegate?.root_loadPath(disc.path, forGame: game, sender: nil, core: nil, saveState: nil)
+                                }
+                            }
+                        }
+                        
+                        actions + [UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
+                            gamesViewModel.discSelectionAlert = nil
+                        }]
+                    } else {
+                        [UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
+                            gamesViewModel.discSelectionAlert = nil
+                        }]
+                    }
+                }
+            )
+            .uiKitAlert(
                 "Choose Artwork Source",
                 message: "Select artwork from your photo library or search online sources",
                 isPresented: $showArtworkSourceAlert,
@@ -315,7 +345,7 @@ struct ConsoleGamesView: SwiftUI.View {
                         gameToUpdateCover = game  // Preserve the game reference
                         showArtworkSearch = true
                     }
-                    UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                    UIAlertAction(title:  NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
                         showArtworkSourceAlert = false
                     }
                 }
@@ -565,9 +595,10 @@ struct ConsoleGamesView: SwiftUI.View {
     }
     
     private func showOptionsMenu(for gameId: String) {
+        let realm = try! Realm()
         // Implement context menu showing logic here
         // This would show the same menu as the long-press context menu
-        if let game = RomDatabase.sharedInstance.realm.objects(PVGame.self).filter("id == %@", gameId).first {
+        if let game = realm.objects(PVGame.self).filter("id == %@", gameId).first {
             GameContextMenu(
                 game: game,
                 rootDelegate: rootDelegate,

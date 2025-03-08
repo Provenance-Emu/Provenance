@@ -152,6 +152,24 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
+			<string>flycast-jitless.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVProjectName</key>
+			<string>Flycast JIT-less (RetroArch)</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.dreamcast</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://github.com/flyinghead/flycast</string>
+			<key>PVProjectVersion</key>
+			<string>2.0</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
 			<string>flycast.libretro.11.9.framework</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
@@ -165,114 +183,6 @@
 			<string>https://github.com/flyinghead/flycast</string>
 			<key>PVProjectVersion</key>
 			<string>11.9</string>
-			<key>PVAppStoreDisabled</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>PVCoreIdentifier</key>
-			<string>flycast.libretro.11.9a.framework</string>
-			<key>PVPrincipleClass</key>
-			<string>PVRetroArch.PVRetroArchCoreCore</string>
-			<key>PVProjectName</key>
-			<string>Flycast (RetroArch) 11.9a</string>
-			<key>PVSupportedSystems</key>
-			<array>
-				<string>com.provenance.dreamcast</string>
-			</array>
-			<key>PVProjectURL</key>
-			<string>https://github.com/flyinghead/flycast</string>
-			<key>PVProjectVersion</key>
-			<string>11.9a</string>
-			<key>PVAppStoreDisabled</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>PVCoreIdentifier</key>
-			<string>flycast.libretro.11.9b.framework</string>
-			<key>PVPrincipleClass</key>
-			<string>PVRetroArch.PVRetroArchCoreCore</string>
-			<key>PVProjectName</key>
-			<string>Flycast (RetroArch) 11.9b</string>
-			<key>PVSupportedSystems</key>
-			<array>
-				<string>com.provenance.dreamcast</string>
-			</array>
-			<key>PVProjectURL</key>
-			<string>https://github.com/flyinghead/flycast</string>
-			<key>PVProjectVersion</key>
-			<string>11.9b</string>
-			<key>PVAppStoreDisabled</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>PVCoreIdentifier</key>
-			<string>flycast.libretro.11.9c.framework</string>
-			<key>PVPrincipleClass</key>
-			<string>PVRetroArch.PVRetroArchCoreCore</string>
-			<key>PVProjectName</key>
-			<string>Flycast (RetroArch) 11.9c</string>
-			<key>PVSupportedSystems</key>
-			<array>
-				<string>com.provenance.dreamcast</string>
-			</array>
-			<key>PVProjectURL</key>
-			<string>https://github.com/flyinghead/flycast</string>
-			<key>PVProjectVersion</key>
-			<string>11.9c</string>
-			<key>PVAppStoreDisabled</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>PVCoreIdentifier</key>
-			<string>flycast.libretro.11.9d.framework</string>
-			<key>PVPrincipleClass</key>
-			<string>PVRetroArch.PVRetroArchCoreCore</string>
-			<key>PVProjectName</key>
-			<string>Flycast (RetroArch) 11.9d</string>
-			<key>PVSupportedSystems</key>
-			<array>
-				<string>com.provenance.dreamcast</string>
-			</array>
-			<key>PVProjectURL</key>
-			<string>https://github.com/flyinghead/flycast</string>
-			<key>PVProjectVersion</key>
-			<string>11.9d</string>
-			<key>PVAppStoreDisabled</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>PVCoreIdentifier</key>
-			<string>flycast.libretro.11.9e.framework</string>
-			<key>PVPrincipleClass</key>
-			<string>PVRetroArch.PVRetroArchCoreCore</string>
-			<key>PVProjectName</key>
-			<string>Flycast (RetroArch) 11.9e</string>
-			<key>PVSupportedSystems</key>
-			<array>
-				<string>com.provenance.dreamcast</string>
-			</array>
-			<key>PVProjectURL</key>
-			<string>https://github.com/flyinghead/flycast</string>
-			<key>PVProjectVersion</key>
-			<string>11.9e</string>
-			<key>PVAppStoreDisabled</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>PVCoreIdentifier</key>
-			<string>flycast.libretro.11.9f.framework</string>
-			<key>PVPrincipleClass</key>
-			<string>PVRetroArch.PVRetroArchCoreCore</string>
-			<key>PVProjectName</key>
-			<string>Flycast (RetroArch) 11.9f</string>
-			<key>PVSupportedSystems</key>
-			<array>
-				<string>com.provenance.dreamcast</string>
-			</array>
-			<key>PVProjectURL</key>
-			<string>https://github.com/flyinghead/flycast</string>
-			<key>PVProjectVersion</key>
-			<string>11.9f</string>
 			<key>PVAppStoreDisabled</key>
 			<true/>
 		</dict>
@@ -296,78 +206,6 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>flycast.libretro.12a.framework</string>
-			<key>PVPrincipleClass</key>
-			<string>PVRetroArch.PVRetroArchCoreCore</string>
-			<key>PVProjectName</key>
-			<string>Flycast (RetroArch) 12a</string>
-			<key>PVSupportedSystems</key>
-			<array>
-				<string>com.provenance.dreamcast</string>
-			</array>
-			<key>PVProjectURL</key>
-			<string>https://github.com/flyinghead/flycast</string>
-			<key>PVProjectVersion</key>
-			<string>12a</string>
-			<key>PVAppStoreDisabled</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>PVCoreIdentifier</key>
-			<string>flycast.libretro.12b.framework</string>
-			<key>PVPrincipleClass</key>
-			<string>PVRetroArch.PVRetroArchCoreCore</string>
-			<key>PVProjectName</key>
-			<string>Flycast (RetroArch) 12b</string>
-			<key>PVSupportedSystems</key>
-			<array>
-				<string>com.provenance.dreamcast</string>
-			</array>
-			<key>PVProjectURL</key>
-			<string>https://github.com/flyinghead/flycast</string>
-			<key>PVProjectVersion</key>
-			<string>12b</string>
-			<key>PVAppStoreDisabled</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>PVCoreIdentifier</key>
-			<string>flycast.libretro.12c.framework</string>
-			<key>PVPrincipleClass</key>
-			<string>PVRetroArch.PVRetroArchCoreCore</string>
-			<key>PVProjectName</key>
-			<string>Flycast (RetroArch) 12c</string>
-			<key>PVSupportedSystems</key>
-			<array>
-				<string>com.provenance.dreamcast</string>
-			</array>
-			<key>PVProjectURL</key>
-			<string>https://github.com/flyinghead/flycast</string>
-			<key>PVProjectVersion</key>
-			<string>12c</string>
-			<key>PVAppStoreDisabled</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>PVCoreIdentifier</key>
-			<string>flycast.libretro.12d.framework</string>
-			<key>PVPrincipleClass</key>
-			<string>PVRetroArch.PVRetroArchCoreCore</string>
-			<key>PVProjectName</key>
-			<string>Flycast (RetroArch) 12d</string>
-			<key>PVSupportedSystems</key>
-			<array>
-				<string>com.provenance.dreamcast</string>
-			</array>
-			<key>PVProjectURL</key>
-			<string>https://github.com/flyinghead/flycast</string>
-			<key>PVProjectVersion</key>
-			<string>12d</string>
-			<key>PVAppStoreDisabled</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>PVCoreIdentifier</key>
 			<string>flycast.libretro.15.5a.framework</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
@@ -381,60 +219,6 @@
 			<string>https://github.com/flyinghead/flycast</string>
 			<key>PVProjectVersion</key>
 			<string>15.5a</string>
-			<key>PVAppStoreDisabled</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>PVCoreIdentifier</key>
-			<string>flycast.libretro.15.5b.framework</string>
-			<key>PVPrincipleClass</key>
-			<string>PVRetroArch.PVRetroArchCoreCore</string>
-			<key>PVProjectName</key>
-			<string>Flycast (RetroArch) 15.5b</string>
-			<key>PVSupportedSystems</key>
-			<array>
-				<string>com.provenance.dreamcast</string>
-			</array>
-			<key>PVProjectURL</key>
-			<string>https://github.com/flyinghead/flycast</string>
-			<key>PVProjectVersion</key>
-			<string>15.5b</string>
-			<key>PVAppStoreDisabled</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>PVCoreIdentifier</key>
-			<string>flycast.libretro.15.5c.framework</string>
-			<key>PVPrincipleClass</key>
-			<string>PVRetroArch.PVRetroArchCoreCore</string>
-			<key>PVProjectName</key>
-			<string>Flycast (RetroArch) 15.5c</string>
-			<key>PVSupportedSystems</key>
-			<array>
-				<string>com.provenance.dreamcast</string>
-			</array>
-			<key>PVProjectURL</key>
-			<string>https://github.com/flyinghead/flycast</string>
-			<key>PVProjectVersion</key>
-			<string>15.5c</string>
-			<key>PVAppStoreDisabled</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>PVCoreIdentifier</key>
-			<string>flycast.libretro.15.5d.framework</string>
-			<key>PVPrincipleClass</key>
-			<string>PVRetroArch.PVRetroArchCoreCore</string>
-			<key>PVProjectName</key>
-			<string>Flycast (RetroArch) 15.5d</string>
-			<key>PVSupportedSystems</key>
-			<array>
-				<string>com.provenance.dreamcast</string>
-			</array>
-			<key>PVProjectURL</key>
-			<string>https://github.com/flyinghead/flycast</string>
-			<key>PVProjectVersion</key>
-			<string>15.5d</string>
 			<key>PVAppStoreDisabled</key>
 			<true/>
 		</dict>
@@ -458,24 +242,6 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>flycast.libretro.16.2b.framework</string>
-			<key>PVPrincipleClass</key>
-			<string>PVRetroArch.PVRetroArchCoreCore</string>
-			<key>PVProjectName</key>
-			<string>Flycast (RetroArch) 16.2b</string>
-			<key>PVSupportedSystems</key>
-			<array>
-				<string>com.provenance.dreamcast</string>
-			</array>
-			<key>PVProjectURL</key>
-			<string>https://github.com/flyinghead/flycast</string>
-			<key>PVProjectVersion</key>
-			<string>16.2b</string>
-			<key>PVAppStoreDisabled</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>PVCoreIdentifier</key>
 			<string>flycast.libretro.16.3a.framework</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
@@ -494,24 +260,6 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>flycast.libretro.16.3b.framework</string>
-			<key>PVPrincipleClass</key>
-			<string>PVRetroArch.PVRetroArchCoreCore</string>
-			<key>PVProjectName</key>
-			<string>Flycast (RetroArch) 16.3b</string>
-			<key>PVSupportedSystems</key>
-			<array>
-				<string>com.provenance.dreamcast</string>
-			</array>
-			<key>PVProjectURL</key>
-			<string>https://github.com/flyinghead/flycast</string>
-			<key>PVProjectVersion</key>
-			<string>16.3b</string>
-			<key>PVAppStoreDisabled</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>PVCoreIdentifier</key>
 			<string>flycast.libretro.27.6.framework</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
@@ -525,6 +273,24 @@
 			<string>https://github.com/flyinghead/flycast</string>
 			<key>PVProjectVersion</key>
 			<string>27.6</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>flycast.libretro.28.1.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVProjectName</key>
+			<string>Flycast (RetroArch) 28.1</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.dreamcast</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://github.com/flyinghead/flycast</string>
+			<key>PVProjectVersion</key>
+			<string>28.1</string>
 			<key>PVAppStoreDisabled</key>
 			<true/>
 		</dict>
@@ -1333,7 +1099,7 @@
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVAppStoreDisabled</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -1404,7 +1170,7 @@
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVAppStoreDisabled</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -1422,7 +1188,7 @@
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVAppStoreDisabled</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -1440,7 +1206,7 @@
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVAppStoreDisabled</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -1779,6 +1545,49 @@
 			<false/>
 			<key>PVContentless</key>
 			<true/>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>mesen.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVProjectName</key>
+			<string>Mesen (RetroArch)</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.nes</string>
+				<string>com.provenance.fds</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/mesen</string>
+			<key>PVProjectVersion</key>
+			<string>Nightly</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
+			<key>PVContentless</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>mesen-s.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.gb</string>
+				<string>com.provenance.gbc</string>
+				<string>com.provenance.snes</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>Mesen-S (RetroArch)</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/mesen</string>
+			<key>PVProjectVersion</key>
+			<string>Nightly</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
+			<key>PVContentless</key>
+			<false/>
 		</dict>
 	</array>
 </dict>

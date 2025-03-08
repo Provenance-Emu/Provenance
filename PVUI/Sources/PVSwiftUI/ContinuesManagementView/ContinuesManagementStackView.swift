@@ -6,15 +6,57 @@
 //
 
 import SwiftUI
-import PVSwiftUI
 import PVThemes
+
+/// Class to hold edit state that won't cause view hierarchy changes
+@MainActor
+public class SaveStateEditState: ObservableObject {
+    /// The text being edited
+    @Published
+    var text: String = ""
+    /// The save state being edited
+    @Published
+    var saveState: SaveStateRowViewModel?
+    /// The field being edited
+    @Published
+    var field: SaveStateEditField?
+
+    /// Computed property to check if editing is active
+    var isEditing: Bool {
+        field != nil
+    }
+
+    /// Reset the edit state
+    func reset() {
+        text = ""
+        saveState = nil
+        field = nil
+    }
+
+    /// Start editing a field
+    func startEditing(_ field: SaveStateEditField, saveState: SaveStateRowViewModel, initialValue: String?) {
+        self.field = field
+        self.saveState = saveState
+        self.text = initialValue ?? ""
+    }
+}
 
 public struct ContinuesManagementStackView: View {
     @ObservedObject var viewModel: ContinuesMagementViewModel
     @State private var currentUserInteractionCellID: String? = nil
     @State private var searchBarVisible = true
 
+    /// Create a bindable wrapper for the edit state
+    @StateObject private var bindableEditState = SaveStateEditState()
+
     private let searchBarHeight: CGFloat = 52
+
+    /// Function to handle edit requests from save state rows
+    private func handleEdit(_ field: SaveStateEditField, saveState: SaveStateRowViewModel, initialValue: String?) {
+        Task { @MainActor in
+            bindableEditState.startEditing(field, saveState: saveState, initialValue: initialValue)
+        }
+    }
 
     public var body: some View {
         ScrollViewReader { proxy in
@@ -31,7 +73,8 @@ public struct ContinuesManagementStackView: View {
                         ForEach(viewModel.filteredAndSortedSaveStates) { saveState in
                             SaveStateRowView(
                                 viewModel: saveState,
-                                currentUserInteractionCellID: $currentUserInteractionCellID)
+                                currentUserInteractionCellID: $currentUserInteractionCellID,
+                                onEdit: handleEdit)
                                 .id(saveState.id)
                         }
                     }
@@ -57,6 +100,49 @@ public struct ContinuesManagementStackView: View {
                     } else if offset.y > scrollThreshold && !searchBarVisible {
                         searchBarVisible = true
                     }
+                }
+            }
+        }
+        .alert("Edit Description", isPresented: Binding(
+            get: {
+                // Access the field property on the main actor
+                let field = bindableEditState.field
+                return field == .description
+            },
+            set: { isPresented in
+                if !isPresented {
+                    Task { @MainActor in
+                        bindableEditState.field = nil
+                    }
+                }
+            }
+        )) {
+            // Use a local state variable for the text field to avoid actor isolation issues
+            let textBinding = Binding(
+                get: { bindableEditState.text },
+                set: { newValue in
+                    Task { @MainActor in
+                        bindableEditState.text = newValue
+                    }
+                }
+            )
+
+            TextField("Description", text: textBinding)
+                #if !os(tvOS)
+                .textInputAutocapitalization(.words)
+                #endif
+            Button(NSLocalizedString("Cancel", comment: "Cancel"), role: .cancel) {
+                Task { @MainActor in
+                    bindableEditState.reset()
+                }
+            }
+            Button("Save") {
+                Task { @MainActor in
+                    if let saveState = bindableEditState.saveState {
+                        saveState.description = bindableEditState.text
+                        viewModel.updateSaveState(saveState)
+                    }
+                    bindableEditState.reset()
                 }
             }
         }

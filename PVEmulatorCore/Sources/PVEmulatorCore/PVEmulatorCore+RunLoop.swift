@@ -93,19 +93,7 @@ import PVLogging
 
         gameSpeed = .normal
         
-#warning("TODO: Should remove the else clause?")
-        if let objcBridge = self as? (any ObjCBridgedCore), let bridge = objcBridge.bridge as? EmulatorCoreRunLoop {
-            bridge.startEmulation()
-        } else {
-            if !skipEmulationLoop {
-                // TODO: Default case (not used?) should be in a detached thread
-//                Task.detached(priority: .high) {
-                    self.emulationLoopThread()
-//                }
-            } else {
-                isFrontBufferReady = true
-            }
-        }
+
         isRunning = true
         shouldStop = false
         isOn = true
@@ -115,6 +103,34 @@ import PVLogging
                 state.coreClassName = self.coreIdentifier ?? ""
                 state.systemName = self.systemIdentifier ?? ""
                 state.isOn = true
+            }
+        }
+        
+#warning("TODO: Should remove the else clause?")
+        if let objcBridge = self as? (any ObjCBridgedCore), let bridge = objcBridge.bridge as? EmulatorCoreRunLoop {
+            bridge.startEmulation()
+        } else {
+            if !skipEmulationLoop {
+                // TODO: Default case (not used?) should be in a detached thread
+                let emulatorThread = Thread {
+                    /// Set thread name for debugging
+                    Thread.current.name = "EmulatorThread"
+                    
+                    /// Set QoS if possible
+                    Thread.current.qualityOfService = .userInteractive
+                                        
+                    /// Run the emulation loop
+                    self.emulationLoopThread()
+                }
+
+                /// Set thread priority (0.0-1.0)
+                emulatorThread.threadPriority = 1.0
+
+                /// Start the thread
+                emulatorThread.start()
+
+            } else {
+                isFrontBufferReady = true
             }
         }
     }

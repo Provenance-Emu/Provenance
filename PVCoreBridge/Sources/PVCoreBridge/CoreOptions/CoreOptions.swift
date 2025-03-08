@@ -47,28 +47,28 @@ public extension CoreOptions {
 }
 
 public enum CoreOption: Sendable {
-    case bool(_ display: CoreOptionValueDisplay, defaultValue: Bool = false)
-    case range(_ display: CoreOptionValueDisplay, range: CoreOptionRange<Int>, defaultValue: Int)
-	case rangef(_ display: CoreOptionValueDisplay, range: CoreOptionRange<Float>, defaultValue: Float)
-    case multi(_ display: CoreOptionValueDisplay, values: [CoreOptionMultiValue])
-    case enumeration(_ display: CoreOptionValueDisplay, values: [CoreOptionEnumValue], defaultValue: Int = 0)
-    case string(_ display: CoreOptionValueDisplay, defaultValue: String = "")
+    case bool(_ display: CoreOptionValueDisplay, defaultValue: Bool = false, valueHandler:  (@Sendable (OptionValueRepresentable) -> Void)? = nil)
+    case range(_ display: CoreOptionValueDisplay, range: CoreOptionRange<Int>, defaultValue: Int, valueHandler: (@Sendable (OptionValueRepresentable) -> Void)? = nil)
+	case rangef(_ display: CoreOptionValueDisplay, range: CoreOptionRange<Float>, defaultValue: Float, valueHandler: (@Sendable (OptionValueRepresentable) -> Void)? = nil)
+    case multi(_ display: CoreOptionValueDisplay, values: [CoreOptionMultiValue], valueHandler: (@Sendable (OptionValueRepresentable) -> Void)? = nil)
+    case enumeration(_ display: CoreOptionValueDisplay, values: [CoreOptionEnumValue], defaultValue: Int = 0, valueHandler: (@Sendable (OptionValueRepresentable) -> Void)? = nil)
+    case string(_ display: CoreOptionValueDisplay, defaultValue: String = "", valueHandler: (@Sendable (OptionValueRepresentable) -> Void)? = nil)
     case group(_ display: CoreOptionValueDisplay, subOptions: [CoreOption])
 
     public var defaultValue: OptionValueRepresentable? {
         switch self {
-        case let .bool(_, defaultValue):
+        case let .bool(_, defaultValue, _):
             return defaultValue
-        case let .range(_, _, defaultValue):
+        case let .range(_, _, defaultValue, _):
             return defaultValue
-		case let .rangef(_, _, defaultValue):
+		case let .rangef(_, _, defaultValue, _):
 			return defaultValue
-        case let .multi(_, values):
+        case let .multi(_, values, _):
             return values.filter { $0.isDefault }.map { $0.title }
 //            return values.first { $0.isDefault }?.title
-		case let .enumeration(_, _, defaultValue):
+		case let .enumeration(_, _, defaultValue, _):
 			return defaultValue
-        case let .string(_, defaultValue):
+        case let .string(_, defaultValue, _):
             return defaultValue
         case .group:
             return nil
@@ -77,19 +77,19 @@ public enum CoreOption: Sendable {
 
     public var key: String {
         switch self {
-        case .bool(let display, _):
+        case .bool(let display, _, _):
             return display.title
-        case .range(let display, _, _):
+        case .range(let display, _, _, _):
             return display.title
-		case .rangef(let display, _, _):
+		case .rangef(let display, _, _, _):
 			return display.title
-        case .multi(let display, _):
+        case .multi(let display, _, _):
             return display.title
-        case .string(let display, _):
+        case .string(let display, _, _):
             return display.title
         case .group(let display, _):
             return display.title
-		case .enumeration(let display, _, _):
+		case .enumeration(let display, _, _, _):
 			return display.title
 		}
     }
@@ -102,19 +102,85 @@ public enum CoreOption: Sendable {
             return nil
         }
     }
+
+    public var valueHandler: ((OptionValueRepresentable) -> Void)? {
+        get {
+            switch self {
+            case .bool(_, _, let handler),
+                 .range(_, _, _, let handler),
+                 .rangef(_, _, _, let handler),
+                 .multi(_, _, let handler),
+                 .enumeration(_, _, _, let handler),
+                 .string(_, _, let handler):
+                return handler
+            case .group:
+                return nil
+            }
+        }
+        set {
+            // This would need to be implemented if we want to set the handler after creation
+            // For now, we'll set it during initialization
+        }
+    }
 }
 
 extension CoreOption: Equatable {
     // MARK: - Equatable
 
-    /// Returns true iff `lhs` and `rhs` have equal titles, detail texts, selection states, and icons.
-//    public static func == (lhs: CoreOption, rhs: CoreOption) -> Bool {
-//      return
-//        lhs.text == rhs.text &&
-//        lhs.detailText == rhs.detailText &&
-//        lhs.isSelected == rhs.isSelected &&
-//        lhs.icon == rhs.icon
-//    }
+    /// Returns true if two CoreOptions are equivalent
+    public static func == (lhs: CoreOption, rhs: CoreOption) -> Bool {
+        // First check if they're the same type and have the same key
+        switch (lhs, rhs) {
+        case (.bool(let lhsDisplay, let lhsDefault, _), .bool(let rhsDisplay, let rhsDefault, _)):
+            return lhsDisplay.title == rhsDisplay.title && lhsDefault == rhsDefault
+
+        case (.range(let lhsDisplay, let lhsRange, let lhsDefault, _),
+              .range(let rhsDisplay, let rhsRange, let rhsDefault, _)):
+            return lhsDisplay.title == rhsDisplay.title &&
+                   lhsRange.min == rhsRange.min &&
+                   lhsRange.max == rhsRange.max &&
+                   lhsDefault == rhsDefault
+
+        case (.rangef(let lhsDisplay, let lhsRange, let lhsDefault, _),
+              .rangef(let rhsDisplay, let rhsRange, let rhsDefault, _)):
+            return lhsDisplay.title == rhsDisplay.title &&
+                   lhsRange.min == rhsRange.min &&
+                   lhsRange.max == rhsRange.max &&
+                   lhsDefault == rhsDefault
+
+        case (.multi(let lhsDisplay, let lhsValues, _), .multi(let rhsDisplay, let rhsValues, _)):
+            return lhsDisplay.title == rhsDisplay.title && lhsValues == rhsValues
+
+        case (.enumeration(let lhsDisplay, let lhsValues, let lhsDefault, _),
+              .enumeration(let rhsDisplay, let rhsValues, let rhsDefault, _)):
+            return lhsDisplay.title == rhsDisplay.title &&
+                   lhsValues == rhsValues &&
+                   lhsDefault == rhsDefault
+
+        case (.string(let lhsDisplay, let lhsDefault, _), .string(let rhsDisplay, let rhsDefault, _)):
+            return lhsDisplay.title == rhsDisplay.title && lhsDefault == rhsDefault
+
+        case (.group(let lhsDisplay, let lhsSubOptions), .group(let rhsDisplay, let rhsSubOptions)):
+            // For groups, compare title and recursively compare suboptions
+            guard lhsDisplay.title == rhsDisplay.title else { return false }
+
+            // If suboption counts differ, they're not equal
+            guard lhsSubOptions.count == rhsSubOptions.count else { return false }
+
+            // Compare each suboption
+            for i in 0..<lhsSubOptions.count {
+                if lhsSubOptions[i] != rhsSubOptions[i] {
+                    return false
+                }
+            }
+
+            return true
+
+        default:
+            // Different types are never equal
+            return false
+        }
+    }
 }
 
 extension CoreOption: Codable {
@@ -172,25 +238,25 @@ extension CoreOption: Codable {
         var container = encoder.container(keyedBy: CodableKeys.self)
 
         switch self {
-        case let .bool(display, defaultValue):
+        case let .bool(display, defaultValue, _):
             try container.encode(display, forKey: .display)
             try container.encode(defaultValue, forKey: .defaultValue)
-        case let .range(display, range, defaultValue):
+        case let .range(display, range, defaultValue, _):
             try container.encode(display, forKey: .display)
             try container.encode(range, forKey: .range)
             try container.encode(defaultValue, forKey: .defaultValue)
-		case let .rangef(display, range, defaultValue):
+		case let .rangef(display, range, defaultValue, _):
 			try container.encode(display, forKey: .display)
 			try container.encode(range, forKey: .range)
 			try container.encode(defaultValue, forKey: .defaultValue)
-        case let .multi(display, values):
+        case let .multi(display, values, _):
             try container.encode(display, forKey: .display)
             try container.encode(values, forKey: .values)
-		case let .enumeration(display, values, defaultValue):
+		case let .enumeration(display, values, defaultValue, _):
 			try container.encode(display, forKey: .display)
 			try container.encode(values, forKey: .values)
             try container.encode(defaultValue, forKey: .defaultValue)
-        case let .string(display, defaultValue):
+        case let .string(display, defaultValue, _):
             try container.encode(display, forKey: .display)
             try container.encode(defaultValue, forKey: .defaultValue)
         case let .group(display, subOptions):

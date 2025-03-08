@@ -9,6 +9,7 @@ import PVAudio
 import PVCoreAudio
 import PVEmulatorCore
 import PVCoreBridge
+import RealmSwift
 
 public protocol PVEmualatorControllerProtocol: AnyObject {
     typealias QuitCompletion = () -> Void
@@ -225,7 +226,7 @@ public extension PVEmualatorControllerProtocol {
 
         var imageFile: PVImageFile?
         if let screenshot = screenshot {
-            if let jpegData = screenshot.jpegData(compressionQuality: 0.85) {
+            if let jpegData = screenshot.jpegData(compressionQuality: 0.95) {
                 let imageURL = saveStatePath.appendingPathComponent("\(baseFilename).jpg")
                 do {
                     try jpegData.write(to: imageURL)
@@ -246,7 +247,10 @@ public extension PVEmualatorControllerProtocol {
 
         /// Create the save state in database
         try await RomDatabase.sharedInstance.asyncWriteTransaction {
-            let realm = RomDatabase.sharedInstance.realm
+            guard let realm = try? Realm() else {
+                ELOG("Realm() failed")
+                return
+            }
             /// Fetch fresh instances of core and game within the write transaction
             guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: coreIdentifier),
                   let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5) else {
@@ -281,8 +285,11 @@ public extension PVEmualatorControllerProtocol {
     /// Separate function to handle cleanup of old auto-saves
     private func cleanupOldAutoSaves(for game: PVGame) {
         guard let autoSaves = game.thaw()?.autoSaves else { return }
-        let realm = RomDatabase.sharedInstance.realm
-
+        guard let realm = try? Realm() else {
+            ELOG("Realm() failed")
+            return
+        }
+        
         if autoSaves.count > 5 {
             // Get saves to delete (keeping the 5 most recent)
             let savesToDelete = Array(autoSaves.sorted(byKeyPath: "date", ascending: false).suffix(from: 5))

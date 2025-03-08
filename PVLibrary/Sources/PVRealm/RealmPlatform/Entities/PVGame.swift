@@ -99,6 +99,8 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     @Persisted public var regionID: Int?
     @Persisted public var systemShortName: String?
     @Persisted public var language: String?
+    
+    public var selectedDiscFilename: String?
 
     public var validatedGame: PVGame? { return self.isInvalidated ? nil : self }
 

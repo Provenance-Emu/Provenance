@@ -12,44 +12,30 @@ import RealmSwift
 import PVLogging
 import Combine
 
-/// A shared loader for game artwork that prioritizes visible items and caches results
+/// A simple loader for game artwork that prioritizes visible items
+/// This class uses PVMediaCache directly without additional caching layers
 @MainActor
 class ArtworkLoader: ObservableObject {
     /// Shared instance for the application
     static let shared = ArtworkLoader()
 
-    /// In-memory cache for quick access to recently used images
-    private let imageCache = NSCache<NSString, UIImage>()
-
-    /// Queue for loading operations with controlled concurrency
-    private let loadingQueue: OperationQueue
-
-    /// Active loading tasks by game ID
+    /// Active loading tasks by game ID to prevent duplicate loads
     private var loadingTasks: [String: Task<UIImage?, Error>] = [:]
 
-    /// Cancellable subscriptions
-    private var cancellables = Set<AnyCancellable>()
+    /// Recently accessed game IDs to prioritize caching
+    private var recentlyAccessedIds = Set<String>()
+
+    /// Maximum number of recent IDs to track
+    private let maxRecentIds = 50
+
+    /// Queue for managing background preloading tasks
+    private let preloadQueue = DispatchQueue(label: "com.provenance.artworkPreloader", qos: .utility, attributes: .concurrent)
+
+    /// Semaphore to limit concurrent preloading operations
+    private let preloadSemaphore = DispatchSemaphore(value: 4)
 
     /// Initialize the loader with default settings
-    init() {
-        self.loadingQueue = OperationQueue()
-        self.loadingQueue.name = "com.provenance.artworkLoader"
-        self.loadingQueue.maxConcurrentOperationCount = 3
-        self.loadingQueue.qualityOfService = .userInitiated
-
-        // Configure cache
-        imageCache.name = "com.provenance.artworkCache"
-        imageCache.countLimit = 100
-
-        // Set up memory warning handler
-        #if !os(tvOS)
-        NotificationCenter.default.publisher(for: UIApplication.didReceiveMemoryWarningNotification)
-            .sink { [weak self] _ in
-                self?.handleMemoryWarning()
-            }
-            .store(in: &cancellables)
-        #endif
-    }
+    init() {}
 
     /// Load artwork for a game with priority based on visibility
     /// - Parameters:
@@ -60,19 +46,14 @@ class ArtworkLoader: ObservableObject {
     func loadArtwork(for game: PVGame, priority: TaskPriority = .medium, isVisible: Bool = true) async -> UIImage? {
         guard !game.isInvalidated else { return nil }
 
-        // Use game ID as cache key
-        let cacheKey = game.id as NSString
-
-        // Check in-memory cache first
-        if let cachedImage = imageCache.object(forKey: cacheKey) {
-            return cachedImage
-        }
-
         // If game has no artwork URL, return nil early
         let artworkURL = game.trueArtworkURL
         guard !artworkURL.isEmpty else {
             return nil
         }
+
+        // Track this game ID as recently accessed
+        updateRecentlyAccessed(gameId: game.id)
 
         // If there's already a task loading this artwork, join it
         if let existingTask = loadingTasks[game.id] {
@@ -91,20 +72,8 @@ class ArtworkLoader: ObservableObject {
                 try await Task.sleep(nanoseconds: 10_000_000) // 10ms delay for non-visible items
             }
 
-            do {
-                // Fetch the artwork using the existing method
-                let image = await game.fetchArtworkFromCache()
-
-                // Cache the result if successful
-                if let image = image {
-                    self.imageCache.setObject(image, forKey: cacheKey)
-                }
-
-                return image
-            } catch {
-                DLOG("Failed to load artwork for \(game.title): \(error.localizedDescription)")
-                throw error
-            }
+            // Fetch the artwork directly from PVMediaCache
+            return await game.fetchArtworkFromCache()
         }
 
         // Store the task
@@ -126,37 +95,56 @@ class ArtworkLoader: ObservableObject {
         }
     }
 
+    /// Update the recently accessed game IDs set
+    private func updateRecentlyAccessed(gameId: String) {
+        recentlyAccessedIds.insert(gameId)
+
+        // Trim if we exceed the maximum size
+        if recentlyAccessedIds.count > maxRecentIds {
+            // Remove oldest entries (approximation by removing random elements)
+            while recentlyAccessedIds.count > maxRecentIds {
+                if let first = recentlyAccessedIds.first {
+                    recentlyAccessedIds.remove(first)
+                }
+            }
+        }
+    }
+
     /// Cancel loading for a specific game
     func cancelLoading(for gameId: String) {
         loadingTasks[gameId]?.cancel()
         loadingTasks[gameId] = nil
     }
 
-    /// Handle memory warning by clearing the cache
-    private func handleMemoryWarning() {
-        DLOG("Memory warning received, clearing artwork cache")
-        imageCache.removeAllObjects()
-    }
-
     /// Preload artwork for a collection of games
     /// - Parameter games: The games to preload artwork for
     /// - Parameter priority: The priority to use for preloading
     func preloadArtwork(for games: [PVGame], priority: TaskPriority = .low) {
+        // Prioritize games that were recently accessed
+        let prioritizedGames = games.sorted { game1, game2 in
+            let isRecent1 = recentlyAccessedIds.contains(game1.id)
+            let isRecent2 = recentlyAccessedIds.contains(game2.id)
+
+            if isRecent1 && !isRecent2 {
+                return true
+            } else if !isRecent1 && isRecent2 {
+                return false
+            } else {
+                // Secondary sort by title for stable ordering
+                return game1.title < game2.title
+            }
+        }
+
         Task(priority: priority) {
-            for game in games {
-                guard !Task.isCancelled else { break }
+            // Extract valid artwork URLs
+            let artworkURLs = prioritizedGames.compactMap { game -> String? in
+                let url = game.trueArtworkURL
+                return url.isEmpty ? nil : url
+            }
 
-                // Skip if already cached
-                let cacheKey = game.id as NSString
-                if imageCache.object(forKey: cacheKey) != nil {
-                    continue
-                }
-
-                // Load with low priority and mark as not visible
-                _ = await loadArtwork(for: game, priority: priority, isVisible: false)
-
-                // Small delay between loads to prevent overwhelming the system
-                try? await Task.sleep(nanoseconds: 5_000_000) // 5ms
+            // Use PVMediaCache's preload method directly
+            if !artworkURLs.isEmpty {
+                await PVMediaCache.shareInstance().preloadImages(forKeys: artworkURLs)
             }
         }
     }

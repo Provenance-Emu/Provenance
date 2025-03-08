@@ -7,7 +7,7 @@ internal import struct PVCoreBridge.CoreOptionValueDisplay
 internal import struct PVCoreBridge.CoreOptionEnumValue
 
 extension PVRetroArchCoreOptions: SubCoreOptional {
-    
+
     nonisolated(unsafe) public static func options(forSubcoreIdentifier identifier: String, systemName: String) -> [CoreOption]? {
         var subCoreOptions: [CoreOption] = []
         var isDOS = false
@@ -72,21 +72,21 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
         coreOptions.append(contentsOf: [subCoreGroup])
 
         // Load dynamic options from RetroArch core
-        let frameworkIdentifier: String = identifier.replacingOccurrences(of: ".framework", with: "")
-        let frameworkPath = Bundle.main.bundlePath + "/Frameworks/" + identifier
-        let corePath = "\(frameworkPath)/\(frameworkIdentifier)"
-        ILOG("frameworkIdentifier: \(frameworkIdentifier), frameworkPath: \(frameworkPath), corePath: \(corePath)")
-        let loader = RetroArchCoreOptionsLoader(corePath: corePath)
-        if let dynamicOptions = loader.loadCoreOptions() {
-            let dynamicGroup: CoreOption = .group(
-                .init(
-                    title: "Dynamic Options",
-                    description: "Options loaded from RetroArch core"
-                ),
-                subOptions: dynamicOptions
-            )
-            coreOptions.append(dynamicGroup)
-        }
+//        let frameworkIdentifier: String = identifier.replacingOccurrences(of: ".framework", with: "")
+//        let frameworkPath = Bundle.main.bundlePath + "/Frameworks/" + identifier
+//        let corePath = "\(frameworkPath)/\(frameworkIdentifier)"
+//        ILOG("frameworkIdentifier: \(frameworkIdentifier), frameworkPath: \(frameworkPath), corePath: \(corePath)")
+//        let loader = RetroArchCoreOptionsLoader(corePath: corePath)
+//        if let dynamicOptions = loader.loadCoreOptions() {
+//            let dynamicGroup: CoreOption = .group(
+//                .init(
+//                    title: "Dynamic Options",
+//                    description: "Options loaded from RetroArch core"
+//                ),
+//                subOptions: dynamicOptions
+//            )
+//            coreOptions.append(dynamicGroup)
+//        }
 
         return coreOptions
     }
@@ -99,7 +99,7 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
         var coreOptions: [CoreOption] = [gsOption]
 
         coreOptions.append(retroArchControllerOption)
-        
+
         if (UIScreen.screens.count > 1 && UIDevice.current.userInterfaceIdiom == .pad) {
             coreOptions.append(secondScreenOption)
         }
@@ -110,7 +110,7 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
                                                 description: "Override options for RetroArch Core"),
                                           subOptions: coreOptions)
         options.append(contentsOf: [coreGroup])
-        return options
+        return options + PVRetroArchCoreBridge.processRetroOptions()
     }
 
     public static var gsOption: CoreOption {
@@ -258,12 +258,12 @@ extension PVRetroArchCoreCore: @preconcurrency CoreOptional, SubCoreOptional {
     public static func options(forSubcoreIdentifier identifier: String, systemName: String) -> [PVCoreBridge.CoreOption]? {
         return PVRetroArchCoreOptions.options(forSubcoreIdentifier: identifier.isEmpty ? self.identifier : identifier, systemName: systemName.isEmpty ? self.systemName : systemName)
     }
-    
+
     @MainActor
     private static var identifier: String {
         EmulationState.shared.coreClassName.isEmpty ? "retroarch" : EmulationState.shared.coreClassName
     }
-    
+
     @MainActor
     private static var systemName: String {
         EmulationState.shared.systemName.isEmpty ? "retroarch" : EmulationState.shared.systemName
@@ -277,8 +277,294 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
         return PVRetroArchCoreOptions.options
     }
 
-    public static func options(forSubcoreIdentifier identifier: String, systemName: String) async -> [PVCoreBridge.CoreOption]? {
-        await PVRetroArchCoreOptions.options(forSubcoreIdentifier: identifier, systemName: systemName)
+    public static func options(forSubcoreIdentifier identifier: String, systemName: String) -> [PVCoreBridge.CoreOption]? {
+        PVRetroArchCoreOptions.options(forSubcoreIdentifier: identifier, systemName: systemName)
+    }
+
+    public static func processRetroOptions() -> [CoreOption] {
+        guard let optionsPtr: UnsafeMutablePointer<core_option_manager_t> = PVRetroArchCoreBridge.getOptions() else {
+            return []
+        }
+
+        /// Array to hold all processed options
+        var processedOptions: [CoreOption] = []
+
+        /// Get the core_option_manager struct
+        let optionsManager = optionsPtr.pointee
+
+        /// Process categories first
+        var categoryMap: [String: [CoreOption]] = [:]
+
+        /// Process all options
+        for i in 0..<optionsManager.size {
+            /// Get option at index i
+            let optionPtr = optionsManager.opts.advanced(by: Int(i))
+            let option = optionPtr.pointee
+
+            /// Get option key
+            guard let key = option.key.map({ String(cString: $0) }) else {
+                continue
+            }
+
+            /// Get option description
+            let description = option.desc.map { String(cString: $0) } ?? key
+
+            /// Get option info/help text
+            let info = option.info.map { String(cString: $0) }
+
+            /// Check if option is visible
+            let isVisible = option.visible
+
+            /// Skip invisible options
+            if !isVisible {
+                continue
+            }
+
+            /// Get option values
+            var values: [CoreOptionEnumValue] = []
+            if let valsList = option.vals {
+                let valsCount = valsList.pointee.size
+
+                for j in 0..<valsCount {
+                    guard let valStr = valsList.pointee.elems.advanced(by: Int(j)).pointee.data else {
+                        continue
+                    }
+
+                    let valueStr = String(cString: valStr)
+
+                    /// Get label if available
+                    var labelStr = valueStr
+                    if let labelsList = option.val_labels,
+                       j < labelsList.pointee.size,
+                       let label = labelsList.pointee.elems.advanced(by: Int(j)).pointee.data {
+                        labelStr = String(cString: label)
+                    }
+
+                    values.append(CoreOptionEnumValue(
+                        title: labelStr,
+                        description: valueStr,
+                        value: Int(j)
+                    ))
+                }
+            }
+
+            /// Create the CoreOption
+            let coreOption: CoreOption
+
+            /// Create display info
+            let display = CoreOptionValueDisplay(
+                title: key,
+                description: info,
+                requiresRestart: false
+            )
+
+            /// Create a value handler closure that will update the RetroArch option
+            let valueHandler: (OptionValueRepresentable) -> Void = { newValue in
+                var valIdx: size_t = 0
+
+                // Find the option index
+                if core_option_manager_get_idx(optionsPtr, key, &valIdx) {
+                    // Convert the new value to the appropriate index
+                    if let intValue = newValue as? Int {
+                        // For enumeration values, use the integer directly
+                        core_option_manager_set_val(optionsPtr, valIdx, size_t(intValue), true)
+                    } else if let boolValue = newValue as? Bool {
+                        // For boolean values, convert to 0/1
+                        core_option_manager_set_val(optionsPtr, valIdx, boolValue ? 1 : 0, true)
+                    } else if let stringValue = newValue as? String {
+                        // For string values, find the matching option
+                        for (idx, value) in values.enumerated() {
+                            if value.title == stringValue || value.description == stringValue {
+                                core_option_manager_set_val(optionsPtr, valIdx, size_t(idx), true)
+                                break
+                            }
+                        }
+                    }
+                }
+            }
+
+            /// Create appropriate option type based on values
+            if values.count == 2
+                &&
+                // We probably don't need this check because RA treats
+                // options with 2 values as bools already
+               (values[1].title.lowercased() == "enabled" || values[1].title.lowercased() == "on" || values[1].title.lowercased() == "true") &&
+               (values[0].title.lowercased() == "disabled" || values[0].title.lowercased() == "off" || values[0].title.lowercased() == "false")
+            {
+                /// This is likely a boolean option
+                coreOption = .bool(display, defaultValue: Int(option.default_index) == 0, valueHandler: valueHandler)
+            } else if values.count > 0 {
+                /// This is an enumeration option
+                coreOption = .enumeration(display, values: values, defaultValue: Int(option.default_index), valueHandler: valueHandler)
+            } else {
+                /// Fallback to string option
+                coreOption = .string(display, defaultValue: "", valueHandler: valueHandler)
+            }
+
+            /// Add to category map if it has a category
+            if let categoryKey = option.category_key.map({ String(cString: $0) }) {
+                if categoryMap[categoryKey] == nil {
+                    categoryMap[categoryKey] = []
+                }
+                categoryMap[categoryKey]?.append(coreOption)
+            } else {
+                /// No category, add directly to processed options
+                processedOptions.append(coreOption)
+            }
+        }
+
+        /// Process categories and add them as groups
+        for i in 0..<optionsManager.cats_size {
+            let categoryPtr = optionsManager.cats.advanced(by: Int(i))
+            let category = categoryPtr.pointee
+
+            /// Get category key
+            guard let key = category.key.map({ String(cString: $0) }) else {
+                continue
+            }
+
+            /// Get category options
+            guard let categoryOptions = categoryMap[key], !categoryOptions.isEmpty else {
+                continue
+            }
+
+            /// Get category description
+            let description = category.desc.map { String(cString: $0) } ?? key
+
+            /// Get category info
+            let info = category.info.map { String(cString: $0) }
+
+            /// Create group option
+            let groupOption = CoreOption.group(
+                CoreOptionValueDisplay(
+                    title: description,
+                    description: info,
+                    requiresRestart: false
+                ),
+                subOptions: categoryOptions
+            )
+
+            processedOptions.append(groupOption)
+        }
+
+        return processedOptions
+    }
+
+    /// Synchronizes all stored option values with RetroArch's internal option system
+    /// Call this when initializing the core to ensure RetroArch has the correct option values
+    @objc public static func synchronizeOptionsWithRetroArch() {
+        guard let optionsPtr: UnsafeMutablePointer<core_option_manager_t> = getOptions() else {
+            WLOG("Failed to get RetroArch options manager")
+            return
+        }
+
+        // Get all options including dynamic ones
+        let allOptions = PVRetroArchCoreOptions.options
+
+        // Create a map of option keys to their CoreOption objects for quick lookup
+        var optionMap: [String: CoreOption] = [:]
+
+        // Helper function to recursively process options and build the map
+        func processOptions(_ options: [CoreOption]) {
+            for option in options {
+                optionMap[option.key] = option
+
+                // If it's a group, process its suboptions
+                if case let .group(_, subOptions) = option {
+                    processOptions(subOptions)
+                }
+            }
+        }
+
+        // Build the option map
+        processOptions(allOptions)
+
+        // Get the core_option_manager struct
+        let optionsManager = optionsPtr.pointee
+
+        // Iterate through all RetroArch options
+        for i in 0..<optionsManager.size {
+            let optionPtr = optionsManager.opts.advanced(by: Int(i))
+            let option = optionPtr.pointee
+
+            // Get option key
+            guard let key = option.key.map({ String(cString: $0) }) else {
+                continue
+            }
+
+            // Find the corresponding CoreOption
+            guard let coreOption = optionMap[key] else {
+                continue
+            }
+
+            // Get the stored value for this option
+            let optionValue: CoreOptionValue = PVRetroArchCoreOptions.valueForOption(coreOption)
+
+            // Find the option index in RetroArch
+            var optIdx: size_t = 0
+            guard core_option_manager_get_idx(optionsPtr, key, &optIdx) else {
+                continue
+            }
+
+            // Set the value based on its type
+            switch optionValue {
+            case .bool(let value):
+                // For boolean values, convert to 0/1
+                core_option_manager_set_val(optionsPtr, optIdx, value ? 1 : 0, false)
+
+            case .int(let value):
+                // For integer values, use directly
+                core_option_manager_set_val(optionsPtr, optIdx, size_t(value), false)
+
+            case .string(let value):
+                // For string values, find the matching option
+                if let valsList = option.vals {
+                    let valsCount = valsList.pointee.size
+
+                    for j in 0..<valsCount {
+                        guard let valStr = valsList.pointee.elems.advanced(by: Int(j)).pointee.data else {
+                            continue
+                        }
+
+                        let valueStr = String(cString: valStr)
+                        if valueStr == value {
+                            core_option_manager_set_val(optionsPtr, optIdx, j, false)
+                            break
+                        }
+                    }
+                }
+
+            case .float(let value):
+                // For float values, convert to string and find matching option
+                let valueStr = String(value)
+                if let valsList = option.vals {
+                    let valsCount = valsList.pointee.size
+
+                    for j in 0..<valsCount {
+                        guard let valStr = valsList.pointee.elems.advanced(by: Int(j)).pointee.data else {
+                            continue
+                        }
+
+                        let optionValueStr = String(cString: valStr)
+                        if optionValueStr == valueStr {
+                            core_option_manager_set_val(optionsPtr, optIdx, j, false)
+                            break
+                        }
+                    }
+                }
+
+            case .notFound:
+                // If no value is found, set to default
+                core_option_manager_set_default(optionsPtr, optIdx, false)
+            }
+        }
+
+        // After setting all options, flush the changes to ensure they're applied
+        if let conf = optionsManager.conf {
+            core_option_manager_flush(optionsPtr, conf)
+        }
+
+        ILOG("Synchronized all options with RetroArch")
     }
 }
 
@@ -483,17 +769,25 @@ extension PVRetroArchCoreCore: GameWithCheat {
             self.window.screen = UIScreen.main
         }
     }
+
 }
 
 extension PVRetroArchCoreCore: CoreActions {
     public var coreActions: [CoreAction]? {
-        return [CoreAction(title: "RetroArch Menu", options: nil, style:.default)]
+        var actions = [CoreAction(title: "RetroArch Menu", options: nil, style:.default)]
+        if _bridge.numberOfDiscs > 1 {
+            actions +=  [CoreAction(title: "Toggle Eject", options: nil, style:.default)]
+        }
+        return actions
     }
     public func selected(action: CoreAction) {
         switch action.title {
             case "RetroArch Menu":
                 menuToggle()
-                break;
+                break
+            case "Toggle Eject":
+                _bridge.toggleEjectState()
+                break
             default:
                 WLOG("Unknown action: " + action.title)
         }

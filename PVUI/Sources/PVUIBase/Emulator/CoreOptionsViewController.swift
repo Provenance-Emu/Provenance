@@ -76,13 +76,13 @@ public final class CoreOptionsViewController: QuickTableViewController {
         let sections: [Section] = groups.enumerated().map { sectionIndex, group in
 			let rows: [TableRow] = group.options.enumerated().map { (rowIndex, option) in
 				switch option {
-				case let .bool(display, defaultValue):
+				case let .bool(display, defaultValue, valueHandler: setter):
 					let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
 					return SwitchRow<PVSwitchCell>(text: display.title, detailText: detailText, switchValue: core.storedValueForOption(Bool.self, option.key) ?? defaultValue, action: { _ in
 						let value = self.core.storedValueForOption(Bool.self, option.key) ?? defaultValue
 						self.core.setValue(!value, forOption: option)
 					})
-				case let .multi(display, values):
+				case let .multi(display, values, valueHandler: setter):
 					let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
 					return NavigationRow(text: display.title,
 															 detailText: detailText,
@@ -111,7 +111,7 @@ public final class CoreOptionsViewController: QuickTableViewController {
 																	 self.tableView.deselectRow(at: indexPath, animated: false)
 																 }
 					})
-                case let .enumeration(display, values: values, defaultValue: defaultValue):
+                case let .enumeration(display, values: values, defaultValue: defaultValue, valueHandler: setter):
                     let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
                     return NavigationRow(text: display.title,
                                                              detailText: detailText,
@@ -140,7 +140,7 @@ public final class CoreOptionsViewController: QuickTableViewController {
                                                                      self.tableView.deselectRow(at: indexPath, animated: false)
                                                                  }
                     })
-				case let .range(display, range: range, defaultValue: defaultValue):
+                case let .range(display, range: range, defaultValue: defaultValue, valueHandler: setter):
 					let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
                     let value = core.storedValueForOption(Int.self, option.key) ?? defaultValue
 
@@ -165,7 +165,7 @@ public final class CoreOptionsViewController: QuickTableViewController {
                         self.core.setValue(value, forOption: option)
                     }
                     #endif
-				case let .rangef(display, range: range, defaultValue: defaultValue):
+				case let .rangef(display, range: range, defaultValue: defaultValue, valueHandler: setter):
                     let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
                     let value = core.storedValueForOption(Float.self, option.key) ?? defaultValue
                     #if os(tvOS)
@@ -189,7 +189,7 @@ public final class CoreOptionsViewController: QuickTableViewController {
                         self.core.setValue(value, forOption: option)
                     }
                     #endif
-                case let .string(display, defaultValue: defaultValue):
+                case let .string(display, defaultValue: defaultValue, valueHandler: setter):
                     let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
                     let value = core.storedValueForOption(String.self, option.key) ?? defaultValue
 

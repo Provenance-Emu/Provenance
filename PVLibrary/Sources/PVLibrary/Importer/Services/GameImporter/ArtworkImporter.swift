@@ -197,12 +197,12 @@ class ArtworkImporter : ArtworkImporting {
 #endif
         
 #if canImport(UIKit)
-        guard let coverArtScaledData = coverArtScaledImage.jpegData(compressionQuality: 0.85) else {
+        guard let coverArtScaledData = coverArtScaledImage.jpegData(compressionQuality: 0.95) else {
             ELOG("Failed to create data representation of scaled image")
             return nil
         }
 #else
-        let coverArtScaledData = coverArtScaledImage.jpegData(compressionQuality: 0.85)
+        let coverArtScaledData = coverArtScaledImage.jpegData(compressionQuality: 0.95)
 #endif
         
         let hash: String = (coverArtScaledData as NSData).md5

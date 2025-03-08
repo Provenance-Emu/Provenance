@@ -113,6 +113,7 @@ public struct ArtworkSearchView: View {
                 TextField("Search artwork...", text: $searchText)
                 #if !os(tvOS)
                     .textFieldStyle(.roundedBorder)
+                    .textInputAutocapitalization(.never)
                 #endif
                     .onSubmit {
                         Task {
@@ -552,7 +553,7 @@ struct ArtworkGridItem: View {
                 image = Image(uiImage: uiImage)
             }
         } catch {
-            print("Error loading image: \(error)")
+            ELOG("Error loading image: \(error)")
         }
     }
 }

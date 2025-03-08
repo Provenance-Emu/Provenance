@@ -12,6 +12,9 @@ struct FilterSettingsView: View {
             OpenGLFilterSection(openGLFilterMode: $openGLFilterMode)
         }
         .navigationTitle("Display Filters")
+        
+        Text("Metal filters provided by Mr. J & Mame4iOS.")
+            .font(.caption)
     }
 }
 

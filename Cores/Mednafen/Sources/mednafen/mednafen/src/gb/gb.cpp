@@ -2877,7 +2877,7 @@ static const CheatInfoStruct CheatInfo =
 
 using namespace MDFN_IEN_GB;
 
-MDFN_HIDE extern const MDFNGI EmulatedGB =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedGB =
 {
  "gb",
  "GameBoy (Color)",

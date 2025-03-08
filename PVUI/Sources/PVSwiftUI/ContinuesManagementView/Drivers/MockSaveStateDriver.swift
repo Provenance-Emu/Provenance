@@ -34,9 +34,7 @@ public class MockSaveStateDriver: SaveStateDriver {
     public var savesSizePublisher: AnyPublisher<UInt64, Never> {
         saveStatesPublisher.map { states in
             states.reduce(into: 0) { total, state in
-                if let size = self.mockSaveSizes[state.id] {
-                    total += size
-                }
+                total += state.size
             }
         }.eraseToAnyPublisher()
     }
@@ -51,21 +49,26 @@ public class MockSaveStateDriver: SaveStateDriver {
     public let savesTotalSize: Int
     public let gameUIImage: UIImage?
 
+    /// System identifier for filtering
+    private var systemIdentifier: String
+
     public init(mockData: Bool = true,
                 gameTitle: String = "Bomber Man",
                 systemTitle: String = "Game Boy",
                 savesTotalSize: Int = 2048,
-                gameUIImage: UIImage? = nil) {
+                gameUIImage: UIImage? = nil,
+                systemIdentifier: String = "com.provenance.gameboy") {
         self.gameTitle = gameTitle
         self.systemTitle = systemTitle
         self.savesTotalSize = savesTotalSize
         self.gameUIImage = gameUIImage
+        self.systemIdentifier = systemIdentifier
 
         if mockData {
             let mockStates = (0..<10).map { index -> SaveStateRowViewModel in
                 let id = UUID().uuidString
                 // Generate random size between 1MB and 10MB
-                mockSaveSizes[id] = UInt64.random(in: 1_000_000...10_000_000)
+                let randomSize = UInt64.random(in: 1_000_000...10_000_000)
                 return SaveStateRowViewModel(
                     id: id,
                     gameID: "1",
@@ -75,7 +78,8 @@ public class MockSaveStateDriver: SaveStateDriver {
                     description: "Save State \(index + 1)",
                     isAutoSave: index % 3 == 0,
                     isPinned: index < 2,
-                    isFavorite: index % 2 == 0
+                    isFavorite: index % 2 == 0,
+                    size: randomSize
                 )
             }
             allSaveStates = mockStates
@@ -83,15 +87,18 @@ public class MockSaveStateDriver: SaveStateDriver {
         }
     }
 
-    public init(mockSaveStates: [SaveStateRowViewModel] = []) {
+    public init(mockSaveStates: [SaveStateRowViewModel] = [], systemIdentifier: String = "com.provenance.gameboy") {
         self.gameTitle = "Test Game"
         self.systemTitle = "Test System"
         self.savesTotalSize = 0
         self.gameUIImage = nil
+        self.systemIdentifier = systemIdentifier
         self.allSaveStates = mockSaveStates
-        // Initialize mock sizes for provided save states
-        mockSaveStates.forEach { state in
-            mockSaveSizes[state.id] = UInt64.random(in: 1_000_000...10_000_000)
+        // Initialize sizes for provided save states if not already set
+        for i in 0..<self.allSaveStates.count {
+            if self.allSaveStates[i].size == 0 {
+                self.allSaveStates[i].size = UInt64.random(in: 1_000_000...10_000_000)
+            }
         }
         updateSaveStates()
     }
@@ -160,5 +167,29 @@ public class MockSaveStateDriver: SaveStateDriver {
     public func share(saveStateId: String) -> URL? {
         // Mock implementation returns nil
         return nil
+    }
+
+    /// Load save states for a specific game
+    public func loadSaveStates(forGameId gameID: String) {
+        // Set the game ID filter and update save states
+        self.gameId = gameID
+        // updateSaveStates() is called by the gameId property observer
+    }
+
+    /// Load all save states for a specific system
+    /// If systemID is empty, load save states for all systems
+    public func loadAllSaveStates(forSystemID systemID: String) {
+        // Clear any game ID filter
+        self.gameId = nil
+
+        // In a real implementation, we would filter by system ID
+        // For the mock, we'll just pretend all save states belong to the requested system
+        // In a more sophisticated mock, we could store system IDs with each save state
+
+        // For now, we'll just update the system identifier and return all save states
+        self.systemIdentifier = systemID
+
+        // updateSaveStates() is called by the gameId property observer
+        // which will send all save states since gameId is nil
     }
 }

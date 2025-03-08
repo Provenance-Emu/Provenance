@@ -39,4 +39,10 @@ public protocol SaveStateDriver: ObservableObject {
 
     /// Share save state
     func share(saveStateId: String) -> URL?
+
+    /// Load save states for a specific game
+    func loadSaveStates(forGameId gameID: String)
+
+    /// Load all save states for a specific system
+    func loadAllSaveStates(forSystemID systemID: String)
 }

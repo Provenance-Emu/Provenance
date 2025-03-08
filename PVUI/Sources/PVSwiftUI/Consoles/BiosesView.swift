@@ -39,11 +39,21 @@ struct BiosesView: View {
                 // Tab indicator
                 tabIndicator
 
-                // Content
-                if isExpanded {
-                    biosContent
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                // Content container with fixed height animation
+                ZStack(alignment: .top) {
+                    if isExpanded {
+                        biosContent
+                            .transition(
+                                .asymmetric(
+                                    insertion: .opacity.combined(with: .scale(scale: 0.95, anchor: .top)).animation(.spring(response: 0.4, dampingFraction: 0.7)),
+                                    removal: .opacity.combined(with: .scale(scale: 0.95, anchor: .top)).animation(.spring(response: 0.3, dampingFraction: 0.7))
+                                )
+                            )
+                    }
                 }
+                .clipped() // Clip the content container
+                .frame(height: isExpanded ? calculateContentHeight() : 0)
+                .animation(.spring(response: 0.4, dampingFraction: 0.7), value: isExpanded)
             }
             .background(Color.black.opacity(0.2))
             // Replace rounded rectangle with top and bottom borders
@@ -59,8 +69,8 @@ struct BiosesView: View {
                     .frame(height: Constants.borderWidth)
                     .edgesIgnoringSafeArea(.horizontal)
             }
+            .clipShape(Rectangle()) // Clip the entire container
             .offset(y: dragOffset)
-            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isExpanded)
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: dragOffset)
             #if !os(tvOS)
             .gesture(
@@ -76,8 +86,10 @@ struct BiosesView: View {
                     .onEnded { value in
                         let translation = value.translation.height
                         if abs(translation) > Constants.dragThreshold {
-                            isExpanded.toggle()
-                            UserDefaults.standard.set(isExpanded, forKey: storageKey)
+                            withAnimation {
+                                isExpanded.toggle()
+                                UserDefaults.standard.set(isExpanded, forKey: storageKey)
+                            }
                         }
                         dragOffset = 0
                     }
@@ -88,6 +100,10 @@ struct BiosesView: View {
                     isExpanded.toggle()
                     UserDefaults.standard.set(isExpanded, forKey: storageKey)
                 }
+            }
+            .onAppear {
+                // Load saved expansion state
+                isExpanded = UserDefaults.standard.bool(forKey: storageKey)
             }
         }
     }
@@ -117,6 +133,20 @@ struct BiosesView: View {
             }
         }
         .padding(.vertical, 8)
+    }
+
+    /// Calculate the height needed for the content based on number of BIOS entries
+    private func calculateContentHeight() -> CGFloat {
+        /// Height for each BIOS row (estimated) plus dividers
+        let rowHeight: CGFloat = 44
+        let dividerHeight: CGFloat = 1
+        let padding: CGFloat = 16 // 8 top + 8 bottom
+
+        /// Calculate total height based on number of BIOS entries
+        /// Each entry has a row and a divider, plus one extra divider at the top
+        return CGFloat(console.bioses.count) * rowHeight +
+               CGFloat(console.bioses.count + 1) * dividerHeight +
+               padding
     }
 }
 

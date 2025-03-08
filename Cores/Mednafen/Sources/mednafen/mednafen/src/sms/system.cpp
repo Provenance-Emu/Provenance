@@ -434,7 +434,7 @@ static const CustomPalette_Spec GGCPInfo[] =
 };
 
 
-MDFN_HIDE extern const MDFNGI EmulatedSMS =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedSMS =
 {
  "sms",
  "Sega Master System",
@@ -489,7 +489,7 @@ MDFN_HIDE extern const MDFNGI EmulatedSMS =
  2,     // Number of output sound channels
 };
 
-MDFN_HIDE extern const MDFNGI EmulatedGG =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedGG =
 {
  "gg",
  "Sega Game Gear",

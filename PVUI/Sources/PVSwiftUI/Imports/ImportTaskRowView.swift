@@ -35,6 +35,9 @@ struct ImportTaskRowView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
 
+    // Replace delegate with callback
+    var onSystemSelected: ((SystemIdentifier, ImportQueueItem) -> Void)?
+
     var bgColor: Color {
         themeManager.currentPalette.settingsCellBackground?.swiftUIColor ?? themeManager.currentPalette.menuBackground.swiftUIColor
     }
@@ -124,7 +127,13 @@ struct ImportTaskRowView: View {
                 }
             }
             .background(
-                NavigationLink(destination: SystemSelectionView(item: item), isActive: $isNavigatingToSystemSelection) {
+                NavigationLink(
+                    destination: SystemSelectionView(
+                        item: item,
+                        onSystemSelected: onSystemSelected
+                    ),
+                    isActive: $isNavigatingToSystemSelection
+                ) {
                     EmptyView()
                 }
                 .hidden()

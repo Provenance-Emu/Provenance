@@ -152,17 +152,17 @@ struct CoreOptionsDetailView: View {
 
     private func getCurrentValue(for option: CoreOption) -> Any? {
         switch option {
-        case .bool(_, let defaultValue):
+        case .bool(_, let defaultValue, _):
             return coreClass.storedValueForOption(Bool.self, option.key) ?? defaultValue
-        case .string(_, let defaultValue):
+        case .string(_, let defaultValue, _):
             return coreClass.storedValueForOption(String.self, option.key) ?? defaultValue
-        case .enumeration(_, _, let defaultValue):
+        case .enumeration(_, _, let defaultValue, _):
             return coreClass.storedValueForOption(Int.self, option.key) ?? defaultValue
-        case .range(_, _, let defaultValue):
+        case .range(_, _, let defaultValue, _):
             return coreClass.storedValueForOption(Int.self, option.key) ?? defaultValue
-        case .rangef(_, _, let defaultValue):
+        case .rangef(_, _, let defaultValue, _):
             return coreClass.storedValueForOption(Float.self, option.key) ?? defaultValue
-        case .multi(_, let values):
+        case .multi(_, let values, _):
             return coreClass.storedValueForOption(String.self, option.key) ?? values.first?.title
         case .group(_, _):
             return nil
@@ -203,7 +203,7 @@ struct CoreOptionsDetailView: View {
     @ViewBuilder
     private func optionView(for option: CoreOption) -> some View {
         switch option {
-        case let .bool(display, defaultValue):
+        case let .bool(display, defaultValue, valueHandler):
             HStack {
                 Toggle(isOn: Binding(
                     get: { state.optionValues[option.key] as? Bool ?? defaultValue },
@@ -230,7 +230,7 @@ struct CoreOptionsDetailView: View {
                 #endif
             }
 
-        case let .enumeration(display, values, defaultValue):
+        case let .enumeration(display, values, defaultValue, valueHandler):
             HStack {
                 let selection = Binding(
                     get: {
@@ -277,7 +277,7 @@ struct CoreOptionsDetailView: View {
                 #endif
             }
 
-        case let .range(display, range, defaultValue):
+        case let .range(display, range, defaultValue, valueHandler):
             VStack(alignment: .leading) {
                 HStack {
                     VStack(alignment: .leading) {
@@ -320,7 +320,7 @@ struct CoreOptionsDetailView: View {
                 #endif
             }
 
-        case let .rangef(display, range, defaultValue):
+        case let .rangef(display, range, defaultValue, valueHandler):
             VStack(alignment: .leading) {
                 HStack {
                     VStack(alignment: .leading) {
@@ -363,7 +363,7 @@ struct CoreOptionsDetailView: View {
                 #endif
             }
 
-        case let .multi(display, values):
+        case let .multi(display, values, valueHandler):
             HStack {
                 let selection = Binding(
                     get: { state.selectedValues[option.key] as? String ?? state.optionValues[option.key] as? String ?? values.first?.title ?? "" },
@@ -407,7 +407,7 @@ struct CoreOptionsDetailView: View {
                 #endif
             }
 
-        case let .string(display, defaultValue):
+        case let .string(display, defaultValue, valueHandler):
             VStack(alignment: .leading) {
                 HStack {
                     VStack(alignment: .leading) {

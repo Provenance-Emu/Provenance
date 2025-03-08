@@ -92,6 +92,7 @@ public class ContinuesMagementViewModel: ObservableObject {
     private func setupObservers() {
         /// Observe editing state changes
         controlsViewModel.$isEditing
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] isEditing in
                 self?.saveStates.forEach { $0.isEditing = isEditing }
                 if !isEditing {
@@ -157,7 +158,7 @@ public class ContinuesMagementViewModel: ObservableObject {
             // Apply search filter
             if !searchText.isEmpty {
                 filtered = filtered.filter {
-                    guard let description = $0.description else { return false }
+                    let description = $0.description ?? $0.gameTitle
                     return description.localizedCaseInsensitiveContains(searchText)
                 }
             }
@@ -179,7 +180,7 @@ public class ContinuesMagementViewModel: ObservableObject {
             // Apply search filter
             if !searchText.isEmpty {
                 filtered = filtered.filter {
-                    guard let description = $0.description else { return false }
+                    let description = $0.description ?? $0.gameTitle
                     return description.localizedCaseInsensitiveContains(searchText)
                 }
             }
@@ -198,6 +199,7 @@ public class ContinuesMagementViewModel: ObservableObject {
 
         // Observe save states size
         driver.savesSizePublisher
+            .receive(on: DispatchQueue.main)
             .map { Int($0) }
             .receive(on: DispatchQueue.main)
             .assign(to: \.savesTotalSize, on: headerViewModel)
@@ -274,31 +276,35 @@ public class ContinuesMagementViewModel: ObservableObject {
     private func observeRowViewModel(_ viewModel: SaveStateRowViewModel) {
         /// Observe pin changes
         viewModel.$isPinned
+            .receive(on: DispatchQueue.main)
             .dropFirst()
             .sink { [weak self] isPinned in
                 self?.driver.setPin(saveStateId: viewModel.id, isPinned: isPinned)
-                self?.refilterStates()
+//                self?.refilterStates()
             }
             .store(in: &cancellables)
 
         /// Observe favorite changes
         viewModel.$isFavorite
             .dropFirst()
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] isFavorite in
                 self?.driver.setFavorite(saveStateId: viewModel.id, isFavorite: isFavorite)
-                self?.refilterStates()
+//                self?.refilterStates()
             }
             .store(in: &cancellables)
 
         /// Observe description changes
         viewModel.$description
             .dropFirst()
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] description in
                 self?.driver.updateDescription(saveStateId: viewModel.id, description: description)
             }
             .store(in: &cancellables)
     }
 
+    @MainActor
     private func refilterStates() {
         objectWillChange.send()
         let states = saveStates
@@ -382,6 +388,12 @@ public class ContinuesMagementViewModel: ObservableObject {
         driver.delete(saveStates: selectedStates)
     }
 
+    /// Update a save state with new values
+    public func updateSaveState(_ saveState: SaveStateRowViewModel) {
+        /// Forward the update to the driver
+        driver.update(saveState: saveState)
+    }
+
     /// Subscribe to driver's save states publisher
     func subscribeToDriverPublisher() {
         // This method is now deprecated as its functionality has been moved to setupObservers
@@ -389,12 +401,36 @@ public class ContinuesMagementViewModel: ObservableObject {
     }
 }
 
+// Add an EditField enum similar to GameMoreInfoView
+public enum SaveStateEditField: Identifiable {
+    case description
+
+    public var id: String {
+        switch self {
+        case .description:
+            return "description"
+        }
+    }
+}
+
 public struct ContinuesMagementView: View {
     /// Main view model
     @StateObject private var viewModel: ContinuesMagementViewModel
 
+    /// State for editing fields
+    @State private var editingField: SaveStateEditField?
+    @State private var editText: String = ""
+    @State private var editingSaveState: SaveStateRowViewModel?
+
     public init(viewModel: ContinuesMagementViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
+    }
+
+    /// Function to show edit field alert
+    private func editField(_ field: SaveStateEditField, saveState: SaveStateRowViewModel, initialValue: String?) {
+        editingField = field
+        editText = initialValue ?? ""
+        editingSaveState = saveState
     }
 
     public var body: some View {
@@ -456,6 +492,21 @@ public struct ContinuesMagementView: View {
         }
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
+        .alert("Edit Description", isPresented: Binding(
+            get: { editingField == .description },
+            set: { if !$0 { editingField = nil } }
+        )) {
+            TextField("Description", text: $editText)
+            Button(NSLocalizedString("Cancel", comment: "Cancel")) {
+                editingField = nil
+            }
+            Button("Save") {
+                if let saveState = editingSaveState {
+                    saveState.description = editText
+                }
+                editingField = nil
+            }
+        }
     }
 }
 
@@ -474,7 +525,7 @@ struct RoundedCorners: Shape {
     }
 }
 
-private struct EmptyStateView: View {
+internal struct EmptyStateView: View {
     var body: some View {
         VStack(spacing: 16) {
             Image(systemName: "tray.fill")

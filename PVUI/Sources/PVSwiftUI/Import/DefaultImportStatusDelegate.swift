@@ -1,5 +1,6 @@
 import PVUIBase
 import UIKit
+import PVSystems
 
 @MainActor
 class DefaultImportStatusDelegate: ImportStatusDelegate {
@@ -38,5 +39,18 @@ class DefaultImportStatusDelegate: ImportStatusDelegate {
         }
 
         GameImporter.shared.startProcessing()
+    }
+
+    // Add method to handle system selection
+    func didSelectSystem(_ system: SystemIdentifier, for item: ImportQueueItem) {
+        // Start processing if we're not already processing
+        if GameImporter.shared.processingState == .idle {
+            GameImporter.shared.startProcessing()
+        } else if GameImporter.shared.processingState == .paused {
+            // If paused, just process this specific item
+            Task {
+                await GameImporter.shared.processItem(item)
+            }
+        }
     }
 }

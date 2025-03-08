@@ -10,18 +10,7 @@
 //
 //  Feel free to tweak, mod, or whatever
 //
-//
-//  ulTron.metal
-//
-//  Created by MrJs 06/2020
-//  v21062020a
-//
-//  Ultron (/ˈʌltrɒn/) is a fictional supervillain appearing in American comic books published by Marvel Comics.
-//  He is most recognized as a nemesis of the Avengers superhero group and his quasi-familial relationship with his creator Hank Pym.
-//  He was the first Marvel Comics character to wield the fictional metal alloy adamantium.
-//
-//  Feel free to tweak, mod, or whatever
-//
+
 #include <metal_stdlib>
 #import "../MetalViewShaders.h"
 

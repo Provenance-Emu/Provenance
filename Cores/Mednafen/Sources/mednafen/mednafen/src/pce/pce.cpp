@@ -1207,7 +1207,7 @@ static const CheatInfoStruct CheatInfo =
 
 using namespace MDFN_IEN_PCE;
 
-MDFN_HIDE extern const MDFNGI EmulatedPCE =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedPCE =
 {
  "pce",
  "PC Engine (CD)/TurboGrafx 16 (CD)/SuperGrafx",
