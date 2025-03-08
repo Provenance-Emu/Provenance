@@ -66,7 +66,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     var initialSyncResult: SyncResult = .indeterminate
     let queue = DispatchQueue(label: "com.provenance.newFiles")
     //process in batch numbers
-    let fileImportQueueMaxCount = 100
+    let fileImportQueueMaxCount = 1
     
     init(directories: Set<String>,
          notificationCenter: NotificationCenter,
@@ -242,7 +242,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                                 files.insert(file)
                                 self?.insertDownloadingFile(file)
                             //}
-                            DLOG("Download started for: \(file)")
+                            ILOG("Download started for: \(file)")
                         } catch {
                             self?.errorHandler.handleError(error, file: file)
                             ELOG("Failed to start download on file \(file): \(error)")
@@ -267,7 +267,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             }
         }
         setNewCloudFilesAvailable()
-        DLOG("\(directories): current iteration: files pending to be downloaded: \(files.count), files downloaded : \(filesDownloaded.count)")
+        ILOG("\(directories): current iteration: files pending to be downloaded: \(files.count), files downloaded : \(filesDownloaded.count)")
     }
     
     func syncToiCloud() -> SyncResult {
@@ -387,17 +387,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     }
 }
 
-extension Int64 {
-    var toGb: String {
-        String(format: "%.2f GBs", Double(self / (1024 * 1024 * 1024)))
-    }
-}
-
 extension URL {
-    /// calls URL.path(percentEncoded: false) which is the same as the upcoming deprecation of URL.path
-    var pathDecoded: String {
-        path(percentEncoded: false)
-    }
     var appendDocumentsDirectory: URL {
         appendingPathComponent("Documents")
     }
@@ -542,7 +532,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
         else {
             return
         }
-        DLOG("downloaded save file: \(file)")
+        ILOG("downloaded save file: \(file)")
         let newFilesCount: Int = queue.sync { [weak self] in
             self?.newFiles.insert(file)
             return self?.newFiles.count ?? 0
@@ -669,7 +659,8 @@ class SaveStateSyncer: iCloudContainerSyncer {
                         } else {
                             realm.add(newSave, update: .all)
                         }
-                        ILOG("Added new save \(newSave.debugDescription)")
+                        ILOG("Added new save \(json)")
+                        DLOG("Added new save \(newSave.debugDescription)")
                     } catch {
                         self?.errorHandler.handleError(error, file: json)
                         ELOG("Decode error on \(json): \(error)")
@@ -783,7 +774,7 @@ class RomsSyncer: iCloudContainerSyncer {
             DLOG("\(file) already exists in database. skipping...")
             return
         }
-        DLOG("\(file) does NOT exist in database, adding to import set")
+        ILOG("\(file) does NOT exist in database, adding to import set")
         let newFilesCount: Int = queue.sync(flags: .barrier) { [weak self] in
             self?.newFiles.insert(file)
             return self?.newFiles.count ?? 0
@@ -890,7 +881,7 @@ class RomsSyncer: iCloudContainerSyncer {
         //TODO: batch should be based on the chip. on the iphone xs max, import freezes the screen even with the 1 minute sleep. on the ipad mini 6th gen, it allows the cpu/ui to breath with batch of 100 and sleep of 1 minute. so older chips need to find out what is a good batch size. if we have to, we could do 1 at a time. maybe put the batch on the system settings?
         ILOG("CPU Cores: \(coreCount), Total Physical Memory: \(totalMemory / (1024 * 1024 * 1024)) GB, deviceModel: \(deviceModelIdentifier)")
         //give the UI a moment to finish updating, otherwise we get real bad app hangs non-stop and the user can't even get into a game or navigate through the UI. this is more of a hack, but it works for now when importing large libraries. not perfect, but allows the UI to breathe a little bit which is better than having the UI freeze because the user's reaction would prolly be to just shut down the app and reopen and then the user would go in an endless loop of not being able to use the app at all
-        sleep(60)
+//        sleep(60)
         queue.async(flags: .barrier) { [weak self] in
             self?.importNewRomFiles()
         }

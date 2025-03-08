@@ -23,7 +23,7 @@
 	<true/>
 	<key>com.apple.developer.ubiquity-container-identifiers</key>
 	<array>
-		<string>iCloud.org.provenance-emu.provenance</string>
+		<string>$(ICLOUD_CONTAINER_IDENTIFIER)</string>
 	</array>
 	<key>com.apple.developer.ubiquity-kvstore-identifier</key>
 	<string>$(TeamIdentifierPrefix)$(CFBundleIdentifier)</string>
