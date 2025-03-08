@@ -1408,7 +1408,7 @@ static const CheatInfoStruct CheatInfo =
 
 using namespace MDFN_IEN_SNES_FAUST;
 
-MDFN_HIDE extern const MDFNGI EmulatedSNES_Faust =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedSNES_Faust =
 {
  "snes_faust",
  "Super Nintendo Entertainment System/Super Famicom",

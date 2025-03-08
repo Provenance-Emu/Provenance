@@ -16,7 +16,7 @@ struct pcecd_drive_bus_t
  uint32 signals;
 };
 
-MDFN_HIDE extern pcecd_drive_bus_t cd_bus; // Don't access this structure directly by name outside of pcecd_drive.c, but use the macros below.
+/*MDFN_HIDE*/ extern pcecd_drive_bus_t cd_bus; // Don't access this structure directly by name outside of pcecd_drive.c, but use the macros below.
 
 // Signals under our(the "target") control.
 #define PCECD_Drive_IO_mask	0x001

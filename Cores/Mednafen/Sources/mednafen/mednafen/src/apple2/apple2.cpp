@@ -3214,7 +3214,7 @@ static const CustomPalette_Spec CPInfo[] =
 
 using namespace MDFN_IEN_APPLE2;
 
-MDFN_HIDE extern const MDFNGI EmulatedApple2 =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedApple2 =
 {
  "apple2",
  "Apple II/II+/IIe/Enhanced IIe",

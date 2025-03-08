@@ -3338,7 +3338,7 @@ static const CustomPalette_Spec CPInfo[] =
 
 using namespace MDFN_IEN_GBA;
 
-MDFN_HIDE extern const MDFNGI EmulatedGBA =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedGBA =
 {
  "gba",
  "GameBoy Advance",

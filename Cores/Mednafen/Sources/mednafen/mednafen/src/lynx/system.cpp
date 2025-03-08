@@ -445,7 +445,7 @@ static const CustomPalette_Spec CPInfo[] =
  { NULL, NULL },
 };
 
-MDFN_HIDE extern const MDFNGI EmulatedLynx =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedLynx =
 {
  "lynx",
  "Atari Lynx",

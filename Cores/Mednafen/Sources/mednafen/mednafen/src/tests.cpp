@@ -2988,8 +2988,7 @@ void MDFN_RunCheapTests(void)
  TestArithRightShift();
 
  DoAlignmentChecks();
- // Provenance -- compiler flags are wrong?
- // TestSignedOverflow();
+ TestSignedOverflow();
  TestDefinedOverShift();
  TestBoolConv();
  TestNarrowConstFold();

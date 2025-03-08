@@ -2528,7 +2528,7 @@ static const CheatInfoStruct CheatInfo =
 
 using namespace MDFN_IEN_SS;
 
-MDFN_HIDE extern const MDFNGI EmulatedSS =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedSS =
 {
  "ss",
  "Sega Saturn",

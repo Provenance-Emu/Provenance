@@ -19,7 +19,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.27.0</string>
+	<string>1.32.1</string>
 	<key>NSPrincipalClass</key>
 	<string>OEGameCoreController</string>
 	<key>OEGameCoreClass</key>

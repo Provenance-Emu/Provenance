@@ -552,7 +552,7 @@ static const std::vector<InputPortInfoStruct> PortInfo =
 
 using namespace MDFN_IEN_CDPLAY;
 
-MDFN_HIDE extern const MDFNGI EmulatedCDPlay =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedCDPlay =
 {
  "cdplay",
  "CD-DA Player",

@@ -1071,7 +1071,7 @@ static const std::vector<InputPortInfoStruct> PortInfo =
 
 using namespace MDFN_IEN_SASPLAY;
 
-MDFN_HIDE extern const MDFNGI EmulatedSASPlay =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedSASPlay =
 {
  "sasplay",
  "Sega Arcade SCSP Sound Player",

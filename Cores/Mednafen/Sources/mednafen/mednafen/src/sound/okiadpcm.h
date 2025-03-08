@@ -33,8 +33,8 @@ typedef enum
 } OKIADPCM_Chip;
 
 MDFN_HIDE extern const int OKIADPCM_StepSizes[49];
-MDFN_HIDE extern const int OKIADPCM_StepIndexDeltas[16];
-MDFN_HIDE extern const int32 OKIADPCM_DeltaTable[49][16];
+/*MDFN_HIDE*/ extern const int OKIADPCM_StepIndexDeltas[16];
+/*MDFN_HIDE*/ extern const int32 OKIADPCM_DeltaTable[49][16];
 
 template <OKIADPCM_Chip CHIP_TYPE> 
 class OKIADPCM_Decoder
