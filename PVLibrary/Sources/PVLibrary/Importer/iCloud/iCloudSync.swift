@@ -66,7 +66,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     var initialSyncResult: SyncResult = .indeterminate
     let queue = DispatchQueue(label: "com.provenance.newFiles")
     //process in batch numbers
-    let fileImportQueueMaxCount = 1
+    let fileImportQueueMaxCount = 1000
     
     init(directories: Set<String>,
          notificationCenter: NotificationCenter,
@@ -613,59 +613,65 @@ class SaveStateSyncer: iCloudContainerSyncer {
         }
     }
     
-    func processJsonFiles(_ jsonFiles: any Collection<URL>) {
-        //for some reason doing this code in a Task just down't work, it only works with this nesting of Tasks and doing the concurrentForEach.
-        Task {
-            Task.detached { // @MainActor in
-                await jsonFiles.concurrentForEach { @MainActor [weak self] json in
-                    do {
-                        guard let save = try self?.getSaveFrom(json)
-                        else {
-                            return
-                        }
-                        let realm = try await Realm()
-                        let existing = realm.object(ofType: PVSaveState.self, forPrimaryKey: save.id)
-                        if let existing = existing {
-                            // Skip if Save already exists
-
-                            // See if game is missing and set
-                            if existing.game == nil || existing.game.system == nil, let game = realm.object(ofType: PVGame.self, forPrimaryKey: save.game.md5) {
-                                do {
-                                    try realm.write {
-                                        existing.game = game
-                                    }
-                                } catch {
-                                    self?.errorHandler.handleError(error, file: json)
-                                    ELOG("Failed to update game \(json): \(error)")
-                                }
-                            }
-                            // TODO: Maybe any other missing data updates or update values in general?
-                            return
-                        }
-
-                        let newSave = await save.asRealm()
-                        if !realm.isInWriteTransaction {
-                            do {
-                                try realm.write {
-                                    realm.add(newSave, update: .all)
-                                }
-                            } catch {
-                                self?.errorHandler.handleError(error, file: json)
-                                ELOG("error adding new save \(json): \(error)")
-                            }
-                        } else {
-                            realm.add(newSave, update: .all)
-                        }
-                        ILOG("Added new save \(json)")
-                        DLOG("Added new save \(newSave.debugDescription)")
-                    } catch {
-                        self?.errorHandler.handleError(error, file: json)
-                        ELOG("Decode error on \(json): \(error)")
-                        return
-                    }
+    func processJsonFiles(_ jsonFiles: some Collection<URL>) {
+        ILOG("Saves: downloading: \(pendingFilesToDownload.count), pending to process: \(newFiles.count), processing: \(jsonFiles.count)")
+        for (index, json) in jsonFiles.enumerated() {
+            do {
+                guard let save: SaveState = try getSaveFrom(json)
+                else {
+                    continue
                 }
+                sleep(5)
+                ILOG("Saves: downloading: processing save (\(index) of \(jsonFiles.count) \(json)")
+                let realm = try Realm()
+                if let existing = realm.object(ofType: PVSaveState.self, forPrimaryKey: save.id) {
+                    updateExistingSave(existing, realm, save, json)
+                    continue
+                }
+                storeNewSave(save, realm, json)
+            } catch {
+                errorHandler.handleError(error, file: json)
+                ELOG("Decode error on \(json): \(error)")
             }
         }
+        ILOG("Saves: downloading: \(pendingFilesToDownload.count), pending to process: \(newFiles.count)")
+    }
+    
+    func updateExistingSave(_ existing: PVSaveState, _ realm: Realm, _ save: SaveState, _ json: URL) {
+        // See if game is missing and set
+       guard existing.game == nil || existing.game.system == nil,
+             let game = realm.object(ofType: PVGame.self, forPrimaryKey: save.game.md5)
+        else {
+           return
+       }
+        do {
+            try realm.write {
+                existing.game = game
+            }
+        } catch {
+            errorHandler.handleError(error, file: json)
+            ELOG("Failed to update game \(json): \(error)")
+        }
+    }
+    
+    func storeNewSave(_ save: SaveState, _ realm: Realm, _ json: URL) {
+        let newSave = save.asRealm()
+        
+        if !realm.isInWriteTransaction {
+            do {
+                try realm.write {
+                    realm.add(newSave, update: .all)
+                }
+            } catch {
+                errorHandler.handleError(error, file: json)
+                ELOG("error adding new save \(json): \(error)")
+            }
+        } else {
+            realm.add(newSave, update: .all)
+        }
+        
+        ILOG("Added new save \(json)")
+        DLOG("Added new save \(newSave.debugDescription)")
     }
 }
 
@@ -878,7 +884,7 @@ class RomsSyncer: iCloudContainerSyncer {
     
     }
     
-    func clearProcessedFiles() {
+    func clearProcessedFiles() {//TODO: this may be interfering with the game importer itself. perhaps we need to refactor to return the list of success and here in this class we remove from the processingFiles
         gameImporter.removeSuccessfulImports(from: &processingFiles)
     }
     
