@@ -227,7 +227,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         }
         DLOG("\(directories) -> number of items: \(metadataQuery.results.count)")
         //accessing results automatically pauses updates and resumes after deallocated
-        /*await*/ metadataQuery.results.forEach/*concurrentForEach*/ { [weak self] item in
+        metadataQuery.results.forEach { [weak self] item in
             if let fileItem = item as? NSMetadataItem,
                let file = fileItem.value(forAttribute: NSMetadataItemURLKey) as? URL,
                let isDirectory = try? file.resourceValues(forKeys: [.isDirectoryKey]).isDirectory,
