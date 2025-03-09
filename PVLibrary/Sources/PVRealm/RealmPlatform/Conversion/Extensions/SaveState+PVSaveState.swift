@@ -49,8 +49,7 @@ extension SaveState: RealmRepresentable {
         return file.fileName
     }
 
-    @MainActor
-    public func asRealm() async -> PVSaveState {
+    public func asRealm() -> PVSaveState {
         return PVSaveState.build { object in
 
             object.id = id

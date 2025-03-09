@@ -705,7 +705,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                 if self.processingState != .paused {
                     self.processingState = .idle
                 }
-                NotificationCenter.default.post(name: .RomsFinishedImporting, object: nil)
+                NotificationCenter.default.post(Notification(name: .RomsFinishedImporting))
             }
         }
         // Check for items that are either queued or have a user-chosen system

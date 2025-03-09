@@ -74,7 +74,7 @@ extension Cheats: RealmRepresentable {
         return code
     }
 
-    public func asRealm() async -> PVCheats {
+    public func asRealm() -> PVCheats {
         return PVCheats.build { object in
             object.id = id
             let realm = try! Realm()
