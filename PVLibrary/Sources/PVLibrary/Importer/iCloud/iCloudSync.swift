@@ -537,9 +537,6 @@ class SaveStateSyncer: iCloudContainerSyncer {
             self?.newFiles.insert(file)
             return self?.newFiles.count ?? 0
         }
-        if newFilesCount >= fileImportQueueMaxCount {
-            importNewSaves()
-        }
     }
     
     override func deleteFromDatastore(_ file: URL) {
