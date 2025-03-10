@@ -439,7 +439,7 @@ public final class GameImporter: GameImporting, ObservableObject {
     
     /// Searches for successful imports filtered by files and removes from importQueue and files. This is so that only files imported by iCloud can be removed
     /// - Parameter files: set of files to check
-    public func removeSuccessfulImports(from files: inout Set<URL>) {
+    public func removeSuccessfulImports(from files: inout ConcurrentSet<URL>) {
         guard !files.isEmpty
         else {
             return
