@@ -25,7 +25,7 @@
  */
 
 #import "osd/osd.h"
-#import "osd/screenshot.h"
+#import "main/screenshot.h"
 
 void ScreenshotRomOpen(void)
 {

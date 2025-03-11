@@ -24,6 +24,7 @@ public enum PVEmulatorCoreErrorCode: NSInteger {
     case stateHasWrongSize              = -4
     case couldNotSaveState              = -5
     case doesNotSupportSaveStates       = -6
-    case missingM3U                      = -7
+    case missingM3U                     = -7
     case couldNotLoadBIOS               = -8
+    case couldNotLoadPlugin             = -9
 }

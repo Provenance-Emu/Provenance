@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -24,25 +24,18 @@
  *
  *  This is a simple file to encapsulate the OpenGL ES 2.0 API headers.
  */
-#ifndef _MSC_VER
+#include "SDL_config.h"
 
-//#ifdef __IPHONEOS__
-#include <TargetConditionals.h>
+#if !defined(_MSC_VER) && !defined(SDL_USE_BUILTIN_OPENGL_DEFINITIONS)
 
-#if TARGET_OS_MACCATALYST || TARGET_OS_OSX
-#include <OpenGL/gl3.h>
-#include <OpenGL/gl3ext.h>
-#include <OpenGL/OpenGL.h>
-#include <GLUT/GLUT.h>
+#ifdef __IPHONEOS__
+#include <OpenGLES/ES2/gl.h>
+#include <OpenGLES/ES2/glext.h>
 #else
-#include <OpenGLES/ES3/gl.h>
-#include <OpenGLES/ES3/glext.h>
+#include <GLES2/gl2platform.h>
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 #endif
-//#else
-//#include <GLES2/gl2platform.h>
-//#include <GLES2/gl2.h>
-//#include <GLES2/gl2ext.h>
-//#endif
 
 #else /* _MSC_VER */
 
@@ -55,9 +48,5 @@
 #endif /* _MSC_VER */
 
 #ifndef APIENTRY
-#ifndef GL_APIENTRY
 #define APIENTRY GL_APIENTRY
-#else
-#define APIENTRY GL_APIENTRY
-#endif
 #endif

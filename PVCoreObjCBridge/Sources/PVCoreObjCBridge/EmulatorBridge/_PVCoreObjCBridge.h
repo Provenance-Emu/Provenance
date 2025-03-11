@@ -52,6 +52,7 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
     PVEmulatorCoreErrorCodeDoesNotSupportSaveStates = -6,
     PVEmulatorCoreErrorCodeMissingM3U               = -7,
     PVEmulatorCoreErrorCodeCouldNotLoadBIOS         = -8,
+    PVEmulatorCoreErrorCodeCouldNotLoadPlugin       = -9,
 };
 
 @protocol PVAudioDelegate;

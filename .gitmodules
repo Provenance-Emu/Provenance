@@ -1,9 +1,6 @@
 [submodule "Cores/Mupen64Plus/Sources/Plugins/Video/gliden64"]
 	path = Cores/Mupen64Plus/Sources/Plugins/Video/gliden64
 	url = https://github.com/Provenance-Emu/GLideN64.git
-[submodule "Cores/Mupen64Plus/Sources/Plugins/Core/Core"]
-	path = Cores/Mupen64Plus/Sources/Plugins/Core/Core
-	url = https://github.com/Provenance-Emu/mupen64plus-core.git
 [submodule "Cores/Mupen64Plus/Sources/Plugins/rsp/hle"]
 	path = Cores/Mupen64Plus/Sources/Plugins/rsp/hle
 	url = https://github.com/mupen64plus/mupen64plus-rsp-hle.git
@@ -190,3 +187,6 @@
 [submodule "Dependencies/SwiftSDL2"]
 	path = Dependencies/SwiftSDL2
 	url = https://github.com/ctreffs/SwiftSDL2.git
+[submodule "Cores/Mupen64Plus/Sources/Plugins/Core/Core"]
+	path = Cores/Mupen64Plus/Sources/Plugins/Core/Core
+	url = https://github.com/mupen64plus/mupen64plus-core.git

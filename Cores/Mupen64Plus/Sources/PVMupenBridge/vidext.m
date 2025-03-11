@@ -116,7 +116,7 @@ EXPORT m64p_error CALL VidExt_ToggleFullScreen(void)
     return M64ERR_UNSUPPORTED;
 }
 
-EXPORT void * CALL VidExt_GL_GetProcAddress(const char* Proc)
+EXPORT m64p_function CALL VidExt_GL_GetProcAddress(const char * Proc)
 {
     return dlsym(RTLD_NEXT, Proc);
 }

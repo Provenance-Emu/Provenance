@@ -157,7 +157,7 @@ void SDL_WaitThread(SDL_Thread *thread, int *status)
     free(thread);
 }
 
-SDL_sem *SDL_CreateSemaphore(int initial_value)
+SDL_sem *SDLCALL SDL_CreateSemaphore(Uint32 initial_value)
 {
     sem_t *semaphore = (sem_t *)malloc(sizeof(sem_t));
     sem_init(semaphore, 0, initial_value);
@@ -194,4 +194,8 @@ int SDL_SemTryWait(SDL_sem *sem)
 		retval = 0;
 	}
 	return retval;
+}
+
+DECLSPEC Uint32 SDLCALL SDL_WasInit(Uint32 flags) {
+    return true;
 }

@@ -33,7 +33,9 @@
 void new_vi(void)
 {
     GET_CURRENT_OR_RETURN();
-    
+#if defined(PROFILE)
+    timed_sections_refresh();
+#endif
 	struct r4300_core* r4300 = &g_dev.r4300;
 
 	if (g_gs_vi_counter < 60) {
@@ -49,6 +51,7 @@ void new_vi(void)
 //    main_check_inputs();
 
 //    pause_loop();
+//    netplay_check_sync(&g_dev.r4300.cp0);
 
     [current videoInterrupt];
 }
