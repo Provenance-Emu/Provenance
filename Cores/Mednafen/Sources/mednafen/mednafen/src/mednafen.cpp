@@ -1439,7 +1439,7 @@ static void AddDynamicSetting(const char *system_name, const char *name, uint32 
 
 bool MDFNI_Init(void)
 {
- assert(!MDFNSystems.size());
+// assert(!MDFNSystems.size());
 
  try
  {

@@ -14,11 +14,30 @@ import PVThemes
 import Combine
 
 class ContinuesSectionViewModel: ObservableObject {
+    /// Maximum number of save states to load initially
+    /// This can be adjusted or made into a user setting later
+    static let initialSaveStateLimit: Int = 20
+
+    /// Number of additional save states to load when approaching the end
+    static let additionalSaveStateLoadCount: Int = 10
+
+    /// Threshold for when to load more save states (when user is this many pages from the end)
+    static let loadMoreThreshold: Int = 2
+
     @Published var currentPage: Int = 0
     @Published var selectedItemId: String?
     @Published var hasFocus: Bool = false
     @Published var isControllerConnected: Bool = GamepadManager.shared.isControllerConnected
     @Published var currentSaveState: PVSaveState?
+
+    /// Total number of save states available (may be more than what's loaded)
+    @Published var totalSaveStatesCount: Int = 0
+
+    /// Current limit for how many save states to load
+    @Published var currentLimit: Int = initialSaveStateLimit
+
+    /// Flag to indicate if all save states have been loaded
+    @Published var hasLoadedAllSaveStates: Bool = false
 
     /// Filtered save states from parent
     private var saveStates: [PVSaveState] = []
@@ -28,13 +47,48 @@ class ContinuesSectionViewModel: ObservableObject {
         isLandscapePhone ? 2 : 1
     }
 
-    func updateSaveStates(_ states: [PVSaveState], isLandscape: Bool) {
+    /// Calculate the number of pages based on currently loaded save states
+    var pageCount: Int {
+        max(1, Int(ceil(Double(saveStates.count) / Double(itemsPerPage))))
+    }
+
+    /// Check if we should load more save states based on current page
+    var shouldLoadMoreSaveStates: Bool {
+        guard !hasLoadedAllSaveStates else { return false }
+
+        let pagesRemaining = pageCount - currentPage
+        return pagesRemaining <= Self.loadMoreThreshold
+    }
+
+    func updateSaveStates(_ states: [PVSaveState], isLandscape: Bool, totalCount: Int) {
         saveStates = states
         isLandscapePhone = isLandscape
+        totalSaveStatesCount = totalCount
+
+        // Update hasLoadedAllSaveStates flag
+        hasLoadedAllSaveStates = states.count >= totalCount
 
         // Update current save state if needed
         if currentSaveState == nil || !states.contains(currentSaveState!) {
             currentSaveState = states.first
+        }
+    }
+
+    /// Increase the limit to load more save states
+    func loadMoreSaveStates() {
+        guard !hasLoadedAllSaveStates else {
+            DLOG("ContinuesSectionViewModel: Already loaded all save states")
+            return
+        }
+
+        let oldLimit = currentLimit
+        let newLimit = min(currentLimit + Self.additionalSaveStateLoadCount, totalSaveStatesCount)
+
+        if newLimit > currentLimit {
+            currentLimit = newLimit
+            DLOG("ContinuesSectionViewModel: Increasing save state limit from \(oldLimit) to \(newLimit) (total: \(totalSaveStatesCount))")
+        } else {
+            DLOG("ContinuesSectionViewModel: No need to increase limit, already at \(currentLimit) of \(totalSaveStatesCount)")
         }
     }
 
@@ -197,6 +251,15 @@ struct HomeContinueSection: SwiftUI.View {
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
     ) private var filteredSaveStates
 
+    /// Total count of save states (without limit)
+    @State private var totalSaveStatesCount: Int = 0
+
+    /// Currently loaded save states (limited subset)
+    @State private var limitedSaveStates: [PVSaveState] = []
+
+    /// Flag to track if the view has appeared
+    @State private var hasAppeared: Bool = false
+
     weak var rootDelegate: PVRootDelegate?
     let defaultHeight: CGFloat = 260
     var consoleIdentifier: String?
@@ -225,21 +288,24 @@ struct HomeContinueSection: SwiftUI.View {
 
         // Create the filter predicate based on console identifier
         let baseFilter = NSPredicate(format: "game != nil")
+        let finalFilter: NSPredicate
+
         if let consoleId = consoleIdentifier {
             let consoleFilter = NSPredicate(format: "game.systemIdentifier == %@", consoleId)
-            let combinedFilter = NSCompoundPredicate(andPredicateWithSubpredicates: [baseFilter, consoleFilter])
-            _filteredSaveStates = ObservedResults(
-                PVSaveState.self,
-                filter: combinedFilter,
-                sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
-            )
+            finalFilter = NSCompoundPredicate(andPredicateWithSubpredicates: [baseFilter, consoleFilter])
         } else {
-            _filteredSaveStates = ObservedResults(
-                PVSaveState.self,
-                filter: baseFilter,
-                sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
-            )
+            finalFilter = baseFilter
         }
+
+        // Initialize with the filter but no limit
+        _filteredSaveStates = ObservedResults(
+            PVSaveState.self,
+            filter: finalFilter,
+            sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
+        )
+
+        // We'll set the total count when the view appears
+        _totalSaveStatesCount = State(initialValue: 0)
     }
 
     var isLandscapePhone: Bool {
@@ -261,8 +327,7 @@ struct HomeContinueSection: SwiftUI.View {
 
     /// Number of pages based on number of save states and items per page
     private var pageCount: Int {
-        let itemsPerPage = viewModel.itemsPerPage
-        return max(1, Int(ceil(Double(filteredSaveStates.count) / Double(itemsPerPage))))
+        viewModel.pageCount
     }
 
     /// Grid columns configuration
@@ -285,11 +350,11 @@ struct HomeContinueSection: SwiftUI.View {
                 VStack(spacing: 0) {
                     // TabView for continues
                     TabView(selection: $viewModel.currentPage) {
-                        if !filteredSaveStates.isEmpty {
+                        if !limitedSaveStates.isEmpty {
                             ForEach(0..<pageCount, id: \.self) { pageIndex in
                                 SaveStatesGridView(
                                     pageIndex: pageIndex,
-                                    filteredSaveStates: Array(filteredSaveStates), // Convert to Array to prevent Realm threading issues
+                                    filteredSaveStates: limitedSaveStates, // Use limited save states
                                     isLandscapePhone: isLandscapePhone,
                                     gridColumns: gridColumns,
                                     adjustedHeight: adjustedHeight,
@@ -350,6 +415,18 @@ struct HomeContinueSection: SwiftUI.View {
             #if !os(tvOS)
             hapticGenerator.prepare()
             #endif
+
+            // Only update the limit when the view first appears
+            if !hasAppeared {
+                hasAppeared = true
+
+                // Set the total count from the filtered save states
+                totalSaveStatesCount = filteredSaveStates.count
+                DLOG("HomeContinueSection: Total save states count: \(totalSaveStatesCount)")
+
+                // Initialize with the initial limit
+                updateSaveStateLimit(ContinuesSectionViewModel.initialSaveStateLimit)
+            }
         }
         .onDisappear {
             // Cancel all tasks and subscriptions
@@ -361,17 +438,44 @@ struct HomeContinueSection: SwiftUI.View {
             // Use weak self to prevent retain cycles
             Task {
                 await MainActor.run {
-                    self.viewModel.updateSaveStates(Array(newValue), isLandscape: self.isLandscapePhone)
+                    // Update total count
+                    self.totalSaveStatesCount = newValue.count
+                    DLOG("HomeContinueSection: Total save states changed to \(self.totalSaveStatesCount)")
+
+                    // Update limited save states with current limit
+                    self.updateSaveStateLimit(self.viewModel.currentLimit)
                 }
             }
         }
         .onChange(of: viewModel.currentPage) { newPage in
             handlePageChange(newPage)
             viewModel.updateCurrentSaveState(forPage: newPage)
+
+            // Check if we need to load more save states
+            if viewModel.shouldLoadMoreSaveStates {
+                viewModel.loadMoreSaveStates()
+                updateSaveStateLimit(viewModel.currentLimit)
+            }
+
             #if !os(tvOS)
             hapticGenerator.impactOccurred()
             #endif
         }
+    }
+
+    /// Updates the limit on the save states by manually filtering the results
+    private func updateSaveStateLimit(_ newLimit: Int) {
+        DLOG("HomeContinueSection: Updating save state limit to \(newLimit) (total available: \(totalSaveStatesCount))")
+
+        // Take only the first newLimit items from filteredSaveStates
+        let allSaveStates = Array(filteredSaveStates)
+        let limitedCount = min(newLimit, allSaveStates.count)
+
+        // Update the limited save states
+        limitedSaveStates = Array(allSaveStates.prefix(limitedCount))
+
+        // Update the view model with the limited save states
+        viewModel.updateSaveStates(limitedSaveStates, isLandscape: isLandscapePhone, totalCount: totalSaveStatesCount)
     }
 
     private func setupGamepadHandling() {
@@ -402,7 +506,7 @@ struct HomeContinueSection: SwiftUI.View {
 
     private func handleButtonPress() {
         if let focused = parentFocusedItem,
-           let saveState = filteredSaveStates.first(where: { $0.id == focused }) {
+           let saveState = limitedSaveStates.first(where: { $0.id == focused }) {
             Task.detached { @MainActor in
                 await self.rootDelegate?.root_load(
                     saveState.game,
@@ -417,7 +521,7 @@ struct HomeContinueSection: SwiftUI.View {
     private func handleHorizontalNavigation(_ value: Float) {
         guard parentFocusedSection == .recentSaveStates else { return }
 
-        let items = filteredSaveStates.map { $0.id }
+        let items = limitedSaveStates.map { $0.id }
         DLOG("HomeContinueSection: Navigation - Total items: \(items.count)")
 
         guard !items.isEmpty else {
@@ -460,12 +564,18 @@ struct HomeContinueSection: SwiftUI.View {
             viewModel.currentPage = newPage
         }
 
+        // Check if we need to load more save states
+        if newPage >= viewModel.pageCount - ContinuesSectionViewModel.loadMoreThreshold && !viewModel.hasLoadedAllSaveStates {
+            viewModel.loadMoreSaveStates()
+            updateSaveStateLimit(viewModel.currentLimit)
+        }
+
         DLOG("HomeContinueSection: Final state - Page: \(newPage), Item: \(items[nextIndex]), Items per page: \(itemsPerPage)")
     }
 
     private func handlePageChange(_ newPage: Int) {
         let itemsPerPage = isLandscapePhone ? 2 : 1
-        let items = filteredSaveStates.map { $0.id }
+        let items = limitedSaveStates.map { $0.id }
 
         DLOG("HomeContinueSection: Page changed to \(newPage)")
 
@@ -511,6 +621,12 @@ private struct SaveStatesGridView: View {
     private var saveStatesForPage: [PVSaveState] {
         let startIndex = pageIndex * viewModel.itemsPerPage
         let endIndex = min(startIndex + viewModel.itemsPerPage, filteredSaveStates.count)
+
+        // Safety check to prevent out of bounds
+        guard startIndex < filteredSaveStates.count, endIndex <= filteredSaveStates.count else {
+            return []
+        }
+
         return Array(filteredSaveStates[startIndex..<endIndex])
     }
 
@@ -543,6 +659,12 @@ private struct SaveStatesGridView: View {
             }
         }
         .padding(.horizontal) // Add padding inside the container
+        .onAppear {
+            // Check if we need to load more save states when this page appears
+            if pageIndex >= viewModel.pageCount - ContinuesSectionViewModel.loadMoreThreshold && !viewModel.hasLoadedAllSaveStates {
+                viewModel.loadMoreSaveStates()
+            }
+        }
     }
 }
 
