@@ -48,5 +48,7 @@
 	<true/>
 	<key>com.apple.private.security.storage.AppDataContainers</key>
 	<true/>
+	<key>aps-environment</key>
+	<string>development</string>
 </dict>
 </plist>
