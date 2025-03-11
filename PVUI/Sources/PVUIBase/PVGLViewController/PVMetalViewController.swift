@@ -343,7 +343,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                     ELOG("Failed to setup effect filter shader: \(error)")
                 }
             } else {
-                ELOG("No filter shader selected for mode: \(renderSettings.metalFilterMode)")
+                WLOG("No filter shader selected for mode: \(renderSettings.metalFilterMode)")
             }
         }
 
