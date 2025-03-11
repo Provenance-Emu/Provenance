@@ -680,6 +680,7 @@ class RomsSyncer: iCloudContainerSyncer {
     var processingFiles = ConcurrentSet<URL>()
     var purgeStatus: GamePurgeStatus = .incomplete
     var previousProcessingCount = 0
+    let multiFileRoms: ConcurrentDictionary<String, [URL]> = [:]
     
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
         self.init(directories: ["ROMs"], notificationCenter: notificationCenter, errorHandler: errorHandler)
@@ -992,6 +993,46 @@ extension URL {
     
     var fileName: String {
         lastPathComponent.removingPercentEncoding ?? lastPathComponent
+    }
+    
+    var multiFileNameKey: String? {
+        guard "cue".caseInsensitiveCompare(pathExtension) == .orderedSame
+                || "bin".caseInsensitiveCompare(pathExtension) == .orderedSame
+                || "ccd".caseInsensitiveCompare(pathExtension) == .orderedSame
+                || "img".caseInsensitiveCompare(pathExtension) == .orderedSame
+                || "sub".caseInsensitiveCompare(pathExtension) == .orderedSame
+                || "m3u".caseInsensitiveCompare(pathExtension) == .orderedSame
+                || "mds".caseInsensitiveCompare(pathExtension) == .orderedSame
+                || "mdf".caseInsensitiveCompare(pathExtension) == .orderedSame
+        else {
+            return nil
+        }
+        var fileName = lastPathComponent
+        fileName.replace(#"\(((Disc)|(Track)) [0-9]{1,3}\)"#, with: "")
+        return fileName
+        
+    }
+}
+
+public class ConcurrentDictionary<Key: Hashable, Value>: ExpressibleByDictionaryLiteral {
+    var dictionary: [Key: Value] = [:]
+    private let queue = DispatchQueue(label: "com.provenance.concurrent.dictionary", attributes: .concurrent)
+    
+    public required init(dictionaryLiteral elements: (Key, Value)...) {
+        dictionary = Dictionary(uniqueKeysWithValues: elements)
+    }
+    
+    subscript(key: Key) -> Value? {
+        get {
+            queue.sync {
+                dictionary[key]
+            }
+        }
+        set {
+            queue.async(flags: .barrier) { [weak self] in
+                self?.dictionary[key] = newValue
+            }
+        }
     }
 }
 
