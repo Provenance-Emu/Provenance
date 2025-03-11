@@ -13,6 +13,7 @@ import RealmSwift
 import PVLibrary
 import PVThemes
 import Combine
+import PVUIBase
 
 enum HomeSectionType: Int, CaseIterable, Sendable {
     case recentSaveStates
@@ -25,7 +26,7 @@ enum HomeSectionType: Int, CaseIterable, Sendable {
 @available(iOS 14, tvOS 14, *)
 struct HomeView: SwiftUI.View {
 
-//    var gameLibrary: PVGameLibrary<RealmDatabaseDriver>!
+    //    var gameLibrary: PVGameLibrary<RealmDatabaseDriver>!
 
     weak var rootDelegate: PVRootDelegate?
     @ObservedObject var viewModel: PVRootViewModel
@@ -54,6 +55,7 @@ struct HomeView: SwiftUI.View {
 
     @ObservedResults(
         PVGame.self,
+        filter: NSPredicate(format: "playCount > 0"),
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
     ) var mostPlayed
 
@@ -88,13 +90,15 @@ struct HomeView: SwiftUI.View {
 
     @State private var showArtworkSourceAlert = false
 
+    @State private var discSelectionAlert: DiscSelectionAlert?
+
     init(
         gameLibrary: PVGameLibrary<RealmDatabaseDriver>? = nil,
         delegate: PVRootDelegate? = nil,
         viewModel: PVRootViewModel,
         showGameInfo: @escaping (String) -> Void
     ) {
-//        self.gameLibrary = gameLibrary
+        //        self.gameLibrary = gameLibrary
         self.rootDelegate = delegate
         self.viewModel = viewModel
         self.showGameInfo = showGameInfo
@@ -123,14 +127,19 @@ struct HomeView: SwiftUI.View {
                 ScrollViewReader { proxy in
                     LazyVStack {
                         continuesSection()
-                        recentlyPlayedSection()
+                            .id("section_continues")
                         favoritesSection()
+                            .id("section_favorites")
+                        recentlyPlayedSection()
+                            .id("section_recent")
                         mostPlayedSection()
                         displayOptionsView()
                         if viewModel.viewGamesAsGrid {
                             showGamesGrid(allGames)
+                                .id("section_allgames")
                         } else {
                             showGamesList(allGames)
+                                .id("section_allgames")
                         }
                     }
                     .onChange(of: focusedItemInSection) { newValue in
@@ -143,6 +152,7 @@ struct HomeView: SwiftUI.View {
                 }
             }
             .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+            .padding(.bottom, 64)
         }
         .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
         .onAppear {
@@ -188,7 +198,7 @@ struct HomeView: SwiftUI.View {
         /// GameContextMenuDelegate
         /// TODO: This is an ugly copy/paste from `ConsolesGameView.swift`
         .sheet(isPresented: $showImagePicker) {
-            #if !os(tvOS)
+#if !os(tvOS)
             ImagePicker(sourceType: .photoLibrary) { image in
                 if let game = gameToUpdateCover {
                     saveArtwork(image: image, forGame: game)
@@ -196,12 +206,12 @@ struct HomeView: SwiftUI.View {
                 showImagePicker = false
                 gameToUpdateCover = nil
             }
-            #endif
+#endif
         }
         .sheet(isPresented: $showArtworkSearch) {
             ArtworkSearchView(
                 initialSearch: gameToUpdateCover?.title ?? "",
-                initialSystem: gameToUpdateCover?.system.enumValue
+                initialSystem: gameToUpdateCover?.system?.enumValue ?? SystemIdentifier.Unknown
             ) { selection in
                 if let game = gameToUpdateCover {
                     Task {
@@ -250,7 +260,7 @@ struct HomeView: SwiftUI.View {
                 let viewModel = ContinuesMagementViewModel(
                     driver: driver,
                     gameTitle: game.title,
-                    systemTitle: game.system.name,
+                    systemTitle: game.system?.name ?? "",
                     numberOfSaves: game.saveStates.count,
                     onLoadSave: { saveID in
                         continuesManagementState = nil
@@ -293,6 +303,29 @@ struct HomeView: SwiftUI.View {
             }
         }
         .uiKitAlert(
+            "Select Disc",
+            message: "Choose which disc to load",
+            isPresented: Binding(
+                get: { discSelectionAlert != nil },
+                set: { if !$0 { discSelectionAlert = nil } }
+            ),
+            preferredContentSize: CGSize(width: 500, height: 300)
+        ) {
+            guard let alert = discSelectionAlert else {
+                return [UIAlertAction(title: "Cancel", style: .cancel)]
+            }
+
+            let actions = alert.discs.map { (disc: DiscSelectionAlert.Disc) -> UIAlertAction in
+                UIAlertAction(title: disc.fileName, style: .default) { _ in
+                    Task {
+                        await rootDelegate?.root_loadPath(disc.path, forGame: alert.game, sender: nil, core: nil, saveState: nil)
+                    }
+                }
+            }
+
+            return actions + [UIAlertAction(title: "Cancel", style: .cancel)]
+        }
+        .uiKitAlert(
             "Choose Artwork Source",
             message: "Select artwork from your photo library or search online sources",
             isPresented: $showArtworkSourceAlert,
@@ -319,24 +352,24 @@ struct HomeView: SwiftUI.View {
             .receive(on: DispatchQueue.main)
             .sink { event in
                 guard !viewModel.isMenuVisible else {
-                    print("🎮 HomeView: Ignoring input - menu visible")
+                    DLOG("🎮 HomeView: Ignoring input - menu visible")
                     return
                 }
 
-                print("🎮 HomeView: Received event: \(event)")
+                DLOG("🎮 HomeView: Received event: \(event)")
 
                 switch event {
                 case .buttonPress(true):
-                    print("🎮 HomeView: Button press detected")
+                    DLOG("🎮 HomeView: Button press detected")
                     handleButtonPress()
                 case .verticalNavigation(let value, true):
-                    print("🎮 HomeView: Vertical navigation: \(value)")
-                    print("🎮 HomeView: Current section: \(String(describing: focusedSection))")
-                    print("🎮 HomeView: Current item: \(String(describing: focusedItemInSection))")
-                    print("🎮 HomeView: Available sections: \(availableSections)")
+                    DLOG("🎮 HomeView: Vertical navigation: \(value)")
+                    DLOG("🎮 HomeView: Current section: \(String(describing: focusedSection))")
+                    DLOG("🎮 HomeView: Current item: \(String(describing: focusedItemInSection))")
+                    DLOG("🎮 HomeView: Available sections: \(availableSections)")
                     handleVerticalNavigation(value)
                 case .horizontalNavigation(let value, true):
-                    print("🎮 HomeView: Horizontal navigation: \(value)")
+                    DLOG("🎮 HomeView: Horizontal navigation: \(value)")
                     handleHorizontalNavigation(value)
                 default:
                     break
@@ -390,6 +423,7 @@ struct HomeView: SwiftUI.View {
         DLOG("Menu toggle requested")
     }
 
+    @ViewBuilder
     private func displayOptionsView() -> some View {
         GamesDisplayOptionsView(
             sortAscending: viewModel.sortGamesAscending,
@@ -402,6 +436,7 @@ struct HomeView: SwiftUI.View {
         .padding(.bottom, 16)
     }
 
+    @ViewBuilder
     private func showGamesList(_ games: Results<PVGame>) -> some View {
         LazyVStack(spacing: 8) {
             ForEach(games, id: \.self) { game in
@@ -435,6 +470,7 @@ struct HomeView: SwiftUI.View {
         }
     }
 
+    @ViewBuilder
     private func showGamesGrid(_ games: Results<PVGame>) -> some View {
         var gameLibraryItemsPerRow: Int {
             let gamesPerRow = min(8, games.count)
@@ -510,10 +546,10 @@ struct HomeView: SwiftUI.View {
     }
 
     private func handleVerticalNavigation(_ yValue: Float) {
-        print("🎮 HomeView: Vertical navigation: \(yValue)")
+        DLOG("🎮 HomeView: Vertical navigation: \(yValue)")
 
         guard let currentSection = focusedSection else {
-            print("🎮 HomeView: No section focused, setting initial focus")
+            DLOG("🎮 HomeView: No section focused, setting initial focus")
             setInitialFocus()
             return
         }
@@ -530,20 +566,20 @@ struct HomeView: SwiftUI.View {
                     let newIndex = currentIndex - itemsPerRow
                     if newIndex >= 0 {
                         focusedItemInSection = items[newIndex]
-                        print("🎮 HomeView: Moving up in grid to index: \(newIndex)")
+                        DLOG("🎮 HomeView: Moving up in grid to index: \(newIndex)")
                         return
                     }
                     // If we can't move up in the grid, try moving to previous section
                     if let prevSection = getPreviousSection(from: currentSection) {
                         focusedSection = prevSection
                         focusedItemInSection = getLastItemInSection(prevSection)
-                        print("🎮 HomeView: Moving to previous section: \(prevSection)")
+                        DLOG("🎮 HomeView: Moving to previous section: \(prevSection)")
                     }
                 } else { // Moving down
                     let newIndex = currentIndex + itemsPerRow
                     if newIndex < items.count {
                         focusedItemInSection = items[newIndex]
-                        print("🎮 HomeView: Moving down in grid to index: \(newIndex)")
+                        DLOG("🎮 HomeView: Moving down in grid to index: \(newIndex)")
                     }
                 }
             } else {
@@ -575,8 +611,8 @@ struct HomeView: SwiftUI.View {
               let currentIndex = items.firstIndex(of: currentItem) else { return }
 
         let newIndex = xValue < 0 ?
-            max(0, currentIndex - 1) :
-            min(items.count - 1, currentIndex + 1)
+        max(0, currentIndex - 1) :
+        min(items.count - 1, currentIndex + 1)
 
         focusedItemInSection = items[newIndex]
     }
@@ -602,8 +638,8 @@ struct HomeView: SwiftUI.View {
         guard let currentIndex = sections.firstIndex(of: currentSection) else { return nil }
 
         let newIndex = direction > 0 ?
-            currentIndex - 1 : // Moving up
-            currentIndex + 1   // Moving down
+        currentIndex - 1 : // Moving up
+        currentIndex + 1   // Moving down
 
         guard newIndex >= 0 && newIndex < sections.count else { return nil }
         return sections[newIndex]
@@ -615,8 +651,8 @@ struct HomeView: SwiftUI.View {
               let currentIndex = items.firstIndex(of: currentItem) else { return false }
 
         let newIndex = direction < 0 ?
-            max(0, currentIndex - 1) :
-            min(items.count - 1, currentIndex + 1)
+        max(0, currentIndex - 1) :
+        min(items.count - 1, currentIndex + 1)
 
         focusedItemInSection = items[newIndex]
         return true
@@ -625,8 +661,8 @@ struct HomeView: SwiftUI.View {
     private func moveBetweenSections(_ currentSection: HomeSectionType, direction: Float) -> Bool {
         if let nextSection = getNextSection(from: currentSection, direction: direction) {
             let newItem = direction < 0 ?
-                getFirstItemInSection(nextSection) :
-                getLastItemInSection(nextSection)
+            getFirstItemInSection(nextSection) :
+            getLastItemInSection(nextSection)
 
             focusedSection = nextSection
             focusedItemInSection = newItem
@@ -916,6 +952,7 @@ struct HomeView: SwiftUI.View {
 extension HomeView: GameContextMenuDelegate {
 
 #if !os(tvOS)
+    @ViewBuilder
     internal func imagePickerView() -> some View {
         ImagePicker(sourceType: .photoLibrary) { image in
             if let game = gameToUpdateCover {
@@ -927,6 +964,7 @@ extension HomeView: GameContextMenuDelegate {
     }
 #endif
 
+    @ViewBuilder
     internal func renameAlertView() -> some View {
         Group {
             TextField("New name", text: $newGameTitle)
@@ -976,7 +1014,8 @@ extension HomeView: GameContextMenuDelegate {
         DLOG("GameContextMenu: Attempting to save artwork for game: \(game.title)")
 
         let uniqueID = UUID().uuidString
-        let key = "artwork_\(game.md5)_\(uniqueID)"
+        let md5: String = game.md5 ?? ""
+        let key = "artwork_\(md5)_\(uniqueID)"
         DLOG("Generated key for image: \(key)")
 
         do {
@@ -1039,5 +1078,33 @@ extension HomeView: GameContextMenuDelegate {
         DLOG("Setting gameToUpdateCover with game: \(game.title)")
         gameToUpdateCover = game
         showArtworkSourceAlert = true
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
+        // Only show disc selection if there are multiple associated files
+        let associatedFiles = game.relatedFiles.toArray()
+        let uniqueFiles = Set(associatedFiles.compactMap { $0.url?.path })
+
+        guard uniqueFiles.count > 1 else {
+            return
+        }
+
+        presentDiscSelectionAlert(for: game, rootDelegate: rootDelegate)
+    }
+
+    private func presentDiscSelectionAlert(for game: PVGame, rootDelegate: PVRootDelegate?) {
+        let discs = game.relatedFiles.toArray()
+        let alertDiscs: [DiscSelectionAlert.Disc] = discs.compactMap { (disc: PVFile?) -> DiscSelectionAlert.Disc? in
+            guard let disc = disc, let url = disc.url else {
+                WLOG("nil file for disc")
+                return nil
+            }
+            return DiscSelectionAlert.Disc(fileName: disc.fileName, path: url.path)
+        }
+
+        self.discSelectionAlert = DiscSelectionAlert(
+            game: game,
+            discs: alertDiscs
+        )
     }
 }

@@ -50,6 +50,8 @@ public class AppBootupState: ObservableObject {
                 return "Database Initialized"
             case .initializingLibrary:
                 return "Initializing Library"
+            case .completed:
+                return "Bootup Completed"
             case (let error):
                 return "Error with library: \(error)"
             }
@@ -57,20 +59,35 @@ public class AppBootupState: ObservableObject {
     }
 
     /// The current state of the bootup process
-    @Published public  private(set) var currentState: State = .notStarted {
+    @Published public private(set) var currentState: State = .notStarted {
+        willSet {
+            objectWillChange.send()
+        }
         didSet {
+            ILOG("Did set currentState to \(currentState.localizedDescription)")
             if currentState == .completed {
                 isBootupCompleted = true
+                /// Force a UI update
+                DispatchQueue.main.async {
+                    self.objectWillChange.send()
+                }
             }
         }
     }
 
     /// Whether the bootup process has completed
-    @Published public private(set) var isBootupCompleted = false
+    @Published public private(set) var isBootupCompleted = false {
+        willSet {
+            objectWillChange.send()
+        }
+    }
 
     /// Function to transition to a new state
     public func transition(to state: State) {
         guard !isBootupCompleted else { return }
-        currentState = state
+
+        if state != currentState {
+            currentState = state
+        }
     }
 }

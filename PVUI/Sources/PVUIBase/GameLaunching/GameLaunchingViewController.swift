@@ -27,30 +27,26 @@ private let WIKI_BIOS_URL = "https://wiki.provenance-emu.com/installation-and-us
 
  */
 
-public protocol GameLaunchingViewController: AnyObject {
+public protocol GameLaunchingViewController {
     func canLoad(_ game: PVGame) async throws
-    func load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async
+    func load(_ game: PVGame,
+              sender: Any?,
+              core: PVCore?,
+              saveState: PVSaveState?) async
     func openSaveState(_ saveState: PVSaveState) async
     func updateRecentGames(_ game: PVGame)
-    func presentCoreSelection(forGame game: PVGame, sender: Any?)
+    func presentCoreSelection(forGame game:
+                              PVGame, sender: Any?)
+    
+    func displayAndLogError(withTitle title: String,
+                            message: String,
+                            customActions: [UIAlertAction]?)
 }
 
-extension GameLaunchingViewController {
-    @MainActor func openSaveState(withID objectId: String) async {
-        let realm = RomDatabase.sharedInstance
-        if let object = realm.object(ofType: PVSaveState.self, wherePrimaryKeyEquals: objectId) {
-            @ThreadSafe var threadObject = object
-            await openSaveState(threadObject!)
-        }
-    }
-}
-
-public
-extension GameLaunchingViewController where Self: UIViewController {
-
+public extension GameLaunchingViewController {
+    
     //MARK: Default protocol implementation `GameLaunchingViewController`
     @MainActor
-
     func canLoad(_ game: PVGame) async throws {
         guard let system = game.system else {
             throw GameLaunchingError.systemNotFound
@@ -58,351 +54,15 @@ extension GameLaunchingViewController where Self: UIViewController {
 
         try await biosCheck(system: system)
     }
-
-    @MainActor
-    func load(_ game: PVGame, sender: Any? = nil, core: PVCore? = nil, saveState: PVSaveState? = nil) async {
-        guard game.realm != nil else {
-            return
-        }
-
-        // Show loading HUD
-        let hud = MBProgressHUD.showAdded(to: self.view, animated: true)
-        hud.label.text = "Loading \(game.title)..."
-        hud.mode = .indeterminate
-
-        defer {
-            // Ensure HUD is hidden when function exits
-            DispatchQueue.main.async {
-                hud.hide(animated: true, afterDelay: 0.1)
-            }
-        }
-
-        @ThreadSafe var game: PVGame! = game
-        @ThreadSafe var core = core
-        @ThreadSafe var saveState = saveState
-
-        guard !(presentedViewController is PVEmulatorViewController) else {
-            let currentGameVC = presentedViewController as! PVEmulatorViewController
-            displayAndLogError(withTitle: "Cannot open new game", message: "A game is already running the game \(currentGameVC.game.title).")
-            return
-        }
-
-        if saveState != nil {
-            let path = saveState!.file.url.path
-            ILOG("Opening with save state at path: \(path)")
-            do {
-                try await downloadFileIfNeeded(saveState!.file.url)
-            } catch {
-                ELOG("Save state was not downloaded")
-                // TODO: Re-throw
-                saveState = nil
-            }
-        }
-
-        // Check if file exists
-        let offline: Bool = !(game.file.online)
-        if  offline {
-            do {
-                try await downloadFileIfNeeded(game.file.url)
-            } catch {
-                displayAndLogError(withTitle: "Cannot open game",
-                                   message: "The ROM file for this game cannot be found. Try re-importing the file for this game.\n\(game.file.fileName)")
-                return
-            }
-        }
-
-        // Pre-flight
-        guard let system = game.system else {
-            displayAndLogError(withTitle: "Cannot open game", message: "Requested system cannot be found for game '\(game.title)'.")
-            return
-        }
-
-        do {
-            ///
-            try await downloadFileIfNeeded(game.file.url)
-
-            try await canLoad(game)
-            VLOG("canLoad \(game.title)")
-            // Init emulator VC
-
-            guard let system = game.system else {
-                displayAndLogError(withTitle: "Cannot open game", message: "No system found matching '\(game.systemIdentifier)'.")
-                return
-            }
-
-            VLOG("\(game.title) matched system \(system.name)\n Cores: \(system.cores.map{$0.principleClass}.joined(separator: ", "))")
-
-            // Are unsupported cores enabled
-            let unsupportedCores = Defaults[.unsupportedCores]
-
-            let cores: [PVCore] = system.cores.filter {
-                (!$0.disabled || unsupportedCores) && $0.hasCoreClass && !(AppState.shared.isAppStore && $0.appStoreDisabled && !unsupportedCores)
-            }.sorted(by: { $0.projectName < $1.projectName })
-
-            guard !cores.isEmpty else {
-                displayAndLogError(withTitle: "Cannot open game", message: "No core found for game system '\(system.shortName)'.")
-                return
-            }
-
-            var selectedCore: PVCore?
-
-            // If a core is passed in and it's valid for this system, use it.
-            if let saveState = saveState {
-                if cores.contains(saveState.core) {
-                    selectedCore = saveState.core
-                } else {
-                    ELOG("Core doesn't match save state system")
-                    displayAndLogError(withTitle: "Cannot open game", message: "Available cores does not match core used to save state.")
-                    return
-                }
-            }
-
-            // See if the user chose a core
-            if selectedCore == nil, let core = core, cores.contains(core) {
-                selectedCore = core
-            }
-
-            // Check if multiple cores can launch this rom
-            if selectedCore == nil, cores.count > 1 {
-                let coresString: String = cores.map({ $0.projectName }).joined(separator: ", ")
-                ILOG("Multiple cores found for system \(system.name). Cores: \(coresString)")
-
-                // See if the system or game has a default selection already set
-                if let userSelecion = game.userPreferredCoreID ?? system.userPreferredCoreID,
-                   let chosenCore = cores.first(where: { $0.identifier == userSelecion }) {
-                    ILOG("User has already selected core \(chosenCore.projectName) for \(system.shortName)")
-                    let presentingView = self.view
-                    Task { @MainActor in
-                        await presentEMU(withCore: chosenCore, forGame: game, source: sender as? UIView ?? presentingView)
-                    }
-                    return
-                }
-
-                // User has no core preference, present dialogue to pick
-                presentCoreSelection(forGame: game, sender: sender)
-            } else {
-                guard let selectedCore = selectedCore ?? cores.first else {
-                    displayAndLogError(withTitle: "Cannot open game", message: "No core found.")
-                    return
-                }
-                let presentingView = self.view
-                @ThreadSafe var core = core
-                @ThreadSafe var theadsafeCore = game
-                @ThreadSafe var saveState = saveState
-
-                await presentEMU(withCore: selectedCore, forGame: game, fromSaveState: saveState, source: sender as? UIView ?? presentingView)
-                //                let contentId : String = "\(system.shortName):\(game.title)"
-                //                let customAttributes : [String : Any] = ["timeSpent" : game.timeSpentInGame, "md5" : game.md5Hash]
-                //                Answers.logContentView(withName: "Play ROM",
-                //                                       contentType: "Gameplay",
-                //                                       contentId: contentId,
-                //                                       customAttributes: customAttributes)
-            }
-        } catch let GameLaunchingError.missingBIOSes(missingBIOSes) {
-            // Create missing BIOS directory to help user out
-            PVEmulatorConfiguration.createBIOSDirectory(forSystemIdentifier: system.enumValue)
-
-            let missingFilesString = missingBIOSes.joined(separator: "\n")
-            let relativeBiosPath = "Documents/BIOS/\(system.identifier)/"
-
-            let message = "\(system.shortName) requires BIOS files to run games. Ensure the following files are inside \(relativeBiosPath)\n\(missingFilesString)"
-#if os(iOS)
-            let guideAction = UIAlertAction(title: "Guide", style: .default, handler: { _ in
-                Task {@MainActor in
-                    UIApplication.shared.open(URL(string: WIKI_BIOS_URL)!, options: [:], completionHandler: nil)
-                }
-            })
-            displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [guideAction])
-#else
-            displayAndLogError(withTitle: "Missing BIOS files", message: message)
-#endif
-        } catch GameLaunchingError.systemNotFound {
-            displayAndLogError(withTitle: "Core not found", message: "No Core was found to run system '\(system.name)'.")
-        } catch let GameLaunchingError.generic(message) {
-            displayAndLogError(withTitle: "Cannot open game", message: message)
-        } catch {
-            displayAndLogError(withTitle: "Cannot open game", message: "Unknown error: \(error.localizedDescription)")
+    
+    @MainActor func openSaveState(withID objectId: String) async {
+        let realm = RomDatabase.sharedInstance
+        if let object = realm.object(ofType: PVSaveState.self, wherePrimaryKeyEquals: objectId) {
+            @ThreadSafe var threadObject = object
+            await openSaveState(threadObject!)
         }
     }
-
-    @MainActor
-
-    func openSaveState(_ saveState: PVSaveState) async {
-
-        if let gameVC = presentedViewController as? PVEmulatorViewController {
-            //            try? RomDatabase.sharedInstance.writeTransaction {
-            try? saveState.realm!.write {
-                saveState.lastOpened = Date()
-            }
-
-            gameVC.core.setPauseEmulation(true)
-
-            do {
-                let path = saveState.file.url.path
-                try await gameVC.core.loadState(fromFileAtPath: path)
-                gameVC.core.setPauseEmulation(false)
-            } catch {
-                let description = error.localizedDescription
-                let reason = (error as NSError).localizedFailureReason
-
-                let msg = "Failed to load save state: \(description) \(reason ?? "")"
-                self.presentError(msg, source: self.view) {
-                    gameVC.core.setPauseEmulation(false)
-                }
-            }
-        } else {
-            presentWarning("No core loaded", source: self.view)
-        }
-    }
-
-
-    func updateRecentGames(_ game: PVGame) {
-        let database = RomDatabase.sharedInstance
-        RomDatabase.refresh()
-
-        let recents: Results<PVRecentGame> = database.all(PVRecentGame.self)
-
-        let recentsMatchingGame = database.all(PVRecentGame.self, where: #keyPath(PVRecentGame.game.md5Hash), value: game.md5Hash)
-        let recentToDelete = recentsMatchingGame.first
-        if let recentToDelete = recentToDelete {
-            do {
-                try database.delete(recentToDelete)
-            } catch {
-                ELOG("Failed to delete recent: \(error.localizedDescription)")
-            }
-        }
-
-        if recents.count >= PVMaxRecentsCount() {
-            // TODO: This should delete more than just the last incase we had an overflow earlier
-            if let oldestRecent: PVRecentGame = recents.sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false).last {
-                do {
-                    try database.delete(oldestRecent)
-                } catch {
-                    ELOG("Failed to delete recent: \(error.localizedDescription)")
-                }
-            }
-        }
-
-        if let currentRecent = game.recentPlays.first {
-            do {
-                currentRecent.lastPlayedDate = Date()
-                try database.add(currentRecent, update: true)
-            } catch {
-                ELOG("Failed to update Recent Game entry. \(error.localizedDescription)")
-            }
-        } else {
-            // TODO: Add PVCore
-            let newRecent = PVRecentGame(withGame: game)
-            do {
-                try database.add(newRecent, update: false)
-
-                let activity = game.spotlightActivity
-                // Make active, causes it to index also
-                userActivity = activity
-            } catch {
-                ELOG("Failed to create Recent Game entry. \(error.localizedDescription)")
-            }
-        }
-    }
-
-
-    @MainActor
-    func presentCoreSelection(forGame game: PVGame, sender: Any?) {
-        guard let system = game.system else {
-            ELOG("No system for game \(game.title)")
-            return
-        }
-
-        // Are unsupported cores enabled
-        let unsupportedCores = Defaults[.unsupportedCores]
-
-        let cores: [PVCore] = system.cores.filter {
-            (!$0.disabled || unsupportedCores) && $0.hasCoreClass && !(AppState.shared.isAppStore && $0.appStoreDisabled && !unsupportedCores)
-        }.sorted(by: { $0.projectName < $1.projectName })
-
-        let coreChoiceAlert = UIAlertController(title: "Multiple cores found",
-                                                message: "Select which core to use with this game.",
-                                                preferredStyle: .actionSheet)
-#if os(macOS) || targetEnvironment(macCatalyst)
-        if let senderView = sender as? UIView ?? self.view {
-            coreChoiceAlert.popoverPresentationController?.sourceView = senderView
-            coreChoiceAlert.popoverPresentationController?.sourceRect = senderView.bounds
-        } else {
-            ELOG("Nil senderView")
-            assertionFailure("Nil senderview")
-        }
-#else
-        if traitCollection.userInterfaceIdiom == .pad, let senderView = sender as? UIView ?? self.view {
-            coreChoiceAlert.popoverPresentationController?.sourceView = senderView
-            coreChoiceAlert.popoverPresentationController?.sourceRect = senderView.bounds
-        }
-#endif
-
-        for core in cores {
-            let action = UIAlertAction(title: core.projectName, style: .default) { [unowned self] _ in
-                let message = "Open with \(core.projectName)…"
-                let alwaysUseAlert = UIAlertController(title: nil, message: message, preferredStyle: .actionSheet)
-#if os(macOS) || targetEnvironment(macCatalyst)
-                if let senderView = sender as? UIView ?? self.view {
-                    alwaysUseAlert.popoverPresentationController?.sourceView = senderView
-                    alwaysUseAlert.popoverPresentationController?.sourceRect = senderView.bounds
-                } else {
-                    ELOG("Nil senderView")
-                    assertionFailure("Nil senderview")
-                }
-#else
-                if self.traitCollection.userInterfaceIdiom == .pad, let senderView = sender as? UIView ?? self.view {
-                    alwaysUseAlert.popoverPresentationController?.sourceView = senderView
-                    alwaysUseAlert.popoverPresentationController?.sourceRect = senderView.bounds
-                }
-#endif
-
-                let thisTimeOnlyAction = UIAlertAction(title: "This time", style: .default, handler: { _ in
-                    Task { @MainActor in
-                        await self.presentEMU(withCore: core, forGame: game, source: sender as? UIView ?? self.view)
-                    }
-                })
-                let alwaysThisGameAction = UIAlertAction(title: "Always for this game", style: .default, handler: { [unowned self] _ in
-                    try! RomDatabase.sharedInstance.writeTransaction {
-                        game.userPreferredCoreID = core.identifier
-                    }
-                    Task { @MainActor in
-                        await self.presentEMU(withCore: core, forGame: game, source: sender as? UIView ?? self.view)
-                    }
-                })
-                let alwaysThisSystemAction = UIAlertAction(title: "Always for this system", style: .default, handler: { [unowned self] _ in
-                    try! RomDatabase.sharedInstance.writeTransaction {
-                        system.userPreferredCoreID = core.identifier
-                    }
-                    Task { @MainActor in
-                        await self.presentEMU(withCore: core, forGame: game, source: sender as? UIView ?? self.view)
-                    }
-                })
-
-                alwaysUseAlert.addAction(thisTimeOnlyAction)
-                alwaysUseAlert.addAction(alwaysThisGameAction)
-                alwaysUseAlert.addAction(alwaysThisSystemAction)
-
-                self.present(alwaysUseAlert, animated: true)
-            }
-
-            coreChoiceAlert.addAction(action)
-        }
-
-        coreChoiceAlert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .destructive, handler: nil))
-
-        present(coreChoiceAlert, animated: true)
-    }
-
-    // MARK: - Private
-    private func getExpectedFilename(_ bios:BIOS) -> String {
-        var expectedFilename=bios.expectedFilename
-        if expectedFilename.contains("|") {
-            expectedFilename=expectedFilename.components(separatedBy: "|")[0]
-        }
-        return expectedFilename
-    }
-
+    
     @MainActor
     private func biosCheck(system: PVSystem) async throws {
         guard system.requiresBIOS else {
@@ -538,8 +198,399 @@ extension GameLaunchingViewController where Self: UIViewController {
             throw GameLaunchingError.missingBIOSes(missingBIOSES)
         }
     }
+    
+    
+    func updateRecentGames(_ game: PVGame) {
+        let database = RomDatabase.sharedInstance
+        RomDatabase.refresh()
 
-    private func displayAndLogError(withTitle title: String, message: String, customActions: [UIAlertAction]? = nil) {
+        let recents: Results<PVRecentGame> = database.all(PVRecentGame.self)
+
+        let recentsMatchingGame = database.all(PVRecentGame.self, where: #keyPath(PVRecentGame.game.md5Hash), value: game.md5Hash)
+        let recentToDelete = recentsMatchingGame.first
+        if let recentToDelete = recentToDelete {
+            do {
+                try database.delete(recentToDelete)
+            } catch {
+                ELOG("Failed to delete recent: \(error.localizedDescription)")
+            }
+        }
+
+        if recents.count >= PVMaxRecentsCount() {
+            // TODO: This should delete more than just the last incase we had an overflow earlier
+            if let oldestRecent: PVRecentGame = recents.sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false).last {
+                do {
+                    try database.delete(oldestRecent)
+                } catch {
+                    ELOG("Failed to delete recent: \(error.localizedDescription)")
+                }
+            }
+        }
+
+        if let currentRecent = game.recentPlays.first {
+            do {
+                currentRecent.lastPlayedDate = Date()
+                try database.add(currentRecent, update: true)
+            } catch {
+                ELOG("Failed to update Recent Game entry. \(error.localizedDescription)")
+            }
+        } else {
+            // TODO: Add PVCore
+            let newRecent = PVRecentGame(withGame: game)
+            do {
+                try database.add(newRecent, update: false)
+
+                let responder = self as? UIResponder ?? UIApplication.shared
+                let activity = game.spotlightActivity
+                // Make active, causes it to index also
+                responder.userActivity = activity
+            } catch {
+                ELOG("Failed to create Recent Game entry. \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func doLoad(_ game: PVGame) async throws {
+        guard let system = game.system else {
+            throw GameLaunchingError.systemNotFound
+        }
+
+        try await biosCheck(system: system)
+    }
+
+    // MARK: - Private
+    private func getExpectedFilename(_ bios:BIOS) -> String {
+        var expectedFilename=bios.expectedFilename
+        if expectedFilename.contains("|") {
+            expectedFilename=expectedFilename.components(separatedBy: "|")[0]
+        }
+        return expectedFilename
+    }
+}
+
+import Intents
+
+public
+extension GameLaunchingViewController where Self: UIViewController {
+
+
+    func donateShortcut(forGame game: PVGame) {
+        let activity = NSUserActivity(activityType: "com.provenance-emu.provenance.openMD5")
+        activity.title = "Open \(game.title) in Provenance"
+        activity.userInfo = ["url": "provenance://open?md5=\(game.md5)"]
+        activity.isEligibleForSearch = true
+        #if !os(tvOS)
+        activity.isEligibleForPrediction = true
+        activity.persistentIdentifier = NSUserActivityPersistentIdentifier("com.provenance-emu.provenance.openMD5")
+        #endif
+        
+        self.userActivity = activity
+        self.userActivity?.becomeCurrent()
+    }
+    
+    @MainActor
+    func load(_ game: PVGame, sender: Any? = nil, core: PVCore? = nil, saveState: PVSaveState? = nil) async {
+        guard game.realm != nil else {
+            return
+        }
+
+        // Show loading HUD
+        let hud = MBProgressHUD.showAdded(to: self.view, animated: true)
+        hud.label.text = "Loading \(game.title)..."
+        hud.mode = .indeterminate
+
+        defer {
+            // Ensure HUD is hidden when function exits
+            DispatchQueue.main.async {
+                hud.hide(animated: true, afterDelay: 0.1)
+            }
+        }
+
+        @ThreadSafe var game: PVGame! = game
+        @ThreadSafe var core = core
+        @ThreadSafe var saveState = saveState
+        
+        donateShortcut(forGame: game)
+
+        guard !(presentedViewController is PVEmualatorControllerProtocol) else {
+            let currentGameVC = presentedViewController as! PVEmualatorControllerProtocol
+            displayAndLogError(withTitle: "Cannot open new game", message: "A game is already running the game \(currentGameVC.game.title).")
+            return
+        }
+
+        if saveState != nil {
+            let path = saveState!.file!.url!.path
+            ILOG("Opening with save state at path: \(path)")
+            do {
+                try await downloadFileIfNeeded(saveState!.file!.url!)
+            } catch {
+                ELOG("Save state was not downloaded")
+                // TODO: Re-throw
+                saveState = nil
+            }
+        }
+
+        // Check if file exists
+        let offline: Bool = !(game.file?.online ?? true)
+        if  offline {
+            do {
+                try await downloadFileIfNeeded(game.file?.url)
+            } catch {
+                displayAndLogError(withTitle: "Cannot open game",
+                                   message: "The ROM file for this game cannot be found. Try re-importing the file for this game.\n\(game.file?.fileName ?? "null")")
+                return
+            }
+        }
+
+        // Pre-flight
+        guard let system = game.system else {
+            displayAndLogError(withTitle: "Cannot open game", message: "Requested system cannot be found for game '\(game.title)'.")
+            return
+        }
+
+        do {
+            ///
+            if let url = game.file?.url {
+                try await downloadFileIfNeeded(url)
+            }
+
+            try await canLoad(game)
+            VLOG("canLoad \(game.title)")
+            // Init emulator VC
+
+            guard let system = game.system else {
+                displayAndLogError(withTitle: "Cannot open game", message: "No system found matching '\(game.systemIdentifier)'.")
+                return
+            }
+
+            VLOG("\(game.title) matched system \(system.name)\n Cores: \(system.cores.map{$0.principleClass}.joined(separator: ", "))")
+
+            // Are unsupported cores enabled
+            let unsupportedCores = Defaults[.unsupportedCores]
+
+            let cores: [PVCore] = system.cores.filter {
+                (!$0.disabled || unsupportedCores) && $0.hasCoreClass && !(AppState.shared.isAppStore && $0.appStoreDisabled && !unsupportedCores)
+            }.sorted { a, b in
+                // If one has "retroarch" and the other doesn't, non-retroarch comes first
+                let aHasRetroarch = a.projectName.localizedCaseInsensitiveContains("retroarch")
+                let bHasRetroarch = b.projectName.localizedCaseInsensitiveContains("retroarch")
+                
+                if aHasRetroarch != bHasRetroarch {
+                    return !aHasRetroarch // non-retroarch comes first
+                }
+                
+                // Within each group, sort alphabetically
+                return a.projectName < b.projectName
+            }
+
+            guard !cores.isEmpty else {
+                displayAndLogError(withTitle: "Cannot open game", message: "No core found for game system '\(system.shortName)'.")
+                return
+            }
+
+            var selectedCore: PVCore?
+
+            // If a core is passed in and it's valid for this system, use it.
+            if let saveState = saveState {
+                if cores.contains(saveState.core) {
+                    selectedCore = saveState.core
+                } else {
+                    ELOG("Core doesn't match save state system")
+                    displayAndLogError(withTitle: "Cannot open game", message: "Available cores does not match core used to save state.")
+                    return
+                }
+            }
+
+            // See if the user chose a core
+            if selectedCore == nil, let core = core, cores.contains(core) {
+                selectedCore = core
+            }
+
+            // Check if multiple cores can launch this rom
+            if selectedCore == nil, cores.count > 1 {
+                let coresString: String = cores.map({ $0.projectName }).joined(separator: ", ")
+                ILOG("Multiple cores found for system \(system.name). Cores: \(coresString)")
+
+                // See if the system or game has a default selection already set
+                if let userSelecion = game.userPreferredCoreID ?? system.userPreferredCoreID,
+                   let chosenCore = cores.first(where: { $0.identifier == userSelecion }) {
+                    ILOG("User has already selected core \(chosenCore.projectName) for \(system.shortName)")
+                    let presentingView = self.view
+                    Task { @MainActor in
+                        await presentEMU(withCore: chosenCore, forGame: game, source: sender as? UIView ?? presentingView)
+                    }
+                    return
+                }
+
+                // User has no core preference, present dialogue to pick
+                presentCoreSelection(forGame: game, sender: sender)
+            } else {
+                guard let selectedCore = selectedCore ?? cores.first else {
+                    displayAndLogError(withTitle: "Cannot open game", message: "No core found.")
+                    return
+                }
+                let presentingView = self.view
+                @ThreadSafe var core = core
+                @ThreadSafe var theadsafeCore = game
+                @ThreadSafe var saveState = saveState
+
+                await presentEMU(withCore: selectedCore, forGame: game, fromSaveState: saveState, source: sender as? UIView ?? presentingView)
+                //                let contentId : String = "\(system.shortName):\(game.title)"
+                //                let customAttributes : [String : Any] = ["timeSpent" : game.timeSpentInGame, "md5" : game.md5Hash]
+                //                Answers.logContentView(withName: "Play ROM",
+                //                                       contentType: "Gameplay",
+                //                                       contentId: contentId,
+                //                                       customAttributes: customAttributes)
+            }
+        } catch let GameLaunchingError.missingBIOSes(missingBIOSes) {
+            // Create missing BIOS directory to help user out
+            PVEmulatorConfiguration.createBIOSDirectory(forSystemIdentifier: system.enumValue)
+
+            let missingFilesString = missingBIOSes.joined(separator: "\n")
+            let relativeBiosPath = "Documents/BIOS/\(system.identifier)/"
+
+            let message = "\(system.shortName) requires BIOS files to run games. Ensure the following files are inside \(relativeBiosPath)\n\(missingFilesString)"
+#if os(iOS)
+            let guideAction = UIAlertAction(title: "Guide", style: .default, handler: { _ in
+                Task {@MainActor in
+                    UIApplication.shared.open(URL(string: WIKI_BIOS_URL)!, options: [:], completionHandler: nil)
+                }
+            })
+            displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [guideAction])
+#else
+            displayAndLogError(withTitle: "Missing BIOS files", message: message)
+#endif
+        } catch GameLaunchingError.systemNotFound {
+            displayAndLogError(withTitle: "Core not found", message: "No Core was found to run system '\(system.name)'.")
+        } catch let GameLaunchingError.generic(message) {
+            displayAndLogError(withTitle: "Cannot open game", message: message)
+        } catch {
+            displayAndLogError(withTitle: "Cannot open game", message: "Unknown error: \(error.localizedDescription)")
+        }
+    }
+
+    @MainActor
+    func openSaveState(_ saveState: PVSaveState) async {
+
+        if let gameVC = presentedViewController as? PVEmualatorControllerProtocol {
+            //            try? RomDatabase.sharedInstance.writeTransaction {
+            try? saveState.realm!.write {
+                saveState.lastOpened = Date()
+            }
+
+            gameVC.core.setPauseEmulation(true)
+
+            do {
+                if let path = saveState.file?.url?.path {
+                    try await gameVC.core.loadState(fromFileAtPath: path)
+                }
+                gameVC.core.setPauseEmulation(false)
+            } catch {
+                let description = error.localizedDescription
+                let reason = (error as NSError).localizedFailureReason
+
+                let msg = "Failed to load save state: \(description) \(reason ?? "")"
+                self.presentError(msg, source: self.view) {
+                    gameVC.core.setPauseEmulation(false)
+                }
+            }
+        } else {
+            presentWarning("No core loaded", source: self.view)
+        }
+    }
+
+    @MainActor
+    func presentCoreSelection(forGame game: PVGame, sender: Any?) {
+        guard let system = game.system else {
+            ELOG("No system for game \(game.title)")
+            return
+        }
+
+        // Are unsupported cores enabled
+        let unsupportedCores = Defaults[.unsupportedCores]
+
+        let cores: [PVCore] = system.cores.filter {
+            (!$0.disabled || unsupportedCores) && $0.hasCoreClass && !(AppState.shared.isAppStore && $0.appStoreDisabled && !unsupportedCores)
+        }.sorted(by: {
+            !$0.projectName.localizedCaseInsensitiveContains("retroarch") && $0.projectName.localizedCaseInsensitiveContains("retroarch")
+            || $0.projectName < $1.projectName
+        })
+
+        let coreChoiceAlert = UIAlertController(title: "Multiple cores found",
+                                                message: "Select which core to use with this game.",
+                                                preferredStyle: .actionSheet)
+#if os(macOS) || targetEnvironment(macCatalyst)
+        if let senderView = sender as? UIView ?? self.view {
+            coreChoiceAlert.popoverPresentationController?.sourceView = senderView
+            coreChoiceAlert.popoverPresentationController?.sourceRect = senderView.bounds
+        } else {
+            ELOG("Nil senderView")
+            assertionFailure("Nil senderview")
+        }
+#else
+        if traitCollection.userInterfaceIdiom == .pad, let senderView = sender as? UIView ?? self.view {
+            coreChoiceAlert.popoverPresentationController?.sourceView = senderView
+            coreChoiceAlert.popoverPresentationController?.sourceRect = senderView.bounds
+        }
+#endif
+
+        for core in cores {
+            let action = UIAlertAction(title: core.projectName, style: .default) { [unowned self] _ in
+                let message = "Open with \(core.projectName)…"
+                let alwaysUseAlert = UIAlertController(title: nil, message: message, preferredStyle: .actionSheet)
+#if os(macOS) || targetEnvironment(macCatalyst)
+                if let senderView = sender as? UIView ?? self.view {
+                    alwaysUseAlert.popoverPresentationController?.sourceView = senderView
+                    alwaysUseAlert.popoverPresentationController?.sourceRect = senderView.bounds
+                } else {
+                    ELOG("Nil senderView")
+                    assertionFailure("Nil senderview")
+                }
+#else
+                if self.traitCollection.userInterfaceIdiom == .pad, let senderView = sender as? UIView ?? self.view {
+                    alwaysUseAlert.popoverPresentationController?.sourceView = senderView
+                    alwaysUseAlert.popoverPresentationController?.sourceRect = senderView.bounds
+                }
+#endif
+
+                let thisTimeOnlyAction = UIAlertAction(title: "This time", style: .default, handler: { _ in
+                    Task { @MainActor in
+                        await self.presentEMU(withCore: core, forGame: game, source: sender as? UIView ?? self.view)
+                    }
+                })
+                let alwaysThisGameAction = UIAlertAction(title: "Always for this game", style: .default, handler: { [unowned self] _ in
+                    try! RomDatabase.sharedInstance.writeTransaction {
+                        game.userPreferredCoreID = core.identifier
+                    }
+                    Task { @MainActor in
+                        await self.presentEMU(withCore: core, forGame: game, source: sender as? UIView ?? self.view)
+                    }
+                })
+                let alwaysThisSystemAction = UIAlertAction(title: "Always for this system", style: .default, handler: { [unowned self] _ in
+                    try! RomDatabase.sharedInstance.writeTransaction {
+                        system.userPreferredCoreID = core.identifier
+                    }
+                    Task { @MainActor in
+                        await self.presentEMU(withCore: core, forGame: game, source: sender as? UIView ?? self.view)
+                    }
+                })
+
+                alwaysUseAlert.addAction(thisTimeOnlyAction)
+                alwaysUseAlert.addAction(alwaysThisGameAction)
+                alwaysUseAlert.addAction(alwaysThisSystemAction)
+
+                self.present(alwaysUseAlert, animated: true)
+            }
+
+            coreChoiceAlert.addAction(action)
+        }
+
+        coreChoiceAlert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .destructive, handler: nil))
+
+        present(coreChoiceAlert, animated: true)
+    }
+
+    func displayAndLogError(withTitle title: String, message: String, customActions: [UIAlertAction]? = nil) {
         ELOG(message)
 
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -550,13 +601,19 @@ extension GameLaunchingViewController where Self: UIViewController {
     }
 
     @MainActor private func presentEMU(withCore core: PVCore, forGame game: PVGame, fromSaveState saveState: PVSaveState? = nil, source: UIView?) async {
-        guard let game = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) else {
+        guard let realm = await try? Realm() else {
+            ELOG("Realm initialization failed")
             return
         }
-        guard let core = RomDatabase.sharedInstance.realm.object(ofType: PVCore.self, forPrimaryKey: core.identifier) else {
+        guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) else {
+            ELOG("No game found for id: \(game.md5Hash)")
             return
         }
-        guard let coreInstance = core.createInstance(forSystem: game.system) else {
+        guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.identifier) else {
+            ELOG("No core found for id: \(core.identifier)")
+            return
+        }
+        guard let system = game.system, let coreInstance = core.createInstance(forSystem: system) else {
             displayAndLogError(withTitle: "Cannot open game", message: "Failed to create instance of core '\(core.projectName)'.")
             ELOG("Failed to init core instance")
             return
@@ -585,7 +642,7 @@ extension GameLaunchingViewController where Self: UIViewController {
 
         present(emulatorViewController, animated: true) { () -> Void in
 
-            emulatorViewController.gpuViewController.screenType = game.system.screenType.rawValue
+            emulatorViewController.gpuViewController.screenType = (game.system?.screenType ?? .unknown).rawValue
 
             // Open the save state after a bootup delay if the user selected one
             // Use a timer loop on ios 10+ to check if the emulator has started running
@@ -634,8 +691,8 @@ extension GameLaunchingViewController where Self: UIViewController {
 
         let saveState : PVSaveState? = await Task {
             for save in saves {
-                let path = await save.file.url.path
-                if !foundSave && FileManager.default.fileExists(atPath: path) && save.core.identifier == core.identifier {
+                if let path = await save.file?.url?.path,
+                   !foundSave && FileManager.default.fileExists(atPath: path) && save.core.identifier == core.identifier {
                     foundSave = true
                     return save
                 }
@@ -729,13 +786,5 @@ extension GameLaunchingViewController where Self: UIViewController {
         } else {
             completion(nil)
         }
-    }
-
-    func doLoad(_ game: PVGame) async throws {
-        guard let system = game.system else {
-            throw GameLaunchingError.systemNotFound
-        }
-
-        try await biosCheck(system: system)
     }
 }

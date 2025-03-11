@@ -22,7 +22,10 @@ public final class LibrarySerializer {
 
     
     public static func storeMetadata<O: JSONMetadataSerialable>(_ object: O, completion: @escaping SerliazeCompletion) where O.DomainType: Sendable {
-        let directory = object.url.deletingLastPathComponent()
+        guard let directory = object.url?.deletingLastPathComponent() else {
+            completion(.error(LibrarySerializerError.noFile))
+            return
+        }
         let fileName = object.fileName
         let data = object.asDomain()
 
@@ -40,8 +43,8 @@ public final class LibrarySerializer {
 
     // MARK: - Packaging
 
-    public static func storePackage<P: Packageable & JSONMetadataSerialable & Sendable>(_ object: P) async throws -> URL {
-        let path = object.url
+    public static func storePackage<P: Packageable & JSONMetadataSerialable & Sendable>(_ object: P) async throws -> URL? {
+        guard  let path = object.url else { return nil }
         let directory = path.deletingLastPathComponent()
         let fileName = object.fileName
 

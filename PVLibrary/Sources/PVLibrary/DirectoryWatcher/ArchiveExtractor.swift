@@ -18,6 +18,7 @@ import Combine
 
 public enum ArchiveError: Error {
     case invalidArchive
+    case fileTooLarge
     case extractionFailed(String)
 }
 
@@ -110,19 +111,29 @@ class ZipExtractor: BaseExtractor {
 
 class SevenZipExtractor: BaseExtractor {
     override func performExtraction(from path: URL, to destination: URL, yieldPath: (URL) -> Void, progress: (Double) -> Void) async throws {
-        let container = try Data(contentsOf: path)
-        let entries = try SevenZipContainer.open(container: container)
-        
-        for (index, item) in entries.enumerated() where item.info.type != .directory {
-            autoreleasepool {
-                let fullPath = destination.appendingPathComponent(item.info.name)
-                Task {
-                    if let data = item.data {
-                        try data.write(to: fullPath, options: [.atomic, .noFileProtection])
+        try autoreleasepool {
+            let container = try Data(contentsOf: path)
+            
+            // TODO: Large 7-zips are crashing here, can we use another 7zip?
+            guard !container.isEmpty else { return }
+            
+            // 128mb?
+            guard container.count <= 128_000_000 else {
+                throw ArchiveError.fileTooLarge
+            }
+            let entries = try SevenZipContainer.open(container: container)
+            
+            for (index, item) in entries.enumerated() where item.info.type != .directory {
+                autoreleasepool {
+                    let fullPath = destination.appendingPathComponent(item.info.name)
+                    Task {
+                        if let data = item.data {
+                            try data.write(to: fullPath, options: [.atomic, .noFileProtection])
+                        }
                     }
+                    yieldPath(fullPath)
+                    progress(Double(index + 1) / Double(entries.count))
                 }
-                yieldPath(fullPath)
-                progress(Double(index + 1) / Double(entries.count))
             }
         }
     }
@@ -146,19 +157,22 @@ class GZipExtractor: BaseExtractor {
 
 class TarExtractor: BaseExtractor {
     override func performExtraction(from path: URL, to destination: URL, yieldPath: (URL) -> Void, progress: (Double) -> Void) async throws {
-        let container = try Data(contentsOf: path)
-        let entries = try TarContainer.open(container: container)
-        
-        for (index, item) in entries.enumerated() where item.info.type != .directory {
-            autoreleasepool {
-                let fullPath = destination.appendingPathComponent(item.info.name)
-                Task {
-                    if let data = item.data {
-                        try data.write(to: fullPath, options: [.atomic, .noFileProtection])
+        try autoreleasepool {
+            
+            let container = try Data(contentsOf: path)
+            let entries = try TarContainer.open(container: container)
+            
+            for (index, item) in entries.enumerated() where item.info.type != .directory {
+                autoreleasepool {
+                    let fullPath = destination.appendingPathComponent(item.info.name)
+                    Task {
+                        if let data = item.data {
+                            try data.write(to: fullPath, options: [.atomic, .noFileProtection])
+                        }
                     }
+                    yieldPath(fullPath)
+                    progress(Double(index + 1) / Double(entries.count))
                 }
-                yieldPath(fullPath)
-                progress(Double(index + 1) / Double(entries.count))
             }
         }
     }

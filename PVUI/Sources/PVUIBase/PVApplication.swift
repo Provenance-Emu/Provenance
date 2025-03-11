@@ -12,14 +12,14 @@ import PVEmulatorCore
 public
 final class PVApplication: UIApplication {
     public override func sendEvent(_ event: UIEvent) {
-        if let core = AppState.shared.emulationState.core {
+        if let core = AppState.shared.emulationUIState.core {
             core.sendEvent(event)
         }
         super.sendEvent(event)
     }
     
     public override func sendAction(_ action: Selector, to target: Any?, from sender: Any?, for event: UIEvent?) -> Bool {
-        if let core = AppState.shared.emulationState.core {
+        if let core = AppState.shared.emulationUIState.core {
             core.sendEvent(event)
         }
         return super.sendAction(action, to: target, from: sender, for: event)

@@ -22,6 +22,114 @@ protocol ArtworkObservable: AnyObject {
     func backArtworkPublisher() -> AnyPublisher<UIImage?, Never>
 }
 
+/// Star rating view component that shows 5 stars and handles user interaction
+struct StarRatingView: View {
+    let rating: Int
+    let maxRating: Int
+    let onRatingChanged: (Int) -> Void
+    let size: CGFloat
+    let spacing: CGFloat
+    let color: Color
+
+    @State private var focusedStar: Int?
+    @State private var isFocused: Bool = false
+    @State private var dragOffset: CGFloat = 0
+    @FocusState private var isFocusedState: Bool
+
+    init(
+        rating: Int,
+        maxRating: Int = 5,
+        onRatingChanged: @escaping (Int) -> Void,
+        size: CGFloat = 30,
+        spacing: CGFloat = 8,
+        color: Color = .yellow
+    ) {
+        self.rating = rating
+        self.maxRating = maxRating
+        self.onRatingChanged = onRatingChanged
+        self.size = size
+        self.spacing = spacing
+        self.color = color
+    }
+
+    var body: some View {
+        HStack(spacing: spacing) {
+            ForEach(1...maxRating, id: \.self) { index in
+                starButton(for: index)
+            }
+        }
+        #if os(tvOS)
+        .focusable()
+        .focused($isFocusedState)
+        .onChange(of: isFocusedState) { focused in
+            isFocused = focused
+            if focused {
+                focusedStar = rating > 0 ? rating : 1
+            } else {
+                focusedStar = nil
+            }
+        }
+        #endif
+#if !os(tvOS)
+        .gesture(
+            DragGesture()
+                .onChanged { value in
+                    dragOffset = value.translation.width
+                    let starWidth = size + spacing
+                    let starIndex = min(max(1, Int(round(dragOffset / starWidth)) + (focusedStar ?? 1)), maxRating)
+                    focusedStar = starIndex
+                }
+                .onEnded { _ in
+                    if let star = focusedStar {
+                        handleTap(star)
+                    }
+                    dragOffset = 0
+                }
+        )
+#endif
+    }
+
+    @ViewBuilder
+    private func starButton(for index: Int) -> some View {
+        Button(action: {
+            handleTap(index)
+        }) {
+            Image(systemName: index <= rating ? "star.fill" : "star")
+                .foregroundColor(color)
+                .font(.system(size: size))
+                #if os(tvOS)
+                .scaleEffect(focusedStar == index ? 1.2 : 1.0)
+                .shadow(color: focusedStar == index ? color : .clear, radius: focusedStar == index ? 10 : 0)
+                .animation(.spring(), value: focusedStar == index)
+                #endif
+        }
+        .buttonStyle(StarButtonStyle())
+        .id("star-\(index)-\(rating)") // Force view refresh when rating changes
+    }
+
+    private func handleTap(_ index: Int) {
+        #if !os(tvOS)
+        Haptics.impact(style: .light)
+        #endif
+
+        if index == rating {
+            onRatingChanged(0) // Toggle off if tapping the same star
+        } else {
+            onRatingChanged(index)
+        }
+    }
+}
+
+/// Custom button style to prevent unwanted animations and state changes
+private struct StarButtonStyle: ButtonStyle {
+    @ViewBuilder
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .contentShape(Rectangle())
+            .animation(nil, value: configuration.isPressed) // Disable press animation
+    }
+}
+
 class GameMoreInfoViewModel: ObservableObject {
     @Published private var driver: any GameLibraryDriver
     private let gameId: String
@@ -33,6 +141,21 @@ class GameMoreInfoViewModel: ObservableObject {
 
     /// Back Artwork with published wrapper
     @Published private(set) var backArtwork: UIImage?
+
+    /// Access to the driver for passing to views
+    var rootDelegate: PVRootDelegate? {
+        return driver as? PVRootDelegate
+    }
+
+    /// Access to the context menu delegate for passing to views
+    var contextMenuDelegate: GameContextMenuDelegate? {
+        return driver as? GameContextMenuDelegate
+    }
+
+    /// Access to the underlying PVGame object if available
+    var pvGame: PVGame? {
+        return game?.pvGame
+    }
 
     init(driver: any GameLibraryDriver, gameId: String) {
         self.driver = driver
@@ -183,14 +306,39 @@ class GameMoreInfoViewModel: ObservableObject {
     var gameDescription: String? {
         game?.gameDescription
     }
+
+    /// Rating (0-5, -1 means unrated)
+    var rating: Int {
+        get { game?.rating ?? -1 }
+        set {
+            driver.updateGameRating(id: gameId, value: newValue)
+        }
+    }
+
+    /// Format rating for display
+    var formattedRating: String {
+        if rating == -1 {
+            return "Not Rated"
+        } else {
+            return "\(rating) of 5 Stars"
+        }
+    }
 }
+
 
 
 // MARK: - Game Info View
 struct GameMoreInfoView: View {
-    @StateObject var viewModel: GameMoreInfoViewModel
+    @ObservedObject var viewModel: GameMoreInfoViewModel
+    @Environment(\.dismiss) private var dismiss
+    /// Tracks if the rating has been modified but not saved
+    @State private var hasUnsavedRating: Bool = false
+    /// Stores the original rating before modification
+    @State private var originalRating: Int = 0
     @State private var editingField: EditableField?
     @State private var editingValue: String = ""
+    /// Context menu delegate for handling artwork selection
+    var contextMenuDelegate: GameContextMenuDelegate?
 
     private enum EditableField: Identifiable {
         case name
@@ -218,11 +366,21 @@ struct GameMoreInfoView: View {
                 // Artwork section with direct binding to published properties
                 GameArtworkView(
                     frontArtwork: viewModel.frontArtwork,
-                    backArtwork: viewModel.backArtwork
+                    backArtwork: viewModel.backArtwork,
+                    game: viewModel.pvGame,
+                    rootDelegate: viewModel.rootDelegate,
+                    contextMenuDelegate: contextMenuDelegate
                 )
 
                 // Game information section
                 VStack(spacing: 8) {
+                    // Add instruction text at the top
+                    Text("Tap any field with a pencil icon to edit")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.bottom, 8)
+
                     LabelRowView(
                         label: "Name",
                         value: viewModel.name
@@ -271,14 +429,6 @@ struct GameMoreInfoView: View {
                         }
                     )
 
-                    if let playCount = viewModel.plays {
-                        LabelRowView(
-                            label: "Play Count",
-                            value: "\(playCount)",
-                            isEditable: false
-                        )
-                    }
-
                     if let timeSpent = viewModel.timeSpent {
                         LabelRowView(
                             label: "Time Spent",
@@ -286,6 +436,59 @@ struct GameMoreInfoView: View {
                             isEditable: false
                         )
                     }
+
+                    // Star rating section
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Rating")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+
+                        HStack {
+                            StarRatingView(
+                                rating: max(0, viewModel.rating),
+                                onRatingChanged: { newRating in
+                                    if !hasUnsavedRating {
+                                        originalRating = viewModel.rating
+                                    }
+                                    hasUnsavedRating = true
+                                    #if !os(tvOS)
+                                    Haptics.impact(style: .light)
+                                    #endif
+                                    viewModel.rating = newRating
+                                }
+                            )
+
+                            Spacer()
+
+                            Text(viewModel.formattedRating)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+
+                        if hasUnsavedRating {
+                            HStack {
+                                Button(action: {
+                                    viewModel.rating = originalRating
+                                    hasUnsavedRating = false
+                                }) {
+                                    Text("Reset")
+                                        .foregroundColor(.red)
+                                }
+
+                                Spacer()
+
+                                Button(action: {
+                                    // Rating is already updated in the viewModel
+                                    hasUnsavedRating = false
+                                }) {
+                                    Text("Save")
+                                        .bold()
+                                }
+                            }
+                            .padding(.top, 8)
+                        }
+                    }
+                    .padding(.vertical, 4)
 
                     if viewModel.plays != nil || viewModel.timeSpent != nil {
                         Button("Reset Stats") {
@@ -387,13 +590,16 @@ struct GameMoreInfoView: View {
 
 // MARK: - Paged Game Info View Model
 public class PagedGameMoreInfoViewModel: ObservableObject {
-    @Published var currentIndex: Int
-    private let driver: (any GameLibraryDriver & PagedGameLibraryDataSource)
+    @Published var currentIndex: Int = 0
+    @Published var showingWebView: Bool = false
+    let driver: any (GameLibraryDriver & PagedGameLibraryDataSource)
     let playGameCallback: ((String) async -> Void)?
     @Published var isDebugExpanded = false
 
-    // Navigation bar item states
-    @Published var showingWebView = false
+    /// Access to the root delegate for passing to views
+    var rootDelegate: PVRootDelegate? {
+        return driver as? PVRootDelegate
+    }
 
     public init(driver: any GameLibraryDriver & PagedGameLibraryDataSource,
                initialGameId: String? = nil,
@@ -454,26 +660,322 @@ public class PagedGameMoreInfoViewModel: ObservableObject {
     }
 }
 
+// MARK: - Lazy View Wrapper
+/// A wrapper view that defers the creation of its content until it's needed
+private struct LazyView<Content: View>: View {
+    let build: () -> Content
+
+    init(_ build: @escaping () -> Content) {
+        self.build = build
+    }
+
+    var body: Content {
+        build()
+    }
+}
+
 // MARK: - Paged Game Info View
 public struct PagedGameMoreInfoView: View {
     @StateObject var viewModel: PagedGameMoreInfoViewModel
     @Environment(\.dismiss) private var dismiss
 
+    /// State for handling image picker and artwork search
+    @State private var showImagePicker = false
+    @State private var showArtworkSearch = false
+    @State private var gameToUpdateCover: PVGame?
+    @State private var selectedImage: UIImage?
+
+    /// Cache for created view models to avoid recreating them
+    @State private var viewModelCache: [Int: GameMoreInfoViewModel] = [:]
+
+    /// Reference to the coordinator
+    @State private var coordinatorRef: Coordinator?
+
     public init(viewModel: PagedGameMoreInfoViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
+    }
+
+    /// Coordinator to handle context menu actions
+    class Coordinator: GameContextMenuDelegate {
+        weak var viewModel: PagedGameMoreInfoViewModel?
+        var parent: PagedGameMoreInfoView?
+
+        init(parent: PagedGameMoreInfoView, viewModel: PagedGameMoreInfoViewModel) {
+            self.parent = parent
+            self.viewModel = viewModel
+        }
+
+        func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame) {
+            /// Delegate to driver if available
+            viewModel?.driver.gameContextMenu(menu, didRequestRenameFor: game)
+        }
+
+        func gameContextMenu(_ menu: GameContextMenu, didRequestChooseCoverFor game: PVGame) {
+            /// Delegate to driver if available
+            viewModel?.driver.gameContextMenu(menu, didRequestChooseCoverFor: game)
+        }
+
+        func gameContextMenu(_ menu: GameContextMenu, didRequestMoveToSystemFor game: PVGame) {
+            /// Delegate to driver if available
+            viewModel?.driver.gameContextMenu(menu, didRequestMoveToSystemFor: game)
+        }
+
+        func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
+            /// Delegate to driver if available
+            viewModel?.driver.gameContextMenu(menu, didRequestShowSaveStatesFor: game)
+        }
+
+        func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor gameId: String) {
+            /// Delegate to driver if available
+            viewModel?.driver.gameContextMenu(menu, didRequestShowGameInfoFor: gameId)
+        }
+
+        func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame) {
+            /// Handle locally
+            parent?.gameToUpdateCover = game
+            parent?.showImagePicker = true
+        }
+
+        func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame) {
+            /// Handle locally
+            parent?.gameToUpdateCover = game
+            parent?.showArtworkSearch = true
+        }
+
+        func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
+            /// Delegate to driver if available
+            viewModel?.driver.gameContextMenu(menu, didRequestChooseArtworkSourceFor: game)
+        }
+
+        func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
+            /// Delegate to driver if available
+            viewModel?.driver.gameContextMenu(menu, didRequestDiscSelectionFor: game)
+        }
+    }
+
+    /// Create a new coordinator if needed
+    private func makeCoordinator() -> Coordinator {
+        let coordinator = Coordinator(parent: self, viewModel: viewModel)
+        DispatchQueue.main.async {
+            self.coordinatorRef = coordinator
+        }
+        return coordinator
+    }
+
+    /// Get or create the coordinator
+    private func getCoordinator() -> Coordinator {
+        return coordinatorRef ?? makeCoordinator()
+    }
+
+    /// Get or create a view model for the given index
+    private func getViewModel(for index: Int) -> GameMoreInfoViewModel? {
+        // Check if we already have a cached view model
+        if let cachedViewModel = viewModelCache[index] {
+            return cachedViewModel
+        }
+
+        // Create a new view model if needed
+        if let newViewModel = viewModel.makeGameViewModel(for: index) {
+            // Cache the new view model
+            Task { @MainActor in
+                self.viewModelCache[index] = newViewModel
+            }
+            return newViewModel
+        }
+
+        return nil
+    }
+
+    /// Save artwork for a game
+    private func saveArtwork(image: UIImage, forGame game: PVGame) {
+        Task {
+            do {
+                let uniqueID = UUID().uuidString
+                let md5: String = game.md5 ?? ""
+                let key = "artwork_\(md5)_\(uniqueID)"
+
+                // Write image to disk asynchronously
+                try await Task.detached(priority: .background) {
+                    try PVMediaCache.writeImage(toDisk: image, withKey: key)
+                }.value
+
+                // Update Realm on main thread
+                try await RomDatabase.sharedInstance.asyncWriteTransaction {
+                    if let thawedGame = game.thaw() {
+                        thawedGame.customArtworkURL = key
+                    }
+                }
+
+                await MainActor.run {
+                    // Post notification to trigger UI updates
+                    NotificationCenter.default.post(name: .gameLibraryDidUpdate, object: nil)
+
+                    // Clear the ArtworkLoader cache for this game to force reload
+                    ArtworkLoader.shared.cancelLoading(for: game.id)
+
+                    // Update the cache with the new image
+//                    PVMediaCache.shareInstance().setImage(image, forKey: key)
+
+                    // Show success message
+                    viewModel.rootDelegate?.showMessage("Artwork has been saved for \(game.title).", title: "Artwork Saved")
+
+                    // Reset state variables
+                    gameToUpdateCover = nil
+                    showImagePicker = false
+                    showArtworkSearch = false
+                }
+            } catch {
+                await MainActor.run {
+                    DLOG("Failed to set custom artwork: \(error.localizedDescription)")
+                    viewModel.rootDelegate?.showMessage("Failed to set custom artwork: \(error.localizedDescription)", title: "Error")
+
+                    // Reset state variables even on error
+                    gameToUpdateCover = nil
+                    showImagePicker = false
+                    showArtworkSearch = false
+                }
+            }
+        }
+    }
+
+    // MARK: - View Builders
+
+    /// Build the content for a specific tab index
+    @ViewBuilder
+    private func tabContent(for index: Int) -> some View {
+        if let gameViewModel = getViewModel(for: index) {
+            GameMoreInfoView(
+                viewModel: gameViewModel,
+                contextMenuDelegate: getCoordinator()
+            )
+        } else {
+            // Placeholder view if view model creation fails
+            placeholderView()
+        }
+    }
+
+    /// Build a placeholder view for when a game can't be loaded
+    @ViewBuilder
+    private func placeholderView() -> some View {
+        VStack {
+            Text("Unable to load game information")
+                .font(.headline)
+                .foregroundColor(.secondary)
+                .padding()
+
+            ProgressView()
+                .padding()
+        }
+    }
+
+    /// Build the web view button if a reference URL is available
+    @ViewBuilder
+    private func webViewButton() -> some View {
+        #if canImport(SafariServices)
+        if let game = viewModel.currentGame,
+           let urlString = game.referenceURL?.absoluteString,
+           let url = URL(string: urlString) {
+            Button {
+                viewModel.openWebView()
+            } label: {
+                Image(systemName: "book")
+            }
+            .sheet(isPresented: $viewModel.showingWebView) {
+                GameReferenceWebView(url: url)
+            }
+        } else {
+            EmptyView()
+        }
+        #else
+        EmptyView()
+        #endif
+    }
+
+    /// Build the play button if a callback is available
+    @ViewBuilder
+    private func playButton() -> some View {
+        if viewModel.playGameCallback != nil {
+            Button {
+                dismiss()  // Dismiss first
+                Task {
+                    if let gameId = viewModel.currentGameId {
+                        await viewModel.playGameCallback?(gameId)
+                    }
+                }
+            } label: {
+                Image(systemName: "play.fill")
+            }
+        } else {
+            EmptyView()
+        }
+    }
+
+    /// Build the image picker sheet
+    @ViewBuilder
+    private func imagePickerSheet() -> some View {
+        #if !os(tvOS)
+        if showImagePicker {
+            ImagePicker(sourceType: .photoLibrary) { image in
+                if let game = gameToUpdateCover {
+                    saveArtwork(image: image, forGame: game)
+                }
+                showImagePicker = false
+                gameToUpdateCover = nil
+            }
+        } else {
+            EmptyView()
+        }
+        #else
+        EmptyView()
+        #endif
+    }
+
+    /// Build the artwork search sheet
+    @ViewBuilder
+    private func artworkSearchSheet() -> some View {
+        if showArtworkSearch, let game = gameToUpdateCover {
+            ArtworkSearchView(
+                initialSearch: game.title,
+                initialSystem: game.system?.enumValue ?? .Unknown
+            ) { selection in
+                Task {
+                    do {
+                        // Load image data from URL
+                        let (data, _) = try await URLSession.shared.data(from: selection.metadata.url)
+                        if let uiImage = UIImage(data: data) {
+                            await MainActor.run {
+                                saveArtwork(image: uiImage, forGame: game)
+                                showArtworkSearch = false
+                                gameToUpdateCover = nil
+                            }
+                        }
+                    } catch {
+                        DLOG("Failed to load artwork image: \(error)")
+                        // Make sure to reset state even on error
+                        await MainActor.run {
+                            showArtworkSearch = false
+                            gameToUpdateCover = nil
+                        }
+                    }
+                }
+            }
+        } else {
+            EmptyView()
+        }
     }
 
     public var body: some View {
         TabView(selection: $viewModel.currentIndex) {
             ForEach(0..<viewModel.gameCount, id: \.self) { index in
-                if let gameViewModel = viewModel.makeGameViewModel(for: index) {
-                    GameMoreInfoView(viewModel: gameViewModel)
-                        .tag(index)
+                // Use LazyView to defer creation of content until needed
+                LazyView {
+                    tabContent(for: index)
                 }
+                .tag(index)
             }
         }
         .onChange(of: viewModel.currentIndex) { _ in
-#if !os(tvOS)
+            #if !os(tvOS)
             Haptics.impact(style: .soft)
             #endif
         }
@@ -481,40 +983,29 @@ public struct PagedGameMoreInfoView: View {
         .indexViewStyle(.page(backgroundDisplayMode: .always))
         .navigationTitle(viewModel.currentGameName)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
+            SwiftUI.ToolbarItem(placement: .navigationBarLeading) {
                 Button("Done") {
                     dismiss()
                 }
             }
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-#if canImport(SafariServices)
-                if let game = viewModel.currentGame,
-                   let urlString = game.referenceURL?.absoluteString,
-                   let url = URL(string: urlString) {
-                    Button {
-                        viewModel.openWebView()
-                    } label: {
-                        Image(systemName: "book")
-                    }
-                    .sheet(isPresented: $viewModel.showingWebView) {
-                        GameReferenceWebView(url: url)
-                    }
-                }
-#endif
 
-                if viewModel.playGameCallback != nil {
-                    Button {
-                        dismiss()  // Dismiss first
-                        Task {
-                            if let gameId = viewModel.currentGameId {
-                                await viewModel.playGameCallback?(gameId)
-                            }
-                        }
-                    } label: {
-                        Image(systemName: "play.fill")
-                    }
-                }
+            SwiftUI.ToolbarItemGroup(placement: .navigationBarTrailing) {
+                webViewButton()
+
+                playButton()
             }
+        }
+        .sheet(isPresented: $showImagePicker, onDismiss: {
+            // Reset state when sheet is dismissed
+            gameToUpdateCover = nil
+        }) {
+            imagePickerSheet()
+        }
+        .sheet(isPresented: $showArtworkSearch, onDismiss: {
+            // Reset state when sheet is dismissed
+            gameToUpdateCover = nil
+        }) {
+            artworkSearchSheet()
         }
     }
 }
@@ -568,3 +1059,43 @@ struct SafariWebView: UIViewControllerRepresentable {
 }
 
 #endif
+
+// MARK: - GameLibraryDriver Extension
+extension GameLibraryDriver {
+    /// Helper method to forward context menu actions to the driver if it implements GameContextMenuDelegate
+    func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame) {
+        (self as? GameContextMenuDelegate)?.gameContextMenu(menu, didRequestRenameFor: game)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestChooseCoverFor game: PVGame) {
+        (self as? GameContextMenuDelegate)?.gameContextMenu(menu, didRequestChooseCoverFor: game)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestMoveToSystemFor game: PVGame) {
+        (self as? GameContextMenuDelegate)?.gameContextMenu(menu, didRequestMoveToSystemFor: game)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
+        (self as? GameContextMenuDelegate)?.gameContextMenu(menu, didRequestShowSaveStatesFor: game)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor gameId: String) {
+        (self as? GameContextMenuDelegate)?.gameContextMenu(menu, didRequestShowGameInfoFor: gameId)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame) {
+        (self as? GameContextMenuDelegate)?.gameContextMenu(menu, didRequestShowImagePickerFor: game)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame) {
+        (self as? GameContextMenuDelegate)?.gameContextMenu(menu, didRequestShowArtworkSearchFor: game)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
+        (self as? GameContextMenuDelegate)?.gameContextMenu(menu, didRequestChooseArtworkSourceFor: game)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
+        (self as? GameContextMenuDelegate)?.gameContextMenu(menu, didRequestDiscSelectionFor: game)
+    }
+}

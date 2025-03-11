@@ -12,7 +12,7 @@ struct RenderSettings: Sendable {
     var metalFilterMode: MetalFilterModeOption = .none
 
     var smoothingEnabled = false
-    
+    var nativeScaleEnabled = false
     var videoBufferSize: CGSize = .zero
     var videoBufferPixelFormat: GLenum = GLenum(GL_RGB)
     var videoBufferPixelType: GLenum = GLenum(GL_RGB8)

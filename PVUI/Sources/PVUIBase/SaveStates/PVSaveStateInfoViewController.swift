@@ -87,15 +87,15 @@ final class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewCo
         }
 
         Task {
-            if let image = saveState.image {
-                imageView.image = UIImage(contentsOfFile: image.url.path)
+            if let image = saveState.image, let path = image.url?.path {
+                imageView.image = UIImage(contentsOfFile: path)
             } else {
                 imageView.image = nil
             }
         }
 
         nameLabel.text = saveState.game.title
-        systemLabel.text = saveState.game.system.name
+        systemLabel.text = saveState.game.system?.name ?? ""
         coreLabel.text = saveState.core.projectName
         coreVersionLabel.text = saveState.createdWithCoreVersion
 

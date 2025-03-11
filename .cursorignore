@@ -1,0 +1,13 @@
+.bundle
+.github
+.cursorignore
+.gitignore
+.ruby-version
+.vscode
+.vscodeignore
+.qodo
+ScadeProject
+fastlane
+modules
+External
+Extensions

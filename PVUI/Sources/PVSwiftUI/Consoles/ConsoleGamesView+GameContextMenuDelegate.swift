@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import protocol PVUIBase.GameContextMenuDelegate
+import struct PVUIBase.GameContextMenu
 
 internal struct SystemMoveState: Identifiable {
     var id: String {
@@ -28,6 +30,7 @@ internal struct ContinuesManagementState: Identifiable {
 extension ConsoleGamesView: GameContextMenuDelegate {
 
 #if !os(tvOS)
+    @ViewBuilder
     internal func imagePickerView() -> some View {
         ImagePicker(sourceType: .photoLibrary) { image in
             if let game = gameToUpdateCover {
@@ -39,6 +42,7 @@ extension ConsoleGamesView: GameContextMenuDelegate {
     }
 #endif
 
+    @ViewBuilder
     internal func renameAlertView() -> some View {
         Group {
             TextField("New name", text: $newGameTitle)
@@ -87,8 +91,9 @@ extension ConsoleGamesView: GameContextMenuDelegate {
     internal func saveArtwork(image: UIImage, forGame game: PVGame) {
         DLOG("GameContextMenu: Attempting to save artwork for game: \(game.title)")
 
-        let uniqueID = UUID().uuidString
-        let key = "artwork_\(game.md5)_\(uniqueID)"
+        let uniqueID: String = UUID().uuidString
+        let md5: String = game.md5 ?? ""
+        let key = "artwork_\(md5)_\(uniqueID)"
         DLOG("Generated key for image: \(key)")
 
         do {
@@ -151,5 +156,9 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         DLOG("Setting gameToUpdateCover with game: \(game.title)")
         gameToUpdateCover = game
         showArtworkSourceAlert = true
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
+        gamesViewModel.presentDiscSelectionAlert(for: game, rootDelegate: rootDelegate)
     }
 }

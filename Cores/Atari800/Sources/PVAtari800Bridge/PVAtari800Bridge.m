@@ -733,10 +733,10 @@ __weak static PVAtari800Bridge * _currentCore;
             } else if (gamepad.rightThumbstick.down.isPressed) {
                 //4 button
                 INPUT_key_code = AKEY_5200_4;
-            } else if (gamepad.leftThumbstickButton.isPressed) {
+            } else if (gamepad.leftThumbstickButton != nil && gamepad.leftThumbstickButton.isPressed) {
                 //5 button
                 INPUT_key_code = AKEY_5200_5;
-            } else if (gamepad.rightThumbstickButton.isPressed) {
+            } else if (gamepad.rightThumbstickButton != nil && gamepad.rightThumbstickButton.isPressed) {
                 //6 button
                 INPUT_key_code = AKEY_5200_6;
             } else if (gamepad.buttonX.isPressed) {

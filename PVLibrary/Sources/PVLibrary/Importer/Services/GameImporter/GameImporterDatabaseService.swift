@@ -21,6 +21,7 @@ import PVRealm
 import Perception
 import SwiftUI
 import PVLookupTypes
+import RealmSwift
 
 public protocol GameImporterDatabaseServicing {
     typealias GameType = PVGame
@@ -60,7 +61,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         romsPath = url
     }
 
-    @MainActor
+//    @MainActor
     internal func importGameIntoDatabase(queueItem: ImportQueueItem) async throws {
         guard queueItem.fileType != .bios else {
             return
@@ -95,7 +96,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         }
     }
 
-    @MainActor
+//    @MainActor
     func importBIOSIntoDatabase(queueItem: ImportQueueItem) async throws {
         ILOG("Starting BIOS database import for: \(queueItem.url.lastPathComponent)")
 
@@ -114,7 +115,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     }
 
     /// Imports a ROM to the database
-    @MainActor
+//    @MainActor
     internal func importToDatabaseROM(forItem queueItem: ImportQueueItem, system: SystemIdentifier, relatedFiles: [URL]?) async throws {
 
         guard let _ = queueItem.destinationUrl else {
@@ -342,7 +343,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
             // Try filename lookup if MD5 failed
             if resultsMaybe == nil || resultsMaybe!.isEmpty {
-                let fileName = game.file.url.lastPathComponent
+                let fileName = game.file?.url?.lastPathComponent ?? game.title
                 // Remove any extraneous stuff in the rom name
                 let nonCharRange: NSRange = (fileName as NSString).rangeOfCharacter(from: _GameImporterDatabaseServiceCharset)
                 var gameTitleLen: Int
@@ -435,7 +436,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     /// Saves a game to the database
     func saveGame(_ game: PVGame) throws {
         let database = RomDatabase.sharedInstance
-        let realm = RomDatabase.sharedInstance.realm
+        let realm = try Realm()
 
         // Get system reference
         guard let system = realm.object(ofType: PVSystem.self, forPrimaryKey: game.systemIdentifier) else {

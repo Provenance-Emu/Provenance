@@ -24,7 +24,7 @@
 
 <p align="center">
 
-  <!-- <a href="https://www.patreon.com/bePatron?u=8537745"><img src="https://user-images.githubusercontent.com/399864/139607496-983c7220-3aae-46f6-8369-ebd45d4c7f06.png" height="65" /></a> -->
+  <a href="https://www.patreon.com/bePatron?u=8537745"><img src="https://user-images.githubusercontent.com/399864/139607496-983c7220-3aae-46f6-8369-ebd45d4c7f06.png" height="65" /></a>
 <a href="https://www.amazon.com/hz/wishlist/ls/1VXOGWHIOFVMR?ref_=wl_share"><img src="https://user-images.githubusercontent.com/399864/140426153-b6797d7d-c82f-4542-89ff-b29a3e70525d.jpg"  height="65" /></a>
  </p>
  <div style="align:center" align="center">
@@ -242,6 +242,48 @@ Please consider supporting those you love or want to see improved!
 ### Importing ROMs
 
 Visit our wiki on [Importing ROMs](https://wiki.provenance-emu.com/installation-and-usage/roms/importing-roms) to learn how to load ROMs into Provenance.
+
+## Controls
+
+### Keyboard Controls
+
+The following keyboard controls are available when a keyboard is connected:
+
+#### Main Controls
+- **WASD**: D-Pad / Left Stick
+- **Arrow Keys**: D-Pad / Right Stick
+- **Space** or **Return**: A Button
+- **F** or **Escape**: B Button
+- **Q**: X Button
+- **E**: Y Button
+
+#### Shoulder Buttons
+- **Tab** or **Caps Lock**: L1 (Left Shoulder)
+- **Left Shift**: L2 (Left Trigger)
+- **R**: R1 (Right Shoulder)
+- **V**: R2 (Right Trigger)
+
+#### Special Buttons
+- **Tilde (~)**: Menu Button
+- **1** or **U**: Options Button
+- **X**: L3 (Left Stick Click)
+- **C**: R3 (Right Stick Click)
+
+#### Additional Controls
+- **[=]**: Right Stick Up
+- **-**: Right Stick Down
+- **[**: Right Stick Left
+- **]**: Right Stick Right
+
+#### Alternate Controls
+- **;**: Right Stick Left
+- **K**: Right Stick Left
+- **L**: Right Stick Down
+- **O**: Right Stick Up
+
+#### Special Functions
+- **/** (Forward Slash): Select Button
+- **Right Shift**: Start Button
 
 ### <a id="contributions-footnote"></a>Contributions
 

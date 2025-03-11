@@ -135,8 +135,12 @@ public final class SystemsSettingsTableViewController: QuickTableViewController 
             tableView.backgroundColor = UIColor.clear
             splitViewController?.title = "Systems"
         #endif
-
-        systemsToken = RomDatabase.sharedInstance.realm.objects(PVSystem.self).observe { _ in
+        guard let realm = try? Realm() else {
+            ELOG("Realm() failed")
+            return
+        }
+        
+        systemsToken = realm.objects(PVSystem.self).observe { _ in
             Task {
                 do {
                     try self.generateViewModels()

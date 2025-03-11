@@ -19,10 +19,9 @@ import TVServices
 
  */
 
-public final class ServiceProvider: NSObject, TVTopShelfProvider {
+@objc(ServiceProvider)
+public final class ServiceProvider: TVTopShelfContentProvider {
     public override init() {
-        super.init()
-
         if RealmConfiguration.supportsAppGroups {
             RomDatabase.refresh()
         } else {
@@ -30,52 +29,69 @@ public final class ServiceProvider: NSObject, TVTopShelfProvider {
         }
     }
 
-    // MARK: - TVTopShelfProvider protocol
+    // MARK: - TVTopShelfContentProvider protocol
 
-    public var topShelfStyle: TVTopShelfContentStyle {
-        // Return desired Top Shelf style.
-        return .sectioned
-    }
-
-    public var topShelfItems: [TVContentItem] {
-        var topShelfItems = [TVContentItem]()
-        if RealmConfiguration.supportsAppGroups {
-            let identifier = TVContentIdentifier(identifier: "id", container: nil)
-            let database = RomDatabase.sharedInstance
-
-            topShelfItems.append(favoriteTopShelfItems(identifier: identifier, database: database)!)
-            topShelfItems.append(recentlyPlayedTopShelfItems(identifier: identifier, database: database)!)
-            topShelfItems.append(recentlyAddedTopShelfItems(identifier: identifier, database: database)!)
+    public var topShelfContent: TVTopShelfContent {
+        guard RealmConfiguration.supportsAppGroups else {
+            return TVTopShelfSectionedContent(sections: [])
         }
 
-        return topShelfItems
+        let database = RomDatabase.sharedInstance
+
+        // Create sections
+        var sections: [TVTopShelfItemCollection<TVTopShelfSectionedItem>] = []
+
+        // Add Favorites section
+        if let favoritesSection = createFavoriteSection(database: database) {
+            sections.append(favoritesSection)
+        }
+
+        // Add Recently Played section
+        if let recentlyPlayedSection = createRecentlyPlayedSection(database: database) {
+            sections.append(recentlyPlayedSection)
+        }
+
+        // Add Recently Added section
+        if let recentlyAddedSection = createRecentlyAddedSection(database: database) {
+            sections.append(recentlyAddedSection)
+        }
+
+        return TVTopShelfSectionedContent(sections: sections)
     }
 
-    private func recentlyAddedTopShelfItems(identifier: TVContentIdentifier, database: RomDatabase) -> TVContentItem? {
-        let recentlyAddedItems = TVContentItem(contentIdentifier: identifier)
+    // MARK: - Private Helpers
 
-        recentlyAddedItems.title = "Recently Added"
-        let recentlyAddedGames = database.all(PVGame.self, sortedByKeyPath:
-            #keyPath(PVGame.importDate), ascending: false)
-        recentlyAddedItems.topShelfItems = recentlyAddedGames.map({ $0.contentItem(with: identifier)! })
-        return recentlyAddedItems
+    private func createRecentlyAddedSection(database: RomDatabase) -> TVTopShelfItemCollection<TVTopShelfSectionedItem>? {
+        let recentlyAddedGames = database.all(PVGame.self, sortedByKeyPath: #keyPath(PVGame.importDate), ascending: false)
+        let items = Array(recentlyAddedGames.map { $0.topShelfItem() })
+
+        guard !items.isEmpty else { return nil }
+
+        return TVTopShelfItemCollection(items: items)
     }
 
-    private func recentlyPlayedTopShelfItems(identifier: TVContentIdentifier, database: RomDatabase) -> TVContentItem? {
-        let recentlyPlayedItems = TVContentItem(contentIdentifier: identifier)
-
-        recentlyPlayedItems.title = "Recently Played"
+    private func createRecentlyPlayedSection(database: RomDatabase) -> TVTopShelfItemCollection<TVTopShelfSectionedItem>? {
         let recentlyPlayedGames = database.all(PVRecentGame.self, sortedByKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
-        recentlyPlayedItems.topShelfItems = recentlyPlayedGames.map({ $0.contentItem(with: identifier)! })
-        return recentlyPlayedItems
+        let items = Array(recentlyPlayedGames.compactMap { recentGame -> TVTopShelfSectionedItem? in
+            // Get the actual game from the recent game reference
+            if let game = database.object(ofType: PVGame.self, wherePrimaryKeyEquals: recentGame.game.md5Hash) {
+                return game.topShelfItem()
+            }
+            return nil
+        })
+
+        guard !items.isEmpty else { return nil }
+
+        return TVTopShelfItemCollection(items: items)
     }
 
-    private func favoriteTopShelfItems(identifier: TVContentIdentifier, database: RomDatabase) -> TVContentItem? {
-        let favoriteItems = TVContentItem(contentIdentifier: identifier)
+    private func createFavoriteSection(database: RomDatabase) -> TVTopShelfItemCollection<TVTopShelfSectionedItem>? {
+        let favoriteGames = database.all(PVGame.self, where: "isFavorite", value: true)
+            .sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
+        let items = Array(favoriteGames.map { $0.topShelfItem() })
 
-        favoriteItems.title = "Favorites"
-        let favoriteGames = database.all(PVGame.self, where: "isFavorite", value: true).sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
-        favoriteItems.topShelfItems = favoriteGames.map({ $0.contentItem(with: identifier)! })
-        return favoriteItems
+        guard !items.isEmpty else { return nil }
+
+        return TVTopShelfItemCollection(items: items)
     }
 }

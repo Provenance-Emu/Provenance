@@ -11,57 +11,58 @@ import Perception
 import PVSystems
 import PVHashing
 
-// Enum to define the possible statuses of each import
-public enum ImportStatus: Int, CustomStringConvertible, CaseIterable {
-    case conflict  // Indicates additional action needed by user after successful import
-
-    case partial //indicates the item is waiting for associated files before it could be processed
-    case processing
-
-    case queued
-
-    case failure
-
-    case success
-
-    public var description: String {
-        switch self {
-            case .queued: return "Queued"
-            case .processing: return "Processing"
-            case .success: return "Completed"
-            case .failure: return "Failed"
-            case .conflict: return "Conflict"
-            case .partial: return "Partial"
-        }
-    }
-
-    public var color: Color {
-        switch self {
-            case .queued: return .gray
-            case .processing: return .blue
-            case .success: return .green
-            case .failure: return .red
-            case .conflict: return .yellow
-            case .partial: return .yellow
-        }
-    }
-}
-
-// Enum to define file types for each import
-public enum FileType {
-    case bios, artwork, game, cdRom, unknown
-}
-
-// Enum to track processing state
-public enum ProcessingState {
-    case idle
-    case processing
-}
 
 // ImportItem model to hold each file's metadata and progress
 @Perceptible
 public class ImportQueueItem: Identifiable, ObservableObject {
+    // Enum to track processing state
+    public enum ProcessingState {
+        case idle
+        case processing
+    }
+    
+    // Enum to define file types for each import
+    public enum FileType {
+        case bios, artwork, game, cdRom, unknown
+    }
+    
+    
+    // Enum to define the possible statuses of each import
+    public enum ImportStatus: Int, CustomStringConvertible, CaseIterable {
+        case conflict  // Indicates additional action needed by user after successful import
 
+        case partial //indicates the item is waiting for associated files before it could be processed
+        case processing
+
+        case queued
+
+        case failure
+
+        case success
+
+        public var description: String {
+            switch self {
+                case .queued: return "Queued"
+                case .processing: return "Processing"
+                case .success: return "Completed"
+                case .failure: return "Failed"
+                case .conflict: return "Conflict"
+                case .partial: return "Partial"
+            }
+        }
+
+        public var color: Color {
+            switch self {
+                case .queued: return .gray
+                case .processing: return .blue
+                case .success: return .green
+                case .failure: return .red
+                case .conflict: return .yellow
+                case .partial: return .yellow
+            }
+        }
+    }
+    
     public let id = UUID()
     public var url: URL
     public var fileType: FileType
@@ -77,15 +78,15 @@ public class ImportQueueItem: Identifiable, ObservableObject {
     public var status: ImportStatus = .queued {
         didSet {
             if status == .failure {
-                Task { @MainActor in
-                    updateSystems()
-                }
+                updateSystems()
             }
         }
     }
 
     private func updateSystems() {
-        systems = PVEmulatorConfiguration.availableSystemIdentifiers
+        Task { @MainActor in
+            systems = PVEmulatorConfiguration.availableSystemIdentifiers
+        }
     }
 
     private let md5Provider: MD5Provider
@@ -114,7 +115,7 @@ public class ImportQueueItem: Identifiable, ObservableObject {
         var md5: String?
     }
 
-    @MainActor
+//    @MainActor
     public func targetSystem() -> SystemIdentifier? {
         guard !systems.isEmpty else {
             return nil
@@ -126,12 +127,8 @@ public class ImportQueueItem: Identifiable, ObservableObject {
 
         if let chosenSystem = userChosenSystem {
 
-            var target:SystemIdentifier? = nil
-
-            for system in systems {
-                if chosenSystem == system {
-                    target = system
-                }
+            var target:SystemIdentifier? = systems.first { systemIdentifier in
+                chosenSystem == systemIdentifier
             }
 
             return target

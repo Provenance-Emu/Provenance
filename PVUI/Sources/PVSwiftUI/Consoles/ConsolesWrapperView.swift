@@ -16,6 +16,9 @@ import PVUIBase
 import PVRealm
 import PVThemes
 import Combine
+#if !os(tvOS)
+import UIKit
+#endif
 
 private struct PVRootDelegateKey: EnvironmentKey {
     static let defaultValue: PVRootDelegate? = nil
@@ -30,7 +33,27 @@ extension EnvironmentValues {
 
 @available(iOS 14, tvOS 14, *)
 class ConsolesWrapperViewDelegate: ObservableObject {
-    @Published var selectedTab = ""
+    private static let tabKey = "PVLastSelectedConsoleTab"
+
+    @Published var selectedTab: String {
+        didSet {
+            Task.detached(priority: .low) { [self] in
+                UserDefaults.standard.set(selectedTab, forKey: Self.tabKey)
+                DLOG("Tab saved to UserDefaults: \(selectedTab)")
+            }
+        }
+    }
+
+    init() {
+        // Load the saved tab on init
+        selectedTab = UserDefaults.standard.string(forKey: Self.tabKey) ?? "home"
+        DLOG("ConsolesWrapperViewDelegate initialized with tab: \(selectedTab)")
+    }
+
+    func setTab(_ tab: String) {
+        selectedTab = tab
+        DLOG("Tab changed to: \(tab)")
+    }
 }
 
 @available(iOS 14, tvOS 14, *)
@@ -46,6 +69,12 @@ struct ConsolesWrapperView: SwiftUI.View {
     @State private var gameInfoState: GameInfoState?
     @ObservedResults(PVSystem.self) private var consoles: Results<PVSystem>
     @ObservedObject private var themeManager = ThemeManager.shared
+
+    /// Track if view is currently visible
+    @State private var isVisible: Bool = false
+
+    /// Track the previous tab for comparison
+    @State private var previousTab: String = ""
 
     /// State for game info presentation
     struct GameInfoState: Identifiable {
@@ -75,7 +104,7 @@ struct ConsolesWrapperView: SwiftUI.View {
     }
 
     // MARK: - Body
-
+    @ViewBuilder
     private func makeGameMoreInfoView(for state: GameInfoState) -> some View {
         do {
             let driver = try RealmGameLibraryDriver()
@@ -93,24 +122,35 @@ struct ConsolesWrapperView: SwiftUI.View {
     }
 
     var body: some View {
-        AnyView(
-            Group {
-                if consoles.isEmpty {
-                    showNoConsolesView()
-                } else {
-                    showConsoles()
-                        .sheet(item: $gameInfoState) { state in
-                            NavigationView {
-                                makeGameMoreInfoView(for: state)
-                                #if !os(tvOS)
-                                    .navigationBarTitleDisplayMode(.inline)
-                                #endif
-                            }
+        Group {
+            if consoles.isEmpty || (consoles.count == 1 && consoles.first!.identifier == SystemIdentifier.RetroArch.rawValue) {
+                noConsolesView
+            } else {
+                consolesTabView
+                    .sheet(item: $gameInfoState) { state in
+                        NavigationView {
+                            makeGameMoreInfoView(for: state)
+                            #if !os(tvOS)
+                                .navigationBarTitleDisplayMode(.inline)
+                            #endif
                         }
+                    }
+            }
+        }
+        .environment(\.rootDelegate, rootDelegate)
+        .onAppear {
+            isVisible = true
+
+            Task(priority: .userInitiated) {
+                // Preload artwork for visible consoles
+                if let selectedConsole = consoles.first(where: { $0.identifier == delegate.selectedTab }) {
+                    preloadArtworkForConsole(selectedConsole)
                 }
             }
-        )
-        .environment(\.rootDelegate, rootDelegate)
+        }
+        .onDisappear {
+            isVisible = false
+        }
     }
 
     // MARK: - Helper Methods
@@ -123,7 +163,30 @@ struct ConsolesWrapperView: SwiftUI.View {
         viewModel.sortConsolesAscending ? consoles.map { $0 } : consoles.reversed()
     }
 
-    private func showNoConsolesView() -> some View {
+    private var glowColor: Color {
+        switch themeManager.currentPalette {
+        case is DarkThemePalette:
+            return .cyan
+        case is LightThemePalette:
+            return .blue
+        default:
+            return themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .purple
+        }
+    }
+
+    /// Preload artwork for a console's games
+    private func preloadArtworkForConsole(_ console: PVSystem) {
+        Task(priority: .low) {
+            // Get the first 20 games for this console
+            let games = Array(console.games.prefix(20))
+
+            // Preload their artwork
+            ArtworkLoader.shared.preloadArtwork(for: games)
+        }
+    }
+
+    @ViewBuilder
+    private var noConsolesView: some View {
         NoConsolesView(delegate: rootDelegate as! PVMenuDelegate)
             .tabItem {
                 Label("No Consoles", systemImage: "xmark.circle")
@@ -131,8 +194,59 @@ struct ConsolesWrapperView: SwiftUI.View {
             .tag("noConsoles")
     }
 
-    private func showConsoles() -> some View {
-        TabView(selection: $delegate.selectedTab) {
+    @ViewBuilder
+    var consolesList: some View {
+        ForEach(sortedConsoles(), id: \.self) { console in
+            ConsoleGamesView(
+                console: console,
+                viewModel: viewModel,
+                rootDelegate: rootDelegate,
+                showGameInfo: showGameInfo
+            )
+            .tabItem {
+                if #available(iOS 17.0, tvOS 17.0, *) {
+                    // Simplified tab item to reduce rendering overhead
+                    Label(console.name, image: ImageResource(name: console.iconName, bundle: PVUIBase.BundleLoader.myBundle))
+                } else {
+                    // Fallback for older iOS versions
+                    Label(console.name, systemImage: "gamecontroller")
+                }
+            }
+            .tag(console.identifier)
+            .ignoresSafeArea(.all, edges: .bottom)
+        }
+    }
+
+    @ViewBuilder
+    var consolesTabView: some View {
+        let binding = Binding(
+            get: { delegate.selectedTab },
+            set: { newTab in
+                Task {
+                    // Store the previous tab before changing
+                    previousTab = delegate.selectedTab
+
+                    // Set the new tab
+                    delegate.setTab(newTab)
+
+                    // Preload artwork for the selected console
+                    if let selectedConsole = consoles.first(where: { console in console.identifier == newTab }) {
+                        preloadArtworkForConsole(selectedConsole)
+                    }
+                }
+                
+                Task {
+                    // Trigger haptic feedback for user-initiated tab changes
+                    #if !os(tvOS)
+                    if isVisible && previousTab != newTab {
+                        Haptics.impact(style: .soft)
+                    }
+                    #endif
+                }
+            }
+        )
+
+        return TabView(selection: binding) {
             HomeView(
                 gameLibrary: rootDelegate.gameLibrary!,
                 delegate: rootDelegate,
@@ -145,24 +259,10 @@ struct ConsolesWrapperView: SwiftUI.View {
             .tag("home")
             .ignoresSafeArea(.all, edges: .bottom)
 
-            ForEach(sortedConsoles(), id: \.self) { console in
-                ConsoleGamesView(
-                    console: console,
-                    viewModel: viewModel,
-                    rootDelegate: rootDelegate,
-                    showGameInfo: showGameInfo
-                )
-                .tabItem {
-                    Label(console.name, systemImage: console.iconName)
-                }
-                .tag(console.identifier)
-                .ignoresSafeArea(.all, edges: .bottom)
-            }
+            consolesList
         }
-        .onChange(of: delegate.selectedTab) { _ in
-            #if !os(tvOS)
-            Haptics.impact(style: .soft)
-            #endif
+        .onChange(of: delegate.selectedTab) { newValue in
+            DLOG("Tab changed in view: \(newValue)")
         }
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .interactive))

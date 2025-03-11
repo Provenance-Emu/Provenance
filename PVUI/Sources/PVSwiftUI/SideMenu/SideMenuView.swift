@@ -231,16 +231,6 @@ SideMenuView: SwiftUI.View {
             Divider()
                 .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
 
-            MenuItemView(icon: .named("prov_home_icon", PVUIBase.BundleLoader.myBundle), rowTitle: "Home", isFocused: focusedItem == "home") {
-                delegate.didTapHome()
-            }
-            .focusableIfAvailable()
-            .focused($focusedItem, equals: "home")
-            .id("home")
-
-            Divider()
-                .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-
             MenuItemView(icon: .named("prov_settings_gear", PVUIBase.BundleLoader.myBundle), rowTitle: "Settings", isFocused: focusedItem == "settings") {
                 delegate.didTapSettings()
             }
@@ -285,6 +275,19 @@ SideMenuView: SwiftUI.View {
                 MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1, sortAscending: viewModel.sortConsolesAscending) {
                     viewModel.sortConsolesAscending.toggle()
                 }
+                
+                Divider()
+                    .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+
+                // Home first
+                
+                MenuItemView(icon: .named("prov_home_icon", PVUIBase.BundleLoader.myBundle), rowTitle: "Home", isFocused: focusedItem == "home") {
+                    delegate.didTapHome()
+                }
+                .focusableIfAvailable()
+                .focused($focusedItem, equals: "home")
+                .id("home")
+                
                 ForEach(sortedConsoles(), id: \.self) { console in
                     Divider()
                         .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)

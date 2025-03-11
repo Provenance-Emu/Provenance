@@ -122,10 +122,14 @@ public extension RomDatabase {
         var cache:[String:PVGame] = cache
         game.relatedFiles.forEach {
             relatedFile in
-            cache = addRelativeFileCache(relatedFile.url, game:game, cache:cache)
+            if let url = relatedFile.url {
+                cache = addRelativeFileCache(url, game:game, cache:cache)
+            }
         }
         cache[game.romPath] = game.detached()
-        cache[altName(game.file.url, systemIdentifier: game.systemIdentifier)]=game.detached()
+        if let url = game.file?.url {
+            cache[altName(url, systemIdentifier: game.systemIdentifier)] = game.detached()
+        }
         return cache
     }
     static func addRelativeFileCache(_ file:URL, game: PVGame) async {

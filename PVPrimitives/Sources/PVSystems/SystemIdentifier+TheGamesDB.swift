@@ -64,17 +64,41 @@ public extension SystemIdentifier {
         case 28:  self = .AtariJaguar  // Atari Jaguar
         case 4924: self = .Lynx        // Atari Lynx
         case 4937: self = .AtariST     // Atari ST
+        case 4943: self = .Atari8bit
 
         // Bandai Systems
         case 4925: self = .WonderSwan  // WonderSwan
         case 4926: self = .WonderSwanColor // WonderSwan Color
 
+        // Philips Systems
+        case 4917: self = .CDi
+
+        // Apple Systems
+        case 4942: self = .AppleII
+        case 37:  self = .Macintosh
+
+        // NEC Systems
+        case 24: self = .NeoGeo
+        case 4922: self = .NGP
+        case 4923: self = .NGPC
+
+        // Watara Systems
+        case 32: self = .Intellivision // Watara Intellivision
+
         // Other Systems
+        case 1:     self = .DOS            // DOS (also used for DOOM, Quake, etc.)
+        case 29:    self = .AtariJaguarCD  // Atari Jaguar CD
         case 31:  self = .ColecoVision // ColecoVision
-        case 4927: self = .Odyssey2    // Magnavox Odyssey 2
         case 40:  self = .C64          // Commodore 64
-        case 4929: self = .MSX         // MSX
         case 4913: self = .ZXSpectrum  // Sinclair ZX Spectrum
+        case 4927: self = .Odyssey2    // Magnavox Odyssey 2
+        case 4929: self = .MSX         // MSX
+        case 4939: self = .Vectrex
+        case 4948:  self = .MegaDuck       // Mega Duck
+        case 4959:  self = .Supervision    // Supervision
+
+        // Arcade Systems
+        case 23: self = .MAME
 
         default: return nil
         }
@@ -139,13 +163,44 @@ public extension SystemIdentifier {
         case .WonderSwan: return 4925  // WonderSwan
         case .WonderSwanColor: return 4926 // WonderSwan Color
 
+        // Philips Systems
+        case .CDi: return 4917
+
         // Other Systems
         case .ColecoVision: return 31  // ColecoVision
         case .Odyssey2: return 4927    // Magnavox Odyssey 2
         case .C64: return 40           // Commodore 64
         case .MSX: return 4929         // MSX
         case .ZXSpectrum: return 4913  // Sinclair ZX Spectrum
+        case .MAME: return 23
+        case .CPS1: return 23
+        case .CPS2: return 23
+        case .CPS3: return 23
 
+
+//        default: return nil
+        case .AppleII: return 4942
+        case .Atari8bit: return 4943 // Atari-800
+        case .AtariJaguarCD: return 29
+        case .DOS: return 1
+        case .DOOM: return 1
+        case .Quake: return 1
+        case .Quake2: return 1
+        case .Wolf3D: return 1
+
+//        case .EP128:
+        case .Intellivision: return 32
+        case .Macintosh: return 37
+        case .MegaDuck: return 4948
+        case .MSX2: return 4929
+//        case .Music:
+//        case .PalmOS:
+//        case .RetroArch:
+//        case .SGFX:
+        case .Supervision: return 4959
+//        case .TIC80:
+        case .Vectrex: return 4939
+        case .Unknown: return nil
         default: return nil
         }
     }

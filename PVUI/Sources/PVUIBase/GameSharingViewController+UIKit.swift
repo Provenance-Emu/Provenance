@@ -49,20 +49,22 @@ public extension GameSharingViewController where Self: UIViewController {
         // - Add save states and images
         // - Use symlinks to images so we can modify the filenames
         var files = await game.saveStates.async.reduce([URL](), { (arr, save) -> [URL] in
-            guard save.file.online else {
+            guard save.file?.online ?? false else {
                 WLOG("Save file is missing. Can't add to zip")
                 return arr
             }
             var arr = arr
-            arr.append(save.file.url)
-            if let image = save.image, image.online {
+            if let url = save.file?.url {
+                arr.append(url)
+            }
+            if let image = save.image, image.online, let file = save.file {
                 // Construct destination url "{SAVEFILE}.{EXT}"
-                let destination = tempDirURL.appendingPathComponent(save.file.fileNameWithoutExtension + "." + image.url.pathExtension, isDirectory: false)
+                let destination = tempDirURL.appendingPathComponent(file.fileNameWithoutExtension + "." + (image.url?.pathExtension ?? "raw"), isDirectory: false)
                 if FileManager.default.fileExists(atPath: destination.path) {
                     arr.append(destination)
                 } else {
                     do {
-                        try FileManager.default.createSymbolicLink(at: destination, withDestinationURL: image.url)
+                        try FileManager.default.createSymbolicLink(at: destination, withDestinationURL: image.url!)
                         arr.append(destination)
                     } catch {
                         ELOG("Failed to make symlink: " + error.localizedDescription)
@@ -127,7 +129,9 @@ public extension GameSharingViewController where Self: UIViewController {
         }
         
         // - Add main game file
-        files.append(game.file.url)
+        if let url = game.file?.url {
+            files.append(url)
+        }
         
         // Check for and add battery saves
         if FileManager.default.fileExists(atPath: game.batterSavesPath.path), let batterySaves = try? await FileManager.default.contentsOfDirectory(at: game.batterSavesPath, includingPropertiesForKeys: nil, options: .skipsHiddenFiles), !batterySaves.isEmpty {
@@ -135,7 +139,7 @@ public extension GameSharingViewController where Self: UIViewController {
             files.append(contentsOf: batterySaves)
         }
         
-        let zipPath = tempDirURL.appendingPathComponent("\(game.title)-\(game.system.shortNameAlt ?? game.system.shortName).zip", isDirectory: false)
+        let zipPath = tempDirURL.appendingPathComponent("\(game.title)-\(game.system?.shortNameAlt ?? game.system?.shortName ?? "Unknown").zip", isDirectory: false)
         let paths: [String] = files.map { $0.path }
         
         Task { @MainActor in

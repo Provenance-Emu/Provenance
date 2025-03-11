@@ -28,6 +28,14 @@ import UniformTypeIdentifiers
 
 @available(iOS 14, tvOS 14, *)
 extension PVRootViewController: PVRootDelegate {
+    @MainActor
+    public func dismissPresentedViews() async {
+        // Dismiss any presented view controllers
+        if let presented = self.presentedViewController {
+            await presented.dismiss(animated: true)
+        }
+    }
+
     public func root_canLoad(_ game: PVGame) async throws {
         try await self.canLoad(game.warmUp())
     }
@@ -36,8 +44,31 @@ extension PVRootViewController: PVRootDelegate {
         await self.load(game.warmUp(), sender: sender, core: core?.warmUp(), saveState: saveState?.warmUp())
     }
 
+    public func root_loadPath(_ path: String, forGame game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async {
+        // Create a temporary game object with the new path
+        let tempGame = game.copy() as! PVGame
+        tempGame.romPath = path
+
+        // Load the temporary game
+        await self.load(tempGame.warmUp(), sender: sender, core: core?.warmUp(), saveState: saveState?.warmUp())
+    }
+
     public func root_openSaveState(_ saveState: PVSaveState) async {
-        await self.openSaveState(saveState.warmUp())
+        // First, dismiss any presented views
+        await dismissPresentedViews()
+
+        // Check if a game is already running
+        if let gameVC = presentedViewController as? PVEmualatorControllerProtocol {
+            // If a game is already running, use the existing openSaveState method
+            await self.openSaveState(saveState.warmUp())
+        } else {
+            // If no game is running, first load the game, then the save state
+            guard let game = saveState.game else {
+                ELOG("nil game")
+                return
+            }
+            await self.load(game.warmUp(), sender: nil, core: nil, saveState: saveState.warmUp())
+        }
     }
 
     public func root_updateRecentGames(_ game: PVGame) {
@@ -48,11 +79,30 @@ extension PVRootViewController: PVRootDelegate {
         self.presentCoreSelection(forGame: game.warmUp(), sender: sender)
     }
 
-    public func attemptToDelete(game: PVGame, deleteSaves: Bool) {
+    public func root_loadDisc(_ disc: PVFile, forGame game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async {
+        // Update the game's romPath to point to the selected disc
         do {
-            try self.delete(game: game, deleteSaves: deleteSaves)
+            try RomDatabase.sharedInstance.writeTransaction {
+                let thawedGame = game.thaw()
+                thawedGame?.romPath = disc.url!.path
+            }
+
+            // Load the game with the updated romPath
+            await self.load(game.warmUp(), sender: sender, core: core?.warmUp(), saveState: saveState?.warmUp())
         } catch {
             self.presentError(error.localizedDescription, source: self.view)
+        }
+    }
+
+    public func attemptToDelete(game: PVGame, deleteSaves: Bool) {
+        let title = Bundle.module.localized("DeleteGameTitle")
+        let message = Bundle.module.localized("DeleteGameBody", game.title)
+        presentDeleteMessage(message, title: title, source: view) {
+            do {
+                try self.delete(game: game, deleteSaves: deleteSaves)
+            } catch {
+                self.presentError(error.localizedDescription, source: self.view)
+            }
         }
     }
 

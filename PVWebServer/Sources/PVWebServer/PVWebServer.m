@@ -125,11 +125,13 @@ NSUInteger webDavPort = 81;
     
     success = [self startWWWUploadServer];
     if (!success) {
+        ELOG(@"Failed to start WWW server on %@", self.IPAddress);
         return NO;
     }
     
     success = [self startWebDavServer];
     if (!success) {
+        ELOG(@"Failed to start webdav server on %@", self.IPAddress);
         [self stopWWWUploadServer];
         return NO;
     }
@@ -138,6 +140,8 @@ NSUInteger webDavPort = 81;
     [[UIApplication sharedApplication] setIdleTimerDisabled: YES];
 #endif
     [self.handoffActivity becomeCurrent];
+    
+    ILOG(@"Started servers on %@", self.IPAddress);
     
     return YES;
 }
@@ -169,7 +173,7 @@ NSUInteger webDavPort = 81;
     BOOL success = [self.webServer startWithOptions:webSeverOptions
                                               error:&error];
     if (!success) {
-        ELOG(@"Failed to start Web Server with error: %@", error.localizedDescription);
+        ELOG(@"Failed to start Web Server on %@, with error: %@", self.IPAddress, error.localizedDescription);
     }
     
     return success;
@@ -177,7 +181,7 @@ NSUInteger webDavPort = 81;
 
 -(BOOL)startWebDavServer {
     if (_webDavServer.isRunning) {
-        NSLog(@"WebDAV Server is already running");
+        NSLog(@"WebDAV Server is already running on %@", self.IPAddress);
         return YES;
     }
 

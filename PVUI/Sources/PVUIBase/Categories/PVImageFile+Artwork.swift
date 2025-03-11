@@ -10,10 +10,13 @@ import PVMediaCache
 
 public extension PVImageFile {
     public func fetchArtworkFromCache() async -> UIImage?  {
-        await PVMediaCache.shareInstance().image(forKey: url.path())
+        guard let url = url else { return nil }
+        return await PVMediaCache.shareInstance().image(forKey: url.path())
     }
     
     var pathOfCachedImage: URL? {
+        guard let url = url else { return nil }
+
         let artworkKey = url.lastPathComponent
         if !PVMediaCache.fileExists(forKey: artworkKey) {
             return nil

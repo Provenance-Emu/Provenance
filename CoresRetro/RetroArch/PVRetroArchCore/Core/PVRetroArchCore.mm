@@ -9,7 +9,7 @@
 #import "PVRetroArchCoreBridge+Controls.h"
 #import "PVRetroArchCoreBridge+Audio.h"
 #import "PVRetroArchCoreBridge+Video.h"
-#import <PVRetroArch/RetroArch-Swift.h>
+#import <PVRetroArch/PVRetroArch-Swift.h>
 
 #import <Foundation/Foundation.h>
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
@@ -62,9 +62,7 @@ extern int g_gs_preference;
 	if (self = [super init]) {
         self.skipLayout = true;
         self.extractArchive = false;
-        PVRetroArchCoreCore.systemName = self.systemIdentifier;
-        PVRetroArchCoreCore.coreClassName = self.coreIdentifier;
-
+        
         PVRetroArchCoreBridge.systemName = self.systemIdentifier;
         PVRetroArchCoreBridge.coreClassName = self.coreIdentifier;
         ILOG(@"PVRetroArchCoreBridge.coreClassName: %@, coreClassName: %@", PVRetroArchCoreBridge.systemName, PVRetroArchCoreBridge.coreClassName);
@@ -103,8 +101,6 @@ extern int g_gs_preference;
     self.alwaysUseMetal = true;
     self.skipLayout = true;
     self.extractArchive = false;
-    PVRetroArchCoreCore.systemName = self.systemIdentifier;
-    PVRetroArchCoreCore.coreClassName = self.coreIdentifier;
 
     PVRetroArchCoreBridge.systemName = self.systemIdentifier;
     PVRetroArchCoreBridge.coreClassName = self.coreIdentifier;

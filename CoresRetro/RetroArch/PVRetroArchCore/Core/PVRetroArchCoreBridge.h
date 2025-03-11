@@ -59,7 +59,7 @@
 @property (nonatomic, assign) bool bindAnalogDpad;
 @property (nonatomic, assign) bool hasSecondScreen;
 @property (nonatomic, assign) int machineType;
-@property (nonatomic, retain) NSString* coreIdentifier;
+@property (nonatomic, copy) NSString* coreIdentifier;
 @property (nonatomic) NSString* coreOptionConfigPath;
 @property (nonatomic) NSString* coreOptionConfig;
 @property (nonatomic) bool coreOptionOverwrite;

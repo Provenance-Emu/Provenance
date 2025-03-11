@@ -90,20 +90,26 @@ NSString *autoLoadStatefileName;
     }
 }
 
-#define START_WAIT_TIME 15
+// Opera needs around 15 second lead time to fill memory the 1st time it loads
+#define OPERA_START_WAIT_TIME 15
+#define START_WAIT_TIME 1
 - (void)autoloadWaitThread
 {
 	@autoreleasepool
 	{
 		//Wait here until we get the signal for full initialization
-        NSLog(@"Loading State: Waiting while loading\n");
-        // Opera needs around 15 second lead time to fill memory the 1st time it loads
-        sleep(START_WAIT_TIME);
-        NSLog(@"Loading State: Waited while loading\n");
-		content_load_state(autoLoadStatefileName.UTF8String, false, true);
-        firstLoad=false;
+        ILOG(@"Loading State: Waiting while loading\n");
+        if([self.coreIdentifier containsString:@"opera"]) {
+            sleep(OPERA_START_WAIT_TIME);
+        } else {
+            sleep(START_WAIT_TIME);
+        }
+        if (self.isRunning) {
+            ILOG(@"Loading State: Waited while loading\n");
+            content_load_state(autoLoadStatefileName.UTF8String, false, true);
+            firstLoad = false;
+        }
 	}
 }
-
 
 @end

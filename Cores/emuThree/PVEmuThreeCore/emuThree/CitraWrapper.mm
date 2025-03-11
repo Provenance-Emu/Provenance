@@ -185,7 +185,7 @@ static void InitializeLogging() {
     Settings::values.factor_3d.SetValue([[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.3D Factor"]] unsignedIntValue]);
 
     Settings::values.dump_textures.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"dump_textures"]);
-    Settings::values.custom_textures.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"custom_textures"]);
+    Settings::values.custom_textures.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Use Custom Textures"]);
     Settings::values.preload_textures.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Preload Textures"]);
     Settings::values.async_custom_loading.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"async_custom_loading"]);
 
@@ -434,10 +434,19 @@ static void InitializeLogging() {
 }
 
 -(void) refreshSize:(CAMetalLayer *)surface {
+#if !TARGET_OS_TV
     if (CitraWrapper.sharedInstance.isRunning)
         [self orientationChanged:[[UIDevice currentDevice] orientation] with:surface];
+#else
+    if (CitraWrapper.sharedInstance.isRunning) {
+        NSInteger layoutOptionInteger = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"landscape_layout_option"]] unsignedIntValue];
+        Settings::values.layout_option.SetValue(layoutOptionInteger == 0 ? Settings::LayoutOption::MobilePortrait : (Settings::LayoutOption)layoutOptionInteger);
+        emu_window->OrientationChanged(false, (__bridge CA::MetalLayer*)surface);
+    }
+#endif
 }
 
+#if !TARGET_OS_TV
 -(void) orientationChanged:(UIDeviceOrientation)orientation with:(CAMetalLayer *)surface {
     if (CitraWrapper.sharedInstance.isRunning) {
         if (orientation == UIDeviceOrientationPortrait) {
@@ -450,6 +459,8 @@ static void InitializeLogging() {
         emu_window->OrientationChanged(orientation == UIDeviceOrientationPortrait, (__bridge CA::MetalLayer*)surface);
     }
 }
+#endif
+
 -(void) SaveState:(NSString *) savePath {
     std::string path=std::string([savePath UTF8String]);
     Core::SaveState(path, _title_id);

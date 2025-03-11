@@ -93,6 +93,53 @@ struct ProvenanceApp: App {
                 #endif
             #endif
                 }
+                .onOpenURL { url in
+                    // Handle the URL
+                    let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+
+                    ILOG("ProvenanceApp: Received URL to open: \(url.absoluteString)")
+
+                    // Debug log the URL structure in detail
+                    if let components = components {
+                        DLOG("ProvenanceApp: URL scheme: \(components.scheme ?? "nil"), host: \(components.host ?? "nil"), path: \(components.path)")
+                        if let queryItems = components.queryItems {
+                            DLOG("ProvenanceApp: Query items: \(queryItems.map { "\($0.name)=\($0.value ?? "nil")" }.joined(separator: ", "))")
+                        } else {
+                            DLOG("ProvenanceApp: No query items found in URL")
+                        }
+                    }
+
+                    if url.isFileURL {
+                        ILOG("ProvenanceApp: Handling file URL")
+                        return handle(fileURL: url)
+                    }
+                    else if let scheme = url.scheme, scheme.lowercased() == PVAppURLKey {
+                        ILOG("ProvenanceApp: Handling app URL with scheme: \(scheme)")
+
+                        // Check for direct md5 parameter in the URL
+                        if let components = components,
+                           components.host?.lowercased() == "open",
+                           let queryItems = components.queryItems,
+                           let md5Value = queryItems.first(where: { $0.name == "md5" })?.value,
+                           !md5Value.isEmpty {
+                            ILOG("ProvenanceApp: Found direct md5 parameter in URL: \(md5Value)")
+                            AppState.shared.appOpenAction = .openMD5(md5Value)
+                            return
+                        }
+
+                        handle(appURL: url)
+                    } else if let components = components,
+                              components.path == PVGameControllerKey,
+                              let first = components.queryItems?.first,
+                              first.name == PVGameMD5Key,
+                              let md5Value = first.value {
+                        ILOG("ProvenanceApp: Found game controller path with MD5: \(md5Value)")
+                        AppState.shared.appOpenAction = .openMD5(md5Value)
+                        return
+                    } else {
+                        WLOG("ProvenanceApp: Unrecognized URL format: \(url.absoluteString)")
+                    }
+                }
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
@@ -104,6 +151,9 @@ struct ProvenanceApp: App {
                     appState.sendEventWasSwizzled = true
                 }
             }
+
+            // Handle scene phase changes for import pausing
+            appState.handleScenePhaseChange(newPhase)
         }
     }
 }
@@ -132,11 +182,174 @@ extension UIApplication {
     /// The sendEvent that will be called
     @objc func pv_sendEvent(_ event: UIEvent) {
 //        print("Handling touch event: \(event.type.rawValue ?? -1)")
-        if let core = AppState.shared.emulationState.core {
+        if let core = AppState.shared.emulationUIState.core {
             core.sendEvent(event)
         }
 
         originalSendEvent(event)
+    }
+}
+
+
+// MARK: - URL Handling
+extension ProvenanceApp {
+    func handle(appURL url: URL) -> Bool {
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+
+        guard let components = components else {
+            ELOG("Failed to parse url <\(url.absoluteString)>")
+            return false
+        }
+
+        ILOG("App to open url \(url.absoluteString). Parsed components: \(String(describing: components))")
+
+        // Debug log the URL structure in detail
+        DLOG("URL scheme: \(components.scheme ?? "nil"), host: \(components.host ?? "nil"), path: \(components.path)")
+        if let queryItems = components.queryItems {
+            DLOG("Query items: \(queryItems.map { "\($0.name)=\($0.value ?? "nil")" }.joined(separator: ", "))")
+        } else {
+            DLOG("No query items found in URL")
+        }
+
+        guard let action = AppURLKeys(rawValue: components.host ?? "") else {
+            ELOG("Invalid host/action: \(components.host ?? "nil")")
+            return false
+        }
+
+        switch action {
+        case .save:
+            guard let queryItems = components.queryItems, !queryItems.isEmpty else {
+                ELOG("Query items is nil")
+                return false
+            }
+
+            guard let a = queryItems["action"] else {
+                return false
+            }
+
+            let md5QueryItem = queryItems["PVGameMD5Key"]
+            let systemItem = queryItems["system"]
+            let nameItem = queryItems["title"]
+
+            if let md5QueryItem = md5QueryItem {
+
+            }
+            if let systemItem = systemItem {
+
+            }
+            if let nameItem = nameItem {
+
+            }
+            return false
+            // .filter("systemIdentifier == %@ AND title == %@", matchedSystem.identifier, gameName)
+        case .open:
+            guard let queryItems = components.queryItems, !queryItems.isEmpty else {
+                ELOG("No query items found for open action")
+                return false
+            }
+
+            DLOG("Processing open action with \(queryItems.count) query items")
+
+            // Check for direct md5 parameter (provenance://open?md5=...)
+            if let md5Value = queryItems.first(where: { $0.name == "md5" })?.value, !md5Value.isEmpty {
+                DLOG("Found direct md5 parameter: \(md5Value)")
+                if let matchedGame = fetchGame(byMD5: md5Value) {
+                    ILOG("Opening game by direct md5 parameter: \(md5Value)")
+                    AppState.shared.appOpenAction = .openGame(matchedGame)
+                    return true
+                } else {
+                    ELOG("Game not found for direct md5 parameter: \(md5Value)")
+                    return false
+                }
+            }
+
+            // Fall back to the original parameter names if direct md5 not found
+            let md5QueryItem = queryItems["PVGameMD5Key"]
+            let systemItem = queryItems["system"]
+            let nameItem = queryItems["title"]
+
+            DLOG("Fallback parameters - PVGameMD5Key: \(md5QueryItem ?? "nil"), system: \(systemItem ?? "nil"), title: \(nameItem ?? "nil")")
+
+            if let value = md5QueryItem, !value.isEmpty,
+               let matchedGame = fetchGame(byMD5: value) {
+                // Match by md5
+                ILOG("Open by md5 \(value)")
+                AppState.shared.appOpenAction = .openGame(matchedGame)
+                return true
+            } else if let gameName = nameItem, !gameName.isEmpty {
+                if let value = systemItem {
+                    // Match by name and system
+                    if !value.isEmpty,
+                       let matchedSystem = fetchSystem(byIdentifier: value) {
+                        if let matchedGame = RomDatabase.sharedInstance.all(PVGame.self).filter("systemIdentifier == %@ AND title == %@", matchedSystem.identifier, gameName).first {
+                            ILOG("Open by system \(value), name: \(gameName)")
+                            AppState.shared.appOpenAction = .openGame(matchedGame)
+                            return true
+                        } else {
+                            ELOG("Failed to open by system \(value), name: \(gameName)")
+                            return false
+                        }
+                    } else {
+                        ELOG("Invalid system id \(systemItem ?? "nil")")
+                        return false
+                    }
+                } else {
+                    if let matchedGame = RomDatabase.sharedInstance.all(PVGame.self, where: #keyPath(PVGame.title), value: gameName).first {
+                        ILOG("Open by name: \(gameName)")
+                        AppState.shared.appOpenAction = .openGame(matchedGame)
+                        return true
+                    } else {
+                        ELOG("Failed to open by name: \(gameName)")
+                        return false
+                    }
+                }
+            } else {
+                ELOG("Open Query didn't have acceptable values")
+                return false
+            }
+        }
+    }
+
+    func handle(fileURL url: URL) {
+        let filename = url.lastPathComponent
+        let destinationPath = Paths.romsImportPath.appendingPathComponent(filename, isDirectory: false)
+        var secureDocument = false
+        do {
+            defer {
+                if secureDocument {
+                    url.stopAccessingSecurityScopedResource()
+                }
+
+            }
+
+            // Doesn't seem we need access in dev builds?
+            secureDocument = url.startAccessingSecurityScopedResource()
+
+//            if let openInPlace = options[.openInPlace] as? Bool, openInPlace {
+                try FileManager.default.copyItem(at: url, to: destinationPath)
+//            } else {
+//                try FileManager.default.moveItem(at: url, to: destinationPath)
+//            }
+        } catch {
+            ELOG("Unable to move file from \(url.path) to \(destinationPath.path) because \(error.localizedDescription)")
+            return
+        }
+
+        return
+    }
+
+    /// Helper method to safely fetch a game from Realm by its MD5 hash
+    /// - Parameter md5: The MD5 hash of the game
+    /// - Returns: The game if found, nil otherwise
+    private func fetchGame(byMD5 md5: String) -> PVGame? {
+        return RomDatabase.sharedInstance.object(ofType: PVGame.self, wherePrimaryKeyEquals: md5)
+    }
+
+    /// Helper method to safely fetch a system from Realm by its identifier
+    /// - Parameter identifier: The system identifier
+    /// - Returns: The system if found, nil otherwise
+    private func fetchSystem(byIdentifier identifier: String) -> PVSystem? {
+        return RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: identifier)
     }
 }
 
@@ -296,6 +509,85 @@ extension ProvenanceApp: WhatsNewCollectionProvider {
                     image: .init(systemName: "bolt.horizontal.circle.fill", foregroundColor: .green),
                     title: "Core Performance",
                     subtitle: "Enhanced stability and responsiveness across all RetroArch-based cores"
+                )
+            ],
+            primaryAction: .init(
+                title: "Continue",
+                backgroundColor: ThemeManager.shared.currentPalette.switchON?.swiftUIColor ?? .accentColor,
+                foregroundColor: ThemeManager.shared.currentPalette.switchThumb?.swiftUIColor ?? .white,
+                hapticFeedback: .notification(.success)
+            )
+        )
+        WhatsNew(
+            version: "3.0.5",
+            title: "New Cores & System Improvements",
+            features: [
+                .init(
+                    image: .init(systemName: "gamecontroller.fill", foregroundColor: .blue),
+                    title: "New RetroArch Cores",
+                    subtitle: "Added Pokemini, BNES, BSNES HD, BSNES Mercury, GenesisPlus GX Wide, and improved FDS support with fceumm and nestopia"
+                ),
+                .init(
+                    image: .init(systemName: "music.note", foregroundColor: .purple),
+                    title: "Audio Improvements",
+                    subtitle: "Added CoreMIDI support, improved audio switching, and reduced audio glitching during gameplay"
+                ),
+                .init(
+                    image: .init(systemName: "gearshape.2.fill", foregroundColor: .orange),
+                    title: "Core Enhancements",
+                    subtitle: "Improved core options interface, better system compatibility, and enhanced feature flags system"
+                ),
+                .init(
+                    image: .init(systemName: "arrow.triangle.2.circlepath", foregroundColor: .red),
+                    title: "Performance & Stability",
+                    subtitle: "Faster system bootup, improved state management, and various crash fixes"
+                ),
+                .init(
+                    image: .init(systemName: "square.3.layers.3d.top.filled", foregroundColor: .green),
+                    title: "3DS Improvements",
+                    subtitle: "Added support for custom textures and improved graphics performance"
+                )
+            ],
+            primaryAction: .init(
+                title: "Continue",
+                backgroundColor: ThemeManager.shared.currentPalette.switchON?.swiftUIColor ?? .accentColor,
+                foregroundColor: ThemeManager.shared.currentPalette.switchThumb?.swiftUIColor ?? .white,
+                hapticFeedback: .notification(.success)
+            )
+        )
+        WhatsNew(
+            version: "3.0.6",
+            title: "System Enhancements & Hardware Features",
+            features: [
+                .init(
+                    image: .init(systemName: "plus.circle.fill", foregroundColor: .blue),
+                    title: "Expanded Gaming Support",
+                    subtitle: "Added support for classic PC games including DOOM, Quake, Quake II, and Wolf3D, plus Neo Geo .neo format support and additional DS emulator options"
+                ),
+                .init(
+                    image: .init(systemName: "camera.fill", foregroundColor: .green),
+                    title: "Hardware Integration",
+                    subtitle: "Added camera support for DS games and improved MIDI device compatibility for DOSBox enhanced gameplay features"
+                ),
+                .init(
+                    image: .init(systemName: "gamecontroller", foregroundColor: .orange),
+                    title: "Controller Improvements",
+                    subtitle: "New on-screen controls toggle button, improved gamepad support, and enhanced mouse input for iPad"
+                ),
+                .init(
+                    image: .init(systemName: "arrow.triangle.2.circlepath", foregroundColor: .purple),
+                    title: "Interface Improvements",
+                    subtitle: "Updated UI designs with modern styling, enhanced homepage organization, and new menu pause control options"
+                ),
+                .init(
+                    image: .init(systemName: "bolt.horizontal.circle.fill", foregroundColor: .red),
+                    title: "Performance Optimizations",
+                    subtitle: "Parallel system bootup with faster initialization, improved import queue processing, and silent mode ignore support"
+                ),
+                .init(
+                    image: .init(systemName: "wrench.and.screwdriver.fill", foregroundColor: .gray),
+                    title: "System Refinements",
+                    subtitle: "Enhanced BIOS management, improved database handling, and various stability fixes"
                 )
             ],
             primaryAction: .init(

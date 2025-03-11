@@ -1,1 +1,0 @@
-Fixed crash in `-_unrarOpenFile:inMode:withPassword:error:` (PR #97)

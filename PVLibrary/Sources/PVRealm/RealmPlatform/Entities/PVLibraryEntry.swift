@@ -28,7 +28,7 @@ public protocol PVGameLibraryEntry: PVLibraryEntry {
        dynamic var id: String { get }
 
        dynamic var romPath: String { get }
-       dynamic var file: PVFile! { get }
+       dynamic var file: PVFile? { get }
        var relatedFiles: List<PVFile> { get }
 
        dynamic var customArtworkURL: String { get set }
@@ -43,7 +43,7 @@ public protocol PVGameLibraryEntry: PVLibraryEntry {
        dynamic var importDate: Date { get }
 
        dynamic var systemIdentifier: String { get }
-       dynamic var system: PVSystem! { get }
+       dynamic var system: PVSystem? { get }
 
        dynamic var md5Hash: String { get }
        dynamic var crc: String { get }

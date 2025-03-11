@@ -11,8 +11,12 @@ import PVSupport
 import PVLogging
 
 public struct LocalFile: LocalFileProvider, Codable, Equatable, Sendable {
-    public let url: URL
+    
+    public static let `default`: LocalFile = LocalFile(url: nil)!
+    
+    public let url: URL?
     public var data: Data? { get {
+        guard let url = url else { return nil }
         return try? Data(contentsOf: url)
     }}
 
@@ -20,6 +24,7 @@ public struct LocalFile: LocalFileProvider, Codable, Equatable, Sendable {
 
     public var md5: String? {
         mutating get async {
+            guard let url = url else { return nil }
             guard online else {
                 return nil
             }
@@ -35,6 +40,8 @@ public struct LocalFile: LocalFileProvider, Codable, Equatable, Sendable {
     }
 
     public var size: UInt64 { get {
+        guard let url = url else { return 0 }
+
         do {
             guard let s = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize else {
                 return 0
@@ -47,8 +54,8 @@ public struct LocalFile: LocalFileProvider, Codable, Equatable, Sendable {
         }
     }}
 
-    public init?(url: URL) {
-        guard url.isFileURL else {
+    public init?(url: URL? = nil) {
+        if let url = url, !url.isFileURL {
             return nil
         }
 
@@ -67,20 +74,21 @@ extension LocalFile: Hashable {
 // MARK: - Comparable
 extension LocalFile: Comparable {
     public static func < (lhs: LocalFile, rhs: LocalFile) -> Bool {
-        return lhs.url.path < rhs.url.path
+        return lhs.url?.path ?? "" < rhs.url?.path ?? ""
     }
 }
 
 // MARK: - CustomStringConvertible
 extension LocalFile: CustomStringConvertible {
     public var description: String {
-        return "Path: \(url.path), MD5: \(md5 ?? "n/a"), Size: \(size)"
+        return "Path: \(url?.path ?? ""), MD5: \(md5 ?? "n/a"), Size: \(size)"
     }
 }
 
 // MARK: - LocalFileProvider
 extension LocalFile {
     public var online: Bool { get {
+        guard let url = url else { return true }
         return FileManager.default.fileExists(atPath: url.path)
     }}
 }

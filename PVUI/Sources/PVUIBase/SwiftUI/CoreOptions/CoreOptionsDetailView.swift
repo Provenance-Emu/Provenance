@@ -6,10 +6,17 @@ import PVLibrary
 private class CoreOptionsState: ObservableObject {
     @Published var selectedValues: [String: Any] = [:]
     @Published var optionValues: [String: Any] = [:]
+    @Published var showResetConfirmation: Bool = false
 
     func updateValue(_ value: Any, forKey key: String) {
         selectedValues[key] = value
         optionValues[key] = value
+        objectWillChange.send()
+    }
+
+    func resetAllValues() {
+        selectedValues.removeAll()
+        optionValues.removeAll()
         objectWillChange.send()
     }
 }
@@ -60,20 +67,64 @@ struct CoreOptionsDetailView: View {
     }
 
     var body: some View {
-        Form {
-            ForEach(groupedOptions) { group in
-                SwiftUI.Section {
-                    ForEach(group.options) { identifiableOption in
-                        optionView(for: identifiableOption.option)
+        VStack {
+            Form {
+                ForEach(groupedOptions) { group in
+                    SwiftUI.Section {
+                        ForEach(group.options) { identifiableOption in
+                            optionView(for: identifiableOption.option)
+                        }
+                    } header: {
+                        Text(group.title)
                     }
-                } header: {
-                    Text(group.title)
                 }
             }
+
+            // Reset button at the bottom
+            Button(action: {
+                state.showResetConfirmation = true
+            }) {
+                HStack {
+                    Image(systemName: "arrow.counterclockwise")
+                    Text("Reset All Options")
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                #if os(tvOS)
+                // Use tvOS-specific styling
+                .background(Color.red.opacity(0.7))
+                .foregroundColor(.white)
+                .cornerRadius(5)
+                .padding(.horizontal, 40)
+                .focusable(true)
+                .buttonStyle(.card)
+                #else
+                // Use iOS-specific styling
+                .background(Color.red.opacity(0.8))
+                .foregroundColor(.white)
+                .cornerRadius(10)
+                .padding(.horizontal)
+                #endif
+            }
+            .padding(.bottom)
         }
         .navigationTitle(title)
         .onAppear {
             loadOptionValues()
+        }
+        .uiKitAlert(
+            "Reset Options",
+            message: "Are you sure you want to reset all options for \(title) to their default values?",
+            isPresented: $state.showResetConfirmation
+        ) {
+            UIAlertAction(title: "Reset", style: .destructive) { _ in
+                resetAllOptions()
+                state.showResetConfirmation = false
+            }
+
+            UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                state.showResetConfirmation = false
+            }
         }
     }
 
@@ -86,6 +137,17 @@ struct CoreOptionsDetailView: View {
                 }
             }
         }
+    }
+
+    private func resetAllOptions() {
+        // Reset all options to their default values
+        coreClass.resetAllOptions()
+
+        // Clear the state
+        state.resetAllValues()
+
+        // Reload option values
+        loadOptionValues()
     }
 
     private func getCurrentValue(for option: CoreOption) -> Any? {
@@ -127,66 +189,120 @@ struct CoreOptionsDetailView: View {
         }
     }
 
+    private func resetOption(_ option: CoreOption) {
+        // Reset the option to its default value
+        if let defaultValue = option.defaultValue {
+            setValue(defaultValue, for: option)
+
+            // Update the state
+            state.optionValues[option.key] = defaultValue
+            state.selectedValues[option.key] = defaultValue
+        }
+    }
+
     @ViewBuilder
     private func optionView(for option: CoreOption) -> some View {
         switch option {
         case let .bool(display, defaultValue):
-            Toggle(isOn: Binding(
-                get: { state.optionValues[option.key] as? Bool ?? defaultValue },
-                set: { setValue($0, for: option) }
-            )) {
-                VStack(alignment: .leading) {
-                    Text(display.title)
-                    if let description = display.description {
-                        Text(description)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+            HStack {
+                Toggle(isOn: Binding(
+                    get: { state.optionValues[option.key] as? Bool ?? defaultValue },
+                    set: { setValue($0, for: option) }
+                )) {
+                    VStack(alignment: .leading) {
+                        Text(display.title)
+                        if let description = display.description {
+                            Text(description)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
                     }
                 }
+
+                #if !os(tvOS)
+                Button(action: {
+                    resetOption(option)
+                }) {
+                    Image(systemName: "arrow.counterclockwise")
+                        .foregroundColor(.blue)
+                }
+                .buttonStyle(.borderless)
+                #endif
             }
 
         case let .enumeration(display, values, defaultValue):
-            let selection = Binding(
-                get: {
-                    let value = state.selectedValues[option.key] as? Int ?? state.optionValues[option.key] as? Int ?? defaultValue
-                    return value
-                },
-                set: { newValue in
-                    withAnimation {
-                        setValue(newValue, for: option)
-                        state.updateValue(newValue, forKey: option.key)
+            HStack {
+                let selection = Binding(
+                    get: {
+                        let value = state.selectedValues[option.key] as? Int ?? state.optionValues[option.key] as? Int ?? defaultValue
+                        return value
+                    },
+                    set: { newValue in
+                        withAnimation {
+                            setValue(newValue, for: option)
+                            state.updateValue(newValue, forKey: option.key)
+                        }
                     }
-                }
-            )
-
-            NavigationLink {
-                EnumerationSelectionList(
-                    values: values,
-                    selection: selection,
-                    title: display.title
                 )
-            } label: {
-                VStack(alignment: .leading) {
-                    Text(display.title)
-                    if let description = display.description {
-                        Text(description)
-                            .font(.caption)
+
+                NavigationLink {
+                    EnumerationSelectionList(
+                        values: values,
+                        selection: selection,
+                        title: display.title
+                    )
+                } label: {
+                    VStack(alignment: .leading) {
+                        Text(display.title)
+                        if let description = display.description {
+                            Text(description)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        Text(values.first { $0.value == selection.wrappedValue }?.title ?? "")
                             .foregroundColor(.secondary)
                     }
-                    Text(values.first { $0.value == selection.wrappedValue }?.title ?? "")
-                        .foregroundColor(.secondary)
                 }
+
+                #if !os(tvOS)
+                Spacer()
+
+                Button(action: {
+                    resetOption(option)
+                }) {
+                    Image(systemName: "arrow.counterclockwise")
+                        .foregroundColor(.blue)
+                }
+                .buttonStyle(.borderless)
+                #endif
             }
 
         case let .range(display, range, defaultValue):
             VStack(alignment: .leading) {
-                Text(display.title)
-                if let description = display.description {
-                    Text(description)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(display.title)
+                        if let description = display.description {
+                            Text(description)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+
+                    #if !os(tvOS)
+                    Spacer()
+
+                    Button(action: {
+                        resetOption(option)
+                    }) {
+                        Image(systemName: "arrow.counterclockwise")
+                            .foregroundColor(.blue)
+                    }
+                    .buttonStyle(.borderless)
+                    #endif
                 }
-#if !os(tvOS)
+
+                #if !os(tvOS)
                 Slider(
                     value: Binding(
                         get: { Double(state.optionValues[option.key] as? Int ?? defaultValue) },
@@ -201,18 +317,35 @@ struct CoreOptionsDetailView: View {
                 } maximumValueLabel: {
                     Text("\(range.max)")
                 }
-#endif
+                #endif
             }
 
         case let .rangef(display, range, defaultValue):
             VStack(alignment: .leading) {
-                Text(display.title)
-                if let description = display.description {
-                    Text(description)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(display.title)
+                        if let description = display.description {
+                            Text(description)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+
+                    #if !os(tvOS)
+                    Spacer()
+
+                    Button(action: {
+                        resetOption(option)
+                    }) {
+                        Image(systemName: "arrow.counterclockwise")
+                            .foregroundColor(.blue)
+                    }
+                    .buttonStyle(.borderless)
+                    #endif
                 }
-#if !os(tvOS)
+
+                #if !os(tvOS)
                 Slider(
                     value: Binding(
                         get: { Double(state.optionValues[option.key] as? Float ?? defaultValue) },
@@ -227,56 +360,85 @@ struct CoreOptionsDetailView: View {
                 } maximumValueLabel: {
                     Text(String(format: "%.1f", range.max))
                 }
-#endif
+                #endif
             }
 
         case let .multi(display, values):
-            let selection = Binding(
-                get: { state.selectedValues[option.key] as? String ?? state.optionValues[option.key] as? String ?? values.first?.title ?? "" },
-                set: { newValue in
-                    withAnimation {
-                        setValue(newValue, for: option)
-                        state.updateValue(newValue, forKey: option.key)
+            HStack {
+                let selection = Binding(
+                    get: { state.selectedValues[option.key] as? String ?? state.optionValues[option.key] as? String ?? values.first?.title ?? "" },
+                    set: { newValue in
+                        withAnimation {
+                            setValue(newValue, for: option)
+                            state.updateValue(newValue, forKey: option.key)
+                        }
                     }
-                }
-            )
-
-            NavigationLink {
-                MultiSelectionList(
-                    values: values,
-                    selection: selection,
-                    title: display.title
                 )
-            } label: {
-                VStack(alignment: .leading) {
-                    Text(display.title)
-                    if let description = display.description {
-                        Text(description)
-                            .font(.caption)
+
+                NavigationLink {
+                    MultiSelectionList(
+                        values: values,
+                        selection: selection,
+                        title: display.title
+                    )
+                } label: {
+                    VStack(alignment: .leading) {
+                        Text(display.title)
+                        if let description = display.description {
+                            Text(description)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        Text(selection.wrappedValue)
                             .foregroundColor(.secondary)
                     }
-                    Text(selection.wrappedValue)
-                        .foregroundColor(.secondary)
                 }
+
+                #if !os(tvOS)
+                Spacer()
+
+                Button(action: {
+                    resetOption(option)
+                }) {
+                    Image(systemName: "arrow.counterclockwise")
+                        .foregroundColor(.blue)
+                }
+                .buttonStyle(.borderless)
+                #endif
             }
 
         case let .string(display, defaultValue):
-            let text = Binding(
-                get: { state.optionValues[option.key] as? String ?? defaultValue },
-                set: { setValue($0, for: option) }
-            )
-
             VStack(alignment: .leading) {
-                Text(display.title)
-                if let description = display.description {
-                    Text(description)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(display.title)
+                        if let description = display.description {
+                            Text(description)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+
+                    #if !os(tvOS)
+                    Spacer()
+
+                    Button(action: {
+                        resetOption(option)
+                    }) {
+                        Image(systemName: "arrow.counterclockwise")
+                            .foregroundColor(.blue)
+                    }
+                    .buttonStyle(.borderless)
+                    #endif
                 }
-                TextField("Value", text: text)
-#if !os(tvOS)
+
+                TextField("Value", text: Binding(
+                    get: { state.optionValues[option.key] as? String ?? defaultValue },
+                    set: { setValue($0, for: option) }
+                ))
+                #if !os(tvOS)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-#endif
+                #endif
             }
 
         case .group(_, _):

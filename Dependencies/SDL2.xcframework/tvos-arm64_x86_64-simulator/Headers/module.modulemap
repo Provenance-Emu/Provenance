@@ -1,0 +1,19 @@
+module SDL2 {
+    header "SDL.h"
+    header "SDL_vulkan.h"
+    export *
+    link "SDL2"
+    link framework "AudioToolbox"
+    link framework "AVFoundation"
+    link framework "CoreAudio"
+    link framework "CoreGraphics"
+    link framework "CoreHaptics"
+    link framework "CoreMotion"
+    link framework "Foundation"
+    link framework "GameController"
+    link framework "IOKit"
+    link framework "Metal"
+    link framework "QuartzCore"
+    link framework "OpenGLES"
+    link framework "UIKit"
+}

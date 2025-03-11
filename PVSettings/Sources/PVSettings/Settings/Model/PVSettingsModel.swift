@@ -34,9 +34,9 @@ extension Defaults.Keys {
 
     static let buttonVibration = Key<Bool>("buttonVibration", default: true)
 #if os(iOS) || os(watchOS) || targetEnvironment(macCatalyst)
-    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: false)
+    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: true)
 #else
-    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: false)
+    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: true)
 #endif
     static let imageSmoothing = Key<Bool>("imageSmoothing", default: false)
 
@@ -225,6 +225,8 @@ public extension Defaults.Keys {
     static let monoAudio = Key<Bool>("monoAudio", default: false)
 
     static let audioLatency = Key<TimeInterval>("audioLatency", default: 10.0)
+    
+    static let respectMuteSwitch = Key<Bool>("respectMuteSwitch", default: true)
 }
 
 // MARK: Beta Options
@@ -250,11 +252,11 @@ public extension Defaults.Keys {
     static let tvOSThemes = Key<Bool>("tvOSThemes", default: false)
 #endif
 #if os(macOS) || targetEnvironment(macCatalyst)
-    static let movableButtons = Key<Bool>("movableButtons", default: false)
+    static let movableButtons = Key<Bool>("movableButtons", default: true)
     static let onscreenJoypad = Key<Bool>("onscreenJoypad", default: false)
     static let onscreenJoypadWithKeyboard = Key<Bool>("onscreenJoypadWithKeyboard", default: false)
 #elseif os(iOS)
-    static let movableButtons = Key<Bool>("movableButtons", default: false)
+    static let movableButtons = Key<Bool>("movableButtons", default: true)
     static let onscreenJoypad = Key<Bool>("onscreenJoypad", default: true)
     static let onscreenJoypadWithKeyboard = Key<Bool>("onscreenJoypadWithKeyboard", default: true)
 #endif

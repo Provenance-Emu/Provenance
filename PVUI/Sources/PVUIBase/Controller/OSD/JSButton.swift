@@ -14,28 +14,77 @@ import UIKit
 import PVSettings
 import PVThemes
 
+public enum ControlTag: Int {
+    case dpad1 = 100
+    case dpad2 = 101
+    case joypad1 = 102
+    case joypad2 = 103
+    case buttonGroup = 200
+    case leftShoulder = 301
+    case rightShoulder = 302
+    case leftShoulder2 = 303
+    case rightShoulder2 = 304
+    case zTrigger = 305
+    case start = 401
+    case select = 402
+    case leftAnalog = 501
+    case rightAnalog = 502
+}
+
 protocol JSButtonDelegate: AnyObject {
     func buttonPressed(_ button: JSButton)
     func buttonReleased(_ button: JSButton)
 }
 
+/// A button that can be moved and resized in the UI
 final class JSButton: MovableButtonView {
-
+    /// The label text for the button
+    private(set) var label: String?
     private(set) var titleLabel: UILabel!
     private var backgroundImageView: UIImageView! {
         didSet {
-			DispatchQueue.main.async { [unowned self] in
-				self.backgroundImageView.image = backgroundImage
-			}
+            DispatchQueue.main.async { [unowned self] in
+                self.backgroundImageView.image = backgroundImage
+            }
         }
+    }
+
+    // MARK: - NSCoding
+    override func encode(with coder: NSCoder) {
+        super.encode(with: coder)
+        coder.encode(label, forKey: "label")
+        coder.encode(titleLabel?.text ?? "", forKey: "titleText")
+        coder.encode(titleEdgeInsets, forKey: "titleEdgeInsets")
+        coder.encode(pressed, forKey: "pressed")
+        coder.encode(isUserInteractionEnabled, forKey: "isEnabled")
+    }
+
+    required init?(coder: NSCoder) {
+        label = coder.decodeObject(forKey: "label") as? String ?? ""
+        super.init(coder: coder)
+
+        // Initialize UI elements
+        commonInit()
+
+        // Set decoded values
+        titleLabel.text = coder.decodeObject(forKey: "titleText") as? String
+        titleEdgeInsets = coder.decodeUIEdgeInsets(forKey: "titleEdgeInsets")
+        pressed = coder.decodeBool(forKey: "pressed")
+        isUserInteractionEnabled = coder.decodeBool(forKey: "isEnabled")
+    }
+
+    public required init(frame: CGRect, label: String?) {
+        self.label = label
+        super.init(frame: frame)
+        commonInit()
     }
 
     var backgroundImage: UIImage? {
         didSet {
             if pressed {
-				DispatchQueue.main.async { [unowned self] in
-					self.backgroundImageView.image = backgroundImage
-				}
+                DispatchQueue.main.async { [unowned self] in
+                    self.backgroundImageView.image = backgroundImage
+                }
             }
         }
     }
@@ -43,9 +92,9 @@ final class JSButton: MovableButtonView {
     var backgroundImagePressed: UIImage? {
         didSet {
             if !pressed {
-				DispatchQueue.main.async { [unowned self] in
-					self.backgroundImageView.image = backgroundImage
-				}
+                DispatchQueue.main.async { [unowned self] in
+                    self.backgroundImageView.image = backgroundImage
+                }
             }
         }
     }
@@ -83,9 +132,9 @@ final class JSButton: MovableButtonView {
                 return
             }
 
-			DispatchQueue.main.async { [unowned self] in
-				self.backgroundImageView?.image = pressed ? backgroundImagePressed : backgroundImage
-			}
+            DispatchQueue.main.async { [unowned self] in
+                self.backgroundImageView?.image = pressed ? backgroundImagePressed : backgroundImage
+            }
         }
     }
 
@@ -93,16 +142,6 @@ final class JSButton: MovableButtonView {
 
     func setEnabled(_ enabled: Bool) {
         isUserInteractionEnabled = enabled
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        commonInit()
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        commonInit()
     }
 
     func commonInit() {
@@ -175,12 +214,12 @@ final class JSButton: MovableButtonView {
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-		if !isUserInteractionEnabled {  return }
+        if !isUserInteractionEnabled {  return }
 
-		if inMoveMode {
-			super.touchesMoved(touches, with: event)
-			return
-		}
+        if inMoveMode {
+            super.touchesMoved(touches, with: event)
+            return
+        }
 
         guard let touch = touches.first else {
             return
@@ -204,9 +243,9 @@ final class JSButton: MovableButtonView {
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-		if !isUserInteractionEnabled {  return }
+        if !isUserInteractionEnabled {  return }
 
-		if inMoveMode {
+        if inMoveMode {
             super.touchesEnded(touches, with: event)
             return
         }
@@ -216,9 +255,9 @@ final class JSButton: MovableButtonView {
     }
 
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-		if !isUserInteractionEnabled {  return }
+        if !isUserInteractionEnabled {  return }
 
-		if inMoveMode {
+        if inMoveMode {
             super.touchesCancelled(touches, with: event)
             return
         }

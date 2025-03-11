@@ -95,6 +95,12 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         view.addSubview(hud)
 
         setupHUDObserver(hud: hud)
+
+        // Listen for bootup state changes
+        setupBootupStateObserver()
+
+        // Listen for app open actions
+        setupAppOpenActionObserver()
     }
 
     public override func viewWillAppear(_ animated: Bool) {
@@ -107,6 +113,26 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         NotificationCenter.default.removeObserver(controllerObserver as Any)
         continuousNavigationTask?.cancel()
         gameController = nil
+    }
+
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        // If bootup is already completed, handle app open events
+        if AppState.shared.bootupState == .completed {
+            ILOG("PVRootViewController: Bootup already completed, checking for app open events")
+
+            // Get the current app open action
+            let currentAction = AppState.shared.appOpenAction
+            if case .none = currentAction {
+                DLOG("PVRootViewController: No app open action to handle on view appear")
+            } else {
+                ILOG("PVRootViewController: Found app open action to handle on view appear")
+                Task { @MainActor in
+                    await handleAppOpenEvents(currentAction)
+                }
+            }
+        }
     }
 
     private var cancellables = Set<AnyCancellable>()
@@ -142,13 +168,13 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
             }
 
         // Set initial console and tab
-        if let console = gameLibrary.activeSystems.first {
-            consolesWrapperViewDelegate.selectedTab = console.identifier
-            viewModel.selectedConsole = console
-        } else {
-            consolesWrapperViewDelegate.selectedTab = "home"
-            viewModel.selectedConsole = nil
-        }
+//        if let console = gameLibrary.activeSystems.first {
+//            consolesWrapperViewDelegate.selectedTab = console.identifier
+//            viewModel.selectedConsole = console
+//        } else {
+//            consolesWrapperViewDelegate.selectedTab = "home"
+//            viewModel.selectedConsole = nil
+//        }
     }
 
     public func didTapHome() {
@@ -178,6 +204,69 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         self.addChildViewController(newVC, toContainerView: self.containerView)
         self.fillParentView(child: newVC.view, parent: self.containerView)
         closeMenu()
+    }
+
+    /// Sets up an observer for app open actions to handle them when they change
+    private func setupAppOpenActionObserver() {
+        Task { @MainActor in
+            for await action in await AppState.shared.$appOpenAction.values {
+                // Skip empty actions
+                if case .none = action {
+                    continue
+                }
+
+                ILOG("PVRootViewController: Detected new app open action: \(String(describing: action))")
+
+                // Only process if bootup is completed
+                if AppState.shared.bootupState == .completed {
+                    ILOG("PVRootViewController: Processing app open action immediately")
+                    await handleAppOpenEvents(action)
+                } else {
+                    ILOG("PVRootViewController: Bootup not completed, action will be handled after bootup")
+                    // The action will be handled by the bootup state observer when bootup completes
+                }
+            }
+        }
+    }
+
+    private func handleAppOpenEvents(_ state: AppState.AppOpenAction) async {
+        ILOG("PVRootViewController: Handling app open action: \(String(describing: state))")
+
+        // Store the current state to process
+        let currentState = state
+
+        // Reset the app open action to none immediately to avoid processing it multiple times
+        if case .none = state {
+            // Already none, no need to reset
+        } else {
+            AppState.shared.appOpenAction = .none
+            DLOG("PVRootViewController: Reset appOpenAction to .none")
+        }
+
+        switch currentState {
+        case .openFile(let url):
+            ILOG("PVRootViewController: Opening file at URL: \(url.path)")
+            // TODO: Find if we have the file by md5, or if the path is in our PVGame paths
+            // if the path is outside the app folders, we need to import and then somehow
+            // load the game. Ideally we could force import the game with a single import method
+            // that's async
+            break
+        case .openMD5(let md5):
+            ILOG("PVRootViewController: Opening game by MD5: \(md5)")
+            guard let game = RomDatabase.sharedInstance.object(ofType: PVGame.self, wherePrimaryKeyEquals: md5) else {
+                ELOG("PVRootViewController: No game found with md5: \(md5)")
+                return
+            }
+            ILOG("PVRootViewController: Found game '\(game.title)' for MD5: \(md5), loading...")
+            await root_load(game, sender: self, core: nil, saveState: nil)
+            break
+        case .openGame(let game):
+            ILOG("PVRootViewController: Opening game directly: \(game.title) (MD5: \(game.md5Hash))")
+            await root_load(game, sender: self, core: nil, saveState: nil)
+        case .none:
+            DLOG("PVRootViewController: No app open action to handle")
+            break
+        }
     }
 
     private var gamepadCancellable: AnyCancellable?
@@ -285,6 +374,151 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
                 self.viewModel.selectedConsole = allConsoles[currentIndex + 1]
             }
         }
+    }
+
+    /// Sets up an observer for the bootup state to handle app open events when bootup completes
+    private func setupBootupStateObserver() {
+        Task { @MainActor in
+            for await _ in await AppState.shared.bootupStateManager.$currentState.values {
+                if AppState.shared.bootupState == .completed {
+                    ILOG("PVRootViewController: Bootup state completed, waiting before handling app open events")
+                    // Add a slight delay to ensure everything is fully initialized
+                    try? await Task.sleep(for: .milliseconds(500))
+
+                    // Check if the task wasn't cancelled during the delay
+                    if !Task.isCancelled {
+                        ILOG("PVRootViewController: Now handling app open events after bootup completion")
+                        // Get the current app open action at the time bootup completes
+                        let currentAction = AppState.shared.appOpenAction
+                        if case .none = currentAction {
+                            DLOG("PVRootViewController: No app open action to handle after bootup")
+                        } else {
+                            await handleAppOpenEvents(currentAction)
+                        }
+                    }
+
+                    // Break the loop since we only need to handle this once
+                    break
+                }
+            }
+        }
+    }
+    
+    @MainActor
+    public func root_showContinuesManagement(_ game: PVGame? = nil) {
+        DLOG("Showing continues management for game: \(game?.title ?? "All Games")")
+        guard let realm = try? Realm() else {
+            ELOG("Realm() failed")
+            return
+        }
+        // Create the driver
+        let driver = RealmSaveStateDriver(realm: realm)
+
+        // Create the view model with appropriate parameters
+        let viewModel = ContinuesMagementViewModel(
+            driver: driver,
+            gameTitle: game?.title ?? "All Games",
+            systemTitle: game?.system?.name ?? "All Systems",
+            numberOfSaves: game?.saveStates.count ?? realm.objects(PVSaveState.self).count,
+            onLoadSave: { [weak self] saveStateId in
+                guard let self = self else { return }
+                Task { @MainActor in
+                    await self.root_openSaveState(saveStateId)
+                }
+            }
+        )
+
+        // If a specific game is provided, filter the save states
+        if let game = game {
+            driver.loadSaveStates(forGameId: game.id)
+        } else {
+            // When no specific game is provided, load all save states across all systems
+            driver.loadAllSaveStates(forSystemID: "")
+        }
+
+        // Create and present the view
+        let continuesView = ContinuesMagementView(viewModel: viewModel)
+                            .onAppear {
+                                if let game = game {
+                                    /// Set the game ID filter
+                                    driver.gameId = game.id
+
+                                    let game = game.freeze()
+                                    Task { @MainActor in
+                                        let image: UIImage? = await game.fetchArtworkFromCache()
+                                        viewModel.gameUIImage = image
+                                    }
+                                }
+                            }
+        let hostingController = UIHostingController(rootView: continuesView)
+
+        // Present as a sheet
+        #if os(tvOS)
+        hostingController.modalPresentationStyle = .blurOverFullScreen
+        #else
+        hostingController.modalPresentationStyle = .formSheet
+        #endif
+        hostingController.preferredContentSize = CGSize(width: 600, height: 800)
+
+        self.present(hostingController, animated: true)
+    }
+
+    /// Show continues management for a specific system
+    /// - Parameter systemID: The system identifier to filter save states by
+    @MainActor
+    public func root_showContinuesManagement(forSystemID systemID: String) {
+        DLOG("Showing continues management for system ID: \(systemID)")
+        guard let realm = try? Realm() else {
+            return
+        }
+        // Create the driver
+        let driver = RealmSaveStateDriver(realm: realm)
+
+        // Get the system name for display
+        let systemName = realm.object(ofType: PVSystem.self, forPrimaryKey: systemID)?.name ?? systemID
+
+        // Create the view model with appropriate parameters
+        let viewModel = ContinuesMagementViewModel(
+            driver: driver,
+            gameTitle: "All Games",
+            systemTitle: systemName,
+            numberOfSaves: realm.objects(PVSaveState.self)
+                .filter("game.systemIdentifier == %@", systemID).count,
+            onLoadSave: { [weak self] saveStateId in
+                guard let self = self else { return }
+                Task { @MainActor in
+                    await self.root_openSaveState(saveStateId)
+                }
+            }
+        )
+
+        // Load all save states for the specified system
+        driver.loadAllSaveStates(forSystemID: systemID)
+        
+        // Create and present the view
+        let continuesView = ContinuesMagementView(viewModel: viewModel)
+            .onAppear {
+                // Use system icon
+                Task { @MainActor in
+                    guard let console = RomDatabase.sharedInstance.realm.object(ofType: PVSystem.self, forPrimaryKey: systemID) else {
+                        ELOG("No system for id: \(systemID)")
+                        return
+                    }
+                    let image: UIImage? = UIImage(named: console.iconName, in: PVUIBase.BundleLoader.myBundle, compatibleWith: nil)
+                    viewModel.gameUIImage = image
+                }
+            }
+        let hostingController = UIHostingController(rootView: continuesView)
+
+        // Present as a sheet
+        #if os(tvOS)
+        hostingController.modalPresentationStyle = .blurOverFullScreen
+        #else
+        hostingController.modalPresentationStyle = .formSheet
+        #endif
+        hostingController.preferredContentSize = CGSize(width: 600, height: 800)
+
+        self.present(hostingController, animated: true)
     }
 }
 

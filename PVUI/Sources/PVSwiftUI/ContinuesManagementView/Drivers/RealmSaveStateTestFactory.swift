@@ -52,6 +52,16 @@ public class RealmSaveStateTestFactory {
                 saveState.date = Date().addingTimeInterval(Double(-i * 24 * 3600))
 
                 realm.add(saveState)
+                
+                /// Store metadata asynchronously
+                LibrarySerializer.storeMetadata(saveState) { result in
+                    switch result {
+                    case .success(let url):
+                        ILOG("Serialized save state metadata to (\(url.path))")
+                    case .error(let error):
+                        ELOG("Failed to serialize save metadata. \(error)")
+                    }
+                }
             }
         }
 

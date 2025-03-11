@@ -33,8 +33,22 @@ extension Moveable where Self: UIView {
     }
 }
 
-class MovableButtonView: UIView, Moveable {
+/// Codable struct for storing button position and scale
+struct ButtonPosition: Codable {
+    let x: CGFloat
+    let y: CGFloat
+    let scale: CGFloat
+    let identifier: String
 
+    init(view: UIView, scale: CGFloat, identifier: String) {
+        self.x = view.frame.origin.x
+        self.y = view.frame.origin.y
+        self.scale = scale
+        self.identifier = identifier
+    }
+}
+
+class MovableButtonView: UIView, Moveable {
     public var isCustomMoved: Bool = false {
         didSet {
             ILOG("isCustomMoved changed to: \(isCustomMoved)")
@@ -331,6 +345,25 @@ class MovableButtonView: UIView, Moveable {
             ILOG("Saved position for key: \(key)")
         }
     }
+
+    // MARK: - NSCoding
+    override func encode(with coder: NSCoder) {
+        super.encode(with: coder)
+        coder.encode(frame, forKey: "frame")
+        coder.encode(currentScale, forKey: "currentScale")
+        coder.encode(isCustomMoved, forKey: "isCustomMoved")
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        currentScale = coder.decodeDouble(forKey: "currentScale")
+        isCustomMoved = coder.decodeBool(forKey: "isCustomMoved")
+        frame = coder.decodeCGRect(forKey: "frame")
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
 }
 
 // MARK: - UIGestureRecognizerDelegate
@@ -339,19 +372,5 @@ extension MovableButtonView: UIGestureRecognizerDelegate {
         DLOG("Checking simultaneous recognition between \(gestureRecognizer) and \(otherGestureRecognizer)")
         // Only allow pan gesture to work exclusively
         return !(gestureRecognizer is UIPanGestureRecognizer || otherGestureRecognizer is UIPanGestureRecognizer)
-    }
-}
-
-struct ButtonPosition: Codable {
-    let x: CGFloat
-    let y: CGFloat
-    let scale: CGFloat
-    let identifier: String
-
-    init(view: UIView, scale: CGFloat, identifier: String) {
-        self.x = view.frame.origin.x
-        self.y = view.frame.origin.y
-        self.scale = scale
-        self.identifier = identifier
     }
 }

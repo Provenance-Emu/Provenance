@@ -16,6 +16,11 @@ import RealmSwift
 import Perception
 import PVFeatureFlags
 import Defaults
+import AudioToolbox
+import MarkdownView
+#if os(tvOS)
+import GameController
+#endif
 
 #if canImport(FreemiumKit)
 import FreemiumKit
@@ -227,12 +232,79 @@ private struct AppSection: View {
 }
 
 private struct CoreOptionsSection: View {
+    @State private var shouldShowResetButton = false
+    @State private var showResetConfirmation = false
+    @State private var resetError: String? = nil
+    @State private var showConfigEditor = false
+
     var body: some View {
         Section(header: Text("Core Options")) {
             NavigationLink(destination: CoreOptionsView()) {
                 SettingsRow(title: "Core Options",
                             subtitle: "Configure emulator core settings.",
                             icon: .sfSymbol("gearshape.2"))
+            }
+
+            if PVFeatureFlagsManager.shared.retroarchBuiltinEditor {
+                NavigationLink(destination: RetroArchConfigEditorWrapper()) {
+                    SettingsRow(
+                        title: "Edit RetroArch Config",
+                        subtitle: "Modify advanced RetroArch settings.",
+                        icon: .sfSymbol("gearshape.2.fill")
+                    )
+                }
+            }
+
+            if shouldShowResetButton {
+                Button(action: { showResetConfirmation = true }) {
+                    SettingsRow(title: "Reset RetroArch Config",
+                                subtitle: "Restore default RetroArch configuration.",
+                                icon: .sfSymbol("arrow.uturn.backward.circle"))
+                }
+                .uiKitAlert(
+                    "Reset RetroArch Config",
+                    message: "This will overwrite your current RetroArch configuration with the default settings. Are you sure?",
+                    isPresented: $showResetConfirmation,
+                    preferredContentSize: CGSize(width: 500, height: 300)
+                ) {
+                    UIAlertAction(title: "Reset", style: .destructive) { _ in
+                        resetRetroArchConfig()
+                    }
+                    UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                        showResetConfirmation = false
+                    }
+                }
+            }
+
+        }
+        .task {
+            shouldShowResetButton = await PVRetroArchCoreManager.shared.shouldResetConfig()
+        }
+        .uiKitAlert(
+            "Reset Error",
+            message: resetError ?? "",
+            isPresented: .constant(resetError != nil),
+            preferredContentSize: CGSize(width: 500, height: 300)
+        ) {
+            UIAlertAction(title: "OK", style: .default) { _ in
+                resetError = nil
+            }
+        }
+    }
+
+    private func resetRetroArchConfig() {
+        Task {
+            guard let bundledURL = PVRetroArchCoreManager.shared.bundledConfigURL,
+                  let activeURL = PVRetroArchCoreManager.shared.activeConfigURL else {
+                return
+            }
+
+            do {
+                try await PVRetroArchCoreManager.shared.copyConfigFile(from: bundledURL, to: activeURL)
+                // Update the button state after successful reset
+                shouldShowResetButton = await PVRetroArchCoreManager.shared.shouldResetConfig()
+            } catch {
+                resetError = "Failed to reset RetroArch config: \(error.localizedDescription)"
             }
         }
     }
@@ -414,15 +486,21 @@ private struct AudioSection: View {
     #if !os(tvOS)
     @Default(.volume) var volume
     @Default(.volumeHUD) var volumeHUD
+    @Default(.respectMuteSwitch) var respectMuteSwitch
     #endif
     var body: some View {
         Section(header: Text("Audio")) {
             #if !os(tvOS)
-            ThemedToggle(isOn: $volumeHUD) {
-                SettingsRow(title: "Volume HUD",
-                            subtitle: "Show volume indicator when changing volume.",
-                            icon: .sfSymbol("speaker.wave.2"))
+            ThemedToggle(isOn: $respectMuteSwitch) {
+                SettingsRow(title: "Respect Silent Mode",
+                            subtitle: respectMuteSwitch ? "Disable game audio when system ringer is muted. Does not apply to headphones or external audio destinations." : "Play game audio when system ringer is muted. Does not apply to headphones or external audio destinations.",
+                            icon: respectMuteSwitch ? .sfSymbol("speaker.slash.fill") : .sfSymbol("speaker.slash"))
             }
+//            ThemedToggle(isOn: $volumeHUD) {
+//                SettingsRow(title: "Volume HUD",
+//                            subtitle: "Show volume indicator when changing volume.",
+//                            icon: .sfSymbol("speaker.wave.2"))
+//            }
             HStack {
                 Text("Volume")
                 Slider(value: $volume, in: 0...1, step: 0.1) {
@@ -561,6 +639,9 @@ private struct OnScreenControllerSection: View {
     @Default(.missingButtonsAlwaysOn) var missingButtonsAlwaysOn
     @Default(.onscreenJoypad) var onscreenJoypad
     @Default(.onscreenJoypadWithKeyboard) var onscreenJoypadWithKeyboard
+#if !os(tvOS)
+    @Default(.movableButtons) var movableButtons
+#endif
 
     var body: some View {
         Section(header: Text("On-Screen Controller")) {
@@ -605,7 +686,12 @@ private struct OnScreenControllerSection: View {
                             subtitle: "Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'. Useful on iPad OS for systems with an analog joystick (N64, PSX, etc.)",
                             icon: .sfSymbol("keyboard.badge.eye"))
             }
-
+            ThemedToggle(isOn: $movableButtons) {
+                SettingsRow(title: "Movable Buttons",
+                            subtitle: "Allow player to move on screen controller buttons. Tap with 3-fingers 3 times to toggle.",
+                            icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right"))
+            }
+            #if false
             if FeatureFlag.advancedSkinFeatures.enabled {
                 // Button Sound Effect Picker
                 NavigationLink {
@@ -678,6 +764,7 @@ private struct OnScreenControllerSection: View {
                 }
 
             }
+            #endif
         }
     }
 
@@ -770,13 +857,15 @@ private struct FeatureFlagsDebugView: View {
         .task {
             await loadInitialConfiguration()
         }
-        .alert("Error", isPresented: .constant(errorMessage != nil)) {
-            Button("OK") {
+        .uiKitAlert(
+            "Error",
+            message: errorMessage ?? "",
+            isPresented: .constant(errorMessage != nil),
+            preferredContentSize: CGSize(width: 500, height: 300)
+        ) {
+            UIAlertAction(title: "OK", style: .default) { _ in
+                print("OK tapped")
                 errorMessage = nil
-            }
-        } message: {
-            if let error = errorMessage {
-                Text(error)
             }
         }
     }
@@ -824,7 +913,7 @@ private struct LoadingSection: View {
 
 private struct FeatureFlagsSection: View {
     let flags: [(key: String, flag: FeatureFlag, enabled: Bool)]
-    let featureFlags: PVFeatureFlagsManager
+    @ObservedObject var featureFlags: PVFeatureFlagsManager
 
     var body: some View {
         Section(header: Text("Feature Flags Status")) {
@@ -842,19 +931,57 @@ private struct FeatureFlagsSection: View {
 
 private struct FeatureFlagRow: View {
     let flag: (key: String, flag: FeatureFlag, enabled: Bool)
-    let featureFlags: PVFeatureFlagsManager
+    @ObservedObject var featureFlags: PVFeatureFlagsManager
+    @State private var isEnabled: Bool
+
+    init(flag: (key: String, flag: FeatureFlag, enabled: Bool), featureFlags: PVFeatureFlagsManager) {
+        self.flag = flag
+        self.featureFlags = featureFlags
+        // Initialize state with current value
+        if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
+            _isEnabled = State(initialValue: featureFlags.debugOverrides[feature] ?? flag.enabled)
+        } else {
+            _isEnabled = State(initialValue: flag.enabled)
+        }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 FeatureFlagInfo(flag: flag)
                 Spacer()
-                FeatureFlagStatus(flag: flag, featureFlags: featureFlags)
-                FeatureFlagToggle(flag: flag, featureFlags: featureFlags)
+                FeatureFlagStatus(flag: flag, featureFlags: featureFlags, isEnabled: isEnabled)
+                #if os(tvOS)
+                Button(action: {
+                    if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
+                        isEnabled.toggle()
+                        featureFlags.setDebugOverride(feature: feature, enabled: isEnabled)
+                    }
+                }) {
+                    Text(isEnabled ? "On" : "Off")
+                        .foregroundColor(isEnabled ? .green : .red)
+                }
+                #else
+                Toggle("", isOn: Binding(
+                    get: { isEnabled },
+                    set: { newValue in
+                        if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
+                            isEnabled = newValue
+                            featureFlags.setDebugOverride(feature: feature, enabled: newValue)
+                        }
+                    }
+                ))
+                #endif
             }
             FeatureFlagDetails(flag: flag.flag)
         }
         .padding(.vertical, 4)
+        .onChange(of: featureFlags.debugOverrides) { _ in
+            // Update state when debug overrides change
+            if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
+                isEnabled = featureFlags.debugOverrides[feature] ?? flag.enabled
+            }
+        }
     }
 }
 
@@ -876,7 +1003,8 @@ private struct FeatureFlagInfo: View {
 
 private struct FeatureFlagStatus: View {
     let flag: (key: String, flag: FeatureFlag, enabled: Bool)
-    let featureFlags: PVFeatureFlagsManager
+    @ObservedObject var featureFlags: PVFeatureFlagsManager
+    let isEnabled: Bool
 
     var body: some View {
         VStack(alignment: .trailing) {
@@ -886,12 +1014,13 @@ private struct FeatureFlagStatus: View {
                 .foregroundColor(flag.flag.enabled ? .green : .red)
 
             // Show effective state
-            Text("Effective: \(flag.enabled ? "On" : "Off")")
+            Text("Effective: \(isEnabled ? "On" : "Off")")
                 .font(.caption)
-                .foregroundColor(flag.enabled ? .green : .red)
+                .foregroundColor(isEnabled ? .green : .red)
 
             // Show debug override if present
-            if let override = featureFlags.debugOverrides[flag.key] {
+            if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key),
+               let override = featureFlags.debugOverrides[feature] {
                 Text("Override: \(override ? "On" : "Off")")
                     .font(.caption)
                     .foregroundColor(.blue)
@@ -907,23 +1036,6 @@ private struct FeatureFlagStatus: View {
                 }
             }
         }
-    }
-}
-
-private struct FeatureFlagToggle: View {
-    let flag: (key: String, flag: FeatureFlag, enabled: Bool)
-    let featureFlags: PVFeatureFlagsManager
-
-    var body: some View {
-        Toggle("", isOn: Binding(
-            get: {
-                featureFlags.debugOverrides[flag.key] ?? flag.enabled
-            },
-            set: { newValue in
-                print("Setting toggle to: \(newValue)")
-                featureFlags.setDebugOverride(feature: flag.key, enabled: newValue)
-            }
-        ))
     }
 }
 
@@ -1072,101 +1184,69 @@ private struct AppearanceSection: View {
                             subtitle: "Display favorites section.",
                             icon: .sfSymbol("star"))
             }
+
+            // Add the new navigation link wrapped in PaidFeatureView
+            PaidFeatureView {
+                NavigationLink(destination: MissingArtworkStyleView()) {
+                    SettingsRow(title: "Missing Artwork Style",
+                                subtitle: "Choose style for games without artwork.",
+                                icon: .sfSymbol("photo.artframe"))
+                }
+            } lockedView: {
+                SettingsRow(title: "Missing Artwork Style",
+                            subtitle: "Unlock to customize missing artwork style.",
+                            icon: .sfSymbol("lock.fill"))
+            }
         }
     }
 }
 
-private struct SecretDPadView: View {
-    enum Direction {
-        case up, down, left, right
-    }
-
-    let onComplete: () -> Void
-    @State private var pressedButtons: [Direction] = []
-    @State private var showDPad = false
-    @Environment(\.dismiss) private var dismiss
-
-    private let konamiCode: [Direction] = [.up, .up, .down, .down, .left, .right, .left, .right]
+// Add the new view for selecting missing artwork style
+private struct MissingArtworkStyleView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
+    @Default(.missingArtworkStyle) private var selectedStyle
 
     var body: some View {
-        VStack {
-            if showDPad {
-                // D-Pad Layout
-                VStack(spacing: 0) {
-                    // Up button
-                    Button(action: { pressButton(.up) }) {
-                        Image(systemName: "arrow.up.circle.fill")
-                            .resizable()
-                            .frame(width: 60, height: 60)
-                    }
+        List {
+            ForEach(RetroTestPattern.allCases, id: \.self) { style in
+                Button(action: { selectedStyle = style }) {
+                    HStack {
+                        // Preview of the style
+                        Image(uiImage: UIImage.missingArtworkImage(
+                            gameTitle: "Preview",
+                            ratio: 1.0,
+                            pattern: style
+                        ))
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 80, height: 80)
+                        .cornerRadius(8)
 
-                    // Middle row (Left, Right)
-                    HStack(spacing: 60) {
-                        Button(action: { pressButton(.left) }) {
-                            Image(systemName: "arrow.left.circle.fill")
-                                .resizable()
-                                .frame(width: 60, height: 60)
+                        // Style description
+                        VStack(alignment: .leading) {
+                            Text(style.description)
+                                .font(.headline)
+                            Text(style.subtitle)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                         }
+                        .padding(.leading, 8)
 
-                        Button(action: { pressButton(.right) }) {
-                            Image(systemName: "arrow.right.circle.fill")
-                                .resizable()
-                                .frame(width: 60, height: 60)
+                        HomeDividerView()
+
+                        // Selection indicator
+                        if selectedStyle == style {
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor, lineWidth: 2)
+                                .frame(width: 80, height: 80)
                         }
-                    }
-
-                    // Down button
-                    Button(action: { pressButton(.down) }) {
-                        Image(systemName: "arrow.down.circle.fill")
-                            .resizable()
-                            .frame(width: 60, height: 60)
                     }
                 }
-                .foregroundColor(.accentColor)
-
-                // Show current sequence
-                Text(sequenceText)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .padding(.top)
+                .buttonStyle(PlainButtonStyle())
+                .padding(.vertical, 4)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .contentShape(Rectangle())
-        .onLongPressGesture(minimumDuration: 5) {
-            withAnimation {
-                showDPad = true
-            }
-        }
-    }
-
-    private var sequenceText: String {
-        pressedButtons.map { direction in
-            switch direction {
-            case .up: return "↑"
-            case .down: return "↓"
-            case .left: return "←"
-            case .right: return "→"
-            }
-        }.joined(separator: " ")
-    }
-
-    private func pressButton(_ direction: Direction) {
-        pressedButtons.append(direction)
-
-        // Check if the sequence matches the Konami code
-        if pressedButtons.count >= konamiCode.count {
-            let lastEight = Array(pressedButtons.suffix(konamiCode.count))
-            if lastEight == konamiCode {
-                onComplete()
-                dismiss()
-            }
-        }
-
-        // Limit the stored sequence length
-        if pressedButtons.count > 16 {
-            pressedButtons.removeFirst(8)
-        }
+        .navigationTitle("Missing Artwork Style")
     }
 }
 
@@ -1181,7 +1261,16 @@ private struct SecretSettingsRow: View {
                 SettingsRow(title: "Feature Flags Debug",
                            subtitle: "Override feature flags for testing",
                            icon: .sfSymbol("flag.fill"))
+                
             }
+            Button {
+                showSecretView = true
+            } label: {
+                SettingsRow(title: "About",
+                           subtitle: "Version information",
+                           icon: .sfSymbol("info.circle"))
+            }
+            .buttonStyle(.plain)
             #else
             if showFeatureFlagsDebug {
                 NavigationLink(destination: FeatureFlagsDebugView()) {
@@ -1190,12 +1279,14 @@ private struct SecretSettingsRow: View {
                                icon: .sfSymbol("flag.fill"))
                 }
             } else {
-                SettingsRow(title: "About",
-                           subtitle: "Version information",
-                           icon: .sfSymbol("info.circle"))
-                    .onTapGesture {
-                        showSecretView = true
-                    }
+                Button {
+                    showSecretView = true
+                } label: {
+                    SettingsRow(title: "About",
+                               subtitle: "Version information",
+                               icon: .sfSymbol("info.circle"))
+                }
+                .buttonStyle(.plain)
             }
             #endif
         }
@@ -1204,6 +1295,225 @@ private struct SecretSettingsRow: View {
                 showFeatureFlagsDebug = true
             }
         }
+    }
+}
+
+private struct SecretDPadView: View {
+    enum Direction {
+        case up, down, left, right
+    }
+
+    let onComplete: () -> Void
+    @State private var pressedButtons: [Direction] = []
+    @State private var showDPad = false
+    @FocusState private var isFocused: Bool
+    @Environment(\.dismiss) private var dismiss
+    #if os(tvOS)
+    @State private var controller: GCController?
+    @State private var isHandlingX = false
+    @State private var isHandlingY = false
+    #endif
+
+    private let konamiCode: [Direction] = [.up, .up, .down, .down, .left, .right, .left, .right]
+
+    var body: some View {
+        VStack {
+            if showDPad {
+                #if os(tvOS)
+                // tvOS: Show instructions and handle Siri Remote gestures
+                VStack {
+                    Text("Use Siri Remote to enter the code")
+                        .font(.headline)
+                        .padding()
+
+                    // Show current sequence with better visibility
+                    Text(sequenceText.isEmpty ? "No input yet" : sequenceText)
+                        .font(.title)
+                        .foregroundColor(.primary)
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.secondary.opacity(0.2))
+                        )
+                        .padding()
+
+                    // Show hint about remaining inputs needed
+                    Text("\(konamiCode.count - (pressedButtons.count % konamiCode.count)) more inputs needed")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .padding(.top)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                #else
+                // iOS: Show D-Pad buttons
+                VStack(spacing: 0) {
+                    Button(action: { pressButton(.up) }) {
+                        Image(systemName: "arrow.up.circle.fill")
+                            .resizable()
+                            .frame(width: 60, height: 60)
+                    }
+
+                    HStack(spacing: 60) {
+                        Button(action: { pressButton(.left) }) {
+                            Image(systemName: "arrow.left.circle.fill")
+                                .resizable()
+                                .frame(width: 60, height: 60)
+                        }
+
+                        Button(action: { pressButton(.right) }) {
+                            Image(systemName: "arrow.right.circle.fill")
+                                .resizable()
+                                .frame(width: 60, height: 60)
+                        }
+                    }
+
+                    Button(action: { pressButton(.down) }) {
+                        Image(systemName: "arrow.down.circle.fill")
+                            .resizable()
+                            .frame(width: 60, height: 60)
+                    }
+                }
+                .foregroundColor(.accentColor)
+
+                Text(sequenceText)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.top)
+                #endif
+            } else {
+                ScrollView {
+                    if let markdownPath = Bundle.main.path(forResource: "CONTRIBUTORS", ofType: "md"),
+                       let markdown = FileManager.default.contents(atPath: markdownPath) {
+                        MarkdownView(text: String(data: markdown, encoding: .utf8) ?? "# CONTRIBUTORS\n\nNo CONTRIBUTORS file found.", baseURL: nil)
+                    } else {
+                        MarkdownView(text: "# CONTRIBUTORS\n\nNo CONTRIBUTORS file found.", baseURL: nil)
+                    }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .contentShape(Rectangle())
+        #if os(tvOS)
+        .focusable()
+        .focused($isFocused)
+        .onLongPressGesture(minimumDuration: 5) {
+            DLOG("[SecretDPadView] Long press detected")
+            withAnimation(.easeInOut) {
+                showDPad = true
+                isFocused = true
+                setupController()
+            }
+        }
+        .onChange(of: showDPad) { newValue in
+            DLOG("[SecretDPadView] showDPad changed to: \(newValue)")
+            if newValue {
+                setupController()
+            }
+        }
+        .onChange(of: isFocused) { focused in
+            DLOG("[SecretDPadView] Focus changed to: \(focused)")
+            if !focused {
+                pressedButtons.removeAll()
+                removeController()
+            } else if showDPad {
+                setupController()
+            }
+        }
+        .onDisappear {
+            removeController()
+        }
+        #else
+        // iOS: Handle long press gesture
+        .onLongPressGesture(minimumDuration: 5) {
+            withAnimation {
+                showDPad = true
+            }
+        }
+        #endif
+    }
+
+    #if os(tvOS)
+    private func setupController() {
+        DLOG("[SecretDPadView] Setting up controller")
+        // Get the first connected controller (Siri Remote)
+        controller = GCController.controllers().first
+
+        controller?.microGamepad?.dpad.valueChangedHandler = { [self] dpad, xValue, yValue in
+            DLOG("[SecretDPadView] Dpad input - x: \(xValue), y: \(yValue)")
+
+            // Handle X-axis (left/right)
+            if xValue == 1.0 && !isHandlingX {
+                isHandlingX = true
+                pressButton(.right)
+            } else if xValue == -1.0 && !isHandlingX {
+                isHandlingX = true
+                pressButton(.left)
+            } else if xValue == 0 {
+                isHandlingX = false
+            }
+
+            // Handle Y-axis (up/down)
+            if yValue == 1.0 && !isHandlingY {
+                isHandlingY = true
+                pressButton(.up)
+            } else if yValue == -1.0 && !isHandlingY {
+                isHandlingY = true
+                pressButton(.down)
+            } else if yValue == 0 {
+                isHandlingY = false
+            }
+        }
+
+        // Enable basic gamepad input profile for Siri Remote
+        controller?.microGamepad?.reportsAbsoluteDpadValues = false
+    }
+
+    private func removeController() {
+        DLOG("[SecretDPadView] Removing controller")
+        controller?.microGamepad?.dpad.valueChangedHandler = nil
+        controller = nil
+        isHandlingX = false
+        isHandlingY = false
+    }
+    #endif
+
+    private var sequenceText: String {
+        pressedButtons.map { direction in
+            switch direction {
+            case .up: return "↑"
+            case .down: return "↓"
+            case .left: return "←"
+            case .right: return "→"
+            }
+        }.joined(separator: " ")
+    }
+
+    private func pressButton(_ direction: Direction) {
+        DLOG("[SecretDPadView] Button pressed: \(direction)")
+        pressedButtons.append(direction)
+
+        #if os(tvOS)
+        // Use AudioServicesPlaySystemSound for tvOS feedback
+        AudioServicesPlaySystemSound(1519) // Standard system sound
+        #endif
+
+        // Check if the sequence matches the Konami code
+        if pressedButtons.count >= konamiCode.count {
+            let lastEight = Array(pressedButtons.suffix(konamiCode.count))
+            DLOG("[SecretDPadView] Checking sequence: \(lastEight) against \(konamiCode)")
+            if lastEight == konamiCode {
+                DLOG("[SecretDPadView] Konami code matched!")
+                onComplete()
+                dismiss()
+            }
+        }
+
+        // Limit the stored sequence length
+        if pressedButtons.count > 16 {
+            pressedButtons.removeFirst(8)
+        }
+
+        DLOG("[SecretDPadView] Current sequence: \(sequenceText)")
     }
 }
 

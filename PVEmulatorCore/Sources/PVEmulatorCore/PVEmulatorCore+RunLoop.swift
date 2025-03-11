@@ -39,6 +39,7 @@ import PVLogging
 
     @objc open var isSpeedModified: Bool { return gameSpeed != .normal }
 
+    @MainActor
     @objc open func stopEmulation() {
         stopHaptic()
         shouldStop = true
@@ -49,8 +50,17 @@ import PVLogging
         
         bridge.stopEmulation()
         isOn = false
+        // Update the singleton state
+        Task {
+            await EmulationState.shared.update { state in
+                state.coreClassName = ""
+                state.systemName = ""
+                state.isOn = false
+            }
+        }
     }
 
+    @MainActor
     @objc open func stopEmulation(withMessage message: String? = nil) {
         stopEmulation()
 
@@ -59,7 +69,7 @@ import PVLogging
         }
     }
 
-
+    @MainActor
     @objc open func startEmulation() {
 //        screenRect
         guard type(of: self) != PVEmulatorCore.self else {
@@ -99,8 +109,17 @@ import PVLogging
         isRunning = true
         shouldStop = false
         isOn = true
+        // Update the singleton state
+        Task {
+            await EmulationState.shared.update { state in
+                state.coreClassName = self.coreIdentifier ?? ""
+                state.systemName = self.systemIdentifier ?? ""
+                state.isOn = true
+            }
+        }
     }
 
+    @MainActor
     @objc open func resetEmulation() {
         bridge.resetEmulation?()
     }

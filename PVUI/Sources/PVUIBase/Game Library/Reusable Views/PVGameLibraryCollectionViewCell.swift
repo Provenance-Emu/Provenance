@@ -486,7 +486,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         }
 
         Task.detached { @MainActor [weak self] in
-            self?.missingFileView?.isHidden = await game.file.online
+            self?.missingFileView?.isHidden = await game.file?.online ?? true
         }
         setupBadges()
         if !Defaults[.showGameBadges] {

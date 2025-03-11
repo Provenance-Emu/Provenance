@@ -10,12 +10,14 @@ public protocol DomainConvertibleType {
 
 public extension LocalFileProvider where Self: DomainConvertibleType {
     func asDomain() -> LocalFile {
-        return LocalFile(url: url)!
+        guard let url = url else { return .default }
+        return LocalFile(url: url) ?? .default
     }
 }
 
 public extension DomainConvertibleType where Self: LocalFileInfoProvider {
     func asDomain() -> LocalFile {
-        return LocalFile(url: url)!
+        guard let url = url else { return .default }
+        return LocalFile(url: url) ?? .default
     }
 }

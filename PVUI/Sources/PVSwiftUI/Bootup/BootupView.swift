@@ -31,7 +31,7 @@ public struct BootupView: View {
             } else {
                 PVAnimatedGradient()
             }
-            
+
             VStack {
                 Text("Initializing...")
                     .font(.system(size: 16, weight: .bold, design: .monospaced))
@@ -39,7 +39,7 @@ public struct BootupView: View {
                     .backgroundStyle(.secondary)
                     .tag("Initializing")
                     .blendMode(.difference)
-                
+
                 ActivityIndicatorView(
                     isVisible: .constant(true),
                     type: .growingArc(currentPalette.defaultTintColor?.swiftUIColor ?? .secondary,
@@ -49,6 +49,13 @@ public struct BootupView: View {
                 Text(appState.bootupState.localizedDescription)
                     .foregroundColor(currentPalette.gameLibraryCellText.swiftUIColor)
             }
+            .padding(20)
+            .background(Color.black.opacity(0.2))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor, lineWidth: 4)
+            )
+            .cornerRadius(16)
         }
         .onAppear {
             ILOG("BootupView: Appeared, current state: \(appState.bootupState.localizedDescription)")
@@ -56,6 +63,8 @@ public struct BootupView: View {
     }
 }
 
+#if DEBUG
 #Preview {
     BootupView()
 }
+#endif

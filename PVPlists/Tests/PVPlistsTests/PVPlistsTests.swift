@@ -13,6 +13,7 @@ import Testing
     #expect(lhs.projectURL == rhs.PVProjectURL)
     #expect(lhs.projectVersion == rhs.PVProjectVersion)
     #expect(lhs.disabled == rhs.PVDisabled)
+    #expect(lhs.contentless == rhs.PVContentless)
     #expect(lhs.appStoreDisabled == rhs.PVAppStoreDisabled)
 //    #expect(lhs.subCores == rhs.PVCores)
 
@@ -31,6 +32,7 @@ import Testing
     #expect(rhs.projectURL == lhs.PVProjectURL)
     #expect(rhs.projectVersion == lhs.PVProjectVersion)
     #expect(rhs.disabled == lhs.PVDisabled)
+    #expect(rhs.contentless == lhs.PVContentless)
     #expect(rhs.appStoreDisabled == lhs.PVAppStoreDisabled)
 
     #expect(rhs == lhs)

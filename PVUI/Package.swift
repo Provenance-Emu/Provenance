@@ -50,34 +50,37 @@ let package = Package(
         /// SwiftUIX
         /// https://github.com/SwiftUIX/SwiftUIX/wiki
         .package(url: "https://github.com/SwiftUIX/SwiftUIX.git", from: "0.2.3"),
-        
+
         /// https://github.com/exyte/ScalingHeaderScrollView
 //        .package(url:"https://github.com/exyte/ScalingHeaderScrollView.git", from: "1.1.5"),
-        
+
         /// https://github.com/exyte/AnimatedGradient
         .package(url: "https://github.com/exyte/AnimatedGradient.git", from: "1.0.0"),
 
         /// https://github.com/exyte/FloatingButton
         .package(url: "https://github.com/exyte/FloatingButton.git", from: "1.3.0"),
-        
+
         /// https://github.com/exyte/ActivityIndicatorView
         .package(url: "https://github.com/exyte/ActivityIndicatorView.git", from: "1.1.1"),
 
         /// https://github.com/exyte/PopupView
 //        .package(url: "https://github.com/exyte/PopupView.git", from: "3.1.4"),
-        
+
         /// https://github.com/DominikButz/SwipeCellSUI.git
         .package(url: "https://github.com/DominikButz/SwipeCellSUI.git", from: "2.1.4"),
-        
-        /// https://github.com/MrAsterisco/DateRangePicker
-        .package(url: "https://github.com/MrAsterisco/DateRangePicker", from: "1.0.2")
 
-        
+        /// https://github.com/MrAsterisco/DateRangePicker
+        .package(url: "https://github.com/MrAsterisco/DateRangePicker", from: "1.0.2"),
+
+
         /// https://swiftpackageindex.com/SvenTiigi/WhatsNewKit
 //        .package(url: "https://github.com/SvenTiigi/WhatsNewKit.git", from: "2.2.1")
+
+        /// https://swiftpackageindex.com/LiYanan2004/MarkdownView
+        .package(url: "https://github.com/LiYanan2004/MarkdownView.git", from: "1.7.0")
     ],
     targets: [
-        
+
         // MARK: Common - Base
         /// The main target for the base framework.
         /// This target is available on all platforms.
@@ -95,6 +98,7 @@ let package = Package(
                 "PVUIObjC",
                 "FreemiumKit",
                 "PVFeatureFlags",
+                "MarkdownView",
                 .byNameItem(name: "MBProgressHUD", condition: .when(platforms: [.iOS, .macCatalyst, .tvOS, .watchOS])),
                 .byNameItem(name: "PVUI_AppKit", condition: .when(platforms: [.macOS])),
                 .byNameItem(name: "PVUI_TV", condition: .when(platforms: [.tvOS])),
@@ -130,7 +134,7 @@ let package = Package(
                 .plugin(name: "BuildEnvPlugin", package: "BuildEnvironment")
             ]
         ),
-        
+
         .testTarget(
             name: "PVUIBaseTests",
             dependencies: [
@@ -180,14 +184,14 @@ let package = Package(
                 .define("CI_SILENCE_GL_DEPRECATION")
             ]
         ),
-        
+
         .testTarget(
             name: "PVUIKitTests",
             dependencies: [
                 "PVUIKit",
             ]
         ),
-        
+
         // MARK: Common - SwiftUI
         /// A small amount of elements are shared between UIKit and SwiftUI
         .target(
@@ -211,14 +215,14 @@ let package = Package(
                 .byNameItem(name: "DateRangePicker", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
             ]
         ),
-        
+
         .testTarget(
             name: "PVSwiftUITests",
             dependencies: [
                 "PVSwiftUI",
             ]
         ),
-        
+
         // MARK: iOS
         /// Allows for conditional use of resources that can only be included with iOS
         /// compatible targets.
@@ -233,14 +237,14 @@ let package = Package(
                 .process("Resources/XIBs/")
             ]
         ),
-        
+
         .testTarget(
             name: "PVUI_IOSTests",
             dependencies: [
                 "PVUI_IOS"
             ]
         ),
-        
+
         // MARK: TVOS
         /// Allows for conditional use of resources that can only be included with tvO
         /// compatible targets.
@@ -260,14 +264,14 @@ let package = Package(
                 .process("Resources/LaunchImageTV.png")
             ]
         ),
-        
+
         .testTarget(
             name: "PVUI_TVTests",
             dependencies: [
                 "PVUI_TV"
             ]
         ),
-        
+
         // MARK: AppKit
         /// Allows for conditional use of resources that can only be included with iOS
         /// compatible targets.
@@ -278,19 +282,18 @@ let package = Package(
 //                .product(name: "Dependencies", package: "swift-dependencies")
             ]
         ),
-        
+
         .testTarget(
             name: "PVUI_AppKitTests",
             dependencies: [
                 "PVUI_AppKit"
             ]
         ),
-        
+
         // MARK: ObjC for very basic hack to GLES
         .target(
             name: "PVUIObjC"
         ),
-
     ],
     swiftLanguageModes: [.v5]
 )

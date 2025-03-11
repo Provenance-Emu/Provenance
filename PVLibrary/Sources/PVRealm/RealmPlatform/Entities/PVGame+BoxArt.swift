@@ -74,6 +74,7 @@ public extension PVGame {
                 .MasterSystem,
                 .NES,
                 .Odyssey2,
+                .PSP,
                 .PS2,
                 .PalmOS,
                 .SG1000,

@@ -126,7 +126,10 @@ public struct Paths {
 }
 
 public extension Paths {
-    static func batterySavesPath(forROM romPath: URL) -> URL {
+    static func batterySavesPath(forROM romPath: URL?) -> URL {
+        guard let romPath = romPath else {
+            return Paths.batterySavesPath.appendingPathComponent("NULL", isDirectory: true)
+        }
         let romName: String = romPath.deletingPathExtension().lastPathComponent
         let batterySavesDirectory = Paths.batterySavesPath.appendingPathComponent(romName, isDirectory: true)
         
@@ -139,7 +142,11 @@ public extension Paths {
         return batterySavesDirectory
     }
     
-    static func saveStatePath(forROM romPath: URL) -> URL {
+    static func saveStatePath(forROM romPath: URL?) -> URL {
+        guard let romPath = romPath else {
+            return Paths.saveSavesPath.appendingPathComponent("NULL", isDirectory: true)
+        }
+        
         let romName: String = romPath.deletingPathExtension().lastPathComponent
         let saveSavesPath = Paths.saveSavesPath.appendingPathComponent(romName, isDirectory: true)
         

@@ -11,6 +11,8 @@ OTHER_CFLAGS = $(inherited) -frename-registers
 OTHER_CFLAGS = $(inherited) -fsingle-precision-constant
 OTHER_CFLAGS = $(inherited) -ftree-vectorize
 
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_AUDIOTOOLBOX
+
 // Experimental
 OTHER_CFLAGS = $(inherited) -Wl,--gc-sections
 //OTHER_CFLAGS = $(inherited) -fdata-sections
@@ -22,8 +24,9 @@ OTHER_CFLAGS = $(inherited) -fomit-frame-pointer
 //OTHER_CFLAGS = $(inherited) -fstrict-aliasing
 OTHER_CFLAGS = $(inherited) -funsafe-math-optimizations
 OTHER_CFLAGS = $(inherited) -fvectorize
-OTHER_CFLAGS = $(inherited) -march=armv8-a+simd
-OTHER_CFLAGS = $(inherited) -mcpu=apple-a15
+OTHER_CFLAGS = $(inherited) -mcpu=apple-a12
+//OTHER_CFLAGS = $(inherited) -mcpu=apple-a15
+//OTHER_CFLAGS = $(inherited) -march=armv8-a+simd
 
 //OTHER_CPPFLAGS = $(inherited) -fmodules -fcxx-modules
 OTHER_LDFLAGS = $(inherited) -ObjC -DIPHONEOS

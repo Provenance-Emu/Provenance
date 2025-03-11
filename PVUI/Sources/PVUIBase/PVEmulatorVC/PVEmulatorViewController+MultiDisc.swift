@@ -3,7 +3,7 @@ import PVEmulatorCore
 import PVCoreBridge
 
 extension PVEmulatorViewController {
-    func showSwapDiscsMenu() {
+    public func showSwapDiscsMenu() {
         guard let core = self.core as? (PVEmulatorCore & DiscSwappable) else {
             presentError("Internal error: No core found.", source: self.view)
             isShowingMenu = false

@@ -18,6 +18,7 @@ class ContinuesSectionViewModel: ObservableObject {
     @Published var selectedItemId: String?
     @Published var hasFocus: Bool = false
     @Published var isControllerConnected: Bool = GamepadManager.shared.isControllerConnected
+    @Published var currentSaveState: PVSaveState?
 
     /// Filtered save states from parent
     private var saveStates: [PVSaveState] = []
@@ -30,6 +31,17 @@ class ContinuesSectionViewModel: ObservableObject {
     func updateSaveStates(_ states: [PVSaveState], isLandscape: Bool) {
         saveStates = states
         isLandscapePhone = isLandscape
+
+        // Update current save state if needed
+        if currentSaveState == nil || !states.contains(currentSaveState!) {
+            currentSaveState = states.first
+        }
+    }
+
+    func updateCurrentSaveState(forPage page: Int) {
+        let startIndex = page * itemsPerPage
+        guard startIndex < saveStates.count else { return }
+        currentSaveState = saveStates[startIndex]
     }
 
     func handleHorizontalNavigation(_ value: Float) -> (nextItemId: String?, nextPage: Int)? {
@@ -64,6 +76,115 @@ class ContinuesSectionViewModel: ObservableObject {
     }
 }
 
+/// A floating footer view that displays metadata for the current save state
+private struct ContinuesFooterView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
+    let saveState: PVSaveState?
+    let hideSystemLabel: Bool
+
+    /// Constants for styling
+    private enum Constants {
+        static let overlayHeight: CGFloat = 60
+        static let bottomPadding: CGFloat = 0 // Removed bottom padding
+    }
+
+    var body: some View {
+        if let continueState = saveState, !continueState.isInvalidated {
+            VStack(spacing: 0) {
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        if let core = continueState.core {
+                            Text("\(core.projectName): Continue...")
+                                .font(.system(size: 10))
+                                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        } else {
+                            Text("Continue...")
+                                .font(.system(size: 10))
+                                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        }
+                        Text(continueState.game?.isInvalidated == true ? "Deleted" : (continueState.game?.title ?? "Deleted"))
+                            .font(.system(size: 13))
+                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    }
+                    Spacer()
+                    if !hideSystemLabel, let system = continueState.game?.system, !system.isInvalidated {
+                        Text(system.name)
+                            .font(.system(size: 8))
+                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    }
+                }
+                .padding(.vertical, 10)
+                .padding(.horizontal, 10)
+            }
+            .frame(height: Constants.overlayHeight)
+            .background(.ultraThinMaterial)
+            .frame(maxWidth: .infinity)
+            .allowsHitTesting(false)
+        }
+    }
+}
+
+/// Custom page indicator with animated pills
+private struct CustomPageIndicator: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
+    let numberOfPages: Int
+    let currentPage: Int
+
+    internal enum Constants {
+        static let indicatorHeight: CGFloat = 4
+        static let spacing: CGFloat = 8
+        static let defaultWidth: CGFloat = 20
+        static let selectedWidth: CGFloat = 32
+        static let cornerRadius: CGFloat = 2
+        static let bottomOffset: CGFloat = 100
+        static let maxVisibleIndicators = 7 // Maximum number of indicators to show at once
+    }
+
+    var body: some View {
+        GeometryReader { geometry in
+            ScrollViewReader { scrollProxy in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: Constants.spacing) {
+                        ForEach(0..<numberOfPages, id: \.self) { index in
+                            Capsule()
+                                .fill(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
+                                .opacity(currentPage == index ? 1.0 : 0.5)
+                                .frame(
+                                    width: currentPage == index ? Constants.selectedWidth : Constants.defaultWidth,
+                                    height: Constants.indicatorHeight
+                                )
+                                .id(index)
+                                .animation(.spring(response: 0.3), value: currentPage)
+                        }
+                    }
+                    .frame(minWidth: geometry.size.width)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: Constants.indicatorHeight + 16) // Add padding for touch area
+                }
+                .onChange(of: currentPage) { newPage in
+                    // Calculate visible range and scroll if needed
+                    let halfVisible = Constants.maxVisibleIndicators / 2
+                    if newPage >= halfVisible && newPage < numberOfPages - halfVisible {
+                        withAnimation {
+                            scrollProxy.scrollTo(newPage, anchor: .center)
+                        }
+                    } else if newPage < halfVisible {
+                        withAnimation {
+                            scrollProxy.scrollTo(0, anchor: .leading)
+                        }
+                    } else {
+                        withAnimation {
+                            scrollProxy.scrollTo(numberOfPages - 1, anchor: .trailing)
+                        }
+                    }
+                }
+                .allowsHitTesting(false)
+            }
+        }
+        .frame(height: Constants.indicatorHeight + 16)
+    }
+}
+
 @available(iOS 15, tvOS 15, *)
 struct HomeContinueSection: SwiftUI.View {
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -84,6 +205,17 @@ struct HomeContinueSection: SwiftUI.View {
     @Binding var parentFocusedItem: String?
 
     @StateObject private var viewModel = ContinuesSectionViewModel()
+
+    #if !os(tvOS)
+    @State private var hapticGenerator = UIImpactFeedbackGenerator(style: .light)
+    #endif
+
+    /// Constants for styling
+    private enum Constants {
+        static let cornerRadius: CGFloat = 16
+        static let borderWidth: CGFloat = 4
+        static let containerPadding: CGFloat = 16
+    }
 
     init(rootDelegate: PVRootDelegate?, consoleIdentifier: String?, parentFocusedSection: Binding<HomeSectionType?>, parentFocusedItem: Binding<String?>) {
         self.rootDelegate = rootDelegate
@@ -145,63 +277,121 @@ struct HomeContinueSection: SwiftUI.View {
     @State private var selectedPage = 0
 
     var body: some SwiftUI.View {
-        TabView(selection: $viewModel.currentPage) {
-            if !filteredSaveStates.isEmpty {
-                ForEach(0..<pageCount, id: \.self) { pageIndex in
-                    SaveStatesGridView(
-                        pageIndex: pageIndex,
-                        filteredSaveStates: filteredSaveStates,
-                        isLandscapePhone: isLandscapePhone,
-                        gridColumns: gridColumns,
-                        adjustedHeight: adjustedHeight,
-                        hideSystemLabel: consoleIdentifier != nil,
-                        rootDelegate: rootDelegate,
-                        parentFocusedSection: $parentFocusedSection,
-                        parentFocusedItem: $parentFocusedItem,
-                        viewModel: viewModel
-                    )
-                    .padding(.horizontal)
-                    .tag(pageIndex)
+        // Main container
+        ZStack(alignment: .bottom) {
+            // Container for all content with border
+            ZStack(alignment: .bottom) {
+                // Content layer
+                VStack(spacing: 0) {
+                    // TabView for continues
+                    TabView(selection: $viewModel.currentPage) {
+                        if !filteredSaveStates.isEmpty {
+                            ForEach(0..<pageCount, id: \.self) { pageIndex in
+                                SaveStatesGridView(
+                                    pageIndex: pageIndex,
+                                    filteredSaveStates: Array(filteredSaveStates), // Convert to Array to prevent Realm threading issues
+                                    isLandscapePhone: isLandscapePhone,
+                                    gridColumns: gridColumns,
+                                    adjustedHeight: adjustedHeight,
+                                    hideSystemLabel: consoleIdentifier != nil,
+                                    rootDelegate: rootDelegate,
+                                    parentFocusedSection: $parentFocusedSection,
+                                    parentFocusedItem: $parentFocusedItem,
+                                    viewModel: viewModel
+                                )
+                                .id(pageIndex)
+                                .tag(pageIndex)
+                            }
+                        } else {
+                            EmptyContinuesView()
+                        }
+                    }
+                    .tabViewStyle(.page(indexDisplayMode: .never))
                 }
-            } else {
-                EmptyContinuesView()
+                .frame(height: adjustedHeight)
+
+                // Footer and page indicator overlay
+                ZStack {
+                    // Footer at bottom
+                    ContinuesFooterView(
+                        saveState: viewModel.currentSaveState,
+                        hideSystemLabel: consoleIdentifier != nil
+                    )
+                    .zIndex(0) // Ensure footer is behind
+
+                    // Page Indicator floating over footer
+                    if pageCount > 1 {
+                        CustomPageIndicator(
+                            numberOfPages: pageCount,
+                            currentPage: viewModel.currentPage
+                        )
+                        .zIndex(1) // Ensure indicator is in front
+                        .offset(y: -35) // Position it over the footer
+                    }
+                }
             }
+            // Replace rounded rectangle with top and bottom borders
+            .overlay(alignment: .top) {
+                Rectangle()
+                    .fill(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
+                    .frame(height: Constants.borderWidth)
+                    .edgesIgnoringSafeArea(.horizontal)
+            }
+            .overlay(alignment: .bottom) {
+                Rectangle()
+                    .fill(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
+                    .frame(height: Constants.borderWidth)
+                    .edgesIgnoringSafeArea(.horizontal)
+            }
+            .padding(.top, 4) // Add top padding to the bordered container
         }
-        .tabViewStyle(.page)
-        .indexViewStyle(.page(backgroundDisplayMode: .interactive))
-        .id(filteredSaveStates.count)
-        .frame(height: adjustedHeight)
         .onAppear {
             setupGamepadHandling()
+            #if !os(tvOS)
+            hapticGenerator.prepare()
+            #endif
         }
         .onDisappear {
+            // Cancel all tasks and subscriptions
             gamepadCancellable?.cancel()
             delayTask?.cancel()
             continuousNavigationTask?.cancel()
         }
         .onChange(of: filteredSaveStates) { newValue in
-            viewModel.updateSaveStates(Array(newValue), isLandscape: isLandscapePhone)
+            // Use weak self to prevent retain cycles
+            Task {
+                await MainActor.run {
+                    self.viewModel.updateSaveStates(Array(newValue), isLandscape: self.isLandscapePhone)
+                }
+            }
         }
         .onChange(of: viewModel.currentPage) { newPage in
             handlePageChange(newPage)
+            viewModel.updateCurrentSaveState(forPage: newPage)
+            #if !os(tvOS)
+            hapticGenerator.impactOccurred()
+            #endif
         }
     }
 
     private func setupGamepadHandling() {
-        DLOG("HomeContinueSection: Setting up gamepad handling")
+        // Cancel existing handler if it exists
+        gamepadCancellable?.cancel()
+
+        // Use weak self to prevent retain cycles
         gamepadCancellable = GamepadManager.shared.eventPublisher
             .receive(on: DispatchQueue.main)
-            .sink { [self] event in
-                DLOG("HomeContinueSection: Received gamepad event: \(event)")
+            .sink { event in
+                // Only handle events if this view is currently visible
+                guard !viewModel.isControllerConnected else { return }
+
                 switch event {
                 case .buttonPress(let isPressed):
                     if isPressed {
-                        DLOG("HomeContinueSection: Button pressed")
                         handleButtonPress()
                     }
                 case .horizontalNavigation(let value, let isPressed):
                     if isPressed {
-                        DLOG("HomeContinueSection: Horizontal navigation: \(value)")
                         handleHorizontalNavigation(value)
                     }
                 default:
@@ -307,7 +497,7 @@ struct HomeContinueSection: SwiftUI.View {
 // Create a new struct for the grid view
 private struct SaveStatesGridView: View {
     let pageIndex: Int
-    let filteredSaveStates: Results<PVSaveState>
+    let filteredSaveStates: [PVSaveState]
     let isLandscapePhone: Bool
     let gridColumns: [GridItem]
     let adjustedHeight: CGFloat
@@ -341,7 +531,8 @@ private struct SaveStatesGridView: View {
                             )
                         }
                     },
-                    isFocused: (parentFocusedSection == .recentSaveStates && parentFocusedItem == saveState.id) && viewModel.isControllerConnected
+                    isFocused: (parentFocusedSection == .recentSaveStates && parentFocusedItem == saveState.id) && viewModel.isControllerConnected,
+                    rootDelegate: rootDelegate
                 )
                 .focusableIfAvailable()
                 .onChange(of: parentFocusedItem) { newValue in
@@ -351,6 +542,7 @@ private struct SaveStatesGridView: View {
                 }
             }
         }
+        .padding(.horizontal) // Add padding inside the container
     }
 }
 

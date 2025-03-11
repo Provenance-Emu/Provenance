@@ -6,6 +6,7 @@ import PVCoreBridge
 import AudioToolbox
 import CoreAudio
 import PVSettings
+import Defaults
 
 /// Audio context for managing buffer and performance metrics
 private final class AudioEngineContext {
@@ -37,6 +38,7 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
     private weak var gameCore: EmulatorCoreAudioDataSource!
     private var isRunning = false
     private let context = AudioEngineContext()
+    private let muteSwitchMonitor = PVMuteSwitchMonitor()
 
     /// Audio processing properties
     private let preferredBufferSize: UInt32 = 4096
@@ -45,7 +47,7 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
 
     public var volume: Float = 1.0 {
         didSet {
-            engine.mainMixerNode.outputVolume = volume
+            updateOutputVolume()
         }
     }
 
@@ -60,8 +62,28 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
     /// Delegate for audio sample rate changes
     public weak var delegate: PVAudioDelegate?
 
+    /// Whether the audio engine is enabled
+    public var isEnabled: Bool = true {
+        didSet {
+            updateOutputVolume()
+        }
+    }
+
     public init() {
         configureAudioSession()
+        muteSwitchMonitor.startMonitoring { [weak self] isMuted in
+            self?.updateOutputVolume()
+        }
+
+        // Observe changes to respectMuteSwitch setting
+        Task {
+            for await newValue in Defaults.updates(Defaults.Keys.respectMuteSwitch) {
+                await MainActor.run { [weak self] in
+                    self?.updateOutputVolume()
+                }
+            }
+        }
+
         #if !os(macOS)
         NotificationCenter.default.addObserver(
             self,
@@ -73,9 +95,51 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
     }
 
     deinit {
+        muteSwitchMonitor.stopMonitoring()
         stopAudio()
         #if !os(macOS)
         NotificationCenter.default.removeObserver(self)
+        #endif
+    }
+
+    private func configureAudioSession() {
+        #if !os(macOS)
+        do {
+            let session = AVAudioSession.sharedInstance()
+            // Use .playback category when ignoring mute switch, .ambient otherwise
+            let category: AVAudioSession.Category = Defaults[.respectMuteSwitch] ? .ambient : .playback
+            try session.setCategory(category,
+                                  mode: .default,
+                                  options: [.mixWithOthers])
+            let bufferDuration = Defaults[.audioLatency] / 1000.0
+            try session.setPreferredIOBufferDuration(bufferDuration)
+            try session.setActive(true)
+        } catch {
+            ELOG("Failed to configure audio session: \(error.localizedDescription)")
+        }
+        #endif
+    }
+
+    private func updateOutputVolume() {
+        #if !os(macOS)
+        let audioSession = AVAudioSession.sharedInstance()
+        let currentRoute = audioSession.currentRoute
+
+        if !isEnabled {
+            engine.mainMixerNode.outputVolume = 0.0
+        } else if Defaults[.respectMuteSwitch] {
+            // Only mute if using internal speaker and mute switch is on
+            if muteSwitchMonitor.isMuted && !currentRoute.isOutputtingToExternalDevice {
+                engine.mainMixerNode.outputVolume = 0.0
+            } else {
+                engine.mainMixerNode.outputVolume = volume
+            }
+        } else {
+            // Ignore mute switch
+            engine.mainMixerNode.outputVolume = volume
+        }
+        #else
+        engine.mainMixerNode.outputVolume = volume
         #endif
     }
 
@@ -89,9 +153,9 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
         switch reason {
         case .newDeviceAvailable, .oldDeviceUnavailable:
             do {
-                stopAudio()
-                configureAudioSession()
-                startAudio()
+                try configureAudioSession()
+                try startAudio()
+                updateOutputVolume() // Update volume based on new route
             } catch {
                 handleAudioError(error)
             }
@@ -376,23 +440,6 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
         guard isRunning else { return }
         engine.pause()
         isRunning = false
-    }
-
-    private func configureAudioSession() {
-        #if !os(macOS)
-        do {
-            let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.ambient,
-                                  mode: .default,
-                                  options: [.mixWithOthers])
-            /// Get user preferred latency from settings (in milliseconds)
-            let bufferDuration = Defaults[.audioLatency] / 1000.0
-            try session.setPreferredIOBufferDuration(bufferDuration)
-            try session.setActive(true)
-        } catch {
-            ELOG("Failed to configure audio session: \(error.localizedDescription)")
-        }
-        #endif
     }
 
     /// Enhanced error handling

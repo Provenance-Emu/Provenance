@@ -11,11 +11,13 @@ import Foundation
 public enum SerializerPackageType: String, Codable, Sendable {
     case game
     case saveState
+    case config
 
     var `extension`: String {
         switch self {
         case .game: return "pvrom"
         case .saveState: return "psvsave"
+        case .config: return "cfg"
         }
     }
 }

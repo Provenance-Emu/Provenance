@@ -14,27 +14,12 @@ import RealmSwift
 import RxSwift
 import PVRealm
 import PVFileSystem
+import PVUIBase
 
 #if !targetEnvironment(macCatalyst) && !os(macOS) // && canImport(SteamController)
 import SteamController
 import UIKit
 #endif
-
-public enum AppURLKeys: String, Codable {
-    case open
-    case save
-
-    public enum OpenKeys: String, Codable {
-        case md5Key = "PVGameMD5Key"
-        case system
-        case title
-    }
-    public enum SaveKeys: String, Codable {
-        case lastQuickSave
-        case lastAnySave
-        case lastManualSave
-    }
-}
 
 extension Array<URLQueryItem> {
     subscript(key: String) -> String? {
@@ -55,7 +40,33 @@ extension Array<URLQueryItem> {
 }
 
 extension PVAppDelegate {
-    func application(_: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+    /// Helper method to safely fetch a game from Realm by its MD5 hash
+    /// - Parameter md5: The MD5 hash of the game
+    /// - Returns: The game if found, nil otherwise
+    internal func fetchGame(byMD5 md5: String) -> PVGame? {
+        do {
+            let realm = try Realm()
+            return realm.object(ofType: PVGame.self, forPrimaryKey: md5)
+        } catch {
+            ELOG("Failed to access Realm: \(error.localizedDescription)")
+            return nil
+        }
+    }
+
+    /// Helper method to safely fetch a system from Realm by its identifier
+    /// - Parameter identifier: The system identifier
+    /// - Returns: The system if found, nil otherwise
+    private func fetchSystem(byIdentifier identifier: String) -> PVSystem? {
+        do {
+            let realm = try Realm()
+            return realm.object(ofType: PVSystem.self, forPrimaryKey: identifier)
+        } catch {
+            ELOG("Failed to access Realm: \(error.localizedDescription)")
+            return nil
+        }
+    }
+
+    func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         #if !os(tvOS) && canImport(SiriusRating)
         if isAppStore {
             appRatingSignifigantEvent()
@@ -72,14 +83,13 @@ extension PVAppDelegate {
         }
         else if let scheme = url.scheme, scheme.lowercased() == PVAppURLKey {
             return handle(appURL: url, options: options)
-        } else if
-            let components = components,
-            components.path == PVGameControllerKey,
-            let first = components.queryItems?.first,
-            first.name == PVGameMD5Key,
-            let md5Value = first.value,
-            let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
-            shortcutItemGame = matchedGame
+        } else if let components = components,
+                  components.path == PVGameControllerKey,
+                  let first = components.queryItems?.first,
+                  first.name == PVGameMD5Key,
+                  let md5Value = first.value,
+                  let matchedGame = fetchGame(byMD5: md5Value) {
+            AppState.shared.appOpenAction = .openGame(matchedGame)
             return true
         }
 
@@ -96,8 +106,8 @@ extension PVAppDelegate {
         }
         if shortcutItem.type == "kRecentGameShortcut",
            let md5Value = shortcutItem.userInfo?["PVGameHash"] as? String,
-           let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
-            shortcutItemGame = matchedGame
+           let matchedGame = fetchGame(byMD5: md5Value) {
+            AppState.shared.appOpenAction = .openGame(matchedGame)
             completionHandler(true)
         } else {
             completionHandler(false)
@@ -113,15 +123,27 @@ extension PVAppDelegate {
             }
             #endif
         }
+
+        ILOG("PVAppDelegate: Continuing user activity: \(userActivity.activityType)")
+
+        // Check if this is an intent-based user activity
+        #if os(iOS)
+        if #available(iOS 14.0, *) {
+            if handleIntentUserActivity(userActivity) {
+                return true
+            }
+        }
+        #endif
+
         // Spotlight search click-through
 #if os(iOS) || os(macOS)
         if userActivity.activityType == CSSearchableItemActionType {
             if let md5 = userActivity.userInfo?[CSSearchableItemActivityIdentifier] as? String,
                let md5Value = md5.components(separatedBy: ".").last,
-               let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
-                // Comes in a format of "com....md5"
-                shortcutItemGame = matchedGame
-                return true
+               let matchedGame = fetchGame(byMD5: md5Value) {
+                    // Comes in a format of "com....md5"
+                    AppState.shared.appOpenAction = .openGame(matchedGame)
+                    return true
             } else {
                 WLOG("Spotlight activity didn't contain the MD5 I was looking for")
             }
@@ -142,7 +164,7 @@ extension PVAppDelegate {
                 if secureDocument {
                     url.stopAccessingSecurityScopedResource()
                 }
-                
+
             }
 
             // Doesn't seem we need access in dev builds?
@@ -171,6 +193,14 @@ extension PVAppDelegate {
 
         let sendingAppID = options[.sourceApplication]
         ILOG("App with id <\(sendingAppID ?? "nil")> requested to open url \(url.absoluteString)")
+
+        // Debug log the URL structure in detail
+        DLOG("URL scheme: \(components.scheme ?? "nil"), host: \(components.host ?? "nil"), path: \(components.path)")
+        if let queryItems = components.queryItems {
+            DLOG("Query items: \(queryItems.map { "\($0.name)=\($0.value ?? "nil")" }.joined(separator: ", "))")
+        } else {
+            DLOG("No query items found in URL")
+        }
 
         guard let action = AppURLKeys(rawValue: components.host ?? "") else {
             ELOG("Invalid host/action: \(components.host ?? "nil")")
@@ -205,28 +235,63 @@ extension PVAppDelegate {
         case .open:
 
             guard let queryItems = components.queryItems, !queryItems.isEmpty else {
+                ELOG("No query items found for open action")
                 return false
             }
 
+            DLOG("Processing open action with \(queryItems.count) query items")
+
+            // Check for direct md5 parameter (provenance://open?md5=...)
+            if let md5Value = queryItems.first(where: { $0.name == AppURLKeys.OpenKeys.md5.rawValue })?.value, !md5Value.isEmpty {
+                DLOG("Found direct md5 parameter: \(md5Value)")
+                if let matchedGame = fetchGame(byMD5: md5Value) {
+                    ILOG("Opening game by direct md5 parameter: \(md5Value)")
+                    AppState.shared.appOpenAction = .openGame(matchedGame)
+                    return true
+                } else {
+                    ELOG("Game not found for direct md5 parameter: \(md5Value)")
+                    // Set the MD5 action in case the game is found later
+                    AppState.shared.appOpenAction = .openMD5(md5Value)
+                    return true
+                }
+            }
+
+            // Check for game name parameter (provenance://open?title=...)
+            if let gameName = queryItems.first(where: { $0.name == "title" })?.value, !gameName.isEmpty {
+                DLOG("Found game name parameter: \(gameName)")
+
+                // Check if we also have a system parameter for more specific search
+                let systemName = queryItems.first(where: { $0.name == "system" })?.value
+
+                if let systemName = systemName, !systemName.isEmpty {
+                    DLOG("Also found system parameter: \(systemName)")
+                    return handleOpenByGameAndSystem(gameName: gameName, systemName: systemName)
+                } else {
+                    return handleOpenByGameName(gameName)
+                }
+            }
+
+            // Fall back to the original parameter names if direct parameters not found
             let md5QueryItem = queryItems["PVGameMD5Key"]
             let systemItem = queryItems["system"]
             let nameItem = queryItems["title"]
 
+            DLOG("Fallback parameters - PVGameMD5Key: \(md5QueryItem ?? "nil"), system: \(systemItem ?? "nil"), title: \(nameItem ?? "nil")")
+
             if let value = md5QueryItem, !value.isEmpty,
-               let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: value)) as PVGame??) {
+               let matchedGame = fetchGame(byMD5: value) {
                 // Match by md5
                 ILOG("Open by md5 \(value)")
-                shortcutItemGame = matchedGame
+                AppState.shared.appOpenAction = .openGame(matchedGame)
                 return true
             } else if let gameName = nameItem, !gameName.isEmpty {
                 if let value = systemItem {
-                    // MAtch by name and system
+                    // Match by name and system
                     if !value.isEmpty,
-                       let systemMaybe = ((try? Realm().object(ofType: PVSystem.self, forPrimaryKey: value)) as PVSystem??),
-                       let matchedSystem = systemMaybe {
+                       let matchedSystem = fetchSystem(byIdentifier: value) {
                         if let matchedGame = RomDatabase.sharedInstance.all(PVGame.self).filter("systemIdentifier == %@ AND title == %@", matchedSystem.identifier, gameName).first {
                             ILOG("Open by system \(value), name: \(gameName)")
-                            shortcutItemGame = matchedGame
+                            AppState.shared.appOpenAction = .openGame(matchedGame)
                             return true
                         } else {
                             ELOG("Failed to open by system \(value), name: \(gameName)")
@@ -239,7 +304,7 @@ extension PVAppDelegate {
                 } else {
                     if let matchedGame = RomDatabase.sharedInstance.all(PVGame.self, where: #keyPath(PVGame.title), value: gameName).first {
                         ILOG("Open by name: \(gameName)")
-                        shortcutItemGame = matchedGame
+                        AppState.shared.appOpenAction = .openGame(matchedGame)
                         return true
                     } else {
                         ELOG("Failed to open by name: \(gameName)")
@@ -250,6 +315,101 @@ extension PVAppDelegate {
                 ELOG("Open Query didn't have acceptable values")
                 return false
             }
+        }
+    }
+
+    /// Handle opening a game by name using fuzzy search
+    /// - Parameter gameName: The name of the game to search for
+    /// - Returns: True if a game was found and set to open, false otherwise
+    private func handleOpenByGameName(_ gameName: String) -> Bool {
+        do {
+            let realm = try Realm()
+
+            // First try an exact match
+            if let exactMatch = realm.objects(PVGame.self).filter("title == %@", gameName).first {
+                ILOG("Found exact match for game name: \(gameName)")
+                AppState.shared.appOpenAction = .openGame(exactMatch)
+                return true
+            }
+
+            // If no exact match, try a case-insensitive contains search
+            let fuzzyMatches = realm.objects(PVGame.self).filter("title CONTAINS[c] %@", gameName)
+
+            if let bestMatch = fuzzyMatches.first {
+                ILOG("Found fuzzy match '\(bestMatch.title)' for game name: \(gameName)")
+                AppState.shared.appOpenAction = .openGame(bestMatch)
+                return true
+            }
+
+            // No matches found
+            WLOG("No games found matching name: \(gameName)")
+            return false
+
+        } catch {
+            ELOG("Error searching for game by name: \(error.localizedDescription)")
+            return false
+        }
+    }
+
+    /// Handle opening a game by name and system using fuzzy search
+    /// - Parameters:
+    ///   - gameName: The name of the game to search for
+    ///   - systemName: The name of the system to search for
+    /// - Returns: True if a game was found and set to open, false otherwise
+    private func handleOpenByGameAndSystem(gameName: String, systemName: String) -> Bool {
+        do {
+            let realm = try Realm()
+
+            // First find matching systems
+            let systemMatches = realm.objects(PVSystem.self).filter("name CONTAINS[c] %@ OR shortName CONTAINS[c] %@", systemName, systemName)
+
+            if systemMatches.isEmpty {
+                WLOG("No systems found matching: \(systemName)")
+                // Fall back to just game name search
+                return handleOpenByGameName(gameName)
+            }
+
+            // Get system identifiers
+            let systemIdentifiers = systemMatches.map { $0.identifier }
+
+            // Try to find a game that matches both the name and one of the systems
+            var bestMatch: PVGame? = nil
+
+            // First try exact match on title with any matching system
+            for systemId in systemIdentifiers {
+                if let match = realm.objects(PVGame.self)
+                    .filter("title == %@ AND systemIdentifier == %@", gameName, systemId)
+                    .first {
+                    bestMatch = match
+                    break
+                }
+            }
+
+            // If no exact match, try fuzzy match on title with any matching system
+            if bestMatch == nil {
+                for systemId in systemIdentifiers {
+                    if let match = realm.objects(PVGame.self)
+                        .filter("title CONTAINS[c] %@ AND systemIdentifier == %@", gameName, systemId)
+                        .first {
+                        bestMatch = match
+                        break
+                    }
+                }
+            }
+
+            if let game = bestMatch {
+                ILOG("Found game '\(game.title)' on system '\(game.systemIdentifier)'")
+                AppState.shared.appOpenAction = .openGame(game)
+                return true
+            }
+
+            // No matches found with system, fall back to just game name
+            WLOG("No games found matching name: \(gameName) on system: \(systemName)")
+            return handleOpenByGameName(gameName)
+
+        } catch {
+            ELOG("Error searching for game by name and system: \(error.localizedDescription)")
+            return false
         }
     }
 }

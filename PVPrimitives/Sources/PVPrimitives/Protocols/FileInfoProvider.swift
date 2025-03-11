@@ -45,20 +45,21 @@ public protocol FileInfoProvider {
 }
 
 public protocol LocalFileInfoProvider: FileInfoProvider {
-    var url: URL { get }
+    var url: URL? { get }
 }
 
 public protocol LocalFileProvider: LocalFileInfoProvider, DataProvider {}
 
 public extension LocalFileProvider {
-    func readData() async throws -> Data {
+    func readData() async throws -> Data? {
+        guard let url = url else { return nil }
         return try Data(contentsOf: url)
     }
 }
 
 public protocol DataProvider {
     var data: Data? { get async }
-    func readData() async throws -> Data
+    func readData() async throws -> Data?
 }
 
 public extension DataProvider {
@@ -93,6 +94,7 @@ nonisolated(unsafe) private let md5Cache: Cache<URL, String> = {
 
 public extension LocalFileInfoProvider {
     var size: UInt64 { get {
+        guard let url = url else { return 0 }
         let fileSize: UInt64
 
         if let attr = try? FileManager.default.attributesOfItem(atPath: url.path) as NSDictionary {
@@ -104,23 +106,30 @@ public extension LocalFileInfoProvider {
     } }
 
     var online: Bool { get {
+        guard let url = url else { return true }
         return FileManager.default.fileExists(atPath: url.path)
     }}
 
     var pathExtension: String { get {
+        guard let url = url else { return "" }
+
         return url.pathExtension
     }}
 
     var fileName: String { get {
+        guard let url = url else { return "" }
         return url.lastPathComponent
     }}
 
     var fileNameWithoutExtension: String { get {
+        guard let url = url else { return "" }
         return url.deletingPathExtension().lastPathComponent
     }}
 
     @preconcurrency
     var md5: String? { get {
+        guard let url = url else { return nil }
+
         if let md5 = md5Cache.object(forKey: url) {
             return md5
         }

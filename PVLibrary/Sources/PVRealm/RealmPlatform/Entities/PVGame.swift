@@ -11,6 +11,7 @@ import RealmSwift
 import AsyncAlgorithms
 import PVPrimitives
 import PVFileSystem
+import PVSystems
 
 @objcMembers
 public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
@@ -24,12 +25,17 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     // The other option is to only use the filename and then path(forGame:) would determine the
     // fully qualified path, but if we add network / cloud storage that may or may not change that.
     @Persisted public var romPath: String = ""
-    @Persisted public var file: PVFile!
+    @Persisted public var file: PVFile?
     @Persisted public private(set) var relatedFiles: List<PVFile>
 
     @Persisted public var customArtworkURL: String = ""
     @Persisted public var originalArtworkURL: String = ""
     @Persisted public var originalArtworkFile: PVImageFile?
+    
+    public var artworkURL: String {
+        get { customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL }
+        set { customArtworkURL = newValue }
+    }
 
     @Persisted public var requiresSync: Bool = true
     @Persisted(indexed: true) public var isFavorite: Bool = false
@@ -39,7 +45,7 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     @Persisted public private(set) var importDate: Date = Date()
 
     @Persisted(indexed: true) public var systemIdentifier: String = ""
-    @Persisted public var system: PVSystem!
+    @Persisted public var system: PVSystem?
 
     /*
      Primary key must be set at import time and can't be changed after.
@@ -54,6 +60,8 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     // If the user has set 'always use' for a specfic core
     // We don't use PVCore incase cores are removed / deleted
     @Persisted public var userPreferredCoreID: String?
+    
+    @Persisted public var contentless: Bool = false
 
     /* Links to other objects */
     @Persisted(originProperty: "game") public var saveStates: LinkingObjects<PVSaveState>
@@ -78,7 +86,7 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
         }
     }
 
-    /* Extra metadata from OpenBG */
+    /* Extra metadata from OpenVGDB */
     @Persisted public var gameDescription: String?
     @Persisted public var boxBackArtworkURL: String?
     @Persisted public var developer: String?
@@ -104,6 +112,20 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
             game.publishDate = String("\(1980 + count)")
             return game
         }
+    }
+    
+    public static func contentlessGenerate(core: PVCore, title: String? = nil) -> PVGame {
+        let systemIdentifier = core.supportedSystems.first?.identifier ?? SystemIdentifier.RetroArch.rawValue
+        let game = PVGame()
+        game.title = core.projectName
+        game.systemIdentifier = systemIdentifier
+        game.md5Hash = core.identifier // Mock MD5 hash
+        game.publishDate = core.projectVersion
+        game.userPreferredCoreID = core.identifier
+        game.contentless = true
+        game.file = PVFile.init(withPartialPath: "", relativeRoot: .caches, size: 0, md5: core.identifier)
+        game.system = core.supportedSystems.first!
+        return game
     }
 }
 
@@ -187,7 +209,11 @@ public extension Game {
         let regionName = game.regionName
         let systemShortName = game.systemShortName
         let language = game.language
-        let file = FileInfo(fileName: game.file.fileName, size: game.file.size, md5: game.file.md5, online: game.file.online, local: true)
+        let file = FileInfo(fileName: game.file?.fileName ?? "",
+                            size: game.file?.size ?? 0,
+                            md5: game.file?.md5 ?? "",
+                            online: game.file?.online ?? true,
+                            local: true)
         let gameDescription = game.gameDescription
         let publishDate = game.publishDate
         // TODO: Screenshots

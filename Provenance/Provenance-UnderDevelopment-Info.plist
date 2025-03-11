@@ -6,9 +6,9 @@
 	<string></string>
 	<key>APP_GROUP_IDENTIFIER</key>
 	<string>$(APP_GROUP_IDENTIFIER)</string>
-	<key>CFBundleAllowMixedLocalizations</key>
-	<true/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>CFBundleAllowMixedLocalizations</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
@@ -218,6 +218,8 @@
 	<string>Provenance uses the local network to find and communicate with AltServer.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Provenance uses the microphone for systems that support audio input (eg. Famicom).</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Provenance uses your device's accelerometer and gyroscope to emulate the portable consoles' built-in accelerometer and gyroscope.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Provenance can set custom artworks from your photos or save screenshots to the Photo Library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -238,6 +240,7 @@
 	</dict>
 	<key>NSUserActivityTypes</key>
 	<array>
+		<string>PVOpenIntent</string>
 		<string>org.provenance-emu.game.play</string>
 		<string>org.provenance-emu.webserver</string>
 	</array>

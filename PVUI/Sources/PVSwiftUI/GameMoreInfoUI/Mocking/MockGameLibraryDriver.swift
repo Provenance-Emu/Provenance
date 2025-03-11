@@ -27,6 +27,8 @@ public protocol GameLibraryDriver: ObservableObject {
     func updateGamePublishDate(id: String, value: String?)
     func updateGameGenres(id: String, value: String?)
     func updateGameRegion(id: String, value: String?)
+    /// Update game rating (-1 for unrated, 0-5 for rated)
+    func updateGameRating(id: String, value: Int)
 
     /// Reset game statistics
     func resetGameStats(id: String)
@@ -45,6 +47,7 @@ public class MockGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSourc
                 system: "SNES",
                 developer: "Nintendo",
                 genres: "Platform, Action",
+                rating: 5,
                 referenceURL: "https://www.mobygames.com/game/super-mario-world"
             ),
             createMockGame(
@@ -53,6 +56,7 @@ public class MockGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSourc
                 system: "NES",
                 developer: "Nintendo",
                 genres: "Action, Adventure",
+                rating: 4,
                 referenceURL: nil
             ),
             createMockGame(
@@ -61,6 +65,7 @@ public class MockGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSourc
                 system: "Genesis",
                 developer: "Sega",
                 genres: "Platform",
+                rating: 3,
                 referenceURL: "https://www.mobygames.com/game/sonic-the-hedgehog"
             ),
             createMockGame(
@@ -69,6 +74,7 @@ public class MockGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSourc
                 system: "PlayStation",
                 developer: "Square",
                 genres: "RPG",
+                rating: 2,
                 referenceURL: nil
             )
         ]
@@ -88,6 +94,7 @@ public class MockGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSourc
         system: String,
         developer: String,
         genres: String,
+        rating: Int = 0,
         referenceURL: String?
     ) -> MockGameLibraryEntry {
         let game = MockGameLibraryEntry()
@@ -96,10 +103,11 @@ public class MockGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSourc
         game.systemIdentifier = system
         game.developer = developer
         game.genres = genres
+        game.rating = rating
         if let urlString = referenceURL {
             game.referenceURL = URL(string: urlString)
         }
-
+        
         // Add custom descriptions for each game
         game.gameDescription = switch id {
         case "mario":
@@ -176,6 +184,13 @@ public class MockGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSourc
     public func updateGameRegion(id: String, value: String?) {
         updateGame(id) { game in
             game.region = value
+        }
+    }
+
+    public func updateGameRating(id: String, value: Int) {
+        assert(-1 ... 5 ~= value, "Rating must be between -1 and 5")
+        updateGame(id) { game in
+            game.rating = value
         }
     }
 

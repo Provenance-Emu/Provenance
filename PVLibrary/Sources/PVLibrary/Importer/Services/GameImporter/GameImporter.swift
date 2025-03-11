@@ -101,6 +101,12 @@ public typealias GameImporterFinishedImportingGameHandler = (_ md5Hash: String, 
 /// Type alias for a closure that handles the finish of getting artwork
 public typealias GameImporterFinishedGettingArtworkHandler = (_ artworkURL: String?) -> Void
 
+public enum ProcessingState {
+    case idle
+    case processing
+    case paused
+}
+
 public protocol GameImporting {
 
     typealias ImportQueueItemType = ImportQueueItem
@@ -119,6 +125,13 @@ public protocol GameImporting {
 
     func removeImports(at offsets: IndexSet)
     func startProcessing()
+
+    /// Pauses the import processing
+    /// Items can still be added to or removed from the queue while paused
+    func pause()
+
+    /// Resumes the import processing if it was paused
+    func resume()
 
     func clearCompleted()
 
@@ -144,7 +157,7 @@ public protocol GameImporting {
 
 //#if !os(tvOS)
 //@Observable
-//#else
+//#els
 @Perceptible
 //#endif
 public final class GameImporter: GameImporting, ObservableObject {
@@ -203,7 +216,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                 $0.status == .queued || $0.userChosenSystem != nil
             }) {
                 importAutoStartDelayTask?.cancel()
-                importAutoStartDelayTask = Task {
+                importAutoStartDelayTask = Task.detached {
                     await try? Task.sleep(for: .seconds(1))
                     self.startProcessing()
                 }
@@ -350,10 +363,16 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     /// Initializes core plists
     fileprivate func initCorePlists() async {
-        let corePlists: [EmulatorCoreInfoPlist]  = CoreLoader.getCorePlists()
         let bundle = ThisBundle
-        await PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
-        await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
+
+//        await Task {
+            await PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
+//        }
+//        await Task {
+            let corePlists: [EmulatorCoreInfoPlist]  = CoreLoader.getCorePlists()
+
+            await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
+//        }
     }
 
     public func getArtwork(forGame game: PVGame) async -> PVGame {
@@ -382,12 +401,13 @@ public final class GameImporter: GameImporting, ObservableObject {
         importQueueLock.lock()
         defer { importQueueLock.unlock() }
 
-        for path in paths {
-            self.addImportItemToQueue(ImportQueueItem(url: path, fileType: .unknown))
+        Task.detached {
+            for path in paths {
+                self.addImportItemToQueue(ImportQueueItem(url: path, fileType: .unknown))
+            }
         }
     }
 
-    @MainActor
     public func addImports(forPaths paths: [URL], targetSystem: SystemIdentifier) {
         importQueueLock.lock()
         defer { importQueueLock.unlock() }
@@ -419,41 +439,49 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     // Public method to manually start processing if needed
     public func startProcessing() {
-        // Only start processing if it's not already active
-        guard processingState == .idle else { return }
+        // Only start processing if it's idle (not processing or paused)
+        guard processingState == .idle else {
+            // If we're paused, resume processing
+            if processingState == .paused {
+                resume()
+            }
+            return
+        }
+
         self.processingState = .processing
-        Task { @MainActor in
+        Task.detached { [self] in
             await preProcessQueue()
             await processQueue()
         }
     }
 
-    //MARK: Processing functions
-    @MainActor
+    // MARK: Processing functions
+//    @MainActor
     private func preProcessQueue() async {
-        importQueueLock.lock()
-        defer { importQueueLock.unlock() }
+        Task {
+//            importQueueLock.lock()
+//            defer { importQueueLock.unlock() }
 
-        //determine the type for all items in the queue
-        for importItem in self.importQueue {
-            //ideally this wouldn't be needed here
-            do {
-                importItem.fileType = try determineImportType(importItem)
-            } catch {
-                ELOG("Caught error trying to assign file type \(error.localizedDescription)")
-                //caught an error trying to assign file type
+            //determine the type for all items in the queue
+            await self.importQueue.asyncForEach { importItem in
+                //ideally this wouldn't be needed here
+                do {
+                    importItem.fileType = try determineImportType(importItem)
+                } catch {
+                    ELOG("Caught error trying to assign file type \(error.localizedDescription)")
+                    //caught an error trying to assign file type
+                }
             }
 
+            //sort the queue to make sure m3us go first
+            importQueue = sortImportQueueItems(importQueue)
+
+            //thirdly, we need to parse the queue and find any children for cue files
+            organizeCueAndBinFiles(in: &importQueue)
+
+            //lastly, move and cue (and child bin) files under the parent m3u (if they exist)
+            organizeM3UFiles(in: &importQueue)
         }
-
-        //sort the queue to make sure m3us go first
-        importQueue = sortImportQueueItems(importQueue)
-
-        //thirdly, we need to parse the queue and find any children for cue files
-        organizeCueAndBinFiles(in: &importQueue)
-
-        //lastly, move and cue (and child bin) files under the parent m3u (if they exist)
-        organizeM3UFiles(in: &importQueue)
     }
 
     public func clearCompleted() {
@@ -649,7 +677,6 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
     // Processes each ImportItem in the queue sequentially
-    @MainActor
     private func processQueue() async {
         // Check for items that are either queued or have a user-chosen system
         let itemsToProcess = importQueue.filter {
@@ -658,17 +685,30 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         guard !itemsToProcess.isEmpty else {
             DispatchQueue.main.async {
-                self.processingState = .idle
+                // Only change to idle if we're not paused
+                if self.processingState != .paused {
+                    self.processingState = .idle
+                }
             }
             return
         }
 
         ILOG("GameImportQueue - processQueue beginning Import Processing")
-        DispatchQueue.main.async {
-            self.processingState = .processing
+
+        // Only update to processing if we're not paused
+        if processingState != .paused {
+            DispatchQueue.main.async {
+                self.processingState = .processing
+            }
         }
 
         for item in itemsToProcess {
+            // Check if we've been paused before processing each item
+            if await checkIfPaused() {
+                ILOG("GameImportQueue - processing paused, waiting for resume")
+                return
+            }
+
             // If there's a user-chosen system, ensure the item is queued
             if item.userChosenSystem != nil {
                 item.status = .queued
@@ -677,45 +717,58 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
 
         DispatchQueue.main.async {
-            self.processingState = .idle
+            // Only change to idle if we're not paused
+            if self.processingState != .paused {
+                self.processingState = .idle
+            }
         }
         ILOG("GameImportQueue - processQueue complete Import Processing")
     }
 
     // Process a single ImportItem and update its status
-    @MainActor
+//    @MainActor
     private func processItem(_ item: ImportQueueItem) async {
         ILOG("GameImportQueue - processing item in queue: \(item.url)")
-        item.status = .processing
+        Task { @MainActor in
+            item.status = .processing
+        }
         updateImporterStatus("Importing \(item.url.lastPathComponent)")
 
         do {
             // Simulate file processing
             try await performImport(for: item)
-            item.status = .success
+            Task { @MainActor in
+                item.status = .success
+            }
             updateImporterStatus("Completed \(item.url.lastPathComponent)")
             ILOG("GameImportQueue - processing item in queue: \(item.url) completed.")
         } catch let error as GameImporterError {
             switch error {
             case .conflictDetected:
-                item.status = .conflict
+                Task { @MainActor in
+                    item.status = .conflict
+                }
                 updateImporterStatus("Conflict for \(item.url.lastPathComponent). User action needed.")
                 WLOG("GameImportQueue - processing item in queue: \(item.url) restuled in conflict.")
             default:
-                item.status = .failure
-                item.errorValue = error.localizedDescription
+                Task { @MainActor in
+                    item.status = .failure
+                    item.errorValue = error.localizedDescription
+                }
                 updateImporterStatus("Failed \(item.url.lastPathComponent) with error: \(error.localizedDescription)")
                 ELOG("GameImportQueue - processing item in queue: \(item.url) restuled in error: \(error.localizedDescription)")
             }
         } catch {
             ILOG("GameImportQueue - processing item in queue: \(item.url) caught error... \(error.localizedDescription)")
-            item.status = .failure
+            Task { @MainActor in
+                item.status = .failure
+            }
             updateImporterStatus("Failed \(item.url.lastPathComponent) with error: \(error.localizedDescription)")
             ELOG("GameImportQueue - processing item in queue: \(item.url) restuled in error: \(error.localizedDescription)")
         }
     }
 
-    private func determineImportType(_ item: ImportQueueItem) throws -> FileType {
+    private func determineImportType(_ item: ImportQueueItem) throws -> ImportQueueItem.FileType {
         //detect type for updating UI and later processing
         if (try isBIOS(item)) { //this can throw
             return .bios
@@ -728,7 +781,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
 
-    @MainActor
+//    @MainActor
     private func performImport(for item: ImportQueueItem) async throws {
         ILOG("Starting import for file: \(item.url.lastPathComponent)")
 
@@ -742,7 +795,9 @@ public final class GameImporter: GameImporting, ObservableObject {
             do {
                 try await gameImporterDatabaseService.importBIOSIntoDatabase(queueItem: item)
                 ILOG("Successfully imported BIOS file")
-                item.status = .success
+                Task { @MainActor in
+                    item.status = .success
+                }
                 return
             } catch {
                 ELOG("Failed to import BIOS file: \(error)")
@@ -753,9 +808,13 @@ public final class GameImporter: GameImporting, ObservableObject {
         if item.fileType == .artwork {
             //TODO: what do i do with the PVGame result here?
             if let _ = await gameImporterArtworkImporter.importArtworkItem(item) {
-                item.status = .success
+                Task { @MainActor in
+                    item.status = .success
+                }
             } else {
-                item.status = .failure
+                Task { @MainActor in
+                    item.status = .failure
+                }
             }
             return
         }
@@ -862,5 +921,43 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         importQueue.append(item)
         ILOG("GameImportQueue - add ImportItem to import queue with url: \(item.url) and id: \(item.id)")
+    }
+
+    /// Pauses the import processing
+    /// Items can still be added to or removed from the queue while paused
+    public func pause() {
+        guard processingState == .processing else { return }
+
+        ILOG("GameImportQueue - Pausing import processing")
+        DispatchQueue.main.async {
+            self.processingState = .paused
+            self.updateImporterStatus("Import processing paused")
+        }
+    }
+
+    /// Resumes the import processing if it was paused
+    public func resume() {
+        guard processingState == .paused else { return }
+
+        ILOG("GameImportQueue - Resuming import processing")
+        DispatchQueue.main.async {
+            self.processingState = .processing
+            self.updateImporterStatus("Resuming import processing")
+        }
+
+        // Restart processing
+        Task.detached { [self] in
+            await processQueue()
+        }
+    }
+
+    // Add a helper method to check if processing is paused
+    private func checkIfPaused() async -> Bool {
+        // Check if we're paused
+        var isPaused = false
+        await MainActor.run {
+            isPaused = self.processingState == .paused
+        }
+        return isPaused
     }
 }

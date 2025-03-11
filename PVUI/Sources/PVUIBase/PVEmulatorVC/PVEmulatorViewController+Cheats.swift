@@ -44,7 +44,10 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
             NSLog("Formatted CheatCode \(modString)")
             if (gameWithCheat.setCheat(code: modString, type:type, codeType: codeType, cheatIndex: cheatIndex, enabled:enabled)) {
                 DLOG("Succeeded applying cheat: \(modString) \(type) \(enabled)")
-                let realm = RomDatabase.sharedInstance.realm
+                guard let realm = try? await Realm() else {
+                    ELOG("Realm() failed")
+                    return
+                }
                 guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: self.core.coreIdentifier) else {
                     completion(.error(.noCoreFound(self.core.coreIdentifier ?? "nil")))
                     return
@@ -198,11 +201,13 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
                 let date1 = try $1.promisedItemResourceValues(forKeys:[.contentModificationDateKey]).contentModificationDate!
                 return date0.compare(date1) == .orderedAscending
             })
-            let realm = RomDatabase.sharedInstance.realm
+            
+            let realm = try await Realm()
+            
             var cheats:[String:Bool]=[:]
             game.realm?.refresh()
             for code in game.cheats {
-                await cheats[code.file.url.lastPathComponent.lowercased()] = true
+                await cheats[code.file!.url!.lastPathComponent.lowercased()] = true
                 cheats[code.id]=true;
             }
             for url in directoryContents {

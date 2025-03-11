@@ -8,6 +8,7 @@
 import PVCoreBridge
 import PVFileSystem
 import PVLogging
+import RealmSwift
 
 /// Save state purging and recoovery
 public extension RomDatabase {
@@ -62,7 +63,7 @@ public extension RomDatabase {
                     DLOG("Save state already exists: \(existingSave.id)")
 
                     // Check if the existing save state's image needs to be updated
-                    if existingSave.image == nil || !fileManager.fileExists(atPath: existingSave.image!.url.path) {
+                    if existingSave.image == nil || !fileManager.fileExists(atPath: existingSave.image!.url!.path) {
 
                         // Look for the image in the same directory as the save state
                         let localImageURL = jsonURL.deletingPathExtension().deletingPathExtension()
@@ -74,7 +75,7 @@ public extension RomDatabase {
                             DLOG("Found image file at alternate location for existing save: \(localImageURL.path)")
                             try? realm.write {
                                 existingSave.image = imgFile
-                                ILOG("Updated image path for existing save state: \(existingSave.id) to \(imgFile.url.path(percentEncoded: false))")
+                                ILOG("Updated image path for existing save state: \(existingSave.id) to \(imgFile.url!.path(percentEncoded: false))")
                             }
                         } else {
                             WLOG("No valid image found for existing save state: \(existingSave.id)")
@@ -182,10 +183,11 @@ public extension RomDatabase {
                     let date1 = try $1.promisedItemResourceValues(forKeys:[.contentModificationDateKey]).contentModificationDate!
                     return date0.compare(date1) == .orderedAscending
                 })
-            let realm = RomDatabase.sharedInstance.realm
+            let realm = try Realm()
+            
             var saves:[String:Int]=[:]
             for saveState in game.saveStates {
-                saves[saveState.file.url.lastPathComponent.lowercased()] = 1;
+                saves[saveState.file!.url!.lastPathComponent.lowercased()] = 1;
             }
             for url in directoryContents {
                 let file = url.lastPathComponent.lowercased()
@@ -220,13 +222,13 @@ public extension RomDatabase {
         do {
             // Clear saves from database that don't have files
             for save in game.saveStates {
-                if !FileManager.default.fileExists(atPath: save.file.url.path) {
+                if !FileManager.default.fileExists(atPath: save.file!.url!.path) {
                     try? PVSaveState.delete(save)
                 }
             }
             // Clear auto-saves from database that don't have files
             for save in game.autoSaves {
-                if !FileManager.default.fileExists(atPath: save.file.url.path) {
+                if !FileManager.default.fileExists(atPath: save.file!.url!.path) {
                     try? PVSaveState.delete(save)
                 }
             }

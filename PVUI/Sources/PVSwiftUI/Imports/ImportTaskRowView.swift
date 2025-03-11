@@ -10,7 +10,7 @@ import PVLibrary
 import PVThemes
 import Perception
 
-func iconNameForStatus(_ status: ImportStatus) -> String {
+func iconNameForStatus(_ status: ImportQueueItem.ImportStatus) -> String {
     switch status {
 
     case .queued:

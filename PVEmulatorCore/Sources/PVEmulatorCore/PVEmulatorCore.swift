@@ -24,17 +24,7 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
 
     open var bridge: (any ObjCBridgedCoreBridge)!
 
-    @MainActor
-    @objc public static var coreClassName: String = ""
-
-    @MainActor
-    @objc public static var systemName: String = ""
-
     @objc dynamic open var resourceBundle: Bundle { Bundle.module }
-
-    @MainActor
-    @available(*, deprecated, message: "Why does this need to exist? Only used for macII in PVRetroCore")
-    public static var status: [String: Any] = .init()
 
     // MARK: EmulatorCoreAudioDataSource
 
@@ -125,9 +115,6 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     { get { bridge.skipEmulationLoop } set { bridge.skipEmulationLoop = newValue } }
     @objc dynamic open var skipLayout: Bool
     { get { bridge.skipLayout } set { bridge.skipLayout = newValue } }
-
-    @available(*, deprecated, message: "What is this even used for?")
-    @objc dynamic open var isOn: Bool = false
 
     @objc dynamic open var isFrontBufferReady: Bool
     { get { bridge.isFrontBufferReady } set { bridge.isFrontBufferReady = newValue } }
@@ -226,6 +213,45 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     // EmulatorCoreAudioDataSource
     @objc dynamic open var ringBuffers: [RingBufferProtocol]?
     { get { bridge.ringBuffers } set { bridge.ringBuffers = newValue }}
+
+    /// Wrapper for isOn state
+    @MainActor
+    @objc dynamic open var isOn: Bool {
+        get {
+            EmulationState.shared.isOn
+        }
+        set {
+            Task {
+                await EmulationState.shared.setIsOn(newValue)
+            }
+        }
+    }
+
+    /// Wrapper for coreClassName
+    @MainActor
+    @objc dynamic open var coreClassName: String {
+        get {
+            EmulationState.shared.coreClassName
+        }
+        set {
+            Task {
+                await EmulationState.shared.setCoreClassName(newValue)
+            }
+        }
+    }
+
+    /// Wrapper for systemName
+    @MainActor
+    @objc dynamic open var systemName: String {
+        get {
+                EmulationState.shared.systemName
+        }
+        set {
+            Task {
+                await EmulationState.shared.setSystemName(newValue)
+            }
+        }
+    }
 }
 
 #if !os(macOS) && !os(watchOS)
