@@ -93,25 +93,11 @@ import PVLogging
 
         gameSpeed = .normal
         
-
-        isRunning = true
-        shouldStop = false
-        isOn = true
-        // Update the singleton state
-        Task {
-            await EmulationState.shared.update { state in
-                state.coreClassName = self.coreIdentifier ?? ""
-                state.systemName = self.systemIdentifier ?? ""
-                state.isOn = true
-            }
-        }
-        
 #warning("TODO: Should remove the else clause?")
         if let objcBridge = self as? (any ObjCBridgedCore), let bridge = objcBridge.bridge as? EmulatorCoreRunLoop {
             bridge.startEmulation()
         } else {
             if !skipEmulationLoop {
-                // TODO: Default case (not used?) should be in a detached thread
                 let emulatorThread = Thread {
                     /// Set thread name for debugging
                     Thread.current.name = "EmulatorThread"
@@ -131,6 +117,18 @@ import PVLogging
 
             } else {
                 isFrontBufferReady = true
+            }
+        }
+
+        isRunning = true
+        shouldStop = false
+        isOn = true
+        // Update the singleton state
+        Task {
+            await EmulationState.shared.update { state in
+                state.coreClassName = self.coreIdentifier ?? ""
+                state.systemName = self.systemIdentifier ?? ""
+                state.isOn = true
             }
         }
     }
