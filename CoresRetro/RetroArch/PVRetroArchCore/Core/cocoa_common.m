@@ -93,7 +93,7 @@ static CocoaView* g_instance;
 void *glkitview_init(void);
 void cocoa_file_load_with_detect_core(const char *filename);
 
-@interface CocoaView()<GCDWebUploaderDelegate, UIGestureRecognizerDelegate
+@interface CocoaView()<GCDWebUploaderDelegate, GCDWebDAVServerDelegate, UIGestureRecognizerDelegate
 #ifdef HAVE_IOS_TOUCHMOUSE
 ,EmulatorTouchMouseHandlerDelegate
 #endif
@@ -761,7 +761,8 @@ void cocoa_file_load_with_detect_core(const char *filename);
 {
     [super viewWillAppear:animated];
 #if TARGET_OS_TV
-    [[WebServer sharedInstance] startUploader];
+    [[WebServer sharedInstance] startServers];
+    [WebServer sharedInstance].webDAVServer.delegate = self;
     [WebServer sharedInstance].webUploader.delegate = self;
 #endif
 }
