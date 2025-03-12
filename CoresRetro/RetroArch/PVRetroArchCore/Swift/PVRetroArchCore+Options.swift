@@ -249,22 +249,18 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
 
 // MARK: - PVRetroArchCoreCore
 extension PVRetroArchCoreCore: @preconcurrency CoreOptional, SubCoreOptional {
-    @MainActor
     public static var options: [PVCoreBridge.CoreOption] {
         return PVRetroArchCoreOptions.options + (options(forSubcoreIdentifier: identifier, systemName: systemName) ?? [])
     }
 
-    @MainActor
     public static func options(forSubcoreIdentifier identifier: String, systemName: String) -> [PVCoreBridge.CoreOption]? {
         return PVRetroArchCoreOptions.options(forSubcoreIdentifier: identifier.isEmpty ? self.identifier : identifier, systemName: systemName.isEmpty ? self.systemName : systemName)
     }
 
-    @MainActor
     private static var identifier: String {
         EmulationState.shared.coreClassName.isEmpty ? "retroarch" : EmulationState.shared.coreClassName
     }
 
-    @MainActor
     private static var systemName: String {
         EmulationState.shared.systemName.isEmpty ? "retroarch" : EmulationState.shared.systemName
     }
@@ -306,8 +302,8 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 continue
             }
 
-            /// Get option description
-            let description = option.desc.map { String(cString: $0) } ?? key
+            /// Get option description to use as title
+            let title = option.desc.map { String(cString: $0) } ?? key
 
             /// Get option info/help text
             let info = option.info.map { String(cString: $0) }
@@ -351,9 +347,9 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
             /// Create the CoreOption
             let coreOption: CoreOption
 
-            /// Create display info
+            /// Create display info - using desc for title instead of key
             let display = CoreOptionValueDisplay(
-                title: key,
+                title: title,
                 description: info,
                 requiresRestart: false
             )
@@ -599,29 +595,21 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
             if (systemIdentifier.contains("psp")) {
                 self.gsPreference = 2; // Use Vulkan PSP
             }
-            if (systemIdentifier.contains("snes") ||
-                systemIdentifier.contains("nes")  ||
-                systemIdentifier.contains("dreamcast")  ||
-                systemIdentifier.contains("genesis")  ||
-//                systemIdentifier.contains("saturn")  ||
-                systemIdentifier.contains("3do")  ||
-                systemIdentifier.contains("gb")  ||
-                systemIdentifier.contains("segacd")  ||
-                systemIdentifier.contains("gba")  ||
-                systemIdentifier.contains("psx")  ||
-                systemIdentifier.contains("neogeo")  ||
-                systemIdentifier.contains("mame")  ||
-//                systemIdentifier.contains("pce") ||
-//                systemIdentifier.contains("pcecd") ||
-//                systemIdentifier.contains("sgfx") ||
-                systemIdentifier.contains("ds") ||
-                systemIdentifier.contains("psp") ||
-                systemIdentifier.contains("n64")) {
+            
+            let systemsWithBindNumlock: Set<String> = [
+                "snes", "nes", "dreamcast", "genesis",
+                "3do", "gb", "segacd", "gba", "psx",
+                "neogeo", "mame", "ds", "psp", "n64",
+//                "saturn", "pce", "pcecd", "sgfx"
+            ]
+            if ( systemsWithBindNumlock.contains(where: systemIdentifier.contains) ) {
                 self.retroArchControls = retroControl
                 self.hasTouchControls = true
             }
             if (systemIdentifier.contains("dos")  ||
                 systemIdentifier.contains("mac")  ||
+                systemIdentifier.contains("doom")  ||
+                systemIdentifier.contains("quake")  ||
                 systemIdentifier.contains("pc98")) {
                 optionValues += "input_auto_game_focus = \"1\"\n"
                 self.retroArchControls = retroControl
