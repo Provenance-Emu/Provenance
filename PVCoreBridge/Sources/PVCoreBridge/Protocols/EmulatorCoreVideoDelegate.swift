@@ -37,7 +37,9 @@ import Foundation
     
     @objc func executeFrame()
     @objc optional func swapBuffers()
-
+    
+    @objc func setMetalLayer(_ : CAMetalLayer)
+    
 #if canImport(OpenGLES) || canImport(OpenGL)
     @objc dynamic var depthFormat: GLenum  { get }
     @objc dynamic var glesVersion: GLESVersion { get }

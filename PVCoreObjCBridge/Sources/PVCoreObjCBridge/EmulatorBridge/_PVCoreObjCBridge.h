@@ -207,6 +207,8 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 @property (atomic, strong, readonly, nonnull) NSLock  *frontBufferLock;
 @property (atomic, assign) BOOL isFrontBufferReady;
 
+- (void)setMetalLayer:(CAMetalLayer *)metalLayer;
+
 #if !TARGET_OS_WATCH
 @property (nonatomic, assign) enum GLESVersion glesVersion;
 @property (nonatomic, readonly) GLenum depthFormat;

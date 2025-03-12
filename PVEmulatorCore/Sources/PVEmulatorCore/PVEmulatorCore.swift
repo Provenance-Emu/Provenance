@@ -98,6 +98,11 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     @objc dynamic open var glesVersion: GLESVersion = .version3
 #endif
 
+    @objc open func setMetalLayer(_ layer: CAMetalLayer)
+    {
+        bridge.setMetalLayer(layer)
+    }
+    
     // PVRenderDelegate
     @objc open weak var renderDelegate: (any PVCoreBridge.PVRenderDelegate)?
     { get{ bridge.renderDelegate } set { bridge.renderDelegate = newValue } }

@@ -290,6 +290,11 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
 
         view.isPaused = false
         view.enableSetNeedsDisplay = false
+
+        // Set the Metal layer for the emulator core
+        if let metalLayer = view.layer as? CAMetalLayer {
+            emulatorCore?.setMetalLayer(metalLayer)
+        }
 #endif
         view.isOpaque = true
         view.layer.isOpaque = true

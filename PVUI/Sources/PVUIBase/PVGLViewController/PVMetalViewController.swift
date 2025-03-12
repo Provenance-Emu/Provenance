@@ -315,6 +315,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         view.layer.isOpaque = true
         view.isUserInteractionEnabled = false
 
+            // Set the Metal layer for the emulator core
+        if let metalLayer = metalView.layer as? CAMetalLayer {
+            emulatorCore?.setMetalLayer(metalLayer)
+        }
+
 #if DEBUG
         ILOG("MTKView frame after setup: \(metalView.frame)")
 #endif
