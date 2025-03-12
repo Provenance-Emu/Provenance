@@ -40,6 +40,12 @@ typedef void (^SaveStateCompletion)(NSError * _Nullable );
  */
 #define GET_CURRENT_OR_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
+/*!
+ * @function GET_CURRENT_OR_RETURN
+ * @abstract Fetch the current game core.
+ */
+#define GET_CURRENT(...) __strong __typeof__(_current) current = _current;
+
 @class OERingBuffer;
 extern NSString * _Nonnull const PVEmulatorCoreErrorDomain;
 
