@@ -1,6 +1,3 @@
-[submodule "Cores/Mupen64Plus/Sources/Plugins/Video/gliden64"]
-	path = Cores/Mupen64Plus/Sources/Plugins/Video/gliden64
-	url = https://github.com/Provenance-Emu/GLideN64.git
 [submodule "Cores/Mupen64Plus/Sources/Plugins/rsp/hle"]
 	path = Cores/Mupen64Plus/Sources/Plugins/rsp/hle
 	url = https://github.com/mupen64plus/mupen64plus-rsp-hle.git
@@ -190,3 +187,9 @@
 [submodule "Cores/Mupen64Plus/Sources/Plugins/Core/Core"]
 	path = Cores/Mupen64Plus/Sources/Plugins/Core/Core
 	url = https://github.com/mupen64plus/mupen64plus-core.git
+[submodule "Cores/Mupen64Plus/Sources/Plugins/Video/glide64mk2"]
+	path = Cores/Mupen64Plus/Sources/Plugins/Video/glide64mk2
+	url = https://github.com/mupen64plus/mupen64plus-video-glide64mk2.git
+[submodule "Cores/Mupen64Plus/Sources/Plugins/Video/GLideN64"]
+	path = Cores/Mupen64Plus/Sources/Plugins/Video/GLideN64
+	url = https://github.com/gonetz/GLideN64.git
