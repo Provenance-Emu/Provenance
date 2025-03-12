@@ -64,7 +64,6 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     var status: iCloudSyncStatus = .initialUpload
     let errorHandler: ErrorHandler
     var initialSyncResult: SyncResult = .indeterminate
-    //process in batch numbers
     let fileImportQueueMaxCount = 1000
     
     init(directories: ConcurrentSet<String>,
@@ -212,8 +211,6 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             return
         }
         let fileManager = FileManager.default
-        var files: Set<URL> = []
-        var filesDownloaded: Set<URL> = []
         let removedObjects = notification.userInfo?[NSMetadataQueryUpdateRemovedItemsKey]
         if let actualRemovedObjects = removedObjects as? [NSMetadataItem] {
             DLOG("\(directories): actualRemovedObjects: (\(actualRemovedObjects.count)) \(actualRemovedObjects)")
@@ -237,7 +234,6 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                     case  NSMetadataUbiquitousItemDownloadingStatusNotDownloaded:
                         do {
                             try fileManager.startDownloadingUbiquitousItem(at: file)
-                            files.insert(file)
                             self?.insertDownloadingFile(file)
                             ILOG("Download started for: \(file)")
                         } catch {
@@ -254,7 +250,6 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                             if self?.status == .initialUpload {
                                 self?.insertDownloadingFile(file)
                             }
-                            filesDownloaded.insert(file)
                             self?.insertDownloadedFile(file)
                         }
                     default: DLOG("\(file): download status: \(downloadStatus)")
@@ -262,7 +257,8 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             }
         }
         setNewCloudFilesAvailable()
-        ILOG("\(directories): current iteration: files pending to be downloaded: \(files.count), files downloaded : \(filesDownloaded.count)")
+        //TODO: this count is missing the multi file ones for downloaded
+        ILOG("\(directories): current iteration: files pending to be downloaded: \(pendingFilesToDownload.count), files downloaded : \(newFiles.count)")
     }
     
     func syncToiCloud() -> SyncResult {
@@ -679,7 +675,6 @@ class RomsSyncer: iCloudContainerSyncer {
     let gameImporter = GameImporter.shared
     var processingFiles = ConcurrentSet<URL>()
     var purgeStatus: GamePurgeStatus = .incomplete
-    var previousProcessingCount = 0
     let multiFileRoms: ConcurrentDictionary<String, [URL]> = [:]
     
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
@@ -770,9 +765,12 @@ class RomsSyncer: iCloudContainerSyncer {
             return
         }
         ILOG("\(file) does NOT exist in database, adding to import set")
-        newFiles.insert(file)
-        //TODO: do 1 at a time
-        if newFiles.count >= fileImportQueueMaxCount {
+        if let multiKey = file.multiFileNameKey {
+            var files = multiFileRoms[multiKey] ?? [URL]()
+            files.append(file)
+            multiFileRoms[multiKey] = files
+        } else {
+            newFiles.insert(file)
             handleImportNewRomFiles()
         }
     }
@@ -844,7 +842,7 @@ class RomsSyncer: iCloudContainerSyncer {
         clearProcessedFiles()
         removeGamesDeletedWhileApplicationClosed()
         guard !newFiles.isEmpty
-                || (!processingFiles.isEmpty && previousProcessingCount != processingFiles.count)//to ensure we do NOT go on an endless loop
+                || (!multiFileRoms.isEmpty && pendingFilesToDownload.isEmpty)
         else {
             return
         }
@@ -868,7 +866,12 @@ class RomsSyncer: iCloudContainerSyncer {
     }
     
     func importNewRomFiles() {
-        let nextFilesToProcess = prepareNextBatchToProcess()
+        var nextFilesToProcess = prepareNextBatchToProcess()
+        if nextFilesToProcess.isEmpty,
+           let nextMultiFile = multiFileRoms.first {
+            nextFilesToProcess = nextMultiFile.value
+            multiFileRoms[nextMultiFile.key] = nil
+        }
         DLOG("\(directories): processingFiles: (\(processingFiles.count)):")
         DLOG("\(processingFiles)")
         processingFiles.formUnion(nextFilesToProcess)
@@ -881,7 +884,6 @@ class RomsSyncer: iCloudContainerSyncer {
         gameImporter.addImports(forPaths: importPaths)
         ILOG("ROMs: downloading: \(pendingFilesToDownload.count), pending to process: \(newFiles.count), processing: \(processingFiles.count)")
         //to ensure we do NOT go on an endless loop
-        previousProcessingCount = processingFiles.count
         gameImporter.startProcessing()
     }
 }
@@ -901,55 +903,82 @@ protocol Queue {
     func dequeue() -> Entry?
     func peek() -> Entry?
     func clear()
+    var allElements: [Entry] { get }
 }
 
-class ConcurrentQueue<T>: Queue, ExpressibleByArrayLiteral {
-    var errors = [T]()
+class ConcurrentQueue<Element>: Queue, ExpressibleByArrayLiteral {
+    private var collection = [Element]()
     private let queue = DispatchQueue(label: "com.provenance.concurrent.queue", attributes: .concurrent)
     
-    required init(arrayLiteral elements: T...) {
-        errors = Array(elements)
+    required init(arrayLiteral elements: Element...) {
+        collection = Array(elements)
     }
     
+    @inlinable
     var count: Int {
         queue.sync {
-            errors.count
+            collection.count
         }
     }
     
-    func enqueue(entry: T) {
+    @inlinable
+    func enqueue(entry: Element) {
         queue.async(flags: .barrier) { [weak self] in
-            self?.errors.insert(entry, at: 0)
+            self?.collection.insert(entry, at: 0)
         }
     }
     
+    @inlinable
     @discardableResult
-    func dequeue() -> T? {
+    func dequeue() -> Element? {
         queue.sync(flags: .barrier) {
-            guard !errors.isEmpty
+            guard !collection.isEmpty
             else {
                 return nil
             }
-            return errors.removeFirst()
+            return collection.removeFirst()
         }
     }
     
-    func peek() -> T? {
+    @inlinable
+    func peek() -> Element? {
         queue.sync {
-            errors.first
+            collection.first
         }
     }
     
+    @inlinable
     func clear() {
         queue.async(flags: .barrier) { [weak self] in
-            self?.errors.removeAll()
+            self?.collection.removeAll()
+        }
+    }
+    
+    @inlinable
+    public var description: String {
+        queue.sync {
+            collection.description
+        }
+    }
+    
+    @inlinable
+    func map<T>(_ transform: (Element) throws -> T) throws -> [T] {
+        try queue.sync(flags: .barrier) {
+            try collection.map(transform)
+        }
+    }
+    
+    @inlinable
+    var allElements: [Element] {
+        queue.sync {
+            collection
         }
     }
 }
 
 protocol ErrorHandler {
-    var allErrorSummaries: [String] { get }
-    var allFullErrors: [String] { get }
+    var allErrorSummaries: [String] { get throws }
+    var allFullErrors: [String] { get throws }
     var allErrors: [iCloudSyncError] { get }
     var numberOfErrors: Int { get }
     func handleError(_ error: Error, file: URL?)
@@ -958,20 +987,28 @@ protocol ErrorHandler {
 
 class iCloudErrorHandler: ErrorHandler {
     static let shared = iCloudErrorHandler()
-    var queue = ConcurrentQueue<iCloudSyncError>()
+    private var queue = ConcurrentQueue<iCloudSyncError>()
     
+    @inlinable
     var allErrorSummaries: [String] {
-        queue.errors.map { $0.summary }
+        get throws {
+            try queue.map { $0.summary }
+        }
     }
     
+    @inlinable
     var allFullErrors: [String] {
-        queue.errors.map { "\($0.error)" }
+        get throws {
+            try queue.map { "\($0.error)" }
+        }
     }
     
+    @inlinable
     var allErrors: [iCloudSyncError] {
-        queue.errors
+        queue.allElements
     }
     
+    @inlinable
     var numberOfErrors: Int {
         queue.count
     }
@@ -981,6 +1018,7 @@ class iCloudErrorHandler: ErrorHandler {
         queue.enqueue(entry: syncError)
     }
     
+    @inlinable
     func clear() {
         queue.clear()
     }
@@ -1007,21 +1045,21 @@ extension URL {
         else {
             return nil
         }
-        var fileName = lastPathComponent
-        fileName.replace(#"\(((Disc)|(Track)) [0-9]{1,3}\)"#, with: "")
-        return fileName
-        
+        let key = PVEmulatorConfiguration.stripDiscNames(fromFilename: deletingPathExtension().pathDecoded)
+        DLOG("key: \(key)")
+        return key
     }
 }
 
-public class ConcurrentDictionary<Key: Hashable, Value>: ExpressibleByDictionaryLiteral {
-    var dictionary: [Key: Value] = [:]
+class ConcurrentDictionary<Key: Hashable, Value>: ExpressibleByDictionaryLiteral, CustomStringConvertible {
+    private var dictionary: [Key: Value] = [:]
     private let queue = DispatchQueue(label: "com.provenance.concurrent.dictionary", attributes: .concurrent)
     
     public required init(dictionaryLiteral elements: (Key, Value)...) {
         dictionary = Dictionary(uniqueKeysWithValues: elements)
     }
     
+    @inlinable
     subscript(key: Key) -> Value? {
         get {
             queue.sync {
@@ -1034,9 +1072,36 @@ public class ConcurrentDictionary<Key: Hashable, Value>: ExpressibleByDictionary
             }
         }
     }
+    
+    @inlinable
+    var first: (key: Key, value: Value)? {
+        queue.sync {
+            dictionary.first
+        }
+    }
+    
+    @inlinable
+    var isEmpty: Bool {
+        queue.sync {
+            dictionary.isEmpty
+        }
+    }
+    
+    @inlinable
+    var count: Int {
+        queue.sync {
+            dictionary.count
+        }
+    }
+    
+    public var description: String {
+        queue.sync {
+            dictionary.description
+        }
+    }
 }
 
-public class ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral {
+public class ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral, CustomStringConvertible {
     private var set: Set<T>
     private let queue = DispatchQueue(label: "com.provenance.concurrent.set", attributes: .concurrent)
     
@@ -1122,6 +1187,12 @@ public class ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral {
     var count: Int {
         queue.sync {
             set.count
+        }
+    }
+    
+    public var description: String {
+        queue.sync {
+            set.description
         }
     }
 }
