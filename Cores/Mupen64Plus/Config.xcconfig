@@ -8,7 +8,7 @@
 
 // All
 GCC_PREPROCESSOR_DEFINITIONS[arch=*] = $(inherited) MUPENPLUSAPI=1 TXFILTER_LIB=1 GL_SILENCE_DEPRECATION=1 __unix__ VFP_HARD=1 TXFILTER_LIB=1 M64P_PLUGIN_PROTOTYPES=1 PROVENANCE=1 NO_ASM=1 IOS=1
-// Vulkan is only for ParallelRDP
+// Only for ParellelRDP, which we're not using
 // VIDEXT_VULKAN=1
 // These should already be enabled by using the MoltenVK headers
 // VK_USE_PLATFORM_METAL_EXT=1 VK_USE_PLATFORM_IOS_MVK=1
