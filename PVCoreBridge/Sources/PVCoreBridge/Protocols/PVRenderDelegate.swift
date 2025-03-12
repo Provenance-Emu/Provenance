@@ -13,7 +13,7 @@ import Metal
 import MetalKit
 //#endif
 
-@objc public protocol PVRenderDelegate {
+@objc public protocol PVRenderDelegate: AnyObject {
     // Required methods
     @objc optional func startRenderingOnAlternateThread()
     @objc optional func didRenderFrameOnAlternateThread()
