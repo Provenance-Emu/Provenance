@@ -1350,8 +1350,13 @@ static void *dlopen_myself()
     vidExtFunctions.VidExtFuncToggleFS = VidExt_ToggleFullScreen;
     vidExtFunctions.VidExtFuncResizeWindow = VidExt_ResizeWindow;
     vidExtFunctions.VidExtFuncGLGetDefaultFramebuffer = VidExt_GL_GetDefaultFramebuffer;
+#if defined(VIDEXT_VULKAN)
     vidExtFunctions.VidExtFuncVKGetSurface = VidExt_VK_GetSurface;
     vidExtFunctions.VidExtFuncVKGetInstanceExtensions = VidExt_VK_GetInstanceExtensions;
+#else
+    vidExtFunctions.VidExtFuncVKGetSurface = NULL;
+    vidExtFunctions.VidExtFuncVKGetInstanceExtensions = NULL;
+#endif
 
     // Make sure we have a valid GL context before registering the functions
     if (![self findExternalGLContext]) {
