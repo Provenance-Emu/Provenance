@@ -94,9 +94,10 @@ extension PVEmulatorCore: EmulatorCoreVideoDelegate {
             return
         }
         
-        if let objcBridge: any ObjCBridgedCore = self as? (any ObjCBridgedCore),
-            let bridge = objcBridge.bridge as? any ObjCBridgedCoreBridge & EmulatorCoreVideoDelegate,
-            bridge.responds(to: #selector(bridge.swapBuffers)) {
+        if let objcBridge: any ObjCBridgedCore = self as? (any ObjCBridgedCore)
+            , let bridge = objcBridge.bridge as? any ObjCBridgedCoreBridge & EmulatorCoreVideoDelegate
+//            , bridge.responds(to: #selector(bridge.swapBuffers))
+        {
             bridge.swapBuffers?()
         } else {
             assertionFailure("Should be implimented in subclasses")
