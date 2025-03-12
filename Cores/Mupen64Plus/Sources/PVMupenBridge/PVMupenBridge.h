@@ -49,7 +49,7 @@ typedef enum PVN64Button: NSInteger PVN64Button;
     uint8_t padData[4][19];
     int8_t xAxis[4];
     int8_t yAxis[4];
-    
+
     int controllerMode[4];
     NSOperationQueue * __nonnull _inputQueue;
 }
@@ -63,9 +63,16 @@ typedef enum PVN64Button: NSInteger PVN64Button;
 @property (nonatomic, assign) BOOL isNTSC;
 @property (nonatomic, assign) BOOL dualJoystick;
 
+@property (nonatomic) EAGLContext *_externalGLContext;
+@property (nonatomic) BOOL _framebufferInitialized;
+@property (nonatomic) GLuint _defaultFramebuffer;
+@property (nonatomic) int _preferredRefreshRate;
+@property (nonatomic) const char * _Nullable * _Nullable _vulkanExtensionNames;
+
 - (void) videoInterrupt;
 - (void) setMode:(NSInteger)mode forController:(NSInteger)controller;
 - (void) swapBuffers;
+- (BOOL) findExternalGLContext;
 @end
 
 extern __weak PVMupenBridge * __nullable _current;

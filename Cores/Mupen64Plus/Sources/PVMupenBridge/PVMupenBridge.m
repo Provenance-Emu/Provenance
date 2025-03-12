@@ -1326,38 +1326,38 @@ static void *dlopen_myself()
     }
 }
 
-// Add the VidExt_GL_GetDefaultFramebuffer function if it's not already in vidext.m
-EXPORT uint32_t CALL VidExt_GL_GetDefaultFramebuffer(void) {
-    // Get the PVMupenBridge instance
-    __strong PVMupenBridge *bridge = _current;
-
-    // Find the external GL context if we don't have one yet
-    if (!bridge->_externalGLContext) {
-        if (![bridge findExternalGLContext]) {
-            ELOG(@"[Mupen] Failed to find external GL context");
-            return 0;
-        }
-    }
-
-    // Make sure we have a valid framebuffer
-    if (!bridge->_framebufferInitialized) {
-        GLint currentFramebuffer = 0;
-        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebuffer);
-        bridge->_defaultFramebuffer = (GLuint)currentFramebuffer;
-
-        if (bridge->_defaultFramebuffer == 0) {
-            ELOG(@"[Mupen] No valid framebuffer bound in external GL context");
-            return 0;
-        }
-
-        bridge->_framebufferInitialized = YES;
-    }
-
-    DLOG(@"[Mupen] VidExt_GL_GetDefaultFramebuffer called, returning: %u", bridge->_defaultFramebuffer);
-
-    // Return the default framebuffer ID
-    return bridge->_defaultFramebuffer;
-}
+//// Add the VidExt_GL_GetDefaultFramebuffer function if it's not already in vidext.m
+//EXPORT uint32_t CALL VidExt_GL_GetDefaultFramebuffer(void) {
+//    // Get the PVMupenBridge instance
+//    __strong PVMupenBridge *bridge = _current;
+//
+//    // Find the external GL context if we don't have one yet
+//    if (!bridge->_externalGLContext) {
+//        if (![bridge findExternalGLContext]) {
+//            ELOG(@"[Mupen] Failed to find external GL context");
+//            return 0;
+//        }
+//    }
+//
+//    // Make sure we have a valid framebuffer
+//    if (!bridge->_framebufferInitialized) {
+//        GLint currentFramebuffer = 0;
+//        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebuffer);
+//        bridge->_defaultFramebuffer = (GLuint)currentFramebuffer;
+//
+//        if (bridge->_defaultFramebuffer == 0) {
+//            ELOG(@"[Mupen] No valid framebuffer bound in external GL context");
+//            return 0;
+//        }
+//
+//        bridge->_framebufferInitialized = YES;
+//    }
+//
+//    DLOG(@"[Mupen] VidExt_GL_GetDefaultFramebuffer called, returning: %u", bridge->_defaultFramebuffer);
+//
+//    // Return the default framebuffer ID
+//    return bridge->_defaultFramebuffer;
+//}
 
 // Implement the refresh rate listing function
 static m64p_error MupenVidExtListRates(m64p_2d_size Size, int *NumRates, int *Rates) {
