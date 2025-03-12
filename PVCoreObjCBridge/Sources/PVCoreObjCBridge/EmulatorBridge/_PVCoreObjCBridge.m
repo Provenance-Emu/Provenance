@@ -458,6 +458,11 @@ static NSString *_systemName;
 
 //@implementation PVCoreObjCBridge (Controllers)
 
+- (void)setMetalLayer:(CAMetalLayer *)metalLayer {
+    if(metalLayer != _metalLayer) {
+        _metalLayer = metalLayer;
+    }
+}
 
 #if !TARGET_OS_OSX && !TARGET_OS_WATCH
 - (UIViewController *)touchViewController {

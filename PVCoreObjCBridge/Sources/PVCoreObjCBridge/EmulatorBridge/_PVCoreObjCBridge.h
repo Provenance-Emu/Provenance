@@ -117,6 +117,8 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
     BOOL _isOn;
 
     GameSpeed _gameSpeed;
+    
+    CAMetalLayer *_metalLayer;
 
 #if !TARGET_OS_WATCH
     GCController *_controller1;
