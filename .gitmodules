@@ -193,3 +193,9 @@
 [submodule "Cores/Mupen64Plus/Sources/Plugins/Video/rice"]
 	path = Cores/Mupen64Plus/Sources/Plugins/Video/rice
 	url = https://github.com/mupen64plus/mupen64plus-video-rice.git
+[submodule "Cores/Mupen64Plus/Sources/Plugins/rsp/z64"]
+	path = Cores/Mupen64Plus/Sources/Plugins/rsp/z64
+	url = https://github.com/mupen64plus/mupen64plus-rsp-z64.git
+[submodule "Cores/Mupen64Plus/Sources/Plugins/Video/z64"]
+	path = Cores/Mupen64Plus/Sources/Plugins/Video/z64
+	url = https://github.com/mupen64plus/mupen64plus-video-z64.git
