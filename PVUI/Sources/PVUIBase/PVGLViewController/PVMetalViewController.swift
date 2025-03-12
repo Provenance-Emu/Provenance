@@ -292,7 +292,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 alternateThreadBufferCopyGLContext = EAGLContext(api: context.api)
 
 #if DEBUG
-                ILOG("Created iOS OpenGL contexts for core that renders to OpenGL")
+                DLOG("Created iOS OpenGL contexts for core that renders to OpenGL")
 #endif
             } else {
                 ELOG("Failed to create iOS OpenGL context")
@@ -1473,7 +1473,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 encoder.setFragmentBytes(&cbData, length: MemoryLayout<CRT_Data>.stride, index: 0)
                 pipelineState = self.effectFilterPipeline
             } else if self.effectFilterShader?.name == "Simple CRT", let inputTexture = self.inputTexture {
-                ILOG("Setting up Simple CRT pipeline")
+                VLOG("Setting up Simple CRT pipeline")
                 let mameScreenSrcRect: SIMD4<Float> = SIMD4<Float>.init(0, 0, Float(screenRect.size.width), Float(screenRect.size.height))
                 let mameScreenDstRect: SIMD4<Float> = SIMD4<Float>.init(Float(inputTexture.width), Float(inputTexture.height), Float(view.drawableSize.width), Float(view.drawableSize.height))
 
@@ -1491,7 +1491,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
                 encoder.setFragmentBytes(&cbData, length: MemoryLayout<SimpleCrtUniforms>.stride, index: 0)
                 pipelineState = self.effectFilterPipeline
-                DLOG("Effect filter pipeline state: \(self.effectFilterPipeline != nil)")
+                VLOG("Effect filter pipeline state: \(self.effectFilterPipeline != nil)")
             } else if self.effectFilterShader?.name == "Line Tron", let inputTexture = self.inputTexture {
                 let time = Float(CACurrentMediaTime())
                 let sourceSize = SIMD4<Float>(
@@ -1809,12 +1809,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         lastNativeScaleEnabled = useNativeScale
 
 #if DEBUG
-        ILOG("Recalculating viewport values:")
-        ILOG("EmulatorCore sizes:")
-        ILOG("- bufferSize: \(bufferSize)")
-        ILOG("Screen bounds: \(screenBounds)")
-        ILOG("Screen scale: \(screenScale)")
-        ILOG("Native scale enabled: \(useNativeScale)")
+        DLOG("Recalculating viewport values:")
+        DLOG("EmulatorCore sizes:")
+        DLOG("- bufferSize: \(bufferSize)")
+        DLOG("Screen bounds: \(screenBounds)")
+        DLOG("Screen scale: \(screenScale)")
+        DLOG("Native scale enabled: \(useNativeScale)")
 #endif
 
         /// Calculate viewport size based on native scale setting
@@ -1832,9 +1832,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         cachedViewportY = ((screenBounds.height * scaleFactor) - cachedViewportHeight) / scaleFactor
 
 #if DEBUG
-        ILOG("Cached viewport values:")
-        ILOG("Size: \(cachedViewportWidth)x\(cachedViewportHeight)")
-        ILOG("Position: \(cachedViewportX),\(cachedViewportY)")
+        DLOG("Cached viewport values:")
+        DLOG("Size: \(cachedViewportWidth)x\(cachedViewportHeight)")
+        DLOG("Position: \(cachedViewportX),\(cachedViewportY)")
 #endif
     }
 
