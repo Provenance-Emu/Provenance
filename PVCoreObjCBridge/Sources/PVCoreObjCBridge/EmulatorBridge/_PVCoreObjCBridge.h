@@ -118,8 +118,6 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 
     GameSpeed _gameSpeed;
     
-    CAMetalLayer *_metalLayer;
-
 #if !TARGET_OS_WATCH
     GCController *_controller1;
     GCController *_controller2;
@@ -143,6 +141,9 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 @property (nonatomic, copy, nullable) NSString *coreIdentifier;
 @property (nonatomic, copy, nullable) NSString *romMD5;
 @property (nonatomic, copy, nullable) NSString *romSerial;
+@property (nonatomic, strong, nullable) CAMetalLayer *metalLayer;
+@property (nonatomic, strong, nullable) CADisplayLink *displayLink;
+
 //@property (nonatomic, copy, nullable) NSString *screenType;
 
 

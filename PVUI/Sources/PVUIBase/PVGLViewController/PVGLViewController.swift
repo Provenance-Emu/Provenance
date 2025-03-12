@@ -315,6 +315,10 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         guard let emulatorCore = emulatorCore else {
             return
         }
+        
+#if USE_DISPLAY_LINK
+        emulatorCore.displayLink = displayLink
+#endif
 
         let depthFormat: Int32 = Int32(emulatorCore.depthFormat)
         switch depthFormat {
