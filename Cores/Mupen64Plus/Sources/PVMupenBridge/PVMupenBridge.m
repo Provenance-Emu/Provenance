@@ -202,14 +202,14 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
     if (core_handle != NULL) {
         // Note: DL close doesn't really work as expected on iOS. The framework will still essentially be loaded
         // take care to reset static variables that are expected to have cleared memory between uses.
+        const char* dlError = NULL;
         if(dlclose(core_handle) != 0) {
-            ELOG(@"Failed to dlclose core framework.");
+            dlError = dlerror();
+            ELOG(@"Failed to dlclose core framework: %s", dlError ? dlError : "Unknown error");
         } else {
             ILOG(@"dlclosed core framework.");
         }
         core_handle = NULL;
-
-//        [_callbackHandlers removeAllObjects];
     }
 }
 
@@ -259,9 +259,17 @@ static void *dlopen_myself()
 {
     Dl_info info;
 
-    dladdr(dlopen_myself, &info);
+    if (!dladdr(dlopen_myself, &info)) {
+        ELOG(@"dladdr failed: %s", dlerror());
+        return NULL;
+    }
 
-    return dlopen(info.dli_fname, RTLD_NOW | RTLD_GLOBAL);
+    void* handle = dlopen(info.dli_fname, RTLD_LAZY | RTLD_GLOBAL);
+    if (handle == NULL) {
+        ELOG(@"dlopen_myself failed: %s", dlerror());
+    }
+
+    return handle;
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
@@ -374,6 +382,24 @@ static void *dlopen_myself()
     }
 
     core_handle = dlopen_myself();
+
+    if (core_handle == NULL) {
+        ELOG(@"Error getting core handle: %s", dlerror());
+
+        NSDictionary *userInfo = @{
+            NSLocalizedDescriptionKey: @"Failed to load Mupen.",
+            NSLocalizedFailureReasonErrorKey: @"Mupen64Plus failed to load itself.",
+            NSLocalizedRecoverySuggestionErrorKey: @"The core is invalid. Developer error. Kill the developer."
+        };
+
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotStart
+                                            userInfo:userInfo];
+
+        *error = newError;
+
+        return NO;
+    }
 
 //    m64p_error callbackStatus = CoreDoCommand(M64CMD_SET_FRAME_CALLBACK, 0, (void *)MupenFrameCallback);
 //    if ( callbackStatus != M64ERR_SUCCESS) {
@@ -631,6 +657,7 @@ static void *dlopen_myself()
     typedef m64p_error (*ptr_PluginShutdown)(void);
     ptr_PluginShutdown PluginShutdown;
     int i;
+    m64p_error finalStatus = M64ERR_SUCCESS;
 
     /* shutdown each type of plugin */
     for (i = 0; i < 4; i++)
@@ -642,24 +669,26 @@ static void *dlopen_myself()
         if (PluginShutdown != NULL) {
             m64p_error status = (*PluginShutdown)();
             if (status == M64ERR_SUCCESS) {
-                ILOG(@"Shutdown plugin");
+                ILOG(@"Shutdown plugin type %i", i);
             } else {
-
                 ELOG(@"Shutdown plugin type %i failed: %i", i, status);
+                finalStatus = status; // Remember the error but continue cleanup
             }
+        } else {
+            ELOG(@"Could not find PluginShutdown function for plugin type %i", i);
         }
-        // TODO: Could we do something like this,
-        // https://github.com/JesseTG/melonds-ds/blob/main/src/libretro/libretro.cpp#L60-L82
-        // https://github.com/JesseTG/melonds-ds/blob/main/src/libretro/libretro.cpp#L148-L165
+
+        const char* dlError = NULL;
         if(dlclose(plugins[i]) != 0) {
-            ELOG(@"Failed to dlclose plugin type %i", i);
+            dlError = dlerror();
+            ELOG(@"Failed to dlclose plugin type %i: %s", i, dlError ? dlError : "Unknown error");
         } else {
             ILOG(@"dlclosed plugin type %i", i);
         }
         plugins[i] = NULL;
     }
 
-    return M64ERR_SUCCESS;
+    return finalStatus;
 }
 
 - (dispatch_time_t)frameTime {
