@@ -58,6 +58,13 @@
 #import "osal/dynamiclib.h"
 #import "../Plugins/Core/Core/src/main/version.h"
 #import "../Plugins/Core/Core/src/plugin/plugin.h"
+#if defined(VIDEXT_VULKAN) && !TARGET_OS_TV
+#include <SDL_vulkan.h>
+#include <vulkan/vulkan.h>
+#include <vulkan/vulkan_ios.h>
+#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan_metal.h>
+#endif
 //#import "rom.h"
 //#import "savestates.h"
 //#import "memory.h"
@@ -249,6 +256,15 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
     // Framebuffer info
     GLuint _defaultFramebuffer;
     BOOL _framebufferInitialized;
+
+    // Refresh rate preference
+    int _preferredRefreshRate;
+
+    // Metal layer for Vulkan surface creation
+    CAMetalLayer *_metalLayer;
+
+    // Vulkan extension names
+    const char **_vulkanExtensionNames;
 }
 
 /// Initializes the PVMupenBridge
@@ -935,6 +951,9 @@ static void *dlopen_myself()
     }
 #endif
 
+    // Set up video extension functions
+    [self setupVideoExtensionFunctions];
+
     DLOG(@"[Mupen] ROM loading completed successfully");
     return YES;
 }
@@ -1215,6 +1234,9 @@ static void *dlopen_myself()
         DLOG(@"[Mupen] State callback set successfully");
     }
 
+    // Set up video extension functions
+    [self setupVideoExtensionFunctions];
+
     // Set debug level to verbose in debug builds
     #if DEBUG
     DLOG(@"[Mupen] Setting debug level to verbose");
@@ -1323,9 +1345,29 @@ static m64p_error MupenVidExtInit(void) {
     return M64ERR_SUCCESS;
 }
 
-static m64p_error MupenVidExtSetMode(int width, int height, int bpp, int fullscreen, int flags) {
-    DLOG(@"[Mupen] VidExtSetMode called: width=%d, height=%d, bpp=%d, fullscreen=%d, flags=%d",
-         width, height, bpp, fullscreen, flags);
+static m64p_error MupenVidExtQuit(void) {
+    DLOG(@"[Mupen] VidExtQuit called");
+    return M64ERR_SUCCESS;
+}
+
+static m64p_error MupenVidExtListModes(m64p_2d_size *SizeArray, int *NumSizes) {
+    DLOG(@"[Mupen] VidExtListModes called");
+
+    // We only support one mode - the current screen size
+    if (SizeArray != NULL && NumSizes != NULL && *NumSizes > 0) {
+        SizeArray[0].uiWidth = 640;
+        SizeArray[0].uiHeight = 480;
+        *NumSizes = 1;
+    } else if (NumSizes != NULL) {
+        *NumSizes = 1;
+    }
+
+    return M64ERR_SUCCESS;
+}
+
+static m64p_error MupenVidExtSetMode(int Width, int Height, int BitsPerPixel, int ScreenMode, int Flags) {
+    DLOG(@"[Mupen] VidExtSetMode called: Width=%d, Height=%d, BitsPerPixel=%d, ScreenMode=%d, Flags=%d",
+         Width, Height, BitsPerPixel, ScreenMode, Flags);
 
     // Get the PVMupenBridge instance
     __strong PVMupenBridge *bridge = _current;
@@ -1357,7 +1399,310 @@ static void* MupenVidExtGLGetProc(const char* proc) {
     return dlsym(RTLD_DEFAULT, proc);
 }
 
-static uint32_t MupenVidExtGetDefaultFramebuffer(void) {
+static m64p_error MupenVidExtGLSetAttr(m64p_GLattr Attr, int Value) {
+    DLOG(@"[Mupen] VidExtGLSetAttr called: Attr=%d, Value=%d", Attr, Value);
+
+    // We don't need to set GL attributes since we're using an existing context
+    return M64ERR_SUCCESS;
+}
+
+static m64p_error MupenVidExtGLGetAttr(m64p_GLattr Attr, int *Value) {
+    DLOG(@"[Mupen] VidExtGLGetAttr called: Attr=%d", Attr);
+
+    if (Value == NULL) {
+        return M64ERR_INPUT_INVALID;
+    }
+
+    // Return reasonable defaults for common attributes
+    switch (Attr) {
+        case M64P_GL_DOUBLEBUFFER:
+            *Value = 1;
+            break;
+        case M64P_GL_BUFFER_SIZE:
+            *Value = 32;
+            break;
+        case M64P_GL_DEPTH_SIZE:
+            *Value = 24;
+            break;
+        case M64P_GL_RED_SIZE:
+            *Value = 8;
+            break;
+        case M64P_GL_GREEN_SIZE:
+            *Value = 8;
+            break;
+        case M64P_GL_BLUE_SIZE:
+            *Value = 8;
+            break;
+        case M64P_GL_ALPHA_SIZE:
+            *Value = 8;
+            break;
+        case M64P_GL_SWAP_CONTROL:
+            *Value = 1;
+            break;
+        case M64P_GL_MULTISAMPLEBUFFERS:
+            *Value = 0;
+            break;
+        case M64P_GL_MULTISAMPLESAMPLES:
+            *Value = 0;
+            break;
+        case M64P_GL_CONTEXT_MAJOR_VERSION:
+            *Value = 3;
+            break;
+        case M64P_GL_CONTEXT_MINOR_VERSION:
+            *Value = 0;
+            break;
+        case M64P_GL_CONTEXT_PROFILE_MASK:
+            *Value = M64P_GL_CONTEXT_PROFILE_ES;
+            break;
+        default:
+            *Value = 0;
+            return M64ERR_INPUT_INVALID;
+    }
+
+    return M64ERR_SUCCESS;
+}
+
+static m64p_error MupenVidExtGLSwapBuf(void) {
+    // Get the PVMupenBridge instance
+    __strong PVMupenBridge *bridge = _current;
+
+    // Find the external GL context if we don't have one yet
+    if (!bridge->_externalGLContext) {
+        if (![bridge findExternalGLContext]) {
+            ELOG(@"[Mupen] Failed to find external GL context");
+            return M64ERR_SYSTEM_FAIL;
+        }
+    }
+
+    // We don't need to present the renderbuffer since that's handled by the Metal view controller
+    // Just make sure we're using the correct framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, bridge->_defaultFramebuffer);
+
+    return M64ERR_SUCCESS;
+}
+
+static m64p_error MupenVidExtSetCaption(const char *Title) {
+    DLOG(@"[Mupen] VidExtSetCaption called: Title=%s", Title);
+
+    // We don't need to set the window caption
+    return M64ERR_SUCCESS;
+}
+
+static m64p_error MupenVidExtToggleFS(void) {
+    DLOG(@"[Mupen] VidExtToggleFS called");
+
+    // We don't support toggling fullscreen
+    return M64ERR_SUCCESS;
+}
+
+static m64p_error MupenVidExtResizeWindow(int Width, int Height) {
+    DLOG(@"[Mupen] VidExtResizeWindow called: Width=%d, Height=%d", Width, Height);
+
+    // We don't need to resize the window since that's handled by the Metal view controller
+    return M64ERR_SUCCESS;
+}
+
+static m64p_error MupenVidExtInitWithRenderMode(m64p_render_mode render_mode) {
+    DLOG(@"[Mupen] VidExtInitWithRenderMode called: render_mode=%d", render_mode);
+
+    // We only support OpenGL ES rendering
+    if (render_mode != M64P_RENDER_OPENGL) {
+        ELOG(@"[Mupen] Unsupported render mode: %d", render_mode);
+        return M64ERR_INPUT_INVALID;
+    }
+
+    return MupenVidExtInit();
+}
+
+// Add this method to set up the video extension functions
+- (void)setupVideoExtensionFunctions {
+    DLOG(@"[Mupen] Setting up video extension functions");
+
+    // Create video extension functions struct
+    m64p_video_extension_functions vidExtFunctions;
+    memset(&vidExtFunctions, 0, sizeof(vidExtFunctions));
+
+    // Set the number of functions we're implementing
+    vidExtFunctions.Functions = 17; // Include all functions
+
+    // Assign function pointers
+    vidExtFunctions.VidExtFuncInit = MupenVidExtInit;
+    vidExtFunctions.VidExtFuncQuit = MupenVidExtQuit;
+    vidExtFunctions.VidExtFuncListModes = MupenVidExtListModes;
+    vidExtFunctions.VidExtFuncSetMode = MupenVidExtSetMode;
+    vidExtFunctions.VidExtFuncGLGetProc = (m64p_function (*)(const char*))MupenVidExtGLGetProc;
+    vidExtFunctions.VidExtFuncGLSetAttr = MupenVidExtGLSetAttr;
+    vidExtFunctions.VidExtFuncGLGetAttr = MupenVidExtGLGetAttr;
+    vidExtFunctions.VidExtFuncGLSwapBuf = MupenVidExtGLSwapBuf;
+    vidExtFunctions.VidExtFuncSetCaption = MupenVidExtSetCaption;
+    vidExtFunctions.VidExtFuncToggleFS = MupenVidExtToggleFS;
+    vidExtFunctions.VidExtFuncResizeWindow = MupenVidExtResizeWindow;
+    vidExtFunctions.VidExtFuncGLGetDefaultFramebuffer = VidExt_GL_GetDefaultFramebuffer;
+    vidExtFunctions.VidExtFuncInitWithRenderMode = (m64p_error (*)(m64p_render_mode))MupenVidExtInitWithRenderMode;
+    vidExtFunctions.VidExtFuncListRates = MupenVidExtListRates;
+    vidExtFunctions.VidExtFuncSetModeWithRate = MupenVidExtSetModeWithRate;
+    vidExtFunctions.VidExtFuncVKGetSurface = MupenVidExtVKGetSurface;
+    vidExtFunctions.VidExtFuncVKGetInstanceExtensions = MupenVidExtVKGetInstanceExtensions;
+
+    // Override the video extension functions
+    m64p_error vidExtError = CoreOverrideVidExt(&vidExtFunctions);
+    if (vidExtError != M64ERR_SUCCESS) {
+        ELOG(@"[Mupen] Failed to override video extension functions: %d (%@)",
+             vidExtError, [self errorCodeToString:vidExtError]);
+    } else {
+        DLOG(@"[Mupen] Video extension functions overridden successfully");
+    }
+}
+
+// Implement the refresh rate listing function
+static m64p_error MupenVidExtListRates(m64p_2d_size Size, int *NumRates, int *Rates) {
+    DLOG(@"[Mupen] VidExtListRates called for size %dx%d", Size.uiWidth, Size.uiHeight);
+
+    if (NumRates == NULL) {
+        return M64ERR_INPUT_INVALID;
+    }
+
+    // Get the main screen's maximum refresh rate
+    float maxRefreshRate = 60.0; // Default to 60Hz
+
+    // On iOS, we can get the actual refresh rate from the main screen
+    UIScreen *mainScreen = [UIScreen mainScreen];
+    if (@available(iOS 10.3, tvOS 10.3, *)) {
+        // Use the maximumFramesPerSecond property if available
+        maxRefreshRate = mainScreen.maximumFramesPerSecond;
+        DLOG(@"[Mupen] Device maximum refresh rate: %.1f Hz", maxRefreshRate);
+    }
+
+    // Determine supported refresh rates
+    NSMutableArray *supportedRates = [NSMutableArray array];
+
+    // Always include 60Hz as it's universally supported
+    [supportedRates addObject:@60];
+
+    // Add higher refresh rates if supported by the device
+    if (maxRefreshRate >= 90) {
+        [supportedRates addObject:@90];
+    }
+
+    if (maxRefreshRate >= 120) {
+        [supportedRates addObject:@120];
+    }
+
+    if (maxRefreshRate >= 144) {
+        [supportedRates addObject:@144];
+    }
+
+    // Fill in the rates array if provided
+    if (Rates != NULL && *NumRates > 0) {
+        int count = MIN(*NumRates, (int)supportedRates.count);
+        for (int i = 0; i < count; i++) {
+            Rates[i] = [supportedRates[i] intValue];
+        }
+    }
+
+    // Return the number of supported rates
+    *NumRates = (int)supportedRates.count;
+
+    return M64ERR_SUCCESS;
+}
+
+// Implement the set mode with rate function
+static m64p_error MupenVidExtSetModeWithRate(int Width, int Height, int RefreshRate, int BitsPerPixel, int ScreenMode, int Flags) {
+    DLOG(@"[Mupen] VidExtSetModeWithRate called: Width=%d, Height=%d, RefreshRate=%d, BitsPerPixel=%d, ScreenMode=%d, Flags=%d",
+         Width, Height, RefreshRate, BitsPerPixel, ScreenMode, Flags);
+
+    // Get the PVMupenBridge instance
+    __strong PVMupenBridge *bridge = _current;
+
+    // Store the requested refresh rate for later use
+    if (bridge) {
+        bridge->_preferredRefreshRate = RefreshRate;
+    }
+
+    // Call the regular SetMode function
+    return MupenVidExtSetMode(Width, Height, BitsPerPixel, ScreenMode, Flags);
+}
+
+// Add Vulkan support via MoltenVK
+static m64p_error MupenVidExtVKGetSurface(void **surface, void *instance) {
+    DLOG(@"[Mupen] VidExtVKGetSurface called");
+
+    // Get the PVMupenBridge instance
+    __strong PVMupenBridge *bridge = _current;
+
+    if (!bridge || !bridge->_metalLayer || !instance || !surface) {
+        ELOG(@"[Mupen] Invalid parameters for VKGetSurface");
+        return M64ERR_INPUT_INVALID;
+    }
+
+    // Create a Vulkan surface using MoltenVK
+    VkMetalSurfaceCreateInfoEXT createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
+    createInfo.pNext = NULL;
+    createInfo.flags = 0;
+    createInfo.pLayer = bridge->_metalLayer;
+
+    VkSurfaceKHR vkSurface = VK_NULL_HANDLE;
+    VkResult result = vkCreateMetalSurfaceEXT((VkInstance)instance, &createInfo, NULL, &vkSurface);
+
+    if (result != VK_SUCCESS) {
+        ELOG(@"[Mupen] Failed to create Vulkan surface: %d", result);
+        return M64ERR_SYSTEM_FAIL;
+    }
+
+    *surface = (void*)vkSurface;
+    DLOG(@"[Mupen] Created Vulkan surface successfully");
+    return M64ERR_SUCCESS;
+}
+
+static m64p_error MupenVidExtVKGetInstanceExtensions(const char **extensions[], uint32_t *count) {
+    DLOG(@"[Mupen] VidExtVKGetInstanceExtensions called");
+
+    if (!extensions || !count) {
+        ELOG(@"[Mupen] Invalid parameters for VKGetInstanceExtensions");
+        return M64ERR_INPUT_INVALID;
+    }
+
+    // MoltenVK requires these extensions
+    static const char *requiredExtensions[] = {
+        "VK_KHR_surface",
+        "VK_EXT_metal_surface"
+    };
+
+    // Get the PVMupenBridge instance
+    __strong PVMupenBridge *bridge = _current;
+
+    // Free any previously allocated extension names
+    if (bridge && bridge->_vulkanExtensionNames) {
+        free(bridge->_vulkanExtensionNames);
+        bridge->_vulkanExtensionNames = NULL;
+    }
+
+    // Allocate memory for the extension names
+    bridge->_vulkanExtensionNames = malloc(sizeof(const char*) * 2);
+    if (!bridge->_vulkanExtensionNames) {
+        ELOG(@"[Mupen] Failed to allocate memory for Vulkan extension names");
+        return M64ERR_SYSTEM_FAIL;
+    }
+
+    // Copy the extension names
+    memcpy(bridge->_vulkanExtensionNames, requiredExtensions, sizeof(requiredExtensions));
+
+    *extensions = bridge->_vulkanExtensionNames;
+    *count = 2;
+
+    DLOG(@"[Mupen] Returning Vulkan extensions: VK_KHR_surface, VK_EXT_metal_surface");
+    return M64ERR_SUCCESS;
+}
+
+- (void)setMetalLayer:(CAMetalLayer *)metalLayer {
+    _metalLayer = metalLayer;
+}
+
+// First, let's define the VidExt_GL_GetDefaultFramebuffer function properly
+// This needs to be exported with the correct name
+
+EXPORT uint32_t CALL VidExt_GL_GetDefaultFramebuffer(void) {
     // Get the PVMupenBridge instance
     __strong PVMupenBridge *bridge = _current;
 
@@ -1383,29 +1728,10 @@ static uint32_t MupenVidExtGetDefaultFramebuffer(void) {
         bridge->_framebufferInitialized = YES;
     }
 
-    DLOG(@"[Mupen] VidExtGetDefaultFramebuffer called, returning: %u", bridge->_defaultFramebuffer);
+    DLOG(@"[Mupen] VidExt_GL_GetDefaultFramebuffer called, returning: %u", bridge->_defaultFramebuffer);
 
     // Return the default framebuffer ID
     return bridge->_defaultFramebuffer;
-}
-
-static m64p_error MupenVidExtGLSwapBuf(void) {
-    // Get the PVMupenBridge instance
-    __strong PVMupenBridge *bridge = _current;
-
-    // Find the external GL context if we don't have one yet
-    if (!bridge->_externalGLContext) {
-        if (![bridge findExternalGLContext]) {
-            ELOG(@"[Mupen] Failed to find external GL context");
-            return M64ERR_SYSTEM_FAIL;
-        }
-    }
-
-    // We don't need to present the renderbuffer since that's handled by the Metal view controller
-    // Just make sure we're using the correct framebuffer
-    glBindFramebuffer(GL_FRAMEBUFFER, bridge->_defaultFramebuffer);
-
-    return M64ERR_SUCCESS;
 }
 
 @end

@@ -289,7 +289,6 @@
 		B3C078842C750D33006F109B /* PVMupenBridge+Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = B39C29D327A121150078D028 /* PVMupenBridge+Controls.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C078862C750D33006F109B /* assem_x86.h in Headers */ = {isa = PBXBuildFile; fileRef = B3055A812072FEE9001212D2 /* assem_x86.h */; };
 		B3C078882C750D33006F109B /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 93BC04FC298AE9D600BA5157 /* PVDebug.c */; };
-		B3C0788D2C750D33006F109B /* SDLStubs.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F0801183E52F002995A1 /* SDLStubs.m */; };
 		B3C078902C750D33006F109B /* cart.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AA02072FEE9001212D2 /* cart.c */; };
 		B3C078912C750D33006F109B /* callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A302072FEE9001212D2 /* callbacks.c */; };
 		B3C078922C750D33006F109B /* flashram.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AAA2072FEE9001212D2 /* flashram.c */; };
@@ -390,6 +389,11 @@
 		B3C83E23279619400020824C /* ucodes.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AE1F2820733D3500AD06D4 /* ucodes.h */; };
 		B3E264D42CA53D9D002BB0FE /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E264D32CA53D9D002BB0FE /* CorePlist-Generated.swift */; };
 		B3E264D72CA54426002BB0FE /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3E264D62CA54426002BB0FE /* PVPlists */; };
+		B3E2D6772D81522D00943231 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2D6762D81522D00943231 /* MoltenVK */; };
+		B3E2D6802D8159F400943231 /* SDL2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2D67F2D8159F400943231 /* SDL2.xcframework */; };
+		B3E2D6842D815B3F00943231 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2D6832D815B3E00943231 /* CoreBluetooth.framework */; };
+		B3E2D6862D815C4B00943231 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2D6852D815C4B00943231 /* MoltenVK */; };
+		B3E2D6882D815CDE00943231 /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2D6872D815CDE00943231 /* MoltenVK.xcframework */; };
 		B3EA447C206E10C700E608F6 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA447B206E10C700E608F6 /* OpenGLES.framework */; platformFilters = (ios, tvos, watchos, ); };
 		B3EA4483206E309A00E608F6 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E811DED272E00896D96 /* libz.tbd */; };
 		B3EED1FB2C7179BB00443F64 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B3EED1FA2C7179BB00443F64 /* PVSupport */; };
@@ -1662,6 +1666,10 @@
 		B3C65E642CA53C00000E37B0 /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
 		B3C83E20279618A30020824C /* hvqm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hvqm.c; sourceTree = "<group>"; };
 		B3E264D32CA53D9D002BB0FE /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
+		B3E2D6782D81598000943231 /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../Dependencies/MoltenVK/MoltenVK/MoltenVK.xcframework; sourceTree = "<group>"; };
+		B3E2D67F2D8159F400943231 /* SDL2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SDL2.xcframework; path = ../../Dependencies/SDL2.xcframework; sourceTree = "<group>"; };
+		B3E2D6832D815B3E00943231 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		B3E2D6872D815CDE00943231 /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework; sourceTree = "<group>"; };
 		B3EA447B206E10C700E608F6 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		B3F2058226FBCBC600A4196B /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		B3FAC9B8292B522C005E8B11 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.1.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
@@ -1704,6 +1712,7 @@
 				B3C078582C74DDA2006F109B /* PVSettings in Frameworks */,
 				B30E9B2B2C71349500C1431E /* PVEmulatorCore in Frameworks */,
 				B30E98FA2C6EF15700C1431E /* PVSupport in Frameworks */,
+				B3E2D6862D815C4B00943231 /* MoltenVK in Frameworks */,
 				B383C8732CAD377C00F532C9 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
 				B324C62B21920BC2009F4EDC /* libz.tbd in Frameworks */,
 				B3F94A502CBE6B7200237221 /* PVMupen64PlusBridge.framework in Frameworks */,
@@ -1742,6 +1751,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3C078DF2C750D33006F109B /* PVSupport in Frameworks */,
+				B3E2D6802D8159F400943231 /* SDL2.xcframework in Frameworks */,
+				B3E2D6882D815CDE00943231 /* MoltenVK.xcframework in Frameworks */,
 				B3C078E02C750D33006F109B /* PVSettings in Frameworks */,
 				B3C078E12C750D33006F109B /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				B3C078E22C750D33006F109B /* PVMupen64PlusRspHLE.framework in Frameworks */,
@@ -1749,6 +1760,8 @@
 				B3C078E42C750D33006F109B /* PVSupport in Frameworks */,
 				B3C078E52C750D33006F109B /* libz.tbd in Frameworks */,
 				B3C078E62C750D33006F109B /* PVLogging in Frameworks */,
+				B3E2D6772D81522D00943231 /* MoltenVK in Frameworks */,
+				B3E2D6842D815B3F00943231 /* CoreBluetooth.framework in Frameworks */,
 				B3C078E72C750D33006F109B /* libdl.tbd in Frameworks */,
 				B3C65E442CA52F9B000E37B0 /* PVCoreObjCBridge in Frameworks */,
 				B3C078E82C750D33006F109B /* OpenGL.framework in Frameworks */,
@@ -4129,6 +4142,10 @@
 		B3B3B8551DECE9D800602746 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3E2D6872D815CDE00943231 /* MoltenVK.xcframework */,
+				B3E2D6832D815B3E00943231 /* CoreBluetooth.framework */,
+				B3E2D67F2D8159F400943231 /* SDL2.xcframework */,
+				B3E2D6782D81598000943231 /* MoltenVK.xcframework */,
 				B3FAC9B8292B522C005E8B11 /* OpenGLES.framework */,
 				B30BF1AD2775320F00FF9E07 /* libz.tbd */,
 				B3F2058226FBCBC600A4196B /* OpenGL.framework */,
@@ -4312,6 +4329,7 @@
 				B3B6E8012CA5217400002BFD /* PVCoreObjCBridge */,
 				B3C65E402CA52EA7000E37B0 /* PVLogging */,
 				B3E264D62CA54426002BB0FE /* PVPlists */,
+				B3E2D6852D815C4B00943231 /* MoltenVK */,
 			);
 			productName = PVMupen64PlusDynamic;
 			productReference = B37EFF381C72F43300857158 /* PVMupen64Plus.framework */;
@@ -4379,6 +4397,7 @@
 				B3C0787A2C750D33006F109B /* PVSupport */,
 				B3C0787B2C750D33006F109B /* PVSettings */,
 				B3C65E432CA52F9B000E37B0 /* PVCoreObjCBridge */,
+				B3E2D6762D81522D00943231 /* MoltenVK */,
 			);
 			productName = PVMupen64PlusDynamic;
 			productReference = B3C078F82C750D33006F109B /* PVMupen64PlusBridge.framework */;
@@ -4458,6 +4477,7 @@
 				B3B6E8002CA5217400002BFD /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
 				B3C65E3F2CA52EA7000E37B0 /* XCLocalSwiftPackageReference "../../PVLogging" */,
 				B3E264D52CA54426002BB0FE /* XCLocalSwiftPackageReference "../../PVPlists" */,
+				B3E2D6752D81522D00943231 /* XCLocalSwiftPackageReference "../../MoltenVK" */,
 			);
 			projectDirPath = "";
 			projectRoot = "";
@@ -4684,7 +4704,6 @@
 			files = (
 				B312FD3A2D80FD54004E27C3 /* is_viewer.c in Sources */,
 				B3C078882C750D33006F109B /* PVDebug.c in Sources */,
-				B3C0788D2C750D33006F109B /* SDLStubs.m in Sources */,
 				B3C078902C750D33006F109B /* cart.c in Sources */,
 				B3C078912C750D33006F109B /* callbacks.c in Sources */,
 				B3C078922C750D33006F109B /* flashram.c in Sources */,
@@ -6610,6 +6629,7 @@
 					"\"$(SRCROOT)/Sources/Plugins/Core/Core/subprojects/xxhash\"",
 					"\"$(SRCROOT)/Sources/Plugins/Core/Core/subprojects/oglft\"",
 					"\"$(SRCROOT)/Sources/Plugins/Core/Core/subprojects/minizip\"",
+					"\"$(SRCROOT)/../../MoltenVK/MoltenVK/include\"",
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
@@ -6700,6 +6720,7 @@
 					"\"$(SRCROOT)/Sources/Plugins/Core/Core/subprojects/xxhash\"",
 					"\"$(SRCROOT)/Sources/Plugins/Core/Core/subprojects/oglft\"",
 					"\"$(SRCROOT)/Sources/Plugins/Core/Core/subprojects/minizip\"",
+					"\"$(SRCROOT)/../../MoltenVK/MoltenVK/include\"",
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
@@ -6796,6 +6817,7 @@
 					"\"$(SRCROOT)/Sources/Plugins/Core/Core/subprojects/xxhash\"",
 					"\"$(SRCROOT)/Sources/Plugins/Core/Core/subprojects/oglft\"",
 					"\"$(SRCROOT)/Sources/Plugins/Core/Core/subprojects/minizip\"",
+					"\"$(SRCROOT)/../../MoltenVK/MoltenVK/include\"",
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
@@ -7171,6 +7193,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVPlists;
 		};
+		B3E2D6752D81522D00943231 /* XCLocalSwiftPackageReference "../../MoltenVK" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../MoltenVK;
+		};
 		B3EED1F92C7179BB00443F64 /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVSupport;
@@ -7234,6 +7260,15 @@
 		B3E264D62CA54426002BB0FE /* PVPlists */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVPlists;
+		};
+		B3E2D6762D81522D00943231 /* MoltenVK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MoltenVK;
+		};
+		B3E2D6852D815C4B00943231 /* MoltenVK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3E2D6752D81522D00943231 /* XCLocalSwiftPackageReference "../../MoltenVK" */;
+			productName = MoltenVK;
 		};
 		B3EED1FA2C7179BB00443F64 /* PVSupport */ = {
 			isa = XCSwiftPackageProductDependency;
