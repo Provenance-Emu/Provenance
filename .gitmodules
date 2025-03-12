@@ -1,6 +1,3 @@
-[submodule "Cores/Mupen64Plus/Sources/Plugins/Video/rice/rice"]
-	path = Cores/Mupen64Plus/Sources/Plugins/Video/rice/rice
-	url = https://github.com/Provenance-Emu/mupen64plus-video-rice.git
 [submodule "Cores/VirtualJaguar"]
 	path = Cores/VirtualJaguar
 	url = https://github.com/Provenance-Emu/Core-VirtualJaguar.git
@@ -193,3 +190,6 @@
 [submodule "Cores/Mupen64Plus/Sources/Plugins/rsp/hle"]
 	path = Cores/Mupen64Plus/Sources/Plugins/rsp/hle
 	url = https://github.com/mupen64plus/mupen64plus-rsp-hle.git
+[submodule "Cores/Mupen64Plus/Sources/Plugins/Video/rice"]
+	path = Cores/Mupen64Plus/Sources/Plugins/Video/rice
+	url = https://github.com/mupen64plus/mupen64plus-video-rice.git

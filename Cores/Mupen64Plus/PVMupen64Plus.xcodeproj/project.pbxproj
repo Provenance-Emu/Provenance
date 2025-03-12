@@ -3807,8 +3807,7 @@
 				B3A302882073F2AA008C1955 /* unix */,
 				B3A3028A2073F2AA008C1955 /* VisualStudio2013 */,
 			);
-			name = projects;
-			path = rice/projects;
+			path = projects;
 			sourceTree = "<group>";
 		};
 		B3A302882073F2AA008C1955 /* unix */ = {
@@ -3832,8 +3831,7 @@
 			children = (
 				B3A302912073F2AA008C1955 /* RiceVideoLinux.ini */,
 			);
-			name = data;
-			path = rice/data;
+			path = data;
 			sourceTree = "<group>";
 		};
 		B3A302932073F2AA008C1955 /* src */ = {
@@ -3923,8 +3921,7 @@
 				B3A302C22073F2AA008C1955 /* video_api_export.ver */,
 				B3A302C42073F2AA008C1955 /* liblinux */,
 			);
-			name = src;
-			path = rice/src;
+			path = src;
 			sourceTree = "<group>";
 		};
 		B3A302C42073F2AA008C1955 /* liblinux */ = {
