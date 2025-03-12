@@ -153,6 +153,8 @@
 		B31206552D811543004E27C3 /* RingBufferPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31204502D810AEE004E27C3 /* RingBufferPool.cpp */; };
 		B31206562D81155F004E27C3 /* glsl_Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31204322D810AEE004E27C3 /* glsl_Utils.cpp */; };
 		B31206572D811595004E27C3 /* Debugger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B312055E2D810AEE004E27C3 /* Debugger.cpp */; };
+		B31206582D81303A004E27C3 /* font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B30559E32072FEE9001212D2 /* font.ttf */; };
+		B31206592D813045004E27C3 /* font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B30559E32072FEE9001212D2 /* font.ttf */; };
 		B312FD262D80F85C004E27C3 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = B312FD1A2D80F84F004E27C3 /* ioapi.c */; };
 		B312FD272D80F85C004E27C3 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = B312FD1E2D80F84F004E27C3 /* zip.c */; };
 		B312FD282D80F85C004E27C3 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = B312FD1C2D80F84F004E27C3 /* unzip.c */; };
@@ -4491,6 +4493,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B31206592D813045004E27C3 /* font.ttf in Resources */,
 				B316B4EB219275A800693472 /* RiceVideoLinux.ini in Resources */,
 				B3C83E1727960C0F0020824C /* mupencheat.txt in Resources */,
 				B3AF47E321072BCB002211EE /* mupen64plus.ini in Resources */,
@@ -4512,6 +4515,7 @@
 				B3C078EF2C750D33006F109B /* RiceVideoLinux.ini in Resources */,
 				B3C078F02C750D33006F109B /* mupencheat.txt in Resources */,
 				B3C078F12C750D33006F109B /* mupen64plus.ini in Resources */,
+				B31206582D81303A004E27C3 /* font.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,6 +8,7 @@
 #if __has_include(<UIKit/UIKit.h>)
 @import UIKit.UIWindow;
 #else
+@import AppKit.NSWindow;
 #endif
 
 #import "api/config.h"
