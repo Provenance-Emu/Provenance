@@ -30,7 +30,6 @@
 		B31205CD2D810B0C004E27C3 /* RDP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B312058A2D810AEE004E27C3 /* RDP.cpp */; };
 		B31205CE2D810B0C004E27C3 /* MupenPlusPluginAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B312057E2D810AEE004E27C3 /* MupenPlusPluginAPI.cpp */; };
 		B31205CF2D810B0C004E27C3 /* Config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31205542D810AEE004E27C3 /* Config.cpp */; };
-		B31205D22D810B0C004E27C3 /* TextDrawerStub.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31205972D810AEE004E27C3 /* TextDrawerStub.cpp */; };
 		B31205D32D810B0C004E27C3 /* gSP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31205772D810AEE004E27C3 /* gSP.cpp */; };
 		B31205D42D810B0C004E27C3 /* PostProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31205882D810AEE004E27C3 /* PostProcessor.cpp */; };
 		B31205D52D810B0C004E27C3 /* SoftwareRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31205922D810AEE004E27C3 /* SoftwareRender.cpp */; };
@@ -197,6 +196,7 @@
 		B3303E7B1DED23EE00896D96 /* pngwtran.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E6A1DED23EE00896D96 /* pngwtran.c */; };
 		B3303E7C1DED23EE00896D96 /* pngwutil.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E6B1DED23EE00896D96 /* pngwutil.c */; };
 		B3303E821DED272E00896D96 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E811DED272E00896D96 /* libz.tbd */; };
+		B36E82592D816D2200AC6334 /* gliden_osd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B34601D320813330008C049C /* gliden_osd.cpp */; };
 		B36EF42F279C5284005C7ED4 /* r4300_core.h in Headers */ = {isa = PBXBuildFile; fileRef = B3055A712072FEE9001212D2 /* r4300_core.h */; };
 		B37EFF231C72E6CD00857158 /* SDLStubs.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F0801183E52F002995A1 /* SDLStubs.m */; };
 		B3801011208545D900FA03B8 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libpng.a */; };
@@ -4800,6 +4800,7 @@
 				B31206172D810B55004E27C3 /* osal_files_ios.mm in Sources */,
 				B312065A2D81401D004E27C3 /* CommonPluginAPI.cpp in Sources */,
 				B31205C32D810B0C004E27C3 /* Combiner.cpp in Sources */,
+				B36E82592D816D2200AC6334 /* gliden_osd.cpp in Sources */,
 				B31205C52D810B0C004E27C3 /* Log.cpp in Sources */,
 				B31205C62D810B0C004E27C3 /* CRC_OPT.cpp in Sources */,
 				B31205C72D810B0C004E27C3 /* PaletteTexture.cpp in Sources */,
@@ -4814,7 +4815,6 @@
 				B312061A2D810B5F004E27C3 /* gSPNeon.cpp in Sources */,
 				B312061B2D810B5F004E27C3 /* CRC_OPT_NEON.cpp in Sources */,
 				B31205CF2D810B0C004E27C3 /* Config.cpp in Sources */,
-				B31205D22D810B0C004E27C3 /* TextDrawerStub.cpp in Sources */,
 				B31206562D81155F004E27C3 /* glsl_Utils.cpp in Sources */,
 				B31205D32D810B0C004E27C3 /* gSP.cpp in Sources */,
 				B31205D42D810B0C004E27C3 /* PostProcessor.cpp in Sources */,
@@ -5715,6 +5715,7 @@
 		};
 		B3303E531DED23C700896D96 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -5776,6 +5777,7 @@
 		};
 		B3303E541DED23C700896D96 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -5906,6 +5908,7 @@
 		};
 		B33115931C7309C200E9AD14 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -6059,6 +6062,7 @@
 		};
 		B37EFEF61C72E63300857158 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -6238,6 +6242,7 @@
 		};
 		B37EFF3F1C72F43400857158 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -6332,6 +6337,7 @@
 		};
 		B3800FFB208522DD00FA03B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -6392,6 +6398,7 @@
 		};
 		B3800FFC208522DD00FA03B8 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -6519,6 +6526,7 @@
 		};
 		B3B3B8671DECEA9100602746 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -6676,6 +6684,7 @@
 		};
 		B3C078F62C750D33006F109B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -6978,6 +6987,7 @@
 		};
 		DFB601862038AD13001E70F1 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
