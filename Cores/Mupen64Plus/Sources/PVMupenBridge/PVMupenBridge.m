@@ -260,9 +260,6 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
     // Refresh rate preference
     int _preferredRefreshRate;
 
-    // Metal layer for Vulkan surface creation
-    CAMetalLayer *_metalLayer;
-
     // Vulkan extension names
     const char **_vulkanExtensionNames;
 }
@@ -1289,232 +1286,7 @@ static void *dlopen_myself()
     }
 }
 
-// Add a method to find the current GL context
-- (BOOL)findExternalGLContext {
-    // Get the current GL context
-    _externalGLContext = [EAGLContext currentContext];
-
-    if (!_externalGLContext) {
-        ELOG(@"[Mupen] No current GL context found");
-        return NO;
-    }
-
-    DLOG(@"[Mupen] Found external GL context: %@", _externalGLContext);
-    return YES;
-}
-
-// Update the video extension functions to find and use the external context
-static m64p_error MupenVidExtInit(void) {
-    DLOG(@"[Mupen] VidExtInit called");
-
-    // Get the PVMupenBridge instance
-    __strong PVMupenBridge *bridge = _current;
-
-    // Find the external GL context if we don't have one yet
-    if (!bridge->_externalGLContext) {
-        if (![bridge findExternalGLContext]) {
-            ELOG(@"[Mupen] Failed to find external GL context");
-            return M64ERR_SYSTEM_FAIL;
-        }
-    }
-
-    // Get the current framebuffer
-    if (!bridge->_framebufferInitialized) {
-        GLint currentFramebuffer = 0;
-        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebuffer);
-        bridge->_defaultFramebuffer = (GLuint)currentFramebuffer;
-
-        // Check if we have a valid framebuffer
-        if (bridge->_defaultFramebuffer == 0) {
-            ELOG(@"[Mupen] No valid framebuffer bound in external GL context");
-            return M64ERR_SYSTEM_FAIL;
-        }
-
-        // Check framebuffer status
-        glBindFramebuffer(GL_FRAMEBUFFER, bridge->_defaultFramebuffer);
-        GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-        if (status != GL_FRAMEBUFFER_COMPLETE) {
-            ELOG(@"[Mupen] External framebuffer is not complete: 0x%04X", status);
-            return M64ERR_SYSTEM_FAIL;
-        }
-
-        bridge->_framebufferInitialized = YES;
-        DLOG(@"[Mupen] Using external framebuffer: %u", bridge->_defaultFramebuffer);
-    }
-
-    return M64ERR_SUCCESS;
-}
-
-static m64p_error MupenVidExtQuit(void) {
-    DLOG(@"[Mupen] VidExtQuit called");
-    return M64ERR_SUCCESS;
-}
-
-static m64p_error MupenVidExtListModes(m64p_2d_size *SizeArray, int *NumSizes) {
-    DLOG(@"[Mupen] VidExtListModes called");
-
-    // We only support one mode - the current screen size
-    if (SizeArray != NULL && NumSizes != NULL && *NumSizes > 0) {
-        SizeArray[0].uiWidth = 640;
-        SizeArray[0].uiHeight = 480;
-        *NumSizes = 1;
-    } else if (NumSizes != NULL) {
-        *NumSizes = 1;
-    }
-
-    return M64ERR_SUCCESS;
-}
-
-static m64p_error MupenVidExtSetMode(int Width, int Height, int BitsPerPixel, int ScreenMode, int Flags) {
-    DLOG(@"[Mupen] VidExtSetMode called: Width=%d, Height=%d, BitsPerPixel=%d, ScreenMode=%d, Flags=%d",
-         Width, Height, BitsPerPixel, ScreenMode, Flags);
-
-    // Get the PVMupenBridge instance
-    __strong PVMupenBridge *bridge = _current;
-
-    // Find the external GL context if we don't have one yet
-    if (!bridge->_externalGLContext) {
-        if (![bridge findExternalGLContext]) {
-            ELOG(@"[Mupen] Failed to find external GL context");
-            return M64ERR_SYSTEM_FAIL;
-        }
-    }
-
-    // We don't need to resize anything since we're using the external framebuffer
-    // Just check that it's still valid
-    glBindFramebuffer(GL_FRAMEBUFFER, bridge->_defaultFramebuffer);
-    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    if (status != GL_FRAMEBUFFER_COMPLETE) {
-        ELOG(@"[Mupen] External framebuffer is not complete: 0x%04X", status);
-        return M64ERR_SYSTEM_FAIL;
-    }
-
-    return M64ERR_SUCCESS;
-}
-
-static void* MupenVidExtGLGetProc(const char* proc) {
-    DLOG(@"[Mupen] VidExtGLGetProc called for: %s", proc);
-
-    // Use the OpenGL ES function pointer lookup
-    return dlsym(RTLD_DEFAULT, proc);
-}
-
-static m64p_error MupenVidExtGLSetAttr(m64p_GLattr Attr, int Value) {
-    DLOG(@"[Mupen] VidExtGLSetAttr called: Attr=%d, Value=%d", Attr, Value);
-
-    // We don't need to set GL attributes since we're using an existing context
-    return M64ERR_SUCCESS;
-}
-
-static m64p_error MupenVidExtGLGetAttr(m64p_GLattr Attr, int *Value) {
-    DLOG(@"[Mupen] VidExtGLGetAttr called: Attr=%d", Attr);
-
-    if (Value == NULL) {
-        return M64ERR_INPUT_INVALID;
-    }
-
-    // Return reasonable defaults for common attributes
-    switch (Attr) {
-        case M64P_GL_DOUBLEBUFFER:
-            *Value = 1;
-            break;
-        case M64P_GL_BUFFER_SIZE:
-            *Value = 32;
-            break;
-        case M64P_GL_DEPTH_SIZE:
-            *Value = 24;
-            break;
-        case M64P_GL_RED_SIZE:
-            *Value = 8;
-            break;
-        case M64P_GL_GREEN_SIZE:
-            *Value = 8;
-            break;
-        case M64P_GL_BLUE_SIZE:
-            *Value = 8;
-            break;
-        case M64P_GL_ALPHA_SIZE:
-            *Value = 8;
-            break;
-        case M64P_GL_SWAP_CONTROL:
-            *Value = 1;
-            break;
-        case M64P_GL_MULTISAMPLEBUFFERS:
-            *Value = 0;
-            break;
-        case M64P_GL_MULTISAMPLESAMPLES:
-            *Value = 0;
-            break;
-        case M64P_GL_CONTEXT_MAJOR_VERSION:
-            *Value = 3;
-            break;
-        case M64P_GL_CONTEXT_MINOR_VERSION:
-            *Value = 0;
-            break;
-        case M64P_GL_CONTEXT_PROFILE_MASK:
-            *Value = M64P_GL_CONTEXT_PROFILE_ES;
-            break;
-        default:
-            *Value = 0;
-            return M64ERR_INPUT_INVALID;
-    }
-
-    return M64ERR_SUCCESS;
-}
-
-static m64p_error MupenVidExtGLSwapBuf(void) {
-    // Get the PVMupenBridge instance
-    __strong PVMupenBridge *bridge = _current;
-
-    // Find the external GL context if we don't have one yet
-    if (!bridge->_externalGLContext) {
-        if (![bridge findExternalGLContext]) {
-            ELOG(@"[Mupen] Failed to find external GL context");
-            return M64ERR_SYSTEM_FAIL;
-        }
-    }
-
-    // We don't need to present the renderbuffer since that's handled by the Metal view controller
-    // Just make sure we're using the correct framebuffer
-    glBindFramebuffer(GL_FRAMEBUFFER, bridge->_defaultFramebuffer);
-
-    return M64ERR_SUCCESS;
-}
-
-static m64p_error MupenVidExtSetCaption(const char *Title) {
-    DLOG(@"[Mupen] VidExtSetCaption called: Title=%s", Title);
-
-    // We don't need to set the window caption
-    return M64ERR_SUCCESS;
-}
-
-static m64p_error MupenVidExtToggleFS(void) {
-    DLOG(@"[Mupen] VidExtToggleFS called");
-
-    // We don't support toggling fullscreen
-    return M64ERR_SUCCESS;
-}
-
-static m64p_error MupenVidExtResizeWindow(int Width, int Height) {
-    DLOG(@"[Mupen] VidExtResizeWindow called: Width=%d, Height=%d", Width, Height);
-
-    // We don't need to resize the window since that's handled by the Metal view controller
-    return M64ERR_SUCCESS;
-}
-
-static m64p_error MupenVidExtInitWithRenderMode(m64p_render_mode render_mode) {
-    DLOG(@"[Mupen] VidExtInitWithRenderMode called: render_mode=%d", render_mode);
-
-    // We only support OpenGL ES rendering
-    if (render_mode != M64P_RENDER_OPENGL) {
-        ELOG(@"[Mupen] Unsupported render mode: %d", render_mode);
-        return M64ERR_INPUT_INVALID;
-    }
-
-    return MupenVidExtInit();
-}
-
-// Add this method to set up the video extension functions
+// Setup video extension functions
 - (void)setupVideoExtensionFunctions {
     DLOG(@"[Mupen] Setting up video extension functions");
 
@@ -1525,24 +1297,24 @@ static m64p_error MupenVidExtInitWithRenderMode(m64p_render_mode render_mode) {
     // Set the number of functions we're implementing
     vidExtFunctions.Functions = 17; // Include all functions
 
-    // Assign function pointers
-    vidExtFunctions.VidExtFuncInit = MupenVidExtInit;
-    vidExtFunctions.VidExtFuncQuit = MupenVidExtQuit;
-    vidExtFunctions.VidExtFuncListModes = MupenVidExtListModes;
-    vidExtFunctions.VidExtFuncSetMode = MupenVidExtSetMode;
-    vidExtFunctions.VidExtFuncGLGetProc = (m64p_function (*)(const char*))MupenVidExtGLGetProc;
-    vidExtFunctions.VidExtFuncGLSetAttr = MupenVidExtGLSetAttr;
-    vidExtFunctions.VidExtFuncGLGetAttr = MupenVidExtGLGetAttr;
-    vidExtFunctions.VidExtFuncGLSwapBuf = MupenVidExtGLSwapBuf;
-    vidExtFunctions.VidExtFuncSetCaption = MupenVidExtSetCaption;
-    vidExtFunctions.VidExtFuncToggleFS = MupenVidExtToggleFS;
-    vidExtFunctions.VidExtFuncResizeWindow = MupenVidExtResizeWindow;
+    // Assign function pointers - use the existing functions from vidext.m
+    vidExtFunctions.VidExtFuncInit = VidExt_Init;
+    vidExtFunctions.VidExtFuncInitWithRenderMode = NULL; // Not implemented in vidext.m
+    vidExtFunctions.VidExtFuncQuit = VidExt_Quit;
+    vidExtFunctions.VidExtFuncListModes = VidExt_ListFullscreenModes;
+    vidExtFunctions.VidExtFuncListRates = MupenVidExtListRates; // Our new refresh rate function
+    vidExtFunctions.VidExtFuncSetMode = (m64p_error (*)(int, int, int, int, int))VidExt_SetVideoMode;
+    vidExtFunctions.VidExtFuncSetModeWithRate = MupenVidExtSetModeWithRate; // Our new set mode with rate function
+    vidExtFunctions.VidExtFuncGLGetProc = (m64p_function (*)(const char*))VidExt_GL_GetProcAddress;
+    vidExtFunctions.VidExtFuncGLSetAttr = VidExt_GL_SetAttribute;
+    vidExtFunctions.VidExtFuncGLGetAttr = VidExt_GL_GetAttribute;
+    vidExtFunctions.VidExtFuncGLSwapBuf = VidExt_GL_SwapBuffers;
+    vidExtFunctions.VidExtFuncSetCaption = VidExt_SetCaption;
+    vidExtFunctions.VidExtFuncToggleFS = VidExt_ToggleFullScreen;
+    vidExtFunctions.VidExtFuncResizeWindow = VidExt_ResizeWindow;
     vidExtFunctions.VidExtFuncGLGetDefaultFramebuffer = VidExt_GL_GetDefaultFramebuffer;
-    vidExtFunctions.VidExtFuncInitWithRenderMode = (m64p_error (*)(m64p_render_mode))MupenVidExtInitWithRenderMode;
-    vidExtFunctions.VidExtFuncListRates = MupenVidExtListRates;
-    vidExtFunctions.VidExtFuncSetModeWithRate = MupenVidExtSetModeWithRate;
-    vidExtFunctions.VidExtFuncVKGetSurface = MupenVidExtVKGetSurface;
-    vidExtFunctions.VidExtFuncVKGetInstanceExtensions = MupenVidExtVKGetInstanceExtensions;
+    vidExtFunctions.VidExtFuncVKGetSurface = MupenVidExtVKGetSurface; // Our Vulkan surface function
+    vidExtFunctions.VidExtFuncVKGetInstanceExtensions = MupenVidExtVKGetInstanceExtensions; // Our Vulkan extensions function
 
     // Override the video extension functions
     m64p_error vidExtError = CoreOverrideVidExt(&vidExtFunctions);
@@ -1552,6 +1324,39 @@ static m64p_error MupenVidExtInitWithRenderMode(m64p_render_mode render_mode) {
     } else {
         DLOG(@"[Mupen] Video extension functions overridden successfully");
     }
+}
+
+// Add the VidExt_GL_GetDefaultFramebuffer function if it's not already in vidext.m
+EXPORT uint32_t CALL VidExt_GL_GetDefaultFramebuffer(void) {
+    // Get the PVMupenBridge instance
+    __strong PVMupenBridge *bridge = _current;
+
+    // Find the external GL context if we don't have one yet
+    if (!bridge->_externalGLContext) {
+        if (![bridge findExternalGLContext]) {
+            ELOG(@"[Mupen] Failed to find external GL context");
+            return 0;
+        }
+    }
+
+    // Make sure we have a valid framebuffer
+    if (!bridge->_framebufferInitialized) {
+        GLint currentFramebuffer = 0;
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebuffer);
+        bridge->_defaultFramebuffer = (GLuint)currentFramebuffer;
+
+        if (bridge->_defaultFramebuffer == 0) {
+            ELOG(@"[Mupen] No valid framebuffer bound in external GL context");
+            return 0;
+        }
+
+        bridge->_framebufferInitialized = YES;
+    }
+
+    DLOG(@"[Mupen] VidExt_GL_GetDefaultFramebuffer called, returning: %u", bridge->_defaultFramebuffer);
+
+    // Return the default framebuffer ID
+    return bridge->_defaultFramebuffer;
 }
 
 // Implement the refresh rate listing function
@@ -1620,10 +1425,14 @@ static m64p_error MupenVidExtSetModeWithRate(int Width, int Height, int RefreshR
     }
 
     // Call the regular SetMode function
-    return MupenVidExtSetMode(Width, Height, BitsPerPixel, ScreenMode, Flags);
+    return VidExt_SetVideoMode(Width, Height, BitsPerPixel, ScreenMode, Flags);
 }
 
 // Add Vulkan support via MoltenVK
+#if defined(VIDEXT_VULKAN)
+#include <vulkan/vulkan.h>
+#include <vulkan/vulkan_metal.h>
+
 static m64p_error MupenVidExtVKGetSurface(void **surface, void *instance) {
     DLOG(@"[Mupen] VidExtVKGetSurface called");
 
@@ -1694,44 +1503,31 @@ static m64p_error MupenVidExtVKGetInstanceExtensions(const char **extensions[], 
     DLOG(@"[Mupen] Returning Vulkan extensions: VK_KHR_surface, VK_EXT_metal_surface");
     return M64ERR_SUCCESS;
 }
-
-- (void)setMetalLayer:(CAMetalLayer *)metalLayer {
-    _metalLayer = metalLayer;
+#else
+static m64p_error MupenVidExtVKGetSurface(void **surface, void *instance) {
+    DLOG(@"[Mupen] VidExtVKGetSurface called but Vulkan support is not compiled in");
+    return M64ERR_UNSUPPORTED;
 }
 
-// First, let's define the VidExt_GL_GetDefaultFramebuffer function properly
-// This needs to be exported with the correct name
+static m64p_error MupenVidExtVKGetInstanceExtensions(const char **extensions[], uint32_t *count) {
+    DLOG(@"[Mupen] VidExtVKGetInstanceExtensions called but Vulkan support is not compiled in");
+    return M64ERR_UNSUPPORTED;
+}
+#endif
 
-EXPORT uint32_t CALL VidExt_GL_GetDefaultFramebuffer(void) {
-    // Get the PVMupenBridge instance
-    __strong PVMupenBridge *bridge = _current;
+// Add a method to find the external GL context
+- (BOOL)findExternalGLContext {
+    // Get the current GL context
+    EAGLContext *currentContext = [EAGLContext currentContext];
 
-    // Find the external GL context if we don't have one yet
-    if (!bridge->_externalGLContext) {
-        if (![bridge findExternalGLContext]) {
-            ELOG(@"[Mupen] Failed to find external GL context");
-            return 0;
-        }
+    if (currentContext) {
+        _externalGLContext = currentContext;
+        DLOG(@"[Mupen] Found external GL context: %@", currentContext);
+        return YES;
     }
 
-    // Make sure we have a valid framebuffer
-    if (!bridge->_framebufferInitialized) {
-        GLint currentFramebuffer = 0;
-        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebuffer);
-        bridge->_defaultFramebuffer = (GLuint)currentFramebuffer;
-
-        if (bridge->_defaultFramebuffer == 0) {
-            ELOG(@"[Mupen] No valid framebuffer bound in external GL context");
-            return 0;
-        }
-
-        bridge->_framebufferInitialized = YES;
-    }
-
-    DLOG(@"[Mupen] VidExt_GL_GetDefaultFramebuffer called, returning: %u", bridge->_defaultFramebuffer);
-
-    // Return the default framebuffer ID
-    return bridge->_defaultFramebuffer;
+    ELOG(@"[Mupen] No current GL context found");
+    return NO;
 }
 
 @end
