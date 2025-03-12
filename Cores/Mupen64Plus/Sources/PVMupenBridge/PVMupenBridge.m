@@ -816,9 +816,11 @@ static void *dlopen_myself()
             success = (pluginError == nil);
             if (success) {
                 DLOG(@"[Mupen] Rice video plugin loaded successfully");
-                ptr_PV_ForceUpdateWindowSize = dlsym(RTLD_DEFAULT, "_PV_ForceUpdateWindowSize");
-                if (ptr_PV_ForceUpdateWindowSize == NULL) {
-                    DLOG(@"[Mupen] Warning: Could not find _PV_ForceUpdateWindowSize symbol");
+                ptr_SetOSDCallback = dlsym(RTLD_DEFAULT, "SetOSDCallback");
+                if (ptr_SetOSDCallback == NULL) {
+                    DLOG(@"[Mupen] Warning: Could not find SetOSDCallback symbol");
+                } else {
+                    ptr_SetOSDCallback(PV_DrawOSD);
                 }
             } else {
                 ELOG(@"[Mupen] Failed to load Rice video plugin: %@", pluginError);
@@ -1087,6 +1089,16 @@ static void *dlopen_myself()
     [self.renderDelegate didRenderFrameOnAlternateThread];
 }
 
+// Make sure we're properly handling the buffer swapping
+//- (void)swapBuffers {
+//    // This is handled by VidExt_GL_SwapBuffers in vidext.m
+//    // We just need to make sure we're properly signaling that the front buffer is ready
+//    [self.frontBufferCondition lock];
+//    self.isFrontBufferReady = YES;
+//    [self.frontBufferCondition signal];
+//    [self.frontBufferCondition unlock];
+//}
+
 /// Executes a frame skipping frame
 /// @param skip YES to skip frame, NO to execute frame
 - (void)executeFrameSkippingFrame:(BOOL)skip {
@@ -1097,7 +1109,30 @@ static void *dlopen_myself()
 
 /// Executes a frame skipping frame
 - (void)executeFrame {
-    [self executeFrameSkippingFrame:NO];
+    if (self.isRunning) {
+        // Make sure we have the video extension functions set up
+        static BOOL videoExtensionSetup = NO;
+        if (!videoExtensionSetup) {
+            [self setupVideoExtensionFunctions];
+            videoExtensionSetup = YES;
+        }
+
+        // Make sure the GL context is current before executing the frame
+        #if TARGET_OS_TV || TARGET_OS_IOS
+        if (self.externalGLContext && [EAGLContext currentContext] != self.externalGLContext) {
+            if (![EAGLContext setCurrentContext:self.externalGLContext]) {
+                ELOG(@"[Mupen] Failed to set current GL context before executing frame");
+            }
+        }
+        #endif
+
+        // Execute the frame
+        m64p_error result = CoreDoCommand(M64CMD_ADVANCE_FRAME, 0, NULL);
+        if (result != M64ERR_SUCCESS) {
+            ELOG(@"[Mupen] Error executing frame: %@ (%d)",
+                 [self errorCodeToString:result], result);
+        }
+    }
 }
 
 /// Sets the pause state of the emulation
@@ -1250,39 +1285,39 @@ static void *dlopen_myself()
     return YES;
 }
 
-// Add this helper method to get a string representation of error codes
+// Add this method to convert error codes to strings
 - (NSString *)errorCodeToString:(m64p_error)errorCode {
     switch (errorCode) {
         case M64ERR_SUCCESS:
-            return @"M64ERR_SUCCESS";
+            return @"Success";
         case M64ERR_NOT_INIT:
-            return @"M64ERR_NOT_INIT";
+            return @"Not initialized";
         case M64ERR_ALREADY_INIT:
-            return @"M64ERR_ALREADY_INIT";
+            return @"Already initialized";
         case M64ERR_INCOMPATIBLE:
-            return @"M64ERR_INCOMPATIBLE";
+            return @"Incompatible";
         case M64ERR_INPUT_ASSERT:
-            return @"M64ERR_INPUT_ASSERT";
+            return @"Input assertion failed";
         case M64ERR_INPUT_INVALID:
-            return @"M64ERR_INPUT_INVALID";
+            return @"Input invalid";
         case M64ERR_INPUT_NOT_FOUND:
-            return @"M64ERR_INPUT_NOT_FOUND";
+            return @"Input not found";
         case M64ERR_NO_MEMORY:
-            return @"M64ERR_NO_MEMORY";
+            return @"No memory";
         case M64ERR_FILES:
-            return @"M64ERR_FILES";
+            return @"File error";
         case M64ERR_INTERNAL:
-            return @"M64ERR_INTERNAL";
+            return @"Internal error";
         case M64ERR_INVALID_STATE:
-            return @"M64ERR_INVALID_STATE";
+            return @"Invalid state";
         case M64ERR_PLUGIN_FAIL:
-            return @"M64ERR_PLUGIN_FAIL";
+            return @"Plugin failure";
         case M64ERR_SYSTEM_FAIL:
-            return @"M64ERR_SYSTEM_FAIL";
+            return @"System failure";
         case M64ERR_UNSUPPORTED:
-            return @"M64ERR_UNSUPPORTED";
+            return @"Unsupported";
         case M64ERR_WRONG_TYPE:
-            return @"M64ERR_WRONG_TYPE";
+            return @"Wrong type";
         default:
             return [NSString stringWithFormat:@"Unknown error code: %d", errorCode];
     }
@@ -1297,16 +1332,16 @@ static void *dlopen_myself()
     memset(&vidExtFunctions, 0, sizeof(vidExtFunctions));
 
     // Set the number of functions we're implementing
-    vidExtFunctions.Functions = 17; // Include all functions
+    vidExtFunctions.Functions = 17; // All functions required by the core
 
     // Assign function pointers - use the existing functions from vidext.m
     vidExtFunctions.VidExtFuncInit = VidExt_Init;
-    vidExtFunctions.VidExtFuncInitWithRenderMode = NULL; // Not implemented in vidext.m
+    vidExtFunctions.VidExtFuncInitWithRenderMode = VidExt_InitWithRenderMode;
     vidExtFunctions.VidExtFuncQuit = VidExt_Quit;
     vidExtFunctions.VidExtFuncListModes = VidExt_ListFullscreenModes;
     vidExtFunctions.VidExtFuncListRates = VidExt_ListFullscreenRates;
-    vidExtFunctions.VidExtFuncSetMode = (m64p_error (*)(int, int, int, int, int)) VidExt_SetVideoMode;
-    vidExtFunctions.VidExtFuncSetModeWithRate = (m64p_error (*)(int, int, int, int, int, int)) VidExt_SetVideoModeWithRate;
+    vidExtFunctions.VidExtFuncSetMode = (m64p_error (*)(int, int, int, int, int))VidExt_SetVideoMode;
+    vidExtFunctions.VidExtFuncSetModeWithRate = (m64p_error (*)(int, int, int, int, int, int))VidExt_SetVideoModeWithRate;
     vidExtFunctions.VidExtFuncGLGetProc = VidExt_GL_GetProcAddress;
     vidExtFunctions.VidExtFuncGLSetAttr = VidExt_GL_SetAttribute;
     vidExtFunctions.VidExtFuncGLGetAttr = VidExt_GL_GetAttribute;
@@ -1318,51 +1353,108 @@ static void *dlopen_myself()
     vidExtFunctions.VidExtFuncVKGetSurface = VidExt_VK_GetSurface;
     vidExtFunctions.VidExtFuncVKGetInstanceExtensions = VidExt_VK_GetInstanceExtensions;
 
-    // Override the video extension functions
-    m64p_error vidExtError = CoreOverrideVidExt(&vidExtFunctions);
-    if (vidExtError != M64ERR_SUCCESS) {
-        ELOG(@"[Mupen] Failed to override video extension functions: %d (%@)",
-             vidExtError, [self errorCodeToString:vidExtError]);
+    // Make sure we have a valid GL context before registering the functions
+    if (![self findExternalGLContext]) {
+        ELOG(@"[Mupen] Failed to find external GL context before setting up video extension functions");
+    }
+
+    // Register the video extension functions with the core
+    m64p_error result = CoreOverrideVidExt(&vidExtFunctions);
+    if (result != M64ERR_SUCCESS) {
+        ELOG(@"[Mupen] Error setting up video extension functions: %d (%@)",
+             result, [self errorCodeToString:result]);
     } else {
-        DLOG(@"[Mupen] Video extension functions overridden successfully");
+        DLOG(@"[Mupen] Successfully set up video extension functions");
+    }
+
+    // Initialize with OpenGL render mode
+    result = VidExt_InitWithRenderMode(M64P_RENDER_OPENGL);
+    if (result != M64ERR_SUCCESS) {
+        ELOG(@"[Mupen] Error initializing with OpenGL render mode: %d (%@)",
+             result, [self errorCodeToString:result]);
+    } else {
+        DLOG(@"[Mupen] Successfully initialized with OpenGL render mode");
     }
 }
 
-// Add a method to find the external GL context
+// Improve the findExternalGLContext method to ensure proper GL context setup
 - (BOOL)findExternalGLContext {
-    // Get the current GL context
-    #if TARGET_OS_MACCATALYST || TARGET_OS_OSX
-    NSOpenGLContext *currentContext = [NSOpenGLContext currentContext];
-    if (currentContext) {
-        DLOG(@"[Mupen] Found external GL context: %@", currentContext);
-        return YES;
-    }
-    #else
+    DLOG(@"[Mupen] Finding external GL context");
+
+    #if TARGET_OS_TV || TARGET_OS_IOS
+    // First try to get the framebuffer from the render delegate
+//    if ([self.renderDelegate respondsToSelector:@selector(presentationFramebuffer)]) {
+        id framebufferObj = [self.renderDelegate presentationFramebuffer];
+        if (framebufferObj && [framebufferObj isKindOfClass:[NSNumber class]]) {
+            GLuint framebuffer = [(NSNumber *)framebufferObj unsignedIntValue];
+            if (framebuffer != 0) {
+                DLOG(@"[Mupen] Found external framebuffer from render delegate: %u", framebuffer);
+                self.defaultFramebuffer = framebuffer;
+                self.framebufferInitialized = YES;
+
+                // Try to get the current GL context
+                EAGLContext *currentContext = [EAGLContext currentContext];
+                if (currentContext) {
+                    DLOG(@"[Mupen] Using current GL context: %@", currentContext);
+                    self.externalGLContext = currentContext;
+                    return YES;
+                } else {
+                    ELOG(@"[Mupen] Found framebuffer but no current GL context");
+                }
+            }
+        }
+//    }
+
+    // If we couldn't get the framebuffer from the render delegate, try the current context
     EAGLContext *currentContext = [EAGLContext currentContext];
     if (currentContext) {
-        _externalGLContext = currentContext;
-        DLOG(@"[Mupen] Found external GL context: %@", currentContext);
+        DLOG(@"[Mupen] Using current GL context: %@", currentContext);
+        self.externalGLContext = currentContext;
 
         // Initialize framebuffer if needed
-        if (!_framebufferInitialized) {
+        if (!self.framebufferInitialized) {
             GLint currentFramebuffer = 0;
             glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebuffer);
-            _defaultFramebuffer = (GLuint)currentFramebuffer;
+            self.defaultFramebuffer = (GLuint)currentFramebuffer;
 
-            if (_defaultFramebuffer != 0) {
-                _framebufferInitialized = YES;
-                DLOG(@"[Mupen] Initialized framebuffer: %u", _defaultFramebuffer);
+            if (self.defaultFramebuffer != 0) {
+                self.framebufferInitialized = YES;
+                DLOG(@"[Mupen] Initialized framebuffer: %u", self.defaultFramebuffer);
             } else {
-                ELOG(@"[Mupen] No valid framebuffer bound in external GL context");
+                ELOG(@"[Mupen] No valid framebuffer bound in current GL context");
             }
         }
 
         return YES;
     }
+
+    // If we still don't have a context, check if the render delegate has an MTKView
+//    if ([self.renderDelegate respondsToSelector:@selector(mtlView)]) {
+        id mtlView = [self.renderDelegate mtlView];
+        if (mtlView) {
+            DLOG(@"[Mupen] Found MTKView from render delegate, will use Metal rendering");
+            // For Metal rendering, we don't need an OpenGL context
+            // But we should set up the Metal layer
+            if ([mtlView respondsToSelector:@selector(layer)]) {
+                CALayer *layer = [mtlView layer];
+                if ([layer isKindOfClass:[CAMetalLayer class]]) {
+                    self.metalLayer = (CAMetalLayer *)layer;
+                    DLOG(@"[Mupen] Found Metal layer from MTKView");
+                    // For Metal, we don't need a framebuffer
+                    return YES;
+                }
+            }
+        }
+//    }
     #endif
 
-    ELOG(@"[Mupen] No current GL context found");
+    ELOG(@"[Mupen] No GL context or Metal view found");
     return NO;
+}
+
+// Override rendersToOpenGL to return YES
+- (BOOL)rendersToOpenGL {
+    return YES;
 }
 
 @end

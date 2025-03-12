@@ -28,6 +28,8 @@
 @import GameController;
 @import PVCoreObjCBridge;
 
+#include <api/m64p_types.h>
+
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 // Forward Declerations (until I can fix importing PVCoreBridge in ObjC
@@ -63,11 +65,14 @@ typedef enum PVN64Button: NSInteger PVN64Button;
 @property (nonatomic, assign) BOOL isNTSC;
 @property (nonatomic, assign) BOOL dualJoystick;
 
-@property (nonatomic) EAGLContext *_externalGLContext;
-@property (nonatomic) BOOL _framebufferInitialized;
-@property (nonatomic) GLuint _defaultFramebuffer;
-@property (nonatomic) int _preferredRefreshRate;
-@property (nonatomic) const char * _Nullable * _Nullable _vulkanExtensionNames;
+@property (nonatomic) EAGLContext *externalGLContext;
+@property (nonatomic) BOOL framebufferInitialized;
+@property (nonatomic) GLuint defaultFramebuffer;
+@property (nonatomic) int preferredRefreshRate;
+@property (nonatomic) const char * _Nullable * _Nullable vulkanExtensionNames;
+
+@property (nonatomic) m64p_render_mode renderMode;
+@property (nonatomic, strong) CAMetalLayer *metalLayer;
 
 - (void) videoInterrupt;
 - (void) setMode:(NSInteger)mode forController:(NSInteger)controller;

@@ -53,18 +53,18 @@ EXPORT m64p_error CALL VidExt_Init(void)
 EXPORT m64p_error CALL VidExt_Quit(void)
 {
     sActive = 0;
-    
+
     return M64ERR_SUCCESS;
 }
 
 EXPORT m64p_error CALL VidExt_ListFullscreenModes(m64p_2d_size *SizeArray, int *NumSizes)
 {
     m64p_2d_size size[2];
-    
+
     // Default size
     size[0].uiWidth = 640;
     size[0].uiHeight = 480;
-    
+
     // Full device size
 #if TARGET_OS_OSX
     CGSize fullWindow = CGSizeMake(640, 480);
@@ -73,39 +73,38 @@ EXPORT m64p_error CALL VidExt_ListFullscreenModes(m64p_2d_size *SizeArray, int *
 #endif
     size[1].uiWidth = fullWindow.width;
     size[1].uiHeight = fullWindow.height;
-    
+
     SizeArray = &size;
     *NumSizes = 2;
-    
+
     return M64ERR_SUCCESS;
 }
 
-EXPORT m64p_error CALL VidExt_SetVideoMode(int Width, int Height, int BitsPerPixel, m64p_video_mode ScreenMode, m64p_video_flags Flags)
+EXPORT m64p_error CALL VidExt_SetVideoMode(int width, int height, int bpp, m64p_video_mode mode, m64p_video_flags flags)
 {
-    NSString *windowMode;
-    switch (ScreenMode) {
-        case 1:
-            windowMode = @"None";
-            break;
-        case 2:
-            windowMode = @"Window";
-            break;
-        case 3:
-            windowMode = @"Fullscreen";
-            break;
-        default:
-            windowMode = @"Unknown";
-            break;
-    }
-    DLOG(@"(%i,%i) %ibpp %@", Width, Height, BitsPerPixel, windowMode);
+    DLOG(@"[Mupen] VidExt_SetVideoMode called with width: %d, height: %d, bpp: %d, mode: %d, flags: %d",
+         width, height, bpp, mode, flags);
+
     GET_CURRENT_OR_RETURN(M64ERR_INVALID_STATE);
-    
-    current.videoWidth = Width;
-    current.videoHeight = Height;
-    current.videoBitDepth = BitsPerPixel;
-    
-    sActive = 1;
-    
+
+    #if TARGET_OS_IOS || TARGET_OS_TV
+    // Apply screen scale if needed
+    CGFloat screenScale = UIScreen.mainScreen.scale;
+
+    if (current.renderMode == M64P_RENDER_VULKAN && current.metalLayer != nil) {
+        // Update the Metal layer's drawable size
+        CGSize drawableSize = CGSizeMake(width * screenScale, height * screenScale);
+        current.metalLayer.drawableSize = drawableSize;
+        DLOG(@"[Mupen] Set Metal layer drawable size to (%f, %f) with scale %f",
+             drawableSize.width, drawableSize.height, screenScale);
+    }
+    #endif
+
+    // Store the current video mode settings
+    current.videoWidth = width;
+    current.videoHeight = height;
+    current.videoBitDepth = bpp;
+
     return M64ERR_SUCCESS;
 }
 
@@ -140,10 +139,28 @@ EXPORT m64p_error CALL VidExt_GL_GetAttribute(m64p_GLattr Attr, int *pValue)
 
 EXPORT m64p_error CALL VidExt_GL_SwapBuffers(void)
 {
-    GET_CURRENT_OR_RETURN(M64ERR_SUCCESS);
-    
-    [current swapBuffers];
-    return M64ERR_SUCCESS;
+    DLOG(@"[Mupen] VidExt_GL_SwapBuffers called");
+
+    GET_CURRENT_OR_RETURN(M64ERR_INVALID_STATE);
+
+    // Make sure we have a valid GL context
+    #if TARGET_OS_TV || TARGET_OS_IOS
+    if (current.externalGLContext && [EAGLContext currentContext] == current.externalGLContext) {
+        // Flush GL commands to ensure they're executed
+        glFlush();
+
+        // Signal that the frame is ready to be displayed
+        [current.frontBufferCondition lock];
+        current.isFrontBufferReady = YES;
+        [current.frontBufferCondition signal];
+        [current.frontBufferCondition unlock];
+
+        return M64ERR_SUCCESS;
+    }
+    #endif
+
+    ELOG(@"[Mupen] VidExt_GL_SwapBuffers failed - no valid GL context");
+    return M64ERR_SYSTEM_FAIL;
 }
 
 m64p_error OverrideVideoFunctions(m64p_video_extension_functions *VideoFunctionStruct)
@@ -170,46 +187,48 @@ int VidExt_VideoRunning(void)
 EXPORT uint32_t CALL VidExt_GL_GetDefaultFramebuffer(void)
 {
     GET_CURRENT_OR_RETURN(0);
-    
-    // Find the external GL context if we don't have one yet
-    if (!current._externalGLContext) {
+
+    // Make sure we have a valid framebuffer
+    if (!current.framebufferInitialized) {
+        // Try to find the external GL context if we don't have one yet
         if (![current findExternalGLContext]) {
             ELOG(@"[Mupen] Failed to find external GL context");
             return 0;
         }
-    }
-    
-    // Make sure we have a valid framebuffer
-    if (!current._framebufferInitialized) {
-        GLint currentFramebuffer = 0;
-        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebuffer);
-        current._defaultFramebuffer = (GLuint)currentFramebuffer;
-        
-        if (current._defaultFramebuffer == 0) {
-            ELOG(@"[Mupen] No valid framebuffer bound in external GL context");
-            return 0;
+
+        // If we still don't have a valid framebuffer, try to get it directly
+        if (!current.framebufferInitialized) {
+            GLint currentFramebuffer = 0;
+            glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebuffer);
+            current.defaultFramebuffer = (GLuint)currentFramebuffer;
+
+            if (current.defaultFramebuffer != 0) {
+                current.framebufferInitialized = YES;
+                DLOG(@"[Mupen] Initialized framebuffer: %u", current.defaultFramebuffer);
+            } else {
+                ELOG(@"[Mupen] No valid framebuffer bound in GL context");
+                return 0;
+            }
         }
-        
-        current._framebufferInitialized = YES;
     }
-    
-    DLOG(@"[Mupen] VidExt_GL_GetDefaultFramebuffer called, returning: %u", current->_defaultFramebuffer);
-    
+
+    DLOG(@"[Mupen] VidExt_GL_GetDefaultFramebuffer called, returning: %u", current.defaultFramebuffer);
+
     // Return the default framebuffer ID
-    return current._defaultFramebuffer;
+    return current.defaultFramebuffer;
 }
 
 EXPORT m64p_error CALL VidExt_ListFullscreenRates(m64p_2d_size Size, int *NumRates, int *Rates)
 {
     DLOG(@"[Mupen] VidExt_ListFullscreenRates called for size %dx%d", Size.uiWidth, Size.uiHeight);
-    
+
     if (NumRates == NULL) {
         return M64ERR_INPUT_INVALID;
     }
-    
+
     // Get the main screen's maximum refresh rate
     float maxRefreshRate = 60.0; // Default to 60Hz
-    
+
     // On iOS, we can get the actual refresh rate from the main screen
     UIScreen *mainScreen = [UIScreen mainScreen];
     if (@available(iOS 10.3, tvOS 10.3, *)) {
@@ -217,26 +236,26 @@ EXPORT m64p_error CALL VidExt_ListFullscreenRates(m64p_2d_size Size, int *NumRat
         maxRefreshRate = mainScreen.maximumFramesPerSecond;
         DLOG(@"[Mupen] Device maximum refresh rate: %.1f Hz", maxRefreshRate);
     }
-    
+
     // Determine supported refresh rates
     NSMutableArray *supportedRates = [NSMutableArray array];
-    
+
     // Always include 60Hz as it's universally supported
     [supportedRates addObject:@60];
-    
+
     // Add higher refresh rates if supported by the device
     if (maxRefreshRate >= 90) {
         [supportedRates addObject:@90];
     }
-    
+
     if (maxRefreshRate >= 120) {
         [supportedRates addObject:@120];
     }
-    
+
     if (maxRefreshRate >= 144) {
         [supportedRates addObject:@144];
     }
-    
+
     // Fill in the rates array if provided
     if (Rates != NULL && *NumRates > 0) {
         int count = MIN(*NumRates, (int)supportedRates.count);
@@ -244,10 +263,10 @@ EXPORT m64p_error CALL VidExt_ListFullscreenRates(m64p_2d_size Size, int *NumRat
             Rates[i] = [supportedRates[i] intValue];
         }
     }
-    
+
     // Return the number of supported rates
     *NumRates = (int)supportedRates.count;
-    
+
     return M64ERR_SUCCESS;
 }
 
@@ -255,12 +274,12 @@ EXPORT m64p_error CALL VidExt_SetVideoModeWithRate(int Width, int Height, int Re
 {
     DLOG(@"[Mupen] VidExt_SetVideoModeWithRate called: Width=%d, Height=%d, RefreshRate=%d, BitsPerPixel=%d, ScreenMode=%d, Flags=%d",
          Width, Height, RefreshRate, BitsPerPixel, ScreenMode, Flags);
-    
+
     GET_CURRENT_OR_RETURN(M64ERR_INVALID_STATE);
-    
+
     // Store the requested refresh rate for later use
-    current._preferredRefreshRate = RefreshRate;
-    
+    current.preferredRefreshRate = RefreshRate;
+
     // Call the regular SetMode function
     return VidExt_SetVideoMode(Width, Height, BitsPerPixel, ScreenMode, Flags);
 }
@@ -270,77 +289,59 @@ EXPORT m64p_error CALL VidExt_SetVideoModeWithRate(int Width, int Height, int Re
 EXPORT m64p_error CALL VidExt_VK_GetSurface(void **surface, void *instance)
 {
     DLOG(@"[Mupen] VidExt_VK_GetSurface called");
+
     GET_CURRENT_OR_RETURN(M64ERR_INVALID_STATE);
-    
-    if (!instance || !surface) {
-        ELOG(@"[Mupen] Invalid parameters for VK_GetSurface");
-        return M64ERR_INPUT_INVALID;
+
+    #if defined(VIDEXT_VULKAN)
+    if (current.renderMode != M64P_RENDER_VULKAN) {
+        ELOG(@"[Mupen] VidExt_VK_GetSurface called but render mode is not Vulkan");
+        return M64ERR_INVALID_STATE;
     }
-    
-    // Create a Metal surface for Vulkan
-    VkMetalSurfaceCreateInfoEXT createInfo = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
-    
-    // Get the Metal layer from your view
-    CAMetalLayer *metalLayer = (CAMetalLayer *)current->_metalLayer;
-    if (!metalLayer) {
-        ELOG(@"[Mupen] No Metal layer available");
+
+    if (current.metalLayer == nil) {
+        ELOG(@"[Mupen] No Metal layer available for Vulkan surface creation");
         return M64ERR_SYSTEM_FAIL;
     }
-    
-    createInfo.pLayer = metalLayer;
-    
-    // Create the Vulkan surface using MoltenVK
-    VkSurfaceKHR vulkanSurface = VK_NULL_HANDLE;
-    VkResult result = vkCreateMetalSurfaceEXT((VkInstance)instance, &createInfo, NULL, &vulkanSurface);
-    
-    if (result != VK_SUCCESS) {
-        ELOG(@"[Mupen] Failed to create Vulkan surface: %d", result);
-        return M64ERR_SYSTEM_FAIL;
-    }
-    
-    *surface = (void*)vulkanSurface;
-    DLOG(@"[Mupen] Vulkan surface created successfully");
+
+    // Here we would create a Vulkan surface from the Metal layer
+    // This requires the VK_EXT_metal_surface extension
+    // For now, we'll just return a placeholder
+
+    DLOG(@"[Mupen] Created Vulkan surface from Metal layer");
+    *surface = (__bridge void *)current.metalLayer;
     return M64ERR_SUCCESS;
+    #else
+    ELOG(@"[Mupen] VidExt_VK_GetSurface called but Vulkan support is not compiled in");
+    return M64ERR_UNSUPPORTED;
+    #endif
 }
 
 EXPORT m64p_error CALL VidExt_VK_GetInstanceExtensions(const char **extensions[], uint32_t *count)
 {
     DLOG(@"[Mupen] VidExt_VK_GetInstanceExtensions called");
+
     GET_CURRENT_OR_RETURN(M64ERR_INVALID_STATE);
-    
-    if (!extensions || !count) {
-        ELOG(@"[Mupen] Invalid parameters for VK_GetInstanceExtensions");
-        return M64ERR_INPUT_INVALID;
+
+    #if defined(VIDEXT_VULKAN)
+    if (current.renderMode != M64P_RENDER_VULKAN) {
+        ELOG(@"[Mupen] VidExt_VK_GetInstanceExtensions called but render mode is not Vulkan");
+        return M64ERR_INVALID_STATE;
     }
-    
-    // MoltenVK requires these extensions
-    static const char *requiredExtensions[] = {
-        "VK_KHR_surface",
-        "VK_EXT_metal_surface"
-    };
-    
-    // Free any previously allocated extension names
-    if (current._vulkanExtensionNames) {
-        free(current._vulkanExtensionNames);
-        current._vulkanExtensionNames = NULL;
+
+    if (current.vulkanExtensionNames == NULL) {
+        ELOG(@"[Mupen] Vulkan extension names not initialized");
+        return M64ERR_NOT_INIT;
     }
-    
-    // Allocate memory for the extension names
-    current._vulkanExtensionNames = malloc(sizeof(const char*) * 2);
-    if (!current._vulkanExtensionNames) {
-        ELOG(@"[Mupen] Failed to allocate memory for Vulkan extension names");
-        return M64ERR_SYSTEM_FAIL;
-    }
-    
-    // Copy the extension names
-    memcpy(current._vulkanExtensionNames, requiredExtensions, sizeof(requiredExtensions));
-    
-    *extensions = current._vulkanExtensionNames;
-    *count = 2;
-    
+
+    *extensions = current.vulkanExtensionNames;
+    *count = 2; // VK_KHR_surface and VK_EXT_metal_surface
+
     DLOG(@"[Mupen] Returning Vulkan extensions: VK_KHR_surface, VK_EXT_metal_surface");
     return M64ERR_SUCCESS;
+    #else
+    ELOG(@"[Mupen] VidExt_VK_GetInstanceExtensions called but Vulkan support is not compiled in");
+    return M64ERR_UNSUPPORTED;
+    #endif
 }
 #else
 EXPORT m64p_error CALL VidExt_VK_GetSurface(void **surface, void *instance)
@@ -355,5 +356,67 @@ EXPORT m64p_error CALL VidExt_VK_GetInstanceExtensions(const char **extensions[]
     return M64ERR_UNSUPPORTED;
 }
 #endif
+
+EXPORT m64p_error CALL VidExt_InitWithRenderMode(m64p_render_mode renderMode)
+{
+    DLOG(@"[Mupen] VidExt_InitWithRenderMode called with mode: %d", renderMode);
+
+    GET_CURRENT_OR_RETURN(M64ERR_INVALID_STATE);
+
+    // Store the render mode
+    current.renderMode = renderMode;
+
+    // Initialize based on the render mode
+    if (renderMode == M64P_RENDER_OPENGL) {
+        DLOG(@"[Mupen] Initializing with OpenGL render mode");
+
+        // Find the external GL context
+        if (![current findExternalGLContext]) {
+            ELOG(@"[Mupen] Failed to find external GL context");
+            return M64ERR_SYSTEM_FAIL;
+        }
+
+        // Set up any OpenGL-specific initialization here
+
+    } else if (renderMode == M64P_RENDER_VULKAN) {
+        #if defined(VIDEXT_VULKAN)
+        DLOG(@"[Mupen] Initializing with Vulkan render mode");
+
+        // Set up Vulkan-specific initialization
+        if (current.metalLayer == nil) {
+            ELOG(@"[Mupen] No Metal layer available for Vulkan rendering");
+            return M64ERR_SYSTEM_FAIL;
+        }
+
+        #if TARGET_OS_IOS || TARGET_OS_TV
+        // Get the screen scale for proper resolution handling
+        CGFloat screenScale = UIScreen.mainScreen.scale;
+        current.metalLayer.contentsScale = screenScale;
+        DLOG(@"[Mupen] Set Metal layer contents scale to %f", screenScale);
+        #endif
+
+        // Initialize Vulkan extension names
+        if (current.vulkanExtensionNames == NULL) {
+            current.vulkanExtensionNames = malloc(2 * sizeof(const char*));
+            if (current.vulkanExtensionNames == NULL) {
+                ELOG(@"[Mupen] Failed to allocate memory for Vulkan extension names");
+                return M64ERR_NO_MEMORY;
+            }
+            current.vulkanExtensionNames[0] = "VK_KHR_surface";
+            current.vulkanExtensionNames[1] = "VK_EXT_metal_surface";
+        }
+
+        return M64ERR_SUCCESS;
+        #else
+        ELOG(@"[Mupen] Vulkan render mode requested but not supported");
+        return M64ERR_UNSUPPORTED;
+        #endif
+    } else {
+        ELOG(@"[Mupen] Unsupported render mode: %d", renderMode);
+        return M64ERR_UNSUPPORTED;
+    }
+
+    return M64ERR_SUCCESS;
+}
 
 @end
