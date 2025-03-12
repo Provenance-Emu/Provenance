@@ -242,6 +242,13 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
     m64p_dynlib_handle core_handle;
 
     m64p_dynlib_handle plugins[4];
+
+    // OpenGL context reference (not owned by this class)
+    EAGLContext *_externalGLContext;
+
+    // Framebuffer info
+    GLuint _defaultFramebuffer;
+    BOOL _framebufferInitialized;
 }
 
 /// Initializes the PVMupenBridge
@@ -551,7 +558,7 @@ static void *dlopen_myself()
 
     // Check ROM state before loading plugins
     int romState = 0;
-    m64p_error stateQueryError = CoreDoCommand(M64CMD_CORE_STATE_QUERY, M64CORE_ROM_OPEN, &romState);
+    m64p_error stateQueryError = CoreDoCommand(M64CMD_CORE_STATE_QUERY, M64CMD_ROM_OPEN, &romState);
     if (stateQueryError != M64ERR_SUCCESS || romState == 0) {
         ELOG(@"[Mupen] ROM is not open before loading plugins! State query error: %d (%@), ROM state: %d",
              stateQueryError, [self errorCodeToString:stateQueryError], romState);
@@ -564,7 +571,7 @@ static void *dlopen_myself()
                 ELOG(@"[Mupen] Failed to open ROM: %d (%@)", openError, [self errorCodeToString:openError]);
                 if (error != NULL) {
                     *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                code:PVEmulatorCoreErrorCodeCouldNotLoadROM
+                                                 code:PVEmulatorCoreErrorCodeCouldNotLoadRom
                                             userInfo:@{
                                                 NSLocalizedDescriptionKey: @"Failed to load game.",
                                                 NSLocalizedFailureReasonErrorKey: @"Mupen64Plus could not open the ROM.",
@@ -576,12 +583,12 @@ static void *dlopen_myself()
             }
 
             // Check ROM state again
-            CoreDoCommand(M64CMD_CORE_STATE_QUERY, M64CORE_ROM_OPEN, &romState);
+            CoreDoCommand(M64CMD_CORE_STATE_QUERY, M64CMD_ROM_OPEN, &romState);
             if (romState == 0) {
                 ELOG(@"[Mupen] ROM still not open after explicit open attempt");
                 if (error != NULL) {
                     *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                code:PVEmulatorCoreErrorCodeCouldNotLoadROM
+                                                 code:PVEmulatorCoreErrorCodeCouldNotLoadRom
                                             userInfo:@{
                                                 NSLocalizedDescriptionKey: @"Failed to load game.",
                                                 NSLocalizedFailureReasonErrorKey: @"Mupen64Plus could not open the ROM.",
@@ -595,7 +602,7 @@ static void *dlopen_myself()
             ELOG(@"[Mupen] No ROM data available to open");
             if (error != NULL) {
                 *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                            code:PVEmulatorCoreErrorCodeCouldNotLoadROM
+                                             code:PVEmulatorCoreErrorCodeCouldNotLoadRom
                                         userInfo:@{
                                             NSLocalizedDescriptionKey: @"Failed to load game.",
                                             NSLocalizedFailureReasonErrorKey: @"No ROM data available.",
@@ -1258,6 +1265,147 @@ static void *dlopen_myself()
         default:
             return [NSString stringWithFormat:@"Unknown error code: %d", errorCode];
     }
+}
+
+// Add a method to find the current GL context
+- (BOOL)findExternalGLContext {
+    // Get the current GL context
+    _externalGLContext = [EAGLContext currentContext];
+
+    if (!_externalGLContext) {
+        ELOG(@"[Mupen] No current GL context found");
+        return NO;
+    }
+
+    DLOG(@"[Mupen] Found external GL context: %@", _externalGLContext);
+    return YES;
+}
+
+// Update the video extension functions to find and use the external context
+static m64p_error MupenVidExtInit(void) {
+    DLOG(@"[Mupen] VidExtInit called");
+
+    // Get the PVMupenBridge instance
+    __strong PVMupenBridge *bridge = _current;
+
+    // Find the external GL context if we don't have one yet
+    if (!bridge->_externalGLContext) {
+        if (![bridge findExternalGLContext]) {
+            ELOG(@"[Mupen] Failed to find external GL context");
+            return M64ERR_SYSTEM_FAIL;
+        }
+    }
+
+    // Get the current framebuffer
+    if (!bridge->_framebufferInitialized) {
+        GLint currentFramebuffer = 0;
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebuffer);
+        bridge->_defaultFramebuffer = (GLuint)currentFramebuffer;
+
+        // Check if we have a valid framebuffer
+        if (bridge->_defaultFramebuffer == 0) {
+            ELOG(@"[Mupen] No valid framebuffer bound in external GL context");
+            return M64ERR_SYSTEM_FAIL;
+        }
+
+        // Check framebuffer status
+        glBindFramebuffer(GL_FRAMEBUFFER, bridge->_defaultFramebuffer);
+        GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (status != GL_FRAMEBUFFER_COMPLETE) {
+            ELOG(@"[Mupen] External framebuffer is not complete: 0x%04X", status);
+            return M64ERR_SYSTEM_FAIL;
+        }
+
+        bridge->_framebufferInitialized = YES;
+        DLOG(@"[Mupen] Using external framebuffer: %u", bridge->_defaultFramebuffer);
+    }
+
+    return M64ERR_SUCCESS;
+}
+
+static m64p_error MupenVidExtSetMode(int width, int height, int bpp, int fullscreen, int flags) {
+    DLOG(@"[Mupen] VidExtSetMode called: width=%d, height=%d, bpp=%d, fullscreen=%d, flags=%d",
+         width, height, bpp, fullscreen, flags);
+
+    // Get the PVMupenBridge instance
+    __strong PVMupenBridge *bridge = _current;
+
+    // Find the external GL context if we don't have one yet
+    if (!bridge->_externalGLContext) {
+        if (![bridge findExternalGLContext]) {
+            ELOG(@"[Mupen] Failed to find external GL context");
+            return M64ERR_SYSTEM_FAIL;
+        }
+    }
+
+    // We don't need to resize anything since we're using the external framebuffer
+    // Just check that it's still valid
+    glBindFramebuffer(GL_FRAMEBUFFER, bridge->_defaultFramebuffer);
+    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (status != GL_FRAMEBUFFER_COMPLETE) {
+        ELOG(@"[Mupen] External framebuffer is not complete: 0x%04X", status);
+        return M64ERR_SYSTEM_FAIL;
+    }
+
+    return M64ERR_SUCCESS;
+}
+
+static void* MupenVidExtGLGetProc(const char* proc) {
+    DLOG(@"[Mupen] VidExtGLGetProc called for: %s", proc);
+
+    // Use the OpenGL ES function pointer lookup
+    return dlsym(RTLD_DEFAULT, proc);
+}
+
+static uint32_t MupenVidExtGetDefaultFramebuffer(void) {
+    // Get the PVMupenBridge instance
+    __strong PVMupenBridge *bridge = _current;
+
+    // Find the external GL context if we don't have one yet
+    if (!bridge->_externalGLContext) {
+        if (![bridge findExternalGLContext]) {
+            ELOG(@"[Mupen] Failed to find external GL context");
+            return 0;
+        }
+    }
+
+    // Make sure we have a valid framebuffer
+    if (!bridge->_framebufferInitialized) {
+        GLint currentFramebuffer = 0;
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebuffer);
+        bridge->_defaultFramebuffer = (GLuint)currentFramebuffer;
+
+        if (bridge->_defaultFramebuffer == 0) {
+            ELOG(@"[Mupen] No valid framebuffer bound in external GL context");
+            return 0;
+        }
+
+        bridge->_framebufferInitialized = YES;
+    }
+
+    DLOG(@"[Mupen] VidExtGetDefaultFramebuffer called, returning: %u", bridge->_defaultFramebuffer);
+
+    // Return the default framebuffer ID
+    return bridge->_defaultFramebuffer;
+}
+
+static m64p_error MupenVidExtGLSwapBuf(void) {
+    // Get the PVMupenBridge instance
+    __strong PVMupenBridge *bridge = _current;
+
+    // Find the external GL context if we don't have one yet
+    if (!bridge->_externalGLContext) {
+        if (![bridge findExternalGLContext]) {
+            ELOG(@"[Mupen] Failed to find external GL context");
+            return M64ERR_SYSTEM_FAIL;
+        }
+    }
+
+    // We don't need to present the renderbuffer since that's handled by the Metal view controller
+    // Just make sure we're using the correct framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, bridge->_defaultFramebuffer);
+
+    return M64ERR_SUCCESS;
 }
 
 @end
