@@ -155,6 +155,7 @@
 		B31206572D811595004E27C3 /* Debugger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B312055E2D810AEE004E27C3 /* Debugger.cpp */; };
 		B31206582D81303A004E27C3 /* font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B30559E32072FEE9001212D2 /* font.ttf */; };
 		B31206592D813045004E27C3 /* font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B30559E32072FEE9001212D2 /* font.ttf */; };
+		B312065A2D81401D004E27C3 /* CommonPluginAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31205522D810AEE004E27C3 /* CommonPluginAPI.cpp */; };
 		B312FD262D80F85C004E27C3 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = B312FD1A2D80F84F004E27C3 /* ioapi.c */; };
 		B312FD272D80F85C004E27C3 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = B312FD1E2D80F84F004E27C3 /* zip.c */; };
 		B312FD282D80F85C004E27C3 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = B312FD1C2D80F84F004E27C3 /* unzip.c */; };
@@ -4778,6 +4779,7 @@
 				B31205C02D810B0C004E27C3 /* GraphicsDrawer.cpp in Sources */,
 				B31205C12D810B0C004E27C3 /* VI.cpp in Sources */,
 				B31206172D810B55004E27C3 /* osal_files_ios.mm in Sources */,
+				B312065A2D81401D004E27C3 /* CommonPluginAPI.cpp in Sources */,
 				B31205C32D810B0C004E27C3 /* Combiner.cpp in Sources */,
 				B31205C52D810B0C004E27C3 /* Log.cpp in Sources */,
 				B31205C62D810B0C004E27C3 /* CRC_OPT.cpp in Sources */,
