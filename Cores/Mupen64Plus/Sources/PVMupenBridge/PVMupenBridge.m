@@ -37,7 +37,6 @@
 @import PVCoreBridge;
 @import PVCoreObjCBridge;
 @import PVEmulatorCore;
-@import PVLogging;
 @import PVLoggingObjC;
 @import PVSettings;
 
@@ -116,9 +115,30 @@ EXPORT static void PV_DrawOSD(const char *_pText, float _x, float _y)
 /// @param message The message
 static void MupenDebugCallback(void *context, int level, const char *message)
 {
-#if DEBUG
-    DLOG(@"Mupen (%d): %s", level, message);
-#endif
+    NSString *messageStr = [NSString stringWithUTF8String:message];
+
+    switch (level) {
+        case M64MSG_ERROR:
+            ELOG(@"[Mupen Core] %@", messageStr);
+            break;
+        case M64MSG_WARNING:
+            WLOG(@"[Mupen Core] %@", messageStr);
+            break;
+        case M64MSG_INFO:
+            ILOG(@"[Mupen Core] %@", messageStr);
+            break;
+        case M64MSG_STATUS:
+            DLOG(@"[Mupen Core] Status: %@", messageStr);
+            break;
+        case M64MSG_VERBOSE:
+            #if DEBUG
+            VLOG(@"[Mupen Core] %@", messageStr);
+            #endif
+            break;
+        default:
+            DLOG(@"[Mupen Core] (%d): %@", level, messageStr);
+            break;
+    }
 }
 
 /// Mupen frame callback
@@ -137,7 +157,73 @@ static void MupenFrameCallback(unsigned int FrameIndex) {
 /// @param newValue The new value of the parameter
 static void MupenStateCallback(void *context, m64p_core_param paramType, int newValue)
 {
-    ILOG(@"Mupen: param %d -> %d", paramType, newValue);
+    NSString *paramName;
+    switch (paramType) {
+        case M64CORE_EMU_STATE:
+            paramName = @"EMU_STATE";
+            switch (newValue) {
+                case M64EMU_STOPPED: ILOG(@"[Mupen State] Emulator state changed to STOPPED"); break;
+                case M64EMU_RUNNING: ILOG(@"[Mupen State] Emulator state changed to RUNNING"); break;
+                case M64EMU_PAUSED: ILOG(@"[Mupen State] Emulator state changed to PAUSED"); break;
+                default: ILOG(@"[Mupen State] Emulator state changed to UNKNOWN (%d)", newValue); break;
+            }
+            break;
+        case M64CORE_VIDEO_MODE:
+            paramName = @"VIDEO_MODE";
+            switch (newValue) {
+                case M64VIDEO_NONE: ILOG(@"[Mupen State] Video mode changed to NONE"); break;
+                case M64VIDEO_WINDOWED: ILOG(@"[Mupen State] Video mode changed to WINDOWED"); break;
+                case M64VIDEO_FULLSCREEN: ILOG(@"[Mupen State] Video mode changed to FULLSCREEN"); break;
+                default: ILOG(@"[Mupen State] Video mode changed to UNKNOWN (%d)", newValue); break;
+            }
+            break;
+        case M64CORE_SAVESTATE_SLOT:
+            paramName = @"SAVESTATE_SLOT";
+            ILOG(@"[Mupen State] Savestate slot changed to %d", newValue);
+            break;
+        case M64CORE_SPEED_FACTOR:
+            paramName = @"SPEED_FACTOR";
+            ILOG(@"[Mupen State] Speed factor changed to %d", newValue);
+            break;
+        case M64CORE_SPEED_LIMITER:
+            paramName = @"SPEED_LIMITER";
+            ILOG(@"[Mupen State] Speed limiter %s", newValue ? "enabled" : "disabled");
+            break;
+        case M64CORE_VIDEO_SIZE:
+            paramName = @"VIDEO_SIZE";
+            ILOG(@"[Mupen State] Video size changed (value: %d)", newValue);
+            break;
+        case M64CORE_AUDIO_VOLUME:
+            paramName = @"AUDIO_VOLUME";
+            ILOG(@"[Mupen State] Audio volume changed to %d", newValue);
+            break;
+        case M64CORE_AUDIO_MUTE:
+            paramName = @"AUDIO_MUTE";
+            ILOG(@"[Mupen State] Audio %s", newValue ? "muted" : "unmuted");
+            break;
+        case M64CORE_INPUT_GAMESHARK:
+            paramName = @"INPUT_GAMESHARK";
+            ILOG(@"[Mupen State] Gameshark button %s", newValue ? "pressed" : "released");
+            break;
+        case M64CORE_STATE_LOADCOMPLETE:
+            paramName = @"STATE_LOADCOMPLETE";
+            ILOG(@"[Mupen State] State load complete");
+            break;
+        case M64CORE_STATE_SAVECOMPLETE:
+            paramName = @"STATE_SAVECOMPLETE";
+            ILOG(@"[Mupen State] State save complete");
+            break;
+        case M64CORE_SCREENSHOT_CAPTURED:
+            paramName = @"M64CORE_SCREENSHOT_CAPTURED";
+            ILOG(@"[Mupen State] Screenshot captured");
+            break;
+        default:
+            paramName = [NSString stringWithFormat:@"UNKNOWN(%d)", paramType];
+            ILOG(@"[Mupen State] Parameter %d changed to %d", paramType, newValue);
+            break;
+    }
+
+    // Forward to the instance method
     [((__bridge PVMupenBridge *)context) OE_didReceiveStateChangeForParamType:paramType value:newValue];
 }
 
@@ -308,7 +394,7 @@ static void *dlopen_myself()
     // Clear any previous dlerror again
     dlerror();
 
-    void* handle = dlopen(info.dli_fname, RTLD_NOW);
+    void* handle = dlopen(info.dli_fname, RTLD_LAZY | RTLD_GLOBAL);
     if (handle == NULL) {
         const char* dlError = dlerror();
         ELOG(@"dlopen_myself failed: %s", dlError ? dlError : "Unknown error");
@@ -465,22 +551,117 @@ static void *dlopen_myself()
 
     // Check ROM state before loading plugins
     int romState = 0;
-    m64p_error stateQueryError = CoreDoCommand(M64CMD_CORE_STATE_QUERY, M64CMD_ROM_OPEN, &romState);
+    m64p_error stateQueryError = CoreDoCommand(M64CMD_CORE_STATE_QUERY, M64CORE_ROM_OPEN, &romState);
     if (stateQueryError != M64ERR_SUCCESS || romState == 0) {
         ELOG(@"[Mupen] ROM is not open before loading plugins! State query error: %d (%@), ROM state: %d",
              stateQueryError, [self errorCodeToString:stateQueryError], romState);
+
+        // Try to open the ROM if we have ROM data
+        if (romData != nil) {
+            ELOG(@"[Mupen] Attempting to open ROM before loading plugins");
+            m64p_error openError = CoreDoCommand(M64CMD_ROM_OPEN, (int)[romData length], (void *)[romData bytes]);
+            if (openError != M64ERR_SUCCESS) {
+                ELOG(@"[Mupen] Failed to open ROM: %d (%@)", openError, [self errorCodeToString:openError]);
+                if (error != NULL) {
+                    *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadROM
+                                            userInfo:@{
+                                                NSLocalizedDescriptionKey: @"Failed to load game.",
+                                                NSLocalizedFailureReasonErrorKey: @"Mupen64Plus could not open the ROM.",
+                                                NSLocalizedRecoverySuggestionErrorKey: [NSString stringWithFormat:@"ROM open error: %d (%@)",
+                                                                                       openError, [self errorCodeToString:openError]]
+                                            }];
+                }
+                return NO;
+            }
+
+            // Check ROM state again
+            CoreDoCommand(M64CMD_CORE_STATE_QUERY, M64CORE_ROM_OPEN, &romState);
+            if (romState == 0) {
+                ELOG(@"[Mupen] ROM still not open after explicit open attempt");
+                if (error != NULL) {
+                    *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadROM
+                                            userInfo:@{
+                                                NSLocalizedDescriptionKey: @"Failed to load game.",
+                                                NSLocalizedFailureReasonErrorKey: @"Mupen64Plus could not open the ROM.",
+                                                NSLocalizedRecoverySuggestionErrorKey: @"ROM state is still 0 after explicit open attempt"
+                                            }];
+                }
+                return NO;
+            }
+            DLOG(@"[Mupen] ROM opened successfully before loading plugins");
+        } else {
+            ELOG(@"[Mupen] No ROM data available to open");
+            if (error != NULL) {
+                *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                            code:PVEmulatorCoreErrorCodeCouldNotLoadROM
+                                        userInfo:@{
+                                            NSLocalizedDescriptionKey: @"Failed to load game.",
+                                            NSLocalizedFailureReasonErrorKey: @"No ROM data available.",
+                                            NSLocalizedRecoverySuggestionErrorKey: @"ROM data is nil"
+                                        }];
+            }
+            return NO;
+        }
     } else {
         DLOG(@"[Mupen] ROM is confirmed open before loading plugins");
+    }
+
+    // Check emulator state - it should not be running
+    int emuState = 0;
+    m64p_error emuStateError = CoreDoCommand(M64CMD_CORE_STATE_QUERY, M64CORE_EMU_STATE, &emuState);
+    if (emuStateError != M64ERR_SUCCESS) {
+        ELOG(@"[Mupen] Failed to query emulator state: %d (%@)",
+             emuStateError, [self errorCodeToString:emuStateError]);
+    } else if (emuState == M64EMU_RUNNING) {
+        ELOG(@"[Mupen] Emulator is running before loading plugins, which is not allowed");
+        // Try to pause the emulator
+        m64p_error pauseError = CoreDoCommand(M64CMD_PAUSE, 0, NULL);
+        if (pauseError != M64ERR_SUCCESS) {
+            ELOG(@"[Mupen] Failed to pause emulator: %d (%@)",
+                 pauseError, [self errorCodeToString:pauseError]);
+        }
     }
 
     // Assistant block to load frameworks
     NSError* (^LoadPlugin)(m64p_plugin_type, NSString *) = ^(m64p_plugin_type pluginType, NSString *pluginName) {
         DLOG(@"[Mupen] Loading plugin: %@ (type: %d)", pluginName, pluginType);
+
+        // Validate plugin type
+        if (pluginType != M64PLUGIN_GFX &&
+            pluginType != M64PLUGIN_AUDIO &&
+            pluginType != M64PLUGIN_INPUT &&
+            pluginType != M64PLUGIN_RSP) {
+            NSString *errorMessage = [NSString stringWithFormat:@"Invalid plugin type: %d", pluginType];
+            ELOG(@"[Mupen] %@", errorMessage);
+            return [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                       code:PVEmulatorCoreErrorCodeCouldNotLoadPlugin
+                                   userInfo:@{
+                                       NSLocalizedDescriptionKey: @"Failed to load game.",
+                                       NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat:@"Invalid plugin type for %@", pluginName],
+                                       NSLocalizedRecoverySuggestionErrorKey: errorMessage
+                                   }];
+        }
+
         m64p_dynlib_handle plugin_handle;
         NSString *frameworkPath = [NSString stringWithFormat:@"%@.framework/%@", pluginName, pluginName];
         NSBundle *frameworkBundle = [NSBundle mainBundle];
         NSString *pluginPath = [frameworkBundle.privateFrameworksPath stringByAppendingPathComponent:frameworkPath];
         DLOG(@"[Mupen] Plugin path: %@", pluginPath);
+
+        // Check if the plugin path exists
+        if (![[NSFileManager defaultManager] fileExistsAtPath:pluginPath]) {
+            NSString *errorMessage = [NSString stringWithFormat:@"Plugin file does not exist at path: %@", pluginPath];
+            ELOG(@"[Mupen] %@", errorMessage);
+            return [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                       code:PVEmulatorCoreErrorCodeCouldNotLoadPlugin
+                                   userInfo:@{
+                                       NSLocalizedDescriptionKey: @"Failed to load game.",
+                                       NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat:@"Mupen64Plus could not find %@ Plugin.", pluginName],
+                                       NSLocalizedRecoverySuggestionErrorKey: errorMessage
+                                   }];
+        }
 
         // Clear any previous dlerror
         dlerror();
@@ -547,7 +728,7 @@ static void *dlopen_myself()
         plugins[pluginType] = plugin_handle;
 
         // Attach the plugin to the core
-        DLOG(@"[Mupen] Attaching plugin to core");
+        DLOG(@"[Mupen] Attaching plugin to core (type: %d, handle: %p)", pluginType, plugin_handle);
         m64p_error attachError = CoreAttachPlugin(pluginType, plugin_handle);
         if (attachError != M64ERR_SUCCESS) {
             NSString *errorMessage = [NSString stringWithFormat:@"CoreAttachPlugin failed with error code: %i (%@)", attachError, [self errorCodeToString:attachError]];
@@ -561,6 +742,12 @@ static void *dlopen_myself()
             int romOpen = 0;
             CoreDoCommand(M64CMD_CORE_STATE_QUERY, M64CMD_ROM_OPEN, &romOpen);
             ELOG(@"[Mupen] ROM open state: %d", romOpen);
+
+            // Check if this plugin type is already attached
+            void* existingPlugin = plugins[pluginType];
+            if (existingPlugin != NULL && existingPlugin != plugin_handle) {
+                ELOG(@"[Mupen] A plugin of type %d is already attached (handle: %p)", pluginType, existingPlugin);
+            }
 
             dlclose(plugin_handle);
             return [NSError errorWithDomain:PVEmulatorCoreErrorDomain
@@ -976,6 +1163,8 @@ static void *dlopen_myself()
 /// @param error Pointer to NSError that will be set if loading fails
 /// @return YES if core loaded successfully, NO otherwise with error set
 - (BOOL)LoadMupen64PlusCore:(NSString *)configPath dataPath:(NSString *)dataPath error:(NSError **)error {
+    DLOG(@"[Mupen] LoadMupen64PlusCore: configPath: %@, dataPath: %@", configPath, dataPath);
+
     // Load the Mupen64Plus core
     m64p_error loaderror = CoreStartup(FRONTEND_API_VERSION,
                                       configPath.fileSystemRepresentation,
@@ -988,7 +1177,8 @@ static void *dlopen_myself()
     // Check for errors and set NSError if needed
     if (loaderror != M64ERR_SUCCESS) {
         if (error != NULL) {
-            NSString *errorMessage = [NSString stringWithFormat:@"CoreStartup failed with error code: %i", loaderror];
+            NSString *errorMessage = [NSString stringWithFormat:@"CoreStartup failed with error code: %i (%@)",
+                                     loaderror, [self errorCodeToString:loaderror]];
             *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
                                          code:PVEmulatorCoreErrorCodeCouldNotLoadPlugin
                                      userInfo:@{
@@ -999,6 +1189,35 @@ static void *dlopen_myself()
         }
         return NO;
     }
+
+    // Set up debug and state callbacks explicitly
+    DLOG(@"[Mupen] Setting up debug and state callbacks");
+    m64p_error debugCallbackError = SetDebugCallback(MupenDebugCallback, (__bridge void *)self);
+    if (debugCallbackError != M64ERR_SUCCESS) {
+        ELOG(@"[Mupen] Failed to set debug callback: %d (%@)",
+             debugCallbackError, [self errorCodeToString:debugCallbackError]);
+    } else {
+        DLOG(@"[Mupen] Debug callback set successfully");
+    }
+
+    m64p_error stateCallbackError = SetStateCallback(MupenStateCallback, (__bridge void *)self);
+    if (stateCallbackError != M64ERR_SUCCESS) {
+        ELOG(@"[Mupen] Failed to set state callback: %d (%@)",
+             stateCallbackError, [self errorCodeToString:stateCallbackError]);
+    } else {
+        DLOG(@"[Mupen] State callback set successfully");
+    }
+
+    // Set debug level to verbose in debug builds
+    #if DEBUG
+    DLOG(@"[Mupen] Setting debug level to verbose");
+    int debugLevel = M64MSG_VERBOSE;
+    m64p_error debugLevelError = CoreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_EMU_STATE, &debugLevel);
+    if (debugLevelError != M64ERR_SUCCESS) {
+        ELOG(@"[Mupen] Failed to set debug level: %d (%@)",
+            debugLevelError, [self errorCodeToString:debugLevelError]);
+    }
+    #endif
 
     return YES;
 }
