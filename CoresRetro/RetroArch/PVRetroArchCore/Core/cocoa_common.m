@@ -93,7 +93,7 @@ static CocoaView* g_instance;
 void *glkitview_init(void);
 void cocoa_file_load_with_detect_core(const char *filename);
 
-@interface CocoaView()<GCDWebUploaderDelegate, UIGestureRecognizerDelegate
+@interface CocoaView()<GCDWebUploaderDelegate, GCDWebDAVServerDelegate, UIGestureRecognizerDelegate
 #ifdef HAVE_IOS_TOUCHMOUSE
 ,EmulatorTouchMouseHandlerDelegate
 #endif
@@ -761,7 +761,8 @@ void cocoa_file_load_with_detect_core(const char *filename);
 {
     [super viewWillAppear:animated];
 #if TARGET_OS_TV
-    [[WebServer sharedInstance] startUploader];
+    [[WebServer sharedInstance] startServers];
+    [WebServer sharedInstance].webDAVServer.delegate = self;
     [WebServer sharedInstance].webUploader.delegate = self;
 #endif
 }
@@ -1121,8 +1122,8 @@ static NSDictionary *topshelfDictForEntry(const struct playlist_entry *entry, gf
    }];
    if (!string_is_empty(path_data->content_db_name))
    {
-      const char *img_name = NULL;
-      if (gfx_thumbnail_get_img_name(path_data, &img_name, PLAYLIST_THUMBNAIL_FLAG_STD_NAME))
+      const char *img_name = path_data->content_img;
+      if (!string_is_empty(img_name))
          dict[@"img"] = [NSString stringWithFormat:@"https://thumbnails.libretro.com/%s/Named_Boxarts/%s",
                          path_data->content_db_name, img_name];
    }
