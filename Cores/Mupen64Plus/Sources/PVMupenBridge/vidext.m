@@ -39,6 +39,8 @@
 #import <UIKit/UIKit.h>
 #endif
 
+@import PVCoreBridge;
+
 #include <dlfcn.h>
 
 @implementation PVMupenBridge (VidExtFunctions)
@@ -145,21 +147,38 @@ EXPORT m64p_error CALL VidExt_GL_SwapBuffers(void)
 
     // Make sure we have a valid GL context
     #if TARGET_OS_TV || TARGET_OS_IOS
-    if (current.externalGLContext && [EAGLContext currentContext] == current.externalGLContext) {
-        // Flush GL commands to ensure they're executed
-        glFlush();
+    // Check if we're using OpenGL or Vulkan/Metal
+    if (current.renderMode == M64P_RENDER_OPENGL) {
+        // For OpenGL, make sure we have a valid GL context
+        if (current.externalGLContext) {
+            // Make sure the context is current
+            if ([EAGLContext currentContext] != current.externalGLContext) {
+                if (![EAGLContext setCurrentContext:current.externalGLContext]) {
+                    ELOG(@"[Mupen] Failed to set current GL context in SwapBuffers");
+                    return M64ERR_SYSTEM_FAIL;
+                }
+            }
 
-        // Signal that the frame is ready to be displayed
-        [current.frontBufferCondition lock];
-        current.isFrontBufferReady = YES;
-        [current.frontBufferCondition signal];
-        [current.frontBufferCondition unlock];
+            // Flush GL commands to ensure they're executed
+            glFlush();
+
+            // Signal that the frame is ready to be displayed
+            [current.renderDelegate didRenderFrameOnAlternateThread];
+            DLOG(@"[Mupen] Notified render delegate that frame is ready");
+
+            return M64ERR_SUCCESS;
+        }
+    } else if (current.renderMode == M64P_RENDER_VULKAN) {
+        // For Vulkan/Metal, we don't need to swap buffers in the traditional sense
+        // Just notify the render delegate that a frame is ready
+        [current.renderDelegate didRenderFrameOnAlternateThread];
+        DLOG(@"[Mupen] Notified render delegate that Vulkan/Metal frame is ready");
 
         return M64ERR_SUCCESS;
     }
     #endif
 
-    ELOG(@"[Mupen] VidExt_GL_SwapBuffers failed - no valid GL context");
+    ELOG(@"[Mupen] VidExt_GL_SwapBuffers failed - no valid rendering context");
     return M64ERR_SYSTEM_FAIL;
 }
 
@@ -382,31 +401,58 @@ EXPORT m64p_error CALL VidExt_InitWithRenderMode(m64p_render_mode renderMode)
         #if defined(VIDEXT_VULKAN)
         DLOG(@"[Mupen] Initializing with Vulkan render mode");
 
-        // Set up Vulkan-specific initialization
-        if (current.metalLayer == nil) {
-            ELOG(@"[Mupen] No Metal layer available for Vulkan rendering");
-            return M64ERR_SYSTEM_FAIL;
-        }
+        // Check if we have a Metal layer from the render delegate
+        MTKView *mtlView = [current.renderDelegate mtlView];
+        if (mtlView) {
+            DLOG(@"[Mupen] Found MTKView from render delegate: %@", mtlView);
 
-        #if TARGET_OS_IOS || TARGET_OS_TV
-        // Get the screen scale for proper resolution handling
-        CGFloat screenScale = UIScreen.mainScreen.scale;
-        current.metalLayer.contentsScale = screenScale;
-        DLOG(@"[Mupen] Set Metal layer contents scale to %f", screenScale);
-        #endif
-
-        // Initialize Vulkan extension names
-        if (current.vulkanExtensionNames == NULL) {
-            current.vulkanExtensionNames = malloc(2 * sizeof(const char*));
-            if (current.vulkanExtensionNames == NULL) {
-                ELOG(@"[Mupen] Failed to allocate memory for Vulkan extension names");
-                return M64ERR_NO_MEMORY;
+            // Get the Metal layer from the view on the main thread
+            __block CAMetalLayer *metalLayer = nil;
+            if ([NSThread isMainThread]) {
+                metalLayer = (CAMetalLayer *)mtlView.layer;
+            } else {
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    metalLayer = (CAMetalLayer *)mtlView.layer;
+                });
             }
-            current.vulkanExtensionNames[0] = "VK_KHR_surface";
-            current.vulkanExtensionNames[1] = "VK_EXT_metal_surface";
+
+            if (metalLayer) {
+                current.metalLayer = metalLayer;
+                DLOG(@"[Mupen] Set Metal layer from MTKView: %@", metalLayer);
+
+                #if TARGET_OS_IOS || TARGET_OS_TV
+                // Get the screen scale for proper resolution handling
+                CGFloat screenScale = UIScreen.mainScreen.scale;
+
+                // Update the Metal layer's contents scale on the main thread
+                if ([NSThread isMainThread]) {
+                    metalLayer.contentsScale = screenScale;
+                } else {
+                    dispatch_sync(dispatch_get_main_queue(), ^{
+                        metalLayer.contentsScale = screenScale;
+                    });
+                }
+
+                DLOG(@"[Mupen] Set Metal layer contents scale to %f", screenScale);
+                #endif
+
+                // Initialize Vulkan extension names
+                if (current.vulkanExtensionNames == NULL) {
+                    current.vulkanExtensionNames = malloc(2 * sizeof(const char*));
+                    if (current.vulkanExtensionNames == NULL) {
+                        ELOG(@"[Mupen] Failed to allocate memory for Vulkan extension names");
+                        return M64ERR_NO_MEMORY;
+                    }
+                    current.vulkanExtensionNames[0] = "VK_KHR_surface";
+                    current.vulkanExtensionNames[1] = "VK_EXT_metal_surface";
+                }
+
+                return M64ERR_SUCCESS;
+            }
         }
 
-        return M64ERR_SUCCESS;
+        ELOG(@"[Mupen] No Metal view available for Vulkan rendering");
+        return M64ERR_SYSTEM_FAIL;
         #else
         ELOG(@"[Mupen] Vulkan render mode requested but not supported");
         return M64ERR_UNSUPPORTED;

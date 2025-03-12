@@ -204,7 +204,7 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 @property (nonatomic, assign) double emulationFPS;
 @property (nonatomic, assign) double renderFPS;
 
-@property(nonatomic, weak, nullable) id<PVRenderDelegate> renderDelegate;
+@property(nonatomic, weak, nullable) NSObject<PVRenderDelegate>* renderDelegate;
 
 @property (atomic, strong, readonly, nonnull) NSCondition  *frontBufferCondition;
 @property (atomic, strong, readonly, nonnull) NSLock  *frontBufferLock;

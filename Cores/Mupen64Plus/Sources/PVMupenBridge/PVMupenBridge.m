@@ -1382,28 +1382,57 @@ static void *dlopen_myself()
     DLOG(@"[Mupen] Finding external GL context");
 
     #if TARGET_OS_TV || TARGET_OS_IOS
-    // First try to get the framebuffer from the render delegate
-//    if ([self.renderDelegate respondsToSelector:@selector(presentationFramebuffer)]) {
-        id framebufferObj = [self.renderDelegate presentationFramebuffer];
-        if (framebufferObj && [framebufferObj isKindOfClass:[NSNumber class]]) {
-            GLuint framebuffer = [(NSNumber *)framebufferObj unsignedIntValue];
-            if (framebuffer != 0) {
-                DLOG(@"[Mupen] Found external framebuffer from render delegate: %u", framebuffer);
-                self.defaultFramebuffer = framebuffer;
-                self.framebufferInitialized = YES;
+    // First check if we should be using Metal instead of OpenGL
+    MTKView *mtlView = [self.renderDelegate mtlView];
+    if (mtlView) {
+        DLOG(@"[Mupen] Found MTKView from render delegate: %@", mtlView);
 
-                // Try to get the current GL context
-                EAGLContext *currentContext = [EAGLContext currentContext];
-                if (currentContext) {
-                    DLOG(@"[Mupen] Using current GL context: %@", currentContext);
-                    self.externalGLContext = currentContext;
-                    return YES;
-                } else {
-                    ELOG(@"[Mupen] Found framebuffer but no current GL context");
-                }
+        // Get the Metal layer from the view on the main thread
+        __block CAMetalLayer *metalLayer = nil;
+        if ([NSThread isMainThread]) {
+            metalLayer = (CAMetalLayer *)mtlView.layer;
+        } else {
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                metalLayer = (CAMetalLayer *)mtlView.layer;
+            });
+        }
+
+        if (metalLayer) {
+            self.metalLayer = metalLayer;
+            DLOG(@"[Mupen] Set Metal layer from MTKView: %@", metalLayer);
+
+            // For Metal rendering, we'll use Vulkan mode
+            self.renderMode = M64P_RENDER_VULKAN;
+
+            // We don't call startRenderingOnAlternateThread here as it's already called in runMupenEmuThread
+
+            return YES;
+        }
+    }
+
+    // If we're not using Metal, try to get the framebuffer from the render delegate
+    id framebufferObj = [self.renderDelegate presentationFramebuffer];
+    if (framebufferObj && [framebufferObj isKindOfClass:[NSNumber class]]) {
+        GLuint framebuffer = [(NSNumber *)framebufferObj unsignedIntValue];
+        if (framebuffer != 0) {
+            DLOG(@"[Mupen] Found external framebuffer from render delegate: %u", framebuffer);
+            self.defaultFramebuffer = framebuffer;
+            self.framebufferInitialized = YES;
+
+            // Try to get the current GL context
+            EAGLContext *currentContext = [EAGLContext currentContext];
+            if (currentContext) {
+                DLOG(@"[Mupen] Using current GL context: %@", currentContext);
+                self.externalGLContext = currentContext;
+
+                // We don't call startRenderingOnAlternateThread here as it's already called in runMupenEmuThread
+
+                return YES;
+            } else {
+                ELOG(@"[Mupen] Found framebuffer but no current GL context");
             }
         }
-//    }
+    }
 
     // If we couldn't get the framebuffer from the render delegate, try the current context
     EAGLContext *currentContext = [EAGLContext currentContext];
@@ -1420,32 +1449,15 @@ static void *dlopen_myself()
             if (self.defaultFramebuffer != 0) {
                 self.framebufferInitialized = YES;
                 DLOG(@"[Mupen] Initialized framebuffer: %u", self.defaultFramebuffer);
+
+                // We don't call startRenderingOnAlternateThread here as it's already called in runMupenEmuThread
+
+                return YES;
             } else {
                 ELOG(@"[Mupen] No valid framebuffer bound in current GL context");
             }
         }
-
-        return YES;
     }
-
-    // If we still don't have a context, check if the render delegate has an MTKView
-//    if ([self.renderDelegate respondsToSelector:@selector(mtlView)]) {
-        id mtlView = [self.renderDelegate mtlView];
-        if (mtlView) {
-            DLOG(@"[Mupen] Found MTKView from render delegate, will use Metal rendering");
-            // For Metal rendering, we don't need an OpenGL context
-            // But we should set up the Metal layer
-            if ([mtlView respondsToSelector:@selector(layer)]) {
-                CALayer *layer = [mtlView layer];
-                if ([layer isKindOfClass:[CAMetalLayer class]]) {
-                    self.metalLayer = (CAMetalLayer *)layer;
-                    DLOG(@"[Mupen] Found Metal layer from MTKView");
-                    // For Metal, we don't need a framebuffer
-                    return YES;
-                }
-            }
-        }
-//    }
     #endif
 
     ELOG(@"[Mupen] No GL context or Metal view found");
