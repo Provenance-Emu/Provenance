@@ -15,6 +15,7 @@ import RxSwift
 import PVPrimitives
 import PVFileSystem
 import PVRealm
+import Combine
 
 public enum SyncError: Error {
     case noUbiquityURL
@@ -59,12 +60,14 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     lazy var newFiles: ConcurrentSet<URL> = []
     lazy var uploadedFiles: ConcurrentSet<URL> = []
     let directories: ConcurrentSet<String>
-    let fileManager = FileManager.default
+    let fileManager: FileManager = .default
     let notificationCenter: NotificationCenter
     var status: iCloudSyncStatus = .initialUpload
     let errorHandler: ErrorHandler
     var initialSyncResult: SyncResult = .indeterminate
     let fileImportQueueMaxCount = 1000
+    var purgeStatus: DatastorePurgeStatus = .incomplete
+    private var querySubscriber: AnyCancellable?
     
     init(directories: ConcurrentSet<String>,
          notificationCenter: NotificationCenter,
@@ -77,11 +80,22 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     deinit {
         metadataQuery.disableUpdates()
         metadataQuery.stop()
+        querySubscriber?.cancel()
         notificationCenter.removeObserver(self, name: .NSMetadataQueryDidFinishGathering, object: metadataQuery)
         notificationCenter.removeObserver(self, name: .NSMetadataQueryDidUpdate, object: metadataQuery)
         let removed = removeFromiCloud()
         DLOG("removed: \(removed)")
         DLOG("dying")
+    }
+    
+    var canPurgeDatastore: Bool {
+        purgeStatus == .incomplete
+            && initialSyncResult == .success
+            //if we have errors, it's better to just assume something happened while importing, so instead of creating a bigger mess, just NOT delete any files
+            && errorHandler.numberOfErrors == 0
+            //we have to ensure that everything has been downloaded/imported before attempting to remove anything
+            && pendingFilesToDownload.count == 0
+            && newFiles.count == 0
     }
     
     var localAndCloudDirectories: [URL: URL] {
@@ -176,8 +190,17 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             predicateArgs.append(NSMetadataItemPathKey)
             predicateArgs.append("/Documents/\(directory)/")
         }
+        metadataQuery.notificationBatchingInterval = 1
         metadataQuery.predicate = NSPredicate(format: predicateFormat, argumentArray: predicateArgs)
         //TODO: update to use Publishers.MergeMany
+//        let names: [NSNotification.Name] = [.NSMetadataQueryDidFinishGathering, .NSMetadataQueryDidUpdate]
+//        let publishers = names.map { notificationCenter.publisher(for: $0) }
+//        querySubscriber = Publishers.MergeMany(publishers).receive(on: DispatchQueue.main).sink { [weak self] notification in
+//            Task {
+//                await self?.queryFinished(notification: notification)
+//                iterationComplete?()
+//            }
+//        }
         notificationCenter.addObserver(
             forName: .NSMetadataQueryDidFinishGathering,
             object: metadataQuery,
@@ -187,7 +210,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                     iterationComplete?()
                 }
             }
-        //listen for deletions and new files. what about conflicts?
+        //listen for deletions and new files.
         notificationCenter.addObserver(
             forName: .NSMetadataQueryDidUpdate,
             object: metadataQuery,
@@ -210,7 +233,10 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         else {
             return
         }
-        let fileManager = FileManager.default
+        metadataQuery.disableUpdates()
+        defer {
+            metadataQuery.enableUpdates()
+        }
         let removedObjects = notification.userInfo?[NSMetadataQueryUpdateRemovedItemsKey]
         if let actualRemovedObjects = removedObjects as? [NSMetadataItem] {
             DLOG("\(directories): actualRemovedObjects: (\(actualRemovedObjects.count)) \(actualRemovedObjects)")
@@ -252,7 +278,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                             }
                             self?.insertDownloadedFile(file)
                         }
-                    default: DLOG("\(file): download status: \(downloadStatus)")
+                    default: ILOG("Other: \(file): download status: \(downloadStatus)")
                 }
             }
         }
@@ -518,6 +544,44 @@ class SaveStateSyncer: iCloudContainerSyncer {
         jsonDecorder.dataDecodingStrategy = .deferredToData
     }
     
+    func removeSavesDeletedWhileApplicationClosed() {
+        guard canPurgeDatastore
+        else {
+            return
+        }
+        
+        defer {
+            purgeStatus = .complete
+        }
+        guard let actualContainrUrl = containerURL
+        else {
+            return
+        }
+        let realm: Realm
+        do {
+            realm = try Realm()
+        } catch {
+            ELOG("error clearing saves deleted while application was closed")
+            return
+        }
+        realm.objects(PVSaveState.self).forEach { save in
+            guard let image = save.image
+            else {
+                return
+            }
+            let saveUrl = actualContainrUrl.appendingPathComponent(image.partialPath)
+            if !fileManager.fileExists(atPath: saveUrl.pathDecoded) {
+                do {
+                    try realm.write {
+                        realm.delete(save)
+                    }
+                } catch {
+                    ELOG("error deleting \(saveUrl), \(error)")
+                }
+            }
+        }
+    }
+    
     override func insertDownloadedFile(_ file: URL) {
         guard let _ = pendingFilesToDownload.remove(file.absoluteString),
               "json".caseInsensitiveCompare(file.pathExtension) == .orderedSame
@@ -589,6 +653,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
         else {
             return
         }
+        removeSavesDeletedWhileApplicationClosed()
         guard !newFiles.isEmpty
         else {
             return
@@ -626,6 +691,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
             }
         }
         processed.enqueue(entry: processedCount)
+        removeSavesDeletedWhileApplicationClosed()
     }
     
     func updateExistingSave(_ existing: PVSaveState, _ realm: Realm, _ save: SaveState, _ json: URL) {
@@ -661,7 +727,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
     }
 }
 
-enum GamePurgeStatus {
+enum DatastorePurgeStatus {
     case incomplete
     case complete
 }
@@ -674,7 +740,6 @@ enum GameStatus {
 class RomsSyncer: iCloudContainerSyncer {
     let gameImporter = GameImporter.shared
     var processingFiles = ConcurrentSet<URL>()
-    var purgeStatus: GamePurgeStatus = .incomplete
     let multiFileRoms: ConcurrentDictionary<String, [URL]> = [:]
     
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
@@ -698,14 +763,7 @@ class RomsSyncer: iCloudContainerSyncer {
     
     /// The only time that we don't know if files have been deleted by the user is when it happens while the app is closed. so we have to query the db and check
     func removeGamesDeletedWhileApplicationClosed() {
-        guard purgeStatus == .incomplete,
-              initialSyncResult == .success,
-              //if we have errors, it's better to just assume something happened while importing, so instead of creating a bigger mess, just NOT delete any files
-              errorHandler.numberOfErrors == 0,
-              //we have to ensure that everything has been downloaded/imported before attempting to remove anything
-              pendingFilesToDownload.count == 0,
-              newFiles.count == 0,
-              processingFiles.count == 0
+        guard canPurgeDatastore
         else {
             return
         }
@@ -839,7 +897,6 @@ class RomsSyncer: iCloudContainerSyncer {
         else {
             return
         }
-        clearProcessedFiles()
         removeGamesDeletedWhileApplicationClosed()
         guard !newFiles.isEmpty
                 || (!multiFileRoms.isEmpty && pendingFilesToDownload.isEmpty)
@@ -859,10 +916,6 @@ class RomsSyncer: iCloudContainerSyncer {
         }
         importNewRomFiles()
     
-    }
-    
-    func clearProcessedFiles() {//TODO: this may be interfering with the game importer itself. perhaps we need to refactor to return the list of success and here in this class we remove from the processingFiles
-        gameImporter.removeSuccessfulImports(from: &processingFiles)
     }
     
     func importNewRomFiles() {
