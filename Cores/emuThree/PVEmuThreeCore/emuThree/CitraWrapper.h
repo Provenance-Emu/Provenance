@@ -12,6 +12,23 @@
 #import "InputBridge.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class MotionInputBridge;
+
+typedef NS_ENUM(NSUInteger, KeyboardButtonConfig) {
+    KeyboardButtonConfigSingle,
+    KeyboardButtonConfigDual,
+    KeyboardButtonConfigTriple,
+    KeyboardButtonConfigNone
+};
+
+@interface KeyboardConfig : NSObject
+@property (nonatomic, strong) NSString * _Nullable hintText;
+@property (nonatomic, assign) KeyboardButtonConfig buttonConfig;
+
+-(KeyboardConfig *) initWithHintText:(NSString * _Nullable)hintText buttonConfig:(KeyboardButtonConfig)buttonConfig;
+@end
+
 @interface CitraWrapper : NSObject {
     CAMetalLayer *_metalLayer;
     NSString *_path;

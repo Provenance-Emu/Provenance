@@ -44,16 +44,73 @@ public enum PVGLViewError: Error {
 
 #if USE_METAL
 extension PVGLViewController: MTKViewDelegate {
-    
+
 }
 #endif
 
 final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
+    func setPreferredRefreshRate(_ rate: Float) {
+        ILOG("Setting preferred refresh rate to \(rate) Hz")
+
+//        #if os(iOS) || os(tvOS)
+//        if #available(iOS 15.0, tvOS 15.0, *) {
+//            if let window = view.window {
+//                let preferredFrameRateRange: CAFrameRateRange
+//
+//                if rate > 0 {
+//                    // Create a range with the specified rate as the preferred rate
+//                    preferredFrameRateRange = CAFrameRateRange(minimum: max(30, rate/2),
+//                                                              maximum: rate * 1.1,
+//                                                              preferred: rate)
+//                } else {
+//                    // Default to device capabilities if rate is 0 or negative
+//                    preferredFrameRateRange = CAFrameRateRange(minimum: 30,
+//                                                              maximum: 120,
+//                                                              preferred: 60)
+//                }
+//
+//                window.windowScene?.screen.maximumFramesPerSecond = Int(rate)
+//
+//                // Apply the frame rate range to the display
+//                CATransaction.begin()
+//                window.windowScene?.screen.preferredFrameRateRange = preferredFrameRateRange
+//                CATransaction.commit()
+//
+//                ILOG("Set display refresh rate range: \(preferredFrameRateRange.minimum)-\(preferredFrameRateRange.maximum) Hz (preferred: \(preferredFrameRateRange.preferred) Hz)")
+//            } else {
+//                WLOG("Cannot set refresh rate - window is nil")
+//            }
+//        } else {
+//            WLOG("Setting refresh rate not supported on this iOS/tvOS version")
+//        }
+//        #else
+//        WLOG("Setting refresh rate not supported on this platform")
+//        #endif
+
+        #if USE_METAL
+        // Update MTKView's preferred FPS if using Metal
+        if let mtlView = self.mtlView {
+            let fps = rate > 0 ? Int(rate) : 60
+            mtlView.preferredFramesPerSecond = fps
+            ILOG("Set MTKView preferred FPS to \(fps)")
+        }
+        #else
+        // Update GLKView's preferred FPS if using OpenGL
+        let fps = rate > 0 ? Int(rate) : 60
+        #if USE_OPENGLES
+        preferredFramesPerSecond = fps
+        #else
+        framesPerSecond = rate
+        #endif
+        ILOG("Set preferred FPS to \(fps)")
+        #endif
+    }
+
     @inlinable
     var presentationFramebuffer: GLuint {
         _presentationFramebuffer()
     }
-    
+
     /// Returns the presentation framebuffer to use for rendering
     @inlinable
     func _presentationFramebuffer() -> GLuint {
@@ -62,42 +119,42 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         : alternateThreadFramebufferFront
         return bufferID
     }
-    
+
     weak var emulatorCore: PVEmulatorCore?
-    
+
 #if targetEnvironment(macCatalyst) || os(macOS)
     //    var isPaused: Bool = false
     //    var timeSinceLastDraw: TimeInterval = 0
     //    var framesPerSecond: Int = 0
 #endif
-    
+
     var alternateThreadFramebufferBack: GLuint = 0
     var alternateThreadColorTextureBack: GLuint = 0
     var alternateThreadDepthRenderbuffer: GLuint = 0
-    
+
     var alternateThreadColorTextureFront: GLuint = 0
     var alternateThreadFramebufferFront: GLuint = 0
-    
+
     var blitFragmentShader: GLuint = 0
     var blitShaderProgram: GLuint = 0
     var blitUniform_EmulatedImage: GLint = 0
-    
+
     var crtFragmentShader: GLuint = 0
     var crtShaderProgram: GLuint = 0
     var crtUniform_DisplayRect: GLint = 0
     var crtUniform_EmulatedImage: GLint = 0
     var crtUniform_EmulatedImageSize: GLint = 0
     var crtUniform_FinalRes: GLint = 0
-    
+
     var defaultVertexShader: GLuint = 0
-    
+
     var indexVBO: GLuint = 0
     var vertexVBO: GLuint = 0
-    
+
     var texture: GLuint = 0
-    
+
     var renderSettings = RenderSettings()
-    
+
 #if USE_METAL
     var glContext: CIContext?
     var alternateThreadGLContext: CIContext?
@@ -116,29 +173,29 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
     var alternateThreadGLContext: CGLContextObj?
     var alternateThreadBufferCopyGLContext: CGLContextObj?
 #endif
-    
+
 #if USE_DISPLAY_LINK
     var displayLink: CADisplayLink?
 #endif
 #if USE_EFFECT && !USE_METAL
     var effect: GLKBaseEffect?
 #endif
-    
+
     var glesVersion: GLESVersion = .version3
-    
+
     init(withEmulatorCore emulatorCore: PVEmulatorCore) {
         self.emulatorCore = emulatorCore
         super.init(nibName: nil, bundle: nil)
-        
+
         if emulatorCore.rendersToOpenGL {
             emulatorCore.renderDelegate = self
         }
-        
+
         renderSettings.metalFilterMode = Defaults[.metalFilterMode]
         renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
         renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
         renderSettings.nativeScaleEnabled = Defaults[.nativeScaleEnabled]
-        
+
         Task {
             for await value in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing]) {
                 renderSettings.metalFilterMode = Defaults[.metalFilterMode]
@@ -148,11 +205,11 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             }
         }
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     deinit {
         if alternateThreadDepthRenderbuffer > 0 {
             glDeleteRenderbuffers(1, &alternateThreadDepthRenderbuffer)
@@ -186,41 +243,41 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         }
         glDeleteTextures(1, &texture)
     }
-    
+
 #if USE_DISPLAY_LINK
     @objc func render() {
         emulatorCore?.executeFrame()
     }
 #endif
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
 //        view.backgroundColor = .red
         updatePreferredFPS()
-        
+
 #if !USE_METAL && USE_OPENGLES
         glContext = bestContext
-        
+
         guard let glContext = glContext else {
             ELOG("glContext is nil")
             assertionFailure("glContext is nil")
             // TODO: Alert NO gl here
             return
         }
-        
+
         ILOG("Initiated GLES version \(glContext.api.rawValue)")
-        
+
         // TODO: Need to benchmark this
 #warning("TODO: Need to benchmark this")
         glContext.isMultiThreaded = Defaults[.multiThreadedGL]
-        
+
         EAGLContext.setCurrent(glContext)
-        
+
         let view = self.view as! GLKView
 #else
         device = MTLCreateSystemDefaultDevice()
-        
+
         let view = MTKView(frame: self.view.bounds, device: device)
         mtlView = view
         self.view.addSubview(view)
@@ -230,7 +287,7 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         view.sampleCount = 4
         view.delegate = self
         commandQueue = device?.makeCommandQueue()
-        
+
         view.isPaused = false
         view.enableSetNeedsDisplay = false
 #endif
@@ -240,20 +297,20 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         view.context = self.glContext!
 #endif
         view.isUserInteractionEnabled = false
-        
+
 #if USE_DISPLAY_LINK
         displayLink = CADisplayLink(target: self, selector: #selector(render))
         displayLink?.add(to: .current, forMode: .default)
 #endif
-        
+
 #if USE_EFFECT && !USE_METAL
         effect = GLKBaseEffect()
 #endif
-        
+
         guard let emulatorCore = emulatorCore else {
             return
         }
-        
+
         let depthFormat: Int32 = Int32(emulatorCore.depthFormat)
         switch depthFormat {
         case GL_DEPTH_COMPONENT16:
@@ -271,7 +328,7 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         default:
             break
         }
-        
+
         if Defaults[.nativeScaleEnabled] {
             let scale = UIScreen.main.scale
             if scale != 1 {
@@ -279,7 +336,7 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                 view.layer.rasterizationScale = scale
                 view.contentScaleFactor = scale
             }
-            
+
             if Defaults[.multiSampling] {
 #if USE_METAL
                 view.sampleCount = 4
@@ -288,17 +345,17 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
 #endif
             }
         }
-        
+
         setupVBOs()
         setupTexture()
-        
+
 #if !USE_METAL
-        
+
         do {
             VLOG("defaultVertexShader attempting to compile")
 
             try defaultVertexShader = compileShaderResource("\(VERTEX_DIR)/default_vertex", ofType: GLenum(GL_VERTEX_SHADER))
-            
+
 //            if defaultVertexShader != GL_NO_ERROR {
 //                throw PVGLViewError.glError(defaultVertexShader)
 //            }
@@ -319,15 +376,15 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             assertionFailure("Something threw \(error.localizedDescription)")
         }
 #endif
-        
+
         alternateThreadFramebufferBack = 0
         alternateThreadColorTextureBack = 0
         alternateThreadDepthRenderbuffer = 0
-        
+
         alternateThreadFramebufferFront = 0
         alternateThreadColorTextureFront = 0
     }
-    
+
 #if USE_OPENGLES
     /// Chooses the best EAGLContext for the device
     private lazy var bestContext: EAGLContext? = {
@@ -345,7 +402,7 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         }
     }()
 #endif
-    
+
     /// Updates the preferred FPS based on the emulator core
     func updatePreferredFPS() {
         let preferredFPS = emulatorCore?.frameInterval ?? 60
@@ -366,31 +423,31 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         }
         ILOG("Actual FPS: \(framesPerSecond)")
     }
-    
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        
+
         guard let emulatorCore = emulatorCore else {
             ELOG("Emulator core is nil")
             return
         }
-        
+
         let parentSafeAreaInsets = parent?.view.safeAreaInsets ?? .zero
-        
+
         if !emulatorCore.screenRect.isEmpty {
             let aspectSize = emulatorCore.aspectSize
             let ratio = aspectSize.width > aspectSize.height
             ? aspectSize.width / aspectSize.height
             : aspectSize.height / aspectSize.width
-            
+
             var parentSize = parent?.view.bounds.size ?? .zero
             if let window = view.window {
                 parentSize = window.bounds.size
             }
-            
+
             var height: CGFloat = 0
             var width: CGFloat = 0
-            
+
             if parentSize.width > parentSize.height {
                 height = Defaults[.integerScaleEnabled] ?
                 floor(parentSize.height / aspectSize.height) * aspectSize.height : parentSize.height
@@ -408,36 +465,36 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                     width = height * ratio
                 }
             }
-            
+
             var origin = CGPoint(x: (parentSize.width - width) / 2, y: 0)
             if traitCollection.userInterfaceIdiom == .phone && parentSize.height > parentSize.width {
                 origin.y = parentSafeAreaInsets.top + 40 // below menu button
             } else {
                 origin.y = (parentSize.height - height) / 2 // centered
             }
-            
+
             view.frame = CGRect(origin: origin, size: CGSize(width: width, height: height))
         } else {
             assertionFailure("Someone should have implimented a screen rect")
         }
-        
+
         updatePreferredFPS()
     }
-    
+
     /// Sets up the GL texture for rendering
     func setupTexture() {
         guard let emulatorCore = emulatorCore else {
             ELOG("Emulator core is nil")
             return
         }
-        
+
         glGenTextures(1, &texture)
         glBindTexture(GLenum(GL_TEXTURE_2D), texture)
-        
+
         glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GLint(emulatorCore.internalPixelFormat),
                      GLsizei(emulatorCore.bufferSize.width), GLsizei(emulatorCore.bufferSize.height),
                      0, GLenum(emulatorCore.pixelFormat), GLenum(emulatorCore.pixelType), emulatorCore.videoBuffer)
-        
+
         if renderSettings.smoothingEnabled {
             glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GLint(GL_LINEAR))
             glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GLint(GL_LINEAR))
@@ -448,45 +505,45 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_S), GLint(GL_CLAMP_TO_EDGE))
         glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GLint(GL_CLAMP_TO_EDGE))
     }
-    
+
     /// Sets up the vertex buffer objects (VBOs) for rendering
     func setupVBOs() {
         glGenBuffers(1, &vertexVBO)
         updateVBO(withScreenRect: emulatorCore?.screenRect ?? .zero, andVideoBufferSize: emulatorCore?.bufferSize ?? .zero)
-        
+
         var indices: [GLushort] = [0, 1, 2, 0, 2, 3]
         glGenBuffers(1, &indexVBO)
         glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), indexVBO)
         glBufferData(GLenum(GL_ELEMENT_ARRAY_BUFFER), MemoryLayout<GLushort>.stride * indices.count, &indices, GLenum(GL_STATIC_DRAW))
         glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), 0)
     }
-    
+
     /// Updates the VBO with the latest screen rectangle and buffer size
     func updateVBO(withScreenRect screenRect: CGRect, andVideoBufferSize videoBufferSize: CGSize) {
         let texLeft = screenRect.origin.x / videoBufferSize.width
         let texTop = screenRect.origin.y / videoBufferSize.height
         let texRight = (screenRect.origin.x + screenRect.width) / videoBufferSize.width
         let texBottom = (screenRect.origin.y + screenRect.height) / videoBufferSize.height
-        
+
         var texCoordTop = texTop
         var texCoordBottom = texBottom
         if emulatorCore?.rendersToOpenGL ?? false {
             texCoordTop = (screenRect.origin.y + screenRect.height) / videoBufferSize.height
             texCoordBottom = screenRect.origin.y / videoBufferSize.height
         }
-        
+
         var quadVertices = [
             PVVertex(x: -1, y: -1, z: 1, u: GLfloat(texLeft),  v: GLfloat(texCoordBottom)),
             PVVertex(x:  1, y: -1, z: 1, u: GLfloat(texRight), v: GLfloat(texCoordBottom)),
             PVVertex(x:  1, y:  1, z: 1, u: GLfloat(texRight), v: GLfloat(texCoordTop)),
             PVVertex(x: -1, y:  1, z: 1, u: GLfloat(texLeft),  v: GLfloat(texCoordTop))
         ]
-        
+
         glBindBuffer(GLenum(GL_ARRAY_BUFFER), vertexVBO)
         glBufferData(GLenum(GL_ARRAY_BUFFER), MemoryLayout<PVVertex>.stride * quadVertices.count, &quadVertices, GLenum(GL_DYNAMIC_DRAW))
         glBindBuffer(GLenum(GL_ARRAY_BUFFER), 0)
     }
-    
+
 #if USE_OPENGLES || USE_OPENGL
     /// Compiles a shader from a resource file
     func compileShaderResource(_ shaderResourceName: String, ofType shaderType: GLenum) throws -> GLuint {
@@ -495,16 +552,16 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
 
         let docsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent(fileName).path
         let fm = FileManager.default
-        
+
         let bundleShaderPath = Bundle.module.path(forResource: shaderResourceName,
                                                 ofType: "glsl")
         guard let bundleShaderPath = bundleShaderPath else {
             ELOG("bundleShaderPath is nil")
             throw NSError(domain: "org.provenance.core", code: -1, userInfo: [NSLocalizedDescriptionKey: "bundleShaderPath is null"])
         }
-        
+
         var shaderPath: String
-        
+
 #if !os(tvOS)
         if !fm.fileExists(atPath: docsPath) {
             VLOG("Shader not found at path: \(docsPath), copying from bundle")
@@ -512,7 +569,7 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             try fm.copyItem(atPath: bundleShaderPath, toPath: docsPath)
             VLOG("Shaders coppied successfully")
         }
-        
+
         if fm.fileExists(atPath: docsPath) {
             shaderPath = docsPath
         } else {
@@ -521,34 +578,34 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
 #else
         shaderPath = bundleShaderPath
 #endif // !os(tvOS)
-        
+
         guard !shaderPath.isEmpty else {
             ELOG("shaderPath is empty")
             throw NSError(domain: "org.provenance.core", code: -1, userInfo: [NSLocalizedDescriptionKey: "shaderPath is null"])
         }
-        
+
         VLOG("Attempting to compile shader at path: \(bundleShaderPath)")
-        
+
         guard let shaderSource = try? String(contentsOfFile: shaderPath, encoding: .ascii) else {
             ELOG("Nil shaderSource: \(shaderPath)")
             throw NSError(domain: "org.provenance.core", code: -1, userInfo: [NSLocalizedDescriptionKey: "shaderSource is null"])
         }
-        
+
         guard let shaderSourceCString = shaderSource.cString(using: .ascii) else {
             ELOG("Nil shaderSourceCString")
             throw NSError(domain: "org.provenance.core", code: -1, userInfo: [NSLocalizedDescriptionKey: "shaderSourceCString is null"])
         }
-        
+
         let shader = glCreateShader(shaderType)
         guard shader != 0 else {
             ELOG("Nil shader")
             throw NSError(domain: "org.provenance.core", code: -1, userInfo: [NSLocalizedDescriptionKey: "shader is null"])
         }
-        
+
         var shaderSourceCStringPointer = UnsafePointer<GLchar>?(shaderSourceCString)
         glShaderSource(shader, 1, &shaderSourceCStringPointer, nil)
         glCompileShader(shader)
-        
+
         var compiled: GLint = 0
         glGetShaderiv(shader, GLenum(GL_COMPILE_STATUS), &compiled)
         if compiled == 0 {
@@ -566,21 +623,21 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                                 [NSLocalizedDescriptionKey: "Error compiling shader",
                           NSLocalizedFailureReasonErrorKey: log])
             }
-            
+
             glDeleteShader(shader)
             ELOG("compiled == 0")
             return 0
         }
-        
+
         return shader
     }
-    
+
 #if !os(tvOS)
     func createShadersDirs(_ directories: [String]) throws {
         let fm = FileManager.default
         let docsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        
-        
+
+
         for dir in directories {
             do {
                 try fm.createDirectory(at: docsPath.appendingPathComponent(dir), withIntermediateDirectories: true, attributes: nil)
@@ -591,24 +648,24 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         }
     }
 #endif
-    
+
     /// Links a vertex and fragment shader into a shader program
     func linkVertexShader(_ vertexShader: GLuint, withFragmentShader fragmentShader: GLuint) throws -> GLuint {
         let shaderProgram = glCreateProgram()
-        
+
         guard shaderProgram != 0 else {
             ELOG("shaerProgrem == 0")
             throw NSError(domain: "org.provenance.core", code: -1, userInfo: [NSLocalizedDescriptionKey: "shaderProgram is null"])
         }
-        
+
         glAttachShader(shaderProgram, vertexShader)
         glAttachShader(shaderProgram, fragmentShader)
-        
+
         glBindAttribLocation(shaderProgram, GLuint(GLKVertexAttrib.position.rawValue), "vPosition")
         glBindAttribLocation(shaderProgram, GLuint(GLKVertexAttrib.texCoord0.rawValue), "vTexCoord")
-        
+
         glLinkProgram(shaderProgram)
-        
+
         var linkStatus: GLint = 0
         glGetProgramiv(shaderProgram, GLenum(GL_LINK_STATUS), &linkStatus)
         if linkStatus == 0 {
@@ -621,87 +678,87 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                 ELOG("Error linking shader program: \(errorString)")
                 infoLog.deallocate()
             }
-            
+
             glDeleteProgram(shaderProgram)
             ELOG("linkStatus == 0")
-            
+
             throw NSError(domain: "org.provenance.core", code: -1, userInfo: [NSLocalizedDescriptionKey: "linkStatus is 0"])
             return 0
         }
-        
+
         return shaderProgram
     }
-    
+
     /// Sets up the blit shader for rendering
     func setupBlitShader() throws {
         blitFragmentShader = try compileShaderResource("\(BLITTER_DIR)/blit_fragment", ofType: GLenum(GL_FRAGMENT_SHADER))
-        
+
         if blitFragmentShader == 0 {
             ELOG("blitFragmentShader == \(blitFragmentShader)")
             throw PVGLViewError.glError(blitFragmentShader)
         }
-        
+
         blitShaderProgram = try linkVertexShader(defaultVertexShader, withFragmentShader: blitFragmentShader)
-        
+
         if blitShaderProgram == 0 {
             ELOG("blitShaderProgram == \(blitShaderProgram)")
             throw PVGLViewError.glError(blitShaderProgram)
         }
-        
+
         blitUniform_EmulatedImage = glGetUniformLocation(blitShaderProgram, "EmulatedImage")
     }
-    
+
     /// Sets up the CRT shader for rendering
     func setupCRTShader() throws {
         crtFragmentShader = try compileShaderResource("\(FILTER_DIR)/crt_fragment", ofType: GLenum(GL_FRAGMENT_SHADER))
-        
+
         if crtFragmentShader == 0 {
             ELOG("crtFragmentShader == \(crtFragmentShader)")
             throw PVGLViewError.glError(crtShaderProgram)
         }
-        
+
         crtShaderProgram = try linkVertexShader(defaultVertexShader, withFragmentShader: crtFragmentShader)
-        
+
         if crtShaderProgram == 0 {
             ELOG("crtShaderProgram == \(crtShaderProgram)")
             throw PVGLViewError.glError(crtShaderProgram)
         }
-        
+
         crtUniform_DisplayRect = glGetUniformLocation(crtShaderProgram, "DisplayRect")
         crtUniform_EmulatedImage = glGetUniformLocation(crtShaderProgram, "EmulatedImage")
         crtUniform_EmulatedImageSize = glGetUniformLocation(crtShaderProgram, "EmulatedImageSize")
         crtUniform_FinalRes = glGetUniformLocation(crtShaderProgram, "FinalRes")
     }
 #endif
-    
+
 #if USE_METAL
     // MARK: - MTKViewDelegate
-    
+
     /// Called whenever the drawable size of the view will change
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         // no-op
     }
-    
+
     /// Called when the view needs to render
 //
 //    func draw(in view: MTKView) {
 //        guard let emulatorCore = emulatorCore else {
 //            return
 //        }
-//        
+//
 //        if emulatorCore.skipEmulationLoop {
 //            return
 //        }
-//        
+//
 //        weak var weakSelf = self
-//        
+//
 //        let renderBlock = { [weak self] in
 //            guard let self = self else {
 //                return
 //            }
-//            
+//
 //            let screenRect = self.emulatorCore?.screenRect ?? .zero
-//            
+//
 //            var frontBufferTex: GLuint = 0
 //            if self.emulatorCore?.rendersToOpenGL ?? false {
 //                frontBufferTex = self.alternateThreadColorTextureFront
@@ -716,12 +773,12 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
 //                                self.renderSettings.videoBuffer)
 //                frontBufferTex = self.texture
 //            }
-//            
+//
 //            if frontBufferTex != 0 {
 //                glActiveTexture(GLenum(GL_TEXTURE0))
 //                glBindTexture(GLenum(GL_TEXTURE_2D), frontBufferTex)
 //            }
-//            
+//
 //            autoreleasepool {
 //                guard let device = self.device,
 //                      let commandQueue = self.commandQueue,
@@ -731,27 +788,27 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
 //                      let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor) else {
 //                    return
 //                }
-//                
+//
 //                let crtEnabled = self.renderSettings.crtFilterEnabled && !(self.emulatorCore?.screenType.stringValue.lowercased().contains("lcd") ?? false)
 //                let lcdEnabled = self.renderSettings.lcdFilterEnabled && (self.emulatorCore?.screenType.stringValue.lowercased().contains("lcd") ?? false)
-//                
+//
 //                if crtEnabled {
 //                    guard let pipeline = self.crtPipeline,
 //                          let shader = pipeline.vertexFunction else {
 //                        return
 //                    }
-//                    
+//
 //                    renderEncoder.setRenderPipelineState(pipeline)
 //                    renderEncoder.setVertexFunction(shader)
-//                    
+//
 //                    var displayRect = self.renderSettings.screenRect
 //                    renderEncoder.setFragmentBytes(&displayRect, length: MemoryLayout<CGRect>.stride, index: 0)
-//                    
+//
 //                    renderEncoder.setFragmentTexture(self.texture, index: 0)
-//                    
+//
 //                    var imageSize = self.renderSettings.videoBufferSize
 //                    renderEncoder.setFragmentBytes(&imageSize, length: MemoryLayout<CGSize>.stride, index: 1)
-//                    
+//
 //                    var finalRes = CGSize(width: CGFloat(view.drawableSize.width),
 //                                          height: CGFloat(view.drawableSize.height))
 //                    renderEncoder.setFragmentBytes(&finalRes, length: MemoryLayout<CGSize>.stride, index: 2)
@@ -761,27 +818,27 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
 //                    guard let pipeline = self.blitPipeline else {
 //                        return
 //                    }
-//                    
+//
 //                    renderEncoder.setRenderPipelineState(pipeline)
 //                    renderEncoder.setFragmentTexture(self.texture, index: 0)
 //                }
-//                
+//
 //                renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6)
 //                renderEncoder.endEncoding()
-//                
+//
 //                guard let drawable = view.currentDrawable else {
 //                    return
 //                }
-//                
+//
 //                commandBuffer.present(drawable)
 //                commandBuffer.commit()
 //            }
-//            
+//
 //            if self.emulatorCore?.rendersToOpenGL ?? false {
 //                self.emulatorCore?.frontBufferLock.unlock()
 //            }
 //        }
-//        
+//
 //        if emulatorCore.rendersToOpenGL {
 //            if (!emulatorCore.isSpeedModified && !emulatorCore.isEmulationPaused) || emulatorCore.isFrontBufferReady {
 //                emulatorCore.frontBufferCondition.lock()
@@ -790,7 +847,7 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
 //                }
 //                let isFrontBufferReady = emulatorCore.isFrontBufferReady
 //                emulatorCore.frontBufferCondition.unlock()
-//                
+//
 //                if isFrontBufferReady {
 //                    renderBlock()
 //                    emulatorCore.frontBufferCondition.lock()
@@ -824,7 +881,7 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
               let safeCommandBuffer = commandQueue!.makeCommandBuffer() else {
             return
         }
-        
+
         guard let emulatorCore = self.emulatorCore else {
             return
         }
@@ -940,27 +997,27 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
 
 #else
     // MARK: - GLKViewDelegate
-    
+
     /// GLKView delegate method, called when the view needs to draw
     override func glkView(_ view: GLKView, drawIn rect: CGRect) {
         guard let emulatorCore = emulatorCore else {
             ELOG("emulatorCore is nil")
             return
         }
-        
+
         if emulatorCore.skipEmulationLoop {
             VLOG("skipEmulationLoop")
             return
         }
-        
+
         //        weak var weakSelf = self
-        
+
         var screenRect: CGRect = .zero
         var videoBuffer: UnsafeMutableRawPointer? = nil
         var videoBufferPixelFormat: GLenum = 0
         var videoBufferPixelType: GLenum = 0
         var videoBufferSize: CGSize = .zero
-        
+
         let fetchVideoBuffer = {
             screenRect = emulatorCore.screenRect
             videoBufferPixelFormat = emulatorCore.pixelFormat
@@ -968,30 +1025,30 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             videoBufferSize = emulatorCore.bufferSize
             videoBuffer = emulatorCore.videoBuffer
         }
-        
+
         let renderBlock = { [weak self] in
             guard let self = self else {
                 assertionFailure("self is nil")
                 return
             }
-            
+
             guard let emulatorCore = self.emulatorCore else {
                 assertionFailure("emulatorCore is nil")
                 return
             }
-            
+
 #if DEBUG
             glClearColor(1.0, 1.0, 1.0, 1.0)
             glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
 #endif
-            
+
             let rendersToOpenGL = emulatorCore.rendersToOpenGL
-            
+
             #warning("TODO: Get system type and check if CRT or LCD")
             let crtEnabled = self.renderSettings.openGLFilterMode == .CRT
-            
+
             var frontBufferTex: GLuint = 0
-            
+
             if rendersToOpenGL {
                 frontBufferTex = self.alternateThreadColorTextureFront
                 emulatorCore.frontBufferLock.lock()
@@ -1003,9 +1060,9 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                                 GLenum(videoBufferPixelFormat),
                                 GLenum(videoBufferPixelType),
                                 videoBuffer)
-                
+
                 frontBufferTex = self.texture
-                
+
 #if USE_EFFECT
                 if self.texture != 0 {
                     self.effect?.texture2d0.envMode = .replace
@@ -1014,16 +1071,16 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                     self.effect?.texture2d0.enabled = 1
                     self.effect?.useConstantColor = 1
                 }
-                
+
                 self.effect?.prepareToDraw()
 #endif
             }
-            
+
             if frontBufferTex != 0 {
                 glActiveTexture(GLenum(GL_TEXTURE0))
                 glBindTexture(GLenum(GL_TEXTURE_2D), frontBufferTex)
             }
-            
+
             if crtEnabled {
                 glUseProgram(self.crtShaderProgram)
                 glUniform4f(self.crtUniform_DisplayRect,
@@ -1032,7 +1089,7 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                 glUniform1i(self.crtUniform_EmulatedImage, 0)
                 glUniform2f(self.crtUniform_EmulatedImageSize,
                             GLfloat(videoBufferSize.width), GLfloat(videoBufferSize.height))
-                
+
                 let finalResWidth = GLfloat(view.drawableWidth)
                 let finalResHeight = GLfloat(view.drawableHeight)
                 glUniform2f(self.crtUniform_FinalRes, finalResWidth, finalResHeight)
@@ -1040,41 +1097,41 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                 glUseProgram(self.blitShaderProgram)
                 glUniform1i(self.blitUniform_EmulatedImage, 0)
             }
-            
+
             glDisable(GLenum(GL_DEPTH_TEST))
             glDisable(GLenum(GL_CULL_FACE))
-            
+
             self.updateVBO(withScreenRect: screenRect, andVideoBufferSize: videoBufferSize)
-            
+
             glBindBuffer(GLenum(GL_ARRAY_BUFFER), self.vertexVBO)
-            
+
             glEnableVertexAttribArray(GLuint(GLKVertexAttrib.position.rawValue))
             glVertexAttribPointer(GLuint(GLKVertexAttrib.position.rawValue),
                                   3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<PVVertex>.stride), nil)
-            
+
             glEnableVertexAttribArray(GLuint(GLKVertexAttrib.texCoord0.rawValue))
             let texCoordOffset = MemoryLayout<GLfloat>.stride * 3
             glVertexAttribPointer(GLuint(GLKVertexAttrib.texCoord0.rawValue),
                                   2, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<PVVertex>.stride),
                                   UnsafeRawPointer(bitPattern: texCoordOffset))
-            
+
             glBindBuffer(GLenum(GL_ARRAY_BUFFER), 0)
-            
+
             glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), self.indexVBO)
             glDrawElements(GLenum(GL_TRIANGLES), 6, GLenum(GL_UNSIGNED_SHORT), nil)
             glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), 0)
-            
+
             glDisableVertexAttribArray(GLuint(GLKVertexAttrib.texCoord0.rawValue))
             glDisableVertexAttribArray(GLuint(GLKVertexAttrib.position.rawValue))
-            
+
             glBindTexture(GLenum(GL_TEXTURE_2D), 0)
-            
+
             if rendersToOpenGL {
                 glFlush()
                 emulatorCore.frontBufferLock.unlock()
             }
         }
-        
+
         if emulatorCore.rendersToOpenGL {
             if (!emulatorCore.isSpeedModified && !emulatorCore.isEmulationPaused) || emulatorCore.isFrontBufferReady {
                 emulatorCore.frontBufferCondition.lock()
@@ -1083,11 +1140,11 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                 }
                 let isFrontBufferReady = emulatorCore.isFrontBufferReady
                 emulatorCore.frontBufferCondition.unlock()
-                
+
                 if isFrontBufferReady {
                     fetchVideoBuffer()
                     renderBlock()
-                    
+
                     emulatorCore.frontBufferCondition.lock()
                     emulatorCore.isFrontBufferReady = false
                     emulatorCore.frontBufferCondition.signal()
@@ -1118,12 +1175,12 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         }
     }
 #endif
-    
+
 #if USE_METAL
     func startRenderingOnAlternateThread() {
-        
+
     }
-    
+
     func didRenderFrameOnAlternateThread() {
         self.emulatorCore?.frontBufferLock.lock()
         // TODO: Copy the back buffer
@@ -1133,15 +1190,15 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         self.emulatorCore?.isFrontBufferReady = true
         self.emulatorCore?.frontBufferCondition.signal()
         self.emulatorCore?.frontBufferCondition.unlock()
-        
+
         // Switch context back to emulator's
         //    [EAGLContext setCurrentContext:self.alternateThreadGLContext];
         //    glBindFramebuffer(GL_FRAMEBUFFER, alternateThreadFramebufferBack);
-        
+
     }
-    
+
 #else
-    
+
     // MARK: - PVRenderDelegate
 
 
@@ -1153,22 +1210,22 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             assertionFailure("emulatorCore is nil")
             return
         }
-        
+
         guard let glContext = glContext else {
             assertionFailure("glContext is nil")
             return
         }
-        
+
         emulatorCore.glesVersion = glesVersion
         alternateThreadBufferCopyGLContext = EAGLContext(api: glContext.api, sharegroup: glContext.sharegroup)
-        
+
         EAGLContext.setCurrent(alternateThreadBufferCopyGLContext)
-        
+
         if alternateThreadFramebufferFront == 0 {
             glGenFramebuffers(1, &alternateThreadFramebufferFront)
         }
         glBindFramebuffer(GLenum(GL_FRAMEBUFFER), alternateThreadFramebufferFront)
-        
+
         if alternateThreadColorTextureFront == 0 {
             glGenTextures(1, &alternateThreadColorTextureFront)
             glBindTexture(GLenum(GL_TEXTURE_2D), alternateThreadColorTextureFront)
@@ -1180,21 +1237,21 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         }
         glFramebufferTexture2D(GLenum(GL_FRAMEBUFFER), GLenum(GL_COLOR_ATTACHMENT0), GLenum(GL_TEXTURE_2D), alternateThreadColorTextureFront, 0)
         assert(glCheckFramebufferStatus(GLenum(GL_FRAMEBUFFER)) == GLenum(GL_FRAMEBUFFER_COMPLETE), "Front framebuffer incomplete!")
-        
+
         glActiveTexture(GLenum(GL_TEXTURE0))
         glEnable(GLenum(GL_TEXTURE_2D))
         glUseProgram(blitShaderProgram)
         glUniform1i(blitUniform_EmulatedImage, 0)
-        
+
         alternateThreadGLContext = EAGLContext(api: glContext.api, sharegroup: glContext.sharegroup)
         EAGLContext.setCurrent(alternateThreadGLContext)
-        
+
         // Setup framebuffer
         if alternateThreadFramebufferBack == 0 {
             glGenFramebuffers(1, &alternateThreadFramebufferBack)
         }
         glBindFramebuffer(GLenum(GL_FRAMEBUFFER), alternateThreadFramebufferBack)
-        
+
         // Setup color textures to render into
         if alternateThreadColorTextureBack == 0 {
             glGenTextures(1, &alternateThreadColorTextureBack)
@@ -1206,7 +1263,7 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             glBindTexture(GLenum(GL_TEXTURE_2D), 0)
         }
         glFramebufferTexture2D(GLenum(GL_FRAMEBUFFER), GLenum(GL_COLOR_ATTACHMENT0), GLenum(GL_TEXTURE_2D), alternateThreadColorTextureBack, 0)
-        
+
         // Setup depth buffer
         if alternateThreadDepthRenderbuffer == 0 {
             glGenRenderbuffers(1, &alternateThreadDepthRenderbuffer)
@@ -1214,25 +1271,25 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             glRenderbufferStorage(GLenum(GL_RENDERBUFFER), GLenum(GL_DEPTH_COMPONENT16), GLsizei(emulatorCore.bufferSize.width), GLsizei(emulatorCore.bufferSize.height))
             glFramebufferRenderbuffer(GLenum(GL_FRAMEBUFFER), GLenum(GL_DEPTH_ATTACHMENT), GLenum(GL_RENDERBUFFER), alternateThreadDepthRenderbuffer)
         }
-        
+
         glViewport(GLint(emulatorCore.screenRect.origin.x), GLint(emulatorCore.screenRect.origin.y), GLsizei(emulatorCore.screenRect.size.width), GLsizei(emulatorCore.screenRect.size.height))
     }
 
-    
+
     /// Called after a frame has been rendered on the alternate thread
     func didRenderFrameOnAlternateThread() {
         guard let emulatorCore = emulatorCore else {
             ELOG("emulatorCore is nil")
             return
         }
-        
+
         // Release back buffer
         glBindFramebuffer(GLenum(GL_FRAMEBUFFER), 0);
         glFlush();
-        
+
         // Blit back buffer to front buffer
         emulatorCore.frontBufferLock.lock()
-        
+
         // NOTE: We switch contexts here because we don't know what state
         // the emulator core might have OpenGL in and we need to avoid
         // changing any state it's relying on. It's more efficient and
@@ -1240,45 +1297,45 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         // state retrieval and restoration.
         EAGLContext.setCurrent(alternateThreadBufferCopyGLContext)
         glBindFramebuffer(GLenum(GL_FRAMEBUFFER), alternateThreadFramebufferFront)
-        
+
         let screenRect = emulatorCore.screenRect
         glViewport(GLint(screenRect.origin.x), GLint(screenRect.origin.y),
                    GLsizei(screenRect.width), GLsizei(screenRect.height))
-        
+
         glBindTexture(GLenum(GL_TEXTURE_2D), alternateThreadColorTextureBack)
         glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GLint(GL_LINEAR))
         glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GLint(GL_LINEAR))
-        
+
         glBindBuffer(GLenum(GL_ARRAY_BUFFER), vertexVBO)
-        
+
         glEnableVertexAttribArray(GLuint(GLKVertexAttrib.position.rawValue))
         glVertexAttribPointer(GLuint(GLKVertexAttrib.position.rawValue), 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<PVVertex>.stride), nil)
-        
+
         glEnableVertexAttribArray(GLuint(GLKVertexAttrib.texCoord0.rawValue))
         let texCoordOffset = MemoryLayout<Float>.stride * 3
         glVertexAttribPointer(GLuint(GLKVertexAttrib.texCoord0.rawValue), 2, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<PVVertex>.stride), UnsafeRawPointer(bitPattern: texCoordOffset))
-        
+
         glBindBuffer(GLenum(GL_ARRAY_BUFFER), 0)
-        
+
         glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), indexVBO)
         glDrawElements(GLenum(GL_TRIANGLES), 6, GLenum(GL_UNSIGNED_SHORT), nil)
-        
+
         glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), 0)
-        
+
         glBindTexture(GLenum(GL_TEXTURE_2D), 0)
-        
+
         glBindFramebuffer(GLenum(GL_FRAMEBUFFER), 0)
-        
+
         glFlush()
-        
+
         emulatorCore.frontBufferLock.unlock()
-        
+
         // Notify render thread that the front buffer is ready
         emulatorCore.frontBufferCondition.lock()
         emulatorCore.isFrontBufferReady = true
         emulatorCore.frontBufferCondition.signal()
         emulatorCore.frontBufferCondition.unlock()
-        
+
         // Switch context back to emulator's
         EAGLContext.setCurrent(alternateThreadGLContext)
         glBindFramebuffer(GLenum(GL_FRAMEBUFFER), alternateThreadFramebufferBack)
@@ -1297,6 +1354,3 @@ import ObjectiveC
 //func objc_sync_exit(_ obj: AnyObject) {
 //    objc_sync_exit(obj)
 //}
-
-
-

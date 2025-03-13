@@ -227,7 +227,7 @@ import PVCoreBridge
             title: "Preload Textures",
             description: nil,
             requiresRestart: false),
-              defaultValue: false)
+              defaultValue: true)
     }
     static var stereoRenderOption: CoreOption {
         .enumeration(.init(title: "3D Stereo Render",
@@ -240,6 +240,28 @@ import PVCoreBridge
                         .init(title: "Interlaced", description: "Interlaced", value: 3),
                         .init(title: "Reverse Interlaced", description: "Reverse Interlaced", value: 4),
                         .init(title: "Cardboard VR", description: "Cardboard VR", value: 5),
+                     ],
+                     defaultValue: 0)
+    }
+    
+    /*
+     Auto = 0,
+     Null = 1,
+     Static = 2,
+     Cubeb = 3,
+     OpenAL = 4,
+     CoreAudio = 5,
+     */
+    static var inputTypeOption: CoreOption {
+        .enumeration(.init(title: "Microphone Input",
+                           description: "(Requires Restart)",
+                           requiresRestart: true),
+                     values: [
+                        .init(title: "Auto", description: "Automatic best, first available input", value: 0),
+                        .init(title: "None", description: "No input", value: 1),
+                        .init(title: "Static", description: "Generates random static", value: 2),
+                        .init(title: "OpenAL", description: "Use OpenAL microphonedriver", value: 4),
+                        .init(title: "Core Audio", description: "Use CoreAudio microphone driver", value: 5),
                      ],
                      defaultValue: 0)
     }
@@ -265,7 +287,7 @@ import PVCoreBridge
         var options = [CoreOption]()
         let coreOptions: [CoreOption] = [
             resolutionOption, enableHLEOption, cpuClockOption, enableJITOption, enableLoggingOption, enableNew3DSOption, gsOption, enableAsyncShaderOption, enableAsyncPresentOption,
-            shaderTypeOption, enableVSyncOption, enableShaderAccurateMulOption, enableShaderJITOption, portraitTypeOption, landscapeTypeOption, volumeOption,
+            shaderTypeOption, enableVSyncOption, enableShaderAccurateMulOption, enableShaderJITOption, portraitTypeOption, landscapeTypeOption, inputTypeOption, volumeOption,
             stretchAudioOption, swapScreenOption, uprightScreenOption, customTexturesOption, preloadTextuesOption, stereoRenderOption, threedFactorOption
         ]
         let coreGroup:CoreOption = .group(.init(title: "EmuThreeds Core",
@@ -291,6 +313,8 @@ extension PVEmuThreeCoreOptions {
     @objc public static var enableVSync: Bool { valueForOption(PVEmuThreeCoreOptions.enableVSyncOption) }
     @objc public static var enableShaderAccurateMul: Bool { valueForOption(PVEmuThreeCoreOptions.enableShaderAccurateMulOption) }
     @objc public static var enableShaderJIT: Bool { valueForOption(PVEmuThreeCoreOptions.enableShaderJITOption) }
+    @objc public static var inputType: Int { valueForOption(PVEmuThreeCoreOptions.inputTypeOption) }
+
      // TODO: Finish this with the rest of the options if wanted
 }
 
@@ -314,6 +338,7 @@ extension PVEmuThreeCoreOptions {
         self.portraitType = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.portraitTypeOption).asInt ?? 5).int8Value
         self.landscapeType = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.landscapeTypeOption).asInt ?? 5).int8Value
         self.stretchAudio = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.stretchAudioOption).asBool
+        self.inputType = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.inputTypeOption).asInt ?? 5).int8Value
         self.volume = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.volumeOption).asInt ?? 100).int8Value
         self.swapScreen = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.swapScreenOption).asBool
         self.uprightScreen = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.uprightScreenOption).asBool

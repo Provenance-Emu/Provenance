@@ -107,3 +107,31 @@ public func VLOG(_ message: @autoclosure () -> String, category: Logger = .gener
     log("🔬 " + message(), level: .debug, category: category, file: file, function: function, line: line)
     #endif
 }
+
+@objc
+public final class PVLoggingObjC: NSObject {
+    @objc
+    public static func Vlog(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
+        VLOG(message, file: file, function: function, line: line)
+    }
+    
+    @objc
+    public static func Dlog(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
+        DLOG(message, file: file, function: function, line: line)
+    }
+    
+    @objc
+    public static func Ilog(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
+        ILOG(message, file: file, function: function, line: line)
+    }
+    
+    @objc
+    public  static func Elog(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
+        ELOG(message, file: file, function: function, line: line)
+    }
+    
+    @objc
+    public static func Wlog(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
+        WLOG(message, file: file, function: function, line: line)
+    }
+}

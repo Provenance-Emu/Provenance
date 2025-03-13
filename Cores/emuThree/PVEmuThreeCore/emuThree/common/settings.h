@@ -491,7 +491,7 @@ struct Values {
     SwitchableSetting<float, true> volume{1.f, 0.f, 1.f, "volume"};
     Setting<AudioCore::SinkType> output_type{AudioCore::SinkType::CoreAudio, "output_type"};
     Setting<std::string> output_device{"auto", "output_device"};
-    Setting<AudioCore::InputType> input_type{AudioCore::InputType::Auto, "input_type"};
+    Setting<AudioCore::InputType> input_type{AudioCore::InputType::CoreAudio, "input_type"};
     Setting<std::string> input_device{"auto", "input_device"};
 
     // Camera

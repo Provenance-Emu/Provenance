@@ -10,9 +10,6 @@ OTHER_CFLAGS = $(inherited) -fpermissive
 OTHER_CFLAGS = $(inherited) -frename-registers
 OTHER_CFLAGS = $(inherited) -fsingle-precision-constant
 OTHER_CFLAGS = $(inherited) -ftree-vectorize
-
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_AUDIOTOOLBOX
-
 // Experimental
 OTHER_CFLAGS = $(inherited) -Wl,--gc-sections
 //OTHER_CFLAGS = $(inherited) -fdata-sections
@@ -27,6 +24,15 @@ OTHER_CFLAGS = $(inherited) -fvectorize
 OTHER_CFLAGS = $(inherited) -mcpu=apple-a12
 //OTHER_CFLAGS = $(inherited) -mcpu=apple-a15
 //OTHER_CFLAGS = $(inherited) -march=armv8-a+simd
+
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_AUDIOTOOLBOX
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) CPPHTTPLIB_OPENSSL_SUPPORT
+//GCC_PREPROCESSOR_DEFINITIONS = $(inherited) ENABLE_WEB_SERVICE
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_OPENAL
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_SDL2
+//GCC_PREPROCESSOR_DEFINITIONS = $(inherited) CITRA_ARCH_arm64 // Overrides boost
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_COREAUDIO
+//GCC_PREPROCESSOR_DEFINITIONS = $(inherited) ENABLE_VULKAN // Already on by default
 
 //OTHER_CPPFLAGS = $(inherited) -fmodules -fcxx-modules
 OTHER_LDFLAGS = $(inherited) -ObjC -DIPHONEOS

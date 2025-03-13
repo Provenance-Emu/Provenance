@@ -28,10 +28,15 @@ import MetalKit
      */
     @objc optional var presentationFramebuffer: AnyObject? { get } // GLuint
 
+    @objc func setPreferredRefreshRate(_ : Float)
     // Optional property
 //#if USE_METAL
     @objc optional var mtlView: MTKView? { get set }
 //#endif
+    
+    @objc optional var glContext: EAGLContext? { get }
+    @objc optional var alternateThreadGLContext: EAGLContext? { get }
+    @objc optional var alternateThreadBufferCopyGLContext: EAGLContext? { get }
 }
 
 //public extension PVRenderDelegate {

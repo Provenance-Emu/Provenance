@@ -67,6 +67,7 @@ typedef enum PV3DSButton: NSInteger PV3DSButton;
 @property (nonatomic, assign) bool enableShaderJIT;
 @property (nonatomic, assign) int8_t portraitType;
 @property (nonatomic, assign) int8_t landscapeType;
+@property (nonatomic, assign) int8_t inputType;
 @property (nonatomic, assign) int8_t volume;
 @property (nonatomic, assign) bool stretchAudio;
 @property (nonatomic, assign) bool swapScreen;
