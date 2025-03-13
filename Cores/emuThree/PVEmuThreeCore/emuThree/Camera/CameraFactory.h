@@ -18,9 +18,15 @@ public:
     std::unique_ptr<CameraInterface> Create(const std::string& config,
                                             const Service::CAM::Flip& flip) override;
 };
-}
 
-namespace Camera {
+class iOSRearAltCameraFactory : public CameraFactory {
+public:
+    ~iOSRearAltCameraFactory() override;
+    
+    std::unique_ptr<CameraInterface> Create(const std::string& config,
+                                            const Service::CAM::Flip& flip) override;
+};
+
 class iOSFrontCameraFactory : public CameraFactory {
 public:
     ~iOSFrontCameraFactory() override;
@@ -28,4 +34,4 @@ public:
     std::unique_ptr<CameraInterface> Create(const std::string& config,
                                             const Service::CAM::Flip& flip) override;
 };
-}
+} // namespace Camera

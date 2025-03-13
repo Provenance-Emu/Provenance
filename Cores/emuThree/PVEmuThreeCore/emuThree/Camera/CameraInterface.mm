@@ -298,6 +298,24 @@ CVPixelBufferRef scaledPixelBuffer(CVPixelBufferRef pixelBuffer, CGSize size) {
     return sharedInstance;
 }
 
+- (void)setCameraWide:(BOOL)isWide {
+    BOOL sessionRunning = session.isRunning;
+    if(sessionRunning){
+        [self stop];}
+    NSArray<AVCaptureDevice *> *devices = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
+        isWide ? AVCaptureDeviceTypeBuiltInWideAngleCamera : AVCaptureDeviceTypeBuiltInTelephotoCamera
+    ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified].devices;
+    
+    [devices enumerateObjectsUsingBlock:^(AVCaptureDevice *obj, NSUInteger idx, BOOL *stop) {
+        if ([obj position] == AVCaptureDevicePositionFront) {
+            device = obj;
+            *stop = TRUE;
+        }
+    }];
+    if(sessionRunning){
+        [self start];}
+}
+
 -(void) stop {
     if ([session isRunning])
         [session stopRunning];
@@ -512,6 +530,24 @@ CVPixelBufferRef scaledPixelBuffer(CVPixelBufferRef pixelBuffer, CGSize size) {
     return sharedInstance;
 }
 
+- (void)setCameraWide:(BOOL)isWide {
+    BOOL sessionRunning = session.isRunning;
+    if(sessionRunning){
+        [self stop];}
+    NSArray<AVCaptureDevice *> *devices = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
+        isWide ? AVCaptureDeviceTypeBuiltInWideAngleCamera : AVCaptureDeviceTypeBuiltInTelephotoCamera
+    ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified].devices;
+    
+    [devices enumerateObjectsUsingBlock:^(AVCaptureDevice *obj, NSUInteger idx, BOOL *stop) {
+        if ([obj position] == AVCaptureDevicePositionFront) {
+            device = obj;
+            *stop = TRUE;
+        }
+    }];
+    if(sessionRunning){
+        [self start];}
+}
+
 -(void) stop {
     if ([session isRunning])
         [session stopRunning];
@@ -700,10 +736,6 @@ CVPixelBufferRef scaledPixelBuffer(CVPixelBufferRef pixelBuffer, CGSize size) {
 }
 @end
 
-
-
-
-
 namespace Camera {
 iOSRearCameraInterface::~iOSRearCameraInterface() {}
 
@@ -749,6 +781,53 @@ bool iOSRearCameraInterface::IsPreviewAvailable() {
     NSLog(@"%s", __FUNCTION__);
     return true;
 };
+
+iOSRearAltCameraInterface::~iOSRearAltCameraInterface() {}
+
+void iOSRearAltCameraInterface::StartCapture() {
+    NSLog(@"%s", __FUNCTION__);
+    [[ObjCRearCamera sharedInstance] start];
+    [[ObjCRearCamera sharedInstance] setCameraWide:false];
+};
+
+void iOSRearAltCameraInterface::StopCapture() {
+    NSLog(@"%s", __FUNCTION__);
+    [[ObjCRearCamera sharedInstance] stop];
+};
+
+void iOSRearAltCameraInterface::SetResolution(const Service::CAM::Resolution& resolution) {
+    NSLog(@"%s, %hu, %hu", __FUNCTION__, resolution.width, resolution.height);
+    [[ObjCRearCamera sharedInstance] resolution:resolution];
+};
+
+void iOSRearAltCameraInterface::SetFlip(Service::CAM::Flip flip) {
+    NSLog(@"%s", __FUNCTION__);
+};
+
+void iOSRearAltCameraInterface::SetEffect(Service::CAM::Effect effect) {
+    NSLog(@"%s", __FUNCTION__);
+};
+
+void iOSRearAltCameraInterface::SetFormat(Service::CAM::OutputFormat format) {
+    NSLog(@"%s, %hhu", __FUNCTION__, format);
+    [[ObjCRearCamera sharedInstance] format:format];
+};
+
+void iOSRearAltCameraInterface::SetFrameRate(Service::CAM::FrameRate frame_rate) {
+    NSLog(@"%s", __FUNCTION__);
+    [[ObjCRearCamera sharedInstance] framesPerSecond:frame_rate];
+};
+
+std::vector<u16> iOSRearAltCameraInterface::ReceiveFrame() {
+    NSLog(@"%s", __FUNCTION__);
+    return [[ObjCRearCamera sharedInstance] frame];
+};
+
+bool iOSRearAltCameraInterface::IsPreviewAvailable() {
+    NSLog(@"%s", __FUNCTION__);
+    return true;
+};
+
 
 iOSFrontCameraInterface::~iOSFrontCameraInterface() {}
 

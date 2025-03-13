@@ -146,7 +146,11 @@ std::pair<std::string, uint8_t> Keyboard::GetKeyboardText(const Frontend::Keyboa
 // MARK: Keyboard
 
 static void InitializeLogging() {
+#if DEBUG
+    Log::Filter log_filter(Log::Level::Trace);
+#else
     Log::Filter log_filter(Log::Level::Debug);
+#endif
     log_filter.ParseFilterString(Settings::values.log_filter.GetValue());
     Log::SetGlobalFilter(log_filter);
     Log::AddBackend(std::make_unique<Log::ColorConsoleBackend>());
@@ -172,9 +176,13 @@ static void InitializeLogging() {
 
 -(instancetype) init {
     if (self = [super init]) {
+#if DEBUG
+        InitializeLogging();
+#else
         if ([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Logging"]) {
             InitializeLogging();
         }
+#endif
         finishedShutdown = false;
     } return self;
 }
@@ -234,8 +242,12 @@ static void InitializeLogging() {
     }
     auto frontCamera = std::make_unique<Camera::iOSFrontCameraFactory>();
     auto rearCamera = std::make_unique<Camera::iOSRearCameraFactory>();
+    auto rearAltCamera = std::make_unique<Camera::iOSRearAltCameraFactory>();
+
     Camera::RegisterFactory("av_front", std::move(frontCamera));
     Camera::RegisterFactory("av_rear", std::move(rearCamera));
+    Camera::RegisterFactory("av_rear_alt", std::move(rearAltCamera));
+
     Frontend::RegisterDefaultApplets();
     Input::RegisterFactory<Input::ButtonDevice>("ios_gamepad", std::make_shared<ButtonFactory>());
     Input::RegisterFactory<Input::AnalogDevice>("ios_gamepad", std::make_shared<AnalogFactory>());
@@ -268,7 +280,19 @@ static void InitializeLogging() {
     Settings::values.use_cpu_jit.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Just in Time"]);
     Settings::values.cpu_clock_percentage.SetValue([[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.CPU Clock Speed"]] unsignedIntValue]);
     Settings::values.is_new_3ds.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable New 3DS"]);
+    
 
+    BOOL enabledLogging = [[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Logging"];
+    if (enabledLogging) {
+#if DEBUG
+        Settings::values.log_filter.SetValue("*:Trace");
+#else
+        Settings::values.log_filter.SetValue("*:Debug");
+#endif
+    } else {
+        Settings::values.log_filter.SetValue("*:Critical");
+    }
+    
     Settings::values.use_vsync_new.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable VSync"]);
     Settings::values.shaders_accurate_mul.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Shader Accurate Mul"]);
     Settings::values.use_shader_jit.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Shader Just in Time"]);

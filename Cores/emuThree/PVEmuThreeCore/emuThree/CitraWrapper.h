@@ -13,6 +13,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class MotionInputBridge;
+
 typedef NS_ENUM(NSUInteger, KeyboardButtonConfig) {
     KeyboardButtonConfigSingle,
     KeyboardButtonConfigDual,

@@ -18,6 +18,13 @@ std::unique_ptr<CameraInterface> iOSRearCameraFactory::Create(const std::string 
     return std::make_unique<iOSRearCameraInterface>();
 }
 
+iOSRearAltCameraFactory::~iOSRearAltCameraFactory() {}
+
+std::unique_ptr<CameraInterface> iOSRearAltCameraFactory::Create(const std::string &config, const Service::CAM::Flip &flip) {
+    NSLog(@"%s", __FUNCTION__);
+    return std::make_unique<iOSRearAltCameraInterface>();
+}
+
 iOSFrontCameraFactory::~iOSFrontCameraFactory() {}
 
 std::unique_ptr<CameraInterface> iOSFrontCameraFactory::Create(const std::string &config, const Service::CAM::Flip &flip) {
