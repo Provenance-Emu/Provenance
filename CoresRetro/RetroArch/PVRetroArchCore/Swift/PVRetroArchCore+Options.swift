@@ -14,9 +14,9 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
 
         DLOG("Getting options for forSubcoreIdentifier: \(identifier), systemName: \(systemName)")
 
-        if (identifier.contains("mupen")) {
-            subCoreOptions.append(mupenRDPOption)
-        }
+//        if (identifier.contains("mupen")) {
+//            subCoreOptions.append(mupenRDPOption)
+//        }
         if (identifier.contains("mame")) {
             subCoreOptions.append(mameOSDOption)
         }
@@ -138,16 +138,16 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
             requiresRestart: false),
               defaultValue: false)
     }
-    public static var mupenRDPOption: CoreOption {
-          .enumeration(.init(title: "Mupen RDP Plugin",
-               description: "(Requires Restart)",
-               requiresRestart: true),
-          values: [
-               .init(title: "Angrylion", description: "Angrylion", value: 0),
-               .init(title: "GlideN64", description: "GlideN64", value: 1)
-          ],
-          defaultValue: 0)
-    }
+//    public static var mupenRDPOption: CoreOption {
+//          .enumeration(.init(title: "Mupen RDP Plugin",
+//               description: "(Requires Restart)",
+//               requiresRestart: true),
+//          values: [
+//               .init(title: "Angrylion", description: "Angrylion", value: 0),
+//               .init(title: "GlideN64", description: "GlideN64", value: 1)
+//          ],
+//          defaultValue: 0)
+//    }
     public static var apple2MachineOption: CoreOption {
           .enumeration(.init(title: "System Model",
                description: "(Requires Restart)",
@@ -656,16 +656,16 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 optionValuesFile = "melonDS/melonDS.opt"
                 optionOverwrite = false
             }
-            if (coreIdentifier.contains("mupen")) {
-                let rdpOpt = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreOptions.mupenRDPOption).asInt ?? 0
-                if (rdpOpt == 0) {
-                    optionValues += "mupen64plus-rdp-plugin = \"angrylion\"\n"
-                } else {
-                    optionValues += "mupen64plus-rdp-plugin = \"gliden64\"\n";
-                }
-                optionValuesFile = "Mupen64Plus-Next/Mupen64Plus-Next.opt"
-                optionOverwrite = false
-            }
+//            if (coreIdentifier.contains("mupen")) {
+//                let rdpOpt = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreOptions.mupenRDPOption).asInt ?? 0
+//                if (rdpOpt == 0) {
+//                    optionValues += "mupen64plus-rdp-plugin = \"angrylion\"\n"
+//                } else {
+//                    optionValues += "mupen64plus-rdp-plugin = \"gliden64\"\n";
+//                }
+//                optionValuesFile = "Mupen64Plus-Next/Mupen64Plus-Next.opt"
+//                optionOverwrite = false
+//            }
             if (coreIdentifier.contains("ppsspp")) {
                 optionValues += "ppsspp_cpu_core = \"Interpreter\"\n"
                 optionValues += "ppsspp_internal_resolution = \"1920x1088\"\n"
