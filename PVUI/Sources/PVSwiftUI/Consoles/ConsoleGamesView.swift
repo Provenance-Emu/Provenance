@@ -104,6 +104,14 @@ struct ConsoleGamesView: SwiftUI.View {
 
     @State internal var showArtworkSourceAlert = false
 
+    @State private var searchText = ""
+
+    @State private var isSearching = false
+
+    @State private var scrollOffset: CGFloat = 0
+    @State private var previousScrollOffset: CGFloat = 0
+    @State private var isSearchBarVisible: Bool = true
+
     private var sectionHeight: CGFloat {
         // Use compact size class to determine if we're in portrait on iPhone
         let baseHeight: CGFloat = horizontalSizeClass == .compact ? 150 : 75
@@ -154,7 +162,41 @@ struct ConsoleGamesView: SwiftUI.View {
                 displayOptionsView()
                     .allowsHitTesting(true)
                     .contentShape(Rectangle())
-                ScrollView {
+
+                // Add search bar with visibility control
+                if games.count > 8 {
+                    PVSearchBar(text: $searchText)
+                        .padding(.horizontal)
+                        .padding(.bottom, 8)
+                        .opacity(isSearchBarVisible ? 1 : 0)
+                        .frame(height: isSearchBarVisible ? nil : 0)
+                        .animation(.easeInOut(duration: 0.3), value: isSearchBarVisible)
+                }
+
+                ScrollViewWithOffset(
+                    offsetChanged: { offset in
+                        // Detect scroll direction and distance
+                        let scrollingDown = offset < previousScrollOffset
+                        let scrollDistance = abs(offset - previousScrollOffset)
+
+                        // Only respond to significant scroll movements
+                        if scrollDistance > 5 {
+                            // Hide search bar when scrolling down, show when scrolling up
+                            if scrollingDown && offset < -10 {
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    isSearchBarVisible = false
+                                }
+                            } else if !scrollingDown {
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    isSearchBarVisible = true
+                                }
+                            }
+                        }
+
+                        scrollOffset = offset
+                        previousScrollOffset = offset
+                    }
+                ) {
                     ScrollViewReader { proxy in
                         LazyVStack(spacing: 20) {
                             continueSection()
@@ -181,6 +223,16 @@ struct ConsoleGamesView: SwiftUI.View {
                         }
                     }
                 }
+                .overlay(
+                    Group {
+                        if !searchText.isEmpty {
+                            VStack {
+                                searchResultsView()
+                            }
+                            .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+                        }
+                    }
+                )
                 .padding(.bottom, 4)
 
                 /// Position BiosesView above the tab bar
@@ -379,6 +431,10 @@ struct ConsoleGamesView: SwiftUI.View {
                 await BIOSWatcher.shared.rescanDirectory(systemPath)
             }
         }
+        .modifier(ConditionalSearchModifier(
+            isEnabled: games.count > 8,
+            searchText: $searchText
+        ))
         .ignoresSafeArea(.all)
     }
 
@@ -670,6 +726,72 @@ struct ConsoleGamesView: SwiftUI.View {
             set: { self.newGameTitle = $0 ?? "" }
         )
     }
+
+    /// Function to filter games based on search text
+    private func filteredSearchResults() -> [PVGame] {
+        guard !searchText.isEmpty else { return [] }
+
+        let searchTextLowercased = searchText.lowercased()
+        /// Only search games for this console
+        return Array(games.filter { game in
+            game.title.lowercased().contains(searchTextLowercased)
+        })
+    }
+
+    @ViewBuilder
+    private func searchResultsView() -> some View {
+        VStack(alignment: .leading) {
+            Text("Search Results")
+                .font(.title2)
+                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                .padding(.horizontal)
+
+            LazyVStack(spacing: 0) {
+                let results = filteredSearchResults()
+                if results.isEmpty {
+                    Text("No games found")
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .padding()
+                } else {
+                    ForEach(results, id: \.self) { game in
+                        GameItemView(
+                            game: game,
+                            constrainHeight: true,
+                            viewType: .row,
+                            sectionContext: .allGames,
+                            isFocused: Binding(
+                                get: {
+                                    !game.isInvalidated &&
+                                    gamesViewModel.focusedSection == .allGames &&
+                                    gamesViewModel.focusedItemInSection == game.id
+                                },
+                                set: {
+                                    if $0 && !game.isInvalidated {
+                                        gamesViewModel.focusedSection = .allGames
+                                        gamesViewModel.focusedItemInSection = game.id
+                                    }
+                                }
+                            )
+                        ) {
+                            Task.detached { @MainActor in
+                                await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                            }
+                        }
+                        .id(game.id)
+                        .focusableIfAvailable()
+                        .contextMenu {
+                            GameContextMenu(
+                                game: game,
+                                rootDelegate: rootDelegate,
+                                contextMenuDelegate: self
+                            )
+                        }
+                        GamesDividerView()
+                    }
+                }
+            }
+        }
+    }
 }
 
 // MARK: - View Components
@@ -851,6 +973,21 @@ struct ConsoleGamesView_Previews: PreviewProvider {
                          viewModel: viewModel,
                          rootDelegate: nil,
                          showGameInfo: {_ in})
+    }
+}
+
+private struct ConditionalSearchModifier: ViewModifier {
+    let isEnabled: Bool
+    @Binding var searchText: String
+
+    func body(content: Content) -> some View {
+        if isEnabled {
+            content
+                .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search games")
+        } else {
+            content
+                .searchable(text: .constant(""), prompt: "")
+        }
     }
 }
 #endif
