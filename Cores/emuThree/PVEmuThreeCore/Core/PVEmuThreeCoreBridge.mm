@@ -86,6 +86,7 @@ static bool _isOff = false;
     _videoWidth = 640;
     _videoHeight = 480;
     _isInitialized = false;
+    
     [self parseOptions];
     return YES;
 }

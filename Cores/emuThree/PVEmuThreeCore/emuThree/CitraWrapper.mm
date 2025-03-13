@@ -6,6 +6,7 @@
 //
 
 // Local Changes: Add Save/Load/Cheat
+// Camera interface
 
 #import <Foundation/Foundation.h>
 #include <AudioToolbox/AudioToolbox.h>
@@ -13,6 +14,8 @@
 #import "../emuThree/CitraWrapper.h"
 #import "InputFactory.h"
 #import <sys/utsname.h>
+#import "../emuThree/Camera/CameraFactory.h"
+#import "../emuThree/Camera/CameraInterface.h"
 #include "../citra_wrapper/helpers/config.h"
 #include "file_handle.h"
 #include "core/core.h"
@@ -20,6 +23,8 @@
 #include "emu_window_vk.h"
 #include "game_info.h"
 
+#include <future>
+#include <algorithm>
 #include <chrono>
 #include <cryptopp/hex.h>
 #include "common/archives.h"
@@ -56,6 +61,89 @@
 Core::System& core{Core::System::GetInstance()};
 std::unique_ptr<EmuWindow_VK> emu_window;
 @class EmulationInput;
+
+// MARK: Keyboard
+
+namespace SoftwareKeyboard {
+
+class Keyboard final : public Frontend::SoftwareKeyboard {
+public:
+    ~Keyboard();
+    
+    void Execute(const Frontend::KeyboardConfig& config) override;
+    void ShowError(const std::string& error) override;
+    
+    void KeyboardText(std::condition_variable& cv);
+    std::pair<std::string, uint8_t> GetKeyboardText(const Frontend::KeyboardConfig& config);
+    
+private:
+    __block NSString *_Nullable keyboardText = @"";
+    __block uint8_t buttonPressed = 0;
+    
+    __block BOOL isReady = FALSE;
+};
+
+} // namespace SoftwareKeyboard
+
+@implementation KeyboardConfig
+-(KeyboardConfig *) initWithHintText:(NSString *)hintText buttonConfig:(KeyboardButtonConfig)buttonConfig {
+    if (self = [super init]) {
+        self.hintText = hintText;
+        self.buttonConfig = buttonConfig;
+    } return self;
+}
+@end
+
+namespace SoftwareKeyboard {
+
+Keyboard::~Keyboard() = default;
+
+void Keyboard::Execute(const Frontend::KeyboardConfig& config) {
+    SoftwareKeyboard::Execute(config);
+    
+    std::pair<std::string, uint8_t> it = this->GetKeyboardText(config);
+    if (this->config.button_config != Frontend::ButtonConfig::None)
+        it.second = static_cast<uint8_t>(this->config.button_config);
+    
+    Finalize(it.first, it.second);
+}
+
+void Keyboard::ShowError(const std::string& error) {
+    printf("error = %s\n", error.c_str());
+}
+
+void Keyboard::KeyboardText(std::condition_variable& cv) {
+    [[NSNotificationCenter defaultCenter] addObserverForName:@"closeKeyboard" object:NULL queue:[NSOperationQueue mainQueue]
+                                                  usingBlock:^(NSNotification *notification) {
+        this->buttonPressed = (NSUInteger)notification.userInfo[@"buttonPressed"];
+        
+        NSString *_Nullable text = notification.userInfo[@"keyboardText"];
+        if (text != NULL)
+            this->keyboardText = text;
+        
+        isReady = TRUE;
+        cv.notify_all();
+    }];
+}
+
+std::pair<std::string, uint8_t> Keyboard::GetKeyboardText(const Frontend::KeyboardConfig& config) {
+    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"openKeyboard"
+                                                                                         object:[[KeyboardConfig alloc] initWithHintText:[NSString stringWithCString:config.hint_text.c_str() encoding:NSUTF8StringEncoding] buttonConfig:(KeyboardButtonConfig)config.button_config]]];
+    
+    std::condition_variable cv;
+    std::mutex mutex;
+    auto t1 = std::async(&Keyboard::KeyboardText, this, std::ref(cv));
+    std::unique_lock<std::mutex> lock(mutex);
+    while (!isReady)
+        cv.wait(lock);
+    
+    isReady = FALSE;
+    
+    return std::make_pair([this->keyboardText UTF8String], this->buttonPressed);
+}
+}
+
+// MARK: Keyboard
 
 static void InitializeLogging() {
     Log::Filter log_filter(Log::Level::Debug);
@@ -144,12 +232,19 @@ static void InitializeLogging() {
         Common::ParamPackage param{ { "engine", "ios_gamepad" }, { "code", std::to_string(i) } };
         Settings::values.current_input_profile.analogs[i] = param.Serialize();
     }
-    Settings::values.current_input_profile.motion_device="engine:motion_device";
+    auto frontCamera = std::make_unique<Camera::iOSFrontCameraFactory>();
+    auto rearCamera = std::make_unique<Camera::iOSRearCameraFactory>();
+    Camera::RegisterFactory("av_front", std::move(frontCamera));
+    Camera::RegisterFactory("av_rear", std::move(rearCamera));
     Frontend::RegisterDefaultApplets();
     Input::RegisterFactory<Input::ButtonDevice>("ios_gamepad", std::make_shared<ButtonFactory>());
     Input::RegisterFactory<Input::AnalogDevice>("ios_gamepad", std::make_shared<AnalogFactory>());
-    Input::RegisterFactory<Input::MotionDevice>("motion_device", std::make_shared<MotionFactory>());
+    Settings::values.current_input_profile.motion_device="engine:motion_device";
+    Input::RegisterFactory<Input::MotionDevice>("motion_emu", std::make_shared<MotionFactory>());
 
+#if defined(TARGET_OS_IPHONE)
+    Core::System::GetInstance().RegisterSoftwareKeyboard(std::make_shared<SoftwareKeyboard::Keyboard>());
+#endif  x
 }
 
 -(void) setShaderOption {
@@ -195,11 +290,18 @@ static void InitializeLogging() {
     Settings::values.enable_audio_stretching.SetValue(shouldStretchAudio);
     int volume = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.Audio Volume"]] unsignedIntValue];
     Settings::values.volume.SetValue((float)volume / 100.0);
+    
+    int inputType = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.Microphone Input"]] unsignedIntValue];
+    Settings::values.input_type.SetValue((AudioCore::InputType) inputType);
+
     if (resetButtons)
         [CitraWrapper.sharedInstance setButtons];
     for (const auto& service_module : Service::service_module_map) {
         Settings::values.lle_modules.emplace(service_module.name, ![[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable High Level Emulation"]);
     }
+    
+//    Settings::values.lle_applets.SetValue([defaults boolForKey:@"cytrus.lleApplets"]);
+    
     [self getModelType];
     Settings::Apply();
 }
@@ -263,6 +365,12 @@ static void InitializeLogging() {
     while (CitraWrapper.sharedInstance.isRunning)
         usleep(100);
     usleep(3000);
+//    Input::UnregisterFactory<Input::ButtonDevice>("gamepad");
+//    Input::UnregisterFactory<Input::AnalogDevice>("gamepad");
+//    Input::UnregisterFactory<Input::MotionDevice>("motion_emu");
+//    button.reset();
+//    analog.reset();
+//    motion.reset();
 }
 
 -(void) resetController {
