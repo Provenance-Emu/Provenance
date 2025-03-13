@@ -232,10 +232,28 @@ struct HomeView: SwiftUI.View {
                 }
             }
         }
-        .alert("Rename Game", isPresented: $showingRenameAlert) {
-            renameAlertView()
-        } message: {
-            Text("Enter a new name for \(gameToRename?.title ?? "")")
+        .uiKitAlert(
+            "Rename Game",
+            message: "Enter a new name for \(gameToRename?.title ?? "")",
+            isPresented: $showingRenameAlert,
+            textValue: newGameTitleBinding,
+            preferredContentSize: CGSize(width: 300, height: 200),
+            textField: { textField in
+                textField.placeholder = "Game name"
+                textField.clearButtonMode = .whileEditing
+                textField.autocapitalizationType = .words
+            }
+        ) {
+            [
+                UIAlertAction(title: "Save", style: .default) { _ in
+                    submitRename()
+                },
+                UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                    showingRenameAlert = false
+                    gameToRename = nil
+                    newGameTitle = ""
+                }
+            ]
         }
         .sheet(item: $systemMoveState) { state in
             SystemPickerView(
@@ -945,6 +963,14 @@ struct HomeView: SwiftUI.View {
                 }
             }
         }
+    }
+
+    // Add this computed property to create the binding wrapper
+    private var newGameTitleBinding: Binding<String?> {
+        Binding<String?>(
+            get: { self.newGameTitle },
+            set: { self.newGameTitle = $0 ?? "" }
+        )
     }
 }
 #endif
