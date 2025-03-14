@@ -55,7 +55,7 @@ enum iCloudSyncStatus {
     case filesAlreadyMoved
 }
 
-class iCloudContainerSyncer: iCloudTypeSyncer {
+class iCloudContainerSyncer: NSObject, iCloudTypeSyncer {
     lazy var pendingFilesToDownload: ConcurrentSet<String> = []
     lazy var newFiles: ConcurrentSet<URL> = []
     lazy var uploadedFiles: ConcurrentSet<URL> = []
@@ -75,17 +75,17 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         self.notificationCenter = notificationCenter
         self.directories = directories
         self.errorHandler = errorHandler
+        super.init()
     }
     
     deinit {
         metadataQuery.disableUpdates()
-        metadataQuery.stop()
+        if metadataQuery.isStarted {
+            metadataQuery.stop()
+        }
         querySubscriber?.cancel()
-        notificationCenter.removeObserver(self, name: .NSMetadataQueryDidFinishGathering, object: metadataQuery)
-        notificationCenter.removeObserver(self, name: .NSMetadataQueryDidUpdate, object: metadataQuery)
         let removed = removeFromiCloud()
         DLOG("removed: \(removed)")
-        DLOG("dying")
     }
     
     var canPurgeDatastore: Bool {
@@ -94,8 +94,8 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             //if we have errors, it's better to just assume something happened while importing, so instead of creating a bigger mess, just NOT delete any files
             && errorHandler.numberOfErrors == 0
             //we have to ensure that everything has been downloaded/imported before attempting to remove anything
-            && pendingFilesToDownload.count == 0
-            && newFiles.count == 0
+            && pendingFilesToDownload.isEmpty
+            && newFiles.isEmpty
     }
     
     var localAndCloudDirectories: [URL: URL] {
@@ -168,7 +168,6 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             completable(.error(SyncError.noUbiquityURL))
             return
         }
-        
         initialSyncResult = syncToiCloud()
         DLOG("syncToiCloud result: \(initialSyncResult)")
         guard initialSyncResult != .saveFailure,
@@ -177,8 +176,6 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             ELOG("error moving files to iCloud container")
             return
         }
-        
-        metadataQuery.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
         DLOG("directories: \(directories)")
         var predicateFormat = ""
         var predicateArgs = [CVarArg]()
@@ -190,36 +187,20 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             predicateArgs.append(NSMetadataItemPathKey)
             predicateArgs.append("/Documents/\(directory)/")
         }
+        metadataQuery.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
         metadataQuery.notificationBatchingInterval = 1
         metadataQuery.predicate = NSPredicate(format: predicateFormat, argumentArray: predicateArgs)
-        //TODO: update to use Publishers.MergeMany
-//        let names: [NSNotification.Name] = [.NSMetadataQueryDidFinishGathering, .NSMetadataQueryDidUpdate]
-//        let publishers = names.map { notificationCenter.publisher(for: $0) }
-//        querySubscriber = Publishers.MergeMany(publishers).receive(on: DispatchQueue.main).sink { [weak self] notification in
-//            Task {
-//                await self?.queryFinished(notification: notification)
-//                iterationComplete?()
-//            }
-//        }
-        notificationCenter.addObserver(
-            forName: .NSMetadataQueryDidFinishGathering,
-            object: metadataQuery,
-            queue: nil) { [weak self] notification in
-                Task {
-                    await self?.queryFinished(notification: notification)
-                    iterationComplete?()
-                }
+        let names: [NSNotification.Name] = [.NSMetadataQueryDidFinishGathering, /*listen for deletions and new files.*/.NSMetadataQueryDidUpdate]
+        let publishers = names.map { notificationCenter.publisher(for: $0, object: metadataQuery) }
+        querySubscriber = Publishers.MergeMany(publishers)
+            .filter() { [weak self] notification in
+                (notification.object as? NSMetadataQuery) === self?.metadataQuery
+            }.sink { [weak self] notification in
+            Task {
+                await self?.queryFinished(notification: notification)
+                iterationComplete?()
             }
-        //listen for deletions and new files.
-        notificationCenter.addObserver(
-            forName: .NSMetadataQueryDidUpdate,
-            object: metadataQuery,
-            queue: nil) { [weak self] notification in
-                Task {
-                    await self?.queryFinished(notification: notification)
-                    iterationComplete?()
-                }
-            }
+        }
         //TODO: unsure if the Task doesn't work with NSMetadataQuery or if there's some other issue.
 //        Task { @MainActor [weak self] in
         DispatchQueue.main.async { [weak self] in
@@ -228,28 +209,14 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     }
     
     func queryFinished(notification: Notification) async {
-        DLOG("directories: \(directories)")
-        guard (notification.object as? NSMetadataQuery) == metadataQuery
+        DLOG("directories: \(directories)")//TODO: remove guard since it's now part of the filter
+        guard (notification.object as? NSMetadataQuery) === metadataQuery
         else {
             return
         }
-        metadataQuery.disableUpdates()
-        defer {
-            metadataQuery.enableUpdates()
-        }
-        let removedObjects = notification.userInfo?[NSMetadataQueryUpdateRemovedItemsKey]
-        if let actualRemovedObjects = removedObjects as? [NSMetadataItem] {
-            DLOG("\(directories): actualRemovedObjects: (\(actualRemovedObjects.count)) \(actualRemovedObjects)")
-            await actualRemovedObjects.concurrentForEach { [weak self] item in
-                if let file = item.value(forAttribute: NSMetadataItemURLKey) as? URL {
-                    DLOG("file DELETED from iCloud: \(file)")
-                    self?.deleteFromDatastore(file)
-                }
-            }
-        }
         DLOG("\(directories) -> number of items: \(metadataQuery.results.count)")
         //accessing results automatically pauses updates and resumes after deallocated
-        metadataQuery.results.forEach { [weak self] item in
+        /*await */metadataQuery.results.forEach/*.concurrentForEach*/ { [weak self] item in
             if let fileItem = item as? NSMetadataItem,
                let file = fileItem.value(forAttribute: NSMetadataItemURLKey) as? URL,
                let isDirectory = try? file.resourceValues(forKeys: [.isDirectoryKey]).isDirectory,
@@ -259,7 +226,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                 switch downloadStatus {
                     case  NSMetadataUbiquitousItemDownloadingStatusNotDownloaded:
                         do {
-                            try fileManager.startDownloadingUbiquitousItem(at: file)
+                            try self?.fileManager.startDownloadingUbiquitousItem(at: file)
                             self?.insertDownloadingFile(file)
                             ILOG("Download started for: \(file)")
                         } catch {
@@ -268,7 +235,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                         }
                     case NSMetadataUbiquitousItemDownloadingStatusCurrent:
                         DLOG("item up to date: \(file)")
-                        if !fileManager.fileExists(atPath: file.pathDecoded) {
+                        if !(self?.fileManager.fileExists(atPath: file.pathDecoded) ?? false) {
                             DLOG("file DELETED from iCloud: \(file)")
                             self?.deleteFromDatastore(file)
                         } else {
@@ -279,6 +246,16 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                             self?.insertDownloadedFile(file)
                         }
                     default: ILOG("Other: \(file): download status: \(downloadStatus)")
+                }
+            }
+        }
+        let removedObjects = notification.userInfo?[NSMetadataQueryUpdateRemovedItemsKey]
+        if let actualRemovedObjects = removedObjects as? [NSMetadataItem] {
+            DLOG("\(directories): actualRemovedObjects: (\(actualRemovedObjects.count)) \(actualRemovedObjects)")
+            await actualRemovedObjects.concurrentForEach { [weak self] item in
+                if let file = item.value(forAttribute: NSMetadataItemURLKey) as? URL {
+                    DLOG("file DELETED from iCloud: \(file)")
+                    self?.deleteFromDatastore(file)
                 }
             }
         }
@@ -435,9 +412,10 @@ public enum iCloudSync {
     static var gameImporter = GameImporter.shared
     static var state: iCloudSync = .initialAppLoad
     static let errorHandler: ErrorHandler = iCloudErrorHandler.shared
-    
+    static var romDatabaseInitializedSubscriber: AnyCancellable?
     public static func initICloudDocuments() {
-        NotificationCenter.default.addObserver(forName: .RomDatabaseInitialized, object: nil, queue: nil) { _ in
+        romDatabaseInitializedSubscriber = NotificationCenter.default.publisher(for: .RomDatabaseInitialized).sink { _ in
+            romDatabaseInitializedSubscriber?.cancel()
             Task {
                 guard Defaults[.iCloudSync]
                 else {
@@ -536,12 +514,53 @@ public enum iCloudSync {
 
 //MARK: - iCloud syncers
 
-class SaveStateSyncer: iCloudContainerSyncer {
+class SaveStateSyncer: iCloudContainerSyncer, NSFilePresenter {
     let jsonDecorder = JSONDecoder()
     var processed = ConcurrentQueue<Int>(arrayLiteral: 0)
+    var presentedItemURL: URL?
+    var presentedItemOperationQueue: OperationQueue = {
+        let queue: OperationQueue = .init()
+        queue.maxConcurrentOperationCount = 1
+        queue.qualityOfService = .background
+        return queue
+    }()
+    
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
         self.init(directories: ["Save States"], notificationCenter: notificationCenter, errorHandler: errorHandler)
+        presentedItemURL = localAndCloudDirectories.first?.value
+        NSFileCoordinator.addFilePresenter(self)
         jsonDecorder.dataDecodingStrategy = .deferredToData
+    }
+    
+    deinit {
+        NSFileCoordinator.removeFilePresenter(self)
+    }
+    
+    func presentedSubitemDidAppear(at url: URL) {
+        DLOG("New file: \(url)")
+        if fileManager.fileExists(atPath: url.pathDecoded) {
+            insertDownloadedFile(url)
+            clearFileObserver()
+        }
+    }
+    
+    func presentedSubitemDidChange(at url: URL) {
+        DLOG("File changed: \(url)")
+        if fileManager.fileExists(atPath: url.pathDecoded) {
+            insertDownloadedFile(url)
+            clearFileObserver()
+        }
+    }
+    
+    func clearFileObserver() {
+        if pendingFilesToDownload.isEmpty {
+            NSFileCoordinator.removeFilePresenter(self)
+        }
+    }
+    
+    override func setNewCloudFilesAvailable() {
+        super.setNewCloudFilesAvailable()
+        clearFileObserver()
     }
     
     func removeSavesDeletedWhileApplicationClosed() {
@@ -737,14 +756,95 @@ enum GameStatus {
     case gameDoesNotExist
 }
 
-class RomsSyncer: iCloudContainerSyncer {
+class DirectoryObserver2: NSObject, NSFilePresenter {
+    var presentedItemURL: URL?
+    var presentedItemOperationQueue: OperationQueue = {
+        let queue: OperationQueue = .init()
+        queue.maxConcurrentOperationCount = 1
+        queue.qualityOfService = .background
+        return queue
+    }()
+    
+    init(directory: URL) {
+        presentedItemURL = directory
+        super.init()
+        NSFileCoordinator.addFilePresenter(self)
+    }
+    
+    deinit {
+        NSFileCoordinator.removeFilePresenter(self)
+    }
+
+    func presentedSubitemDidAppear(at url: URL) {
+        DLOG("file appears: \(url)")
+        return
+    }
+
+    func presentedSubitemDidChange(at url: URL) {
+        DLOG("file changed: \(url)")
+        return
+    }
+}
+
+class DirectoryObserver: NSObject, NSFilePresenter {
+    let observedDirectory: URL
+    
+    var presentedItemURL: URL? { return observedDirectory }
+    //TODO: not working beside the main queue
+    var presentedItemOperationQueue: OperationQueue /*= .init() {
+        let queue: OperationQueue = .init()
+        queue.maxConcurrentOperationCount = 1
+        queue.qualityOfService = .userInitiated
+        return queue
+    }()*/
+    
+    init(directory: URL, queue: OperationQueue) {
+        observedDirectory = directory
+        presentedItemOperationQueue = queue
+        super.init()
+        NSFileCoordinator.addFilePresenter(self)
+    }
+    
+    deinit {
+        NSFileCoordinator.removeFilePresenter(self)
+    }
+    
+    let queue = DispatchQueue(label: "test")
+    func presentedSubitemDidChange(at url: URL) {
+        DLOG("file changed: \(url), mainThread: \(Thread.isMainThread)")
+        queue.async {
+            DLOG("test")
+            return
+        }
+    }
+}
+
+class RomsSyncer: iCloudContainerSyncer, NSFilePresenter {
     let gameImporter = GameImporter.shared
     var processingFiles = ConcurrentSet<URL>()
     let multiFileRoms: ConcurrentDictionary<String, [URL]> = [:]
+    var romsFinishedImportingSubscriber: AnyCancellable?
+    var presentedItemURL: URL?
+    lazy var presentedItemOperationQueue: OperationQueue = {
+        let queue: OperationQueue = .init()
+        queue.maxConcurrentOperationCount = 1
+        queue.qualityOfService = .background
+        return queue
+    }()
+    var observer: DirectoryObserver!
     
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
         self.init(directories: ["ROMs"], notificationCenter: notificationCenter, errorHandler: errorHandler)
-        notificationCenter.addObserver(forName: .RomsFinishedImporting, object: nil, queue: nil) { [weak self] _ in
+        presentedItemURL = localAndCloudDirectories.first?.value
+        if let container = presentedItemURL {
+            //Task { @MainActor in
+//            DispatchQueue.main.async { [weak self] in
+                /*self?.*/observer = .init(directory: container, queue: .init())
+//            }
+        }
+        
+//        NSFileCoordinator.addFilePresenter(self)
+        romsFinishedImportingSubscriber = notificationCenter.publisher(for: .RomsFinishedImporting).sink { [weak self] _ in
             Task {
                 self?.handleImportNewRomFiles()
             }
@@ -752,7 +852,35 @@ class RomsSyncer: iCloudContainerSyncer {
     }
     
     deinit {
-        notificationCenter.removeObserver(self)
+        romsFinishedImportingSubscriber?.cancel()
+//        NSFileCoordinator.removeFilePresenter(self)
+    }
+    
+    func presentedSubitemDidAppear(at url: URL) {
+        DLOG("New file: \(url)")
+        if fileManager.fileExists(atPath: url.pathDecoded) {
+            insertDownloadedFile(url)
+            clearFileObserver()
+        }
+    }
+    
+    func presentedSubitemDidChange(at url: URL) {
+        DLOG("File changed: \(url)")
+        if fileManager.fileExists(atPath: url.pathDecoded) {
+            insertDownloadedFile(url)
+            clearFileObserver()
+        }
+    }
+    
+    func clearFileObserver() {
+        if pendingFilesToDownload.isEmpty {
+            //NSFileCoordinator.removeFilePresenter(self)
+        }
+    }
+    
+    override func setNewCloudFilesAvailable() {
+        super.setNewCloudFilesAvailable()
+        clearFileObserver()
     }
     
     override func loadAllFromICloud(iterationComplete: (() -> Void)?) -> Completable {
@@ -1174,9 +1302,11 @@ public class ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral, CustomString
     }
     
     func remove(_ element: T) -> T? {
-        queue.sync(flags: .barrier) {
-            set.remove(element)
+        let tmp = queue.sync(flags: .barrier) {
+            let inner = set.remove(element)
+            return inner
         }
+        return tmp
     }
     
     func contains(_ element: T) -> Bool {
