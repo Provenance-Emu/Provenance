@@ -3,6 +3,7 @@
 // Refer to the license.txt file included.
 
 // Local Changes: filter src1_/src2_ in arithmetic
+// Local Changes: ARM NEON optimizations for iOS devices
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -18,6 +19,10 @@
 #include "video_core/pica_types.h"
 #include "video_core/shader/shader.h"
 #include "video_core/shader/shader_interpreter.h"
+
+#if defined(__ARM_NEON) && defined(__aarch64__)
+#include <arm_neon.h>
+#endif
 
 using nihstro::Instruction;
 using nihstro::OpCode;
@@ -157,10 +162,19 @@ static void RunInterpreter(const ShaderSetup& setup, UnitState& state, DebugData
                 src1_[(int)swizzle.src1_selector_3.Value()],
             };
             if (negate_src1) {
+#if defined(__ARM_NEON) && defined(__aarch64__)
+                // Load float24 values as regular floats into NEON register
+                float32x4_t vec = vld1q_f32(reinterpret_cast<const float*>(src1));
+                // Negate all elements at once
+                vec = vnegq_f32(vec);
+                // Store back
+                vst1q_f32(reinterpret_cast<float*>(src1), vec);
+#else
                 src1[0] = -src1[0];
                 src1[1] = -src1[1];
                 src1[2] = -src1[2];
                 src1[3] = -src1[3];
+#endif
             }
             float24 src2[4] = {
                 src2_[(int)swizzle.src2_selector_0.Value()],
@@ -169,10 +183,19 @@ static void RunInterpreter(const ShaderSetup& setup, UnitState& state, DebugData
                 src2_[(int)swizzle.src2_selector_3.Value()],
             };
             if (negate_src2) {
+#if defined(__ARM_NEON) && defined(__aarch64__)
+                // Load float24 values as regular floats into NEON register
+                float32x4_t vec = vld1q_f32(reinterpret_cast<const float*>(src2));
+                // Negate all elements at once
+                vec = vnegq_f32(vec);
+                // Store back
+                vst1q_f32(reinterpret_cast<float*>(src2), vec);
+#else
                 src2[0] = -src2[0];
                 src2[1] = -src2[1];
                 src2[2] = -src2[2];
                 src2[3] = -src2[3];
+#endif
             }
 
             float24* dest =
@@ -190,12 +213,37 @@ static void RunInterpreter(const ShaderSetup& setup, UnitState& state, DebugData
                 Record<DebugDataRecord::SRC1>(debug_data, iteration, src1);
                 Record<DebugDataRecord::SRC2>(debug_data, iteration, src2);
                 Record<DebugDataRecord::DEST_IN>(debug_data, iteration, dest);
+#if defined(__ARM_NEON) && defined(__aarch64__)
+                // Create a mask for enabled components
+                uint32_t mask[4] = {
+                    swizzle.DestComponentEnabled(0) ? 0xFFFFFFFF : 0,
+                    swizzle.DestComponentEnabled(1) ? 0xFFFFFFFF : 0,
+                    swizzle.DestComponentEnabled(2) ? 0xFFFFFFFF : 0,
+                    swizzle.DestComponentEnabled(3) ? 0xFFFFFFFF : 0
+                };
+                
+                // Load vectors and mask
+                float32x4_t src1_vec = vld1q_f32(reinterpret_cast<const float*>(src1));
+                float32x4_t src2_vec = vld1q_f32(reinterpret_cast<const float*>(src2));
+                float32x4_t dest_vec = vld1q_f32(reinterpret_cast<const float*>(dest));
+                uint32x4_t mask_vec = vld1q_u32(mask);
+                
+                // Perform vector addition
+                float32x4_t result_vec = vaddq_f32(src1_vec, src2_vec);
+                
+                // Apply mask: use result_vec where mask is set, otherwise use original dest_vec
+                result_vec = vbslq_f32(mask_vec, result_vec, dest_vec);
+                
+                // Store result
+                vst1q_f32(reinterpret_cast<float*>(dest), result_vec);
+#else
                 for (int i = 0; i < 4; ++i) {
                     if (!swizzle.DestComponentEnabled(i))
                         continue;
 
                     dest[i] = src1[i] + src2[i];
                 }
+#endif
                 Record<DebugDataRecord::DEST_OUT>(debug_data, iteration, dest);
                 break;
             }
@@ -204,12 +252,37 @@ static void RunInterpreter(const ShaderSetup& setup, UnitState& state, DebugData
                 Record<DebugDataRecord::SRC1>(debug_data, iteration, src1);
                 Record<DebugDataRecord::SRC2>(debug_data, iteration, src2);
                 Record<DebugDataRecord::DEST_IN>(debug_data, iteration, dest);
+#if defined(__ARM_NEON) && defined(__aarch64__)
+                // Create a mask for enabled components
+                uint32_t mask[4] = {
+                    swizzle.DestComponentEnabled(0) ? 0xFFFFFFFF : 0,
+                    swizzle.DestComponentEnabled(1) ? 0xFFFFFFFF : 0,
+                    swizzle.DestComponentEnabled(2) ? 0xFFFFFFFF : 0,
+                    swizzle.DestComponentEnabled(3) ? 0xFFFFFFFF : 0
+                };
+                
+                // Load vectors and mask
+                float32x4_t src1_vec = vld1q_f32(reinterpret_cast<const float*>(src1));
+                float32x4_t src2_vec = vld1q_f32(reinterpret_cast<const float*>(src2));
+                float32x4_t dest_vec = vld1q_f32(reinterpret_cast<const float*>(dest));
+                uint32x4_t mask_vec = vld1q_u32(mask);
+                
+                // Perform vector multiplication
+                float32x4_t result_vec = vmulq_f32(src1_vec, src2_vec);
+                
+                // Apply mask: use result_vec where mask is set, otherwise use original dest_vec
+                result_vec = vbslq_f32(mask_vec, result_vec, dest_vec);
+                
+                // Store result
+                vst1q_f32(reinterpret_cast<float*>(dest), result_vec);
+#else
                 for (int i = 0; i < 4; ++i) {
                     if (!swizzle.DestComponentEnabled(i))
                         continue;
 
                     dest[i] = src1[i] * src2[i];
                 }
+#endif
                 Record<DebugDataRecord::DEST_OUT>(debug_data, iteration, dest);
                 break;
             }
