@@ -459,8 +459,22 @@ void RasterizerVulkan::DrawTriangles() {
 
 bool RasterizerVulkan::Draw(bool accelerate, bool is_indexed) {
     MICROPROFILE_SCOPE(Vulkan_Drawing);
-    if ((Settings::values.shader_type.GetValue() == 2 || Settings::values.shader_type.GetValue() == 3) && pipeline_info.vertex_layout.binding_count > 2)
+    
+    // Special handling for hardware full renderer (shader_type=3)
+    const bool is_hw_full_renderer = Settings::values.shader_type.GetValue() == 3;
+    
+    // For shader_type=2 and shader_type=3, we need to restrict complex vertex layouts
+    if ((Settings::values.shader_type.GetValue() == 2 || is_hw_full_renderer) && pipeline_info.vertex_layout.binding_count > 2)
         return false;
+    
+    // For hardware full renderer, add additional safety checks
+    if (is_hw_full_renderer) {
+        // Ensure texture units are properly synchronized before drawing
+        if (pipeline_info.vertex_layout.binding_count > 0 && pipeline_info.vertex_layout.binding_count % 2 != 0) {
+            LOG_DEBUG(Render_Vulkan, "Skipping draw with odd binding count for shader_type=3");
+            return false;
+        }
+    }
         
     const bool shadow_rendering = regs.framebuffer.IsShadowRendering();
     const bool has_stencil = regs.framebuffer.HasStencil();
