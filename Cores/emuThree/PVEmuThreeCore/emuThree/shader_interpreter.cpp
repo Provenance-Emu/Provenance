@@ -63,9 +63,37 @@ static void RunInterpreter(const ShaderSetup& setup, UnitState& state, DebugData
     auto evaluate_condition = [&state](Instruction::FlowControlType flow_control) {
         using Op = Instruction::FlowControlType::Op;
 
+#if defined(__ARM_NEON) && defined(__aarch64__)
+        // Load conditional code and reference values into NEON registers
+        // This allows us to perform the comparison in parallel
+        uint8_t cond_code[4] = {
+            static_cast<uint8_t>(state.conditional_code[0]),
+            static_cast<uint8_t>(state.conditional_code[1]),
+            0, 0  // Padding for 32-bit alignment
+        };
+        
+        uint8_t ref_values[4] = {
+            static_cast<uint8_t>(flow_control.refx.Value()),
+            static_cast<uint8_t>(flow_control.refy.Value()),
+            0, 0  // Padding for 32-bit alignment
+        };
+        
+        // Load values into NEON registers
+        uint8x8_t cond_vec = vld1_u8(cond_code);
+        uint8x8_t ref_vec = vld1_u8(ref_values);
+        
+        // Compare equality (result is non-zero if equal)
+        uint8x8_t result_vec = vceq_u8(cond_vec, ref_vec);
+        
+        // Extract results
+        bool result_x = vget_lane_u8(result_vec, 0) != 0;
+        bool result_y = vget_lane_u8(result_vec, 1) != 0;
+#else
         bool result_x = flow_control.refx.Value() == state.conditional_code[0];
         bool result_y = flow_control.refy.Value() == state.conditional_code[1];
+#endif
 
+        // Use a branchless approach for common cases to avoid pipeline stalls
         switch (flow_control.op) {
         case Op::Or:
             return result_x || result_y;
@@ -1032,10 +1060,19 @@ static void RunInterpreter(const ShaderSetup& setup, UnitState& state, DebugData
                     src1_[(int)mad_swizzle.src1_selector_3.Value()],
                 };
                 if (negate_src1) {
+#if defined(__ARM_NEON) && defined(__aarch64__)
+                    // Load float24 values as regular floats into NEON register
+                    float32x4_t vec = vld1q_f32(reinterpret_cast<const float*>(src1));
+                    // Negate all elements at once
+                    vec = vnegq_f32(vec);
+                    // Store back
+                    vst1q_f32(reinterpret_cast<float*>(src1), vec);
+#else
                     src1[0] = -src1[0];
                     src1[1] = -src1[1];
                     src1[2] = -src1[2];
                     src1[3] = -src1[3];
+#endif
                 }
                 float24 src2[4] = {
                     src2_[(int)mad_swizzle.src2_selector_0.Value()],
@@ -1044,10 +1081,19 @@ static void RunInterpreter(const ShaderSetup& setup, UnitState& state, DebugData
                     src2_[(int)mad_swizzle.src2_selector_3.Value()],
                 };
                 if (negate_src2) {
+#if defined(__ARM_NEON) && defined(__aarch64__)
+                    // Load float24 values as regular floats into NEON register
+                    float32x4_t vec = vld1q_f32(reinterpret_cast<const float*>(src2));
+                    // Negate all elements at once
+                    vec = vnegq_f32(vec);
+                    // Store back
+                    vst1q_f32(reinterpret_cast<float*>(src2), vec);
+#else
                     src2[0] = -src2[0];
                     src2[1] = -src2[1];
                     src2[2] = -src2[2];
                     src2[3] = -src2[3];
+#endif
                 }
                 float24 src3[4] = {
                     src3_[(int)mad_swizzle.src3_selector_0.Value()],
@@ -1056,10 +1102,19 @@ static void RunInterpreter(const ShaderSetup& setup, UnitState& state, DebugData
                     src3_[(int)mad_swizzle.src3_selector_3.Value()],
                 };
                 if (negate_src3) {
+#if defined(__ARM_NEON) && defined(__aarch64__)
+                    // Load float24 values as regular floats into NEON register
+                    float32x4_t vec = vld1q_f32(reinterpret_cast<const float*>(src3));
+                    // Negate all elements at once
+                    vec = vnegq_f32(vec);
+                    // Store back
+                    vst1q_f32(reinterpret_cast<float*>(src3), vec);
+#else
                     src3[0] = -src3[0];
                     src3[1] = -src3[1];
                     src3[2] = -src3[2];
                     src3[3] = -src3[3];
+#endif
                 }
 
                 float24* dest =
@@ -1142,6 +1197,11 @@ static void RunInterpreter(const ShaderSetup& setup, UnitState& state, DebugData
                 break;
 
             case OpCode::Id::CALL:
+                // CALL is a direct unconditional call - optimize by avoiding unnecessary checks
+#if defined(__ARM_NEON) && defined(__aarch64__)
+                // Use prefetch hint to improve instruction cache performance for the call target
+                __builtin_prefetch(&program_code[instr.flow_control.dest_offset], 0, 3); // 0=read, 3=high temporal locality
+#endif
                 call(instr.flow_control.dest_offset, instr.flow_control.num_instructions,
                      program_counter + 1, 0, 0);
                 break;
@@ -1150,6 +1210,10 @@ static void RunInterpreter(const ShaderSetup& setup, UnitState& state, DebugData
                 Record<DebugDataRecord::COND_BOOL_IN>(
                     debug_data, iteration, uniforms.b[instr.flow_control.bool_uniform_id]);
                 if (uniforms.b[instr.flow_control.bool_uniform_id]) {
+#if defined(__ARM_NEON) && defined(__aarch64__)
+                    // Use prefetch hint to improve instruction cache performance for the call target
+                    __builtin_prefetch(&program_code[instr.flow_control.dest_offset], 0, 3); // 0=read, 3=high temporal locality
+#endif
                     call(instr.flow_control.dest_offset, instr.flow_control.num_instructions,
                          program_counter + 1, 0, 0);
                 }
@@ -1158,6 +1222,10 @@ static void RunInterpreter(const ShaderSetup& setup, UnitState& state, DebugData
             case OpCode::Id::CALLC:
                 Record<DebugDataRecord::COND_CMP_IN>(debug_data, iteration, state.conditional_code);
                 if (evaluate_condition(instr.flow_control)) {
+#if defined(__ARM_NEON) && defined(__aarch64__)
+                    // Use prefetch hint to improve instruction cache performance for the call target
+                    __builtin_prefetch(&program_code[instr.flow_control.dest_offset], 0, 3); // 0=read, 3=high temporal locality
+#endif
                     call(instr.flow_control.dest_offset, instr.flow_control.num_instructions,
                          program_counter + 1, 0, 0);
                 }
@@ -1203,7 +1271,25 @@ static void RunInterpreter(const ShaderSetup& setup, UnitState& state, DebugData
                                             uniforms.i[instr.flow_control.int_uniform_id].y,
                                             uniforms.i[instr.flow_control.int_uniform_id].z,
                                             uniforms.i[instr.flow_control.int_uniform_id].w);
+                
+#if defined(__ARM_NEON) && defined(__aarch64__)
+                // Load loop parameters into NEON registers for faster access
+                // This is particularly helpful for loops with many iterations
+                uint8x8_t loop_param_vec = vdup_n_u8(0);
+                loop_param_vec = vset_lane_u8(loop_param.x, loop_param_vec, 0); // Initial counter
+                loop_param_vec = vset_lane_u8(loop_param.y, loop_param_vec, 1); // Initial address
+                loop_param_vec = vset_lane_u8(loop_param.z, loop_param_vec, 2); // Loop increment
+                
+                // Store initial address register
+                state.address_registers[2] = vget_lane_u8(loop_param_vec, 1);
+                
+                // Prefetch the loop body instructions
+                for (u32 i = program_counter + 1; i < instr.flow_control.dest_offset; i += 8) {
+                    __builtin_prefetch(&program_code[i], 0, 3); // 0=read, 3=high temporal locality
+                }
+#else
                 state.address_registers[2] = loop_param.y;
+#endif
 
                 Record<DebugDataRecord::LOOP_INT_IN>(debug_data, iteration, loop_param);
                 call(program_counter + 1, instr.flow_control.dest_offset - program_counter,
