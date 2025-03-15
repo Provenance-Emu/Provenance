@@ -150,8 +150,10 @@ u32 UnpackDepthStencil(const VideoCore::StagingData& data, vk::Format dest) {
 Image MakeImage(const Instance& instance, u32 width, u32 height, u32 levels, u32 layers,
                 vk::Format format, vk::ImageUsageFlags usage, vk::ImageCreateFlags flags,
                 bool need_format_list, std::string_view debug_name = {}) {
+    // Include SRGB format for proper alpha channel handling on MoltenVK
     const std::array format_list = {
         vk::Format::eR8G8B8A8Unorm,
+        vk::Format::eR8G8B8A8Srgb,  // Add SRGB format for proper alpha channel handling
         vk::Format::eR32Uint,
     };
     const vk::ImageFormatListCreateInfo image_format_list = {
@@ -363,7 +365,8 @@ Allocation TextureRuntime::Allocate(const VideoCore::SurfaceParams& params,
     if (params.res_scale != 1) {
         const u32 scaled_width = is_custom ? params.width : params.GetScaledWidth();
         const u32 scaled_height = is_custom ? params.height : params.GetScaledHeight();
-        const vk::Format scaled_format = is_custom ? vk::Format::eR8G8B8A8Unorm : format;
+        // Use RGBA8 SRGB format for custom textures to ensure proper alpha channel handling on MoltenVK
+        const vk::Format scaled_format = is_custom ? vk::Format::eR8G8B8A8Srgb : format;
         const std::string scaled_name = is_custom ? debug_name : params.DebugName(true);
         images[1] = MakeImage(instance, scaled_width, scaled_height, params.levels, layers,
                               scaled_format, traits.usage, flags, need_format_list, scaled_name);
