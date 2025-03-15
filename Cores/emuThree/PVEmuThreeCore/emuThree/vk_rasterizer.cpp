@@ -383,14 +383,21 @@ bool RasterizerVulkan::AccelerateDrawBatchInternal(bool is_indexed) {
         return true; // Skip draw call when pipeline is not ready
     }
 
-    const DrawParams params = {
+    DrawParams params = {
         .vertex_count = regs.pipeline.num_vertices,
         .vertex_offset = -static_cast<s32>(vertex_info.vs_input_index_min),
         .binding_count = pipeline_info.vertex_layout.binding_count,
         .bindings = binding_offsets,
         .is_indexed = is_indexed,
     };
-    if (Settings::values.shader_type.GetValue() == 2 || Settings::values.shader_type.GetValue() == 4 || params.binding_count % 2 == 0) {
+    
+    // Special handling for hardware full renderer (shader_type=3)
+    // Ensure binding count is always even to prevent texture loading issues
+    if (Settings::values.shader_type.GetValue() == 3 && params.binding_count % 2 != 0) {
+        // Add a dummy binding to make the count even
+        params.binding_count += 1;
+    }
+    if (Settings::values.shader_type.GetValue() == 2 || Settings::values.shader_type.GetValue() == 3 || Settings::values.shader_type.GetValue() == 4 || params.binding_count % 2 == 0) {
         scheduler.Record([this, params](vk::CommandBuffer cmdbuf) {
             std::array<u64, 16> offsets;
             std::copy(params.bindings.begin(), params.bindings.end(), offsets.begin());
@@ -452,7 +459,7 @@ void RasterizerVulkan::DrawTriangles() {
 
 bool RasterizerVulkan::Draw(bool accelerate, bool is_indexed) {
     MICROPROFILE_SCOPE(Vulkan_Drawing);
-    if (Settings::values.shader_type.GetValue() == 2 && pipeline_info.vertex_layout.binding_count > 2)
+    if ((Settings::values.shader_type.GetValue() == 2 || Settings::values.shader_type.GetValue() == 3) && pipeline_info.vertex_layout.binding_count > 2)
         return false;
         
     const bool shadow_rendering = regs.framebuffer.IsShadowRendering();
@@ -597,10 +604,49 @@ void RasterizerVulkan::SyncTextureUnits(const Framebuffer& framebuffer) {
         }
 
         // Bind the texture provided by the rasterizer cache
-        Surface& surface = res_cache.GetTextureSurface(texture);
-        Sampler& sampler = res_cache.GetSampler(texture.config);
-        if (!IsFeedbackLoop(texture_index, framebuffer, surface, sampler)) {
-            pipeline_cache.BindTexture(texture_index, surface.ImageView(), sampler.Handle());
+        try {
+            // For shader_type=3 (hardware full renderer), we need to be more careful with texture loading
+            const bool is_hw_full_renderer = Settings::values.shader_type.GetValue() == 3;
+            
+            // Get the texture surface and sampler
+            Surface& surface = res_cache.GetTextureSurface(texture);
+            Sampler& sampler = res_cache.GetSampler(texture.config);
+            
+            // For hardware full renderer, we need to ensure proper texture state transitions
+            if (is_hw_full_renderer) {
+                // Add a memory barrier to ensure the texture is fully loaded
+                scheduler.Record([&surface](vk::CommandBuffer cmdbuf) {
+                    const vk::ImageMemoryBarrier barrier{
+                        .srcAccessMask = surface.AccessFlags(),
+                        .dstAccessMask = vk::AccessFlagBits::eShaderRead,
+                        .oldLayout = vk::ImageLayout::eGeneral,
+                        .newLayout = vk::ImageLayout::eShaderReadOnlyOptimal,
+                        .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+                        .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+                        .image = surface.Image(),
+                        .subresourceRange = {
+                            .aspectMask = surface.Aspect(),
+                            .baseMipLevel = 0,
+                            .levelCount = VK_REMAINING_MIP_LEVELS,
+                            .baseArrayLayer = 0,
+                            .layerCount = VK_REMAINING_ARRAY_LAYERS,
+                        },
+                    };
+                    cmdbuf.pipelineBarrier(surface.PipelineStageFlags(),
+                                          vk::PipelineStageFlagBits::eFragmentShader,
+                                          vk::DependencyFlagBits::eByRegion, {}, {}, barrier);
+                });
+            }
+            
+            if (!IsFeedbackLoop(texture_index, framebuffer, surface, sampler)) {
+                pipeline_cache.BindTexture(texture_index, surface.ImageView(), sampler.Handle());
+            }
+        } catch (const std::exception& e) {
+            // If texture loading fails, bind a null texture instead of crashing
+            LOG_ERROR(Render_Vulkan, "Texture loading failed: {}", e.what());
+            const Surface& null_surface = res_cache.GetSurface(VideoCore::NULL_SURFACE_ID);
+            const Sampler& null_sampler = res_cache.GetSampler(VideoCore::NULL_SAMPLER_ID);
+            pipeline_cache.BindTexture(texture_index, null_surface.ImageView(), null_sampler.Handle());
         }
     }
 }
