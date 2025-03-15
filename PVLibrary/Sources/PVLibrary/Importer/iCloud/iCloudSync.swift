@@ -55,7 +55,7 @@ enum iCloudSyncStatus {
     case filesAlreadyMoved
 }
 
-class iCloudContainerSyncer: NSObject, iCloudTypeSyncer {
+class iCloudContainerSyncer: iCloudTypeSyncer {
     lazy var pendingFilesToDownload: ConcurrentSet<String> = []
     lazy var newFiles: ConcurrentSet<URL> = []
     lazy var uploadedFiles: ConcurrentSet<URL> = []
@@ -75,7 +75,6 @@ class iCloudContainerSyncer: NSObject, iCloudTypeSyncer {
         self.notificationCenter = notificationCenter
         self.directories = directories
         self.errorHandler = errorHandler
-        super.init()
     }
     
     deinit {
@@ -114,19 +113,19 @@ class iCloudContainerSyncer: NSObject, iCloudTypeSyncer {
     let metadataQuery: NSMetadataQuery = .init()
     
     func insertDownloadingFile(_ file: URL) {
-        guard !uploadedFiles.contains(file)
+        guard !uploadedFiles.contains(file.standardizedFileURL)
         else {
             return
         }
-        pendingFilesToDownload.insert(file.absoluteString)
+        pendingFilesToDownload.insert(file.standardizedFileURL.pathDecoded)
     }
     
     func insertDownloadedFile(_ file: URL) {
-        pendingFilesToDownload.remove(file.absoluteString)
+        pendingFilesToDownload.remove(file.pathDecoded)
     }
     
     func insertUploadedFile(_ file: URL) {
-        uploadedFiles.insert(file)
+        uploadedFiles.insert(file.standardizedFileURL)
     }
     
     func setNewCloudFilesAvailable() {
@@ -227,11 +226,11 @@ class iCloudContainerSyncer: NSObject, iCloudTypeSyncer {
                     case  NSMetadataUbiquitousItemDownloadingStatusNotDownloaded:
                         do {
                             try self?.fileManager.startDownloadingUbiquitousItem(at: file)
-                            self?.insertDownloadingFile(file)
-                            ILOG("Download started for: \(file)")
+                            self?.insertDownloadingFile(file.standardizedFileURL)
+                            ILOG("Download started for: \(file.standardizedFileURL.pathDecoded)")
                         } catch {
                             self?.errorHandler.handleError(error, file: file)
-                            ELOG("Failed to start download on file \(file): \(error)")
+                            ELOG("Failed to start download on file \(file.pathDecoded): \(error)")
                         }
                     case NSMetadataUbiquitousItemDownloadingStatusCurrent:
                         DLOG("item up to date: \(file)")
@@ -241,9 +240,9 @@ class iCloudContainerSyncer: NSObject, iCloudTypeSyncer {
                         } else {
                             //in the case when we are initially turning on iCloud or the app is opened and coming into the foreground for the first time, we try to import any files already downloaded
                             if self?.status == .initialUpload {
-                                self?.insertDownloadingFile(file)
+                                self?.insertDownloadingFile(file.standardizedFileURL)
                             }
-                            self?.insertDownloadedFile(file)
+                            self?.insertDownloadedFile(file.standardizedFileURL)
                         }
                     default: ILOG("Other: \(file): download status: \(downloadStatus)")
                 }
@@ -514,47 +513,30 @@ public enum iCloudSync {
 
 //MARK: - iCloud syncers
 
-class SaveStateSyncer: iCloudContainerSyncer, NSFilePresenter {
+class SaveStateSyncer: iCloudContainerSyncer {
     let jsonDecorder = JSONDecoder()
     var processed = ConcurrentQueue<Int>(arrayLiteral: 0)
-    var presentedItemURL: URL?
-    var presentedItemOperationQueue: OperationQueue = {
-        let queue: OperationQueue = .init()
-        queue.maxConcurrentOperationCount = 1
-        queue.qualityOfService = .background
-        return queue
-    }()
+    var observer: DirectoryObserver?
     
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
         self.init(directories: ["Save States"], notificationCenter: notificationCenter, errorHandler: errorHandler)
-        presentedItemURL = localAndCloudDirectories.first?.value
-        NSFileCoordinator.addFilePresenter(self)
+        if let actualContainer = localAndCloudDirectories.first?.value {
+            observer = .init(directory: actualContainer) { [weak self] url in
+                DLOG("attempting to process save file \(url.standardizedFileURL)")
+                self?.insertDownloadedFile(url.standardizedFileURL)
+                self?.clearFileObserver()
+            }
+        }
         jsonDecorder.dataDecodingStrategy = .deferredToData
     }
     
     deinit {
-        NSFileCoordinator.removeFilePresenter(self)
-    }
-    
-    func presentedSubitemDidAppear(at url: URL) {
-        DLOG("New file: \(url)")
-        if fileManager.fileExists(atPath: url.pathDecoded) {
-            insertDownloadedFile(url)
-            clearFileObserver()
-        }
-    }
-    
-    func presentedSubitemDidChange(at url: URL) {
-        DLOG("File changed: \(url)")
-        if fileManager.fileExists(atPath: url.pathDecoded) {
-            insertDownloadedFile(url)
-            clearFileObserver()
-        }
+        observer = nil
     }
     
     func clearFileObserver() {
         if pendingFilesToDownload.isEmpty {
-            NSFileCoordinator.removeFilePresenter(self)
+            observer = nil
         }
     }
     
@@ -602,7 +584,7 @@ class SaveStateSyncer: iCloudContainerSyncer, NSFilePresenter {
     }
     
     override func insertDownloadedFile(_ file: URL) {
-        guard let _ = pendingFilesToDownload.remove(file.absoluteString),
+        guard let _ = pendingFilesToDownload.remove(file.pathDecoded),
               "json".caseInsensitiveCompare(file.pathExtension) == .orderedSame
         else {
             return
@@ -663,7 +645,7 @@ class SaveStateSyncer: iCloudContainerSyncer, NSFilePresenter {
 
         DLOG("Data read \(String(data: data, encoding: .utf8) ?? "Nil")")
         let save = try jsonDecorder.decode(SaveState.self, from: data)
-        DLOG("Read JSON data at (\(json.absoluteString)")
+        DLOG("Read JSON data at (\(json.pathDecoded)")
         return save
     }
     
@@ -746,6 +728,7 @@ class SaveStateSyncer: iCloudContainerSyncer, NSFilePresenter {
     }
 }
 
+/// used for only purging database entries that no longer exist (files deleted from icloud while the app was shut off)
 enum DatastorePurgeStatus {
     case incomplete
     case complete
@@ -756,94 +739,65 @@ enum GameStatus {
     case gameDoesNotExist
 }
 
-class DirectoryObserver2: NSObject, NSFilePresenter {
-    var presentedItemURL: URL?
-    var presentedItemOperationQueue: OperationQueue = {
-        let queue: OperationQueue = .init()
-        queue.maxConcurrentOperationCount = 1
-        queue.qualityOfService = .background
-        return queue
-    }()
-    
-    init(directory: URL) {
-        presentedItemURL = directory
-        super.init()
-        NSFileCoordinator.addFilePresenter(self)
-    }
-    
-    deinit {
-        NSFileCoordinator.removeFilePresenter(self)
-    }
-
-    func presentedSubitemDidAppear(at url: URL) {
-        DLOG("file appears: \(url)")
-        return
-    }
-
-    func presentedSubitemDidChange(at url: URL) {
-        DLOG("file changed: \(url)")
-        return
-    }
-}
-
+//TODO: test without this. the issue may have been a deadlock that is now fixed
+/// When turning on iCloud initially and the user has a large number of files OR the file sizes are large (haven't been able to figure out which case it is), when the downloads coplete no event is fired from the NSMetadataQuery.
+/// The easiest solution is to just add a listener initially. after all of those files are procesed, we turn it off and for a few files to sync the event does come in.
 class DirectoryObserver: NSObject, NSFilePresenter {
-    let observedDirectory: URL
+    let presentedItemURL: URL?
+    //can't get any operation queue other than the main to work
+    let presentedItemOperationQueue: OperationQueue = .main
+    var fileHandler: ((URL) -> Void)!
+    let fileManager: FileManager = .default
     
-    var presentedItemURL: URL? { return observedDirectory }
-    //TODO: not working beside the main queue
-    var presentedItemOperationQueue: OperationQueue /*= .init() {
-        let queue: OperationQueue = .init()
-        queue.maxConcurrentOperationCount = 1
-        queue.qualityOfService = .userInitiated
-        return queue
-    }()*/
-    
-    init(directory: URL, queue: OperationQueue) {
-        observedDirectory = directory
-        presentedItemOperationQueue = queue
+    init(directory: URL, fileHandler: @escaping(URL) -> Void) {
+        presentedItemURL = directory
+        self.fileHandler = fileHandler
         super.init()
         NSFileCoordinator.addFilePresenter(self)
     }
     
     deinit {
         NSFileCoordinator.removeFilePresenter(self)
+        fileHandler = nil
     }
     
-    let queue = DispatchQueue(label: "test")
+    let queue = DispatchQueue(label: "com.provenance.directory.observer")
     func presentedSubitemDidChange(at url: URL) {
-        DLOG("file changed: \(url), mainThread: \(Thread.isMainThread)")
-        queue.async {
-            DLOG("test")
-            return
+        queue.async { [weak self] in
+            var isDirectory: ObjCBool = false
+            if self?.fileManager.fileExists(atPath: url.pathDecoded, isDirectory: &isDirectory) ?? false,
+               !isDirectory.boolValue {
+                self?.fileHandler(url)
+            }
+        }
+    }
+    
+    func presentedSubitemDidAppear(at url: URL) {
+        queue.async { [weak self] in
+            if self?.fileManager.fileExists(atPath: url.pathDecoded) ?? false {
+                self?.fileHandler(url)
+            }
         }
     }
 }
 
-class RomsSyncer: iCloudContainerSyncer, NSFilePresenter {
+class RomsSyncer: iCloudContainerSyncer {
     let gameImporter = GameImporter.shared
     var processingFiles = ConcurrentSet<URL>()
     let multiFileRoms: ConcurrentDictionary<String, [URL]> = [:]
     var romsFinishedImportingSubscriber: AnyCancellable?
-    var presentedItemURL: URL?
-    lazy var presentedItemOperationQueue: OperationQueue = {
-        let queue: OperationQueue = .init()
-        queue.maxConcurrentOperationCount = 1
-        queue.qualityOfService = .background
-        return queue
-    }()
-    var observer: DirectoryObserver!
+    var observer: DirectoryObserver?
     
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
         self.init(directories: ["ROMs"], notificationCenter: notificationCenter, errorHandler: errorHandler)
-        presentedItemURL = localAndCloudDirectories.first?.value
-        if let container = presentedItemURL {
-            //Task { @MainActor in
-//            DispatchQueue.main.async { [weak self] in
-                /*self?.*/observer = .init(directory: container, queue: .init())
-//            }
+        if let container = localAndCloudDirectories.first?.value {
+            observer = .init(directory: container) { [weak self] url in
+                DLOG("attempting to process ROM file \(url.standardizedFileURL)")
+                self?.insertDownloadedFile(url.standardizedFileURL)
+                self?.clearFileObserver()
+            }
         }
         
-//        NSFileCoordinator.addFilePresenter(self)
         romsFinishedImportingSubscriber = notificationCenter.publisher(for: .RomsFinishedImporting).sink { [weak self] _ in
             Task {
                 self?.handleImportNewRomFiles()
@@ -853,28 +807,12 @@ class RomsSyncer: iCloudContainerSyncer, NSFilePresenter {
     
     deinit {
         romsFinishedImportingSubscriber?.cancel()
-//        NSFileCoordinator.removeFilePresenter(self)
-    }
-    
-    func presentedSubitemDidAppear(at url: URL) {
-        DLOG("New file: \(url)")
-        if fileManager.fileExists(atPath: url.pathDecoded) {
-            insertDownloadedFile(url)
-            clearFileObserver()
-        }
-    }
-    
-    func presentedSubitemDidChange(at url: URL) {
-        DLOG("File changed: \(url)")
-        if fileManager.fileExists(atPath: url.pathDecoded) {
-            insertDownloadedFile(url)
-            clearFileObserver()
-        }
+        observer = nil
     }
     
     func clearFileObserver() {
         if pendingFilesToDownload.isEmpty {
-            //NSFileCoordinator.removeFilePresenter(self)
+            observer = nil
         }
     }
     
@@ -907,31 +845,31 @@ class RomsSyncer: iCloudContainerSyncer, NSFilePresenter {
         
         let romsPath = actualContainrUrl.appendDocumentsDirectory.appendingPathComponent(romsDirectoryName)
         DLOG("romsPath: \(romsPath)")
-        var realm: Realm! = nil
+        let realm: Realm
+        do {
+            realm = try Realm()
+        } catch {
+            ELOG("error removing game entries that do NOT exist in the cloud container \(romsPath)")
+            return
+        }
         RomDatabase.gamesCache.forEach { (_, game: PVGame) in
             let gameUrl = romsPath.appendingPathComponent(game.romPath)
-            if !fileManager.fileExists(atPath: gameUrl.pathDecoded) {
-                do {
-                    if realm == nil {
-                        do {//lazy load so we only instantiate if there's a match found
-                            realm = try Realm()
-                        } catch {
-                            ELOG("error removing game entries that do NOT exist in the cloud container \(romsPath)")
-                            return
-                        }
-                    }
-                    if let gameToDelete = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) {
-                        try realm.deleteGame(gameToDelete)
-                    }
-                } catch {
-                    ELOG("error deleting \(gameUrl), \(error)")
+            guard fileManager.fileExists(atPath: gameUrl.pathDecoded)
+            else {
+                return
+            }
+            do {
+                if let gameToDelete = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) {
+                    try realm.deleteGame(gameToDelete)
                 }
+            } catch {
+                ELOG("error deleting \(gameUrl), \(error)")
             }
         }
     }
     
     override func insertDownloadedFile(_ file: URL) {
-        guard let _ = pendingFilesToDownload.remove(file.absoluteString)
+        guard let _ = pendingFilesToDownload.remove(file.pathDecoded)
         else {
             return
         }
@@ -1089,7 +1027,7 @@ protocol Queue {
 
 class ConcurrentQueue<Element>: Queue, ExpressibleByArrayLiteral {
     private var collection = [Element]()
-    private let queue = DispatchQueue(label: "com.provenance.concurrent.queue", attributes: .concurrent)
+    private let queue = DispatchQueue(label: "com.provenance.concurrent.queue")
     
     required init(arrayLiteral elements: Element...) {
         collection = Array(elements)
@@ -1214,6 +1152,7 @@ extension URL {
         lastPathComponent.removingPercentEncoding ?? lastPathComponent
     }
     
+    //TODO: needs to be updated to not include .bin files for non multi-file ROMs
     var multiFileNameKey: String? {
         guard "cue".caseInsensitiveCompare(pathExtension) == .orderedSame
                 || "bin".caseInsensitiveCompare(pathExtension) == .orderedSame
@@ -1234,7 +1173,7 @@ extension URL {
 
 class ConcurrentDictionary<Key: Hashable, Value>: ExpressibleByDictionaryLiteral, CustomStringConvertible {
     private var dictionary: [Key: Value] = [:]
-    private let queue = DispatchQueue(label: "com.provenance.concurrent.dictionary", attributes: .concurrent)
+    private let queue = DispatchQueue(label: "com.provenance.concurrent.dictionary")
     
     public required init(dictionaryLiteral elements: (Key, Value)...) {
         dictionary = Dictionary(uniqueKeysWithValues: elements)
@@ -1284,7 +1223,7 @@ class ConcurrentDictionary<Key: Hashable, Value>: ExpressibleByDictionaryLiteral
 
 public class ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral, CustomStringConvertible {
     private var set: Set<T>
-    private let queue = DispatchQueue(label: "com.provenance.concurrent.set", attributes: .concurrent)
+    private let queue = DispatchQueue(label: "com.provenance.concurrent.set")
     
     public required init(arrayLiteral elements: T...) {
         set = Set(elements)
@@ -1302,11 +1241,9 @@ public class ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral, CustomString
     }
     
     func remove(_ element: T) -> T? {
-        let tmp = queue.sync(flags: .barrier) {
-            let inner = set.remove(element)
-            return inner
+        queue.sync(flags: .barrier) {
+            set.remove(element)
         }
-        return tmp
     }
     
     func contains(_ element: T) -> Bool {
