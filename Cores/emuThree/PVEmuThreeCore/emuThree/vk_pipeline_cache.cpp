@@ -461,55 +461,15 @@ void PipelineCache::SaveDiskCache() {
 
 bool PipelineCache::BindPipeline(const PipelineInfo& info, bool wait_built) {
     MICROPROFILE_SCOPE(Vulkan_Bind);
-    
-    // Optimize pipeline binding for ARM64 devices with MoltenVK
-    // This is critical for Kirby games which use many small 3D models
-    
-    // Cache the last pipeline hash to avoid redundant hash calculations
-    static thread_local u64 last_pipeline_hash = 0;
-    static thread_local const PipelineInfo* last_info = nullptr;
-    static thread_local u64 last_shader_hash = 0;
-    
-    // Fast path: check if we're binding the same pipeline as before
-    // This is common in Kirby games which draw many similar small models
-    if (last_info == &info) {
-        // If we're binding the same pipeline and it's not dirty, we can skip most of the work
-        if (!scheduler.IsStateDirty(StateFlags::Pipeline) && current_pipeline) {
-            // Only bind descriptor sets which may have changed
-            desc_manager.BindDescriptorSets();
-            scheduler.MarkStateNonDirty(StateFlags::Pipeline);
-            return true;
-        }
-    }
-    
-    // Calculate shader hash only when needed
-    u64 shader_hash;
-    if (last_info == &info) {
-        // Reuse cached shader hash if the info is the same
-        shader_hash = last_shader_hash;
-    } else {
-        // Calculate new shader hash
-        shader_hash = 0;
-        for (u32 i = 0; i < MAX_SHADER_STAGES; i++) {
-            shader_hash = Common::HashCombine(shader_hash, shader_hashes[i]);
-        }
-        last_shader_hash = shader_hash;
+
+    u64 shader_hash = 0;
+    for (u32 i = 0; i < MAX_SHADER_STAGES; i++) {
+        shader_hash = Common::HashCombine(shader_hash, shader_hashes[i]);
     }
 
-    // Calculate pipeline hash
-    u64 pipeline_hash;
-    if (last_info == &info) {
-        // Reuse cached pipeline hash if the info is the same
-        pipeline_hash = last_pipeline_hash;
-    } else {
-        // Calculate new pipeline hash
-        const u64 info_hash = info.Hash(instance);
-        pipeline_hash = Common::HashCombine(shader_hash, info_hash);
-        last_pipeline_hash = pipeline_hash;
-        last_info = &info;
-    }
+    const u64 info_hash = info.Hash(instance);
+    const u64 pipeline_hash = Common::HashCombine(shader_hash, info_hash);
 
-    // Look up or create pipeline
     auto [it, new_pipeline] = graphics_pipelines.try_emplace(pipeline_hash);
     if (new_pipeline) {
         it.value() = std::make_unique<GraphicsPipeline>(
@@ -531,37 +491,9 @@ bool PipelineCache::BindPipeline(const PipelineInfo& info, bool wait_built) {
             scheduler.Record([pipeline](vk::CommandBuffer) { pipeline->WaitDone(); });
         }
 
-#if defined(__ARM_NEON) && defined(__aarch64__)
-        // On ARM64 devices with MoltenVK, we can optimize the pipeline binding
-        // This is particularly important for Kirby games which use many small models
-        scheduler.Record([pipeline](vk::CommandBuffer cmdbuf) {
-            // Bind pipeline with a hint that this might be used frequently
-            // This helps the driver optimize for repeated bindings
-            cmdbuf.bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline->Handle());
-            
-            // Add a memory barrier hint for better performance on Apple GPUs
-            // This is particularly effective for games with many small draw calls
-            static const vk::MemoryBarrier memory_barrier{
-                .srcAccessMask = vk::AccessFlagBits::eShaderWrite,
-                .dstAccessMask = vk::AccessFlagBits::eShaderRead
-            };
-            
-            // Only add memory barriers occasionally to avoid overhead
-            // Use a simple counter to determine when to add barriers
-            static thread_local uint32_t barrier_counter = 0;
-            if ((barrier_counter++ % 32) == 0) {
-                cmdbuf.pipelineBarrier(
-                    vk::PipelineStageFlagBits::eFragmentShader,
-                    vk::PipelineStageFlagBits::eVertexShader,
-                    vk::DependencyFlagBits::eByRegion,
-                    memory_barrier, {}, {});
-            }
-        });
-#else
         scheduler.Record([pipeline](vk::CommandBuffer cmdbuf) {
             cmdbuf.bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline->Handle());
         });
-#endif
 
         current_pipeline = pipeline;
     }
