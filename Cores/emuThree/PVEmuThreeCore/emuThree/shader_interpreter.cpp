@@ -554,8 +554,10 @@ static void RunInterpreter(const ShaderSetup& setup, UnitState& state, DebugData
                     float32x4_t dest_vec_rcp = vld1q_f32(reinterpret_cast<const float*>(dest));
                     uint32x4_t mask_vec_rcp = vld1q_u32(mask_rcp);
                     
-                    // Calculate reciprocal (1.0 / src1[0])
-                    float32_t rcp_val = 1.0f / src1[0].ToFloat32();
+                    // Calculate reciprocal using the exact same method as the non-NEON implementation
+                    // This ensures numerical consistency between NEON and non-NEON code paths
+                    float32_t src_val = src1[0].ToFloat32();
+                    float32_t rcp_val = 1.0f / src_val;
                     
                     // Create a vector with the reciprocal value in all components
                     float32x4_t rcp_vec = vdupq_n_f32(rcp_val);
@@ -597,10 +599,12 @@ static void RunInterpreter(const ShaderSetup& setup, UnitState& state, DebugData
                     float32x4_t dest_vec_rsq = vld1q_f32(reinterpret_cast<const float*>(dest));
                     uint32x4_t mask_vec_rsq = vld1q_u32(mask_rsq);
                     
-                    // Calculate reciprocal square root (1.0 / sqrt(src1[0]))
+                    // Calculate reciprocal square root using the exact same method as the non-NEON implementation
                     // ARM NEON provides vrsqrteq_f32 for approximate reciprocal square root
-                    // but we need precise results matching the original implementation
-                    float32_t rsq_val = 1.0f / std::sqrt(src1[0].ToFloat32());
+                    // but we need precise results matching the original implementation for numerical consistency
+                    float32_t src_val = src1[0].ToFloat32();
+                    float32_t sqrt_val = std::sqrt(src_val);
+                    float32_t rsq_val = 1.0f / sqrt_val;
                     
                     // Create a vector with the rsq value in all components
                     float32x4_t rsq_vec = vdupq_n_f32(rsq_val);
@@ -949,8 +953,10 @@ static void RunInterpreter(const ShaderSetup& setup, UnitState& state, DebugData
                     float32x4_t dest_vec_ex2 = vld1q_f32(reinterpret_cast<const float*>(dest));
                     uint32x4_t mask_vec_ex2 = vld1q_u32(mask_ex2);
                     
-                    // Calculate exp2 of the first component
-                    float32_t ex2_val = std::exp2(src1[0].ToFloat32());
+                    // Calculate exp2 of the first component using the exact same method as the non-NEON implementation
+                    // This ensures numerical consistency between NEON and non-NEON code paths
+                    float32_t src_val = src1[0].ToFloat32();
+                    float32_t ex2_val = std::exp2(src_val);
                     
                     // Create a vector with the ex2 value in all components
                     float32x4_t ex2_vec = vdupq_n_f32(ex2_val);
@@ -993,8 +999,10 @@ static void RunInterpreter(const ShaderSetup& setup, UnitState& state, DebugData
                     float32x4_t dest_vec_lg2 = vld1q_f32(reinterpret_cast<const float*>(dest));
                     uint32x4_t mask_vec_lg2 = vld1q_u32(mask_lg2);
                     
-                    // Calculate log2 of the first component
-                    float32_t lg2_val = std::log2(src1[0].ToFloat32());
+                    // Calculate log2 of the first component using the exact same method as the non-NEON implementation
+                    // This ensures numerical consistency between NEON and non-NEON code paths
+                    float32_t src_val = src1[0].ToFloat32();
+                    float32_t lg2_val = std::log2(src_val);
                     
                     // Create a vector with the lg2 value in all components
                     float32x4_t lg2_vec = vdupq_n_f32(lg2_val);
@@ -1145,9 +1153,10 @@ static void RunInterpreter(const ShaderSetup& setup, UnitState& state, DebugData
                     float32x4_t dest_vec_mad = vld1q_f32(reinterpret_cast<const float*>(dest));
                     uint32x4_t mask_vec_mad = vld1q_u32(mask_mad);
                     
-                    // Perform fused multiply-add operation
-                    // src1 * src2 + src3
-                    float32x4_t result_vec_mad = vfmaq_f32(src3_vec_mad, src1_vec_mad, src2_vec_mad);
+                    // Perform multiply and add operations separately to match the non-NEON implementation
+                    // This avoids potential precision differences with fused multiply-add
+                    float32x4_t mul_result = vmulq_f32(src1_vec_mad, src2_vec_mad);
+                    float32x4_t result_vec_mad = vaddq_f32(mul_result, src3_vec_mad);
                     
                     // Apply mask: use result_vec where mask is set, otherwise use original dest_vec
                     result_vec_mad = vbslq_f32(mask_vec_mad, result_vec_mad, dest_vec_mad);
