@@ -49,8 +49,7 @@ extension SaveState: RealmRepresentable {
         return file.fileName
     }
 
-    @MainActor
-    public func asRealm() async -> PVSaveState {
+    public func asRealm() -> PVSaveState {
         return PVSaveState.build { object in
 
             object.id = id
@@ -67,22 +66,20 @@ extension SaveState: RealmRepresentable {
             } else {
                 object.core = core.asRealm()
             }
-
-            Task {
-                let path = game.file.fileName.saveStatePath.appendingPathComponent(file.fileName)
-                object.file = PVFile(withURL: path)
-                DLOG("file path: \(path)")
-                
-                object.date = date
-                object.lastOpened = lastOpened
-                if let image = image {
-                    let dir = path.deletingLastPathComponent()
-                    let imagePath = dir.appendingPathComponent(image.fileName)
-                    DLOG("path: \(imagePath)")
-                    object.image = PVImageFile(withURL: imagePath, relativeRoot: .iCloud)
-                }
-                object.isAutosave = isAutosave
+            //we remove the extension in order to get the correct path
+            let path = game.file.fileName.saveStatePath.deletingPathExtension().appendingPathComponent(file.fileName)
+            object.file = PVFile(withURL: path)
+            DLOG("file path: \(path)")
+            
+            object.date = date
+            object.lastOpened = lastOpened
+            if let image = image {
+                let dir = path.deletingLastPathComponent()
+                let imagePath = dir.appendingPathComponent(image.fileName)
+                DLOG("path: \(imagePath)")
+                object.image = PVImageFile(withURL: imagePath, relativeRoot: .iCloud)
             }
+            object.isAutosave = isAutosave
         }
     }
 }
