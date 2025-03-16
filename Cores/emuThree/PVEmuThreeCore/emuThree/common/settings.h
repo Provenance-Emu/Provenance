@@ -437,7 +437,7 @@ struct Values {
     SwitchableSetting<bool> async_shader_compilation{false, "async_shader_compilation"};
     SwitchableSetting<bool> async_presentation{true, "async_presentation"};
     SwitchableSetting<bool> use_hw_shader{true, "use_hw_shader"};
-    SwitchableSetting<u32> shader_type{3, "shader_type"};
+    SwitchableSetting<u32> shader_type{2, "shader_type"};
     SwitchableSetting<bool> use_disk_shader_cache{true, "use_disk_shader_cache"};
     SwitchableSetting<bool> shaders_accurate_mul{true, "shaders_accurate_mul"};
     SwitchableSetting<bool> use_vsync_new{true, "use_vsync_new"};
