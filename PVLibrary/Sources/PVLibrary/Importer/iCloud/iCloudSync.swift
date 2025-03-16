@@ -551,11 +551,21 @@ class SaveStateSyncer: iCloudContainerSyncer {
     let jsonDecorder = JSONDecoder()
     let processed = ConcurrentQueue<Int>(arrayLiteral: 0)
     let processingState: ConcurrentQueue<ProcessingState> = .init(arrayLiteral: .idle)
+    var savesFinishedImportingSubscriber: AnyCancellable?
     
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
         self.init(directories: ["Save States"], notificationCenter: notificationCenter, errorHandler: errorHandler)
         fileImportQueueMaxCount = 10
         jsonDecorder.dataDecodingStrategy = .deferredToData
+        savesFinishedImportingSubscriber = notificationCenter.publisher(for: .SavesFinishedImporting).sink { [weak self] _ in
+            Task {
+                self?.importNewSaves()
+            }
+        }
+    }
+    
+    deinit {
+        savesFinishedImportingSubscriber?.cancel()
     }
     
     func removeSavesDeletedWhileApplicationClosed() {
@@ -563,7 +573,6 @@ class SaveStateSyncer: iCloudContainerSyncer {
         else {
             return
         }
-        
         defer {
             purgeStatus = .complete
         }
@@ -673,12 +682,8 @@ class SaveStateSyncer: iCloudContainerSyncer {
             return
         }
         removeSavesDeletedWhileApplicationClosed()
-        guard !newFiles.isEmpty//,
-//              pendingFilesToDownload.isEmpty
-        else {
-            return
-        }
-        guard processingState.peek() == .idle
+        guard !newFiles.isEmpty,
+              processingState.peek() == .idle
         else {
             return
         }
@@ -720,6 +725,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
         processingState.dequeue()
         processingState.enqueue(entry: .idle)
         removeSavesDeletedWhileApplicationClosed()
+        notificationCenter.post(Notification(name: .SavesFinishedImporting))
     }
     
     func updateExistingSave(_ existing: PVSaveState, _ realm: Realm, _ save: SaveState, _ json: URL) {
@@ -797,7 +803,6 @@ class RomsSyncer: iCloudContainerSyncer {
         else {
             return
         }
-        
         defer {
             purgeStatus = .complete
         }
