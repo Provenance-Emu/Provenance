@@ -2873,10 +2873,6 @@
 					CodeSignOnCopy,
 					RemoveHeadersOnCopy,
 				);
-				libopenal.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
 			};
 			buildPhase = B394CD3B2BDEE53A006B63E8 /* Embed Frameworks */;
 			membershipExceptions = (
@@ -2888,7 +2884,6 @@
 				FFMpeg/xcframeworks/libavutil.xcframework,
 				FFMpeg/xcframeworks/libswresample.xcframework,
 				FFMpeg/xcframeworks/libswscale.xcframework,
-				libopenal.xcframework,
 			);
 		};
 		B3FD986A2D615C7700397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
