@@ -383,8 +383,51 @@ bool RasterizerVulkan::AccelerateDrawBatchInternal(bool is_indexed) {
         SetupIndexArray();
     }
 
-    if (!pipeline_cache.BindPipeline(pipeline_info, !async_shaders)) {
-        return true; // Skip draw call when pipeline is not ready
+    // Get the current shader mode
+    const u32 shader_mode = Settings::values.shader_type.GetValue();
+
+    // Smart async shader handling that works for all modes
+    bool wait_for_pipeline = !async_shaders;
+
+    // For bottom screen rendering or critical draw operations in hardware modes,
+    // we need to ensure shaders are ready to prevent blank/grey screens
+    if (shader_mode >= 2) {
+        // Check if this is likely a bottom screen draw call
+        const bool is_likely_bottom_screen =
+            // If we're rendering to a framebuffer, it's likely important
+            regs.framebuffer.output_merger.depth_test_enable ||
+            regs.framebuffer.output_merger.depth_write_enable ||
+            // Check if we're using textures, common in bottom screen rendering
+            (regs.texturing.texture0.type != Pica::TexturingRegs::TextureConfig::TextureType::Disabled ||
+             regs.texturing.texture1.type != Pica::TexturingRegs::TextureConfig::TextureType::Disabled);
+
+        // For critical operations, wait for pipeline to be ready
+        // This ensures bottom screen renders correctly while maintaining async benefits elsewhere
+        if (is_likely_bottom_screen) {
+            wait_for_pipeline = true;
+        }
+    }
+
+    // Try to bind the pipeline
+    if (!pipeline_cache.BindPipeline(pipeline_info, wait_for_pipeline)) {
+        // If we're in a hardware mode and failed to bind, we'll try a fallback approach
+        if (shader_mode >= 2 && async_shaders) {
+            // For hardware modes, use a simplified pipeline for temporary rendering
+            // until the actual pipeline is ready
+            static PipelineInfo fallback_pipeline = pipeline_info;
+            fallback_pipeline.blending.blend_enable = true;
+            fallback_pipeline.depth_stencil.depth_test_enable.Assign(true);
+
+            // Try to bind a simpler fallback pipeline that might be ready
+            if (!pipeline_cache.BindPipeline(fallback_pipeline, false)) {
+                // If even the fallback fails, skip this draw call
+                return true;
+            }
+            // Fallback pipeline bound successfully, continue with rendering
+        } else {
+            // For software mode or if not using async shaders, skip the draw call
+            return true;
+        }
     }
 
     DrawParams params = {
@@ -777,12 +820,12 @@ void RasterizerVulkan::SyncTextureUnits(const Framebuffer& framebuffer) {
                             .layerCount = VK_REMAINING_ARRAY_LAYERS, // Transition all layers
                         },
                     };
-                    
+
                     // Complete any pending writes before transitioning to shader read
                     cmdbuf.pipelineBarrier(vk::PipelineStageFlagBits::eAllCommands,
                                           vk::PipelineStageFlagBits::eFragmentShader,
                                           vk::DependencyFlagBits::eByRegion, {}, {}, write_complete_barrier);
-                    
+
                     // Then transition to optimal layout for shader reading
                     const vk::ImageMemoryBarrier shader_read_barrier{
                         .srcAccessMask = vk::AccessFlagBits::eShaderRead,
@@ -800,7 +843,7 @@ void RasterizerVulkan::SyncTextureUnits(const Framebuffer& framebuffer) {
                             .layerCount = VK_REMAINING_ARRAY_LAYERS, // Transition all layers
                         },
                     };
-                    
+
                     // Use a more specific pipeline stage for better performance
                     cmdbuf.pipelineBarrier(vk::PipelineStageFlagBits::eFragmentShader,
                                           vk::PipelineStageFlagBits::eFragmentShader,
