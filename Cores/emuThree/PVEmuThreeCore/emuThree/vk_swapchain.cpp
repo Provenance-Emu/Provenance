@@ -125,6 +125,11 @@ void Swapchain::Present() {
 
     MICROPROFILE_SCOPE(Vulkan_Present);
     try {
+#if defined(__APPLE__)
+        // On MoltenVK, make sure we wait for all operations to complete before presenting
+        // This helps avoid timing issues with Metal's command buffer scheduling
+        instance.GetPresentQueue().waitIdle();
+#endif
         [[maybe_unused]] vk::Result result = instance.GetPresentQueue().presentKHR(present_info);
     } catch (vk::OutOfDateKHRError&) {
         needs_recreation = true;

@@ -26,6 +26,7 @@ private:
     struct Impl;
     std::unique_ptr<Impl> impl;
     std::string device_id;
+    bool is_sampling = false;
 };
 
 std::vector<std::string> ListOpenALInputDevices();

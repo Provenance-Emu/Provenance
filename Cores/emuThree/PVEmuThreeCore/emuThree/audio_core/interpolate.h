@@ -46,4 +46,17 @@ void None(State& state, StereoBuffer16& input, float rate, StereoFrame16& output
 void Linear(State& state, StereoBuffer16& input, float rate, StereoFrame16& output,
             std::size_t& outputi);
 
+/**
+ * Cubic interpolation. This provides better audio quality than linear interpolation.
+ * There is a two-sample predelay.
+ * @param state Interpolation state.
+ * @param input Input buffer.
+ * @param rate Stretch factor. Must be a positive non-zero value.
+ *             rate > 1.0 performs decimation and rate < 1.0 performs upsampling.
+ * @param output The resampled audio buffer.
+ * @param outputi The index of output to start writing to.
+ */
+void Cubic(State& state, StereoBuffer16& input, float rate, StereoFrame16& output,
+           std::size_t& outputi);
+
 } // namespace AudioCore::AudioInterp

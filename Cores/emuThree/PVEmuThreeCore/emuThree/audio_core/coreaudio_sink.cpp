@@ -8,7 +8,6 @@
 #include "audio_core/audio_types.h"
 #include "audio_core/coreaudio_sink.h"
 #include "common/logging/log.h"
-#include "common/settings.h"
 
 namespace AudioCore {
 CoreAudioSink::CoreAudioSink(std::string device_name) {
@@ -30,8 +29,9 @@ CoreAudioSink::CoreAudioSink(std::string device_name) {
         LOG_CRITICAL(Audio_Sink, "Failed to create new AudioComponent instance");
         return;
     }
+
     AudioStreamBasicDescription format_desc;
-    FillOutASBDForLPCM(format_desc, (Float64)33000, 2, 16, 16, false, false);
+    FillOutASBDForLPCM(format_desc, (Float64)native_sample_rate, 2, 16, 16, false, false);
     err = AudioUnitSetProperty(audio_unit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &format_desc, sizeof format_desc);
     if (err != noErr) {
         LOG_CRITICAL(Audio_Sink, "Failed to set input property");
