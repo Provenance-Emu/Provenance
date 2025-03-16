@@ -208,7 +208,6 @@
 		B31A9FEE2D1FA7440085789A /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B6D2BF0AB6000F199BB /* libMoltenVK.dylib */; platformFilter = maccatalyst; };
 		B31A9FEF2D1FA7440085789A /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B6D2BF0AB6000F199BB /* libMoltenVK.dylib */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B31DDC822D82931200D6525B /* SDL2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39FAC452D6014000065B66B /* SDL2.xcframework */; };
-		B31DDC832D82931200D6525B /* SDL2.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39FAC452D6014000065B66B /* SDL2.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B31DDD102D82C56E00D6525B /* OpenSSL in Frameworks */ = {isa = PBXBuildFile; productRef = B31DDD0F2D82C56E00D6525B /* OpenSSL */; };
 		B32111A52CBC428700BE8D6C /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B32111B12CBC42B500BE8D6C /* SpotlightImportExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */; platformFilters = (ios, maccatalyst, macos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -1505,7 +1504,6 @@
 				B318E29E2CAB58A300D0E599 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B33BD1B62C6A619F001E933A /* PVAtari800-Dynamic in Embed Frameworks */,
 				B318E2962CAB571100D0E599 /* PVBliss-Dynamic in Embed Frameworks */,
-				B31DDC832D82931200D6525B /* SDL2.xcframework in Embed Frameworks */,
 				B30ED0D82CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic in Embed Frameworks */,
 				B318E27E2CAB4C4200D0E599 /* PVSNES.framework in Embed Frameworks */,
 				B318E2812CAB4C6400D0E599 /* PVFCEU.framework in Embed Frameworks */,
