@@ -865,7 +865,6 @@ class RomsSyncer: iCloudContainerSyncer {
         } else {
             newFiles.insert(file)
         }
-        handleImportNewRomFiles()
     }
     
     /// Checks if game exists in game cache
