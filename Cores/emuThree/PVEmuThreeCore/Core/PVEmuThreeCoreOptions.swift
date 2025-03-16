@@ -111,7 +111,7 @@ import PVCoreBridge
                         .init(title: "None (Slow, but Accurate)", description: "None (Slow, but Accurate)", value: 1),
                         .init(title: "HW (Faster, Accurate Render)", description: "HW (Faster, Accurate Render)", value: 2),
                         .init(title: "HW Partial Render (Fastest, Inaccurate Render)", description: "HW Partial Render (Fastest, Inaccurate Render)", value: 3),
-                        .init(title: "HW Full Render (Experimental)", description: "HW Full Render (Experimental)", value: 4),
+                        .init(title: "HW Full Render (Experimental)", description: "HW Full Render (Experimental)", value: 3),
                      ],
                      defaultValue: 2)
     }
