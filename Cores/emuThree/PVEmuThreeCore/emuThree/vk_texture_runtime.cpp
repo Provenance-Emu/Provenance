@@ -3,7 +3,7 @@
 // Refer to the license.txt file included.
 
 // Local Changes: delay vmaDestroyImage by random seconds to give time for the scene to move on where texture is safe to delete
-#define RAND_DELAY 100
+#define RAND_DELAY 10
 
 #include "common/microprofile.h"
 #include "common/scope_exit.h"
