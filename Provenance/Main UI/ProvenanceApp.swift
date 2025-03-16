@@ -557,37 +557,32 @@ extension ProvenanceApp: WhatsNewCollectionProvider {
         )
         WhatsNew(
             version: "3.0.6",
-            title: "System Enhancements & Hardware Features",
+            title: "3DS Enhancements & UI Improvements",
             features: [
                 .init(
-                    image: .init(systemName: "plus.circle.fill", foregroundColor: .blue),
-                    title: "Expanded Gaming Support",
-                    subtitle: "Added support for classic PC games including DOOM, Quake, Quake II, and Wolf3D, plus Neo Geo .neo format support and additional DS emulator options"
+                    image: .init(systemName: "gamecontroller.fill", foregroundColor: .blue),
+                    title: "3DS Performance Boost",
+                    subtitle: "Major optimizations for 3DS emulation with improved rendering, audio processing, and hardware acceleration"
                 ),
                 .init(
-                    image: .init(systemName: "camera.fill", foregroundColor: .green),
-                    title: "Hardware Integration",
-                    subtitle: "Added camera support for DS games and improved MIDI device compatibility for DOSBox enhanced gameplay features"
+                    image: .init(systemName: "gearshape.2.fill", foregroundColor: .orange),
+                    title: "Core Options Menu",
+                    subtitle: "Access and customize RetroArch core options directly from the Provenance interface"
                 ),
                 .init(
-                    image: .init(systemName: "gamecontroller", foregroundColor: .orange),
-                    title: "Controller Improvements",
-                    subtitle: "New on-screen controls toggle button, improved gamepad support, and enhanced mouse input for iPad"
+                    image: .init(systemName: "magnifyingglass", foregroundColor: .green),
+                    title: "Enhanced Search",
+                    subtitle: "Improved search functionality in Home and Console views with auto-hiding search bars"
                 ),
                 .init(
-                    image: .init(systemName: "arrow.triangle.2.circlepath", foregroundColor: .purple),
-                    title: "Interface Improvements",
-                    subtitle: "Updated UI designs with modern styling, enhanced homepage organization, and new menu pause control options"
+                    image: .init(systemName: "opticaldisc", foregroundColor: .purple),
+                    title: "Multi-Disc Support",
+                    subtitle: "Enhanced disc selection menu for multi-disc games"
                 ),
                 .init(
-                    image: .init(systemName: "bolt.horizontal.circle.fill", foregroundColor: .red),
-                    title: "Performance Optimizations",
-                    subtitle: "Parallel system bootup with faster initialization, improved import queue processing, and silent mode ignore support"
-                ),
-                .init(
-                    image: .init(systemName: "wrench.and.screwdriver.fill", foregroundColor: .gray),
-                    title: "System Refinements",
-                    subtitle: "Enhanced BIOS management, improved database handling, and various stability fixes"
+                    image: .init(systemName: "arrow.clockwise", foregroundColor: .red),
+                    title: "Core Updates",
+                    subtitle: "Updated Mednafen to 1.32.1 and improved RetroArch cores with better Vulkan support"
                 )
             ],
             primaryAction: .init(
