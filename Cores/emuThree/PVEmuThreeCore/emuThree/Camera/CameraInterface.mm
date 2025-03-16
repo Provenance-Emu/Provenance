@@ -819,7 +819,7 @@ void iOSRearAltCameraInterface::SetFrameRate(Service::CAM::FrameRate frame_rate)
 };
 
 std::vector<u16> iOSRearAltCameraInterface::ReceiveFrame() {
-    NSLog(@"%s", __FUNCTION__);
+//    NSLog(@"%s", __FUNCTION__);
     return [[ObjCRearCamera sharedInstance] frame];
 };
 
@@ -865,7 +865,7 @@ void iOSFrontCameraInterface::SetFrameRate(Service::CAM::FrameRate frame_rate) {
 };
 
 std::vector<u16> iOSFrontCameraInterface::ReceiveFrame() {
-    NSLog(@"%s", __FUNCTION__);
+//    NSLog(@"%s", __FUNCTION__);
     return [[ObjCFrontCamera sharedInstance] frame];
 };
 
