@@ -29,7 +29,7 @@ namespace Vulkan {
 
 namespace {
 
-bool skip_threading = true;
+bool skip_threading = false;
 
 using VideoCore::MapType;
 using VideoCore::PixelFormat;
@@ -242,7 +242,7 @@ download_buffer{instance, scheduler,
     vk::BufferUsageFlagBits::eTransferDst |
     vk::BufferUsageFlagBits::eStorageBuffer,
     DOWNLOAD_BUFFER_SIZE, BufferType::Download} {
-        skip_threading = true;
+        skip_threading = false;
     }
 
 TextureRuntime::~TextureRuntime() {
