@@ -100,7 +100,7 @@ import PVCoreBridge
             title: "Enable Async Presentation",
             description: "Faster Input Responsiveness (Disable if the game crashes)",
             requiresRestart: false),
-              defaultValue: false)
+              defaultValue: true)
     }
     
     static var shaderTypeOption: CoreOption {
