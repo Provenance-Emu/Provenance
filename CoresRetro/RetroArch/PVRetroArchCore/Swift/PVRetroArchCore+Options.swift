@@ -127,7 +127,7 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
     public static var retroArchControllerOption: CoreOption {
         .bool(.init(
             title: USE_RETROARCH_CONTROLLER,
-            description: nil,
+            description: "Must also be enabled in the RetroArch configuration for overlays if not already enabled.",
             requiresRestart: false),
               defaultValue: false)
     }
