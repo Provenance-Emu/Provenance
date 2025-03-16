@@ -473,10 +473,10 @@ bool RasterizerVulkan::Draw(bool accelerate, bool is_indexed) {
 
     // For hardware full renderer, add additional safety checks and optimizations
     if (is_hw_full_renderer) {
-        // Ensure texture units are properly synchronized before drawing
+        // Don't skip draws based on binding count - this was causing blank scenes
+        // Just log it for debugging purposes
         if (pipeline_info.vertex_layout.binding_count > 0 && pipeline_info.vertex_layout.binding_count % 2 != 0) {
-            LOG_DEBUG(Render_Vulkan, "Skipping draw with odd binding count for shader_type=3");
-            return false;
+            LOG_DEBUG(Render_Vulkan, "Drawing with odd binding count in full hardware renderer mode");
         }
 
         // Enhanced optimization for Kirby games which use many small 3D models with similar properties
@@ -655,7 +655,7 @@ void RasterizerVulkan::SyncTextureUnits(const Framebuffer& framebuffer) {
     }
 
     const auto pica_textures = regs.texturing.GetTextures();
-    const bool is_hw_full_renderer = Settings::values.shader_type.GetValue() == 4;
+    const bool is_hw_full_renderer = Settings::values.shader_type.GetValue() >= 4;
 
     // For Kirby games optimization: batch process texture units to reduce overhead
     // Process all texture units at once to minimize state changes
@@ -758,9 +758,34 @@ void RasterizerVulkan::SyncTextureUnits(const Framebuffer& framebuffer) {
             if (is_hw_full_renderer) {
                 // Use a more efficient barrier for ARM64 platforms
                 // This reduces the overhead of texture state transitions
-                scheduler.Record([&surface](vk::CommandBuffer cmdbuf) {
-                    const vk::ImageMemoryBarrier barrier{
-                        .srcAccessMask = surface.AccessFlags(),
+                // Capture 'this' explicitly to ensure proper access to member variables in async operation
+                scheduler.Record([&surface, this](vk::CommandBuffer cmdbuf) {
+                    // First ensure any pending writes are complete
+                    const vk::ImageMemoryBarrier write_complete_barrier{
+                        .srcAccessMask = surface.AccessFlags() | vk::AccessFlagBits::eMemoryWrite,
+                        .dstAccessMask = vk::AccessFlagBits::eShaderRead,
+                        .oldLayout = vk::ImageLayout::eGeneral,
+                        .newLayout = vk::ImageLayout::eGeneral,
+                        .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+                        .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+                        .image = surface.Image(),
+                        .subresourceRange = {
+                            .aspectMask = surface.Aspect(),
+                            .baseMipLevel = 0,
+                            .levelCount = VK_REMAINING_MIP_LEVELS, // Transition all mip levels
+                            .baseArrayLayer = 0,
+                            .layerCount = VK_REMAINING_ARRAY_LAYERS, // Transition all layers
+                        },
+                    };
+                    
+                    // Complete any pending writes before transitioning to shader read
+                    cmdbuf.pipelineBarrier(vk::PipelineStageFlagBits::eAllCommands,
+                                          vk::PipelineStageFlagBits::eFragmentShader,
+                                          vk::DependencyFlagBits::eByRegion, {}, {}, write_complete_barrier);
+                    
+                    // Then transition to optimal layout for shader reading
+                    const vk::ImageMemoryBarrier shader_read_barrier{
+                        .srcAccessMask = vk::AccessFlagBits::eShaderRead,
                         .dstAccessMask = vk::AccessFlagBits::eShaderRead,
                         .oldLayout = vk::ImageLayout::eGeneral,
                         .newLayout = vk::ImageLayout::eShaderReadOnlyOptimal,
@@ -770,15 +795,16 @@ void RasterizerVulkan::SyncTextureUnits(const Framebuffer& framebuffer) {
                         .subresourceRange = {
                             .aspectMask = surface.Aspect(),
                             .baseMipLevel = 0,
-                            .levelCount = 1, // Only transition the base level for better performance
+                            .levelCount = VK_REMAINING_MIP_LEVELS, // Transition all mip levels
                             .baseArrayLayer = 0,
-                            .layerCount = 1, // Only transition the base layer for better performance
+                            .layerCount = VK_REMAINING_ARRAY_LAYERS, // Transition all layers
                         },
                     };
+                    
                     // Use a more specific pipeline stage for better performance
-                    cmdbuf.pipelineBarrier(vk::PipelineStageFlagBits::eTransfer,
+                    cmdbuf.pipelineBarrier(vk::PipelineStageFlagBits::eFragmentShader,
                                           vk::PipelineStageFlagBits::eFragmentShader,
-                                          vk::DependencyFlagBits::eByRegion, {}, {}, barrier);
+                                          vk::DependencyFlagBits::eByRegion, {}, {}, shader_read_barrier);
                 });
             }
 
@@ -1151,7 +1177,7 @@ void RasterizerVulkan::SyncAndUploadLUTsLF() {
     }
 
     // Check if this is a Kirby game which needs special optimization
-    const bool is_hw_full_renderer = Settings::values.shader_type.GetValue() == 4;
+    const bool is_hw_full_renderer = Settings::values.shader_type.GetValue() >= 4;
 
     std::size_t bytes_used = 0;
     auto [buffer, offset, invalidate] = texture_lf_buffer.Map(max_size, sizeof(Common::Vec4f));
