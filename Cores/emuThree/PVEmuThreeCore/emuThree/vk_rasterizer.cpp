@@ -397,7 +397,7 @@ bool RasterizerVulkan::AccelerateDrawBatchInternal(bool is_indexed) {
 
     // Special handling for hardware full renderer (shader_type=3)
     // Ensure binding count is always even to prevent texture loading issues
-    if (Settings::values.shader_type.GetValue() == 3 && params.binding_count % 2 != 0) {
+    if (Settings::values.shader_type.GetValue() == 4 && params.binding_count % 2 != 0) {
         // Add a dummy binding to make the count even
         params.binding_count += 1;
     }
@@ -465,10 +465,10 @@ bool RasterizerVulkan::Draw(bool accelerate, bool is_indexed) {
     MICROPROFILE_SCOPE(Vulkan_Drawing);
 
     // Special handling for hardware full renderer (shader_type=3)
-    const bool is_hw_full_renderer = Settings::values.shader_type.GetValue() == 3;
+    const bool is_hw_full_renderer = Settings::values.shader_type.GetValue() >= 4;
 
-    // For shader_type=2 and shader_type=3, we need to restrict complex vertex layouts
-    if ((Settings::values.shader_type.GetValue() == 2 || is_hw_full_renderer) && pipeline_info.vertex_layout.binding_count > 2)
+    // For shader_type=3 and shader_type=4, we need to restrict complex vertex layouts
+    if ((Settings::values.shader_type.GetValue() == 3 || is_hw_full_renderer) && pipeline_info.vertex_layout.binding_count > 2)
         return false;
 
     // For hardware full renderer, add additional safety checks and optimizations
@@ -655,7 +655,7 @@ void RasterizerVulkan::SyncTextureUnits(const Framebuffer& framebuffer) {
     }
 
     const auto pica_textures = regs.texturing.GetTextures();
-    const bool is_hw_full_renderer = Settings::values.shader_type.GetValue() == 3;
+    const bool is_hw_full_renderer = Settings::values.shader_type.GetValue() == 4;
 
     // For Kirby games optimization: batch process texture units to reduce overhead
     // Process all texture units at once to minimize state changes
@@ -1151,7 +1151,7 @@ void RasterizerVulkan::SyncAndUploadLUTsLF() {
     }
 
     // Check if this is a Kirby game which needs special optimization
-    const bool is_hw_full_renderer = Settings::values.shader_type.GetValue() == 3;
+    const bool is_hw_full_renderer = Settings::values.shader_type.GetValue() == 4;
 
     std::size_t bytes_used = 0;
     auto [buffer, offset, invalidate] = texture_lf_buffer.Map(max_size, sizeof(Common::Vec4f));
@@ -1166,7 +1166,7 @@ void RasterizerVulkan::SyncAndUploadLUTsLF() {
                 std::array<Common::Vec2f, 256> new_data;
                 const auto& source_lut = Pica::g_state.lighting.luts[index];
 
-                // For Kirby games with shader_type=3, we can use a more optimized approach
+                // For Kirby games with shader_type=4, we can use a more optimized approach
                 if (is_hw_full_renderer) {
                     // Process 4 entries at a time using NEON
                     for (size_t i = 0; i < source_lut.size(); i += 4) {
