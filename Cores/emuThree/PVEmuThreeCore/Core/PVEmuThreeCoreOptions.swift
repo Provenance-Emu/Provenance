@@ -116,6 +116,24 @@ import PVCoreBridge
                      defaultValue: 2)
     }
     
+    static var regionOption: CoreOption {
+        .enumeration(.init(title: "System Region",
+                           description: "The preferred language for multi-language supported games.",
+                           requiresRestart: true),
+                     values: [
+                        .init(title: "Automatic", description: "Select based on local region.", value: -1),
+                        .init(title: "Japan", description: "", value: 0),
+                        .init(title: "USA", description: "", value: 1),
+                        .init(title: "Europe", description: "", value: 2),
+                        .init(title: "Australia", description: "", value: 2),
+                        .init(title: "China", description: "", value: 3),
+                        .init(title: "Korea", description: "", value: 4),
+                        .init(title: "Taiwan", description: "", value: 5),
+
+                     ],
+                     defaultValue: -1)
+    }
+    
     static var enableVSyncOption: CoreOption {
         .bool(.init(
             title: "Enable VSync",
@@ -288,7 +306,7 @@ import PVCoreBridge
         let coreOptions: [CoreOption] = [
             resolutionOption, enableHLEOption, cpuClockOption, enableJITOption, enableLoggingOption, enableNew3DSOption, gsOption, enableAsyncShaderOption, enableAsyncPresentOption,
             shaderTypeOption, enableVSyncOption, enableShaderAccurateMulOption, enableShaderJITOption, portraitTypeOption, landscapeTypeOption, inputTypeOption, volumeOption,
-            stretchAudioOption, swapScreenOption, uprightScreenOption, customTexturesOption, preloadTextuesOption, stereoRenderOption, threedFactorOption
+            stretchAudioOption, swapScreenOption, uprightScreenOption, regionOption, customTexturesOption, preloadTextuesOption, stereoRenderOption, threedFactorOption
         ]
         let coreGroup:CoreOption = .group(.init(title: "EmuThreeds Core",
                                                 description: "Global options for EmuThreeds"),
@@ -310,6 +328,7 @@ extension PVEmuThreeCoreOptions {
     @objc public static var enableAsyncShader: Bool { valueForOption(PVEmuThreeCoreOptions.enableAsyncShaderOption) }
     @objc public static var enableAsyncPresent: Int { valueForOption(PVEmuThreeCoreOptions.enableAsyncPresentOption)  }
     @objc public static var shaderType: Int { valueForOption(PVEmuThreeCoreOptions.shaderTypeOption)  }
+    @objc public static var region: Int { valueForOption(PVEmuThreeCoreOptions.regionOption)  }
     @objc public static var enableVSync: Bool { valueForOption(PVEmuThreeCoreOptions.enableVSyncOption) }
     @objc public static var enableShaderAccurateMul: Bool { valueForOption(PVEmuThreeCoreOptions.enableShaderAccurateMulOption) }
     @objc public static var enableShaderJIT: Bool { valueForOption(PVEmuThreeCoreOptions.enableShaderJITOption) }
@@ -332,6 +351,7 @@ extension PVEmuThreeCoreOptions {
         self.asyncShader = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableAsyncShaderOption).asBool
         self.asyncPresent = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableAsyncPresentOption).asBool
         self.shaderType = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.shaderTypeOption).asInt ?? 2).int8Value
+        self.region = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.regionOption).asInt ?? -1).int8Value
         self.enableVSync = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableVSyncOption).asBool
         self.enableShaderAccurate = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableShaderAccurateMulOption).asBool
         self.enableShaderJIT = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableShaderJITOption).asBool

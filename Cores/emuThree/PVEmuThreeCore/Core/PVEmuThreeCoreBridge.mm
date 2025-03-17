@@ -114,6 +114,7 @@ static bool _isOff = false;
     [[NSUserDefaults standardUserDefaults] setInteger:self.volume forKey:@"audio_volume"];
 
     [[NSUserDefaults standardUserDefaults] setInteger:self.shaderType forKey:@"shader_type"];
+    [[NSUserDefaults standardUserDefaults] setInteger:self.region forKey:@"region_value"];
 
     [[NSUserDefaults standardUserDefaults] setBool:self.asyncShader  forKey:@"async_shader_compilation"];
     [[NSUserDefaults standardUserDefaults] setBool:self.asyncPresent forKey:@"async_presentation"];
@@ -369,6 +370,12 @@ static bool _isOff = false;
             [CitraWrapper.sharedInstance resetController];
         },
         @"Enable Async Presentation":
+        ^{
+            [self setOptionValues];
+            [CitraWrapper.sharedInstance setOptions:false];
+            [CitraWrapper.sharedInstance resetController];
+        },
+        @"System Language":
         ^{
             [self setOptionValues];
             [CitraWrapper.sharedInstance setOptions:false];

@@ -62,6 +62,7 @@ typedef enum PV3DSButton: NSInteger PV3DSButton;
 @property (nonatomic, assign) bool asyncShader;
 @property (nonatomic, assign) bool asyncPresent;
 @property (nonatomic, assign) int8_t shaderType;
+@property (nonatomic, assign) int8_t region;
 @property (nonatomic, assign) bool enableVSync;
 @property (nonatomic, assign) bool enableShaderAccurate;
 @property (nonatomic, assign) bool enableShaderJIT;

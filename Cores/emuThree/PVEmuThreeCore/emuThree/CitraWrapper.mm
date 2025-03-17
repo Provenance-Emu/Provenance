@@ -310,14 +310,23 @@ static void InitializeLogging() {
 
     [self prepareAudio];
     Settings::values.isReloading.SetValue(false);
+    
+    // Stretch Audio
     shouldStretchAudio=[[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Stretch Audio"];
     Settings::values.enable_audio_stretching.SetValue(shouldStretchAudio);
+    
+    // Volume
     int volume = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.Audio Volume"]] unsignedIntValue];
     Settings::values.volume.SetValue((float)volume / 100.0);
     
+    // Microphone
     int inputType = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.Microphone Input"]] unsignedIntValue];
     Settings::values.input_type.SetValue((AudioCore::InputType) inputType);
 
+    // Region
+    int retionType = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.System Region"]] intValue];
+    Settings::values.region_value.SetValue(retionType);
+    
     if (resetButtons)
         [CitraWrapper.sharedInstance setButtons];
     for (const auto& service_module : Service::service_module_map) {
