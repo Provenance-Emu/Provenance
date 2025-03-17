@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 
+#pragma once
 
 #ifdef __cplusplus
 #include "common/assert.h"

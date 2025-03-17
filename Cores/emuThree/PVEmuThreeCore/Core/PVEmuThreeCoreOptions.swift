@@ -142,6 +142,14 @@ import PVCoreBridge
               defaultValue: true)
     }
     
+    static var realtimeAudioOption: CoreOption {
+        .bool(.init(
+            title: "Realtime Audio",
+            description: "Scales audio playback speed to account for drops in emulation framerate",
+            requiresRestart: false),
+              defaultValue: false)
+    }
+    
     static var enableShaderAccurateMulOption: CoreOption {
         .bool(.init(
             title: "Enable Shader Accurate Mul",
@@ -305,7 +313,7 @@ import PVCoreBridge
         var options = [CoreOption]()
         let coreOptions: [CoreOption] = [
             resolutionOption, enableHLEOption, cpuClockOption, enableJITOption, enableLoggingOption, enableNew3DSOption, gsOption, enableAsyncShaderOption, enableAsyncPresentOption,
-            shaderTypeOption, enableVSyncOption, enableShaderAccurateMulOption, enableShaderJITOption, portraitTypeOption, landscapeTypeOption, inputTypeOption, volumeOption,
+            shaderTypeOption, enableVSyncOption, enableShaderAccurateMulOption, enableShaderJITOption, portraitTypeOption, landscapeTypeOption, inputTypeOption, volumeOption, realtimeAudioOption,
             stretchAudioOption, swapScreenOption, uprightScreenOption, regionOption, customTexturesOption, preloadTextuesOption, stereoRenderOption, threedFactorOption
         ]
         let coreGroup:CoreOption = .group(.init(title: "EmuThreeds Core",
@@ -330,6 +338,7 @@ extension PVEmuThreeCoreOptions {
     @objc public static var shaderType: Int { valueForOption(PVEmuThreeCoreOptions.shaderTypeOption)  }
     @objc public static var region: Int { valueForOption(PVEmuThreeCoreOptions.regionOption)  }
     @objc public static var enableVSync: Bool { valueForOption(PVEmuThreeCoreOptions.enableVSyncOption) }
+    @objc public static var realtimeAudio: Bool { valueForOption(PVEmuThreeCoreOptions.realtimeAudioOption) }
     @objc public static var enableShaderAccurateMul: Bool { valueForOption(PVEmuThreeCoreOptions.enableShaderAccurateMulOption) }
     @objc public static var enableShaderJIT: Bool { valueForOption(PVEmuThreeCoreOptions.enableShaderJITOption) }
     @objc public static var inputType: Int { valueForOption(PVEmuThreeCoreOptions.inputTypeOption) }
@@ -366,5 +375,6 @@ extension PVEmuThreeCoreOptions {
         self.customTextures = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.customTexturesOption).asBool
         self.stereoRender = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.stereoRenderOption).asInt ?? 0).int8Value
         self.threedFactor = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.threedFactorOption).asInt ?? 100).int8Value
+        self.realtimeAudio = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.realtimeAudioOption).asBool
     }
 }

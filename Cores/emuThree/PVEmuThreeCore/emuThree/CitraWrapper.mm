@@ -9,9 +9,9 @@
 // Camera interface
 
 #import <Foundation/Foundation.h>
-#include <AudioToolbox/AudioToolbox.h>
+#import <AudioToolbox/AudioToolbox.h>
 #import <AVFoundation/AVFoundation.h>
-#import "../emuThree/CitraWrapper.h"
+#import <PVEmuThree/CitraWrapper.h>
 #import "InputFactory.h"
 #import <sys/utsname.h>
 #import "../emuThree/Camera/CameraFactory.h"
@@ -54,7 +54,7 @@
 #include "video_core/renderer_base.h"
 #include "video_core/video_core.h"
 
-#import "InputBridge.h"
+#import <PVEmuThree/InputBridge.h>
 
 #define IS_IPHONE() ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone)
 
@@ -308,13 +308,17 @@ static void InitializeLogging() {
     Settings::values.preload_textures.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Preload Textures"]);
     Settings::values.async_custom_loading.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"async_custom_loading"]);
 
-    [self prepareAudio];
+    [self prepareAudioSession];
     Settings::values.isReloading.SetValue(false);
     
     // Stretch Audio
     shouldStretchAudio=[[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Stretch Audio"];
     Settings::values.enable_audio_stretching.SetValue(shouldStretchAudio);
     
+    // Realtime audio
+    BOOL enable_realtime_audio = [[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Realtime Audio"];
+    Settings::values.enable_realtime_audio.SetValue(enable_realtime_audio);
+
     // Volume
     int volume = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.Audio Volume"]] unsignedIntValue];
     Settings::values.volume.SetValue((float)volume / 100.0);
@@ -441,7 +445,7 @@ static void InitializeLogging() {
     shouldLoad=true;
 }
 
--(void) prepareAudio {
+-(void) prepareAudioSession {
     NSError *error = nil;
     [[AVAudioSession sharedInstance]
      setCategory:AVAudioSessionCategoryAmbient

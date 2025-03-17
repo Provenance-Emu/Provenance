@@ -2,8 +2,8 @@
 //  Copyright © 2023 Provenance. All rights reserved.
 
 #import "PVEmuThreeCoreBridge+Controls.h"
-#import "PVEmuThreeCoreBridge+Audio.h"
-#import "PVEmuThreeCoreBridge+Video.h"
+//#import "PVEmuThreeCoreBridge+Audio.h"
+//#import "PVEmuThreeCoreBridge+Video.h"
 #import <PVEmuThree/PVEmuThree-Swift.h>
 
 #import <Foundation/Foundation.h>
@@ -12,7 +12,7 @@
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
 /* Citra Includes */
-#import "../emuThree/CitraWrapper.h"
+#import <PVEmuThree/CitraWrapper.h>
 #include "core/savestate.h"
 #include "core/hle/service/am/am.h"
 
@@ -121,6 +121,7 @@ static bool _isOff = false;
     [[NSUserDefaults standardUserDefaults] setBool:(self.shaderType >= 2) forKey:@"use_hw_shader"];
 
     [[NSUserDefaults standardUserDefaults] setBool:self.stretchAudio forKey:@"stretch_audio"];
+    [[NSUserDefaults standardUserDefaults] setBool:self.realtimeAudio forKey:@"use_realtime_audio"];
     [[NSUserDefaults standardUserDefaults] setBool:self.enableJIT forKey:@"use_cpu_jit"];
     [[NSUserDefaults standardUserDefaults] setBool:self.enableLogging forKey:@"enable_logging"];
     [[NSUserDefaults standardUserDefaults] setBool:self.useNew3DS forKey:@"is_new_3ds"];

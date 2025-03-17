@@ -176,6 +176,7 @@ void LogSettings() {
     log_setting("Audio_OutputDevice", values.output_device.GetValue());
     log_setting("Audio_InputType", values.input_type.GetValue());
     log_setting("Audio_InputDevice", values.input_device.GetValue());
+    log_setting("Audio_EnableRealtime", values.enable_realtime_audio.GetValue());
     log_setting("Audio_EnableAudioStretching", values.enable_audio_stretching.GetValue());
     using namespace Service::CAM;
     log_setting("Camera_OuterRightName", values.camera_name[OuterRightCamera]);
@@ -225,6 +226,7 @@ void RestoreGlobalState(bool is_powered_on) {
     // Audio
     values.audio_emulation.SetGlobal(true);
     values.enable_audio_stretching.SetGlobal(true);
+    values.enable_realtime_audio.SetGlobal(true);
     values.volume.SetGlobal(true);
     
     // Core
