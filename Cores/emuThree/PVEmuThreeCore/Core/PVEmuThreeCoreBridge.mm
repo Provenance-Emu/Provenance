@@ -14,6 +14,7 @@
 /* Citra Includes */
 #import "../emuThree/CitraWrapper.h"
 #include "core/savestate.h"
+#include "core/hle/service/am/am.h"
 
 #define SAMPLERATE 48000
 #define SIZESOUNDBUFFER 48000 / 60 * 4
@@ -88,6 +89,14 @@ static bool _isOff = false;
     _isInitialized = false;
     
     [self parseOptions];
+    
+    if ([path.pathExtension.lowercaseString isEqualToString:@"nds"]) {
+        _emuThreeCoreModule = @"NDS";
+    } else if ([path.pathExtension.lowercaseString isEqualToString:@"cia"]) {
+        Service::AM::InstallStatus success = Service::AM::InstallCIA([path UTF8String], [](std::size_t total_bytes_read, std::size_t file_size) {});
+//        return success == Service::AM::InstallStatus::Success;
+    }
+
     return YES;
 }
 

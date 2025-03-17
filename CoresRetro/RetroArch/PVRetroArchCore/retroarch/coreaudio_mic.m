@@ -108,20 +108,20 @@ static void *coreaudio_microphone_init(void)
 static void coreaudio_microphone_free(void *driver_context)
 {
     coreaudio_microphone_t *microphone = (coreaudio_microphone_t*)driver_context;
-    if (microphone) {
-        if (microphone->audio_unit && microphone->is_running) {
+    if (microphone != NULL) {
+        if (microphone->audio_unit != NULL && microphone->is_running) {
             AudioOutputUnitStop(microphone->audio_unit);
             microphone->is_running = false;
         }
         // TODO: This crashes, though we protect calls around `audio_unit` nil!
-//        if (microphone->audio_unit) {
+//        if (microphone->audio_unit != NULL) {
 //            AudioComponentInstanceDispose(microphone->audio_unit);
 //            microphone->audio_unit = nil;
 //        }
-        if (microphone->sample_buffer) {
-            fifo_free(microphone->sample_buffer);
-        }
-        free(microphone);
+//        if (microphone->sample_buffer) {
+//            fifo_free(microphone->sample_buffer);
+//        }
+//        free(microphone);
     }
 }
 

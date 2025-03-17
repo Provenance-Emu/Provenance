@@ -48,10 +48,23 @@ struct CoreOptionsDetailView: View {
         var rootOptions = [CoreOption]()
         var groups = [OptionGroup]()
 
+        /// Dictionary to track processed option keys to avoid duplicates
+        var processedOptionKeys = Set<String>()
+
         // Process options into groups
         coreClass.options.forEach { option in
+            /// Skip if we've already processed an option with this key
+            if processedOptionKeys.contains(option.key) {
+                return
+            }
+
+            /// Mark this option key as processed
+            processedOptionKeys.insert(option.key)
+
             switch option {
             case let .group(display, subOptions):
+                /// For groups, also mark all suboptions as processed
+                subOptions.forEach { processedOptionKeys.insert($0.key) }
                 groups.append(OptionGroup(title: display.title, options: subOptions))
             default:
                 rootOptions.append(option)
