@@ -251,7 +251,7 @@ static void InitializeLogging() {
     Frontend::RegisterDefaultApplets();
     Input::RegisterFactory<Input::ButtonDevice>("ios_gamepad", std::make_shared<ButtonFactory>());
     Input::RegisterFactory<Input::AnalogDevice>("ios_gamepad", std::make_shared<AnalogFactory>());
-    Settings::values.current_input_profile.motion_device="engine:motion_device";
+    Settings::values.current_input_profile.motion_device="engine:motion_emu";
     Input::RegisterFactory<Input::MotionDevice>("motion_emu", std::make_shared<MotionFactory>());
 
 #if defined(TARGET_OS_IPHONE)
