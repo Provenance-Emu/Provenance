@@ -2,7 +2,6 @@
 //  Created by Joseph Mattiello on 11/1/18.
 
 // All
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited)
 OTHER_CFLAGS = $(inherited) -DTARGET_NO_NIXPROF
 OTHER_CFLAGS = $(inherited) -ffast-math
 OTHER_CFLAGS = $(inherited) -fno-strict-aliasing

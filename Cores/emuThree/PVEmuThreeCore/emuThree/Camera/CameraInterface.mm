@@ -178,37 +178,37 @@ static constexpr int V(int r, int g, int b) {
 CVPixelBufferRef scaledPixelBuffer(CVPixelBufferRef pixelBuffer, CGSize size) {
     CIImage *ciImage = [CIImage imageWithCVPixelBuffer:pixelBuffer];
     CIContext *context = [CIContext contextWithOptions:NULL];
-    
+
     CGSize inputSize = ciImage.extent.size;
-    
+
     CGFloat widthScale = size.width / inputSize.width;
     CGFloat heightScale = size.height / inputSize.height;
     CGFloat scaleFactor = MIN(widthScale, heightScale);
-    
+
     CGSize scaledSize = CGSizeMake(inputSize.width * scaleFactor, inputSize.height * scaleFactor);
-    
+
     NSDictionary *pixelBufferAttributes = @{
         (NSString *)kCVPixelBufferCGImageCompatibilityKey: @YES,
         (NSString *)kCVPixelBufferCGBitmapContextCompatibilityKey: @YES
     };
-    
+
     CVPixelBufferRef scaledPixelBuffer;
     CVPixelBufferCreate(kCFAllocatorDefault, size.width, size.height, kCVPixelFormatType_32BGRA, (__bridge CFDictionaryRef)pixelBufferAttributes, &scaledPixelBuffer);
-    
+
     CVPixelBufferLockBaseAddress(scaledPixelBuffer, kCVPixelBufferLock_ReadOnly);
-    
+
     CGAffineTransform scaleTransform = CGAffineTransformMakeScale(scaleFactor, scaleFactor);
     CIImage *scaledImage = [ciImage imageByApplyingTransform:scaleTransform];
-    
+
     CGFloat offsetX = (size.width - scaledSize.width) / 2.0;
     CGFloat offsetY = (size.height - scaledSize.height) / 2.0;
     CGAffineTransform translateTransform = CGAffineTransformMakeTranslation(offsetX, offsetY);
     CIImage *centeredImage = [scaledImage imageByApplyingTransform:translateTransform];
-    
+
     [context render:centeredImage toCVPixelBuffer:scaledPixelBuffer];
-    
+
     CVPixelBufferUnlockBaseAddress(scaledPixelBuffer, kCVPixelBufferLock_ReadOnly);
-    
+
     return scaledPixelBuffer;
 }
 
@@ -219,11 +219,11 @@ CVPixelBufferRef scaledPixelBuffer(CVPixelBufferRef pixelBuffer, CGSize size) {
     AVCaptureSession *session;
     AVCaptureDeviceInput *input;
     AVCaptureVideoDataOutput *output;
-    
+
     BOOL isRGB565;
-    
+
     std::vector<uint16_t> framebuffer;
-    
+
     int64_t minFramesPerSecond, maxFramesPerSecond;
     CGFloat _width, _height;
 }
@@ -247,11 +247,11 @@ CVPixelBufferRef scaledPixelBuffer(CVPixelBufferRef pixelBuffer, CGSize size) {
     AVCaptureSession *session;
     AVCaptureDeviceInput *input;
     AVCaptureVideoDataOutput *output;
-    
+
     BOOL isRGB565;
-    
+
     std::vector<uint16_t> framebuffer;
-    
+
     int64_t minFramesPerSecond, maxFramesPerSecond;
     CGFloat _width, _height;
 }
@@ -275,11 +275,11 @@ CVPixelBufferRef scaledPixelBuffer(CVPixelBufferRef pixelBuffer, CGSize size) {
     if (self = [super init]) {
         session = [[AVCaptureSession alloc] init];
         [session setSessionPreset:AVCaptureSessionPresetHigh];
-        
+
         NSArray<AVCaptureDevice *> *devices = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
             AVCaptureDeviceTypeBuiltInWideAngleCamera
         ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified].devices;
-        
+
         [devices enumerateObjectsUsingBlock:^(AVCaptureDevice *obj, NSUInteger idx, BOOL *stop) {
             if ([obj position] == AVCaptureDevicePositionBack) {
                 device = obj;
@@ -305,7 +305,7 @@ CVPixelBufferRef scaledPixelBuffer(CVPixelBufferRef pixelBuffer, CGSize size) {
     NSArray<AVCaptureDevice *> *devices = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
         isWide ? AVCaptureDeviceTypeBuiltInWideAngleCamera : AVCaptureDeviceTypeBuiltInTelephotoCamera
     ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified].devices;
-    
+
     [devices enumerateObjectsUsingBlock:^(AVCaptureDevice *obj, NSUInteger idx, BOOL *stop) {
         if ([obj position] == AVCaptureDevicePositionFront) {
             device = obj;
@@ -319,7 +319,7 @@ CVPixelBufferRef scaledPixelBuffer(CVPixelBufferRef pixelBuffer, CGSize size) {
 -(void) stop {
     if ([session isRunning])
         [session stopRunning];
-    
+
     [session removeInput:input];
     [session removeOutput:output];
 }
@@ -330,25 +330,25 @@ CVPixelBufferRef scaledPixelBuffer(CVPixelBufferRef pixelBuffer, CGSize size) {
     [device setActiveVideoMinFrameDuration:CMTimeMake(1, minFramesPerSecond)];
     [device setActiveVideoMaxFrameDuration:CMTimeMake(1, maxFramesPerSecond)];
     [device unlockForConfiguration];
-    
+
     input = [AVCaptureDeviceInput deviceInputWithDevice:device error:NULL];
-    
+
     if ([session canAddInput:input])
         [session addInput:input];
-    
+
     output = [[AVCaptureVideoDataOutput alloc] init];
-    
+
     NSDictionary *settings = @{
         (NSString *)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA)
     };
-    
+
     [output setVideoSettings:settings];
     [output setAlwaysDiscardsLateVideoFrames:YES];
     [output setSampleBufferDelegate:self queue:dispatch_get_main_queue()];
-    
+
     if ([session canAddOutput:output])
         [session addOutput:output];
-    
+
     if (![session isRunning])
         [session startRunning];
 }
@@ -432,55 +432,55 @@ CVPixelBufferRef scaledPixelBuffer(CVPixelBufferRef pixelBuffer, CGSize size) {
         [connection setVideoOrientation:(AVCaptureVideoOrientation)orientation];
     else
         [connection setVideoOrientation:AVCaptureVideoOrientationPortrait];
-    
+
     CVPixelBufferRef ref = CMSampleBufferGetImageBuffer(sampleBuffer);
     CVPixelBufferRef pixelBuffer = scaledPixelBuffer(ref, {_width, _height});
-    
+
     CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
-    
+
     uint8_t *bgraData = (uint8_t *)CVPixelBufferGetBaseAddress(pixelBuffer);
     size_t bgraStride = CVPixelBufferGetBytesPerRow(pixelBuffer);
     size_t width = CVPixelBufferGetWidth(pixelBuffer);
     size_t height = CVPixelBufferGetHeight(pixelBuffer);
-    
+
     CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
-    
+
     if (isRGB565) {
         std::vector<uint16_t> rgb565Buffer(width * height);
-        
+
         for (size_t y = 0; y < height; ++y) {
             for (size_t x = 0; x < width; ++x) {
                 size_t bgraOffset = y * bgraStride + x * 4;
-                
+
                 uint8_t b = bgraData[bgraOffset];
                 uint8_t g = bgraData[bgraOffset + 1];
                 uint8_t r = bgraData[bgraOffset + 2];
-                
+
                 rgb565Buffer[y * width + x] = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
             }
         }
-        
+
         memcpy(framebuffer.data(), rgb565Buffer.data(), width * height * sizeof(uint16_t));
     } else {
         std::vector<uint16_t> yuv422Buffer(width * height);
         auto dest = yuv422Buffer.begin();
-        
+
         bool write = false;
         int py = 0, pu = 0, pv = 0;
         for (int j = 0; j < height; ++j) {
             for (int i = 0; i < width; ++i) {
                 uint32_t bgra = *reinterpret_cast<uint32_t*>(&bgraData[(j * width + i) * 4]);
-                
+
                 uint8_t b  = (bgra & 0x000000FF);        // Extract Blue
                 uint8_t g = (bgra & 0x0000FF00) >> 8;   // Extract Green
                 uint8_t r   = (bgra & 0x00FF0000) >> 16;  // Extract Red
                 uint8_t a = (bgra & 0xFF000000) >> 24;  // Extract Alpha
-                
+
                 // The following transformation is a reverse of the one in Y2R using ITU_Rec601
                 int y = YuvTable::Y(r, g, b);
                 int u = YuvTable::U(r, g, b);
                 int v = YuvTable::V(r, g, b);
-                
+
                 if (write) {
                     pu = (pu + u) / 2;
                     pv = (pv + v) / 2;
@@ -496,7 +496,7 @@ CVPixelBufferRef scaledPixelBuffer(CVPixelBufferRef pixelBuffer, CGSize size) {
                 write = !write;
             }
         }
-        
+
         memcpy(framebuffer.data(), yuv422Buffer.data(), width * height * sizeof(uint16_t));
     }
 }
@@ -507,11 +507,11 @@ CVPixelBufferRef scaledPixelBuffer(CVPixelBufferRef pixelBuffer, CGSize size) {
     if (self = [super init]) {
         session = [[AVCaptureSession alloc] init];
         [session setSessionPreset:AVCaptureSessionPresetHigh];
-        
+
         NSArray<AVCaptureDevice *> *devices = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
             AVCaptureDeviceTypeBuiltInWideAngleCamera
         ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified].devices;
-        
+
         [devices enumerateObjectsUsingBlock:^(AVCaptureDevice *obj, NSUInteger idx, BOOL *stop) {
             if ([obj position] == AVCaptureDevicePositionFront) {
                 device = obj;
@@ -537,7 +537,7 @@ CVPixelBufferRef scaledPixelBuffer(CVPixelBufferRef pixelBuffer, CGSize size) {
     NSArray<AVCaptureDevice *> *devices = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
         isWide ? AVCaptureDeviceTypeBuiltInWideAngleCamera : AVCaptureDeviceTypeBuiltInTelephotoCamera
     ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified].devices;
-    
+
     [devices enumerateObjectsUsingBlock:^(AVCaptureDevice *obj, NSUInteger idx, BOOL *stop) {
         if ([obj position] == AVCaptureDevicePositionFront) {
             device = obj;
@@ -551,7 +551,7 @@ CVPixelBufferRef scaledPixelBuffer(CVPixelBufferRef pixelBuffer, CGSize size) {
 -(void) stop {
     if ([session isRunning])
         [session stopRunning];
-    
+
     [session removeInput:input];
     [session removeOutput:output];
 }
@@ -562,25 +562,25 @@ CVPixelBufferRef scaledPixelBuffer(CVPixelBufferRef pixelBuffer, CGSize size) {
     [device setActiveVideoMinFrameDuration:CMTimeMake(1, minFramesPerSecond)];
     [device setActiveVideoMaxFrameDuration:CMTimeMake(1, maxFramesPerSecond)];
     [device unlockForConfiguration];
-    
+
     input = [AVCaptureDeviceInput deviceInputWithDevice:device error:NULL];
-    
+
     if ([session canAddInput:input])
         [session addInput:input];
-    
+
     output = [[AVCaptureVideoDataOutput alloc] init];
-    
+
     NSDictionary *settings = @{
         (NSString *)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA)
     };
-    
+
     [output setVideoSettings:settings];
     [output setAlwaysDiscardsLateVideoFrames:YES];
     [output setSampleBufferDelegate:self queue:dispatch_get_main_queue()];
-    
+
     if ([session canAddOutput:output])
         [session addOutput:output];
-    
+
     if (![session isRunning])
         [session startRunning];
 }
@@ -664,57 +664,57 @@ CVPixelBufferRef scaledPixelBuffer(CVPixelBufferRef pixelBuffer, CGSize size) {
         [connection setVideoOrientation:(AVCaptureVideoOrientation)orientation];
     else
         [connection setVideoOrientation:AVCaptureVideoOrientationPortrait];
-    
+
     [connection setVideoMirrored:TRUE];
-    
+
     CVPixelBufferRef ref = CMSampleBufferGetImageBuffer(sampleBuffer);
     CVPixelBufferRef pixelBuffer = scaledPixelBuffer(ref, {_width, _height});
-    
+
     CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
-    
+
     uint8_t *bgraData = (uint8_t *)CVPixelBufferGetBaseAddress(pixelBuffer);
     size_t bgraStride = CVPixelBufferGetBytesPerRow(pixelBuffer);
     size_t width = CVPixelBufferGetWidth(pixelBuffer);
     size_t height = CVPixelBufferGetHeight(pixelBuffer);
-    
+
     CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
-    
+
     if (isRGB565) {
         std::vector<uint16_t> rgb565Buffer(width * height);
-        
+
         for (size_t y = 0; y < height; ++y) {
             for (size_t x = 0; x < width; ++x) {
                 size_t bgraOffset = y * bgraStride + x * 4;
-                
+
                 uint8_t b = bgraData[bgraOffset];
                 uint8_t g = bgraData[bgraOffset + 1];
                 uint8_t r = bgraData[bgraOffset + 2];
-                
+
                 rgb565Buffer[y * width + x] = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
             }
         }
-        
+
         memcpy(framebuffer.data(), rgb565Buffer.data(), width * height * sizeof(uint16_t));
     } else {
         std::vector<uint16_t> yuv422Buffer(width * height);
         auto dest = yuv422Buffer.begin();
-        
+
         bool write = false;
         int py = 0, pu = 0, pv = 0;
         for (int j = 0; j < height; ++j) {
             for (int i = 0; i < width; ++i) {
                 uint32_t bgra = *reinterpret_cast<uint32_t*>(&bgraData[(j * width + i) * 4]);
-                
+
                 uint8_t b  = (bgra & 0x000000FF);        // Extract Blue
                 uint8_t g = (bgra & 0x0000FF00) >> 8;   // Extract Green
                 uint8_t r   = (bgra & 0x00FF0000) >> 16;  // Extract Red
                 uint8_t a = (bgra & 0xFF000000) >> 24;  // Extract Alpha
-                
+
                 // The following transformation is a reverse of the one in Y2R using ITU_Rec601
                 int y = YuvTable::Y(r, g, b);
                 int u = YuvTable::U(r, g, b);
                 int v = YuvTable::V(r, g, b);
-                
+
                 if (write) {
                     pu = (pu + u) / 2;
                     pv = (pv + v) / 2;
@@ -730,7 +730,7 @@ CVPixelBufferRef scaledPixelBuffer(CVPixelBufferRef pixelBuffer, CGSize size) {
                 write = !write;
             }
         }
-        
+
         memcpy(framebuffer.data(), yuv422Buffer.data(), width * height * sizeof(uint16_t));
     }
 }
@@ -773,7 +773,7 @@ void iOSRearCameraInterface::SetFrameRate(Service::CAM::FrameRate frame_rate) {
 };
 
 std::vector<u16> iOSRearCameraInterface::ReceiveFrame() {
-    NSLog(@"%s", __FUNCTION__);
+    // NSLog(@"%s", __FUNCTION__);
     return [[ObjCRearCamera sharedInstance] frame];
 };
 
@@ -819,7 +819,7 @@ void iOSRearAltCameraInterface::SetFrameRate(Service::CAM::FrameRate frame_rate)
 };
 
 std::vector<u16> iOSRearAltCameraInterface::ReceiveFrame() {
-    NSLog(@"%s", __FUNCTION__);
+//    NSLog(@"%s", __FUNCTION__);
     return [[ObjCRearCamera sharedInstance] frame];
 };
 
@@ -865,7 +865,7 @@ void iOSFrontCameraInterface::SetFrameRate(Service::CAM::FrameRate frame_rate) {
 };
 
 std::vector<u16> iOSFrontCameraInterface::ReceiveFrame() {
-    NSLog(@"%s", __FUNCTION__);
+//    NSLog(@"%s", __FUNCTION__);
     return [[ObjCFrontCamera sharedInstance] frame];
 };
 

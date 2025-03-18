@@ -9,7 +9,7 @@
 #import <MetalKit/MetalKit.h>
 #import <UIKit/UIKit.h>
 
-#import "InputBridge.h"
+#import <PVEmuThree/InputBridge.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -76,7 +76,7 @@ typedef NS_ENUM(NSUInteger, KeyboardButtonConfig) {
 -(NSString *) GetRegion:(NSString *)path;
 -(NSString *) GetTitle:(NSString *)path;
 
--(void) prepareAudio;
+-(void) prepareAudioSession;
 -(void) useMetalLayer:(CAMetalLayer *)layer;
 -(void) setShaderOption;
 -(void) setOptions:(bool)resetButtons;

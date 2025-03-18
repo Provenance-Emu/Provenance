@@ -79,6 +79,11 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
     static func valueForOption(_ option: CoreOption) -> Int {
         return valueForOption(option).asInt ?? option.defaultValue as! Int
     }
+    
+    static func valueForOption(_ option: CoreOption) -> UInt {
+        return valueForOption(option).asUInt ?? option.defaultValue as! UInt
+    }
+
 
     static func valueForOption(_ option: CoreOption) -> Float {
         return valueForOption(option).asFloat ?? option.defaultValue as! Float
