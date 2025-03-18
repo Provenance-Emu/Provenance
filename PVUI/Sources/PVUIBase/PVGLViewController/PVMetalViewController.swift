@@ -1468,7 +1468,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 encoder.setFragmentBytes(&cbData, length: MemoryLayout<CRT_Data>.stride, index: 0)
                 pipelineState = self.effectFilterPipeline
             } else if self.effectFilterShader?.name == "Simple CRT", let inputTexture = self.inputTexture {
-                ILOG("Setting up Simple CRT pipeline")
+
                 let mameScreenSrcRect: SIMD4<Float> = SIMD4<Float>.init(0, 0, Float(screenRect.size.width), Float(screenRect.size.height))
                 let mameScreenDstRect: SIMD4<Float> = SIMD4<Float>.init(Float(inputTexture.width), Float(inputTexture.height), Float(view.drawableSize.width), Float(view.drawableSize.height))
 
