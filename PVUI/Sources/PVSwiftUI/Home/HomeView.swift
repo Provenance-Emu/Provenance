@@ -1251,8 +1251,13 @@ private struct ConditionalSearchModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         if isEnabled {
+            #if !os(tvOS)
             content
                 .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search games")
+            #else
+            content
+                .searchable(text: $searchText, placement: .automatic, prompt: "Search games")
+            #endif
         } else {
             content
         }
