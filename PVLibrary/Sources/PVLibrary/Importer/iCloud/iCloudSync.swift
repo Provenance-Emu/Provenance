@@ -327,7 +327,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             DLOG("file DELETED from iCloud: \(file)")
             deleteFromDatastore(file)
         } else {
-            //in the case when we are initially turning on iCloud or the app is opened and coming into the foreground for the first time, we try to import any files already downloaded
+            //in the case when we are initially turning on iCloud or the app is opened and coming into the foreground for the first time, we try to import any files already downloaded. this is to ensure that a downloaded file gets imported and we do this just when the icloud switch is turned on and subsequent updates only happen after they are downloaded
             if status.contains(.initialUpload) {
                 insertDownloadingFile(file)
             }
@@ -507,6 +507,7 @@ public enum iCloudSync {
         turnOn()
     }
     
+    /// in order to account for large libraries, we go through each directory/file and tell the iCloud API to start downloading. this way it starts and by the time we query, we can get actual events that the downloads complete.
     static func initiateDownload() {
         guard let documentsDirectory = URL.iCloudDocumentsDirectory
         else {
@@ -521,8 +522,25 @@ public enum iCloudSync {
             ELOG("error starting downloading \(documentsDirectory)")
             errorHandler.handleError(error, file: documentsDirectory)
         }
-        DLOG("subpathsOfDirectory: \(try? fileManager.subpathsOfDirectory(atPath: documentsDirectory.pathDecoded))")
-        return
+        let subDirectorys: [String]
+        do {
+            subDirectorys = try fileManager.subpathsOfDirectory(atPath: documentsDirectory.pathDecoded)
+            DLOG("found \(subDirectorys.count) in \(documentsDirectory)")
+        } catch {
+            DLOG("error grabbing sub directories of \(documentsDirectory)")
+            errorHandler.handleError(error, file: documentsDirectory)
+            return
+        }
+        subDirectorys.forEach { subdirectory in
+            let currentDirectory = documentsDirectory.appendingPathComponent(subdirectory)
+            DLOG("processing \(currentDirectory)")
+            do {
+                try fileManager.startDownloadingUbiquitousItem(at: currentDirectory)
+            } catch {
+                DLOG("error initiating download of \(currentDirectory)")
+                errorHandler.handleError(error, file: currentDirectory)
+            }
+        }
     }
     
     static func turnOn() {
