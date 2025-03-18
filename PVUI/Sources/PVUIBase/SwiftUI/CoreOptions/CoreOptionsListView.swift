@@ -181,7 +181,9 @@ struct CoreOptionsListView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding()
+                #if !os(tvOS)
                 .background(Color(.systemGray6))
+                #endif
                 .cornerRadius(8)
                 .padding(.horizontal)
 
@@ -194,7 +196,9 @@ struct CoreOptionsListView: View {
             .padding(.top, 8)
             .frame(height: isHeaderVisible ? expandedHeaderHeight : collapsedHeaderHeight)
             .opacity(isHeaderVisible ? 1 : 0)
+            #if !os(tvOS)
             .background(Color(.systemBackground))
+            #endif
             .animation(.easeInOut(duration: 0.3), value: isHeaderVisible)
         }
         .navigationTitle("Core Options")

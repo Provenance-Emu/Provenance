@@ -37,6 +37,7 @@
 			<string>cso</string>
 			<string>7z</string>
 			<string>elf</string>
+			<string>cue</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
