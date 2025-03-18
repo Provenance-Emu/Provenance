@@ -49,6 +49,8 @@
 	<true/>
 	<key>com.apple.security.personal-information.photos-library</key>
 	<true/>
+	<key>aps-environment</key>
+	<string>production</string>
 	<key>keychain-access-groups</key>
 	<array>
 		<string>$(AppIdentifierPrefix)org.provenance-emu.provenance</string>

@@ -10,11 +10,13 @@ import PVUIBase
 import PVLibrary
 import PVThemes
 import Perception
+import PVSystems
 
-public protocol ImportStatusDelegate : AnyObject {
+public protocol ImportStatusDelegate: AnyObject {
     func dismissAction()
     func addImportsAction()
     func forceImportsAction()
+    func didSelectSystem(_ system: SystemIdentifier, for item: ImportQueueItem)
 }
 
 public struct ImportStatusView: View {
@@ -39,6 +41,12 @@ public struct ImportStatusView: View {
         gameImporter.removeImports(at: offsets)
     }
 
+    // Define the system selection handler
+    private func handleSystemSelection(_ system: SystemIdentifier, for item: ImportQueueItem) {
+        // Forward to the delegate
+        delegate?.didSelectSystem(system, for: item)
+    }
+
     public var body: some View {
         WithPerceptionTracking {
             NavigationView {
@@ -52,8 +60,12 @@ public struct ImportStatusView: View {
                             Button(action: {
                                 print("Tapped item: \(item.id)")
                             }) {
-                                ImportTaskRowView(item: item)
-                                    .id(item.id)
+                                // Pass callback to ImportTaskRowView
+                                ImportTaskRowView(
+                                    item: item,
+                                    onSystemSelected: handleSystemSelection
+                                )
+                                .id(item.id)
                             }
                             #if os(tvOS)
                             .buttonStyle(.bordered)

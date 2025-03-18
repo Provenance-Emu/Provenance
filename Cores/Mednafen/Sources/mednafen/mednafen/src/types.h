@@ -181,8 +181,7 @@ typedef uint64_t uint64;
   #if defined(WIN32) || defined(DOS)
    #define MDFN_HIDE
   #else
-   #define MDFN_HIDE
-//__attribute__((visibility("hidden")))
+   #define MDFN_HIDE //__attribute__((visibility("hidden")))
   #endif
 
   #define MDFN_UNDEFINED(cond) ((cond) ? (void)__builtin_unreachable() : (void)0)
@@ -250,8 +249,7 @@ typedef uint64_t uint64;
   #if defined(WIN32) || defined(DOS)
    #define MDFN_HIDE
   #else
-   #define MDFN_HIDE
-//__attribute__((visibility("hidden")))
+   #define MDFN_HIDE // __attribute__((visibility("hidden")))
   #endif
 
   #define MDFN_UNDEFINED(cond) ((cond) ? (void)__builtin_unreachable() : (void)0)

@@ -44,6 +44,16 @@ public enum CoreOptionValue {
         case .notFound: return nil
         }
     }
+    
+    public var asUInt: UInt? {
+        switch self {
+        case .bool(let value): return value ? 1 : 0
+        case .string(let value): return UInt(value)
+        case .int(let value): return UInt(value)
+        case .float(let value): return UInt(value)
+        case .notFound: return nil
+        }
+    }
 
     public var asFloat: Float? {
         switch self {

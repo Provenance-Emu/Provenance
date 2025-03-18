@@ -559,8 +559,8 @@ void MDFNI_CloseGame(void)
 /*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedSASPlay;
 #endif
 
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedCDPlay;
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedDEMO;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedCDPlay;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedDEMO;
 
 namespace Mednafen
 {
@@ -1439,7 +1439,7 @@ static void AddDynamicSetting(const char *system_name, const char *name, uint32 
 
 bool MDFNI_Init(void)
 {
- assert(!MDFNSystems.size());
+// assert(!MDFNSystems.size());
 
  try
  {

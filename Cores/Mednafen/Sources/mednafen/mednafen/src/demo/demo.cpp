@@ -1289,7 +1289,7 @@ static const std::vector<InputPortInfoStruct> PortInfo =
 
 using namespace MDFN_IEN_DEMO;
 
-MDFN_HIDE extern const MDFNGI EmulatedDEMO =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedDEMO =
 {
  "demo",
  "Mednafen Demo/Example Module",

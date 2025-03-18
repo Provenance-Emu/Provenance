@@ -7,10 +7,12 @@
 
 // Local Changes: Create local buttoninputbridge
 
-#import "../emuThree/InputBridge.h"
+#import <PVEmuThree/InputBridge.h>
 #import "../emuThree/InputFactory.h"
 
-#import "../emuThree/CitraWrapper.h"
+#import <PVEmuThree/CitraWrapper.h>
+#include <thread>
+#import <CoreMotion/CoreMotion.h>
 
 @class EmulationInput;
 
@@ -94,12 +96,133 @@ std::unique_ptr<Input::ButtonDevice> ButtonFactory::Create(const Common::ParamPa
     return std::unique_ptr<ButtonBridge<bool>>([emuInput getCppBridge]);
 }
 
+static std::shared_ptr<MotionFactory> motion;
 
-std::unique_ptr<Input::MotionDevice> MotionFactory::Create(const Common::ParamPackage& params) {
-    MotionInputBridge* emuInput = nullptr;
-    emuInput = CitraWrapper.sharedInstance.m_motion;
-    
-    if (emuInput == nullptr)
-        return {};
-    return std::unique_ptr<MotionBridge>([emuInput getCppBridge]);
+namespace {
+using Common::Vec3;
 }
+
+class Motion : public Input::MotionDevice {
+    std::chrono::microseconds update_period;
+    
+    mutable std::atomic<Vec3<float>> acceleration{};
+    mutable std::atomic<Vec3<float>> rotation{};
+    static_assert(decltype(acceleration)::is_always_lock_free, "vectors are not lock free");
+    std::thread poll_thread;
+    std::atomic<bool> stop_polling = false;
+    
+    CMMotionManager *motionManager;
+    
+    static Vec3<float> TransformAxes(Vec3<float> in) {
+        // 3DS   Y+            Phone     Z+
+        // on    |             laying    |
+        // table |             in        |
+        //       |_______ X-   portrait  |_______ X+
+        //      /              mode     /
+        //     /                       /
+        //    Z-                      Y-
+        Vec3<float> out;
+        out.y = in.z;
+        // rotations are 90 degrees counter-clockwise from portrait
+        switch (screen_rotation) {
+            case 0:
+                out.x = -in.x;
+                out.z = in.y;
+                break;
+            case 1:
+                out.x = in.y;
+                out.z = in.x;
+                break;
+            case 2:
+                out.x = in.x;
+                out.z = -in.y;
+                break;
+            case 3:
+                out.x = -in.y;
+                out.z = -in.x;
+                break;
+            default:
+                UNREACHABLE();
+        }
+        return out;
+    }
+    
+public:
+    Motion(std::chrono::microseconds update_period_, bool asynchronous = false)
+    : update_period(update_period_) {
+        if (asynchronous) {
+            poll_thread = std::thread([this] {
+                Construct();
+                auto start = std::chrono::high_resolution_clock::now();
+                while (!stop_polling) {
+                    Update();
+                    std::this_thread::sleep_until(start += update_period);
+                }
+                Destruct();
+            });
+        } else {
+            Construct();
+        }
+    }
+    
+    std::tuple<Vec3<float>, Vec3<float>> GetStatus() const override {
+        if (std::thread::id{} == poll_thread.get_id()) {
+            Update();
+        }
+        return {acceleration, rotation};
+    }
+    
+    void Construct() {
+        motionManager = [[CMMotionManager alloc] init];
+        EnableSensors();
+    }
+    
+    void Destruct() {
+        
+    }
+    
+    void Update() const {
+        CMDeviceMotion *motion = [motionManager deviceMotion];
+        
+        acceleration = {
+            (motion.gravity.x + motion.userAcceleration.x),
+            (motion.gravity.y + motion.userAcceleration.y),
+            (motion.gravity.z + motion.userAcceleration.z)
+        };
+        
+        rotation = {
+            motion.rotationRate.x,
+            motion.rotationRate.y,
+            motion.rotationRate.z
+        };
+    }
+    
+    void DisableSensors() {
+        [motionManager stopDeviceMotionUpdates];
+    }
+    
+    void EnableSensors() {
+        [motionManager startDeviceMotionUpdates];
+    }
+};
+
+std::unique_ptr<Input::MotionDevice> MotionFactory::Create(const Common::ParamPackage &params) {
+    std::chrono::milliseconds update_period{params.Get("update_period", 4)};
+    std::unique_ptr<Motion> motion = std::make_unique<Motion>(update_period);
+    _motion = motion.get();
+    return std::move(motion);
+}
+
+void MotionFactory::EnableSensors() {
+    _motion->EnableSensors();
+};
+
+void MotionFactory::DisableSensors() {
+    _motion->DisableSensors();
+};
+
+
+MotionFactory* MotionHandler() {
+    return motion.get();
+}
+

@@ -39,6 +39,19 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 // calculate this on init
 static double timebase_ratio;
 
+/**
+ * Makes the current thread real-time with the specified priority.
+ * This function uses the mach thread policy to set real-time parameters.
+ *
+ * @param period The period in seconds (e.g., 0.005 for 5ms)
+ * @param computation The computation time needed within each period (e.g., 0.003 for 3ms)
+ * @param constraint The maximum time by which thread scheduling can be delayed (e.g., 0.004 for 4ms)
+ * @param preemptible Whether the thread can be preempted (YES for most cases)
+ * @return YES if successful, NO otherwise
+ */
+BOOL iMakeCurrentThreadRealTime(double period, double computation, double constraint, BOOL preemptible);
+
+
 NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.ErrorDomain";
 
 @interface PVCoreObjCBridge()
@@ -86,7 +99,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
         _extractArchive          = YES;
         _isOn                    = NO;
 	}
-	
+
 	return self;
 }
 - (void)initialize {
@@ -240,6 +253,22 @@ static NSString *_systemName;
     //Become a real-time thread:
     //@ 9:40 iMakeCurrentThreadRealTime();
 
+    // Calculate parameters based on self.frameInterval
+    double period = 1.0 / self.frameInterval;
+    double computation = period * 0.8;  // 80% of period
+    double constraint = period * 0.9;   // 90% of period
+
+    // For reference:
+    // For 60 FPS (16.67ms per frame): period=0.01667, computation=0.01333, constraint=0.01500
+    // For 120 FPS (8.33ms per frame): period=0.00833, computation=0.00666, constraint=0.00750
+
+    if (iMakeCurrentThreadRealTime(period, computation, constraint, YES)) {
+        ILOG(@"Thread is now real-time at %.1f FPS (period=%.5fs, computation=%.5fs, constraint=%.5fs)",
+             self.frameInterval, period, computation, constraint);
+    } else {
+        ELOG(@"Failed to make thread real-time, emulation may experience timing issues");
+    }
+
     //Emulation loop
     while (UNLIKELY(!_shouldStop)) {
 
@@ -250,9 +279,7 @@ static NSString *_systemName;
                 if (self.isSpeedModified) {
                     [self executeFrame];
                 } else {
-                    @synchronized(self) {
-                        [self executeFrame];
-                    }
+                    [self executeFrame];
                 }
             }
         }
@@ -400,8 +427,27 @@ static NSString *_systemName;
     [self.frontBufferCondition signal];
 
     if(message) {
-        #warning TODO: Show the message to the user.
-        // TODO: Show the message to the user.
+        // Implementation to show message to user
+        dispatch_async(dispatch_get_main_queue(), ^{
+            #if TARGET_OS_OSX
+            NSAlert *alert = [[NSAlert alloc] init];
+            [alert setMessageText:@"Emulation Stopped"];
+            [alert setInformativeText:message];
+            [alert addButtonWithTitle:@"OK"];
+            [alert runModal];
+            #else
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Emulation Stopped"
+                                                                           message:message
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+
+            UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
+            while (topController.presentedViewController) {
+                topController = topController.presentedViewController;
+            }
+            [topController presentViewController:alert animated:YES completion:nil];
+            #endif
+        });
     }
     [self.emulationLoopThreadLock lock]; // make sure emulator loop has ended
     [self.emulationLoopThreadLock unlock];
@@ -716,7 +762,7 @@ static NSString *_systemName;
     if (UNLIKELY(ringBuffers.count <= index)) {
         NSInteger length = [self audioBufferSizeForBuffer:index] * 32;
         RingBufferType bufferType = [PVSettingsWrapper audioRingBufferType];
-        
+
         id<RingBufferProtocol> newRingBuffer = [RingBufferFactory makeWithType:bufferType withLength:length];
         [ringBuffers addObject:newRingBuffer];
         return newRingBuffer;
@@ -725,3 +771,53 @@ static NSString *_systemName;
     return ringBuffers[index];
 }
 @end
+
+/**
+ * Makes the current thread real-time with the specified priority.
+ * This function uses the mach thread policy to set real-time parameters.
+ *
+ * @param period The period in seconds (e.g., 0.005 for 5ms)
+ * @param computation The computation time needed within each period (e.g., 0.003 for 3ms)
+ * @param constraint The maximum time by which thread scheduling can be delayed (e.g., 0.004 for 4ms)
+ * @param preemptible Whether the thread can be preempted (YES for most cases)
+ * @return YES if successful, NO otherwise
+ */
+BOOL iMakeCurrentThreadRealTime(double period, double computation, double constraint, BOOL preemptible) {
+    // Get the current thread
+    thread_t thread = mach_thread_self();
+
+    // Set up the time constraints for real-time behavior
+    thread_time_constraint_policy_data_t policy;
+    mach_msg_type_number_t count = THREAD_TIME_CONSTRAINT_POLICY_COUNT;
+    boolean_t get_default = FALSE;
+
+    // Convert seconds to absolute time units
+    // These values need to be in absolute time units which are platform dependent
+    uint32_t absoluteTimeFrequency = 0;
+
+    // Get the timebase info to convert seconds to absolute time
+    mach_timebase_info_data_t timebaseInfo;
+    mach_timebase_info(&timebaseInfo);
+
+    // Calculate the conversion factor from seconds to absolute time
+    double absoluteTimeToSecondsRatio = ((double)timebaseInfo.denom / (double)timebaseInfo.numer) * 1e-9;
+
+    // Convert the time values from seconds to absolute time units
+    policy.period = (uint32_t)(period / absoluteTimeToSecondsRatio);
+    policy.computation = (uint32_t)(computation / absoluteTimeToSecondsRatio);
+    policy.constraint = (uint32_t)(constraint / absoluteTimeToSecondsRatio);
+    policy.preemptible = preemptible;
+
+    // Set the thread policy
+    kern_return_t result = thread_policy_set(
+        thread,
+        THREAD_TIME_CONSTRAINT_POLICY,
+        (thread_policy_t)&policy,
+        THREAD_TIME_CONSTRAINT_POLICY_COUNT
+    );
+
+    // Release the thread port right that was allocated by mach_thread_self()
+    mach_port_deallocate(mach_task_self(), thread);
+
+    return result == KERN_SUCCESS;
+}

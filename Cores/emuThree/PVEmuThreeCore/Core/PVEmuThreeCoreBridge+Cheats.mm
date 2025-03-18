@@ -1,7 +1,7 @@
 #import "PVEmuThreeCoreBridge.h"
 #import <Foundation/Foundation.h>
 
-#import "../emuThree/CitraWrapper.h"
+#import <PVEmuThree/CitraWrapper.h>
 
 @implementation PVEmuThreeCoreBridge (Cheats)
 #pragma mark - Cheats

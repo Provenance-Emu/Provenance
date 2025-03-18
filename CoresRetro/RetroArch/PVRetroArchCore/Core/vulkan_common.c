@@ -46,10 +46,7 @@
 
 #include "vulkan_common.h"
 #include "../include/vulkan/vulkan.h"
-// Provenance Change
-//#include "vksym.h"
 #include "../gfx/common/vksym.h"
-
 #include <libretro_vulkan.h>
 
 #include "../../verbosity.h"
@@ -59,7 +56,7 @@
 #define VENDOR_ID_NV 0x10DE
 #define VENDOR_ID_INTEL 0x8086
 
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__APPLE__)
 #define VULKAN_EMULATE_MAILBOX
 #endif
 
@@ -293,9 +290,9 @@ static void vulkan_debug_mark_object(VkDevice device,
 }
 
 static bool vulkan_buffer_chain_suballoc(struct vk_buffer_chain *chain,
-      size_t size, struct vk_buffer_range *range)
+      size_t len, struct vk_buffer_range *range)
 {
-   VkDeviceSize next_offset = chain->offset + size;
+   VkDeviceSize next_offset = chain->offset + len;
    if (next_offset <= chain->current->buffer.size)
    {
       range->data   = (uint8_t*)chain->current->buffer.mapped + chain->offset;
@@ -303,24 +300,21 @@ static bool vulkan_buffer_chain_suballoc(struct vk_buffer_chain *chain,
       range->offset = chain->offset;
       chain->offset = (next_offset + chain->alignment - 1)
          & ~(chain->alignment - 1);
-
       return true;
    }
-
    return false;
 }
 
 static struct vk_buffer_node *vulkan_buffer_chain_alloc_node(
       const struct vulkan_context *context,
-      size_t size, VkBufferUsageFlags usage)
+      size_t len, VkBufferUsageFlags usage)
 {
    struct vk_buffer_node *node = (struct vk_buffer_node*)
       malloc(sizeof(*node));
    if (!node)
       return NULL;
-
    node->buffer = vulkan_create_buffer(
-         context, size, usage);
+         context, len, usage);
    node->next   = NULL;
    return node;
 }
@@ -717,12 +711,16 @@ static bool vulkan_context_init_device(gfx_ctx_vulkan_data_t *vk)
          &vk->context.memory_properties);
 
 #ifdef VULKAN_EMULATE_MAILBOX
+#if defined(_WIN32)
    /* Win32 windowed mode seems to deal just fine with toggling VSync.
     * Fullscreen however ... */
    if (vk->flags & VK_DATA_FLAG_FULLSCREEN)
       vk->flags |=  VK_DATA_FLAG_EMULATE_MAILBOX;
    else
       vk->flags &= ~VK_DATA_FLAG_EMULATE_MAILBOX;
+#else
+   vk->flags |=  VK_DATA_FLAG_EMULATE_MAILBOX;
+#endif
 #endif
 
    /* If we're emulating mailbox, stick to using fences rather than semaphores.
@@ -745,13 +743,13 @@ static bool vulkan_context_init_device(gfx_ctx_vulkan_data_t *vk)
 
    {
       char version_str[128];
-      size_t len            = snprintf(version_str      , sizeof(version_str)      , "%u", VK_VERSION_MAJOR(vk->context.gpu_properties.apiVersion));
-      version_str[  len]    = '.';
-      version_str[++len]    = '\0';
-      len                  += snprintf(version_str + len, sizeof(version_str) - len, "%u", VK_VERSION_MINOR(vk->context.gpu_properties.apiVersion));
-      version_str[  len]    = '.';
-      version_str[++len]    = '\0';
-      snprintf(version_str + len, sizeof(version_str) - len, "%u", VK_VERSION_PATCH(vk->context.gpu_properties.apiVersion));
+      size_t _len            = snprintf(version_str      , sizeof(version_str)      , "%u", VK_VERSION_MAJOR(vk->context.gpu_properties.apiVersion));
+      version_str[  _len]    = '.';
+      version_str[++_len]    = '\0';
+      _len                  += snprintf(version_str + _len, sizeof(version_str) - _len, "%u", VK_VERSION_MINOR(vk->context.gpu_properties.apiVersion));
+      version_str[  _len]    = '.';
+      version_str[++_len]    = '\0';
+      snprintf(version_str + _len, sizeof(version_str) - _len, "%u", VK_VERSION_PATCH(vk->context.gpu_properties.apiVersion));
       video_driver_set_gpu_api_version_string(version_str);
    }
 
@@ -918,10 +916,6 @@ static VkInstance vulkan_context_create_instance_wrapper(void *opaque, const VkI
       case VULKAN_WSI_MVK_IOS:
          required_extensions[required_extension_count++] = "VK_EXT_metal_surface";
          break;
-           // Provenane had this before, maybe not needed anymore? @JoeMatt
-//      case VULKAN_WSI_MVK_IOS:
-//         instance_extensions[info.enabledExtensionCount++] = "VK_MVK_ios_surface";
-//         break;
       case VULKAN_WSI_NONE:
       default:
          break;
@@ -1375,7 +1369,7 @@ static void vulkan_create_wait_fences(gfx_ctx_vulkan_data_t *vk)
 
 bool vulkan_buffer_chain_alloc(const struct vulkan_context *context,
       struct vk_buffer_chain *chain,
-      size_t size, struct vk_buffer_range *range)
+      size_t len, struct vk_buffer_range *range)
 {
    if (!chain->head)
    {
@@ -1387,7 +1381,7 @@ bool vulkan_buffer_chain_alloc(const struct vulkan_context *context,
       chain->offset  = 0;
    }
 
-   if (!vulkan_buffer_chain_suballoc(chain, size, range))
+   if (!vulkan_buffer_chain_suballoc(chain, len, range))
    {
       /* We've exhausted the current chain, traverse list until we
        * can find a block we can use. Usually, we just step once. */
@@ -1395,24 +1389,24 @@ bool vulkan_buffer_chain_alloc(const struct vulkan_context *context,
       {
          chain->current = chain->current->next;
          chain->offset  = 0;
-         if (vulkan_buffer_chain_suballoc(chain, size, range))
+         if (vulkan_buffer_chain_suballoc(chain, len, range))
             return true;
       }
 
       /* We have to allocate a new node, might allocate larger
        * buffer here than block_size in case we have
        * a very large allocation. */
-      if (size < chain->block_size)
-         size        = chain->block_size;
+      if (len < chain->block_size)
+         len = chain->block_size;
 
       if (!(chain->current->next = vulkan_buffer_chain_alloc_node(
-                  context, size, chain->usage)))
+                  context, len, chain->usage)))
          return false;
 
       chain->current = chain->current->next;
       chain->offset  = 0;
       /* This cannot possibly fail. */
-      retro_assert(vulkan_buffer_chain_suballoc(chain, size, range));
+      retro_assert(vulkan_buffer_chain_suballoc(chain, len, range));
    }
    return true;
 }
@@ -1438,7 +1432,7 @@ void vulkan_debug_mark_memory(VkDevice device, VkDeviceMemory memory)
 
 struct vk_buffer vulkan_create_buffer(
       const struct vulkan_context *context,
-      size_t size, VkBufferUsageFlags usage)
+      size_t len, VkBufferUsageFlags usage)
 {
    struct vk_buffer buffer;
    VkMemoryRequirements mem_reqs;
@@ -1448,7 +1442,7 @@ struct vk_buffer vulkan_create_buffer(
    info.sType                 = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
    info.pNext                 = NULL;
    info.flags                 = 0;
-   info.size                  = size;
+   info.size                  = len;
    info.usage                 = usage;
    info.sharingMode           = VK_SHARING_MODE_EXCLUSIVE;
    info.queueFamilyIndexCount = 0;
@@ -1470,7 +1464,7 @@ struct vk_buffer vulkan_create_buffer(
    vulkan_debug_mark_memory(context->device, buffer.memory);
    vkBindBufferMemory(context->device, buffer.buffer, buffer.memory, 0);
 
-   buffer.size                = size;
+   buffer.size                = len;
 
    vkMapMemory(context->device,
          buffer.memory, 0, buffer.size, 0, &buffer.mapped);
@@ -1552,7 +1546,7 @@ bool vulkan_surface_create(gfx_ctx_vulkan_data_t *vk,
       enum vulkan_wsi_type type,
       void *display, void *surface,
       unsigned width, unsigned height,
-      unsigned swap_interval)
+                           int8_t swap_interval)
 {
    switch (type)
    {
@@ -1933,7 +1927,7 @@ bool vulkan_is_hdr10_format(VkFormat format)
 
 bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
       unsigned width, unsigned height,
-      unsigned swap_interval)
+                             int8_t swap_interval)
 {
    unsigned i;
    uint32_t format_count;
@@ -1951,6 +1945,7 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
    VkCompositeAlphaFlagBitsKHR composite   = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
    settings_t                    *settings = config_get_ptr();
    bool vsync                              = settings->bools.video_vsync;
+   bool adaptive_vsync                     = settings->bools.video_adaptive_vsync;
 
    format.format                           = VK_FORMAT_UNDEFINED;
    format.colorSpace                       = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
@@ -1962,15 +1957,15 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
          vk->vk_surface, &surface_properties);
 
    /* Skip creation when window is minimized */
-   /*if (   !surface_properties.currentExtent.width
-       && !surface_properties.currentExtent.height)
-      return false;
-   */
+//   if (   !surface_properties.currentExtent.width
+//       && !surface_properties.currentExtent.height)
+//      return false;
+
    if (     (swap_interval == 0)
          && (vk->flags & VK_DATA_FLAG_EMULATE_MAILBOX)
          && vsync)
    {
-      swap_interval  =  1;
+      swap_interval  =  (adaptive_vsync) ? -1 : 1;
       vk->flags     |=  VK_DATA_FLAG_EMULATING_MAILBOX;
    }
    else
@@ -2047,6 +2042,9 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
 
    vk->context.swap_interval = swap_interval;
 
+   for (i = 0; i < present_mode_count; i++)
+      vk->context.present_modes[i] = present_modes[i];
+
    /* Prefer IMMEDIATE without vsync */
    for (i = 0; i < present_mode_count; i++)
    {
@@ -2055,6 +2053,13 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
             && present_modes[i] == VK_PRESENT_MODE_IMMEDIATE_KHR)
       {
          swapchain_present_mode = VK_PRESENT_MODE_IMMEDIATE_KHR;
+         break;
+      }
+
+      if (     swap_interval < 0
+            && present_modes[i] == VK_PRESENT_MODE_FIFO_RELAXED_KHR)
+      {
+         swapchain_present_mode = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
          break;
       }
    }
@@ -2185,13 +2190,14 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
          format = formats[0];
    }
 
-   //if (surface_properties.currentExtent.width == UINT32_MAX)
-   //{
+    // @Prov change
+//   if (surface_properties.currentExtent.width == UINT32_MAX)
+//   {
       swapchain_size.width     = width;
       swapchain_size.height    = height;
-   //}
-   //else
-   //   swapchain_size           = surface_properties.currentExtent;
+//   }
+//   else
+//      swapchain_size           = surface_properties.currentExtent;
 
 #ifdef WSI_HARDENING_TEST
    if (trigger_spurious_error())
@@ -2385,7 +2391,9 @@ bool vulkan_context_init(gfx_ctx_vulkan_data_t *vk,
         if (!vulkan_library) {
             vulkan_library = dylib_load("MoltenVK.framework/MoltenVK");
         }
-
+       if (!vulkan_library) {
+           vulkan_library = dylib_load("../Contents/MoltenVK.framework/MoltenVK");
+       }
 #else
       vulkan_library = dylib_load("libvulkan.so.1");
       if (!vulkan_library)

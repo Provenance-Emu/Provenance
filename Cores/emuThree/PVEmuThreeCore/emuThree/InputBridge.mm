@@ -5,7 +5,7 @@
 //  Created by Antique on 27/5/2023.
 //
 
-#import "../emuThree/InputBridge.h"
+#import <PVEmuThree/InputBridge.h>
 
 @implementation ButtonInputBridge {
     ButtonBridge<bool>* _cppBridge;

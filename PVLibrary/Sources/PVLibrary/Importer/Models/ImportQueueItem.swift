@@ -20,15 +20,15 @@ public class ImportQueueItem: Identifiable, ObservableObject {
         case idle
         case processing
     }
-    
+
     // Enum to define file types for each import
     public enum FileType {
         case bios, artwork, game, cdRom, unknown
     }
-    
-    
+
+
     // Enum to define the possible statuses of each import
-    public enum ImportStatus: Int, CustomStringConvertible, CaseIterable {
+    public enum ImportStatus: Int, CustomStringConvertible, CaseIterable, Equatable {
         case conflict  // Indicates additional action needed by user after successful import
 
         case partial //indicates the item is waiting for associated files before it could be processed
@@ -62,12 +62,21 @@ public class ImportQueueItem: Identifiable, ObservableObject {
             }
         }
     }
-    
+
     public let id = UUID()
     public var url: URL
     public var fileType: FileType
     public var systems: [SystemIdentifier] = [] // Can be set to the specific system type
-    public var userChosenSystem: (SystemIdentifier)? = nil
+    public var userChosenSystem: (SystemIdentifier)? = nil {
+        didSet {
+            if userChosenSystem != nil && status != .processing {
+                // Reset status to queued if it was in conflict or failure state
+                if status == .conflict || status == .failure {
+                    status = .queued
+                }
+            }
+        }
+    }
     public var destinationUrl: URL?
     public var errorValue: String?
 

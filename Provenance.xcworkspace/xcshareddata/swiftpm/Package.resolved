@@ -245,6 +245,15 @@
         }
       },
       {
+        "package": "OpenSSL",
+        "repositoryURL": "https://github.com/krzyzanowskim/OpenSSL",
+        "state": {
+          "branch": null,
+          "revision": "8729614a93e6b20307db3c3359aed81f030facaa",
+          "version": "3.3.2000"
+        }
+      },
+      {
         "package": "PackageBuildInfo",
         "repositoryURL": "https://github.com/DimaRU/PackageBuildInfo.git",
         "state": {

@@ -47,7 +47,7 @@ class RetroArchCoreOptionsLoader {
     // MARK: - Core Loading
 
     private func loadCore() -> Bool {
-        coreHandle = dlopen(corePath, RTLD_NOW)
+        coreHandle = dlopen(corePath, RTLD_LAZY | RTLD_LOCAL)
         return coreHandle != nil
     }
 

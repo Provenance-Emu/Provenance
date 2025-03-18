@@ -6,13 +6,16 @@
 //
 
 // Local Changes: Add Save/Load/Cheat
+// Camera interface
 
 #import <Foundation/Foundation.h>
-#include <AudioToolbox/AudioToolbox.h>
+#import <AudioToolbox/AudioToolbox.h>
 #import <AVFoundation/AVFoundation.h>
-#import "../emuThree/CitraWrapper.h"
+#import <PVEmuThree/CitraWrapper.h>
 #import "InputFactory.h"
 #import <sys/utsname.h>
+#import "../emuThree/Camera/CameraFactory.h"
+#import "../emuThree/Camera/CameraInterface.h"
 #include "../citra_wrapper/helpers/config.h"
 #include "file_handle.h"
 #include "core/core.h"
@@ -20,6 +23,8 @@
 #include "emu_window_vk.h"
 #include "game_info.h"
 
+#include <future>
+#include <algorithm>
 #include <chrono>
 #include <cryptopp/hex.h>
 #include "common/archives.h"
@@ -49,7 +54,7 @@
 #include "video_core/renderer_base.h"
 #include "video_core/video_core.h"
 
-#import "InputBridge.h"
+#import <PVEmuThree/InputBridge.h>
 
 #define IS_IPHONE() ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone)
 
@@ -57,8 +62,95 @@ Core::System& core{Core::System::GetInstance()};
 std::unique_ptr<EmuWindow_VK> emu_window;
 @class EmulationInput;
 
+// MARK: Keyboard
+
+namespace SoftwareKeyboard {
+
+class Keyboard final : public Frontend::SoftwareKeyboard {
+public:
+    ~Keyboard();
+    
+    void Execute(const Frontend::KeyboardConfig& config) override;
+    void ShowError(const std::string& error) override;
+    
+    void KeyboardText(std::condition_variable& cv);
+    std::pair<std::string, uint8_t> GetKeyboardText(const Frontend::KeyboardConfig& config);
+    
+private:
+    __block NSString *_Nullable keyboardText = @"";
+    __block uint8_t buttonPressed = 0;
+    
+    __block BOOL isReady = FALSE;
+};
+
+} // namespace SoftwareKeyboard
+
+@implementation KeyboardConfig
+-(KeyboardConfig *) initWithHintText:(NSString *)hintText buttonConfig:(KeyboardButtonConfig)buttonConfig {
+    if (self = [super init]) {
+        self.hintText = hintText;
+        self.buttonConfig = buttonConfig;
+    } return self;
+}
+@end
+
+namespace SoftwareKeyboard {
+
+Keyboard::~Keyboard() = default;
+
+void Keyboard::Execute(const Frontend::KeyboardConfig& config) {
+    SoftwareKeyboard::Execute(config);
+    
+    std::pair<std::string, uint8_t> it = this->GetKeyboardText(config);
+    if (this->config.button_config != Frontend::ButtonConfig::None)
+        it.second = static_cast<uint8_t>(this->config.button_config);
+    
+    Finalize(it.first, it.second);
+}
+
+void Keyboard::ShowError(const std::string& error) {
+    printf("error = %s\n", error.c_str());
+}
+
+void Keyboard::KeyboardText(std::condition_variable& cv) {
+    [[NSNotificationCenter defaultCenter] addObserverForName:@"closeKeyboard" object:NULL queue:[NSOperationQueue mainQueue]
+                                                  usingBlock:^(NSNotification *notification) {
+        this->buttonPressed = (NSUInteger)notification.userInfo[@"buttonPressed"];
+        
+        NSString *_Nullable text = notification.userInfo[@"keyboardText"];
+        if (text != NULL)
+            this->keyboardText = text;
+        
+        isReady = TRUE;
+        cv.notify_all();
+    }];
+}
+
+std::pair<std::string, uint8_t> Keyboard::GetKeyboardText(const Frontend::KeyboardConfig& config) {
+    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"openKeyboard"
+                                                                                         object:[[KeyboardConfig alloc] initWithHintText:[NSString stringWithCString:config.hint_text.c_str() encoding:NSUTF8StringEncoding] buttonConfig:(KeyboardButtonConfig)config.button_config]]];
+    
+    std::condition_variable cv;
+    std::mutex mutex;
+    auto t1 = std::async(&Keyboard::KeyboardText, this, std::ref(cv));
+    std::unique_lock<std::mutex> lock(mutex);
+    while (!isReady)
+        cv.wait(lock);
+    
+    isReady = FALSE;
+    
+    return std::make_pair([this->keyboardText UTF8String], this->buttonPressed);
+}
+}
+
+// MARK: Keyboard
+
 static void InitializeLogging() {
+#if DEBUG
+    Log::Filter log_filter(Log::Level::Trace);
+#else
     Log::Filter log_filter(Log::Level::Debug);
+#endif
     log_filter.ParseFilterString(Settings::values.log_filter.GetValue());
     Log::SetGlobalFilter(log_filter);
     Log::AddBackend(std::make_unique<Log::ColorConsoleBackend>());
@@ -84,9 +176,13 @@ static void InitializeLogging() {
 
 -(instancetype) init {
     if (self = [super init]) {
+#if DEBUG
+        InitializeLogging();
+#else
         if ([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Logging"]) {
             InitializeLogging();
         }
+#endif
         finishedShutdown = false;
     } return self;
 }
@@ -144,12 +240,23 @@ static void InitializeLogging() {
         Common::ParamPackage param{ { "engine", "ios_gamepad" }, { "code", std::to_string(i) } };
         Settings::values.current_input_profile.analogs[i] = param.Serialize();
     }
-    Settings::values.current_input_profile.motion_device="engine:motion_device";
+    auto frontCamera = std::make_unique<Camera::iOSFrontCameraFactory>();
+    auto rearCamera = std::make_unique<Camera::iOSRearCameraFactory>();
+    auto rearAltCamera = std::make_unique<Camera::iOSRearAltCameraFactory>();
+
+    Camera::RegisterFactory("av_front", std::move(frontCamera));
+    Camera::RegisterFactory("av_rear", std::move(rearCamera));
+    Camera::RegisterFactory("av_rear_alt", std::move(rearAltCamera));
+
     Frontend::RegisterDefaultApplets();
     Input::RegisterFactory<Input::ButtonDevice>("ios_gamepad", std::make_shared<ButtonFactory>());
     Input::RegisterFactory<Input::AnalogDevice>("ios_gamepad", std::make_shared<AnalogFactory>());
-    Input::RegisterFactory<Input::MotionDevice>("motion_device", std::make_shared<MotionFactory>());
+    Settings::values.current_input_profile.motion_device="engine:motion_emu,update_period:100,sensitivity:0.01,tilt_clamp:90.0";
+    Input::RegisterFactory<Input::MotionDevice>("motion_emu", std::make_shared<MotionFactory>());
 
+#if defined(TARGET_OS_IPHONE)
+    Core::System::GetInstance().RegisterSoftwareKeyboard(std::make_shared<SoftwareKeyboard::Keyboard>());
+#endif  x
 }
 
 -(void) setShaderOption {
@@ -173,7 +280,19 @@ static void InitializeLogging() {
     Settings::values.use_cpu_jit.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Just in Time"]);
     Settings::values.cpu_clock_percentage.SetValue([[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.CPU Clock Speed"]] unsignedIntValue]);
     Settings::values.is_new_3ds.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable New 3DS"]);
+    
 
+    BOOL enabledLogging = [[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Logging"];
+    if (enabledLogging) {
+#if DEBUG
+        Settings::values.log_filter.SetValue("*:Trace");
+#else
+        Settings::values.log_filter.SetValue("*:Debug");
+#endif
+    } else {
+        Settings::values.log_filter.SetValue("*:Critical");
+    }
+    
     Settings::values.use_vsync_new.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable VSync"]);
     Settings::values.shaders_accurate_mul.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Shader Accurate Mul"]);
     Settings::values.use_shader_jit.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Shader Just in Time"]);
@@ -189,17 +308,37 @@ static void InitializeLogging() {
     Settings::values.preload_textures.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Preload Textures"]);
     Settings::values.async_custom_loading.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"async_custom_loading"]);
 
-    [self prepareAudio];
+    [self prepareAudioSession];
     Settings::values.isReloading.SetValue(false);
+    
+    // Stretch Audio
     shouldStretchAudio=[[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Stretch Audio"];
     Settings::values.enable_audio_stretching.SetValue(shouldStretchAudio);
+    
+    // Realtime audio
+    BOOL enable_realtime_audio = [[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Realtime Audio"];
+    Settings::values.enable_realtime_audio.SetValue(enable_realtime_audio);
+
+    // Volume
     int volume = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.Audio Volume"]] unsignedIntValue];
     Settings::values.volume.SetValue((float)volume / 100.0);
+    
+    // Microphone
+    int inputType = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.Microphone Input"]] unsignedIntValue];
+    Settings::values.input_type.SetValue((AudioCore::InputType) inputType);
+
+    // Region
+    int retionType = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.System Region"]] intValue];
+    Settings::values.region_value.SetValue(retionType);
+    
     if (resetButtons)
         [CitraWrapper.sharedInstance setButtons];
     for (const auto& service_module : Service::service_module_map) {
         Settings::values.lle_modules.emplace(service_module.name, ![[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable High Level Emulation"]);
     }
+    
+//    Settings::values.lle_applets.SetValue([defaults boolForKey:@"cytrus.lleApplets"]);
+    
     [self getModelType];
     Settings::Apply();
 }
@@ -263,6 +402,12 @@ static void InitializeLogging() {
     while (CitraWrapper.sharedInstance.isRunning)
         usleep(100);
     usleep(3000);
+//    Input::UnregisterFactory<Input::ButtonDevice>("gamepad");
+//    Input::UnregisterFactory<Input::AnalogDevice>("gamepad");
+//    Input::UnregisterFactory<Input::MotionDevice>("motion_emu");
+//    button.reset();
+//    analog.reset();
+//    motion.reset();
 }
 
 -(void) resetController {
@@ -300,7 +445,7 @@ static void InitializeLogging() {
     shouldLoad=true;
 }
 
--(void) prepareAudio {
+-(void) prepareAudioSession {
     NSError *error = nil;
     [[AVAudioSession sharedInstance]
      setCategory:AVAudioSessionCategoryAmbient

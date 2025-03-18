@@ -726,8 +726,7 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
     // Process a single ImportItem and update its status
-//    @MainActor
-    private func processItem(_ item: ImportQueueItem) async {
+    public func processItem(_ item: ImportQueueItem) async {
         ILOG("GameImportQueue - processing item in queue: \(item.url)")
         Task { @MainActor in
             item.status = .processing

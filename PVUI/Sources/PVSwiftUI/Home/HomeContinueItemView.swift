@@ -115,7 +115,7 @@ struct HomeContinueItemView: SwiftUI.View {
                     }
                     showDeleteAlert = false
                 }
-                UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
                     showDeleteAlert = false
                 }
             }

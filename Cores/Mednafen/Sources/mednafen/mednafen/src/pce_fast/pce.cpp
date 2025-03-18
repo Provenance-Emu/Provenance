@@ -686,7 +686,7 @@ static const CheatInfoStruct CheatInfo =
 
 };
 
-MDFN_HIDE extern const MDFNGI EmulatedPCE_Fast =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedPCE_Fast =
 {
  "pce_fast",
  "PC Engine (CD)/TurboGrafx 16 (CD)/SuperGrafx",

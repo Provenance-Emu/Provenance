@@ -360,6 +360,15 @@ public struct ArtworkSearchView: View {
                 showDetail = true
             }
             .fullScreenCover(isPresented: $showDetail) {
+                /// When the detail view is dismissed, scroll to the last viewed artwork
+                if let lastViewed = lastViewedArtwork {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        withAnimation {
+                            self.lastViewedArtwork = nil
+                        }
+                    }
+                }
+            } content: {
                 if let artwork = selectedArtwork {
                     ArtworkDetailView(
                         artworks: displayResults,
@@ -374,6 +383,7 @@ public struct ArtworkSearchView: View {
                             }
                         },
                         onPageChange: { artwork in
+                            /// Store the last viewed artwork but don't scroll yet
                             lastViewedArtwork = artwork
                         }
                     )
@@ -382,7 +392,6 @@ public struct ArtworkSearchView: View {
             .onChange(of: showDetail) { isShown in
                 if !isShown {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        lastViewedArtwork = nil
                         selectedArtwork = nil
                     }
                 }

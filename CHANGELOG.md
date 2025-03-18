@@ -5,6 +5,162 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.6] - 2025-03-16
+
+Special thanks to all contributors and testers who helped make this release possible.
+
+### Added
+- Core Options Menu for RetroArch cores
+- Enhanced search functionality with auto-hiding search bars
+- Improved disc selection menu for multi-disc games
+- Support for custom textures in 3DS games
+- RAR archive support in file enumeration
+
+### Improved
+- Major 3DS performance optimizations:
+  - NEON-optimized shader interpreter
+  - Enhanced Vulkan rendering pipeline
+  - Audio processing improvements with NEON optimizations
+  - Camera, gyro, and microphone support
+  - Async presentation for smoother gameplay
+- Updated Mednafen to version 1.32.1
+- Improved RetroArch cores with better Vulkan support
+- Enhanced continues section with optimized paging
+- Threaded rendering and realtime improvements
+- Fixed CPU deadlock issues
+
+### Fixed
+- Fixed search functionality in Home and Console views
+- Fixed tvOS build issues
+- Resolved logging issues
+- Fixed immediate import on conflict resolution
+- Various crash fixes and stability improvements
+
+## [3.0.5] - 2025-03-11
+
+Special thanks to @mrjschulte, @yippeeeyay, and @pabloarista for their contributions to this release.
+
+### Added
+- Core Options Menu for RetroArch cores
+- Custom textures support for 3DS games
+- Onscreen controls toggle button
+- RetroArch support for FFMPEG, CoreMIDI, CoreLocation, and AVFoundation camera drivers
+- Support for additional systems: CPS1, CPS2, CPS3, Doom, Quake, Quake2
+- Additional RetroArch cores: melondsds, desmume, mesen, mesen-s
+- ROM deletion confirmation dialog
+- Contributors list in settings
+
+### Improved
+- Metal performance optimizations
+- Realm threading and performance
+- Artwork loading and caching system
+- Save state management and performance
+- SwiftUI components with reduced redraws
+- Native scale enabled by default
+- Continues section with optimized paging
+- Threaded rendering for better performance
+- Marquee text animation and performance
+- Protocol-oriented refactoring of EmulatorVC
+
+### Fixed
+- Fixed tvOS build issues
+- Fixed crash in core close operations
+- Fixed save state loading and renaming
+- Fixed threading crashes in PVFile MD5 cache
+- Fixed Metal shader issues (megaTron, ulTron)
+- Fixed rotation misalignment in Metal view controller
+- Fixed Atari core MFi controllers without L3/R3 buttons
+- Fixed multi-disc/track file deletion
+- Fixed artwork search and database lookups for various systems
+
+## [3.0.4] - 2025-02-08
+
+Special thanks to all contributors and testers who helped make this release possible.
+
+### Added
+- Core Options Menu for RetroArch cores
+- Audio switch monitoring
+- Protocol-oriented refactoring of EmulatorVC
+- Additional UTI types for ROMs
+
+### Improved
+- Game cells alignment by title
+- Improved threading for database operations
+- Refactored emulator state into observed actor
+- Parallelized bootup of PVSystems for faster startup
+
+### Fixed
+- Fixed crash in core close operations
+- Fixed Metal shader issues (megaTron, ulTron)
+- Fixed rotation misalignment in Metal view controller
+- Fixed nil texture crash in PVMetalVC
+- Fixed tvOS WebServer UX flow
+- Fixed artwork search for various systems
+
+## [3.0.3] - 2025-01-23
+
+### Added
+- Added Crashalytics for better crash reporting
+- Added support for ZIP format BIOS files
+- Added system name display on custom selection screen
+
+### Improved
+- Improved Metal rendering for various cores
+- Improved EmuThree settings and options
+- Updated core loading system to use plists
+- Improved BIOS directory handling and caching
+
+### Fixed
+- Fixed Intellivision button layout
+- Fixed Vectrex rendering options
+- Fixed Metal color rendering for Jaguar and other systems
+- Fixed missing Molten framework for Catalyst builds
+- Removed broken Opera core from build
+- Fixed various core configuration issues
+
+## [3.0.2] - 2025-01-16
+
+### Added
+- Added Sentry crash reporting SDK
+- Added BIOS scanner with support for subdirectories
+- Added Discord and Twitter links in App Store version
+
+### Improved
+- Improved EmuThree core options with better restart handling
+- Improved settings UI navigation style
+- Enhanced BIOS scanning and UI for force scanning
+
+### Fixed
+- Fixed bootup locking from cache async calls
+- Fixed potential TopShelf crash
+- Fixed potential nil crash on boot
+- Fixed SystemPlist entry for NeoGeo.zip
+- Fixed Saturn controls using RetroArch controls
+- Updated Jaguar core for buttons 1-8
+- Fixed PVFile crash on duplicate write
+
+## [3.0.1] - 2025-01-07
+
+### Added
+- Added WhatsNewKit for displaying new features
+- Added PVJit module to fix missing module issues
+
+### Improved
+- Improved EmuThree core options and settings
+- Improved theme system with better UI updates
+- Enhanced navigation bar theming
+- Improved RetroArch configuration paths on tvOS
+
+### Fixed
+- Fixed crash in save state menu
+- Fixed theme changes not updating navigation bar
+- Fixed Realm bootup crash on iOS 16
+- Fixed tvOS build issues
+- Fixed potential crash in PVFile size caching
+- Fixed Vectrex compilation without GLES
+- Fixed RetroArch config paths on tvOS
+- Fixed controller issues with Atari 5200 and Nintendo 64
+
 ## [2.2.0] - 2022-12-02
 
 Super special thanks to @Carter1190 @dnicolson @ianclawson @mrjschulte @stuartcarnie for providing pull requests.
@@ -42,7 +198,7 @@ Special thanks for all the Patreon and Discord members that provided testing fee
 - fixes #2027 importer double run and deleting
 - fix archive step
 - fix artwork download
-- stella: don’t crash on 2nd load
+- stella: don't crash on 2nd load
 - stella: updated and cheats,save support
 - closes #1765 map dualsense home to pause on saturn
 - closes #1765 map dualsense home to pause on saturn
@@ -89,9 +245,9 @@ Special thanks for all the Patreon and Discord members that provided testing fee
 - cicd remove UIBrackgroundModes processing
 - citra: combine platforms
 - core 4do updates to fix tvos
-- cores framework don’t embed
+- cores framework don't embed
 - cores table view, hide unsupported cores unless on
-- Cores, add .core.name to ones that didn’t
+- Cores, add .core.name to ones that didn't
 - cxd4 fix submodule bs
 - delete dup schemes, new shaders, blissemu framewk
 - delete old tvos schemes and rename others
@@ -229,7 +385,7 @@ Special thanks for all the Patreon and Discord members that provided testing fee
 - retro: gme loads
 - retro: gme plays
 - retro: ios biulds
-- retro: metal video doesn’t crash but still odd
+- retro: metal video doesn't crash but still odd
 - retro: potator loads, fix static rom buffer copy
 - retro: remove VecXGL for libretro version
 - retro: software fb callback and pixl fmt fixes
@@ -267,7 +423,7 @@ Special thanks for all the Patreon and Discord members that provided testing fee
 - tic80 add submodule
 - tic80 submodule
 - tvos add missing enums
-- tvOS don’t copy glsl to docs
+- tvOS don't copy glsl to docs
 - tvOS fix duplicate symbols in mupen/gliden
 - tvOS Fix jaguar compile
 - tvOS fix missing target warnings, introspect err
@@ -300,7 +456,7 @@ Special thanks for all the Patreon and Discord members that provided testing fee
 - Use system background color for game library
 - Use system background for game info
 - Use system background for settings
-- Use system color for “Game library empty”
+- Use system color for "Game library empty"
 - Use system colors for file logs
 - Use system colors for live log
 - Use system colors for save states
@@ -442,10 +598,10 @@ Special thanks for all the Patreon and Discord members that provided testing fee
 - retro: submodules update
 - retro: supervision works with new callbacks
 - retro: tvos builds, refactor cores into frameworks
-- retro: various fixes, tvos builds
+- retro: various fixes, tvos builds
 - retro: vecrex
 - retro: video work
-- retro: yabause update
+- retro: yabause update
 - shader manager
 - shaders metal are wrong
 - swiftlint corrections
@@ -684,8 +840,8 @@ More Bug fixes mostly.
 
 - #1564 SteamController native SPM package port
 - Jaguar core updated with libretro upstream + my performance hacks. PR made https://github.com/libretro/virtualjaguar-libretro/pull/53#issuecomment-919242560
-- Fix many static analyzer warnigns about possible nil pointer/un-malloc'd memory usage, now we check and log nils or early exit where applicable 
-- SQLite.swift updated 
+- Fix many static analyzer warnigns about possible nil pointer/un-malloc'd memory usage, now we check and log nils or early exit where applicable
+- SQLite.swift updated
 - RxRealm updated from 5.0.2 to 5.0.3
 - realm-cocoa updated from 10.14.0 to 10.15.0
 
@@ -723,7 +879,7 @@ Special thanks and shout-outs to @braindx, @error404-na, @zydeco, @mrjschulte, @
 
 ⚠️ **Breaking** ⚠️
 
-2.0 does not support upgrading from 1.4 libraries. It MAY work with some versions of 1.5beta's but not all betas are the same. Your mileage may vary. For this reason we're updating the version to 2.0, to indicate the lack of upgrade path. 
+2.0 does not support upgrading from 1.4 libraries. It MAY work with some versions of 1.5beta's but not all betas are the same. Your mileage may vary. For this reason we're updating the version to 2.0, to indicate the lack of upgrade path.
 
 ℹ️ *You can install 2.0 along side 1.x by using a different bundle id*
 ### Added

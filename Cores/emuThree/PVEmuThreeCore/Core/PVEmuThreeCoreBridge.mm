@@ -2,8 +2,8 @@
 //  Copyright © 2023 Provenance. All rights reserved.
 
 #import "PVEmuThreeCoreBridge+Controls.h"
-#import "PVEmuThreeCoreBridge+Audio.h"
-#import "PVEmuThreeCoreBridge+Video.h"
+//#import "PVEmuThreeCoreBridge+Audio.h"
+//#import "PVEmuThreeCoreBridge+Video.h"
 #import <PVEmuThree/PVEmuThree-Swift.h>
 
 #import <Foundation/Foundation.h>
@@ -12,8 +12,9 @@
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
 /* Citra Includes */
-#import "../emuThree/CitraWrapper.h"
+#import <PVEmuThree/CitraWrapper.h>
 #include "core/savestate.h"
+#include "core/hle/service/am/am.h"
 
 #define SAMPLERATE 48000
 #define SIZESOUNDBUFFER 48000 / 60 * 4
@@ -86,7 +87,16 @@ static bool _isOff = false;
     _videoWidth = 640;
     _videoHeight = 480;
     _isInitialized = false;
+    
     [self parseOptions];
+    
+    if ([path.pathExtension.lowercaseString isEqualToString:@"nds"]) {
+        _emuThreeCoreModule = @"NDS";
+    } else if ([path.pathExtension.lowercaseString isEqualToString:@"cia"]) {
+        Service::AM::InstallStatus success = Service::AM::InstallCIA([path UTF8String], [](std::size_t total_bytes_read, std::size_t file_size) {});
+//        return success == Service::AM::InstallStatus::Success;
+    }
+
     return YES;
 }
 
@@ -104,12 +114,14 @@ static bool _isOff = false;
     [[NSUserDefaults standardUserDefaults] setInteger:self.volume forKey:@"audio_volume"];
 
     [[NSUserDefaults standardUserDefaults] setInteger:self.shaderType forKey:@"shader_type"];
+    [[NSUserDefaults standardUserDefaults] setInteger:self.region forKey:@"region_value"];
 
     [[NSUserDefaults standardUserDefaults] setBool:self.asyncShader  forKey:@"async_shader_compilation"];
     [[NSUserDefaults standardUserDefaults] setBool:self.asyncPresent forKey:@"async_presentation"];
     [[NSUserDefaults standardUserDefaults] setBool:(self.shaderType >= 2) forKey:@"use_hw_shader"];
 
     [[NSUserDefaults standardUserDefaults] setBool:self.stretchAudio forKey:@"stretch_audio"];
+    [[NSUserDefaults standardUserDefaults] setBool:self.realtimeAudio forKey:@"use_realtime_audio"];
     [[NSUserDefaults standardUserDefaults] setBool:self.enableJIT forKey:@"use_cpu_jit"];
     [[NSUserDefaults standardUserDefaults] setBool:self.enableLogging forKey:@"enable_logging"];
     [[NSUserDefaults standardUserDefaults] setBool:self.useNew3DS forKey:@"is_new_3ds"];
@@ -359,6 +371,12 @@ static bool _isOff = false;
             [CitraWrapper.sharedInstance resetController];
         },
         @"Enable Async Presentation":
+        ^{
+            [self setOptionValues];
+            [CitraWrapper.sharedInstance setOptions:false];
+            [CitraWrapper.sharedInstance resetController];
+        },
+        @"System Language":
         ^{
             [self setOptionValues];
             [CitraWrapper.sharedInstance setOptions:false];

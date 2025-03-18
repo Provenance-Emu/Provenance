@@ -108,20 +108,20 @@ static void *coreaudio_microphone_init(void)
 static void coreaudio_microphone_free(void *driver_context)
 {
     coreaudio_microphone_t *microphone = (coreaudio_microphone_t*)driver_context;
-    if (microphone) {
-        if (microphone->audio_unit && microphone->is_running) {
+    if (microphone != NULL) {
+        if (microphone->audio_unit != NULL && microphone->is_running) {
             AudioOutputUnitStop(microphone->audio_unit);
             microphone->is_running = false;
         }
         // TODO: This crashes, though we protect calls around `audio_unit` nil!
-//        if (microphone->audio_unit) {
+//        if (microphone->audio_unit != NULL) {
 //            AudioComponentInstanceDispose(microphone->audio_unit);
 //            microphone->audio_unit = nil;
 //        }
-        if (microphone->sample_buffer) {
-            fifo_free(microphone->sample_buffer);
-        }
-        free(microphone);
+//        if (microphone->sample_buffer) {
+//            fifo_free(microphone->sample_buffer);
+//        }
+//        free(microphone);
     }
 }
 
@@ -185,6 +185,158 @@ static void coreaudio_microphone_set_format(coreaudio_microphone_t *microphone, 
               microphone->format.mBytesPerFrame);
 }
 
+/// Get device list (implemented differently for macOS and iOS)
+static struct string_list *coreaudio_microphone_device_list_new(const void *driver_context)
+{
+    (void)driver_context;
+    struct string_list *list = string_list_new();
+
+    if (!list)
+        return NULL;
+
+#if TARGET_OS_IPHONE
+    /// On iOS, we just add the default device
+    string_list_append(list, "Default iOS Microphone", (union string_list_elem_attr){0});
+#else
+    /// On macOS, enumerate available audio devices
+    AudioObjectPropertyAddress propertyAddress = {
+        kAudioHardwarePropertyDevices,
+        kAudioObjectPropertyScopeGlobal,
+        kAudioObjectPropertyElementMaster
+    };
+
+    UInt32 dataSize = 0;
+    OSStatus status = AudioObjectGetPropertyDataSize(kAudioObjectSystemObject,
+                                                    &propertyAddress,
+                                                    0,
+                                                    NULL,
+                                                    &dataSize);
+
+    if (status != noErr) {
+        RARCH_ERR("[CoreAudio]: Failed to get devices data size\n");
+        string_list_free(list);
+        return NULL;
+    }
+
+    UInt32 deviceCount = dataSize / sizeof(AudioDeviceID);
+    AudioDeviceID *audioDevices = (AudioDeviceID *)malloc(dataSize);
+
+    if (!audioDevices) {
+        RARCH_ERR("[CoreAudio]: Failed to allocate memory for device IDs\n");
+        string_list_free(list);
+        return NULL;
+    }
+
+    status = AudioObjectGetPropertyData(kAudioObjectSystemObject,
+                                       &propertyAddress,
+                                       0,
+                                       NULL,
+                                       &dataSize,
+                                       audioDevices);
+
+    if (status != noErr) {
+        RARCH_ERR("[CoreAudio]: Failed to get device IDs\n");
+        free(audioDevices);
+        string_list_free(list);
+        return NULL;
+    }
+
+    /// Add default device first
+    string_list_append(list, "Default", 0);
+
+    /// Iterate through devices and add input-capable ones
+    for (UInt32 i = 0; i < deviceCount; i++) {
+        /// Check if device has input capability
+        AudioObjectPropertyAddress inputAddress = {
+            kAudioDevicePropertyStreamConfiguration,
+            kAudioDevicePropertyScopeInput,
+            kAudioObjectPropertyElementMaster
+        };
+
+        dataSize = 0;
+        status = AudioObjectGetPropertyDataSize(audioDevices[i],
+                                               &inputAddress,
+                                               0,
+                                               NULL,
+                                               &dataSize);
+
+        if (status != noErr || dataSize == 0)
+            continue;
+
+        AudioBufferList *bufferList = (AudioBufferList *)malloc(dataSize);
+        if (!bufferList)
+            continue;
+
+        status = AudioObjectGetPropertyData(audioDevices[i],
+                                           &inputAddress,
+                                           0,
+                                           NULL,
+                                           &dataSize,
+                                           bufferList);
+
+        bool hasInputChannels = false;
+        if (status == noErr) {
+            /// Check if device has input channels
+            for (UInt32 j = 0; j < bufferList->mNumberBuffers; j++) {
+                if (bufferList->mBuffers[j].mNumberChannels > 0) {
+                    hasInputChannels = true;
+                    break;
+                }
+            }
+        }
+
+        free(bufferList);
+
+        if (!hasInputChannels)
+            continue;
+
+        /// Get device name
+        AudioObjectPropertyAddress nameAddress = {
+            kAudioObjectPropertyName,
+            kAudioObjectPropertyScopeGlobal,
+            kAudioObjectPropertyElementMaster
+        };
+
+        CFStringRef deviceName = NULL;
+        dataSize = sizeof(CFStringRef);
+        status = AudioObjectGetPropertyData(audioDevices[i],
+                                           &nameAddress,
+                                           0,
+                                           NULL,
+                                           &dataSize,
+                                           &deviceName);
+
+        if (status == noErr && deviceName) {
+            char name[256];
+            CFStringGetCString(deviceName, name, sizeof(name), kCFStringEncodingUTF8);
+
+            /// Store device ID as userdata
+            char *id_str = malloc(32);
+            if (id_str) {
+                snprintf(id_str, 32, "%u", (unsigned)audioDevices[i]);
+                string_list_append(list, name, (union string_list_elem_attr) { .i = (int)audioDevices[i] });
+            } else {
+                string_list_append(list, name, 0);
+            }
+
+            CFRelease(deviceName);
+        }
+    }
+
+    free(audioDevices);
+#endif
+
+    return list;
+}
+
+/// Free device list
+static void coreaudio_microphone_device_list_free(const void *driver_context, struct string_list *devices)
+{
+    (void)driver_context;
+    if (devices)
+        string_list_free(devices);
+}
+
 /// Open microphone device
 static void *coreaudio_microphone_open_mic(void *driver_context,
                                          const char *device,
@@ -208,7 +360,8 @@ static void *coreaudio_microphone_open_mic(void *driver_context,
         rate = 48000;
     }
 
-    /// Configure audio session
+#if TARGET_OS_IPHONE
+    /// Configure audio session (iOS only)
     AVAudioSession *audioSession = [AVAudioSession sharedInstance];
     NSError *error = nil;
     [audioSession setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];
@@ -230,6 +383,13 @@ static void *coreaudio_microphone_open_mic(void *driver_context,
         *new_rate = (unsigned)actualRate;
     }
     microphone->sample_rate = (int)actualRate;
+#else
+    /// For macOS, we'll use the requested rate directly
+    if (new_rate) {
+        *new_rate = rate;
+    }
+    microphone->sample_rate = rate;
+#endif
 
     RARCH_LOG("[CoreAudio] Using sample rate: %d Hz\n", microphone->sample_rate);
 
@@ -273,6 +433,25 @@ static void *coreaudio_microphone_open_mic(void *driver_context,
         goto error;
     }
 
+#if !TARGET_OS_IPHONE
+    /// For macOS, set the specific device if provided
+    if (device && strcmp(device, "Default") != 0) {
+        AudioDeviceID deviceID = 0;
+        if (sscanf(device, "%u", &deviceID) == 1 && deviceID > 0) {
+            status = AudioUnitSetProperty(microphone->audio_unit,
+                                         kAudioOutputUnitProperty_CurrentDevice,
+                                         kAudioUnitScope_Global,
+                                         0,
+                                         &deviceID,
+                                         sizeof(deviceID));
+            if (status != noErr) {
+                RARCH_ERR("[CoreAudio]: Failed to set device ID: %d\n", status);
+                goto error;
+            }
+        }
+    }
+#endif
+
     /// Enable input
     UInt32 flag = 1;
     status = AudioUnitSetProperty(microphone->audio_unit,
@@ -285,6 +464,21 @@ static void *coreaudio_microphone_open_mic(void *driver_context,
         RARCH_ERR("[CoreAudio]: Failed to enable input\n");
         goto error;
     }
+
+#if !TARGET_OS_IPHONE
+    /// Disable output for macOS (we only want input)
+    flag = 0;
+    status = AudioUnitSetProperty(microphone->audio_unit,
+                                 kAudioOutputUnitProperty_EnableIO,
+                                 kAudioUnitScope_Output,
+                                 0, // Output bus
+                                 &flag,
+                                 sizeof(flag));
+    if (status != noErr) {
+        RARCH_ERR("[CoreAudio]: Failed to disable output\n");
+        goto error;
+    }
+#endif
 
     /// Set format using helper method
     coreaudio_microphone_set_format(microphone, false); /// Default to 16-bit integer
@@ -326,6 +520,7 @@ static void *coreaudio_microphone_open_mic(void *driver_context,
         goto error;
     }
 
+    microphone->is_running = true;
     return microphone;
 
 error:
@@ -334,7 +529,10 @@ error:
             AudioComponentInstanceDispose(microphone->audio_unit);
             microphone->audio_unit = nil;
         }
-        free(microphone);
+        if (microphone->sample_buffer) {
+            fifo_free(microphone->sample_buffer);
+            microphone->sample_buffer = NULL;
+        }
     }
     return NULL;
 }
@@ -346,7 +544,7 @@ static void coreaudio_microphone_close_mic(void *driver_context, void *microphon
     if (microphone) {
         if (microphone->is_running)
             AudioOutputUnitStop(microphone->audio_unit);
-        
+
         if(microphone->audio_unit) {
             AudioComponentInstanceDispose(microphone->audio_unit);
             microphone->audio_unit = nil;
@@ -418,20 +616,6 @@ static bool coreaudio_microphone_mic_use_float(const void *driver_context, const
     (void)driver_context;
 
     return microphone && microphone->use_float;
-}
-
-/// Get device list (not implemented for CoreAudio)
-static struct string_list *coreaudio_microphone_device_list_new(const void *driver_context)
-{
-    (void)driver_context;
-    return NULL;
-}
-
-/// Free device list (not implemented for CoreAudio)
-static void coreaudio_microphone_device_list_free(const void *driver_context, struct string_list *devices)
-{
-    (void)driver_context;
-    (void)devices;
 }
 
 /// Check if microphone is using float format

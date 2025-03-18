@@ -1351,7 +1351,7 @@ static const FileExtensionSpecStruct KnownExtensions[] =
  { NULL, 0, NULL }
 };
 
-MDFN_HIDE extern const MDFNGI EmulatedSNES =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedSNES =
 {
  "snes",
  "Super Nintendo Entertainment System/Super Famicom",

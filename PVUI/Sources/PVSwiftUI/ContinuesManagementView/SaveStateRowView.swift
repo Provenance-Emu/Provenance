@@ -433,7 +433,7 @@ public struct SaveStateRowView: View {
                 tempDescription = nil
                 showingEditDialog = false
             }
-            UIAlertAction(title: "Cancel", style: .cancel) { _ in
+            UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
                 // Discard the temp value
                 tempDescription = nil
                 showingEditDialog = false

@@ -437,7 +437,7 @@ struct Values {
     SwitchableSetting<bool> async_shader_compilation{false, "async_shader_compilation"};
     SwitchableSetting<bool> async_presentation{true, "async_presentation"};
     SwitchableSetting<bool> use_hw_shader{true, "use_hw_shader"};
-    SwitchableSetting<u32> shader_type{3, "shader_type"};
+    SwitchableSetting<u32> shader_type{2, "shader_type"};
     SwitchableSetting<bool> use_disk_shader_cache{true, "use_disk_shader_cache"};
     SwitchableSetting<bool> shaders_accurate_mul{true, "shaders_accurate_mul"};
     SwitchableSetting<bool> use_vsync_new{true, "use_vsync_new"};
@@ -488,10 +488,11 @@ struct Values {
     bool audio_muted;
     SwitchableSetting<AudioEmulation> audio_emulation{AudioEmulation::HLE, "audio_emulation"};
     SwitchableSetting<bool> enable_audio_stretching{true, "enable_audio_stretching"};
+    SwitchableSetting<bool> enable_realtime_audio{true, "enable_realtime_audio"};
     SwitchableSetting<float, true> volume{1.f, 0.f, 1.f, "volume"};
     Setting<AudioCore::SinkType> output_type{AudioCore::SinkType::CoreAudio, "output_type"};
     Setting<std::string> output_device{"auto", "output_device"};
-    Setting<AudioCore::InputType> input_type{AudioCore::InputType::Auto, "input_type"};
+    Setting<AudioCore::InputType> input_type{AudioCore::InputType::CoreAudio, "input_type"};
     Setting<std::string> input_device{"auto", "input_device"};
 
     // Camera

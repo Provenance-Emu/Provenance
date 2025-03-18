@@ -9,9 +9,26 @@
 #import <MetalKit/MetalKit.h>
 #import <UIKit/UIKit.h>
 
-#import "InputBridge.h"
+#import <PVEmuThree/InputBridge.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class MotionInputBridge;
+
+typedef NS_ENUM(NSUInteger, KeyboardButtonConfig) {
+    KeyboardButtonConfigSingle,
+    KeyboardButtonConfigDual,
+    KeyboardButtonConfigTriple,
+    KeyboardButtonConfigNone
+};
+
+@interface KeyboardConfig : NSObject
+@property (nonatomic, strong) NSString * _Nullable hintText;
+@property (nonatomic, assign) KeyboardButtonConfig buttonConfig;
+
+-(KeyboardConfig *) initWithHintText:(NSString * _Nullable)hintText buttonConfig:(KeyboardButtonConfig)buttonConfig;
+@end
+
 @interface CitraWrapper : NSObject {
     CAMetalLayer *_metalLayer;
     NSString *_path;
@@ -59,7 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(NSString *) GetRegion:(NSString *)path;
 -(NSString *) GetTitle:(NSString *)path;
 
--(void) prepareAudio;
+-(void) prepareAudioSession;
 -(void) useMetalLayer:(CAMetalLayer *)layer;
 -(void) setShaderOption;
 -(void) setOptions:(bool)resetButtons;

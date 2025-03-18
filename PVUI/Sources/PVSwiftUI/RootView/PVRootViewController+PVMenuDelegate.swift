@@ -236,4 +236,16 @@ extension PVRootViewController: ImportStatusDelegate {
 
         GameImporter.shared.startProcessing()
     }
+
+    public func didSelectSystem(_ system: SystemIdentifier, for item: ImportQueueItem) {
+        // Start processing if we're not already processing
+        if GameImporter.shared.processingState == .idle {
+            GameImporter.shared.startProcessing()
+        } else if GameImporter.shared.processingState == .paused {
+            // If paused, just process this specific item
+            Task {
+                await GameImporter.shared.processItem(item)
+            }
+        }
+    }
 }

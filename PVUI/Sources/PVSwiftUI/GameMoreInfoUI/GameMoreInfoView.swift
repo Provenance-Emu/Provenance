@@ -542,7 +542,7 @@ struct GameMoreInfoView: View {
             set: { if !$0 { editingField = nil } }
         )) {
             TextField("Value", text: $editingValue)
-            Button("Cancel", role: .cancel) {
+            Button(NSLocalizedString("Cancel", comment: "Cancel"), role: .cancel) {
                 editingField = nil
             }
             Button("Save") {

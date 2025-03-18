@@ -92,6 +92,12 @@ struct HomeView: SwiftUI.View {
 
     @State private var discSelectionAlert: DiscSelectionAlert?
 
+    @State private var searchText = ""
+
+    @State private var scrollOffset: CGFloat = 0
+    @State private var previousScrollOffset: CGFloat = 0
+    @State private var isSearchBarVisible: Bool = true
+
     init(
         gameLibrary: PVGameLibrary<RealmDatabaseDriver>? = nil,
         delegate: PVRootDelegate? = nil,
@@ -123,33 +129,78 @@ struct HomeView: SwiftUI.View {
 
     var body: some SwiftUI.View {
         StatusBarProtectionWrapper {
-            ScrollView {
-                ScrollViewReader { proxy in
-                    LazyVStack {
-                        continuesSection()
-                            .id("section_continues")
-                        favoritesSection()
-                            .id("section_favorites")
-                        recentlyPlayedSection()
-                            .id("section_recent")
-                        mostPlayedSection()
-                        displayOptionsView()
-                        if viewModel.viewGamesAsGrid {
-                            showGamesGrid(allGames)
-                                .id("section_allgames")
-                        } else {
-                            showGamesList(allGames)
-                                .id("section_allgames")
+            VStack(spacing: 0) {
+                // Add search bar with visibility control
+                if allGames.count > 8 {
+                    PVSearchBar(text: $searchText)
+                        .padding(.horizontal)
+                        .padding(.bottom, 8)
+                        .opacity(isSearchBarVisible ? 1 : 0)
+                        .frame(height: isSearchBarVisible ? nil : 0)
+                        .animation(.easeInOut(duration: 0.3), value: isSearchBarVisible)
+                }
+
+                ScrollViewWithOffset(
+                    offsetChanged: { offset in
+                        // Detect scroll direction and distance
+                        let scrollingDown = offset < previousScrollOffset
+                        let scrollDistance = abs(offset - previousScrollOffset)
+
+                        // Only respond to significant scroll movements
+                        if scrollDistance > 5 {
+                            // Hide search bar when scrolling down, show when scrolling up
+                            if scrollingDown && offset < -10 {
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    isSearchBarVisible = false
+                                }
+                            } else if !scrollingDown {
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    isSearchBarVisible = true
+                                }
+                            }
                         }
+
+                        scrollOffset = offset
+                        previousScrollOffset = offset
                     }
-                    .onChange(of: focusedItemInSection) { newValue in
-                        if let id = newValue {
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                proxy.scrollTo(id, anchor: .center)
+                ) {
+                    ScrollViewReader { proxy in
+                        LazyVStack {
+                            continuesSection()
+                                .id("section_continues")
+                            favoritesSection()
+                                .id("section_favorites")
+                            recentlyPlayedSection()
+                                .id("section_recent")
+                            mostPlayedSection()
+                            displayOptionsView()
+                            if viewModel.viewGamesAsGrid {
+                                showGamesGrid(allGames)
+                                    .id("section_allgames")
+                            } else {
+                                showGamesList(allGames)
+                                    .id("section_allgames")
+                            }
+                        }
+                        .onChange(of: focusedItemInSection) { newValue in
+                            if let id = newValue {
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    proxy.scrollTo(id, anchor: .center)
+                                }
                             }
                         }
                     }
                 }
+                .overlay(
+                    Group {
+                        if !searchText.isEmpty {
+                            VStack {
+                                searchResultsView()
+                            }
+                            .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+                        }
+                    }
+                )
             }
             .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
             .padding(.bottom, 64)
@@ -232,10 +283,28 @@ struct HomeView: SwiftUI.View {
                 }
             }
         }
-        .alert("Rename Game", isPresented: $showingRenameAlert) {
-            renameAlertView()
-        } message: {
-            Text("Enter a new name for \(gameToRename?.title ?? "")")
+        .uiKitAlert(
+            "Rename Game",
+            message: "Enter a new name for \(gameToRename?.title ?? "")",
+            isPresented: $showingRenameAlert,
+            textValue: newGameTitleBinding,
+            preferredContentSize: CGSize(width: 300, height: 200),
+            textField: { textField in
+                textField.placeholder = "Game name"
+                textField.clearButtonMode = .whileEditing
+                textField.autocapitalizationType = .words
+            }
+        ) {
+            [
+                UIAlertAction(title: "Save", style: .default) { _ in
+                    submitRename()
+                },
+                UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                    showingRenameAlert = false
+                    gameToRename = nil
+                    newGameTitle = ""
+                }
+            ]
         }
         .sheet(item: $systemMoveState) { state in
             SystemPickerView(
@@ -311,19 +380,19 @@ struct HomeView: SwiftUI.View {
             ),
             preferredContentSize: CGSize(width: 500, height: 300)
         ) {
-            guard let alert = discSelectionAlert else {
-                return [UIAlertAction(title: "Cancel", style: .cancel)]
-            }
-
-            let actions = alert.discs.map { (disc: DiscSelectionAlert.Disc) -> UIAlertAction in
-                UIAlertAction(title: disc.fileName, style: .default) { _ in
-                    Task {
-                        await rootDelegate?.root_loadPath(disc.path, forGame: alert.game, sender: nil, core: nil, saveState: nil)
+            if let alert = discSelectionAlert, let game = alert.game {
+                let actions = alert.discs.map { (disc: DiscSelectionAlert.Disc) -> UIAlertAction in
+                    UIAlertAction(title: disc.fileName, style: .default) { _ in
+                        Task {
+                            await rootDelegate?.root_loadPath(disc.path, forGame: game, sender: nil, core: nil, saveState: nil)
+                        }
                     }
                 }
-            }
 
-            return actions + [UIAlertAction(title: "Cancel", style: .cancel)]
+                actions + [UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel)]
+            } else {
+                [UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel)]
+            }
         }
         .uiKitAlert(
             "Choose Artwork Source",
@@ -339,7 +408,7 @@ struct HomeView: SwiftUI.View {
                     gameToUpdateCover = game
                     showArtworkSearch = true
                 }
-                UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
                     showArtworkSourceAlert = false
                 }
             }
@@ -946,6 +1015,72 @@ struct HomeView: SwiftUI.View {
             }
         }
     }
+
+    // Add this computed property to create the binding wrapper
+    private var newGameTitleBinding: Binding<String?> {
+        Binding<String?>(
+            get: { self.newGameTitle },
+            set: { self.newGameTitle = $0 ?? "" }
+        )
+    }
+
+    /// Function to filter games based on search text
+    private func filteredSearchResults() -> [PVGame] {
+        guard !searchText.isEmpty else { return [] }
+
+        let searchTextLowercased = searchText.lowercased()
+        return Array(allGames.filter { game in
+            game.title.lowercased().contains(searchTextLowercased)
+        })
+    }
+
+    @ViewBuilder
+    private func searchResultsView() -> some View {
+        VStack(alignment: .leading) {
+            Text("Search Results")
+                .font(.title2)
+                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                .padding(.horizontal)
+
+            LazyVStack(spacing: 0) {
+                let results = filteredSearchResults()
+                if results.isEmpty {
+                    Text("No games found")
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .padding()
+                } else {
+                    ForEach(results, id: \.self) { game in
+                        GameItemView(
+                            game: game,
+                            constrainHeight: true,
+                            viewType: .row,
+                            sectionContext: .allGames,
+                            isFocused: Binding(
+                                get: {
+                                    !game.isInvalidated &&
+                                    focusedSection == .allGames &&
+                                    focusedItemInSection == game.id
+                                },
+                                set: {
+                                    if $0 {
+                                        focusedSection = .allGames
+                                        focusedItemInSection = game.id
+                                    }
+                                }
+                            )
+                        ) {
+                            Task.detached { @MainActor in
+                                await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                            }
+                        }
+                        .focusableIfAvailable()
+                        .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+                        GamesDividerView()
+                    }
+                }
+            }
+        }
+    }
 }
 #endif
 
@@ -972,7 +1107,7 @@ extension HomeView: GameContextMenuDelegate {
                 .textInputAutocapitalization(.words)
                 .disableAutocorrection(true)
 
-            Button("Cancel", role: .cancel) { showingRenameAlert = false }
+            Button(NSLocalizedString("Cancel", comment: "Cancel"), role: .cancel) { showingRenameAlert = false }
             Button("OK") { submitRename() }
         }
     }
@@ -1106,5 +1241,63 @@ extension HomeView: GameContextMenuDelegate {
             game: game,
             discs: alertDiscs
         )
+    }
+}
+
+// Add this struct at the end of the file
+private struct ConditionalSearchModifier: ViewModifier {
+    let isEnabled: Bool
+    @Binding var searchText: String
+
+    func body(content: Content) -> some View {
+        if isEnabled {
+            #if !os(tvOS)
+            content
+                .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search games")
+            #else
+            content
+                .searchable(text: $searchText, placement: .automatic, prompt: "Search games")
+            #endif
+        } else {
+            content
+        }
+    }
+}
+
+// Add this ScrollViewWithOffset struct if it doesn't already exist in the file
+struct ScrollViewWithOffset<Content: View>: View {
+    let axes: Axis.Set
+    let showsIndicators: Bool
+    let offsetChanged: (CGFloat) -> Void
+    let content: Content
+
+    init(
+        axes: Axis.Set = .vertical,
+        showsIndicators: Bool = true,
+        offsetChanged: @escaping (CGFloat) -> Void,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.axes = axes
+        self.showsIndicators = showsIndicators
+        self.offsetChanged = offsetChanged
+        self.content = content()
+    }
+
+    var body: some View {
+        ScrollView(axes, showsIndicators: showsIndicators) {
+            GeometryReader { geometry in
+                Color.clear.preference(
+                    key: ScrollOffsetPreferenceKey.self,
+                    value: geometry.frame(in: .named("scrollView")).origin.y
+                )
+            }
+            .frame(width: 0, height: 0)
+
+            content
+        }
+        .coordinateSpace(name: "scrollView")
+        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
+            offsetChanged(offset)
+        }
     }
 }

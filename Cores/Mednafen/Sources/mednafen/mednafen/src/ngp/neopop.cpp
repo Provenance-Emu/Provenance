@@ -381,7 +381,7 @@ static const FileExtensionSpecStruct KnownExtensions[] =
 
 using namespace MDFN_IEN_NGP;
 
-MDFN_HIDE extern const MDFNGI EmulatedNGP =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedNGP =
 {
  "ngp",
  "Neo Geo Pocket (Color)",

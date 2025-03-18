@@ -65,6 +65,52 @@ enum EffectFilterShaderError: Error {
 // MARK: - PVMetalViewController
 final
 class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDelegate {
+    func setPreferredRefreshRate(_ rate: Float) {
+        ILOG("Setting preferred refresh rate to \(rate) Hz")
+
+//        #if os(iOS) || os(tvOS)
+//        if #available(iOS 15.0, tvOS 15.0, *) {
+//            if let window = view.window {
+//                let preferredFrameRateRange: CAFrameRateRange
+//
+//                if rate > 0 {
+//                    // Create a range with the specified rate as the preferred rate
+//                    preferredFrameRateRange = CAFrameRateRange(minimum: max(30, rate/2),
+//                                                              maximum: rate * 1.1,
+//                                                              preferred: rate)
+//                } else {
+//                    // Default to device capabilities if rate is 0 or negative
+//                    preferredFrameRateRange = CAFrameRateRange(minimum: 30,
+//                                                              maximum: 120,
+//                                                              preferred: 60)
+//                }
+//
+//                window.windowScene?.screen.maximumFramesPerSecond = Int(rate)
+//
+//                // Apply the frame rate range to the display
+//                CATransaction.begin()
+//                window.windowScene?.screen.preferredFrameRateRange = preferredFrameRateRange
+//                CATransaction.commit()
+//
+//                ILOG("Set display refresh rate range: \(preferredFrameRateRange.minimum)-\(preferredFrameRateRange.maximum) Hz (preferred: \(preferredFrameRateRange.preferred) Hz)")
+//            } else {
+//                WLOG("Cannot set refresh rate - window is nil")
+//            }
+//        } else {
+//            WLOG("Setting refresh rate not supported on this iOS/tvOS version")
+//        }
+//        #else
+//        WLOG("Setting refresh rate not supported on this platform")
+//        #endif
+
+        // Also update the MTKView's preferred FPS
+        if let mtlView = self.mtlView {
+            let fps = rate > 0 ? Int(rate) : 60
+            mtlView.preferredFramesPerSecond = fps
+            ILOG("Set MTKView preferred FPS to \(fps)")
+        }
+    }
+
     var presentationFramebuffer: AnyObject? = nil
 
     weak var emulatorCore: PVEmulatorCore? = nil
@@ -194,7 +240,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        
+
         // Invalidate cached values to force recalculation of the viewport on rotation.
         lastScreenBounds = .zero
         lastBufferSize = .zero
@@ -204,7 +250,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             self.view.setNeedsLayout()
         })
     }
-    
+
     override func loadView() {
         /// Create MTKView with initial frame from screen bounds
         let screenBounds = UIScreen.main.bounds
@@ -343,7 +389,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                     ELOG("Failed to setup effect filter shader: \(error)")
                 }
             } else {
-                ELOG("No filter shader selected for mode: \(renderSettings.metalFilterMode)")
+                WLOG("No filter shader selected for mode: \(renderSettings.metalFilterMode)")
             }
         }
 
@@ -802,7 +848,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_SHORT)):
             return .rgb10a2Unorm // Better match for RGB unsigned short
         case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_SHORT_5_6_5)),
-            (GLenum(GL_BGRA), GLenum(GL_UNSIGNED_SHORT_5_6_5)):
+            (GLenum(GL_BGRA), GLenum(GL_UNSIGNED_SHORT_5_6_5)),
+            (GLenum(GL_UNSIGNED_SHORT_5_6_5), GLenum(GL_UNSIGNED_BYTE)):
             return .b5g6r5Unorm
         case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_INT)):
             return .rgba32Uint // Approximation, might lose precision
@@ -1421,7 +1468,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 encoder.setFragmentBytes(&cbData, length: MemoryLayout<CRT_Data>.stride, index: 0)
                 pipelineState = self.effectFilterPipeline
             } else if self.effectFilterShader?.name == "Simple CRT", let inputTexture = self.inputTexture {
-                ILOG("Setting up Simple CRT pipeline")
+
                 let mameScreenSrcRect: SIMD4<Float> = SIMD4<Float>.init(0, 0, Float(screenRect.size.width), Float(screenRect.size.height))
                 let mameScreenDstRect: SIMD4<Float> = SIMD4<Float>.init(Float(inputTexture.width), Float(inputTexture.height), Float(view.drawableSize.width), Float(view.drawableSize.height))
 

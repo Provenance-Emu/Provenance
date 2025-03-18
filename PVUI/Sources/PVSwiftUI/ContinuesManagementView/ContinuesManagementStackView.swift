@@ -131,7 +131,7 @@ public struct ContinuesManagementStackView: View {
                 #if !os(tvOS)
                 .textInputAutocapitalization(.words)
                 #endif
-            Button("Cancel", role: .cancel) {
+            Button(NSLocalizedString("Cancel", comment: "Cancel"), role: .cancel) {
                 Task { @MainActor in
                     bindableEditState.reset()
                 }
@@ -155,18 +155,18 @@ extension View {
         self.background(
             GeometryReader { geometry in
                 Color.clear.preference(
-                    key: ScrollOffsetPreferenceKey.self,
+                    key: ScrollOffsetPointPreferenceKey.self,
                     value: geometry.frame(in: .named("scroll")).origin
                 )
             }
         )
-        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
+        .onPreferenceChange(ScrollOffsetPointPreferenceKey.self) { offset in
             perform(offset)
         }
     }
 }
 
-private struct ScrollOffsetPreferenceKey: PreferenceKey {
+private struct ScrollOffsetPointPreferenceKey: PreferenceKey {
     static var defaultValue: CGPoint = .zero
 
     static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {

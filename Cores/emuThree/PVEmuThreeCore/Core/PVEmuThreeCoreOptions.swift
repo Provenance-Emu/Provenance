@@ -33,10 +33,13 @@ import PVCoreBridge
     
     static var cpuClockOption: CoreOption {
         .enumeration(.init(title: "CPU Clock Speed",
-                           description: "Underclocking can increase performance but may cause the game to freeze. Overclocking may reduce in game lag but also might cause freezes",
+                           description: "Underclocking can increase performance but may cause the game to freeze or increase load times. Overclocking may reduce in game lag but also might cause freezes",
                            requiresRestart: false),
                      values: [
+                        .init(title: "Auto", description: "Automatic scaling based on scene demand (Experimental)", value: 0),
+                        .init(title: "5%", description: "5%", value: 5),
                         .init(title: "10%", description: "10%", value: 10),
+                        .init(title: "15%", description: "15%", value: 15),
                         .init(title: "20%", description: "20%", value: 20),
                         .init(title: "30%", description: "30%", value: 30),
                         .init(title: "40%", description: "40%", value: 40),
@@ -46,6 +49,8 @@ import PVCoreBridge
                         .init(title: "80%", description: "80%", value: 80),
                         .init(title: "90%", description: "90%", value: 90),
                         .init(title: "100%", description: "100%", value: 100),
+                        .init(title: "120%", description: "120%", value: 120),
+                        .init(title: "150%", description: "150%", value: 150),
                         .init(title: "200%", description: "200%", value: 200),
                         .init(title: "300%", description: "300%", value: 300),
                         .init(title: "400%", description: "400%", value: 400),
@@ -100,7 +105,7 @@ import PVCoreBridge
             title: "Enable Async Presentation",
             description: "Faster Input Responsiveness (Disable if the game crashes)",
             requiresRestart: false),
-              defaultValue: false)
+              defaultValue: true)
     }
     
     static var shaderTypeOption: CoreOption {
@@ -116,12 +121,38 @@ import PVCoreBridge
                      defaultValue: 2)
     }
     
+    static var regionOption: CoreOption {
+        .enumeration(.init(title: "System Region",
+                           description: "The preferred language for multi-language supported games.",
+                           requiresRestart: true),
+                     values: [
+                        .init(title: "Automatic", description: "Select based on local region.", value: -1),
+                        .init(title: "Japan", description: "", value: 0),
+                        .init(title: "USA", description: "", value: 1),
+                        .init(title: "Europe", description: "", value: 2),
+                        .init(title: "Australia", description: "", value: 2),
+                        .init(title: "China", description: "", value: 3),
+                        .init(title: "Korea", description: "", value: 4),
+                        .init(title: "Taiwan", description: "", value: 5),
+
+                     ],
+                     defaultValue: -1)
+    }
+    
     static var enableVSyncOption: CoreOption {
         .bool(.init(
             title: "Enable VSync",
             description: nil,
             requiresRestart: true),
               defaultValue: true)
+    }
+    
+    static var realtimeAudioOption: CoreOption {
+        .bool(.init(
+            title: "Realtime Audio",
+            description: "Scales audio playback speed to account for drops in emulation framerate",
+            requiresRestart: false),
+              defaultValue: false)
     }
     
     static var enableShaderAccurateMulOption: CoreOption {
@@ -227,7 +258,7 @@ import PVCoreBridge
             title: "Preload Textures",
             description: nil,
             requiresRestart: false),
-              defaultValue: false)
+              defaultValue: true)
     }
     static var stereoRenderOption: CoreOption {
         .enumeration(.init(title: "3D Stereo Render",
@@ -240,6 +271,28 @@ import PVCoreBridge
                         .init(title: "Interlaced", description: "Interlaced", value: 3),
                         .init(title: "Reverse Interlaced", description: "Reverse Interlaced", value: 4),
                         .init(title: "Cardboard VR", description: "Cardboard VR", value: 5),
+                     ],
+                     defaultValue: 0)
+    }
+    
+    /*
+     Auto = 0,
+     Null = 1,
+     Static = 2,
+     Cubeb = 3,
+     OpenAL = 4,
+     CoreAudio = 5,
+     */
+    static var inputTypeOption: CoreOption {
+        .enumeration(.init(title: "Microphone Input",
+                           description: "(Requires Restart)",
+                           requiresRestart: true),
+                     values: [
+                        .init(title: "Auto", description: "Automatic best, first available input", value: 0),
+                        .init(title: "None", description: "No input", value: 1),
+                        .init(title: "Static", description: "Generates random static", value: 2),
+                        .init(title: "OpenAL", description: "Use OpenAL microphonedriver", value: 4),
+                        .init(title: "Core Audio", description: "Use CoreAudio microphone driver", value: 5),
                      ],
                      defaultValue: 0)
     }
@@ -265,8 +318,8 @@ import PVCoreBridge
         var options = [CoreOption]()
         let coreOptions: [CoreOption] = [
             resolutionOption, enableHLEOption, cpuClockOption, enableJITOption, enableLoggingOption, enableNew3DSOption, gsOption, enableAsyncShaderOption, enableAsyncPresentOption,
-            shaderTypeOption, enableVSyncOption, enableShaderAccurateMulOption, enableShaderJITOption, portraitTypeOption, landscapeTypeOption, volumeOption,
-            stretchAudioOption, swapScreenOption, uprightScreenOption, customTexturesOption, preloadTextuesOption, stereoRenderOption, threedFactorOption
+            shaderTypeOption, enableVSyncOption, enableShaderAccurateMulOption, enableShaderJITOption, portraitTypeOption, landscapeTypeOption, inputTypeOption, volumeOption, realtimeAudioOption,
+            stretchAudioOption, swapScreenOption, uprightScreenOption, regionOption, customTexturesOption, preloadTextuesOption, stereoRenderOption, threedFactorOption
         ]
         let coreGroup:CoreOption = .group(.init(title: "EmuThreeds Core",
                                                 description: "Global options for EmuThreeds"),
@@ -288,9 +341,13 @@ extension PVEmuThreeCoreOptions {
     @objc public static var enableAsyncShader: Bool { valueForOption(PVEmuThreeCoreOptions.enableAsyncShaderOption) }
     @objc public static var enableAsyncPresent: Int { valueForOption(PVEmuThreeCoreOptions.enableAsyncPresentOption)  }
     @objc public static var shaderType: Int { valueForOption(PVEmuThreeCoreOptions.shaderTypeOption)  }
+    @objc public static var region: Int { valueForOption(PVEmuThreeCoreOptions.regionOption)  }
     @objc public static var enableVSync: Bool { valueForOption(PVEmuThreeCoreOptions.enableVSyncOption) }
+    @objc public static var realtimeAudio: Bool { valueForOption(PVEmuThreeCoreOptions.realtimeAudioOption) }
     @objc public static var enableShaderAccurateMul: Bool { valueForOption(PVEmuThreeCoreOptions.enableShaderAccurateMulOption) }
     @objc public static var enableShaderJIT: Bool { valueForOption(PVEmuThreeCoreOptions.enableShaderJITOption) }
+    @objc public static var inputType: Int { valueForOption(PVEmuThreeCoreOptions.inputTypeOption) }
+
      // TODO: Finish this with the rest of the options if wanted
 }
 
@@ -308,12 +365,14 @@ extension PVEmuThreeCoreOptions {
         self.asyncShader = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableAsyncShaderOption).asBool
         self.asyncPresent = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableAsyncPresentOption).asBool
         self.shaderType = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.shaderTypeOption).asInt ?? 2).int8Value
+        self.region = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.regionOption).asInt ?? -1).int8Value
         self.enableVSync = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableVSyncOption).asBool
         self.enableShaderAccurate = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableShaderAccurateMulOption).asBool
         self.enableShaderJIT = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableShaderJITOption).asBool
         self.portraitType = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.portraitTypeOption).asInt ?? 5).int8Value
         self.landscapeType = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.landscapeTypeOption).asInt ?? 5).int8Value
         self.stretchAudio = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.stretchAudioOption).asBool
+        self.inputType = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.inputTypeOption).asInt ?? 5).int8Value
         self.volume = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.volumeOption).asInt ?? 100).int8Value
         self.swapScreen = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.swapScreenOption).asBool
         self.uprightScreen = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.uprightScreenOption).asBool
@@ -321,5 +380,6 @@ extension PVEmuThreeCoreOptions {
         self.customTextures = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.customTexturesOption).asBool
         self.stereoRender = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.stereoRenderOption).asInt ?? 0).int8Value
         self.threedFactor = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.threedFactorOption).asInt ?? 100).int8Value
+        self.realtimeAudio = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.realtimeAudioOption).asBool
     }
 }

@@ -182,7 +182,12 @@ void RendererVulkan::RenderToWindow(PresentWindow& window, const Layout::Framebu
         present_textures[i] = vk::DescriptorImageInfo{
             .sampler = present_samplers[current_sampler],
             .imageView = screen_infos[i].image_view,
+#if defined(__APPLE__)
+            // MoltenVK works better with specific image layouts
+            .imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal,
+#else
             .imageLayout = vk::ImageLayout::eGeneral,
+#endif
         };
     }
 
@@ -374,10 +379,18 @@ void RendererVulkan::BuildPipelines() {
         .pVertexAttributeDescriptions = attributes.data(),
     };
 
+    // Metal doesn't support disabling primitive restart, so we enable it on Apple platforms
+#if defined(__APPLE__)
+    const vk::PipelineInputAssemblyStateCreateInfo input_assembly = {
+        .topology = vk::PrimitiveTopology::eTriangleStrip,
+        .primitiveRestartEnable = true,
+    };
+#else
     const vk::PipelineInputAssemblyStateCreateInfo input_assembly = {
         .topology = vk::PrimitiveTopology::eTriangleStrip,
         .primitiveRestartEnable = false,
     };
+#endif
 
     const vk::PipelineRasterizationStateCreateInfo raster_state = {
         .depthClampEnable = false,
@@ -555,7 +568,12 @@ void RendererVulkan::LoadColorToActiveVkTexture(u8 color_r, u8 color_g, u8 color
         const vk::ImageMemoryBarrier pre_barrier = {
             .srcAccessMask = vk::AccessFlagBits::eShaderRead | vk::AccessFlagBits::eTransferRead,
             .dstAccessMask = vk::AccessFlagBits::eTransferWrite,
+#if defined(__APPLE__)
+            // MoltenVK works better with specific image layouts
+            .oldLayout = vk::ImageLayout::eShaderReadOnlyOptimal,
+#else
             .oldLayout = vk::ImageLayout::eGeneral,
+#endif
             .newLayout = vk::ImageLayout::eTransferDstOptimal,
             .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
             .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
@@ -567,7 +585,12 @@ void RendererVulkan::LoadColorToActiveVkTexture(u8 color_r, u8 color_g, u8 color
             .srcAccessMask = vk::AccessFlagBits::eTransferWrite,
             .dstAccessMask = vk::AccessFlagBits::eShaderRead | vk::AccessFlagBits::eTransferRead,
             .oldLayout = vk::ImageLayout::eTransferDstOptimal,
+#if defined(__APPLE__)
+            // MoltenVK works better with specific image layouts
+            .newLayout = vk::ImageLayout::eShaderReadOnlyOptimal,
+#else
             .newLayout = vk::ImageLayout::eGeneral,
+#endif
             .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
             .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
             .image = image,

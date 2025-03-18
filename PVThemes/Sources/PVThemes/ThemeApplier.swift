@@ -8,6 +8,7 @@
 import PVLogging
 import PVSettings
 import UIKit
+import Defaults
 
 public extension ThemeManager {
     @MainActor

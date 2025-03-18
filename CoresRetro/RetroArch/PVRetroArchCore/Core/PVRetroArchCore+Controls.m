@@ -944,7 +944,7 @@ input_device_driver_t mfi_joypad = {
 @implementation CocoaView (Utility)
 // A native swift wrapper around displaying notifications
 -(void) showRetroArchNotification:_:(NSString *)title _:(NSString *)message _:(enum message_queue_icon)icon _:(enum message_queue_category)category {
-    runloop_msg_queue_push([message UTF8String], 1, 100, true, [title UTF8String], icon, category);
+    runloop_msg_queue_push([message UTF8String], message.length, 1, 100, true, [title UTF8String], icon, category);
 }
 @end
 

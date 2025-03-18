@@ -162,7 +162,7 @@ static std::vector<InputPortInfoStruct> DummyPortInfo;
 
 using namespace MDFN_IEN_SSFPLAY;
 
-MDFN_HIDE extern const MDFNGI EmulatedSSFPlay =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedSSFPlay =
 {
  "ssfplay",
  "Sega Saturn Sound Format Player",

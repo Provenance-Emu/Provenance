@@ -783,7 +783,7 @@ void SetLayerEnableMask(uint64 mask)
 }
 
 
-MDFN_HIDE extern const MDFNGI EmulatedMD =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedMD =
 {
  "md",
  "Sega Genesis/MegaDrive",

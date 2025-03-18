@@ -98,14 +98,28 @@ import PVLogging
             bridge.startEmulation()
         } else {
             if !skipEmulationLoop {
-                // TODO: Default case (not used?) should be in a detached thread
-//                Task.detached(priority: .high) {
+                let emulatorThread = Thread {
+                    /// Set thread name for debugging
+                    Thread.current.name = "EmulatorThread"
+                    
+                    /// Set QoS if possible
+                    Thread.current.qualityOfService = .userInteractive
+                                        
+                    /// Run the emulation loop
                     self.emulationLoopThread()
-//                }
+                }
+
+                /// Set thread priority (0.0-1.0)
+                emulatorThread.threadPriority = 1.0
+
+                /// Start the thread
+                emulatorThread.start()
+
             } else {
                 isFrontBufferReady = true
             }
         }
+
         isRunning = true
         shouldStop = false
         isOn = true

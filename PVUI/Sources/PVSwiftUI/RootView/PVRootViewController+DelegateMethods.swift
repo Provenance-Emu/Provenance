@@ -46,8 +46,8 @@ extension PVRootViewController: PVRootDelegate {
 
     public func root_loadPath(_ path: String, forGame game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async {
         // Create a temporary game object with the new path
-        let tempGame = game.copy() as! PVGame
-        tempGame.romPath = path
+        var tempGame = game
+        tempGame.selectedDiscFilename = (path as NSString).lastPathComponent
 
         // Load the temporary game
         await self.load(tempGame.warmUp(), sender: sender, core: core?.warmUp(), saveState: saveState?.warmUp())

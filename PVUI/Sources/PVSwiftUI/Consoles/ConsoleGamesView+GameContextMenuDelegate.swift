@@ -42,19 +42,6 @@ extension ConsoleGamesView: GameContextMenuDelegate {
     }
 #endif
 
-    @ViewBuilder
-    internal func renameAlertView() -> some View {
-        Group {
-            TextField("New name", text: $newGameTitle)
-                .onSubmit { submitRename() }
-                .textInputAutocapitalization(.words)
-                .disableAutocorrection(true)
-
-            Button("Cancel", role: .cancel) { showingRenameAlert = false }
-            Button("OK") { submitRename() }
-        }
-    }
-
     // MARK: - Rename Methods
     func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame) {
         gameToRename = game.freeze()

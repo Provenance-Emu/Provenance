@@ -78,7 +78,7 @@ public final class PVLogging: NSObject {
                 entry = PVLogEntry(message: "\(event)")
             }
         }
-        history.insert(entry, at: 0)
+//        history.insert(entry, at: 0)
         log(entry)
         PVLogging.shared.notifyListeners()
     }

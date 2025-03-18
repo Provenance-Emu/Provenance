@@ -28,6 +28,7 @@ public enum ArchiveType: String, CaseIterable {
     case bzip2 = "bz2"
     case tar
     case gzip = "gz"
+    case rar
 }
 
 protocol ArchiveExtractor {

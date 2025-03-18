@@ -105,49 +105,122 @@ struct CoreOptionsListView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     /// Whether to show the reset confirmation alert
     @State private var showResetAllConfirmation = false
-    /// Track scroll offset to hide/show the reset button
+    /// Whether we're currently searching
+    @State private var isSearching = false
+    /// State to track if view is appearing
+    @State private var hasAppeared = false
+    /// State to track scroll offset
     @State private var scrollOffset: CGFloat = 0
-    /// Previous scroll offset to determine direction
+    /// State to track if header is visible
+    @State private var isHeaderVisible = true
+    /// Previous scroll offset for direction detection
     @State private var previousScrollOffset: CGFloat = 0
-    /// Whether the button is visible
-    @State private var isButtonVisible = true
-    /// Threshold for hiding/showing the button
-    private let scrollThreshold: CGFloat = 20
+    /// Header height when expanded
+    private let expandedHeaderHeight: CGFloat = 160
+    /// Header height when collapsed
+    private let collapsedHeaderHeight: CGFloat = 0
 
     /// The body of the view
     var body: some View {
         ZStack(alignment: .top) {
             // Main content
             ScrollViewWithOffset(
-                axes: .vertical,
-                showsIndicators: true,
                 offsetChanged: { offset in
-                    handleScrollOffset(offset)
+                    // Detect scroll direction
+                    let scrollingDown = offset < previousScrollOffset
+
+                    // Update header visibility based on scroll direction
+                    if scrollingDown && offset < -20 {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            isHeaderVisible = false
+                        }
+                    } else if !scrollingDown {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            isHeaderVisible = true
+                        }
+                    }
+
+                    scrollOffset = offset
+                    previousScrollOffset = offset
                 }
             ) {
-                LazyVStack {
-                    // Spacer to account for the floating button
-                    Color.clear.frame(height: 70)
+                // Add padding to account for the header
+                VStack {
+                    // Spacer to push content below the header
+                    Spacer()
+                        .frame(height: expandedHeaderHeight)
 
-                    ForEach(coreItems) { item in
-                        NavigationLink {
-                            CoreOptionsDetailView(coreClass: item.coreClass, title: item.name)
-                        } label: {
-                            CoreListItemView(item: item)
+                    LazyVStack {
+                        ForEach(filteredCoreItems) { item in
+                            NavigationLink {
+                                CoreOptionsDetailView(coreClass: item.coreClass, title: item.name)
+                            } label: {
+                                CoreListItemView(item: item)
+                            }
+                            .padding(.horizontal)
+                            .padding(.vertical, 4)
+                            .id(item.id) // Add id to help maintain identity
                         }
-                        .padding(.horizontal)
-                        .padding(.vertical, 4)
                     }
+                    .padding(.bottom)
                 }
-                .padding(.bottom)
             }
+            .id("coreOptionsScrollView") // Add stable ID to ScrollView
 
-            // Floating reset button
-            resetButton
-                .zIndex(1) // Ensure button stays on top
+            // Header with RetroArch note and search bar
+            VStack(spacing: 8) {
+                // RetroArch note
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Note about RetroArch Cores")
+                        .font(.headline)
+                        .foregroundColor(Color.primary)
+
+                    Text("RetroArch cores may show additional options in the in-game core options menu that aren't available here due to RetroArch limitations.")
+                        .font(.subheadline)
+                        .foregroundColor(Color.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding()
+                #if !os(tvOS)
+                .background(Color(.systemGray6))
+                #endif
+                .cornerRadius(8)
+                .padding(.horizontal)
+
+                // Search bar
+                if hasAppeared {
+                    CoreSearchBar(text: $searchText, isSearching: $isSearching)
+                        .padding(.horizontal)
+                }
+            }
+            .padding(.top, 8)
+            .frame(height: isHeaderVisible ? expandedHeaderHeight : collapsedHeaderHeight)
+            .opacity(isHeaderVisible ? 1 : 0)
+            #if !os(tvOS)
+            .background(Color(.systemBackground))
+            #endif
+            .animation(.easeInOut(duration: 0.3), value: isHeaderVisible)
         }
-        .searchable(text: $searchText)
         .navigationTitle("Core Options")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    showResetAllConfirmation = true
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.counterclockwise")
+                        Text("Reset All")
+                    }
+                    .foregroundColor(.red)
+                }
+            }
+        }
+        .onAppear {
+            // Delay setting hasAppeared to avoid animation issues
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                hasAppeared = true
+            }
+        }
         .task {
             /// Load the core items
             DLOG("CoreOptions: Loading core items for \(cores.count) cores")
@@ -169,69 +242,18 @@ struct CoreOptionsListView: View {
         }
     }
 
-    /// Handle scroll offset changes to show/hide the button
-    private func handleScrollOffset(_ offset: CGFloat) {
-        // Only show button when at or near the top of the content
-        let isAtTop = offset >= -10 // Allow a small threshold for "top" position
-
-        // If we're at the top, always show the button
-        if isAtTop && !isButtonVisible {
-            withAnimation(.spring(response: 0.3)) {
-                isButtonVisible = true
+    /// Filtered core items based on search text
+    private var filteredCoreItems: [CoreListItem] {
+        if searchText.isEmpty {
+            return coreItems
+        } else {
+            return coreItems.filter { item in
+                item.name.localizedCaseInsensitiveContains(searchText) ||
+                item.systems.contains { system in
+                    system.name.localizedCaseInsensitiveContains(searchText)
+                }
             }
         }
-        // If we're scrolling down and button is visible, hide it
-        else if !isAtTop && isButtonVisible && offset < previousScrollOffset {
-            withAnimation(.spring(response: 0.3)) {
-                isButtonVisible = false
-            }
-        }
-
-        // Update previous offset for next comparison
-        previousScrollOffset = offset
-    }
-
-    /// The reset button view
-    private var resetButton: some View {
-        Button(action: {
-            showResetAllConfirmation = true
-        }) {
-            HStack {
-                Image(systemName: "arrow.counterclockwise")
-                Text("Reset All Core Options")
-            }
-            .padding()
-            .frame(maxWidth: .infinity)
-            #if os(tvOS)
-            // Use tvOS-specific styling
-            .background(Color.red.opacity(0.7))
-            .foregroundColor(.white)
-            .cornerRadius(5)
-            .padding(.horizontal, 40)
-            .focusable(true)
-            .buttonStyle(.card)
-            #else
-            // Use iOS-specific styling
-            .background(Color.red.opacity(0.8))
-            .foregroundColor(.white)
-            .cornerRadius(10)
-            .padding(.horizontal)
-            #endif
-        }
-        .padding(.top, 8)
-        .padding(.bottom, 4)
-        #if !os(tvOS)
-        .background(
-            Rectangle()
-                .fill(Color(.systemBackground))
-                .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 2)
-        )
-        #endif
-        // Use both scale and opacity for a more dramatic effect
-        .opacity(isButtonVisible ? 1 : 0)
-        .scaleEffect(isButtonVisible ? 1 : 0.5, anchor: .top)
-        // Add a slight vertical offset when hiding
-        .offset(y: isButtonVisible ? 0 : -20)
     }
 
     /// Load the core items
@@ -264,6 +286,9 @@ struct CoreOptionsListView: View {
             item.coreClass.resetAllOptions()
         }
 
+        // Delete RetroArch config files
+        deleteRetroArchConfigFiles()
+
         // Show a toast or notification that reset is complete
         #if !os(tvOS)
         NotificationCenter.default.post(
@@ -274,6 +299,82 @@ struct CoreOptionsListView: View {
         #endif
 
         ILOG("CoreOptions: All core options have been reset")
+    }
+
+    /// Delete all RetroArch config files (.opt files)
+    private func deleteRetroArchConfigFiles() {
+        let fileManager = FileManager.default
+
+        // Get the appropriate base directory
+        #if os(tvOS)
+        /// Use Caches directory on tvOS
+        guard let baseURL = try? fileManager.url(
+            for: .cachesDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: false
+        ) else {
+            ELOG("CoreOptions: Failed to get caches directory")
+            return
+        }
+        #else
+        /// Use Documents directory on iOS
+        guard let baseURL = try? fileManager.url(
+            for: .documentDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: false
+        ) else {
+            ELOG("CoreOptions: Failed to get documents directory")
+            return
+        }
+        #endif
+
+        // Construct the RetroArch config directory path
+        let retroArchConfigURL = baseURL.appendingPathComponent("RetroArch/config", isDirectory: true)
+
+        DLOG("CoreOptions: Looking for RetroArch config files in \(retroArchConfigURL.path)")
+
+        // Check if the directory exists
+        guard fileManager.fileExists(atPath: retroArchConfigURL.path) else {
+            DLOG("CoreOptions: RetroArch config directory does not exist")
+            return
+        }
+
+        // Find and delete all .opt files recursively
+        do {
+            /// Get all files in the directory and subdirectories
+            let resourceKeys: [URLResourceKey] = [.isDirectoryKey]
+            let enumerator = fileManager.enumerator(
+                at: retroArchConfigURL,
+                includingPropertiesForKeys: resourceKeys,
+                options: [.skipsHiddenFiles],
+                errorHandler: { (url, error) -> Bool in
+                    ELOG("CoreOptions: Error accessing \(url): \(error)")
+                    return true
+                }
+            )!
+
+            var deletedCount = 0
+
+            /// Process each file
+            for case let fileURL as URL in enumerator {
+                /// Check if it's a .opt file
+                if fileURL.pathExtension == "opt" {
+                    do {
+                        try fileManager.removeItem(at: fileURL)
+                        deletedCount += 1
+                        DLOG("CoreOptions: Deleted config file: \(fileURL.lastPathComponent)")
+                    } catch {
+                        ELOG("CoreOptions: Failed to delete \(fileURL.path): \(error)")
+                    }
+                }
+            }
+
+            ILOG("CoreOptions: Deleted \(deletedCount) RetroArch config files")
+        } catch {
+            ELOG("CoreOptions: Error enumerating RetroArch config directory: \(error)")
+        }
     }
 }
 
@@ -312,14 +413,6 @@ struct ScrollViewWithOffset<Content: View>: View {
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
             offsetChanged(offset)
         }
-    }
-}
-
-/// Preference key for tracking scroll offset
-struct ScrollOffsetPreferenceKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
     }
 }
 
