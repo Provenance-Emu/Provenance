@@ -157,8 +157,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         if metadataQuery.isStarted {
             metadataQuery.stop()
         }
-//        Task { @MainActor [weak self] in
-        DispatchQueue.main.async { [weak self] in
+        Task { @MainActor [weak self] in
             self?.metadataQuery.start()
         }
     }
@@ -225,9 +224,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                 iterationComplete?()
             }
         }
-        //TODO: unsure if the Task doesn't work with NSMetadataQuery or if there's some other issue.
-//        Task { @MainActor [weak self] in
-        DispatchQueue.main.async { [weak self] in
+        Task { @MainActor [weak self] in
             self?.metadataQuery.start()
         }
     }
@@ -480,6 +477,7 @@ public enum iCloudSync {
     static var state: iCloudSync = .initialAppLoad
     static let errorHandler: ErrorHandler = iCloudErrorHandler.shared
     static var romDatabaseInitializedSubscriber: AnyCancellable?
+    
     public static func initICloudDocuments() {
         romDatabaseInitializedSubscriber = NotificationCenter.default.publisher(for: .RomDatabaseInitialized).sink { _ in
             romDatabaseInitializedSubscriber?.cancel()
@@ -523,7 +521,6 @@ public enum iCloudSync {
             ELOG("error starting downloading \(documentsDirectory)")
             errorHandler.handleError(error, file: documentsDirectory)
         }
-        DLOG("subpaths: \(fileManager.subpaths(atPath: documentsDirectory.pathDecoded))")
         DLOG("subpathsOfDirectory: \(try? fileManager.subpathsOfDirectory(atPath: documentsDirectory.pathDecoded))")
         return
     }
