@@ -3555,14 +3555,14 @@
 		<key>PVDatabaseID</key>
 		<string>0</string>
 		<key>PVRequiresBIOS</key>
-		<true/>
+		<false/>
 		<key>PVBIOSNames</key>
 		<array>
 			<dict>
 				<key>Description</key>
 				<string>Dreamcast BIOS</string>
 				<key>Optional</key>
-				<false/>
+				<true/>
 				<key>Name</key>
 				<string>dc_bios.bin</string>
 				<key>MD5</key>
@@ -3574,7 +3574,7 @@
 				<key>Description</key>
 				<string>Dreamcast Flash USA</string>
 				<key>Optional</key>
-				<false/>
+				<true/>
 				<key>MD5</key>
 				<string>0a93f7940c455905bea6e392dfde92a4</string>
 				<key>Name</key>
