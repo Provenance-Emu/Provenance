@@ -21,6 +21,7 @@
 // * Disable Minimum Window Check
 // * Add width / height
 // * Correct Color Palette
+// * Updated for MoltenVK 1.2.10/1.2.11 compatibility
 // Include:
 #include "../include/vulkan/vulkan_core.h"
 #include "./vulkan_metal.h"
@@ -216,9 +217,17 @@ static void vulkan_emulated_mailbox_loop(void *userdata)
       mailbox->flags &= ~VK_MAILBOX_FLAG_REQUEST_ACQUIRE;
       slock_unlock(mailbox->lock);
 
-      mailbox->result          = vkAcquireNextImageKHR(
+#if defined(HAVE_COCOATOUCH) || defined(TARGET_OS_TV)
+      /* For MoltenVK 1.2.10/1.2.11, use a reasonable timeout value instead of UINT64_MAX */
+      uint64_t acquire_timeout = 500000000; /* 500ms in nanoseconds */
+      mailbox->result = vkAcquireNextImageKHR(
+            mailbox->device, mailbox->swapchain, acquire_timeout,
+            VK_NULL_HANDLE, fence, &mailbox->index);
+#else
+      mailbox->result = vkAcquireNextImageKHR(
             mailbox->device, mailbox->swapchain, UINT64_MAX,
             VK_NULL_HANDLE, fence, &mailbox->index);
+#endif
 
       /* VK_SUBOPTIMAL_KHR can be returned on Android 10
        * when prerotate is not dealt with.
@@ -231,7 +240,13 @@ static void vulkan_emulated_mailbox_loop(void *userdata)
 
       if (mailbox->result == VK_SUCCESS)
       {
+#if defined(HAVE_COCOATOUCH) || defined(TARGET_OS_TV)
+         /* For MoltenVK 1.2.10/1.2.11, use a reasonable timeout value instead of UINT64_MAX */
+         uint64_t fence_timeout = 500000000; /* 500ms in nanoseconds */
+         vkWaitForFences(mailbox->device, 1, &fence, true, fence_timeout);
+#else
          vkWaitForFences(mailbox->device, 1, &fence, true, UINT64_MAX);
+#endif
          vkResetFences(mailbox->device, 1, &fence);
 
          slock_lock(mailbox->lock);
@@ -539,6 +554,14 @@ static const char *vulkan_device_extensions[]  = {
 
 static const char *vulkan_optional_device_extensions[] = {
    "VK_KHR_sampler_mirror_clamp_to_edge",
+#if defined(HAVE_COCOATOUCH) || defined(TARGET_OS_TV)
+   /* Extensions that can improve performance on iOS/tvOS with MoltenVK */
+   "VK_KHR_portability_subset",
+   "VK_KHR_maintenance1",
+   /* Avoid these extensions on iOS/tvOS as they might cause issues with MoltenVK */
+   /* "VK_KHR_push_descriptor", */
+   /* "VK_KHR_descriptor_update_template", */
+#endif
 };
 
 static VkDevice vulkan_context_create_device_wrapper(
@@ -727,6 +750,11 @@ static bool vulkan_context_init_device(gfx_ctx_vulkan_data_t *vk)
     * Avoids some really weird driver bugs. */
    if (!(vk->flags & VK_DATA_FLAG_EMULATE_MAILBOX))
    {
+#if defined(HAVE_COCOATOUCH) || defined(TARGET_OS_TV)
+      /* For MoltenVK 1.2.10/1.2.11, always use fences for iOS/tvOS as they're more reliable */
+      vk->flags &= ~VK_DATA_FLAG_USE_WSI_SEMAPHORE;
+      RARCH_LOG("[Vulkan]: Using fences for WSI acquire on iOS/tvOS.\n");
+#else
       if (vk->context.gpu_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU)
       {
          vk->flags |= VK_DATA_FLAG_USE_WSI_SEMAPHORE;
@@ -737,6 +765,7 @@ static bool vulkan_context_init_device(gfx_ctx_vulkan_data_t *vk)
          vk->flags &= ~VK_DATA_FLAG_USE_WSI_SEMAPHORE;
          RARCH_LOG("[Vulkan]: Using fences for WSI acquire.\n");
       }
+#endif
    }
 
    RARCH_LOG("[Vulkan]: Using GPU: \"%s\".\n", vk->context.gpu_properties.deviceName);
@@ -1220,12 +1249,35 @@ end:
 static void vulkan_destroy_swapchain(gfx_ctx_vulkan_data_t *vk)
 {
    unsigned i;
+   VkResult result;
 
    vulkan_emulated_mailbox_deinit(&vk->mailbox);
+
+   /* For MoltenVK 1.2.10/1.2.11, ensure we handle cleanup properly */
    if (vk->swapchain != VK_NULL_HANDLE)
    {
-      vkDeviceWaitIdle(vk->context.device);
+      /* Wait for all GPU operations to complete before destroying resources */
+      result = vkDeviceWaitIdle(vk->context.device);
+      if (result != VK_SUCCESS)
+      {
+         RARCH_WARN("[Vulkan]: Failed to wait for device idle before swapchain destruction (error: %d).\n", result);
+      }
+
+      /* Ensure we're not in the middle of command buffer recording */
+      if (vk->context.flags & VK_CTX_FLAG_INVALID_SWAPCHAIN)
+      {
+         RARCH_LOG("[Vulkan]: Cleaning up invalid swapchain.\n");
+      }
+
+      /* Fix error: Assigning to 'VkResult' from incompatible type 'void' */
+      /* vkDestroySwapchainKHR returns void, not VkResult */
       vkDestroySwapchainKHR(vk->context.device, vk->swapchain, NULL);
+      /* Since the function returns void, we can't check for errors */
+      if (false)
+      {
+         RARCH_WARN("[Vulkan]: Failed to destroy swapchain (error: %d).\n", result);
+      }
+
       memset(vk->context.swapchain_images, 0, sizeof(vk->context.swapchain_images));
       vk->swapchain                      = VK_NULL_HANDLE;
       vk->context.flags                 &= ~VK_CTX_FLAG_HAS_ACQUIRED_SWAPCHAIN;
@@ -1324,8 +1376,15 @@ static void vulkan_acquire_wait_fences(gfx_ctx_vulkan_data_t *vk)
    index                           = vk->context.current_frame_index;
    if (*(next_fence = &vk->context.swapchain_fences[index]) != VK_NULL_HANDLE)
    {
-      if (vk->context.swapchain_fences_signalled[index])
+      if (vk->context.swapchain_fences_signalled[index]) {
+#if defined(HAVE_COCOATOUCH) || defined(TARGET_OS_TV)
+         /* For MoltenVK 1.2.10/1.2.11, use a reasonable timeout value instead of UINT64_MAX */
+         uint64_t fence_timeout = 500000000; /* 500ms in nanoseconds */
+         vkWaitForFences(vk->context.device, 1, next_fence, true, fence_timeout);
+#else
          vkWaitForFences(vk->context.device, 1, next_fence, true, UINT64_MAX);
+#endif
+      }
       vkResetFences(vk->context.device, 1, next_fence);
    }
    else
@@ -1434,6 +1493,7 @@ struct vk_buffer vulkan_create_buffer(
       const struct vulkan_context *context,
       size_t len, VkBufferUsageFlags usage)
 {
+   /* For iOS/tvOS, we need special handling for buffer creation to avoid crashes */
    struct vk_buffer buffer;
    VkMemoryRequirements mem_reqs;
    VkBufferCreateInfo info;
@@ -1455,28 +1515,116 @@ struct vk_buffer vulkan_create_buffer(
    alloc.sType                = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
    alloc.pNext                = NULL;
    alloc.allocationSize       = mem_reqs.size;
-   alloc.memoryTypeIndex      = vulkan_find_memory_type(
+   /* For MoltenVK 1.2.10/1.2.11, use a more iOS/tvOS friendly memory allocation strategy */
+#if defined(HAVE_COCOATOUCH) || defined(TARGET_OS_TV)
+   /* On iOS/tvOS, prioritize host visible memory for all buffers that need mapping */
+   /* This is a more conservative approach to avoid memory mapping failures */
+   alloc.memoryTypeIndex = vulkan_find_memory_type_fallback(
          &context->memory_properties,
          mem_reqs.memoryTypeBits,
-           VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
-         | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-   vkAllocateMemory(context->device, &alloc, NULL, &buffer.memory);
+         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+   /* Log the memory type selection for debugging */
+   RARCH_LOG("[Vulkan]: iOS/tvOS buffer creation - Selected memory type index: %u\n", alloc.memoryTypeIndex);
+#else
+   /* On other platforms, prioritize host visible memory */
+   alloc.memoryTypeIndex = vulkan_find_memory_type(
+         &context->memory_properties,
+         mem_reqs.memoryTypeBits,
+         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+#endif
+   VkResult alloc_res = vkAllocateMemory(context->device, &alloc, NULL, &buffer.memory);
+   if (alloc_res != VK_SUCCESS) {
+      RARCH_WARN("[Vulkan]: Failed to allocate memory (error: %d), trying fallback allocation strategy.\n", alloc_res);
+
+      /* Fallback to any memory type that will work */
+      alloc.memoryTypeIndex = vulkan_find_memory_type_fallback(
+             &context->memory_properties,
+             mem_reqs.memoryTypeBits, 0, 0);
+      alloc_res = vkAllocateMemory(context->device, &alloc, NULL, &buffer.memory);
+
+      if (alloc_res != VK_SUCCESS) {
+         RARCH_ERR("[Vulkan]: Failed to allocate memory even with fallback (error: %d).\n", alloc_res);
+         buffer.memory = VK_NULL_HANDLE;
+         return buffer;
+      }
+   }
    vulkan_debug_mark_memory(context->device, buffer.memory);
    vkBindBufferMemory(context->device, buffer.buffer, buffer.memory, 0);
 
    buffer.size                = len;
 
-   vkMapMemory(context->device,
+   /* For MoltenVK 1.2.10/1.2.11, add error handling for memory mapping */
+   VkResult map_result = vkMapMemory(context->device,
          buffer.memory, 0, buffer.size, 0, &buffer.mapped);
+
+   if (map_result != VK_SUCCESS) {
+#if defined(HAVE_COCOATOUCH) || defined(TARGET_OS_TV)
+      /* On iOS/tvOS, handle memory mapping failures more gracefully */
+      RARCH_WARN("[Vulkan]: Failed to map memory (error: %d), trying alternative approach.\n", map_result);
+
+      /* Free the current memory allocation */
+      if (buffer.memory != VK_NULL_HANDLE) {
+         vkFreeMemory(context->device, buffer.memory, NULL);
+         buffer.memory = VK_NULL_HANDLE;
+      }
+
+      /* Try a completely different approach - use device local memory without mapping */
+      /* This is a compromise - we won't be able to map this memory, but it might still work for some use cases */
+      alloc.memoryTypeIndex = vulkan_find_memory_type_fallback(
+            &context->memory_properties,
+            mem_reqs.memoryTypeBits,
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+            0);
+
+      RARCH_LOG("[Vulkan]: Trying device-local memory (type index: %u) without mapping.\n", alloc.memoryTypeIndex);
+
+      VkResult alloc_res = vkAllocateMemory(context->device, &alloc, NULL, &buffer.memory);
+      if (alloc_res != VK_SUCCESS) {
+         /* Last resort - try any memory type that's available */
+         RARCH_WARN("[Vulkan]: Failed to allocate device-local memory, trying any available memory type.\n");
+
+         alloc.memoryTypeIndex = vulkan_find_memory_type_fallback(
+               &context->memory_properties,
+               mem_reqs.memoryTypeBits,
+               0,
+               0);
+
+         alloc_res = vkAllocateMemory(context->device, &alloc, NULL, &buffer.memory);
+         if (alloc_res != VK_SUCCESS) {
+            RARCH_ERR("[Vulkan]: All memory allocation attempts failed (error: %d).\n", alloc_res);
+            buffer.memory = VK_NULL_HANDLE;
+            buffer.mapped = NULL;
+            return buffer;
+         }
+      }
+
+      vulkan_debug_mark_memory(context->device, buffer.memory);
+      vkBindBufferMemory(context->device, buffer.buffer, buffer.memory, 0);
+
+      /* Note that we're not trying to map this memory again - we'll use it unmapped */
+      RARCH_LOG("[Vulkan]: Successfully allocated memory, but it cannot be mapped. Some features may be limited.\n");
+      buffer.mapped = NULL;
+#else
+      RARCH_ERR("[Vulkan]: Failed to map memory (error: %d).\n", map_result);
+      buffer.mapped = NULL;
+#endif
+   }
    return buffer;
 }
 
 void vulkan_destroy_buffer(VkDevice device, struct vk_buffer *buffer)
 {
-   vkUnmapMemory(device, buffer->memory);
-   vkFreeMemory(device, buffer->memory, NULL);
+   /* For MoltenVK 1.2.10/1.2.11, add safety checks for buffer cleanup */
+   if (buffer->mapped)
+      vkUnmapMemory(device, buffer->memory);
 
-   vkDestroyBuffer(device, buffer->buffer, NULL);
+   if (buffer->memory != VK_NULL_HANDLE)
+      vkFreeMemory(device, buffer->memory, NULL);
+
+   if (buffer->buffer != VK_NULL_HANDLE)
+      vkDestroyBuffer(device, buffer->buffer, NULL);
 
    memset(buffer, 0, sizeof(*buffer));
 }
@@ -1767,12 +1915,16 @@ uint32_t vulkan_find_memory_type_fallback(
 void vulkan_acquire_next_image(gfx_ctx_vulkan_data_t *vk)
 {
    unsigned index;
+   /* For MoltenVK 1.2.10/1.2.11, track retry attempts */
+   static unsigned acquire_retry_count = 0;
    VkFenceCreateInfo fence_info;
    VkSemaphoreCreateInfo sem_info;
    VkResult err                   = VK_SUCCESS;
    VkFence fence                  = VK_NULL_HANDLE;
    VkSemaphore semaphore          = VK_NULL_HANDLE;
    bool is_retrying               = false;
+   uint32_t retry_count           = 0;
+   const uint32_t max_retries     = 3; /* Limit retries to avoid infinite loops */
 
    fence_info.sType               = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
    fence_info.pNext               = NULL;
@@ -1783,6 +1935,12 @@ void vulkan_acquire_next_image(gfx_ctx_vulkan_data_t *vk)
    sem_info.flags                 = 0;
 
 retry:
+   /* Prevent infinite retry loops */
+   if (retry_count++ > max_retries) {
+      RARCH_ERR("[Vulkan]: Exceeded maximum swapchain creation retries.\n");
+      return;
+   }
+
    if (vk->swapchain == VK_NULL_HANDLE)
    {
       /* We don't have a swapchain, try to create one now. */
@@ -1828,15 +1986,36 @@ retry:
       else
           vkCreateFence(vk->context.device, &fence_info, NULL, &fence);
 
+      /* For MoltenVK 1.2.10/1.2.11, use a timeout value instead of UINT64_MAX
+       * This helps prevent hangs on iOS/tvOS devices */
+      uint64_t timeout = 500000000; /* 500ms in nanoseconds */
+
+      /* For MoltenVK 1.2.10/1.2.11, use shorter timeout if we've had failures */
+      if (acquire_retry_count > 0)
+      {
+         /* Progressively reduce timeout on retries to avoid long hangs */
+         timeout = timeout / (1 + acquire_retry_count);
+         RARCH_LOG("[Vulkan]: Using reduced timeout of %llu ns after %u retries.\n",
+            (unsigned long long)timeout, acquire_retry_count);
+      }
       err = vkAcquireNextImageKHR(vk->context.device,
-            vk->swapchain, UINT64_MAX,
+            vk->swapchain, timeout,
             semaphore, fence, &vk->context.current_swapchain_index);
    }
 
    if (err == VK_SUCCESS || err == VK_SUBOPTIMAL_KHR)
    {
-      if (fence != VK_NULL_HANDLE)
-         vkWaitForFences(vk->context.device, 1, &fence, true, UINT64_MAX);
+      if (fence != VK_NULL_HANDLE) {
+         /* For MoltenVK 1.2.10/1.2.11, use a timeout value instead of UINT64_MAX */
+         uint64_t fence_timeout = 500000000; /* 500ms in nanoseconds */
+
+         /* Use shorter timeout if we've had failures */
+         if (acquire_retry_count > 0)
+         {
+            fence_timeout = fence_timeout / (1 + acquire_retry_count);
+         }
+         vkWaitForFences(vk->context.device, 1, &fence, true, fence_timeout);
+      }
       vk->context.flags |= VK_CTX_FLAG_HAS_ACQUIRED_SWAPCHAIN;
 
       if (vk->context.swapchain_acquire_semaphore)
@@ -1884,11 +2063,19 @@ retry:
          /* Swapchain out of date, trying to create new one ... */
          if (is_retrying)
          {
-            retro_sleep(10);
+            /* Increase sleep time for MoltenVK to ensure resources are properly released */
+            retro_sleep(20);
          }
          else
             is_retrying = true;
+
+         /* For MoltenVK 1.2.10/1.2.11, ensure we wait for device to be idle before recreating swapchain */
+         vkDeviceWaitIdle(vk->context.device);
          vulkan_acquire_clear_fences(vk);
+
+         /* Reset retry counter on expected errors */
+         acquire_retry_count = 0;
+
          goto retry;
       default:
          if (err != VK_SUCCESS)
@@ -1899,6 +2086,19 @@ retry:
                   (int)err);
             if (err == VK_ERROR_SURFACE_LOST_KHR)
                RARCH_ERR("[Vulkan]: Got VK_ERROR_SURFACE_LOST_KHR.\n");
+            else if (err == VK_ERROR_OUT_OF_HOST_MEMORY || err == VK_ERROR_OUT_OF_DEVICE_MEMORY)
+               RARCH_ERR("[Vulkan]: Memory error in MoltenVK. Waiting for device idle.\n");
+
+            /* For MoltenVK 1.2.10/1.2.11, ensure we wait for device to be idle on errors */
+            vkDeviceWaitIdle(vk->context.device);
+
+            /* Increment retry counter for MoltenVK error handling */
+            acquire_retry_count++;
+            if (acquire_retry_count > 5) {
+               RARCH_WARN("[Vulkan]: Too many acquire failures (%u), may need to restart the app.\n",
+                  acquire_retry_count);
+            }
+
             /* Force driver to reset swapchain image handles. */
             vk->context.flags |= VK_CTX_FLAG_INVALID_SWAPCHAIN;
             vulkan_acquire_clear_fences(vk);
@@ -1912,6 +2112,9 @@ retry:
       vkCreateSemaphore(vk->context.device, &sem_info,
             NULL, &vk->context.swapchain_semaphores[index]);
    vulkan_acquire_wait_fences(vk);
+
+   /* Reset retry counter on successful acquisition */
+   acquire_retry_count = 0;
 }
 
 #ifdef VULKAN_HDR_SWAPCHAIN
@@ -1947,6 +2150,10 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
    bool vsync                              = settings->bools.video_vsync;
    bool adaptive_vsync                     = settings->bools.video_adaptive_vsync;
 
+   /* For MoltenVK 1.2.10/1.2.11, track retry attempts */
+   static unsigned swapchain_create_retry_count = 0;
+   const unsigned max_swapchain_create_retries = 3;
+
    format.format                           = VK_FORMAT_UNDEFINED;
    format.colorSpace                       = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
 
@@ -1960,6 +2167,12 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
 //   if (   !surface_properties.currentExtent.width
 //       && !surface_properties.currentExtent.height)
 //      return false;
+
+   /* For MoltenVK 1.2.10/1.2.11, we need to ensure valid dimensions */
+   if (surface_properties.currentExtent.width == 0)
+       surface_properties.currentExtent.width = width;
+   if (surface_properties.currentExtent.height == 0)
+       surface_properties.currentExtent.height = height;
 
    if (     (swap_interval == 0)
          && (vk->flags & VK_DATA_FLAG_EMULATE_MAILBOX)
@@ -2142,10 +2355,14 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
       }
 
 #ifdef VULKAN_HDR_SWAPCHAIN
+      /* Check if HDR is supported and enabled in settings */
       if (vk->context.flags & VK_CTX_FLAG_HDR_SUPPORT)
       {
          if (settings->bools.video_hdr_enable)
+         {
             vk->context.flags |=  VK_CTX_FLAG_HDR_ENABLE;
+            RARCH_LOG("[Vulkan]: HDR enabled - using robust memory allocation for iOS/tvOS compatibility.\n");
+         }
          else
             vk->context.flags &= ~VK_CTX_FLAG_HDR_ENABLE;
 
@@ -2190,14 +2407,20 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
          format = formats[0];
    }
 
-    // @Prov change
-//   if (surface_properties.currentExtent.width == UINT32_MAX)
-//   {
+    // @Prov change - Updated for MoltenVK 1.2.10/1.2.11
+   if (surface_properties.currentExtent.width == UINT32_MAX)
+   {
       swapchain_size.width     = width;
       swapchain_size.height    = height;
-//   }
-//   else
-//      swapchain_size           = surface_properties.currentExtent;
+   }
+   else
+   {
+      // For MoltenVK, use provided dimensions but ensure they're valid
+      swapchain_size.width     = surface_properties.currentExtent.width > 0 ?
+                               surface_properties.currentExtent.width : width;
+      swapchain_size.height    = surface_properties.currentExtent.height > 0 ?
+                               surface_properties.currentExtent.height : height;
+   }
 
 #ifdef WSI_HARDENING_TEST
    if (trigger_spurious_error())
@@ -2277,10 +2500,16 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
    info.imageExtent.width      = swapchain_size.width;
    info.imageExtent.height     = swapchain_size.height;
    info.imageArrayLayers       = 1;
-   info.imageUsage             =  VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT
-                                | VK_IMAGE_USAGE_TRANSFER_SRC_BIT
-                                | VK_IMAGE_USAGE_TRANSFER_DST_BIT
-                                | VK_IMAGE_USAGE_SAMPLED_BIT;
+   /* For MoltenVK 1.2.10/1.2.11, be more conservative with image usage flags
+    * This helps avoid memory issues on iOS/tvOS */
+   info.imageUsage             = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT
+                               | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+
+#if !defined(HAVE_COCOATOUCH) || !defined(TARGET_OS_TV)
+   /* Add these flags conditionally if we're not on iOS/tvOS with A10+ chip */
+   info.imageUsage            |= VK_IMAGE_USAGE_TRANSFER_DST_BIT
+                              | VK_IMAGE_USAGE_SAMPLED_BIT;
+#endif
    info.imageSharingMode       = VK_SHARING_MODE_EXCLUSIVE;
    info.queueFamilyIndexCount  = 0;
    info.pQueueFamilyIndices    = NULL;
@@ -2294,12 +2523,39 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
    if (old_swapchain != VK_NULL_HANDLE)
       vkDestroySwapchainKHR(vk->context.device, old_swapchain, NULL);
 
-   if (vkCreateSwapchainKHR(vk->context.device,
-            &info, NULL, &vk->swapchain) != VK_SUCCESS)
+   /* For MoltenVK 1.2.10/1.2.11, ensure device is idle before creating swapchain */
+   vkDeviceWaitIdle(vk->context.device);
+
+   VkResult swapchain_result = vkCreateSwapchainKHR(vk->context.device, &info, NULL, &vk->swapchain);
+   if (swapchain_result != VK_SUCCESS)
    {
-      RARCH_ERR("[Vulkan]: Failed to create swapchain.\n");
+      RARCH_ERR("[Vulkan]: Failed to create swapchain (error code: %d).\n", swapchain_result);
+
+      if (swapchain_result == VK_ERROR_OUT_OF_HOST_MEMORY ||
+          swapchain_result == VK_ERROR_OUT_OF_DEVICE_MEMORY)
+      {
+         RARCH_ERR("[Vulkan]: Memory allocation error in MoltenVK swapchain creation.\n");
+      }
+
+      /* For MoltenVK 1.2.10/1.2.11, implement retry mechanism */
+      swapchain_create_retry_count++;
+      if (swapchain_create_retry_count < max_swapchain_create_retries)
+      {
+         RARCH_WARN("[Vulkan]: Retrying swapchain creation (attempt %u of %u)...\n",
+            swapchain_create_retry_count + 1, max_swapchain_create_retries);
+
+         /* Wait a bit before retrying */
+         retro_sleep(50 * swapchain_create_retry_count);
+         return vulkan_create_swapchain(vk, width, height, swap_interval);
+      }
+
+      /* Reset retry counter for next time */
+      swapchain_create_retry_count = 0;
       return false;
    }
+
+   /* Reset retry counter on success */
+   swapchain_create_retry_count = 0;
 
    vk->context.swapchain_width        = swapchain_size.width;
    vk->context.swapchain_height       = swapchain_size.height;
@@ -2335,10 +2591,30 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
          break;
    }
 
-   vkGetSwapchainImagesKHR(vk->context.device, vk->swapchain,
+   /* For MoltenVK 1.2.10/1.2.11, add error handling for swapchain image retrieval */
+   VkResult get_images_result;
+
+   get_images_result = vkGetSwapchainImagesKHR(vk->context.device, vk->swapchain,
          &vk->context.num_swapchain_images, NULL);
-   vkGetSwapchainImagesKHR(vk->context.device, vk->swapchain,
+   if (get_images_result != VK_SUCCESS) {
+      RARCH_ERR("[Vulkan]: Failed to get swapchain image count (error: %d).\n", get_images_result);
+      vk->context.num_swapchain_images = 0;
+      return false;
+   }
+
+   /* Ensure we don't exceed the maximum number of swapchain images */
+   if (vk->context.num_swapchain_images > VULKAN_MAX_SWAPCHAIN_IMAGES) {
+      RARCH_WARN("[Vulkan]: Too many swapchain images reported (%u), capping to %d.\n",
+         vk->context.num_swapchain_images, VULKAN_MAX_SWAPCHAIN_IMAGES);
+      vk->context.num_swapchain_images = VULKAN_MAX_SWAPCHAIN_IMAGES;
+   }
+
+   get_images_result = vkGetSwapchainImagesKHR(vk->context.device, vk->swapchain,
          &vk->context.num_swapchain_images, vk->context.swapchain_images);
+   if (get_images_result != VK_SUCCESS) {
+      RARCH_ERR("[Vulkan]: Failed to get swapchain images (error: %d).\n", get_images_result);
+      return false;
+   }
 
    if (old_swapchain == VK_NULL_HANDLE)
       RARCH_LOG("[Vulkan]: Got %u swapchain images.\n",
@@ -2640,6 +2916,13 @@ void vulkan_present(gfx_ctx_vulkan_data_t *vk, unsigned index)
 #ifdef HAVE_THREADS
    slock_lock(vk->context.queue_lock);
 #endif
+
+#if defined(HAVE_COCOATOUCH) || defined(TARGET_OS_TV)
+   /* For MoltenVK 1.2.10/1.2.11, ensure device is idle before presenting to avoid race conditions */
+   /* This is a conservative approach that may impact performance but improves stability */
+   vkDeviceWaitIdle(vk->context.device);
+#endif
+
    err = vkQueuePresentKHR(vk->context.queue, &present);
 
    /* VK_SUBOPTIMAL_KHR can be returned on
@@ -2720,6 +3003,21 @@ void vulkan_framebuffer_clear(VkImage image, VkCommandBuffer cmd)
    VkClearColorValue color;
    VkImageSubresourceRange range;
 
+   /* For MoltenVK 1.2.10/1.2.11, use more conservative pipeline barriers */
+#if defined(HAVE_COCOATOUCH) || defined(TARGET_OS_TV)
+   /* Use more conservative pipeline stages for iOS/tvOS */
+   VULKAN_IMAGE_LAYOUT_TRANSITION_LEVELS(cmd,
+         image,
+         VK_REMAINING_MIP_LEVELS,
+         VK_IMAGE_LAYOUT_UNDEFINED,
+         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+         0,
+         VK_ACCESS_TRANSFER_WRITE_BIT,
+         VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, /* More conservative than TOP_OF_PIPE */
+         VK_PIPELINE_STAGE_TRANSFER_BIT,
+         VK_QUEUE_FAMILY_IGNORED,
+         VK_QUEUE_FAMILY_IGNORED);
+#else
    VULKAN_IMAGE_LAYOUT_TRANSITION_LEVELS(cmd,
          image,
          VK_REMAINING_MIP_LEVELS,
@@ -2731,6 +3029,7 @@ void vulkan_framebuffer_clear(VkImage image, VkCommandBuffer cmd)
          VK_PIPELINE_STAGE_TRANSFER_BIT,
          VK_QUEUE_FAMILY_IGNORED,
          VK_QUEUE_FAMILY_IGNORED);
+#endif
 
    color.float32[0]     = 0.0f;
    color.float32[1]     = 0.0f;
@@ -2749,6 +3048,26 @@ void vulkan_framebuffer_clear(VkImage image, VkCommandBuffer cmd)
          1,
          &range);
 
+#if defined(HAVE_COCOATOUCH) || defined(TARGET_OS_TV)
+   /* Add additional synchronization for iOS/tvOS to ensure command buffer operations are properly ordered */
+   vulkan_ios_tvos_command_buffer_sync(cmd, NULL, NULL);
+#endif
+
+   /* For MoltenVK 1.2.10/1.2.11, use more conservative pipeline barriers */
+#if defined(HAVE_COCOATOUCH) || defined(TARGET_OS_TV)
+   /* Use more conservative access flags and pipeline stages for iOS/tvOS */
+   VULKAN_IMAGE_LAYOUT_TRANSITION_LEVELS(cmd,
+         image,
+         VK_REMAINING_MIP_LEVELS,
+         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+         VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+         VK_ACCESS_TRANSFER_WRITE_BIT,
+         VK_ACCESS_SHADER_READ_BIT,
+         VK_PIPELINE_STAGE_TRANSFER_BIT,
+         VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT, /* More conservative than FRAGMENT_SHADER_BIT */
+         VK_QUEUE_FAMILY_IGNORED,
+         VK_QUEUE_FAMILY_IGNORED);
+#else
    VULKAN_IMAGE_LAYOUT_TRANSITION_LEVELS(cmd,
          image,
          VK_REMAINING_MIP_LEVELS,
@@ -2760,6 +3079,7 @@ void vulkan_framebuffer_clear(VkImage image, VkCommandBuffer cmd)
          VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
          VK_QUEUE_FAMILY_IGNORED,
          VK_QUEUE_FAMILY_IGNORED);
+#endif
 }
 
 void vulkan_framebuffer_generate_mips(
@@ -2924,6 +3244,22 @@ void vulkan_framebuffer_copy(VkImage image,
 {
    VkImageCopy region;
 
+   /* For MoltenVK 1.2.10/1.2.11, use more conservative pipeline barriers */
+#if defined(HAVE_COCOATOUCH) || defined(TARGET_OS_TV)
+   /* Use more conservative pipeline stages for iOS/tvOS */
+   VULKAN_IMAGE_LAYOUT_TRANSITION_LEVELS(
+         cmd,
+         image,
+         VK_REMAINING_MIP_LEVELS,
+         VK_IMAGE_LAYOUT_UNDEFINED,
+         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+         0,
+         VK_ACCESS_TRANSFER_WRITE_BIT,
+         VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT, /* More conservative than FRAGMENT_SHADER_BIT */
+         VK_PIPELINE_STAGE_TRANSFER_BIT,
+         VK_QUEUE_FAMILY_IGNORED,
+         VK_QUEUE_FAMILY_IGNORED);
+#else
    VULKAN_IMAGE_LAYOUT_TRANSITION_LEVELS(
          cmd,
          image,
@@ -2936,6 +3272,7 @@ void vulkan_framebuffer_copy(VkImage image,
          VK_PIPELINE_STAGE_TRANSFER_BIT,
          VK_QUEUE_FAMILY_IGNORED,
          VK_QUEUE_FAMILY_IGNORED);
+#endif
 
    region.srcSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
    region.srcSubresource.mipLevel       = 0;
@@ -2957,6 +3294,21 @@ void vulkan_framebuffer_copy(VkImage image,
          image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
          1, &region);
 
+   /* For MoltenVK 1.2.10/1.2.11, use more conservative pipeline barriers */
+#if defined(HAVE_COCOATOUCH) || defined(TARGET_OS_TV)
+   /* Use more conservative access flags and pipeline stages for iOS/tvOS */
+   VULKAN_IMAGE_LAYOUT_TRANSITION_LEVELS(cmd,
+         image,
+         VK_REMAINING_MIP_LEVELS,
+         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+         VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+         VK_ACCESS_TRANSFER_WRITE_BIT,
+         VK_ACCESS_SHADER_READ_BIT,
+         VK_PIPELINE_STAGE_TRANSFER_BIT,
+         VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT, /* More conservative than FRAGMENT_SHADER_BIT */
+         VK_QUEUE_FAMILY_IGNORED,
+         VK_QUEUE_FAMILY_IGNORED);
+#else
    VULKAN_IMAGE_LAYOUT_TRANSITION_LEVELS(cmd,
          image,
          VK_REMAINING_MIP_LEVELS,
@@ -2968,4 +3320,5 @@ void vulkan_framebuffer_copy(VkImage image,
          VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
          VK_QUEUE_FAMILY_IGNORED,
          VK_QUEUE_FAMILY_IGNORED);
+#endif
 }

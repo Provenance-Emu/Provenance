@@ -23,6 +23,10 @@
 #include <lists/string_list.h>
 #include <retro_inline.h>
 
+#if defined(HAVE_COCOATOUCH) || defined(TARGET_OS_TV)
+#include "vulkan_ios_tvos_helpers.h"
+#endif
+
 #define VULKAN_DESCRIPTOR_MANAGER_BLOCK_SETS    16
 #define VULKAN_MAX_DESCRIPTOR_POOL_SIZES        16
 #define VULKAN_BUFFER_BLOCK_SIZE                (64 * 1024)
