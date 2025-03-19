@@ -378,7 +378,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 $0.isHidden = isHidden
                 $0.alpha = CGFloat(Defaults[.controllerOpacity])
             }
-            print("Controller Alpha Set ", CGFloat(Defaults[.controllerOpacity]))
+            DLOG("Controller Alpha Set \(CGFloat(Defaults[.controllerOpacity]))")
             dPad2?.isHidden = isHidden
             setupTouchControls()
         }
@@ -502,16 +502,10 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     func hideTouchControls(for controller: GCController) {
         ILOG("Hiding touch controls")
 
-        dPad?.isHidden = true
-        joyPad?.isHidden = true
-        joyPad2?.isHidden = true
-        buttonGroup?.isHidden = true
-        leftShoulderButton?.isHidden = true
-        rightShoulderButton?.isHidden = true
-        leftShoulderButton2?.isHidden = true
-        rightShoulderButton2?.isHidden = true
-        zTriggerButton?.isHidden = true
+        // Set all buttons to hidden
+        allButtons.forEach { $0.isHidden = true }
 
+        // Special handling for select/start/analog buttons if needed
         if !Defaults[.missingButtonsAlwaysOn] {
             selectButton?.isHidden = true
             startButton?.isHidden = true
@@ -521,6 +515,10 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             leftAnalogButton?.isHidden = true
             rightAnalogButton?.isHidden = true
         }
+
+        // Update buttonsVisible state
+        buttonsVisible = false
+        updateToggleButtonAppearance()
 
         setupTouchControls()
     }
@@ -1426,7 +1424,23 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     }
 #endif // os(iOS)
 
-    // Modify the setupToggleButton method
+    // Add a method to toggle button visibility
+    @objc private func toggleButtonVisibility() {
+        buttonsVisible = !buttonsVisible
+
+        // Update visibility for all control elements
+        allButtons.forEach { $0.isHidden = !buttonsVisible }
+
+        // Update toggle button appearance
+        updateToggleButtonAppearance()
+    }
+
+    // Add a method to update toggle button appearance
+    private func updateToggleButtonAppearance() {
+        toggleButton.setImage(UIImage(named: buttonsVisible ? "chevron.up.circle" : "chevron.down.circle", in: Bundle.module, with: nil), for: .normal)
+    }
+
+    // Add a method to setup the toggle button
     private func setupToggleButton() {
         /// Create and configure the toggle button
         toggleButton = MenuButton(type: .custom)
@@ -1440,7 +1454,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         #if !os(tvOS)
         toggleButton.isPointerInteractionEnabled = true
         #endif
-        
+
         /// Add constraints
         toggleButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(toggleButton)
@@ -1484,9 +1498,15 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
         /// Animate the visibility change
         UIView.animate(withDuration: 0.3) {
-            self.allButtons.forEach { $0.alpha = self.buttonsVisible ? 1.0 : 0.0 }
+            self.allButtons.forEach { 
+                $0.alpha = self.buttonsVisible ? 1.0 : 0.0 
+                // Also set isHidden to properly hide the controls, especially joypads
+                $0.isHidden = !self.buttonsVisible
+                // Disable user interaction when hidden to prevent ghost touches
+                $0.isUserInteractionEnabled = self.buttonsVisible
+            }
             self.toggleButton.setImage(
-                UIImage(systemName: self.buttonsVisible ? "chevron.up.circle.fill" : "chevron.down.circle.fill"),
+                UIImage(systemName: self.buttonsVisible ? "chevron.up.circle" : "chevron.down.circle"),
                 for: .normal
             )
         }
