@@ -330,6 +330,9 @@ final class JSDPad: MovableButtonView {
         if let context = UIGraphicsGetCurrentContext() {
 
             context.clear(rect)
+            
+            // Respect the view's alpha value
+            context.setAlpha(self.alpha)
 
             // Set the circle outerline-width
             context.setLineWidth(5.0 * self.scale)
@@ -349,6 +352,13 @@ final class JSDPad: MovableButtonView {
             context.addArc(center: analogPoint, radius: radius / 6, startAngle: 0.0, endAngle: .pi * 2.0, clockwise: true)
             // Draw
             context.fillPath()
+            
+            // If alpha is 0, also disable user interaction to prevent touches
+            if self.alpha == 0 {
+                self.isUserInteractionEnabled = false
+            } else {
+                self.isUserInteractionEnabled = true
+            }
         }
     }
 }
