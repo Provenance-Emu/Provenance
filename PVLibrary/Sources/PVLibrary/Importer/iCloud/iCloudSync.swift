@@ -548,6 +548,7 @@ public enum iCloudSync {
             DLOG("attempted to turn on iCloud, but iCloud is NOT setup on the device")
             return
         }
+        //TODO: we have a bug here. since turnOn can be called twice (or more), then disposeBag will be set twice and then everything will be disposed.
         initiateDownload()
         guard RomDatabase.databaseInitialized
         else {
