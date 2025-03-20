@@ -69,7 +69,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     let errorHandler: ErrorHandler
     var initialSyncResult: SyncResult = .indeterminate
     var fileImportQueueMaxCount = 1000
-    var purgeStatus: DatastorePurgeStatus = .incomplete
+    var purgeStatus: ConcurrentQueue<DatastorePurgeStatus> = [.incomplete]
     private var querySubscriber: AnyCancellable?
     
     init(directories: Set<String>,
@@ -91,7 +91,8 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     }
     
     var canPurgeDatastore: Bool {
-        purgeStatus == .incomplete
+        let status = purgeStatus.peek()
+        return status == .incomplete && status != .processing
             && initialSyncResult == .success
             //if we have errors, it's better to just assume something happened while importing, so instead of creating a bigger mess, just NOT delete any files
             && errorHandler.numberOfErrors == 0
@@ -230,13 +231,13 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     }
     
     func queryFinished(notification: Notification) async {
-        DLOG("directories: \(directories)")//TODO: remove guard since it's now part of the filter
+        DLOG("directories: \(directories)")
         guard (notification.object as? NSMetadataQuery) === metadataQuery
         else {
             return
         }
         //accessing metadataQuery.results implicitly calls disable/enable, but for some reason with large libraries, the signals don't get fired at all that files finished downloading. by enabling this, we get the signals, although it erroneously shows as not downloaded, but we are able to check the metrics to know the real state of the file
-        metadataQuery.disableUpdates()
+        metadataQuery.disableUpdates()//TODO: retest if this is still needed
         defer {
             metadataQuery.enableUpdates()
         }
@@ -476,84 +477,150 @@ public enum iCloudSync {
     static var gameImporter = GameImporter.shared
     static var state: iCloudSync = .initialAppLoad
     static let errorHandler: ErrorHandler = iCloudErrorHandler.shared
-    static var romDatabaseInitializedSubscriber: AnyCancellable?
     
     public static func initICloudDocuments() {
-        romDatabaseInitializedSubscriber = NotificationCenter.default.publisher(for: .RomDatabaseInitialized).sink { _ in
-            romDatabaseInitializedSubscriber?.cancel()
-            Task {
-                guard Defaults[.iCloudSync]
-                else {
-                    turnOff()
-                    return
-                }
-                turnOn()
-            }
-        }
         Task {
             for await value in Defaults.updates(.iCloudSync) {
-                iCloudSyncChanged(value)
+                await iCloudSyncChanged(value)
             }
         }
     }
     
-    static func iCloudSyncChanged(_ newValue: Bool) {
+    static func iCloudSyncChanged(_ newValue: Bool) async {
         DLOG("new iCloudSync value: \(newValue)")
         guard newValue
         else {
             turnOff()
             return
         }
-        turnOn()
+        await turnOn()
     }
     
     /// in order to account for large libraries, we go through each directory/file and tell the iCloud API to start downloading. this way it starts and by the time we query, we can get actual events that the downloads complete.
-    static func initiateDownload() {
+    static func initiateDownload() async {
         guard let documentsDirectory = URL.iCloudDocumentsDirectory
         else {
             ELOG("error obtaining iCloud documents directory")
             return
         }
-        ILOG("attempting to start downloading iCloud directory: \(documentsDirectory)")
-        let fileManager: FileManager = .default
-        do {
-            try fileManager.startDownloadingUbiquitousItem(at: documentsDirectory)
-        } catch {
-            ELOG("error starting downloading \(documentsDirectory)")
-            errorHandler.handleError(error, file: documentsDirectory)
-        }
-        let subDirectorys: [String]
-        do {
-            subDirectorys = try fileManager.subpathsOfDirectory(atPath: documentsDirectory.pathDecoded)
-            DLOG("found \(subDirectorys.count) in \(documentsDirectory)")
-        } catch {
-            DLOG("error grabbing sub directories of \(documentsDirectory)")
-            errorHandler.handleError(error, file: documentsDirectory)
-            return
-        }
-        subDirectorys.forEach { subdirectory in
-            let currentDirectory = documentsDirectory.appendingPathComponent(subdirectory)
-            DLOG("processing \(currentDirectory)")
-            do {
-                try fileManager.startDownloadingUbiquitousItem(at: currentDirectory)
-            } catch {
-                DLOG("error initiating download of \(currentDirectory)")
-                errorHandler.handleError(error, file: currentDirectory)
+        let romsDirectory = documentsDirectory.appendingPathComponent("ROMs")
+        let savesDirectory = documentsDirectory.appendingPathComponent("Save States")
+        await withTaskGroup(of: Void.self) { group in
+            group.addTask {
+                startDownloading(directory: romsDirectory, parentDirectoryPrefix: "com.provenance.")
             }
+            group.addTask {
+                startDownloading(directory: savesDirectory)
+            }
+            await group.waitForAll()
         }
     }
     
-    static func turnOn() {
+    static func startDownloading(directory: URL, parentDirectoryPrefix: String? = nil) {
+        ILOG("attempting to start downloading iCloud directory: \(directory)")
+        let fileManager: FileManager = .default
+        /*do {
+            try fileManager.startDownloadingUbiquitousItem(at: directory)
+        } catch {
+            ELOG("error starting downloading \(directory)")
+            errorHandler.handleError(error, file: directory)
+        }*/
+        let children: [String]
+        do {
+            children = try fileManager.subpathsOfDirectory(atPath: directory.pathDecoded)
+            DLOG("found \(children.count) in \(directory)")
+        } catch {
+            DLOG("error grabbing sub directories of \(directory)")
+            errorHandler.handleError(error, file: directory)
+            return
+        }
+        var childrenUrls: Set<URL> = []
+        children.forEach { child in
+            let currentUrl = directory.appendingPathComponent(child)
+            do {
+                var isDirectory: ObjCBool = false
+                _ = try fileManager.fileExists(atPath: currentUrl.pathDecoded, isDirectory: &isDirectory)
+                guard !isDirectory.boolValue
+                else {
+                    return
+                }
+                guard checkDownloadStatus(url: currentUrl) != .current
+                else {
+                    return
+                }
+                
+                 let parentDirectory = currentUrl.parentPathComponent
+                 //we should only add to the import queue files that are actual ROMs, anything else can be ignored.
+                guard parentDirectoryPrefix == nil
+                        || parentDirectory.range(of: parentDirectoryPrefix!,
+                                             options: [.caseInsensitive, .anchored]) != nil
+                else {
+                    return
+                }
+                 
+                DLOG("processing \(currentUrl)")
+                do {
+                    try fileManager.startDownloadingUbiquitousItem(at: currentUrl)
+                    Thread.sleep(forTimeInterval: 0.5)
+//                    sleep(1)
+                } catch {
+                    DLOG("error initiating download of \(currentUrl)")
+                    errorHandler.handleError(error, file: currentUrl)
+                }
+                childrenUrls.insert(currentUrl)
+            } catch {
+                DLOG("error checking if \(currentUrl) is a directory")
+            }
+        }
+        //TODO: add a condition to break out of this because if the user runs out of space, then this will run on an endless loop or until the app crashes
+        /*var currentChildren = childrenUrls
+        while !childrenUrls.isEmpty {
+            currentChildren.forEach { child in
+                if checkDownloadStatus(url: child) == .current {
+                    DLOG("✅ fully downloaded: \(child)")
+                    childrenUrls.remove(child)
+                    return
+                }
+                do {
+                    try fileManager.setAttributes([.modificationDate: Date()], ofItemAtPath: child.pathDecoded)
+                } catch {
+                    DLOG("Error forcing metadata refresh for file \(child), error: \(error)")
+                }
+            }
+            DLOG("\(directory.lastPathComponent) total left to process: \(childrenUrls.count)")
+            if currentChildren.count != childrenUrls.count {
+                currentChildren = childrenUrls
+            }
+            sleep(5)
+        }*/
+    }
+    
+    static func checkDownloadStatus(url: URL) -> URLUbiquitousItemDownloadingStatus? {
+        do {
+            let resourceValues = try url.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey,
+                                                                  .ubiquitousItemIsDownloadingKey])
+            /*switch resourceValues.ubiquitousItemDownloadingStatus {
+                case .current:          DLOG("✅ fully downloaded: \(url)")
+                case .notDownloaded:    DLOG("❌ not downloaded: \(url)")
+                case .downloaded:       DLOG("⏳ currently downloading: \(url)")
+                default:                DLOG("❓ Unknown status: \(url)")
+            }
+            let isDownloading = resourceValues.ubiquitousItemIsDownloading ?? false
+            DLOG("currently downloading? \(isDownloading), \(url)")
+            let tmp = resourceValues.ubiquitousItemDownloadingError*/
+            return resourceValues.ubiquitousItemDownloadingStatus
+        } catch {
+            DLOG("Error checking iCloud file status for: \(url), error: \(error)")
+            return nil
+        }
+    }
+    
+    static func turnOn() async {
         guard URL.supportsICloud else {
             DLOG("attempted to turn on iCloud, but iCloud is NOT setup on the device")
             return
         }
-        //TODO: we have a bug here. since turnOn can be called twice (or more), then disposeBag will be set twice and then everything will be disposed.
-        initiateDownload()
-        guard RomDatabase.databaseInitialized
-        else {
-            return
-        }
+        await initiateDownload()
         DLOG("turning on iCloud")
         //reset ROMs path
         gameImporter.gameImporterDatabaseService.setRomsPath(url: gameImporter.romsPath)
@@ -623,13 +690,15 @@ class SaveStateSyncer: iCloudContainerSyncer {
     let jsonDecorder = JSONDecoder()
     let processed = ConcurrentQueue<Int>(arrayLiteral: 0)
     let processingState: ConcurrentQueue<ProcessingState> = .init(arrayLiteral: .idle)
-    var savesFinishedImportingSubscriber: AnyCancellable?
+    var savesDatabaseSubscriber: AnyCancellable?
     
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
         self.init(directories: ["Save States"], notificationCenter: notificationCenter, errorHandler: errorHandler)
         fileImportQueueMaxCount = 10
         jsonDecorder.dataDecodingStrategy = .deferredToData
-        savesFinishedImportingSubscriber = notificationCenter.publisher(for: .SavesFinishedImporting).sink { [weak self] _ in
+        
+        let publishers = [.SavesFinishedImporting, .RomDatabaseInitialized].map { notificationCenter.publisher(for: $0) }
+        savesDatabaseSubscriber = Publishers.MergeMany(publishers).sink { [weak self] _ in
             Task {
                 self?.importNewSaves()
             }
@@ -637,7 +706,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
     }
     
     deinit {
-        savesFinishedImportingSubscriber?.cancel()
+        savesDatabaseSubscriber?.cancel()
     }
     
     func removeSavesDeletedWhileApplicationClosed() {
@@ -645,8 +714,11 @@ class SaveStateSyncer: iCloudContainerSyncer {
         else {
             return
         }
+        purgeStatus.dequeue()
+        purgeStatus.enqueue(entry: .processing)
         defer {
-            purgeStatus = .complete
+            purgeStatus.dequeue()
+            purgeStatus.enqueue(entry: .complete)
         }
         let realm: Realm
         do {
@@ -829,6 +901,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
 /// used for only purging database entries that no longer exist (files deleted from icloud while the app was shut off)
 enum DatastorePurgeStatus {
     case incomplete
+    case processing
     case complete
 }
 
@@ -841,11 +914,12 @@ class RomsSyncer: iCloudContainerSyncer {
     let gameImporter = GameImporter.shared
     let processingFiles = ConcurrentQueue(arrayLiteral: 0)
     let multiFileRoms: ConcurrentDictionary<String, [URL]> = [:]
-    var romsFinishedImportingSubscriber: AnyCancellable?
+    var romsDatabaseSubscriber: AnyCancellable?
     
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
         self.init(directories: ["ROMs"], notificationCenter: notificationCenter, errorHandler: errorHandler)
-        romsFinishedImportingSubscriber = notificationCenter.publisher(for: .RomsFinishedImporting).sink { [weak self] _ in
+        let publishers = [.RomsFinishedImporting, .RomDatabaseInitialized].map { notificationCenter.publisher(for: $0) }
+        romsDatabaseSubscriber = Publishers.MergeMany(publishers).sink { [weak self] _ in
             Task {
                 self?.handleImportNewRomFiles()
             }
@@ -853,7 +927,7 @@ class RomsSyncer: iCloudContainerSyncer {
     }
     
     deinit {
-        romsFinishedImportingSubscriber?.cancel()
+        romsDatabaseSubscriber?.cancel()
     }
     
     override func loadAllFromICloud(iterationComplete: (() -> Void)?) -> Completable {
@@ -868,8 +942,11 @@ class RomsSyncer: iCloudContainerSyncer {
         else {
             return
         }
+        purgeStatus.dequeue()
+        purgeStatus.enqueue(entry: .processing)
         defer {
-            purgeStatus = .complete
+            purgeStatus.dequeue()
+            purgeStatus.enqueue(entry: .complete)
         }
         guard let actualDocumentsUrl = documentsURL,
               let romsDirectoryName = directories.first
@@ -1011,7 +1088,7 @@ class RomsSyncer: iCloudContainerSyncer {
         let importState = gameImporter.processingState
         guard importState == .idle,
               importState != .paused
-        else {
+        else {//TODO: sometimes there's a timing issue and import doesn't finish. perhaps adding a sleep and then checking to ensure this doesn't happen, so long as there's something to process
             return
         }
         importNewRomFiles()
