@@ -522,6 +522,26 @@ public enum iCloudSync {
                 DLOG("error checking if \(currentUrl) is a directory")
             }
         }
+        /*
+        TODO: to check if a particular file has been downloaded, try:
+         1. fileManager.contentsOfDirectory(at: URL, includingPropertiesForKeys:nil)
+         2. URL.resourceValues(forKeys: [.fileSizeKey]).fileSize <- if 0 NOT downloaded
+        */
+        /* for review later this file attributes:
+        func isFileDownloaded(url: URL) -> Bool {
+            let fileManager = FileManager.default
+            do {
+                let fileAttributes = try fileManager.attributesOfItem(atPath: url.path)
+                //fileAttributes[.systemSize] <- this is different from file size
+                // Check if the file is a placeholder or fully downloaded
+                if let fileType = fileAttributes[.type] as? FileAttributeType, fileType == .typeRegular {
+                    return true
+                }
+            } catch {
+                print("Error checking file attributes: \(error)")
+            }
+            return false
+        }*/
     }
     
     static func checkDownloadStatus(url: URL) -> URLUbiquitousItemDownloadingStatus? {
