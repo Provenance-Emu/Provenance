@@ -52,10 +52,7 @@ public protocol iCloudTypeSyncer: Container {
 
 enum iCloudSyncStatus {
     case initialUpload
-    case doesNotRequireImportAfterDownload
     case filesAlreadyMoved
-    case waitingForDownloads
-    case nothingToDownload
 }
 
 class iCloudContainerSyncer: iCloudTypeSyncer {
@@ -69,8 +66,10 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     let errorHandler: ErrorHandler
     var initialSyncResult: SyncResult = .indeterminate
     var fileImportQueueMaxCount = 1000
-    var purgeStatus: ConcurrentQueue<DatastorePurgeStatus> = [.incomplete]
+    var purgeStatus: DatastorePurgeStatus = .incomplete
     private var querySubscriber: AnyCancellable?
+    //TODO: switch to actor
+    let statusQueue = DispatchQueue(label: "com.provenance.status")
     
     init(directories: Set<String>,
          notificationCenter: NotificationCenter,
@@ -91,8 +90,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     }
     
     var canPurgeDatastore: Bool {
-        let status = purgeStatus.peek()
-        return status == .incomplete && status != .processing
+        purgeStatus == .incomplete
             && initialSyncResult == .success
             //if we have errors, it's better to just assume something happened while importing, so instead of creating a bigger mess, just NOT delete any files
             && errorHandler.numberOfErrors == 0
@@ -133,34 +131,11 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     }
     
     func setNewCloudFilesAvailable() {
-        guard pendingFilesToDownload.isEmpty
-        else {
-            return
-        }
-        /*if !status.contains(.waitingForDownloads)
-            || status.contains(.doesNotRequireImportAfterDownload) {
+        if pendingFilesToDownload.isEmpty {
             status = [.filesAlreadyMoved]
             uploadedFiles.removeAll()
-        } else {*/
-            restartSyncQuery()
-        //}
+        }
         DLOG("\(directories): status: \(status), uploadedFiles: \(uploadedFiles.count)")
-    }
-    
-    func restartSyncQuery() {
-        guard !status.contains(.doesNotRequireImportAfterDownload),
-              !status.contains(.nothingToDownload)
-        else {
-            return
-        }
-        status.insert(.nothingToDownload)
-        DLOG("\(directories) finished downloading, restarting query...")
-        if metadataQuery.isStarted {
-            metadataQuery.stop()
-        }
-        Task { @MainActor [weak self] in
-            self?.metadataQuery.start()
-        }
     }
     
     func deleteFromDatastore(_ file: URL) {
@@ -224,7 +199,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                 await self?.queryFinished(notification: notification)
                 iterationComplete?()
             }
-        }
+        }//TODO: test if reverting to dispatchqueue.main fixes hangs that are now appearing
         Task { @MainActor [weak self] in
             self?.metadataQuery.start()
         }
@@ -269,21 +244,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                 """)
                 switch downloadStatus {
                     case  NSMetadataUbiquitousItemDownloadingStatusNotDownloaded:
-                        //if the download percentage is 100 and the file exists, we can remove the file from pending. for large libraries the event is incorrect. it could be because the number of files are so large
-                        /*if percentDownloaded == 100,
-                           doesFileExist,
-                           !status.contains(.nothingToDownload),
-                           !status.contains(.doesNotRequireImportAfterDownload) {
-                            DLOG("finished downloading \(file)")
-                            status.insert(.waitingForDownloads)
-                            pendingFilesToDownload.remove(file)
-                            restartSyncQuery()
-                            if !status.contains(.doesNotRequireImportAfterDownload) {
-                                break
-                            }
-                        } else {*/
-                            handleFileToDownload(file)
-                        //}
+                        handleFileToDownload(file)
                     case NSMetadataUbiquitousItemDownloadingStatusCurrent:
                         handleDownloadedFile(file)
                     default: ILOG("Other: \(file): download status: \(downloadStatus)")
@@ -318,11 +279,6 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     }
     
     func handleDownloadedFile(_ file: URL) {
-        //if something is downloading, then we want to wait for everything to finish downloading
-        guard !status.contains(.waitingForDownloads)
-        else {
-            return
-        }
         DLOG("item up to date: \(file)")
         if !fileManager.fileExists(atPath: file.pathDecoded) {
             DLOG("file DELETED from iCloud: \(file)")
@@ -519,12 +475,6 @@ public enum iCloudSync {
     static func startDownloading(directory: URL, parentDirectoryPrefix: String? = nil) {
         ILOG("attempting to start downloading iCloud directory: \(directory)")
         let fileManager: FileManager = .default
-        /*do {
-            try fileManager.startDownloadingUbiquitousItem(at: directory)
-        } catch {
-            ELOG("error starting downloading \(directory)")
-            errorHandler.handleError(error, file: directory)
-        }*/
         let children: [String]
         do {
             children = try fileManager.subpathsOfDirectory(atPath: directory.pathDecoded)
@@ -572,43 +522,12 @@ public enum iCloudSync {
                 DLOG("error checking if \(currentUrl) is a directory")
             }
         }
-        //TODO: add a condition to break out of this because if the user runs out of space, then this will run on an endless loop or until the app crashes
-        /*var currentChildren = childrenUrls
-        while !childrenUrls.isEmpty {
-            currentChildren.forEach { child in
-                if checkDownloadStatus(url: child) == .current {
-                    DLOG("✅ fully downloaded: \(child)")
-                    childrenUrls.remove(child)
-                    return
-                }
-                do {
-                    try fileManager.setAttributes([.modificationDate: Date()], ofItemAtPath: child.pathDecoded)
-                } catch {
-                    DLOG("Error forcing metadata refresh for file \(child), error: \(error)")
-                }
-            }
-            DLOG("\(directory.lastPathComponent) total left to process: \(childrenUrls.count)")
-            if currentChildren.count != childrenUrls.count {
-                currentChildren = childrenUrls
-            }
-            sleep(5)
-        }*/
     }
     
     static func checkDownloadStatus(url: URL) -> URLUbiquitousItemDownloadingStatus? {
         do {
-            let resourceValues = try url.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey,
-                                                                  .ubiquitousItemIsDownloadingKey])
-            /*switch resourceValues.ubiquitousItemDownloadingStatus {
-                case .current:          DLOG("✅ fully downloaded: \(url)")
-                case .notDownloaded:    DLOG("❌ not downloaded: \(url)")
-                case .downloaded:       DLOG("⏳ currently downloading: \(url)")
-                default:                DLOG("❓ Unknown status: \(url)")
-            }
-            let isDownloading = resourceValues.ubiquitousItemIsDownloading ?? false
-            DLOG("currently downloading? \(isDownloading), \(url)")
-            let tmp = resourceValues.ubiquitousItemDownloadingError*/
-            return resourceValues.ubiquitousItemDownloadingStatus
+            return try url.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey,
+                                                    .ubiquitousItemIsDownloadingKey]).ubiquitousItemDownloadingStatus
         } catch {
             DLOG("Error checking iCloud file status for: \(url), error: \(error)")
             return nil
@@ -643,7 +562,6 @@ public enum iCloudSync {
         var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots"],
                                                                   notificationCenter: .default,
                                                                   errorHandler: iCloudErrorHandler.shared)
-        nonDatabaseFileSyncer.status.insert(.doesNotRequireImportAfterDownload)
         nonDatabaseFileSyncer.loadAllFromICloud()
             .observe(on: MainScheduler.instance)
             .subscribe(onError: { error in
@@ -710,40 +628,39 @@ class SaveStateSyncer: iCloudContainerSyncer {
     }
     
     func removeSavesDeletedWhileApplicationClosed() {
-        guard canPurgeDatastore
-        else {
-            return
-        }
-        purgeStatus.dequeue()
-        purgeStatus.enqueue(entry: .processing)
-        defer {
-            purgeStatus.dequeue()
-            purgeStatus.enqueue(entry: .complete)
-        }
-        let realm: Realm
-        do {
-            realm = try Realm()
-        } catch {
-            ELOG("error clearing saves deleted while application was closed")
-            return
-        }
-        do {
-            try realm.write {
-                realm.objects(PVSaveState.self).forEach { save in
-                    guard let file = save.file,
-                          let url = file.url
-                    else {
-                        return
-                    }
-                    //fileManager.fileExists(atPath: file.url!.appendingPathExtension("json").pathDecoded)
-                    let saveUrl = url.appendingPathExtension("json").pathDecoded
-                    if !fileManager.fileExists(atPath: saveUrl) {
-                        realm.delete(save)
+        statusQueue.sync {
+            guard canPurgeDatastore
+            else {
+                return
+            }
+            defer {
+                purgeStatus = .complete
+            }
+            let realm: Realm
+            do {
+                realm = try Realm()
+            } catch {
+                ELOG("error clearing saves deleted while application was closed")
+                return
+            }
+            do {
+                try realm.write {
+                    realm.objects(PVSaveState.self).forEach { save in
+                        guard let file = save.file,
+                              let url = file.url
+                        else {
+                            return
+                        }
+                        //fileManager.fileExists(atPath: file.url!.appendingPathExtension("json").pathDecoded)
+                        let saveUrl = url.appendingPathExtension("json").pathDecoded
+                        if !fileManager.fileExists(atPath: saveUrl) {
+                            realm.delete(save)
+                        }
                     }
                 }
+            } catch {
+                ELOG("error deleting, \(error)")
             }
-        } catch {
-            ELOG("error deleting, \(error)")
         }
     }
     
@@ -901,7 +818,6 @@ class SaveStateSyncer: iCloudContainerSyncer {
 /// used for only purging database entries that no longer exist (files deleted from icloud while the app was shut off)
 enum DatastorePurgeStatus {
     case incomplete
-    case processing
     case complete
 }
 
@@ -938,43 +854,42 @@ class RomsSyncer: iCloudContainerSyncer {
     
     /// The only time that we don't know if files have been deleted by the user is when it happens while the app is closed. so we have to query the db and check
     func removeGamesDeletedWhileApplicationClosed() {
-        guard canPurgeDatastore
-        else {
-            return
-        }
-        purgeStatus.dequeue()
-        purgeStatus.enqueue(entry: .processing)
-        defer {
-            purgeStatus.dequeue()
-            purgeStatus.enqueue(entry: .complete)
-        }
-        guard let actualDocumentsUrl = documentsURL,
-              let romsDirectoryName = directories.first
-        else {
-            return
-        }
-        
-        let romsPath = actualDocumentsUrl.appendingPathComponent(romsDirectoryName)
-        DLOG("romsPath: \(romsPath)")
-        let realm: Realm
-        do {
-            realm = try Realm()
-        } catch {
-            ELOG("error removing game entries that do NOT exist in the cloud container \(romsPath)")
-            return
-        }
-        RomDatabase.gamesCache.forEach { (_, game: PVGame) in
-            let gameUrl = romsPath.appendingPathComponent(game.romPath)
-            guard fileManager.fileExists(atPath: gameUrl.pathDecoded)
+        statusQueue.sync {
+            guard canPurgeDatastore
             else {
                 return
             }
+            defer {
+                purgeStatus = .complete
+            }
+            guard let actualDocumentsUrl = documentsURL,
+                  let romsDirectoryName = directories.first
+            else {
+                return
+            }
+            
+            let romsPath = actualDocumentsUrl.appendingPathComponent(romsDirectoryName)
+            DLOG("romsPath: \(romsPath)")
+            let realm: Realm
             do {
-                if let gameToDelete = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) {
-                    try realm.deleteGame(gameToDelete)
-                }
+                realm = try Realm()
             } catch {
-                ELOG("error deleting \(gameUrl), \(error)")
+                ELOG("error removing game entries that do NOT exist in the cloud container \(romsPath)")
+                return
+            }
+            RomDatabase.gamesCache.forEach { (_, game: PVGame) in
+                let gameUrl = romsPath.appendingPathComponent(game.romPath)
+                guard fileManager.fileExists(atPath: gameUrl.pathDecoded)
+                else {
+                    return
+                }
+                do {
+                    if let gameToDelete = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) {
+                        try realm.deleteGame(gameToDelete)
+                    }
+                } catch {
+                    ELOG("error deleting \(gameUrl), \(error)")
+                }
             }
         }
     }
@@ -1088,7 +1003,7 @@ class RomsSyncer: iCloudContainerSyncer {
         let importState = gameImporter.processingState
         guard importState == .idle,
               importState != .paused
-        else {//TODO: sometimes there's a timing issue and import doesn't finish. perhaps adding a sleep and then checking to ensure this doesn't happen, so long as there's something to process
+        else {//TODO: sometimes there's a timing issue and import doesn't finish. perhaps adding a sleep and then checking to ensure this doesn't happen, so long as there's something to process. this may actually have been due to left over code from when the predownload wasn't happening, and the query was restarting on icloud. TEST this to be sure that's what cause the bug
             return
         }
         importNewRomFiles()
