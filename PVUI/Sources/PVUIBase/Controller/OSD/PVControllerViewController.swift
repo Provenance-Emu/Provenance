@@ -343,8 +343,9 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
         // Add toggle button
         setupToggleButton()
+        updateToggleButtonAppearance()
     }
-
+ 
     @objc func tripleTapRecognized(_ gesture : UITapGestureRecognizer) {
         self.inMoveMode = !self.inMoveMode
     }
@@ -1437,7 +1438,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
     // Add a method to update toggle button appearance
     private func updateToggleButtonAppearance() {
-        toggleButton.setImage(UIImage(named: buttonsVisible ? "chevron.up.circle" : "chevron.down.circle", in: Bundle.module, with: nil), for: .normal)
+        toggleButton?.setImage(UIImage(systemName: buttonsVisible ? "chevron.up.circle" : "chevron.down.circle"), for: .normal)
     }
 
     // Add a method to setup the toggle button
