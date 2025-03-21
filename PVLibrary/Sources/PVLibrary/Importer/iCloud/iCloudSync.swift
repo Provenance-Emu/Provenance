@@ -170,7 +170,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             return
         }
         initialSyncResult = syncToiCloud()
-        DLOG("syncToiCloud result: \(initialSyncResult)")
+        DLOG("\(directories) syncToiCloud result: \(initialSyncResult)")
         guard initialSyncResult != .saveFailure,
               initialSyncResult != .denied
         else {
@@ -199,7 +199,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                 await self?.queryFinished(notification: notification)
                 iterationComplete?()
             }
-        }//TODO: test if reverting to dispatchqueue.main fixes hangs that are now appearing
+        }
         Task { @MainActor [weak self] in
             self?.metadataQuery.start()
         }
@@ -490,15 +490,11 @@ public enum iCloudSync {
             do {
                 var isDirectory: ObjCBool = false
                 _ = try fileManager.fileExists(atPath: currentUrl.pathDecoded, isDirectory: &isDirectory)
-                guard !isDirectory.boolValue
+                guard !isDirectory.boolValue,
+                      checkDownloadStatus(of: currentUrl) != .current
                 else {
                     return
                 }
-                guard checkDownloadStatus(url: currentUrl) != .current
-                else {
-                    return
-                }
-                
                  let parentDirectory = currentUrl.parentPathComponent
                  //we should only add to the import queue files that are actual ROMs, anything else can be ignored.
                 guard parentDirectoryPrefix == nil
@@ -507,44 +503,24 @@ public enum iCloudSync {
                 else {
                     return
                 }
-                 
                 DLOG("processing \(currentUrl)")
                 do {
                     try fileManager.startDownloadingUbiquitousItem(at: currentUrl)
-                    Thread.sleep(forTimeInterval: 0.5)
-//                    sleep(1)
                 } catch {
                     DLOG("error initiating download of \(currentUrl)")
                     errorHandler.handleError(error, file: currentUrl)
                 }
                 childrenUrls.insert(currentUrl)
+                if childrenUrls.count % 10 == 0 {
+                    Thread.sleep(forTimeInterval: 0.25)
+                }
             } catch {
                 DLOG("error checking if \(currentUrl) is a directory")
             }
         }
-        /*
-        TODO: to check if a particular file has been downloaded, try:
-         1. fileManager.contentsOfDirectory(at: URL, includingPropertiesForKeys:nil)
-         2. URL.resourceValues(forKeys: [.fileSizeKey]).fileSize <- if 0 NOT downloaded
-        */
-        /* for review later this file attributes:
-        func isFileDownloaded(url: URL) -> Bool {
-            let fileManager = FileManager.default
-            do {
-                let fileAttributes = try fileManager.attributesOfItem(atPath: url.path)
-                //fileAttributes[.systemSize] <- this is different from file size
-                // Check if the file is a placeholder or fully downloaded
-                if let fileType = fileAttributes[.type] as? FileAttributeType, fileType == .typeRegular {
-                    return true
-                }
-            } catch {
-                print("Error checking file attributes: \(error)")
-            }
-            return false
-        }*/
     }
     
-    static func checkDownloadStatus(url: URL) -> URLUbiquitousItemDownloadingStatus? {
+    static func checkDownloadStatus(of url: URL) -> URLUbiquitousItemDownloadingStatus? {
         do {
             return try url.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey,
                                                     .ubiquitousItemIsDownloadingKey]).ubiquitousItemDownloadingStatus
@@ -692,7 +668,6 @@ class SaveStateSyncer: iCloudContainerSyncer {
         }
         ILOG("downloaded save file: \(file)")
         newFiles.insert(file)
-        importNewSaves()
     }
     
     override func deleteFromDatastore(_ file: URL) {
@@ -846,11 +821,17 @@ enum GameStatus {
     case gameDoesNotExist
 }
 
+enum FinalInitialGameImportStatus {
+    case alreadyInitiated
+    case notInitiated
+}
+
 class RomsSyncer: iCloudContainerSyncer {
     let gameImporter = GameImporter.shared
     let processingFiles = ConcurrentQueue(arrayLiteral: 0)
     let multiFileRoms: ConcurrentDictionary<String, [URL]> = [:]
     var romsDatabaseSubscriber: AnyCancellable?
+    var initialImportStatus: ConcurrentQueue<FinalInitialGameImportStatus> = [.notInitiated]
     
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
         self.init(directories: ["ROMs"], notificationCenter: notificationCenter, errorHandler: errorHandler)
@@ -942,7 +923,6 @@ class RomsSyncer: iCloudContainerSyncer {
         } else {
             newFiles.insert(file)
         }
-        handleImportNewRomFiles()
     }
     
     /// Checks if game exists in game cache
@@ -1012,6 +992,7 @@ class RomsSyncer: iCloudContainerSyncer {
         removeGamesDeletedWhileApplicationClosed()
         guard !newFiles.isEmpty
                 || (!multiFileRoms.isEmpty && pendingFilesToDownload.isEmpty)
+                || newFiles.isEmpty && pendingFilesToDownload.isEmpty && initialImportStatus.peek() == .notInitiated
         else {
             return
         }
@@ -1023,8 +1004,12 @@ class RomsSyncer: iCloudContainerSyncer {
         let importState = gameImporter.processingState
         guard importState == .idle,
               importState != .paused
-        else {//TODO: sometimes there's a timing issue and import doesn't finish. perhaps adding a sleep and then checking to ensure this doesn't happen, so long as there's something to process. this may actually have been due to left over code from when the predownload wasn't happening, and the query was restarting on icloud. TEST this to be sure that's what cause the bug
+        else {
             return
+        }
+        if initialImportStatus.peek() == .notInitiated {
+            initialImportStatus.dequeue()
+            initialImportStatus.enqueue(entry: .alreadyInitiated)
         }
         importNewRomFiles()
     
