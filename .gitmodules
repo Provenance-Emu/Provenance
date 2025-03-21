@@ -187,3 +187,6 @@
 [submodule "Dependencies/SwiftSDL2"]
 	path = Dependencies/SwiftSDL2
 	url = https://github.com/ctreffs/SwiftSDL2.git
+[submodule "Cores/azahar/Sources/libazahar/azahar"]
+	path = Cores/azahar/Sources/libazahar/azahar
+	url = https://github.com/Provenance-Emu/azahar.git
