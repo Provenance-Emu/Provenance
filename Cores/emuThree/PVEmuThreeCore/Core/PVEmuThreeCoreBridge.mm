@@ -115,6 +115,7 @@ static bool _isOff = false;
 
     [[NSUserDefaults standardUserDefaults] setInteger:self.shaderType forKey:@"shader_type"];
     [[NSUserDefaults standardUserDefaults] setInteger:self.region forKey:@"region_value"];
+    [[NSUserDefaults standardUserDefaults] setInteger:self.language forKey:@"language_value"];
 
     [[NSUserDefaults standardUserDefaults] setBool:self.asyncShader  forKey:@"async_shader_compilation"];
     [[NSUserDefaults standardUserDefaults] setBool:self.asyncPresent forKey:@"async_presentation"];

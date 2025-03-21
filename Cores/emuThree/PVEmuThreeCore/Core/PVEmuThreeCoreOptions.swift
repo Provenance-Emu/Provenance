@@ -121,20 +121,66 @@ import PVCoreBridge
                      defaultValue: 2)
     }
     
+    // # The system region that Cytrus will use during emulation
+    // # -1: Auto-select (default), 0: Japan, 1: USA, 2: Europe, 3: Australia, 4: China, 5: Korea, 6: Taiwan
+
     static var regionOption: CoreOption {
         .enumeration(.init(title: "System Region",
-                           description: "The preferred language for multi-language supported games.",
+                           description: "The system region that 3DS will use during emulation.",
                            requiresRestart: true),
                      values: [
                         .init(title: "Automatic", description: "Select based on local region.", value: -1),
                         .init(title: "Japan", description: "", value: 0),
                         .init(title: "USA", description: "", value: 1),
                         .init(title: "Europe", description: "", value: 2),
-                        .init(title: "Australia", description: "", value: 2),
-                        .init(title: "China", description: "", value: 3),
-                        .init(title: "Korea", description: "", value: 4),
-                        .init(title: "Taiwan", description: "", value: 5),
+                        .init(title: "Australia", description: "", value: 3),
+                        .init(title: "China", description: "", value: 4),
+                        .init(title: "Korea", description: "", value: 5),
+                        .init(title: "Taiwan", description: "", value: 6),
 
+                     ],
+                     defaultValue: -1)
+    }
+    
+    // # The system language that Cytrus will use during emulation
+    // # 0: Japanese, 1: English (default), 2: French, 3: German, 4: Italian, 5: Spanish,
+    // # 6: Simplified Chinese, 7: Korean, 8: Dutch, 9: Portuguese, 10: Russian, 11: Traditional Chinese
+    static var languageOption: CoreOption {
+        .enumeration(.init(title: "System Region",
+                           description: "The system language that 3DS will use during emulation.",
+                           requiresRestart: true),
+                     values: [
+                        .init(title: "Japanese", value: 0),
+                        .init(title: "English", value: 1),
+                        .init(title: "French", value: 2),
+                        .init(title: "German", value: 3),
+                        .init(title: "Italian", value: 4),
+                        .init(title: "Spanish", value: 5),
+                        .init(title: "Simplified Chinese", value: 6),
+                        .init(title: "Korean", value: 7),
+                        .init(title: "Dutch", value: 8),
+                        .init(title: "Portuguese", value: 9),
+                        .init(title: "Russian", value: 10),
+                        .init(title: "Traditional Chinese", value: 11),
+                     ],
+                     defaultValue: 1)
+    }
+    /*
+     eNearest  = VK_FILTER_NEAREST,
+     eLinear   = VK_FILTER_LINEAR,
+     eCubicIMG = VK_FILTER_CUBIC_IMG,
+     eCubicEXT = VK_FILTER_CUBIC_EXT
+     */
+    static var filterModeOption: CoreOption {
+        .enumeration(.init(title: "System Region",
+                           description: "The preferred language for multi-language supported games.",
+                           requiresRestart: true),
+                     values: [
+                        .init(title: "None", description: " No filters will be applied.", value: -1),
+                        .init(title: "Nearest", description: "", value: 0),
+                        .init(title: "Linear", description: "", value: 1),
+                        .init(title: "Cubic Image", description: "", value: 2),
+                        .init(title: "Cubic Extension", description: "", value: 3),
                      ],
                      defaultValue: -1)
     }
@@ -342,11 +388,13 @@ extension PVEmuThreeCoreOptions {
     @objc public static var enableAsyncPresent: Int { valueForOption(PVEmuThreeCoreOptions.enableAsyncPresentOption)  }
     @objc public static var shaderType: Int { valueForOption(PVEmuThreeCoreOptions.shaderTypeOption)  }
     @objc public static var region: Int { valueForOption(PVEmuThreeCoreOptions.regionOption)  }
+    @objc public static var language: Int { valueForOption(PVEmuThreeCoreOptions.languageOption)  }
     @objc public static var enableVSync: Bool { valueForOption(PVEmuThreeCoreOptions.enableVSyncOption) }
     @objc public static var realtimeAudio: Bool { valueForOption(PVEmuThreeCoreOptions.realtimeAudioOption) }
     @objc public static var enableShaderAccurateMul: Bool { valueForOption(PVEmuThreeCoreOptions.enableShaderAccurateMulOption) }
     @objc public static var enableShaderJIT: Bool { valueForOption(PVEmuThreeCoreOptions.enableShaderJITOption) }
     @objc public static var inputType: Int { valueForOption(PVEmuThreeCoreOptions.inputTypeOption) }
+    @objc public static var filterMode: Int { valueForOption(PVEmuThreeCoreOptions.filterModeOption)  }
 
      // TODO: Finish this with the rest of the options if wanted
 }
@@ -366,6 +414,7 @@ extension PVEmuThreeCoreOptions {
         self.asyncPresent = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableAsyncPresentOption).asBool
         self.shaderType = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.shaderTypeOption).asInt ?? 2).int8Value
         self.region = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.regionOption).asInt ?? -1).int8Value
+        self.language = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.languageOption).asInt ?? 1).int8Value
         self.enableVSync = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableVSyncOption).asBool
         self.enableShaderAccurate = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableShaderAccurateMulOption).asBool
         self.enableShaderJIT = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableShaderJITOption).asBool
@@ -376,6 +425,7 @@ extension PVEmuThreeCoreOptions {
         self.volume = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.volumeOption).asInt ?? 100).int8Value
         self.swapScreen = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.swapScreenOption).asBool
         self.uprightScreen = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.uprightScreenOption).asBool
+        self.filterMode = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.filterModeOption).asInt ?? -1).int8Value
         self.preloadTextures = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.preloadTextuesOption).asBool
         self.customTextures = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.customTexturesOption).asBool
         self.stereoRender = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.stereoRenderOption).asInt ?? 0).int8Value
