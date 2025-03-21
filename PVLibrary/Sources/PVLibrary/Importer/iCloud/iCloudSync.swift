@@ -922,6 +922,9 @@ class RomsSyncer: iCloudContainerSyncer {
             multiFileRoms[multiKey] = files
         } else {
             newFiles.insert(file)
+        }//TODO: is this necessary? if not what is causing the high memory usage on initial import for large libraries
+        if newFiles.count >= fileImportQueueMaxCount {
+            handleImportNewRomFiles()
         }
     }
     
@@ -1008,6 +1011,7 @@ class RomsSyncer: iCloudContainerSyncer {
             return
         }
         if initialImportStatus.peek() == .notInitiated {
+            DLOG("setting initial import status to \(FinalInitialGameImportStatus.alreadyInitiated)")
             initialImportStatus.dequeue()
             initialImportStatus.enqueue(entry: .alreadyInitiated)
         }
