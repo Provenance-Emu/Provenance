@@ -576,4 +576,10 @@ void CreateProfile(std::string name);
 void DeleteProfile(int index);
 void RenameCurrentProfile(std::string new_name);
 
+extern bool is_temporary_frame_limit;
+extern double temporary_frame_limit;
+static inline double GetFrameLimit() {
+    return is_temporary_frame_limit ? temporary_frame_limit : values.frame_limit.GetValue();
+}
+
 } // namespace Settings

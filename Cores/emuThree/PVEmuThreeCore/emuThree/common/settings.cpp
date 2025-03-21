@@ -74,6 +74,8 @@ std::string_view GetTextureFilterName(TextureFilter filter) {
 
 Values values = {};
 static bool configuring_global = true;
+bool is_temporary_frame_limit;
+double temporary_frame_limit;
 
 void Apply() {
     GDBStub::SetServerPort(values.gdbstub_port.GetValue());

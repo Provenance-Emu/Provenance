@@ -167,21 +167,42 @@ void Swapchain::FindPresentFormat() {
     LOG_CRITICAL(Render_Vulkan, "Unable to find required swapchain format!");
     UNREACHABLE();
 }
-
 void Swapchain::SetPresentMode() {
+    const auto modes = instance.GetPhysicalDevice().getSurfacePresentModesKHR(surface);
+    const bool use_vsync = Settings::values.use_vsync_new.GetValue();
+    const auto find_mode = [&modes](vk::PresentModeKHR requested) {
+        const auto it =
+            std::find_if(modes.begin(), modes.end(),
+                         [&requested](vk::PresentModeKHR mode) { return mode == requested; });
+
+        return it != modes.end();
+    };
+
     present_mode = vk::PresentModeKHR::eFifo;
-    if (!Settings::values.use_vsync_new) {
-        const auto modes = instance.GetPhysicalDevice().getSurfacePresentModesKHR(surface);
-        const auto find_mode = [&modes](vk::PresentModeKHR requested) {
-            auto it =
-                std::find_if(modes.begin(), modes.end(),
-                             [&requested](vk::PresentModeKHR mode) { return mode == requested; });
+    const bool has_immediate = find_mode(vk::PresentModeKHR::eImmediate);
+    const bool has_mailbox = find_mode(vk::PresentModeKHR::eMailbox);
+    if (!has_immediate && !has_mailbox) {
+        LOG_WARNING(Render_Vulkan, "Forcing Fifo present mode as no alternatives are available");
+        return;
+    }
 
-            return it != modes.end();
-        };
-
-        const bool has_mailbox = find_mode(vk::PresentModeKHR::eMailbox);
+    // If the user has disabled vsync use immediate mode for the least latency.
+    // This may have screen tearing.
+    if (!use_vsync) {
+        present_mode =
+            has_immediate ? vk::PresentModeKHR::eImmediate : vk::PresentModeKHR::eMailbox;
+        return;
+    }
+    // If vsync is enabled attempt to use mailbox mode in case the user wants to speedup/slowdown
+    // the game. If mailbox is not available use immediate and warn about it.
+    if (use_vsync && Settings::GetFrameLimit() > 100) {
         present_mode = has_mailbox ? vk::PresentModeKHR::eMailbox : vk::PresentModeKHR::eImmediate;
+        if (!has_mailbox) {
+            LOG_WARNING(
+                Render_Vulkan,
+                "Vsync enabled while frame limiting and no mailbox support, expect tearing");
+        }
+        return;
     }
 }
 
