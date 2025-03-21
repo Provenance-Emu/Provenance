@@ -142,6 +142,7 @@ void LogSettings() {
 
     LOG_INFO(Config, "Citra Configuration:");
     log_setting("Core_UseCpuJit", values.use_cpu_jit.GetValue());
+    log_setting("Core_UseBlockBasedOptimization", values.use_block_based_optimization.GetValue());
     log_setting("Core_CPUClockPercentage", values.cpu_clock_percentage.GetValue());
     log_setting("Renderer_UseGLES", values.use_gles.GetValue());
     log_setting("Renderer_GraphicsAPI", GetGraphicsAPIName(values.graphics_api.GetValue()));
