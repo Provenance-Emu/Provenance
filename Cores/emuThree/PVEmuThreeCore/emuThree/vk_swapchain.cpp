@@ -13,6 +13,11 @@
 #include "video_core/renderer_vulkan/vk_scheduler.h"
 #include "video_core/renderer_vulkan/vk_swapchain.h"
 
+// Turn on PRESENT_WAIT_IDLE to wait for all operations to complete before presenting.
+// This helps avoid timing issues with Metal's command buffer scheduling
+// Set to 1 to enable, 0 to disable @JoeMatt
+#define PRESENT_WAIT_IDLE 0
+
 MICROPROFILE_DEFINE(Vulkan_Acquire, "Vulkan", "Swapchain Acquire", MP_RGB(185, 66, 245));
 MICROPROFILE_DEFINE(Vulkan_Present, "Vulkan", "Swapchain Present", MP_RGB(66, 185, 245));
 
@@ -125,7 +130,7 @@ void Swapchain::Present() {
 
     MICROPROFILE_SCOPE(Vulkan_Present);
     try {
-#if defined(__APPLE__)
+#if defined(__APPLE__) && PRESENT_WAIT_IDLE
         // On MoltenVK, make sure we wait for all operations to complete before presenting
         // This helps avoid timing issues with Metal's command buffer scheduling
         instance.GetPresentQueue().waitIdle();
