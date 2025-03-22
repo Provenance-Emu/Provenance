@@ -647,9 +647,9 @@ class SaveStateSyncer: iCloudContainerSyncer {
                         else {
                             return
                         }
-                        //fileManager.fileExists(atPath: file.url!.appendingPathExtension("json").pathDecoded)
                         let saveUrl = url.appendingPathExtension("json").pathDecoded
                         if !fileManager.fileExists(atPath: saveUrl) {
+                            ILOG("save: \(saveUrl) does NOT exist, removing from datastore")
                             realm.delete(save)
                         }
                     }
@@ -692,6 +692,10 @@ class SaveStateSyncer: iCloudContainerSyncer {
             else {
                 return
             }
+            ILOG("""
+            removing save: \(partialPath)
+            full file: \(file)
+            """)
             try realm.write {
                 realm.delete(save)
             }
@@ -877,7 +881,6 @@ class RomsSyncer: iCloudContainerSyncer {
             }
             
             let romsPath = actualDocumentsUrl.appendingPathComponent(romsDirectoryName)
-            DLOG("romsPath: \(romsPath)")
             let realm: Realm
             do {
                 realm = try Realm()
@@ -887,12 +890,17 @@ class RomsSyncer: iCloudContainerSyncer {
             }
             RomDatabase.gamesCache.forEach { (_, game: PVGame) in
                 let gameUrl = romsPath.appendingPathComponent(game.romPath)
-                guard fileManager.fileExists(atPath: gameUrl.pathDecoded)
+                DLOG("""
+                rom partial path: \(game.romPath)
+                full game URL: \(gameUrl)
+                """)
+                guard !fileManager.fileExists(atPath: gameUrl.pathDecoded)
                 else {
                     return
                 }
                 do {
                     if let gameToDelete = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) {
+                        ILOG("\(gameUrl) does NOT exists, removing from datastore")
                         try realm.deleteGame(gameToDelete)
                     }
                 } catch {
@@ -986,7 +994,7 @@ class RomsSyncer: iCloudContainerSyncer {
             else {
                 return
             }
-            
+            ILOG("deleting \(file) from datastore")
             try realm.deleteGame(game)
         } catch {
             errorHandler.handleError(error, file: file)

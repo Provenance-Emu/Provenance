@@ -442,22 +442,15 @@ public final class GameImporter: GameImporting, ObservableObject {
     ///   - files: set of files to check
     ///   - newFiles: for anything that failed or is partial, ie missing files, we readd to the set so it can be reprocessed after some time
     public func removeSuccessfulImports(from files: inout ConcurrentSet<URL>, andReaddUnprocessed newFiles: inout ConcurrentSet<URL>) {
-         guard !files.isEmpty
-         else {
-             return
-         }
          importQueueLock.lock()
          defer {
              importQueueLock.unlock()
          }
          let offsets = IndexSet(importQueue.enumerated().compactMap { index, item in
-             guard files.contains(item.url)
-             else {
-                 return nil
-             }
              if item.status == .success {
+                 files.remove(item.url)
                  return index
-             } else if item.status == .partial || item.status == .failure {
+             } else if files.contains(item.url) && (item.status == .partial || item.status == .failure) {
                  files.remove(item.url)
                  newFiles.insert(item.url)
                  return index
