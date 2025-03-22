@@ -20,6 +20,31 @@ import RealmSwift
     private init() {}
 }
 
+actor FileOperationTasks {
+    private var fileOperationTasks = Set<Task<Void, Never>>()
+    
+    func insert(_ item: Task<Void, Never>) {
+        fileOperationTasks.insert(item)
+    }
+    
+    func remove(_ item: Task<Void, Never>) {
+        fileOperationTasks.remove(item)
+    }
+    
+    func removeAll() {
+        fileOperationTasks.removeAll()
+    }
+    
+    /// Cancels all ongoing file operation tasks
+    func cancelAllFileOperations() {
+        for task in fileOperationTasks {
+            task.cancel()
+        }
+        fileOperationTasks.removeAll()
+    }
+    
+}
+
 @Perceptible
 public final class BIOSWatcher: ObservableObject {
     public static let shared = BIOSWatcher()
@@ -29,7 +54,7 @@ public final class BIOSWatcher: ObservableObject {
     private var newBIOSFilesContinuation: AsyncStream<[URL]>.Continuation?
 
     /// Task group for managing concurrent file operations
-    private var fileOperationTasks = Set<Task<Void, Never>>()
+    private var fileOperationTasks = FileOperationTasks()
 
     /// Serial queue for file operations that need to be sequential
     private let fileOperationQueue = DispatchQueue(label: "com.provenance.biosWatcher.fileOperations", qos: .utility)
@@ -63,8 +88,10 @@ public final class BIOSWatcher: ObservableObject {
             directoryWatcher = nil
         }
 
-        // Cancel any ongoing file operation tasks
-        cancelAllFileOperations()
+        Task {
+            // Cancel any ongoing file operation tasks
+            await fileOperationTasks.cancelAllFileOperations()
+        }
 
         // Watch BIOS directory and its subdirectories, but exclude sibling directories
         let options = DirectoryWatcherOptions(
@@ -120,14 +147,6 @@ public final class BIOSWatcher: ObservableObject {
                 ELOG("Failed to create BIOS directory for system \(system.rawValue): \(error)")
             }
         }
-    }
-
-    /// Cancels all ongoing file operation tasks
-    private func cancelAllFileOperations() {
-        for task in fileOperationTasks {
-            task.cancel()
-        }
-        fileOperationTasks.removeAll()
     }
 
     /// Scans for BIOS files and updates database entries
@@ -324,12 +343,12 @@ public final class BIOSWatcher: ObservableObject {
             }
 
             // Store the task for potential cancellation
-            fileOperationTasks.insert(task)
+            await fileOperationTasks.insert(task)
 
             // Set up cleanup when task completes
             Task {
                 await task.value
-                self.fileOperationTasks.remove(task)
+                await self.fileOperationTasks.remove(task)
             }
         }
     }
@@ -383,7 +402,9 @@ public final class BIOSWatcher: ObservableObject {
         directoryWatcher = nil
         directoryWatchingTask?.cancel()
         directoryWatchingTask = nil
-        cancelAllFileOperations()
+        Task {
+            await fileOperationTasks.cancelAllFileOperations()
+        }
         setupDirectoryWatcher()
     }
 
@@ -483,12 +504,12 @@ public final class BIOSWatcher: ObservableObject {
         }
 
         // Store the task for potential cancellation
-        fileOperationTasks.insert(task)
+        await fileOperationTasks.insert(task)
 
         // Set up cleanup when task completes
         Task {
             await task.value
-            self.fileOperationTasks.remove(task)
+            await self.fileOperationTasks.remove(task)
         }
     }
 
@@ -515,22 +536,25 @@ public final class BIOSWatcher: ObservableObject {
         let task = Task.detached(priority: .utility) {
             await self.processBIOSFiles([fileURL])
         }
-
-        // Store the task for potential cancellation
-        fileOperationTasks.insert(task)
-
-        // Set up cleanup when task completes
         Task {
-            await task.value
-            self.fileOperationTasks.remove(task)
+            // Store the task for potential cancellation
+            await fileOperationTasks.insert(task)
+            
+            // Set up cleanup when task completes
+            Task {
+                await task.value
+                await self.fileOperationTasks.remove(task)
+            }
         }
     }
 
     deinit {
+        Task {
+            await fileOperationTasks.cancelAllFileOperations()
+        }
         // Clean up resources
         directoryWatcher?.stopMonitoring()
         directoryWatchingTask?.cancel()
-        cancelAllFileOperations()
         NotificationCenter.default.removeObserver(self)
     }
 }

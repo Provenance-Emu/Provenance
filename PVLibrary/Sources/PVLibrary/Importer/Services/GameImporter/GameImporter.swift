@@ -436,6 +436,36 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         importQueue.remove(atOffsets: offsets)
     }
+    
+    /// Searches for successful imports filtered by files and removes from importQueue and files. This is so that only files imported by iCloud can be removed
+    /// - Parameters:
+    ///   - files: set of files to check
+    ///   - newFiles: for anything that failed or is partial, ie missing files, we readd to the set so it can be reprocessed after some time
+    public func removeSuccessfulImports(from files: inout ConcurrentSet<URL>, andReaddUnprocessed newFiles: inout ConcurrentSet<URL>) {
+         guard !files.isEmpty
+         else {
+             return
+         }
+         importQueueLock.lock()
+         defer {
+             importQueueLock.unlock()
+         }
+         let offsets = IndexSet(importQueue.enumerated().compactMap { index, item in
+             guard files.contains(item.url)
+             else {
+                 return nil
+             }
+             if item.status == .success {
+                 return index
+             } else if item.status == .partial || item.status == .failure {
+                 files.remove(item.url)
+                 newFiles.insert(item.url)
+                 return index
+             }
+             return nil
+         })
+         importQueue.remove(atOffsets: offsets)
+     }
 
     // Public method to manually start processing if needed
     public func startProcessing() {
@@ -678,18 +708,21 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     // Processes each ImportItem in the queue sequentially
     private func processQueue() async {
+        defer {
+            DispatchQueue.main.async {
+                // Only change to idle if we're not paused
+                if self.processingState != .paused {
+                    self.processingState = .idle
+                }
+                NotificationCenter.default.post(Notification(name: .RomsFinishedImporting))
+            }
+        }
         // Check for items that are either queued or have a user-chosen system
         let itemsToProcess = importQueue.filter {
             $0.status == .queued || $0.userChosenSystem != nil
         }
 
         guard !itemsToProcess.isEmpty else {
-            DispatchQueue.main.async {
-                // Only change to idle if we're not paused
-                if self.processingState != .paused {
-                    self.processingState = .idle
-                }
-            }
             return
         }
 
@@ -716,12 +749,6 @@ public final class GameImporter: GameImporting, ObservableObject {
             await processItem(item)
         }
 
-        DispatchQueue.main.async {
-            // Only change to idle if we're not paused
-            if self.processingState != .paused {
-                self.processingState = .idle
-            }
-        }
         ILOG("GameImportQueue - processQueue complete Import Processing")
     }
 
