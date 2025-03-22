@@ -40,7 +40,7 @@ enum class LayoutOption : u32 {
     // Similiar to default, but better for mobile devices in portrait mode. Top screen in clamped to
     // the top of the frame, and the bottom screen is enlarged to match the top screen.
     MobilePortrait,
-
+    
     // Similiar to LargeScreen, but better for mobile devices in landscape mode. The screens are
     // clamped to the top of the frame, and the bottom screen is a bit bigger.
     MobileLandscape,
@@ -94,12 +94,12 @@ enum Values {
     Select,
     Debug,
     Gpio14,
-
+    
     ZL,
     ZR,
-
+    
     Home,
-
+    
     NumButtons,
 };
 
@@ -159,7 +159,7 @@ template <typename Type, bool ranged = false>
 class Setting {
 protected:
     Setting() = default;
-
+    
     /**
      * Only sets the setting to the given initializer, leaving the other members to their default
      * initializers.
@@ -167,7 +167,7 @@ protected:
      * @param global_val Initial value of the setting
      */
     explicit Setting(const Type& val) : value{val} {}
-
+    
 public:
     /**
      * Sets a default value, label, and setting value.
@@ -176,9 +176,9 @@ public:
      * @param name Label for the setting
      */
     explicit Setting(const Type& default_val, const std::string& name) requires(!ranged)
-        : value{default_val}, default_value{default_val}, label{name} {}
+    : value{default_val}, default_value{default_val}, label{name} {}
     virtual ~Setting() = default;
-
+    
     /**
      * Sets a default value, minimum value, maximum value, and label.
      *
@@ -189,9 +189,9 @@ public:
      */
     explicit Setting(const Type& default_val, const Type& min_val, const Type& max_val,
                      const std::string& name) requires(ranged)
-        : value{default_val},
-          default_value{default_val}, maximum{max_val}, minimum{min_val}, label{name} {}
-
+    : value{default_val},
+    default_value{default_val}, maximum{max_val}, minimum{min_val}, label{name} {}
+    
     /**
      *  Returns a reference to the setting's value.
      *
@@ -200,7 +200,7 @@ public:
     [[nodiscard]] virtual const Type& GetValue() const {
         return value;
     }
-
+    
     /**
      * Sets the setting to the given value.
      *
@@ -210,7 +210,7 @@ public:
         Type temp{ranged ? std::clamp(val, minimum, maximum) : val};
         std::swap(value, temp);
     }
-
+    
     /**
      * Returns the value that this setting was created with.
      *
@@ -219,7 +219,7 @@ public:
     [[nodiscard]] const Type& GetDefault() const {
         return default_value;
     }
-
+    
     /**
      * Returns the label this setting was created with.
      *
@@ -228,7 +228,7 @@ public:
     [[nodiscard]] const std::string& GetLabel() const {
         return label;
     }
-
+    
     /**
      * Assigns a value to the setting.
      *
@@ -241,7 +241,7 @@ public:
         std::swap(value, temp);
         return value;
     }
-
+    
     /**
      * Returns a reference to the setting.
      *
@@ -250,7 +250,7 @@ public:
     explicit virtual operator const Type&() const {
         return value;
     }
-
+    
 protected:
     Type value{};               ///< The setting
     const Type default_value{}; ///< The default value
@@ -277,9 +277,9 @@ public:
      * @param name Label for the setting
      */
     explicit SwitchableSetting(const Type& default_val, const std::string& name) requires(!ranged)
-        : Setting<Type>{default_val, name} {}
+    : Setting<Type>{default_val, name} {}
     virtual ~SwitchableSetting() = default;
-
+    
     /**
      * Sets a default value, minimum value, maximum value, and label.
      *
@@ -290,8 +290,8 @@ public:
      */
     explicit SwitchableSetting(const Type& default_val, const Type& min_val, const Type& max_val,
                                const std::string& name) requires(ranged)
-        : Setting<Type, true>{default_val, min_val, max_val, name} {}
-
+    : Setting<Type, true>{default_val, min_val, max_val, name} {}
+    
     /**
      * Tells this setting to represent either the global or custom setting when other member
      * functions are used.
@@ -301,7 +301,7 @@ public:
     void SetGlobal(bool to_global) {
         use_global = to_global;
     }
-
+    
     /**
      * Returns whether this setting is using the global setting or not.
      *
@@ -310,7 +310,7 @@ public:
     [[nodiscard]] bool UsingGlobal() const {
         return use_global;
     }
-
+    
     /**
      * Returns either the global or custom setting depending on the values of this setting's global
      * state or if the global value was specifically requested.
@@ -331,7 +331,7 @@ public:
         }
         return custom;
     }
-
+    
     /**
      * Sets the current setting value depending on the global state.
      *
@@ -345,7 +345,7 @@ public:
             std::swap(custom, temp);
         }
     }
-
+    
     /**
      * Assigns the current setting value depending on the global state.
      *
@@ -362,7 +362,7 @@ public:
         std::swap(custom, temp);
         return custom;
     }
-
+    
     /**
      * Returns the current setting value depending on the global state.
      *
@@ -374,7 +374,7 @@ public:
         }
         return custom;
     }
-
+    
 protected:
     bool use_global{true}; ///< The setting's global state
     Type custom{};         ///< The custom value of the setting
@@ -408,18 +408,18 @@ struct Values {
     int current_input_profile_index;          ///< The current input profile index
     std::vector<InputProfile> input_profiles; ///< The list of input profiles
     std::vector<TouchFromButtonMap> touch_from_button_maps;
-
+    
     // Core
     Setting<bool> use_cpu_jit{true, "use_cpu_jit"};
     Setting<bool> use_block_based_optimization{true, "use_block_based_optimization"};
     // 0 is a special value for auto mode, normal range is 5-400%
     SwitchableSetting<s32, true> cpu_clock_percentage{100, 0, 400, "cpu_clock_percentage"};
     SwitchableSetting<bool> is_new_3ds{true, "is_new_3ds"};
-
+    
     // Data Storage
     Setting<bool> use_virtual_sd{true, "use_virtual_sd"};
     Setting<bool> use_custom_storage{false, "use_custom_storage"};
-
+    
     // System
     SwitchableSetting<s32> region_value{REGION_VALUE_AUTO_SELECT, "region_value"};
     Setting<InitClock> init_clock{InitClock::SystemTime, "init_clock"};
@@ -427,10 +427,10 @@ struct Values {
     Setting<s64> init_time_offset{0, "init_time_offset"};
     Setting<bool> plugin_loader_enabled{false, "plugin_loader"};
     Setting<bool> allow_plugin_loader{true, "allow_plugin_loader"};
-
+    
     // Renderer
     SwitchableSetting<GraphicsAPI, true> graphics_api{GraphicsAPI::OpenGL, GraphicsAPI::Software,
-                                                      GraphicsAPI::Vulkan, "graphics_api"};
+        GraphicsAPI::Vulkan, "graphics_api"};
     SwitchableSetting<u32> physical_device{0, "physical_device"};
     Setting<bool> use_gles{false, "use_gles"};
     Setting<bool> renderer_debug{false, "renderer_debug"};
@@ -447,12 +447,12 @@ struct Values {
     SwitchableSetting<u32, true> resolution_factor{1, 0, 10, "resolution_factor"};
     SwitchableSetting<u16, true> frame_limit{100, 0, 1000, "frame_limit"};
     SwitchableSetting<TextureFilter> texture_filter{TextureFilter::None, "texture_filter"};
-
+    
     SwitchableSetting<LayoutOption> layout_option{LayoutOption::Default, "layout_option"};
     SwitchableSetting<bool> swap_screen{false, "swap_screen"};
     SwitchableSetting<bool> upright_screen{false, "upright_screen"};
     SwitchableSetting<float, true> large_screen_proportion{4.f, 1.f, 16.f,
-                                                           "large_screen_proportion"};
+        "large_screen_proportion"};
     Setting<bool> custom_layout{false, "custom_layout"};
     Setting<u16> custom_top_left{0, "custom_top_left"};
     Setting<u16> custom_top_top{0, "custom_top_top"};
@@ -463,29 +463,29 @@ struct Values {
     Setting<u16> custom_bottom_right{360, "custom_bottom_right"};
     Setting<u16> custom_bottom_bottom{480, "custom_bottom_bottom"};
     Setting<u16> custom_second_layer_opacity{100, "custom_second_layer_opacity"};
-
+    
     SwitchableSetting<float> bg_red{0.f, "bg_red"};
     SwitchableSetting<float> bg_green{0.f, "bg_green"};
     SwitchableSetting<float> bg_blue{0.f, "bg_blue"};
-
+    
     SwitchableSetting<StereoRenderOption> render_3d{StereoRenderOption::Off, "render_3d"};
     SwitchableSetting<u32> factor_3d{0, "factor_3d"};
     SwitchableSetting<MonoRenderOption> mono_render_option{MonoRenderOption::LeftEye,
-                                                           "mono_render_option"};
-
+        "mono_render_option"};
+    
     Setting<u32> cardboard_screen_size{85, "cardboard_screen_size"};
     Setting<s32> cardboard_x_shift{0, "cardboard_x_shift"};
     Setting<s32> cardboard_y_shift{0, "cardboard_y_shift"};
-
+    
     SwitchableSetting<bool> filter_mode{true, "filter_mode"};
     SwitchableSetting<std::string> pp_shader_name{"none (builtin)", "pp_shader_name"};
     SwitchableSetting<std::string> anaglyph_shader_name{"dubois (builtin)", "anaglyph_shader_name"};
-
+    
     SwitchableSetting<bool> dump_textures{false, "dump_textures"};
     SwitchableSetting<bool> custom_textures{false, "custom_textures"};
     SwitchableSetting<bool> preload_textures{false, "preload_textures"};
     SwitchableSetting<bool> async_custom_loading{true, "async_custom_loading"};
-
+    
     // Audio
     bool audio_muted;
     SwitchableSetting<AudioEmulation> audio_emulation{AudioEmulation::HLE, "audio_emulation"};
@@ -496,23 +496,23 @@ struct Values {
     Setting<std::string> output_device{"auto", "output_device"};
     Setting<AudioCore::InputType> input_type{AudioCore::InputType::CoreAudio, "input_type"};
     Setting<std::string> input_device{"auto", "input_device"};
-
+    
     // Camera
     std::array<std::string, Service::CAM::NumCameras> camera_name;
     std::array<std::string, Service::CAM::NumCameras> camera_config;
     std::array<int, Service::CAM::NumCameras> camera_flip;
-
+    
     // Debugging
     bool record_frame_times;
     std::unordered_map<std::string, bool> lle_modules;
     Setting<bool> use_gdbstub{false, "use_gdbstub"};
     Setting<u16> gdbstub_port{24689, "gdbstub_port"};
-
+    
     // buttons
     bool buttons_initialized = false;
     bool home_button_initialized = false;
     bool extra_buttons_initialized = false;
-
+    
     bool skip_buttons = false;
     bool skip_home_button = false;
     bool skip_extra_buttons = false;
@@ -548,11 +548,11 @@ struct Values {
     // Video Dumping
     std::string output_format;
     std::string format_options;
-
+    
     std::string video_encoder;
     std::string video_encoder_options;
     u64 video_bitrate;
-
+    
     std::string audio_encoder;
     std::string audio_encoder_options;
     u64 audio_bitrate;
@@ -580,6 +580,10 @@ void RenameCurrentProfile(std::string new_name);
 
 extern bool is_temporary_frame_limit;
 extern double temporary_frame_limit;
+static inline void ResetTemporaryFrameLimit() {
+    is_temporary_frame_limit = false;
+    temporary_frame_limit = 0;
+}
 static inline double GetFrameLimit() {
     return is_temporary_frame_limit ? temporary_frame_limit : values.frame_limit.GetValue();
 }
