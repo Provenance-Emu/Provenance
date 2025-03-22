@@ -828,17 +828,11 @@ enum GameStatus {
     case gameDoesNotExist
 }
 
-enum FinalInitialGameImportStatus {
-    case alreadyInitiated
-    case notInitiated
-}
-
 class RomsSyncer: iCloudContainerSyncer {
     let gameImporter = GameImporter.shared
     var processingFiles: ConcurrentSet<URL> = []
     let multiFileRoms: ConcurrentDictionary<String, [URL]> = [:]
     var romsDatabaseSubscriber: AnyCancellable?
-//    var initialImportStatus: ConcurrentQueue<FinalInitialGameImportStatus> = [.notInitiated]
     var previousProcessingCount: ConcurrentQueue<Int> = [0]
     override var downloadedCount: Int {
         newFiles.count + multiFileRoms.count
@@ -1011,7 +1005,6 @@ class RomsSyncer: iCloudContainerSyncer {
         removeGamesDeletedWhileApplicationClosed()
         guard !newFiles.isEmpty
                 || (!multiFileRoms.isEmpty && pendingFilesToDownload.isEmpty)
-//                || newFiles.isEmpty && pendingFilesToDownload.isEmpty && initialImportStatus.peek() == .notInitiated
                 || processingFiles.count > 0 && previousProcessingCount.peek() != processingFiles.count
         else {
             return
@@ -1032,11 +1025,6 @@ class RomsSyncer: iCloudContainerSyncer {
         else {
             return
         }
-        /*if initialImportStatus.peek() == .notInitiated {
-            DLOG("setting initial import status to \(FinalInitialGameImportStatus.alreadyInitiated)")
-            initialImportStatus.dequeue()
-            initialImportStatus.enqueue(entry: .alreadyInitiated)
-        }*/
         importNewRomFiles()
     
     }
