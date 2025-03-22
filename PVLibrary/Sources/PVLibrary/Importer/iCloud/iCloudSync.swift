@@ -67,7 +67,6 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     let errorHandler: ErrorHandler
     var initialSyncResult: SyncResult = .indeterminate
     var fileImportQueueMaxCount = 1000
-    var fileImportQueueMinCount = 100
     var purgeStatus: DatastorePurgeStatus = .incomplete
     private var querySubscriber: AnyCancellable?
     //TODO: switch to actor
@@ -668,9 +667,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
         }
         ILOG("downloaded save file: \(file)")
         newFiles.insert(file)
-        if newFiles.count >= fileImportQueueMinCount {
-            importNewSaves()
-        }
+        importNewSaves()
     }
     
     override func deleteFromDatastore(_ file: URL) {
@@ -932,9 +929,7 @@ class RomsSyncer: iCloudContainerSyncer {
         } else {
             newFiles.insert(file)
         }
-        if newFiles.count >= fileImportQueueMinCount {
-            handleImportNewRomFiles()
-        }
+        handleImportNewRomFiles()
     }
     
     /// Checks if game exists in game cache
