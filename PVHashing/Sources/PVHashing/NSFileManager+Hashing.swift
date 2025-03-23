@@ -3,19 +3,10 @@ import Foundation
 import PVLogging
 
 extension FileManager: MD5Provider {
-    public func md5ForFile(atPath path: String, fromOffset offset: UInt = 0) -> String? {
+    public func md5ForFile(at url: URL, fromOffset offset: UInt = 0) -> String? {
         #if LEGACY_MD5
-        guard let url = URL(string: path) else {
-            ELOG("File path URL invalid")
-            return nil
-        }
         return url.checksum(algorithm: .md5, fromOffset: offset)
         #else
-        guard let url = URL(string: path) else {
-            print("Error: File path URL invalid")
-            return nil
-        }
-
         do {
             let md5Hash = try calculateMD5Synchronously(of: url, startingAt: UInt64(offset))
             VLOG("MD5 Hash: \(md5Hash)")
