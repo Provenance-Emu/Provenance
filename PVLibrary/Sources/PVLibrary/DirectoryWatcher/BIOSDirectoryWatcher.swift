@@ -20,22 +20,28 @@ import RealmSwift
     private init() {}
 }
 
+/// Actor to prevent crash when mutating and another thread is accessing
 actor FileOperationTasks {
     private var fileOperationTasks = Set<Task<Void, Never>>()
     
+    /// inserts item into set
+    /// - Parameter item: item to insert
     func insert(_ item: Task<Void, Never>) {
         fileOperationTasks.insert(item)
     }
     
+    /// removes item from set
+    /// - Parameter item: item to remove
     func remove(_ item: Task<Void, Never>) {
         fileOperationTasks.remove(item)
     }
     
+    /// clears set
     func removeAll() {
         fileOperationTasks.removeAll()
     }
     
-    /// Cancels all ongoing file operation tasks
+    /// Cancels all ongoing file operation tasks and clears set after
     func cancelAllFileOperations() {
         for task in fileOperationTasks {
             task.cancel()
