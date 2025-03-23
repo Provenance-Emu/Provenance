@@ -120,7 +120,7 @@ public extension PVFile {
             }
             guard let url = url else { return nil }
             // Lazy make MD5
-            guard let calculatedMD5 = FileManager.default.md5ForFile(at: path, fromOffset: 0) else {
+            guard let calculatedMD5 = FileManager.default.md5ForFile(at: url, fromOffset: 0) else {
                 ELOG("calculatedMD5 nil")
                 return nil
             }
