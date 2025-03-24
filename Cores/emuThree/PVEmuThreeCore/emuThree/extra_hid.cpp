@@ -4,11 +4,11 @@
 
 // Local Changes: Check for isReloaded/isInitialized state
 
+#include <fmt/format.h>
 #include "common/alignment.h"
 #include "common/settings.h"
-#include "common/string_util.h"
-#include "core/core.h"
 #include "core/core_timing.h"
+#include "core/hle/service/hid/hid.h"
 #include "core/hle/service/ir/extra_hid.h"
 #include "core/movie.h"
 
@@ -207,12 +207,11 @@ void ExtraHID::HandleReadCalibrationDataRequest(std::span<const u8> request_buf)
         return;
     }
 
-    std::vector<u8> response(5);
+    std::vector<u8> response(5 + size);
     response[0] = static_cast<u8>(ResponseID::ReadCalibrationData);
     std::memcpy(&response[1], &request.offset, sizeof(request.offset));
     std::memcpy(&response[3], &request.size, sizeof(request.size));
-    response.insert(response.end(), calibration_data.begin() + offset,
-                    calibration_data.begin() + offset + size);
+    std::memcpy(&response[5], calibration_data.data() + offset, size);
     Send(response);
 }
 
@@ -231,29 +230,50 @@ void ExtraHID::OnReceive(std::span<const u8> data) {
 }
 
 void ExtraHID::SendHIDStatus() {
-    if (Settings::values.isReloading || Settings::values.skip_extra_buttons)
-        return;
-    
     if (is_device_reload_pending.exchange(false))
         LoadInputDevices();
+
+    constexpr u32 ZL_BUTTON = (1 << 14);
+    constexpr u32 ZR_BUTTON = (1 << 15);
 
     constexpr int C_STICK_CENTER = 0x800;
     // TODO(wwylele): this value is not accurately measured. We currently assume that the axis can
     // take values in the whole range of a 12-bit integer.
     constexpr int C_STICK_RADIUS = 0x7FF;
 
-    float x, y;
-    std::tie(x, y) = Settings::values.c_stick->GetStatus();
+    ExtraHIDResponse response{};
 
-    ExtraHIDResponse response;
-    response.c_stick.header.Assign(static_cast<u8>(ResponseID::PollHID));
-    response.c_stick.c_stick_x.Assign(static_cast<u32>(C_STICK_CENTER + C_STICK_RADIUS * x));
-    response.c_stick.c_stick_y.Assign(static_cast<u32>(C_STICK_CENTER + C_STICK_RADIUS * y));
-    response.buttons.battery_level.Assign(0x1F);
-    response.buttons.zl_not_held.Assign(!Settings::values.zl->GetStatus());
-    response.buttons.zr_not_held.Assign(!Settings::values.zr->GetStatus());
-    response.buttons.r_not_held.Assign(1);
-    response.unknown = 0;
+    if (artic_controller.get() && artic_controller->IsReady()) {
+        Service::HID::ArticBaseController::ControllerData data =
+            artic_controller->GetControllerData();
+
+        constexpr int MAX_CSTICK_RADIUS = 0x9C; // Max value for a c-stick radius
+
+        response.c_stick.header.Assign(static_cast<u8>(ResponseID::PollHID));
+        response.c_stick.c_stick_x.Assign(static_cast<u32>(
+            (static_cast<float>(data.c_stick_x) / MAX_CSTICK_RADIUS) * C_STICK_RADIUS +
+            C_STICK_CENTER));
+        response.c_stick.c_stick_y.Assign(static_cast<u32>(
+            (static_cast<float>(data.c_stick_y) / MAX_CSTICK_RADIUS) * C_STICK_RADIUS +
+            C_STICK_CENTER));
+        response.buttons.battery_level.Assign(0x1F);
+        response.buttons.zl_not_held.Assign((data.pad & ZL_BUTTON) == 0);
+        response.buttons.zr_not_held.Assign((data.pad & ZR_BUTTON) == 0);
+        response.buttons.r_not_held.Assign(1);
+        response.unknown = 0;
+    } else {
+        float x, y;
+        std::tie(x, y) = c_stick->GetStatus();
+
+        response.c_stick.header.Assign(static_cast<u8>(ResponseID::PollHID));
+        response.c_stick.c_stick_x.Assign(static_cast<u32>(C_STICK_CENTER + C_STICK_RADIUS * x));
+        response.c_stick.c_stick_y.Assign(static_cast<u32>(C_STICK_CENTER + C_STICK_RADIUS * y));
+        response.buttons.battery_level.Assign(0x1F);
+        response.buttons.zl_not_held.Assign(!zl->GetStatus());
+        response.buttons.zr_not_held.Assign(!zr->GetStatus());
+        response.buttons.r_not_held.Assign(1);
+        response.unknown = 0;
+    }
 
     movie.HandleExtraHidResponse(response);
 
@@ -276,6 +296,7 @@ void ExtraHID::LoadInputDevices() {
                                                                        Settings::values.current_input_profile.buttons[Settings::NativeButton::ZR]);
         Settings::values.c_stick = Input::CreateDevice<Input::AnalogDevice>(
                                                                             Settings::values.current_input_profile.analogs[Settings::NativeAnalog::CStick]);
+
         Settings::values.extra_buttons_initialized=true;
     }
 }
