@@ -208,7 +208,6 @@
 		B31A9FEE2D1FA7440085789A /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B6D2BF0AB6000F199BB /* libMoltenVK.dylib */; platformFilter = maccatalyst; };
 		B31A9FEF2D1FA7440085789A /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B6D2BF0AB6000F199BB /* libMoltenVK.dylib */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B31DDC822D82931200D6525B /* SDL2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39FAC452D6014000065B66B /* SDL2.xcframework */; };
-		B31DDD102D82C56E00D6525B /* OpenSSL in Frameworks */ = {isa = PBXBuildFile; productRef = B31DDD0F2D82C56E00D6525B /* OpenSSL */; };
 		B32111A52CBC428700BE8D6C /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B32111B12CBC42B500BE8D6C /* SpotlightImportExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */; platformFilters = (ios, maccatalyst, macos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B323B0092BF46D2800CEA3CF /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B323B0082BF46D2800CEA3CF /* PVLibrary */; };
@@ -537,6 +536,8 @@
 		B35F93E52D2F8E560016E633 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B35F93E42D2F8E560016E633 /* WhatsNewKit */; };
 		B362232F2D1A012F003CAD92 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
 		B36223302D1A0142003CAD92 /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; platformFilters = (tvos, ); };
+		B36A16042D90D2CC00420484 /* OpenSSL in Frameworks */ = {isa = PBXBuildFile; productRef = B36A16032D90D2CC00420484 /* OpenSSL */; };
+		B36A16062D90D43900420484 /* OpenSSL in Frameworks */ = {isa = PBXBuildFile; productRef = B36A16052D90D43900420484 /* OpenSSL */; };
 		B36A8D442CCD5480002357DD /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D432CCD5480002357DD /* Defaults */; };
 		B36A8D462CCD548E002357DD /* MBProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D452CCD548E002357DD /* MBProgressHUD */; };
 		B36A8D4A2CCD54C7002357DD /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D492CCD54C7002357DD /* PVUI */; };
@@ -740,7 +741,6 @@
 		B3BDD41A2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		B3BDD41B2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		B3BDD41C2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		B3BDD41D2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		B3BDD41E2D349220005F5AF9 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 54925F9AB59542258A6A5CE9 /* Sentry */; };
 		B3BDD41F2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		B3BDD4202D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
@@ -817,6 +817,8 @@
 		B3E77F902D1F5825004A3AD2 /* PVFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = B3E77F8F2D1F5825004A3AD2 /* PVFeatureFlags */; };
 		B3E77F922D1F582A004A3AD2 /* PVFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = B3E77F912D1F582A004A3AD2 /* PVFeatureFlags */; };
 		B3E77F942D1F5830004A3AD2 /* PVFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = B3E77F932D1F5830004A3AD2 /* PVFeatureFlags */; };
+		B3E881962D90C4BA00A80D83 /* PVEmuThree.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E881952D90C4BA00A80D83 /* PVEmuThree.framework */; };
+		B3E881972D90C4BA00A80D83 /* PVEmuThree.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E881952D90C4BA00A80D83 /* PVEmuThree.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E88CB82977AB4400C90E86 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B3E88CB72977AB4400C90E86 /* Reachability */; };
 		B3E88CBA2977AB5900C90E86 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B3E88CB92977AB5900C90E86 /* Reachability */; };
 		B3E88CBC2977AB6C00C90E86 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B3E88CBB2977AB6C00C90E86 /* Reachability */; };
@@ -1647,6 +1649,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B3E881972D90C4BA00A80D83 /* PVEmuThree.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2491,6 +2494,8 @@
 		B3E5DA1B2959841000907CFB /* PVBeetlePSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBeetlePSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E799EE2C92E16E007D86A6 /* PVProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E79B272C93C6C4007D86A6 /* PVProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3E881952D90C4BA00A80D83 /* PVEmuThree.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmuThree.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3E8819A2D90C4E500A80D83 /* PVEmuThree.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmuThree.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3EE4E9C2D694B630089FCB4 /* Cube.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Cube.xcodeproj; sourceTree = "<group>"; };
 		B3EE4F382D694B630089FCB4 /* MoltenVK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVK.xcodeproj; sourceTree = "<group>"; };
 		B3EE4F562D694B630089FCB4 /* MoltenVKShaderConverter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKShaderConverter.xcodeproj; sourceTree = "<group>"; };
@@ -2720,6 +2725,7 @@
 				FFMpeg/xcframeworks/libavutil.xcframework,
 				FFMpeg/xcframeworks/libswresample.xcframework,
 				FFMpeg/xcframeworks/libswscale.xcframework,
+				OpenSSL.xcframework,
 			);
 			target = B3F7E422297736C200362B92 /* Provenance-XL */;
 		};
@@ -2734,6 +2740,7 @@
 				FFMpeg/xcframeworks/libavutil.xcframework,
 				FFMpeg/xcframeworks/libswresample.xcframework,
 				FFMpeg/xcframeworks/libswscale.xcframework,
+				OpenSSL.xcframework,
 			);
 			target = 1A3D409317B2DCE4004DFFFC /* Provenance */;
 		};
@@ -2772,6 +2779,7 @@
 				FFMpeg/xcframeworks/libavutil.xcframework,
 				FFMpeg/xcframeworks/libswresample.xcframework,
 				FFMpeg/xcframeworks/libswscale.xcframework,
+				OpenSSL.xcframework,
 			);
 			target = B3F7E295297736BE00362B92 /* Provenance-Lite */;
 		};
@@ -2800,6 +2808,7 @@
 				FFMpeg/xcframeworks/libavutil.xcframework,
 				FFMpeg/xcframeworks/libswresample.xcframework,
 				FFMpeg/xcframeworks/libswscale.xcframework,
+				OpenSSL.xcframework,
 			);
 			target = 930498BE2A93073800BF257F /* Provenance-UnderDevelopment */;
 		};
@@ -2814,6 +2823,7 @@
 				FFMpeg/xcframeworks/libavutil.xcframework,
 				FFMpeg/xcframeworks/libswresample.xcframework,
 				FFMpeg/xcframeworks/libswscale.xcframework,
+				OpenSSL.xcframework,
 			);
 			target = 1AD481B31BA350A400FDA50A /* ProvenanceTV */;
 		};
@@ -2828,6 +2838,7 @@
 				FFMpeg/xcframeworks/libavutil.xcframework,
 				FFMpeg/xcframeworks/libswresample.xcframework,
 				FFMpeg/xcframeworks/libswscale.xcframework,
+				OpenSSL.xcframework,
 			);
 			target = B341FCB72BE61EC100718929 /* ProvenanceTV (AppStore) */;
 		};
@@ -2842,6 +2853,7 @@
 				FFMpeg/xcframeworks/libavutil.xcframework,
 				FFMpeg/xcframeworks/libswresample.xcframework,
 				FFMpeg/xcframeworks/libswscale.xcframework,
+				OpenSSL.xcframework,
 			);
 			target = B347B2352BC4CA98006A3B2D /* ProvennaceTV-Lite */;
 		};
@@ -3029,6 +3041,10 @@
 					CodeSignOnCopy,
 					RemoveHeadersOnCopy,
 				);
+				OpenSSL.xcframework = (
+					CodeSignOnCopy,
+					RemoveHeadersOnCopy,
+				);
 			};
 			buildPhase = B3FD98902D615CF000397643 /* Embed Frameworks */;
 			membershipExceptions = (
@@ -3039,6 +3055,7 @@
 				FFMpeg/xcframeworks/libavutil.xcframework,
 				FFMpeg/xcframeworks/libswresample.xcframework,
 				FFMpeg/xcframeworks/libswscale.xcframework,
+				OpenSSL.xcframework,
 			);
 		};
 		B3FD98A22D615D1300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
@@ -3650,6 +3667,7 @@
 				B3A477C52C941F120052500A /* PVFCEU.framework in Frameworks */,
 				B31553622CC2FD5500C472CA /* PVPPSSPP.framework in Frameworks */,
 				B35EEFD72C6C6D1A00EBD1A8 /* Metal.framework in Frameworks */,
+				B36A16042D90D2CC00420484 /* OpenSSL in Frameworks */,
 				B35EEFD82C6C6D1A00EBD1A8 /* OpenGLES.framework in Frameworks */,
 				B37321A42C900A9F00CF59EF /* PVCrabEmu-Dynamic in Frameworks */,
 				B35EEFDA2C6C6D1A00EBD1A8 /* PVLogging in Frameworks */,
@@ -3681,7 +3699,7 @@
 				B318E28F2CAB51EE00D0E599 /* PVEmuThree.framework in Frameworks */,
 				B35F93E12D2F71450016E633 /* WhatsNewKit in Frameworks */,
 				B38FB4A12CBEF57B006786C6 /* PVCoreBridgeRetro.framework in Frameworks */,
-				B31DDD102D82C56E00D6525B /* OpenSSL in Frameworks */,
+				B36A16062D90D43900420484 /* OpenSSL in Frameworks */,
 				B3EF26F02BE7F9690066D4B6 /* libc.tbd in Frameworks */,
 				B3EF26EE2BE7F8EC0066D4B6 /* libc++.tbd in Frameworks */,
 				B39343992CC5C432008AA673 /* MoltenVK-Catalyst in Frameworks */,
@@ -3758,7 +3776,6 @@
 				B3E0CFA82C05508500F45074 /* PVCoreAudio in Frameworks */,
 				B318E2952CAB571100D0E599 /* PVBliss-Dynamic in Frameworks */,
 				B33BD1C22C6A621A001E933A /* PVPokeMini-Dynamic in Frameworks */,
-				B3BDD41D2D349220005F5AF9 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3840,6 +3857,7 @@
 				B3F7E3B3297736BE00362B92 /* SteamController in Frameworks */,
 				B3F7E3B4297736BE00362B92 /* Metal.framework in Frameworks */,
 				B3250A2F2CCEE29800E6D7CE /* FreemiumKit in Frameworks */,
+				B3E881962D90C4BA00A80D83 /* PVEmuThree.framework in Frameworks */,
 				B3F7E3B5297736BE00362B92 /* OpenGLES.framework in Frameworks */,
 				B3F7E3B7297736BE00362B92 /* Foundation.framework in Frameworks */,
 				B3F7E3B8297736BE00362B92 /* OpenGL.framework in Frameworks */,
@@ -4020,6 +4038,8 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3E8819A2D90C4E500A80D83 /* PVEmuThree.framework */,
+				B3E881952D90C4BA00A80D83 /* PVEmuThree.framework */,
 				B3FD98552D614E6E00397643 /* CoreLocationUI.framework */,
 				B3FD98532D614E6400397643 /* CoreLocation.framework */,
 				B39FAC452D6014000065B66B /* SDL2.xcframework */,
@@ -7530,6 +7550,7 @@
 				B30ED0D92CFD3C5200AFCFCE /* PVCoreMednafen-Dynamic */,
 				B3E77F8B2D1F5819004A3AD2 /* PVFeatureFlags */,
 				B35F93E22D2F811B0016E633 /* WhatsNewKit */,
+				B36A16032D90D2CC00420484 /* OpenSSL */,
 			);
 			productName = Provenance;
 			productReference = B35EF0042C6C6D1A00EBD1A8 /* Provenance Lite.app */;
@@ -7603,7 +7624,7 @@
 				B306D7E52D3DDC6B00C71EBE /* FirebaseCore */,
 				B306D7E72D3DDC6B00C71EBE /* FirebaseCrashlytics */,
 				B306D7E92D3DDC6B00C71EBE /* FirebasePerformance */,
-				B31DDD0F2D82C56E00D6525B /* OpenSSL */,
+				B36A16052D90D43900420484 /* OpenSSL */,
 			);
 			productName = Provenance;
 			productReference = B394CDDF2BDEE53A006B63E8 /* Provenance.app */;
@@ -8016,7 +8037,7 @@
 				B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */,
 				F8F20E7C3CB546288E1FB7F2 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 				B306D7E22D3DDC6B00C71EBE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-				B31DDD0E2D82C56E00D6525B /* XCRemoteSwiftPackageReference "OpenSSL" */,
+				B3E8817E2D90C1B700A80D83 /* XCRemoteSwiftPackageReference "OpenSSL" */,
 			);
 			preferredProjectObjectVersion = 63;
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
@@ -15381,14 +15402,6 @@
 				minimumVersion = 11.7.0;
 			};
 		};
-		B31DDD0E2D82C56E00D6525B /* XCRemoteSwiftPackageReference "OpenSSL" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/krzyzanowskim/OpenSSL";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.3.2000;
-			};
-		};
 		B33B4F3E2C198F32007371C5 /* XCRemoteSwiftPackageReference "MBProgressHUD" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/jdg/MBProgressHUD.git";
@@ -15605,6 +15618,14 @@
 				minimumVersion = 2.5.5;
 			};
 		};
+		B3E8817E2D90C1B700A80D83 /* XCRemoteSwiftPackageReference "OpenSSL" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/krzyzanowskim/OpenSSL";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.3.2000;
+			};
+		};
 		B3E88CB62977AB4300C90E86 /* XCRemoteSwiftPackageReference "Reachability" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ashleymills/Reachability.swift";
@@ -15781,11 +15802,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3E1BC492C96DD0500EB4238 /* XCLocalSwiftPackageReference "Cores/ProSystem" */;
 			productName = "PVProSystem-Dynamic";
-		};
-		B31DDD0F2D82C56E00D6525B /* OpenSSL */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B31DDD0E2D82C56E00D6525B /* XCRemoteSwiftPackageReference "OpenSSL" */;
-			productName = OpenSSL;
 		};
 		B323B0082BF46D2800CEA3CF /* PVLibrary */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -16286,6 +16302,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */;
 			productName = WhatsNewKit;
+		};
+		B36A16032D90D2CC00420484 /* OpenSSL */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3E8817E2D90C1B700A80D83 /* XCRemoteSwiftPackageReference "OpenSSL" */;
+			productName = OpenSSL;
+		};
+		B36A16052D90D43900420484 /* OpenSSL */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3E8817E2D90C1B700A80D83 /* XCRemoteSwiftPackageReference "OpenSSL" */;
+			productName = OpenSSL;
 		};
 		B36A8D432CCD5480002357DD /* Defaults */ = {
 			isa = XCSwiftPackageProductDependency;
