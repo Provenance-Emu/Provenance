@@ -20,7 +20,7 @@
 #include "video_core/renderer_vulkan/vk_memory_util.h"
 #include "video_core/renderer_vulkan/vk_shader_util.h"
 
-#define USE_SPIRV_SHADERS 1
+#define USE_SPIRV_SHADERS 0
 
 #if USE_SPIRV_SHADERS
 #include "video_core/host_shaders/vulkan_present_anaglyph_frag_spv.h"
