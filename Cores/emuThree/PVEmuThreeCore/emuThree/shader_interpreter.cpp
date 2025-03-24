@@ -1798,32 +1798,32 @@ static void RunInterpreter(const ShaderSetup& setup, ShaderUnit& state,
     }
 }
 
-//void InterpreterEngine::SetupBatch(ShaderSetup& setup, unsigned int entry_point) {
-//    ASSERT(entry_point < MAX_PROGRAM_CODE_LENGTH);
-//    setup.entry_point = entry_point;
-//}
-//
-//MICROPROFILE_DEFINE(GPU_Shader, "GPU", "Shader", MP_RGB(50, 50, 240));
-//
-//void InterpreterEngine::Run(const ShaderSetup& setup, ShaderUnit& state) const {
-//
-//    MICROPROFILE_SCOPE(GPU_Shader);
-//
-//    DebugData<false> dummy_debug_data;
-//    RunInterpreter(setup, state, dummy_debug_data, setup.entry_point);
-//}
-//
-//DebugData<true> InterpreterEngine::ProduceDebugInfo(const ShaderSetup& setup,
-//                                                    const AttributeBuffer& input,
-//                                                    const ShaderRegs& config) const {
-//    ShaderUnit state;
-//    DebugData<true> debug_data;
-//
-//    // Setup input register table
-//    state.input.fill(Common::Vec4<f24>::AssignToAll(f24::Zero()));
-//    state.LoadInput(config, input);
-//    RunInterpreter(setup, state, debug_data, setup.entry_point);
-//    return debug_data;
-//}
+void InterpreterEngine::SetupBatch(ShaderSetup& setup, unsigned int entry_point) {
+    ASSERT(entry_point < MAX_PROGRAM_CODE_LENGTH);
+    setup.entry_point = entry_point;
+}
+
+MICROPROFILE_DEFINE(GPU_Shader, "GPU", "Shader", MP_RGB(50, 50, 240));
+
+void InterpreterEngine::Run(const ShaderSetup& setup, ShaderUnit& state) const {
+
+    MICROPROFILE_SCOPE(GPU_Shader);
+
+    DebugData<false> dummy_debug_data;
+    RunInterpreter(setup, state, dummy_debug_data, setup.entry_point);
+}
+
+DebugData<true> InterpreterEngine::ProduceDebugInfo(const ShaderSetup& setup,
+                                                    const AttributeBuffer& input,
+                                                    const ShaderRegs& config) const {
+    ShaderUnit state;
+    DebugData<true> debug_data;
+
+    // Setup input register table
+    state.input.fill(Common::Vec4<f24>::AssignToAll(f24::Zero()));
+    state.LoadInput(config, input);
+    RunInterpreter(setup, state, debug_data, setup.entry_point);
+    return debug_data;
+}
 
 } // namespace Pica::Shader
