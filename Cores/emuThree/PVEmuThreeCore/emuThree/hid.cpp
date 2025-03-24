@@ -2,7 +2,8 @@
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
 
-// Local Changes: Check for isReloaded/isInitialized state
+// Local Changes: Check for isReloaded Setting / add Controller Refresh to Reload
+
 
 #include <algorithm>
 #include <cmath>
@@ -165,6 +166,11 @@ void Module::LoadInputDevices() {
     }
 }
 void Module::UpdatePadCallback(std::uintptr_t user_data, s64 cycles_late) {
+    // Avoid a crash on booting
+    if (Settings::values.isReloading || Settings::values.skip_buttons) {
+        return;
+    }
+    
     SharedMem* mem = reinterpret_cast<SharedMem*>(shared_mem->GetPointer());
 
     if (is_device_reload_pending.exchange(false))
@@ -225,24 +231,25 @@ void Module::UpdatePadCallback(std::uintptr_t user_data, s64 cycles_late) {
 
         system.Movie().HandleTouchStatus(touch_entry);
     } else {
-        state.a.Assign(buttons[A - BUTTON_HID_BEGIN]->GetStatus());
-        state.b.Assign(buttons[B - BUTTON_HID_BEGIN]->GetStatus());
-        state.x.Assign(buttons[X - BUTTON_HID_BEGIN]->GetStatus());
-        state.y.Assign(buttons[Y - BUTTON_HID_BEGIN]->GetStatus());
-        state.right.Assign(buttons[Right - BUTTON_HID_BEGIN]->GetStatus());
-        state.left.Assign(buttons[Left - BUTTON_HID_BEGIN]->GetStatus());
-        state.up.Assign(buttons[Up - BUTTON_HID_BEGIN]->GetStatus());
-        state.down.Assign(buttons[Down - BUTTON_HID_BEGIN]->GetStatus());
-        state.l.Assign(buttons[L - BUTTON_HID_BEGIN]->GetStatus());
-        state.r.Assign(buttons[R - BUTTON_HID_BEGIN]->GetStatus());
-        state.start.Assign(buttons[Start - BUTTON_HID_BEGIN]->GetStatus());
-        state.select.Assign(buttons[Select - BUTTON_HID_BEGIN]->GetStatus());
-        state.debug.Assign(buttons[Debug - BUTTON_HID_BEGIN]->GetStatus());
-        state.gpio14.Assign(buttons[Gpio14 - BUTTON_HID_BEGIN]->GetStatus());
+        using namespace Settings::NativeButton;
+        state.a.Assign(Settings::values.m_buttonA->GetStatus());
+        state.b.Assign(Settings::values.m_buttonB->GetStatus());
+        state.x.Assign(Settings::values.m_buttonX->GetStatus());
+        state.y.Assign(Settings::values.m_buttonY->GetStatus());
+        state.right.Assign(Settings::values.m_buttonDpadRight->GetStatus());
+        state.left.Assign(Settings::values.m_buttonDpadLeft->GetStatus());
+        state.up.Assign(Settings::values.m_buttonDpadUp->GetStatus());
+        state.down.Assign(Settings::values.m_buttonDpadDown->GetStatus());
+        state.l.Assign(Settings::values.m_buttonL->GetStatus());
+        state.r.Assign(Settings::values.m_buttonR->GetStatus());
+        state.start.Assign(Settings::values.m_buttonStart->GetStatus());
+        state.select.Assign(Settings::values.m_buttonSelect->GetStatus());
+        //state.debug.Assign(Settings::values.m_buttonDummy->GetStatus());
+        //state.gpio14.Assign(Settings::values.m_buttonDummy->GetStatus());
 
         // Get current circle pad position and update circle pad direction
         float circle_pad_x_f, circle_pad_y_f;
-        std::tie(circle_pad_x_f, circle_pad_y_f) = circle_pad->GetStatus();
+        std::tie(circle_pad_x_f, circle_pad_y_f) = Settings::values.circle_pad->GetStatus();
 
         // xperia64: 0x9A seems to be the calibrated limit of the circle pad
         // Verified by using Input Redirector with very large-value digital inputs
@@ -252,12 +259,12 @@ void Module::UpdatePadCallback(std::uintptr_t user_data, s64 cycles_late) {
         // These are rounded rather than truncated on actual hardware
         s16 circle_pad_new_x = static_cast<s16>(std::roundf(circle_pad_x_f * MAX_CIRCLEPAD_POS));
         s16 circle_pad_new_y = static_cast<s16>(std::roundf(circle_pad_y_f * MAX_CIRCLEPAD_POS));
-        s16 circle_pad_x = (circle_pad_new_x +
-                            std::accumulate(circle_pad_old_x.begin(), circle_pad_old_x.end(), 0)) /
-                           CIRCLE_PAD_AVERAGING;
-        s16 circle_pad_y = (circle_pad_new_y +
-                            std::accumulate(circle_pad_old_y.begin(), circle_pad_old_y.end(), 0)) /
-                           CIRCLE_PAD_AVERAGING;
+        s16 circle_pad_x =
+            (circle_pad_new_x + std::accumulate(circle_pad_old_x.begin(), circle_pad_old_x.end(), 0)) /
+            CIRCLE_PAD_AVERAGING;
+        s16 circle_pad_y =
+            (circle_pad_new_y + std::accumulate(circle_pad_old_y.begin(), circle_pad_old_y.end(), 0)) /
+            CIRCLE_PAD_AVERAGING;
         circle_pad_old_x.erase(circle_pad_old_x.begin());
         circle_pad_old_x.push_back(circle_pad_new_x);
         circle_pad_old_y.erase(circle_pad_old_y.begin());
@@ -305,9 +312,9 @@ void Module::UpdatePadCallback(std::uintptr_t user_data, s64 cycles_late) {
         TouchDataEntry& touch_entry = mem->touch.entries[mem->touch.index];
         bool pressed = false;
         float x, y;
-        std::tie(x, y, pressed) = touch_device->GetStatus();
-        if (!pressed && touch_btn_device) {
-            std::tie(x, y, pressed) = touch_btn_device->GetStatus();
+        std::tie(x, y, pressed) = Settings::values.touch_device->GetStatus();
+        if (!pressed && Settings::values.touch_btn_device) {
+            std::tie(x, y, pressed) = Settings::values.touch_btn_device->GetStatus();
         }
         touch_entry.x = static_cast<u16>(x * Core::kScreenBottomWidth);
         touch_entry.y = static_cast<u16>(y * Core::kScreenBottomHeight);
@@ -341,6 +348,9 @@ void Module::UpdatePadCallback(std::uintptr_t user_data, s64 cycles_late) {
 }
 
 void Module::UpdateAccelerometerCallback(std::uintptr_t user_data, s64 cycles_late) {
+    if (Settings::values.isReloading || Settings::values.skip_buttons)
+        return;
+    
     SharedMem* mem = reinterpret_cast<SharedMem*>(shared_mem->GetPointer());
 
     mem->accelerometer.index = next_accelerometer_index;
@@ -357,7 +367,7 @@ void Module::UpdateAccelerometerCallback(std::uintptr_t user_data, s64 cycles_la
         accelerometer_entry.z = data.accel_z;
     } else {
         Common::Vec3<float> accel;
-        std::tie(accel, std::ignore) = motion_device->GetStatus();
+        std::tie(accel, std::ignore) = Settings::values.motion_device->GetStatus();
         accel *= accelerometer_coef;
         // TODO(wwylele): do a time stretch like the one in UpdateGyroscopeCallback
         // The time stretch formula should be like
@@ -394,6 +404,9 @@ void Module::UpdateAccelerometerCallback(std::uintptr_t user_data, s64 cycles_la
 }
 
 void Module::UpdateGyroscopeCallback(std::uintptr_t user_data, s64 cycles_late) {
+    if (Settings::values.isReloading || Settings::values.skip_buttons)
+        return;
+    
     SharedMem* mem = reinterpret_cast<SharedMem*>(shared_mem->GetPointer());
 
     mem->gyroscope.index = next_gyroscope_index;
@@ -409,7 +422,7 @@ void Module::UpdateGyroscopeCallback(std::uintptr_t user_data, s64 cycles_late) 
         gyroscope_entry.z = data.gyro_z;
     } else {
         Common::Vec3<float> gyro;
-        std::tie(std::ignore, gyro) = motion_device->GetStatus();
+        std::tie(std::ignore, gyro) = Settings::values.motion_device->GetStatus();
         double stretch = system.perf_stats->GetLastFrameTimeScale();
         gyro *= gyroscope_coef * static_cast<float>(stretch);
         gyroscope_entry.x = static_cast<s16>(gyro.x);
@@ -704,6 +717,8 @@ Module::Module(Core::System& system) : system(system) {
         });
 
     timing.ScheduleEvent(pad_update_ticks, pad_update_event);
+    timing.ScheduleEvent(accelerometer_update_ticks, accelerometer_update_event);
+    timing.ScheduleEvent(gyroscope_update_ticks, gyroscope_update_event);
 }
 
 void Module::UseArticClient(const std::shared_ptr<Network::ArticBase::Client>& client) {
