@@ -46,7 +46,7 @@ constexpr bool USE_NEON_MATRIX_MULT = true;    // Enable optimized matrix multip
 constexpr bool USE_NEON_FAST_MATH = true;      // Enable fast math approximations (slightly less accurate but faster)
 
 // Parallelization settings
-constexpr bool USE_PARALLEL_SHADER_EXECUTION = true;  // Enable parallel shader execution
+constexpr bool USE_PARALLEL_SHADER_EXECUTION = false;  // Enable parallel shader execution
 constexpr int MAX_SHADER_THREADS = 4;                // Maximum number of threads to use for shader execution
 
 // Helper functions for NEON optimizations
@@ -96,10 +96,10 @@ inline float32x4_t vrsqrteq_f32_fast(float32x4_t x) {
 inline float32x4_t vdotq_f32(float32x4_t a, float32x4_t b) {
     float32x4_t mul = vmulq_f32(a, b);
     
-    #if defined(__ARM_FEATURE_DOTPROD)
+#if defined(__ARM_FEATURE_DOTPROD)
     // If hardware dot product is available (newer ARM CPUs)
     return vdupq_n_f32(vaddvq_f32(mul));
-    #else
+#else
     // Fallback for older ARM CPUs
     float32x2_t low = vget_low_f32(mul);
     float32x2_t high = vget_high_f32(mul);
@@ -111,7 +111,7 @@ inline float32x4_t vdotq_f32(float32x4_t a, float32x4_t b) {
     
     // Broadcast result to all elements
     return vdupq_n_f32(vget_lane_f32(sum, 0));
-    #endif
+#endif
 }
 
 // Optimized 3-component dot product using NEON (for DP3 operations)
@@ -160,13 +160,13 @@ inline float32x4_t vmatrixmulq_f32(const float32x4_t* matrix, float32x4_t vector
 
 // Fast fused multiply-add: a * b + c
 inline float32x4_t vfmaq_f32_fast(float32x4_t c, float32x4_t a, float32x4_t b) {
-    #if defined(__ARM_FEATURE_FMA)
+#if defined(__ARM_FEATURE_FMA)
     // Use hardware FMA if available
     return vfmaq_f32(c, a, b);
-    #else
+#else
     // Fallback for devices without FMA
     return vaddq_f32(vmulq_f32(a, b), c);
-    #endif
+#endif
 }
 
 // Fast vector cross product (for 3D vectors)
@@ -224,7 +224,7 @@ struct ShaderBatch {
     unsigned offset;                 // Starting offset
     
     ShaderBatch(const ShaderSetup* setup_in, unsigned offset_in)
-        : setup(setup_in), offset(offset_in) {}
+    : setup(setup_in), offset(offset_in) {}
     
     // Add a state to this batch
     void AddState(ShaderUnit* state) {
@@ -266,13 +266,13 @@ static void ProcessShaderBatch(ShaderBatch& batch, std::vector<DebugData<Debug>>
     // Process states in parallel with improved error handling
     try {
         ParallelShaderExecution(static_cast<unsigned>(batch.Size()),
-            [&batch, &debug_data](unsigned start, unsigned end) {
-                for (unsigned i = start; i < end; ++i) {
-                    if (i < batch.Size()) { // Extra bounds check for safety
-                        RunInterpreter(*batch.setup, *batch.states[i], debug_data[i], batch.offset);
-                    }
+                                [&batch, &debug_data](unsigned start, unsigned end) {
+            for (unsigned i = start; i < end; ++i) {
+                if (i < batch.Size()) { // Extra bounds check for safety
+                    RunInterpreter(*batch.setup, *batch.states[i], debug_data[i], batch.offset);
                 }
-            });
+            }
+        });
     } catch (const std::exception& e) {
         // Fall back to sequential processing if parallel execution fails
         LOG_ERROR(HW_GPU, "Parallel shader execution failed: {}", e.what());
@@ -290,7 +290,7 @@ static void RunInterpreter(const ShaderSetup& setup, ShaderUnit& state,
     boost::circular_buffer<CallStackElement> call_stack(4);
     boost::circular_buffer<LoopStackElement> loop_stack(4);
     u32 program_counter = entry_point;
-
+    
     const auto do_if = [&](Instruction instr, bool condition) {
         if (condition) {
             if_stack.push_back({
@@ -301,7 +301,7 @@ static void RunInterpreter(const ShaderSetup& setup, ShaderUnit& state,
             program_counter = instr.flow_control.dest_offset - 1;
         }
     };
-
+    
     const auto do_call = [&](Instruction instr) {
         call_stack.push_back({
             .end_address = instr.flow_control.dest_offset + instr.flow_control.num_instructions,
@@ -309,7 +309,7 @@ static void RunInterpreter(const ShaderSetup& setup, ShaderUnit& state,
         });
         program_counter = instr.flow_control.dest_offset - 1;
     };
-
+    
     const auto do_loop = [&](Instruction instr, const Common::Vec4<u8>& loop_param) {
         const u8 previous_aL = static_cast<u8>(state.address_registers[2]);
         loop_stack.push_back({
@@ -321,10 +321,10 @@ static void RunInterpreter(const ShaderSetup& setup, ShaderUnit& state,
         });
         state.address_registers[2] = loop_param.y;
     };
-
+    
     auto evaluate_condition = [&state](Instruction::FlowControlType flow_control) {
         using Op = Instruction::FlowControlType::Op;
-
+        
 #if defined(__ARM_NEON) && defined(__aarch64__)
         // Load conditional code and reference values into NEON registers
         // This allows us to perform the comparison in parallel
@@ -354,76 +354,75 @@ static void RunInterpreter(const ShaderSetup& setup, ShaderUnit& state,
         bool result_x = flow_control.refx.Value() == state.conditional_code[0];
         bool result_y = flow_control.refy.Value() == state.conditional_code[1];
 #endif
-
+        
         // Use a branchless approach for common cases to avoid pipeline stalls
         switch (flow_control.op) {
-        case Op::Or:
-            return result_x || result_y;
-        case Op::And:
-            return result_x && result_y;
-        case Op::JustX:
-            return result_x;
-        case Op::JustY:
-            return result_y;
-        default:
-            UNREACHABLE();
-            return false;
+            case Op::Or:
+                return result_x || result_y;
+            case Op::And:
+                return result_x && result_y;
+            case Op::JustX:
+                return result_x;
+            case Op::JustY:
+                return result_y;
+            default:
+                UNREACHABLE();
+                return false;
         }
     };
-
+    
     const auto& uniforms = setup.uniforms;
     const auto& swizzle_data = setup.swizzle_data;
     const auto& program_code = setup.program_code;
-
+    
     // Constants for handling invalid inputs
     static f24 dummy_vec4_float24_zeros[4] = {f24::Zero(), f24::Zero(), f24::Zero(), f24::Zero()};
     static f24 dummy_vec4_float24_ones[4] = {f24::One(), f24::One(), f24::One(), f24::One()};
-
+    
     u32 iteration = 0;
     bool should_stop = false;
     while (!should_stop) {
         bool is_break = false;
         const u32 old_program_counter = program_counter;
-
+        
         const Instruction instr = {program_code[program_counter]};
         const SwizzlePattern swizzle = {swizzle_data[instr.common.operand_desc_id]};
-
+        
         Record<DebugDataRecord::CUR_INSTR>(debug_data, iteration, program_counter);
         if (iteration > 0)
             Record<DebugDataRecord::NEXT_INSTR>(debug_data, iteration - 1, program_counter);
-
+        
         debug_data.max_offset = std::max<u32>(debug_data.max_offset, 1 + program_counter);
-
-        auto LookupSourceRegister = [&](const SourceRegister& source_reg,
-                                        int address_register_index) -> const f24* {
+        
+        auto LookupSourceRegister = [&](const SourceRegister& source_reg, int address_register_index) -> const f24* {
             int index = source_reg.GetIndex();
             switch (source_reg.GetRegisterType()) {
-            case RegisterType::Input:
-                return &state.input[index].x;
-
-            case RegisterType::Temporary:
-                return &state.temporary[index].x;
-
-            case RegisterType::FloatUniform:
-                if (address_register_index != 0) {
-                    int offset = state.address_registers[address_register_index - 1];
-                    if (offset < std::numeric_limits<s8>::min() ||
-                        offset > std::numeric_limits<s8>::max()) [[unlikely]] {
-                        offset = 0;
+                case RegisterType::Input:
+                    return &state.input[index].x;
+                    
+                case RegisterType::Temporary:
+                    return &state.temporary[index].x;
+                    
+                case RegisterType::FloatUniform:
+                    if (address_register_index != 0) {
+                        int offset = state.address_registers[address_register_index - 1];
+                        if (offset < std::numeric_limits<s8>::min() ||
+                            offset > std::numeric_limits<s8>::max()) [[unlikely]] {
+                            offset = 0;
+                        }
+                        index = (index + offset) & 0x7F;
+                        // If the index is above 96, the result is all one.
+                        if (index >= 96) [[unlikely]] {
+                            return dummy_vec4_float24_ones;
+                        }
                     }
-                    index = (index + offset) & 0x7F;
-                    // If the index is above 96, the result is all one.
-                    if (index >= 96) [[unlikely]] {
-                        return dummy_vec4_float24_ones;
-                    }
-                }
-                return &uniforms.f[index].x;
-
-            default:
-                return dummy_vec4_float24_zeros;
+                    return &uniforms.f[index].x;
+                    
+                default:
+                    return dummy_vec4_float24_zeros;
             }
         };
-
+        
         switch (instr.opcode.Value().GetInfo().type) {
             case OpCode::Type::Arithmetic: {
                 const bool is_inverted =
@@ -1488,273 +1487,272 @@ static void RunInterpreter(const ShaderSetup& setup, ShaderUnit& state,
                     break;
                 }
             }
-        case OpCode::Type::MultiplyAdd: {
-            if ((instr.opcode.Value().EffectiveOpCode() == OpCode::Id::MAD) ||
-                (instr.opcode.Value().EffectiveOpCode() == OpCode::Id::MADI)) {
-                const SwizzlePattern& mad_swizzle = *reinterpret_cast<const SwizzlePattern*>(
-                    &swizzle_data[instr.mad.operand_desc_id]);
-
-                bool is_inverted = (instr.opcode.Value().EffectiveOpCode() == OpCode::Id::MADI);
-
-                const int address_offset =
+            case OpCode::Type::MultiplyAdd: {
+                if ((instr.opcode.Value().EffectiveOpCode() == OpCode::Id::MAD) ||
+                    (instr.opcode.Value().EffectiveOpCode() == OpCode::Id::MADI)) {
+                    const SwizzlePattern& mad_swizzle = *reinterpret_cast<const SwizzlePattern*>(
+                                                                                                 &swizzle_data[instr.mad.operand_desc_id]);
+                    
+                    bool is_inverted = (instr.opcode.Value().EffectiveOpCode() == OpCode::Id::MADI);
+                    
+                    const int address_offset =
                     (instr.mad.address_register_index == 0)
-                        ? 0
-                        : state.address_registers[instr.mad.address_register_index - 1];
-
-                const float24* src1_ = LookupSourceRegister(instr.mad.GetSrc1(is_inverted));
-                const float24* src2_ = LookupSourceRegister(instr.mad.GetSrc2(is_inverted) +
-                                                            (!is_inverted * address_offset));
-                const float24* src3_ = LookupSourceRegister(instr.mad.GetSrc3(is_inverted) +
-                                                            (is_inverted * address_offset));
-
-                const bool negate_src1 = ((bool)mad_swizzle.negate_src1 != false);
-                const bool negate_src2 = ((bool)mad_swizzle.negate_src2 != false);
-                const bool negate_src3 = ((bool)mad_swizzle.negate_src3 != false);
-
-                float24 src1[4] = {
-                    src1_[(int)mad_swizzle.src1_selector_0.Value()],
-                    src1_[(int)mad_swizzle.src1_selector_1.Value()],
-                    src1_[(int)mad_swizzle.src1_selector_2.Value()],
-                    src1_[(int)mad_swizzle.src1_selector_3.Value()],
-                };
-                if (negate_src1) {
-#if defined(__ARM_NEON) && defined(__aarch64__)
-                    // Load float24 values as regular floats into NEON register
-                    float32x4_t vec = vld1q_f32(reinterpret_cast<const float*>(src1));
-                    // Negate all elements at once
-                    vec = vnegq_f32(vec);
-                    // Store back
-                    vst1q_f32(reinterpret_cast<float*>(src1), vec);
-#else
-                    src1[0] = -src1[0];
-                    src1[1] = -src1[1];
-                    src1[2] = -src1[2];
-                    src1[3] = -src1[3];
-#endif
-                }
-                float24 src2[4] = {
-                    src2_[(int)mad_swizzle.src2_selector_0.Value()],
-                    src2_[(int)mad_swizzle.src2_selector_1.Value()],
-                    src2_[(int)mad_swizzle.src2_selector_2.Value()],
-                    src2_[(int)mad_swizzle.src2_selector_3.Value()],
-                };
-                if (negate_src2) {
-#if defined(__ARM_NEON) && defined(__aarch64__)
-                    // Load float24 values as regular floats into NEON register
-                    float32x4_t vec = vld1q_f32(reinterpret_cast<const float*>(src2));
-                    // Negate all elements at once
-                    vec = vnegq_f32(vec);
-                    // Store back
-                    vst1q_f32(reinterpret_cast<float*>(src2), vec);
-#else
-                    src2[0] = -src2[0];
-                    src2[1] = -src2[1];
-                    src2[2] = -src2[2];
-                    src2[3] = -src2[3];
-#endif
-                }
-                float24 src3[4] = {
-                    src3_[(int)mad_swizzle.src3_selector_0.Value()],
-                    src3_[(int)mad_swizzle.src3_selector_1.Value()],
-                    src3_[(int)mad_swizzle.src3_selector_2.Value()],
-                    src3_[(int)mad_swizzle.src3_selector_3.Value()],
-                };
-                if (negate_src3) {
-#if defined(__ARM_NEON) && defined(__aarch64__)
-                    // Load float24 values as regular floats into NEON register
-                    float32x4_t vec = vld1q_f32(reinterpret_cast<const float*>(src3));
-                    // Negate all elements at once
-                    vec = vnegq_f32(vec);
-                    // Store back
-                    vst1q_f32(reinterpret_cast<float*>(src3), vec);
-#else
-                    src3[0] = -src3[0];
-                    src3[1] = -src3[1];
-                    src3[2] = -src3[2];
-                    src3[3] = -src3[3];
-#endif
-                }
-
-                f24* dest = (instr.mad.dest.Value() < 0x10)
-                                ? &state.output[instr.mad.dest.Value().GetIndex()][0]
-                            : (instr.mad.dest.Value() < 0x20)
-                                ? &state.temporary[instr.mad.dest.Value().GetIndex()][0]
-                                : dummy_vec4_float24_zeros;
-
-                Record<DebugDataRecord::SRC1>(debug_data, iteration, src1);
-                Record<DebugDataRecord::SRC2>(debug_data, iteration, src2);
-                Record<DebugDataRecord::SRC3>(debug_data, iteration, src3);
-                Record<DebugDataRecord::DEST_IN>(debug_data, iteration, dest);
-#if defined(__ARM_NEON) && defined(__aarch64__) && USE_NEON_OPTIMIZATIONS
-                {
-                    // Prefetch next instruction for better performance on ARM64
-                    #if PREFETCH_SHADER_CODE
-                    __builtin_prefetch(&program_code[program_counter + 1], 0, 0);
-                    #endif
+                    ? 0
+                    : state.address_registers[instr.mad.address_register_index - 1];
                     
-                    // Create a mask for enabled components
-                    uint32_t mask_mad[4] = {
-                        mad_swizzle.DestComponentEnabled(0) ? 0xFFFFFFFF : 0,
-                        mad_swizzle.DestComponentEnabled(1) ? 0xFFFFFFFF : 0,
-                        mad_swizzle.DestComponentEnabled(2) ? 0xFFFFFFFF : 0,
-                        mad_swizzle.DestComponentEnabled(3) ? 0xFFFFFFFF : 0
+                    const f24* src1_ = LookupSourceRegister(instr.mad.GetSrc1(is_inverted), 0);
+                    const f24* src2_ =LookupSourceRegister(instr.mad.GetSrc2(is_inverted),
+                                             !is_inverted * instr.mad.address_register_index);
+                    const f24* src3_ = LookupSourceRegister(instr.mad.GetSrc3(is_inverted), is_inverted * instr.mad.address_register_index);
+                    
+                    const bool negate_src1 = ((bool)mad_swizzle.negate_src1 != false);
+                    const bool negate_src2 = ((bool)mad_swizzle.negate_src2 != false);
+                    const bool negate_src3 = ((bool)mad_swizzle.negate_src3 != false);
+                    
+                    float24 src1[4] = {
+                        src1_[(int)mad_swizzle.src1_selector_0.Value()],
+                        src1_[(int)mad_swizzle.src1_selector_1.Value()],
+                        src1_[(int)mad_swizzle.src1_selector_2.Value()],
+                        src1_[(int)mad_swizzle.src1_selector_3.Value()],
                     };
-                    
-                    // Load vectors and mask with non-temporal hints for better performance
-                    // This is particularly important for shader processing in games with many small models
-                    float32x4_t src1_vec_mad = vld1q_f32(reinterpret_cast<const float*>(src1));
-                    float32x4_t src2_vec_mad = vld1q_f32(reinterpret_cast<const float*>(src2));
-                    float32x4_t src3_vec_mad = vld1q_f32(reinterpret_cast<const float*>(src3));
-                    float32x4_t dest_vec_mad = vld1q_f32(reinterpret_cast<const float*>(dest));
-                    uint32x4_t mask_vec_mad = vld1q_u32(mask_mad);
-                    
-                    // Use ARM NEON's fused multiply-add for better performance and precision
-                    // This is significantly faster on ARM64 iOS devices and maintains precision
-                    // vfmaq_f32 performs: src3 + (src1 * src2)
-                    float32x4_t result_vec_mad = vfmaq_f32(src3_vec_mad, src1_vec_mad, src2_vec_mad);
-                    
-                    // Apply mask: use result_vec where mask is set, otherwise use original dest_vec
-                    result_vec_mad = vbslq_f32(mask_vec_mad, result_vec_mad, dest_vec_mad);
-                    
-                    // Store result with non-temporal hint for better performance
-                    vst1q_f32(reinterpret_cast<float*>(dest), result_vec_mad);
-                }
+                    if (negate_src1) {
+#if defined(__ARM_NEON) && defined(__aarch64__)
+                        // Load float24 values as regular floats into NEON register
+                        float32x4_t vec = vld1q_f32(reinterpret_cast<const float*>(src1));
+                        // Negate all elements at once
+                        vec = vnegq_f32(vec);
+                        // Store back
+                        vst1q_f32(reinterpret_cast<float*>(src1), vec);
 #else
-                for (int i = 0; i < 4; ++i) {
-                    if (!mad_swizzle.DestComponentEnabled(i))
-                        continue;
-
-                    dest[i] = src1[i] * src2[i] + src3[i];
-                }
+                        src1[0] = -src1[0];
+                        src1[1] = -src1[1];
+                        src1[2] = -src1[2];
+                        src1[3] = -src1[3];
 #endif
-                Record<DebugDataRecord::DEST_OUT>(debug_data, iteration, dest);
-            } else {
-                LOG_ERROR(HW_GPU, "Unhandled multiply-add instruction: 0x{:02x} ({}): 0x{:08x}",
-                          (int)instr.opcode.Value().EffectiveOpCode(),
-                          instr.opcode.Value().GetInfo().name, instr.hex);
+                    }
+                    float24 src2[4] = {
+                        src2_[(int)mad_swizzle.src2_selector_0.Value()],
+                        src2_[(int)mad_swizzle.src2_selector_1.Value()],
+                        src2_[(int)mad_swizzle.src2_selector_2.Value()],
+                        src2_[(int)mad_swizzle.src2_selector_3.Value()],
+                    };
+                    if (negate_src2) {
+#if defined(__ARM_NEON) && defined(__aarch64__)
+                        // Load float24 values as regular floats into NEON register
+                        float32x4_t vec = vld1q_f32(reinterpret_cast<const float*>(src2));
+                        // Negate all elements at once
+                        vec = vnegq_f32(vec);
+                        // Store back
+                        vst1q_f32(reinterpret_cast<float*>(src2), vec);
+#else
+                        src2[0] = -src2[0];
+                        src2[1] = -src2[1];
+                        src2[2] = -src2[2];
+                        src2[3] = -src2[3];
+#endif
+                    }
+                    float24 src3[4] = {
+                        src3_[(int)mad_swizzle.src3_selector_0.Value()],
+                        src3_[(int)mad_swizzle.src3_selector_1.Value()],
+                        src3_[(int)mad_swizzle.src3_selector_2.Value()],
+                        src3_[(int)mad_swizzle.src3_selector_3.Value()],
+                    };
+                    if (negate_src3) {
+#if defined(__ARM_NEON) && defined(__aarch64__)
+                        // Load float24 values as regular floats into NEON register
+                        float32x4_t vec = vld1q_f32(reinterpret_cast<const float*>(src3));
+                        // Negate all elements at once
+                        vec = vnegq_f32(vec);
+                        // Store back
+                        vst1q_f32(reinterpret_cast<float*>(src3), vec);
+#else
+                        src3[0] = -src3[0];
+                        src3[1] = -src3[1];
+                        src3[2] = -src3[2];
+                        src3[3] = -src3[3];
+#endif
+                    }
+                    
+                    f24* dest = (instr.mad.dest.Value() < 0x10)
+                    ? &state.output[instr.mad.dest.Value().GetIndex()][0]
+                    : (instr.mad.dest.Value() < 0x20)
+                    ? &state.temporary[instr.mad.dest.Value().GetIndex()][0]
+                    : dummy_vec4_float24_zeros;
+                    
+                    Record<DebugDataRecord::SRC1>(debug_data, iteration, src1);
+                    Record<DebugDataRecord::SRC2>(debug_data, iteration, src2);
+                    Record<DebugDataRecord::SRC3>(debug_data, iteration, src3);
+                    Record<DebugDataRecord::DEST_IN>(debug_data, iteration, dest);
+#if defined(__ARM_NEON) && defined(__aarch64__) && USE_NEON_OPTIMIZATIONS
+                    {
+                        // Prefetch next instruction for better performance on ARM64
+#if PREFETCH_SHADER_CODE
+                        __builtin_prefetch(&program_code[program_counter + 1], 0, 0);
+#endif
+                        
+                        // Create a mask for enabled components
+                        uint32_t mask_mad[4] = {
+                            mad_swizzle.DestComponentEnabled(0) ? 0xFFFFFFFF : 0,
+                            mad_swizzle.DestComponentEnabled(1) ? 0xFFFFFFFF : 0,
+                            mad_swizzle.DestComponentEnabled(2) ? 0xFFFFFFFF : 0,
+                            mad_swizzle.DestComponentEnabled(3) ? 0xFFFFFFFF : 0
+                        };
+                        
+                        // Load vectors and mask with non-temporal hints for better performance
+                        // This is particularly important for shader processing in games with many small models
+                        float32x4_t src1_vec_mad = vld1q_f32(reinterpret_cast<const float*>(src1));
+                        float32x4_t src2_vec_mad = vld1q_f32(reinterpret_cast<const float*>(src2));
+                        float32x4_t src3_vec_mad = vld1q_f32(reinterpret_cast<const float*>(src3));
+                        float32x4_t dest_vec_mad = vld1q_f32(reinterpret_cast<const float*>(dest));
+                        uint32x4_t mask_vec_mad = vld1q_u32(mask_mad);
+                        
+                        // Use ARM NEON's fused multiply-add for better performance and precision
+                        // This is significantly faster on ARM64 iOS devices and maintains precision
+                        // vfmaq_f32 performs: src3 + (src1 * src2)
+                        float32x4_t result_vec_mad = vfmaq_f32(src3_vec_mad, src1_vec_mad, src2_vec_mad);
+                        
+                        // Apply mask: use result_vec where mask is set, otherwise use original dest_vec
+                        result_vec_mad = vbslq_f32(mask_vec_mad, result_vec_mad, dest_vec_mad);
+                        
+                        // Store result with non-temporal hint for better performance
+                        vst1q_f32(reinterpret_cast<float*>(dest), result_vec_mad);
+                    }
+#else
+                    for (int i = 0; i < 4; ++i) {
+                        if (!mad_swizzle.DestComponentEnabled(i))
+                            continue;
+                        
+                        dest[i] = src1[i] * src2[i] + src3[i];
+                    }
+#endif
+                    Record<DebugDataRecord::DEST_OUT>(debug_data, iteration, dest);
+                } else {
+                    LOG_ERROR(HW_GPU, "Unhandled multiply-add instruction: 0x{:02x} ({}): 0x{:08x}",
+                              (int)instr.opcode.Value().EffectiveOpCode(),
+                              instr.opcode.Value().GetInfo().name, instr.hex);
+                }
+                break;
             }
-            break;
+            default: {
+                // Handle each instruction on its own
+                switch (instr.opcode.Value()) {
+                    case OpCode::Id::END:
+                        should_stop = true;
+                        break;
+                        
+                    case OpCode::Id::JMPC:
+                        Record<DebugDataRecord::COND_CMP_IN>(debug_data, iteration, state.conditional_code);
+                        if (evaluate_condition(instr.flow_control)) {
+                            program_counter = instr.flow_control.dest_offset - 1;
+                        }
+                        break;
+                        
+                    case OpCode::Id::JMPU:
+                        Record<DebugDataRecord::COND_BOOL_IN>(
+                                                              debug_data, iteration, uniforms.b[instr.flow_control.bool_uniform_id]);
+                        
+                        if (uniforms.b[instr.flow_control.bool_uniform_id] ==
+                            !(instr.flow_control.num_instructions & 1)) {
+                            program_counter = instr.flow_control.dest_offset - 1;
+                        }
+                        break;
+                        
+                    case OpCode::Id::CALL:
+                        do_call(instr);
+                        break;
+                        
+                    case OpCode::Id::CALLU:
+                        Record<DebugDataRecord::COND_BOOL_IN>(
+                                                              debug_data, iteration, uniforms.b[instr.flow_control.bool_uniform_id]);
+                        if (uniforms.b[instr.flow_control.bool_uniform_id]) {
+                            do_call(instr);
+                        }
+                        break;
+                        
+                    case OpCode::Id::CALLC:
+                        Record<DebugDataRecord::COND_CMP_IN>(debug_data, iteration, state.conditional_code);
+                        if (evaluate_condition(instr.flow_control)) {
+                            do_call(instr);
+                        }
+                        break;
+                        
+                    case OpCode::Id::NOP:
+                        break;
+                        
+                    case OpCode::Id::IFU: {
+                        Record<DebugDataRecord::COND_BOOL_IN>(
+                                                              debug_data, iteration, uniforms.b[instr.flow_control.bool_uniform_id]);
+                        const bool cond = uniforms.b[instr.flow_control.bool_uniform_id];
+                        do_if(instr, cond);
+                        break;
+                    }
+                        
+                    case OpCode::Id::IFC: {
+                        // TODO: Do we need to consider swizzlers here?
+                        Record<DebugDataRecord::COND_CMP_IN>(debug_data, iteration, state.conditional_code);
+                        const bool cond = evaluate_condition(instr.flow_control);
+                        do_if(instr, cond);
+                        break;
+                    }
+                        
+                    case OpCode::Id::LOOP: {
+                        const Common::Vec4<u8>& loop_param = uniforms.i[instr.flow_control.int_uniform_id];
+                        state.address_registers[2] = loop_param.y;
+                        
+                        Record<DebugDataRecord::LOOP_INT_IN>(debug_data, iteration, loop_param);
+                        do_loop(instr, loop_param);
+                        Record<DebugDataRecord::ADDR_REG_OUT>(debug_data, iteration,
+                                                              state.address_registers);
+                        break;
+                    }
+                        
+                    case OpCode::Id::BREAK: {
+                        is_break = true;
+                        Record<DebugDataRecord::ADDR_REG_OUT>(debug_data, iteration,
+                                                              state.address_registers);
+                        break;
+                    }
+                        
+                    case OpCode::Id::BREAKC: {
+                        Record<DebugDataRecord::COND_CMP_IN>(debug_data, iteration, state.conditional_code);
+                        if (evaluate_condition(instr.flow_control)) {
+                            is_break = true;
+                        }
+                        Record<DebugDataRecord::ADDR_REG_OUT>(debug_data, iteration,
+                                                              state.address_registers);
+                        break;
+                    }
+                        
+                    case OpCode::Id::EMIT: {
+                        auto* emitter = state.emitter_ptr;
+                        ASSERT_MSG(emitter, "Execute EMIT on VS");
+                        emitter->Emit(state.output);
+                        break;
+                    }
+                        
+                    case OpCode::Id::SETEMIT: {
+                        auto* emitter = state.emitter_ptr;
+                        ASSERT_MSG(emitter, "Execute SETEMIT on VS");
+                        emitter->vertex_id = instr.setemit.vertex_id;
+                        emitter->prim_emit = instr.setemit.prim_emit != 0;
+                        emitter->winding = instr.setemit.winding != 0;
+                        break;
+                    }
+                        
+                    default:
+                        LOG_ERROR(HW_GPU, "Unhandled instruction: 0x{:02x} ({}): 0x{:08x}",
+                                  (int)instr.opcode.Value().EffectiveOpCode(),
+                                  instr.opcode.Value().GetInfo().name, instr.hex);
+                        break;
+                }
+                
+                break;
+            }
         }
-        default: {
-            // Handle each instruction on its own
-            switch (instr.opcode.Value()) {
-            case OpCode::Id::END:
-                should_stop = true;
-                break;
-
-            case OpCode::Id::JMPC:
-                Record<DebugDataRecord::COND_CMP_IN>(debug_data, iteration, state.conditional_code);
-                if (evaluate_condition(instr.flow_control)) {
-                    program_counter = instr.flow_control.dest_offset - 1;
-                }
-                break;
-
-            case OpCode::Id::JMPU:
-                Record<DebugDataRecord::COND_BOOL_IN>(
-                    debug_data, iteration, uniforms.b[instr.flow_control.bool_uniform_id]);
-
-                if (uniforms.b[instr.flow_control.bool_uniform_id] ==
-                    !(instr.flow_control.num_instructions & 1)) {
-                    program_counter = instr.flow_control.dest_offset - 1;
-                }
-                break;
-
-            case OpCode::Id::CALL:
-                do_call(instr);
-                break;
-
-            case OpCode::Id::CALLU:
-                Record<DebugDataRecord::COND_BOOL_IN>(
-                    debug_data, iteration, uniforms.b[instr.flow_control.bool_uniform_id]);
-                if (uniforms.b[instr.flow_control.bool_uniform_id]) {
-                    do_call(instr);
-                }
-                break;
-
-            case OpCode::Id::CALLC:
-                Record<DebugDataRecord::COND_CMP_IN>(debug_data, iteration, state.conditional_code);
-                if (evaluate_condition(instr.flow_control)) {
-                    do_call(instr);
-                }
-                break;
-
-            case OpCode::Id::NOP:
-                break;
-
-            case OpCode::Id::IFU: {
-                Record<DebugDataRecord::COND_BOOL_IN>(
-                    debug_data, iteration, uniforms.b[instr.flow_control.bool_uniform_id]);
-                const bool cond = uniforms.b[instr.flow_control.bool_uniform_id];
-                do_if(instr, cond);
-                break;
-            }
-
-            case OpCode::Id::IFC: {
-                // TODO: Do we need to consider swizzlers here?
-                Record<DebugDataRecord::COND_CMP_IN>(debug_data, iteration, state.conditional_code);
-                const bool cond = evaluate_condition(instr.flow_control);
-                do_if(instr, cond);
-                break;
-            }
-
-            case OpCode::Id::LOOP: {
-                const Common::Vec4<u8>& loop_param = uniforms.i[instr.flow_control.int_uniform_id];
-                state.address_registers[2] = loop_param.y;
-
-                Record<DebugDataRecord::LOOP_INT_IN>(debug_data, iteration, loop_param);
-                do_loop(instr, loop_param);
-                Record<DebugDataRecord::ADDR_REG_OUT>(debug_data, iteration,
-                                                      state.address_registers);
-                break;
-            }
-
-            case OpCode::Id::BREAK: {
-                is_break = true;
-                Record<DebugDataRecord::ADDR_REG_OUT>(debug_data, iteration,
-                                                      state.address_registers);
-                break;
-            }
-
-            case OpCode::Id::BREAKC: {
-                Record<DebugDataRecord::COND_CMP_IN>(debug_data, iteration, state.conditional_code);
-                if (evaluate_condition(instr.flow_control)) {
-                    is_break = true;
-                }
-                Record<DebugDataRecord::ADDR_REG_OUT>(debug_data, iteration,
-                                                      state.address_registers);
-                break;
-            }
-
-            case OpCode::Id::EMIT: {
-                auto* emitter = state.emitter_ptr;
-                ASSERT_MSG(emitter, "Execute EMIT on VS");
-                emitter->Emit(state.output);
-                break;
-            }
-
-            case OpCode::Id::SETEMIT: {
-                auto* emitter = state.emitter_ptr;
-                ASSERT_MSG(emitter, "Execute SETEMIT on VS");
-                emitter->vertex_id = instr.setemit.vertex_id;
-                emitter->prim_emit = instr.setemit.prim_emit != 0;
-                emitter->winding = instr.setemit.winding != 0;
-                break;
-            }
-
-            default:
-                LOG_ERROR(HW_GPU, "Unhandled instruction: 0x{:02x} ({}): 0x{:08x}",
-                          (int)instr.opcode.Value().EffectiveOpCode(),
-                          instr.opcode.Value().GetInfo().name, instr.hex);
-                break;
-            }
-
-            break;
-        }
-        }
-
+        
         ++program_counter;
         ++iteration;
-
+        
         // Stacks are checked in the order CALL -> IF -> LOOP. The CALL stack
         // can be popped multiple times per instruction. A JMP at the end of a
         // scope is never taken, this is why we compare against
@@ -1771,7 +1769,7 @@ static void RunInterpreter(const ShaderSetup& setup, ShaderUnit& state,
             }
             call_stack.pop_back();
         }
-
+        
         // The other two stacks can only pop one entry per instruction. They
         // are checked against the original program counter before any CALL
         // scopes were closed and they overwrite any previous program counter
@@ -1780,7 +1778,7 @@ static void RunInterpreter(const ShaderSetup& setup, ShaderUnit& state,
             program_counter = if_stack.back().end_address;
             if_stack.pop_back();
         }
-
+        
         if (!loop_stack.empty() &&
             (loop_stack.back().end_address == old_program_counter + 1 || is_break)) {
             auto& loop = loop_stack.back();
@@ -1801,14 +1799,175 @@ static void RunInterpreter(const ShaderSetup& setup, ShaderUnit& state,
 void InterpreterEngine::SetupBatch(ShaderSetup& setup, unsigned int entry_point) {
     ASSERT(entry_point < MAX_PROGRAM_CODE_LENGTH);
     setup.entry_point = entry_point;
+    
+#if defined(__ARM_NEON) && defined(__aarch64__)
+    // Additional setup for optimized batch processing on ARM64
+    if (USE_PARALLEL_SHADER_EXECUTION) {
+        // Pre-fetch shader code into cache for better performance
+        if (PREFETCH_SHADER_CODE) {
+            // Calculate size of program code to prefetch (in bytes)
+            const size_t code_size = setup.program_code.size() * sizeof(decltype(setup.program_code[0]));
+            
+            // Prefetch the shader code into cache
+            // This significantly improves performance by reducing cache misses
+            const void* code_ptr = setup.program_code.data();
+            
+            // Use NEON prefetch instructions to load data into cache
+            // PRFM PLDL1KEEP - Prefetch for load, L1 cache, keep in cache
+            __builtin_prefetch(code_ptr, 0, 3);  // 0 = read, 3 = high temporal locality
+            
+            // For larger shaders, prefetch additional blocks
+            if (code_size > 64) { // 64 bytes is typical cache line size
+                const char* char_ptr = static_cast<const char*>(code_ptr);
+                __builtin_prefetch(char_ptr + 64, 0, 3);
+                
+                if (code_size > 128) {
+                    __builtin_prefetch(char_ptr + 128, 0, 3);
+                }
+            }
+        }
+    }
+#endif
 }
 
 MICROPROFILE_DEFINE(GPU_Shader, "GPU", "Shader", MP_RGB(50, 50, 240));
 
+#if defined(__ARM_NEON) && defined(__aarch64__)
+// Simple parallel execution helper for shader operations
+namespace {
+    // Number of parallel threads to use for shader execution
+    constexpr unsigned MAX_PARALLEL_SHADERS = MAX_SHADER_THREADS;
+    
+    // Function to execute a batch of shader operations in parallel
+    // Improved parallel shader execution with better error handling and thread management
+    template<typename Func>
+    void ParallelShaderExecution(unsigned total_items, Func&& func) {
+        if (total_items == 0 || !USE_PARALLEL_SHADER_EXECUTION) {
+            return;
+        }
+        
+        // Determine how many threads to use (at most MAX_PARALLEL_SHADERS)
+        // Limit to hardware_concurrency - 1 to leave one core for the main thread
+        unsigned available_cores = std::max(1u, static_cast<unsigned>(std::thread::hardware_concurrency()) - 1);
+        unsigned thread_count = std::min(MAX_PARALLEL_SHADERS,
+                                        std::min(available_cores, total_items));
+        
+        // If only one item or one thread available, just run directly
+        if (thread_count <= 1) {
+            func(0, total_items);
+            return;
+        }
+        
+        // Calculate items per thread - ensure at least 1 item per thread
+        unsigned items_per_thread = std::max(1u, total_items / thread_count);
+        unsigned remainder = total_items % thread_count;
+        
+        // Create and launch threads
+        std::vector<std::thread> workers;
+        workers.reserve(thread_count);
+        
+        // Track exceptions from worker threads
+        std::mutex exception_mutex;
+        std::exception_ptr exception_ptr = nullptr;
+        
+        unsigned start_item = 0;
+        
+        for (unsigned i = 0; i < thread_count && start_item < total_items; ++i) {
+            // Distribute remainder items among the first 'remainder' threads
+            unsigned items_for_this_thread = items_per_thread + (i < remainder ? 1 : 0);
+            unsigned end_item = std::min(start_item + items_for_this_thread, total_items);
+            
+            // Skip if no items to process
+            if (start_item >= end_item) {
+                continue;
+            }
+            
+            // Launch thread with this batch, capturing exceptions
+            workers.emplace_back([func, start_item, end_item, &exception_mutex, &exception_ptr]() {
+                try {
+                    func(start_item, end_item);
+                } catch (...) {
+                    // Capture any exception to be rethrown in the main thread
+                    std::lock_guard<std::mutex> lock(exception_mutex);
+                    if (!exception_ptr) {
+                        exception_ptr = std::current_exception();
+                    }
+                }
+            });
+            
+            start_item = end_item;
+        }
+        
+        // Wait for all threads to complete
+        for (auto& worker : workers) {
+            if (worker.joinable()) {
+                worker.join();
+            }
+        }
+        
+        // If any thread threw an exception, rethrow it
+        if (exception_ptr) {
+            std::rethrow_exception(exception_ptr);
+        }
+    }
+}
+#endif
+
 void InterpreterEngine::Run(const ShaderSetup& setup, ShaderUnit& state) const {
-
     MICROPROFILE_SCOPE(GPU_Shader);
-
+    
+#if defined(__ARM_NEON) && defined(__aarch64__)
+    if (USE_PARALLEL_SHADER_EXECUTION) {
+        // Check if we have multiple shader units to process in parallel
+        // For now, we'll focus on shader units that can be processed independently
+        // This could be extended to other types of shaders in the future
+        
+        // Get the number of shader units to process
+        unsigned int num_shader_units = 1; // Default to 1 for most shader types
+        
+        // For shaders that process multiple units in a single call, we can parallelize
+        // We need to identify what types of shaders in this codebase can be parallelized
+        // and how many units they process
+        
+        // If we have multiple shader units to process, use parallel execution
+        if (num_shader_units > 1) {
+            // Create copies of the state for each thread to avoid data races
+            std::vector<ShaderUnit> thread_states;
+            thread_states.reserve(num_shader_units);
+            
+            // Initialize states with the original state
+            for (unsigned int i = 0; i < num_shader_units; ++i) {
+                thread_states.push_back(state);
+            }
+            
+            // Execute shader units in parallel
+            ParallelShaderExecution(num_shader_units, [this, &setup, &thread_states](unsigned start, unsigned end) {
+                DebugData<false> thread_debug_data;
+                
+                // Process assigned shader units
+                for (unsigned unit_id = start; unit_id < end; ++unit_id) {
+                    // Set up the current unit
+                    // Note: We need to adapt this based on the actual shader unit structure
+                    
+                    // Run the interpreter for this unit
+                    RunInterpreter(setup, thread_states[unit_id], thread_debug_data, setup.entry_point);
+                }
+            });
+            
+            // Merge results back to the original state
+            // This needs to be adapted based on the actual shader output structure
+            // For now, we'll just copy the first state back as a placeholder
+            // In a real implementation, you would merge the results appropriately
+            if (!thread_states.empty()) {
+                state = thread_states[0];
+            }
+            
+            return;
+        }
+    }
+#endif
+    
+    // Fall back to sequential execution if parallelization is not enabled or not applicable
     DebugData<false> dummy_debug_data;
     RunInterpreter(setup, state, dummy_debug_data, setup.entry_point);
 }
@@ -1818,7 +1977,7 @@ DebugData<true> InterpreterEngine::ProduceDebugInfo(const ShaderSetup& setup,
                                                     const ShaderRegs& config) const {
     ShaderUnit state;
     DebugData<true> debug_data;
-
+    
     // Setup input register table
     state.input.fill(Common::Vec4<f24>::AssignToAll(f24::Zero()));
     state.LoadInput(config, input);
