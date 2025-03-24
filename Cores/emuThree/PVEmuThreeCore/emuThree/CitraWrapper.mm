@@ -41,7 +41,9 @@
 #include "core/cheats/cheat_base.h"
 #include "core/core.h"
 #include "core/frontend/applets/default_applets.h"
+#include "core/frontend/applets/swkbd.h"
 #include "core/hle/service/am/am.h"
+#include "core/frontend/input.h"
 
 #include "common/common_paths.h"
 #include "common/logging/backend.h"
@@ -146,19 +148,23 @@ std::pair<std::string, uint8_t> Keyboard::GetKeyboardText(const Frontend::Keyboa
 // MARK: Keyboard
 
 static void InitializeLogging() {
+    Common::Log::Initialize();
+    Common::Log::SetColorConsoleBackendEnabled(true);
+    Common::Log::Start();
+
 #if DEBUG
-    Log::Filter log_filter(Log::Level::Trace);
+    Common::Log::Filter log_filter(Common::Log::Level::Trace);
 #else
-    Log::Filter log_filter(Log::Level::Debug);
+    Common::Log::Filter log_filter(Common::Log::Level::Debug);
 #endif
     log_filter.ParseFilterString(Settings::values.log_filter.GetValue());
-    Log::SetGlobalFilter(log_filter);
-    Log::AddBackend(std::make_unique<Log::ColorConsoleBackend>());
+    Common::Log::SetGlobalFilter(log_filter);
+    Common::Log::SetColorConsoleBackendEnabled(true);
     const std::string& log_dir = FileUtil::GetUserPath(FileUtil::UserPath::LogDir);
     FileUtil::CreateFullPath(log_dir);
-    Log::AddBackend(std::make_unique<Log::FileBackend>(log_dir + LOG_FILE));
+//    Common::Log::AddBackend(std::make_unique<Log::FileBackend>(log_dir + LOG_FILE));
 #ifdef _WIN32
-    Log::AddBackend(std::make_unique<Log::DebuggerBackend>());
+    Common::Log::AddBackend(std::make_unique<Log::DebuggerBackend>());
 #endif
 }
 
@@ -248,7 +254,9 @@ static void InitializeLogging() {
     Camera::RegisterFactory("av_rear", std::move(rearCamera));
     Camera::RegisterFactory("av_rear_alt", std::move(rearAltCamera));
 
-    Frontend::RegisterDefaultApplets();
+    Core::System& system{Core::System::GetInstance()};
+
+    Frontend::RegisterDefaultApplets(system);
     Input::RegisterFactory<Input::ButtonDevice>("ios_gamepad", std::make_shared<ButtonFactory>());
     Input::RegisterFactory<Input::AnalogDevice>("ios_gamepad", std::make_shared<AnalogFactory>());
     Settings::values.current_input_profile.motion_device="engine:motion_emu,update_period:100,sensitivity:0.01,tilt_clamp:90.0";

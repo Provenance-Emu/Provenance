@@ -1372,14 +1372,14 @@ void RasterizerCache<T>::UnregisterSurface(SurfaceId surface_id) {
     ForEachPage(surface.addr, surface.size, [this, surface_id](u64 page) {
         const auto page_it = page_table.find(page);
         if (page_it == page_table.end()) {
-            ASSERT_MSG(false, "Unregistering unregistered page=0x{:x}", page << CYTRUS_PAGEBITS);
+            ASSERT_MSG(false, "Unregistering unregistered page=0x{:x}", page << CITRA_PAGEBITS);
             return;
         }
         std::vector<SurfaceId>& surfaces = page_it.value();
         const auto vector_it = std::find(surfaces.begin(), surfaces.end(), surface_id);
         if (vector_it == surfaces.end()) {
             ASSERT_MSG(false, "Unregistering unregistered surface in page=0x{:x}",
-                       page << CYTRUS_PAGEBITS);
+                       page << CITRA_PAGEBITS);
             return;
         }
         surfaces.erase(vector_it);

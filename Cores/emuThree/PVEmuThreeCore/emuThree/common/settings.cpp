@@ -15,10 +15,11 @@
 #include "core/hle/service/hid/hid.h"
 #include "core/hle/service/ir/ir_rst.h"
 #include "core/hle/service/ir/ir_user.h"
-#include "core/hle/service/mic_u.h"
+#include "core/hle/service/mic/mic_u.h"
 #include "core/hle/service/plgldr/plgldr.h"
 #include "video_core/renderer_base.h"
 #include "video_core/video_core.h"
+#include "common/file_util.h"
 
 namespace Settings {
 
@@ -60,16 +61,15 @@ std::string_view GetTextureFilterName(TextureFilter filter) {
         return "Anime4K";
     case TextureFilter::Bicubic:
         return "Bicubic";
-    case TextureFilter::NearestNeighbor:
-        return "NearestNeighbor";
     case TextureFilter::ScaleForce:
         return "ScaleForce";
     case TextureFilter::xBRZ:
         return "xBRZ";
+    case TextureFilter::MMPX:
+        return "MMPX";
     default:
         return "Invalid";
     }
-    UNREACHABLE();
 }
 
 std::string_view GetTextureSamplingName(TextureSampling sampling) {

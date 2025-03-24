@@ -3707,7 +3707,7 @@ inline bool brotli_decompressor::is_valid() const { return decoder_s; }
 inline bool brotli_decompressor::decompress(const char *data,
                                             size_t data_length,
                                             Callback callback) {
-  if (decoder_r == BROTLI_DECODER_RESULT_SUCCESS ||
+  if (decoder_r == BROTLI_DECODER_ResultSuccess ||
       decoder_r == BROTLI_DECODER_RESULT_ERROR) {
     return 0;
   }
@@ -3732,7 +3732,7 @@ inline bool brotli_decompressor::decompress(const char *data,
     if (!callback(buff.data(), buff.size() - avail_out)) { return false; }
   }
 
-  return decoder_r == BROTLI_DECODER_RESULT_SUCCESS ||
+  return decoder_r == BROTLI_DECODER_ResultSuccess ||
          decoder_r == BROTLI_DECODER_RESULT_NEEDS_MORE_INPUT;
 }
 #endif

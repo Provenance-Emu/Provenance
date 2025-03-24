@@ -14,6 +14,7 @@
 #include "audio_core/sink_details.h"
 #include "common/common_types.h"
 #include "core/hle/service/cam/cam_params.h"
+#include "core/frontend/input.h"
 
 namespace Settings {
 
@@ -77,9 +78,9 @@ enum class TextureFilter : u32 {
     None = 0,
     Anime4K = 1,
     Bicubic = 2,
-    NearestNeighbor = 3,
-    ScaleForce = 4,
-    xBRZ = 5,
+    ScaleForce = 3,
+    xBRZ = 4,
+    MMPX = 5,
 };
 
 enum class TextureSampling : u32 {
@@ -110,13 +111,14 @@ enum Values {
     ZR,
     
     Home,
+    Power,
     
     NumButtons,
 };
 
 constexpr int BUTTON_HID_BEGIN = A;
 constexpr int BUTTON_IR_BEGIN = ZL;
-constexpr int BUTTON_NS_BEGIN = Home;
+constexpr int BUTTON_NS_BEGIN = Power;
 
 constexpr int BUTTON_HID_END = BUTTON_IR_BEGIN;
 constexpr int BUTTON_IR_END = BUTTON_NS_BEGIN;
@@ -144,6 +146,7 @@ static const std::array<const char*, NumButtons> mapping = {{
     "button_zl",
     "button_zr",
     "button_home",
+    "button_power",
 }};
 
 } // namespace NativeButton
@@ -419,7 +422,10 @@ struct Values {
     int current_input_profile_index;          ///< The current input profile index
     std::vector<InputProfile> input_profiles; ///< The list of input profiles
     std::vector<TouchFromButtonMap> touch_from_button_maps;
-    
+    Setting<bool> use_artic_base_controller{false, "use_artic_base_controller"};
+
+    SwitchableSetting<bool> enable_gamemode{true, "enable_gamemode"};
+
     // Core
     Setting<bool> use_cpu_jit{true, "use_cpu_jit"};
     Setting<bool> use_block_based_optimization{true, "use_block_based_optimization"};
@@ -444,7 +450,8 @@ struct Values {
     Setting<s64> init_ticks_override{0, "init_ticks_override"};
     Setting<bool> plugin_loader_enabled{false, "plugin_loader"};
     Setting<bool> allow_plugin_loader{true, "allow_plugin_loader"};
-    
+    Setting<u16> steps_per_hour{0, "steps_per_hour"};
+
     // Renderer
     SwitchableSetting<GraphicsAPI, true> graphics_api{
 #if defined(ENABLE_OPENGL)
@@ -537,9 +544,11 @@ struct Values {
     // Debugging
     bool record_frame_times;
     std::unordered_map<std::string, bool> lle_modules;
+    Setting<bool> delay_start_for_lle_modules{true, "delay_start_for_lle_modules"};
     Setting<bool> use_gdbstub{false, "use_gdbstub"};
     Setting<u16> gdbstub_port{24689, "gdbstub_port"};
-    
+    Setting<bool> instant_debug_log{false, "instant_debug_log"};
+
     // buttons
     bool buttons_initialized = false;
     bool home_button_initialized = false;
@@ -576,6 +585,7 @@ struct Values {
     // Miscellaneous
     SwitchableSetting<bool> isReloading{false, "isReloading"};
     Setting<std::string> log_filter{"*:Info", "log_filter"};
+    Setting<std::string> log_regex_filter{"", "log_regex_filter"};
     SwitchableSetting<bool> color_attachment{true, "color_attachment"};
     // Video Dumping
     std::string output_format;

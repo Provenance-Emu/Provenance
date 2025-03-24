@@ -38,9 +38,9 @@ using VideoCore::SurfaceType;
 using namespace Common::Literals;
 using namespace Pica::Shader::Generator;
 
-constexpr u64 STREAM_BUFFER_SIZE = 128_MiB; // Changed from 64 @JoeMatt
-constexpr u64 UNIFORM_BUFFER_SIZE = 6_MiB; // Changed from 4 @JoeMatt
-constexpr u64 TEXTURE_BUFFER_SIZE = 4_MiB; // Changed from 2 @JoeMatt
+constexpr u64 STREAM_BUFFER_SIZE = 64_MiB; // Changed from 64 @JoeMatt
+constexpr u64 UNIFORM_BUFFER_SIZE = 4_MiB; // Changed from 4 @JoeMatt
+constexpr u64 TEXTURE_BUFFER_SIZE = 2_MiB; // Changed from 2 @JoeMatt
 
 constexpr vk::BufferUsageFlags BUFFER_USAGE =
     vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eIndexBuffer;
@@ -398,9 +398,51 @@ bool RasterizerVulkan::AccelerateDrawBatchInternal(bool is_indexed) {
         SetupIndexArray();
     }
 
-    const bool wait_built = !async_shaders || regs.pipeline.num_vertices <= 6;
-    if (!pipeline_cache.BindPipeline(pipeline_info, wait_built)) {
-        return true;
+    // Get the current shader mode
+    const u32 shader_mode = Settings::values.shader_type.GetValue();
+
+    // Smart async shader handling that works for all modes
+    bool wait_for_pipeline = !async_shaders;
+
+    // For bottom screen rendering or critical draw operations in hardware modes,
+    // we need to ensure shaders are ready to prevent blank/grey screens
+    if (shader_mode >= 2) {
+        // Check if this is likely a bottom screen draw call
+        const bool is_likely_bottom_screen =
+            // If we're rendering to a framebuffer, it's likely important
+            regs.framebuffer.output_merger.depth_test_enable ||
+            regs.framebuffer.output_merger.depth_write_enable ||
+            // Check if we're using textures, common in bottom screen rendering
+            (regs.texturing.texture0.type != Pica::TexturingRegs::TextureConfig::TextureType::Disabled ||
+             regs.texturing.texture1.type != Pica::TexturingRegs::TextureConfig::TextureType::Disabled);
+
+        // For critical operations, wait for pipeline to be ready
+        // This ensures bottom screen renders correctly while maintaining async benefits elsewhere
+        if (is_likely_bottom_screen) {
+            wait_for_pipeline = true;
+        }
+    }
+
+    // Try to bind the pipeline
+    if (!pipeline_cache.BindPipeline(pipeline_info, wait_for_pipeline)) {
+        // If we're in a hardware mode and failed to bind, we'll try a fallback approach
+        if (shader_mode >= 2 && async_shaders) {
+            // For hardware modes, use a simplified pipeline for temporary rendering
+            // until the actual pipeline is ready
+            static PipelineInfo fallback_pipeline = pipeline_info;
+            fallback_pipeline.blending.blend_enable = true;
+            fallback_pipeline.depth_stencil.depth_test_enable.Assign(true);
+
+            // Try to bind a simpler fallback pipeline that might be ready
+            if (!pipeline_cache.BindPipeline(fallback_pipeline, false)) {
+                // If even the fallback fails, skip this draw call
+                return true;
+            }
+            // Fallback pipeline bound successfully, continue with rendering
+        } else {
+            // For software mode or if not using async shaders, skip the draw call
+            return true;
+        }
     }
 
     DrawParams params = {

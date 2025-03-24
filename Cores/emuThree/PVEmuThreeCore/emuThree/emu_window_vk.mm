@@ -10,6 +10,7 @@
 #include "video_core/video_core.h"
 #include "video_core/gpu.h"
 #include "common/settings.h"
+#include "core/core.h"
 
 #import <UIKit/UIKit.h>
 
@@ -59,8 +60,10 @@ void EmuWindow_VK::TryPresenting() {
         }
     }
 
+    Core::System& system{Core::System::GetInstance()};
+
     // FIXME: @JoeMatt
-//    if (Core::System::GetInstance().GPU().Renderer() != nullptr) {
-        Core::System::GetInstance().GPU().Renderer().TryPresent(0);
+//    if (system.GPU().Renderer() != nullptr) {
+        system.GPU().Renderer().TryPresent(0);
 //    }
 }

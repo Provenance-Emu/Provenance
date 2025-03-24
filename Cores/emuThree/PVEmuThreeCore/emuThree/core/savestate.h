@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <string>
 #include <vector>
 #include "common/common_types.h"
 #include <mach/mach.h>
@@ -18,6 +19,7 @@ struct SaveStateInfo {
         OK,
         RevisionDismatch,
     } status;
+    std::string build_name;
 };
 
 constexpr u32 SaveStateSlotCount = 10; // Maximum count of savestate slots
@@ -32,4 +34,5 @@ bool InitMem();
 void SaveState(std::string path, u64 _title_id);
 void LoadState(std::string path);
 void CleanState();
+
 } // namespace Core

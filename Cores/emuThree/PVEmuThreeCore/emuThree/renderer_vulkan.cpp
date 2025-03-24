@@ -11,6 +11,7 @@
 #include "common/memory_detect.h"
 #include "common/microprofile.h"
 #include "common/settings.h"
+#include "common/telemetry.h"
 #include "core/core.h"
 #include "core/frontend/emu_window.h"
 #include "video_core/gpu.h"
@@ -63,6 +64,34 @@ constexpr static std::array<vk::DescriptorSetLayoutBinding, 1> PRESENT_BINDINGS 
     {0, vk::DescriptorType::eCombinedImageSampler, 3, vk::ShaderStageFlagBits::eFragment},
 }};
 
+namespace {
+
+std::string GetReadableVersion(u32 version) {
+    return fmt::format("{}.{}.{}", VK_VERSION_MAJOR(version), VK_VERSION_MINOR(version),
+                       VK_VERSION_PATCH(version));
+}
+
+std::string GetDriverVersion(const Instance& instance) {
+    // Extracted from
+    // https://github.com/SaschaWillems/vulkan.gpuinfo.org/blob/5dddea46ea1120b0df14eef8f15ff8e318e35462/functions.php#L308-L314
+    const u32 version = instance.GetDriverVersion();
+    if (instance.GetDriverID() == vk::DriverId::eNvidiaProprietary) {
+        const u32 major = (version >> 22) & 0x3ff;
+        const u32 minor = (version >> 14) & 0x0ff;
+        const u32 secondary = (version >> 6) & 0x0ff;
+        const u32 tertiary = version & 0x003f;
+        return fmt::format("{}.{}.{}.{}", major, minor, secondary, tertiary);
+    }
+    if (instance.GetDriverID() == vk::DriverId::eIntelProprietaryWindows) {
+        const u32 major = version >> 14;
+        const u32 minor = version & 0x3fff;
+        return fmt::format("{}.{}", major, minor);
+    }
+    return GetReadableVersion(version);
+}
+
+} // Anonymous namespace
+
 RendererVulkan::RendererVulkan(Core::System& system, Pica::PicaCore& pica_,
                                Frontend::EmuWindow& window, Frontend::EmuWindow* secondary_window)
     : RendererBase{system, window, secondary_window}, memory{system.Memory()}, pica{pica_},
@@ -75,6 +104,7 @@ RendererVulkan::RendererVulkan(Core::System& system, Pica::PicaCore& pica_,
           memory,   pica,      system.CustomTexManager(), *this,        render_window,
           instance, scheduler, renderpass_cache,          update_queue, main_window.ImageCount()},
       present_heap{instance, scheduler.GetMasterSemaphore(), PRESENT_BINDINGS, 32} {
+    ReportDriver();
     CompileShaders();
     BuildLayouts();
     BuildPipelines();
@@ -1146,6 +1176,29 @@ bool RendererVulkan::TryRenderScreenshotWithHostMemory() {
     device.destroyImageView(frame.image_view);
 
     return true;
+}
+
+void RendererVulkan::ReportDriver() const {
+    const std::string vendor_name{instance.GetVendorName()};
+    const std::string model_name{instance.GetModelName()};
+    const std::string driver_version = GetDriverVersion(instance);
+    const std::string driver_name = fmt::format("{} {}", vendor_name, driver_version);
+
+    const std::string api_version = GetReadableVersion(instance.ApiVersion());
+
+    const std::string extensions =
+        fmt::format("{}", fmt::join(instance.GetAvailableExtensions(), ", "));
+
+    LOG_INFO(Render_Vulkan, "VK_DRIVER: {}", driver_name);
+    LOG_INFO(Render_Vulkan, "VK_DEVICE: {}", model_name);
+    LOG_INFO(Render_Vulkan, "VK_VERSION: {}", api_version);
+
+//    static constexpr auto field = Common::Telemetry::FieldType::UserSystem;
+//    telemetry_session.AddField(field, "GPU_Vendor", vendor_name);
+//    telemetry_session.AddField(field, "GPU_Model", model_name);
+//    telemetry_session.AddField(field, "GPU_Vulkan_Driver", driver_name);
+//    telemetry_session.AddField(field, "GPU_Vulkan_Version", api_version);
+//    telemetry_session.AddField(field, "GPU_Vulkan_Extensions", extensions);
 }
 
 } // namespace Vulkan
