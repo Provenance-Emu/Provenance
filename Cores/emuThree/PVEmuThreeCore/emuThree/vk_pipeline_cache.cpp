@@ -24,6 +24,7 @@
 #include "video_core/shader/generator/spv_fs_shader_gen.h"
 #include "video_core/shader/generator/pica_fs_config.h"
 
+
 using namespace Pica::Shader::Generator;
 using Pica::Shader::FSConfig;
 
@@ -130,7 +131,9 @@ PipelineCache::~PipelineCache() {
 }
 
 void PipelineCache::LoadDiskCache() {
+#if USE_SPRIV_SHADER_CACHE
     return;
+#endif
     if (!Settings::values.use_disk_shader_cache || !EnsureDirectories()) {
         return;
     }
@@ -431,6 +434,8 @@ void PipelineCache::UseTrivialGeometryShader() {
 }
 
 void PipelineCache::UseFragmentShader(const Pica::RegsInternal& regs, const Pica::Shader::UserConfig& user) {
+
+#if USE_SPRIV_SHADER_CACHE
     const PicaFSConfig config{regs, instance};
 
     auto [it, new_shader] = fragment_shaders.try_emplace(config, instance);
@@ -439,7 +444,7 @@ void PipelineCache::UseFragmentShader(const Pica::RegsInternal& regs, const Pica
     if (new_shader) {
         const bool use_spirv = Settings::values.spirv_shader_gen.GetValue();
         const vk::Device device = instance.GetDevice();
-
+        
         if (use_spirv && !config.state.shadow_rendering.Value()) {
             const std::vector code = GenerateFragmentShaderSPV(config);
             shader.module = CompileSPV(code, device);
@@ -449,18 +454,35 @@ void PipelineCache::UseFragmentShader(const Pica::RegsInternal& regs, const Pica
                 const std::vector code = GenerateFragmentShaderSPV(config);
                 shader.module = CompileSPV(code, device);
                 shader.MarkDone();
-                /*
-                const std::string code = GenerateFragmentShader(config);
-                shader.module = Compile(code, vk::ShaderStageFlagBits::eFragment, device,
-                                        ShaderOptimization::Debug);
-                shader.MarkDone();
-                */
             });
         }
     }
-
     current_shaders[ProgramType::FS] = &shader;
     shader_hashes[ProgramType::FS] = config.Hash();
+#else
+    const FSConfig fs_config{regs, user, profile};
+
+    auto [it, new_shader] = fragment_shaders.try_emplace(fs_config, instance);
+    auto& shader = it->second;
+    if (new_shader) {
+        workers.QueueWork([fs_config, this, &shader]() {
+            const bool use_spirv = Settings::values.spirv_shader_gen.GetValue();
+            if (use_spirv && !fs_config.UsesShadowPipeline()) {
+                const std::vector code = SPIRV::GenerateFragmentShader(fs_config, profile);
+                shader.module = CompileSPV(code, instance.GetDevice());
+            } else {
+                const std::string code = GLSL::GenerateFragmentShader(fs_config, profile);
+                shader.module =
+                    Compile(code, vk::ShaderStageFlagBits::eFragment, instance.GetDevice());
+            }
+            shader.MarkDone();
+        });
+    }
+    current_shaders[ProgramType::FS] = &shader;
+    shader_hashes[ProgramType::FS] = fs_config.Hash();
+
+#endif
+
 }
 
 bool PipelineCache::IsCacheValid(std::span<const u8> data) const {
