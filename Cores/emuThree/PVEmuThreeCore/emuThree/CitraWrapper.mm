@@ -254,6 +254,7 @@ static void InitializeLogging() {
     Settings::values.current_input_profile.motion_device="engine:motion_emu,update_period:100,sensitivity:0.01,tilt_clamp:90.0";
     Input::RegisterFactory<Input::MotionDevice>("motion_emu", std::make_shared<MotionFactory>());
 
+    Settings::values.graphics_api = Settings::GraphicsAPI::Vulkan;
 #if defined(TARGET_OS_IPHONE)
     Core::System::GetInstance().RegisterSoftwareKeyboard(std::make_shared<SoftwareKeyboard::Keyboard>());
 #endif  x
@@ -264,7 +265,7 @@ static void InitializeLogging() {
 
     Settings::values.use_hw_shader.SetValue(shaderType >= 2);
     Settings::values.shader_type.SetValue(shaderType);
-    Settings::Apply();
+    Core::System::GetInstance().ApplySettings();
 }
 
 -(void) setOptions:(bool)resetButtons {
@@ -340,7 +341,7 @@ static void InitializeLogging() {
 //    Settings::values.lle_applets.SetValue([defaults boolForKey:@"cytrus.lleApplets"]);
     
     [self getModelType];
-    Settings::Apply();
+    Core::System::GetInstance().ApplySettings();
 }
 
 -(void) getModelType {
@@ -422,17 +423,17 @@ static void InitializeLogging() {
 
 -(void) rotate:(BOOL)rotate {
     Settings::values.upright_screen.SetValue(rotate);
-    Settings::Apply();
+    Core::System::GetInstance().ApplySettings();
 }
 
 -(void) swap:(BOOL)swap {
     Settings::values.swap_screen.SetValue(swap);
-    Settings::Apply();
+    Core::System::GetInstance().ApplySettings();
 }
 
 -(void) layout:(int)option {
     Settings::values.layout_option.SetValue((Settings::LayoutOption)option);
-    Settings::Apply();
+    Core::System::GetInstance().ApplySettings();
 }
 
 -(void) requestSave:(NSString *)path {
@@ -470,7 +471,6 @@ static void InitializeLogging() {
 }
 -(void) shutdown {
     core.Shutdown();
-    VideoCore::g_renderer.reset();
     emu_window.reset();
     Settings::values.m_buttonA.reset();
     Settings::values.m_buttonB.reset();
@@ -549,8 +549,8 @@ static void InitializeLogging() {
         bool touchReleased=(touch.phase == UITouchPhaseEnded || touch.phase == UITouchPhaseCancelled);
         bool touchBegan=touch.phase == UITouchPhaseBegan;
         bool touchMoved=touch.phase == UITouchPhaseMoved;
-        float heightRatio=emu_window->framebuffer_layout.height / ([touch view].window.bounds.size.height * [[UIScreen mainScreen] nativeScale]);
-        float widthRatio=emu_window->framebuffer_layout.width / ([touch view].window.bounds.size.width * [[UIScreen mainScreen] nativeScale]);
+        float heightRatio=emu_window->GetFramebufferLayout().height / ([touch view].window.bounds.size.height * [[UIScreen mainScreen] nativeScale]);
+        float widthRatio=emu_window->GetFramebufferLayout().width / ([touch view].window.bounds.size.width * [[UIScreen mainScreen] nativeScale]);
         if (touchBegan)
             emu_window->OnTouchEvent((point.x) * [[UIScreen mainScreen] nativeScale] * widthRatio, ((point.y) * [[UIScreen mainScreen] nativeScale] * heightRatio), true);
         if (touchMoved)

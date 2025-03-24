@@ -14,7 +14,6 @@
 #include "audio_core/sink_details.h"
 #include "common/common_types.h"
 #include "core/hle/service/cam/cam_params.h"
-#include "core/frontend/input.h"
 
 namespace Settings {
 
@@ -29,6 +28,11 @@ enum class InitClock : u32 {
     FixedTime = 1,
 };
 
+enum class InitTicks : u32 {
+    Random = 0,
+    Fixed = 1,
+};
+
 enum class LayoutOption : u32 {
     Default,
     SingleScreen,
@@ -37,10 +41,11 @@ enum class LayoutOption : u32 {
 #ifndef ANDROID
     SeparateWindows,
 #endif
+    HybridScreen,
     // Similiar to default, but better for mobile devices in portrait mode. Top screen in clamped to
     // the top of the frame, and the bottom screen is enlarged to match the top screen.
     MobilePortrait,
-    
+
     // Similiar to LargeScreen, but better for mobile devices in landscape mode. The screens are
     // clamped to the top of the frame, and the bottom screen is a bit bigger.
     MobileLandscape,
@@ -75,6 +80,12 @@ enum class TextureFilter : u32 {
     NearestNeighbor = 3,
     ScaleForce = 4,
     xBRZ = 5,
+};
+
+enum class TextureSampling : u32 {
+    GameControlled = 0,
+    NearestNeighbor = 1,
+    Linear = 2,
 };
 
 namespace NativeButton {
@@ -415,7 +426,11 @@ struct Values {
     // 0 is a special value for auto mode, normal range is 5-400%
     SwitchableSetting<s32, true> cpu_clock_percentage{100, 0, 400, "cpu_clock_percentage"};
     SwitchableSetting<bool> is_new_3ds{true, "is_new_3ds"};
-    
+    SwitchableSetting<bool> lle_applets{true, "lle_applets"};
+    SwitchableSetting<bool> deterministic_async_operations{false, "deterministic_async_operations"};
+    SwitchableSetting<bool> enable_required_online_lle_modules{
+            false, "enable_required_online_lle_modules"};
+
     // Data Storage
     Setting<bool> use_virtual_sd{true, "use_virtual_sd"};
     Setting<bool> use_custom_storage{false, "use_custom_storage"};
@@ -425,12 +440,25 @@ struct Values {
     Setting<InitClock> init_clock{InitClock::SystemTime, "init_clock"};
     Setting<u64> init_time{946681277ULL, "init_time"};
     Setting<s64> init_time_offset{0, "init_time_offset"};
+    Setting<InitTicks> init_ticks_type{InitTicks::Random, "init_ticks_type"};
+    Setting<s64> init_ticks_override{0, "init_ticks_override"};
     Setting<bool> plugin_loader_enabled{false, "plugin_loader"};
     Setting<bool> allow_plugin_loader{true, "allow_plugin_loader"};
     
     // Renderer
-    SwitchableSetting<GraphicsAPI, true> graphics_api{GraphicsAPI::OpenGL, GraphicsAPI::Software,
-        GraphicsAPI::Vulkan, "graphics_api"};
+    SwitchableSetting<GraphicsAPI, true> graphics_api{
+#if defined(ENABLE_OPENGL)
+        GraphicsAPI::OpenGL,
+#elif defined(ENABLE_VULKAN)
+        GraphicsAPI::Vulkan,
+#elif defined(ENABLE_SOFTWARE_RENDERER)
+        GraphicsAPI::Software,
+#else
+// TODO: Add a null renderer backend for this, perhaps.
+#error "At least one renderer must be enabled."
+#endif
+        
+    GraphicsAPI::Software, GraphicsAPI::Vulkan, "graphics_api"};
     SwitchableSetting<u32> physical_device{0, "physical_device"};
     Setting<bool> use_gles{false, "use_gles"};
     Setting<bool> renderer_debug{false, "renderer_debug"};
@@ -447,7 +475,11 @@ struct Values {
     SwitchableSetting<u32, true> resolution_factor{1, 0, 10, "resolution_factor"};
     SwitchableSetting<u16, true> frame_limit{100, 0, 1000, "frame_limit"};
     SwitchableSetting<TextureFilter> texture_filter{TextureFilter::None, "texture_filter"};
-    
+    SwitchableSetting<TextureSampling> texture_sampling{TextureSampling::GameControlled,
+                                                        "texture_sampling"};
+    SwitchableSetting<u16, true> delay_game_render_thread_us{0, 0, 16000,
+                                                             "delay_game_render_thread_us"};
+
     SwitchableSetting<LayoutOption> layout_option{LayoutOption::Default, "layout_option"};
     SwitchableSetting<bool> swap_screen{false, "swap_screen"};
     SwitchableSetting<bool> upright_screen{false, "upright_screen"};

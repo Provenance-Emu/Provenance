@@ -40,6 +40,8 @@ std::string_view GetAudioEmulationName(AudioEmulation emulation) {
 
 std::string_view GetGraphicsAPIName(GraphicsAPI api) {
     switch (api) {
+    case GraphicsAPI::Vulkan:
+        return "Vulkan";
     case GraphicsAPI::Software:
         return "Software";
     case GraphicsAPI::OpenGL:
@@ -70,70 +72,25 @@ std::string_view GetTextureFilterName(TextureFilter filter) {
     UNREACHABLE();
 }
 
+std::string_view GetTextureSamplingName(TextureSampling sampling) {
+    switch (sampling) {
+    case TextureSampling::GameControlled:
+        return "GameControlled";
+    case TextureSampling::NearestNeighbor:
+        return "NearestNeighbor";
+    case TextureSampling::Linear:
+        return "Linear";
+    default:
+        return "Invalid";
+    }
+}
+
 } // Anonymous namespace
 
 Values values = {};
 static bool configuring_global = true;
 bool is_temporary_frame_limit;
 double temporary_frame_limit;
-
-void Apply() {
-    GDBStub::SetServerPort(values.gdbstub_port.GetValue());
-    GDBStub::ToggleServer(values.use_gdbstub.GetValue());
-
-    VideoCore::g_shader_jit_enabled = values.use_shader_jit.GetValue();
-    VideoCore::g_hw_shader_enabled = values.use_hw_shader.GetValue();
-    VideoCore::g_hw_shader_accurate_mul = values.shaders_accurate_mul.GetValue();
-
-#ifndef ANDROID
-   if (VideoCore::g_renderer) {
-        VideoCore::g_renderer->UpdateCurrentFramebufferLayout();
-   }
-#endif
-
-    if (VideoCore::g_renderer) {
-        auto& settings = VideoCore::g_renderer->Settings();
-        settings.bg_color_update_requested = true;
-        settings.sampler_update_requested = true;
-        settings.shader_update_requested = true;
-        settings.texture_filter_update_requested = true;
-    }
-
-    auto& system = Core::System::GetInstance();
-    if (system.IsPoweredOn()) {
-        system.CoreTiming().UpdateClockSpeed(values.cpu_clock_percentage.GetValue());
-        Core::DSP().SetSink(values.output_type.GetValue(), values.output_device.GetValue());
-        Core::DSP().EnableStretching(values.enable_audio_stretching.GetValue());
-
-        auto hid = Service::HID::GetModule(system);
-        if (hid) {
-            hid->ReloadInputDevices();
-        }
-
-        auto apt = Service::APT::GetModule(system);
-        if (apt) {
-            apt->GetAppletManager()->ReloadInputDevices();
-        }
-
-        auto sm = system.ServiceManager();
-        auto ir_user = sm.GetService<Service::IR::IR_USER>("ir:USER");
-        if (ir_user)
-            ir_user->ReloadInputDevices();
-        auto ir_rst = sm.GetService<Service::IR::IR_RST>("ir:rst");
-        if (ir_rst)
-            ir_rst->ReloadInputDevices();
-
-        auto cam = Service::CAM::GetModule(system);
-        if (cam) {
-            cam->ReloadCameraDevices();
-        }
-
-        Service::MIC::ReloadMic(system);
-    }
-
-    Service::PLGLDR::PLG_LDR::SetEnabled(values.plugin_loader_enabled.GetValue());
-    Service::PLGLDR::PLG_LDR::SetAllowGameChangeState(values.allow_plugin_loader.GetValue());
-}
 
 void LogSettings() {
     const auto log_setting = [](std::string_view name, const auto& value) {
@@ -159,6 +116,9 @@ void LogSettings() {
     log_setting("Renderer_PostProcessingShader", values.pp_shader_name.GetValue());
     log_setting("Renderer_FilterMode", values.filter_mode.GetValue());
     log_setting("Renderer_TextureFilter", GetTextureFilterName(values.texture_filter.GetValue()));
+    log_setting("Renderer_TextureSampling",
+                GetTextureSamplingName(values.texture_sampling.GetValue()));
+    log_setting("Renderer_DelayGameRenderThreasUs", values.delay_game_render_thread_us.GetValue());
     log_setting("Stereoscopy_Render3d", values.render_3d.GetValue());
     log_setting("Stereoscopy_Factor3d", values.factor_3d.GetValue());
     log_setting("Stereoscopy_MonoRenderOption", values.mono_render_option.GetValue());
@@ -249,6 +209,8 @@ void RestoreGlobalState(bool is_powered_on) {
     values.resolution_factor.SetGlobal(true);
     values.frame_limit.SetGlobal(true);
     values.texture_filter.SetGlobal(true);
+    values.texture_sampling.SetGlobal(true);
+    values.delay_game_render_thread_us.SetGlobal(true);
     values.layout_option.SetGlobal(true);
     values.swap_screen.SetGlobal(true);
     values.upright_screen.SetGlobal(true);

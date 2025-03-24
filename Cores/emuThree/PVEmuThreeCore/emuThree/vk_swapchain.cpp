@@ -2,30 +2,23 @@
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
 
-// Local Changes: Comment out Destroy()
-
 #include <algorithm>
 #include <limits>
 #include "common/logging/log.h"
 #include "common/microprofile.h"
 #include "common/settings.h"
 #include "video_core/renderer_vulkan/vk_instance.h"
-#include "video_core/renderer_vulkan/vk_scheduler.h"
 #include "video_core/renderer_vulkan/vk_swapchain.h"
 
-// Turn on PRESENT_WAIT_IDLE to wait for all operations to complete before presenting.
-// This helps avoid timing issues with Metal's command buffer scheduling
-// Set to 1 to enable, 0 to disable @JoeMatt
-#define PRESENT_WAIT_IDLE 0
+#define DESTROY_SWAPCHAIN 0
 
 MICROPROFILE_DEFINE(Vulkan_Acquire, "Vulkan", "Swapchain Acquire", MP_RGB(185, 66, 245));
 MICROPROFILE_DEFINE(Vulkan_Present, "Vulkan", "Swapchain Present", MP_RGB(66, 185, 245));
 
 namespace Vulkan {
 
-Swapchain::Swapchain(const Instance& instance_, Scheduler& scheduler, u32 width, u32 height,
-                     vk::SurfaceKHR surface_)
-    : instance{instance_}, scheduler{scheduler}, surface{surface_} {
+Swapchain::Swapchain(const Instance& instance_, u32 width, u32 height, vk::SurfaceKHR surface_)
+    : instance{instance_}, surface{surface_} {
     FindPresentFormat();
     SetPresentMode();
     Create(width, height, surface);
@@ -42,8 +35,12 @@ void Swapchain::Create(u32 width_, u32 height_, vk::SurfaceKHR surface_) {
     surface = surface_;
     needs_recreation = false;
 
+#if DESTROY_SWAPCHAIN
+    Destroy();
+#else
     // Store old swapchain to pass to create info @JoeMatt
     vk::SwapchainKHR old_swapchain = swapchain;
+#endif
 
     SetPresentMode();
     SetSurfaceProperties();
@@ -73,7 +70,11 @@ void Swapchain::Create(u32 width_, u32 height_, vk::SurfaceKHR surface_) {
         .compositeAlpha = composite_alpha,
         .presentMode = present_mode,
         .clipped = true,
+#if DESTROY_SWAPCHAIN
+        .oldSwapchain = nullptr,
+#else
         .oldSwapchain = old_swapchain, // Pass the old swapchain here @JoeMatt
+#endif
     };
 
     try {
@@ -83,19 +84,18 @@ void Swapchain::Create(u32 width_, u32 height_, vk::SurfaceKHR surface_) {
         UNREACHABLE();
     }
 
-    // Destroy old swapchain after creating new one @JoeMatt
-    if (old_swapchain) {
-        instance.GetDevice().destroySwapchainKHR(old_swapchain);
-    }
-
     SetupImages();
     RefreshSemaphores();
 }
 
 bool Swapchain::AcquireNextImage() {
+    if (needs_recreation) {
+        return false;
+    }
+
     MICROPROFILE_SCOPE(Vulkan_Acquire);
-    vk::Device device = instance.GetDevice();
-    vk::Result result =
+    const vk::Device device = instance.GetDevice();
+    const vk::Result result =
         device.acquireNextImageKHR(swapchain, std::numeric_limits<u64>::max(),
                                    image_acquired[frame_index], VK_NULL_HANDLE, &image_index);
 
@@ -117,10 +117,6 @@ bool Swapchain::AcquireNextImage() {
 }
 
 void Swapchain::Present() {
-    // if (needs_recreation) {
-    //     return;
-    // }
-
     const vk::PresentInfoKHR present_info = {
         .waitSemaphoreCount = 1,
         .pWaitSemaphores = &present_ready[image_index],
@@ -131,7 +127,7 @@ void Swapchain::Present() {
 
     MICROPROFILE_SCOPE(Vulkan_Present);
     try {
-#if defined(__APPLE__) && PRESENT_WAIT_IDLE
+#if defined(__APPLE__)
         // On MoltenVK, make sure we wait for all operations to complete before presenting
         // This helps avoid timing issues with Metal's command buffer scheduling
         instance.GetPresentQueue().waitIdle();
@@ -139,6 +135,10 @@ void Swapchain::Present() {
         [[maybe_unused]] vk::Result result = instance.GetPresentQueue().presentKHR(present_info);
     } catch (vk::OutOfDateKHRError&) {
         needs_recreation = true;
+        return;
+    } catch (vk::SurfaceLostKHRError&) {
+        needs_recreation = true;
+        return;
     } catch (const vk::SystemError& err) {
         LOG_CRITICAL(Render_Vulkan, "Swapchain presentation failed {}", err.what());
         UNREACHABLE();
@@ -170,9 +170,9 @@ void Swapchain::FindPresentFormat() {
         return;
     }
 
-    LOG_CRITICAL(Render_Vulkan, "Unable to find required swapchain format!");
-    UNREACHABLE();
+    UNREACHABLE_MSG("Unable to find required swapchain format!");
 }
+
 void Swapchain::SetPresentMode() {
     const auto modes = instance.GetPhysicalDevice().getSurfacePresentModesKHR(surface);
     const bool use_vsync = Settings::values.use_vsync_new.GetValue();
@@ -201,7 +201,7 @@ void Swapchain::SetPresentMode() {
     }
     // If vsync is enabled attempt to use mailbox mode in case the user wants to speedup/slowdown
     // the game. If mailbox is not available use immediate and warn about it.
-    if (use_vsync && Settings::GetFrameLimit() > 100) {
+    if (use_vsync && Settings::values.frame_limit.GetValue() > 100) {
         present_mode = has_mailbox ? vk::PresentModeKHR::eMailbox : vk::PresentModeKHR::eImmediate;
         if (!has_mailbox) {
             LOG_WARNING(
@@ -267,12 +267,25 @@ void Swapchain::RefreshSemaphores() {
     for (vk::Semaphore& semaphore : present_ready) {
         semaphore = device.createSemaphore({});
     }
+
+//    if (instance.HasDebuggingToolAttached()) {
+//        for (u32 i = 0; i < image_count; ++i) {
+//            SetObjectName(device, image_acquired[i], "Swapchain Semaphore: image_acquired {}", i);
+//            SetObjectName(device, present_ready[i], "Swapchain Semaphore: present_ready {}", i);
+//        }
+//    }
 }
 
 void Swapchain::SetupImages() {
     vk::Device device = instance.GetDevice();
     images = device.getSwapchainImagesKHR(swapchain);
     image_count = static_cast<u32>(images.size());
+
+//    if (instance.HasDebuggingToolAttached()) {
+//        for (u32 i = 0; i < image_count; ++i) {
+//            SetObjectName(device, images[i], "Swapchain Image {}", i);
+//        }
+//    }
 }
 
 } // namespace Vulkan

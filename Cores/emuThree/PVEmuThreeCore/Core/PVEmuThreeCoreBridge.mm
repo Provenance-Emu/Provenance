@@ -151,7 +151,7 @@ static bool _isOff = false;
 
 - (void)startEmuThree {
     _isInitialized = false;
-    [CitraWrapper.sharedInstance useMetalLayer:m_view.layer];
+    [CitraWrapper.sharedInstance useMetalLayer:(CAMetalLayer *)m_view.layer];
     [CitraWrapper.sharedInstance load:_romPath];
     [self setupControllers];
     DLOG(@"VM Started\n");

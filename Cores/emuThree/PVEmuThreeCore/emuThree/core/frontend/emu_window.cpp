@@ -35,7 +35,7 @@ private:
         explicit Device(std::weak_ptr<TouchState>&& touch_state) : touch_state(touch_state) {}
         std::tuple<float, float, bool> GetStatus() const override {
             if (auto state = touch_state.lock()) {
-                std::lock_guard guard{state->mutex};
+                std::scoped_lock guard{state->mutex};
                 return std::make_tuple(state->touch_x, state->touch_y, state->touch_pressed);
             }
             return std::make_tuple(0.0f, 0.0f, false);
@@ -55,15 +55,17 @@ EmuWindow::EmuWindow(bool is_secondary_) : is_secondary{is_secondary_} {
 }
 
 EmuWindow::~EmuWindow() = default;
-/**
- * Check if the given x/y coordinates are within the touchpad specified by the framebuffer layout
- * @param layout FramebufferLayout object describing the framebuffer size and screen positions
- * @param framebuffer_x Framebuffer x-coordinate to check
- * @param framebuffer_y Framebuffer y-coordinate to check
- * @return True if the coordinates are within the touchpad, otherwise false
- */
-static bool IsWithinTouchscreen(const Layout::FramebufferLayout& layout, unsigned framebuffer_x,
-                                unsigned framebuffer_y) {
+
+bool EmuWindow::IsWithinTouchscreen(const Layout::FramebufferLayout& layout, unsigned framebuffer_x,
+                                    unsigned framebuffer_y) {
+#ifndef ANDROID
+    // If separate windows and the touch is in the primary (top) screen, ignore it.
+    if (Settings::values.layout_option.GetValue() == Settings::LayoutOption::SeparateWindows &&
+        !is_secondary && !Settings::values.swap_screen.GetValue()) {
+        return false;
+    }
+#endif
+
     if (Settings::values.render_3d.GetValue() == Settings::StereoRenderOption::SideBySide) {
         return (framebuffer_y >= layout.bottom_screen.top &&
                 framebuffer_y < layout.bottom_screen.bottom &&
@@ -110,7 +112,8 @@ std::tuple<unsigned, unsigned> EmuWindow::ClipToTouchScreen(unsigned new_x, unsi
 }
 
 void EmuWindow::CreateTouchState() {
-    if (touch_state = global_touch_state.lock()) {
+    touch_state = global_touch_state.lock();
+    if (touch_state) {
         return;
     }
     touch_state = std::make_shared<TouchState>();
@@ -129,7 +132,7 @@ bool EmuWindow::TouchPressed(unsigned framebuffer_x, unsigned framebuffer_y) {
             framebuffer_x -=
                 (framebuffer_layout.width / 2) - (framebuffer_layout.cardboard.user_x_shift * 2);
     }
-    std::lock_guard guard(touch_state->mutex);
+    std::scoped_lock guard(touch_state->mutex);
     if (Settings::values.render_3d.GetValue() == Settings::StereoRenderOption::SideBySide) {
         touch_state->touch_x =
             static_cast<float>(framebuffer_x - framebuffer_layout.bottom_screen.left / 2) /
@@ -154,7 +157,7 @@ bool EmuWindow::TouchPressed(unsigned framebuffer_x, unsigned framebuffer_y) {
 }
 
 void EmuWindow::TouchReleased() {
-    std::lock_guard guard{touch_state->mutex};
+    std::scoped_lock guard{touch_state->mutex};
     touch_state->touch_pressed = false;
     touch_state->touch_x = 0;
     touch_state->touch_y = 0;
@@ -170,8 +173,7 @@ void EmuWindow::TouchMoved(unsigned framebuffer_x, unsigned framebuffer_y) {
     TouchPressed(framebuffer_x, framebuffer_y);
 }
 
-void EmuWindow::UpdateCurrentFramebufferLayout(unsigned width, unsigned height,
-                                               bool is_portrait_mode) {
+void EmuWindow::UpdateCurrentFramebufferLayout(u32 width, u32 height, bool is_portrait_mode) {
     Layout::FramebufferLayout layout;
 
     // If in portrait mode, only the MobilePortrait option really makes sense
@@ -197,11 +199,19 @@ void EmuWindow::UpdateCurrentFramebufferLayout(unsigned width, unsigned height,
             layout =
                 Layout::LargeFrameLayout(width, height, Settings::values.swap_screen.GetValue(),
                                          Settings::values.upright_screen.GetValue(),
-                                         Settings::values.large_screen_proportion.GetValue());
+                                         Settings::values.large_screen_proportion.GetValue(),
+                                         Layout::VerticalAlignment::Bottom);
+            break;
+        case Settings::LayoutOption::HybridScreen:
+            layout =
+                Layout::HybridScreenLayout(width, height, Settings::values.swap_screen.GetValue(),
+                                           Settings::values.upright_screen.GetValue());
             break;
         case Settings::LayoutOption::SideScreen:
-            layout = Layout::SideFrameLayout(width, height, Settings::values.swap_screen.GetValue(),
-                                             Settings::values.upright_screen.GetValue());
+            layout =
+                Layout::LargeFrameLayout(width, height, Settings::values.swap_screen.GetValue(),
+                                         Settings::values.upright_screen.GetValue(), 1.0f,
+                                         Layout::VerticalAlignment::Bottom);
             break;
 #ifndef ANDROID
         case Settings::LayoutOption::SeparateWindows:
@@ -214,8 +224,9 @@ void EmuWindow::UpdateCurrentFramebufferLayout(unsigned width, unsigned height,
                                                        Settings::values.swap_screen.GetValue());
             break;
         case Settings::LayoutOption::MobileLandscape:
-            layout = Layout::MobileLandscapeFrameLayout(
-                width, height, Settings::values.swap_screen.GetValue(), 2.25f, false);
+            layout =
+                Layout::LargeFrameLayout(width, height, Settings::values.swap_screen.GetValue(),
+                                         false, 2.25f, Layout::VerticalAlignment::Top);
             break;
         case Settings::LayoutOption::Default:
         default:
