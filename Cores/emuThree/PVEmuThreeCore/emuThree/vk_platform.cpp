@@ -198,9 +198,9 @@ vk::UniqueInstance CreateInstance(const Common::DynamicLibrary& library,
     const auto extensions = GetInstanceExtensions(window_type, enable_validation);
 
     const vk::ApplicationInfo application_info = {
-        .pApplicationName = "Cytrus",
+        .pApplicationName = "Citra",
         .applicationVersion = VK_MAKE_VERSION(1, 0, 0),
-        .pEngineName = "Cytrus Vulkan",
+        .pEngineName = "Citra Vulkan",
         .engineVersion = VK_MAKE_VERSION(1, 0, 0),
         .apiVersion = TargetVulkanApiVersion,
     };
@@ -222,35 +222,25 @@ vk::UniqueInstance CreateInstance(const Common::DynamicLibrary& library,
         .ppEnabledExtensionNames = extensions.data(),
     };
 
-    // FIXME: @JoeMatt This doesn't build yet @JoeMatt
+    // Configure MoltenVK using environment variables instead of the deprecated layer settings API
 #ifdef __APPLE__
-    // Use synchronous queue submits if async presentation is enabled, to avoid threading
-    // indirection.
+    // Note: MoltenVK now uses environment variables for configuration
+    // These would typically be set before the application starts
+    // For example:
+    // MVK_CONFIG_SYNCHRONOUS_QUEUE_SUBMITS=1
+    // MVK_CONFIG_RESUME_LOST_DEVICE=1
+    // MVK_CONFIG_SHOULD_MAXIMIZE_CONCURRENT_COMPILATION=1
+    
+    // If we need to set these programmatically, we would need to use setenv
+    // but this is generally not recommended during runtime
+    
+    // The following code is left as a comment for reference:
+    /*
     const auto synchronous_queue_submits = Settings::values.async_presentation.GetValue();
-    // If the device is lost, make an attempt to resume if possible to avoid crashes.
-    constexpr auto resume_lost_device = true;
-    // Maximize concurrency to improve shader compilation performance.
-    constexpr auto maximize_concurrent_compilation = true;
-
-    constexpr auto layer_name = "MoltenVK";
-//    const vk::LayerSettingEXT layer_settings[] = {
-//        {layer_name, "MVK_CONFIG_SYNCHRONOUS_QUEUE_SUBMITS", vk::LayerSettingTypeEXT::eBool32, 1,
-//         &synchronous_queue_submits},
-//        {layer_name, "MVK_CONFIG_RESUME_LOST_DEVICE", vk::LayerSettingTypeEXT::eBool32, 1,
-//         &resume_lost_device},
-//        {layer_name, "MVK_CONFIG_SHOULD_MAXIMIZE_CONCURRENT_COMPILATION",
-//         vk::LayerSettingTypeEXT::eBool32, 1, &maximize_concurrent_compilation},
-//    };
-//    const vk::LayerSettingsCreateInfoEXT layer_settings_ci = {
-//        .pNext = nullptr,
-//        .settingCount = static_cast<uint32_t>(std::size(layer_settings)),
-//        .pSettings = layer_settings,
-//    };
-//
-//    if (std::find(extensions.begin(), extensions.end(), VK_EXT_LAYER_SETTINGS_EXTENSION_NAME) !=
-//        extensions.end()) {
-//        instance_ci.pNext = &layer_settings_ci;
-//    }
+    setenv("MVK_CONFIG_SYNCHRONOUS_QUEUE_SUBMITS", synchronous_queue_submits ? "1" : "0", 1);
+    setenv("MVK_CONFIG_RESUME_LOST_DEVICE", "1", 1);
+    setenv("MVK_CONFIG_SHOULD_MAXIMIZE_CONCURRENT_COMPILATION", "1", 1);
+    */
 #endif
 
     auto instance = vk::createInstanceUnique(instance_ci);

@@ -135,7 +135,7 @@ static void OnStatusMessageReceived(const Network::StatusMessageEntry& msg) {
 @implementation MultiplayerManager
 -(MultiplayerManager *) init {
     if(self = [super init]) {
-        NetSettings::values.web_api_url = [[[NSUserDefaults standardUserDefaults] stringForKey:@"cytrus.webAPIURL"] UTF8String];
+        NetSettings::values.web_api_url = [[[NSUserDefaults standardUserDefaults] stringForKey:@"citra.webAPIURL"] UTF8String];
         Network::Init();
         
         session = std::make_shared<Network::AnnounceMultiplayerSession>();
@@ -208,7 +208,7 @@ static void OnStatusMessageReceived(const Network::StatusMessageEntry& msg) {
 -(void) updateWebAPIURL {
     NSLog(@"updated web api url");
     Network::Shutdown();
-    NetSettings::values.web_api_url = [[[NSUserDefaults standardUserDefaults] stringForKey:@"cytrus.webAPIURL"] UTF8String];
+    NetSettings::values.web_api_url = [[[NSUserDefaults standardUserDefaults] stringForKey:@"citra.webAPIURL"] UTF8String];
     Network::Init();
 }
 @end

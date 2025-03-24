@@ -121,7 +121,7 @@ import PVCoreBridge
                      defaultValue: 2)
     }
     
-    // # The system region that Cytrus will use during emulation
+    // # The system region that Citra will use during emulation
     // # -1: Auto-select (default), 0: Japan, 1: USA, 2: Europe, 3: Australia, 4: China, 5: Korea, 6: Taiwan
 
     static var regionOption: CoreOption {
@@ -142,7 +142,7 @@ import PVCoreBridge
                      defaultValue: -1)
     }
     
-    // # The system language that Cytrus will use during emulation
+    // # The system language that Citra will use during emulation
     // # 0: Japanese, 1: English (default), 2: French, 3: German, 4: Italian, 5: Spanish,
     // # 6: Simplified Chinese, 7: Korean, 8: Dutch, 9: Portuguese, 10: Russian, 11: Traditional Chinese
     static var languageOption: CoreOption {

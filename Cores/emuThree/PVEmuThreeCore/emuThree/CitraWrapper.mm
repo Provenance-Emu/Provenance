@@ -346,7 +346,7 @@ static void InitializeLogging() {
         Settings::values.lle_modules.emplace(service_module.name, ![[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable High Level Emulation"]);
     }
     
-//    Settings::values.lle_applets.SetValue([defaults boolForKey:@"cytrus.lleApplets"]);
+//    Settings::values.lle_applets.SetValue([defaults boolForKey:@"citra.lleApplets"]);
     
     [self getModelType];
     Core::System::GetInstance().ApplySettings();
