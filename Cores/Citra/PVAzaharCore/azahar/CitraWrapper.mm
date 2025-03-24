@@ -14,8 +14,8 @@
 #import <PVAzahar/CitraWrapper.h>
 #import "InputFactory.h"
 #import <sys/utsname.h>
-#import "../emuThree/Camera/CameraFactory.h"
-#import "../emuThree/Camera/CameraInterface.h"
+#import "../azahar/Camera/CameraFactory.h"
+#import "../azahar/Camera/CameraInterface.h"
 #include "../citra_wrapper/helpers/config.h"
 #include "file_handle.h"
 #include "core/core.h"

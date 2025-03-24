@@ -8,7 +8,7 @@
 // Local Changes: Create local buttoninputbridge
 
 #import <PVAzahar/InputBridge.h>
-#import "../emuThree/InputFactory.h"
+#import "../azahar/InputFactory.h"
 
 #import <PVAzahar/CitraWrapper.h>
 #include <thread>
