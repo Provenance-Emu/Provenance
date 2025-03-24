@@ -41,9 +41,7 @@
 #include "core/cheats/cheat_base.h"
 #include "core/core.h"
 #include "core/frontend/applets/default_applets.h"
-#include "core/frontend/applets/swkbd.h"
 #include "core/hle/service/am/am.h"
-#include "core/frontend/input.h"
 
 #include "common/common_paths.h"
 #include "common/logging/backend.h"
@@ -148,23 +146,19 @@ std::pair<std::string, uint8_t> Keyboard::GetKeyboardText(const Frontend::Keyboa
 // MARK: Keyboard
 
 static void InitializeLogging() {
-    Common::Log::Initialize();
-    Common::Log::SetColorConsoleBackendEnabled(true);
-    Common::Log::Start();
-
 #if DEBUG
-    Common::Log::Filter log_filter(Common::Log::Level::Trace);
+    Log::Filter log_filter(Log::Level::Trace);
 #else
-    Common::Log::Filter log_filter(Common::Log::Level::Debug);
+    Log::Filter log_filter(Log::Level::Debug);
 #endif
     log_filter.ParseFilterString(Settings::values.log_filter.GetValue());
-    Common::Log::SetGlobalFilter(log_filter);
-    Common::Log::SetColorConsoleBackendEnabled(true);
+    Log::SetGlobalFilter(log_filter);
+    Log::AddBackend(std::make_unique<Log::ColorConsoleBackend>());
     const std::string& log_dir = FileUtil::GetUserPath(FileUtil::UserPath::LogDir);
     FileUtil::CreateFullPath(log_dir);
-//    Common::Log::AddBackend(std::make_unique<Log::FileBackend>(log_dir + LOG_FILE));
+    Log::AddBackend(std::make_unique<Log::FileBackend>(log_dir + LOG_FILE));
 #ifdef _WIN32
-    Common::Log::AddBackend(std::make_unique<Log::DebuggerBackend>());
+    Log::AddBackend(std::make_unique<Log::DebuggerBackend>());
 #endif
 }
 
@@ -254,15 +248,12 @@ static void InitializeLogging() {
     Camera::RegisterFactory("av_rear", std::move(rearCamera));
     Camera::RegisterFactory("av_rear_alt", std::move(rearAltCamera));
 
-    Core::System& system{Core::System::GetInstance()};
-
-    Frontend::RegisterDefaultApplets(system);
+    Frontend::RegisterDefaultApplets();
     Input::RegisterFactory<Input::ButtonDevice>("ios_gamepad", std::make_shared<ButtonFactory>());
     Input::RegisterFactory<Input::AnalogDevice>("ios_gamepad", std::make_shared<AnalogFactory>());
     Settings::values.current_input_profile.motion_device="engine:motion_emu,update_period:100,sensitivity:0.01,tilt_clamp:90.0";
     Input::RegisterFactory<Input::MotionDevice>("motion_emu", std::make_shared<MotionFactory>());
 
-    Settings::values.graphics_api = Settings::GraphicsAPI::Vulkan;
 #if defined(TARGET_OS_IPHONE)
     Core::System::GetInstance().RegisterSoftwareKeyboard(std::make_shared<SoftwareKeyboard::Keyboard>());
 #endif  x
@@ -273,7 +264,7 @@ static void InitializeLogging() {
 
     Settings::values.use_hw_shader.SetValue(shaderType >= 2);
     Settings::values.shader_type.SetValue(shaderType);
-    Core::System::GetInstance().ApplySettings();
+    Settings::Apply();
 }
 
 -(void) setOptions:(bool)resetButtons {
@@ -346,10 +337,10 @@ static void InitializeLogging() {
         Settings::values.lle_modules.emplace(service_module.name, ![[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable High Level Emulation"]);
     }
     
-//    Settings::values.lle_applets.SetValue([defaults boolForKey:@"citra.lleApplets"]);
+//    Settings::values.lle_applets.SetValue([defaults boolForKey:@"cytrus.lleApplets"]);
     
     [self getModelType];
-    Core::System::GetInstance().ApplySettings();
+    Settings::Apply();
 }
 
 -(void) getModelType {
@@ -431,17 +422,17 @@ static void InitializeLogging() {
 
 -(void) rotate:(BOOL)rotate {
     Settings::values.upright_screen.SetValue(rotate);
-    Core::System::GetInstance().ApplySettings();
+    Settings::Apply();
 }
 
 -(void) swap:(BOOL)swap {
     Settings::values.swap_screen.SetValue(swap);
-    Core::System::GetInstance().ApplySettings();
+    Settings::Apply();
 }
 
 -(void) layout:(int)option {
     Settings::values.layout_option.SetValue((Settings::LayoutOption)option);
-    Core::System::GetInstance().ApplySettings();
+    Settings::Apply();
 }
 
 -(void) requestSave:(NSString *)path {
@@ -479,6 +470,7 @@ static void InitializeLogging() {
 }
 -(void) shutdown {
     core.Shutdown();
+    VideoCore::g_renderer.reset();
     emu_window.reset();
     Settings::values.m_buttonA.reset();
     Settings::values.m_buttonB.reset();
@@ -557,8 +549,8 @@ static void InitializeLogging() {
         bool touchReleased=(touch.phase == UITouchPhaseEnded || touch.phase == UITouchPhaseCancelled);
         bool touchBegan=touch.phase == UITouchPhaseBegan;
         bool touchMoved=touch.phase == UITouchPhaseMoved;
-        float heightRatio=emu_window->GetFramebufferLayout().height / ([touch view].window.bounds.size.height * [[UIScreen mainScreen] nativeScale]);
-        float widthRatio=emu_window->GetFramebufferLayout().width / ([touch view].window.bounds.size.width * [[UIScreen mainScreen] nativeScale]);
+        float heightRatio=emu_window->framebuffer_layout.height / ([touch view].window.bounds.size.height * [[UIScreen mainScreen] nativeScale]);
+        float widthRatio=emu_window->framebuffer_layout.width / ([touch view].window.bounds.size.width * [[UIScreen mainScreen] nativeScale]);
         if (touchBegan)
             emu_window->OnTouchEvent((point.x) * [[UIScreen mainScreen] nativeScale] * widthRatio, ((point.y) * [[UIScreen mainScreen] nativeScale] * heightRatio), true);
         if (touchMoved)

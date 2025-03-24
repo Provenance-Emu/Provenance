@@ -1,0 +1,51 @@
+{
+  "buildCommand" : {
+    "command" : "prepareForIndexing",
+    "enableIndexBuildArena" : false,
+    "targets" : null
+  },
+  "configuredTargets" : [
+    {
+      "guid" : "323e553800c6467b8de23fe641093e5ac79a2a4f0767399491c551712845faaa"
+    },
+    {
+      "guid" : "323e553800c6467b8de23fe641093e5ad9309c7c91544e1a7658784ea351b3c4"
+    },
+    {
+      "guid" : "c092538d34de09fbede7a3d7ab2237a5becabdea1152de7ee75c495d794a9322"
+    }
+  ],
+  "containerPath" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/PVAzahar.xcodeproj",
+  "continueBuildingAfterErrors" : true,
+  "dependencyScope" : "workspace",
+  "enableIndexBuildArena" : false,
+  "hideShellScriptEnvironment" : false,
+  "parameters" : {
+    "action" : "build",
+    "arenaInfo" : {
+      "buildIntermediatesPath" : "",
+      "buildProductsPath" : "",
+      "derivedDataPath" : "/Users/jmattiello/Library/Developer/Xcode/DerivedData",
+      "indexDataStoreFolderPath" : "/Users/jmattiello/Library/Developer/Xcode/DerivedData/PVAzahar-cxkaetqulmcmgwdihkafncwuqlzv/Index.noindex/DataStore",
+      "indexEnableDataStore" : true,
+      "indexPCHPath" : "/Users/jmattiello/Library/Developer/Xcode/DerivedData/PVAzahar-cxkaetqulmcmgwdihkafncwuqlzv/Index.noindex/PrecompiledHeaders",
+      "pchPath" : ""
+    },
+    "configurationName" : "Debug",
+    "overrides" : {
+      "synthesized" : {
+        "table" : {
+          "ENABLE_PREVIEWS" : "NO",
+          "ENABLE_XOJIT_PREVIEWS" : "NO"
+        }
+      }
+    }
+  },
+  "qos" : "default",
+  "schemeCommand" : "launch",
+  "showNonLoggedProgress" : true,
+  "useDryRun" : true,
+  "useImplicitDependencies" : true,
+  "useLegacyBuildLocations" : false,
+  "useParallelTargets" : true
+}

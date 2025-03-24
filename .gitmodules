@@ -187,3 +187,6 @@
 [submodule "Dependencies/SwiftSDL2"]
 	path = Dependencies/SwiftSDL2
 	url = https://github.com/ctreffs/SwiftSDL2.git
+[submodule "Cores/Citra/emuThreeDS"]
+	path = Cores/Citra/azahar
+	url = https://github.com/Provenance-Emu/emuThreeDS.git

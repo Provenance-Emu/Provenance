@@ -1,0 +1,10 @@
+framework module PVEmuThree {
+  umbrella header "PVEmuThree.h"
+  export *
+
+  module * { export * }
+}
+
+module PVEmuThree.__Swift {
+  exclude header "PVEmuThree-Swift.h"
+}

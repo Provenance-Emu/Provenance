@@ -1,0 +1,5 @@
+ extern const unsigned char PVEmuThreeVersionString[];
+ extern const double PVEmuThreeVersionNumber;
+
+ const unsigned char PVEmuThreeVersionString[] __attribute__ ((used)) = "@(#)PROGRAM:PVEmuThree  PROJECT:PVAzahar-1" "\n";
+ const double PVEmuThreeVersionNumber __attribute__ ((used)) = (double)1.;

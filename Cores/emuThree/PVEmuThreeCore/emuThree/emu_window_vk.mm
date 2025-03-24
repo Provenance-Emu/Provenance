@@ -6,13 +6,6 @@
 //
 
 #include "emu_window_vk.h"
-#include "video_core/renderer_base.h"
-#include "video_core/video_core.h"
-#include "video_core/gpu.h"
-#include "common/settings.h"
-#include "core/core.h"
-
-#import <UIKit/UIKit.h>
 
 class SharedContext_Apple : public Frontend::GraphicsContext {};
 
@@ -30,8 +23,7 @@ bool EmuWindow_VK::CreateWindowSurface() {
     
     window_info.type = Frontend::WindowSystemType::MacOS;
     window_info.render_surface = host_window;
-    window_info.render_surface_scale = [[UIScreen mainScreen] nativeScale];
-
+    
     return true;
 }
 
@@ -39,6 +31,10 @@ std::unique_ptr<Frontend::GraphicsContext> EmuWindow_VK::CreateSharedContext() c
     return std::make_unique<SharedContext_Apple>();
 }
 
+
+#include "video_core/renderer_base.h"
+#include "video_core/video_core.h"
+#include "common/settings.h"
 void EmuWindow_VK::OrientationChanged(bool portrait, CA::MetalLayer* surface) {
     is_portrait = portrait;
     
@@ -60,10 +56,7 @@ void EmuWindow_VK::TryPresenting() {
         }
     }
 
-    Core::System& system{Core::System::GetInstance()};
-
-    // FIXME: @JoeMatt
-//    if (system.GPU().Renderer() != nullptr) {
-        system.GPU().Renderer().TryPresent(0);
-//    }
+    if (VideoCore::g_renderer) {
+        VideoCore::g_renderer->TryPresent(0);
+    }
 }

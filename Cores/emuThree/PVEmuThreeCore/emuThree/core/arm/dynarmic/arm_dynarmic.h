@@ -17,15 +17,16 @@ class MemorySystem;
 } // namespace Memory
 
 namespace Core {
-
-class DynarmicUserCallbacks;
 class DynarmicExclusiveMonitor;
 class ExclusiveMonitor;
 class System;
+} // namespace Core
+
+class DynarmicUserCallbacks;
 
 class ARM_Dynarmic final : public ARM_Interface {
 public:
-    explicit ARM_Dynarmic(Core::System& system_, Memory::MemorySystem& memory_, u32 core_id_,
+    explicit ARM_Dynarmic(Core::System* system_, Memory::MemorySystem& memory_, u32 core_id_,
                           std::shared_ptr<Core::Timing::Timer> timer,
                           Core::ExclusiveMonitor& exclusive_monitor_);
     ~ARM_Dynarmic() override;
@@ -46,8 +47,9 @@ public:
     u32 GetCP15Register(CP15Register reg) const override;
     void SetCP15Register(CP15Register reg, u32 value) override;
 
-    void SaveContext(ThreadContext& ctx) override;
-    void LoadContext(const ThreadContext& ctx) override;
+    std::unique_ptr<ThreadContext> NewContext() const override;
+    void SaveContext(const std::unique_ptr<ThreadContext>& arg) override;
+    void LoadContext(const std::unique_ptr<ThreadContext>& arg) override;
 
     void PrepareReschedule() override;
 
@@ -55,6 +57,7 @@ public:
     void InvalidateCacheRange(u32 start_address, std::size_t length) override;
     void ClearExclusiveState() override;
     void SetPageTable(const std::shared_ptr<Memory::PageTable>& page_table) override;
+    void PurgeState() override;
 
 protected:
     std::shared_ptr<Memory::PageTable> GetPageTable() const override;
@@ -76,5 +79,3 @@ private:
     std::shared_ptr<Memory::PageTable> current_page_table = nullptr;
     std::map<std::shared_ptr<Memory::PageTable>, std::unique_ptr<Dynarmic::A32::Jit>> jits;
 };
-
-} // namespace Core
