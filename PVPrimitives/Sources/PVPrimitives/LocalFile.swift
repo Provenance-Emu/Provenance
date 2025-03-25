@@ -32,7 +32,7 @@ public struct LocalFile: LocalFileProvider, Codable, Equatable, Sendable {
             if let md5Cache = md5Cache {
                 return md5Cache.uppercased()
             } else {
-                let md5 = await FileManager.default.md5ForFile(atPath: url.path, fromOffset: 0)
+                let md5 = await FileManager.default.md5ForFile(at: url, fromOffset: 0)
                 md5Cache = md5
                 return md5
             }

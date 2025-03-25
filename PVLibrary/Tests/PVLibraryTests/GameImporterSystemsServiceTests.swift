@@ -9,7 +9,7 @@ import PVHashing
 class MockMD5Provider: MD5Provider {
     var mockMD5: String?
 
-    func md5ForFile(atPath path: String, fromOffset offset: UInt = 0) -> String? {
+    func md5ForFile(at url: URL, fromOffset offset: UInt = 0) -> String? {
         return mockMD5
     }
 }
