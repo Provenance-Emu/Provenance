@@ -4,6 +4,9 @@ import PVLogging
 import PVSwiftUI
 import PVFeatureFlags
 import PVThemes
+import PVLibrary
+import PVEmulatorCore
+import PVCoreBridge
 #if canImport(FreemiumKit)
 import FreemiumKit
 #endif
@@ -20,6 +23,7 @@ struct ProvenanceApp: App {
     @UIApplicationDelegateAdaptor(PVAppDelegate.self) var appDelegate
     @Environment(\.scenePhase) private var scenePhase
     @StateObject private var featureFlags = PVFeatureFlagsManager.shared
+    @StateObject private var sceneCoordinator = SceneCoordinator.shared
 
     init() {
 //#if canImport(Sentry)
@@ -46,7 +50,7 @@ struct ProvenanceApp: App {
       }
 
     var body: some Scene {
-        WindowGroup {
+        WindowGroup(id: "main") {
             ContentView(appDelegate: appDelegate)
                 .environmentObject(appState)
                 .environmentObject(featureFlags)
@@ -124,6 +128,7 @@ struct ProvenanceApp: App {
                            !md5Value.isEmpty {
                             ILOG("ProvenanceApp: Found direct md5 parameter in URL: \(md5Value)")
                             AppState.shared.appOpenAction = .openMD5(md5Value)
+                            openEmulatorSceneIfNeeded()
                             return
                         }
 
@@ -135,11 +140,14 @@ struct ProvenanceApp: App {
                               let md5Value = first.value {
                         ILOG("ProvenanceApp: Found game controller path with MD5: \(md5Value)")
                         AppState.shared.appOpenAction = .openMD5(md5Value)
+                        openEmulatorSceneIfNeeded()
                         return
                     } else {
                         WLOG("ProvenanceApp: Unrecognized URL format: \(url.absoluteString)")
                     }
                 }
+                .handlesExternalEvents(preferring: ["main"], allowing: ["main"])
+                .preferredColorScheme(ThemeManager.shared.currentPalette.dark ? .dark : .light)
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
@@ -150,11 +158,20 @@ struct ProvenanceApp: App {
                     UIApplication.swizzleSendEvent()
                     appState.sendEventWasSwizzled = true
                 }
+
+                // Check if we need to open the emulator scene based on app open action
+                if appState.bootupState == .completed {
+                    openEmulatorSceneIfNeeded()
+                }
             }
 
             // Handle scene phase changes for import pausing
             appState.handleScenePhaseChange(newPhase)
         }
+
+        // Add the emulator scene
+        EmulatorScene()
+            .handlesExternalEvents(matching: ["emulator"])
     }
 }
 
@@ -193,6 +210,14 @@ extension UIApplication {
 
 // MARK: - URL Handling
 extension ProvenanceApp {
+    // Helper method to open the emulator scene if needed based on app open action
+    private func openEmulatorSceneIfNeeded() {
+        if appState.appOpenAction.requiresEmulatorScene {
+            ILOG("Opening emulator scene for action: \(appState.appOpenAction)")
+            sceneCoordinator.openEmulatorScene()
+        }
+    }
+
     func handle(appURL url: URL) -> Bool {
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 
@@ -330,6 +355,12 @@ extension ProvenanceApp {
 //            } else {
 //                try FileManager.default.moveItem(at: url, to: destinationPath)
 //            }
+
+            // Set the app open action to open the file
+            AppState.shared.appOpenAction = .openFile(destinationPath)
+
+            // Open the emulator scene
+            openEmulatorSceneIfNeeded()
         } catch {
             ELOG("Unable to move file from \(url.path) to \(destinationPath.path) because \(error.localizedDescription)")
             return

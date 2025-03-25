@@ -14,7 +14,7 @@ import Perception
 @MainActor
 //@Observable
 @Perceptible
-public final class EmulationUIState: ObservableObject {
+public final class EmulationUIState : ObservableObject {
     public var core: PVEmulatorCore? {
         didSet {
             DLOG("Set core to \(core?.debugDescription ?? "nil")")
@@ -22,4 +22,7 @@ public final class EmulationUIState: ObservableObject {
     }
     public var emulator: PVEmualatorControllerProtocol?
     public var isInBackground: Bool = false
+    
+    /// The current game that should be loaded in the emulator scene
+    public var currentGame: PVGame? = nil
 }
