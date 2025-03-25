@@ -21,7 +21,8 @@ public enum CorePlist {
   public static let pvProjectURL: String = "https://azahar-emu.org"
   public static let pvProjectVersion: String = "git"
   public static let pvSupportedSystems: [String] = ["com.provenance.3ds"]
-
+  public static let pvDisabled: Bool = true
+    
   #if canImport(PVCoreBridge)
     public static var corePlist: EmulatorCoreInfoPlist {
         .init(
@@ -30,7 +31,8 @@ public enum CorePlist {
             supportedSystems: CorePlist.pvSupportedSystems,
             projectName: CorePlist.pvProjectName,
             projectURL: CorePlist.pvProjectURL,
-            projectVersion: CorePlist.pvProjectVersion)
+            projectVersion: CorePlist.pvProjectVersion,
+            disabled: CorePlist.pvDisabled)
     }
 
     public var corePlist: EmulatorCoreInfoPlist { Self.corePlist }

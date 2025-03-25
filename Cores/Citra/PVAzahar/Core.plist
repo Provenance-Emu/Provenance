@@ -16,5 +16,7 @@
 	<string>https://azahar-emu.org</string>
 	<key>PVProjectVersion</key>
 	<string>git</string>
+	<key>PVDisabled</key>
+	<true/>
 </dict>
 </plist>
