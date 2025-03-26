@@ -70,6 +70,14 @@ struct GameLibraryView: View {
                     }
                 }
             }
+            .sheet(isPresented: $showingDocumentPicker) {
+                DocumentPicker(onImport: importFiles)
+            }
+            .alert("Import Result", isPresented: $showingImportMessage, presenting: importMessage) { _ in
+                Button("OK", role: .cancel) {}
+            } message: { message in
+                Text(message)
+            }
         }
     }
     
@@ -109,14 +117,6 @@ struct GameLibraryView: View {
             .padding(.top, 10)
         }
         .padding()
-        .sheet(isPresented: $showingDocumentPicker) {
-            DocumentPicker(onImport: importFiles)
-        }
-        .alert("Import Result", isPresented: $showingImportMessage, presenting: importMessage) { _ in
-            Button("OK", role: .cancel) {}
-        } message: { message in
-            Text(message)
-        }
     }
     
     private func importFiles(urls: [URL]) {

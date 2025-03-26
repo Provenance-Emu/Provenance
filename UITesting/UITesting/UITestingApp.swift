@@ -218,6 +218,9 @@ struct UITestingApp: SwiftUI.App {
             .environmentObject(sceneCoordinator)
 #if canImport(FreemiumKit)
             .environmentObject(FreemiumKit.shared)
+            .onAppear {
+                FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
+            }
 #endif
         }
         .onChange(of: scenePhase) { newPhase in
