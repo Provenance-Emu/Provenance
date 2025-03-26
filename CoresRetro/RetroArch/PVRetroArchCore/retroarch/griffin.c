@@ -509,6 +509,9 @@ VIDEO DRIVER
 
 #ifdef HAVE_VULKAN
 #include "../gfx/drivers/vulkan.c"
+#if defined(HAVE_COCOATOUCH) || defined(HAVE_COCOA) || defined(HAVE_COCOA_METAL)
+#include "../gfx/drivers/vulkan_hdr_helpers.c"
+#endif
 #endif
 
 #if defined(HAVE_PLAIN_DRM)

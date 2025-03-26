@@ -119,7 +119,7 @@ public final class RealmConfiguration {
                         return
                     }
                     
-                    if let md5 = FileManager.default.md5ForFile(atPath: fullPath.path, fromOffset: UInt(offset)), !md5.isEmpty {
+                    if let md5 = FileManager.default.md5ForFile(at: fullPath, fromOffset: UInt(offset)), !md5.isEmpty {
                         newObject!["md5Hash"] = md5
                         counter += 1
                     } else {

@@ -480,7 +480,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                 ELOG("Cannot find file at path: \(romPath)")
                 return nil
             }
-            return fm.md5ForFile(atPath: romPath.path, fromOffset: offset)
+            return fm.md5ForFile(at: romPath, fromOffset: offset)
         }
 
         return nil

@@ -23,7 +23,7 @@ class ImportExtension: CSImportExtension {
         #warning("TODO: Make this support save states, cheats, and other related objects")
 
         if RealmConfiguration.supportsAppGroups {
-            guard let md5Hash = FileManager.default.md5ForFile(atPath: forFileAt.path, fromOffset: 0)  else {
+            guard let md5Hash = FileManager.default.md5ForFile(at: forFileAt, fromOffset: 0)  else {
                 WLOG("No MD5 hash found for file")
                 return
             }

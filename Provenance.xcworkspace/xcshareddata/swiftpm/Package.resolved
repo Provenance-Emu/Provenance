@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/google/abseil-cpp-binary.git",
         "state": {
           "branch": null,
-          "revision": "194a6706acbd25e4ef639bcaddea16e8758a3e27",
-          "version": "1.2024011602.0"
+          "revision": "bbe8b69694d7873315fd3a4ad41efe043e1c07c5",
+          "version": "1.2024072200.0"
         }
       },
       {
@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/microsoft/appcenter-sdk-apple.git",
         "state": {
           "branch": null,
-          "revision": "ab54f758243f282d290b33027e8aac910d3d859a",
-          "version": "5.0.5"
+          "revision": "9308921a2f6ef828cf9fae898ea4f080a81cdf11",
+          "version": "5.0.6"
         }
       },
       {
@@ -78,8 +78,8 @@
         "repositoryURL": "https://github.com/MrAsterisco/DateRangePicker",
         "state": {
           "branch": null,
-          "revision": "5b1ec8990b42f7f4f21a596300707d3a024dd782",
-          "version": "1.0.3"
+          "revision": "8bad437603a0559cfe29e69df4ef1981ddfb5f2b",
+          "version": "1.0.4"
         }
       },
       {
@@ -87,7 +87,7 @@
         "repositoryURL": "https://github.com/sindresorhus/Defaults.git",
         "state": {
           "branch": "main",
-          "revision": "ef1b2318fb549002bb533bec3a8ad98ae09f2cb6",
+          "revision": "cc938ecf0bed848dc80a9726ac5455104e3f9dae",
           "version": null
         }
       },
@@ -96,8 +96,8 @@
         "repositoryURL": "https://github.com/firebase/firebase-ios-sdk",
         "state": {
           "branch": null,
-          "revision": "0d885d28250fb1196b614bc9455079b75c531f72",
-          "version": "11.7.0"
+          "revision": "2e4a4daac9da51f79c131e76cb47e785dd7708c4",
+          "version": "11.10.0"
         }
       },
       {
@@ -114,8 +114,8 @@
         "repositoryURL": "https://github.com/FlineDev/FreemiumKit.git",
         "state": {
           "branch": null,
-          "revision": "602b69b45c0e827ef1514c6386ed762b6dba7747",
-          "version": "1.16.0"
+          "revision": "3ba71311448d2c7f706b0b5e34b014999a1af856",
+          "version": "1.18.0"
         }
       },
       {
@@ -123,8 +123,8 @@
         "repositoryURL": "https://github.com/google/GoogleAppMeasurement.git",
         "state": {
           "branch": null,
-          "revision": "be0881ff728eca210ccb628092af400c086abda3",
-          "version": "11.7.0"
+          "revision": "defe1970a9099d47765592ebd7ac5f5e9fdb57c6",
+          "version": "11.10.0"
         }
       },
       {
@@ -150,8 +150,8 @@
         "repositoryURL": "https://github.com/google/grpc-binary.git",
         "state": {
           "branch": null,
-          "revision": "f56d8fc3162de9a498377c7b6cea43431f4f5083",
-          "version": "1.65.1"
+          "revision": "cc0001a0cf963aa40501d9c2b181e7fc9fd8ec71",
+          "version": "1.69.0"
         }
       },
       {
@@ -159,8 +159,8 @@
         "repositoryURL": "https://github.com/google/gtm-session-fetcher.git",
         "state": {
           "branch": null,
-          "revision": "85b7b231882c3c472b8bda4fb495324d3f19bab6",
-          "version": "4.2.0"
+          "revision": "4d70340d55d7d07cc2fdf8e8125c4c126c1d5f35",
+          "version": "4.4.0"
         }
       },
       {
@@ -186,8 +186,8 @@
         "repositoryURL": "https://github.com/google/interop-ios-for-google-sdks.git",
         "state": {
           "branch": null,
-          "revision": "2d12673670417654f08f5f90fdd62926dc3a2648",
-          "version": "100.0.0"
+          "revision": "040d087ac2267d2ddd4cca36c757d1c6a05fdbfe",
+          "version": "101.0.0"
         }
       },
       {
@@ -267,8 +267,8 @@
         "repositoryURL": "https://github.com/microsoft/PLCrashReporter.git",
         "state": {
           "branch": null,
-          "revision": "6752f71de206f6a53fa6a758c3660fd9a7fe7527",
-          "version": "1.11.2"
+          "revision": "fec2ff791b27fd9b9ceab9072025dea56409cca1",
+          "version": "1.11.3"
         }
       },
       {
@@ -303,8 +303,8 @@
         "repositoryURL": "https://github.com/realm/realm-core.git",
         "state": {
           "branch": null,
-          "revision": "85eeca41654cc9070ad81a21a4b1d153ad467c33",
-          "version": "14.13.1"
+          "revision": "cccb3ca9e26ec452a29f2f0d4050d1e38b8a3d43",
+          "version": "14.14.0"
         }
       },
       {
@@ -312,8 +312,8 @@
         "repositoryURL": "https://github.com/realm/realm-swift.git",
         "state": {
           "branch": null,
-          "revision": "5553cfd1c789efdb3d6daf7f0cc0733cfe601846",
-          "version": "10.54.1"
+          "revision": "8cb364a6a63695df296f05b53f7c3f3b1dda6af3",
+          "version": "10.54.3"
         }
       },
       {
@@ -339,8 +339,8 @@
         "repositoryURL": "https://github.com/ReactiveX/RxSwift.git",
         "state": {
           "branch": null,
-          "revision": "c7c7d2cf50a3211fe2843f76869c698e4e417930",
-          "version": "6.8.0"
+          "revision": "5dd1907d64f0d36f158f61a466bab75067224893",
+          "version": "6.9.0"
         }
       },
       {
@@ -348,8 +348,8 @@
         "repositoryURL": "https://github.com/getsentry/sentry-cocoa/",
         "state": {
           "branch": null,
-          "revision": "f45e9c62d7a4d9258ac3cf35a3acf9dbab4481d1",
-          "version": "8.43.0"
+          "revision": "4589f82132097558d386710b139bfe9c35c64d4a",
+          "version": "8.48.0"
         }
       },
       {
@@ -402,8 +402,8 @@
         "repositoryURL": "https://github.com/apple/swift-async-algorithms",
         "state": {
           "branch": null,
-          "revision": "5c8bd186f48c16af0775972700626f0b74588278",
-          "version": "1.0.2"
+          "revision": "4c3ea81f81f0a25d0470188459c6d4bf20cf2f97",
+          "version": "1.0.3"
         }
       },
       {
@@ -456,8 +456,8 @@
         "repositoryURL": "https://github.com/apple/swift-openapi-runtime",
         "state": {
           "branch": null,
-          "revision": "5e119a3d52dde0229312ed586be99c666c6b6f64",
-          "version": "1.7.0"
+          "revision": "81c309c7b43cd56b2d2b90ca0170f17ff3d0c433",
+          "version": "1.8.1"
         }
       },
       {
@@ -465,7 +465,7 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-perception.git",
         "state": {
           "branch": "main",
-          "revision": "8d52279b9809ef27eabe7d5420f03734528f19da",
+          "revision": "7efae7948b8de33ee2aa73f910daaf254a502d3b",
           "version": null
         }
       },
@@ -474,8 +474,8 @@
         "repositoryURL": "https://github.com/apple/swift-protobuf.git",
         "state": {
           "branch": null,
-          "revision": "ebc7251dd5b37f627c93698e4374084d98409633",
-          "version": "1.28.2"
+          "revision": "d72aed98f8253ec1aa9ea1141e28150f408cf17f",
+          "version": "1.29.0"
         }
       },
       {
@@ -519,8 +519,8 @@
         "repositoryURL": "https://github.com/DominikButz/SwipeCellSUI.git",
         "state": {
           "branch": null,
-          "revision": "d1b121a9b30789b603d7fa7559889925f20fe47e",
-          "version": "2.1.4"
+          "revision": "980921a595b098f2ad51198becada43bd0f5888e",
+          "version": "2.1.6"
         }
       },
       {
@@ -537,8 +537,8 @@
         "repositoryURL": "https://github.com/mtgto/Unrar.swift.git",
         "state": {
           "branch": null,
-          "revision": "510d61c954f27b196bef732b06125e29a619ebe6",
-          "version": "0.3.16"
+          "revision": "1112f3124eae0d9b962b0c26c9817c251917c62e",
+          "version": "0.4.1"
         }
       },
       {
@@ -555,8 +555,8 @@
         "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
         "state": {
           "branch": null,
-          "revision": "a3f634d1a409c7979cabc0a71b3f26ffa9fc8af1",
-          "version": "1.4.3"
+          "revision": "39de59b2d47f7ef3ca88a039dff3084688fe27f4",
+          "version": "1.5.2"
         }
       },
       {
@@ -573,7 +573,7 @@
         "repositoryURL": "https://github.com/facebook/zstd",
         "state": {
           "branch": "dev",
-          "revision": "f7a8bb1263448e5028aceeba606a08fe3809550f",
+          "revision": "eca205fc7849a61ab287492931a04960ac58e031",
           "version": null
         }
       }

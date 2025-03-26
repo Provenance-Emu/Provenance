@@ -20,9 +20,23 @@ OTHER_CFLAGS = $(inherited) -fomit-frame-pointer
 //OTHER_CFLAGS = $(inherited) -fstrict-aliasing
 OTHER_CFLAGS = $(inherited) -funsafe-math-optimizations
 OTHER_CFLAGS = $(inherited) -fvectorize
-OTHER_CFLAGS = $(inherited) -mcpu=apple-a12
-//OTHER_CFLAGS = $(inherited) -mcpu=apple-a15
-//OTHER_CFLAGS = $(inherited) -march=armv8-a+simd
+
+//Note that:
+//The -mcpu flag optimizes specifically for the target CPU architecture
+//The -mtune flag optimizes for the target CPU but maintains compatibility with older architectures
+
+OTHER_CFLAGS = $(inherited) -mcpu=apple-a10  // iPhone 7/7+, iPad 6th gen, Apple TV 4K 1st gen
+//OTHER_CFLAGS = $(inherited) -mtune=apple-a10 // iPhone 7/7+, iPad 6th gen, Apple TV 4K 1st gen
+//OTHER_CFLAGS = $(inherited) -mcpu=apple-a12  // iPhone XR/XS/XS Max, iPad 8th gen, iPad Air 3, iPad mini 5, Apple TV 4K 2nd gen
+//OTHER_CFLAGS = $(inherited) -mtune=apple-a12   // iPhone XR/XS/XS Max, iPad 8th gen, iPad Air 3, iPad mini 5, Apple TV 4K 2nd gen
+//OTHER_CFLAGS = $(inherited) -mtune=apple-a14   // iPhone 12 series, iPad Air 4th gen, iPad 10th gen
+//OTHER_CFLAGS = $(inherited) -mcpu=apple-a15  // iPhone 13 series, iPhone 14/14+, iPad mini 6, Apple TV 4K 3rd gen
+OTHER_CFLAGS = $(inherited) -mtune=apple-a15  // iPhone 13 series, iPhone 14/14+, iPad mini 6, Apple TV 4K 3rd gen
+//OTHER_CFLAGS = $(inherited) -mcpu=apple-a16
+//OTHER_CFLAGS = $(inherited) -mcpu=apple-a17  // iPhone 15 Pro/Pro Max
+//OTHER_CFLAGS = $(inherited) -mcpu=apple-a18    // iPhone 16/16+, iPhone 16 Pro/Pro Max
+//OTHER_CFLAGS = $(inherited) -mtune=apple-a18   // iPhone 16/16+, iPhone 16 Pro/Pro Max
+OTHER_CFLAGS = $(inherited) -march=armv8-a+simd // 34-36fps kirby top screen level 1
 
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_AUDIOTOOLBOX
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) CPPHTTPLIB_OPENSSL_SUPPORT

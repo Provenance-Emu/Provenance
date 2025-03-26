@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 73;
+	objectVersion = 74;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -2750,6 +2750,16 @@
 				FFMpeg/xcframeworks/libswscale.xcframework,
 				libopenal.xcframework,
 			);
+			platformFiltersByRelativePath = {
+				FFMpeg/xcframeworks/ffmpegkit.xcframework = (
+					ios,
+					maccatalyst,
+				);
+				libopenal.xcframework = (
+					ios,
+					maccatalyst,
+				);
+			};
 			target = B394CC562BDEE53A006B63E8 /* Provenance (AppStore) */;
 		};
 		B3FD984D2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
@@ -2885,6 +2895,12 @@
 				FFMpeg/xcframeworks/libswresample.xcframework,
 				FFMpeg/xcframeworks/libswscale.xcframework,
 			);
+			platformFiltersByRelativePath = {
+				FFMpeg/xcframeworks/ffmpegkit.xcframework = (
+					ios,
+					maccatalyst,
+				);
+			};
 		};
 		B3FD986A2D615C7700397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;

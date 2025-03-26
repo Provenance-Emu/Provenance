@@ -148,7 +148,7 @@ public extension GameLaunchingViewController {
                         Task {
                             try await downloadFileIfNeeded(fullBIOSFileURL)
                         }
-                        if let hash = FileManager.default.md5ForFile(atPath: fullBIOSFileURL.path, fromOffset: 0), !hash.isEmpty {
+                        if let hash = FileManager.default.md5ForFile(at: fullBIOSFileURL, fromOffset: 0), !hash.isEmpty {
                             // Make mutable
                             var hashDictionary = hashDictionary
                             hashDictionary[hash] = filename
@@ -183,9 +183,9 @@ public extension GameLaunchingViewController {
             } else {
                 // Not as important, but log if MD5 is mismatched.
                 // Cores care about filenames for some reason, not MD5s
-                let path = system.biosDirectory.appendingPathComponent(expectedFilename, isDirectory: false).path
+                let url = system.biosDirectory.appendingPathComponent(expectedFilename, isDirectory: false)
                 Task.detached(priority: .low) {
-                    let fileMD5 = FileManager.default.md5ForFile(atPath: path, fromOffset: 0) ?? ""
+                    let fileMD5 = FileManager.default.md5ForFile(at: url, fromOffset: 0) ?? ""
                     let expectedMD5 = currentEntry.expectedMD5.lowercased()
                     if fileMD5 != expectedMD5 {
                         WLOG("MD5 hash for \(expectedFilename) didn't match the expected value.\nGot {\(fileMD5)} expected {\(expectedMD5)}")
