@@ -23,7 +23,7 @@ import PVLogging
 //    }
 // }
 
-extension PVCore {
+public extension PVCore {
     public func createInstance(forSystem system: PVSystem) -> PVEmulatorCore? {
         guard let coreClass = NSClassFromString(self.principleClass) as? PVEmulatorCore.Type else {
             ELOG("Couldn't get class for <\(principleClass)>")
