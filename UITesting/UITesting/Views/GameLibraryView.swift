@@ -46,6 +46,13 @@ struct GameLibraryView: View {
                                     // Launch game action
                                     launchGame(game)
                                 }
+                                .contextMenu {
+                                    GameContextMenu(
+                                        game: game,
+                                        rootDelegate: nil,
+                                        contextMenuDelegate: self
+                                    )
+                                }
                             }
                         }
                         .padding()
@@ -181,6 +188,46 @@ struct GameLibraryView: View {
         } else {
             ELOG("GameLibraryView: Failed to set current game in EmulationUIState")
         }
+    }
+}
+
+// MARK: - GameContextMenuDelegate
+
+extension GameLibraryView: GameContextMenuDelegate {
+    func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame) {
+        ILOG("GameLibraryView: Rename requested for game: \(game.title)")
+    }
+    
+    func gameContextMenu(_ menu: GameContextMenu, didRequestChooseCoverFor game: PVGame) {
+        ILOG("GameLibraryView: Choose cover requested for game: \(game.title)")
+    }
+    
+    func gameContextMenu(_ menu: GameContextMenu, didRequestMoveToSystemFor game: PVGame) {
+        ILOG("GameLibraryView: Move to system requested for game: \(game.title)")
+    }
+    
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
+        ILOG("GameLibraryView: Show save states requested for game: \(game.title)")
+    }
+    
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor gameId: String) {
+        ILOG("GameLibraryView: Show game info requested for game ID: \(gameId)")
+    }
+    
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame) {
+        ILOG("GameLibraryView: Show image picker requested for game: \(game.title)")
+    }
+    
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame) {
+        ILOG("GameLibraryView: Show artwork search requested for game: \(game.title)")
+    }
+    
+    func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
+        ILOG("GameLibraryView: Choose artwork source requested for game: \(game.title)")
+    }
+    
+    func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
+        ILOG("GameLibraryView: Disc selection requested for game: \(game.title)")
     }
 }
 
