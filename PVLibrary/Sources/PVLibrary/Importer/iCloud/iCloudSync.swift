@@ -775,7 +775,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
         processingState.dequeue()
         processingState.enqueue(entry: .idle)
         removeSavesDeletedWhileApplicationClosed()
-        notificationCenter.post(Notification(name: .SavesFinishedImporting))
+        notificationCenter.post(name: .SavesFinishedImporting, object: nil)
     }
     
     func updateExistingSave(_ existing: PVSaveState, _ realm: Realm, _ save: SaveState, _ json: URL) {

@@ -341,7 +341,7 @@ public final class RomDatabase {
             
             ILOG("Database initialization completed")
             databaseInitialized = true
-            NotificationCenter.default.post(Notification(name: .RomDatabaseInitialized))
+            NotificationCenter.default.post(name: .RomDatabaseInitialized, object: nil)
         } else {
             ILOG("Database already initialized")
         }
