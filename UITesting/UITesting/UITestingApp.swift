@@ -16,12 +16,15 @@ import PVLibrary
 import PVRealm
 import PVEmulatorCore
 import PVCoreBridge
+import PVThemes
 import PVLogging
 import PVFileSystem
 import RealmSwift
 import PVSystems
 import PVPlists
 import PVCoreLoader
+import UIKit
+import SwiftUI
 
 #if canImport(FreemiumKit)
 import FreemiumKit
@@ -99,7 +102,7 @@ struct UITestingApp: SwiftUI.App {
                 
                 let newCore = PVCore(withIdentifier: "com.mock.", principleClass: "", supportedSystems: [nesSystem], name: "Mock NES", url: "https://mock.com", version: "1.0")
                 realm.add(newCore)
-
+                
             } else {
                 ILOG("UITestingApp: NES system already exists in database")
             }
@@ -227,10 +230,10 @@ struct UITestingApp: SwiftUI.App {
             throw error
         }
     }
-
+    
     @StateObject
     private var mockImportStatusDriverData = MockImportStatusDriverData()
-
+    
     // Scan for real systems and cores from plists
     private func scanForRealSystemsAndCores() async {
         ILOG("UITestingApp: Starting scan for real systems and cores")
@@ -361,34 +364,34 @@ struct UITestingApp: SwiftUI.App {
             }
             
             // Create a new save state
-//            let saveState = PVSaveState()
-//            saveState.game = realmGame
-//            saveState.core = realmGame.core
-//            saveState.date = Date()
-//            saveState.userDescription = "Test Save State"
-//            
-//            // Create a mock save state file
-//            let saveStateFileName = "\(realmGame.id)_savestate.sav"
-//            let saveStateFileURL = FileManager.default.temporaryDirectory.appendingPathComponent(saveStateFileName)
+            //            let saveState = PVSaveState()
+            //            saveState.game = realmGame
+            //            saveState.core = realmGame.core
+            //            saveState.date = Date()
+            //            saveState.userDescription = "Test Save State"
+            //
+            //            // Create a mock save state file
+            //            let saveStateFileName = "\(realmGame.id)_savestate.sav"
+            //            let saveStateFileURL = FileManager.default.temporaryDirectory.appendingPathComponent(saveStateFileName)
             
             // Create an empty file for the save state
-//            FileManager.default.createFile(atPath: saveStateFileURL.path, contents: Data(), attributes: nil)
+            //            FileManager.default.createFile(atPath: saveStateFileURL.path, contents: Data(), attributes: nil)
             
             // Create a PVFile for the save state
-//            let saveStateFile = PVFile()
-//            saveStateFile.url = saveStateFileURL
-//            saveStateFile.fileName = saveStateFileName
-//            saveStateFile.fileExtension = "sav"
-//            
-//            // Assign the file to the save state
-//            saveState.file = saveStateFile
-//            
-//            // Add the save state to the Realm
-//            try await realm.asyncWrite {
-//                realm.add(saveState)
-//                realmGame.saveStates.append(saveState)
-//            }
-//            
+            //            let saveStateFile = PVFile()
+            //            saveStateFile.url = saveStateFileURL
+            //            saveStateFile.fileName = saveStateFileName
+            //            saveStateFile.fileExtension = "sav"
+            //
+            //            // Assign the file to the save state
+            //            saveState.file = saveStateFile
+            //
+            //            // Add the save state to the Realm
+            //            try await realm.asyncWrite {
+            //                realm.add(saveState)
+            //                realmGame.saveStates.append(saveState)
+            //            }
+            //
             ILOG("UITestingApp: Created save state for game: \(realmGame.title)")
             return nil // saveState
         } catch {
@@ -397,7 +400,73 @@ struct UITestingApp: SwiftUI.App {
         }
     }
     
+    // MARK: - UIViewControllerRepresentable for PVEmulatorViewController
+    
+    /// SwiftUI wrapper for PVEmulatorViewController
+    struct EmulatorViewControllerWrapper: UIViewControllerRepresentable {
+        let game: PVGame
+        let coreInstance: PVEmulatorCore
+        
+        func makeUIViewController(context: Context) -> PVEmulatorViewController {
+            let emulatorViewController = PVEmulatorViewController(game: game, core: coreInstance)
+            return emulatorViewController
+        }
+        
+        func updateUIViewController(_ uiViewController: PVEmulatorViewController, context: Context) {
+            // Update the view controller if needed
+        }
+    }
+    
     // MARK: - View Builders
+    
+    // State to track emulator preparation status
+    @State private var emulatorError: String? = nil
+    @State private var coreInstance: PVEmulatorCore? = nil
+    
+    /// Prepare the emulator core instance
+    private func prepareEmulatorCore() {
+        guard let game = testGame, let system = game.system else {
+            emulatorError = "Game or system not available"
+            return
+        }
+        
+        ILOG("UITestingApp: Preparing to show emulator for game: \(game.title) (ID: \(game.id))")
+        ILOG("UITestingApp: Game system: \(system.name) (ID: \(system.identifier))")
+        
+        let coreID = game.userPreferredCoreID ?? system.cores.first?.identifier
+        ILOG("UITestingApp: Selected core ID: \(coreID ?? "None")")
+        
+        do {
+            let realm = try Realm()
+            
+            guard let coreID = coreID else {
+                ELOG("UITestingApp: No core ID available for game \(game.title)")
+                emulatorError = "No core ID available"
+                return
+            }
+            
+            guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: coreID) else {
+                ELOG("UITestingApp: Core not found for ID: \(coreID)")
+                emulatorError = "Core not found for ID: \(coreID)"
+                return
+            }
+            
+            ILOG("UITestingApp: Found core: \(core.projectName) (\(core.identifier))")
+            
+            guard let instance = core.createInstance(forSystem: system) else {
+                ELOG("UITestingApp: Failed to create core instance for \(core.projectName)")
+                emulatorError = "Failed to create core instance for \(core.projectName)"
+                return
+            }
+            
+            ILOG("UITestingApp: Successfully created core instance")
+            coreInstance = instance
+            
+        } catch let error {
+            ELOG("UITestingApp: Error creating core instance: \(error)")
+            emulatorError = error.localizedDescription
+        }
+    }
     
     /// View for showing the emulator inline in the current scene
     @ViewBuilder
@@ -405,23 +474,107 @@ struct UITestingApp: SwiftUI.App {
         ZStack {
             Color.black.edgesIgnoringSafeArea(.all)
             
-            VStack {
-                Text("Emulator View")
-                    .font(.largeTitle)
-                    .foregroundColor(.white)
-                
-                if let game = testGame {
-                    Text("Playing: \(game.title)")
+            if let game = testGame, let system = game.system {
+                if let core = coreInstance {
+                    // Use our SwiftUI wrapper for PVEmulatorViewController
+                    EmulatorViewControllerWrapper(game: game, coreInstance: core)
+                        .edgesIgnoringSafeArea(.all)
+                        .overlay(alignment: .topTrailing) {
+                            Button(action: {
+                                showEmulatorInCurrentScene = false
+                                coreInstance = nil
+                                emulatorError = nil
+                            }) {
+                                Image(systemName: "xmark.circle.fill")
+                                    .font(.title)
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .background(
+                                        Circle()
+                                            .fill(Color.black.opacity(0.5))
+                                            .overlay(
+                                                Circle()
+                                                    .stroke(Color(ThemeManager.shared.currentPalette.defaultTintColor), lineWidth: 2)
+                                            )
+                                    )
+                            }
+                            .padding()
+                        }
+                } else if let error = emulatorError {
+                    // Show error if core couldn't be created
+                    VStack {
+                        Text("Error: \(error)")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding(.bottom, 8)
+                        
+                        Text("Game: \(game.title)")
+                            .foregroundColor(.white)
+                        
+                        Text("System: \(system.name)")
+                            .foregroundColor(.white)
+                        
+                        Text("Core ID: \(game.userPreferredCoreID ?? system.cores.first?.identifier ?? "None")")
+                            .foregroundColor(.white)
+                        
+                        // Add debug information
+                        Text("Available cores:")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding(.top, 8)
+                        
+                        ForEach(Array(system.cores), id: \.identifier) { core in
+                            Text("\(core.projectName) (\(core.identifier))")
+                                .foregroundColor(.white)
+                                .font(.caption)
+                        }
+                        
+                        HStack(spacing: 16) {
+                            Button("Close") {
+                                showEmulatorInCurrentScene = false
+                                coreInstance = nil
+                                emulatorError = nil
+                            }
+                            .provenanceButton(isDestructive: true)
+                            
+                            Button("Retry") {
+                                emulatorError = nil
+                                prepareEmulatorCore()
+                            }
+                            .provenanceButton()
+                        }
+                        .padding(.top, 16)
+                    }
+                } else {
+                    // Loading state
+                    VStack {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            .scaleEffect(1.5)
+                            .padding()
+                        
+                        Text("Preparing emulator...")
+                            .foregroundColor(.white)
+                            .padding()
+                    }
+                    .onAppear {
+                        prepareEmulatorCore()
+                    }
+                }
+            } else {
+                // Show error if game or system is nil
+                VStack {
+                    Text("Error: Game or system not available")
+                        .font(.headline)
                         .foregroundColor(.white)
+                    
+                    Button("Close") {
+                        showEmulatorInCurrentScene = false
+                        coreInstance = nil
+                        emulatorError = nil
+                    }
+                    .provenanceButton(isDestructive: true)
                 }
-                
-                Button("Close") {
-                    showEmulatorInCurrentScene = false
-                }
-                .padding()
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(8)
             }
         }
     }
@@ -588,6 +741,8 @@ struct UITestingApp: SwiftUI.App {
             DispatchQueue.main.async {
                 // Set a flag to show the emulator in the current view hierarchy
                 self.showEmulatorInCurrentScene = true
+                self.coreInstance = nil
+                self.emulatorError = nil
                 ILOG("UITestingApp: Set flag to show emulator in current scene")
             }
         }
@@ -701,6 +856,8 @@ struct UITestingApp: SwiftUI.App {
             DispatchQueue.main.async {
                 // Set a flag to show the emulator in the current view hierarchy
                 self.showEmulatorInCurrentScene = true
+                self.coreInstance = nil
+                self.emulatorError = nil
                 ILOG("UITestingApp: Set flag to show emulator in current scene")
             }
         }
@@ -775,10 +932,10 @@ struct UITestingApp: SwiftUI.App {
             .sheet(isPresented: $showingRealmSheet) {
                 let testRealm = try! RealmSaveStateTestFactory.createInMemoryRealm()
                 let mockDriver = RealmSaveStateDriver(realm: testRealm)
-
+                
                 /// Get the first game from realm for the view model
                 let game = testRealm.objects(PVGame.self).first!
-
+                
                 /// Create view model with game data
                 let viewModel = ContinuesMagementViewModel(
                     driver: mockDriver,
@@ -786,7 +943,7 @@ struct UITestingApp: SwiftUI.App {
                     systemTitle: "Game Boy",
                     numberOfSaves: game.saveStates.count
                 )
-
+                
                 ContinuesMagementView(viewModel: viewModel)
                     .onAppear {
                         /// Load initial states through the publisher
@@ -805,7 +962,7 @@ struct UITestingApp: SwiftUI.App {
                     numberOfSaves: 5, // Use a fixed number instead of async call
                     gameUIImage: mockDriver.gameUIImage
                 )
-
+                
                 ContinuesMagementView(viewModel: viewModel)
                     .onAppear {
                     }
@@ -817,7 +974,7 @@ struct UITestingApp: SwiftUI.App {
                     let gameImporter = mockImportStatusDriverData.gameImporter
                     let pvgamelibraryUpdatesController = mockImportStatusDriverData.pvgamelibraryUpdatesController
                     let menuDelegate = MockPVMenuDelegate()
-
+                    
                     PVSettingsView(
                         conflictsController: pvgamelibraryUpdatesController,
                         menuDelegate: menuDelegate
@@ -858,13 +1015,13 @@ struct UITestingApp: SwiftUI.App {
                         showArtworkSearch = false
                     }
                     .navigationTitle("Artwork Search")
-                    #if !os(tvOS)
+#if !os(tvOS)
                     .background(Color(uiColor: .systemBackground))
-                    #endif
+#endif
                 }
-                #if !os(tvOS)
+#if !os(tvOS)
                 .presentationBackground(Color(uiColor: .systemBackground))
-                #endif
+#endif
             }
             .sheet(isPresented: $showFreeROMs) {
                 FreeROMsView { rom, url in
@@ -893,31 +1050,31 @@ struct UITestingApp: SwiftUI.App {
 
 class MockPVMenuDelegate: PVMenuDelegate {
     func didTapImports() {
-
+        
     }
-
+    
     func didTapSettings() {
-
+        
     }
-
+    
     func didTapHome() {
-
+        
     }
-
+    
     func didTapAddGames() {
-
+        
     }
-
+    
     func didTapConsole(with consoleId: String) {
-
+        
     }
-
+    
     func didTapCollection(with collection: Int) {
-
+        
     }
-
+    
     func closeMenu() {
-
+        
     }
 }
 
@@ -930,21 +1087,21 @@ struct MainView_Previews: PreviewProvider {
     // Reference to shared AppState and SceneCoordinator for the preview
     private static let appState = AppState.shared
     private static let sceneCoordinator = SceneCoordinator.shared
-
+    
     static var previews: some View {
         ZStack {
             Color.black.ignoresSafeArea()
-
+            
             VStack(spacing: 20) {
                 Button("Show Realm Driver") { }
                     .buttonStyle(.borderedProminent)
-
+                
                 Button("Show Mock Driver") { }
                     .buttonStyle(.borderedProminent)
-
+                
                 Button("Show Settings") { }
                     .buttonStyle(.borderedProminent)
-
+                
                 Button("Show Import Queue") {
                     showImportQueue = true
                 }
@@ -954,11 +1111,11 @@ struct MainView_Previews: PreviewProvider {
         .sheet(isPresented: $showingSettings) {
             // Use the existing PVGameLibraryUpdatesController from mockImportStatusDriverData
             let menuDelegate = MockPVMenuDelegate()
-
+            
             PVSettingsView(
                 conflictsController: mockImportStatusDriverData.pvgamelibraryUpdatesController,
                 menuDelegate: menuDelegate) {
-
+                    
                 }
         }
         .sheet(isPresented: .init(
@@ -978,6 +1135,52 @@ struct MainView_Previews: PreviewProvider {
         
         // Preview of the main app UI
     }
-    
+}
 
+// MARK: - Custom Button Style
+
+/// A button style that matches the Provenance theme
+struct ProvenanceButtonStyle: ButtonStyle {
+    var isDestructive: Bool = false
+    
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(buttonColor(configuration: configuration))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(buttonBorderColor(configuration: configuration), lineWidth: 2)
+            )
+            .foregroundColor(.white)
+            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
+            .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
+    }
+    
+    private func buttonColor(configuration: Configuration) -> Color {
+        if configuration.isPressed {
+            return Color(ThemeManager.shared.currentPalette.defaultTintColor.withAlphaComponent(0.8))
+        } else if isDestructive {
+            return Color.red.opacity(0.8)
+        } else {
+            return Color(ThemeManager.shared.currentPalette.defaultTintColor)
+        }
+    }
+    
+    private func buttonBorderColor(configuration: Configuration) -> Color {
+        if configuration.isPressed {
+            return Color.white.opacity(0.5)
+        } else {
+            return Color.white.opacity(0.2)
+        }
+    }
+}
+
+extension View {
+    func provenanceButton(isDestructive: Bool = false) -> some View {
+        self.buttonStyle(ProvenanceButtonStyle(isDestructive: isDestructive))
+    }
 }

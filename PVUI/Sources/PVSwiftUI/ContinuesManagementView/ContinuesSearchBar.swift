@@ -12,7 +12,7 @@ struct ContinuesSearchBar: View {
     var body: some View {
         HStack {
             Image(systemName: "magnifyingglass")
-                .foregroundColor(currentPalette.defaultTintColor?.swiftUIColor ?? .gray)
+                .foregroundColor(currentPalette.defaultTintColor.swiftUIColor ?? .gray)
             
             TextField("Search", text: $text)
                 .textFieldStyle(PlainTextFieldStyle())

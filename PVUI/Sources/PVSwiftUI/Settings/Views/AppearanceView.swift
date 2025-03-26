@@ -182,12 +182,12 @@ fileprivate struct MissingArtworkStyleView: View {
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
                                 .strokeBorder(
-                                    themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor,
+                                    themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor,
                                     lineWidth: 3
                                 )
                         )
                         .shadow(
-                            color: (themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor).opacity(0.5),
+                            color: (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor).opacity(0.5),
                             radius: 10,
                             x: 0,
                             y: 5
@@ -274,7 +274,7 @@ private struct StyleOptionRow: View {
                     RoundedRectangle(cornerRadius: 8)
                         .strokeBorder(
                             isSelected ?
-                                (themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor) :
+                                (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor) :
                                 Color.clear,
                             lineWidth: 2
                         )
@@ -294,7 +294,7 @@ private struct StyleOptionRow: View {
                 // Selection indicator
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
+                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor)
                         .imageScale(.large)
                 }
             }

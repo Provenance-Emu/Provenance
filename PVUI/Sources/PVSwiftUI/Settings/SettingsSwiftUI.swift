@@ -1237,7 +1237,7 @@ private struct MissingArtworkStyleView: View {
                         // Selection indicator
                         if selectedStyle == style {
                             RoundedRectangle(cornerRadius: 8)
-                                .stroke(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor, lineWidth: 2)
+                                .stroke(themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor, lineWidth: 2)
                                 .frame(width: 80, height: 80)
                         }
                     }

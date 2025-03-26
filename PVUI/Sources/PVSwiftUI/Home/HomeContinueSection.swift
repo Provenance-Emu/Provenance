@@ -201,7 +201,7 @@ private struct CustomPageIndicator: View {
                     HStack(spacing: Constants.spacing) {
                         ForEach(0..<numberOfPages, id: \.self) { index in
                             Capsule()
-                                .fill(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
+                                .fill(themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor)
                                 .opacity(currentPage == index ? 1.0 : 0.5)
                                 .frame(
                                     width: currentPage == index ? Constants.selectedWidth : Constants.defaultWidth,
@@ -398,13 +398,13 @@ struct HomeContinueSection: SwiftUI.View {
             // Replace rounded rectangle with top and bottom borders
             .overlay(alignment: .top) {
                 Rectangle()
-                    .fill(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
+                    .fill(themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor)
                     .frame(height: Constants.borderWidth)
                     .edgesIgnoringSafeArea(.horizontal)
             }
             .overlay(alignment: .bottom) {
                 Rectangle()
-                    .fill(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
+                    .fill(themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor)
                     .frame(height: Constants.borderWidth)
                     .edgesIgnoringSafeArea(.horizontal)
             }

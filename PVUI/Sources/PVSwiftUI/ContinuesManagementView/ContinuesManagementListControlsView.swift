@@ -43,11 +43,11 @@ public class ContinuesManagementListControlsViewModel: ObservableObject {
 
     /// Shadow color for the controls view
     var shadowColor: Color {
-        currentPalette.defaultTintColor?.swiftUIColor.opacity(0.1) ?? Color.accentColor.opacity(0.1)
+        currentPalette.defaultTintColor.swiftUIColor.opacity(0.1)
     }
 
     var editButtonsBorderColor: Color? {
-        currentPalette.defaultTintColor?.swiftUIColor
+        currentPalette.defaultTintColor.swiftUIColor
     }
 
     var autoSaveLabelColor: Color? {
@@ -145,7 +145,7 @@ public struct ContinuesManagementListControlsView: View {
                     } label: {
                         Image(systemName: viewModel.filterFavoritesOnly ? "heart.fill" : "heart")
                             .foregroundStyle(
-                                viewModel.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor
+                                viewModel.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor
                             )
                     }
 
@@ -155,7 +155,7 @@ public struct ContinuesManagementListControlsView: View {
                     } label: {
                         Image(systemName: viewModel.isAutoSavesEnabled ? "clock.badge.fill" : "clock.badge.checkmark")
                             .foregroundStyle(
-                                viewModel.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor
+                                viewModel.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor
                             )
                     }
 
@@ -166,7 +166,7 @@ public struct ContinuesManagementListControlsView: View {
                         #if !os(tvOS)
                         Image(systemName: viewModel.dateRange != nil ? "calendar.badge.checkmark" : "calendar")
                             .foregroundStyle(
-                                viewModel.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor
+                                viewModel.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor
                             )
                         #endif
                     }

@@ -145,7 +145,7 @@ struct ControllerSettingsView: View {
     }
 
     private var accentColor: Color {
-        themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor
+        themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor
     }
 
     var body: some View {

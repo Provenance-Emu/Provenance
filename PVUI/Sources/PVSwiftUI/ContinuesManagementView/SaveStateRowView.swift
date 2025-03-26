@@ -339,7 +339,7 @@ public struct SaveStateRowView: View {
                                 .font(.system(size: 16))
                                 .foregroundStyle(
                                     viewModel.isPinned ?
-                                    viewModel.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor :
+                                    viewModel.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor :
                                             .accentColor
                                 )
                                 .opacity(viewModel.isPinned ? 1 : 0.7)
@@ -350,7 +350,7 @@ public struct SaveStateRowView: View {
                                 .font(.system(size: 16))
                                 .foregroundStyle(
                                     viewModel.isPinned ?
-                                    viewModel.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor :
+                                    viewModel.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor :
                                             .accentColor
                                 )
                                 .opacity(viewModel.isPinned ? 1 : 0.7)

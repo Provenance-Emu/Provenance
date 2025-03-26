@@ -92,7 +92,7 @@ public struct ImportStatusView: View {
                                 dismissAction?()
                                 delegate?.dismissAction()
                             }
-                            .tint(currentPalette.defaultTintColor?.swiftUIColor)
+                            .tint(currentPalette.defaultTintColor.swiftUIColor)
 #if os(tvOS)
                             .focusable(true)
 #endif
@@ -105,13 +105,13 @@ public struct ImportStatusView: View {
                         Button("Add Files") {
                             delegate?.addImportsAction()
                         }
-                        .tint(currentPalette.defaultTintColor?.swiftUIColor)
+                        .tint(currentPalette.defaultTintColor.swiftUIColor)
                         #endif
 
                         Button("Begin") {
                             delegate?.forceImportsAction()
                         }
-                        .tint(currentPalette.defaultTintColor?.swiftUIColor)
+                        .tint(currentPalette.defaultTintColor.swiftUIColor)
                         #if os(tvOS)
                         .focusable(true)
                         #endif

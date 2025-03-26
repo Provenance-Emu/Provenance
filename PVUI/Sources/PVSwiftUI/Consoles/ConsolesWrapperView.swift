@@ -170,7 +170,7 @@ struct ConsolesWrapperView: SwiftUI.View {
         case is LightThemePalette:
             return .blue
         default:
-            return themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .purple
+            return themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .purple
         }
     }
 
@@ -267,7 +267,7 @@ struct ConsolesWrapperView: SwiftUI.View {
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .interactive))
         .id(consoles.count)
-        .tint(themeManager.currentPalette.defaultTintColor?.swiftUIColor)
+        .tint(themeManager.currentPalette.defaultTintColor.swiftUIColor)
         .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
         .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
     }

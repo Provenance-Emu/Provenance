@@ -59,13 +59,13 @@ struct BiosesView: View {
             // Replace rounded rectangle with top and bottom borders
             .overlay(alignment: .top) {
                 Rectangle()
-                    .fill(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
+                    .fill(themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor)
                     .frame(height: Constants.borderWidth)
                     .edgesIgnoringSafeArea(.horizontal)
             }
             .overlay(alignment: .bottom) {
                 Rectangle()
-                    .fill(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
+                    .fill(themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor)
                     .frame(height: Constants.borderWidth)
                     .edgesIgnoringSafeArea(.horizontal)
             }
@@ -113,7 +113,7 @@ struct BiosesView: View {
             Spacer()
             VStack(spacing: 4) {
                 Image(systemName: "line.3.horizontal")
-                    .foregroundColor(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
+                    .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor)
                 Text("BIOSes (\(console.bioses.count))")
                     .font(.caption)
                     .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
