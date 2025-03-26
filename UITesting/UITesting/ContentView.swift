@@ -14,6 +14,7 @@ import PVLogging
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var themeManager: ThemeManager
+    @EnvironmentObject var sceneCoordinator: TestSceneCoordinator
     
     // State to force view refresh
     @State private var forceRefresh: Bool = false
@@ -29,14 +30,28 @@ struct ContentView: View {
         
         return Group {
             if case .completed = bootupState {
-                ZStack {
-                    MainView()
+                // Use the TestSceneCoordinator to determine which view to show
+                if sceneCoordinator.currentScene == .emulator && sceneCoordinator.showEmulator {
+                    // Show the emulator view
+                    ZStack {
+                        EmulatorContainerView()
+                    }
+                    .onAppear {
+                        ILOG("ContentView: EmulatorContainerView appeared")
+                    }
+                    .transition(.opacity)
+                    .animation(.easeInOut, value: sceneCoordinator.currentScene)
+                } else {
+                    // Show the main view
+                    ZStack {
+                        MainView()
+                    }
+                    .onAppear {
+                        ILOG("ContentView: MainView appeared")
+                    }
+                    .transition(.opacity)
+                    .animation(.easeInOut, value: sceneCoordinator.currentScene)
                 }
-                .onAppear {
-                    ILOG("ContentView: MainView appeared")
-                }
-                .transition(.opacity)
-                .animation(.easeInOut, value: bootupState)
             } else if case .error(let error) = bootupState {
                 ErrorView(error: error) {
                     appState.startBootupSequence()

@@ -35,7 +35,7 @@ struct UITestingApp: SwiftUI.App {
 
     // Use the shared AppState for state management
     @StateObject private var appState = AppState.shared
-    @StateObject private var sceneCoordinator = SceneCoordinator.shared
+    @StateObject private var sceneCoordinator = TestSceneCoordinator.shared
     @Environment(\.scenePhase) private var scenePhase
     /// Use EnvironmentObject for bootup state manager
     
