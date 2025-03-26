@@ -19,49 +19,21 @@ struct SettingsView: View {
     @State private var showingDocumentPicker = false
     @State private var importMessage: String? = nil
     @State private var showingImportMessage = false
+    @State private var showingSettings = true
     
     var body: some View {
         NavigationView {
-            List {
-                Section(header: Text("Game Management")) {
-                    Button(action: {
-                        showingDocumentPicker = true
-                    }) {
-                        HStack {
-                            Image(systemName: "plus.circle.fill")
-                                .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                            Text("Import Games")
-                        }
-                    }
-                    
-                    NavigationLink(destination: EmptyView()) {
-                        HStack {
-                            Image(systemName: "wrench.fill")
-                                .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                            Text("Manage Systems")
-                        }
-                    }
-                }
-                
-                Section(header: Text("Appearance")) {
-                    Picker("Theme", selection: .constant(0)) {
-                        Text("Default").tag(0)
-                        Text("Dark").tag(1)
-                        Text("Light").tag(2)
-                    }
-                }
-                
-                Section(header: Text("About")) {
-                    HStack {
-                        Text("Version")
-                        Spacer()
-                        Text("UITesting 1.0")
-                            .foregroundColor(.gray)
-                    }
-                }
+            let gameImporter = GameImporter.shared
+            let pvgamelibraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
+            let menuDelegate = MockPVMenuDelegate()
+
+            PVSettingsView(
+                conflictsController: pvgamelibraryUpdatesController,
+                menuDelegate: menuDelegate
+            ) {
+                showingSettings = false
             }
-            .listStyle(InsetGroupedListStyle())
-            .navigationTitle("Settings")
+            .navigationBarHidden(true)
         }
         .navigationViewStyle(.stack)
         .sheet(isPresented: $showingDocumentPicker) {
