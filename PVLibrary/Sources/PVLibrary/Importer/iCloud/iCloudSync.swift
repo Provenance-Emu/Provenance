@@ -69,7 +69,6 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     var fileImportQueueMaxCount = 1000
     var purgeStatus: DatastorePurgeStatus = .incomplete
     private var querySubscriber: AnyCancellable?
-    //TODO: switch to actor
     let statusQueue = DispatchQueue(label: "com.provenance.status")
     var downloadedCount: Int {
         newFiles.count
@@ -452,7 +451,7 @@ public enum iCloudSync {
     }
     
     /// in order to account for large libraries, we go through each directory/file and tell the iCloud API to start downloading. this way it starts and by the time we query, we can get actual events that the downloads complete.
-    static func initiateDownload() async {
+    static func initiateRomsSavesDownload() async {
         guard let documentsDirectory = URL.iCloudDocumentsDirectory
         else {
             ELOG("error obtaining iCloud documents directory")
@@ -550,10 +549,8 @@ public enum iCloudSync {
         } else {
             UserDefaults.standard.removeObject(forKey: UbiquityIdentityTokenKey)
         }
-
-        //TODO: should we pause when a game starts so we don't interfere with the game and continue listening when no game is running?
         disposeBag = DisposeBag()
-        var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots"],
+        var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots", "RetroArch"],
                                                                   notificationCenter: .default,
                                                                   errorHandler: iCloudErrorHandler.shared)
         nonDatabaseFileSyncer.loadAllFromICloud()
@@ -564,7 +561,7 @@ public enum iCloudSync {
                 DLOG("disposing nonDatabaseFileSyncer")
                 nonDatabaseFileSyncer = nil
             }.disposed(by: disposeBag)
-        await initiateDownload()//TODO: use a better name
+        await initiateRomsSavesDownload()
         var saveStateSyncer: SaveStateSyncer! = .init(notificationCenter: .default, errorHandler: iCloudErrorHandler.shared)
         saveStateSyncer.loadAllFromICloud() {
                 saveStateSyncer.importNewSaves()
@@ -827,10 +824,9 @@ enum GameStatus {
 
 class RomsSyncer: iCloudContainerSyncer {
     let gameImporter = GameImporter.shared
-    var processingFiles: ConcurrentSet<URL> = []
     let multiFileRoms: ConcurrentDictionary<String, [URL]> = [:]
     var romsDatabaseSubscriber: AnyCancellable?
-    var previousProcessingCount: ConcurrentQueue<Int> = [0]
+    
     override var downloadedCount: Int {
         newFiles.count + multiFileRoms.count
     }
@@ -922,13 +918,18 @@ class RomsSyncer: iCloudContainerSyncer {
             return
         }
         ILOG("\(file) does NOT exist in database, adding to import set")
-        if let multiKey = file.multiFileNameKey {
-            var files = multiFileRoms[multiKey] ?? [URL]()
-            files.append(file)
-            multiFileRoms[multiKey] = files
-        } else {
-            newFiles.insert(file)
-        }
+        switch file.system {
+            case .Atari2600, .Atari5200, .Atari7800, .Genesis:
+                newFiles.insert(file)
+            default:
+                if let multiKey = file.multiFileNameKey {
+                    var files = multiFileRoms[multiKey] ?? [URL]()
+                    files.append(file)
+                    multiFileRoms[multiKey] = files
+                } else {
+                    newFiles.insert(file)
+                }
+            }
         handleImportNewRomFiles()
     }
     
@@ -946,7 +947,7 @@ class RomsSyncer: iCloudContainerSyncer {
     
     func getGameFromCache(of file: URL) -> (PVGame, SystemIdentifier)? {
         let parentDirectory = file.parentPathComponent
-        guard let system = SystemIdentifier(rawValue: parentDirectory),
+        guard let system = file.system,
               let parentUrl = URL(string: parentDirectory)
         else {
             DLOG("error obtaining existence of \(file) in game cache.")
@@ -996,21 +997,15 @@ class RomsSyncer: iCloudContainerSyncer {
         else {
             return
         }
-        clearProcessedFiles()
+        gameImporter.clearCompleted()
         removeGamesDeletedWhileApplicationClosed()
         guard !newFiles.isEmpty
-                || (!multiFileRoms.isEmpty && pendingFilesToDownload.isEmpty)
-                || processingFiles.count > 0 && previousProcessingCount.peek() != processingFiles.count
+                || !multiFileRoms.isEmpty && pendingFilesToDownload.isEmpty
         else {
             return
         }
         tryToImportNewRomFiles()
     }
-    
-    /// Clear files processed successfully from the game import queue
-    func clearProcessedFiles() {
-        gameImporter.removeSuccessfulImports(from: &processingFiles, andReaddUnprocessed: &newFiles)
-     }
     
     func tryToImportNewRomFiles() {
         //if the importer is currently importing files, we have to wait
@@ -1031,19 +1026,12 @@ class RomsSyncer: iCloudContainerSyncer {
             nextFilesToProcess = nextMultiFile.value
             multiFileRoms[nextMultiFile.key] = nil
         }
-        DLOG("\(directories): processingFiles: (\(processingFiles.count)):")
-        DLOG("\(processingFiles)")
-        processingFiles.formUnion(nextFilesToProcess)
-        DLOG("\(directories): processingFiles plus new files: (\(processingFiles.count)):")
-        DLOG("\(directories): \(processingFiles)")
         let importPaths = [URL](nextFilesToProcess)
+        gameImporter.addImports(forPaths: importPaths)
+        ILOG("ROMs: downloading: \(pendingFilesToDownload.count), pending to process: \(downloadedCount), processing: \(importPaths.count)")
         if newFiles.isEmpty {
             uploadedFiles.removeAll()
         }
-        gameImporter.addImports(forPaths: importPaths)
-        previousProcessingCount.dequeue()
-        previousProcessingCount.enqueue(entry: processingFiles.count)
-        ILOG("ROMs: downloading: \(pendingFilesToDownload.count), pending to process: \(newFiles.count + multiFileRoms.count), processing: \(processingFiles.count)")
         //to ensure we do NOT go on an endless loop
         gameImporter.startProcessing()
     }
@@ -1186,6 +1174,9 @@ class iCloudErrorHandler: ErrorHandler {
 }
 
 extension URL {
+    var system : SystemIdentifier? {
+        return SystemIdentifier(rawValue: parentPathComponent)
+    }
     var parentPathComponent: String {
         deletingLastPathComponent().lastPathComponent
     }
@@ -1194,7 +1185,6 @@ extension URL {
         lastPathComponent.removingPercentEncoding ?? lastPathComponent
     }
     
-    //TODO: needs to be updated to not include .bin files for non multi-file ROMs
     var multiFileNameKey: String? {
         guard "cue".caseInsensitiveCompare(pathExtension) == .orderedSame
                 || "bin".caseInsensitiveCompare(pathExtension) == .orderedSame
