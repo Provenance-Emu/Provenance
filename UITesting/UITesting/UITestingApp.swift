@@ -24,6 +24,13 @@ import FreemiumKit
 
 @main
 struct UITestingApp: SwiftUI.App {
+    // Static shared instance for access from other components
+    static var shared: UITestingApp!
+    
+    init() {
+        UITestingApp.shared = self
+    }
+    
     @ObservedObject private var themeManager = ThemeManager.shared
 
     // Use the shared AppState for state management

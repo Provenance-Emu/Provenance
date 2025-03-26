@@ -19,6 +19,7 @@ import PVLogging
 struct GameLibraryView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @EnvironmentObject private var appState: AppState
+    @EnvironmentObject private var sceneCoordinator: SceneCoordinator
     
     // Observed results for all games in the database
     @ObservedResults(
@@ -185,8 +186,48 @@ struct GameLibraryView: View {
         // Verify the game was set correctly
         if let currentGame = appState.emulationUIState.currentGame {
             ILOG("GameLibraryView: Successfully set current game in EmulationUIState: \(currentGame.title) (ID: \(currentGame.id))")
+            
+            // Activate the emulator scene
+            activateEmulatorScene()
         } else {
             ELOG("GameLibraryView: Failed to set current game in EmulationUIState")
+        }
+    }
+    
+    // Activate the emulator scene
+    private func activateEmulatorScene() {
+        ILOG("GameLibraryView: Activating emulator scene")
+        
+        // Check if the device supports multiple scenes
+        if UIApplication.shared.supportsMultipleScenes {
+            // Create a window scene description for the emulator
+            let windowScene = UIApplication.shared.connectedScenes.first { $0.activationState == .foregroundActive } as? UIWindowScene
+            if let windowScene = windowScene {
+                ILOG("GameLibraryView: Found active window scene, creating emulator scene")
+                
+                let options = UIScene.ActivationRequestOptions()
+                options.requestingScene = windowScene
+                
+                // Create a scene session request
+                let request = UISceneSessionActivationRequest(options: options)
+                
+                // Use the recommended API instead of the deprecated one
+                UIApplication.shared.activateSceneSession(for: request) { error in
+                    ELOG("GameLibraryView: Error activating emulator scene: \(error)")
+                }
+                
+                // Log success since errorHandler is only called on error
+                ILOG("GameLibraryView: Successfully requested scene activation")
+            } else {
+                ELOG("GameLibraryView: Could not find active window scene")
+            }
+        } else {
+            // Device doesn't support multiple scenes (e.g., iPhone simulator)
+            ILOG("GameLibraryView: Device doesn't support multiple scenes, using scene coordinator")
+            
+            // Use the scene coordinator from the environment
+            ILOG("GameLibraryView: Using sceneCoordinator to launch game")
+            sceneCoordinator.openEmulatorScene()
         }
     }
 }

@@ -96,6 +96,9 @@ public class AppState: ObservableObject {
 
     /// Coordinator for Popover HUD
     public let hudCoordinator = HUDCoordinator()
+    
+    /// Coordinator for Scene management
+    @Published public var sceneCoordinator: SceneCoordinator?
 
     /// Whether the app has been initialized
     @Published public var isInitialized = false {

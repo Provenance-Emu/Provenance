@@ -298,7 +298,7 @@ struct ThemePreviewView: View {
                 ColorRow(name: "Header", color: themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
                 ColorRow(name: "Background", color: themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
                 ColorRow(name: "Cell", color: themeManager.currentPalette.gameLibraryCellText.swiftUIColor)
-                ColorRow(name: "Tint", color: Color(themeManager.currentPalette.defaultTintColor))
+                ColorRow(name: "Tint", color: themeManager.currentPalette.defaultTintColor.swiftUIColor)
                 ColorRow(name: "Text", color: themeManager.currentPalette.gameLibraryText.swiftUIColor)
             }
             
