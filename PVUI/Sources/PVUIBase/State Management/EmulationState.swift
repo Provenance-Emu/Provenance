@@ -25,4 +25,13 @@ public final class EmulationUIState : ObservableObject {
     
     /// The current game that should be loaded in the emulator scene
     public var currentGame: PVGame? = nil
+    
+    public func reset() -> (PVEmulatorCore?, PVEmualatorControllerProtocol?, PVGame?) {
+        defer {
+            core = nil
+            emulator = nil
+            currentGame = nil
+        }
+        return (core, emulator, currentGame)
+    }
 }
