@@ -84,7 +84,10 @@ public class AppBootupState: ObservableObject {
 
     /// Function to transition to a new state
     public func transition(to state: State) {
-        guard !isBootupCompleted else { return }
+        guard !isBootupCompleted else {
+            ELOG("Transition to state \(state.localizedDescription) while !isBootupCompleted")
+            return
+        }
 
         if state != currentState {
             currentState = state

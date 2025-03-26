@@ -13,6 +13,8 @@ import PVLibrary
 import PVRealm
 import RealmSwift
 import PVMediaCache
+import UniformTypeIdentifiers
+import PVLogging
 
 struct GameLibraryView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -52,8 +54,21 @@ struct GameLibraryView: View {
             }
             .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
             .navigationTitle("Game Library")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        showingDocumentPicker = true
+                    }) {
+                        Image(systemName: "plus")
+                    }
+                }
+            }
         }
     }
+    
+    @State private var showingDocumentPicker = false
+    @State private var importMessage: String? = nil
+    @State private var showingImportMessage = false
     
     // Empty library view
     @ViewBuilder
@@ -73,7 +88,7 @@ struct GameLibraryView: View {
                 .padding(.horizontal)
             
             Button(action: {
-                // Action to add games
+                showingDocumentPicker = true
             }) {
                 HStack {
                     Image(systemName: "plus.circle.fill")
@@ -87,6 +102,70 @@ struct GameLibraryView: View {
             .padding(.top, 10)
         }
         .padding()
+        .sheet(isPresented: $showingDocumentPicker) {
+            DocumentPicker(onImport: importFiles)
+        }
+        .alert("Import Result", isPresented: $showingImportMessage, presenting: importMessage) { _ in
+            Button("OK", role: .cancel) {}
+        } message: { message in
+            Text(message)
+        }
+    }
+    
+    private func importFiles(urls: [URL]) {
+        ILOG("GameLibraryView: Importing \(urls.count) files")
+        
+        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            ELOG("GameLibraryView: Could not access documents directory")
+            importMessage = "Error: Could not access documents directory"
+            showingImportMessage = true
+            return
+        }
+        
+        let importsDirectory = documentsDirectory.appendingPathComponent("Imports", isDirectory: true)
+        
+        // Create Imports directory if it doesn't exist
+        do {
+            try FileManager.default.createDirectory(at: importsDirectory, withIntermediateDirectories: true)
+        } catch {
+            ELOG("GameLibraryView: Error creating Imports directory: \(error.localizedDescription)")
+            importMessage = "Error creating Imports directory: \(error.localizedDescription)"
+            showingImportMessage = true
+            return
+        }
+        
+        var successCount = 0
+        var errorMessages = [String]()
+        
+        for url in urls {
+            let destinationURL = importsDirectory.appendingPathComponent(url.lastPathComponent)
+            
+            do {
+                // If file already exists, remove it first
+                if FileManager.default.fileExists(atPath: destinationURL.path) {
+                    try FileManager.default.removeItem(at: destinationURL)
+                }
+                
+                // Copy file to Imports directory
+                try FileManager.default.copyItem(at: url, to: destinationURL)
+                ILOG("GameLibraryView: Successfully copied \(url.lastPathComponent) to Imports directory")
+                successCount += 1
+            } catch {
+                ELOG("GameLibraryView: Error copying file \(url.lastPathComponent): \(error.localizedDescription)")
+                errorMessages.append("\(url.lastPathComponent): \(error.localizedDescription)")
+            }
+        }
+        
+        // Prepare result message
+        if successCount == urls.count {
+            importMessage = "Successfully imported \(successCount) file(s). The game importer will process them shortly."
+        } else if successCount > 0 {
+            importMessage = "Imported \(successCount) of \(urls.count) file(s). Some files could not be imported."
+        } else {
+            importMessage = "Failed to import any files. \(errorMessages.first ?? "Unknown error")"
+        }
+        
+        showingImportMessage = true
     }
     
     // Launch game
@@ -133,3 +212,5 @@ struct SearchBar: View {
         .cornerRadius(10)
     }
 }
+
+

@@ -33,7 +33,7 @@ public class AppState: ObservableObject {
         case openFile(URL)
         case openMD5(String)
         case openGame(PVGame)
-        
+
         public var requiresEmulatorScene: Bool {
             switch self {
             case .openGame, .openMD5, .openFile:
@@ -43,7 +43,7 @@ public class AppState: ObservableObject {
             }
         }
     }
-    
+
     @ObservedObject
     public static private(set) var shared: AppState = .init()
 
@@ -53,7 +53,7 @@ public class AppState: ObservableObject {
             bootupStateManager.currentState
         }
     }
-    
+
     /// Action to be performed after bootup
     @Published
     public var appOpenAction: AppOpenAction = .none
@@ -74,6 +74,11 @@ public class AppState: ObservableObject {
     @Published public private(set) var bootupStateManager: AppBootupState = AppBootupState() {
         willSet {
             objectWillChange.send()
+        }
+        didSet {
+            DispatchQueue.main.async {
+                self.objectWillChange.send()
+            }
         }
     }
 
@@ -362,7 +367,7 @@ public class AppState: ObservableObject {
             guard let self = self else { return }
             do {
                 /// Increased timeout and added progress logging
-                try await withTimeout(seconds: 120) { // Increased from 30 to 120 seconds
+                try await withTimeout(seconds: 30) {
                     await self.libraryUpdatesController?.addImportedGames(
                         to: CSSearchableIndex.default(),
                         database: RomDatabase.sharedInstance

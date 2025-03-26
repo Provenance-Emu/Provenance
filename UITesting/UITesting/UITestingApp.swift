@@ -206,33 +206,7 @@ struct UITestingApp: SwiftUI.App {
             }
         }
     }
-    
-    @ViewBuilder
-    private func mainTabView() -> some View {
-        TabView(selection: $selectedTab) {
-            // Library Tab
-            GameLibraryView()
-                .tabItem {
-                    Label("Library", systemImage: "gamecontroller")
-                }
-                .tag(0)
-            
-            // Settings Tab
-            SettingsView()
-                .tabItem {
-                    Label("Settings", systemImage: "gear")
-                }
-                .tag(1)
-            
-            // Debug Tab
-            DebugView()
-                .tabItem {
-                    Label("Debug", systemImage: "ladybug")
-                }
-                .tag(2)
-        }
-    }
-    
+        
     var body: some Scene {
         // Main window group for the UI
         WindowGroup(id: "main") {            
@@ -259,6 +233,18 @@ struct UITestingApp: SwiftUI.App {
                 // Check if we need to open the emulator scene based on app open action
                 if case .completed = appState.bootupStateManager.currentState {
                     ILOG("UITestingApp: Bootup state is completed, ready for user interaction")
+                    
+                    // Force UI refresh after a short delay to ensure the UI updates
+                    Task { @MainActor in
+                        try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+                        ILOG("UITestingApp: Forcing UI refresh after bootup completion")
+                        
+                        // Temporarily change state and change it back to force refresh
+                        let currentState = appState.bootupStateManager.currentState
+                        appState.bootupStateManager.transition(to: .notStarted)
+                        try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+                        appState.bootupStateManager.transition(to: currentState)
+                    }
                 }
             }
 

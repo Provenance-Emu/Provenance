@@ -7,9 +7,6 @@
 
 import SwiftUI
 import PVSwiftUI
-import PVLookup
-import PVLookupTypes
-import PVSystems
 import PVUIBase
 import PVThemes
 import PVLogging
@@ -18,37 +15,95 @@ struct ContentView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var themeManager: ThemeManager
     
+    // State to force view refresh
+    @State private var forceRefresh: Bool = false
+    
     init() {
         ILOG("ContentView: init() called, current bootup state: \(AppState.shared.bootupStateManager.currentState.localizedDescription)")
     }
     
     var body: some View {
-        Group {
-            switch appState.bootupStateManager.currentState {
-            case .completed:
+        // Use a local variable to track the bootup state
+        let bootupState = appState.bootupStateManager.currentState
+        ILOG("ContentView: body evaluated with bootup state: \(bootupState.localizedDescription)")
+        
+        return Group {
+            if case .completed = bootupState {
                 ZStack {
                     MainView()
                 }
                 .onAppear {
                     ILOG("ContentView: MainView appeared")
                 }
-            case .error(let error):
+                .transition(.opacity)
+                .animation(.easeInOut, value: bootupState)
+            } else if case .error(let error) = bootupState {
                 ErrorView(error: error) {
                     appState.startBootupSequence()
                 }
-            default:
+                .transition(.opacity)
+                .animation(.easeInOut, value: bootupState)
+            } else {
                 BootupView()
                     .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
                     .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    .transition(.opacity)
+                    .animation(.easeInOut, value: bootupState)
             }
         }
         .edgesIgnoringSafeArea(.all)
+        .id(forceRefresh) // Force view refresh when this changes
         .onAppear {
-            ILOG("ContentView: Appeared")
-            ILOG("ContentView: onAppear - Set currentBootupState to \(appState.bootupStateManager.currentState.localizedDescription)")
+            ILOG("ContentView: Appeared with bootup state: \(bootupState.localizedDescription)")
+            
+            // Force a refresh after a delay if we're in Database Initialized state
+            if case .databaseInitialized = bootupState {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    ILOG("ContentView: Forcing refresh for Database Initialized state")
+                    forceRefresh.toggle()
+                }
+            }
+            
+            // If we're already in completed state, force a refresh
+            if case .completed = bootupState {
+                // Multiple refreshes with different delays to ensure the UI updates
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    ILOG("ContentView: Forcing immediate refresh for already Completed state")
+                    forceRefresh.toggle()
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    ILOG("ContentView: Forcing second refresh for already Completed state")
+                    forceRefresh.toggle()
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    ILOG("ContentView: Forcing third refresh for already Completed state")
+                    forceRefresh.toggle()
+                }
+            }
         }
-        .onChange(of: appState.bootupStateManager.currentState) { state in
-            ILOG("ContentView: Bootup state changed to \(state.localizedDescription)")
+        .onChange(of: bootupState) { newState in
+            ILOG("ContentView: Bootup state changed to \(newState.localizedDescription)")
+            
+            // Force refresh when state changes to completed
+            if case .completed = newState {
+                // Use multiple delayed refreshes with different intervals to ensure UI updates
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    ILOG("ContentView: Forcing first refresh after state changed to completed")
+                    forceRefresh.toggle()
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    ILOG("ContentView: Forcing second refresh after state changed to completed")
+                    forceRefresh.toggle()
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    ILOG("ContentView: Forcing third refresh after state changed to completed")
+                    forceRefresh.toggle()
+                }
+            }
         }
     }
 }
