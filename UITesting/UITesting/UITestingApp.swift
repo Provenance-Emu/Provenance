@@ -240,10 +240,10 @@ struct UITestingApp: SwiftUI.App {
                 switch appState.bootupStateManager.currentState {
                 case .completed:
                     ZStack {
-                        mainTabView()
+                        MainView()
                     }
                     .onAppear {
-                        ILOG("ContentView: MainView appeared")
+                        ILOG("UITestingApp: MainView appeared")
                     }
                 case .error(let error):
                     ErrorView(error: error) {
@@ -258,6 +258,8 @@ struct UITestingApp: SwiftUI.App {
             .handlesExternalEvents(preferring: ["main"], allowing: ["main"])
             .preferredColorScheme(ThemeManager.shared.currentPalette.dark ? .dark : .light)
             .environmentObject(appState)
+            .environmentObject(appState.bootupStateManager)
+            .environmentObject(ThemeManager.shared)
             .environmentObject(sceneCoordinator)
 #if canImport(FreemiumKit)
 //            .environmentObject(FreemiumKit.shared)
@@ -274,8 +276,8 @@ struct UITestingApp: SwiftUI.App {
                 }
 
                 // Check if we need to open the emulator scene based on app open action
-                if appState.bootupState == .completed {
-
+                if case .completed = appState.bootupStateManager.currentState {
+                    ILOG("UITestingApp: Bootup state is completed, ready for user interaction")
                 }
             }
 
