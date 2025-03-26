@@ -235,30 +235,11 @@ struct UITestingApp: SwiftUI.App {
     
     var body: some Scene {
         // Main window group for the UI
-        WindowGroup(id: "main") {
-            Group {
-                switch appState.bootupStateManager.currentState {
-                case .completed:
-                    ZStack {
-                        MainView()
-                    }
-                    .onAppear {
-                        ILOG("UITestingApp: MainView appeared")
-                    }
-                case .error(let error):
-                    ErrorView(error: error) {
-                        appState.startBootupSequence()
-                    }
-                default:
-                    BootupView()
-                        .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                }
-            }
+        WindowGroup(id: "main") {            
+            ContentView()
             .handlesExternalEvents(preferring: ["main"], allowing: ["main"])
             .preferredColorScheme(ThemeManager.shared.currentPalette.dark ? .dark : .light)
             .environmentObject(appState)
-            .environmentObject(appState.bootupStateManager)
             .environmentObject(ThemeManager.shared)
             .environmentObject(sceneCoordinator)
 #if canImport(FreemiumKit)

@@ -16,7 +16,6 @@ import PVLogging
 
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
-    @EnvironmentObject var bootupStateManager: AppBootupState
     @EnvironmentObject var themeManager: ThemeManager
     
     init() {
@@ -24,11 +23,8 @@ struct ContentView: View {
     }
     
     var body: some View {
-        let currentState = bootupStateManager.currentState
-        ILOG("ContentView: body evaluated with bootup state: \(currentState.localizedDescription)")
-        
-        return Group {
-            switch currentState {
+        Group {
+            switch appState.bootupStateManager.currentState {
             case .completed:
                 ZStack {
                     MainView()
@@ -49,8 +45,9 @@ struct ContentView: View {
         .edgesIgnoringSafeArea(.all)
         .onAppear {
             ILOG("ContentView: Appeared")
+            ILOG("ContentView: onAppear - Set currentBootupState to \(appState.bootupStateManager.currentState.localizedDescription)")
         }
-        .onChange(of: bootupStateManager.currentState) { state in
+        .onChange(of: appState.bootupStateManager.currentState) { state in
             ILOG("ContentView: Bootup state changed to \(state.localizedDescription)")
         }
     }
@@ -59,6 +56,5 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .environmentObject(AppState.shared)
-        .environmentObject(AppState.shared.bootupStateManager)
         .environmentObject(ThemeManager.shared)
 }

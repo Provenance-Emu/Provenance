@@ -12,7 +12,7 @@ import PVThemes
 import PVLogging
 
 struct BootupView: View {
-    @EnvironmentObject var bootupStateManager: AppBootupState
+    @EnvironmentObject var appState: AppState
     @EnvironmentObject var themeManager: ThemeManager
     
     init() {
@@ -33,7 +33,7 @@ struct BootupView: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
             
-            Text(bootupStateManager.currentState.localizedDescription)
+            Text(appState.bootupStateManager.currentState.localizedDescription)
                 .font(.headline)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
@@ -47,13 +47,13 @@ struct BootupView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {
-            ILOG("BootupView: Appeared, current state: \(bootupStateManager.currentState.localizedDescription)")
+            ILOG("BootupView: Appeared, current state: \(appState.bootupStateManager.currentState.localizedDescription)")
         }
     }
 }
 
 #Preview {
     BootupView()
-        .environmentObject(AppState.shared.bootupStateManager)
+        .environmentObject(AppState.shared)
         .environmentObject(ThemeManager.shared)
 }
