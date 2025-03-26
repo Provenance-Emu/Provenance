@@ -217,7 +217,7 @@ struct UITestingApp: SwiftUI.App {
             .environmentObject(ThemeManager.shared)
             .environmentObject(sceneCoordinator)
 #if canImport(FreemiumKit)
-//            .environmentObject(FreemiumKit.shared)
+            .environmentObject(FreemiumKit.shared)
 #endif
         }
         .onChange(of: scenePhase) { newPhase in

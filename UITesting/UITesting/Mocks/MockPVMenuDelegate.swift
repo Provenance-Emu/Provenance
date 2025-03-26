@@ -10,6 +10,41 @@ import PVUIBase
 
 /// A mock implementation of the PVMenuDelegate protocol for testing
 class MockPVMenuDelegate: PVMenuDelegate {
+    func didTapImports() {
+        print("MockPVMenuDelegate: didTapImports called")
+
+    }
+    
+    func didTapSettings() {
+        print("MockPVMenuDelegate: didTapSettings called")
+
+    }
+    
+    func didTapHome() {
+        print("MockPVMenuDelegate: didTapHome called")
+
+    }
+    
+    func didTapAddGames() {
+        print("MockPVMenuDelegate: didTapAddGames called")
+
+    }
+    
+    func didTapConsole(with consoleId: String) {
+        print("MockPVMenuDelegate: didTapConsole called: \(consoleId)")
+
+    }
+    
+    func didTapCollection(with collection: Int) {
+        print("MockPVMenuDelegate: didTapCollection called: \(collection)")
+
+    }
+    
+    func closeMenu() {
+        print("MockPVMenuDelegate: closeMenu called")
+
+    }
+    
     func showSettings() {
         // No-op in testing environment
         print("MockPVMenuDelegate: showSettings called")

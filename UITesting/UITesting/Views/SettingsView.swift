@@ -12,6 +12,9 @@ import PVUIBase
 import PVLibrary
 import UniformTypeIdentifiers
 import PVLogging
+#if canImport(FreemiumKit)
+import FreemiumKit
+#endif
 
 struct SettingsView: View {
     @EnvironmentObject private var appState: AppState
@@ -34,6 +37,9 @@ struct SettingsView: View {
                 showingSettings = false
             }
             .navigationBarHidden(true)
+#if canImport(FreemiumKit)
+            .environmentObject(FreemiumKit.shared)
+#endif
         }
         .navigationViewStyle(.stack)
         .sheet(isPresented: $showingDocumentPicker) {
