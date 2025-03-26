@@ -8,295 +8,49 @@
 import SwiftUI
 import PVSwiftUI
 import PVThemes
-import SwiftUI
-import UIKit
-import Perception
 import PVUIBase
 import PVLibrary
 import PVRealm
 import PVEmulatorCore
-import PVCoreBridge
-import PVThemes
 import PVLogging
-import PVFileSystem
 import RealmSwift
 import PVSystems
-import PVPlists
+import PVMediaCache
 import PVCoreLoader
-import UIKit
-import SwiftUI
 
 #if canImport(FreemiumKit)
 import FreemiumKit
 #endif
 
-
-
 @main
 struct UITestingApp: SwiftUI.App {
-    @State private var showingRealmSheet = false
-    @State private var showingMockSheet = false
-    @State private var showingSettings = false
-    @State private var showImportStatus = false
-    @State private var showDatabaseDebug = false
-    @State private var showGameMoreInfo = false
-    @State private var showGameMoreInfoRealm = false
-    @State private var showArtworkSearch = false
-    @State private var showFreeROMs = false
-    @State private var showDeltaSkinList = false
-    @State private var showEmulatorScene = false
-    @State private var showEmulatorInCurrentScene = false
+    @ObservedObject private var themeManager = ThemeManager.shared
 
-    // Use the real AppState for now, but we'll use our mockImportStatusDriverData for the importer
+    // Use the shared AppState for state management
     @StateObject private var appState = AppState.shared
     @StateObject private var sceneCoordinator = SceneCoordinator.shared
+    @Environment(\.scenePhase) private var scenePhase
+    /// Use EnvironmentObject for bootup state manager
+    
+    // Tab selection state
+    @State private var selectedTab = 0
 
-    // Store the test game and loading state
-    @State private var testGame: PVGame?
-    @State private var isInitializing = false
-    @State private var initializationError: String?
-
-    // Initialize the in-memory Realm and systems
-    init() {
-        setupInMemoryRealm()
-
-        // We'll initialize the systems in onAppear instead
-    }
-
-    // Setup in-memory Realm for testing
-    private func setupInMemoryRealm() {
-        // Configure Realm for in-memory storage
-        var config = Realm.Configuration()
-        config.inMemoryIdentifier = "UITestingRealm"
-
-        // Set this as the default configuration
-        Realm.Configuration.defaultConfiguration = config
-
-        ILOG("Configured in-memory Realm for testing")
-    }
-
-    // Initialize systems and create test game
-    private func initializeSystemsAndTestGame() async throws {
-        ILOG("UITestingApp: Initializing test environment")
-
-        // Scan for real systems and cores from plists
-        ILOG("UITestingApp: Scanning for real systems and cores from plists")
-        await scanForRealSystemsAndCores()
-
-        // Create a mock NES system for testing if needed
-        let realm = try await Realm()
-        try await realm.asyncWrite {
-            // Check if we already have a NES system
-            let existingSystems = realm.objects(PVSystem.self).where { $0.identifier == "com.provenance.nes" }
-
-            if existingSystems.isEmpty {
-                ILOG("UITestingApp: Creating mock NES system")
-                let nesSystem = PVSystem()
-                nesSystem.identifier = "com.provenance.nes"
-                nesSystem.name = "Nintendo Entertainment System"
-                nesSystem.shortName = "NES"
-                nesSystem.manufacturer = "Nintendo"
-                nesSystem.bit = 8
-                nesSystem.releaseYear = 1985
-                realm.add(nesSystem)
-                ILOG("UITestingApp: Added mock NES system to database")
-
-                let newCore = PVCore(withIdentifier: "com.mock.", principleClass: "", supportedSystems: [nesSystem], name: "Mock NES", url: "https://mock.com", version: "1.0")
-                realm.add(newCore)
-
-            } else {
-                ILOG("UITestingApp: NES system already exists in database")
-            }
-        }
-
-        // Check systems after initialization
-        let systems = realm.objects(PVSystem.self)
-        ILOG("UITestingApp: Found \(systems.count) systems in database")
-
-        // Install the test ROM to trigger automatic import
-        try await installTestROM()
-
-        // Wait a moment for the import to process
-        try await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
-
-        // Find the NES system
-        ILOG("UITestingApp: Looking for NES system")
-        let nesSystem = SystemIdentifier.NES.system
-        guard let system = nesSystem else {
-            // Debug: Print out all available systems and cores
-            ELOG("UITestingApp: Failed to find NES system. Dumping all systems and cores for debugging:")
-
-            do {
-                let realm = try await Realm()
-
-                // Print all systems
-                let systems = realm.objects(PVSystem.self)
-                ELOG("UITestingApp: Available Systems (\(systems.count)):")
-                for (index, sys) in systems.enumerated() {
-                    ELOG("  [\(index)] System: \(sys.name) (ID: \(sys.identifier), Manufacturer: \(sys.manufacturer))")
-                }
-
-                // Print all cores
-                let cores = realm.objects(PVCore.self)
-                ELOG("UITestingApp: Available Cores (\(cores.count)):")
-                for (index, core) in cores.enumerated() {
-                    ELOG("  [\(index)] Core: \(core.projectName) (Systems: \(core.supportedSystems.map { $0.shortName }.joined(separator: ", ")))")
-                }
-
-                // Print system identifiers
-                ELOG("UITestingApp: System Identifiers:")
-                for identifier in SystemIdentifier.allCases {
-                    ELOG("  Identifier: \(identifier.rawValue) -> System: \(identifier.system?.name ?? "nil")")
-                }
-
-            } catch {
-                ELOG("UITestingApp: Error accessing Realm for debugging: \(error)")
-            }
-
-            let error = NSError(domain: "UITestingApp", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to find NES system"])
-            ELOG("UITestingApp: Failed to find NES system")
-            throw error
-        }
-
-        ILOG("UITestingApp: Found NES system: \(system.name)")
-
-        // Get the first core for the NES system
-        guard let core = system.cores.first else {
-            ELOG("UITestingApp: No cores available for NES system. System details:")
-            ELOG("  System: \(system.name) (ID: \(system.identifier))")
-            ELOG("  Cores count: \(system.cores.count)")
-            ELOG("  Manufacturer: \(system.manufacturer)")
-            ELOG("  Extensions: \(system.extensions.joined(separator: ", "))")
-
-            let error = NSError(domain: "UITestingApp", code: 2, userInfo: [NSLocalizedDescriptionKey: "No cores available for NES system"])
-            ELOG("UITestingApp: No cores available for NES system")
-            throw error
-        }
-
-        ILOG("UITestingApp: Using core: \(core.projectName)")
-
-        // Get the path to the test ROM in the app bundle
-        ILOG("UITestingApp: Looking for test ROM in app bundle")
-        guard let testROMURL = Bundle.main.url(forResource: "240p", withExtension: "nes") else {
-            let error = NSError(domain: "UITestingApp", code: 3, userInfo: [NSLocalizedDescriptionKey: "Test ROM not found in app bundle"])
-            ELOG("UITestingApp: Test ROM not found in app bundle")
-            throw error
-        }
-
-        ILOG("UITestingApp: Found test ROM at: \(testROMURL.path)")
-
-        // Create a PVFile for the ROM
-        ILOG("UITestingApp: Creating PVFile for ROM")
-        let file = PVFile(withURL: testROMURL)
-
-        // Create a game for the test ROM
-        ILOG("UITestingApp: Creating PVGame for ROM")
-        let game = PVGame()
-        game.title = "240p Test Suite"
-        game.systemIdentifier = system.identifier
-        game.system = system
-        game.romPath = testROMURL.path
-        game.file = file
-
-        // Add the game to Realm
-        ILOG("UITestingApp: Adding game to Realm database")
-        do {
-            let realm = try await Realm()
-            ILOG("UITestingApp: Realm opened successfully")
-
-            // First check if the game already exists
-            if let existingGame = realm.objects(PVGame.self).filter("title CONTAINS[c] %@", "240p").first {
-                ILOG("UITestingApp: Game already exists in Realm: \(existingGame.title)")
-
-                // Store the existing game for later use
-                await MainActor.run {
-                    self.testGame = existingGame
-                    ILOG("UITestingApp: Using existing game from Realm")
-                }
-            } else {
-                // Add the new game to Realm
-                try await realm.asyncWrite {
-                    realm.add(game)
-                    ILOG("UITestingApp: Added new game to Realm: \(game.title)")
-                }
-
-                // Store the new game for later use
-                await MainActor.run {
-                    self.testGame = game
-                    ILOG("UITestingApp: Using newly added game from Realm")
-                }
-            }
-        } catch {
-            ELOG("UITestingApp: Error accessing Realm: \(error)")
-            throw error
-        }
-    }
+//
+//    // Setup in-memory Realm for testing
+//    private func setupInMemoryRealm() {
+//        // Configure Realm for in-memory storage
+//        var config = Realm.Configuration()
+//        config.inMemoryIdentifier = "UITestingRealm"
+//
+//        // Set this as the default configuration
+//        Realm.Configuration.defaultConfiguration = config
+//
+//        ILOG("Configured in-memory Realm for testing")
+//    }
 
     @StateObject
     private var mockImportStatusDriverData = MockImportStatusDriverData()
 
-    // Scan for real systems and cores from plists
-    private func scanForRealSystemsAndCores() async {
-        ILOG("UITestingApp: Starting scan for real systems and cores")
-
-        do {
-            // Find all system plists in the app bundle and packages
-            let systemPlistURLs = findSystemPlistURLs()
-            ILOG("UITestingApp: Found \(systemPlistURLs.count) system plist URLs")
-
-            // Update systems from plists
-            await PVEmulatorConfiguration.updateSystems(fromPlists: systemPlistURLs)
-            ILOG("UITestingApp: Updated systems from plists")
-
-            // Get core plists from CoreLoader
-            let corePlists = CoreLoader.getCorePlists()
-            ILOG("UITestingApp: Found \(corePlists.count) core plists")
-
-            // Update cores from plists
-            await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
-            ILOG("UITestingApp: Updated cores from plists")
-
-            // Log the systems and cores found
-            let realm = try await Realm()
-            let systems = realm.objects(PVSystem.self)
-            let cores = realm.objects(PVCore.self)
-            ILOG("UITestingApp: Found \(systems.count) systems and \(cores.count) cores after scanning")
-
-            // Log the system identifiers
-            for system in systems {
-                ILOG("UITestingApp: Found system: \(system.name) (\(system.identifier))")
-            }
-        } catch {
-            ELOG("UITestingApp: Error scanning for systems and cores: \(error)")
-        }
-    }
-
-    // Find all system plist URLs in the app bundle and packages
-    private func findSystemPlistURLs() -> [URL] {
-        var urls: [URL] = []
-
-        // Add system plist from the main bundle if it exists
-        if let mainBundleURL = Bundle.main.url(forResource: "systems", withExtension: "plist") {
-            urls.append(mainBundleURL)
-            ILOG("UITestingApp: Found systems.plist in main bundle: \(mainBundleURL.path)")
-        }
-
-        // Add system plist from PVLibrary package if it exists
-        let pvLibraryBundle = Bundle(for: GameImporter.self)
-        if let pvLibraryURL = pvLibraryBundle.url(forResource: "systems", withExtension: "plist") {
-            urls.append(pvLibraryURL)
-            ILOG("UITestingApp: Found systems.plist in PVLibrary bundle: \(pvLibraryURL.path)")
-        }
-
-        // Add system plist from PVEmulatorCore package if it exists
-        let pvEmulatorCoreBundle = Bundle(for: PVEmulatorConfiguration.self)
-        if let pvEmulatorCoreURL = pvEmulatorCoreBundle.url(forResource: "systems", withExtension: "plist") {
-            urls.append(pvEmulatorCoreURL)
-            ILOG("UITestingApp: Found systems.plist in PVEmulatorCore bundle: \(pvEmulatorCoreURL.path)")
-        }
-
-        return urls
-    }
 
     // Install the test ROM by copying it to the ROMs directory
     private func installTestROM() async throws {
@@ -342,63 +96,12 @@ struct UITestingApp: SwiftUI.App {
         do {
             try FileManager.default.copyItem(at: testROMURL, to: destinationURL)
             ILOG("UITestingApp: Successfully copied ROM to: \(destinationURL.path)")
+            appState.gameImporter?.startProcessing()
         } catch {
             ELOG("UITestingApp: Error copying ROM: \(error)")
             throw error
         }
-    }
-
-    /// Creates a save state for the specified game
-    /// - Parameter game: The game to create a save state for
-    /// - Returns: The created save state, or nil if creation failed
-    private func createSaveState(for game: PVGame) async -> PVSaveState? {
-        ILOG("UITestingApp: Creating save state for game: \(game.title)")
-
-        // Get the Realm instance
-        do {
-            let realm = try await Realm()
-
-            // Check if the game exists in the Realm
-            guard let realmGame = realm.object(ofType: PVGame.self, forPrimaryKey: game.id) else {
-                ELOG("UITestingApp: Game not found in Realm")
-                return nil
-            }
-
-            // Create a new save state
-            //            let saveState = PVSaveState()
-            //            saveState.game = realmGame
-            //            saveState.core = realmGame.core
-            //            saveState.date = Date()
-            //            saveState.userDescription = "Test Save State"
-            //
-            //            // Create a mock save state file
-            //            let saveStateFileName = "\(realmGame.id)_savestate.sav"
-            //            let saveStateFileURL = FileManager.default.temporaryDirectory.appendingPathComponent(saveStateFileName)
-
-            // Create an empty file for the save state
-            //            FileManager.default.createFile(atPath: saveStateFileURL.path, contents: Data(), attributes: nil)
-
-            // Create a PVFile for the save state
-            //            let saveStateFile = PVFile()
-            //            saveStateFile.url = saveStateFileURL
-            //            saveStateFile.fileName = saveStateFileName
-            //            saveStateFile.fileExtension = "sav"
-            //
-            //            // Assign the file to the save state
-            //            saveState.file = saveStateFile
-            //
-            //            // Add the save state to the Realm
-            //            try await realm.asyncWrite {
-            //                realm.add(saveState)
-            //                realmGame.saveStates.append(saveState)
-            //            }
-            //
-            ILOG("UITestingApp: Created save state for game: \(realmGame.title)")
-            return nil // saveState
-        } catch {
-            ELOG("UITestingApp: Failed to create save state: \(error)")
-            return nil
-        }
+        appState.gameImporter?.resume()
     }
 
     // MARK: - UIViewControllerRepresentable for PVEmulatorViewController
@@ -425,435 +128,28 @@ struct UITestingApp: SwiftUI.App {
     @State private var coreInstance: PVEmulatorCore? = nil
 
     /// Prepare the emulator core instance
-    private func prepareEmulatorCore() {
-            guard let game = testGame, let system = game.system else {
-                emulatorError = "Game or system not available"
-                return
-            }
-            
-            ILOG("UITestingApp: Preparing to show emulator for game: \(game.title) (ID: \(game.id))")
-            ILOG("UITestingApp: Game system: \(system.name) (ID: \(system.identifier))")
-            
-            do {
-                let realm = try Realm()
-                
-                // Log all available cores in the system
-                ILOG("UITestingApp: System has \(system.cores.count) cores:")
-                for core in system.cores {
-                    ILOG("UITestingApp: Available core: \(core.projectName) (\(core.identifier))")
-                }
-                
-                // Filter cores that are valid for this system
-                let validCores = system.cores.filter { core in
-                    core.hasCoreClass && !core.disabled
-                }.sorted { a, b in
-                    // If one has "retroarch" and the other doesn't, non-retroarch comes first
-                    let aHasRetroarch = a.projectName.localizedCaseInsensitiveContains("retroarch")
-                    let bHasRetroarch = b.projectName.localizedCaseInsensitiveContains("retroarch")
-                    
-                    if aHasRetroarch != bHasRetroarch {
-                        return !aHasRetroarch // non-retroarch comes first
-                    }
-                    
-                    // Within each group, sort alphabetically
-                    return a.projectName < b.projectName
-                }
-                
-                ILOG("UITestingApp: Found \(validCores.count) valid cores for \(system.shortName)")
-                
-                // If no valid cores found, check all cores in the database that support this system
-                if validCores.isEmpty {
-                    ILOG("UITestingApp: No cores directly associated with system, checking database for compatible cores")
-                    
-                    let compatibleCores = realm.objects(PVCore.self).filter("ANY supportedSystems.identifier == %@", system.identifier)
-                    
-                    if !compatibleCores.isEmpty {
-                        ILOG("UITestingApp: Found \(compatibleCores.count) compatible cores in database")
-                        
-                        // Use the first compatible core
-                        let selectedCore = compatibleCores.first!
-                        ILOG("UITestingApp: Selected compatible core: \(selectedCore.projectName) (\(selectedCore.identifier))")
-                        
-                        // Try to create an instance of the selected core
-                        guard let instance = selectedCore.createInstance(forSystem: system) else {
-                            ELOG("UITestingApp: Failed to create core instance for \(selectedCore.projectName)")
-                            emulatorError = "Failed to create core instance"
-                            return
-                        }
-                        
-                        ILOG("UITestingApp: Successfully created core instance of type \(type(of: instance))")
-                        coreInstance = instance
-                        return
-                    } else {
-                        ELOG("UITestingApp: No compatible cores found for \(system.name)")
-                        emulatorError = "No compatible cores found for \(system.name)"
-                        
-                        // Log all cores in the database for debugging
-                        let allCores = realm.objects(PVCore.self)
-                        ILOG("UITestingApp: Available cores in database (\(allCores.count)):")
-                        for core in allCores {
-                            let supportedSystems = core.supportedSystems.map { $0.shortName }.joined(separator: ", ")
-                            ILOG("UITestingApp: Database core: \(core.projectName) (\(core.identifier)) - Supports: \(supportedSystems)")
-                        }
-                        
-                        return
-                    }
-                }
-                
-                // Use the first valid core
-                let selectedCore = validCores.first!
-                ILOG("UITestingApp: Selected core: \(selectedCore.projectName) (\(selectedCore.identifier))")
-                
-                // Try to create an instance of the selected core
-                guard let instance = selectedCore.createInstance(forSystem: system) else {
-                    ELOG("UITestingApp: Failed to create core instance for \(selectedCore.projectName)")
-                    emulatorError = "Failed to create core instance"
-                    return
-                }
-                
-                ILOG("UITestingApp: Successfully created core instance of type \(type(of: instance))")
-                coreInstance = instance
-                
-            } catch let error {
-                ELOG("UITestingApp: Error creating core instance: \(error)")
-                emulatorError = error.localizedDescription
-            }
-        }
-
-    /// View for showing the emulator inline in the current scene
-    @ViewBuilder
-    private func inlineEmulatorView() -> some View {
-        ZStack {
-            Color.black.edgesIgnoringSafeArea(.all)
-
-            if let game = testGame, let system = game.system {
-                if let core = coreInstance {
-                    // Use our SwiftUI wrapper for PVEmulatorViewController
-                    EmulatorViewControllerWrapper(game: game, coreInstance: core)
-                        .edgesIgnoringSafeArea(.all)
-                        .overlay(alignment: .topTrailing) {
-                            Button(action: {
-                                showEmulatorInCurrentScene = false
-                                coreInstance = nil
-                                emulatorError = nil
-                            }) {
-                                Image(systemName: "xmark.circle.fill")
-                                    .font(.title)
-                                    .foregroundColor(.white)
-                                    .padding()
-                                    .background(
-                                        Circle()
-                                            .fill(Color.black.opacity(0.5))
-                                            .overlay(
-                                                Circle()
-                                                    .stroke(Color(ThemeManager.shared.currentPalette.defaultTintColor), lineWidth: 2)
-                                            )
-                                    )
-                            }
-                            .padding()
-                        }
-                } else if let error = emulatorError {
-                    // Show error if core couldn't be created
-                    VStack {
-                        Text("Error: \(error)")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding(.bottom, 8)
-
-                        Text("Game: \(game.title)")
-                            .foregroundColor(.white)
-
-                        Text("System: \(system.name)")
-                            .foregroundColor(.white)
-
-                        Text("Core ID: \(game.userPreferredCoreID ?? system.cores.first?.identifier ?? "None")")
-                            .foregroundColor(.white)
-
-                        // Add debug information
-                        Text("Available cores:")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding(.top, 8)
-
-                        ForEach(Array(system.cores), id: \.identifier) { core in
-                            Text("\(core.projectName) (\(core.identifier))")
-                                .foregroundColor(.white)
-                                .font(.caption)
-                        }
-
-                        HStack(spacing: 16) {
-                            Button("Close") {
-                                showEmulatorInCurrentScene = false
-                                coreInstance = nil
-                                emulatorError = nil
-                            }
-                            .provenanceButton(isDestructive: true)
-
-                            Button("Retry") {
-                                emulatorError = nil
-                                prepareEmulatorCore()
-                            }
-                            .provenanceButton()
-                        }
-                        .padding(.top, 16)
-                    }
-                } else {
-                    // Loading state
-                    VStack {
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                            .scaleEffect(1.5)
-                            .padding()
-
-                        Text("Preparing emulator...")
-                            .foregroundColor(.white)
-                            .padding()
-                    }
-                    .onAppear {
-                        prepareEmulatorCore()
-                    }
-                }
-            } else {
-                // Show error if game or system is nil
-                VStack {
-                    Text("Error: Game or system not available")
-                        .font(.headline)
-                        .foregroundColor(.white)
-
-                    Button("Close") {
-                        showEmulatorInCurrentScene = false
-                        coreInstance = nil
-                        emulatorError = nil
-                    }
-                    .provenanceButton(isDestructive: true)
-                }
-            }
-        }
+    private func prepareEmulatorCore(forGame game: PVGame?) {
+            // TODO: We already have the default GameLaunchingViewController.swift protocol to use to find the right core
     }
 
-    /// Creates the initialization view based on the current state
-    @ViewBuilder
-    private func initializationView() -> some View {
-        if isInitializing {
-            VStack {
-                Text("Initializing test game...").foregroundColor(.gray)
-                ProgressView()
-            }
-        } else if let error = initializationError {
-            VStack {
-                Text("Initialization failed: \(error)").foregroundColor(.red)
-                Button("Retry") {
-                    initializationError = nil
-                    isInitializing = true
-                    Task {
-                        do {
-                            try await initializeSystemsAndTestGame()
-                            isInitializing = false
-                        } catch {
-                            ELOG("UITestingApp: Retry initialization failed with error: \(error)")
-                            initializationError = error.localizedDescription
-                            isInitializing = false
-                        }
-                    }
-                }
-            }
-        } else if testGame != nil {
-            gameControlsView()
-        } else {
-            VStack {
-                Text("Test game not initialized yet").foregroundColor(.orange)
-                Button("Initialize Test Game") {
-                    isInitializing = true
-                    Task {
-                        do {
-                            try await initializeSystemsAndTestGame()
-                            isInitializing = false
-                        } catch {
-                            ELOG("UITestingApp: Initialization failed with error: \(error)")
-                            initializationError = error.localizedDescription
-                            isInitializing = false
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     /// Creates the game controls view when a test game is available
     @ViewBuilder
-    private func gameControlsView() -> some View {
-        Group {
-            Button("Launch Emulator with Test ROM") {
-                launchEmulatorWithTestROM()
-            }
-
-            Button("Launch Emulator (Direct)") {
-                launchEmulatorDirect()
-            }
-        }
+    private func gameLibraryView() -> some View {
+        // TODO: Cells for PVGames or emtpy library
     }
 
     // MARK: - Launch Methods
 
-    /// Launch the emulator with the test ROM using the standard approach
-    private func launchEmulatorWithTestROM() {
-        guard let game = testGame else { return }
-
-        ILOG("UITestingApp: Launching emulator with game: \(game.title) (ID: \(game.id))")
-        ILOG("UITestingApp: Game details - System: \(game.system?.name ?? "nil"), Core: \(game.userPreferredCoreID ?? "nil")")
-
-        // Verify the game exists in Realm
-        Task {
-            do {
-                let realm = try await Realm()
-
-                // Try to find the game by different methods
-                let gameByID: PVGame? = realm.object(ofType: PVGame.self, forPrimaryKey: game.id)
-                let gamesByTitle: Results<PVGame> = realm.objects(PVGame.self).filter("title CONTAINS[c] %@", "240p")
-                let gamesByMD5: Results<PVGame> = realm.objects(PVGame.self).filter("id == %@", "06b44b6cbb2ecfca4325537ccb4d32a7")
-                let gamesByFilename: Results<PVGame> = realm.objects(PVGame.self).filter("romPath CONTAINS[c] %@", "240p.nes")
-
-                ILOG("UITestingApp: Search results - By ID: \(gameByID != nil ? "Found" : "Not found"), " +
-                     "By Title: \(gamesByTitle.count), By MD5: \(gamesByMD5.count), By Filename: \(gamesByFilename.count)")
-
-                // Use the first game found by any method
-                let realmGame = gameByID ?? gamesByTitle.first ?? gamesByMD5.first ?? gamesByFilename.first
-
-                if let realmGame = realmGame {
-                    ILOG("UITestingApp: Found game in Realm: \(realmGame.title) (ID: \(realmGame.id))")
-
-                    // Update the testGame reference to use the one from Realm
-                    await MainActor.run {
-                        self.testGame = realmGame
-                        ILOG("UITestingApp: Updated testGame reference to use the one from Realm")
-                    }
-                } else {
-                    ELOG("UITestingApp: Game not found in Realm by any search method")
-                }
-            } catch {
-                ELOG("UITestingApp: Error accessing Realm: \(error)")
-            }
-        }
-
-        // Set the current game in EmulationUIState
-        appState.emulationUIState.currentGame = game
-
-        // Verify the game was set correctly
-        if let currentGame = appState.emulationUIState.currentGame {
-            ILOG("UITestingApp: Successfully set current game in EmulationUIState: \(currentGame.title) (ID: \(currentGame.id))")
-        } else {
-            ELOG("UITestingApp: Failed to set current game in EmulationUIState")
-        }
-
-        // Show the emulator scene directly
-        showEmulatorScene = true
-
-        ILOG("UITestingApp: Showing emulator scene directly via EmulationUIState")
-
-        // Check if the device supports multiple scenes
-        if UIApplication.shared.supportsMultipleScenes {
-            // Create a window scene description for the emulator
-            let windowScene = UIApplication.shared.connectedScenes.first { $0.activationState == .foregroundActive } as? UIWindowScene
-            if let windowScene = windowScene {
-                ILOG("UITestingApp: Found active window scene, creating emulator scene")
-                let options = UIScene.ActivationRequestOptions()
-                options.requestingScene = windowScene
-
-                // Log all connected scenes before activation
-                ILOG("UITestingApp: Connected scenes before activation:")
-                for (index, scene) in UIApplication.shared.connectedScenes.enumerated() {
-                    ILOG("  [\(index)] Scene: \(scene), State: \(scene.activationState.rawValue)")
-                }
-
-                // Create a scene session request
-                let request = UISceneSessionActivationRequest(options: options)
-
-                // Use the recommended API instead of the deprecated one
-                UIApplication.shared.activateSceneSession(for: request) { error in
-                    ELOG("UITestingApp: Error activating emulator scene: \(error)")
-                }
-
-                // Log success since errorHandler is only called on error
-                ILOG("UITestingApp: Successfully requested scene activation")
-
-                // Log all connected scenes after activation
-                ILOG("UITestingApp: Connected scenes after activation:")
-                for (index, scene) in UIApplication.shared.connectedScenes.enumerated() {
-                    ILOG("  [\(index)] Scene: \(scene), State: \(scene.activationState.rawValue)")
-                }
-            } else {
-                ELOG("UITestingApp: Could not find active window scene")
-            }
-        } else {
-            // Device doesn't support multiple scenes (e.g., iPhone simulator)
-            ILOG("UITestingApp: Device doesn't support multiple scenes, using fallback approach")
-
-            // Present the emulator directly in the current scene
-            // This is a simplified approach - you may need to adjust based on your app's architecture
-            DispatchQueue.main.async {
-                // Set a flag to show the emulator in the current view hierarchy
-                self.showEmulatorInCurrentScene = true
-                self.coreInstance = nil
-                self.emulatorError = nil
-                ILOG("UITestingApp: Set flag to show emulator in current scene")
-            }
-        }
-    }
-
     /// Launch the emulator directly using the shared AppState
-    private func launchEmulatorDirect() {
-        guard let game = testGame else { return }
-
+    private func launchEmulatorDirect(with game: PVGame) async {
         ILOG("UITestingApp: Direct launch of emulator with game: \(game.title) (ID: \(game.id))")
         ILOG("UITestingApp: Game details - System: \(game.system?.name ?? "nil"), Core: \(game.userPreferredCoreID ?? "nil")")
-
-        // Verify the game exists in Realm and use the Realm version
-        Task {
-            do {
-                let realm = try await Realm()
-
-                // Try to find the game by different methods
-                let gameByID = realm.object(ofType: PVGame.self, forPrimaryKey: game.id)
-                let gamesByTitle = realm.objects(PVGame.self).filter("title CONTAINS[c] %@", "240p")
-                let gamesByMD5 = realm.objects(PVGame.self).filter("id == %@", "06b44b6cbb2ecfca4325537ccb4d32a7")
-                let gamesByFilename = realm.objects(PVGame.self).filter("romPath CONTAINS[c] %@", "240p.nes")
-
-                ILOG("UITestingApp: Search results - By ID: \(gameByID != nil ? "Found" : "Not found"), " +
-                     "By Title: \(gamesByTitle.count), By MD5: \(gamesByMD5.count), By Filename: \(gamesByFilename.count)")
-
-                // Use the first game found by any method
-                let realmGame = gameByID ?? gamesByTitle.first ?? gamesByMD5.first ?? gamesByFilename.first
-
-                if let realmGame = realmGame {
-                    ILOG("UITestingApp: Found game in Realm: \(realmGame.title) (ID: \(realmGame.id))")
-
-                    // Update the testGame reference and set it in AppState
-                    await MainActor.run {
-                        self.testGame = realmGame
-                        ILOG("UITestingApp: Updated testGame reference to use the one from Realm")
-
-                        // Set the current game in EmulationUIState directly
-                        ILOG("UITestingApp: Setting current game directly in AppState.shared.emulationUIState")
-                        AppState.shared.emulationUIState.currentGame = realmGame
-                    }
-                } else {
-                    ELOG("UITestingApp: Game not found in Realm by any search method")
-
-                    // Set the current game in EmulationUIState directly using the original game
-                    await MainActor.run {
-                        ILOG("UITestingApp: Setting current game directly in AppState.shared.emulationUIState (using original reference)")
-                        AppState.shared.emulationUIState.currentGame = game
-                    }
-                }
-            } catch {
-                ELOG("UITestingApp: Error accessing Realm: \(error)")
-
-                // Set the current game in EmulationUIState directly using the original game
-                await MainActor.run {
-                    ILOG("UITestingApp: Setting current game directly in AppState.shared.emulationUIState (using original reference)")
-                    AppState.shared.emulationUIState.currentGame = game
-                }
-            }
+ 
+        // Set the current game in EmulationUIState directly using the original game
+        await MainActor.run {
+            ILOG("UITestingApp: Setting current game directly in AppState.shared.emulationUIState (using original reference)")
+            AppState.shared.emulationUIState.currentGame = game
         }
 
         // Verify the game was set correctly in the shared instance
@@ -863,8 +159,6 @@ struct UITestingApp: SwiftUI.App {
             ELOG("UITestingApp: Failed to set current game in shared EmulationUIState")
         }
 
-        // Show the emulator scene directly
-        showEmulatorScene = true
 
         ILOG("UITestingApp: Direct showing emulator scene")
 
@@ -906,339 +200,122 @@ struct UITestingApp: SwiftUI.App {
 
             // Present the emulator directly in the current scene
             DispatchQueue.main.async {
-                // Set a flag to show the emulator in the current view hierarchy
-                self.showEmulatorInCurrentScene = true
                 self.coreInstance = nil
                 self.emulatorError = nil
                 ILOG("UITestingApp: Set flag to show emulator in current scene")
             }
         }
     }
-
-    // MARK: - Scene Body
-
+    
+    @ViewBuilder
+    private func mainTabView() -> some View {
+        TabView(selection: $selectedTab) {
+            // Library Tab
+            GameLibraryView()
+                .tabItem {
+                    Label("Library", systemImage: "gamecontroller")
+                }
+                .tag(0)
+            
+            // Settings Tab
+            SettingsView()
+                .tabItem {
+                    Label("Settings", systemImage: "gear")
+                }
+                .tag(1)
+            
+            // Debug Tab
+            DebugView()
+                .tabItem {
+                    Label("Debug", systemImage: "ladybug")
+                }
+                .tag(2)
+        }
+    }
+    
     var body: some Scene {
         // Main window group for the UI
-        WindowGroup {
-            ZStack {
-                NavigationView {
-                    List {
-                        Section("Emulator Testing") {
-                            initializationView()
-                        }
-
-                        Section("UI Testing") {
-                            Button("Test DeltaSkins List") {
-                                showDeltaSkinList = true
-                            }
-                            Button("Show Realm Driver") {
-                                showingRealmSheet = true
-                            }
-                            Button("Show Mock Driver") {
-                                showingMockSheet = true
-                            }
-                            Button("Show Settings") {
-                                showingSettings = true
-                            }
-                            Button("Show Import Queue") {
-                                showImportStatus = true
-                            }
-                            Button("Database Debug View") {
-                                showDatabaseDebug = true
-                            }
-                        }
+        WindowGroup(id: "main") {
+            Group {
+                switch appState.bootupStateManager.currentState {
+                case .completed:
+                    ZStack {
+                        mainTabView()
                     }
-                    .navigationTitle("UI Testing")
-                }
-
-                // Overlay the emulator view when needed
-                if showEmulatorInCurrentScene {
-                    inlineEmulatorView()
-                        .transition(.opacity)
-                        .zIndex(100) // Ensure it's on top
-                }
-            }
-            .onAppear {
-                ILOG("UITestingApp: Main view appeared, starting initialization")
-
-                // Initialize the mock importer first
-                Task {
-                    ILOG("UITestingApp: Initializing mock importer")
-                    let importer = mockImportStatusDriverData.gameImporter
-                    await importer.initSystems()
-                    ILOG("UITestingApp: Mock importer initialized")
-                }
-
-                // Then initialize systems and test game if needed
-                if testGame == nil && !isInitializing {
-                    isInitializing = true
-                    Task {
-                        do {
-                            try await initializeSystemsAndTestGame()
-                            isInitializing = false
-                        } catch {
-                            ELOG("UITestingApp: Initialization failed with error: \(error)")
-                            initializationError = error.localizedDescription
-                            isInitializing = false
-                        }
-                    }
-                }
-            }
-            .sheet(isPresented: $showingRealmSheet) {
-                let testRealm = try! RealmSaveStateTestFactory.createInMemoryRealm()
-                let mockDriver = RealmSaveStateDriver(realm: testRealm)
-
-                /// Get the first game from realm for the view model
-                let game = testRealm.objects(PVGame.self).first!
-
-                /// Create view model with game data
-                let viewModel = ContinuesMagementViewModel(
-                    driver: mockDriver,
-                    gameTitle: game.title,
-                    systemTitle: "Game Boy",
-                    numberOfSaves: game.saveStates.count
-                )
-
-                ContinuesMagementView(viewModel: viewModel)
                     .onAppear {
-                        /// Load initial states through the publisher
-                        mockDriver.loadSaveStates(forGameId: "1")
+                        ILOG("ContentView: MainView appeared")
                     }
-                    .presentationBackground(.clear)
-            }
-            .sheet(isPresented: $showingMockSheet) {
-                /// Create mock driver with sample data
-                let mockDriver = MockSaveStateDriver(mockData: true)
-                /// Create view model with mock driver
-                let viewModel = ContinuesMagementViewModel(
-                    driver: mockDriver,
-                    gameTitle: mockDriver.gameTitle,
-                    systemTitle: mockDriver.systemTitle,
-                    numberOfSaves: 5, // Use a fixed number instead of async call
-                    gameUIImage: mockDriver.gameUIImage
-                )
-
-                ContinuesMagementView(viewModel: viewModel)
-                    .onAppear {
+                case .error(let error):
+                    ErrorView(error: error) {
+                        appState.startBootupSequence()
                     }
-                    .presentationBackground(.clear)
-            }
-            .sheet(isPresented: $showingSettings) {
-                NavigationView {
-                    // Use the existing MockGameImporter from mockImportStatusDriverData
-                    let gameImporter = mockImportStatusDriverData.gameImporter
-                    let pvgamelibraryUpdatesController = mockImportStatusDriverData.pvgamelibraryUpdatesController
-                    let menuDelegate = MockPVMenuDelegate()
-
-                    PVSettingsView(
-                        conflictsController: pvgamelibraryUpdatesController,
-                        menuDelegate: menuDelegate
-                    ) {
-                        showingSettings = false
-                    }
-                    .navigationBarHidden(true)
-                }
-                .navigationViewStyle(.stack)
-            }
-            .sheet(isPresented: $showImportStatus) {
-                ImportStatusView(
-                    updatesController: mockImportStatusDriverData.pvgamelibraryUpdatesController,
-                    gameImporter: mockImportStatusDriverData.gameImporter,
-                    delegate: mockImportStatusDriverData) {
-                        print("Import Status View Closed")
-                    }
-            }
-            .sheet(isPresented: $showDatabaseDebug) {
-                DatabaseDebugView()
-            }
-            .sheet(isPresented: $showGameMoreInfo) {
-                NavigationView {
-                    let driver = MockGameLibraryDriver()
-                    PagedGameMoreInfoView(viewModel: PagedGameMoreInfoViewModel(driver: driver))
-                        .navigationTitle("Game Info")
+                default:
+                    BootupView()
+                        .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                 }
             }
-            .sheet(isPresented: $showGameMoreInfoRealm) {
-                if let driver = try? RealmGameLibraryDriver.previewDriver() {
-                    NavigationView {
-                        PagedGameMoreInfoView(viewModel: PagedGameMoreInfoViewModel(driver: driver))
-                            .navigationTitle("Game Info")
-                    }
-                }
-            }
-            .sheet(isPresented: $showArtworkSearch) {
-                NavigationView {
-                    ArtworkSearchView { selection in
-                        print("Selected artwork: \(selection.metadata.url)")
-                        showArtworkSearch = false
-                    }
-                    .navigationTitle("Artwork Search")
-#if !os(tvOS)
-                    .background(Color(uiColor: .systemBackground))
-#endif
-                }
-#if !os(tvOS)
-                .presentationBackground(Color(uiColor: .systemBackground))
-#endif
-            }
-            .sheet(isPresented: $showFreeROMs) {
-                FreeROMsView { rom, url in
-                    print("Downloaded ROM: \(rom.file) to: \(url)")
-                }
-            }
-            .sheet(isPresented: $showDeltaSkinList) {
-                NavigationView {
-                    DeltaSkinListView(manager: DeltaSkinManager.shared)
-                }
-            }
-            .onAppear {
+            .handlesExternalEvents(preferring: ["main"], allowing: ["main"])
+            .preferredColorScheme(ThemeManager.shared.currentPalette.dark ? .dark : .light)
+            .environmentObject(appState)
+            .environmentObject(sceneCoordinator)
 #if canImport(FreemiumKit)
-                FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
+//            .environmentObject(FreemiumKit.shared)
 #endif
-            }
         }
-#if canImport(FreemiumKit)
-        .environmentObject(FreemiumKit.shared)
-#endif
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .active {
+                appState.startBootupSequence()
 
+                /// Swizzle sendEvent(UIEvent)
+                if !appState.sendEventWasSwizzled {
+                    // UIApplication.swizzleSendEvent()
+                    appState.sendEventWasSwizzled = true
+                }
+
+                // Check if we need to open the emulator scene based on app open action
+                if appState.bootupState == .completed {
+
+                }
+            }
+
+            // Handle scene phase changes for import pausing
+            appState.handleScenePhaseChange(newPhase)
+        }
+        
         // Add the emulator scene as a separate scene
         EmulatorScene()
     }
 }
 
-class MockPVMenuDelegate: PVMenuDelegate {
-    func didTapImports() {
+/// Hack to get touches send to RetroArch
 
+extension UIApplication {
+
+    /// Swap implipmentations of sendEvent() while
+    /// maintaing a reference back to the original
+    @objc static func swizzleSendEvent() {
+            let originalSelector = #selector(UIApplication.sendEvent(_:))
+            let swizzledSelector = #selector(UIApplication.pv_sendEvent(_:))
+            let orginalStoreSelector = #selector(UIApplication.originalSendEvent(_:))
+            guard let originalMethod = class_getInstanceMethod(self, originalSelector),
+                let swizzledMethod = class_getInstanceMethod(self, swizzledSelector),
+                  let orginalStoreMethod = class_getInstanceMethod(self, orginalStoreSelector)
+            else { return }
+            method_exchangeImplementations(originalMethod, orginalStoreMethod)
+            method_exchangeImplementations(originalMethod, swizzledMethod)
     }
 
-    func didTapSettings() {
+    /// Placeholder for storing original selector
+    @objc func originalSendEvent(_ event: UIEvent) { }
 
-    }
-
-    func didTapHome() {
-
-    }
-
-    func didTapAddGames() {
-
-    }
-
-    func didTapConsole(with consoleId: String) {
-
-    }
-
-    func didTapCollection(with collection: Int) {
-
-    }
-
-    func closeMenu() {
-
-    }
-}
-
-struct MainView_Previews: PreviewProvider {
-    @State static private var showSaveStatesMock = false
-    @State static private var showingSettings = false
-    @State static private var showImportQueue = false
-    @State static private var mockImportStatusDriverData = MockImportStatusDriverData()
-
-    // Reference to shared AppState and SceneCoordinator for the preview
-    private static let appState = AppState.shared
-    private static let sceneCoordinator = SceneCoordinator.shared
-
-    static var previews: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-
-            VStack(spacing: 20) {
-                Button("Show Realm Driver") { }
-                    .buttonStyle(.borderedProminent)
-
-                Button("Show Mock Driver") { }
-                    .buttonStyle(.borderedProminent)
-
-                Button("Show Settings") { }
-                    .buttonStyle(.borderedProminent)
-
-                Button("Show Import Queue") {
-                    showImportQueue = true
-                }
-                .buttonStyle(.borderedProminent)
-            }
-        }
-        .sheet(isPresented: $showingSettings) {
-            // Use the existing PVGameLibraryUpdatesController from mockImportStatusDriverData
-            let menuDelegate = MockPVMenuDelegate()
-
-            PVSettingsView(
-                conflictsController: mockImportStatusDriverData.pvgamelibraryUpdatesController,
-                menuDelegate: menuDelegate) {
-
-                }
-        }
-        .sheet(isPresented: .init(
-            get: { mockImportStatusDriverData.isPresent },
-            set: { mockImportStatusDriverData.isPresent = $0 }
-        )) {
-            ImportStatusView(
-                updatesController: mockImportStatusDriverData.pvgamelibraryUpdatesController,
-                gameImporter: mockImportStatusDriverData.gameImporter,
-                delegate: mockImportStatusDriverData)
-        }
-        .onAppear {
-#if canImport(FreemiumKit)
-            FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
-#endif
+    /// The sendEvent that will be called
+    @objc func pv_sendEvent(_ event: UIEvent) {
+//        print("Handling touch event: \(event.type.rawValue ?? -1)")
+        if let core = AppState.shared.emulationUIState.core {
+            core.sendEvent(event)
         }
 
-        // Preview of the main app UI
-    }
-}
-
-// MARK: - Custom Button Style
-
-/// A button style that matches the Provenance theme
-struct ProvenanceButtonStyle: ButtonStyle {
-    var isDestructive: Bool = false
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(buttonColor(configuration: configuration))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(buttonBorderColor(configuration: configuration), lineWidth: 2)
-            )
-            .foregroundColor(.white)
-            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
-            .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
-    }
-
-    private func buttonColor(configuration: Configuration) -> Color {
-        if configuration.isPressed {
-            return Color(ThemeManager.shared.currentPalette.defaultTintColor.withAlphaComponent(0.8))
-        } else if isDestructive {
-            return Color.red.opacity(0.8)
-        } else {
-            return Color(ThemeManager.shared.currentPalette.defaultTintColor)
-        }
-    }
-
-    private func buttonBorderColor(configuration: Configuration) -> Color {
-        if configuration.isPressed {
-            return Color.white.opacity(0.5)
-        } else {
-            return Color.white.opacity(0.2)
-        }
-    }
-}
-
-extension View {
-    func provenanceButton(isDestructive: Bool = false) -> some View {
-        self.buttonStyle(ProvenanceButtonStyle(isDestructive: isDestructive))
+        originalSendEvent(event)
     }
 }

@@ -12,21 +12,34 @@ import RealmSwift
 import PVThemes
 
 @available(iOS 16, tvOS 16, *)
-struct GameItemView: SwiftUI.View {
+public struct GameItemView: SwiftUI.View {
 
-    @ObservedRealmObject var game: PVGame
-    var constrainHeight: Bool = false
-    var viewType: GameItemViewType = .cell
+    @ObservedRealmObject public var game: PVGame
+    public var constrainHeight: Bool = false
+    public var viewType: GameItemViewType = .cell
     /// The section context this GameItemView is being rendered in
-    let sectionContext: HomeSectionType
+    public let sectionContext: HomeSectionType
 
-    @Binding var isFocused: Bool
+    @Binding public var isFocused: Bool
 
     @ObservedObject private var themeManager = ThemeManager.shared
     @ObservedObject private var gamepadManager = GamepadManager.shared
     @State private var artwork: SwiftImage?
     @State private var isVisible: Bool = false
-    var action: () -> Void
+    public var action: () -> Void
+
+    public init(game: PVGame, constrainHeight: Bool = false, viewType: GameItemViewType = .cell, sectionContext: HomeSectionType = .allGames, isFocused: Binding<Bool> = .constant(false), themeManager: ThemeManager = ThemeManager.shared, gamepadManager: GamepadManager = GamepadManager.shared, artwork: SwiftImage? = nil, isVisible: Bool = false, action: @escaping () -> Void) {
+        self.game = game
+        self.constrainHeight = constrainHeight
+        self.viewType = viewType
+        self.sectionContext = sectionContext
+        self._isFocused = isFocused
+        self.themeManager = themeManager
+        self.gamepadManager = gamepadManager
+        self.artwork = artwork
+        self.isVisible = isVisible
+        self.action = action
+    }
 
     private var discCount: Int {
         let allFiles = game.relatedFiles.toArray()
@@ -42,7 +55,7 @@ struct GameItemView: SwiftUI.View {
         gamepadManager.isControllerConnected && isFocused
     }
 
-    var body: some SwiftUI.View {
+    public var body: some SwiftUI.View {
         if !game.isInvalidated {
             Button {
                 action()

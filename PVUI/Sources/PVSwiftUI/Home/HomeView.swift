@@ -15,7 +15,7 @@ import PVThemes
 import Combine
 import PVUIBase
 
-enum HomeSectionType: Int, CaseIterable, Sendable {
+public enum HomeSectionType: Int, CaseIterable, Sendable {
     case recentSaveStates
     case recentlyPlayedGames
     case favorites
