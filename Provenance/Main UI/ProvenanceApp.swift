@@ -51,9 +51,11 @@ struct ProvenanceApp: App {
 
     var body: some Scene {
         WindowGroup(id: "main") {
-            ContentView(appDelegate: appDelegate)
+            ContentView()
                 .environmentObject(appState)
                 .environmentObject(featureFlags)
+                .environmentObject(appDelegate)
+                .environmentObject(appState.bootupStateManager)
                 .task {
                     try? await featureFlags.loadConfiguration(
                         from: URL(string: "https://data.provenance-emu.com/features/features.json")!

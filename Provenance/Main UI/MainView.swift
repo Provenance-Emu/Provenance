@@ -12,24 +12,23 @@ import PVUIBase
 import Perception
 
 struct MainView: View {
-    @EnvironmentObject
-    private var appState: AppState
+    /// Use EnvironmentObject for app state
+    @EnvironmentObject private var appState: AppState
+    /// Use EnvironmentObject for app delegate
+    @EnvironmentObject private var appDelegate: PVAppDelegate
 
-    let appDelegate: PVAppDelegate
-
-    init(appDelegate: PVAppDelegate) {
-        ILOG("ContentView: App is initialized, showing MainView")
-        self.appDelegate = appDelegate
-    }
+    /// Remove init since we're using environment objects now
 
     var body: some View {
         WithPerceptionTracking {
             Group {
                 if appState.useUIKit {
-                    UIKitHostedProvenanceMainView(appDelegate: appDelegate)
+                    UIKitHostedProvenanceMainView()
+                        .environmentObject(appDelegate)
                         .edgesIgnoringSafeArea(.all)
                 } else {
-                    SwiftUIHostedProvenanceMainView(appDelegate: appDelegate)
+                    SwiftUIHostedProvenanceMainView()
+                        .environmentObject(appDelegate)
                         .edgesIgnoringSafeArea(.all)
                 }
             }

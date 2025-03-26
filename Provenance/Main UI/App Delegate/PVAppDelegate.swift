@@ -56,7 +56,7 @@ import FreemiumKit
 //#else
 //@Observable
 //#endif
-final class PVAppDelegate: UIResponder, UIApplicationDelegate {
+final class PVAppDelegate: UIResponder, UIApplicationDelegate, ObservableObject {
     /// This is set by the UIApplicationDelegateAdaptor
     internal var window: UIWindow? = nil
 

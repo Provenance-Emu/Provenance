@@ -2610,30 +2610,30 @@
 		B39436512CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"PVAppDelegate+AppRating.swift",
-				"PVAppDelegate+NitoTV.swift",
+				"App Delegate/PVAppDelegate+AppRating.swift",
+				"App Delegate/PVAppDelegate+NitoTV.swift",
 			);
 			target = B3F7E422297736C200362B92 /* Provenance-XL */;
 		};
 		B39436522CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"PVAppDelegate+AppRating.swift",
+				"App Delegate/PVAppDelegate+AppRating.swift",
 			);
 			target = 1A3D409317B2DCE4004DFFFC /* Provenance */;
 		};
 		B39436532CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"PVAppDelegate+AppRating+NOOP.swift",
-				"PVAppDelegate+JIT.swift",
+				"App Delegate/PVAppDelegate+AppRating+NOOP.swift",
+				"App Delegate/PVAppDelegate+JIT.swift",
 			);
 			platformFiltersByRelativePath = {
-				"PVAppDelegate+AppRating.swift" = (
+				"App Delegate/PVAppDelegate+AppRating.swift" = (
 					ios,
 					maccatalyst,
 				);
-				"PVAppDelegate+NitoTV.swift" = (
+				"App Delegate/PVAppDelegate+NitoTV.swift" = (
 					tvos,
 				);
 			};
@@ -2642,10 +2642,10 @@
 		B39436542CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"PVAppDelegate+AppRating.swift",
+				"App Delegate/PVAppDelegate+AppRating.swift",
 			);
 			platformFiltersByRelativePath = {
-				"PVAppDelegate+NitoTV.swift" = (
+				"App Delegate/PVAppDelegate+NitoTV.swift" = (
 					tvos,
 				);
 			};
@@ -2654,15 +2654,15 @@
 		B39436552CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"PVAppDelegate+AppRating+NOOP.swift",
-				"PVAppDelegate+JIT.swift",
+				"App Delegate/PVAppDelegate+AppRating+NOOP.swift",
+				"App Delegate/PVAppDelegate+JIT.swift",
 			);
 			platformFiltersByRelativePath = {
-				"PVAppDelegate+AppRating.swift" = (
+				"App Delegate/PVAppDelegate+AppRating.swift" = (
 					ios,
 					maccatalyst,
 				);
-				"PVAppDelegate+NitoTV.swift" = (
+				"App Delegate/PVAppDelegate+NitoTV.swift" = (
 					tvos,
 				);
 			};
@@ -2671,27 +2671,27 @@
 		B39436562CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"PVAppDelegate+AppRating.swift",
-				"PVAppDelegate+NitoTV.swift",
+				"App Delegate/PVAppDelegate+AppRating.swift",
+				"App Delegate/PVAppDelegate+NitoTV.swift",
 			);
 			target = 930498BE2A93073800BF257F /* Provenance-UnderDevelopment */;
 		};
 		B39436572CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"PVAppDelegate+AppRating.swift",
-				"PVAppDelegate+VolumeButton.swift",
+				"App Delegate/PVAppDelegate+AppRating.swift",
+				"App Delegate/PVAppDelegate+VolumeButton.swift",
 			);
 			target = 1AD481B31BA350A400FDA50A /* ProvenanceTV */;
 		};
 		B39436582CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"PVAppDelegate+AppRating.swift",
-				"PVAppDelegate+JIT.swift",
+				"App Delegate/PVAppDelegate+AppRating.swift",
+				"App Delegate/PVAppDelegate+JIT.swift",
 			);
 			platformFiltersByRelativePath = {
-				"PVAppDelegate+NitoTV.swift" = (
+				"App Delegate/PVAppDelegate+NitoTV.swift" = (
 					tvos,
 				);
 			};
@@ -2700,8 +2700,8 @@
 		B39436592CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"PVAppDelegate+AppRating.swift",
-				"PVAppDelegate+VolumeButton.swift",
+				"App Delegate/PVAppDelegate+AppRating.swift",
+				"App Delegate/PVAppDelegate+VolumeButton.swift",
 			);
 			target = B347B2352BC4CA98006A3B2D /* ProvennaceTV-Lite */;
 		};

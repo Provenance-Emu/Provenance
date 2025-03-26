@@ -10,6 +10,9 @@
 		B36DFC3E2CF1975B00BAE9BE /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B36DFC3D2CF1975B00BAE9BE /* PVUI */; };
 		B37444812D444B09002306B0 /* GBC-Sunrise.deltaskin in Resources */ = {isa = PBXBuildFile; fileRef = B374447F2D444B09002306B0 /* GBC-Sunrise.deltaskin */; };
 		B37444842D444B81002306B0 /* GBA-SharpX1.deltaskin in Resources */ = {isa = PBXBuildFile; fileRef = B37444822D444B81002306B0 /* GBA-SharpX1.deltaskin */; };
+		B3C427D72D9392F000E367CF /* PVCoreLoader in Frameworks */ = {isa = PBXBuildFile; productRef = B3C427D62D9392F000E367CF /* PVCoreLoader */; };
+		B3C42D562D9398A200E367CF /* PVCoreMednafen in Frameworks */ = {isa = PBXBuildFile; productRef = B3C42D552D9398A200E367CF /* PVCoreMednafen */; };
+		B3C42D592D93999900E367CF /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B3C42D582D93999900E367CF /* PVSupport */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +89,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3C42D592D93999900E367CF /* PVSupport in Frameworks */,
+				B3C427D72D9392F000E367CF /* PVCoreLoader in Frameworks */,
+				B3C42D562D9398A200E367CF /* PVCoreMednafen in Frameworks */,
 				B36DFC3E2CF1975B00BAE9BE /* PVUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -115,6 +121,7 @@
 				B36DFC112CF196D700BAE9BE /* UITesting */,
 				B36DFC222CF196D800BAE9BE /* UITestingTests */,
 				B36DFC2C2CF196D800BAE9BE /* UITestingUITests */,
+				B3C42D542D9398A200E367CF /* Frameworks */,
 				B36DFC102CF196D700BAE9BE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -127,6 +134,13 @@
 				B36DFC292CF196D800BAE9BE /* UITestingUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B3C42D542D9398A200E367CF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -150,6 +164,9 @@
 			name = UITesting;
 			packageProductDependencies = (
 				B36DFC3D2CF1975B00BAE9BE /* PVUI */,
+				B3C427D62D9392F000E367CF /* PVCoreLoader */,
+				B3C42D552D9398A200E367CF /* PVCoreMednafen */,
+				B3C42D582D93999900E367CF /* PVSupport */,
 			);
 			productName = UITesting;
 			productReference = B36DFC0F2CF196D700BAE9BE /* UITesting.app */;
@@ -235,6 +252,9 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				B36DFC3C2CF1975B00BAE9BE /* XCLocalSwiftPackageReference "../PVUI" */,
+				B3A213472D938DD70097C7E1 /* XCLocalSwiftPackageReference "../Cores/Mednafen" */,
+				B3C427D52D9392F000E367CF /* XCLocalSwiftPackageReference "../PVCoreLoader" */,
+				B3C42D572D93999900E367CF /* XCLocalSwiftPackageReference "../PVSupport" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B36DFC102CF196D700BAE9BE /* Products */;
@@ -617,12 +637,37 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../PVUI;
 		};
+		B3A213472D938DD70097C7E1 /* XCLocalSwiftPackageReference "../Cores/Mednafen" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Cores/Mednafen;
+		};
+		B3C427D52D9392F000E367CF /* XCLocalSwiftPackageReference "../PVCoreLoader" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../PVCoreLoader;
+		};
+		B3C42D572D93999900E367CF /* XCLocalSwiftPackageReference "../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../PVSupport;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		B36DFC3D2CF1975B00BAE9BE /* PVUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVUI;
+		};
+		B3C427D62D9392F000E367CF /* PVCoreLoader */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreLoader;
+		};
+		B3C42D552D9398A200E367CF /* PVCoreMednafen */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3A213472D938DD70097C7E1 /* XCLocalSwiftPackageReference "../Cores/Mednafen" */;
+			productName = PVCoreMednafen;
+		};
+		B3C42D582D93999900E367CF /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

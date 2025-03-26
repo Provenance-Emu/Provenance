@@ -18,6 +18,30 @@ public class SceneCoordinator: ObservableObject {
     
     private init() {}
     
+    public enum Scenes {
+        case main
+        case emulator
+    }
+    
+    public func open(scene: Scenes) {
+        switch scene {
+        case .main:
+            openMainScene()
+        case .emulator:
+            openEmulatorScene()
+        }
+    }
+    
+    public func openMainScene() {
+        guard let url = URL(string: "provenance://main") else {
+            ELOG("Failed to create URL for main scene")
+            return
+        }
+        
+        ILOG("SceneCoordinator: Opening main scene")
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+    }
+    
     /// Opens the emulator scene with the current game from AppState
     public func openEmulatorScene() {
         guard let url = URL(string: "provenance://emulator") else {
