@@ -456,9 +456,11 @@ extension GameLaunchingViewController where Self: UIViewController {
                     UIApplication.shared.open(URL(string: WIKI_BIOS_URL)!, options: [:], completionHandler: nil)
                 }
             })
-            displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [guideAction])
+            let cancelAction =  UIAlertAction(title: "Close", style: .destructive)
+            displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [guideAction, cancelAction])
 #else
-            displayAndLogError(withTitle: "Missing BIOS files", message: message)
+            let cancelAction =  UIAlertAction(title: "Close", style: .destructive)
+            displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [cancelAction])
 #endif
         } catch GameLaunchingError.systemNotFound {
             displayAndLogError(withTitle: "Core not found", message: "No Core was found to run system '\(system.name)'.")

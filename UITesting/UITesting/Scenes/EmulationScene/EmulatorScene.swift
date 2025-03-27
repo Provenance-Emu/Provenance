@@ -388,7 +388,9 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
             alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         }
         
-        viewController.present(alertController, animated: true, completion: nil)
+        viewController.present(alertController, animated: true) {
+            AppState.shared.emulationUIState.reset()
+        }
     }
     
     func updateRecentGames(_ game: PVGame) {
