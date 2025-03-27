@@ -565,9 +565,10 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
                 // Clear emulation state
                 AppState.shared.emulationUIState.core = nil
                 AppState.shared.emulationUIState.emulator = nil
+                AppState.shared.emulationUIState.currentGame = nil
                 
-                // Return to main scene
-                SceneCoordinator.shared.closeEmulator()
+                // Return to main scene using TestSceneCoordinator
+                TestSceneCoordinator.shared.closeEmulator()
             }
             
             // Store in app state

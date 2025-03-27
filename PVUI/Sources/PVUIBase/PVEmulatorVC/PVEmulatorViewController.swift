@@ -594,6 +594,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         self.view?.removeFromSuperview()
         self.removeFromParent()
         staticSelf = nil
+        
+        
+        AppState.shared.emulationUIState.reset()
     }
 
     @objc

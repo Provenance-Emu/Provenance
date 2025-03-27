@@ -42,6 +42,10 @@ public class TestSceneCoordinator: ObservableObject {
                     ILOG("TestSceneCoordinator: Game detected in EmulationUIState, showing emulator scene")
                     self.showEmulator = true
                     self.currentScene = .emulator
+                } else {
+                    ILOG("TestSceneCoordinator: No game detected in EmulationUIState, returning to main scene")
+                    self.showEmulator = false
+                    self.currentScene = .main
                 }
             }
             .store(in: &cancellables)
@@ -77,5 +81,16 @@ public class TestSceneCoordinator: ObservableObject {
         } else {
             ELOG("TestSceneCoordinator: Failed to set current game in EmulationUIState")
         }
+    }
+    
+    /// Handles closing the emulator and returning to the main scene
+    public func closeEmulator() {
+        ILOG("TestSceneCoordinator: Closing emulator")
+        
+        // Clear the emulation state
+        AppState.shared.emulationUIState.currentGame = nil
+        
+        // Return to the main scene
+        openMainScene()
     }
 }

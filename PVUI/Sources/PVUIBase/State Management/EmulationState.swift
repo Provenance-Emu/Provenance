@@ -34,4 +34,11 @@ public final class EmulationUIState : ObservableObject {
         }
         return (core, emulator, currentGame)
     }
+    
+    /// Update state
+//    public func update(_ update: (inout EmulationUIState) -> Void) {
+//        var newState = state
+//        update(&newState)
+//        state = newState
+//    }
 }

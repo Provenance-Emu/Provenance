@@ -31,7 +31,8 @@ struct ContentView: View {
         return Group {
             if case .completed = bootupState {
                 // Use the TestSceneCoordinator to determine which view to show
-                if sceneCoordinator.currentScene == .emulator && sceneCoordinator.showEmulator {
+                // Only show emulator if both the scene coordinator says to AND there's a game in EmulationUIState
+                if sceneCoordinator.currentScene == .emulator && sceneCoordinator.showEmulator && appState.emulationUIState.currentGame != nil {
                     // Show the emulator view
                     ZStack {
                         EmulatorContainerView()
