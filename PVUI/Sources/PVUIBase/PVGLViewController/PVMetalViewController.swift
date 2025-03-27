@@ -270,137 +270,39 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        guard let metalView = view as? MTKView else {
+        // Create a Metal device
+        device = MTLCreateSystemDefaultDevice()
+
+        if device == nil {
+            ELOG("Failed to create Metal device")
             return
         }
 
-        /// Setup OpenGL context if core renders to OpenGL
-        if emulatorCore?.rendersToOpenGL ?? false {
-#if os(macOS) || targetEnvironment(macCatalyst)
-            if let context = createMacOpenGLContext() {
-                glContext = context
-                alternateThreadGLContext = createMacOpenGLContext()
-                alternateThreadBufferCopyGLContext = createMacOpenGLContext()
-
-#if DEBUG
-                ILOG("Created macOS/Catalyst OpenGL contexts for core that renders to OpenGL")
-#endif
-            } else {
-                ELOG("Failed to create macOS/Catalyst OpenGL context")
-            }
-#else
-            if let context = bestContext {
-                glContext = context
-                alternateThreadGLContext = EAGLContext(api: context.api)
-                alternateThreadBufferCopyGLContext = EAGLContext(api: context.api)
-
-#if DEBUG
-                ILOG("Created iOS OpenGL contexts for core that renders to OpenGL")
-#endif
-            } else {
-                ELOG("Failed to create iOS OpenGL context")
-            }
-#endif
-        }
-
-        metalView.device = device
-        metalView.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
-        metalView.depthStencilPixelFormat = .depth32Float_stencil8
-        metalView.sampleCount = 1
-        metalView.delegate = self
-        metalView.autoResizeDrawable = true
-
-        // Set paused and only trigger redraw when needs display is set.
-        metalView.isPaused = false
-        metalView.enableSetNeedsDisplay = false
-
-        view.isOpaque = true
-        view.layer.isOpaque = true
-        view.isUserInteractionEnabled = false
-
-#if DEBUG
-        ILOG("MTKView frame after setup: \(metalView.frame)")
-#endif
-
-        frameCount = 0
-        device = MTLCreateSystemDefaultDevice()
-
-        metalView.device = device
-        metalView.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
-        metalView.depthStencilPixelFormat = .depth32Float_stencil8
-        metalView.sampleCount = 1
-        metalView.delegate = self
-        metalView.autoResizeDrawable = true
+        // Create a command queue
         commandQueue = device?.makeCommandQueue()
 
-        // Set paused and only trigger redraw when needs display is set.
-        metalView.isPaused = false
-        metalView.enableSetNeedsDisplay = false
-
-        view.isOpaque = true
-        view.layer.isOpaque = true
-
-        view.isUserInteractionEnabled = false
-
-        updatePreferredFPS()
-
-        if let emulatorCore = emulatorCore {
-            let depthFormat: Int32 = Int32(emulatorCore.depthFormat)
-            switch depthFormat {
-            case GL_DEPTH_COMPONENT16:
-                metalView.depthStencilPixelFormat = .depth16Unorm
-            case GL_DEPTH_COMPONENT24:
-                metalView.depthStencilPixelFormat = .x32_stencil8
-#if !(targetEnvironment(macCatalyst) || os(iOS) || os(tvOS) || os(watchOS))
-                if device?.isDepth24Stencil8PixelFormatSupported ?? false {
-                    view.depthStencilPixelFormat = .x24_stencil8
-                }
-#endif
-            default:
-                break
-            }
+        if commandQueue == nil {
+            ELOG("Failed to create command queue")
+            return
         }
 
-        if Defaults[.nativeScaleEnabled]  || renderSettings.nativeScaleEnabled {
-            let scale = UIScreen.main.scale
-            if scale != 1 {
-                view.layer.contentsScale = scale
-                view.layer.rasterizationScale = scale
-                view.contentScaleFactor = scale
-            }
+        // Set up the Metal view
+        mtlView.device = device
+        mtlView.delegate = self
+        mtlView.framebufferOnly = true
+        mtlView.colorPixelFormat = .bgra8Unorm
+        mtlView.clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
+        mtlView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
+        // Try to set up shaders using different approaches
+        createBasicShaders()
+
+        // If that didn't work, try the default library approach
+        if customPipeline == nil && blitPipeline == nil {
+            createBasicShadersWithDefaultLibrary()
         }
 
-        do {
-            try setupTexture()
-        } catch {
-            ELOG("Setup texture shader creation error: \(error.localizedDescription)")
-        }
-
-        do {
-            try setupBlitShader()
-        } catch {
-            ELOG("Setup blit shader creation error: \(error.localizedDescription)")
-        }
-        if let emulatorCore = emulatorCore {
-            ILOG("Setting up shader for screen type: \(emulatorCore.screenType)")
-            if let filterShader = MetalShaderManager.shared.filterShader(forOption: renderSettings.metalFilterMode,
-                                                                         screenType: emulatorCore.screenType) {
-                ILOG("Selected filter shader: \(filterShader.name)")
-                do {
-                    try setupEffectFilterShader(filterShader)
-                } catch {
-                    ELOG("Failed to setup effect filter shader: \(error)")
-                }
-            } else {
-                WLOG("No filter shader selected for mode: \(renderSettings.metalFilterMode)")
-            }
-        }
-
-        alternateThreadFramebufferBack = 0
-        alternateThreadColorTextureBack = 0
-        alternateThreadDepthRenderbuffer = 0
-
-        // Add notification observer for emulator core initialization
+        // Add notification observers
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(emulatorCoreDidInitialize),
@@ -408,14 +310,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             object: nil
         )
 
-        // Set up the custom shader
-        do {
-            try setupCustomShader()
-        } catch {
-            ELOG("Custom shader setup error: \(error)")
-        }
-
-        // Add notification observer for emulator core initialization
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(refreshTexture),
@@ -426,6 +320,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         // Add a colored border to the MTKView for debugging
         mtlView.layer.borderWidth = 5.0
         mtlView.layer.borderColor = UIColor.cyan.cgColor
+
+        DLOG("Metal view controller view did load")
     }
 
     @objc private func emulatorCoreDidInitialize() {
@@ -1062,37 +958,86 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         return .invalid
     }
 
-    func setupBlitShader() throws {
+    private func setupBlitShader() throws {
         guard let device = device else {
-            throw EffectFilterShaderError.deviceIsNIl
+            throw MetalViewControllerError.deviceIsNil
         }
 
-        // Create a default library
-        guard let defaultLibrary = device.makeDefaultLibrary() else {
-            throw EffectFilterShaderError.noBlitterShaderFound
+        // Create a simple vertex shader
+        let vertexShaderSource = """
+        #include <metal_stdlib>
+        using namespace metal;
+
+        struct VertexOut {
+            float4 position [[position]];
+            float2 texCoord;
+        };
+
+        vertex VertexOut blit_vertex(uint vertexID [[vertex_id]]) {
+            const float2 positions[4] = {
+                float2(-1.0, -1.0),
+                float2(1.0, -1.0),
+                float2(-1.0, 1.0),
+                float2(1.0, 1.0)
+            };
+
+            const float2 texCoords[4] = {
+                float2(0.0, 1.0),
+                float2(1.0, 1.0),
+                float2(0.0, 0.0),
+                float2(1.0, 0.0)
+            };
+
+            VertexOut out;
+            out.position = float4(positions[vertexID], 0.0, 1.0);
+            out.texCoord = texCoords[vertexID];
+            return out;
+        }
+        """
+
+        // Create a simple fragment shader
+        let fragmentShaderSource = """
+        #include <metal_stdlib>
+        using namespace metal;
+
+        struct VertexOut {
+            float4 position [[position]];
+            float2 texCoord;
+        };
+
+        fragment float4 blit_fragment(VertexOut in [[stage_in]],
+                                     texture2d<float> texture [[texture(0)]],
+                                     sampler textureSampler [[sampler(0)]]) {
+            return texture.sample(textureSampler, in.texCoord);
+        }
+        """
+
+        // Create a Metal library from the shader source
+        let library: MTLLibrary
+        do {
+            library = try device.makeLibrary(source: vertexShaderSource + fragmentShaderSource, options: nil)
+            DLOG("Successfully created Metal library")
+        } catch {
+            ELOG("Error creating Metal library: \(error)")
+            throw error
         }
 
         // Get the vertex and fragment functions
-        guard let vertexFunction = defaultLibrary.makeFunction(name: "blit_vs") else {
+        guard let vertexFunction = library.makeFunction(name: "blit_vertex") else {
+            ELOG("Failed to create vertex function")
             throw EffectFilterShaderError.noBlitterShaderFound
         }
 
-        DLOG("Found vertex function: blit_vs")
-
-        guard let fragmentFunction = defaultLibrary.makeFunction(name: "blit_ps") else {
+        guard let fragmentFunction = library.makeFunction(name: "blit_fragment") else {
+            ELOG("Failed to create fragment function")
             throw EffectFilterShaderError.noBlitterShaderFound
         }
-
-        DLOG("Found fragment function: blit_ps")
 
         // Create a render pipeline descriptor
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
-        pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
-
-        // Print the pipeline descriptor for debugging
-        DLOG("Pipeline descriptor: \(pipelineDescriptor)")
+        pipelineDescriptor.colorAttachments[0].pixelFormat = mtlView.colorPixelFormat
 
         // Create the render pipeline state
         do {
@@ -1100,8 +1045,36 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             DLOG("Successfully created blit pipeline state")
         } catch {
             ELOG("Failed to create blit pipeline state: \(error)")
-            throw EffectFilterShaderError.errorCreatingPipelineState(error)
+            throw error
         }
+
+        // Create a sampler descriptor
+        let samplerDescriptor = MTLSamplerDescriptor()
+        samplerDescriptor.minFilter = .nearest
+        samplerDescriptor.magFilter = .nearest
+
+        // Create the sampler state
+        pointSampler = device.makeSamplerState(descriptor: samplerDescriptor)
+
+        if pointSampler == nil {
+            ELOG("Failed to create point sampler state")
+            throw MetalViewControllerError.failedToCreateSamplerState("point sampler")
+        }
+
+        // Create a linear sampler descriptor
+        let linearSamplerDescriptor = MTLSamplerDescriptor()
+        linearSamplerDescriptor.minFilter = .linear
+        linearSamplerDescriptor.magFilter = .linear
+
+        // Create the linear sampler state
+        linearSampler = device.makeSamplerState(descriptor: linearSamplerDescriptor)
+
+        if linearSampler == nil {
+            ELOG("Failed to create linear sampler state")
+            throw MetalViewControllerError.failedToCreateSamplerState("linear sampler")
+        }
+
+        DLOG("Successfully set up blit shader and samplers")
     }
 
     func setupEffectFilterShader(_ filterShader: Shader) throws {
@@ -1261,6 +1234,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         if emulatorCore.skipEmulationLoop {
             return
+        }
+
+        // Check if we have a valid pipeline
+        if customPipeline == nil && blitPipeline == nil {
+            DLOG("No valid pipeline available, trying to set up shaders directly")
+            createBasicShaders()
         }
 
         // Handle rendering based on the core type
@@ -1734,7 +1713,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     // Add this method to create a custom shader that doesn't require a sampler
     private func setupCustomShader() throws {
         guard let device = device else {
-            throw EffectFilterShaderError.deviceIsNIl
+            throw MetalViewControllerError.deviceIsNil
         }
 
         // Create a simple vertex shader
@@ -1742,22 +1721,17 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         #include <metal_stdlib>
         using namespace metal;
 
-        struct VertexIn {
-            float4 position [[attribute(0)]];
-            float2 texCoord [[attribute(1)]];
-        };
-
         struct VertexOut {
             float4 position [[position]];
             float2 texCoord;
         };
 
-        vertex VertexOut vertex_main(uint vertexID [[vertex_id]]) {
-            const float4 positions[4] = {
-                float4(-1.0, -1.0, 0.0, 1.0),
-                float4( 1.0, -1.0, 0.0, 1.0),
-                float4(-1.0,  1.0, 0.0, 1.0),
-                float4( 1.0,  1.0, 0.0, 1.0)
+        vertex VertexOut custom_vertex(uint vertexID [[vertex_id]]) {
+            const float2 positions[4] = {
+                float2(-1.0, -1.0),
+                float2(1.0, -1.0),
+                float2(-1.0, 1.0),
+                float2(1.0, 1.0)
             };
 
             const float2 texCoords[4] = {
@@ -1768,13 +1742,13 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             };
 
             VertexOut out;
-            out.position = positions[vertexID];
+            out.position = float4(positions[vertexID], 0.0, 1.0);
             out.texCoord = texCoords[vertexID];
             return out;
         }
         """
 
-        // Create a simple fragment shader that doesn't use a sampler
+        // Create a simple fragment shader with built-in sampler
         let fragmentShaderSource = """
         #include <metal_stdlib>
         using namespace metal;
@@ -1784,8 +1758,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             float2 texCoord;
         };
 
-        fragment float4 fragment_main(VertexOut in [[stage_in]],
-                                     texture2d<float> texture [[texture(0)]]) {
+        fragment float4 custom_fragment(VertexOut in [[stage_in]],
+                                      texture2d<float> texture [[texture(0)]]) {
             constexpr sampler textureSampler(mag_filter::linear, min_filter::linear);
             return texture.sample(textureSampler, in.texCoord);
         }
@@ -1795,17 +1769,20 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         let library: MTLLibrary
         do {
             library = try device.makeLibrary(source: vertexShaderSource + fragmentShaderSource, options: nil)
+            DLOG("Successfully created custom Metal library")
         } catch {
-            ELOG("Error creating Metal library: \(error)")
+            ELOG("Error creating custom Metal library: \(error)")
             throw error
         }
 
         // Get the vertex and fragment functions
-        guard let vertexFunction = library.makeFunction(name: "vertex_main") else {
+        guard let vertexFunction = library.makeFunction(name: "custom_vertex") else {
+            ELOG("Failed to create custom vertex function")
             throw EffectFilterShaderError.noBlitterShaderFound
         }
 
-        guard let fragmentFunction = library.makeFunction(name: "fragment_main") else {
+        guard let fragmentFunction = library.makeFunction(name: "custom_fragment") else {
+            ELOG("Failed to create custom fragment function")
             throw EffectFilterShaderError.noBlitterShaderFound
         }
 
@@ -1813,7 +1790,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
-        pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+        pipelineDescriptor.colorAttachments[0].pixelFormat = mtlView.colorPixelFormat
 
         // Create the render pipeline state
         do {
@@ -1826,13 +1803,24 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     }
 
     private func directRender(in view: MTKView) {
-        guard let emulatorCore = emulatorCore,
-              let device = device,
+        guard let device = device,
               let commandQueue = commandQueue,
               let drawable = view.currentDrawable,
               let inputTexture = inputTexture else {
             DLOG("Missing required resources for direct rendering")
             return
+        }
+
+        // Check if we have a valid pipeline
+        if customPipeline == nil && blitPipeline == nil {
+            DLOG("No valid pipeline available in directRender, trying to set up shaders directly")
+            createBasicShaders()
+
+            // If we still don't have a pipeline, return
+            if customPipeline == nil && blitPipeline == nil {
+                ELOG("Failed to create a pipeline, cannot render")
+                return
+            }
         }
 
         // Create a command buffer
@@ -2024,6 +2012,225 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
 
         DLOG("============================")
+    }
+
+    private func setupShaders() {
+        DLOG("Setting up shaders...")
+
+        // Set up the blit shader
+        do {
+            try setupBlitShader()
+            DLOG("Successfully set up blit shader")
+        } catch {
+            ELOG("Failed to set up blit shader: \(error)")
+        }
+
+        // Set up the custom shader
+        do {
+            try setupCustomShader()
+            DLOG("Successfully set up custom shader")
+        } catch {
+            ELOG("Failed to set up custom shader: \(error)")
+        }
+    }
+
+    private func createBasicShaders() {
+        DLOG("Creating basic shaders directly...")
+
+        guard let device = device else {
+            ELOG("No Metal device available")
+            return
+        }
+
+        // Create a simple vertex shader
+        let vertexSource = """
+        #include <metal_stdlib>
+        using namespace metal;
+
+        struct VertexIn {
+            float4 position [[attribute(0)]];
+            float2 texCoord [[attribute(1)]];
+        };
+
+        struct VertexOut {
+            float4 position [[position]];
+            float2 texCoord;
+        };
+
+        vertex VertexOut basic_vertex(uint vertexID [[vertex_id]]) {
+            // Define positions and texture coordinates directly
+            float2 positions[4] = {
+                float2(-1.0, -1.0),
+                float2(1.0, -1.0),
+                float2(-1.0, 1.0),
+                float2(1.0, 1.0)
+            };
+
+            float2 texCoords[4] = {
+                float2(0.0, 1.0),
+                float2(1.0, 1.0),
+                float2(0.0, 0.0),
+                float2(1.0, 0.0)
+            };
+
+            VertexOut out;
+            out.position = float4(positions[vertexID], 0.0, 1.0);
+            out.texCoord = texCoords[vertexID];
+            return out;
+        }
+        """
+
+        // Create a separate fragment shader
+        let fragmentSource = """
+        #include <metal_stdlib>
+        using namespace metal;
+
+        struct VertexOut {
+            float4 position [[position]];
+            float2 texCoord;
+        };
+
+        fragment float4 basic_fragment(VertexOut in [[stage_in]],
+                                     texture2d<float> texture [[texture(0)]]) {
+            constexpr sampler textureSampler(mag_filter::linear, min_filter::linear);
+            return texture.sample(textureSampler, in.texCoord);
+        }
+        """
+
+        // Try to create the vertex shader library
+        do {
+            let vertexLibrary = try device.makeLibrary(source: vertexSource, options: nil)
+            DLOG("Successfully created vertex shader library")
+
+            // Try to create the fragment shader library
+            do {
+                let fragmentLibrary = try device.makeLibrary(source: fragmentSource, options: nil)
+                DLOG("Successfully created fragment shader library")
+
+                // Get the vertex function
+                guard let vertexFunction = vertexLibrary.makeFunction(name: "basic_vertex") else {
+                    ELOG("Failed to get vertex function")
+                    return
+                }
+
+                // Get the fragment function
+                guard let fragmentFunction = fragmentLibrary.makeFunction(name: "basic_fragment") else {
+                    ELOG("Failed to get fragment function")
+                    return
+                }
+
+                // Create a render pipeline descriptor
+                let pipelineDescriptor = MTLRenderPipelineDescriptor()
+                pipelineDescriptor.vertexFunction = vertexFunction
+                pipelineDescriptor.fragmentFunction = fragmentFunction
+                pipelineDescriptor.colorAttachments[0].pixelFormat = mtlView.colorPixelFormat
+
+                // Create the render pipeline state
+                do {
+                    customPipeline = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+                    DLOG("Successfully created custom pipeline state")
+
+                    // Create a sampler descriptor for linear filtering
+                    let linearSamplerDescriptor = MTLSamplerDescriptor()
+                    linearSamplerDescriptor.minFilter = .linear
+                    linearSamplerDescriptor.magFilter = .linear
+
+                    // Create the linear sampler state
+                    linearSampler = device.makeSamplerState(descriptor: linearSamplerDescriptor)
+
+                    // Create a sampler descriptor for point filtering
+                    let pointSamplerDescriptor = MTLSamplerDescriptor()
+                    pointSamplerDescriptor.minFilter = .nearest
+                    pointSamplerDescriptor.magFilter = .nearest
+
+                    // Create the point sampler state
+                    pointSampler = device.makeSamplerState(descriptor: pointSamplerDescriptor)
+
+                    DLOG("Successfully created sampler states")
+                } catch {
+                    ELOG("Failed to create pipeline state: \(error)")
+                }
+            } catch {
+                ELOG("Failed to create fragment shader library: \(error)")
+            }
+        } catch {
+            ELOG("Failed to create vertex shader library: \(error)")
+        }
+    }
+
+    private func createBasicShadersWithDefaultLibrary() {
+        DLOG("Creating basic shaders with default library...")
+
+        guard let device = device else {
+            ELOG("No Metal device available")
+            return
+        }
+
+        // Create a simple shader source
+        let shaderSource = """
+        #include <metal_stdlib>
+        using namespace metal;
+
+        struct VertexOut {
+            float4 position [[position]];
+            float2 texCoord;
+        };
+
+        vertex VertexOut vertexShader(uint vid [[vertex_id]]) {
+            const float2 vertices[] = {
+                float2(-1, -1),
+                float2(-1,  1),
+                float2( 1, -1),
+                float2( 1,  1)
+            };
+
+            const float2 texCoords[] = {
+                float2(0, 1),
+                float2(0, 0),
+                float2(1, 1),
+                float2(1, 0)
+            };
+
+            VertexOut out;
+            out.position = float4(vertices[vid], 0, 1);
+            out.texCoord = texCoords[vid];
+            return out;
+        }
+
+        fragment float4 fragmentShader(VertexOut in [[stage_in]],
+                                      texture2d<float> tex [[texture(0)]]) {
+            constexpr sampler s(address::clamp_to_edge, filter::linear);
+            return tex.sample(s, in.texCoord);
+        }
+        """
+
+        do {
+            // Create a library from the shader source
+            let library = try device.makeLibrary(source: shaderSource, options: nil)
+
+            // Get the vertex and fragment functions
+            guard let vertexFunction = library.makeFunction(name: "vertexShader"),
+                  let fragmentFunction = library.makeFunction(name: "fragmentShader") else {
+                ELOG("Failed to get shader functions")
+                return
+            }
+
+            // Create a render pipeline descriptor
+            let pipelineDescriptor = MTLRenderPipelineDescriptor()
+            pipelineDescriptor.vertexFunction = vertexFunction
+            pipelineDescriptor.fragmentFunction = fragmentFunction
+            pipelineDescriptor.colorAttachments[0].pixelFormat = mtlView.colorPixelFormat
+
+            // Create the render pipeline state
+            do {
+                customPipeline = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+                DLOG("Successfully created custom pipeline state with default library")
+            } catch {
+                ELOG("Failed to create pipeline state with default library: \(error)")
+            }
+        } catch {
+            ELOG("Failed to create shader library with default library: \(error)")
+        }
     }
 }
 
