@@ -255,7 +255,7 @@ class MovableButtonView: UIView, Moveable {
 
             // Cache the successful key
             cachedPositionKey = key
-            ILOG("Generated and cached position key: \(key)")
+//            VLOG("Generated and cached position key: \(key)")
             return key
         }
 
