@@ -24,6 +24,9 @@ struct EmulatorWithSkinView: View {
     // Debug mode
     @State private var showDebugOverlay = false
 
+    // Add this to the struct to track rotation changes
+    @State private var rotationCount: Int = 0
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -32,20 +35,24 @@ struct EmulatorWithSkinView: View {
 
                 if let skin = selectedSkin {
                     // If we have a skin, use DeltaSkinScreensView with input handling
-                    DeltaSkinScreensView(
+                    DeltaSkinView(
                         skin: skin,
                         traits: createSkinTraits(),
-                        containerSize: geometry.size
+                        showDebugOverlay: showDebugOverlay,
+                        showHitTestOverlay: false
                     )
                     .environmentObject(createInputHandler())
+                    .id("skin-view-\(rotationCount)") // Force recreation on rotation
                 } else if let asyncSkin = asyncSkin {
                     // If we have an async skin, use DeltaSkinScreensView with input handling
-                    DeltaSkinScreensView(
+                    DeltaSkinView(
                         skin: asyncSkin,
                         traits: createSkinTraits(),
-                        containerSize: geometry.size
+                        showDebugOverlay: showDebugOverlay,
+                        showHitTestOverlay: false
                     )
                     .environmentObject(createInputHandler())
+                    .id("async-skin-view-\(rotationCount)") // Force recreation on rotation
                 } else if isLoading {
                     // Loading indicator
                     ProgressView()
@@ -55,6 +62,84 @@ struct EmulatorWithSkinView: View {
                 } else {
                     // Fallback controller with input handling
                     defaultControllerSkin()
+                }
+
+                // Debug overlay
+                if showDebugOverlay {
+                    VStack(alignment: .leading) {
+                        Text("Debug Info")
+                            .font(.headline)
+                            .foregroundColor(.white)
+
+                        Text("Skin: \(selectedSkin?.name ?? "None")")
+                            .foregroundColor(.white)
+
+                        Text("Orientation: \(currentOrientation.isLandscape ? "Landscape" : "Portrait")")
+                            .foregroundColor(.white)
+
+                        Text("Rotation Count: \(rotationCount)")
+                            .foregroundColor(.white)
+
+                        Text("Game: \(game.title)")
+                            .foregroundColor(.white)
+
+                        Text("System: \(game.system?.name ?? "Unknown")")
+                            .foregroundColor(.white)
+
+                        if let core = coreInstance as? NSObject {
+                            Text("Core: \(type(of: core))")
+                                .foregroundColor(.white)
+                        }
+
+                        Button("Refresh GPU View") {
+                            NotificationCenter.default.post(name: Notification.Name("RefreshGPUView"), object: nil)
+                        }
+                        .padding(8)
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+
+                        // Add view hierarchy info
+                        Text("View Borders:")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding(.top, 8)
+
+                        HStack {
+                            Rectangle().fill(Color.yellow).frame(width: 20, height: 20)
+                            Text("Main View").foregroundColor(.white)
+                        }
+
+                        HStack {
+                            Rectangle().fill(Color.red).frame(width: 20, height: 20)
+                            Text("Game Screen View").foregroundColor(.white)
+                        }
+
+                        HStack {
+                            Rectangle().fill(Color.blue).frame(width: 20, height: 20)
+                            Text("Skin View").foregroundColor(.white)
+                        }
+
+                        HStack {
+                            Rectangle().fill(Color.green).frame(width: 20, height: 20)
+                            Text("Skin Subviews").foregroundColor(.white)
+                        }
+
+                        HStack {
+                            Rectangle().fill(Color.orange).frame(width: 20, height: 20)
+                            Text("DeltaSkinScreensView").foregroundColor(.white)
+                        }
+
+                        HStack {
+                            Rectangle().fill(Color.purple).frame(width: 20, height: 20)
+                            Text("Screen View").foregroundColor(.white)
+                        }
+                    }
+                    .padding()
+                    .background(Color.black.opacity(0.7))
+                    .cornerRadius(10)
+                    .padding()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 }
 
                 // Debug toggle button
@@ -507,7 +592,11 @@ struct EmulatorWithSkinView: View {
             let newOrientation = UIDevice.current.orientation
             if newOrientation.isLandscape || newOrientation.isPortrait {
                 self.currentOrientation = newOrientation
-                print("Orientation changed to: \(newOrientation.isLandscape ? "landscape" : "portrait")")
+                self.rotationCount += 1 // Increment rotation count to force view recreation
+                print("Orientation changed to: \(newOrientation.isLandscape ? "landscape" : "portrait"), rotation count: \(self.rotationCount)")
+
+                // Post a notification to refresh the GPU view
+                NotificationCenter.default.post(name: Notification.Name("RefreshGPUView"), object: nil)
             }
         }
     }

@@ -422,6 +422,10 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             name: Notification.Name("RefreshGPUView"),
             object: nil
         )
+
+        // Add a colored border to the MTKView for debugging
+        mtlView.layer.borderWidth = 5.0
+        mtlView.layer.borderColor = UIColor.cyan.cgColor
     }
 
     @objc private func emulatorCoreDidInitialize() {
@@ -449,6 +453,62 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             draw(in: mtlView)
         } catch {
             print("Error updating texture: \(error)")
+
+            // Try to create a default texture
+            do {
+                try createDefaultTexture()
+
+                // Force a redraw
+                draw(in: mtlView)
+            } catch {
+                print("Error creating default texture: \(error)")
+            }
+        }
+    }
+
+    private func createDefaultTexture() throws {
+        guard let device = device else {
+            throw MetalViewControllerError.deviceIsNil
+        }
+
+        // Use a default size
+        let defaultWidth: Int = 256
+        let defaultHeight: Int = 240
+
+        // Create a texture descriptor with the default size
+        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(
+            pixelFormat: .rgba8Unorm,
+            width: defaultWidth,
+            height: defaultHeight,
+            mipmapped: false
+        )
+
+        textureDescriptor.usage = [.shaderRead, .renderTarget]
+
+        // Create the texture
+        inputTexture = device.makeTexture(descriptor: textureDescriptor)
+
+        if inputTexture == nil {
+            throw MetalViewControllerError.failedToCreateTexture("default texture")
+        }
+
+        // Fill the texture with a solid color
+        if let texture = inputTexture {
+            let region = MTLRegionMake2D(0, 0, defaultWidth, defaultHeight)
+            let bytesPerRow = 4 * defaultWidth
+            let totalBytes = bytesPerRow * defaultHeight
+
+            // Create a buffer with a solid color (black with alpha)
+            var buffer = [UInt8](repeating: 0, count: totalBytes)
+            for i in stride(from: 0, to: totalBytes, by: 4) {
+                buffer[i] = 0     // R
+                buffer[i+1] = 0   // G
+                buffer[i+2] = 0   // B
+                buffer[i+3] = 255 // A
+            }
+
+            // Replace the texture contents
+            texture.replace(region: region, mipmapLevel: 0, withBytes: buffer, bytesPerRow: bytesPerRow)
         }
     }
 
@@ -1239,7 +1299,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
-        // Use direct rendering instead of the complex pipeline
+        // Update the texture from the core's buffer
+        if !emulatorCore.rendersToOpenGL {
+            _ = updateTextureFromCore()
+        }
+
+        // Use the direct rendering method which is safer
         directRender(in: view)
     }
 
@@ -1781,9 +1846,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     }
 
     private func directRender(in view: MTKView) {
-        print("Using direct rendering method")
-
-        guard let device = device,
+        guard let emulatorCore = emulatorCore,
+              let device = device,
               let commandQueue = commandQueue,
               let drawable = view.currentDrawable,
               let inputTexture = inputTexture else {
@@ -1797,43 +1861,131 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
-        // Use a blit encoder for simple copying
-        guard let blitEncoder = commandBuffer.makeBlitCommandEncoder() else {
-            print("Failed to create blit encoder")
+        // Create a render pass descriptor
+        let renderPassDescriptor = MTLRenderPassDescriptor()
+        renderPassDescriptor.colorAttachments[0].texture = drawable.texture
+        renderPassDescriptor.colorAttachments[0].loadAction = .clear
+        renderPassDescriptor.colorAttachments[0].storeAction = .store
+        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
+
+        // Create a render command encoder
+        guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
+            print("Failed to create render encoder")
             return
         }
 
-        // Copy the input texture to the drawable texture
-        blitEncoder.copy(
-            from: inputTexture,
-            sourceSlice: 0,
-            sourceLevel: 0,
-            sourceOrigin: MTLOrigin(x: 0, y: 0, z: 0),
-            sourceSize: MTLSize(
-                width: min(inputTexture.width, drawable.texture.width),
-                height: min(inputTexture.height, drawable.texture.height),
-                depth: 1
-            ),
-            to: drawable.texture,
-            destinationSlice: 0,
-            destinationLevel: 0,
-            destinationOrigin: MTLOrigin(
-                x: (drawable.texture.width - min(inputTexture.width, drawable.texture.width)) / 2,
-                y: (drawable.texture.height - min(inputTexture.height, drawable.texture.height)) / 2,
-                z: 0
-            )
+        // Set the viewport
+        let viewport = MTLViewport(
+            originX: 0,
+            originY: 0,
+            width: Double(drawable.texture.width),
+            height: Double(drawable.texture.height),
+            znear: 0.0,
+            zfar: 1.0
         )
+        renderEncoder.setViewport(viewport)
+
+        // Use the custom pipeline if available, otherwise fall back to the blit pipeline
+        if let customPipeline = customPipeline {
+            renderEncoder.setRenderPipelineState(customPipeline)
+
+            // Set the texture
+            renderEncoder.setFragmentTexture(inputTexture, index: 0)
+
+            // Draw the primitives
+            renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
+        } else if let blitPipeline = blitPipeline {
+            // Fall back to the blit pipeline
+            renderEncoder.setRenderPipelineState(blitPipeline)
+
+            // Set the texture
+            renderEncoder.setFragmentTexture(inputTexture, index: 0)
+
+            // Set the sampler state
+            if let pointSampler = pointSampler {
+                renderEncoder.setFragmentSamplerState(pointSampler, index: 0)
+            }
+
+            // Draw the primitives
+            renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
+        } else {
+            print("No pipeline available")
+        }
 
         // End encoding
-        blitEncoder.endEncoding()
+        renderEncoder.endEncoding()
 
         // Present the drawable
         commandBuffer.present(drawable)
 
         // Commit the command buffer
         commandBuffer.commit()
+    }
 
-        print("Direct rendering completed")
+    // Helper method to update texture from core's buffer
+    private func updateTextureFromCore() -> Bool {
+        guard let emulatorCore = emulatorCore,
+              let device = device,
+              let inputTexture = inputTexture else {
+            return false
+        }
+
+        // Get the video buffer from the core
+        guard let videoBuffer = emulatorCore.videoBuffer else {
+            return false
+        }
+
+        let screenRect = emulatorCore.screenRect
+        let bufferSize = emulatorCore.bufferSize
+
+        // Calculate buffer size
+        let bytesPerPixel = getByteWidth(for: Int32(emulatorCore.pixelFormat), type: Int32(emulatorCore.pixelType))
+        let bytesPerRow = Int(bufferSize.width) * Int(bytesPerPixel)
+        let totalBytes = bytesPerRow * Int(bufferSize.height)
+
+        // Create a temporary buffer if needed
+        let tempBuffer: MTLBuffer
+        if let uploadBuffer = uploadBuffer, uploadBuffer.length >= totalBytes {
+            tempBuffer = uploadBuffer
+        } else {
+            guard let newBuffer = device.makeBuffer(length: totalBytes, options: .storageModeShared) else {
+                return false
+            }
+            tempBuffer = newBuffer
+        }
+
+        // Copy the video buffer to the upload buffer
+        let uploadContents = tempBuffer.contents()
+        memcpy(uploadContents, videoBuffer, totalBytes)
+
+        // Create a command buffer
+        guard let commandQueue = commandQueue,
+              let commandBuffer = commandQueue.makeCommandBuffer() else {
+            return false
+        }
+
+        // Create a blit command encoder
+        guard let blitEncoder = commandBuffer.makeBlitCommandEncoder() else {
+            return false
+        }
+
+        // Copy from the upload buffer to the texture
+        blitEncoder.copy(
+            from: tempBuffer,
+            sourceOffset: 0,
+            sourceBytesPerRow: bytesPerRow,
+            sourceBytesPerImage: totalBytes,
+            sourceSize: MTLSizeMake(Int(bufferSize.width), Int(bufferSize.height), 1),
+            to: inputTexture,
+            destinationSlice: 0,
+            destinationLevel: 0,
+            destinationOrigin: MTLOriginMake(0, 0, 0)
+        )
+
+        blitEncoder.endEncoding()
+        commandBuffer.commit()
+
+        return true
     }
 }
 

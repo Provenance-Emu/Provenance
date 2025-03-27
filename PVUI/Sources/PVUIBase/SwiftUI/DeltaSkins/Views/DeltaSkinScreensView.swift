@@ -145,8 +145,9 @@ public struct DeltaSkinScreensView: View {
                             .background(Color.red.opacity(0.3))
                             .overlay(
                                 Text(mapping.id)
-                                    .font(.caption2)
+                                    .font(.caption)
                                     .foregroundColor(.white)
+                                    .padding(4)
                             )
                     } else {
                         // Invisible button area in normal mode
@@ -164,14 +165,13 @@ public struct DeltaSkinScreensView: View {
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { _ in
-                            // Button pressed
                             handleButtonPress(mapping.id)
                         }
                         .onEnded { _ in
-                            // Button released
                             handleButtonRelease(mapping.id)
                         }
                 )
+                .accessibility(identifier: "Button-\(mapping.id)")
             }
         }
     }
@@ -367,11 +367,11 @@ public struct DeltaSkinScreensView: View {
                         height: outputFrame.height * geometry.size.height
                     )
                     .overlay(
-                        // Only show debug info in debug mode
-                        showDebug ?
-                            Rectangle()
-                                .stroke(Color.blue, lineWidth: 2)
-                                .overlay(
+                        // Always show a border for debugging
+                        Rectangle()
+                            .stroke(Color.purple, lineWidth: 3)
+                            .overlay(
+                                showDebug ?
                                     VStack(alignment: .leading) {
                                         Text(screen.id)
                                             .font(.caption)
@@ -388,8 +388,8 @@ public struct DeltaSkinScreensView: View {
                                     .padding(4)
                                     .background(Color.white.opacity(0.8))
                                     .cornerRadius(4)
-                                )
-                            : nil
+                                : nil
+                            )
                     )
                     // Add a tag to help identify this view for debugging
                     .accessibility(identifier: "ScreenView-\(screen.id)")

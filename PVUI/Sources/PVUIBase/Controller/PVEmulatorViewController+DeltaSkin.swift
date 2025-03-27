@@ -95,6 +95,10 @@ extension PVEmulatorViewController {
         // Set the z-position to ensure it's below the skin but visible
         gameScreenView.layer.zPosition = 10
 
+        // Add a colored border to the game screen view for debugging
+        gameScreenView.layer.borderWidth = 4.0
+        gameScreenView.layer.borderColor = UIColor.red.cgColor
+
         // Create the input handler
         let inputHandler = DeltaSkinInputHandler()
 
@@ -113,6 +117,10 @@ extension PVEmulatorViewController {
         skinView.view.frame = view.bounds
         skinView.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
+        // Add a colored border to the skin view for debugging
+        skinView.view.layer.borderWidth = 2.0
+        skinView.view.layer.borderColor = UIColor.blue.cgColor
+
         // Add the skin view above the game screen
         view.insertSubview(skinView.view, aboveSubview: gameScreenView)
         print("Added skin view above game screen")
@@ -124,9 +132,25 @@ extension PVEmulatorViewController {
         skinView.view.isHidden = false
         skinView.view.alpha = 1.0
 
+        // Make sure user interaction is enabled
+        skinView.view.isUserInteractionEnabled = true
+
+        // Make sure the skin view doesn't block the game screen
+        for subview in skinView.view.subviews {
+            subview.backgroundColor = .clear
+
+            // Add a colored border to each subview for debugging
+            subview.layer.borderWidth = 1.0
+            subview.layer.borderColor = UIColor.green.cgColor
+        }
+
         skinView.didMove(toParent: self)
 
         print("Added skin view to view hierarchy")
+
+        // Add a colored border to the main view for debugging
+        view.layer.borderWidth = 6.0
+        view.layer.borderColor = UIColor.yellow.cgColor
 
         // Ensure the GPU view is properly initialized
         gpuViewController.view.setNeedsLayout()
