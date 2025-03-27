@@ -76,8 +76,28 @@ public class AppState: ObservableObject {
             objectWillChange.send()
         }
         didSet {
-            DispatchQueue.main.async {
+            // Force immediate notification
+            objectWillChange.send()
+
+            // Schedule delayed notifications to ensure UI updates
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 self.objectWillChange.send()
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.objectWillChange.send()
+            }
+
+            // Post a notification for the bootup state change
+            let stateName = bootupStateManager.currentState.localizedDescription
+            ILOG("AppState: bootupStateManager changed to state: \(stateName)")
+
+            // Post a notification for the bootup state change
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(
+                    name: Notification.Name("BootupStateChanged"),
+                    object: nil,
+                    userInfo: ["state": stateName]
+                )
             }
         }
     }
@@ -96,7 +116,7 @@ public class AppState: ObservableObject {
 
     /// Coordinator for Popover HUD
     public let hudCoordinator = HUDCoordinator()
-    
+
     /// Coordinator for Scene management
     @Published public var sceneCoordinator: SceneCoordinator?
 
@@ -398,10 +418,36 @@ public class AppState: ObservableObject {
         }
 
         ILOG("AppState: Bootup state transitioning to completed...")
-        bootupStateManager.transition(to: .completed)
-        ILOG("AppState: Bootup state transitioned to completed.")
-        ILOG("AppState: Bootup finalized")
 
+        // Log the current state before transition
+        ILOG("AppState: Current state before transition: \(bootupStateManager.currentState.localizedDescription)")
+
+        // Transition to completed state
+        bootupStateManager.transition(to: .completed)
+
+        // Log the current state after transition
+        ILOG("AppState: Current state after transition: \(bootupStateManager.currentState.localizedDescription)")
+
+        // Force UI updates with more logging
+        ILOG("AppState: Sending objectWillChange notification")
+        objectWillChange.send()
+
+        // Schedule additional UI updates with delays
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            ILOG("AppState: Sending delayed objectWillChange notification (0.1s)")
+            self.objectWillChange.send()
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            ILOG("AppState: Sending delayed objectWillChange notification (0.5s)")
+            self.objectWillChange.send()
+        }
+
+        // Set isInitialized to trigger additional UI updates
+        ILOG("AppState: Setting isInitialized to true")
+        isInitialized = true
+
+        ILOG("AppState: Bootup finalized")
 
         Task { @MainActor in
             try? await self.withTimeout(seconds: 15) {

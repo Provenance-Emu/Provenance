@@ -52,9 +52,17 @@ public class AppBootupState: ObservableObject {
                 return "Initializing Library"
             case .completed:
                 return "Bootup Completed"
-            case (let error):
-                return "Error with library: \(error)"
+            case .error(let error):
+                return "Error with library: \(error.localizedDescription)"
             }
+        }
+
+        /// Whether the state is an error state
+        public var isErrorState: Bool {
+            if case .error = self {
+                return true
+            }
+            return false
         }
     }
 
@@ -84,13 +92,52 @@ public class AppBootupState: ObservableObject {
 
     /// Function to transition to a new state
     public func transition(to state: State) {
-        guard !isBootupCompleted else {
-            ELOG("Transition to state \(state.localizedDescription) while !isBootupCompleted")
+        // Check if we're trying to transition when already completed
+        // Allow error transitions even if completed
+        guard !isBootupCompleted || state.isErrorState else {
+            ELOG("Transition to state \(state.localizedDescription) while bootup is already completed")
             return
         }
 
         if state != currentState {
+            ILOG("AppBootupState: Transitioning from \(currentState.localizedDescription) to \(state.localizedDescription)")
+
+            // Update the state
             currentState = state
+
+            // Force UI updates by sending objectWillChange multiple times with delays
+            objectWillChange.send()
+
+            // Schedule additional notifications for important state transitions
+            switch state {
+            case .completed:
+                // For completed state, use more aggressive refresh strategy
+                ILOG("AppBootupState: Completed state reached, using aggressive refresh strategy")
+
+                // Send multiple notifications with different delays
+                for delay in [0.05, 0.1, 0.2, 0.5, 1.0] {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                        ILOG("AppBootupState: Sending delayed notification at \(delay)s")
+                        self.objectWillChange.send()
+                    }
+                }
+
+                // Post a notification that other components can listen for
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: Notification.Name("BootupCompleted"), object: nil)
+                }
+
+            case .databaseInitialized:
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    self.objectWillChange.send()
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.objectWillChange.send()
+                }
+
+            default:
+                break
+            }
         }
     }
 }

@@ -26,19 +26,24 @@ import FreemiumKit
 struct UITestingApp: SwiftUI.App {
     // Static shared instance for access from other components
     static var shared: UITestingApp!
-    
+
     init() {
         UITestingApp.shared = self
     }
-    
+
     @ObservedObject private var themeManager = ThemeManager.shared
 
     // Use the shared AppState for state management
     @StateObject private var appState = AppState.shared
     @StateObject private var sceneCoordinator = TestSceneCoordinator.shared
     @Environment(\.scenePhase) private var scenePhase
-    /// Use EnvironmentObject for bootup state manager
-    
+
+    // Add a state variable to force view refreshes
+    @State private var viewRefreshTrigger = UUID()
+
+    // Add a timer to periodically force UI updates during bootup
+    private let bootupRefreshTimer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
+
     // Tab selection state
     @State private var selectedTab = 0
 
@@ -152,7 +157,7 @@ struct UITestingApp: SwiftUI.App {
     private func launchEmulatorDirect(with game: PVGame) async {
         ILOG("UITestingApp: Direct launch of emulator with game: \(game.title) (ID: \(game.id))")
         ILOG("UITestingApp: Game details - System: \(game.system?.name ?? "nil"), Core: \(game.userPreferredCoreID ?? "nil")")
- 
+
         // Set the current game in EmulationUIState directly using the original game
         await MainActor.run {
             ILOG("UITestingApp: Setting current game directly in AppState.shared.emulationUIState (using original reference)")
@@ -213,22 +218,101 @@ struct UITestingApp: SwiftUI.App {
             }
         }
     }
-        
+
     var body: some Scene {
         // Main window group for the UI
-        WindowGroup(id: "main") {            
+        WindowGroup(id: "main") {
             ContentView()
-            .handlesExternalEvents(preferring: ["main"], allowing: ["main"])
-            .preferredColorScheme(ThemeManager.shared.currentPalette.dark ? .dark : .light)
-            .environmentObject(appState)
-            .environmentObject(ThemeManager.shared)
-            .environmentObject(sceneCoordinator)
+                .id(viewRefreshTrigger) // Force view refresh when this changes
+                .handlesExternalEvents(preferring: ["main"], allowing: ["main"])
+                .preferredColorScheme(ThemeManager.shared.currentPalette.dark ? .dark : .light)
+                .environmentObject(appState)
+                .environmentObject(ThemeManager.shared)
+                .environmentObject(sceneCoordinator)
 #if canImport(FreemiumKit)
-            .environmentObject(FreemiumKit.shared)
-            .onAppear {
-                FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
-            }
+                .environmentObject(FreemiumKit.shared)
+                .onAppear {
+                    FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
+                }
 #endif
+                .onReceive(bootupRefreshTimer) { _ in
+                    // Only refresh during bootup process
+                    if appState.bootupStateManager.currentState != .completed {
+                        viewRefreshTrigger = UUID()
+                    }
+                }
+                .onReceive(appState.bootupStateManager.$currentState) { newState in
+                    // Force refresh when bootup state changes
+                    ILOG("UITestingApp: Bootup state changed to \(newState.localizedDescription), forcing UI refresh")
+                    viewRefreshTrigger = UUID()
+
+                    // Add additional refresh after a short delay for .completed state
+                    if newState == .completed {
+                        // Cancel the timer when bootup completes
+                        bootupRefreshTimer.upstream.connect().cancel()
+
+                        // Schedule multiple refreshes with different delays
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            viewRefreshTrigger = UUID()
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            viewRefreshTrigger = UUID()
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                            viewRefreshTrigger = UUID()
+                        }
+                    }
+                }
+                .onReceive(appState.$isInitialized) { initialized in
+                    ILOG("UITestingApp: isInitialized changed to \(initialized)")
+                    if initialized {
+                        // Force refresh when initialized changes to true
+                        viewRefreshTrigger = UUID()
+                    }
+                }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                    ILOG("UITestingApp: App became active, forcing UI refresh")
+                    viewRefreshTrigger = UUID()
+
+                    // Check if we're in a state that should show the main view
+                    if appState.bootupStateManager.currentState == .completed {
+                        ILOG("UITestingApp: App is in completed state, forcing additional refreshes")
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            viewRefreshTrigger = UUID()
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            viewRefreshTrigger = UUID()
+                        }
+                    }
+                }
+                .onReceive(NotificationCenter.default.publisher(for: Notification.Name("BootupCompleted"))) { _ in
+                    ILOG("UITestingApp: Received BootupCompleted notification, forcing UI refresh")
+                    viewRefreshTrigger = UUID()
+
+                    // Schedule multiple refreshes with different delays
+                    for delay in [0.1, 0.3, 0.5, 1.0] {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                            ILOG("UITestingApp: Forcing refresh after BootupCompleted at \(delay)s")
+                            viewRefreshTrigger = UUID()
+                        }
+                    }
+                }
+                .onReceive(NotificationCenter.default.publisher(for: Notification.Name("BootupStateChanged"))) { notification in
+                    if let stateName = notification.userInfo?["state"] as? String {
+                        ILOG("UITestingApp: Received BootupStateChanged notification: \(stateName)")
+                        viewRefreshTrigger = UUID()
+
+                        // If the state is "Bootup Completed", schedule additional refreshes
+                        if stateName == "Bootup Completed" {
+                            for delay in [0.1, 0.3, 0.5, 1.0] {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                                    ILOG("UITestingApp: Forcing refresh after BootupStateChanged at \(delay)s")
+                                    viewRefreshTrigger = UUID()
+                                }
+                            }
+                        }
+                    }
+                }
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
@@ -240,28 +324,14 @@ struct UITestingApp: SwiftUI.App {
                     appState.sendEventWasSwizzled = true
                 }
 
-                // Check if we need to open the emulator scene based on app open action
-                if case .completed = appState.bootupStateManager.currentState {
-                    ILOG("UITestingApp: Bootup state is completed, ready for user interaction")
-                    
-                    // Force UI refresh after a short delay to ensure the UI updates
-                    Task { @MainActor in
-                        try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
-                        ILOG("UITestingApp: Forcing UI refresh after bootup completion")
-                        
-                        // Temporarily change state and change it back to force refresh
-                        let currentState = appState.bootupStateManager.currentState
-                        appState.bootupStateManager.transition(to: .notStarted)
-                        try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
-                        appState.bootupStateManager.transition(to: currentState)
-                    }
-                }
+                // Force UI refresh when becoming active
+                viewRefreshTrigger = UUID()
             }
 
             // Handle scene phase changes for import pausing
             appState.handleScenePhaseChange(newPhase)
         }
-        
+
         // Add the emulator scene as a separate scene
         EmulatorScene()
     }
