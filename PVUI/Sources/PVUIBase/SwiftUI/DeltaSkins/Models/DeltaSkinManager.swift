@@ -15,12 +15,6 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
 
     public init() {
         print("Initializing DeltaSkinManager")
-        loadSkins()
-    }
-
-    private func loadSkins() {
-        print("Loading skins...")
-        // Rest of the method...
     }
 
     /// Get all available skins

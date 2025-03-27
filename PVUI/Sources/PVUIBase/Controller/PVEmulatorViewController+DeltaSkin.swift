@@ -78,6 +78,23 @@ extension PVEmulatorViewController {
             }
         }
 
+        // Get the GPU view from the gpuViewController
+        guard let gameScreenView = gpuViewController.view else {
+            print("GPU view not found")
+            return
+        }
+
+        // Ensure the GPU view is properly sized and positioned
+        gameScreenView.frame = view.bounds
+        gameScreenView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
+        // Make sure the GPU view is visible
+        gameScreenView.isHidden = false
+        gameScreenView.alpha = 1.0
+
+        // Set the z-position to ensure it's below the skin but visible
+        gameScreenView.layer.zPosition = 10
+
         // Create the input handler
         let inputHandler = DeltaSkinInputHandler()
 
@@ -96,27 +113,37 @@ extension PVEmulatorViewController {
         skinView.view.frame = view.bounds
         skinView.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
-        // Get the GPU view from the gpuViewController
-        let gameScreenView = gpuViewController.view
+        // Add the skin view above the game screen
+        view.insertSubview(skinView.view, aboveSubview: gameScreenView)
+        print("Added skin view above game screen")
 
-        // Add the skin view to the hierarchy
-        if let gameScreenView = gameScreenView {
-            // Add the skin view above the game screen
-            view.insertSubview(skinView.view, aboveSubview: gameScreenView)
-            print("Added skin view above game screen")
+        // Set the z-position of the skin view
+        skinView.view.layer.zPosition = 20
 
-            // Make sure the game screen has the right z position
-            gameScreenView.layer.zPosition = 10
-            skinView.view.layer.zPosition = 20
-        } else {
-            // If we can't find the game screen, just add the skin view
-            view.addSubview(skinView.view)
-            print("Added skin view (no game screen found)")
-        }
+        // Make sure the skin view is visible
+        skinView.view.isHidden = false
+        skinView.view.alpha = 1.0
 
         skinView.didMove(toParent: self)
 
         print("Added skin view to view hierarchy")
+
+        // Ensure the GPU view is properly initialized
+        gpuViewController.view.setNeedsLayout()
+        gpuViewController.view.layoutIfNeeded()
+
+        // Add debug logging
+        print("GPU View Controller: \(type(of: gpuViewController))")
+        print("GPU View: \(type(of: gpuViewController.view))")
+        print("GPU View Frame: \(gpuViewController.view.frame)")
+        print("GPU View Bounds: \(gpuViewController.view.bounds)")
+        print("Emulator Core Buffer Size: \(core.bufferSize)")
+        print("Emulator Core Screen Rect: \(core.screenRect)")
+
+        // Force a redraw of the GPU view
+        if let metalVC = gpuViewController as? PVMetalViewController {
+            metalVC.draw(in: metalVC.mtlView)
+        }
     }
 
     /// Hide the standard controller buttons
@@ -139,6 +166,14 @@ extension PVEmulatorViewController {
             name: UIDevice.orientationDidChangeNotification,
             object: nil
         )
+
+        // Add observer for GPU view refresh
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(refreshGPUView),
+            name: Notification.Name("RefreshGPUView"),
+            object: nil
+        )
     }
 
     /// Handle device rotation
@@ -147,6 +182,39 @@ extension PVEmulatorViewController {
         if UIDevice.current.orientation.isLandscape || UIDevice.current.orientation.isPortrait {
             print("Device rotated, recreating skin view")
             createSkinView()
+        }
+    }
+
+    /// Refresh the GPU view
+    @objc private func refreshGPUView() {
+        print("Refreshing GPU view")
+
+        // Ensure the GPU view is properly sized and positioned
+        gpuViewController.view.frame = view.bounds
+        gpuViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
+        // Make sure the GPU view is visible
+        gpuViewController.view.isHidden = false
+        gpuViewController.view.alpha = 1.0
+
+        // Force layout
+        gpuViewController.view.setNeedsLayout()
+        gpuViewController.view.layoutIfNeeded()
+
+        // Post a notification that the emulator core has initialized
+        NotificationCenter.default.post(name: Notification.Name("EmulatorCoreDidInitialize"), object: nil)
+
+        // Force the GPU view to redraw
+        if let metalVC = gpuViewController as? PVMetalViewController {
+            // Force a texture update
+            do {
+                try metalVC.updateInputTexture()
+            } catch {
+                print("Error updating texture: \(error)")
+            }
+
+            // Force a redraw
+            metalVC.draw(in: metalVC.mtlView)
         }
     }
 }

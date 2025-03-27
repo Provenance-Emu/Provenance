@@ -84,6 +84,11 @@ struct EmulatorWithSkinView: View {
 
                 // Set up orientation notification
                 setupOrientationNotification()
+
+                // Post a notification to refresh the GPU view
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: Notification.Name("RefreshGPUView"), object: nil)
+                }
             }
             .onDisappear {
                 // Clean up notification
@@ -107,6 +112,11 @@ struct EmulatorWithSkinView: View {
             if selectedSkin != nil {
                 print("Successfully loaded skin for \(systemId): \(selectedSkin!.name)")
                 isLoading = false
+
+                // Post a notification to refresh the GPU view
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: Notification.Name("RefreshGPUView"), object: nil)
+                }
             } else {
                 print("No skin available from sync method for \(systemId)")
 
@@ -120,36 +130,44 @@ struct EmulatorWithSkinView: View {
                     print("Using first available skin (sync): \(firstSkin.name)")
                     isLoading = false
                 } else {
-                    // Try to get a skin asynchronously
-                    Task {
-                        do {
-                            // Try to get the skin to use
-                            asyncSkin = try await DeltaSkinManager.shared.skinToUse(for: systemId)
+                    // Try to load a default skin
+                    selectedSkin = await DeltaSkinManager.shared.skin(for: systemId)
 
-                            if asyncSkin != nil {
-                                print("Loaded async skin for \(systemId): \(asyncSkin!.identifier)")
-                            } else {
-                                print("No async skin available for \(systemId)")
+                    if selectedSkin != nil {
+                        print("Using default skin for \(systemId)")
+                        isLoading = false
+                    } else {
+                        // Try to get a skin asynchronously
+                        Task {
+                            do {
+                                // Try to get the skin to use
+                                asyncSkin = try await DeltaSkinManager.shared.skinToUse(for: systemId)
 
-                                // Try to get all skins for this system
-                                let systemSkins = try await DeltaSkinManager.shared.availableSkins(for: systemId)
-                                print("Available skins (async): \(systemSkins.count)")
+                                if asyncSkin != nil {
+                                    print("Loaded async skin for \(systemId): \(asyncSkin!.identifier)")
+                                } else {
+                                    print("No async skin available for \(systemId)")
 
-                                // If there are any skins, use the first one
-                                if let firstSkin = systemSkins.first {
-                                    await MainActor.run {
-                                        selectedSkin = firstSkin as? DeltaSkin
+                                    // Try to get all skins for this system
+                                    let systemSkins = try await DeltaSkinManager.shared.availableSkins(for: systemId)
+                                    print("Available skins (async): \(systemSkins.count)")
+
+                                    // If there are any skins, use the first one
+                                    if let firstSkin = systemSkins.first {
+                                        await MainActor.run {
+                                            selectedSkin = firstSkin as? DeltaSkin
+                                        }
+                                        print("Using first available skin (async): \(firstSkin.identifier)")
                                     }
-                                    print("Using first available skin (async): \(firstSkin.identifier)")
                                 }
+                            } catch {
+                                print("Error loading async skin: \(error)")
                             }
-                        } catch {
-                            print("Error loading async skin: \(error)")
-                        }
 
-                        // Update loading state on the main thread
-                        await MainActor.run {
-                            isLoading = false
+                            // Update loading state on the main thread
+                            await MainActor.run {
+                                isLoading = false
+                            }
                         }
                     }
                 }

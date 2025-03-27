@@ -35,6 +35,7 @@ public struct DeltaSkinScreensView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.height)
+                        .opacity(0.9) // Make it slightly transparent to see the game screen
                 } else if let loadingError = loadingError {
                     Text("Failed to load skin: \(loadingError.localizedDescription)")
                         .foregroundStyle(.red)
@@ -83,20 +84,27 @@ public struct DeltaSkinScreensView: View {
                     }
                 }
             }
-        }
-        .task {
-            // Load skin image
-            do {
-                skinImage = try await skin.image(for: traits)
-            } catch {
-                loadingError = error
+            .onAppear {
+                print("DeltaSkinScreensView appeared")
             }
+            .task {
+                // Load skin image
+                do {
+                    skinImage = try await skin.image(for: traits)
+                    print("Loaded skin image: \(skinImage?.size ?? .zero)")
+                } catch {
+                    loadingError = error
+                    print("Error loading skin image: \(error)")
+                }
 
-            // Load screen groups
-            screenGroups = skin.screenGroups(for: traits)
+                // Load screen groups
+                screenGroups = skin.screenGroups(for: traits)
+                print("Loaded screen groups: \(screenGroups?.count ?? 0)")
 
-            // Load button mappings
-            buttonMappings = skin.buttonMappings(for: traits)
+                // Load button mappings
+                buttonMappings = skin.buttonMappings(for: traits)
+                print("Loaded button mappings: \(buttonMappings?.count ?? 0)")
+            }
         }
     }
 
@@ -383,6 +391,8 @@ public struct DeltaSkinScreensView: View {
                                 )
                             : nil
                     )
+                    // Add a tag to help identify this view for debugging
+                    .accessibility(identifier: "ScreenView-\(screen.id)")
             }
             .position(
                 x: outputFrame.midX * geometry.size.width,

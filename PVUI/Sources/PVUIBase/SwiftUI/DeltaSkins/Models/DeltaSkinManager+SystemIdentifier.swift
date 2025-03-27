@@ -121,6 +121,17 @@ public extension DeltaSkinManager {
         return filteredSkins.compactMap { $0 as? DeltaSkin }
     }
 
+
+    /// Get the default skin for a system
+    public func defaultSkin(for systemIdentifier: String) -> DeltaSkinProtocol? {
+        return loadedSkins.first { $0.gameType.rawValue == systemIdentifier }
+    }
+
+    /// Get the default skin for a system
+    public func defaultSkin(for systemIdentifier: SystemIdentifier) -> DeltaSkinProtocol? {
+        return loadedSkins.first { $0.gameType.systemIdentifier == systemIdentifier }
+    }
+
     /// Convert a SystemIdentifier to a string identifier for DeltaSkinManager
     private func skinIdentifier(for systemIdentifier: SystemIdentifier) -> String {
         switch systemIdentifier {
