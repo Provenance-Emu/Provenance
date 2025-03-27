@@ -244,13 +244,26 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
+        DLOG("View will transition to size: \(size)")
+
         // Invalidate cached values to force recalculation of the viewport on rotation.
         lastScreenBounds = .zero
         lastBufferSize = .zero
         lastNativeScaleEnabled = false
 
+        // Schedule a texture update after the rotation completes
         coordinator.animate(alongsideTransition: { _ in
             self.view.setNeedsLayout()
+        }, completion: { _ in
+            DLOG("Rotation completed, forcing refresh")
+
+            // Force a complete refresh
+            self.forceRefreshAfterRotation()
+
+            // Schedule another refresh after a short delay to ensure everything is updated
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.forceRefreshAfterRotation()
+            }
         })
     }
 
@@ -314,6 +327,14 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             self,
             selector: #selector(refreshTexture),
             name: Notification.Name("RefreshGPUView"),
+            object: nil
+        )
+
+        // Add observer for orientation changes
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleOrientationChange),
+            name: UIDevice.orientationDidChangeNotification,
             object: nil
         )
 
@@ -469,106 +490,65 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
+        DLOG("viewDidLayoutSubviews called")
+
         guard let emulatorCore = emulatorCore else {
             return
         }
 
-#if DEBUG
-        ILOG("Before layout - MTKView frame: \(mtlView.frame)")
-#endif
+        // Update the Metal view frame to match the view bounds
+        mtlView.frame = view.bounds
 
-        if emulatorCore.skipLayout {
-            return
+        // Calculate the aspect ratio of the emulator screen
+        let screenRect = emulatorCore.screenRect
+        let bufferSize = emulatorCore.bufferSize
+
+        // Calculate the aspect ratio based on the screen rect or buffer size
+        let aspectRatio: CGFloat
+        if screenRect.width > 0 && screenRect.height > 0 {
+            aspectRatio = screenRect.width / screenRect.height
+        } else if bufferSize.width > 0 && bufferSize.height > 0 {
+            aspectRatio = bufferSize.width / bufferSize.height
+        } else {
+            aspectRatio = 4.0 / 3.0 // Default aspect ratio
         }
 
-        let parentSafeAreaInsets = parent?.view.safeAreaInsets ?? .zero
+        // Calculate the size to fill the view while maintaining aspect ratio
+        let viewSize = view.bounds.size
+        var width: CGFloat
+        var height: CGFloat
 
-        if !emulatorCore.screenRect.isEmpty {
-            let aspectSize = emulatorCore.aspectSize
-            var ratio: CGFloat = 0
-            if aspectSize.width > aspectSize.height {
-                ratio = aspectSize.width / aspectSize.height
-            } else {
-                ratio = aspectSize.height / aspectSize.width
-            }
-
-            /// Get parent size in points (not scaled)
-            var parentSize = parent?.view.bounds.size ?? CGSize.zero
-            if let window = view.window {
-                parentSize = window.bounds.size
-            }
-
-#if DEBUG
-            ILOG("Parent size for calculations: \(parentSize)")
-#endif
-
-            var height: CGFloat = 0
-            var width: CGFloat = 0
-
-            /// Calculate dimensions in points first
-            if parentSize.width > parentSize.height {
-                if Defaults[.integerScaleEnabled] {
-                    height = floor(parentSize.height / aspectSize.height) * aspectSize.height
-                } else {
-                    height = parentSize.height
-                }
-                width = height * ratio
-                if width > parentSize.width {
-                    width = parentSize.width
-                    height = width / ratio
-                }
-            } else {
-                if Defaults[.integerScaleEnabled] {
-                    width = floor(parentSize.width / aspectSize.width) * aspectSize.width
-                } else {
-                    width = parentSize.width
-                }
-                height = width / ratio
-                if height > parentSize.height {
-                    height = parentSize.height
-                    width = height * ratio
-                }
-            }
-
-            /// Calculate center position
-            let x = (parentSize.width - width) / 2
-            let y = traitCollection.userInterfaceIdiom == .phone && parentSize.height > parentSize.width ?
-            parentSafeAreaInsets.top + 40 : // below menu button
-            (parentSize.height - height) / 2 // centered
-
-            /// Create frame with calculated position and size
-            let frame = CGRect(x: x, y: y, width: width, height: height)
-
-#if DEBUG
-            ILOG("Calculated frame: \(frame)")
-#endif
-
-            if renderSettings.nativeScaleEnabled {
-                let scale = UIScreen.main.scale
-
-                /// Apply frame to main view
-                view.frame = frame
-
-                /// Position MTKView using frame directly
-                mtlView.frame = CGRect(x: x, y: y, width: width, height: height)
-                mtlView.contentScaleFactor = scale
-
-#if DEBUG
-                ILOG("Applied scale factor: \(scale)")
-                ILOG("Final MTKView frame: \(mtlView.frame)")
-#endif
-            } else {
-                view.frame = frame
-                mtlView.frame = frame
-                mtlView.contentScaleFactor = 1.0
-
-#if DEBUG
-                ILOG("Final MTKView frame (no scale): \(mtlView.frame)")
-#endif
-            }
+        if viewSize.width / viewSize.height > aspectRatio {
+            // View is wider than content, fit to height
+            height = viewSize.height
+            width = height * aspectRatio
+        } else {
+            // View is taller than content, fit to width
+            width = viewSize.width
+            height = width / aspectRatio
         }
 
-        updatePreferredFPS()
+        // Center the content in the view
+        let x = (viewSize.width - width) / 2
+        let y = (viewSize.height - height) / 2
+
+        // Create a frame with the calculated position and size
+        let contentFrame = CGRect(x: x, y: y, width: width, height: height)
+
+        DLOG("Content frame: \(contentFrame)")
+
+        // Apply the frame to the Metal view
+        mtlView.frame = contentFrame
+
+        // Force a texture update
+        do {
+            try updateInputTexture()
+
+            // Force a redraw
+            draw(in: mtlView)
+        } catch {
+            ELOG("Error updating texture in viewDidLayoutSubviews: \(error)")
+        }
     }
 
 #if DEBUG
@@ -1240,6 +1220,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         if customPipeline == nil && blitPipeline == nil {
             DLOG("No valid pipeline available, trying to set up shaders directly")
             createBasicShaders()
+
+            // If that didn't work, try the default library approach
+            if customPipeline == nil && blitPipeline == nil {
+                createBasicShadersWithDefaultLibrary()
+            }
         }
 
         // Handle rendering based on the core type
@@ -1273,6 +1258,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             } else {
                 DLOG("Failed to update texture from core")
             }
+        }
+
+        // Schedule the next frame if needed
+        if !isPaused {
+            // Request another draw on the next frame
+            view.setNeedsDisplay()
         }
     }
 
@@ -1892,6 +1883,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         // Commit the command buffer
         commandBuffer.commit()
+
+        // Store the command buffer for synchronization
+        previousCommandBuffer = commandBuffer
     }
 
     // Helper method to update texture from core's buffer
@@ -2230,6 +2224,62 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             }
         } catch {
             ELOG("Failed to create shader library with default library: \(error)")
+        }
+    }
+
+    @objc private func handleOrientationChange() {
+        DLOG("Orientation changed, updating view and texture")
+
+        // Reset cached values to force recalculation
+        lastScreenBounds = .zero
+        lastBufferSize = .zero
+        lastNativeScaleEnabled = false
+
+        // Force a layout update
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+
+        // Update the texture
+        do {
+            // Force recreation of the texture
+            inputTexture = nil
+            try updateInputTexture()
+
+            // Force a redraw
+            draw(in: mtlView)
+
+            // Post a notification to refresh the GPU view
+            NotificationCenter.default.post(name: Notification.Name("RefreshGPUView"), object: nil)
+        } catch {
+            ELOG("Error updating texture after orientation change: \(error)")
+        }
+    }
+
+    private func forceRefreshAfterRotation() {
+        DLOG("Forcing refresh after rotation")
+
+        // Reset cached values
+        lastScreenBounds = .zero
+        lastBufferSize = .zero
+        lastNativeScaleEnabled = false
+
+        // Force layout update
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+
+        // Force texture update
+        inputTexture = nil
+
+        do {
+            try updateInputTexture()
+
+            // Force a redraw
+            draw(in: mtlView)
+
+            // Post a notification to refresh the GPU view
+            NotificationCenter.default.post(name: Notification.Name("RefreshGPUView"), object: nil)
+        } catch {
+            ELOG("Error updating texture after forced refresh: \(error)")
         }
     }
 }
