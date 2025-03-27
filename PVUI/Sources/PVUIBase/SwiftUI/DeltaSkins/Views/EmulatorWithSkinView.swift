@@ -10,7 +10,7 @@ struct EmulatorWithSkinView: View {
     let game: PVGame
     let coreInstance: PVEmulatorCore
 
-    // State for the skin
+    @EnvironmentObject private var inputHandler: DeltaSkinInputHandler
     @State private var selectedSkin: DeltaSkin?
     @State private var isLoading = true
     @State private var asyncSkin: DeltaSkinProtocol?
@@ -19,7 +19,7 @@ struct EmulatorWithSkinView: View {
     @State private var currentOrientation: UIDeviceOrientation = UIDevice.current.orientation
 
     // Input handling
-    private let inputSubject = PassthroughSubject<DeltaSkinButtonInput, Never>()
+    private let inputSubject = PassthroughSubject<String, Never>()
 
     // Debug mode
     @State private var showDebugOverlay = false
@@ -40,9 +40,10 @@ struct EmulatorWithSkinView: View {
                         traits: createSkinTraits(),
                         showDebugOverlay: showDebugOverlay,
                         showHitTestOverlay: false,
-                        isInEmulator: true  // Set to true to hide test patterns
+                        isInEmulator: true,  // Set to true to hide test patterns
+                        inputHandler: inputHandler
                     )
-                    .environmentObject(createInputHandler())
+                    .environmentObject(inputHandler)
                     .id("skin-view-\(rotationCount)") // Force recreation on rotation
                 } else if let asyncSkin = asyncSkin {
                     // If we have an async skin, use DeltaSkinView with input handling
@@ -51,9 +52,10 @@ struct EmulatorWithSkinView: View {
                         traits: createSkinTraits(),
                         showDebugOverlay: showDebugOverlay,
                         showHitTestOverlay: false,
-                        isInEmulator: true  // Set to true to hide test patterns
+                        isInEmulator: true,  // Set to true to hide test patterns
+                        inputHandler: inputHandler
                     )
-                    .environmentObject(createInputHandler())
+                    .environmentObject(inputHandler)
                     .id("async-skin-view-\(rotationCount)") // Force recreation on rotation
                 } else if isLoading {
                     // Loading indicator
@@ -164,10 +166,11 @@ struct EmulatorWithSkinView: View {
                 }
             }
             .onAppear {
-                // Try to load a skin when the view appears
-                Task {
-                    await loadSkin()
-                }
+                // Set the emulator core in the input handler
+                inputHandler.setEmulatorCore(coreInstance)
+
+                // Load the appropriate skin
+                loadSkin()
 
                 // Set up orientation notification
                 setupOrientationNotification()
@@ -191,82 +194,32 @@ struct EmulatorWithSkinView: View {
     }
 
     /// Load a skin for the current game
-    private func loadSkin() async {
-        isLoading = true
-
-        // Get the system identifier
-        if let systemId = game.system?.systemIdentifier {
-            print("Loading skin for system: \(systemId)")
-
-            // Try to get a skin from the manager using our new synchronous method
-            selectedSkin = await DeltaSkinManager.shared.skin(for: systemId)
-
-            if selectedSkin != nil {
-                print("Successfully loaded skin for \(systemId): \(selectedSkin!.name)")
-                isLoading = false
-
-                // Post a notification to refresh the GPU view
-                DispatchQueue.main.async {
-                    NotificationCenter.default.post(name: Notification.Name("RefreshGPUView"), object: nil)
-                }
-            } else {
-                print("No skin available from sync method for \(systemId)")
-
-                // Try to get all skins for this system synchronously
-                let systemSkins = await DeltaSkinManager.shared.availableSkinsSync(for: systemId)
-                print("Available skins (sync): \(systemSkins.count)")
-
-                // If there are any skins, use the first one
-                if let firstSkin = systemSkins.first {
-                    selectedSkin = firstSkin
-                    print("Using first available skin (sync): \(firstSkin.name)")
-                    isLoading = false
-                } else {
-                    // Try to load a default skin
-                    selectedSkin = await DeltaSkinManager.shared.skin(for: systemId)
-
-                    if selectedSkin != nil {
-                        print("Using default skin for \(systemId)")
-                        isLoading = false
-                    } else {
-                        // Try to get a skin asynchronously
-                        Task {
-                            do {
-                                // Try to get the skin to use
-                                asyncSkin = try await DeltaSkinManager.shared.skinToUse(for: systemId)
-
-                                if asyncSkin != nil {
-                                    print("Loaded async skin for \(systemId): \(asyncSkin!.identifier)")
-                                } else {
-                                    print("No async skin available for \(systemId)")
-
-                                    // Try to get all skins for this system
-                                    let systemSkins = try await DeltaSkinManager.shared.availableSkins(for: systemId)
-                                    print("Available skins (async): \(systemSkins.count)")
-
-                                    // If there are any skins, use the first one
-                                    if let firstSkin = systemSkins.first {
-                                        await MainActor.run {
-                                            selectedSkin = firstSkin as? DeltaSkin
-                                        }
-                                        print("Using first available skin (async): \(firstSkin.identifier)")
-                                    }
-                                }
-                            } catch {
-                                print("Error loading async skin: \(error)")
+    private func loadSkin() {
+        Task {
+            do {
+                if let systemId = game.system?.systemIdentifier {
+                    if let skin = try await DeltaSkinManager.shared.skinToUse(for: systemId) {
+                        DispatchQueue.main.async {
+                            // Store the skin in the appropriate property based on its type
+                            if let deltaSkin = skin as? DeltaSkin {
+                                self.selectedSkin = deltaSkin
+                            } else {
+                                self.asyncSkin = skin
                             }
-
-                            // Update loading state on the main thread
-                            await MainActor.run {
-                                isLoading = false
-                            }
+                            self.isLoading = false
                         }
+                    } else {
+                        ELOG("No skin available for system: \(systemId)")
+                        // Use a fallback skin or default UI
                     }
+                } else {
+                    ELOG("No system identifier available for game: \(game.title)")
+                    // Use a fallback skin or default UI
                 }
+            } catch {
+                ELOG("Error loading skin: \(error)")
+                // Use a fallback skin or default UI
             }
-        } else {
-            print("No system identifier available for game: \(game.title)")
-            isLoading = false
         }
     }
 
@@ -409,186 +362,6 @@ struct EmulatorWithSkinView: View {
         )
     }
 
-    // Create input handler for the skin
-    private func createInputHandler() -> DeltaSkinInputHandler {
-        let handler = DeltaSkinInputHandler()
-
-        // Set up the handler to forward inputs to the emulator core
-        handler.onButtonInput = { input in
-            handleButtonInput(input)
-        }
-
-        return handler
-    }
-
-    // Handle button input from the skin
-    private func handleButtonInput(_ input: DeltaSkinButtonInput) {
-        print("Button input: \(input.button), pressed: \(input.isPressed), x: \(input.x), y: \(input.y)")
-
-        // Handle analog sticks
-        if case .analogLeft = input.button {
-            // Try to set analog values using a more generic approach
-            print("Setting left analog stick: x=\(input.x), y=\(input.y)")
-
-            // Try different methods that might exist
-            if let method = class_getInstanceMethod(type(of: coreInstance), NSSelectorFromString("setAnalogJoypadAxisValue:forAxis:forPlayer:")) {
-                let imp = method_getImplementation(method)
-                let function = unsafeBitCast(imp, to: (@convention(c) (Any, Selector, Float, Int, Int) -> Void).self)
-                function(coreInstance, NSSelectorFromString("setAnalogJoypadAxisValue:forAxis:forPlayer:"), input.x, 0, 0)
-                function(coreInstance, NSSelectorFromString("setAnalogJoypadAxisValue:forAxis:forPlayer:"), input.y, 1, 0)
-            } else if let method = class_getInstanceMethod(type(of: coreInstance), NSSelectorFromString("setAnalogValue:forAxis:player:")) {
-                let imp = method_getImplementation(method)
-                let function = unsafeBitCast(imp, to: (@convention(c) (Any, Selector, Float, Int, Int) -> Void).self)
-                function(coreInstance, NSSelectorFromString("setAnalogValue:forAxis:player:"), input.x, 0, 0)
-                function(coreInstance, NSSelectorFromString("setAnalogValue:forAxis:player:"), input.y, 1, 0)
-            }
-            return
-        } else if case .analogRight = input.button {
-            // Try to set analog values using a more generic approach
-            print("Setting right analog stick: x=\(input.x), y=\(input.y)")
-
-            // Try different methods that might exist
-            if let method = class_getInstanceMethod(type(of: coreInstance), NSSelectorFromString("setAnalogJoypadAxisValue:forAxis:forPlayer:")) {
-                let imp = method_getImplementation(method)
-                let function = unsafeBitCast(imp, to: (@convention(c) (Any, Selector, Float, Int, Int) -> Void).self)
-                function(coreInstance, NSSelectorFromString("setAnalogJoypadAxisValue:forAxis:forPlayer:"), input.x, 2, 0)
-                function(coreInstance, NSSelectorFromString("setAnalogJoypadAxisValue:forAxis:forPlayer:"), input.y, 3, 0)
-            } else if let method = class_getInstanceMethod(type(of: coreInstance), NSSelectorFromString("setAnalogValue:forAxis:player:")) {
-                let imp = method_getImplementation(method)
-                let function = unsafeBitCast(imp, to: (@convention(c) (Any, Selector, Float, Int, Int) -> Void).self)
-                function(coreInstance, NSSelectorFromString("setAnalogValue:forAxis:player:"), input.x, 2, 0)
-                function(coreInstance, NSSelectorFromString("setAnalogValue:forAxis:player:"), input.y, 3, 0)
-            }
-            return
-        }
-
-        // Handle digital buttons
-        if input.isPressed {
-            #if os(iOS)
-            let generator = UIImpactFeedbackGenerator(style: .light)
-            generator.impactOccurred()
-            #endif
-
-            // Map button to player input
-            let buttonIndex: Int
-            switch input.button {
-            case .dpadUp:
-                buttonIndex = 0
-            case .dpadDown:
-                buttonIndex = 1
-            case .dpadLeft:
-                buttonIndex = 2
-            case .dpadRight:
-                buttonIndex = 3
-            case .buttonA:
-                buttonIndex = 4
-            case .buttonB:
-                buttonIndex = 5
-            case .buttonX:
-                buttonIndex = 6
-            case .buttonY:
-                buttonIndex = 7
-            case .buttonL:
-                buttonIndex = 8
-            case .buttonR:
-                buttonIndex = 9
-            case .buttonStart:
-                buttonIndex = 10
-            case .buttonSelect:
-                buttonIndex = 11
-            case .custom(let id):
-                // Handle custom buttons based on ID
-                handleCustomButton(id, pressed: true)
-                return
-            default:
-                return
-            }
-
-            // Use the correct method to press the button
-            if let method = class_getInstanceMethod(type(of: coreInstance), NSSelectorFromString("player:didPressButton:")) {
-                let imp = method_getImplementation(method)
-                let function = unsafeBitCast(imp, to: (@convention(c) (Any, Selector, Int, Int) -> Void).self)
-                function(coreInstance, NSSelectorFromString("player:didPressButton:"), 0, buttonIndex)
-            } else if let method = class_getInstanceMethod(type(of: coreInstance), NSSelectorFromString("pushButton:forPlayer:")) {
-                let imp = method_getImplementation(method)
-                let function = unsafeBitCast(imp, to: (@convention(c) (Any, Selector, Int, Int) -> Void).self)
-                function(coreInstance, NSSelectorFromString("pushButton:forPlayer:"), buttonIndex, 0)
-            }
-        } else {
-            // Map button to player input
-            let buttonIndex: Int
-            switch input.button {
-            case .dpadUp:
-                buttonIndex = 0
-            case .dpadDown:
-                buttonIndex = 1
-            case .dpadLeft:
-                buttonIndex = 2
-            case .dpadRight:
-                buttonIndex = 3
-            case .buttonA:
-                buttonIndex = 4
-            case .buttonB:
-                buttonIndex = 5
-            case .buttonX:
-                buttonIndex = 6
-            case .buttonY:
-                buttonIndex = 7
-            case .buttonL:
-                buttonIndex = 8
-            case .buttonR:
-                buttonIndex = 9
-            case .buttonStart:
-                buttonIndex = 10
-            case .buttonSelect:
-                buttonIndex = 11
-            case .custom(let id):
-                // Handle custom buttons based on ID
-                handleCustomButton(id, pressed: false)
-                return
-            default:
-                return
-            }
-
-            // Use the correct method to release the button
-            if let method = class_getInstanceMethod(type(of: coreInstance), NSSelectorFromString("player:didReleaseButton:")) {
-                let imp = method_getImplementation(method)
-                let function = unsafeBitCast(imp, to: (@convention(c) (Any, Selector, Int, Int) -> Void).self)
-                function(coreInstance, NSSelectorFromString("player:didReleaseButton:"), 0, buttonIndex)
-            } else if let method = class_getInstanceMethod(type(of: coreInstance), NSSelectorFromString("releaseButton:forPlayer:")) {
-                let imp = method_getImplementation(method)
-                let function = unsafeBitCast(imp, to: (@convention(c) (Any, Selector, Int, Int) -> Void).self)
-                function(coreInstance, NSSelectorFromString("releaseButton:forPlayer:"), buttonIndex, 0)
-            }
-        }
-    }
-
-    // Handle custom buttons
-    private func handleCustomButton(_ id: String, pressed: Bool) {
-        // Map custom button IDs to actions
-        switch id.lowercased() {
-        case "menu":
-            if pressed {
-                // Show menu
-                NotificationCenter.default.post(name: Notification.Name("PauseGame"), object: nil)
-            }
-        case "togglefastforward":
-            if pressed {
-                // Toggle fast forward - check if the method exists
-                if let method = class_getInstanceMethod(type(of: coreInstance), NSSelectorFromString("toggleFastForward")) {
-                    let imp = method_getImplementation(method)
-                    let function = unsafeBitCast(imp, to: (@convention(c) (Any, Selector) -> Void).self)
-                    function(coreInstance, NSSelectorFromString("toggleFastForward"))
-                } else {
-                    // Fallback - try to set a fast forward flag if available
-                    print("Fast forward not supported by this core")
-                }
-            }
-        default:
-            print("Unknown custom button: \(id)")
-        }
-    }
-
     // Set up orientation notification
     private func setupOrientationNotification() {
         NotificationCenter.default.addObserver(
@@ -606,38 +379,5 @@ struct EmulatorWithSkinView: View {
                 NotificationCenter.default.post(name: Notification.Name("RefreshGPUView"), object: nil)
             }
         }
-    }
-}
-
-// Input handler for Delta Skin
-class DeltaSkinInputHandler: ObservableObject {
-    var onButtonInput: ((DeltaSkinButtonInput) -> Void)?
-
-    func handleButtonInput(_ input: DeltaSkinButtonInput) {
-        onButtonInput?(input)
-    }
-}
-
-// Button input structure
-struct DeltaSkinButtonInput {
-    enum Button {
-        case dpadUp, dpadDown, dpadLeft, dpadRight
-        case buttonA, buttonB, buttonX, buttonY
-        case buttonL, buttonR, buttonL2, buttonR2
-        case buttonStart, buttonSelect, buttonHome
-        case analogLeft, analogRight
-        case custom(String)
-    }
-
-    let button: Button
-    let isPressed: Bool
-    let x: Float
-    let y: Float
-
-    init(button: Button, isPressed: Bool, x: Float = 0, y: Float = 0) {
-        self.button = button
-        self.isPressed = isPressed
-        self.x = x
-        self.y = y
     }
 }

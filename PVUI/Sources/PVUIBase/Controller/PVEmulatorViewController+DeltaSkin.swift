@@ -100,7 +100,7 @@ extension PVEmulatorViewController {
         gameScreenView.layer.borderColor = UIColor.red.cgColor
 
         // Create the input handler
-        let inputHandler = DeltaSkinInputHandler()
+        let inputHandler = DeltaSkinInputHandler(emulatorCore: core)
 
         // Create the skin view
         let skinView = UIHostingController(
@@ -201,6 +201,14 @@ extension PVEmulatorViewController {
             name: Notification.Name("RefreshGPUView"),
             object: nil
         )
+
+        // Add observer for showing the menu
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(showEmulatorMenu),
+            name: Notification.Name("ShowEmulatorMenu"),
+            object: nil
+        )
     }
 
     /// Handle device rotation
@@ -246,5 +254,13 @@ extension PVEmulatorViewController {
             // Force a redraw
             metalVC.draw(in: metalVC.mtlView)
         }
+    }
+
+    // Add this method to handle showing the menu
+    @objc private func showEmulatorMenu() {
+        DLOG("Showing emulator menu")
+
+        // Call the existing method to show the menu
+        showMenu(self)
     }
 }

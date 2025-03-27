@@ -77,7 +77,7 @@ public struct DeltaSkinFullscreenPagerView: View {
         // Convert UIDeviceOrientation to DeltaSkinOrientation
         let desiredOrientation: DeltaSkinOrientation = deviceOrientation.isLandscape ? .landscape : .portrait
         #endif
-        
+
         // First try with current display type
         let newTraits = DeltaSkinTraits(
             device: currentTraits.device,
@@ -141,7 +141,8 @@ public struct DeltaSkinFullscreenPagerView: View {
                     filters: selectedFilters,
                     showDebugOverlay: showDebugOverlay,
                     showHitTestOverlay: showHitTestOverlay,
-                    screenAspectRatio: screenAspectRatio
+                    isInEmulator: false,
+                    inputHandler: DeltaSkinInputHandler()
                 )
                 .id("\(index)-\(currentTraits.orientation)")
                 .frame(width: geometry.size.width)
@@ -255,7 +256,7 @@ public struct DeltaSkinFullscreenPagerView: View {
             }
     }
     #endif
-    
+
     private var currentSkin: DeltaSkinProtocol {
         skins[currentPage]
     }

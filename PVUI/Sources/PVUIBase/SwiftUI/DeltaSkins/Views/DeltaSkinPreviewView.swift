@@ -56,7 +56,9 @@ struct DeltaSkinPreviewView: View {
                         skin: initialSkin,
                         traits: makeTraits(orientation: .portrait),
                         showDebugOverlay: false,
-                        showHitTestOverlay: false
+                        showHitTestOverlay: false,
+                        isInEmulator: false,
+                        inputHandler: DeltaSkinInputHandler()
                     )
                     .frame(height: 400)
                 }
@@ -71,7 +73,9 @@ struct DeltaSkinPreviewView: View {
                         skin: initialSkin,
                         traits: makeTraits(orientation: .landscape),
                         showDebugOverlay: false,
-                        showHitTestOverlay: false
+                        showHitTestOverlay: false,
+                        isInEmulator: false,
+                        inputHandler: DeltaSkinInputHandler()
                     )
                     .frame(height: 600)
                     .rotationEffect(.degrees(90))

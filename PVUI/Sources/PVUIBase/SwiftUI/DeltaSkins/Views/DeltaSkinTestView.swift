@@ -317,7 +317,8 @@ public struct DeltaSkinTestView: View {
                 ),
                 filters: selectedFilters,
                 showDebugOverlay: showDebugOverlay,
-                showHitTestOverlay: showHitTestOverlay
+                showHitTestOverlay: showHitTestOverlay,
+                inputHandler: .init(emulatorCore: nil)
             )
             .rotationEffect(.degrees(-90))
             .frame(width: availableWidth, height: previewHeight)
@@ -335,7 +336,8 @@ public struct DeltaSkinTestView: View {
                     traits: selectedTraits,
                     filters: selectedFilters,
                     showDebugOverlay: showDebugOverlay,
-                    showHitTestOverlay: showHitTestOverlay
+                    showHitTestOverlay: showHitTestOverlay,
+                    inputHandler: .init(emulatorCore: nil)
                 )
                 .id("portrait_\(selectedTraits.device.rawValue)_\(selectedTraits.displayType.rawValue)")
             } else {
@@ -345,7 +347,8 @@ public struct DeltaSkinTestView: View {
                     traits: selectedTraits,
                     filters: selectedFilters,
                     showDebugOverlay: showDebugOverlay,
-                    showHitTestOverlay: showHitTestOverlay
+                    showHitTestOverlay: showHitTestOverlay,
+                    inputHandler: .init(emulatorCore: nil)
                 )
                 .rotationEffect(.degrees(-90))
                 .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width * (4/3))

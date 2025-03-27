@@ -2,6 +2,7 @@ import SwiftUI
 import AudioToolbox
 import AVFoundation  // Add this for audio buffer types
 import PVLogging
+import PVEmulatorCore
 
 /// Core view for rendering a DeltaSkin with test patterns and interactive elements
 public struct DeltaSkinView: View {
@@ -12,6 +13,7 @@ public struct DeltaSkinView: View {
     let showHitTestOverlay: Bool
     let screenAspectRatio: CGFloat?  // Optional aspect ratio
     let isInEmulator: Bool
+    let inputHandler: DeltaSkinInputHandler
 
     /// State for touch and button interactions
     @State private var touchLocation: CGPoint?
@@ -42,13 +44,12 @@ public struct DeltaSkinView: View {
     // Track the currently pressed button
     @State private var currentlyPressedButton: DeltaSkinButton?
 
-    /// Input handler for the skin
-    @EnvironmentObject private var inputHandler: DeltaSkinInputHandler
-
     /// State for the loaded skin image
     @State private var loadingError: Error?
     @State private var screenGroups: [DeltaSkinScreenGroup]?
     @State private var buttonMappings: [DeltaSkinButtonMapping]?
+
+    @State private var pressedButtons: Set<String> = []
 
     private static func createButtonSounds() -> [String: PCMBuffer] {
         let soundConfigs = [
@@ -170,7 +171,8 @@ public struct DeltaSkinView: View {
         showDebugOverlay: Bool = false,
         showHitTestOverlay: Bool = false,
         screenAspectRatio: CGFloat? = nil,
-        isInEmulator: Bool = true
+        isInEmulator: Bool = true,
+        inputHandler: DeltaSkinInputHandler
     ) {
         self.skin = skin
         self.traits = traits
@@ -179,6 +181,7 @@ public struct DeltaSkinView: View {
         self.showHitTestOverlay = showHitTestOverlay
         self.screenAspectRatio = screenAspectRatio
         self.isInEmulator = isInEmulator
+        self.inputHandler = inputHandler
     }
 
     internal struct SkinLayout {
@@ -869,7 +872,8 @@ public struct DeltaSkinView: View {
             } else {
                 // Regular button
                 Button(action: {
-                    // Do nothing here - we'll handle touch events in the gesture
+                    // Pass the button ID directly instead of the button object
+                    handleButtonPress(mapping.id)
                 }) {
                     if showDebugOverlay {
                         // Show debug overlay for the button
@@ -889,6 +893,17 @@ public struct DeltaSkinView: View {
                 }
                 .frame(width: scaledFrame.width, height: scaledFrame.height)
                 .position(x: absoluteX, y: absoluteY)
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { _ in
+                            // Pass the button ID directly
+                            handleButtonPress(mapping.id)
+                        }
+                        .onEnded { _ in
+                            // Pass the button ID directly
+                            handleButtonRelease(mapping.id)
+                        }
+                )
                 .accessibility(identifier: "Button-\(mapping.id)")
             }
         }
@@ -1001,6 +1016,16 @@ public struct DeltaSkinView: View {
                     .foregroundColor(.white)
                 : nil
         )
+    }
+
+    private func handleButtonPress(_ buttonId: String) {
+        // Pass the button ID directly to the input handler
+        inputHandler.buttonPressed(buttonId)
+    }
+
+    private func handleButtonRelease(_ buttonId: String) {
+        // Pass the button ID directly to the input handler
+        inputHandler.buttonReleased(buttonId)
     }
 }
 

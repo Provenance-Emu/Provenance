@@ -20,6 +20,9 @@ public struct DeltaSkinScreensView: View {
     @State private var screenGroups: [DeltaSkinScreenGroup]?
     @State private var buttonMappings: [DeltaSkinButtonMapping]?
 
+    @State private var leftStickPosition: CGPoint = .zero
+    @State private var rightStickPosition: CGPoint = .zero
+
     public init(skin: DeltaSkinProtocol, traits: DeltaSkinTraits, containerSize: CGSize) {
         self.skin = skin
         self.traits = traits
@@ -309,37 +312,14 @@ public struct DeltaSkinScreensView: View {
             y: frame.midY * geometry.size.height
         )
         .gesture(
-            DragGesture(minimumDistance: 0)
+            DragGesture()
                 .onChanged { value in
-                    // Calculate normalized position (-1 to 1)
-                    let centerX = frame.midX * geometry.size.width
-                    let centerY = frame.midY * geometry.size.height
-                    let radius = min(frame.width, frame.height) * 0.5 * geometry.size.width
-
-                    var deltaX = (value.location.x - centerX) / radius
-                    var deltaY = (value.location.y - centerY) / radius
-
-                    // Clamp to unit circle
-                    let length = sqrt(deltaX * deltaX + deltaY * deltaY)
-                    if length > 1.0 {
-                        deltaX /= length
-                        deltaY /= length
-                    }
-
-                    // Send analog input
-                    handleAnalogInput(
-                        isLeftStick ? .analogLeft : .analogRight,
-                        x: Float(deltaX),
-                        y: Float(deltaY)
-                    )
+                    let position = normalizePosition(value.location, in: frame)
+                    handleAnalogStick(position: position, isLeftStick: isLeftStick)
                 }
                 .onEnded { _ in
                     // Reset to center position
-                    handleAnalogInput(
-                        isLeftStick ? .analogLeft : .analogRight,
-                        x: 0,
-                        y: 0
-                    )
+                    handleAnalogStick(position: .zero, isLeftStick: isLeftStick)
                 }
         )
         .overlay(
@@ -403,81 +383,48 @@ public struct DeltaSkinScreensView: View {
 
     // Handle button press
     private func handleButtonPress(_ buttonId: String) {
-        // Map the button ID to a DeltaSkinButtonInput
-        let button = mapButtonIdToButton(buttonId)
-        let input = DeltaSkinButtonInput(button: button, isPressed: true)
-
-        print("Button pressed: \(buttonId) -> \(button)")
-
-        // Forward to the input handler
-        inputHandler.handleButtonInput(input)
+        // Send button press to input handler
+        inputHandler.buttonPressed(buttonId)
     }
 
     // Handle button release
     private func handleButtonRelease(_ buttonId: String) {
-        // Map the button ID to a DeltaSkinButtonInput
-        let button = mapButtonIdToButton(buttonId)
-        let input = DeltaSkinButtonInput(button: button, isPressed: false)
-
-        print("Button released: \(buttonId) -> \(button)")
-
-        // Forward to the input handler
-        inputHandler.handleButtonInput(input)
+        // Send button release to input handler
+        inputHandler.buttonReleased(buttonId)
     }
 
-    // Map button ID to button type
-    private func mapButtonIdToButton(_ buttonId: String) -> DeltaSkinButtonInput.Button {
-        switch buttonId.lowercased() {
-        case "up", "dpad_up":
-            return .dpadUp
-        case "down", "dpad_down":
-            return .dpadDown
-        case "left", "dpad_left":
-            return .dpadLeft
-        case "right", "dpad_right":
-            return .dpadRight
-        case "a", "button_a":
-            return .buttonA
-        case "b", "button_b":
-            return .buttonB
-        case "x", "button_x":
-            return .buttonX
-        case "y", "button_y":
-            return .buttonY
-        case "l", "l1", "button_l", "button_l1":
-            return .buttonL
-        case "r", "r1", "button_r", "button_r1":
-            return .buttonR
-        case "l2", "button_l2":
-            return .buttonL2
-        case "r2", "button_r2":
-            return .buttonR2
-        case "start", "button_start":
-            return .buttonStart
-        case "select", "button_select":
-            return .buttonSelect
-        case "menu", "button_menu":
-            return .custom("menu")
-        case "togglefastforward", "fastforward":
-            return .custom("toggleFastForward")
-        default:
-            return .custom(buttonId)
+    // Update the analog stick handling
+    private func handleAnalogStick(position: CGPoint, isLeftStick: Bool) {
+        // Normalize position to -1...1 range
+        let normalizedX = Float(position.x)
+        let normalizedY = Float(position.y)
+
+        // Clamp values to -1...1 range
+        let clampedX = max(-1, min(1, normalizedX))
+        let clampedY = max(-1, min(1, normalizedY))
+
+        // Send the input to the handler
+        let stickId = isLeftStick ? "analog_left" : "analog_right"
+        inputHandler.analogStickMoved(stickId, x: clampedX, y: clampedY)
+    }
+
+    // Add a helper method to calculate normalized values
+    private func normalizePosition(_ position: CGPoint, in frame: CGRect) -> CGPoint {
+        // Convert position to center-relative coordinates (-1 to 1)
+        let centerX = frame.midX
+        let centerY = frame.midY
+        let radius = min(frame.width, frame.height) / 2
+
+        let relativeX = (position.x - centerX) / radius
+        let relativeY = (position.y - centerY) / radius
+
+        // Clamp to a circle with radius 1
+        let length = sqrt(relativeX * relativeX + relativeY * relativeY)
+        if length > 1 {
+            return CGPoint(x: relativeX / length, y: relativeY / length)
+        } else {
+            return CGPoint(x: relativeX, y: relativeY)
         }
-    }
-
-    // Handle analog input
-    private func handleAnalogInput(_ stick: DeltaSkinButtonInput.Button, x: Float, y: Float) {
-        let input = DeltaSkinButtonInput(
-            button: stick,
-            isPressed: true,
-            x: x,
-            y: y
-        )
-
-        print("Analog input: \(stick), x: \(x), y: \(y)")
-
-        // Forward to the input handler
-        inputHandler.handleButtonInput(input)
     }
 
     private func formatRect(_ rect: CGRect) -> String {

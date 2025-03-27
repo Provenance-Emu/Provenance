@@ -381,7 +381,7 @@ private struct SkinPreviewCell: View {
         VStack(alignment: .leading, spacing: 8) {
             // Preview
             PreviewContainer {
-                DeltaSkinView(skin: skin, traits: previewTraits)
+                DeltaSkinView(skin: skin, traits: previewTraits, inputHandler: .init(emulatorCore: nil))
                     .allowsHitTesting(false)
             }
             .overlay {
