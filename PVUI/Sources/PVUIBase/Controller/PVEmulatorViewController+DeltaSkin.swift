@@ -27,6 +27,9 @@ extension PVEmulatorViewController {
                 print("System Identifier: \(identifier)")
             }
 
+            // Set up rotation notification
+            setupRotationNotification()
+
             // Print available skins
             if let systemId = game.system?.systemIdentifier {
                 // Get all available skins synchronously
@@ -75,9 +78,13 @@ extension PVEmulatorViewController {
             }
         }
 
+        // Create the input handler
+        let inputHandler = DeltaSkinInputHandler()
+
         // Create the skin view
         let skinView = UIHostingController(
             rootView: EmulatorWithSkinView(game: game, coreInstance: core)
+                .environmentObject(inputHandler)
                 .ignoresSafeArea(.all)
         )
 
@@ -105,12 +112,29 @@ extension PVEmulatorViewController {
         // Find the controller view controller
         for childVC in children {
             if let controllerVC = childVC as? UIViewController {
-                // Hide all buttons and controls
-                let buttons = controllerVC.view.subviews.filter { $0 is UIButton || $0 is UIControl }
-                buttons.forEach { $0.isHidden = true }
-
-                print("Hidden standard controls: \(buttons.count) buttons")
+                // Hide the entire controller view
+                controllerVC.view.isHidden = true
+                print("Hidden standard controller view")
             }
+        }
+    }
+
+    /// Set up rotation notification
+    private func setupRotationNotification() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleDeviceRotation),
+            name: UIDevice.orientationDidChangeNotification,
+            object: nil
+        )
+    }
+
+    /// Handle device rotation
+    @objc private func handleDeviceRotation() {
+        // Force the skin view to update by recreating it
+        if UIDevice.current.orientation.isLandscape || UIDevice.current.orientation.isPortrait {
+            print("Device rotated, recreating skin view")
+            createSkinView()
         }
     }
 }
