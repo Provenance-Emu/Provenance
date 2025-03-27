@@ -53,6 +53,10 @@ struct DebugView: View {
     @State private var showDeltaSkinList = false
     @State private var selectedTheme: ThemeName = .default
 
+    // Add this new state variable
+    @State private var showDeltaSkinImport = false
+    @State private var showDeltaSkinPreview = false
+
     var body: some View {
         NavigationView {
             List {
@@ -139,6 +143,21 @@ struct DebugView: View {
 
                     ColorPalettePreview(palette: themeManager.currentPalette)
                 }
+
+                // Add this new section
+                Section("Controller Skins") {
+                    NavigationLink("Browse System Skins", destination: SystemSkinBrowserView())
+
+                    Button("Import Skin") {
+                        showDeltaSkinImport = true
+                    }
+                    .buttonStyle(GradientButtonStyle(colors: [.purple, .blue]))
+
+                    Button("Test Skin Preview") {
+                        showDeltaSkinPreview = true
+                    }
+                    .buttonStyle(GradientButtonStyle(colors: [.blue, .green]))
+                }
             }
             .navigationTitle("Debug")
             .alert(isPresented: $showConfirmResetAlert) {
@@ -205,6 +224,12 @@ struct DebugView: View {
                 NavigationView {
                     DeltaSkinListView(manager: DeltaSkinManager.shared)
                 }
+            }
+            .sheet(isPresented: $showDeltaSkinImport) {
+                DeltaSkinImportView()
+            }
+            .sheet(isPresented: $showDeltaSkinPreview) {
+                DeltaSkinPreviewWrapper()
             }
         }
     }
@@ -579,6 +604,55 @@ struct SaveStatesMockView: View {
             await MainActor.run {
                 self.viewModel = newViewModel
                 self.isLoading = false
+            }
+        }
+    }
+}
+
+// Add this helper view to handle async loading of skins
+struct DeltaSkinPreviewWrapper: View {
+    @StateObject private var skinManager = DeltaSkinManager.shared
+    @State private var skins: [DeltaSkinProtocol] = []
+    @State private var isLoading = true
+
+    var body: some View {
+        Group {
+            if isLoading {
+                ProgressView("Loading skins...")
+            } else if skins.isEmpty {
+                Text("No skins available")
+                    .padding()
+            } else {
+                DeltaSkinFullscreenPagerView(
+                    skins: skins,
+                    traits: DeltaSkinTraits(
+                        device: .iphone,
+                        displayType: .standard,
+                        orientation: .portrait
+                    )
+                )
+            }
+        }
+        .onAppear {
+            loadSkins()
+        }
+    }
+
+    private func loadSkins() {
+        Task {
+            do {
+                // Get all available skins from the manager
+                let availableSkins = try await skinManager.availableSkins()
+
+                await MainActor.run {
+                    self.skins = availableSkins
+                    self.isLoading = false
+                }
+            } catch {
+                print("Error loading skins: \(error)")
+                await MainActor.run {
+                    self.isLoading = false
+                }
             }
         }
     }
