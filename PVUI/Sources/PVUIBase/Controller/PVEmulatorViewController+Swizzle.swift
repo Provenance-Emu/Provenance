@@ -40,8 +40,14 @@ extension PVEmulatorViewController {
         // Call the original implementation
         self.swizzled_viewDidLoad()
 
-        // Add our custom code
-        setupDeltaSkinView()
+        // Add our custom code - call the async method in a Task
+        Task {
+            do {
+                try await setupDeltaSkinView()
+            } catch {
+                print("Error setting up Delta Skin: \(error)")
+            }
+        }
 
         print("Swizzled viewDidLoad called, setting up Delta Skin if enabled")
     }

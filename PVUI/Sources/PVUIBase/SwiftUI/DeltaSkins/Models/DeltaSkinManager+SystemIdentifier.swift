@@ -1,5 +1,6 @@
 import Foundation
 import PVPrimitives
+import PVSystems
 
 public extension DeltaSkinManager {
     /// Get all skins for a specific system identifier
@@ -49,5 +50,133 @@ public extension DeltaSkinManager {
 
         // Fall back to default skin
         return try await defaultSkin(for: system)
+    }
+
+    /// Get a skin for a specific system identifier (synchronous version)
+    func skin(for systemIdentifier: SystemIdentifier) async -> DeltaSkin? {
+        // Convert SystemIdentifier to a string identifier that DeltaSkinManager understands
+        let skinIdentifier = skinIdentifier(for: systemIdentifier)
+
+        print("Looking for skin with identifier: \(skinIdentifier) for system: \(systemIdentifier)")
+
+        // Get all available skins synchronously
+        let allSkins = try! await availableSkins()
+
+        // Find a skin that matches the identifier
+        let matchingSkin = allSkins.first { skin in
+            return skin.identifier.contains(skinIdentifier) ||
+            (skin.gameType.rawValue.lowercased() == skinIdentifier)
+        }
+
+        if let skin = matchingSkin {
+            print("Found skin: \(skin.name) for \(skinIdentifier)")
+            // Make sure it's a DeltaSkin
+            if let deltaSkin = skin as? DeltaSkin {
+                return deltaSkin
+            } else {
+                print("Found skin is not a DeltaSkin: \(skin.identifier)")
+                return nil
+            }
+        } else {
+            print("No skin found for \(skinIdentifier)")
+            return nil
+        }
+    }
+
+    /// Get available skins for a specific system identifier
+    func availableSkins(for systemIdentifier: SystemIdentifier) async throws -> [DeltaSkin] {
+        // Convert SystemIdentifier to a string identifier that DeltaSkinManager understands
+        let skinIdentifier = skinIdentifier(for: systemIdentifier)
+
+        // Get all available skins
+        let allSkins = try await availableSkins()
+
+        // Filter skins for this system and convert to [DeltaSkin]
+        let filteredSkins = allSkins.filter { skin in
+            // Check if the skin is for this system
+            return skin.gameType.rawValue.lowercased() == skinIdentifier ||
+                   skin.identifier.contains(skinIdentifier)
+        }
+
+        // Convert to [DeltaSkin] - this might need adjustment based on your actual types
+        return filteredSkins.compactMap { $0 as? DeltaSkin }
+    }
+
+    /// Get available skins for a specific system identifier (synchronous version)
+    func availableSkinsSync(for systemIdentifier: SystemIdentifier) async -> [DeltaSkin] {
+        // Convert SystemIdentifier to a string identifier that DeltaSkinManager understands
+        let skinIdentifier = skinIdentifier(for: systemIdentifier)
+
+        // Get all available skins synchronously
+        let allSkins = try! await availableSkins()
+
+        // Filter skins for this system and convert to [DeltaSkin]
+        let filteredSkins = allSkins.filter { skin in
+            // Check if the skin is for this system
+            return (skin.gameType.rawValue.lowercased() == skinIdentifier) ||
+                   skin.identifier.contains(skinIdentifier)
+        }
+
+        // Convert to [DeltaSkin]
+        return filteredSkins.compactMap { $0 as? DeltaSkin }
+    }
+
+    /// Convert a SystemIdentifier to a string identifier for DeltaSkinManager
+    private func skinIdentifier(for systemIdentifier: SystemIdentifier) -> String {
+        switch systemIdentifier {
+        case .NES:
+            return "nes"
+        case .SNES:
+            return "snes"
+        case .N64:
+            return "n64"
+        case .GB:
+            return "gb"
+        case .GBC:
+            return "gbc"
+        case .GBA:
+            return "gba"
+        case .Genesis:
+            return "genesis"
+        case .SegaCD:
+            return "segacd"
+        case .Sega32X:
+            return "32x"
+        case .MasterSystem:
+            return "mastersystem"
+        case .PSX:
+            return "psx"
+        case .PSP:
+            return "psp"
+        case .DS:
+            return "nds"
+        case .Atari2600:
+            return "atari2600"
+        case .Atari5200:
+            return "atari5200"
+        case .Atari7800:
+            return "atari7800"
+        case .AtariJaguar, .AtariJaguarCD:
+            return "jaguar"
+        case .Lynx:
+            return "lynx"
+        case .PCE, .PCECD:
+            return "pcengine"
+        case .SGFX:
+            return "sgfx"
+        case .WonderSwan, .WonderSwanColor:
+            return "wonderswan"
+        case .NGP, .NGPC:
+            return "neogeopocket"
+        case .PokemonMini:
+            return "pokemonmini"
+        case .VirtualBoy:
+            return "virtualboy"
+        case .Dreamcast:
+            return "dreamcast"
+        default:
+            // For any other system, return a default identifier
+            return systemIdentifier.rawValue.lowercased()
+        }
     }
 }

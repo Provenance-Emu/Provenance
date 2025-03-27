@@ -8,9 +8,116 @@ struct EmulatorWithSkinView: View {
     let game: PVGame
     let coreInstance: PVEmulatorCore
 
+    // State for the skin
+    @State private var selectedSkin: DeltaSkin?
+    @State private var isLoading = true
+    @State private var asyncSkin: DeltaSkinProtocol?
+
     var body: some View {
-        // Just show the default controller skin
-        defaultControllerSkin()
+        GeometryReader { geometry in
+            ZStack {
+                // Background
+                Color.black.edgesIgnoringSafeArea(.all)
+
+                if let skin = selectedSkin {
+                    // If we have a skin, use DeltaSkinScreensView
+                    DeltaSkinScreensView(
+                        skin: skin,
+                        traits: DeltaSkinTraits(orientation: .landscape),
+                        containerSize: geometry.size
+                    )
+                } else if let asyncSkin = asyncSkin {
+                    // If we have an async skin, use DeltaSkinScreensView
+                    DeltaSkinScreensView(
+                        skin: asyncSkin,
+                        traits: DeltaSkinTraits(orientation: .landscape),
+                        containerSize: geometry.size
+                    )
+                } else if isLoading {
+                    // Loading indicator
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .scaleEffect(1.5)
+                        .foregroundColor(.white)
+                } else {
+                    // Fallback controller
+                    defaultControllerSkin()
+                }
+            }
+            .onAppear {
+                // Try to load a skin when the view appears
+                Task {
+                    await loadSkin()
+                }
+            }
+        }
+    }
+
+    /// Load a skin for the current game
+    private func loadSkin() async {
+        isLoading = true
+
+        // Get the system identifier
+        if let systemId = game.system?.systemIdentifier {
+            print("Loading skin for system: \(systemId)")
+
+            // Try to get a skin from the manager using our new synchronous method
+            selectedSkin = await DeltaSkinManager.shared.skin(for: systemId)
+
+            if selectedSkin != nil {
+                print("Successfully loaded skin for \(systemId): \(selectedSkin!.name)")
+                isLoading = false
+            } else {
+                print("No skin available from sync method for \(systemId)")
+
+                // Try to get all skins for this system synchronously
+                let systemSkins = await DeltaSkinManager.shared.availableSkinsSync(for: systemId)
+                print("Available skins (sync): \(systemSkins.count)")
+
+                // If there are any skins, use the first one
+                if let firstSkin = systemSkins.first {
+                    selectedSkin = firstSkin
+                    print("Using first available skin (sync): \(firstSkin.name)")
+                    isLoading = false
+                } else {
+                    // Try to get a skin asynchronously
+                    Task {
+                        do {
+                            // Try to get the skin to use
+                            asyncSkin = try await DeltaSkinManager.shared.skinToUse(for: systemId)
+
+                            if asyncSkin != nil {
+                                print("Loaded async skin for \(systemId): \(asyncSkin!.identifier)")
+                            } else {
+                                print("No async skin available for \(systemId)")
+
+                                // Try to get all skins for this system
+                                let systemSkins = try await DeltaSkinManager.shared.availableSkins(for: systemId)
+                                print("Available skins (async): \(systemSkins.count)")
+
+                                // If there are any skins, use the first one
+                                if let firstSkin = systemSkins.first {
+                                    await MainActor.run {
+                                        selectedSkin = firstSkin as? DeltaSkin
+                                    }
+                                    print("Using first available skin (async): \(firstSkin.identifier)")
+                                }
+                            }
+                        } catch {
+                            print("Error loading async skin: \(error)")
+                        }
+
+                        // Update loading state on the main thread
+                        await MainActor.run {
+                            isLoading = false
+                        }
+                    }
+                }
+            }
+        } else {
+            print("No system identifier available for game: \(game.title)")
+            isLoading = false
+        }
     }
 
     /// Default controller skin as a fallback

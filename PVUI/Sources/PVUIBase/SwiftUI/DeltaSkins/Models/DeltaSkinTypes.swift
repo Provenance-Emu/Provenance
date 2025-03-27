@@ -60,9 +60,9 @@ public struct DeltaSkinTraits: Codable, Hashable, Equatable {
     public let iPadModel: DeltaSkinIPadModel?
     public let externalDisplay: DeltaSkinExternalDisplay
 
-    public init(device: DeltaSkinDevice,
-                displayType: DeltaSkinDisplayType,
-                orientation: DeltaSkinOrientation,
+    public init(device: DeltaSkinDevice = .iphone,
+                displayType: DeltaSkinDisplayType = .standard,
+                orientation: DeltaSkinOrientation = .portrait,
                 iPadModel: DeltaSkinIPadModel? = nil,
                 externalDisplay: DeltaSkinExternalDisplay = .none) {
         self.device = device
