@@ -57,6 +57,9 @@ struct DebugView: View {
     @State private var showDeltaSkinImport = false
     @State private var showDeltaSkinPreview = false
 
+    // Add this state variable
+    @State private var showAIEnhancements = false
+
     var body: some View {
         NavigationView {
             List {
@@ -157,6 +160,11 @@ struct DebugView: View {
                         showDeltaSkinPreview = true
                     }
                     .buttonStyle(GradientButtonStyle(colors: [.blue, .green]))
+
+                    Button("AI Enhancements") {
+                        showAIEnhancements = true
+                    }
+                    .buttonStyle(GradientButtonStyle(colors: [.indigo, .purple]))
                 }
             }
             .navigationTitle("Debug")
@@ -230,6 +238,11 @@ struct DebugView: View {
             }
             .sheet(isPresented: $showDeltaSkinPreview) {
                 DeltaSkinPreviewWrapper()
+            }
+            .sheet(isPresented: $showAIEnhancements) {
+                NavigationView {
+                    DeltaSkinAIEnhancementView()
+                }
             }
         }
     }
