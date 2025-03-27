@@ -129,13 +129,13 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
         var parentView: EmulatorContainerView?
     }
 
-    func makeCoordinator() -> Coordinator {
-        return Coordinator()
-    }
-
     // State for core selection alert
     @State private var showCoreSelectionAlert = false
     @State private var gameForCoreSelection: PVGame? = nil
+
+    func makeCoordinator() -> Coordinator {
+        return Coordinator()
+    }
 
     func makeUIViewController(context: Context) -> UIViewController {
         ILOG("EmulatorContainerView: Creating container view controller")
@@ -521,6 +521,15 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
             let useSkins = true // UserDefaults.standard.bool(forKey: "useDeltaSkins")
             let emulatorViewController = PVEmulatorViewController(game: game, core: emulatorCore)
             self.emulatorViewController = emulatorViewController
+
+            // Set up Delta Skin directly
+            Task {
+                do {
+                    try await emulatorViewController.setupDeltaSkinView()
+                } catch {
+                    print("Error setting up Delta Skin: \(error)")
+                }
+            }
 
             // Set up quit completion handler
             quitCompletionHandler = { [weak self] in

@@ -23,14 +23,22 @@ struct EmulatorWithSkinView: View {
                     // If we have a skin, use DeltaSkinScreensView
                     DeltaSkinScreensView(
                         skin: skin,
-                        traits: DeltaSkinTraits(orientation: .landscape),
+                        traits: .init(device: .iphone,
+                                      displayType: .edgeToEdge,
+                                      orientation: .portrait,
+                                      iPadModel: nil,
+                                      externalDisplay: .none),
                         containerSize: geometry.size
                     )
                 } else if let asyncSkin = asyncSkin {
                     // If we have an async skin, use DeltaSkinScreensView
                     DeltaSkinScreensView(
                         skin: asyncSkin,
-                        traits: DeltaSkinTraits(orientation: .landscape),
+                        traits: .init(device: .iphone,
+                                      displayType: .edgeToEdge,
+                                      orientation: .portrait,
+                                      iPadModel: nil,
+                                      externalDisplay: .none),
                         containerSize: geometry.size
                     )
                 } else if isLoading {

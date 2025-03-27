@@ -284,6 +284,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             emulationState.emulator = self
         }
 
+        setupDeltaSkinDirectly()
+        
         initNotificationObservers()
         do {
             try createEmulator()
