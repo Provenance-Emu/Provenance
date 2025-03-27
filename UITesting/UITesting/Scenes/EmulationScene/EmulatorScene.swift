@@ -459,45 +459,45 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
         }
     }
     
-    @MainActor
-    func load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async {
-        do {
-            try await canLoad(game)
-            
-            // Store the game in the app state
-            AppState.shared.emulationUIState.currentGame = game
-            
-            ILOG("EmulatorContainerViewController: Loading game: \(game.title)")
-            
-            // If a core is specified, use it, otherwise use the default core or present core selection
-            if let core = core {
-                ILOG("EmulatorContainerViewController: Using specified core: \(core.projectName)")
-                await presentEMU(withCore: core, forGame: game, source: sender as? UIView ?? view)
-            } else if let saveState = saveState, let core = saveState.core {
-                ILOG("EmulatorContainerViewController: Using core from save state: \(core.projectName)")
-                await presentEMU(withCore: core, forGame: game, source: sender as? UIView ?? view)
-                
-                // Load the save state after the emulator is initialized
-                if let emulatorVC = self.emulatorViewController {
-                    await emulatorVC.loadSaveState(saveState)
-                }
-            } else if let system = game.system, let defaultCore = system.cores.first {
-                ILOG("EmulatorContainerViewController: Using default core: \(defaultCore.projectName)")
-                await presentEMU(withCore: defaultCore, forGame: game, source: sender as? UIView ?? view)
-            } else {
-                ILOG("EmulatorContainerViewController: No core specified, presenting core selection")
-                presentCoreSelection(forGame: game, sender: sender)
-            }
-            
-            // Update recent games
-            updateRecentGames(game)
-            
-        } catch let error as GameLaunchingError {
-            handleGameLaunchingError(error, forGame: game)
-        } catch {
-            displayAndLogError(withTitle: "Error", message: "An unknown error occurred: \(error.localizedDescription)", customActions: nil)
-        }
-    }
+//    @MainActor
+//    func load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async {
+//        do {
+//            try await canLoad(game)
+//            
+//            // Store the game in the app state
+//            AppState.shared.emulationUIState.currentGame = game
+//            
+//            ILOG("EmulatorContainerViewController: Loading game: \(game.title)")
+//            
+//            // If a core is specified, use it, otherwise use the default core or present core selection
+//            if let core = core {
+//                ILOG("EmulatorContainerViewController: Using specified core: \(core.projectName)")
+//                await presentEMU(withCore: core, forGame: game, source: sender as? UIView ?? view)
+//            } else if let saveState = saveState, let core = saveState.core {
+//                ILOG("EmulatorContainerViewController: Using core from save state: \(core.projectName)")
+//                await presentEMU(withCore: core, forGame: game, source: sender as? UIView ?? view)
+//                
+//                // Load the save state after the emulator is initialized
+//                if let emulatorVC = self.emulatorViewController {
+//                    await emulatorVC.loadSaveState(saveState)
+//                }
+//            } else if let system = game.system, let defaultCore = system.cores.first {
+//                ILOG("EmulatorContainerViewController: Using default core: \(defaultCore.projectName)")
+//                await presentEMU(withCore: defaultCore, forGame: game, source: sender as? UIView ?? view)
+//            } else {
+//                ILOG("EmulatorContainerViewController: No core specified, presenting core selection")
+//                presentCoreSelection(forGame: game, sender: sender)
+//            }
+//            
+//            // Update recent games
+//            updateRecentGames(game)
+//            
+//        } catch let error as GameLaunchingError {
+//            handleGameLaunchingError(error, forGame: game)
+//        } catch {
+//            displayAndLogError(withTitle: "Error", message: "An unknown error occurred: \(error.localizedDescription)", customActions: nil)
+//        }
+//    }
     
     @MainActor
     func openSaveState(_ saveState: PVSaveState) async {
