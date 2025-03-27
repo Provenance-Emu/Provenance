@@ -517,8 +517,9 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
 
             let emulatorCore = coreClass.init()
 
-            // Create the emulator view controller with skin support
-            let emulatorViewController = PVEmulatorViewController(game: game, core: emulatorCore, useSkin: true)
+            // Create the emulator view controller with skin support - make sure useSkin is true
+            let useSkins = UserDefaults.standard.bool(forKey: "useDeltaSkins")
+            let emulatorViewController = PVEmulatorViewController(game: game, core: emulatorCore, useSkin: useSkins)
             self.emulatorViewController = emulatorViewController
 
             // Set up quit completion handler
