@@ -173,7 +173,12 @@ struct EmulatorWithSkinView: View {
                 setupOrientationNotification()
 
                 // Post a notification to refresh the GPU view
-                DispatchQueue.main.async {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    NotificationCenter.default.post(name: Notification.Name("RefreshGPUView"), object: nil)
+                }
+
+                // Set up a timer to periodically refresh the GPU view
+                Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
                     NotificationCenter.default.post(name: Notification.Name("RefreshGPUView"), object: nil)
                 }
             }

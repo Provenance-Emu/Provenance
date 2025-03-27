@@ -210,8 +210,10 @@ public struct DeltaSkinView: View {
     internal func calculateLayout(for geometry: GeometryProxy) -> SkinLayout? {
         guard let mappingSize = skin.mappingSize(for: traits) else { return nil }
 
-        // For portrait mode on iPhone, prioritize filling width while maintaining aspect ratio
+        // Calculate the scale to fit the skin in the available space
         var scale: CGFloat
+
+        // For portrait mode on iPhone, prioritize filling width while maintaining aspect ratio
         if traits.device == .iphone && traits.orientation == .portrait {
             // Start with width scale to fill screen
             scale = geometry.size.width / mappingSize.width
@@ -238,19 +240,15 @@ public struct DeltaSkinView: View {
         // Center horizontally
         let xOffset = (geometry.size.width - scaledWidth) / 2
 
-        // Calculate Y offset based on orientation and screen presence
+        // For portrait mode on iPhone, position at bottom of screen
+        // For landscape or iPad, center vertically
         let yOffset: CGFloat
-        if hasScreenPosition(for: traits) {
-            // If screen position is specified, center the skin
-            yOffset = (geometry.size.height - scaledHeight) / 2
+        if traits.device == .iphone && traits.orientation == .portrait {
+            // Position at bottom of screen
+            yOffset = geometry.size.height - scaledHeight
         } else {
-            // For portrait skins without screen position, position at bottom
-            if traits.orientation == .portrait {
-                yOffset = geometry.size.height - scaledHeight
-            } else {
-                // For landscape, center vertically
-                yOffset = (geometry.size.height - scaledHeight) / 2
-            }
+            // Center vertically
+            yOffset = (geometry.size.height - scaledHeight) / 2
         }
 
         return SkinLayout(
@@ -778,10 +776,11 @@ public struct DeltaSkinView: View {
 
         return AnyView(
             ZStack {
-                // Screen frame - make it transparent to show the game screen underneath
+                // Screen frame - make it completely transparent to show the game screen underneath
                 Rectangle()
                     .fill(Color.clear)
                     .frame(width: scaledFrame.width, height: scaledFrame.height)
+                    .blendMode(.normal) // Ensure normal blending
                     .overlay(
                         // Show a border for debugging
                         showDebugOverlay ?
@@ -857,12 +856,16 @@ public struct DeltaSkinView: View {
                 height: frame.height * layout.height
             )
 
+            // Calculate the absolute position in the parent view
+            let absoluteX = scaledFrame.midX + layout.xOffset
+            let absoluteY = scaledFrame.midY + layout.yOffset
+
             if mapping.id.lowercased() == "dpad" {
                 // Special handling for D-pad
-                dpadMapping(frame: scaledFrame)
+                dpadMapping(frame: scaledFrame, absolutePosition: CGPoint(x: absoluteX, y: absoluteY))
             } else if mapping.id.lowercased().contains("analog") || mapping.id.lowercased().contains("stick") {
                 // Analog stick
-                analogStickMapping(mapping: mapping, frame: scaledFrame)
+                analogStickMapping(mapping: mapping, frame: scaledFrame, absolutePosition: CGPoint(x: absoluteX, y: absoluteY))
             } else {
                 // Regular button
                 Button(action: {
@@ -885,14 +888,14 @@ public struct DeltaSkinView: View {
                     }
                 }
                 .frame(width: scaledFrame.width, height: scaledFrame.height)
-                .position(x: scaledFrame.midX, y: scaledFrame.midY)
+                .position(x: absoluteX, y: absoluteY)
                 .accessibility(identifier: "Button-\(mapping.id)")
             }
         }
     }
 
     @ViewBuilder
-    private func dpadMapping(frame: CGRect) -> some View {
+    private func dpadMapping(frame: CGRect, absolutePosition: CGPoint) -> some View {
         // Create a view for the D-pad with regions for each direction
         ZStack {
             if showDebugOverlay {
@@ -917,8 +920,8 @@ public struct DeltaSkinView: View {
                     height: frame.height * 0.33
                 )
                 .position(
-                    x: frame.midX,
-                    y: frame.minY + frame.height * 0.16
+                    x: frame.width / 2,
+                    y: frame.height * 0.16
                 )
                 .overlay(showDebugOverlay ? Text("Up").font(.caption2).foregroundColor(.white) : nil)
 
@@ -930,8 +933,8 @@ public struct DeltaSkinView: View {
                     height: frame.height * 0.33
                 )
                 .position(
-                    x: frame.midX,
-                    y: frame.maxY - frame.height * 0.16
+                    x: frame.width / 2,
+                    y: frame.height * 0.84
                 )
                 .overlay(showDebugOverlay ? Text("Down").font(.caption2).foregroundColor(.white) : nil)
 
@@ -943,8 +946,8 @@ public struct DeltaSkinView: View {
                     height: frame.height * 0.33
                 )
                 .position(
-                    x: frame.minX + frame.width * 0.16,
-                    y: frame.midY
+                    x: frame.width * 0.16,
+                    y: frame.height / 2
                 )
                 .overlay(showDebugOverlay ? Text("Left").font(.caption2).foregroundColor(.white) : nil)
 
@@ -956,17 +959,17 @@ public struct DeltaSkinView: View {
                     height: frame.height * 0.33
                 )
                 .position(
-                    x: frame.maxX - frame.width * 0.16,
-                    y: frame.midY
+                    x: frame.width * 0.84,
+                    y: frame.height / 2
                 )
                 .overlay(showDebugOverlay ? Text("Right").font(.caption2).foregroundColor(.white) : nil)
         }
         .frame(width: frame.width, height: frame.height)
-        .position(x: frame.midX, y: frame.midY)
+        .position(x: absolutePosition.x, y: absolutePosition.y)
     }
 
     @ViewBuilder
-    private func analogStickMapping(mapping: DeltaSkinButtonMapping, frame: CGRect) -> some View {
+    private func analogStickMapping(mapping: DeltaSkinButtonMapping, frame: CGRect, absolutePosition: CGPoint) -> some View {
         // Determine if this is left or right analog stick
         let isLeftStick = mapping.id.lowercased().contains("left")
 
@@ -990,7 +993,7 @@ public struct DeltaSkinView: View {
                 )
         }
         .frame(width: frame.width, height: frame.height)
-        .position(x: frame.midX, y: frame.midY)
+        .position(x: absolutePosition.x, y: absolutePosition.y)
         .overlay(
             showDebugOverlay ?
                 Text(isLeftStick ? "Left Analog" : "Right Analog")
@@ -1022,6 +1025,7 @@ private struct DeltaSkinHitTestOverlay: View {
         GeometryReader { geometry in
             if let buttons = skin.buttons(for: traits),
                let mappingSize = skin.mappingSize(for: traits) {
+                // Calculate the scale to fit the skin in the available space
                 let scale = min(
                     geometry.size.width / mappingSize.width,
                     geometry.size.height / mappingSize.height
@@ -1029,33 +1033,34 @@ private struct DeltaSkinHitTestOverlay: View {
 
                 let scaledSkinWidth = mappingSize.width * scale
                 let scaledSkinHeight = mappingSize.height * scale
+
+                // Calculate the offset to center the skin
                 let xOffset = (geometry.size.width - scaledSkinWidth) / 2
+                let yOffset = (geometry.size.height - scaledSkinHeight) / 2
 
-                // Check if skin has fixed screen position
-                let hasScreenPosition = skin.screens(for: traits) != nil
-
-                // Calculate Y offset based on skin type
-                let yOffset: CGFloat = hasScreenPosition ?
-                    ((geometry.size.height - scaledSkinHeight) / 2) :
-                    (geometry.size.height - scaledSkinHeight)
-
+                // Draw hit boxes for each button
                 ForEach(buttons, id: \.id) { button in
-                    let hitFrame = button.frame.insetBy(dx: -20, dy: -20)
                     let scaledFrame = CGRect(
-                        x: hitFrame.minX * scale + xOffset,
-                        y: yOffset + (hitFrame.minY * scale),
-                        width: hitFrame.width * scale,
-                        height: hitFrame.height * scale
+                        x: button.frame.minX * scale + xOffset,
+                        y: button.frame.minY * scale + yOffset,
+                        width: button.frame.width * scale,
+                        height: button.frame.height * scale
                     )
 
                     Rectangle()
                         .stroke(.red.opacity(0.5), lineWidth: 1)
                         .frame(width: scaledFrame.width, height: scaledFrame.height)
                         .position(x: scaledFrame.midX, y: scaledFrame.midY)
+                        .overlay(
+                            Text(button.id)
+                                .font(.caption2)
+                                .foregroundColor(.white)
+                                .background(Color.black.opacity(0.5))
+                                .padding(2)
+                        )
                 }
             }
         }
-        .allowsHitTesting(false)
     }
 }
 

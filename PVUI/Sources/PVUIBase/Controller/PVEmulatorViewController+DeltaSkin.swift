@@ -168,6 +168,9 @@ extension PVEmulatorViewController {
         if let metalVC = gpuViewController as? PVMetalViewController {
             metalVC.draw(in: metalVC.mtlView)
         }
+
+        // Post a notification that the emulator core has initialized
+        NotificationCenter.default.post(name: Notification.Name("EmulatorCoreDidInitialize"), object: nil)
     }
 
     /// Hide the standard controller buttons

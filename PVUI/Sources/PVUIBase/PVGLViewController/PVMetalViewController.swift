@@ -1299,10 +1299,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
-        // Update the texture from the core's buffer
-        if !emulatorCore.rendersToOpenGL {
-            _ = updateTextureFromCore()
-        }
+        // Always update the texture from the core's buffer
+        _ = updateTextureFromCore()
 
         // Use the direct rendering method which is safer
         directRender(in: view)
