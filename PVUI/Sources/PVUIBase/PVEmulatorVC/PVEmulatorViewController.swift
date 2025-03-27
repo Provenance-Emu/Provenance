@@ -284,8 +284,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             emulationState.emulator = self
         }
 
+        // Set up the GPU view
+        setupGPUView()
+
+        // Set up Delta Skin
         setupDeltaSkinDirectly()
-        
+
         initNotificationObservers()
         do {
             try createEmulator()
@@ -330,6 +334,16 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
     }
 
+    private func setupGPUView() {
+        // Add the GPU view to the view hierarchy
+        view.addSubview(gpuViewController.view)
+        gpuViewController.view.frame = view.bounds
+        gpuViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
+        // Make sure it has the right z-index
+        gpuViewController.view.layer.zPosition = 10
+    }
+
     private func createEmulator() throws {
         initCore()
 
@@ -338,10 +352,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         let m3uFile: URL? = PVEmulatorConfiguration.m3uFile(forGame: game)
         // TODO: Why are we using `UserDefaults`? @JoeMatt
         // Now I know why, this is how the old library VC would set selected disc
-        
-        
+
+
         var romPathMaybe: URL?
-        
+
         // First check if the user selected a specific related file
         if let selectedDiscFilename = game.selectedDiscFilename {
             let url = URL(fileURLWithPath: selectedDiscFilename, relativeTo: PVEmulatorConfiguration.romDirectory(forSystemIdentifier: game.system?.systemIdentifier ?? .RetroArch))
@@ -349,12 +363,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 romPathMaybe = url
             }
         }
-        
+
         // Check for m3uFile or user default set path
         if romPathMaybe == nil {
             romPathMaybe = UserDefaults.standard.url(forKey: game.romPath) ?? m3uFile
         }
-        
+
         // Finally settle on the single file
         if romPathMaybe == nil {
             romPathMaybe = game.file?.url
@@ -596,8 +610,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         self.view?.removeFromSuperview()
         self.removeFromParent()
         staticSelf = nil
-        
-        
+
+
         AppState.shared.emulationUIState.reset()
     }
 

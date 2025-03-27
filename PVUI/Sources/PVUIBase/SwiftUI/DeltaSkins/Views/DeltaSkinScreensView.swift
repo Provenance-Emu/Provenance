@@ -351,33 +351,38 @@ public struct DeltaSkinScreensView: View {
 
         return AnyView(
             ZStack {
-                // Screen frame
+                // Screen frame - make it transparent to show the game screen underneath
                 Rectangle()
-                    .stroke(showDebug ? .blue : .clear, lineWidth: 2)
+                    .fill(Color.clear)
                     .frame(
                         width: outputFrame.width * geometry.size.width,
                         height: outputFrame.height * geometry.size.height
                     )
-
-                // Debug info
-                if showDebug {
-                    VStack(alignment: .leading) {
-                        Text(screen.id)
-                            .font(.caption)
-                        if let inputFrame = screen.inputFrame {
-                            Text("In: \(formatRect(inputFrame))")
-                                .font(.caption2)
-                        }
-                        Text("Out: \(formatRect(outputFrame))")
-                            .font(.caption2)
-                        Text("Place: \(screen.placement.rawValue)")
-                            .font(.caption2)
-                    }
-                    .foregroundColor(.blue)
-                    .padding(4)
-                    .background(.white.opacity(0.8))
-                    .cornerRadius(4)
-                }
+                    .overlay(
+                        // Only show debug info in debug mode
+                        showDebug ?
+                            Rectangle()
+                                .stroke(Color.blue, lineWidth: 2)
+                                .overlay(
+                                    VStack(alignment: .leading) {
+                                        Text(screen.id)
+                                            .font(.caption)
+                                        if let inputFrame = screen.inputFrame {
+                                            Text("In: \(formatRect(inputFrame))")
+                                                .font(.caption2)
+                                        }
+                                        Text("Out: \(formatRect(outputFrame))")
+                                            .font(.caption2)
+                                        Text("Place: \(screen.placement.rawValue)")
+                                            .font(.caption2)
+                                    }
+                                    .foregroundColor(.blue)
+                                    .padding(4)
+                                    .background(Color.white.opacity(0.8))
+                                    .cornerRadius(4)
+                                )
+                            : nil
+                    )
             }
             .position(
                 x: outputFrame.midX * geometry.size.width,

@@ -27,8 +27,8 @@ struct EmulatorWithSkinView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // Background
-                Color.black.edgesIgnoringSafeArea(.all)
+                // Background - make it transparent to show the game screen
+                Color.clear.edgesIgnoringSafeArea(.all)
 
                 if let skin = selectedSkin {
                     // If we have a skin, use DeltaSkinScreensView with input handling

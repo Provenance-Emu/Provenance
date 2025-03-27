@@ -88,16 +88,28 @@ extension PVEmulatorViewController {
                 .ignoresSafeArea(.all)
         )
 
+        // Make the background transparent
+        skinView.view.backgroundColor = .clear
+
         // Add the skin view as a child view controller
         addChild(skinView)
         skinView.view.frame = view.bounds
         skinView.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
-        // Add the view to the hierarchy - make sure it's below the game screen
-        if let gameScreenView = view.subviews.first {
-            view.insertSubview(skinView.view, belowSubview: gameScreenView)
-            print("Added skin view below game screen")
+        // Get the GPU view from the gpuViewController
+        let gameScreenView = gpuViewController.view
+
+        // Add the skin view to the hierarchy
+        if let gameScreenView = gameScreenView {
+            // Add the skin view above the game screen
+            view.insertSubview(skinView.view, aboveSubview: gameScreenView)
+            print("Added skin view above game screen")
+
+            // Make sure the game screen has the right z position
+            gameScreenView.layer.zPosition = 10
+            skinView.view.layer.zPosition = 20
         } else {
+            // If we can't find the game screen, just add the skin view
             view.addSubview(skinView.view)
             print("Added skin view (no game screen found)")
         }
