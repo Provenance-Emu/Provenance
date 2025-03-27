@@ -34,22 +34,24 @@ struct EmulatorWithSkinView: View {
                 Color.clear.edgesIgnoringSafeArea(.all)
 
                 if let skin = selectedSkin {
-                    // If we have a skin, use DeltaSkinScreensView with input handling
+                    // If we have a skin, use DeltaSkinView with input handling
                     DeltaSkinView(
                         skin: skin,
                         traits: createSkinTraits(),
                         showDebugOverlay: showDebugOverlay,
-                        showHitTestOverlay: false
+                        showHitTestOverlay: false,
+                        isInEmulator: true  // Set to true to hide test patterns
                     )
                     .environmentObject(createInputHandler())
                     .id("skin-view-\(rotationCount)") // Force recreation on rotation
                 } else if let asyncSkin = asyncSkin {
-                    // If we have an async skin, use DeltaSkinScreensView with input handling
+                    // If we have an async skin, use DeltaSkinView with input handling
                     DeltaSkinView(
                         skin: asyncSkin,
                         traits: createSkinTraits(),
                         showDebugOverlay: showDebugOverlay,
-                        showHitTestOverlay: false
+                        showHitTestOverlay: false,
+                        isInEmulator: true  // Set to true to hide test patterns
                     )
                     .environmentObject(createInputHandler())
                     .id("async-skin-view-\(rotationCount)") // Force recreation on rotation

@@ -1,6 +1,7 @@
 import SwiftUI
 import AudioToolbox
 import AVFoundation  // Add this for audio buffer types
+import PVLogging
 
 /// Core view for rendering a DeltaSkin with test patterns and interactive elements
 public struct DeltaSkinView: View {
@@ -10,6 +11,7 @@ public struct DeltaSkinView: View {
     let showDebugOverlay: Bool
     let showHitTestOverlay: Bool
     let screenAspectRatio: CGFloat?  // Optional aspect ratio
+    let isInEmulator: Bool
 
     /// State for touch and button interactions
     @State private var touchLocation: CGPoint?
@@ -39,6 +41,14 @@ public struct DeltaSkinView: View {
 
     // Track the currently pressed button
     @State private var currentlyPressedButton: DeltaSkinButton?
+
+    /// Input handler for the skin
+    @EnvironmentObject private var inputHandler: DeltaSkinInputHandler
+
+    /// State for the loaded skin image
+    @State private var loadingError: Error?
+    @State private var screenGroups: [DeltaSkinScreenGroup]?
+    @State private var buttonMappings: [DeltaSkinButtonMapping]?
 
     private static func createButtonSounds() -> [String: PCMBuffer] {
         let soundConfigs = [
@@ -159,7 +169,8 @@ public struct DeltaSkinView: View {
         filters: Set<TestPatternEffect> = [],
         showDebugOverlay: Bool = false,
         showHitTestOverlay: Bool = false,
-        screenAspectRatio: CGFloat? = nil
+        screenAspectRatio: CGFloat? = nil,
+        isInEmulator: Bool = true
     ) {
         self.skin = skin
         self.traits = traits
@@ -167,6 +178,7 @@ public struct DeltaSkinView: View {
         self.showDebugOverlay = showDebugOverlay
         self.showHitTestOverlay = showHitTestOverlay
         self.screenAspectRatio = screenAspectRatio
+        self.isInEmulator = isInEmulator
     }
 
     internal struct SkinLayout {
@@ -343,87 +355,123 @@ public struct DeltaSkinView: View {
     public var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // Background
-                Color.black.ignoresSafeArea()
-
                 if let layout = calculateLayout(for: geometry) {
                     ZStack {
-                        // Screen layer (color bars) - should be behind everything
-                        DeltaSkinScreenLayer(
-                            skin: skin,
-                            traits: traits,
-                            filters: filters,
-                            size: geometry.size,
-                            screenAspectRatio: screenAspectRatio
-                        )
-                        .zIndex(0)
+                        // Base skin image
+                        if let skinImage = skinImage {
+                            Image(uiImage: skinImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: layout.width, height: layout.height)
+                        } else {
+                            // Loading placeholder
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.2))
+                                .frame(width: layout.width, height: layout.height)
+                        }
 
-                        // Skin and controls container
-                        ZStack {
-                            // Skin image layer
-                            if let skinImage {
-                                Image(uiImage: skinImage)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: layout.width, height: layout.height)
-                                    .clipped()
-                                    .zIndex(1)
-                            }
-
-                            // Debug/hit test overlays
-                            if showDebugOverlay {
-                                DeltaSkinDebugOverlay(
-                                    skin: skin,
-                                    traits: traits,
-                                    size: geometry.size
-                                )
-                                .zIndex(2)
-                            }
-                            if showHitTestOverlay {
-                                DeltaSkinHitTestOverlay(
-                                    skin: skin,
-                                    traits: traits,
-                                    size: geometry.size
-                                )
-                                .zIndex(2)
-                            }
-
-                            // Effects and thumbsticks inside the skin container
-                            ForEach(activeButtons, id: \.timestamp) { button in
-                                DeltaSkinButtonHighlight(
-                                    frame: button.frame,
-                                    mappingSize: button.mappingSize,
-                                    previewSize: geometry.size,
-                                    buttonId: button.buttonId
-                                )
-                                .zIndex(3)
-                            }
-
-                            // Thumbstick layer - should be on top
-                            ForEach(activeThumbsticks, id: \.frame) { thumbstick in
-                                DeltaSkinThumbstick(
-                                    frame: thumbstick.frame,
-                                    thumbstickImage: thumbstick.image,
-                                    thumbstickSize: thumbstick.size,
-                                    mappingSize: skin.mappingSize(for: traits) ?? .zero
-                                )
-                                .zIndex(4)
-                            }
-
-                            // Touch indicators - always on top
-                            if let location = touchLocation {
-                                DeltaSkinTouchIndicator(at: location)
-                                    .zIndex(5)
+                        // Screen groups
+                        if let groups = screenGroups {
+                            ForEach(groups, id: \.id) { group in
+                                screenGroup(group, in: geometry, layout: layout)
                             }
                         }
-                        .frame(width: layout.width, height: layout.height)
-                        .position(x: geometry.size.width / 2, y: geometry.size.height - layout.height / 2)
+
+                        // Button mappings
+                        if let mappings = buttonMappings {
+                            ForEach(mappings, id: \.id) { mapping in
+                                buttonMapping(mapping, in: geometry, layout: layout)
+                            }
+                        }
+
+                        // Debug/hit test overlays
+                        if showDebugOverlay {
+                            DeltaSkinDebugOverlay(
+                                skin: skin,
+                                traits: traits,
+                                size: geometry.size
+                            )
+                            .zIndex(2)
+                        }
+                        if showHitTestOverlay {
+                            DeltaSkinHitTestOverlay(
+                                skin: skin,
+                                traits: traits,
+                                size: geometry.size
+                            )
+                            .zIndex(2)
+                        }
+
+                        // Effects and thumbsticks inside the skin container
+                        ForEach(activeButtons, id: \.timestamp) { button in
+                            DeltaSkinButtonHighlight(
+                                frame: button.frame,
+                                mappingSize: button.mappingSize,
+                                previewSize: geometry.size,
+                                buttonId: button.buttonId
+                            )
+                            .zIndex(3)
+                        }
+
+                        // Thumbstick layer - should be on top
+                        ForEach(activeThumbsticks, id: \.frame) { thumbstick in
+                            DeltaSkinThumbstick(
+                                frame: thumbstick.frame,
+                                thumbstickImage: thumbstick.image,
+                                thumbstickSize: thumbstick.size,
+                                mappingSize: skin.mappingSize(for: traits) ?? .zero
+                            )
+                            .zIndex(4)
+                        }
+
+                        // Touch indicators - always on top
+                        if let location = touchLocation {
+                            DeltaSkinTouchIndicator(at: location)
+                                .zIndex(5)
+                        }
                     }
+                    .frame(width: layout.width, height: layout.height)
+                    .position(x: geometry.size.width / 2, y: geometry.size.height - layout.height / 2)
                     .environment(\.skinLayout, layout)
                     .onAppear {
                         DLOG("DeltaSkinView appeared")
                         logLayoutInfo(geometry: geometry, layout: layout)
+                        loadSkinResources()
                     }
+                }
+
+                // Only show test patterns if not in emulator mode
+                if !isInEmulator, let layout = calculateLayout(for: geometry) {
+                    // Test pattern container
+                    ZStack {
+                        // Only show in preview mode, not in emulator
+                        if let screens = skin.screens(for: traits) {
+                            ForEach(screens, id: \.id) { screen in
+                                if let outputFrame = screen.outputFrame {
+                                    let scaledFrame = CGRect(
+                                        x: outputFrame.minX * layout.width,
+                                        y: outputFrame.minY * layout.height,
+                                        width: outputFrame.width * layout.width,
+                                        height: outputFrame.height * layout.height
+                                    )
+
+                                    DeltaSkinTestPatternView(
+                                        frame: CGRect(
+                                            x: 0,
+                                            y: 0,
+                                            width: scaledFrame.width,
+                                            height: scaledFrame.height
+                                        ),
+                                        filters: filters
+                                    )
+                                    .frame(width: scaledFrame.width, height: scaledFrame.height)
+                                    .position(x: scaledFrame.midX, y: scaledFrame.midY)
+                                }
+                            }
+                        }
+                    }
+                    .frame(width: layout.width, height: layout.height)
+                    .position(x: geometry.size.width / 2, y: geometry.size.height - layout.height / 2)
                 }
             }
             .onChange(of: geometry.size) { newSize in
@@ -469,17 +517,26 @@ public struct DeltaSkinView: View {
             )
             #endif
         }
-        .task {
-            await loadSkin()
-            await loadThumbsticks()
-        }
     }
 
-    private func loadSkin() async {
-        do {
-            skinImage = try await skin.image(for: traits)
-        } catch {
-            ELOG("Failed to load skin image: \(error)")
+    private func loadSkinResources() {
+        Task {
+            // Load skin image
+            do {
+                skinImage = try await skin.image(for: traits)
+                print("Loaded skin image: \(skinImage?.size ?? .zero)")
+            } catch {
+                loadingError = error
+                print("Error loading skin image: \(error)")
+            }
+
+            // Load screen groups
+            screenGroups = skin.screenGroups(for: traits)
+            print("Loaded screen groups: \(screenGroups?.count ?? 0)")
+
+            // Load button mappings
+            buttonMappings = skin.buttonMappings(for: traits)
+            print("Loaded button mappings: \(buttonMappings?.count ?? 0)")
         }
     }
 
@@ -696,6 +753,251 @@ public struct DeltaSkinView: View {
                 activeThumbsticks.append((frame: button.frame, image: image, size: size))
             }
         }
+    }
+
+    // Add this helper function to format CGRect as a string
+    private func formatRect(_ rect: CGRect) -> String {
+        String(format: "(%.1f, %.1f, %.1f, %.1f)",
+               rect.origin.x, rect.origin.y,
+               rect.size.width, rect.size.height)
+    }
+
+    // Update the screenView method to use DeltaSkinTestPatternView instead of TestPatternView
+    @ViewBuilder
+    private func screenView(_ screen: DeltaSkinScreen, in geometry: GeometryProxy, layout: SkinLayout) -> some View {
+        guard let outputFrame = screen.outputFrame else {
+            return AnyView(EmptyView())
+        }
+
+        let scaledFrame = CGRect(
+            x: outputFrame.minX * layout.width,
+            y: outputFrame.minY * layout.height,
+            width: outputFrame.width * layout.width,
+            height: outputFrame.height * layout.height
+        )
+
+        return AnyView(
+            ZStack {
+                // Screen frame - make it transparent to show the game screen underneath
+                Rectangle()
+                    .fill(Color.clear)
+                    .frame(width: scaledFrame.width, height: scaledFrame.height)
+                    .overlay(
+                        // Show a border for debugging
+                        showDebugOverlay ?
+                        Rectangle()
+                            .stroke(Color.purple, lineWidth: 3)
+                            .overlay(
+                                VStack(alignment: .leading) {
+                                    Text(screen.id)
+                                        .font(.caption)
+                                    if let inputFrame = screen.inputFrame {
+                                        Text("In: \(formatRect(inputFrame))")
+                                            .font(.caption2)
+                                    }
+                                    Text("Out: \(formatRect(outputFrame))")
+                                        .font(.caption2)
+                                    Text("Place: \(screen.placement.rawValue)")
+                                        .font(.caption2)
+                                }
+                                .foregroundColor(.blue)
+                                .padding(4)
+                                .background(Color.white.opacity(0.8))
+                                .cornerRadius(4)
+                            )
+                        : nil
+                    )
+                    // Only show test pattern if not in emulator
+                    .overlay(
+                        !isInEmulator ?
+                        DeltaSkinTestPatternView(
+                            frame: CGRect(
+                                x: 0,
+                                y: 0,
+                                width: scaledFrame.width,
+                                height: scaledFrame.height
+                            ),
+                            filters: filters
+                        )
+                        : nil
+                    )
+                    // Add a tag to help identify this view for debugging
+                    .accessibility(identifier: "ScreenView-\(screen.id)")
+            }
+            .position(
+                x: scaledFrame.midX,
+                y: scaledFrame.midY
+            )
+        )
+    }
+
+    @ViewBuilder
+    private func screenGroup(_ group: DeltaSkinScreenGroup, in geometry: GeometryProxy, layout: SkinLayout) -> some View {
+        ZStack {
+            // Translucent background if needed
+            if group.translucent ?? false {
+                Rectangle()
+                    .fill(.black.opacity(0.5))
+            }
+
+            // Screens in this group
+            ForEach(group.screens, id: \.id) { screen in
+                screenView(screen, in: geometry, layout: layout)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func buttonMapping(_ mapping: DeltaSkinButtonMapping, in geometry: GeometryProxy, layout: SkinLayout) -> some View {
+        if let frame = mapping.frame {
+            let scaledFrame = CGRect(
+                x: frame.minX * layout.width,
+                y: frame.minY * layout.height,
+                width: frame.width * layout.width,
+                height: frame.height * layout.height
+            )
+
+            if mapping.id.lowercased() == "dpad" {
+                // Special handling for D-pad
+                dpadMapping(frame: scaledFrame)
+            } else if mapping.id.lowercased().contains("analog") || mapping.id.lowercased().contains("stick") {
+                // Analog stick
+                analogStickMapping(mapping: mapping, frame: scaledFrame)
+            } else {
+                // Regular button
+                Button(action: {
+                    // Do nothing here - we'll handle touch events in the gesture
+                }) {
+                    if showDebugOverlay {
+                        // Show debug overlay for the button
+                        Rectangle()
+                            .stroke(Color.red, lineWidth: 2)
+                            .background(Color.red.opacity(0.3))
+                            .overlay(
+                                Text(mapping.id)
+                                    .font(.caption)
+                                    .foregroundColor(.white)
+                                    .padding(4)
+                            )
+                    } else {
+                        // Invisible button area in normal mode
+                        Color.clear
+                    }
+                }
+                .frame(width: scaledFrame.width, height: scaledFrame.height)
+                .position(x: scaledFrame.midX, y: scaledFrame.midY)
+                .accessibility(identifier: "Button-\(mapping.id)")
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func dpadMapping(frame: CGRect) -> some View {
+        // Create a view for the D-pad with regions for each direction
+        ZStack {
+            if showDebugOverlay {
+                // Debug overlay for the entire D-pad
+                Rectangle()
+                    .stroke(Color.red, lineWidth: 2)
+                    .background(Color.red.opacity(0.1))
+                    .overlay(
+                        Text("D-Pad")
+                            .font(.caption)
+                            .foregroundColor(.white)
+                    )
+            } else {
+                Color.clear
+            }
+
+            // Up region
+            Rectangle()
+                .fill(showDebugOverlay ? Color.green.opacity(0.3) : Color.clear)
+                .frame(
+                    width: frame.width * 0.33,
+                    height: frame.height * 0.33
+                )
+                .position(
+                    x: frame.midX,
+                    y: frame.minY + frame.height * 0.16
+                )
+                .overlay(showDebugOverlay ? Text("Up").font(.caption2).foregroundColor(.white) : nil)
+
+            // Down region
+            Rectangle()
+                .fill(showDebugOverlay ? Color.green.opacity(0.3) : Color.clear)
+                .frame(
+                    width: frame.width * 0.33,
+                    height: frame.height * 0.33
+                )
+                .position(
+                    x: frame.midX,
+                    y: frame.maxY - frame.height * 0.16
+                )
+                .overlay(showDebugOverlay ? Text("Down").font(.caption2).foregroundColor(.white) : nil)
+
+            // Left region
+            Rectangle()
+                .fill(showDebugOverlay ? Color.green.opacity(0.3) : Color.clear)
+                .frame(
+                    width: frame.width * 0.33,
+                    height: frame.height * 0.33
+                )
+                .position(
+                    x: frame.minX + frame.width * 0.16,
+                    y: frame.midY
+                )
+                .overlay(showDebugOverlay ? Text("Left").font(.caption2).foregroundColor(.white) : nil)
+
+            // Right region
+            Rectangle()
+                .fill(showDebugOverlay ? Color.green.opacity(0.3) : Color.clear)
+                .frame(
+                    width: frame.width * 0.33,
+                    height: frame.height * 0.33
+                )
+                .position(
+                    x: frame.maxX - frame.width * 0.16,
+                    y: frame.midY
+                )
+                .overlay(showDebugOverlay ? Text("Right").font(.caption2).foregroundColor(.white) : nil)
+        }
+        .frame(width: frame.width, height: frame.height)
+        .position(x: frame.midX, y: frame.midY)
+    }
+
+    @ViewBuilder
+    private func analogStickMapping(mapping: DeltaSkinButtonMapping, frame: CGRect) -> some View {
+        // Determine if this is left or right analog stick
+        let isLeftStick = mapping.id.lowercased().contains("left")
+
+        // Create a draggable analog stick
+        ZStack {
+            if showDebugOverlay {
+                // Debug overlay
+                Circle()
+                    .stroke(Color.blue, lineWidth: 2)
+                    .background(Color.blue.opacity(0.1))
+            } else {
+                Color.clear
+            }
+
+            // Stick handle
+            Circle()
+                .fill(showDebugOverlay ? Color.white.opacity(0.5) : Color.clear)
+                .frame(
+                    width: frame.width * 0.5,
+                    height: frame.height * 0.5
+                )
+        }
+        .frame(width: frame.width, height: frame.height)
+        .position(x: frame.midX, y: frame.midY)
+        .overlay(
+            showDebugOverlay ?
+                Text(isLeftStick ? "Left Analog" : "Right Analog")
+                    .font(.caption2)
+                    .foregroundColor(.white)
+                : nil
+        )
     }
 }
 
