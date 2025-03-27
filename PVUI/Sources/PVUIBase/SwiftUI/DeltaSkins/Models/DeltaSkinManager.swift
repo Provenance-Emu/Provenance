@@ -13,7 +13,15 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     /// Queue for synchronizing skin operations
     private let queue = DispatchQueue(label: "com.provenance.deltaskin-manager")
 
-    private init() {}
+    public init() {
+        print("Initializing DeltaSkinManager")
+        loadSkins()
+    }
+
+    private func loadSkins() {
+        print("Loading skins...")
+        // Rest of the method...
+    }
 
     /// Get all available skins
     public func availableSkins() async throws -> [DeltaSkinProtocol] {
