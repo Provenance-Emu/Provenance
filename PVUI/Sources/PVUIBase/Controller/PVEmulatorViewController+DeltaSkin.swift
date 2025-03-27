@@ -11,7 +11,7 @@ extension PVEmulatorViewController {
     @objc public func setupDeltaSkinView() async throws {
         // Check if DeltaSkins are enabled
         let useDeltaSkins = true // UserDefaults.standard.bool(forKey: "useDeltaSkins")
-        print("Delta Skin setting: \(useDeltaSkins)")
+        ILOG("Delta Skin setting: \(useDeltaSkins)")
 
         if useDeltaSkins {
             // Create and add DeltaSkin view
@@ -20,11 +20,11 @@ extension PVEmulatorViewController {
             // Hide the standard controls
             hideStandardControls()
 
-            print("Delta Skin enabled and loaded")
-            print("Game: \(game.title)")
-            print("System: \(game.system?.name ?? "Unknown")")
+            DLOG("Delta Skin enabled and loaded")
+            DLOG("Game: \(game.title)")
+            DLOG("System: \(game.system?.name ?? "Unknown")")
             if let identifier = game.system?.systemIdentifier {
-                print("System Identifier: \(identifier)")
+                DLOG("System Identifier: \(identifier)")
             }
 
             // Set up rotation notification
@@ -34,35 +34,35 @@ extension PVEmulatorViewController {
             if let systemId = game.system?.systemIdentifier {
                 // Get all available skins synchronously
                 let allSkins = try! await DeltaSkinManager.shared.availableSkins()
-                print("Available skins (sync): \(allSkins.count) total")
+                DLOG("Available skins (sync): \(allSkins.count) total")
 
                 // Get skins for this system synchronously
                 let systemSkins = await DeltaSkinManager.shared.availableSkinsSync(for: systemId)
-                print("Skins for \(systemId) (sync): \(systemSkins.count)")
+                DLOG("Skins for \(systemId) (sync): \(systemSkins.count)")
 
                 // Print the system skins
                 for skin in systemSkins {
-                    print("  - \(skin.name) (for \(systemId))")
+                    DLOG("  - \(skin.name) (for \(systemId))")
                 }
 
                 // Start an async task to get more skin info
                 Task {
                     do {
                         let asyncSkins = try await DeltaSkinManager.shared.skins(for: systemId)
-                        print("Async skins for \(systemId): \(asyncSkins.count)")
+                        DLOG("Async skins for \(systemId): \(asyncSkins.count)")
 
                         if let skinToUse = try await DeltaSkinManager.shared.skinToUse(for: systemId) {
-                            print("Skin to use: \(skinToUse.identifier)")
+                            DLOG("Skin to use: \(skinToUse.identifier)")
                         } else {
-                            print("No skin to use for \(systemId)")
+                            DLOG("No skin to use for \(systemId)")
                         }
                     } catch {
-                        print("Error getting skins: \(error)")
+                        ELOG("Error getting skins: \(error)")
                     }
                 }
             }
         } else {
-            print("Delta Skin not enabled in settings")
+            ELOG("Delta Skin not enabled in settings")
         }
     }
 
@@ -74,13 +74,13 @@ extension PVEmulatorViewController {
                 hostingController.willMove(toParent: nil)
                 subview.removeFromSuperview()
                 hostingController.removeFromParent()
-                print("Removed existing skin view")
+                DLOG("Removed existing skin view")
             }
         }
 
         // Get the GPU view from the gpuViewController
         guard let gameScreenView = gpuViewController.view else {
-            print("GPU view not found")
+            ELOG("GPU view not found")
             return
         }
 
@@ -123,7 +123,7 @@ extension PVEmulatorViewController {
 
         // Add the skin view above the game screen
         view.insertSubview(skinView.view, aboveSubview: gameScreenView)
-        print("Added skin view above game screen")
+        ILOG("Added skin view above game screen")
 
         // Set the z-position of the skin view
         skinView.view.layer.zPosition = 20
@@ -146,7 +146,7 @@ extension PVEmulatorViewController {
 
         skinView.didMove(toParent: self)
 
-        print("Added skin view to view hierarchy")
+        DLOG("Added skin view to view hierarchy")
 
         // Add a colored border to the main view for debugging
         view.layer.borderWidth = 6.0
@@ -157,12 +157,12 @@ extension PVEmulatorViewController {
         gpuViewController.view.layoutIfNeeded()
 
         // Add debug logging
-        print("GPU View Controller: \(type(of: gpuViewController))")
-        print("GPU View: \(type(of: gpuViewController.view))")
-        print("GPU View Frame: \(gpuViewController.view.frame)")
-        print("GPU View Bounds: \(gpuViewController.view.bounds)")
-        print("Emulator Core Buffer Size: \(core.bufferSize)")
-        print("Emulator Core Screen Rect: \(core.screenRect)")
+        DLOG("GPU View Controller: \(type(of: gpuViewController))")
+        DLOG("GPU View: \(type(of: gpuViewController.view))")
+        DLOG("GPU View Frame: \(gpuViewController.view.frame)")
+        DLOG("GPU View Bounds: \(gpuViewController.view.bounds)")
+        DLOG("Emulator Core Buffer Size: \(core.bufferSize)")
+        DLOG("Emulator Core Screen Rect: \(core.screenRect)")
 
         // Force a redraw of the GPU view
         if let metalVC = gpuViewController as? PVMetalViewController {
@@ -236,8 +236,11 @@ extension PVEmulatorViewController {
             // Force a texture update
             do {
                 try metalVC.updateInputTexture()
+
+                // Dump texture info for debugging
+                metalVC.dumpTextureInfo()
             } catch {
-                print("Error updating texture: \(error)")
+                ELOG("Error updating texture: \(error)")
             }
 
             // Force a redraw
