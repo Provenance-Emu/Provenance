@@ -18,6 +18,28 @@ import PVLogging
 import PVSystems
 import Combine
 
+// Retrowave color extension
+extension Color {
+    static let retroPink = Color(red: 0.98, green: 0.2, blue: 0.6)
+    static let retroPurple = Color(red: 0.5, green: 0.0, blue: 0.8)
+    static let retroBlue = Color(red: 0.0, green: 0.8, blue: 0.95)
+    static let retroYellow = Color(red: 0.98, green: 0.84, blue: 0.2)
+    static let retroBlack = Color(red: 0.05, green: 0.05, blue: 0.1)
+    
+    // Gradient helpers
+    static let retroGradient = LinearGradient(
+        gradient: Gradient(colors: [.retroPurple, .retroPink]),
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+    
+    static let retroSunsetGradient = LinearGradient(
+        gradient: Gradient(colors: [.retroYellow, .retroPink, .retroPurple]),
+        startPoint: .top,
+        endPoint: .bottom
+    )
+}
+
 struct GameLibraryView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @EnvironmentObject private var appState: AppState
@@ -40,53 +62,218 @@ struct GameLibraryView: View {
     
     // State to track expanded sections during the current session
     @State private var expandedSections: Set<String> = []
+    
+    // Track search text
+    @State private var searchText = ""
+    @State private var isSearching = false
+    @State private var selectedViewMode: ViewMode = .grid
+    @State private var showFilterSheet = false
+    @State private var selectedSortOption: SortOption = .name
+    
+    // Enum for view modes
+    enum ViewMode: String, CaseIterable, Identifiable {
+        case grid, list
+        var id: Self { self }
         
+        var iconName: String {
+            switch self {
+            case .grid: return "square.grid.2x2"
+            case .list: return "list.bullet"
+            }
+        }
+    }
+    
+    // Enum for sort options
+    enum SortOption: String, CaseIterable, Identifiable {
+        case name, recentlyPlayed, recentlyAdded
+        var id: Self { self }
+        
+        var displayName: String {
+            switch self {
+            case .name: return "Name"
+            case .recentlyPlayed: return "Recently Played"
+            case .recentlyAdded: return "Recently Added"
+            }
+        }
+    }
+    
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
+            ZStack {
+                themeManager.currentPalette.gameLibraryBackground.swiftUIColor.ignoresSafeArea()
+                
                 if allGames.isEmpty {
                     emptyLibraryView()
                 } else {
-                    // Games organized by system
-                    ScrollView {
-                        LazyVStack(spacing: 16, pinnedViews: [.sectionHeaders]) {
-                            // All Games section that's always visible
-                            Section {
-                                systemGamesGrid(games: Array(allGames))
-                            } header: {
-                                sectionHeader(title: "All Games", count: allGames.count, systemId: "all")
+                    VStack(spacing: 0) {
+                        // Custom search bar
+                        searchBar
+                            .padding(.horizontal)
+                            .padding(.top, 8)
+                        
+                        // View mode and filter controls
+                        HStack {
+                            Text("\(filteredGames.count) Games")
+                                .font(.subheadline)
+                                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.7))
+                            
+                            Spacer()
+                            
+                            // Sort button
+                            Menu {
+                                ForEach(SortOption.allCases) { option in
+                                    Button(action: {
+                                        selectedSortOption = option
+                                    }) {
+                                        HStack {
+                                            Text(option.displayName)
+                                            if selectedSortOption == option {
+                                                Image(systemName: "checkmark")
+                                            }
+                                        }
+                                    }
+                                }
+                            } label: {
+                                Label("Sort", systemImage: "arrow.up.arrow.down")
+                                    .font(.subheadline)
+                                    .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                             }
-                            .padding(.bottom, 8)
                             
-                            // Divider between All Games and systems
-                            Divider()
-                                .padding(.horizontal)
-                            
-                            // Individual system sections
-                            ForEach(allSystems, id: \.self) { system in
-                                let systemGames = gamesForSystem(system)
-                                if !systemGames.isEmpty {
+                            // View mode toggle
+                            Menu {
+                                ForEach(ViewMode.allCases) { mode in
+                                    Button(action: {
+                                        withAnimation {
+                                            selectedViewMode = mode
+                                        }
+                                    }) {
+                                        HStack {
+                                            Text(mode.rawValue.capitalized)
+                                            if selectedViewMode == mode {
+                                                Image(systemName: "checkmark")
+                                            }
+                                        }
+                                    }
+                                }
+                            } label: {
+                                Image(systemName: selectedViewMode.iconName)
+                                    .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                            }
+                        }
+                        .padding(.horizontal)
+                        .padding(.vertical, 8)
+                        
+                        Divider()
+                            .padding(.horizontal)
+                        
+                        // Games organized by system
+                        ScrollView {
+                            LazyVStack(spacing: 16, pinnedViews: [.sectionHeaders]) {
+                                // All Games section that's always visible
+                                if searchText.isEmpty {
                                     Section {
-                                        if expandedSections.contains(system.systemIdentifier.rawValue) {
-                                            systemGamesGrid(games: systemGames)
+                                        if selectedViewMode == .grid {
+                                            systemGamesGrid(games: sortedGames(Array(allGames)))
+                                        } else {
+                                            systemGamesList(games: sortedGames(Array(allGames)))
                                         }
                                     } header: {
-                                        sectionHeader(
-                                            title: system.name,
-                                            subtitle: system.shortName,
-                                            count: systemGames.count,
-                                            systemId: system.systemIdentifier.rawValue
-                                        )
+                                        sectionHeader(title: "All Games", count: allGames.count, systemId: "all")
+                                    }
+                                    .padding(.bottom, 8)
+                                    
+                                    // Divider between All Games and systems
+                                    Divider()
+                                        .padding(.horizontal)
+                                    
+                                    // Individual system sections
+                                    ForEach(allSystems, id: \.self) { system in
+                                        let systemGames = gamesForSystem(system)
+                                        if !systemGames.isEmpty {
+                                            Section {
+                                                if expandedSections.contains(system.systemIdentifier.rawValue) {
+                                                    if selectedViewMode == .grid {
+                                                        systemGamesGrid(games: sortedGames(systemGames))
+                                                    } else {
+                                                        systemGamesList(games: sortedGames(systemGames))
+                                                    }
+                                                }
+                                            } header: {
+                                                sectionHeader(
+                                                    title: system.name,
+                                                    subtitle: system.shortName,
+                                                    count: systemGames.count,
+                                                    systemId: system.systemIdentifier.rawValue
+                                                )
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    // Search results
+                                    if filteredGames.isEmpty {
+                                        VStack(spacing: 20) {
+                                            Image(systemName: "magnifyingglass")
+                                                .font(.system(size: 40))
+                                                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.5))
+                                            
+                                            Text("No games found matching '\(searchText)'")
+                                                .font(.headline)
+                                                .multilineTextAlignment(.center)
+                                                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                                        }
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.top, 60)
+                                    } else {
+                                        if selectedViewMode == .grid {
+                                            systemGamesGrid(games: filteredGames)
+                                        } else {
+                                            systemGamesList(games: filteredGames)
+                                        }
                                     }
                                 }
                             }
+                            .padding()
                         }
-                        .padding()
                     }
                 }
             }
-            .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
-            .navigationTitle("Game Library")
+            .background(
+                ZStack {
+                    // Base dark background
+                    Color.retroBlack.ignoresSafeArea()
+                    
+                    // Grid lines (horizontal)
+                    VStack(spacing: 20) {
+                        ForEach(0..<20) { _ in
+                            Rectangle()
+                                .fill(Color.retroBlue.opacity(0.2))
+                                .frame(height: 1)
+                        }
+                    }
+                    
+                    // Grid lines (vertical)
+                    HStack(spacing: 20) {
+                        ForEach(0..<20) { _ in
+                            Rectangle()
+                                .fill(Color.retroBlue.opacity(0.2))
+                                .frame(width: 1)
+                        }
+                    }
+                    
+                    // Sunset gradient at bottom
+                    VStack {
+                        Spacer()
+                        Rectangle()
+                            .fill(Color.retroSunsetGradient)
+                            .frame(height: 150)
+                            .offset(y: 70)
+                            .blur(radius: 20)
+                    }
+                }
+            )
+            .navigationTitle("GAME LIBRARY")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
@@ -215,6 +402,22 @@ struct GameLibraryView: View {
 
 // MARK: - GameContextMenuDelegate
 
+extension GameLibraryView {
+    /// Sort games based on the selected sort option
+    private func sortedGames(_ games: [PVGame]) -> [PVGame] {
+        switch selectedSortOption {
+        case .name:
+            return games.sorted(by: { $0.title < $1.title })
+        case .recentlyPlayed:
+            // This would ideally use a lastPlayed date property
+            // For now, just return alphabetically sorted
+            return games.sorted(by: { $0.title < $1.title })
+        case .recentlyAdded:
+            return games.sorted(by: { $0.importDate > $1.importDate })
+        }
+    }
+}
+
 extension GameLibraryView: GameContextMenuDelegate {
     func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame) {
         ILOG("GameLibraryView: Rename requested for game: \(game.title)")
@@ -256,6 +459,53 @@ extension GameLibraryView: GameContextMenuDelegate {
 // MARK: - System Section Helpers
 
 extension GameLibraryView {
+    // MARK: - Computed Properties
+    
+    /// Filtered games based on search text
+    private var filteredGames: [PVGame] {
+        guard !searchText.isEmpty else { return Array(allGames) }
+        
+        return allGames.filter { game in
+            game.title.lowercased().contains(searchText.lowercased())
+        }
+    }
+    
+    /// Custom search bar view
+    private var searchBar: some View {
+        HStack {
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(isSearching ? themeManager.currentPalette.defaultTintColor.swiftUIColor : .gray)
+                    .animation(.easeInOut(duration: 0.2), value: isSearching)
+                
+                TextField("Search Games", text: $searchText, onEditingChanged: { editing in
+                    withAnimation {
+                        isSearching = editing
+                    }
+                })
+                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                
+                if !searchText.isEmpty {
+                    Button(action: {
+                        searchText = ""
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.gray)
+                    }
+                }
+            }
+            .padding(10)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.retroBlack.opacity(0.7))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .strokeBorder(Color.retroPink, lineWidth: 1.5)
+                    )
+            )
+        }
+    }
+    
     /// Get games for a specific system
     private func gamesForSystem(_ system: PVSystem) -> [PVGame] {
         return Array(system.games.sorted(by: { $0.title < $1.title }))
@@ -314,33 +564,56 @@ extension GameLibraryView {
                         .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                     
                     if let subtitle = subtitle, !subtitle.isEmpty {
-                        Text(subtitle)
-                            .font(.subheadline)
-                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.7))
+                        Text(subtitle.uppercased())
+                            .font(.system(.subheadline, design: .monospaced))
+                            .foregroundColor(Color.retroBlue)
+                            .shadow(color: Color.retroPink.opacity(0.5), radius: 1, x: 1, y: 1)
                     }
                 }
                 
                 Spacer()
                 
                 Text("\(count)")
-                    .font(.subheadline)
+                    .font(.caption)
+                    .fontWeight(.medium)
                     .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                     .padding(.horizontal, 8)
-                    .padding(.vertical, 2)
-                    .background(themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.2))
-                    .cornerRadius(8)
+                    .padding(.vertical, 4)
+                    .background(Color.retroPurple.opacity(0.3))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(Color.retroBlue, lineWidth: 1)
+                    )
+                    .cornerRadius(12)
                 
                 if systemId != "all" {
                     Image(systemName: expandedSections.contains(systemId) ? "chevron.up" : "chevron.down")
                         .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                         .font(.system(size: 14, weight: .bold))
+                        .frame(width: 24, height: 24)
                         .animation(.easeInOut(duration: 0.2), value: expandedSections.contains(systemId))
                 }
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, 12)
             .padding(.horizontal, 16)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.retroBlack.opacity(0.7))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                ),
+                                lineWidth: 1.5
+                            )
+                    )
+                    .shadow(color: Color.retroPink.opacity(0.3), radius: 5, x: 0, y: 0)
+            )
+            .contentShape(Rectangle())
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -359,6 +632,73 @@ extension GameLibraryView {
                     // Launch game action
                     launchGame(game)
                 }
+                .contextMenu {
+                    GameContextMenu(
+                        game: game,
+                        rootDelegate: nil,
+                        contextMenuDelegate: self
+                    )
+                }
+                .transition(.scale(scale: 0.95).combined(with: .opacity))
+            }
+        }
+    }
+    
+    /// Creates a list of games for a system
+    private func systemGamesList(games: [PVGame]) -> some View {
+        LazyVStack(spacing: 8) {
+            ForEach(games, id: \.self) { game in
+                HStack(spacing: 12) {
+                    // Game cover image
+                    GameItemView(
+                        game: game,
+                        constrainHeight: true,
+                        viewType: .row,
+                        sectionContext: .allGames,
+                        isFocused: .constant(false)
+                    ) {
+                        // Empty action as we'll handle it in the parent HStack
+                    }
+                    .frame(width: 60, height: 60)
+                    
+                    // Game details
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(game.title.uppercased())
+                            .font(.system(.headline, design: .monospaced))
+                            .foregroundColor(Color.retroYellow)
+                            .shadow(color: Color.retroPink.opacity(0.5), radius: 1, x: 1, y: 1)
+                            .lineLimit(1)
+                        
+                        if let system = game.system {
+                            Text(system.shortName.uppercased())
+                                .font(.system(.caption, design: .monospaced))
+                                .foregroundColor(Color.retroBlue)
+                                .shadow(color: Color.retroPink.opacity(0.5), radius: 1, x: 0, y: 0)
+                        }
+                    }
+                    
+                    Spacer()
+                    
+                    // Play button
+                    Button(action: {
+                        launchGame(game)
+                    }) {
+                        Image(systemName: "play.fill")
+                            .foregroundColor(.white)
+                            .frame(width: 36, height: 36)
+                            .background(
+                                Circle()
+                                    .fill(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                            )
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+                .padding(12)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color(.systemBackground))
+                        .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
+                )
                 .contextMenu {
                     GameContextMenu(
                         game: game,
