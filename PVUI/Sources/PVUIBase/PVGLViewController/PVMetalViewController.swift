@@ -192,6 +192,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     // Add this property to the class
     private var customPipeline: MTLRenderPipelineState?
 
+    // Track recovery attempts to prevent infinite loops
+    private var recoveryAttempts: Int = 0
+    private let maxRecoveryAttempts: Int = 3
+    private var lastRecoveryTime: TimeInterval = 0
+
     // MARK: Methods
 
     required init?(coder: NSCoder) {
@@ -255,15 +260,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         coordinator.animate(alongsideTransition: { _ in
             self.view.setNeedsLayout()
         }, completion: { _ in
-            DLOG("Rotation completed, forcing refresh")
-
-            // Force a complete refresh
-            self.forceRefreshAfterRotation()
-
-            // Schedule another refresh after a short delay to ensure everything is updated
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.forceRefreshAfterRotation()
-            }
+            DLOG("Rotation completed")
         })
     }
 
@@ -288,6 +285,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         if device == nil {
             ELOG("Failed to create Metal device")
+            // No recovery here since we're in initialization
             return
         }
 
@@ -296,6 +294,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         if commandQueue == nil {
             ELOG("Failed to create command queue")
+            // No recovery here since we're in initialization
             return
         }
 
@@ -320,21 +319,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             self,
             selector: #selector(emulatorCoreDidInitialize),
             name: Notification.Name("EmulatorCoreDidInitialize"),
-            object: nil
-        )
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(refreshTexture),
-            name: Notification.Name("RefreshGPUView"),
-            object: nil
-        )
-
-        // Add observer for orientation changes
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleOrientationChange),
-            name: UIDevice.orientationDidChangeNotification,
             object: nil
         )
 
@@ -379,6 +363,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 draw(in: mtlView)
             } catch {
                 ELOG("Error creating default texture: \(error)")
+                // Attempt recovery
+                recoverFromGPUError()
             }
         }
     }
@@ -1246,11 +1232,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             } catch {
                 ELOG("Error creating texture in draw: \(error)")
 
-                // Schedule a retry after a delay
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                    self?.draw(in: view)
-                }
-
+                // Use our recovery method instead of just retrying
+                recoverFromGPUError()
                 return
             }
         }
@@ -1516,6 +1499,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     func didRenderFrameOnAlternateThread() {
         guard backingMTLTexture != nil else {
             ELOG("backingMTLTexture was nil")
+            recoverFromGPUError()
             return
         }
         glFlush()
@@ -1526,11 +1510,15 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         guard let commandBuffer = commandQueue?.makeCommandBuffer() else {
             ELOG("commandBuffer was nil")
+            emulatorCore?.frontBufferLock.unlock()
+            recoverFromGPUError()
             return
         }
 
         guard let encoder = commandBuffer.makeBlitCommandEncoder() else {
             ELOG("encoder was nil")
+            emulatorCore?.frontBufferLock.unlock()
+            recoverFromGPUError()
             return
         }
 
@@ -1842,6 +1830,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
               let drawable = view.currentDrawable,
               let inputTexture = inputTexture else {
             ELOG("Missing required resources for direct rendering")
+            // Call the recovery method when resources are missing
+            recoverFromGPUError()
             return
         }
 
@@ -1850,9 +1840,10 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             WLOG("No valid pipeline available in directRender, trying to set up shaders directly")
             createBasicShaders()
 
-            // If we still don't have a pipeline, return
+            // If we still don't have a pipeline, attempt recovery
             if customPipeline == nil && blitPipeline == nil {
                 ELOG("Failed to create a pipeline, cannot render")
+                recoverFromGPUError()
                 return
             }
         }
@@ -1860,6 +1851,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         // Create a command buffer
         guard let commandBuffer = commandQueue.makeCommandBuffer() else {
             ELOG("Failed to create command buffer")
+            recoverFromGPUError()
             return
         }
 
@@ -1937,6 +1929,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
               let device = device,
               let inputTexture = inputTexture else {
             DLOG("Missing required resources for texture update")
+            // Don't call recovery here as this is often a normal initial state
             return false
         }
 
@@ -1961,6 +1954,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             DLOG("Creating new upload buffer of size \(totalBytes)")
             guard let newBuffer = device.makeBuffer(length: totalBytes, options: .storageModeShared) else {
                 DLOG("Failed to create upload buffer")
+                recoverFromGPUError()
                 return false
             }
             uploadBuffer = newBuffer
@@ -2186,12 +2180,18 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                     DLOG("Successfully created sampler states")
                 } catch {
                     ELOG("Failed to create pipeline state: \(error)")
+                    // Recovery might be needed here
+                    recoverFromGPUError()
                 }
             } catch {
                 ELOG("Failed to create fragment shader library: \(error)")
+                // Recovery might be needed here
+                recoverFromGPUError()
             }
         } catch {
             ELOG("Failed to create vertex shader library: \(error)")
+            // Recovery might be needed here
+            recoverFromGPUError()
         }
     }
 
@@ -2249,6 +2249,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             guard let vertexFunction = library.makeFunction(name: "vertexShader"),
                   let fragmentFunction = library.makeFunction(name: "fragmentShader") else {
                 ELOG("Failed to get shader functions")
+                recoverFromGPUError()
                 return
             }
 
@@ -2264,66 +2265,40 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 DLOG("Successfully created custom pipeline state with default library")
             } catch {
                 ELOG("Failed to create pipeline state with default library: \(error)")
+                recoverFromGPUError()
             }
         } catch {
             ELOG("Failed to create shader library with default library: \(error)")
+            recoverFromGPUError()
         }
     }
 
     @objc private func handleOrientationChange() {
-//        DLOG("Orientation changed, updating view and texture")
-//
-//        // Reset cached values to force recalculation
-//        lastScreenBounds = .zero
-//        lastBufferSize = .zero
-//        lastNativeScaleEnabled = false
-//
-//        // Force a layout update
-//        view.setNeedsLayout()
-//        view.layoutIfNeeded()
-//
-//        // Update the texture
-//        do {
-//            // Force recreation of the texture
-//            inputTexture = nil
-//            try updateInputTexture()
-//
-//            // Force a redraw
-//            draw(in: mtlView)
-//
-//            // Post a notification to refresh the GPU view
-//            NotificationCenter.default.post(name: Notification.Name("RefreshGPUView"), object: nil)
-//        } catch {
-//            ELOG("Error updating texture after orientation change: \(error)")
-//        }
-    }
+        DLOG("Orientation changed, updating view and texture")
 
-    private func forceRefreshAfterRotation() {
-//        DLOG("Forcing refresh after rotation")
-//
-//        // Reset cached values
-//        lastScreenBounds = .zero
-//        lastBufferSize = .zero
-//        lastNativeScaleEnabled = false
-//
-//        // Force layout update
-//        view.setNeedsLayout()
-//        view.layoutIfNeeded()
-//
-//        // Force texture update
-//        inputTexture = nil
-//
-//        do {
-//            try updateInputTexture()
-//
-//            // Force a redraw
-//            draw(in: mtlView)
-//
-//            // Post a notification to refresh the GPU view
-//            NotificationCenter.default.post(name: Notification.Name("RefreshGPUView"), object: nil)
-//        } catch {
-//            ELOG("Error updating texture after forced refresh: \(error)")
-//        }
+        // Reset cached values to force recalculation
+        lastScreenBounds = .zero
+        lastBufferSize = .zero
+        lastNativeScaleEnabled = false
+
+        // Force a layout update
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+
+        // Update the texture
+        do {
+            // Force recreation of the texture
+            inputTexture = nil
+            try updateInputTexture()
+
+            // Force a redraw
+            draw(in: mtlView)
+
+            // Post a notification to refresh the GPU view
+//    /        NotificationCenter.default.post(name: Notification.Name("RefreshGPUView"), object: nil)
+        } catch {
+            ELOG("Error updating texture after orientation change: \(error)")
+        }
     }
 
     // Add this method to check and refresh the texture if needed
@@ -2349,7 +2324,26 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     // Add this method to recover from GPU errors
     private func recoverFromGPUError() {
-        ELOG("Attempting to recover from GPU error")
+        let currentTime = Date().timeIntervalSince1970
+        let timeSinceLastRecovery = currentTime - lastRecoveryTime
+
+        // If we've tried recovery recently, increment counter
+        if timeSinceLastRecovery < 5.0 {
+            recoveryAttempts += 1
+        } else {
+            // Reset counter if it's been a while since last recovery attempt
+            recoveryAttempts = 1
+        }
+
+        lastRecoveryTime = currentTime
+
+        ELOG("Attempting to recover from GPU error (attempt \(recoveryAttempts) of \(maxRecoveryAttempts))")
+
+        // If we've tried too many times in succession, just log and return
+        if recoveryAttempts > maxRecoveryAttempts {
+            ELOG("Too many recovery attempts (\(recoveryAttempts)). Giving up until next render cycle.")
+            return
+        }
 
         // Reset the command queue
         commandQueue = device?.makeCommandQueue()
@@ -2357,13 +2351,39 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         // Reset the texture
         inputTexture = nil
 
-        // Wait a bit before trying to recreate everything
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+        // Reset the pipelines
+        blitPipeline = nil
+        customPipeline = nil
+        effectFilterPipeline = nil
+
+        // Reset samplers
+        pointSampler = nil
+        linearSampler = nil
+
+        // Wait a bit before trying to recreate everything, with increasing delay for repeated attempts
+        let delay = 0.5 * Double(recoveryAttempts)
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
             guard let self = self else { return }
 
             do {
                 // Recreate the texture
                 try self.updateInputTexture()
+
+                // Recreate the shaders
+                self.createBasicShaders()
+
+                if self.customPipeline == nil && self.blitPipeline == nil {
+                    self.createBasicShadersWithDefaultLibrary()
+                }
+
+                // Create samplers if needed
+                if self.pointSampler == nil || self.linearSampler == nil {
+                    do {
+                        try self.setupTexture()
+                    } catch {
+                        ELOG("Failed to recreate samplers during recovery: \(error)")
+                    }
+                }
 
                 // Force a redraw after another delay
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -2371,10 +2391,29 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                         self.draw(in: mtlView)
                     }
                 }
+
+                // Log success
+                ILOG("Successfully recovered from GPU error on attempt \(self.recoveryAttempts)")
             } catch {
                 ELOG("Failed to recover from GPU error: \(error)")
+
+                // Try one more time with a longer delay if we haven't reached max attempts
+                if self.recoveryAttempts < self.maxRecoveryAttempts {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        self.recoverFromGPUError()
+                    }
+                }
             }
         }
+    }
+
+    // Public method to allow recovery to be triggered from outside
+    func triggerGPUErrorRecovery() {
+        ILOG("Manual GPU error recovery triggered")
+        // Reset recovery attempts to ensure we start fresh
+        recoveryAttempts = 0
+        lastRecoveryTime = 0
+        recoverFromGPUError()
     }
 }
 
