@@ -18,28 +18,6 @@ import PVLogging
 import PVSystems
 import Combine
 
-// Retrowave color extension
-extension Color {
-    static let retroPink = Color(red: 0.98, green: 0.2, blue: 0.6)
-    static let retroPurple = Color(red: 0.5, green: 0.0, blue: 0.8)
-    static let retroBlue = Color(red: 0.0, green: 0.8, blue: 0.95)
-    static let retroYellow = Color(red: 0.98, green: 0.84, blue: 0.2)
-    static let retroBlack = Color(red: 0.05, green: 0.05, blue: 0.1)
-    
-    // Gradient helpers
-    static let retroGradient = LinearGradient(
-        gradient: Gradient(colors: [.retroPurple, .retroPink]),
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
-    
-    static let retroSunsetGradient = LinearGradient(
-        gradient: Gradient(colors: [.retroYellow, .retroPink, .retroPurple]),
-        startPoint: .top,
-        endPoint: .bottom
-    )
-}
-
 struct GameLibraryView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @EnvironmentObject private var appState: AppState
