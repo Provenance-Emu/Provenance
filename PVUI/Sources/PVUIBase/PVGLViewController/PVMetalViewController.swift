@@ -1958,7 +1958,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         commandBuffer.commit()
         commandBuffer.waitUntilCompleted()  // Wait for the copy to complete
 
-        DLOG("Updated texture from core: \(bufferSize.width)x\(bufferSize.height), bytes per pixel: \(bytesPerPixel)")
+//        DLOG("Updated texture from core: \(bufferSize.width)x\(bufferSize.height), bytes per pixel: \(bytesPerPixel)")
         return true
     }
 
