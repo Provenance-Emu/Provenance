@@ -61,7 +61,7 @@ struct DebugView: View {
     @State private var showAIEnhancements = false
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 Section("Database") {
                     Button("View Database Stats") {
@@ -347,7 +347,7 @@ struct DatabaseStatsView: View {
     @State private var saveStateCount = 0
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 Section("Counts") {
                     StatRow(title: "Games", value: "\(gameCount)")

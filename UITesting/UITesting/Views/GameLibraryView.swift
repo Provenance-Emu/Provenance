@@ -28,7 +28,7 @@ struct GameLibraryView: View {
     ) var allGames
         
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 0) {
                 if allGames.isEmpty {
                     emptyLibraryView()
