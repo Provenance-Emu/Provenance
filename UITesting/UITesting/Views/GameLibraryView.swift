@@ -15,6 +15,8 @@ import RealmSwift
 import PVMediaCache
 import UniformTypeIdentifiers
 import PVLogging
+import PVSystems
+import Combine
 
 struct GameLibraryView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -26,6 +28,18 @@ struct GameLibraryView: View {
         PVGame.self,
         sortDescriptor: SortDescriptor(keyPath: "title", ascending: true)
     ) var allGames
+    
+    // Observed results for all systems in the database
+    @ObservedResults(
+        PVSystem.self,
+        sortDescriptor: SortDescriptor(keyPath: "name", ascending: true)
+    ) var allSystems
+    
+    // Track expanded sections with AppStorage to persist between app runs
+    @AppStorage("GameLibraryExpandedSections") private var expandedSectionsData: Data = Data()
+    
+    // State to track expanded sections during the current session
+    @State private var expandedSections: Set<String> = []
         
     var body: some View {
         NavigationStack {
@@ -33,26 +47,37 @@ struct GameLibraryView: View {
                 if allGames.isEmpty {
                     emptyLibraryView()
                 } else {
-                    // Games grid
+                    // Games organized by system
                     ScrollView {
-                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 200), spacing: 16)], spacing: 16) {
-                            ForEach(allGames, id: \.self) { game in
-                                GameItemView(
-                                    game: game,
-                                    constrainHeight: false,
-                                    viewType: .cell,
-                                    sectionContext: .allGames,
-                                    isFocused: .constant(false)
-                                ) {
-                                    // Launch game action
-                                    launchGame(game)
-                                }
-                                .contextMenu {
-                                    GameContextMenu(
-                                        game: game,
-                                        rootDelegate: nil,
-                                        contextMenuDelegate: self
-                                    )
+                        LazyVStack(spacing: 16, pinnedViews: [.sectionHeaders]) {
+                            // All Games section that's always visible
+                            Section {
+                                systemGamesGrid(games: Array(allGames))
+                            } header: {
+                                sectionHeader(title: "All Games", count: allGames.count, systemId: "all")
+                            }
+                            .padding(.bottom, 8)
+                            
+                            // Divider between All Games and systems
+                            Divider()
+                                .padding(.horizontal)
+                            
+                            // Individual system sections
+                            ForEach(allSystems, id: \.self) { system in
+                                let systemGames = gamesForSystem(system)
+                                if !systemGames.isEmpty {
+                                    Section {
+                                        if expandedSections.contains(system.systemIdentifier.rawValue) {
+                                            systemGamesGrid(games: systemGames)
+                                        }
+                                    } header: {
+                                        sectionHeader(
+                                            title: system.name,
+                                            subtitle: system.shortName,
+                                            count: systemGames.count,
+                                            systemId: system.systemIdentifier.rawValue
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -78,6 +103,9 @@ struct GameLibraryView: View {
                 Button("OK", role: .cancel) {}
             } message: { message in
                 Text(message)
+            }
+            .onAppear {
+                loadExpandedSections()
             }
         }
     }
@@ -222,6 +250,124 @@ extension GameLibraryView: GameContextMenuDelegate {
     
     func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
         ILOG("GameLibraryView: Disc selection requested for game: \(game.title)")
+    }
+}
+
+// MARK: - System Section Helpers
+
+extension GameLibraryView {
+    /// Get games for a specific system
+    private func gamesForSystem(_ system: PVSystem) -> [PVGame] {
+        return Array(system.games.sorted(by: { $0.title < $1.title }))
+    }
+    
+    /// Load expanded sections from AppStorage
+    private func loadExpandedSections() {
+        // If no data is stored yet, expand all sections by default
+        if expandedSectionsData.isEmpty {
+            expandedSections = Set(allSystems.map { $0.systemIdentifier.rawValue })
+            return
+        }
+        
+        // Otherwise, load from AppStorage
+        if let decoded = try? JSONDecoder().decode(Set<String>.self, from: expandedSectionsData) {
+            expandedSections = decoded
+        } else {
+            // Fallback to all expanded if there's an error
+            expandedSections = Set(allSystems.map { $0.systemIdentifier.rawValue })
+        }
+    }
+    
+    /// Toggle the expanded state of a section
+    private func toggleSection(_ systemId: String) {
+        // Don't allow collapsing the All Games section
+        if systemId == "all" { return }
+        
+        withAnimation(.easeInOut(duration: 0.2)) {
+            if expandedSections.contains(systemId) {
+                expandedSections.remove(systemId)
+            } else {
+                expandedSections.insert(systemId)
+            }
+            
+            // Save to AppStorage
+            saveExpandedSections()
+        }
+    }
+    
+    /// Save expanded sections to AppStorage
+    private func saveExpandedSections() {
+        if let encoded = try? JSONEncoder().encode(expandedSections) {
+            expandedSectionsData = encoded
+        }
+    }
+    
+    /// Creates a collapsible section header for a system
+    private func sectionHeader(title: String, subtitle: String? = nil, count: Int, systemId: String) -> some View {
+        Button(action: {
+            toggleSection(systemId)
+        }) {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.headline)
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    
+                    if let subtitle = subtitle, !subtitle.isEmpty {
+                        Text(subtitle)
+                            .font(.subheadline)
+                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.7))
+                    }
+                }
+                
+                Spacer()
+                
+                Text("\(count)")
+                    .font(.subheadline)
+                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .background(themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.2))
+                    .cornerRadius(8)
+                
+                if systemId != "all" {
+                    Image(systemName: expandedSections.contains(systemId) ? "chevron.up" : "chevron.down")
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .font(.system(size: 14, weight: .bold))
+                        .animation(.easeInOut(duration: 0.2), value: expandedSections.contains(systemId))
+                }
+            }
+            .padding(.vertical, 8)
+            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+    
+    /// Creates a grid of games for a system
+    private func systemGamesGrid(games: [PVGame]) -> some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 200), spacing: 16)], spacing: 16) {
+            ForEach(games, id: \.self) { game in
+                GameItemView(
+                    game: game,
+                    constrainHeight: false,
+                    viewType: .cell,
+                    sectionContext: .allGames,
+                    isFocused: .constant(false)
+                ) {
+                    // Launch game action
+                    launchGame(game)
+                }
+                .contextMenu {
+                    GameContextMenu(
+                        game: game,
+                        rootDelegate: nil,
+                        contextMenuDelegate: self
+                    )
+                }
+            }
+        }
     }
 }
 

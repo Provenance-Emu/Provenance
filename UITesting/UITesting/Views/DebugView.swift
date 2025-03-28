@@ -101,36 +101,37 @@ struct DebugView: View {
 
                 Section("UI Testing") {
                     NavigationLink("Theme Preview", destination: ThemePreviewView())
-
-                    Button("Show Save States UI") {
-                        showSaveStatesMock = true
+                    Grid {
+                        Button("Show Save States UI") {
+                            showSaveStatesMock = true
+                        }
+                        .buttonStyle(GradientButtonStyle(colors: [.blue, .purple]))
+                        
+                        Button("Show Game Info UI") {
+                            showGameMoreInfo = true
+                        }
+                        .buttonStyle(GradientButtonStyle(colors: [.green, .blue]))
+                        
+                        Button("Show Game Info (Realm)") {
+                            showGameMoreInfoRealm = true
+                        }
+                        .buttonStyle(GradientButtonStyle(colors: [.orange, .red]))
+                        
+                        Button("Show Artwork Search") {
+                            showArtworkSearch = true
+                        }
+                        .buttonStyle(GradientButtonStyle(colors: [.pink, .purple]))
+                        
+                        Button("Show Free ROMs") {
+                            showFreeROMs = true
+                        }
+                        .buttonStyle(GradientButtonStyle(colors: [.yellow, .orange]))
+                        
+                        Button("Show Delta Skin List") {
+                            showDeltaSkinList = true
+                        }
+                        .buttonStyle(GradientButtonStyle(colors: [.mint, .teal]))
                     }
-                    .buttonStyle(GradientButtonStyle(colors: [.blue, .purple]))
-
-                    Button("Show Game Info UI") {
-                        showGameMoreInfo = true
-                    }
-                    .buttonStyle(GradientButtonStyle(colors: [.green, .blue]))
-
-                    Button("Show Game Info (Realm)") {
-                        showGameMoreInfoRealm = true
-                    }
-                    .buttonStyle(GradientButtonStyle(colors: [.orange, .red]))
-
-                    Button("Show Artwork Search") {
-                        showArtworkSearch = true
-                    }
-                    .buttonStyle(GradientButtonStyle(colors: [.pink, .purple]))
-
-                    Button("Show Free ROMs") {
-                        showFreeROMs = true
-                    }
-                    .buttonStyle(GradientButtonStyle(colors: [.yellow, .orange]))
-
-                    Button("Show Delta Skin List") {
-                        showDeltaSkinList = true
-                    }
-                    .buttonStyle(GradientButtonStyle(colors: [.mint, .teal]))
                 }
 
                 // Add this section for theme testing
