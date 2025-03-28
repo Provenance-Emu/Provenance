@@ -15,14 +15,15 @@ class DeltaSkinContainerView: UIView {
         containerView.backgroundColor = .clear
         containerView.isOpaque = false
 
-        // Create the wrapper view
+        // Create the wrapper view with debug mode ENABLED
         let wrapperView = EmulatorWrapperView(
             game: game,
             coreInstance: core,
             onSkinLoaded: onSkinLoaded,
             onRefreshRequested: onRefreshRequested,
             onMenuRequested: onMenuRequested,
-            inputHandler: inputHandler
+            inputHandler: inputHandler,
+            showDebug: true // Enable debug borders
         )
 
         // Create the hosting controller
@@ -33,6 +34,10 @@ class DeltaSkinContainerView: UIView {
         hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         hostingController.view.backgroundColor = .clear
         hostingController.view.isOpaque = false
+
+        // Add debug visualization to hosting controller view
+        hostingController.view.layer.borderColor = UIColor.blue.cgColor
+        hostingController.view.layer.borderWidth = 1.0
 
         // Add the hosting controller's view as a subview
         containerView.addSubview(hostingController.view)
