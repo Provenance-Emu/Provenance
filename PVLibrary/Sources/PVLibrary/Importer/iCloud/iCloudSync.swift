@@ -550,7 +550,7 @@ public enum iCloudSync {
             UserDefaults.standard.removeObject(forKey: UbiquityIdentityTokenKey)
         }
         disposeBag = DisposeBag()
-        var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots", "RetroArch"],
+        var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots"],
                                                                   notificationCenter: .default,
                                                                   errorHandler: iCloudErrorHandler.shared)
         nonDatabaseFileSyncer.loadAllFromICloud()
@@ -833,6 +833,7 @@ class RomsSyncer: iCloudContainerSyncer {
     
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
         self.init(directories: ["ROMs"], notificationCenter: notificationCenter, errorHandler: errorHandler)
+        fileImportQueueMaxCount = 1
         let publishers = [.RomsFinishedImporting, .RomDatabaseInitialized].map { notificationCenter.publisher(for: $0) }
         romsDatabaseSubscriber = Publishers.MergeMany(publishers).sink { [weak self] _ in
             Task {
