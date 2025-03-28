@@ -50,6 +50,9 @@ public struct SystemSkinBrowserView: View {
         }
         .navigationTitle("Controller Skins")
         .onAppear {
+            Task {
+                await skinManager.reloadSkins()
+            }
             loadSkinCounts()
         }
         .sheet(isPresented: $showingSystemSelection) {
