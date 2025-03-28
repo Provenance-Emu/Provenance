@@ -168,10 +168,6 @@ extension PVEmulatorViewController {
             },
             onRefreshRequested: { [weak self] in
                 self?.refreshGPUView()
-            },
-            onMenuRequested: { [weak self] in
-                // This is called from SwiftUI controls, not from skin button presses
-                self?.showEmulatorMenu()
             }
         )
 

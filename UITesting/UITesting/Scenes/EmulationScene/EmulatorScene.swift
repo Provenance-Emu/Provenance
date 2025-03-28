@@ -517,8 +517,6 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
 
             let emulatorCore = coreClass.init()
 
-            // Create the emulator view controller with skin support - make sure useSkin is true
-            let useSkins = true // UserDefaults.standard.bool(forKey: "useDeltaSkins")
             let emulatorViewController = PVEmulatorViewController(game: game, core: emulatorCore)
             self.emulatorViewController = emulatorViewController
 
@@ -535,10 +533,8 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
             quitCompletionHandler = { [weak self] in
                 ILOG("EmulatorContainerViewController: Quit completion handler called")
                 // Clear emulation state
-                AppState.shared.emulationUIState.core = nil
-                AppState.shared.emulationUIState.emulator = nil
-                AppState.shared.emulationUIState.currentGame = nil
-
+                AppState.shared.emulationUIState.reset()
+                
                 // Return to main scene using TestSceneCoordinator
                 TestSceneCoordinator.shared.closeEmulator()
             }

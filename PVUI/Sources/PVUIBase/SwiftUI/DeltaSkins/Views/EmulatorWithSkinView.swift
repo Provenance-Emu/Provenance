@@ -17,7 +17,6 @@ struct EmulatorWithSkinView: View {
     let coreInstance: PVEmulatorCore
     let onSkinLoaded: () -> Void
     let onRefreshRequested: () -> Void
-    let onMenuRequested: () -> Void
 
     @EnvironmentObject private var inputHandler: DeltaSkinInputHandler
     @StateObject private var skinLoader = DeltaSkinLoader()
@@ -36,7 +35,7 @@ struct EmulatorWithSkinView: View {
     @State private var rotationCount: Int = 0
 
     // Initialize with a game, extracting the necessary properties
-    init(game: PVGame, coreInstance: PVEmulatorCore, onSkinLoaded: @escaping () -> Void, onRefreshRequested: @escaping () -> Void, onMenuRequested: @escaping () -> Void) {
+    init(game: PVGame, coreInstance: PVEmulatorCore, onSkinLoaded: @escaping () -> Void, onRefreshRequested: @escaping () -> Void) {
         self.gameTitle = game.title
         self.systemName = game.system?.name
 
@@ -46,7 +45,6 @@ struct EmulatorWithSkinView: View {
         self.coreInstance = coreInstance
         self.onSkinLoaded = onSkinLoaded
         self.onRefreshRequested = onRefreshRequested
-        self.onMenuRequested = onMenuRequested
     }
 
     var body: some View {
@@ -116,11 +114,6 @@ struct EmulatorWithSkinView: View {
             .onAppear {
                 // Set the emulator core in the input handler
                 inputHandler.setEmulatorCore(coreInstance)
-
-                // Update the menu button handler to use the direct callback
-                inputHandler.menuButtonHandler = {
-                    onMenuRequested()
-                }
 
                 // Start loading the skin using a simplified approach
                 Task {

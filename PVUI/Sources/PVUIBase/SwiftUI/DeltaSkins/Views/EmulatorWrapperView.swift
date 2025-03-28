@@ -8,7 +8,6 @@ struct EmulatorWrapperView: View {
     let coreInstance: PVEmulatorCore
     let onSkinLoaded: () -> Void
     let onRefreshRequested: () -> Void
-    let onMenuRequested: () -> Void
 
     @ObservedObject var inputHandler: DeltaSkinInputHandler
 
@@ -17,8 +16,7 @@ struct EmulatorWrapperView: View {
             game: game,
             coreInstance: coreInstance,
             onSkinLoaded: onSkinLoaded,
-            onRefreshRequested: onRefreshRequested,
-            onMenuRequested: onMenuRequested
+            onRefreshRequested: onRefreshRequested
         )
         .environmentObject(inputHandler)
         .ignoresSafeArea(.all)
