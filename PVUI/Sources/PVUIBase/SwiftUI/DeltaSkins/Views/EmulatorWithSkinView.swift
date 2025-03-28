@@ -5,10 +5,15 @@ import PVSystems
 import Combine
 import ObjectiveC
 import PVLogging
+import RealmSwift
 
 /// A SwiftUI view that displays a custom skin for the emulator
 struct EmulatorWithSkinView: View {
-    let game: PVGame
+    // Store only the necessary properties from the game
+    let gameTitle: String
+    let systemName: String?
+    let systemId: SystemIdentifier?
+
     let coreInstance: PVEmulatorCore
     let onSkinLoaded: () -> Void
     let onRefreshRequested: () -> Void
@@ -29,6 +34,20 @@ struct EmulatorWithSkinView: View {
 
     // Add this to the struct to track rotation changes
     @State private var rotationCount: Int = 0
+
+    // Initialize with a game, extracting the necessary properties
+    init(game: PVGame, coreInstance: PVEmulatorCore, onSkinLoaded: @escaping () -> Void, onRefreshRequested: @escaping () -> Void, onMenuRequested: @escaping () -> Void) {
+        self.gameTitle = game.title
+        self.systemName = game.system?.name
+
+        // Convert string system identifier to enum
+        self.systemId = game.system?.systemIdentifier
+
+        self.coreInstance = coreInstance
+        self.onSkinLoaded = onSkinLoaded
+        self.onRefreshRequested = onRefreshRequested
+        self.onMenuRequested = onMenuRequested
+    }
 
     var body: some View {
         GeometryReader { geometry in
@@ -95,9 +114,9 @@ struct EmulatorWithSkinView: View {
                     onMenuRequested()
                 }
 
-                // Start loading the skin
+                // Start loading the skin using a simplified approach
                 Task {
-                    _ = await skinLoader.loadSkin(for: game)
+                    await loadSkinSafely()
                 }
 
                 // Set up orientation handling
@@ -115,7 +134,7 @@ struct EmulatorWithSkinView: View {
 
     private var loadingView: some View {
         VStack(spacing: 20) {
-            Text("Loading \(game.system?.name ?? "Game") Skin...")
+            Text("Loading \(systemName ?? "Game") Skin...")
                 .font(.headline)
                 .foregroundColor(.white)
 
@@ -191,10 +210,10 @@ struct EmulatorWithSkinView: View {
             Text("Rotation Count: \(rotationCount)")
                 .foregroundColor(.white)
 
-            Text("Game: \(game.title)")
+            Text("Game: \(gameTitle)")
                 .foregroundColor(.white)
 
-            Text("System: \(game.system?.name ?? "Unknown")")
+            Text("System: \(systemName ?? "Unknown")")
                 .foregroundColor(.white)
 
             if let error = skinLoader.loadingError {
@@ -411,5 +430,24 @@ struct EmulatorWithSkinView: View {
             iPadModel: iPadModel,
             externalDisplay: .none
         )
+    }
+
+    // MARK: - Loading Logic
+
+    /// Load the skin safely without Realm threading issues
+    private func loadSkinSafely() async {
+        DLOG("🎮 EmulatorWithSkinView: Starting to load skin safely")
+
+        // If we have a system ID, we can load the skin directly
+        if let systemId = systemId {
+            _ = await skinLoader.loadSkin(forSystem: systemId, systemName: systemName ?? "Unknown")
+        } else {
+            ELOG("🎮 EmulatorWithSkinView: No system ID available, cannot load skin")
+            await MainActor.run {
+                skinLoader.loadingError = NSError(domain: "EmulatorWithSkinView", code: 404, userInfo: [NSLocalizedDescriptionKey: "No system ID available"])
+                skinLoader.isLoading = false
+                onSkinLoaded() // Still notify that we're done, even with an error
+            }
+        }
     }
 }

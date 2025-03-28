@@ -2,6 +2,7 @@ import Foundation
 import Combine
 import PVLibrary
 import PVLogging
+import PVSystems
 
 /// A class responsible for loading Delta skins with progress tracking
 class DeltaSkinLoader: ObservableObject {
@@ -33,10 +34,10 @@ class DeltaSkinLoader: ObservableObject {
         }
     }
 
-    /// Load a skin for the given game
+    /// Load a skin for the given system identifier
     /// Returns a task that completes when the skin is loaded
-    func loadSkin(for game: PVGame) async -> DeltaSkinProtocol? {
-        DLOG("🎮 DeltaSkinLoader: Starting to load Delta Skin for \(game.title)")
+    func loadSkin(forSystem systemId: SystemIdentifier, systemName: String = "Unknown") async -> DeltaSkinProtocol? {
+        DLOG("🎮 DeltaSkinLoader: Starting to load Delta Skin for system: \(systemId.rawValue)")
 
         // Start with initializing stage
         await updateLoadingState(.initializing)
@@ -45,42 +46,38 @@ class DeltaSkinLoader: ObservableObject {
             // Move to loading skin stage
             await updateLoadingState(.loadingSkin)
 
-            // Load the skin
-            if let systemId = game.system?.systemIdentifier {
-                if let skin = try await DeltaSkinManager.shared.skinToUse(for: systemId) {
-                    // Move to processing assets stage
-                    await updateLoadingState(.processingAssets)
+            // Convert SystemIdentifier to string for DeltaSkinManager
 
-                    // Simulate asset processing time (in a real implementation, this would be actual processing)
-                    try await Task.sleep(nanoseconds: 200_000_000)
+            // Load the skin directly using the system ID
+            if let skin = try await DeltaSkinManager.shared.skinToUse(for: systemId) {
+                // Move to processing assets stage
+                await updateLoadingState(.processingAssets)
 
-                    // Move to rendering layout stage
-                    await updateLoadingState(.renderingLayout)
+                // Simulate asset processing time (in a real implementation, this would be actual processing)
+                try await Task.sleep(nanoseconds: 200_000_000)
 
-                    // Set the skin and prepare for display
-                    await MainActor.run {
-                        // Store the skin
-                        self.selectedSkin = skin
+                // Move to rendering layout stage
+                await updateLoadingState(.renderingLayout)
 
-                        // Move to finalizing stage
-                        self.updateLoadingState(.finalizing)
-                    }
+                // Set the skin and prepare for display
+                await MainActor.run {
+                    // Store the skin
+                    self.selectedSkin = skin
 
-                    // Wait a moment to ensure UI updates
-                    try await Task.sleep(nanoseconds: 300_000_000)
-
-                    // Complete loading
-                    await updateLoadingState(.complete)
-
-                    DLOG("🎮 DeltaSkinLoader: Skin loaded for \(game.title)")
-                    return skin
-                } else {
-                    ELOG("🎮 DeltaSkinLoader: No skin available for system: \(systemId)")
-                    await updateLoadingState(.complete)
-                    return nil
+                    // Move to finalizing stage
+                    self.updateLoadingState(.finalizing)
                 }
+
+                // Wait a moment to ensure UI updates
+                try await Task.sleep(nanoseconds: 300_000_000)
+
+                // Complete loading
+                await updateLoadingState(.complete)
+
+                DLOG("🎮 DeltaSkinLoader: Skin loaded for system: \(systemId.rawValue)")
+                return skin
             } else {
-                ELOG("🎮 DeltaSkinLoader: No system identifier available for game: \(game.title)")
+                ELOG("🎮 DeltaSkinLoader: No skin available for system: \(systemId.rawValue)")
                 await updateLoadingState(.complete)
                 return nil
             }

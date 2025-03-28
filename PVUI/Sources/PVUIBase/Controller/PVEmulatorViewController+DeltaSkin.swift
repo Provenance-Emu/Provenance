@@ -139,70 +139,66 @@ extension PVEmulatorViewController {
         containerView.layer.borderWidth = 2.0
         containerView.layer.borderColor = UIColor.blue.cgColor
 
-        // Create a task to load the skin
-        Task { @MainActor in
-            do {
-                // Create the wrapper view
-                let wrapperView = EmulatorWrapperView(
-                    game: game,
-                    coreInstance: core,
-                    onSkinLoaded: { [weak self] in
-                        // This will be called when the skin is loaded
-                        DLOG("Skin loaded callback received")
+        // Create a thread-safe copy of the game properties
+        let gameId = game.id
+        let gameTitle = game.title
+        let systemName = game.system?.name
+        let systemId = game.system?.systemIdentifier
 
-                        // Show the skin view
-                        containerView.isHidden = false
+        // Create the wrapper view with the thread-safe properties
+        let wrapperView = EmulatorWrapperView(
+            game: game, // Pass the original game object
+            coreInstance: core,
+            onSkinLoaded: { [weak self] in
+                // This will be called when the skin is loaded
+                DLOG("Skin loaded callback received")
 
-                        // Remove the loading view
-                        loadingView.removeFromSuperview()
-
-                        // Force a redraw of the GPU view
-                        if let metalVC = self?.gpuViewController as? PVMetalViewController {
-                            metalVC.draw(in: metalVC.mtlView)
-                        }
-                    },
-                    onRefreshRequested: { [weak self] in
-                        // Direct callback for refresh requests
-                        self?.refreshGPUView()
-                    },
-                    onMenuRequested: { [weak self] in
-                        // Direct callback for menu requests
-                        self?.showEmulatorMenu()
-                    },
-                    inputHandler: inputHandler
-                )
-
-                // Create the hosting controller
-                let hostingController = UIHostingController(rootView: wrapperView)
-
-                // Add the hosting controller as a child
-                addChild(hostingController)
-
-                // Configure the hosting controller's view
-                hostingController.view.frame = containerView.bounds
-                hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-                hostingController.view.backgroundColor = .clear
-
-                // Add the hosting controller's view to the container
-                containerView.addSubview(hostingController.view)
-
-                // Finish adding the hosting controller
-                hostingController.didMove(toParent: self)
-
-                // Set a timeout to remove the loading view if the skin takes too long to load
-                DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-                    // Remove the loading view if it's still there
-                    if loadingView.superview != nil {
-                        DLOG("Timeout waiting for skin to load, showing anyway")
-                        loadingView.removeFromSuperview()
-                        containerView.isHidden = false
-                    }
-                }
-            } catch {
-                ELOG("Error creating skin view: \(error)")
+                // Show the skin view
+                containerView.isHidden = false
 
                 // Remove the loading view
                 loadingView.removeFromSuperview()
+
+                // Force a redraw of the GPU view
+                if let metalVC = self?.gpuViewController as? PVMetalViewController {
+                    metalVC.draw(in: metalVC.mtlView)
+                }
+            },
+            onRefreshRequested: { [weak self] in
+                // Direct callback for refresh requests
+                self?.refreshGPUView()
+            },
+            onMenuRequested: { [weak self] in
+                // Direct callback for menu requests
+                self?.showEmulatorMenu()
+            },
+            inputHandler: inputHandler
+        )
+
+        // Create the hosting controller
+        let hostingController = UIHostingController(rootView: wrapperView)
+
+        // Add the hosting controller as a child
+        addChild(hostingController)
+
+        // Configure the hosting controller's view
+        hostingController.view.frame = containerView.bounds
+        hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        hostingController.view.backgroundColor = .clear
+
+        // Add the hosting controller's view to the container
+        containerView.addSubview(hostingController.view)
+
+        // Finish adding the hosting controller
+        hostingController.didMove(toParent: self)
+
+        // Set a timeout to remove the loading view if the skin takes too long to load
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+            // Remove the loading view if it's still there
+            if loadingView.superview != nil {
+                DLOG("Timeout waiting for skin to load, showing anyway")
+                loadingView.removeFromSuperview()
+                containerView.isHidden = false
             }
         }
 
