@@ -71,14 +71,6 @@ extension PVEmulatorViewController {
 
     /// Add the skin view to the view hierarchy
     private func addSkinView() async {
-        // Remove any existing skin views
-        for subview in view.subviews {
-            if subview is DeltaSkinContainerView {
-                subview.removeFromSuperview()
-                DLOG("Removed existing skin view")
-            }
-        }
-
         // Get the GPU view from the gpuViewController
         guard let gameScreenView = gpuViewController.view else {
             ELOG("GPU view not found")
@@ -161,7 +153,15 @@ extension PVEmulatorViewController {
 
                 // Force a redraw of the GPU view
                 if let metalVC = self?.gpuViewController as? PVMetalViewController {
-                    metalVC.draw(in: metalVC.mtlView)
+                    // Force a redraw after a short delay to ensure the skin is fully rendered
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        metalVC.draw(in: metalVC.mtlView)
+
+                        // Force another redraw after a longer delay
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            metalVC.draw(in: metalVC.mtlView)
+                        }
+                    }
                 }
             },
             onRefreshRequested: { [weak self] in
@@ -186,6 +186,11 @@ extension PVEmulatorViewController {
         hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         hostingController.view.backgroundColor = .clear
 
+        // Make sure all subviews are transparent
+        for subview in hostingController.view.subviews {
+            subview.backgroundColor = .clear
+        }
+
         // Add the hosting controller's view to the container
         containerView.addSubview(hostingController.view)
 
@@ -199,6 +204,11 @@ extension PVEmulatorViewController {
                 DLOG("Timeout waiting for skin to load, showing anyway")
                 loadingView.removeFromSuperview()
                 containerView.isHidden = false
+
+                // Force a redraw of the GPU view
+                if let metalVC = self.gpuViewController as? PVMetalViewController {
+                    metalVC.draw(in: metalVC.mtlView)
+                }
             }
         }
 
@@ -213,6 +223,17 @@ extension PVEmulatorViewController {
         DLOG("GPU View Bounds: \(gpuViewController.view.bounds)")
         DLOG("Emulator Core Buffer Size: \(core.bufferSize)")
         DLOG("Emulator Core Screen Rect: \(core.screenRect)")
+
+        // Force an initial draw of the GPU view
+        if let metalVC = gpuViewController as? PVMetalViewController {
+            // Draw immediately
+            metalVC.draw(in: metalVC.mtlView)
+
+            // And again after a short delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                metalVC.draw(in: metalVC.mtlView)
+            }
+        }
     }
 
     /// Hide the standard controller buttons
@@ -246,11 +267,25 @@ extension PVEmulatorViewController {
 
             // Create a task to recreate the skin view
             Task {
+                // First, force a redraw of the GPU view
+                if let metalVC = gpuViewController as? PVMetalViewController {
+                    metalVC.draw(in: metalVC.mtlView)
+                }
+
+                // Wait a moment before recreating the skin
+                try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+
+                // Recreate the skin view
                 await addSkinView()
 
-                // Refresh the GPU view
-                DispatchQueue.main.async {
+                // Refresh the GPU view after the skin is loaded
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     self.refreshGPUView()
+
+                    // Force another refresh after a delay
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.refreshGPUView()
+                    }
                 }
             }
         }
@@ -285,6 +320,11 @@ extension PVEmulatorViewController {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         // Force a redraw
                         metalVC.draw(in: metalVC.mtlView)
+
+                        // Force another redraw after a delay
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            metalVC.draw(in: metalVC.mtlView)
+                        }
                     }
                 } catch {
                     ELOG("Error updating texture: \(error)")

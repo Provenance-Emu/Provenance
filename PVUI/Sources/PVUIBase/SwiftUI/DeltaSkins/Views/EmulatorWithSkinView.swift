@@ -61,6 +61,7 @@ struct EmulatorWithSkinView: View {
                 } else if let skin = skinLoader.selectedSkin {
                     // Render the skin
                     skinContentView(skin: skin, geometry: geometry)
+                        .background(Color.clear) // Ensure background is transparent
                         .onAppear {
                             // When the skin content appears, mark as complete after a short delay
                             // to ensure it's fully rendered
@@ -69,12 +70,18 @@ struct EmulatorWithSkinView: View {
                                     skinRenderComplete = true
                                     onSkinLoaded()
                                     DLOG("🎮 EmulatorWithSkinView: Skin render complete, notifying observers")
+
+                                    // Request a refresh after the skin is loaded
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        onRefreshRequested()
+                                    }
                                 }
                             }
                         }
                 } else {
                     // Fallback controller with input handling
                     defaultControllerSkin()
+                        .background(Color.clear) // Ensure background is transparent
                         .onAppear {
                             // Even with the fallback, notify that we're ready
                             onSkinLoaded()
@@ -105,6 +112,7 @@ struct EmulatorWithSkinView: View {
                     }
                 }
             }
+            .background(Color.clear) // Ensure the background is transparent
             .onAppear {
                 // Set the emulator core in the input handler
                 inputHandler.setEmulatorCore(coreInstance)
@@ -128,6 +136,7 @@ struct EmulatorWithSkinView: View {
             }
             .environment(\.debugSkinMappings, showDebugOverlay)
         }
+        .background(Color.clear) // Ensure the background is transparent
     }
 
     // MARK: - Loading View
