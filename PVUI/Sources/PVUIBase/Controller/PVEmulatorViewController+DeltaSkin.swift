@@ -26,9 +26,12 @@ extension PVEmulatorViewController {
             // Hide the standard controls
             hideStandardControls()
 
-            DLOG("Delta Skin enabled and loaded")
-            DLOG("Game: \(game.title)")
-            DLOG("System: \(game.system?.name ?? "Unknown")")
+            DLOG(
+                """
+                "Delta Skin enabled and loaded
+                Game: \(game.title)
+                System: \(game.system?.name ?? "Unknown")
+                """)
             if let identifier = game.system?.systemIdentifier {
                 DLOG("System Identifier: \(identifier)")
             }
@@ -47,6 +50,11 @@ extension PVEmulatorViewController {
                 } catch {
                     ELOG("Error getting skins: \(error)")
                 }
+            }
+            
+            // Just a single gentle refresh after a short delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                self?.gentleRefreshMetalView()
             }
         } else {
             ELOG("Delta Skin not enabled in settings")
@@ -83,6 +91,9 @@ extension PVEmulatorViewController {
             DLOG("Forcing initial draw of GPU view")
             metalVC.draw(in: metalVC.mtlView)
         }
+        
+        // Make sure GPU view is in front
+        view.bringSubviewToFront(gameScreenView)
     }
 
     /// Add the skin view to the view hierarchy
@@ -185,6 +196,8 @@ extension PVEmulatorViewController {
         // Update frame
         if let gameScreenView = gpuViewController.view {
             gameScreenView.frame = view.bounds
+            gameScreenView.isHidden = false
+            gameScreenView.alpha = 1.0
         }
 
         // Force redraw
@@ -198,7 +211,50 @@ extension PVEmulatorViewController {
 
             // Force a redraw
             metalVC.draw(in: metalVC.mtlView)
+            
+            // Make sure Metal view is visible
+            if let mtlView = metalVC.mtlView {
+                mtlView.isHidden = false
+                mtlView.alpha = 1.0
+            }
         }
+    }
+    
+    /// A more gentle refresh of the Metal view that won't freeze the UI
+    func gentleRefreshMetalView() {
+        guard let metalVC = gpuViewController as? PVMetalViewController,
+              let mtlView = metalVC.mtlView else {
+            ELOG("Metal view not available")
+            return
+        }
+        
+        // Log the current state
+        let logOutput =
+        """
+        🔧 METAL VIEW REFRESH:
+        - Current state: superview=\(mtlView.superview != nil ? "exists" : "nil"), hidden=\(mtlView.isHidden), alpha=\(mtlView.alpha)
+        - Frame: \(mtlView.frame)
+        """
+
+        DLOG(logOutput)
+        
+        // Only make minimal changes to ensure visibility
+        if mtlView.isHidden {
+            mtlView.isHidden = false
+        }
+        
+        if mtlView.alpha < 1.0 {
+            mtlView.alpha = 1.0
+        }
+        
+        // Only add to view hierarchy if absolutely necessary
+        if mtlView.superview == nil {
+            DLOG("Metal view has no superview, adding to view hierarchy")
+            view.addSubview(mtlView)
+        }
+        
+        // Request a redraw but don't force it
+        try? metalVC.updateInputTexture()
     }
 
     // Add this method to handle showing the menu
@@ -207,5 +263,44 @@ extension PVEmulatorViewController {
 
         // Call the existing method to show the menu
         showMenu(self)
+    }
+    
+    /// Print a detailed view hierarchy - for debugging
+    func printViewHierarchy() {
+        var logOutput = ""
+        logOutput += "🔍 ===== FULL VIEW HIERARCHY =====\n"
+        
+        // Build the view hierarchy string
+        var hierarchyOutput = ""
+        buildViewHierarchyString(for: view, level: 0, output: &hierarchyOutput)
+        logOutput += hierarchyOutput
+        
+        logOutput += "🔍 ===== END VIEW HIERARCHY =====\n"
+        
+        // Add GPU view info
+        if let gameScreenView = gpuViewController.view {
+            logOutput += "🔍 GPU View: frame=\(gameScreenView.frame), hidden=\(gameScreenView.isHidden), alpha=\(gameScreenView.alpha), tag=\(gameScreenView.tag)\n"
+            logOutput += "🔍 GPU View superview: \(String(describing: gameScreenView.superview))\n"
+            
+            if let metalVC = gpuViewController as? PVMetalViewController,
+               let mtlView = metalVC.mtlView {
+                logOutput += "🔍 Metal View: frame=\(mtlView.frame), hidden=\(mtlView.isHidden) alpha=\(mtlView.alpha), opaque=\(mtlView.isOpaque)\n"
+                logOutput += "🔍 Metal View drawable size: \(mtlView.drawableSize)\n"
+            }
+        }
+        
+        // Log the entire output as a single call
+        DLOG(logOutput)
+    }
+    
+    /// Helper to build a view hierarchy string with indentation
+    private func buildViewHierarchyString(for view: UIView, level: Int, output: inout String) {
+        let indent = String(repeating: "  ", count: level)
+        output += "\(indent)🔍 \(type(of: view)): frame=\(view.frame), hidden=\(view.isHidden), alpha=\(view.alpha), tag=\(view.tag)\n"
+        
+        for (index, subview) in view.subviews.enumerated() {
+            output += "\(indent)  🔹 Subview [\(index)]:\n"
+            buildViewHierarchyString(for: subview, level: level + 1, output: &output)
+        }
     }
 }
