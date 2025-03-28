@@ -7,9 +7,9 @@ import PVLogging
 import PVUIBase
 // Make sure this import is correct if needed
 // import PVUIBase.SwiftUI.DeltaSkins.Views
+import QuartzCore
 
 extension PVEmulatorViewController {
-
 
     /// Set up the DeltaSkin view if enabled in settings
     @objc public func setupDeltaSkinView() async throws {
@@ -106,6 +106,12 @@ extension PVEmulatorViewController {
 
         // Create the input handler
         let inputHandler = DeltaSkinInputHandler(emulatorCore: core)
+        
+        // Set up the menu button handler to show the emulator menu
+        inputHandler.menuButtonHandler = { [weak self] in
+            DLOG("Menu button pressed from skin, showing emulator menu")
+            self?.showEmulatorMenu()
+        }
 
         // Create a container for the skin
         let containerView = DeltaSkinContainerView.create(
@@ -123,6 +129,7 @@ extension PVEmulatorViewController {
                 self?.refreshGPUView()
             },
             onMenuRequested: { [weak self] in
+                // This is called from SwiftUI controls, not from skin button presses
                 self?.showEmulatorMenu()
             }
         )
@@ -141,6 +148,12 @@ extension PVEmulatorViewController {
         
         // Make sure the skin view is above the GPU view
         view.bringSubviewToFront(containerView)
+        
+        // Add debug overlay toggle gesture
+        let debugTapGesture = UITapGestureRecognizer(target: self, action: #selector(toggleDebugOverlay))
+        debugTapGesture.numberOfTapsRequired = 3
+        debugTapGesture.numberOfTouchesRequired = 2
+        view.addGestureRecognizer(debugTapGesture)
 
         // Force a redraw of GPU view to make sure it's visible
         refreshGPUView()
@@ -291,6 +304,144 @@ extension PVEmulatorViewController {
 
         // Call the existing method to show the menu
         showMenu(self)
+    }
+    
+    // Add a method to handle showing the menu with a sender
+    @objc private func showEmulatorMenu(sender: Any? = nil) {
+        DLOG("Showing emulator menu with sender: \(String(describing: sender))")
+        
+        // Call the existing method to show the menu
+        showMenu(sender ?? self)
+    }
+    
+    // MARK: - Debug Overlay
+    
+    /// Toggle the debug overlay with a triple tap (3 taps with 2 fingers)
+    @objc private func toggleDebugOverlay() {
+        if debugOverlayView != nil {
+            removeDebugOverlay()
+        } else {
+            showDebugOverlay()
+        }
+    }
+    
+    /// Show a debug overlay with useful information
+    private func showDebugOverlay() {
+        // Create overlay view
+        let overlay = UIView(frame: CGRect(x: 10, y: 50, width: 300, height: 300))
+        overlay.backgroundColor = UIColor(white: 0.1, alpha: 0.85)
+        overlay.layer.cornerRadius = 10
+        overlay.layer.borderWidth = 1
+        overlay.layer.borderColor = UIColor.cyan.cgColor
+        
+        // Add a title
+        let titleLabel = UILabel(frame: CGRect(x: 10, y: 5, width: 280, height: 30))
+        titleLabel.text = "Debug Info"
+        titleLabel.textColor = .cyan
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
+        titleLabel.textAlignment = .center
+        overlay.addSubview(titleLabel)
+        
+        // Add info label
+        let infoLabel = UILabel(frame: CGRect(x: 10, y: 40, width: 280, height: 250))
+        infoLabel.textColor = .white
+        infoLabel.font = UIFont.monospacedSystemFont(ofSize: 11, weight: .regular)
+        infoLabel.numberOfLines = 0
+        overlay.addSubview(infoLabel)
+        self.debugInfoLabel = infoLabel
+        
+        // Add close button
+        let closeButton = UIButton(frame: CGRect(x: 260, y: 5, width: 30, height: 30))
+        closeButton.setTitle("×", for: .normal)
+        closeButton.setTitleColor(.cyan, for: .normal)
+        closeButton.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        closeButton.addTarget(self, action: #selector(removeDebugOverlay), for: .touchUpInside)
+        overlay.addSubview(closeButton)
+        
+        // Make overlay draggable
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleDebugOverlayPan(_:)))
+        overlay.addGestureRecognizer(panGesture)
+        
+        // Add to view
+        view.addSubview(overlay)
+        self.debugOverlayView = overlay
+        
+        // Start update timer
+        updateDebugInfo()
+        debugUpdateTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            self?.updateDebugInfo()
+        }
+    }
+    
+    /// Remove the debug overlay
+    @objc private func removeDebugOverlay() {
+        debugUpdateTimer?.invalidate()
+        debugUpdateTimer = nil
+        
+        debugOverlayView?.removeFromSuperview()
+        debugOverlayView = nil
+        debugInfoLabel = nil
+    }
+    
+    /// Handle dragging the debug overlay
+    @objc private func handleDebugOverlayPan(_ gesture: UIPanGestureRecognizer) {
+        guard let overlay = debugOverlayView else { return }
+        
+        let translation = gesture.translation(in: view)
+        overlay.center = CGPoint(x: overlay.center.x + translation.x, y: overlay.center.y + translation.y)
+        gesture.setTranslation(.zero, in: view)
+    }
+    
+    /// Update the debug info display
+    private func updateDebugInfo() {
+        guard let infoLabel = debugInfoLabel else { return }
+        
+        // Get GPU view info
+        var gpuInfo = "No GPU view"
+        if let gameScreenView = gpuViewController.view {
+            gpuInfo = "Frame: \(gameScreenView.frame.size.width)×\(gameScreenView.frame.size.height)\nHidden: \(gameScreenView.isHidden)\nAlpha: \(gameScreenView.alpha)"
+        }
+        
+        // Get Metal view info
+        var metalInfo = "No Metal view"
+        if let metalVC = gpuViewController as? PVMetalViewController,
+           let mtlView = metalVC.mtlView {
+            metalInfo = "Frame: \(mtlView.frame.size.width)×\(mtlView.frame.size.height)\nHidden: \(mtlView.isHidden)\nAlpha: \(mtlView.alpha)\nDrawable: \(mtlView.drawableSize.width)×\(mtlView.drawableSize.height)"
+        }
+        
+        // Get skin view info
+        var skinInfo = "No skin view"
+        if let skinView = skinContainerView {
+            skinInfo = "Frame: \(skinView.frame.size.width)×\(skinView.frame.size.height)\nHidden: \(skinView.isHidden)\nAlpha: \(skinView.alpha)"
+        }
+        
+        // Get device orientation
+        let orientation = UIDevice.current.orientation
+        let orientationStr = orientation.isPortrait ? "Portrait" : (orientation.isLandscape ? "Landscape" : "Other")
+        
+        // Get FPS if available
+        var fpsInfo = "FPS: N/A"
+        if let metalVC = gpuViewController as? PVMetalViewController {
+            let fps = metalVC.currentFPS
+            fpsInfo = "FPS: \(Int(fps))"
+        }
+        
+        // Combine all info
+        let infoText = """
+        📱 Device: \(orientationStr)
+        ⏱ \(fpsInfo)
+        
+        🖥 GPU View:
+        \(gpuInfo)
+        
+        🔲 Metal View:
+        \(metalInfo)
+        
+        🎮 Skin View:
+        \(skinInfo)
+        """
+        
+        infoLabel.text = infoText
     }
     
     /// Print a detailed view hierarchy - for debugging

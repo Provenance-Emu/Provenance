@@ -57,6 +57,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     // Store a reference to the skin container view
     internal var skinContainerView: UIView?
     
+    // Debug overlay view
+    internal var debugOverlayView: UIView?
+    internal var debugInfoLabel: UILabel?
+    internal var debugUpdateTimer: Timer?
+    
     var menuButton: MenuButton?
 
     private(set) lazy var gpuViewController: PVGPUViewController = {
