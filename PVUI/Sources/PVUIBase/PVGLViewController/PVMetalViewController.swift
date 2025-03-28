@@ -2282,6 +2282,57 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             ELOG("Error updating texture after forced refresh: \(error)")
         }
     }
+
+    // Add this method to check and refresh the texture if needed
+    func checkAndRefreshTextureIfNeeded() {
+        // Check if we have a valid input texture
+        if inputTexture == nil {
+            DLOG("Input texture is nil, attempting to recreate")
+            do {
+                // Just call the existing updateInputTexture method without modifying it
+                try updateInputTexture()
+                DLOG("Successfully recreated input texture")
+
+                // Force a redraw using the existing draw method, but with a delay to avoid GPU overload
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                    guard let self = self, let mtlView = self.mtlView else { return }
+                    self.draw(in: mtlView)
+                }
+            } catch {
+                ELOG("Failed to recreate input texture: \(error)")
+            }
+        }
+    }
+
+    // Add this method to recover from GPU errors
+    private func recoverFromGPUError() {
+        ELOG("Attempting to recover from GPU error")
+
+        // Reset the command queue
+        commandQueue = device?.makeCommandQueue()
+
+        // Reset the texture
+        inputTexture = nil
+
+        // Wait a bit before trying to recreate everything
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            guard let self = self else { return }
+
+            do {
+                // Recreate the texture
+                try self.updateInputTexture()
+
+                // Force a redraw after another delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    if let mtlView = self.mtlView {
+                        self.draw(in: mtlView)
+                    }
+                }
+            } catch {
+                ELOG("Failed to recover from GPU error: \(error)")
+            }
+        }
+    }
 }
 
 /// Error types for Metal view controller operations

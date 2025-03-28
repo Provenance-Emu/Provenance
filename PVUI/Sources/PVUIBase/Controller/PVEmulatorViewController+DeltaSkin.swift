@@ -2,6 +2,9 @@ import UIKit
 import SwiftUI
 import PVEmulatorCore
 import PVLibrary
+import PVLogging
+// Make sure we import our custom views
+import PVUIBase
 // Make sure this import is correct if needed
 // import PVUIBase.SwiftUI.DeltaSkins.Views
 
@@ -14,8 +17,8 @@ extension PVEmulatorViewController {
         ILOG("Delta Skin setting: \(useDeltaSkins)")
 
         if useDeltaSkins {
-            // Create and add DeltaSkin view
-            createSkinView()
+            // Create and add the skin view directly
+            await addSkinView()
 
             // Hide the standard controls
             hideStandardControls()
@@ -27,7 +30,7 @@ extension PVEmulatorViewController {
                 DLOG("System Identifier: \(identifier)")
             }
 
-            // Set up rotation notification
+            // Set up rotation notification (this is a system notification, so it's appropriate)
             setupRotationNotification()
 
             // Print available skins
@@ -66,14 +69,12 @@ extension PVEmulatorViewController {
         }
     }
 
-    /// Create the skin view
-    private func createSkinView() {
+    /// Add the skin view to the view hierarchy
+    private func addSkinView() async {
         // Remove any existing skin views
         for subview in view.subviews {
-            if let hostingController = subview.next as? UIHostingController<EmulatorWithSkinView> {
-                hostingController.willMove(toParent: nil)
+            if subview is DeltaSkinContainerView {
                 subview.removeFromSuperview()
-                hostingController.removeFromParent()
                 DLOG("Removed existing skin view")
             }
         }
@@ -102,55 +103,108 @@ extension PVEmulatorViewController {
         // Create the input handler
         let inputHandler = DeltaSkinInputHandler(emulatorCore: core)
 
-        // Create the skin view
-        let skinView = UIHostingController(
-            rootView: EmulatorWithSkinView(game: game, coreInstance: core)
-                .environmentObject(inputHandler)
-                .ignoresSafeArea(.all)
-        )
+        // Create a simple loading view
+        let loadingView = UIView(frame: view.bounds)
+        loadingView.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        loadingView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
-        // Make the background transparent
-        skinView.view.backgroundColor = .clear
+        let activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.center = loadingView.center
+        activityIndicator.startAnimating()
+        loadingView.addSubview(activityIndicator)
 
-        // Add the skin view as a child view controller
-        addChild(skinView)
-        skinView.view.frame = view.bounds
-        skinView.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        let loadingLabel = UILabel()
+        loadingLabel.text = "Loading skin..."
+        loadingLabel.textColor = .white
+        loadingLabel.textAlignment = .center
+        loadingLabel.frame = CGRect(x: 0, y: activityIndicator.frame.maxY + 20, width: loadingView.bounds.width, height: 30)
+        loadingLabel.autoresizingMask = [.flexibleWidth, .flexibleLeftMargin, .flexibleRightMargin]
+        loadingView.addSubview(loadingLabel)
 
-        // Add a colored border to the skin view for debugging
-        skinView.view.layer.borderWidth = 2.0
-        skinView.view.layer.borderColor = UIColor.blue.cgColor
+        view.addSubview(loadingView)
 
-        // Add the skin view above the game screen
-        view.insertSubview(skinView.view, aboveSubview: gameScreenView)
-        ILOG("Added skin view above game screen")
+        // Create a simple container view
+        let containerView = UIView(frame: view.bounds)
+        containerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        containerView.backgroundColor = .clear
+        containerView.isHidden = true // Hide until loaded
 
-        // Set the z-position of the skin view
-        skinView.view.layer.zPosition = 20
+        // Add the container view to the view hierarchy
+        view.insertSubview(containerView, aboveSubview: gameScreenView)
 
-        // Make sure the skin view is visible
-        skinView.view.isHidden = false
-        skinView.view.alpha = 1.0
+        // Set the z-position of the container view
+        containerView.layer.zPosition = 20
 
-        // Make sure user interaction is enabled
-        skinView.view.isUserInteractionEnabled = true
+        // Add a colored border for debugging
+        containerView.layer.borderWidth = 2.0
+        containerView.layer.borderColor = UIColor.blue.cgColor
 
-        // Make sure the skin view doesn't block the game screen
-        for subview in skinView.view.subviews {
-            subview.backgroundColor = .clear
+        // Create a task to load the skin
+        Task { @MainActor in
+            do {
+                // Create the wrapper view
+                let wrapperView = EmulatorWrapperView(
+                    game: game,
+                    coreInstance: core,
+                    onSkinLoaded: { [weak self] in
+                        // This will be called when the skin is loaded
+                        DLOG("Skin loaded callback received")
 
-            // Add a colored border to each subview for debugging
-            subview.layer.borderWidth = 1.0
-            subview.layer.borderColor = UIColor.green.cgColor
+                        // Show the skin view
+                        containerView.isHidden = false
+
+                        // Remove the loading view
+                        loadingView.removeFromSuperview()
+
+                        // Force a redraw of the GPU view
+                        if let metalVC = self?.gpuViewController as? PVMetalViewController {
+                            metalVC.draw(in: metalVC.mtlView)
+                        }
+                    },
+                    onRefreshRequested: { [weak self] in
+                        // Direct callback for refresh requests
+                        self?.refreshGPUView()
+                    },
+                    onMenuRequested: { [weak self] in
+                        // Direct callback for menu requests
+                        self?.showEmulatorMenu()
+                    },
+                    inputHandler: inputHandler
+                )
+
+                // Create the hosting controller
+                let hostingController = UIHostingController(rootView: wrapperView)
+
+                // Add the hosting controller as a child
+                addChild(hostingController)
+
+                // Configure the hosting controller's view
+                hostingController.view.frame = containerView.bounds
+                hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+                hostingController.view.backgroundColor = .clear
+
+                // Add the hosting controller's view to the container
+                containerView.addSubview(hostingController.view)
+
+                // Finish adding the hosting controller
+                hostingController.didMove(toParent: self)
+
+                // Set a timeout to remove the loading view if the skin takes too long to load
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+                    // Remove the loading view if it's still there
+                    if loadingView.superview != nil {
+                        DLOG("Timeout waiting for skin to load, showing anyway")
+                        loadingView.removeFromSuperview()
+                        containerView.isHidden = false
+                    }
+                }
+            } catch {
+                ELOG("Error creating skin view: \(error)")
+
+                // Remove the loading view
+                loadingView.removeFromSuperview()
+            }
         }
-
-        skinView.didMove(toParent: self)
-
-        DLOG("Added skin view to view hierarchy")
-
-        // Add a colored border to the main view for debugging
-        view.layer.borderWidth = 6.0
-        view.layer.borderColor = UIColor.yellow.cgColor
 
         // Ensure the GPU view is properly initialized
         gpuViewController.view.setNeedsLayout()
@@ -163,14 +217,6 @@ extension PVEmulatorViewController {
         DLOG("GPU View Bounds: \(gpuViewController.view.bounds)")
         DLOG("Emulator Core Buffer Size: \(core.bufferSize)")
         DLOG("Emulator Core Screen Rect: \(core.screenRect)")
-
-        // Force a redraw of the GPU view
-        if let metalVC = gpuViewController as? PVMetalViewController {
-            metalVC.draw(in: metalVC.mtlView)
-        }
-
-        // Post a notification that the emulator core has initialized
-        NotificationCenter.default.post(name: Notification.Name("EmulatorCoreDidInitialize"), object: nil)
     }
 
     /// Hide the standard controller buttons
@@ -187,26 +233,11 @@ extension PVEmulatorViewController {
 
     /// Set up rotation notification
     private func setupRotationNotification() {
+        // This is a system notification, so it's appropriate to use NotificationCenter
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleDeviceRotation),
             name: UIDevice.orientationDidChangeNotification,
-            object: nil
-        )
-
-        // Add observer for GPU view refresh
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(refreshGPUView),
-            name: Notification.Name("RefreshGPUView"),
-            object: nil
-        )
-
-        // Add observer for showing the menu
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(showEmulatorMenu),
-            name: Notification.Name("ShowEmulatorMenu"),
             object: nil
         )
     }
@@ -216,13 +247,22 @@ extension PVEmulatorViewController {
         // Force the skin view to update by recreating it
         if UIDevice.current.orientation.isLandscape || UIDevice.current.orientation.isPortrait {
             print("Device rotated, recreating skin view")
-            createSkinView()
+
+            // Create a task to recreate the skin view
+            Task {
+                await addSkinView()
+
+                // Refresh the GPU view
+                DispatchQueue.main.async {
+                    self.refreshGPUView()
+                }
+            }
         }
     }
 
     /// Refresh the GPU view
-    @objc private func refreshGPUView() {
-        print("Refreshing GPU view")
+    func refreshGPUView() {
+        DLOG("Refreshing GPU view")
 
         // Ensure the GPU view is properly sized and positioned
         gpuViewController.view.frame = view.bounds
@@ -236,23 +276,24 @@ extension PVEmulatorViewController {
         gpuViewController.view.setNeedsLayout()
         gpuViewController.view.layoutIfNeeded()
 
-        // Post a notification that the emulator core has initialized
-        NotificationCenter.default.post(name: Notification.Name("EmulatorCoreDidInitialize"), object: nil)
+        // Force the GPU view to redraw with a delay to prevent GPU overload
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            guard let self = self else { return }
 
-        // Force the GPU view to redraw
-        if let metalVC = gpuViewController as? PVMetalViewController {
-            // Force a texture update
-            do {
-                try metalVC.updateInputTexture()
+            if let metalVC = self.gpuViewController as? PVMetalViewController {
+                // Force a texture update
+                do {
+                    try metalVC.updateInputTexture()
 
-                // Dump texture info for debugging
-                metalVC.dumpTextureInfo()
-            } catch {
-                ELOG("Error updating texture: \(error)")
+                    // Add another delay before drawing
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        // Force a redraw
+                        metalVC.draw(in: metalVC.mtlView)
+                    }
+                } catch {
+                    ELOG("Error updating texture: \(error)")
+                }
             }
-
-            // Force a redraw
-            metalVC.draw(in: metalVC.mtlView)
         }
     }
 

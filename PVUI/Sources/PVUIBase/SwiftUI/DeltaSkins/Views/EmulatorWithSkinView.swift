@@ -4,16 +4,19 @@ import PVLibrary
 import PVSystems
 import Combine
 import ObjectiveC
+import PVLogging
 
 /// A SwiftUI view that displays a custom skin for the emulator
 struct EmulatorWithSkinView: View {
     let game: PVGame
     let coreInstance: PVEmulatorCore
+    let onSkinLoaded: () -> Void
+    let onRefreshRequested: () -> Void
+    let onMenuRequested: () -> Void
 
     @EnvironmentObject private var inputHandler: DeltaSkinInputHandler
-    @State private var selectedSkin: DeltaSkin?
-    @State private var isLoading = true
-    @State private var asyncSkin: DeltaSkinProtocol?
+    @StateObject private var skinLoader = DeltaSkinLoader()
+    @State private var skinRenderComplete = false
 
     // State for orientation
     @State private var currentOrientation: UIDeviceOrientation = UIDevice.current.orientation
@@ -33,117 +36,35 @@ struct EmulatorWithSkinView: View {
                 // Background - make it transparent to show the game screen
                 Color.clear.edgesIgnoringSafeArea(.all)
 
-                if let skin = selectedSkin {
-                    // If we have a skin, use DeltaSkinView with input handling
-                    DeltaSkinView(
-                        skin: skin,
-                        traits: createSkinTraits(),
-                        showDebugOverlay: showDebugOverlay,
-                        showHitTestOverlay: false,
-                        isInEmulator: true,  // Set to true to hide test patterns
-                        inputHandler: inputHandler
-                    )
-                    .environmentObject(inputHandler)
-                    .id("skin-view-\(rotationCount)") // Force recreation on rotation
-                } else if let asyncSkin = asyncSkin {
-                    // If we have an async skin, use DeltaSkinView with input handling
-                    DeltaSkinView(
-                        skin: asyncSkin,
-                        traits: createSkinTraits(),
-                        showDebugOverlay: showDebugOverlay,
-                        showHitTestOverlay: false,
-                        isInEmulator: true,  // Set to true to hide test patterns
-                        inputHandler: inputHandler
-                    )
-                    .environmentObject(inputHandler)
-                    .id("async-skin-view-\(rotationCount)") // Force recreation on rotation
-                } else if isLoading {
-                    // Loading indicator
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
-                        .scaleEffect(1.5)
-                        .foregroundColor(.white)
+                if skinLoader.isLoading {
+                    // Loading view with progress
+                    loadingView
+                } else if let skin = skinLoader.selectedSkin {
+                    // Render the skin
+                    skinContentView(skin: skin, geometry: geometry)
+                        .onAppear {
+                            // When the skin content appears, mark as complete after a short delay
+                            // to ensure it's fully rendered
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                if !skinRenderComplete {
+                                    skinRenderComplete = true
+                                    onSkinLoaded()
+                                    DLOG("🎮 EmulatorWithSkinView: Skin render complete, notifying observers")
+                                }
+                            }
+                        }
                 } else {
                     // Fallback controller with input handling
                     defaultControllerSkin()
+                        .onAppear {
+                            // Even with the fallback, notify that we're ready
+                            onSkinLoaded()
+                        }
                 }
 
-                // Debug overlay
+                // Debug overlay if enabled
                 if showDebugOverlay {
-                    VStack(alignment: .leading) {
-                        Text("Debug Info")
-                            .font(.headline)
-                            .foregroundColor(.white)
-
-                        Text("Skin: \(selectedSkin?.name ?? "None")")
-                            .foregroundColor(.white)
-
-                        Text("Orientation: \(currentOrientation.isLandscape ? "Landscape" : "Portrait")")
-                            .foregroundColor(.white)
-
-                        Text("Rotation Count: \(rotationCount)")
-                            .foregroundColor(.white)
-
-                        Text("Game: \(game.title)")
-                            .foregroundColor(.white)
-
-                        Text("System: \(game.system?.name ?? "Unknown")")
-                            .foregroundColor(.white)
-
-                        if let core = coreInstance as? NSObject {
-                            Text("Core: \(type(of: core))")
-                                .foregroundColor(.white)
-                        }
-
-                        Button("Refresh GPU View") {
-                            NotificationCenter.default.post(name: Notification.Name("RefreshGPUView"), object: nil)
-                        }
-                        .padding(8)
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-
-                        // Add view hierarchy info
-                        Text("View Borders:")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding(.top, 8)
-
-                        HStack {
-                            Rectangle().fill(Color.yellow).frame(width: 20, height: 20)
-                            Text("Main View").foregroundColor(.white)
-                        }
-
-                        HStack {
-                            Rectangle().fill(Color.red).frame(width: 20, height: 20)
-                            Text("Game Screen View").foregroundColor(.white)
-                        }
-
-                        HStack {
-                            Rectangle().fill(Color.blue).frame(width: 20, height: 20)
-                            Text("Skin View").foregroundColor(.white)
-                        }
-
-                        HStack {
-                            Rectangle().fill(Color.green).frame(width: 20, height: 20)
-                            Text("Skin Subviews").foregroundColor(.white)
-                        }
-
-                        HStack {
-                            Rectangle().fill(Color.orange).frame(width: 20, height: 20)
-                            Text("DeltaSkinScreensView").foregroundColor(.white)
-                        }
-
-                        HStack {
-                            Rectangle().fill(Color.purple).frame(width: 20, height: 20)
-                            Text("Screen View").foregroundColor(.white)
-                        }
-                    }
-                    .padding()
-                    .background(Color.black.opacity(0.7))
-                    .cornerRadius(10)
-                    .padding()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    debugOverlayView
                 }
 
                 // Debug toggle button
@@ -169,21 +90,18 @@ struct EmulatorWithSkinView: View {
                 // Set the emulator core in the input handler
                 inputHandler.setEmulatorCore(coreInstance)
 
-                // Load the appropriate skin
-                loadSkin()
-
-                // Set up orientation notification
-                setupOrientationNotification()
-
-                // Post a notification to refresh the GPU view
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    NotificationCenter.default.post(name: Notification.Name("RefreshGPUView"), object: nil)
+                // Update the menu button handler to use the direct callback
+                inputHandler.menuButtonHandler = {
+                    onMenuRequested()
                 }
 
-                // Set up a timer to periodically refresh the GPU view
-                Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-                    NotificationCenter.default.post(name: Notification.Name("RefreshGPUView"), object: nil)
+                // Start loading the skin
+                Task {
+                    _ = await skinLoader.loadSkin(for: game)
                 }
+
+                // Set up orientation handling
+                setupOrientationHandling()
             }
             .onDisappear {
                 // Clean up notification
@@ -193,35 +111,113 @@ struct EmulatorWithSkinView: View {
         }
     }
 
-    /// Load a skin for the current game
-    private func loadSkin() {
-        Task {
-            do {
-                if let systemId = game.system?.systemIdentifier {
-                    if let skin = try await DeltaSkinManager.shared.skinToUse(for: systemId) {
-                        DispatchQueue.main.async {
-                            // Store the skin in the appropriate property based on its type
-                            if let deltaSkin = skin as? DeltaSkin {
-                                self.selectedSkin = deltaSkin
-                            } else {
-                                self.asyncSkin = skin
-                            }
-                            self.isLoading = false
-                        }
-                    } else {
-                        ELOG("No skin available for system: \(systemId)")
-                        // Use a fallback skin or default UI
-                    }
-                } else {
-                    ELOG("No system identifier available for game: \(game.title)")
-                    // Use a fallback skin or default UI
-                }
-            } catch {
-                ELOG("Error loading skin: \(error)")
-                // Use a fallback skin or default UI
+    // MARK: - Loading View
+
+    private var loadingView: some View {
+        VStack(spacing: 20) {
+            Text("Loading \(game.system?.name ?? "Game") Skin...")
+                .font(.headline)
+                .foregroundColor(.white)
+
+            ProgressView(value: skinLoader.loadingProgress, total: 1.0)
+                .progressViewStyle(LinearProgressViewStyle(tint: .white))
+                .frame(width: 200)
+
+            Text(skinLoader.loadingStage.rawValue)
+                .font(.subheadline)
+                .foregroundColor(.white.opacity(0.8))
+        }
+        .padding(30)
+        .background(
+            RoundedRectangle(cornerRadius: 15)
+                .fill(Color.black.opacity(0.7))
+        )
+        .shadow(radius: 10)
+    }
+
+    // MARK: - Skin Content View
+
+    private func skinContentView(skin: DeltaSkinProtocol, geometry: GeometryProxy) -> some View {
+        let traits = createSkinTraits()
+
+        return Group {
+            if let deltaSkin = skin as? DeltaSkin {
+                // If we have a DeltaSkin, use the specialized view
+                DeltaSkinView(
+                    skin: deltaSkin,
+                    traits: traits,
+                    showDebugOverlay: showDebugOverlay,
+                    showHitTestOverlay: false,
+                    isInEmulator: true,
+                    inputHandler: inputHandler
+                )
+                .id("skin-view-\(rotationCount)")
+            } else {
+                // For other skin types
+                DeltaSkinView(
+                    skin: skin,
+                    traits: traits,
+                    showDebugOverlay: showDebugOverlay,
+                    showHitTestOverlay: false,
+                    isInEmulator: true,
+                    inputHandler: inputHandler
+                )
+                .id("async-skin-view-\(rotationCount)")
             }
         }
+        .environmentObject(inputHandler)
     }
+
+    // MARK: - Debug Overlay
+
+    private var debugOverlayView: some View {
+        VStack(alignment: .leading) {
+            Text("Debug Info")
+                .font(.headline)
+                .foregroundColor(.white)
+
+            Text("Skin: \(skinLoader.selectedSkin?.name ?? "None")")
+                .foregroundColor(.white)
+
+            Text("Loading Stage: \(skinLoader.loadingStage.rawValue)")
+                .foregroundColor(.white)
+
+            Text("Progress: \(Int(skinLoader.loadingProgress * 100))%")
+                .foregroundColor(.white)
+
+            Text("Orientation: \(currentOrientation.isLandscape ? "Landscape" : "Portrait")")
+                .foregroundColor(.white)
+
+            Text("Rotation Count: \(rotationCount)")
+                .foregroundColor(.white)
+
+            Text("Game: \(game.title)")
+                .foregroundColor(.white)
+
+            Text("System: \(game.system?.name ?? "Unknown")")
+                .foregroundColor(.white)
+
+            if let error = skinLoader.loadingError {
+                Text("Error: \(error.localizedDescription)")
+                    .foregroundColor(.red)
+            }
+
+            Button("Refresh View") {
+                onRefreshRequested()
+            }
+            .padding(8)
+            .background(Color.blue)
+            .foregroundColor(.white)
+            .cornerRadius(8)
+        }
+        .padding()
+        .background(Color.black.opacity(0.7))
+        .cornerRadius(10)
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+
+    // MARK: - Default Controller
 
     /// Default controller skin as a fallback
     private func defaultControllerSkin() -> some View {
@@ -256,35 +252,51 @@ struct EmulatorWithSkinView: View {
     /// D-Pad view
     private func dPadView() -> some View {
         VStack(spacing: 0) {
-            Button(action: {}) {
+            Button(action: { inputHandler.buttonPressed("up") }) {
                 Image(systemName: "arrow.up")
                     .font(.system(size: 30))
                     .foregroundColor(.white)
             }
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 0)
+                    .onEnded { _ in inputHandler.buttonReleased("up") }
+            )
 
             HStack(spacing: 0) {
-                Button(action: {}) {
+                Button(action: { inputHandler.buttonPressed("left") }) {
                     Image(systemName: "arrow.left")
                         .font(.system(size: 30))
                         .foregroundColor(.white)
                 }
+                .simultaneousGesture(
+                    DragGesture(minimumDistance: 0)
+                        .onEnded { _ in inputHandler.buttonReleased("left") }
+                )
 
                 Rectangle()
                     .fill(Color.clear)
                     .frame(width: 30, height: 30)
 
-                Button(action: {}) {
+                Button(action: { inputHandler.buttonPressed("right") }) {
                     Image(systemName: "arrow.right")
                         .font(.system(size: 30))
                         .foregroundColor(.white)
                 }
+                .simultaneousGesture(
+                    DragGesture(minimumDistance: 0)
+                        .onEnded { _ in inputHandler.buttonReleased("right") }
+                )
             }
 
-            Button(action: {}) {
+            Button(action: { inputHandler.buttonPressed("down") }) {
                 Image(systemName: "arrow.down")
                     .font(.system(size: 30))
                     .foregroundColor(.white)
             }
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 0)
+                    .onEnded { _ in inputHandler.buttonReleased("down") }
+            )
         }
         .padding()
         .background(Color.black.opacity(0.5))
@@ -293,7 +305,7 @@ struct EmulatorWithSkinView: View {
 
     /// Circle button view
     private func circleButton(label: String, color: Color) -> some View {
-        Button(action: {}) {
+        Button(action: { inputHandler.buttonPressed(label.lowercased()) }) {
             Text(label)
                 .font(.system(size: 20, weight: .bold))
                 .foregroundColor(.white)
@@ -301,11 +313,15 @@ struct EmulatorWithSkinView: View {
                 .background(color)
                 .clipShape(Circle())
         }
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onEnded { _ in inputHandler.buttonReleased(label.lowercased()) }
+        )
     }
 
     /// Pill-shaped button view
     private func pillButton(label: String, color: Color) -> some View {
-        Button(action: {}) {
+        Button(action: { inputHandler.buttonPressed(label.lowercased()) }) {
             Text(label)
                 .font(.system(size: 14, weight: .bold))
                 .foregroundColor(.white)
@@ -313,9 +329,44 @@ struct EmulatorWithSkinView: View {
                 .background(color)
                 .cornerRadius(15)
         }
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onEnded { _ in inputHandler.buttonReleased(label.lowercased()) }
+        )
     }
 
-    // Create skin traits based on current device and orientation
+    // MARK: - Orientation Handling
+
+    /// Set up orientation handling
+    private func setupOrientationHandling() {
+        // We still need to use NotificationCenter for device orientation changes
+        // as it's a system notification
+        NotificationCenter.default.addObserver(
+            forName: UIDevice.orientationDidChangeNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            let newOrientation = UIDevice.current.orientation
+            if newOrientation.isLandscape || newOrientation.isPortrait {
+                self.currentOrientation = newOrientation
+                self.rotationCount += 1
+                DLOG("🎮 EmulatorWithSkinView: Orientation changed to: \(newOrientation.isLandscape ? "landscape" : "portrait"), rotation count: \(self.rotationCount)")
+
+                // Refresh the view
+                self.refreshView()
+            }
+        }
+    }
+
+    /// Refresh the view after orientation changes
+    private func refreshView() {
+        // This will be called by the parent view controller
+        DLOG("🎮 EmulatorWithSkinView: Refreshing view")
+    }
+
+    // MARK: - Skin Traits
+
+    /// Create skin traits based on current device and orientation
     private func createSkinTraits() -> DeltaSkinTraits {
         let isLandscape = currentOrientation.isLandscape ||
                          UIDevice.current.orientation == .unknown &&
@@ -360,24 +411,5 @@ struct EmulatorWithSkinView: View {
             iPadModel: iPadModel,
             externalDisplay: .none
         )
-    }
-
-    // Set up orientation notification
-    private func setupOrientationNotification() {
-        NotificationCenter.default.addObserver(
-            forName: UIDevice.orientationDidChangeNotification,
-            object: nil,
-            queue: .main
-        ) { _ in
-            let newOrientation = UIDevice.current.orientation
-            if newOrientation.isLandscape || newOrientation.isPortrait {
-                self.currentOrientation = newOrientation
-                self.rotationCount += 1 // Increment rotation count to force view recreation
-                print("Orientation changed to: \(newOrientation.isLandscape ? "landscape" : "portrait"), rotation count: \(self.rotationCount)")
-
-                // Post a notification to refresh the GPU view
-                NotificationCenter.default.post(name: Notification.Name("RefreshGPUView"), object: nil)
-            }
-        }
     }
 }

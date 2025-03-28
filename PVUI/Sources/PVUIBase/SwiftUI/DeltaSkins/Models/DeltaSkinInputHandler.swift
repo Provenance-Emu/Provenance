@@ -9,6 +9,9 @@ public class DeltaSkinInputHandler: ObservableObject {
     /// The emulator core to send inputs to
     private weak var emulatorCore: PVEmulatorCore?
 
+    /// Callback for menu button presses
+    var menuButtonHandler: (() -> Void)?
+
     /// Initialize with an emulator core
     public init(emulatorCore: PVEmulatorCore? = nil) {
         self.emulatorCore = emulatorCore
@@ -60,8 +63,8 @@ public class DeltaSkinInputHandler: ObservableObject {
     func menuButtonPressed() {
         DLOG("Delta Skin menu button pressed")
 
-        // Post a notification to show the menu
-        NotificationCenter.default.post(name: Notification.Name("ShowEmulatorMenu"), object: nil)
+        // Call the menu button handler if set
+        menuButtonHandler?()
     }
 
     /// Handle analog stick movement
