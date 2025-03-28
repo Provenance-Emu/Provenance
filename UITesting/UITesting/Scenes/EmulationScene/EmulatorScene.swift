@@ -462,51 +462,6 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
     }
 
     @MainActor
-    func openSaveState(_ saveState: PVSaveState) async {
-        ILOG("EmulatorContainerViewController: Opening save state: \(saveState.md5)")
-
-        do {
-            guard let game = saveState.game else {
-                ELOG("EmulatorContainerViewController: Cannot open save state with no associated game")
-                throw GameLaunchingError.generic("Game not found")
-            }
-
-            try await canLoad(game)
-
-            // Store the game in the app state
-            AppState.shared.emulationUIState.currentGame = game
-
-            if let core = saveState.core {
-                ILOG("EmulatorContainerViewController: Using core from save state: \(core.projectName)")
-                await presentEMU(withCore: core, forGame: game, source: view)
-
-                // Load the save state after the emulator is initialized
-                if let emulatorVC = self.emulatorViewController {
-                    await emulatorVC.loadSaveState(saveState)
-                }
-            } else if let system = game.system, let defaultCore = system.cores.first {
-                ILOG("EmulatorContainerViewController: No core in save state, using default: \(defaultCore.projectName)")
-                await presentEMU(withCore: defaultCore, forGame: game, source: view)
-            } else {
-                ILOG("EmulatorContainerViewController: No core specified, presenting core selection")
-                presentCoreSelection(forGame: game, sender: nil)
-            }
-
-            // Update recent games
-            updateRecentGames(game)
-
-        } catch let error as GameLaunchingError {
-            if let game = saveState.game {
-                handleGameLaunchingError(error, forGame: game)
-            } else {
-                displayAndLogError(withTitle: "Error", message: "Failed to open save state: \(error.localizedDescription)", customActions: nil)
-            }
-        } catch {
-            displayAndLogError(withTitle: "Error", message: "An unknown error occurred: \(error.localizedDescription)", customActions: nil)
-        }
-    }
-
-    @MainActor
     private func presentEMU(withCore core: PVCore, forGame game: PVGame, source: UIView) async {
         do {
             ILOG("EmulatorContainerViewController: Creating emulator core for game: \(game.title) with core: \(core.projectName)")
