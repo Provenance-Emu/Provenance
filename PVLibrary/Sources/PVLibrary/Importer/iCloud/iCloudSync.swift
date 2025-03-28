@@ -604,7 +604,8 @@ class SaveStateSyncer: iCloudContainerSyncer {
     
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
         self.init(directories: ["Save States"], notificationCenter: notificationCenter, errorHandler: errorHandler)
-        fileImportQueueMaxCount = 10
+        //TODO: test if 1 at a time improves cpu and memory usage like roms
+        fileImportQueueMaxCount = 1
         jsonDecorder.dataDecodingStrategy = .deferredToData
         
         let publishers = [.SavesFinishedImporting, .RomDatabaseInitialized].map { notificationCenter.publisher(for: $0) }
