@@ -58,6 +58,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     // Store a reference to the skin container view
     internal var skinContainerView: UIView?
     
+    
     // Debug overlay view
     internal var debugOverlayView: UIView?
     internal var debugInfoLabel: UILabel?
@@ -347,9 +348,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         view.addSubview(gpuViewController.view)
         gpuViewController.view.frame = view.bounds
         gpuViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-
-        // Make sure it has the right z-index
-        gpuViewController.view.layer.zPosition = 10
     }
 
     private func createEmulator() throws {

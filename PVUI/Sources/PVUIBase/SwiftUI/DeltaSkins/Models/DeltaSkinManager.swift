@@ -15,6 +15,9 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
 
     public init() {
         print("Initializing DeltaSkinManager")
+        Task.detached { [weak self] in
+            try? self?.scanForSkins()
+        }
     }
 
     /// Get all available skins

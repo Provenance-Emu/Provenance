@@ -42,12 +42,9 @@ extension PVEmulatorViewController {
             observeAppStateChanges()
 
             // Scan for available skins in the background
-            Task {
-                await scanForAvailableSkins()
-            }
-            
-            // Schedule a refresh to ensure rendering is correct
-            scheduleInitialRefresh()
+//            Task {
+//                await scanForAvailableSkins()
+//            }
         } else {
             ELOG("Delta Skin not enabled in settings")
         }
@@ -68,14 +65,6 @@ extension PVEmulatorViewController {
             }
         } catch {
             ELOG("Error scanning for skins: \(error)")
-        }
-    }
-    
-    /// Schedule initial refresh with appropriate timing
-    private func scheduleInitialRefresh() {
-        // Initial gentle refresh after a short delay
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-            self?.gentleRefreshMetalView()
         }
     }
     
@@ -104,7 +93,7 @@ extension PVEmulatorViewController {
     /// Handle app coming to foreground
     @objc private func handleAppWillEnterForeground() {
         DLOG("App entering foreground, refreshing Metal view")
-        gentleRefreshMetalView()
+        configureGPUView()
     }
     
     /// Handle app going to background
@@ -191,14 +180,24 @@ extension PVEmulatorViewController {
         containerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         containerView.isOpaque = false  // Ensure it's not opaque
         containerView.backgroundColor = .clear  // Clear background
+        
+        // Add the Metal view to the main view first (bottom layer)
+        if let metalVC = gpuViewController as? PVMetalViewController,
+           let mtlView = metalVC.mtlView {
+            // Make sure Metal view is in the view hierarchy
+            if mtlView.superview == nil {
+                view.addSubview(mtlView)
+            }
+            mtlView.frame = view.bounds
+            mtlView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            mtlView.isHidden = false
+            mtlView.alpha = 1.0
+        }
 
-        // Add the container to the view hierarchy
+        // Now add the skin container on top
         view.addSubview(containerView)
         
-        // Store reference to the skin container view
-        self.skinContainerView = containerView
-        
-        // Make sure the skin view is above the GPU view
+        // Make sure skin is on top
         view.bringSubviewToFront(containerView)
         
         // Add debug overlay toggle gesture
@@ -239,38 +238,49 @@ extension PVEmulatorViewController {
         super.viewWillTransition(to: size, with: coordinator)
         
         // Use the coordinator to animate alongside the rotation
-        coordinator.animate(alongsideTransition: { [weak self] _ in
-            guard let self = self else { return }
-            
-            // Update frames during the rotation animation
-            self.updateViewFramesForCurrentBounds()
-            
-        }, completion: { [weak self] _ in
-            // After rotation is complete, do a gentle refresh
-            self?.gentleRefreshMetalView()
-        })
+//        coordinator.animate(alongsideTransition: { [weak self] _ in
+//            guard let self = self else { return }
+//            
+//            // Update Metal view frame
+//            if let metalVC = self.gpuViewController as? PVMetalViewController,
+//               let mtlView = metalVC.mtlView {
+//                mtlView.frame = self.view.bounds
+//            }
+//            
+//            // Update skin container frame and ensure it's on top
+//            if let containerView = view.subviews.first(where: { $0 is DeltaSkinContainerView }) {
+//                containerView.frame = self.view.bounds
+//                self.view.bringSubviewToFront(containerView)
+//            }
+//            
+//        }, completion: { [weak self] _ in
+//            // After rotation is complete, do a gentle refresh
+//            self?.gentleRefreshMetalView()
+//        })
     }
     
-    /// Update all view frames to match current bounds
+    /// Update all view frames to match current bounds - ensures proper z-order
     private func updateViewFramesForCurrentBounds() {
         let currentBounds = view.bounds
         
-        // Update GPU view frame
+        // CRITICAL: Update in the correct order to maintain z-order
+        
+        // 1. First update GPU view frame (bottom layer)
         if let gameScreenView = gpuViewController.view {
             gameScreenView.frame = currentBounds
         }
         
-        // Update Metal view if available
+        // 2. Then update Metal view (middle layer)
         if let metalVC = gpuViewController as? PVMetalViewController,
            let mtlView = metalVC.mtlView {
             mtlView.frame = currentBounds
         }
         
-        // Update skin view if available
+        // 3. Finally update skin view (top layer)
         if let skinView = self.skinContainerView {
             skinView.frame = currentBounds
             
-            // Ensure skin view is always on top
+            // CRITICAL: Ensure skin view is ALWAYS on top
             if let superview = skinView.superview {
                 superview.bringSubviewToFront(skinView)
             }
@@ -304,64 +314,6 @@ extension PVEmulatorViewController {
             if let mtlView = metalVC.mtlView {
                 mtlView.isHidden = false
                 mtlView.alpha = 1.0
-            }
-        }
-    }
-    
-    /// A more gentle refresh of the Metal view that won't freeze the UI
-    func gentleRefreshMetalView() {
-        guard let metalVC = gpuViewController as? PVMetalViewController,
-              let mtlView = metalVC.mtlView else {
-            ELOG("Metal view not available")
-            return
-        }
-        
-        // Capture initial state for logging
-        let initialState = "superview=\(mtlView.superview != nil ? "exists" : "nil"), hidden=\(mtlView.isHidden), alpha=\(mtlView.alpha)"
-        let initialFrame = mtlView.frame
-        
-        // Perform all updates on the main thread to avoid UI issues
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            
-            // Only make minimal changes to ensure visibility
-            if mtlView.isHidden {
-                mtlView.isHidden = false
-            }
-            
-            if mtlView.alpha < 1.0 {
-                mtlView.alpha = 1.0
-            }
-            
-            // Only add to view hierarchy if absolutely necessary
-            if mtlView.superview == nil {
-                DLOG("Metal view has no superview, adding to view hierarchy")
-                self.view.addSubview(mtlView)
-            }
-            
-            // Ensure frame is correct
-            if mtlView.frame != self.view.bounds {
-                mtlView.frame = self.view.bounds
-            }
-            
-            // Ensure proper z-order with skin view
-            if let skinView = self.skinContainerView, let superview = skinView.superview {
-                superview.bringSubviewToFront(skinView)
-            }
-            
-            // Request a redraw but don't force it
-            try? metalVC.updateInputTexture()
-            
-            // Log the changes made
-            let finalState = "superview=\(mtlView.superview != nil ? "exists" : "nil"), hidden=\(mtlView.isHidden), alpha=\(mtlView.alpha)"
-            let finalFrame = mtlView.frame
-            
-            if initialState != finalState || initialFrame != finalFrame {
-                DLOG("""
-                🔧 METAL VIEW UPDATED:
-                - Initial: \(initialState), frame=\(initialFrame)
-                - Final: \(finalState), frame=\(finalFrame)
-                """)
             }
         }
     }
