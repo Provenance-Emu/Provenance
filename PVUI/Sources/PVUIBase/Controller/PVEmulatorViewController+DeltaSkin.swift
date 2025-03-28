@@ -36,9 +36,6 @@ extension PVEmulatorViewController {
             // Set up rotation notification
             setupRotationNotification()
 
-            // Set up post-appearance GPU visibility enforcement
-            setupPostAppearanceGPUEnforcement()
-
             // Only scan for skins once at startup
             Task {
                 do {
@@ -63,65 +60,39 @@ extension PVEmulatorViewController {
             return
         }
 
-        // CRITICAL STEP 1: Remove GPU view from hierarchy to ensure clean addition
-        if gameScreenView.superview != nil {
-            gameScreenView.removeFromSuperview()
+        // Ensure the GPU view is in the hierarchy FIRST
+        if gameScreenView.superview == nil {
+            view.addSubview(gameScreenView)
+            DLOG("Added GPU view to view hierarchy")
         }
 
-        // CRITICAL STEP 2: Insert at index 0 to be at bottom of view stack
-        view.insertSubview(gameScreenView, at: 0)
-        DLOG("Added GPU view at index 0")
-
-        // CRITICAL STEP 3: Configure with absolute positioning and full opacity
+        // Configure the GPU view
         gameScreenView.frame = view.bounds
         gameScreenView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         gameScreenView.isHidden = false
         gameScreenView.alpha = 1.0
-        gameScreenView.backgroundColor = .black
-        gameScreenView.isOpaque = true
+        gameScreenView.backgroundColor = .black // Black background for the game screen
+        gameScreenView.isOpaque = true // GPU view should be opaque
 
-        // Debug border to see if it's visible
-        gameScreenView.layer.borderColor = UIColor.magenta.cgColor
-        gameScreenView.layer.borderWidth = 4.0
+        // Force layout
+        gameScreenView.setNeedsLayout()
+        gameScreenView.layoutIfNeeded()
 
-        DLOG("GPU view configured: \(gameScreenView.frame)")
-
-        // CRITICAL STEP 4: Force immediate layout
-        view.layoutIfNeeded()
-
-        // CRITICAL STEP 5: Directly configure Metal view if present
-        if let metalVC = gpuViewController as? PVMetalViewController,
-           let metalView = metalVC.mtlView {
-            metalView.isOpaque = true
-            metalView.frame = view.bounds
-            metalView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-            metalView.isPaused = false // Ensure rendering is active
-            metalView.enableSetNeedsDisplay = true
-
-            // Force Metal view to be visible and render
-            metalView.layer.isOpaque = true
-            metalView.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 1.0)
-
-            DLOG("Metal view configured: \(metalView.frame)")
-
-            // CRITICAL STEP 6: Force multiple draws with increasing delays
-            try? metalVC.updateInputTexture()
-            metalVC.draw(in: metalView)
-
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                try? metalVC.updateInputTexture()
-                metalVC.draw(in: metalView)
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    try? metalVC.updateInputTexture()
-                    metalVC.draw(in: metalView)
-                }
-            }
+        // Force a draw to make sure content is visible
+        if let metalVC = gpuViewController as? PVMetalViewController {
+            DLOG("Forcing initial draw of GPU view")
+            metalVC.draw(in: metalVC.mtlView)
         }
     }
 
     /// Add the skin view to the view hierarchy
     private func addSkinView() async {
+        // Get the GPU view from the gpuViewController
+        guard let gameScreenView = gpuViewController.view else {
+            ELOG("GPU view not found")
+            return
+        }
+
         // Create the input handler
         let inputHandler = DeltaSkinInputHandler(emulatorCore: core)
 
@@ -131,41 +102,10 @@ extension PVEmulatorViewController {
             core: core,
             inputHandler: inputHandler,
             onSkinLoaded: { [weak self] in
-                // CRITICAL: When skin is loaded, ensure GPU view is at bottom and visible
-                if let self = self, let gameScreenView = self.gpuViewController.view {
-                    // Send to back to ensure it's behind the skin layer
-                    self.view.sendSubviewToBack(gameScreenView)
-
-                    // Make 100% sure it's visible
-                    gameScreenView.isHidden = false
-                    gameScreenView.alpha = 1.0
-
-                    // Force layout update
-                    self.view.setNeedsLayout()
-                    self.view.layoutIfNeeded()
-
-                    // Schedule multiple redraws to force video display
-                    if let metalVC = self.gpuViewController as? PVMetalViewController,
-                       let metalView = metalVC.mtlView {
-                        // First draw immediately
-                        try? metalVC.updateInputTexture()
-                        metalVC.draw(in: metalView)
-
-                        // Second draw after short delay
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                            try? metalVC.updateInputTexture()
-                            metalVC.draw(in: metalView)
-
-                            // Third draw after longer delay
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                try? metalVC.updateInputTexture()
-                                metalVC.draw(in: metalView)
-                            }
-                        }
-                    }
-
-                    // Log success
-                    DLOG("Skin loaded, GPU view ensured visible")
+                // Force a redraw when skin is loaded
+                if let metalVC = self?.gpuViewController as? PVMetalViewController {
+                    DLOG("Skin loaded, forcing GPU redraw")
+                    metalVC.draw(in: metalVC.mtlView)
                 }
             },
             onRefreshRequested: { [weak self] in
@@ -176,19 +116,18 @@ extension PVEmulatorViewController {
             }
         )
 
-        // Configure container
+        // Configure the container
         containerView.frame = view.bounds
         containerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
-        // Add container ABOVE GPU view
+        // Add the container AFTER the GPU view
         view.addSubview(containerView)
-        DLOG("Added skin container")
 
         // Force a redraw of GPU view to make sure it's visible
         refreshGPUView()
 
-        // Schedule another redraw after a delay
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+        // Schedule another redraw after a delay for safety
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
             self?.refreshGPUView()
         }
     }
@@ -197,11 +136,10 @@ extension PVEmulatorViewController {
     private func hideStandardControls() {
         // Find the controller view controller
         for childVC in children {
-            if let controllerVC = childVC as? UIViewController,
-               childVC != gpuViewController,
-               type(of: childVC).description().contains("Controller") {
+            if let controllerVC = childVC as? UIViewController {
+                // Hide the entire controller view
                 controllerVC.view.isHidden = true
-                DLOG("Hidden standard controller: \(type(of: childVC))")
+                print("Hidden standard controller view")
             }
         }
     }
@@ -237,60 +175,30 @@ extension PVEmulatorViewController {
 
             // Force a redraw
             refreshGPUView()
-
-            // Log view hierarchy after rotation
-            logViewHierarchy("AFTER ROTATION")
         }
     }
 
-    /// Simple refresh of the GPU view with maximum visibility enforcement
+    /// Simple refresh of the GPU view
     func refreshGPUView() {
-        DLOG("Refreshing GPU view with maximum visibility")
+        DLOG("Refreshing GPU view")
 
-        // Make sure GPU view is at the bottom layer
+        // Update frame
         if let gameScreenView = gpuViewController.view {
-            view.sendSubviewToBack(gameScreenView)
-
-            // Ensure complete visibility
-            gameScreenView.isHidden = false
-            gameScreenView.alpha = 1.0
-            gameScreenView.backgroundColor = .black
-            gameScreenView.isOpaque = true
-
-            // Update frame to fill view
             gameScreenView.frame = view.bounds
         }
 
-        // Force immediate draw
+        // Force redraw
         if let metalVC = gpuViewController as? PVMetalViewController {
+            // Try to update the texture first
             do {
                 try metalVC.updateInputTexture()
-                metalVC.draw(in: metalVC.mtlView)
-
-                // Log buffer details for debugging
-                if let emulatorCore = metalVC.emulatorCore {
-                    DLOG("GPU buffer size: \(emulatorCore.bufferSize)")
-                }
-
-                // Force an additional draw after a delay
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    metalVC.draw(in: metalVC.mtlView)
-                }
             } catch {
-                ELOG("Failed to update texture: \(error)")
+                ELOG("Error updating texture: \(error)")
             }
-        }
-    }
 
-    // Helper method to log the view hierarchy for debugging
-    private func logViewHierarchy(_ label: String) {
-        DLOG("--- VIEW HIERARCHY (\(label)) ---")
-        for (index, subview) in view.subviews.enumerated() {
-            let viewType = type(of: subview)
-            let isGPUView = subview == gpuViewController.view
-            DLOG("[\(index)] \(viewType)\(isGPUView ? " (GPU VIEW)" : "") - frame: \(subview.frame), alpha: \(subview.alpha), hidden: \(subview.isHidden)")
+            // Force a redraw
+            metalVC.draw(in: metalVC.mtlView)
         }
-        DLOG("--- END VIEW HIERARCHY ---")
     }
 
     // Add this method to handle showing the menu
@@ -299,72 +207,5 @@ extension PVEmulatorViewController {
 
         // Call the existing method to show the menu
         showMenu(self)
-    }
-
-    // Add an optimized forced refresh method
-    private func forceRefreshGPUView() {
-        guard let metalVC = gpuViewController as? PVMetalViewController else {
-            return
-        }
-
-        if let metalView = metalVC.mtlView {
-            // Clean previous texture
-            try? metalVC.updateInputTexture()
-
-            // Force immediate draw
-            metalVC.draw(in: metalView)
-
-            // Schedule additional draws to ensure visibility
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                try? metalVC.updateInputTexture()
-                metalVC.draw(in: metalView)
-            }
-        }
-    }
-
-    /// Set up a notification to enforce GPU visibility after view appearance
-    private func setupPostAppearanceGPUEnforcement() {
-        // This approach preserves the existing viewDidAppear implementation
-        // while still enforcing GPU visibility after the view appears
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(enforceGPUVisibility),
-            name: UIApplication.didBecomeActiveNotification,
-            object: nil
-        )
-
-        // Also add a delayed call to enforce visibility
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-            self?.enforceGPUVisibility()
-        }
-    }
-
-    /// Enforce GPU view visibility - can be called anytime
-    @objc func enforceGPUVisibility() {
-        guard let gameScreenView = gpuViewController.view else {
-            ELOG("GPU view not found")
-            return
-        }
-
-        // Make sure it's in the hierarchy
-        if gameScreenView.superview == nil {
-            view.insertSubview(gameScreenView, at: 0)
-            DLOG("Enforced GPU view insertion")
-        } else {
-            // Just make sure it's at the bottom
-            view.sendSubviewToBack(gameScreenView)
-        }
-
-        // Force visibility
-        gameScreenView.isHidden = false
-        gameScreenView.alpha = 1.0
-
-        // Forcibly redraw Metal content
-        if let metalVC = gpuViewController as? PVMetalViewController {
-            try? metalVC.updateInputTexture()
-            metalVC.draw(in: metalVC.mtlView)
-        }
-
-        DLOG("Enforced GPU view visibility")
     }
 }

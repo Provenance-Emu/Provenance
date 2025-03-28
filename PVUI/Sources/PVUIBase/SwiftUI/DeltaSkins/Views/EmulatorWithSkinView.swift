@@ -15,13 +15,9 @@ struct EmulatorWithSkinView: View {
     let systemId: SystemIdentifier?
 
     let coreInstance: PVEmulatorCore
-    // Debug overlay control
-    let showDebugOverlay: Bool
-
     let onSkinLoaded: () -> Void
     let onRefreshRequested: () -> Void
     let onMenuRequested: () -> Void
-
 
     @EnvironmentObject private var inputHandler: DeltaSkinInputHandler
     @StateObject private var skinLoader = DeltaSkinLoader()
@@ -33,11 +29,14 @@ struct EmulatorWithSkinView: View {
     // Input handling
     private let inputSubject = PassthroughSubject<String, Never>()
 
+    // Debug mode
+    @State private var showDebugOverlay = false
+
     // Add this to the struct to track rotation changes
     @State private var rotationCount: Int = 0
 
     // Initialize with a game, extracting the necessary properties
-    init(game: PVGame, coreInstance: PVEmulatorCore, showDebugOverlay: Bool = false, onSkinLoaded: @escaping () -> Void, onRefreshRequested: @escaping () -> Void, onMenuRequested: @escaping () -> Void) {
+    init(game: PVGame, coreInstance: PVEmulatorCore, onSkinLoaded: @escaping () -> Void, onRefreshRequested: @escaping () -> Void, onMenuRequested: @escaping () -> Void) {
         self.gameTitle = game.title
         self.systemName = game.system?.name
 
@@ -48,42 +47,43 @@ struct EmulatorWithSkinView: View {
         self.onSkinLoaded = onSkinLoaded
         self.onRefreshRequested = onRefreshRequested
         self.onMenuRequested = onMenuRequested
-        self.showDebugOverlay = showDebugOverlay
     }
 
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // Background - completely transparent to allow game to show through
-                Color.clear
-                    .edgesIgnoringSafeArea(.all)
+                // Background - make it transparent to show the game screen
+                Color.clear.edgesIgnoringSafeArea(.all)
 
                 if skinLoader.isLoading {
                     // Loading view with progress
                     loadingView
-                        .background(Color.clear)
                 } else if let skin = skinLoader.selectedSkin {
                     // Render the skin
                     skinContentView(skin: skin, geometry: geometry)
-                        .background(Color.clear)
+                        .background(Color.clear) // Ensure background is transparent
                         .onAppear {
-                            // When the skin content appears, mark as complete
-                            if !skinRenderComplete {
-                                skinRenderComplete = true
-                                onSkinLoaded()
-                                DLOG("Skin render complete")
+                            // When the skin content appears, mark as complete after a short delay
+                            // to ensure it's fully rendered
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                if !skinRenderComplete {
+                                    skinRenderComplete = true
+                                    onSkinLoaded()
+                                    DLOG("🎮 EmulatorWithSkinView: Skin render complete, notifying observers")
 
-                                // Request GPU refresh immediately after skin load
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                    onRefreshRequested()
+                                    // Request a refresh after the skin is loaded
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        onRefreshRequested()
+                                    }
                                 }
                             }
                         }
                 } else {
                     // Fallback controller with input handling
                     defaultControllerSkin()
-                        .background(Color.clear)
+                        .background(Color.clear) // Ensure background is transparent
                         .onAppear {
+                            // Even with the fallback, notify that we're ready
                             onSkinLoaded()
                         }
                 }
@@ -92,18 +92,37 @@ struct EmulatorWithSkinView: View {
                 if showDebugOverlay {
                     debugOverlayView
                 }
+
+                // Debug toggle button
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            showDebugOverlay.toggle()
+                        }) {
+                            Image(systemName: showDebugOverlay ? "ladybug.fill" : "ladybug")
+                                .font(.system(size: 20))
+                                .foregroundColor(.white)
+                                .padding(8)
+                                .background(Color.black.opacity(0.5))
+                                .clipShape(Circle())
+                        }
+                        .padding()
+                    }
+                }
             }
-            .background(Color.clear)
+            .background(Color.clear) // Ensure the background is transparent
             .onAppear {
                 // Set the emulator core in the input handler
                 inputHandler.setEmulatorCore(coreInstance)
 
-                // Update the menu button handler
+                // Update the menu button handler to use the direct callback
                 inputHandler.menuButtonHandler = {
                     onMenuRequested()
                 }
 
-                // Start loading the skin
+                // Start loading the skin using a simplified approach
                 Task {
                     await loadSkinSafely()
                 }
@@ -117,7 +136,7 @@ struct EmulatorWithSkinView: View {
             }
             .environment(\.debugSkinMappings, showDebugOverlay)
         }
-        .background(Color.clear)
+        .background(Color.clear) // Ensure the background is transparent
     }
 
     // MARK: - Loading View
