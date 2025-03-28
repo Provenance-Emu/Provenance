@@ -171,7 +171,7 @@ public struct DeltaSkinView: View {
         showDebugOverlay: Bool = false,
         showHitTestOverlay: Bool = false,
         screenAspectRatio: CGFloat? = nil,
-        isInEmulator: Bool = true,
+        isInEmulator: Bool = false,
         inputHandler: DeltaSkinInputHandler
     ) {
         self.skin = skin
