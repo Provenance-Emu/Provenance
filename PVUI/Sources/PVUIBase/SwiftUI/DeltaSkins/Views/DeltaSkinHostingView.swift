@@ -13,8 +13,13 @@ class DeltaSkinHostingView: UIView {
         // Initialize with the hosting controller's view frame
         super.init(frame: hostingController.view.frame)
 
+        // CRITICAL: Configure view for transparency
+        self.backgroundColor = .clear
+        self.isOpaque = false
+
         // Configure the hosting controller's view
         hostingController.view.backgroundColor = .clear
+        hostingController.view.isOpaque = false
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
 
         // Add the hosting controller's view as a subview
@@ -27,6 +32,12 @@ class DeltaSkinHostingView: UIView {
             hostingController.view.trailingAnchor.constraint(equalTo: trailingAnchor),
             hostingController.view.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+
+        // Ensure all SwiftUI subviews are also transparent
+        for subview in hostingController.view.subviews {
+            subview.backgroundColor = .clear
+            subview.isOpaque = false
+        }
     }
 
     required init?(coder: NSCoder) {
@@ -36,5 +47,9 @@ class DeltaSkinHostingView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         hostingController.view.frame = bounds
+
+        // Ensure transparency is maintained after layout
+        hostingController.view.backgroundColor = .clear
+        hostingController.view.isOpaque = false
     }
 }

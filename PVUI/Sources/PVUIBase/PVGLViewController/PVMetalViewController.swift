@@ -1798,13 +1798,13 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
               let commandQueue = commandQueue,
               let drawable = view.currentDrawable,
               let inputTexture = inputTexture else {
-            DLOG("Missing required resources for direct rendering")
+            ELOG("Missing required resources for direct rendering")
             return
         }
 
         // Check if we have a valid pipeline
         if customPipeline == nil && blitPipeline == nil {
-            DLOG("No valid pipeline available in directRender, trying to set up shaders directly")
+            WLOG("No valid pipeline available in directRender, trying to set up shaders directly")
             createBasicShaders()
 
             // If we still don't have a pipeline, return
@@ -1816,7 +1816,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         // Create a command buffer
         guard let commandBuffer = commandQueue.makeCommandBuffer() else {
-            DLOG("Failed to create command buffer")
+            ELOG("Failed to create command buffer")
             return
         }
 
@@ -1829,7 +1829,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         // Create a render command encoder
         guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
-            DLOG("Failed to create render encoder")
+            ELOG("Failed to create render encoder")
             return
         }
 
@@ -1854,7 +1854,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             // Draw the primitives
             renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
 
-            DLOG("Rendered with custom pipeline")
+            // DLOG("Rendered with custom pipeline")
         } else if let blitPipeline = blitPipeline {
             // Fall back to the blit pipeline
             renderEncoder.setRenderPipelineState(blitPipeline)
@@ -1870,9 +1870,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             // Draw the primitives
             renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
 
-            DLOG("Rendered with blit pipeline")
+            // DLOG("Rendered with blit pipeline")
         } else {
-            DLOG("No pipeline available")
+            ELOG("No pipeline available")
         }
 
         // End encoding
