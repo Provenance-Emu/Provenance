@@ -3,17 +3,19 @@ import SwiftUI
 import PVEmulatorCore
 import PVLibrary
 import PVLogging
-// Make sure we import our custom views
 import PVUIBase
-// Make sure this import is correct if needed
-// import PVUIBase.SwiftUI.DeltaSkins.Views
 import QuartzCore
+import Combine
 
+// MARK: - DeltaSkin Extension
+
+/// Extension to add DeltaSkin support to the emulator view controller
 extension PVEmulatorViewController {
+  
 
     /// Set up the DeltaSkin view if enabled in settings
     @objc public func setupDeltaSkinView() async throws {
-        // Check if DeltaSkins are enabled
+        // Check if DeltaSkins are enabled (hardcoded to true for now, but should use UserDefaults in production)
         let useDeltaSkins = true // UserDefaults.standard.bool(forKey: "useDeltaSkins")
         ILOG("Delta Skin setting: \(useDeltaSkins)")
 
@@ -27,38 +29,88 @@ extension PVEmulatorViewController {
             // Hide the standard controls
             hideStandardControls()
 
-            DLOG(
-                """
-                "Delta Skin enabled and loaded
-                Game: \(game.title)
-                System: \(game.system?.name ?? "Unknown")
-                """)
-            if let identifier = game.system?.systemIdentifier {
-                DLOG("System Identifier: \(identifier)")
-            }
+            // Log skin setup info
+            let skinInfo = """
+            Delta Skin enabled and loaded
+            Game: \(game.title)
+            System: \(game.system?.name ?? "Unknown")
+            Identifier: \(game.system?.systemIdentifier.rawValue ?? "Unknown")
+            """
+            DLOG(skinInfo)
+            
+            // Set up observation of app state changes
+            observeAppStateChanges()
 
-            // No need for rotation notification - using standard UIKit methods
-
-            // Only scan for skins once at startup
+            // Scan for available skins in the background
             Task {
-                do {
-                    if let systemId = game.system?.systemIdentifier {
-                        // Just log the skin count
-                        let systemSkins = try await DeltaSkinManager.shared.skins(for: systemId)
-                        DLOG("Found \(systemSkins.count) skins for \(systemId)")
-                    }
-                } catch {
-                    ELOG("Error getting skins: \(error)")
-                }
+                await scanForAvailableSkins()
             }
             
-            // Just a single gentle refresh after a short delay
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-                self?.gentleRefreshMetalView()
-            }
+            // Schedule a refresh to ensure rendering is correct
+            scheduleInitialRefresh()
         } else {
             ELOG("Delta Skin not enabled in settings")
         }
+    }
+    
+    /// Scan for available skins for the current system
+    private func scanForAvailableSkins() async {
+        do {
+            if let systemId = game.system?.systemIdentifier {
+                // Get skins for this system
+                let systemSkins = try await DeltaSkinManager.shared.skins(for: systemId)
+                DLOG("Found \(systemSkins.count) skins for \(systemId)")
+                
+                // If no skins found, try to use default skins
+                if systemSkins.isEmpty {
+                    DLOG("No custom skins found, using default skin if available")
+                }
+            }
+        } catch {
+            ELOG("Error scanning for skins: \(error)")
+        }
+    }
+    
+    /// Schedule initial refresh with appropriate timing
+    private func scheduleInitialRefresh() {
+        // Initial gentle refresh after a short delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+            self?.gentleRefreshMetalView()
+        }
+    }
+    
+    /// Observe app state changes to handle background/foreground transitions
+    private func observeAppStateChanges() {
+        // Remove any existing observers
+        NotificationCenter.default.removeObserver(self, name: UIApplication.willEnterForegroundNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
+        
+        // Add observers for app state changes
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAppWillEnterForeground),
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAppDidEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+    }
+    
+    /// Handle app coming to foreground
+    @objc private func handleAppWillEnterForeground() {
+        DLOG("App entering foreground, refreshing Metal view")
+        gentleRefreshMetalView()
+    }
+    
+    /// Handle app going to background
+    @objc private func handleAppDidEnterBackground() {
+        DLOG("App entering background")
+        // Any cleanup needed when going to background
     }
 
     /// Configure the GPU view properly
@@ -264,38 +316,54 @@ extension PVEmulatorViewController {
             return
         }
         
-        // Log the current state
-        let logOutput =
-        """
-        🔧 METAL VIEW REFRESH:
-        - Current state: superview=\(mtlView.superview != nil ? "exists" : "nil"), hidden=\(mtlView.isHidden), alpha=\(mtlView.alpha)
-        - Frame: \(mtlView.frame)
-        """
-
-        DLOG(logOutput)
+        // Capture initial state for logging
+        let initialState = "superview=\(mtlView.superview != nil ? "exists" : "nil"), hidden=\(mtlView.isHidden), alpha=\(mtlView.alpha)"
+        let initialFrame = mtlView.frame
         
-        // Only make minimal changes to ensure visibility
-        if mtlView.isHidden {
-            mtlView.isHidden = false
-        }
-        
-        if mtlView.alpha < 1.0 {
-            mtlView.alpha = 1.0
-        }
-        
-        // Only add to view hierarchy if absolutely necessary
-        if mtlView.superview == nil {
-            DLOG("Metal view has no superview, adding to view hierarchy")
-            view.addSubview(mtlView)
+        // Perform all updates on the main thread to avoid UI issues
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            
+            // Only make minimal changes to ensure visibility
+            if mtlView.isHidden {
+                mtlView.isHidden = false
+            }
+            
+            if mtlView.alpha < 1.0 {
+                mtlView.alpha = 1.0
+            }
+            
+            // Only add to view hierarchy if absolutely necessary
+            if mtlView.superview == nil {
+                DLOG("Metal view has no superview, adding to view hierarchy")
+                self.view.addSubview(mtlView)
+            }
+            
+            // Ensure frame is correct
+            if mtlView.frame != self.view.bounds {
+                mtlView.frame = self.view.bounds
+            }
             
             // Ensure proper z-order with skin view
             if let skinView = self.skinContainerView, let superview = skinView.superview {
                 superview.bringSubviewToFront(skinView)
             }
+            
+            // Request a redraw but don't force it
+            try? metalVC.updateInputTexture()
+            
+            // Log the changes made
+            let finalState = "superview=\(mtlView.superview != nil ? "exists" : "nil"), hidden=\(mtlView.isHidden), alpha=\(mtlView.alpha)"
+            let finalFrame = mtlView.frame
+            
+            if initialState != finalState || initialFrame != finalFrame {
+                DLOG("""
+                🔧 METAL VIEW UPDATED:
+                - Initial: \(initialState), frame=\(initialFrame)
+                - Final: \(finalState), frame=\(finalFrame)
+                """)
+            }
         }
-        
-        // Request a redraw but don't force it
-        try? metalVC.updateInputTexture()
     }
 
     // Add this method to handle showing the menu
@@ -307,7 +375,7 @@ extension PVEmulatorViewController {
     }
     
     // Add a method to handle showing the menu with a sender
-    @objc private func showEmulatorMenu(sender: Any? = nil) {
+    @objc private func showEmulatorMenu(sender: AnyObject? = nil) {
         DLOG("Showing emulator menu with sender: \(String(describing: sender))")
         
         // Call the existing method to show the menu
@@ -422,7 +490,7 @@ extension PVEmulatorViewController {
         // Get FPS if available
         var fpsInfo = "FPS: N/A"
         if let metalVC = gpuViewController as? PVMetalViewController {
-            let fps = metalVC.currentFPS
+            let fps = metalVC.framesPerSecond
             fpsInfo = "FPS: \(Int(fps))"
         }
         

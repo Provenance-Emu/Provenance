@@ -23,6 +23,7 @@ import PVThemes
 import PVSettings
 import PVRealm
 import PVLogging
+import Combine
 import MBProgressHUD
 
 private weak var staticSelf: PVEmualatorControllerProtocol?
