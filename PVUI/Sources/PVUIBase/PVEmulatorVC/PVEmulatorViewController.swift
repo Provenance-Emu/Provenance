@@ -54,7 +54,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     public let game: PVGame
     public internal(set) var autosaveTimer: Timer?
     public internal(set) var gameStartTime: Date?
-
+    // Store a reference to the skin container view
+    internal var skinContainerView: UIView?
+    
     var menuButton: MenuButton?
 
     private(set) lazy var gpuViewController: PVGPUViewController = {

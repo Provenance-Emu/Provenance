@@ -10,6 +10,7 @@ import PVUIBase
 
 extension PVEmulatorViewController {
 
+
     /// Set up the DeltaSkin view if enabled in settings
     @objc public func setupDeltaSkinView() async throws {
         // Check if DeltaSkins are enabled
@@ -36,8 +37,7 @@ extension PVEmulatorViewController {
                 DLOG("System Identifier: \(identifier)")
             }
 
-            // Set up rotation notification
-            setupRotationNotification()
+            // No need for rotation notification - using standard UIKit methods
 
             // Only scan for skins once at startup
             Task {
@@ -130,9 +130,17 @@ extension PVEmulatorViewController {
         // Configure the container
         containerView.frame = view.bounds
         containerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        containerView.isOpaque = false  // Ensure it's not opaque
+        containerView.backgroundColor = .clear  // Clear background
 
-        // Add the container AFTER the GPU view
+        // Add the container to the view hierarchy
         view.addSubview(containerView)
+        
+        // Store reference to the skin container view
+        self.skinContainerView = containerView
+        
+        // Make sure the skin view is above the GPU view
+        view.bringSubviewToFront(containerView)
 
         // Force a redraw of GPU view to make sure it's visible
         refreshGPUView()
@@ -155,37 +163,52 @@ extension PVEmulatorViewController {
         }
     }
 
-    /// Set up rotation notification
-    private func setupRotationNotification() {
-        // This is a system notification, so it's appropriate to use NotificationCenter
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleDeviceRotation),
-            name: UIDevice.orientationDidChangeNotification,
-            object: nil
-        )
+    // MARK: - Rotation Handling
+    
+    /// Handle rotation properly using UIKit's standard view transition method
+    override public func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        // Log rotation for debugging
+        DLOG("View transitioning to size: \(size)")
+        
+        // Always call super first
+        super.viewWillTransition(to: size, with: coordinator)
+        
+        // Use the coordinator to animate alongside the rotation
+        coordinator.animate(alongsideTransition: { [weak self] _ in
+            guard let self = self else { return }
+            
+            // Update frames during the rotation animation
+            self.updateViewFramesForCurrentBounds()
+            
+        }, completion: { [weak self] _ in
+            // After rotation is complete, do a gentle refresh
+            self?.gentleRefreshMetalView()
+        })
     }
-
-    /// Handle device rotation with a simple, reliable approach
-    @objc private func handleDeviceRotation() {
-        // Only respond to actual orientation changes
-        if UIDevice.current.orientation.isLandscape || UIDevice.current.orientation.isPortrait {
-            DLOG("Device rotated, updating views")
-
-            // First update the GPU view's frame
-            if let gameScreenView = gpuViewController.view {
-                gameScreenView.frame = view.bounds
+    
+    /// Update all view frames to match current bounds
+    private func updateViewFramesForCurrentBounds() {
+        let currentBounds = view.bounds
+        
+        // Update GPU view frame
+        if let gameScreenView = gpuViewController.view {
+            gameScreenView.frame = currentBounds
+        }
+        
+        // Update Metal view if available
+        if let metalVC = gpuViewController as? PVMetalViewController,
+           let mtlView = metalVC.mtlView {
+            mtlView.frame = currentBounds
+        }
+        
+        // Update skin view if available
+        if let skinView = self.skinContainerView {
+            skinView.frame = currentBounds
+            
+            // Ensure skin view is always on top
+            if let superview = skinView.superview {
+                superview.bringSubviewToFront(skinView)
             }
-
-            // Refresh all skin views
-            for subview in view.subviews {
-                if subview != gpuViewController.view {
-                    subview.frame = view.bounds
-                }
-            }
-
-            // Force a redraw
-            refreshGPUView()
         }
     }
 
@@ -251,6 +274,11 @@ extension PVEmulatorViewController {
         if mtlView.superview == nil {
             DLOG("Metal view has no superview, adding to view hierarchy")
             view.addSubview(mtlView)
+            
+            // Ensure proper z-order with skin view
+            if let skinView = self.skinContainerView, let superview = skinView.superview {
+                superview.bringSubviewToFront(skinView)
+            }
         }
         
         // Request a redraw but don't force it
