@@ -33,37 +33,78 @@ struct DeltaSkinButtonHighlight: View {
     }
 
     private func highlightShape(for buttonId: String, in frame: CGRect) -> some Shape {
+        // Check if this is a D-pad direction
         switch buttonId {
         case "up":
-            return AnyShape(Rectangle().path(in: CGRect(
-                x: frame.width * 0.3,
-                y: 0,
-                width: frame.width * 0.4,
-                height: frame.height * 0.4
-            )))
+            return AnyShape(
+                Path { path in
+                    // Create a triangular shape pointing up
+                    let centerX = frame.width / 2
+                    let width = frame.width * 0.5
+                    let height = frame.height * 0.45
+                    
+                    path.move(to: CGPoint(x: centerX, y: frame.height * 0.05))
+                    path.addLine(to: CGPoint(x: centerX - width/2, y: height))
+                    path.addLine(to: CGPoint(x: centerX + width/2, y: height))
+                    path.closeSubpath()
+                }
+            )
         case "down":
-            return AnyShape(Rectangle().path(in: CGRect(
-                x: frame.width * 0.3,
-                y: frame.height * 0.6,
-                width: frame.width * 0.4,
-                height: frame.height * 0.4
-            )))
+            return AnyShape(
+                Path { path in
+                    // Create a triangular shape pointing down
+                    let centerX = frame.width / 2
+                    let width = frame.width * 0.5
+                    let startY = frame.height * 0.55
+                    
+                    path.move(to: CGPoint(x: centerX, y: frame.height * 0.95))
+                    path.addLine(to: CGPoint(x: centerX - width/2, y: startY))
+                    path.addLine(to: CGPoint(x: centerX + width/2, y: startY))
+                    path.closeSubpath()
+                }
+            )
         case "left":
-            return AnyShape(Rectangle().path(in: CGRect(
-                x: 0,
-                y: frame.height * 0.3,
-                width: frame.width * 0.4,
-                height: frame.height * 0.4
-            )))
+            return AnyShape(
+                Path { path in
+                    // Create a triangular shape pointing left
+                    let centerY = frame.height / 2
+                    let width = frame.width * 0.45
+                    let height = frame.height * 0.5
+                    
+                    path.move(to: CGPoint(x: frame.width * 0.05, y: centerY))
+                    path.addLine(to: CGPoint(x: width, y: centerY - height/2))
+                    path.addLine(to: CGPoint(x: width, y: centerY + height/2))
+                    path.closeSubpath()
+                }
+            )
         case "right":
-            return AnyShape(Rectangle().path(in: CGRect(
-                x: frame.width * 0.6,
-                y: frame.height * 0.3,
-                width: frame.width * 0.4,
-                height: frame.height * 0.4
-            )))
+            return AnyShape(
+                Path { path in
+                    // Create a triangular shape pointing right
+                    let centerY = frame.height / 2
+                    let startX = frame.width * 0.55
+                    let height = frame.height * 0.5
+                    
+                    path.move(to: CGPoint(x: frame.width * 0.95, y: centerY))
+                    path.addLine(to: CGPoint(x: startX, y: centerY - height/2))
+                    path.addLine(to: CGPoint(x: startX, y: centerY + height/2))
+                    path.closeSubpath()
+                }
+            )
         default:
-            return AnyShape(Circle())
+            // For non-directional buttons, use a circle or the appropriate shape
+            if buttonId.contains("dpad") {
+                // If it's the main D-pad button but no direction specified, show a small center circle
+                return AnyShape(Circle().path(in: CGRect(
+                    x: frame.width * 0.35,
+                    y: frame.height * 0.35,
+                    width: frame.width * 0.3,
+                    height: frame.height * 0.3
+                )))
+            } else {
+                // For regular buttons, use a circle that matches the button shape
+                return AnyShape(Circle())
+            }
         }
     }
 
@@ -74,33 +115,42 @@ struct DeltaSkinButtonHighlight: View {
         switch buttonId {
         case "up":
             return CGRect(
-                x: parentFrame.minX + width * 0.3,
+                x: parentFrame.minX,
                 y: parentFrame.minY,
-                width: width * 0.4,
-                height: height * 0.4
+                width: width,
+                height: height * 0.5
             )
         case "down":
             return CGRect(
-                x: parentFrame.minX + width * 0.3,
-                y: parentFrame.maxY - height * 0.4,
-                width: width * 0.4,
-                height: height * 0.4
+                x: parentFrame.minX,
+                y: parentFrame.minY + height * 0.5,
+                width: width,
+                height: height * 0.5
             )
         case "left":
             return CGRect(
                 x: parentFrame.minX,
-                y: parentFrame.minY + height * 0.3,
-                width: width * 0.4,
-                height: height * 0.4
+                y: parentFrame.minY,
+                width: width * 0.5,
+                height: height
             )
         case "right":
             return CGRect(
-                x: parentFrame.maxX - width * 0.4,
-                y: parentFrame.minY + height * 0.3,
-                width: width * 0.4,
-                height: height * 0.4
+                x: parentFrame.minX + width * 0.5,
+                y: parentFrame.minY,
+                width: width * 0.5,
+                height: height
             )
         default:
+            // For the main D-pad button with no direction, use a smaller centered frame
+            if buttonId.contains("dpad") {
+                return CGRect(
+                    x: parentFrame.minX + width * 0.25,
+                    y: parentFrame.minY + height * 0.25,
+                    width: width * 0.5,
+                    height: height * 0.5
+                )
+            }
             return parentFrame
         }
     }

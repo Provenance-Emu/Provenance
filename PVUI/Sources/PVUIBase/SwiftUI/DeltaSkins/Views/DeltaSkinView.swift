@@ -651,10 +651,46 @@ public struct DeltaSkinView: View {
                 currentlyPressedButton = button
 
                 // Add visual feedback
+                // For D-pad buttons, we need to determine which direction is being pressed
+                let highlightButtonId: String
+                
+                if case .directional(let commands) = button.input, let touchLocation = touchLocation {
+                    // For D-pad buttons, we need to determine which direction is being pressed
+                    // based on the touch location relative to the button center
+                    
+                    // Calculate the button center in the original coordinate space
+                    let buttonCenterX = button.frame.midX * mappingSize.width
+                    let buttonCenterY = button.frame.midY * mappingSize.height
+                    
+                    // Calculate the touch position relative to the button center
+                    let relativeX = touchLocation.x - buttonCenterX
+                    let relativeY = touchLocation.y - buttonCenterY
+                    
+                    // Define the center dead zone (25% of button size)
+                    let buttonWidth = button.frame.width * mappingSize.width
+                    let buttonHeight = button.frame.height * mappingSize.height
+                    let deadZoneRadius = min(buttonWidth, buttonHeight) * 0.25
+                    
+                    // Determine which direction to highlight
+                    if sqrt(relativeX * relativeX + relativeY * relativeY) < deadZoneRadius {
+                        // In dead zone, use default button ID
+                        highlightButtonId = button.id
+                    } else if abs(relativeX) > abs(relativeY) {
+                        // Horizontal movement is dominant
+                        highlightButtonId = relativeX > 0 ? "right" : "left"
+                    } else {
+                        // Vertical movement is dominant
+                        highlightButtonId = relativeY > 0 ? "down" : "up"
+                    }
+                } else {
+                    // Not a D-pad button, use the button ID
+                    highlightButtonId = button.id
+                }
+                
                 let newButton = (
                     frame: button.frame,
                     mappingSize: mappingSize,
-                    buttonId: button.id,
+                    buttonId: highlightButtonId,
                     timestamp: Date()
                 )
                 activeButtons.append(newButton)
@@ -1052,15 +1088,28 @@ public struct DeltaSkinView: View {
             // For directional inputs, we need to determine which direction is being pressed
             // This requires checking the touch location relative to the button's center
             if let touchLocation = touchLocation, let mappingSize = skin.mappingSize(for: traits) {
-                // Calculate the center of the button
-                let buttonCenter = CGPoint(
-                    x: button.frame.midX * mappingSize.width,
-                    y: button.frame.midY * mappingSize.height
-                )
+                // For D-pad buttons, we just need to determine the direction based on the relative position
+                // to the center of the button in the original coordinate space
+                
+                // Calculate the button center in the original coordinate space
+                let buttonCenterX = button.frame.midX * mappingSize.width
+                let buttonCenterY = button.frame.midY * mappingSize.height
                 
                 // Calculate the touch position relative to the button center
-                let relativeX = touchLocation.x - buttonCenter.x
-                let relativeY = touchLocation.y - buttonCenter.y
+                // This works because touchLocation is already in the same coordinate space
+                let relativeX = touchLocation.x - buttonCenterX
+                let relativeY = touchLocation.y - buttonCenterY
+                
+                // Define the center dead zone (25% of button size)
+                let buttonWidth = button.frame.width * mappingSize.width
+                let buttonHeight = button.frame.height * mappingSize.height
+                let deadZoneRadius = min(buttonWidth, buttonHeight) * 0.25
+                
+                // Check if touch is in the dead zone
+                if sqrt(relativeX * relativeX + relativeY * relativeY) < deadZoneRadius {
+                    // In dead zone, return the default command if available
+                    return commands.values.first ?? "none"
+                }
                 
                 // Determine which direction is being pressed based on the touch position
                 if abs(relativeX) > abs(relativeY) {
