@@ -116,149 +116,228 @@ struct DebugView: View {
     
     var body: some View {
         NavigationStack {
-            List {
-                RetroSectionView(title: "DATABASE") {
-                    Button("VIEW DATABASE STATS") {
-                        showDatabaseStats = true
+            ZStack {
+                // Retrowave background
+                Color.retroBlack.ignoresSafeArea()
+                
+                // Sunset gradient
+                VStack {
+                    Spacer()
+                    Rectangle()
+                        .fill(Color.retroCyber)
+                        .frame(height: 200)
+                        .offset(y: 100)
+                        .blur(radius: 30)
+                }
+                .ignoresSafeArea()
+                
+                // Grid lines
+                RetroGrid(lineSpacing: 30, lineColor: Color.retroBlue.opacity(0.2))
+                    .ignoresSafeArea()
+                
+                // Scanline effect
+                VStack(spacing: 4) {
+                    ForEach(0..<100) { _ in
+                        Rectangle()
+                            .fill(Color.black.opacity(0.1))
+                            .frame(height: 1)
                     }
-                    .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroPurple], glowColor: .retroBlue))
+                }
+                .offset(y: scanlineOffset)
+                .ignoresSafeArea()
+                .onAppear {
+                    withAnimation(.linear(duration: 10).repeatForever(autoreverses: false)) {
+                        scanlineOffset = 4
+                    }
                     
-                    Button("RESET DATABASE") {
-                        showConfirmResetAlert = true
+                    // Pulsing glow effect
+                    withAnimation(.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
+                        glowOpacity = 1.0
                     }
-                    .buttonStyle(GradientButtonStyle(colors: [.retroPink, .retroOrange], glowColor: .retroPink))
-                    
-                    NavigationLink("BROWSE GAMES") {
-                        DatabaseBrowserView()
-                    }
-                    .buttonStyle(GradientButtonStyle(colors: [.retroPurple, .retroBlue], glowColor: .retroPurple))
                 }
                 
-                
-                RetroSectionView(title: "IMPORT") {
-                    Button("SHOW IMPORT QUEUE") {
-                        showImportQueue = true
-                    }
-                    .buttonStyle(GradientButtonStyle(colors: [.retroYellow, .retroOrange], glowColor: .retroYellow))
-                    
-                    Button("FORCE IMPORT SCAN") {
-                        // Force a scan of the import directories
-                        appState.gameImporter?.startProcessing()
-                    }
-                    .buttonStyle(GradientButtonStyle(colors: [.retroOrange, .retroPink], glowColor: .retroOrange))
-                    
-                    Button("INSTALL TEST ROM") {
-                        // Install the test ROM
-                        Task {
-                            do {
-                                try await installTestROM()
-                            } catch {
-                                ELOG("Error installing test ROM: \(error)")
+                // Content
+                ScrollView {
+                    VStack(spacing: 24) {
+                        // DATABASE Section
+                        RetroSectionView(title: "DATABASE") {
+                            VStack(spacing: 12) {
+                                Button("VIEW DATABASE STATS") {
+                                    showDatabaseStats = true
+                                }
+                                .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroPurple], glowColor: .retroBlue))
+                                .frame(maxWidth: .infinity)
+                                
+                                Button("RESET DATABASE") {
+                                    showConfirmResetAlert = true
+                                }
+                                .buttonStyle(GradientButtonStyle(colors: [.retroPink, .retroOrange], glowColor: .retroPink))
+                                .frame(maxWidth: .infinity)
+                                
+                                NavigationLink("BROWSE GAMES") {
+                                    DatabaseBrowserView()
+                                }
+                                .buttonStyle(GradientButtonStyle(colors: [.retroPurple, .retroBlue], glowColor: .retroPurple))
+                                .frame(maxWidth: .infinity)
+                            }
+                        }
+                        
+                        // IMPORT Section
+                        RetroSectionView(title: "IMPORT") {
+                            VStack(spacing: 12) {
+                                Button("SHOW IMPORT QUEUE") {
+                                    showImportQueue = true
+                                }
+                                .buttonStyle(GradientButtonStyle(colors: [.retroYellow, .retroOrange], glowColor: .retroYellow))
+                                .frame(maxWidth: .infinity)
+                                
+                                Button("FORCE IMPORT SCAN") {
+                                    // Force a scan of the import directories
+                                    appState.gameImporter?.startProcessing()
+                                }
+                                .buttonStyle(GradientButtonStyle(colors: [.retroOrange, .retroPink], glowColor: .retroOrange))
+                                .frame(maxWidth: .infinity)
+                                
+                                Button("INSTALL TEST ROM") {
+                                    // Install the test ROM
+                                    Task {
+                                        do {
+                                            try await installTestROM()
+                                        } catch {
+                                            ELOG("Error installing test ROM: \(error)")
+                                        }
+                                    }
+                                }
+                                .buttonStyle(GradientButtonStyle(colors: [.retroPink, .retroPurple], glowColor: .retroPink))
+                                .frame(maxWidth: .infinity)
+                            }
+                        }
+                        
+                        // UI TESTING Section
+                        RetroSectionView(title: "UI TESTING") {
+                            VStack(spacing: 16) {
+                                NavigationLink("THEME PREVIEW") {
+                                    ThemePreviewView()
+                                }
+                                .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroPurple], glowColor: .retroBlue))
+                                .frame(maxWidth: .infinity)
+                                
+                                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                                    Button("SAVE STATES") {
+                                        showSaveStatesMock = true
+                                    }
+                                    .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroPurple]))
+                                    .frame(maxWidth: .infinity)
+                                    
+                                    Button("GAME INFO") {
+                                        showGameMoreInfo = true
+                                    }
+                                    .buttonStyle(GradientButtonStyle(colors: [.retroPurple, .retroPink]))
+                                    .frame(maxWidth: .infinity)
+                                    
+                                    Button("GAME INFO (REALM)") {
+                                        showGameMoreInfoRealm = true
+                                    }
+                                    .buttonStyle(GradientButtonStyle(colors: [.retroPink, .retroOrange]))
+                                    .frame(maxWidth: .infinity)
+                                    
+                                    Button("ARTWORK SEARCH") {
+                                        showArtworkSearch = true
+                                    }
+                                    .buttonStyle(GradientButtonStyle(colors: [.retroOrange, .retroYellow]))
+                                    .frame(maxWidth: .infinity)
+                                    
+                                    Button("FREE ROMS") {
+                                        showFreeROMs = true
+                                    }
+                                    .buttonStyle(GradientButtonStyle(colors: [.retroYellow, .retroBlue]))
+                                    .frame(maxWidth: .infinity)
+                                    
+                                    Button("DELTA SKIN LIST") {
+                                        showDeltaSkinList = true
+                                    }
+                                    .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroPurple]))
+                                    .frame(maxWidth: .infinity)
+                                }
+                            }
+                        }
+                        
+                        // THEME TESTING Section
+                        RetroSectionView(title: "THEME TESTING") {
+                            VStack(spacing: 16) {
+                                VStack(alignment: .leading, spacing: 12) {
+                                    Text("SELECT THEME")
+                                        .font(.system(.headline, design: .monospaced))
+                                        .foregroundColor(.retroBlue)
+                                        .shadow(color: .retroPink.opacity(0.8), radius: 2, x: 1, y: 1)
+                                    
+                                    Picker("Select Theme", selection: $selectedTheme) {
+                                        ForEach(ThemeName.allCases, id: \.self) { theme in
+                                            Text(theme.rawValue.uppercased()).tag(theme)
+                                        }
+                                    }
+                                    .pickerStyle(.wheel)
+                                    .frame(height: 100)
+                                    .onChange(of: selectedTheme) { newValue in
+                                        applyTheme(newValue)
+                                    }
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .strokeBorder(
+                                                LinearGradient(
+                                                    gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                                    startPoint: .leading,
+                                                    endPoint: .trailing
+                                                ),
+                                                lineWidth: 1.5
+                                            )
+                                    )
+                                    .background(Color.retroBlack.opacity(0.5))
+                                    .cornerRadius(8)
+                                }
+                                .frame(maxWidth: .infinity)
+                                
+                                RetroPalettePreview(palette: themeManager.currentPalette)
+                                    .frame(maxWidth: .infinity)
+                            }
+                        }
+                        
+                        // CONTROLLER SKINS Section
+                        RetroSectionView(title: "CONTROLLER SKINS") {
+                            VStack(spacing: 16) {
+                                NavigationLink("BROWSE SYSTEM SKINS") {
+                                    SystemSkinBrowserView()
+                                }
+                                .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroPurple], glowColor: .retroBlue))
+                                .frame(maxWidth: .infinity)
+                                
+                                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                                    Button("IMPORT SKIN") {
+                                        showDeltaSkinImport = true
+                                    }
+                                    .buttonStyle(GradientButtonStyle(colors: [.retroPurple, .retroPink]))
+                                    .frame(maxWidth: .infinity)
+                                    
+                                    Button("SKIN PREVIEW") {
+                                        showDeltaSkinPreview = true
+                                    }
+                                    .buttonStyle(GradientButtonStyle(colors: [.retroPink, .retroYellow]))
+                                    .frame(maxWidth: .infinity)
+                                    
+                                    Button("AI ENHANCE") {
+                                        showAIEnhancements = true
+                                    }
+                                    .buttonStyle(GradientButtonStyle(colors: [.retroYellow, .retroBlue]))
+                                    .frame(maxWidth: .infinity)
+                                }
                             }
                         }
                     }
-                    .buttonStyle(GradientButtonStyle(colors: [.retroPink, .retroPurple], glowColor: .retroPink))
-                }
-                
-                RetroSectionView(title: "UI TESTING") {
-                    NavigationLink("THEME PREVIEW") {
-                        ThemePreviewView()
-                    }
-                    .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroPurple], glowColor: .retroBlue))
-                    
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                        Button("SAVE STATES") {
-                            showSaveStatesMock = true
-                        }
-                        .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroPurple]))
-                        
-                        Button("GAME INFO") {
-                            showGameMoreInfo = true
-                        }
-                        .buttonStyle(GradientButtonStyle(colors: [.retroPurple, .retroPink]))
-                        
-                        Button("GAME INFO (REALM)") {
-                            showGameMoreInfoRealm = true
-                        }
-                        .buttonStyle(GradientButtonStyle(colors: [.retroPink, .retroOrange]))
-                        
-                        Button("ARTWORK SEARCH") {
-                            showArtworkSearch = true
-                        }
-                        .buttonStyle(GradientButtonStyle(colors: [.retroOrange, .retroYellow]))
-                        
-                        Button("FREE ROMS") {
-                            showFreeROMs = true
-                        }
-                        .buttonStyle(GradientButtonStyle(colors: [.retroYellow, .retroBlue]))
-                        
-                        Button("DELTA SKIN LIST") {
-                            showDeltaSkinList = true
-                        }
-                        .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroPurple]))
-                    }
-                }
-                
-                RetroSectionView(title: "THEME TESTING") {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("SELECT THEME")
-                            .font(.system(.headline, design: .monospaced))
-                            .foregroundColor(.retroBlue)
-                            .shadow(color: .retroPink.opacity(0.8), radius: 2, x: 1, y: 1)
-                        
-                        Picker("Select Theme", selection: $selectedTheme) {
-                            ForEach(ThemeName.allCases, id: \.self) { theme in
-                                Text(theme.rawValue.uppercased()).tag(theme)
-                            }
-                        }
-                        .pickerStyle(.wheel)
-                        .frame(height: 100)
-                        .onChange(of: selectedTheme) { newValue in
-                            applyTheme(newValue)
-                        }
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .strokeBorder(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    ),
-                                    lineWidth: 1.5
-                                )
-                        )
-                        .background(Color.retroBlack.opacity(0.5))
-                        .cornerRadius(8)
-                    }
-                    
-                    RetroPalettePreview(palette: themeManager.currentPalette)
-                }
-                
-                RetroSectionView(title: "CONTROLLER SKINS") {
-                    NavigationLink("BROWSE SYSTEM SKINS") {
-                        SystemSkinBrowserView()
-                    }
-                    .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroPurple], glowColor: .retroBlue))
-                    
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                        Button("IMPORT SKIN") {
-                            showDeltaSkinImport = true
-                        }
-                        .buttonStyle(GradientButtonStyle(colors: [.retroPurple, .retroPink]))
-                        
-                        Button("SKIN PREVIEW") {
-                            showDeltaSkinPreview = true
-                        }
-                        .buttonStyle(GradientButtonStyle(colors: [.retroPink, .retroYellow]))
-                        
-                        Button("AI ENHANCE") {
-                            showAIEnhancements = true
-                        }
-                        .buttonStyle(GradientButtonStyle(colors: [.retroYellow, .retroBlue]))
-                    }
+                    .padding(.horizontal, 100)
+                    .padding(.vertical, 16)
+                    .padding(.bottom, 40) // Extra padding at bottom for better scrolling
                 }
             }
-            .padding()
         }
         .navigationTitle("DEBUG CONSOLE")
         .navigationBarTitleDisplayMode(.large)
@@ -624,8 +703,11 @@ struct GradientButtonStyle: ButtonStyle {
             .font(.system(.body, design: .monospaced))
             .fontWeight(.bold)
             .tracking(1.2) // Letter spacing for that retro look
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
             .padding(.vertical, 12)
             .padding(.horizontal, 20)
+            .frame(maxWidth: .infinity)
             .background(
                 ZStack {
                     // Base gradient
@@ -795,9 +877,11 @@ struct RetroSectionView<Content: View>: View {
                 .foregroundColor(.retroPink)
                 .shadow(color: .retroBlue.opacity(0.8), radius: 2, x: 2, y: 2)
                 .padding(.bottom, 4)
+                .frame(maxWidth: .infinity, alignment: .leading)
             
             // Content
             content
+                .frame(maxWidth: .infinity)
         }
         .padding(20)
         .background(
@@ -827,6 +911,7 @@ struct RetroSectionView<Content: View>: View {
                 glowOpacity = 1.0
             }
         }
+        .frame(maxWidth: .infinity)
     }
 }
 
