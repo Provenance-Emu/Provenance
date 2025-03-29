@@ -31,13 +31,13 @@ public enum ControlTag: Int {
     case rightAnalog = 502
 }
 
-protocol JSButtonDelegate: AnyObject {
+public protocol JSButtonDelegate: AnyObject {
     func buttonPressed(_ button: JSButton)
     func buttonReleased(_ button: JSButton)
 }
 
 /// A button that can be moved and resized in the UI
-final class JSButton: MovableButtonView {
+public final class JSButton: MovableButtonView {
     /// The label text for the button
     private(set) var label: String?
     private(set) var titleLabel: UILabel!
@@ -50,7 +50,7 @@ final class JSButton: MovableButtonView {
     }
 
     // MARK: - NSCoding
-    override func encode(with coder: NSCoder) {
+    public override func encode(with coder: NSCoder) {
         super.encode(with: coder)
         coder.encode(label, forKey: "label")
         coder.encode(titleLabel?.text ?? "", forKey: "titleText")
@@ -116,7 +116,7 @@ final class JSButton: MovableButtonView {
         }
     }
 
-    override var tintColor: UIColor? {
+    public override var tintColor: UIColor? {
         didSet {
             if Defaults[.buttonTints] {
                 backgroundImageView?.tintColor = tintColor
@@ -181,7 +181,7 @@ final class JSButton: MovableButtonView {
         removeObserver(self as NSObject, forKeyPath: "backgroundImagePressed")
     }
 
-    override func layoutSubviews() {
+    public override func layoutSubviews() {
         super.layoutSubviews()
         backgroundImageView?.frame = bounds
 
@@ -196,7 +196,7 @@ final class JSButton: MovableButtonView {
         }
     }
 
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if !isUserInteractionEnabled {
             // DLOG("Touch ignored - button not enabled")
             return
@@ -213,7 +213,7 @@ final class JSButton: MovableButtonView {
         pressed = true
     }
 
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+    public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if !isUserInteractionEnabled {  return }
 
         if inMoveMode {
@@ -242,7 +242,7 @@ final class JSButton: MovableButtonView {
         self.pressed = pressed
     }
 
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if !isUserInteractionEnabled {  return }
 
         if inMoveMode {
@@ -254,7 +254,7 @@ final class JSButton: MovableButtonView {
         pressed = false
     }
 
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+    public override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         if !isUserInteractionEnabled {  return }
 
         if inMoveMode {

@@ -50,6 +50,7 @@ typealias PVEmulatorViewControllerRootClass = UIViewController
 
 public
 final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmualatorControllerProtocol, PVAudioDelegate, PVSaveStatesViewControllerDelegate {
+    
 
     public let core: PVEmulatorCore
     public let game: PVGame
@@ -71,7 +72,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         return useMetal ? PVMetalViewController(withEmulatorCore: core) : PVGLViewController(withEmulatorCore: core)
     }()
 
-    private(set) lazy public var controllerViewController: (UIViewController & StartSelectDelegate)? = {
+    private(set) lazy public var controllerViewController: (any ControllerVC)? = {
         guard let system = game.system else {
             ELOG("Nil system for \(game.title)")
             return nil

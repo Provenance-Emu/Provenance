@@ -13,7 +13,7 @@ import PVPlists
 import PVRealm
 
 /// Protocol for on-screen display controllers of type `UIViewController`
-protocol ControllerVC: StartSelectDelegate, JSButtonDelegate, JSDPadDelegate where Self: UIViewController {
+public protocol ControllerVC: StartSelectDelegate, JSButtonDelegate, JSDPadDelegate where Self: UIViewController {
 	associatedtype ResponderType: ResponderClient
 	var emulatorCore: ResponderType {get}
 	var system: PVSystem {get set}

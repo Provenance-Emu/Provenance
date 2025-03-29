@@ -146,8 +146,16 @@ extension PVEmulatorViewController {
         }
 
         // Create the input handler for both core-level and controller-level input
-        let controllerVC = controllerViewController as? PVControllerViewController<ResponderClient>
-        let inputHandler = DeltaSkinInputHandler(emulatorCore: core, controllerVC: controllerVC)
+        
+        // Add debug logging for the controller view controller
+        if let controller = controllerViewController {
+            DLOG("Found controller view controller: \(controller) of type \(type(of: controller))")
+        } else {
+            DLOG("No controller view controller found")
+        }
+        
+        // Pass the controller view controller directly without casting
+        let inputHandler = DeltaSkinInputHandler(emulatorCore: core, controllerVC: controllerViewController)
         
         // Set up the menu button handler to show the emulator menu
         inputHandler.menuButtonHandler = { [weak self] in

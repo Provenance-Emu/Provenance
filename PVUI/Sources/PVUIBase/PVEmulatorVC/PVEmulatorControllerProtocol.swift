@@ -31,7 +31,7 @@ public protocol PVEmualatorControllerProtocol: AnyObject {
     var autosaveTimer: Timer?  { get }
     var gameStartTime: Date?  { get }
 
-    var controllerViewController: (UIViewController & StartSelectDelegate)? { get }
+    var controllerViewController: (any ControllerVC)? { get }
     func controllerPauseButtonPressed(_ sender: Any?)
 
     // MARK: - Methods
