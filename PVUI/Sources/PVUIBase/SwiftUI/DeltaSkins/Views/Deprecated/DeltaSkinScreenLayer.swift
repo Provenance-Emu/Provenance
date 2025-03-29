@@ -26,7 +26,7 @@ struct DeltaSkinScreenLayer: View {
            let orientationRep = displayRep[traits.orientation.rawValue] as? [String: Any],
            orientationRep["gameScreenFrame"] != nil {
             return true
-        }
+        } 
 
         return false
     }

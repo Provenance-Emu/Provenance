@@ -232,27 +232,6 @@ extension PVEmulatorViewController {
         
         // Always call super first
         super.viewWillTransition(to: size, with: coordinator)
-        
-        // Use the coordinator to animate alongside the rotation
-//        coordinator.animate(alongsideTransition: { [weak self] _ in
-//            guard let self = self else { return }
-//            
-//            // Update Metal view frame
-//            if let metalVC = self.gpuViewController as? PVMetalViewController,
-//               let mtlView = metalVC.mtlView {
-//                mtlView.frame = self.view.bounds
-//            }
-//            
-//            // Update skin container frame and ensure it's on top
-//            if let containerView = view.subviews.first(where: { $0 is DeltaSkinContainerView }) {
-//                containerView.frame = self.view.bounds
-//                self.view.bringSubviewToFront(containerView)
-//            }
-//            
-//        }, completion: { [weak self] _ in
-//            // After rotation is complete, do a gentle refresh
-//            self?.gentleRefreshMetalView()
-//        })
     }
     
     /// Update all view frames to match current bounds - ensures proper z-order
