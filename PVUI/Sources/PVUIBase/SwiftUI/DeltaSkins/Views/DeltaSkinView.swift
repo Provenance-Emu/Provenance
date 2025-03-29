@@ -728,9 +728,12 @@ public struct DeltaSkinView: View {
                 // Play sound with current position
                 playClickSound(for: button)
                 
-                // Extract the input command and call the input handler's buttonPressed method
+                // Extract the input command
                 let inputCommand = extractInputCommand(from: button)
-                inputHandler.buttonPressed(inputCommand)
+                
+                // Use the input handler for all buttons
+                // The input handler will determine whether to use the controller or core
+                inputHandler.buttonPressed(highlightButtonId)
 
                 // Clean up old highlights after delay
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -739,9 +742,12 @@ public struct DeltaSkinView: View {
             }
         } else if let previousButton = currentlyPressedButton {
             // Touch is not on any button, but we had a pressed button
-            // Extract the input command and call the input handler's buttonReleased method
-            let inputCommand = extractInputCommand(from: previousButton)
-            inputHandler.buttonReleased(inputCommand)
+            // Extract the input command
+            let buttonId = extractInputCommand(from: previousButton)
+            
+            // Use the input handler for all buttons
+            // The input handler will determine whether to use the controller or core
+            inputHandler.buttonReleased(buttonId)
             currentlyPressedButton = nil
         } else {
             // Touch is not on any button and no previous button was pressed

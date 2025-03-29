@@ -1,34 +1,45 @@
+
 import Foundation
 import Combine
 import PVEmulatorCore
 import PVCoreBridge
 import PVLogging
 
-/// Handles input from Delta Skins and forwards it to the emulator core
+/// Handles input from Delta Skins and forwards it to the emulator core or controller
 public class DeltaSkinInputHandler: ObservableObject {
     /// The emulator core to send inputs to
     private weak var emulatorCore: PVEmulatorCore?
+    
+    /// The controller view controller to send controller-based inputs to
+    private weak var controllerVC: PVControllerViewController<ResponderClient>?
+    
+    /// A dummy D-pad for sending directional input to the controller
+    private let dummyDPad = JSDPad(frame: .zero)
 
     /// Callback for menu button presses
     var menuButtonHandler: (() -> Void)?
 
-    /// Initialize with an emulator core
-    public init(emulatorCore: PVEmulatorCore? = nil) {
+    /// Initialize with an emulator core and optional controller view controller
+    public init(emulatorCore: PVEmulatorCore? = nil, controllerVC: PVControllerViewController<ResponderClient>? = nil) {
         self.emulatorCore = emulatorCore
+        self.controllerVC = controllerVC
+        
+        // Set the tag to match the D-pad tag expected by the controller
+        dummyDPad.tag = ControlTag.dpad1.rawValue
     }
 
     /// Set the emulator core
     func setEmulatorCore(_ core: PVEmulatorCore) {
         self.emulatorCore = core
     }
+    
+    /// Set the controller view controller
+    func setControllerVC(_ controller: PVControllerViewController<ResponderClient>?) {
+        self.controllerVC = controller
+    }
 
     /// Handle button press
     func buttonPressed(_ buttonId: String) {
-        guard let core = emulatorCore else {
-            ELOG("No emulator core available for button press: \(buttonId)")
-            return
-        }
-
         DLOG("Delta Skin button pressed: \(buttonId)")
 
         // Check if this is a menu button
@@ -36,27 +47,44 @@ public class DeltaSkinInputHandler: ObservableObject {
             menuButtonPressed()
             return
         }
-
-        // Forward to the core
-        forwardButtonPress(buttonId, isPressed: true)
+        
+        // Normalize the button ID
+        let normalizedId = buttonId.lowercased()
+        
+        // Check if we should use the controller VC for this button
+        if let controller = controllerVC, isControllerButton(normalizedId) {
+            // Use the controller view controller for D-pad, Start, and Select buttons
+            forwardButtonPressToController(normalizedId, isPressed: true)
+        } else if let core = emulatorCore {
+            // Forward to the core for other buttons
+            forwardButtonPress(buttonId, isPressed: true)
+        } else {
+            ELOG("No emulator core or controller available for button press: \(buttonId)")
+        }
     }
 
     /// Handle button release
     func buttonReleased(_ buttonId: String) {
-        guard let core = emulatorCore else {
-            ELOG("No emulator core available for button release: \(buttonId)")
-            return
-        }
-
         DLOG("Delta Skin button released: \(buttonId)")
 
         // Skip menu button releases
         if buttonId.lowercased().contains("menu") {
             return
         }
-
-        // Forward to the core
-        forwardButtonPress(buttonId, isPressed: false)
+        
+        // Normalize the button ID
+        let normalizedId = buttonId.lowercased()
+        
+        // Check if we should use the controller VC for this button
+        if let controller = controllerVC, isControllerButton(normalizedId) {
+            // Use the controller view controller for D-pad, Start, and Select buttons
+            forwardButtonPressToController(normalizedId, isPressed: false)
+        } else if let core = emulatorCore {
+            // Forward to the core for other buttons
+            forwardButtonPress(buttonId, isPressed: false)
+        } else {
+            ELOG("No emulator core or controller available for button release: \(buttonId)")
+        }
     }
 
     /// Handle menu button press
@@ -97,6 +125,83 @@ public class DeltaSkinInputHandler: ObservableObject {
     }
 
     // MARK: - Private Methods
+    
+    /// Check if a button should be handled by the controller
+    private func isControllerButton(_ buttonId: String) -> Bool {
+        // D-pad directions, Start, and Select buttons should be handled by the controller
+        return ["up", "down", "left", "right", "upleft", "upright", "downleft", "downright", "start", "select"].contains(buttonId)
+    }
+    
+    /// Forward button press to the controller view controller
+    private func forwardButtonPressToController(_ buttonId: String, isPressed: Bool) {
+        guard let controller = controllerVC else { return }
+        
+        DLOG("Forwarding \(isPressed ? "press" : "release") to controller: \(buttonId)")
+        
+        if isPressed {
+            // Handle button press
+            switch buttonId {
+            case "start":
+                controller.pressStart(forPlayer: 0)
+            case "select":
+                controller.pressSelect(forPlayer: 0)
+            case "up":
+                controller.dPad(dummyDPad, didPress: .up)
+            case "down":
+                controller.dPad(dummyDPad, didPress: .down)
+            case "left":
+                controller.dPad(dummyDPad, didPress: .left)
+            case "right":
+                controller.dPad(dummyDPad, didPress: .right)
+            case "upleft":
+                controller.dPad(dummyDPad, didPress: .upLeft)
+            case "upright":
+                controller.dPad(dummyDPad, didPress: .upRight)
+            case "downleft":
+                controller.dPad(dummyDPad, didPress: .downLeft)
+            case "downright":
+                controller.dPad(dummyDPad, didPress: .downRight)
+            default:
+                DLOG("Unhandled controller button press: \(buttonId)")
+            }
+        } else {
+            // Handle button release
+            switch buttonId {
+            case "start":
+                controller.releaseStart(forPlayer: 0)
+            case "select":
+                controller.releaseSelect(forPlayer: 0)
+            case "up", "down", "left", "right", "upleft", "upright", "downleft", "downright":
+                controller.dPad(dummyDPad, didRelease: stringToDirection(buttonId))
+            default:
+                DLOG("Unhandled controller button release: \(buttonId)")
+            }
+        }
+    }
+    
+    /// Convert string direction to JSDPadDirection
+    private func stringToDirection(_ direction: String) -> JSDPadDirection {
+        switch direction.lowercased() {
+        case "up":
+            return .up
+        case "down":
+            return .down
+        case "left":
+            return .left
+        case "right":
+            return .right
+        case "upleft":
+            return .upLeft
+        case "upright":
+            return .upRight
+        case "downleft":
+            return .downLeft
+        case "downright":
+            return .downRight
+        default:
+            return .none
+        }
+    }
 
     /// Forward button press to the emulator core
     private func forwardButtonPress(_ buttonId: String, isPressed: Bool) {
@@ -141,7 +246,7 @@ public class DeltaSkinInputHandler: ObservableObject {
     private func mapButtonToIndex(_ buttonId: String) -> Int {
         // Normalize the input ID for consistent matching
         let normalizedId = buttonId.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-        
+
         // Exact matches first (for commands extracted from skin JSON)
         switch normalizedId {
         case "up":
@@ -171,7 +276,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         default:
             break
         }
-        
+
         // Fallback to partial matching if exact match failed
         if normalizedId.contains("up") {
             return 1  // Up

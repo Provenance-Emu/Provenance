@@ -145,8 +145,9 @@ extension PVEmulatorViewController {
             return
         }
 
-        // Create the input handler
-        let inputHandler = DeltaSkinInputHandler(emulatorCore: core)
+        // Create the input handler for both core-level and controller-level input
+        let controllerVC = controllerViewController as? PVControllerViewController<ResponderClient>
+        let inputHandler = DeltaSkinInputHandler(emulatorCore: core, controllerVC: controllerVC)
         
         // Set up the menu button handler to show the emulator menu
         inputHandler.menuButtonHandler = { [weak self] in
