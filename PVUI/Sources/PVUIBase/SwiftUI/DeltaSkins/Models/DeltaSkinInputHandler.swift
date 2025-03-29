@@ -148,9 +148,20 @@ public class DeltaSkinInputHandler: ObservableObject {
     
     /// Check if a button should be handled by the controller
     private func isControllerButton(_ buttonId: String) -> Bool {
-        // D-pad directions, Start, and Select buttons should be handled by the controller
-        let controllerButtons = ["up", "down", "left", "right", "upleft", "upright", "downleft", "downright", "start", "select"]
-        let isController = controllerButtons.contains(buttonId)
+        // All standard controller buttons should be handled by the controller
+        let controllerButtons = [
+            // D-pad directions
+            "up", "down", "left", "right", "upleft", "upright", "downleft", "downright",
+            // Menu buttons
+            "start", "select", 
+            // Action buttons
+            "a", "b", "x", "y",
+            // Shoulder buttons
+            "l", "r", "l1", "r1", "l2", "r2", "l3", "r3",
+            // Analog buttons
+            "leftanalog", "rightanalog"
+        ]
+        let isController = controllerButtons.contains(buttonId.lowercased())
         DLOG("isControllerButton check: \(buttonId) -> \(isController)")
         return isController
     }
@@ -164,59 +175,127 @@ public class DeltaSkinInputHandler: ObservableObject {
         
         DLOG("Forwarding \(isPressed ? "press" : "release") to controller: \(buttonId)")
         
-        if isPressed {
-            // Handle button press
-            switch buttonId {
-            case "start":
+        // Normalize the button ID to lowercase
+        let normalizedId = buttonId.lowercased()
+        
+        // Handle special buttons first (D-pad, Start, Select)
+        if handleSpecialButtons(normalizedId, isPressed: isPressed, controller: controller) {
+            return
+        }
+        
+        // For other buttons (A, B, X, Y, etc.), find the button in the button group
+        if let buttonGroup = controller.buttonGroup {
+            // Find the button with the matching label
+            if let button = findButtonInGroup(buttonGroup, withLabel: normalizedId) {
+                DLOG("Found button with label \(normalizedId) in button group")
+                if isPressed {
+                    controller.buttonPressed(button)
+                } else {
+                    controller.buttonReleased(button)
+                }
+                return
+            }
+        }
+        
+        // Handle shoulder buttons
+        if handleShoulderButtons(normalizedId, isPressed: isPressed, controller: controller) {
+            return
+        }
+        
+        DLOG("Unhandled controller button \(isPressed ? "press" : "release"): \(buttonId)")
+    }
+    
+    /// Handle special buttons (D-pad, Start, Select)
+    private func handleSpecialButtons(_ buttonId: String, isPressed: Bool, controller: any ControllerVC) -> Bool {
+        switch buttonId {
+        // Menu buttons
+        case "start":
+            if isPressed {
                 DLOG("Calling controller.pressStart")
                 controller.pressStart(forPlayer: 0)
-            case "select":
-                DLOG("Calling controller.pressSelect")
-                controller.pressSelect(forPlayer: 0)
-            case "up":
-                DLOG("Calling controller.dPad with .up")
-                controller.dPad(dummyDPad, didPress: .up)
-            case "down":
-                DLOG("Calling controller.dPad with .down")
-                controller.dPad(dummyDPad, didPress: .down)
-            case "left":
-                DLOG("Calling controller.dPad with .left")
-                controller.dPad(dummyDPad, didPress: .left)
-            case "right":
-                DLOG("Calling controller.dPad with .right")
-                controller.dPad(dummyDPad, didPress: .right)
-            case "upleft":
-                DLOG("Calling controller.dPad with .upLeft")
-                controller.dPad(dummyDPad, didPress: .upLeft)
-            case "upright":
-                DLOG("Calling controller.dPad with .upRight")
-                controller.dPad(dummyDPad, didPress: .upRight)
-            case "downleft":
-                DLOG("Calling controller.dPad with .downLeft")
-                controller.dPad(dummyDPad, didPress: .downLeft)
-            case "downright":
-                DLOG("Calling controller.dPad with .downRight")
-                controller.dPad(dummyDPad, didPress: .downRight)
-            default:
-                DLOG("Unhandled controller button press: \(buttonId)")
-            }
-        } else {
-            // Handle button release
-            switch buttonId {
-            case "start":
+            } else {
                 DLOG("Calling controller.releaseStart")
                 controller.releaseStart(forPlayer: 0)
-            case "select":
+            }
+            return true
+            
+        case "select":
+            if isPressed {
+                DLOG("Calling controller.pressSelect")
+                controller.pressSelect(forPlayer: 0)
+            } else {
                 DLOG("Calling controller.releaseSelect")
                 controller.releaseSelect(forPlayer: 0)
-            case "up", "down", "left", "right", "upleft", "upright", "downleft", "downright":
+            }
+            return true
+            
+        // D-pad directions
+        case "up", "down", "left", "right", "upleft", "upright", "downleft", "downright":
+            if isPressed {
+                let direction = stringToDirection(buttonId)
+                DLOG("Calling controller.dPad with press direction: \(direction)")
+                controller.dPad(dummyDPad, didPress: direction)
+            } else {
                 let direction = stringToDirection(buttonId)
                 DLOG("Calling controller.dPad with release direction: \(direction)")
                 controller.dPad(dummyDPad, didRelease: direction)
-            default:
-                DLOG("Unhandled controller button release: \(buttonId)")
+            }
+            return true
+            
+        default:
+            return false
+        }
+    }
+    
+    /// Handle shoulder buttons (L, R, L2, R2, etc.)
+    private func handleShoulderButtons(_ buttonId: String, isPressed: Bool, controller: any ControllerVC) -> Bool {
+        // Try to find the appropriate shoulder button
+        var button: JSButton? = nil
+        
+        switch buttonId {
+        case "l", "l1":
+            button = controller.leftShoulderButton
+        case "r", "r1":
+            button = controller.rightShoulderButton
+        case "l2":
+            button = controller.leftShoulderButton2
+        case "r2":
+            button = controller.rightShoulderButton2
+        case "l3":
+            button = controller.leftAnalogButton
+        case "r3":
+            button = controller.rightAnalogButton
+        case "z":
+            button = controller.zTriggerButton
+        default:
+            return false
+        }
+        
+        if let button = button {
+            if isPressed {
+                DLOG("Pressing shoulder button: \(buttonId)")
+                controller.buttonPressed(button)
+            } else {
+                DLOG("Releasing shoulder button: \(buttonId)")
+                controller.buttonReleased(button)
+            }
+            return true
+        }
+        
+        return false
+    }
+    
+    /// Find a button in the button group with the given label
+    private func findButtonInGroup(_ buttonGroup: MovableButtonView, withLabel label: String) -> JSButton? {
+        // Search for buttons in the button group
+        for case let button as JSButton in buttonGroup.subviews {
+            // Check if the button label matches (case insensitive)
+            if let buttonLabel = button.titleLabel?.text?.lowercased(), 
+               buttonLabel == label || buttonLabel.first?.lowercased() == label {
+                return button
             }
         }
+        return nil
     }
     
     /// Convert string direction to JSDPadDirection
