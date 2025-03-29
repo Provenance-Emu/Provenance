@@ -22,7 +22,7 @@ protocol ControllerVC: StartSelectDelegate, JSButtonDelegate, JSDPadDelegate whe
 	var dPad: JSDPad? {get}
 	var dPad2: JSDPad? {get}
 	var joyPad: JSDPad? { get }
-  var joyPad2: JSDPad? { get }
+    var joyPad2: JSDPad? { get }
 	var buttonGroup: MovableButtonView? {get}
 	var leftShoulderButton: JSButton? {get}
 	var rightShoulderButton: JSButton? {get}
