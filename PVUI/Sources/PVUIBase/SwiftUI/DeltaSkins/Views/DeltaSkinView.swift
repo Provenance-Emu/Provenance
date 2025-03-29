@@ -43,6 +43,9 @@ public struct DeltaSkinView: View {
 
     // Track the currently pressed button
     @State private var currentlyPressedButton: DeltaSkinButton?
+    
+    // Track the current preview size
+    @State private var previewSize: CGSize = .zero
 
     /// State for the loaded skin image
     @State private var loadingError: Error?
@@ -355,6 +358,13 @@ public struct DeltaSkinView: View {
 
     public var body: some View {
         GeometryReader { geometry in
+            // Store the geometry size for coordinate transformations
+            Color.clear.onAppear {
+                self.previewSize = geometry.size
+            }
+            .onChange(of: geometry.size) { newSize in
+                self.previewSize = newSize
+            }
             ZStack {
                 if let layout = calculateLayout(for: geometry) {
                     ZStack {
@@ -596,6 +606,7 @@ public struct DeltaSkinView: View {
     }
 
     private func handleTouch(at location: CGPoint, in size: CGSize) {
+        // Store the touch location for visual feedback and direction detection
         touchLocation = location
 
         guard let buttons = skin.buttons(for: traits),
@@ -656,31 +667,47 @@ public struct DeltaSkinView: View {
                 
                 if case .directional(let commands) = button.input, let touchLocation = touchLocation {
                     // For D-pad buttons, we need to determine which direction is being pressed
-                    // based on the touch location relative to the button center
+                    // based on the touch location relative to the button center in the view coordinate system
                     
-                    // Calculate the button center in the original coordinate space
-                    let buttonCenterX = button.frame.midX * mappingSize.width
-                    let buttonCenterY = button.frame.midY * mappingSize.height
+                    // Calculate the button center in view coordinates
+                    let buttonCenterX = button.frame.midX * scale + xOffset
+                    let buttonCenterY = button.frame.midY * scale + yOffset
                     
                     // Calculate the touch position relative to the button center
                     let relativeX = touchLocation.x - buttonCenterX
                     let relativeY = touchLocation.y - buttonCenterY
                     
                     // Define the center dead zone (25% of button size)
-                    let buttonWidth = button.frame.width * mappingSize.width
-                    let buttonHeight = button.frame.height * mappingSize.height
+                    let buttonWidth = button.frame.width * scale
+                    let buttonHeight = button.frame.height * scale
                     let deadZoneRadius = min(buttonWidth, buttonHeight) * 0.25
+                    
+                    // Add debug logging to help diagnose direction issues
+                    DLOG("D-pad highlight: relativeX=\(relativeX), relativeY=\(relativeY)")
                     
                     // Determine which direction to highlight
                     if sqrt(relativeX * relativeX + relativeY * relativeY) < deadZoneRadius {
                         // In dead zone, use default button ID
+                        DLOG("D-pad highlight: In dead zone")
                         highlightButtonId = button.id
                     } else if abs(relativeX) > abs(relativeY) {
                         // Horizontal movement is dominant
-                        highlightButtonId = relativeX > 0 ? "right" : "left"
+                        if relativeX > 0 {
+                            DLOG("D-pad highlight: RIGHT direction detected")
+                            highlightButtonId = "right"
+                        } else {
+                            DLOG("D-pad highlight: LEFT direction detected")
+                            highlightButtonId = "left"
+                        }
                     } else {
                         // Vertical movement is dominant
-                        highlightButtonId = relativeY > 0 ? "down" : "up"
+                        if relativeY > 0 {
+                            DLOG("D-pad highlight: DOWN direction detected")
+                            highlightButtonId = "down"
+                        } else {
+                            DLOG("D-pad highlight: UP direction detected")
+                            highlightButtonId = "up"
+                        }
                     }
                 } else {
                     // Not a D-pad button, use the button ID
@@ -1088,26 +1115,45 @@ public struct DeltaSkinView: View {
             // For directional inputs, we need to determine which direction is being pressed
             // This requires checking the touch location relative to the button's center
             if let touchLocation = touchLocation, let mappingSize = skin.mappingSize(for: traits) {
-                // For D-pad buttons, we just need to determine the direction based on the relative position
-                // to the center of the button in the original coordinate space
+                // We need to use the same coordinate transformation as in handleTouch
+                // to ensure consistent direction detection
+                let scale = min(
+                    previewSize.width / mappingSize.width,
+                    previewSize.height / mappingSize.height
+                )
                 
-                // Calculate the button center in the original coordinate space
-                let buttonCenterX = button.frame.midX * mappingSize.width
-                let buttonCenterY = button.frame.midY * mappingSize.height
+                let scaledSkinWidth = mappingSize.width * scale
+                let scaledSkinHeight = mappingSize.height * scale
+                let xOffset = (previewSize.width - scaledSkinWidth) / 2
+                
+                // Check if skin has fixed screen position
+                let hasScreenPosition = skin.screens(for: traits) != nil
+                
+                // Calculate Y offset based on skin type
+                let yOffset: CGFloat = hasScreenPosition ?
+                    ((previewSize.height - scaledSkinHeight) / 2) :
+                    (previewSize.height - scaledSkinHeight)
+                
+                // Calculate the button center in view coordinates
+                let buttonCenterX = button.frame.midX * scale + xOffset
+                let buttonCenterY = button.frame.midY * scale + yOffset
                 
                 // Calculate the touch position relative to the button center
-                // This works because touchLocation is already in the same coordinate space
                 let relativeX = touchLocation.x - buttonCenterX
                 let relativeY = touchLocation.y - buttonCenterY
                 
+                // Add debug logging to help diagnose direction issues
+                DLOG("D-pad: relativeX=\(relativeX), relativeY=\(relativeY)")
+                
                 // Define the center dead zone (25% of button size)
-                let buttonWidth = button.frame.width * mappingSize.width
-                let buttonHeight = button.frame.height * mappingSize.height
+                let buttonWidth = button.frame.width * scale
+                let buttonHeight = button.frame.height * scale
                 let deadZoneRadius = min(buttonWidth, buttonHeight) * 0.25
                 
                 // Check if touch is in the dead zone
                 if sqrt(relativeX * relativeX + relativeY * relativeY) < deadZoneRadius {
                     // In dead zone, return the default command if available
+                    DLOG("D-pad: In dead zone")
                     return commands.values.first ?? "none"
                 }
                 
@@ -1115,15 +1161,19 @@ public struct DeltaSkinView: View {
                 if abs(relativeX) > abs(relativeY) {
                     // Horizontal movement is dominant
                     if relativeX > 0 {
+                        DLOG("D-pad: RIGHT direction detected")
                         return commands["right"] ?? "right"
                     } else {
+                        DLOG("D-pad: LEFT direction detected")
                         return commands["left"] ?? "left"
                     }
                 } else {
                     // Vertical movement is dominant
                     if relativeY > 0 {
+                        DLOG("D-pad: DOWN direction detected")
                         return commands["down"] ?? "down"
                     } else {
+                        DLOG("D-pad: UP direction detected")
                         return commands["up"] ?? "up"
                     }
                 }
