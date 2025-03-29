@@ -18,15 +18,12 @@ struct EmulatorWithSkinView: View {
     let onSkinLoaded: () -> Void
     let onRefreshRequested: () -> Void
 
-    @EnvironmentObject private var inputHandler: DeltaSkinInputHandler
+    @EnvironmentObject internal var inputHandler: DeltaSkinInputHandler
     @StateObject private var skinLoader = DeltaSkinLoader()
     @State private var skinRenderComplete = false
 
     // State for orientation
     @State private var currentOrientation: UIDeviceOrientation = UIDevice.current.orientation
-
-    // Input handling
-    private let inputSubject = PassthroughSubject<String, Never>()
 
     // Debug mode
     @State private var showDebugOverlay = false
@@ -236,124 +233,6 @@ struct EmulatorWithSkinView: View {
         .cornerRadius(10)
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    }
-
-    // MARK: - Default Controller
-
-    /// Default controller skin as a fallback
-    private func defaultControllerSkin() -> some View {
-        VStack(spacing: 20) {
-            // D-Pad
-            dPadView()
-
-            // Action buttons
-            HStack(spacing: 10) {
-                VStack(spacing: 10) {
-                    circleButton(label: "Y", color: .yellow)
-                    circleButton(label: "X", color: .blue)
-                }
-
-                VStack(spacing: 10) {
-                    circleButton(label: "B", color: .red)
-                    circleButton(label: "A", color: .green)
-                }
-            }
-
-            // Start/Select buttons
-            HStack(spacing: 20) {
-                pillButton(label: "SELECT", color: .black)
-                pillButton(label: "START", color: .black)
-            }
-        }
-        .padding()
-        .background(Color.gray.opacity(0.5))
-        .cornerRadius(20)
-    }
-
-    /// D-Pad view
-    private func dPadView() -> some View {
-        VStack(spacing: 0) {
-            Button(action: { inputHandler.buttonPressed("up") }) {
-                Image(systemName: "arrow.up")
-                    .font(.system(size: 30))
-                    .foregroundColor(.white)
-            }
-            .simultaneousGesture(
-                DragGesture(minimumDistance: 0)
-                    .onEnded { _ in inputHandler.buttonReleased("up") }
-            )
-
-            HStack(spacing: 0) {
-                Button(action: { inputHandler.buttonPressed("left") }) {
-                    Image(systemName: "arrow.left")
-                        .font(.system(size: 30))
-                        .foregroundColor(.white)
-                }
-                .simultaneousGesture(
-                    DragGesture(minimumDistance: 0)
-                        .onEnded { _ in inputHandler.buttonReleased("left") }
-                )
-
-                Rectangle()
-                    .fill(Color.clear)
-                    .frame(width: 30, height: 30)
-
-                Button(action: { inputHandler.buttonPressed("right") }) {
-                    Image(systemName: "arrow.right")
-                        .font(.system(size: 30))
-                        .foregroundColor(.white)
-                }
-                .simultaneousGesture(
-                    DragGesture(minimumDistance: 0)
-                        .onEnded { _ in inputHandler.buttonReleased("right") }
-                )
-            }
-
-            Button(action: { inputHandler.buttonPressed("down") }) {
-                Image(systemName: "arrow.down")
-                    .font(.system(size: 30))
-                    .foregroundColor(.white)
-            }
-            .simultaneousGesture(
-                DragGesture(minimumDistance: 0)
-                    .onEnded { _ in inputHandler.buttonReleased("down") }
-            )
-        }
-        .padding()
-        .background(Color.black.opacity(0.5))
-        .cornerRadius(15)
-    }
-
-    /// Circle button view
-    private func circleButton(label: String, color: Color) -> some View {
-        Button(action: { inputHandler.buttonPressed(label.lowercased()) }) {
-            Text(label)
-                .font(.system(size: 20, weight: .bold))
-                .foregroundColor(.white)
-                .frame(width: 50, height: 50)
-                .background(color)
-                .clipShape(Circle())
-        }
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-                .onEnded { _ in inputHandler.buttonReleased(label.lowercased()) }
-        )
-    }
-
-    /// Pill-shaped button view
-    private func pillButton(label: String, color: Color) -> some View {
-        Button(action: { inputHandler.buttonPressed(label.lowercased()) }) {
-            Text(label)
-                .font(.system(size: 14, weight: .bold))
-                .foregroundColor(.white)
-                .frame(width: 80, height: 30)
-                .background(color)
-                .cornerRadius(15)
-        }
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-                .onEnded { _ in inputHandler.buttonReleased(label.lowercased()) }
-        )
     }
 
     // MARK: - Orientation Handling
