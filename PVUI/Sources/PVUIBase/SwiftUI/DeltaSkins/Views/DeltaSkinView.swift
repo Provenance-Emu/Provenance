@@ -632,19 +632,47 @@ public struct DeltaSkinView: View {
 
         // Find the button being touched
         var touchedButton: DeltaSkinButton?
-
-        for button in buttons {
-            let hitFrame = button.frame.insetBy(dx: -20, dy: -20)
+        var isDPadButton = false
+        
+        // First check if we're already pressing a D-pad button and still within its extended hit area
+        if let currentButton = currentlyPressedButton, case .directional = currentButton.input {
+            // For D-pad, use a larger hit area to allow sliding between directions
+            let extendedHitFrame = currentButton.frame.insetBy(dx: -40, dy: -40) // Larger hit area for D-pad
             let scaledFrame = CGRect(
-                x: hitFrame.minX * scale + xOffset,
-                y: yOffset + (hitFrame.minY * scale),
-                width: hitFrame.width * scale,
-                height: hitFrame.height * scale
+                x: extendedHitFrame.minX * scale + xOffset,
+                y: yOffset + (extendedHitFrame.minY * scale),
+                width: extendedHitFrame.width * scale,
+                height: extendedHitFrame.height * scale
             )
-
+            
             if scaledFrame.contains(location) {
-                touchedButton = button
-                break
+                touchedButton = currentButton
+                isDPadButton = true
+                DLOG("Still within D-pad extended hit area")
+            } else {
+                // We've moved outside the D-pad hit area, release the current direction
+                let inputCommand = extractInputCommand(from: currentButton)
+                DLOG("Moved outside D-pad area - releasing direction: \(inputCommand)")
+                inputHandler.buttonReleased(inputCommand)
+                currentlyPressedButton = nil
+            }
+        }
+        
+        // If we're not continuing with a D-pad press, check all buttons normally
+        if !isDPadButton {
+            for button in buttons {
+                let hitFrame = button.frame.insetBy(dx: -20, dy: -20)
+                let scaledFrame = CGRect(
+                    x: hitFrame.minX * scale + xOffset,
+                    y: yOffset + (hitFrame.minY * scale),
+                    width: hitFrame.width * scale,
+                    height: hitFrame.height * scale
+                )
+
+                if scaledFrame.contains(location) {
+                    touchedButton = button
+                    break
+                }
             }
         }
 
@@ -657,63 +685,23 @@ public struct DeltaSkinView: View {
                         activeThumbsticks.append((frame: button.frame, image: image, size: size))
                     }
                 }
+            } else if case .directional = button.input {
+                // Special handling for D-pad buttons to allow direction changes
+                handleDPadInput(button, scale: scale, xOffset: xOffset, yOffset: yOffset, mappingSize: mappingSize)
             } else if button != currentlyPressedButton {
-                // Only trigger effects for new button presses
+                // For non-D-pad buttons, only trigger effects for new button presses
+                // Release any previous button first
+                if let previousButton = currentlyPressedButton {
+                    let previousCommand = extractInputCommand(from: previousButton)
+                    DLOG("Releasing previous button: \(previousCommand)")
+                    inputHandler.buttonReleased(previousCommand)
+                }
+                
+                // Set the new button as current
                 currentlyPressedButton = button
 
                 // Add visual feedback
-                // For D-pad buttons, we need to determine which direction is being pressed
-                let highlightButtonId: String
-                
-                if case .directional(let commands) = button.input, let touchLocation = touchLocation {
-                    // For D-pad buttons, we need to determine which direction is being pressed
-                    // based on the touch location relative to the button center in the view coordinate system
-                    
-                    // Calculate the button center in view coordinates
-                    let buttonCenterX = button.frame.midX * scale + xOffset
-                    let buttonCenterY = button.frame.midY * scale + yOffset
-                    
-                    // Calculate the touch position relative to the button center
-                    let relativeX = touchLocation.x - buttonCenterX
-                    let relativeY = touchLocation.y - buttonCenterY
-                    
-                    // Define the center dead zone (15% of button size - smaller dead zone)
-                    let buttonWidth = button.frame.width * scale
-                    let buttonHeight = button.frame.height * scale
-                    let deadZoneRadius = min(buttonWidth, buttonHeight) * 0.15
-                    
-                    // Add debug logging to help diagnose direction issues
-                    DLOG("D-pad highlight: relativeX=\(relativeX), relativeY=\(relativeY)")
-                    
-                    // Determine which direction to highlight
-                    if sqrt(relativeX * relativeX + relativeY * relativeY) < deadZoneRadius {
-                        // In dead zone, use a special center highlight or the default button ID
-                        DLOG("D-pad highlight: In dead zone")
-                        // For D-pad buttons, use a special "dpad_center" ID to show the center highlight
-                        highlightButtonId = "dpad_center"
-                    } else if abs(relativeX) > abs(relativeY) {
-                        // Horizontal movement is dominant
-                        if relativeX > 0 {
-                            DLOG("D-pad highlight: RIGHT direction detected")
-                            highlightButtonId = "right"
-                        } else {
-                            DLOG("D-pad highlight: LEFT direction detected")
-                            highlightButtonId = "left"
-                        }
-                    } else {
-                        // Vertical movement is dominant
-                        if relativeY > 0 {
-                            DLOG("D-pad highlight: DOWN direction detected")
-                            highlightButtonId = "down"
-                        } else {
-                            DLOG("D-pad highlight: UP direction detected")
-                            highlightButtonId = "up"
-                        }
-                    }
-                } else {
-                    // Not a D-pad button, use the button ID
-                    highlightButtonId = button.id
-                }
+                let highlightButtonId = button.id
                 
                 let newButton = (
                     frame: button.frame,
@@ -736,7 +724,6 @@ public struct DeltaSkinView: View {
                 
                 // Use the input handler for all buttons
                 // The input handler will determine whether to use the controller or core
-                // IMPORTANT: Use the extracted input command, not the highlight button ID
                 inputHandler.buttonPressed(inputCommand)
 
                 // Clean up old highlights after delay
@@ -744,6 +731,7 @@ public struct DeltaSkinView: View {
                     activeButtons.removeAll { $0.timestamp <= newButton.timestamp }
                 }
             }
+        
         } else if let previousButton = currentlyPressedButton {
             // Touch is not on any button, but we had a pressed button
             // Extract the input command using the proper method
@@ -797,6 +785,95 @@ public struct DeltaSkinView: View {
         )
     }
 
+    /// Handle D-pad input with support for direction changes
+    private func handleDPadInput(_ button: DeltaSkinButton, scale: CGFloat, xOffset: CGFloat, yOffset: CGFloat, mappingSize: CGSize) {
+        guard let touchLocation = touchLocation else { return }
+        
+        // Calculate the button center in view coordinates
+        let buttonCenterX = button.frame.midX * scale + xOffset
+        let buttonCenterY = button.frame.midY * scale + yOffset
+        
+        // Calculate the touch position relative to the button center
+        let relativeX = touchLocation.x - buttonCenterX
+        let relativeY = touchLocation.y - buttonCenterY
+        
+        // Define the center dead zone (15% of button size - smaller dead zone)
+        let buttonWidth = button.frame.width * scale
+        let buttonHeight = button.frame.height * scale
+        let deadZoneRadius = min(buttonWidth, buttonHeight) * 0.15
+        
+        // Add debug logging to help diagnose direction issues
+        DLOG("D-pad highlight: relativeX=\(relativeX), relativeY=\(relativeY)")
+        
+        // Determine which direction to highlight
+        let newDirection: String
+        if sqrt(relativeX * relativeX + relativeY * relativeY) < deadZoneRadius {
+            // In dead zone, use a special center highlight
+            DLOG("D-pad highlight: In dead zone")
+            newDirection = "dpad_center"
+        } else if abs(relativeX) > abs(relativeY) {
+            // Horizontal movement is dominant
+            if relativeX > 0 {
+                DLOG("D-pad highlight: RIGHT direction detected")
+                newDirection = "right"
+            } else {
+                DLOG("D-pad highlight: LEFT direction detected")
+                newDirection = "left"
+            }
+        } else {
+            // Vertical movement is dominant
+            if relativeY > 0 {
+                DLOG("D-pad highlight: DOWN direction detected")
+                newDirection = "down"
+            } else {
+                DLOG("D-pad highlight: UP direction detected")
+                newDirection = "up"
+            }
+        }
+        
+        // Check if the direction has changed
+        let previousDirection = currentlyPressedButton.flatMap { extractInputCommand(from: $0) }
+        
+        // If this is a new press or the direction has changed
+        if currentlyPressedButton != button || previousDirection != newDirection {
+            // Release the previous direction if there was one
+            if let previousButton = currentlyPressedButton, let previousDirection = previousDirection, previousDirection != "dpad_center" {
+                DLOG("Releasing previous D-pad direction: \(previousDirection)")
+                inputHandler.buttonReleased(previousDirection)
+            }
+            
+            // Update the current button
+            currentlyPressedButton = button
+            
+            // Add visual feedback for the new direction
+            let newButton = (
+                frame: button.frame,
+                mappingSize: mappingSize,
+                buttonId: newDirection,
+                timestamp: Date()
+            )
+            activeButtons.append(newButton)
+            
+            #if !os(tvOS)
+            buttonGenerator.impactOccurred(intensity: 0.8)
+            #endif
+            
+            // Play sound with current position
+            playClickSound(for: button)
+            
+            // Press the new direction if it's not the center
+            if newDirection != "dpad_center" {
+                DLOG("Pressing new D-pad direction: \(newDirection)")
+                inputHandler.buttonPressed(newDirection)
+            }
+            
+            // Clean up old highlights after delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                activeButtons.removeAll { $0.timestamp <= newButton.timestamp }
+            }
+        }
+    }
+    
     // For hit testing
     func hitTest(_ point: CGPoint, in geometry: GeometryProxy) -> DeltaSkinButton? {
         guard let buttons = skin.buttons(for: traits),
