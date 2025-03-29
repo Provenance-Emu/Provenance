@@ -93,13 +93,21 @@ struct DeltaSkinButtonHighlight: View {
             )
         default:
             // For non-directional buttons, use a circle or the appropriate shape
-            if buttonId.contains("dpad") {
-                // If it's the main D-pad button but no direction specified, show a small center circle
+            if buttonId == "dpad_center" {
+                // If it's specifically the center of the D-pad, show a small center circle
                 return AnyShape(Circle().path(in: CGRect(
                     x: frame.width * 0.35,
                     y: frame.height * 0.35,
                     width: frame.width * 0.3,
                     height: frame.height * 0.3
+                )))
+            } else if buttonId.contains("dpad") {
+                // If it's the main D-pad button but no direction specified, show a rounded square
+                return AnyShape(RoundedRectangle(cornerRadius: frame.width * 0.15).path(in: CGRect(
+                    x: frame.width * 0.3,
+                    y: frame.height * 0.3,
+                    width: frame.width * 0.4,
+                    height: frame.height * 0.4
                 )))
             } else {
                 // For regular buttons, use a circle that matches the button shape
@@ -142,8 +150,17 @@ struct DeltaSkinButtonHighlight: View {
                 height: height
             )
         default:
-            // For the main D-pad button with no direction, use a smaller centered frame
-            if buttonId.contains("dpad") {
+            // For the center of the D-pad, use a small centered frame
+            if buttonId == "dpad_center" {
+                return CGRect(
+                    x: parentFrame.minX + width * 0.35,
+                    y: parentFrame.minY + height * 0.35,
+                    width: width * 0.3,
+                    height: height * 0.3
+                )
+            }
+            // For the main D-pad button with no direction, use a medium centered frame
+            else if buttonId.contains("dpad") {
                 return CGRect(
                     x: parentFrame.minX + width * 0.25,
                     y: parentFrame.minY + height * 0.25,

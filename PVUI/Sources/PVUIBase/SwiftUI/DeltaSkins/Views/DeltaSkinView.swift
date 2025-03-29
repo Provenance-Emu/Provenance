@@ -677,19 +677,20 @@ public struct DeltaSkinView: View {
                     let relativeX = touchLocation.x - buttonCenterX
                     let relativeY = touchLocation.y - buttonCenterY
                     
-                    // Define the center dead zone (25% of button size)
+                    // Define the center dead zone (15% of button size - smaller dead zone)
                     let buttonWidth = button.frame.width * scale
                     let buttonHeight = button.frame.height * scale
-                    let deadZoneRadius = min(buttonWidth, buttonHeight) * 0.25
+                    let deadZoneRadius = min(buttonWidth, buttonHeight) * 0.15
                     
                     // Add debug logging to help diagnose direction issues
                     DLOG("D-pad highlight: relativeX=\(relativeX), relativeY=\(relativeY)")
                     
                     // Determine which direction to highlight
                     if sqrt(relativeX * relativeX + relativeY * relativeY) < deadZoneRadius {
-                        // In dead zone, use default button ID
+                        // In dead zone, use a special center highlight or the default button ID
                         DLOG("D-pad highlight: In dead zone")
-                        highlightButtonId = button.id
+                        // For D-pad buttons, use a special "dpad_center" ID to show the center highlight
+                        highlightButtonId = "dpad_center"
                     } else if abs(relativeX) > abs(relativeY) {
                         // Horizontal movement is dominant
                         if relativeX > 0 {
@@ -1145,16 +1146,17 @@ public struct DeltaSkinView: View {
                 // Add debug logging to help diagnose direction issues
                 DLOG("D-pad: relativeX=\(relativeX), relativeY=\(relativeY)")
                 
-                // Define the center dead zone (25% of button size)
+                // Define the center dead zone (15% of button size - smaller dead zone)
                 let buttonWidth = button.frame.width * scale
                 let buttonHeight = button.frame.height * scale
-                let deadZoneRadius = min(buttonWidth, buttonHeight) * 0.25
+                let deadZoneRadius = min(buttonWidth, buttonHeight) * 0.15
                 
                 // Check if touch is in the dead zone
                 if sqrt(relativeX * relativeX + relativeY * relativeY) < deadZoneRadius {
-                    // In dead zone, return the default command if available
+                    // In dead zone, return a special "center" command or nothing
                     DLOG("D-pad: In dead zone")
-                    return commands.values.first ?? "none"
+                    // Don't send any command when in the dead zone
+                    return "none"
                 }
                 
                 // Determine which direction is being pressed based on the touch position
