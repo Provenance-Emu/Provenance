@@ -511,8 +511,9 @@ public struct DeltaSkinView: View {
                                 volume: normalizedSize
                             )
                             
-                            // Call the input handler's buttonReleased method
-                            inputHandler.buttonReleased(button.id)
+                            // Extract the input command and call the input handler's buttonReleased method
+                            let inputCommand = extractInputCommand(from: button)
+                            inputHandler.buttonReleased(inputCommand)
                         }
 
                         touchLocation = nil
@@ -663,8 +664,9 @@ public struct DeltaSkinView: View {
                 // Play sound with current position
                 playClickSound(for: button)
                 
-                // Call the input handler's buttonPressed method
-                inputHandler.buttonPressed(button.id)
+                // Extract the input command and call the input handler's buttonPressed method
+                let inputCommand = extractInputCommand(from: button)
+                inputHandler.buttonPressed(inputCommand)
 
                 // Clean up old highlights after delay
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -673,8 +675,9 @@ public struct DeltaSkinView: View {
             }
         } else if let previousButton = currentlyPressedButton {
             // Touch is not on any button, but we had a pressed button
-            // Call the input handler's buttonReleased method
-            inputHandler.buttonReleased(previousButton.id)
+            // Extract the input command and call the input handler's buttonReleased method
+            let inputCommand = extractInputCommand(from: previousButton)
+            inputHandler.buttonReleased(inputCommand)
             currentlyPressedButton = nil
         } else {
             // Touch is not on any button and no previous button was pressed
@@ -1037,6 +1040,84 @@ public struct DeltaSkinView: View {
     private func handleButtonRelease(_ buttonId: String) {
         // Pass the button ID directly to the input handler
         inputHandler.buttonReleased(buttonId)
+    }
+    
+    /// Extract the actual input command from a button
+    private func extractInputCommand(from button: DeltaSkinButton) -> String {
+        // First, try to get the command from the button's input property
+        switch button.input {
+        case .single(let command):
+            return command
+        case .directional(let commands):
+            // For directional inputs, we need to determine which direction is being pressed
+            // This requires checking the touch location relative to the button's center
+            if let touchLocation = touchLocation, let mappingSize = skin.mappingSize(for: traits) {
+                // Calculate the center of the button
+                let buttonCenter = CGPoint(
+                    x: button.frame.midX * mappingSize.width,
+                    y: button.frame.midY * mappingSize.height
+                )
+                
+                // Calculate the touch position relative to the button center
+                let relativeX = touchLocation.x - buttonCenter.x
+                let relativeY = touchLocation.y - buttonCenter.y
+                
+                // Determine which direction is being pressed based on the touch position
+                if abs(relativeX) > abs(relativeY) {
+                    // Horizontal movement is dominant
+                    if relativeX > 0 {
+                        return commands["right"] ?? "right"
+                    } else {
+                        return commands["left"] ?? "left"
+                    }
+                } else {
+                    // Vertical movement is dominant
+                    if relativeY > 0 {
+                        return commands["down"] ?? "down"
+                    } else {
+                        return commands["up"] ?? "up"
+                    }
+                }
+            }
+            
+            // Fallback if we can't determine the direction
+            if let firstCommand = commands.values.first {
+                return firstCommand
+            }
+        }
+        
+        // If we couldn't get a command from the input, try to extract it from the button ID
+        // This is a fallback for compatibility with existing code
+        let buttonId = button.id.lowercased()
+        
+        if buttonId.contains("up") {
+            return "up"
+        } else if buttonId.contains("down") {
+            return "down"
+        } else if buttonId.contains("left") {
+            return "left"
+        } else if buttonId.contains("right") {
+            return "right"
+        } else if buttonId.contains("a") {
+            return "a"
+        } else if buttonId.contains("b") {
+            return "b"
+        } else if buttonId.contains("x") {
+            return "x"
+        } else if buttonId.contains("y") {
+            return "y"
+        } else if buttonId.contains("l") && !buttonId.contains("select") {
+            return "l"
+        } else if buttonId.contains("r") && !buttonId.contains("start") {
+            return "r"
+        } else if buttonId.contains("start") {
+            return "start"
+        } else if buttonId.contains("select") {
+            return "select"
+        }
+        
+        // If all else fails, just use the button ID
+        return button.id
     }
 }
 

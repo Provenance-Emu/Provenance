@@ -139,30 +139,63 @@ public class DeltaSkinInputHandler: ObservableObject {
 
     /// Map button ID to button index
     private func mapButtonToIndex(_ buttonId: String) -> Int {
-        // Default mapping that works for most systems
-        if buttonId.contains("up") {
+        // Normalize the input ID for consistent matching
+        let normalizedId = buttonId.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        // Exact matches first (for commands extracted from skin JSON)
+        switch normalizedId {
+        case "up":
             return 1  // Up
-        } else if buttonId.contains("down") {
+        case "down":
             return 2  // Down
-        } else if buttonId.contains("left") {
+        case "left":
             return 3  // Left
-        } else if buttonId.contains("right") {
+        case "right":
             return 4  // Right
-        } else if buttonId.contains("a") {
+        case "a":
             return 5  // A
-        } else if buttonId.contains("b") {
+        case "b":
             return 6  // B
-        } else if buttonId.contains("x") {
+        case "x":
             return 7  // X
-        } else if buttonId.contains("y") {
+        case "y":
             return 8  // Y
-        } else if buttonId.contains("l") || buttonId.contains("l1") {
+        case "l", "l1":
             return 9  // L
-        } else if buttonId.contains("r") || buttonId.contains("r1") {
+        case "r", "r1":
             return 10 // R
-        } else if buttonId.contains("start") {
+        case "start":
             return 11 // Start
-        } else if buttonId.contains("select") {
+        case "select":
+            return 12 // Select
+        default:
+            break
+        }
+        
+        // Fallback to partial matching if exact match failed
+        if normalizedId.contains("up") {
+            return 1  // Up
+        } else if normalizedId.contains("down") {
+            return 2  // Down
+        } else if normalizedId.contains("left") {
+            return 3  // Left
+        } else if normalizedId.contains("right") {
+            return 4  // Right
+        } else if normalizedId.contains("a") && !normalizedId.contains("analog") {
+            return 5  // A
+        } else if normalizedId.contains("b") {
+            return 6  // B
+        } else if normalizedId.contains("x") {
+            return 7  // X
+        } else if normalizedId.contains("y") {
+            return 8  // Y
+        } else if (normalizedId.contains("l") || normalizedId.contains("l1")) && !normalizedId.contains("select") {
+            return 9  // L
+        } else if (normalizedId.contains("r") || normalizedId.contains("r1")) && !normalizedId.contains("start") {
+            return 10 // R
+        } else if normalizedId.contains("start") {
+            return 11 // Start
+        } else if normalizedId.contains("select") {
             return 12 // Select
         }
 
