@@ -332,7 +332,7 @@ public struct DeltaSkinView: View {
     }
 
     // Helper function to calculate screen dimensions
-    private func calculateScreenDimensions(in geometry: GeometryProxy) -> String {
+    private func calculateScreenDimensions(in geometry: GeometryProxy) -> String { 
         guard let mappingSize = skin.mappingSize(for: traits) else { return "No mapping size" }
 
         let availableWidth = geometry.size.width
@@ -510,6 +510,9 @@ public struct DeltaSkinView: View {
                                 pan: panPosition,
                                 volume: normalizedSize
                             )
+                            
+                            // Call the input handler's buttonReleased method
+                            inputHandler.buttonReleased(button.id)
                         }
 
                         touchLocation = nil
@@ -659,14 +662,22 @@ public struct DeltaSkinView: View {
                 #endif
                 // Play sound with current position
                 playClickSound(for: button)
+                
+                // Call the input handler's buttonPressed method
+                inputHandler.buttonPressed(button.id)
 
                 // Clean up old highlights after delay
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                     activeButtons.removeAll { $0.timestamp <= newButton.timestamp }
                 }
             }
+        } else if let previousButton = currentlyPressedButton {
+            // Touch is not on any button, but we had a pressed button
+            // Call the input handler's buttonReleased method
+            inputHandler.buttonReleased(previousButton.id)
+            currentlyPressedButton = nil
         } else {
-            // Touch is not on any button
+            // Touch is not on any button and no previous button was pressed
             currentlyPressedButton = nil
         }
     }
