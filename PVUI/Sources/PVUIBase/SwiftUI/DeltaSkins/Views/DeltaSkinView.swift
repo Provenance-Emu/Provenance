@@ -525,19 +525,19 @@ public struct DeltaSkinView: View {
             // Load skin image
             do {
                 skinImage = try await skin.image(for: traits)
-                print("Loaded skin image: \(skinImage?.size ?? .zero)")
+                DLOG("Loaded skin image: \(skinImage?.size ?? .zero)")
             } catch {
                 loadingError = error
-                print("Error loading skin image: \(error)")
+                ELOG("Error loading skin image: \(error)")
             }
 
             // Load screen groups
             screenGroups = skin.screenGroups(for: traits)
-            print("Loaded screen groups: \(screenGroups?.count ?? 0)")
+            DLOG("Loaded screen groups: \(screenGroups?.count ?? 0)")
 
             // Load button mappings
             buttonMappings = skin.buttonMappings(for: traits)
-            print("Loaded button mappings: \(buttonMappings?.count ?? 0)")
+            DLOG("Loaded button mappings: \(buttonMappings?.count ?? 0)")
         }
     }
 
