@@ -33,6 +33,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B31531BB2D99C94E0022158D /* TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TODO.md; sourceTree = "<group>"; };
 		B36DFC0F2CF196D700BAE9BE /* UITesting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UITesting.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36DFC1F2CF196D800BAE9BE /* UITestingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UITestingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36DFC292CF196D800BAE9BE /* UITestingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UITestingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -116,6 +117,7 @@
 		B36DFC062CF196D700BAE9BE = {
 			isa = PBXGroup;
 			children = (
+				B31531BB2D99C94E0022158D /* TODO.md */,
 				B37444822D444B81002306B0 /* GBA-SharpX1.deltaskin */,
 				B374447F2D444B09002306B0 /* GBC-Sunrise.deltaskin */,
 				B36DFC112CF196D700BAE9BE /* UITesting */,

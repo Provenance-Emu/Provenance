@@ -73,6 +73,18 @@ public class DeltaSkinInputHandler: ObservableObject {
             return
         }
         
+        // Handle fast forward toggle button
+        if lowercasedId.contains("togglefastforward") {
+            toggleFastForwardPressed()
+            return
+        }
+        
+        // Handle slow motion toggle button
+        if lowercasedId.contains("toggleslowmotion") {
+            toggleSlowMotionPressed()
+            return
+        }
+        
         // Normalize the button ID
         let normalizedId = buttonId.lowercased()
         DLOG("Normalized button ID: \(normalizedId)")
@@ -106,7 +118,9 @@ public class DeltaSkinInputHandler: ObservableObject {
         let lowercasedId = buttonId.lowercased()
         if lowercasedId.contains("menu") || 
            lowercasedId.contains("quicksave") || 
-           lowercasedId.contains("quickload") {
+           lowercasedId.contains("quickload") ||
+           lowercasedId.contains("togglefastforward") ||
+           lowercasedId.contains("toggleslowmotion") {
             return
         }
         
@@ -185,6 +199,75 @@ public class DeltaSkinInputHandler: ObservableObject {
                 }
             } catch {
                 ELOG("Error during quickload: \(error)")
+            }
+        }
+    }
+    
+    // MARK: - Game Speed Control
+    
+    /// Timer for long press detection
+    private var longPressTimer: Timer?
+    
+    /// Handle toggle fast forward button press
+    private func toggleFastForwardPressed() {
+        DLOG("Toggle fast forward button pressed")
+        guard let core = emulatorCore else {
+            ELOG("Cannot toggle fast forward - emulatorCore is nil")
+            return
+        }
+        
+        // If already in fast mode, go back to normal
+        if core.gameSpeed == .fast || core.gameSpeed == .veryFast {
+            DLOG("Returning to normal speed from fast mode")
+            core.gameSpeed = .normal
+            return
+        }
+        
+        // Otherwise, set to fast mode
+        DLOG("Setting game speed to fast")
+        core.gameSpeed = .fast
+        
+        // Start a timer for long press detection (for very fast mode)
+        longPressTimer?.invalidate()
+        longPressTimer = Timer.scheduledTimer(withTimeInterval: 0.75, repeats: false) { [weak self] _ in
+            guard let self = self, let core = self.emulatorCore else { return }
+            
+            // If still in fast mode after the timer, switch to very fast
+            if core.gameSpeed == .fast {
+                DLOG("Long press detected, setting game speed to very fast")
+                core.gameSpeed = .veryFast
+            }
+        }
+    }
+    
+    /// Handle toggle slow motion button press
+    private func toggleSlowMotionPressed() {
+        DLOG("Toggle slow motion button pressed")
+        guard let core = emulatorCore else {
+            ELOG("Cannot toggle slow motion - emulatorCore is nil")
+            return
+        }
+        
+        // If already in slow mode, go back to normal
+        if core.gameSpeed == .slow || core.gameSpeed == .verySlow {
+            DLOG("Returning to normal speed from slow mode")
+            core.gameSpeed = .normal
+            return
+        }
+        
+        // Otherwise, set to slow mode
+        DLOG("Setting game speed to slow")
+        core.gameSpeed = .slow
+        
+        // Start a timer for long press detection (for very slow mode)
+        longPressTimer?.invalidate()
+        longPressTimer = Timer.scheduledTimer(withTimeInterval: 0.75, repeats: false) { [weak self] _ in
+            guard let self = self, let core = self.emulatorCore else { return }
+            
+            // If still in slow mode after the timer, switch to very slow
+            if core.gameSpeed == .slow {
+                DLOG("Long press detected, setting game speed to very slow")
+                core.gameSpeed = .verySlow
             }
         }
     }
