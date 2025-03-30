@@ -1,7 +1,20 @@
 /// Core types for DeltaSkin functionality
 public enum DeltaSkinDevice: String, Codable, Hashable, Equatable, CaseIterable {
-    case iphone
-    case ipad
+    case iphone = "iPhone"
+    case ipad = "iPad"
+    
+    // Helper method to match device strings case-insensitively
+    public static func fromString(_ string: String) -> DeltaSkinDevice? {
+        let lowercased = string.lowercased()
+        switch lowercased {
+        case "iphone", "phone":
+            return .iphone
+        case "ipad", "pad":
+            return .ipad
+        default:
+            return nil
+        }
+    }
 }
 
 public enum DeltaSkinDisplayType: String, Codable, Hashable, Equatable, CaseIterable {
@@ -13,8 +26,21 @@ public enum DeltaSkinDisplayType: String, Codable, Hashable, Equatable, CaseIter
 }
 
 public enum DeltaSkinOrientation: String, Codable, Hashable, Equatable, CaseIterable {
-    case portrait
-    case landscape
+    case portrait = "Portrait"
+    case landscape = "Landscape"
+    
+    // Helper method to match orientation strings case-insensitively
+    public static func fromString(_ string: String) -> DeltaSkinOrientation? {
+        let lowercased = string.lowercased()
+        switch lowercased {
+        case "portrait":
+            return .portrait
+        case "landscape":
+            return .landscape
+        default:
+            return nil
+        }
+    }
 }
 
 /// Represents specific iPad models for layout customization

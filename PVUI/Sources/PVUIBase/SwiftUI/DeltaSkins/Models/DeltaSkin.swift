@@ -77,6 +77,45 @@ public struct DeltaSkin: DeltaSkinProtocol {
     public func supports(_ traits: DeltaSkinTraits) -> Bool {
         representation(for: traits) != nil
     }
+    
+    /// Check if this skin supports a specific device, regardless of orientation or display type
+    /// - Parameter device: The device to check support for
+    /// - Returns: True if the skin supports the device in any orientation or display type
+    public func supports(_ device: DeltaSkinDevice) -> Bool {
+        // Check if we have any representations for this device
+        DLOG("Checking if skin '\(name)' supports device '\(device.rawValue)'")
+        
+        // First check if the device is directly in the representations dictionary
+        if info.representations[device] != nil {
+            DLOG("✅ Skin '\(name)' has direct representation for '\(device.rawValue)'")
+            return true
+        }
+        
+        // If not found directly, check using case-insensitive matching
+        for (deviceKey, _) in info.representations {
+            if deviceKey == device {
+                DLOG("✅ Skin '\(name)' supports '\(device.rawValue)' via case-insensitive match with '\(deviceKey)'")
+                return true
+            }
+        }
+        
+        // Also check the raw JSON representation for more flexibility
+        if let jsonRep = jsonRepresentation["representations"] as? [String: Any] {
+            for (key, value) in jsonRep {
+                // Try to match the key to our device type
+                if let matchedDevice = DeltaSkinDevice.fromString(key), 
+                   matchedDevice == device,
+                   let deviceRep = value as? [String: Any], 
+                   !deviceRep.isEmpty {
+                    DLOG("✅ Skin '\(name)' supports '\(device.rawValue)' via JSON representation with key '\(key)'")
+                    return true
+                }
+            }
+        }
+        
+        DLOG("❌ Skin '\(name)' does not support device '\(device.rawValue)'")
+        return false
+    }
 
     public func screens(for traits: DeltaSkinTraits) -> [DeltaSkinScreen]? {
         guard let rep = representation(for: traits),
@@ -166,25 +205,84 @@ public struct DeltaSkin: DeltaSkinProtocol {
     }
 
     public func representation(for traits: DeltaSkinTraits) -> DeltaSkin.RepresentationInfo? {
-        guard let deviceReps = info.representations[traits.device] else {
-            return nil
+        // First try direct lookup using the enum value
+        if let deviceReps = info.representations[traits.device] {
+            let orientationReps: OrientationRepresentations?
+            switch traits.displayType {
+            case .standard:
+                // Try to find the orientation representation using case-insensitive matching
+                if let standardDict = deviceReps.standard {
+                    // First try direct lookup
+                    if let directMatch = standardDict[traits.orientation.rawValue] {
+                        return directMatch.toRepresentationInfo()
+                    }
+                    
+                    // If direct lookup fails, try case-insensitive matching
+                    for (key, value) in standardDict {
+                        if key.lowercased() == traits.orientation.rawValue.lowercased() {
+                            DLOG("Found orientation \(traits.orientation.rawValue) using case-insensitive match with key \(key)")
+                            return value.toRepresentationInfo()
+                        }
+                    }
+                }
+                orientationReps = nil
+            case .edgeToEdge:
+                orientationReps = deviceReps.edgeToEdge?[traits.orientation.rawValue]
+            case .splitView:
+                orientationReps = deviceReps.splitView?[traits.orientation.rawValue]
+            case .stageManager:
+                orientationReps = deviceReps.stageManager?[traits.orientation.rawValue]
+            case .externalDisplay:
+                orientationReps = deviceReps.externalDisplay?[traits.orientation.rawValue]
+            }
+            
+            return orientationReps?.toRepresentationInfo()
         }
-
-        let orientationReps: OrientationRepresentations?
-        switch traits.displayType {
-        case .standard:
-            orientationReps = deviceReps.standard?[traits.orientation.rawValue]
-        case .edgeToEdge:
-            orientationReps = deviceReps.edgeToEdge?[traits.orientation.rawValue]
-        case .splitView:
-            orientationReps = deviceReps.splitView?[traits.orientation.rawValue]
-        case .stageManager:
-            orientationReps = deviceReps.stageManager?[traits.orientation.rawValue]
-        case .externalDisplay:
-            orientationReps = deviceReps.externalDisplay?[traits.orientation.rawValue]
+        
+        // If direct lookup fails, try case-insensitive matching for device
+        DLOG("Direct device lookup failed, trying case-insensitive matching for \(traits.device.rawValue)")
+        for (deviceKey, deviceReps) in info.representations {
+            // Try to match the device key using our helper method
+            if let matchedDevice = DeltaSkinDevice.fromString(deviceKey.rawValue), 
+               matchedDevice == traits.device {
+                DLOG("Found device \(traits.device.rawValue) using case-insensitive match with key \(deviceKey)")
+                
+                // Now try to find the orientation representation
+                let orientationReps: OrientationRepresentations?
+                switch traits.displayType {
+                case .standard:
+                    // Try to find the orientation representation using case-insensitive matching
+                    if let standardDict = deviceReps.standard {
+                        // First try direct lookup
+                        if let directMatch = standardDict[traits.orientation.rawValue] {
+                            return directMatch.toRepresentationInfo()
+                        }
+                        
+                        // If direct lookup fails, try case-insensitive matching
+                        for (key, value) in standardDict {
+                            if let matchedOrientation = DeltaSkinOrientation.fromString(key),
+                               matchedOrientation == traits.orientation {
+                                DLOG("Found orientation \(traits.orientation.rawValue) using case-insensitive match with key \(key)")
+                                return value.toRepresentationInfo()
+                            }
+                        }
+                    }
+                    orientationReps = nil
+                case .edgeToEdge:
+                    orientationReps = deviceReps.edgeToEdge?[traits.orientation.rawValue]
+                case .splitView:
+                    orientationReps = deviceReps.splitView?[traits.orientation.rawValue]
+                case .stageManager:
+                    orientationReps = deviceReps.stageManager?[traits.orientation.rawValue]
+                case .externalDisplay:
+                    orientationReps = deviceReps.externalDisplay?[traits.orientation.rawValue]
+                }
+                
+                return orientationReps?.toRepresentationInfo()
+            }
         }
-
-        return orientationReps?.toRepresentationInfo()
+        
+        return nil
     }
 
     public func image(for traits: DeltaSkinTraits) async throws -> UIImage {
@@ -251,6 +349,14 @@ public struct DeltaSkin: DeltaSkinProtocol {
         private enum CodingKeys: String, CodingKey {
             case name, identifier, gameTypeIdentifier, debug, representations
         }
+        
+        public init(name: String, identifier: String, gameTypeIdentifier: DeltaSkinGameType, debug: Bool, representations: Dictionary<DeltaSkinDevice, DeviceRepresentations>) {
+            self.name = name
+            self.identifier = identifier
+            self.gameTypeIdentifier = gameTypeIdentifier
+            self.debug = debug
+            self.representations = representations
+        }
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -294,6 +400,17 @@ public struct DeltaSkin: DeltaSkinProtocol {
         let mini: [String: OrientationRepresentations]?
         let pro13: [String: OrientationRepresentations]?
         let dedicated: [String: OrientationRepresentations]?
+        
+        public init(standard: [String : OrientationRepresentations]? = nil, edgeToEdge: [String : OrientationRepresentations]? = nil, splitView: [String : OrientationRepresentations]? = nil, stageManager: [String : OrientationRepresentations]? = nil, externalDisplay: [String : OrientationRepresentations]? = nil, mini: [String : OrientationRepresentations]? = nil, pro13: [String : OrientationRepresentations]? = nil, dedicated: [String : OrientationRepresentations]? = nil) {
+            self.standard = standard
+            self.edgeToEdge = edgeToEdge
+            self.splitView = splitView
+            self.stageManager = stageManager
+            self.externalDisplay = externalDisplay
+            self.mini = mini
+            self.pro13 = pro13
+            self.dedicated = dedicated
+        }
 
         private enum CodingKeys: String, CodingKey {
             case standard

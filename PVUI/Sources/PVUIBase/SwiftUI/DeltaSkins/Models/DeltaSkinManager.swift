@@ -39,8 +39,186 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     public func skins(for gameType: String) async throws -> [DeltaSkinProtocol] {
         try await queue.asyncResult {
             try self.scanForSkins()
-            return self.loadedSkins.filter { $0.gameType.rawValue == gameType }
+            
+            // Use case-insensitive matching for the game type
+            let matchingSkins = self.loadedSkins.filter { 
+                $0.gameType.rawValue.lowercased() == gameType.lowercased() 
+            }
+            
+            DLOG("Found \(matchingSkins.count) skins for game type '\(gameType)' (case-insensitive matching)")
+            return matchingSkins
         }
+    }
+    
+    /// Get skins for a specific game type, filtered by device and orientation
+    /// - Parameters:
+    ///   - gameType: The game type to filter by
+    ///   - device: The device to filter by (iPhone or iPad)
+    ///   - orientation: The orientation to filter by (portrait or landscape)
+    /// - Returns: Array of skins that match the criteria
+    public func skins(for gameType: String, device: DeltaSkinDevice, orientation: DeltaSkinOrientation? = nil) async throws -> [DeltaSkinProtocol] {
+        try await queue.asyncResult {
+            try self.scanForSkins()
+            
+            // First get all skins for this game type (using case-insensitive matching)
+            let gameSkins = self.loadedSkins.filter { 
+                $0.gameType.rawValue.lowercased() == gameType.lowercased() 
+            }
+            DLOG("Found \(gameSkins.count) total skins for \(gameType) (case-insensitive matching)")
+            
+            // Log the first few skins' details to help diagnose issues
+            for (index, skin) in gameSkins.prefix(3).enumerated() {
+                DLOG("Skin \(index+1): \(skin.name), ID: \(skin.identifier), Game Type: \(skin.gameType.rawValue)")
+                if let jsonRep = skin.jsonRepresentation["representations"] as? [String: Any] {
+                    DLOG("  Available representations for \(skin.name):")
+                    for (deviceKey, deviceValue) in jsonRep {
+                        DLOG("  - Device: \(deviceKey)")
+                        if let deviceRep = deviceValue as? [String: Any] {
+                            for (displayKey, displayValue) in deviceRep {
+                                DLOG("    - Display: \(displayKey)")
+                                if let displayRep = displayValue as? [String: Any] {
+                                    DLOG("      - Orientations: \(displayRep.keys.joined(separator: ", "))")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Filter skins based on device and optional orientation
+            let deviceSkins = gameSkins.filter { skin in
+                // Use the protocol extension method that handles all the matching logic
+                let supported = skin.supports(device, orientation: orientation)
+                
+                if supported {
+                    if let orientation = orientation {
+                        DLOG("✅ Skin '\(skin.name)' supports \(device) in \(orientation) mode")
+                    } else {
+                        DLOG("✅ Skin '\(skin.name)' supports \(device)")
+                    }
+                } else {
+                    if let orientation = orientation {
+                        DLOG("❌ Skin '\(skin.name)' does not support \(device) in \(orientation) mode")
+                    } else {
+                        DLOG("❌ Skin '\(skin.name)' does not support \(device)")
+                    }
+                }
+                
+                return supported
+            }
+            DLOG("Found \(deviceSkins.count) skins for \(device) (any orientation)")
+            return deviceSkins
+
+        }
+    }
+    
+    /// Get skins for a specific system, filtered by device and orientation
+    /// - Parameters:
+    ///   - system: The system to filter by
+    ///   - device: The device to filter by (iPhone or iPad)
+    ///   - orientation: The orientation to filter by (portrait or landscape)
+    /// - Returns: Array of skins that match the criteria
+    public func skins(for system: SystemIdentifier, device: DeltaSkinDevice, orientation: DeltaSkinOrientation? = nil) async throws -> [DeltaSkinProtocol] {
+        // First, log the system information to help diagnose issues
+        DLOG("Looking for skins for system: \(system.systemName) (ID: \(system.rawValue), full name: \(system.fullName))")
+        
+        // Get all skins first to see what's available
+        let allSkins = try await availableSkins()
+        DLOG("Total skins available: \(allSkins.count)")
+        
+        // Log the game types of the first few skins to help diagnose issues
+        for (index, skin) in allSkins.prefix(5).enumerated() {
+            DLOG("Skin \(index+1): \(skin.name), Game Type: \(skin.gameType.rawValue)")
+            if let skinSystem = skin.gameType.systemIdentifier {
+                DLOG("  System: \(skinSystem.systemName) (ID: \(skinSystem.rawValue), full name: \(skinSystem.fullName))")
+                
+                // Check if this skin matches our target system
+                let systemNameMatch = skinSystem.systemName.lowercased() == system.systemName.lowercased()
+                let systemIDMatch = skinSystem == system
+                DLOG("  Matches target system? Name: \(systemNameMatch), ID: \(systemIDMatch)")
+            }
+        }
+        
+        // Now call the original method with the system name
+        return try await skins(for: system.systemName, device: device, orientation: orientation)
+    }
+    
+    /// Get the appropriate skin to use for a system based on current device and orientation
+    /// - Parameters:
+    ///   - system: The system identifier
+    ///   - device: The device type (defaults to current device)
+    ///   - orientation: The orientation (defaults to current orientation)
+    /// - Returns: The skin to use, or nil if none is available
+    public func skinToUse(for system: SystemIdentifier, 
+                          device: DeltaSkinDevice? = nil,
+                          orientation: DeltaSkinOrientation? = nil) async throws -> DeltaSkinProtocol? {
+        // Determine current device and orientation if not specified
+        let currentDevice = device ?? (UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone)
+        let currentOrientation = orientation ?? (UIDevice.current.orientation.isLandscape ? .landscape : .portrait)
+        
+        // Get the selected skin identifier for the current orientation
+        let selectedSkinId = DeltaSkinPreferences.shared.selectedSkinIdentifier(for: system, orientation: currentOrientation)
+        
+        // If a skin is selected, try to find it
+        if let selectedSkinId = selectedSkinId {
+            DLOG("Looking for selected skin \(selectedSkinId) for \(system.systemName) in \(currentOrientation) mode")
+            
+            // Get all skins for this system
+            let allSkins = try await skins(for: system)
+            
+            // Find the selected skin
+            if let selectedSkin = allSkins.first(where: { $0.identifier == selectedSkinId }) {
+                // Check if the skin supports the current device and orientation
+                let traits = DeltaSkinTraits(
+                    device: currentDevice,
+                    displayType: .standard,
+                    orientation: currentOrientation
+                )
+                
+                if selectedSkin.supports(traits) {
+                    DLOG("Using selected skin: \(selectedSkin.name)")
+                    return selectedSkin
+                } else {
+                    WLOG("Selected skin \(selectedSkin.name) doesn't support \(currentDevice) in \(currentOrientation) mode")
+                }
+            } else {
+                WLOG("Selected skin with ID \(selectedSkinId) not found")
+            }
+        }
+        
+        // If no skin is selected or the selected skin doesn't support the current device/orientation,
+        // find a compatible skin
+        DLOG("Finding compatible skin for \(system.systemName) on \(currentDevice) in \(currentOrientation) mode")
+        
+        // First try to get skins specifically for this orientation
+        let compatibleSkins = try await skins(for: system, device: currentDevice, orientation: currentOrientation)
+        
+        if let firstCompatibleSkin = compatibleSkins.first {
+            DLOG("Using compatible skin: \(firstCompatibleSkin.name)")
+            return firstCompatibleSkin
+        }
+        
+        // If no compatible skin is found for the current orientation, try any skin for this device
+        WLOG("No skin found for \(currentOrientation) mode, trying any skin for \(currentDevice)")
+        let deviceSkins = try await skins(for: system, device: currentDevice)
+        
+        if let firstDeviceSkin = deviceSkins.first {
+            DLOG("Using device skin: \(firstDeviceSkin.name)")
+            return firstDeviceSkin
+        }
+        
+        // If still no skin is found, try the opposite orientation
+        let oppositeOrientation: DeltaSkinOrientation = currentOrientation == .portrait ? .landscape : .portrait
+        let oppositeOrientationSkins = try await skins(for: system, device: currentDevice, orientation: oppositeOrientation)
+        
+        if let firstOppositeOrientationSkin = oppositeOrientationSkins.first {
+            WLOG("No skin found for \(currentDevice), using \(oppositeOrientation) skin: \(firstOppositeOrientationSkin.name)")
+            return firstOppositeOrientationSkin
+        }
+        
+        // If still no skin is found, return nil
+        WLOG("No compatible skin found for \(system.systemName) on \(currentDevice)")
+        return nil
     }
 
     /// Scan for available skins

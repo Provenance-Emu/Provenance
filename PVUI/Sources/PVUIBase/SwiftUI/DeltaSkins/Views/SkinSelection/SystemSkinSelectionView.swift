@@ -1,5 +1,6 @@
 import SwiftUI
 import PVPrimitives
+import PVLogging
 
 /// View for selecting a skin for a specific system
 public struct SystemSkinSelectionView: View {
@@ -9,9 +10,15 @@ public struct SystemSkinSelectionView: View {
     @StateObject private var preferences = DeltaSkinPreferences.shared
 
     @State private var availableSkins: [DeltaSkinProtocol] = []
-    @State private var selectedSkinId: String?
+    @State private var filteredSkins: [DeltaSkinProtocol] = []
+    @State private var selectedPortraitSkinId: String?
+    @State private var selectedLandscapeSkinId: String?
     @State private var isLoading = true
     @State private var errorMessage: String?
+    @State private var currentOrientation: DeltaSkinOrientation = .portrait
+    
+    // Current device type for filtering
+    private let currentDevice: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
 
     @Environment(\.dismiss) private var dismiss
 
@@ -26,10 +33,24 @@ public struct SystemSkinSelectionView: View {
                     loadingView
                 } else if let error = errorMessage {
                     errorView(message: error)
-                } else if availableSkins.isEmpty {
+                } else if filteredSkins.isEmpty {
                     noSkinsView
                 } else {
-                    skinGridView
+                    VStack(spacing: 0) {
+                        // Orientation picker
+                        Picker("Orientation", selection: $currentOrientation) {
+                            Text("Portrait").tag(DeltaSkinOrientation.portrait)
+                            Text("Landscape").tag(DeltaSkinOrientation.landscape)
+                        }
+                        .pickerStyle(SegmentedPickerStyle())
+                        .padding()
+                        .onChange(of: currentOrientation) { newOrientation in
+                            updateSelectedSkinId()
+                            filterSkins()
+                        }
+                        
+                        skinGridView
+                    }
                 }
             }
             .navigationTitle("Select Controller Skin")
@@ -113,7 +134,7 @@ public struct SystemSkinSelectionView: View {
                 defaultSkinCell
 
                 // Available skins
-                ForEach(availableSkins, id: \.identifier) { skin in
+                ForEach(filteredSkins, id: \.identifier) { skin in
                     skinCell(for: skin)
                 }
             }
@@ -134,7 +155,7 @@ public struct SystemSkinSelectionView: View {
             }
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(selectedSkinId == nil ? Color.accentColor : Color.clear, lineWidth: 3)
+                    .stroke(currentSelectedSkinId == nil ? Color.accentColor : Color.clear, lineWidth: 3)
             )
 
             Text("System Default")
@@ -149,14 +170,14 @@ public struct SystemSkinSelectionView: View {
     private func skinCell(for skin: DeltaSkinProtocol) -> some View {
         VStack {
             ZStack {
-                // Skin preview
-                SkinPreviewImage(skin: skin)
+                // Skin preview with real rendering
+                EnhancedSkinPreview(skin: skin, orientation: currentOrientation, device: currentDevice)
                     .aspectRatio(1.5, contentMode: .fit)
                     .cornerRadius(12)
             }
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(selectedSkinId == skin.identifier ? Color.accentColor : Color.clear, lineWidth: 3)
+                    .stroke(currentSelectedSkinId == skin.identifier ? Color.accentColor : Color.clear, lineWidth: 3)
             )
 
             Text(skin.name)
@@ -189,32 +210,141 @@ public struct SystemSkinSelectionView: View {
 
         Task {
             do {
-                // Load skins for this system
-                let skins = try await skinManager.skins(for: system)
+                // First, try to get all skins for this system (unfiltered)
+                let allSystemSkins = try await skinManager.skins(for: system)
+                DLOG("Total skins for \(system.systemName): \(allSystemSkins.count)")
+                
+                // Log details about the first few skins to help diagnose issues
+                for (index, skin) in allSystemSkins.prefix(3).enumerated() {
+                    DLOG("System skin \(index+1): \(skin.name), ID: \(skin.identifier)")
+                    
+                    // Check if this skin has representations for our device
+                    if let jsonRep = skin.jsonRepresentation["representations"] as? [String: Any] {
+                        let deviceKeys = jsonRep.keys.joined(separator: ", ")
+                        DLOG("  Available devices: \(deviceKeys)")
+                        
+                        // Check for our device specifically
+                        for (key, value) in jsonRep {
+                            if key.lowercased() == currentDevice.rawValue.lowercased(), 
+                               let deviceRep = value as? [String: Any] {
+                                let displayTypes = deviceRep.keys.joined(separator: ", ")
+                                DLOG("  ✅ Found \(currentDevice) support with display types: \(displayTypes)")
+                                
+                                // Check for standard display type
+                                if let standardRep = deviceRep["standard"] as? [String: Any] {
+                                    let orientations = standardRep.keys.joined(separator: ", ")
+                                    DLOG("    Standard display orientations: \(orientations)")
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Load all skins for this system and device (without orientation filtering)
+                // This gives us the full set of skins to filter by orientation later
+                let skins = try await skinManager.skins(for: system, device: currentDevice)
+                DLOG("Loaded \(skins.count) skins compatible with \(currentDevice) for \(system.systemName)")
 
-                // Get currently selected skin
-                let currentSelection = DeltaSkinPreferences.shared.selectedSkinIdentifier(for: system)
+                // Get currently selected skins for both orientations
+                let portraitSelection = DeltaSkinPreferences.shared.selectedSkinIdentifier(for: system, orientation: .portrait)
+                let landscapeSelection = DeltaSkinPreferences.shared.selectedSkinIdentifier(for: system, orientation: .landscape)
+                DLOG("Selected skins - Portrait: \(portraitSelection ?? "none"), Landscape: \(landscapeSelection ?? "none")")
 
                 // Update UI on main thread
                 await MainActor.run {
                     self.availableSkins = skins
-                    self.selectedSkinId = currentSelection
+                    self.selectedPortraitSkinId = portraitSelection
+                    self.selectedLandscapeSkinId = landscapeSelection
+                    updateSelectedSkinId()
+                    filterSkins()
                     self.isLoading = false
                 }
             } catch {
                 await MainActor.run {
                     self.errorMessage = error.localizedDescription
                     self.isLoading = false
+                    ELOG("Error loading skins: \(error)")
                 }
             }
+        }
+    }
+    
+    /// Filter skins based on current device and orientation
+    private func filterSkins() {
+        DLOG("Filtering \(availableSkins.count) skins for \(currentDevice) in \(currentOrientation) mode")
+        
+        // Log details about the first few available skins
+        for (index, skin) in availableSkins.prefix(3).enumerated() {
+            DLOG("Available skin \(index+1): \(skin.name), ID: \(skin.identifier)")
+        }
+        
+        // Filter the available skins to only show those that support the current orientation
+        filteredSkins = availableSkins.filter { skin in
+            DLOG("Checking if \(skin.name) supports \(currentDevice) in \(currentOrientation) orientation")
+            
+            // Use the protocol extension method that handles all the matching logic
+            let supported = skin.supports(currentDevice, orientation: currentOrientation)
+            
+            if supported {
+                DLOG("✅ Skin \(skin.name) supports \(currentDevice) in \(currentOrientation) mode")
+            } else {
+                DLOG("❌ Skin \(skin.name) does not support \(currentDevice) in \(currentOrientation) mode")
+            }
+            
+            return supported
+        }
+        
+        DLOG("Filtered skins for \(currentDevice) in \(currentOrientation): \(filteredSkins.count) of \(availableSkins.count)")
+        
+        // Log the filtered skins
+        for (index, skin) in filteredSkins.prefix(5).enumerated() {
+            DLOG("Filtered skin \(index+1): \(skin.name)")
+        }
+        
+        // If the currently selected skin isn't compatible with the current orientation,
+        // we should clear the selection
+        if let currentId = currentSelectedSkinId,
+           !filteredSkins.contains(where: { $0.identifier == currentId }) {
+            DLOG("Currently selected skin \(currentId) is not compatible with \(currentOrientation) orientation, clearing selection")
+            selectSkin(nil)
+        }
+    }
+    
+    /// Update the currently selected skin ID based on orientation
+    private func updateSelectedSkinId() {
+        // This method is now a no-op since we're using a computed property
+        // The currentSelectedSkinId getter will return the correct value based on orientation
+    }
+    
+    /// Current selected skin ID based on orientation
+    private var currentSelectedSkinId: String? {
+        get {
+            currentOrientation == .portrait ? selectedPortraitSkinId : selectedLandscapeSkinId
+        }
+        set {
+            // Cannot directly assign to self in a computed property
+            // We'll handle this in the updateSelectedSkinId method
+        }
+    }
+    
+    /// Update the selected skin ID for the current orientation
+    private func updateCurrentSelectedSkinId(_ newValue: String?) {
+        if currentOrientation == .portrait {
+            selectedPortraitSkinId = newValue
+        } else {
+            selectedLandscapeSkinId = newValue
         }
     }
 
     private func selectSkin(_ identifier: String?) {
         Task {
-            await DeltaSkinPreferences.shared.setSelectedSkin(identifier, for: system)
+            // Save selection for current orientation only
+            await DeltaSkinPreferences.shared.setSelectedSkin(identifier, for: system, orientation: currentOrientation)
+            
             await MainActor.run {
-                self.selectedSkinId = identifier
+                // Update the appropriate orientation selection
+                updateCurrentSelectedSkinId(identifier)
+                // No need to call updateSelectedSkinId() since it's now a no-op
             }
         }
     }
@@ -224,9 +354,13 @@ public struct SystemSkinSelectionView: View {
             do {
                 try await skinManager.deleteSkin(skin.identifier)
 
-                // If we deleted the selected skin, reset selection
-                if selectedSkinId == skin.identifier {
-                    await DeltaSkinPreferences.shared.setSelectedSkin(nil, for: system)
+                // If we deleted the selected skin, reset selection for both orientations
+                if selectedPortraitSkinId == skin.identifier {
+                    await DeltaSkinPreferences.shared.setSelectedSkin(nil, for: system, orientation: .portrait)
+                }
+                
+                if selectedLandscapeSkinId == skin.identifier {
+                    await DeltaSkinPreferences.shared.setSelectedSkin(nil, for: system, orientation: .landscape)
                 }
 
                 // Reload skins
@@ -238,19 +372,28 @@ public struct SystemSkinSelectionView: View {
     }
 }
 
-/// Helper view to display a skin preview image
-struct SkinPreviewImage: View {
+/// Enhanced skin preview that renders the actual skin with test pattern
+struct EnhancedSkinPreview: View {
     let skin: DeltaSkinProtocol
-
-    @State private var image: UIImage?
+    let orientation: DeltaSkinOrientation
+    let device: DeltaSkinDevice
+    
+    @State private var previewImage: UIImage?
     @State private var isLoading = true
     @State private var error: Error?
+    
+    // Cache for preview images to avoid regenerating them
+    private static var previewCache: [String: UIImage] = [:]
+    
+    private var cacheKey: String {
+        "\(skin.identifier)_\(device.rawValue)_\(orientation.rawValue)"
+    }
 
     var body: some View {
         ZStack {
             if isLoading {
                 ProgressView()
-            } else if let image = image {
+            } else if let image = previewImage {
                 Image(uiImage: image)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -261,32 +404,105 @@ struct SkinPreviewImage: View {
             }
         }
         .onAppear {
-            loadPreview()
+            loadOrGeneratePreview()
         }
     }
-
-    private func loadPreview() {
+    
+    private func loadOrGeneratePreview() {
+        // Check cache first
+        if let cachedImage = Self.previewCache[cacheKey] {
+            previewImage = cachedImage
+            isLoading = false
+            return
+        }
+        
         Task {
             do {
-                // Use portrait orientation for preview
+                // Create traits for the specific device and orientation
                 let traits = DeltaSkinTraits(
-                    device: .iphone,
+                    device: device,
                     displayType: .standard,
-                    orientation: .portrait
+                    orientation: orientation
                 )
-
-                // Try to load the image
-                let skinImage = try await skin.image(for: traits)
-
+                
+                // Check if skin supports these traits
+                guard skin.supports(traits) else {
+                    throw NSError(domain: "SkinPreview", code: 404, userInfo: [NSLocalizedDescriptionKey: "Skin doesn't support this configuration"])
+                }
+                
+                // Try to generate a preview by rendering the skin with a test pattern
+                let renderedImage = try await generateSkinPreview(for: traits)
+                
                 await MainActor.run {
-                    self.image = skinImage
+                    self.previewImage = renderedImage
+                    Self.previewCache[cacheKey] = renderedImage
                     self.isLoading = false
                 }
             } catch {
-                await MainActor.run {
-                    self.error = error
-                    self.isLoading = false
+                // Fall back to basic image loading if preview generation fails
+                do {
+                    let traits = DeltaSkinTraits(
+                        device: device,
+                        displayType: .standard,
+                        orientation: orientation
+                    )
+                    
+                    let skinImage = try await skin.image(for: traits)
+                    
+                    await MainActor.run {
+                        self.previewImage = skinImage
+                        Self.previewCache[cacheKey] = skinImage
+                        self.isLoading = false
+                    }
+                } catch {
+                    await MainActor.run {
+                        self.error = error
+                        self.isLoading = false
+                    }
                 }
+            }
+        }
+    }
+    
+    /// Generate a preview by rendering the skin with a test pattern
+    private func generateSkinPreview(for traits: DeltaSkinTraits) async throws -> UIImage {
+        // Create a renderer to capture the skin view
+        let renderer = await MainActor.run { () -> UIGraphicsImageRenderer in
+            // Determine size based on device and orientation
+            let size: CGSize
+            if device == .ipad {
+                size = orientation == .portrait ? CGSize(width: 768, height: 1024) : CGSize(width: 1024, height: 768)
+            } else {
+                size = orientation == .portrait ? CGSize(width: 390, height: 844) : CGSize(width: 844, height: 390)
+            }
+            
+            return UIGraphicsImageRenderer(size: size)
+        }
+        
+        // Create a dummy input handler for the preview
+        let inputHandler = DeltaSkinInputHandler()
+        
+        // Render the skin view to an image
+        return await MainActor.run {
+            renderer.image { context in
+                // Create a view to render
+                let skinView = DeltaSkinView(
+                    skin: skin,
+                    traits: traits,
+                    filters: [.pixelated],  // Use pixelated effect for preview
+                    showDebugOverlay: false,
+                    showHitTestOverlay: false,
+                    isInEmulator: false,
+                    inputHandler: inputHandler
+                )
+                
+                // Create a hosting controller to render the SwiftUI view
+                let hostingController = UIHostingController(rootView: skinView)
+                hostingController.view.frame = CGRect(origin: .zero, size: renderer.format.bounds.size)
+                hostingController.view.backgroundColor = .clear
+                
+                // Render the view
+                hostingController.view.drawHierarchy(in: renderer.format.bounds, afterScreenUpdates: true)
             }
         }
     }
