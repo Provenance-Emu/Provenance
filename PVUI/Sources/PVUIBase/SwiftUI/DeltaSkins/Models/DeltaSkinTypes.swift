@@ -333,6 +333,7 @@ public enum DeltaSkinGameType: String, Codable, Hashable, Equatable, Comparable 
     case genesis = "com.rileytestut.delta.game.genesis"
     case gamegear = "com.rileytestut.delta.game.gg"
     case masterSystem = "com.rileytestut.delta.game.ms"
+    case psx = "com.rileytestut.delta.game.psx"
 
     // Implement Comparable
     public static func < (lhs: DeltaSkinGameType, rhs: DeltaSkinGameType) -> Bool {
@@ -342,7 +343,8 @@ public enum DeltaSkinGameType: String, Codable, Hashable, Equatable, Comparable 
             .nes, .snes,            // Nintendo consoles
             .n64,                   // Nintendo 3D
             .nds,                   // Nintendo DS
-            .genesis, .gamegear, .masterSystem                // Sega
+            .genesis, .gamegear, .masterSystem,                // Sega
+            .psx// Sony
         ]
 
         guard let lhsIndex = order.firstIndex(of: lhs),
@@ -358,13 +360,14 @@ public enum DeltaSkinGameType: String, Codable, Hashable, Equatable, Comparable 
         case .GB: self = .gb
         case .GBC: self = .gbc
         case .GBA: self = .gba
-        case .NES: self = .nes
+        case .FDS, .NES: self = .nes
         case .SNES: self = .snes
         case .N64: self = .n64
         case .DS: self = .nds
         case .Genesis: self = .genesis
         case .GameGear: self = .gamegear
-        case .MasterSystem: self = .masterSystem
+        case .MasterSystem, .SG1000: self = .masterSystem
+        case .PSX: self = .psx
         default : return nil
         }
     }
@@ -381,7 +384,7 @@ public enum DeltaSkinGameType: String, Codable, Hashable, Equatable, Comparable 
         case .genesis: return .Genesis
         case .gamegear: return .GameGear
         case .masterSystem: return .MasterSystem
-        default: return nil
+        case .psx: return .PSX
         }
     }
 }

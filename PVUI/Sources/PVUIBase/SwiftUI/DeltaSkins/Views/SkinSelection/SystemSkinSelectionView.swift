@@ -283,7 +283,7 @@ public struct SystemSkinSelectionView: View {
             DLOG("Checking if \(skin.name) supports \(currentDevice) in \(currentOrientation) orientation")
             
             // Use the protocol extension method that handles all the matching logic
-            let supported = skin.supports(currentDevice, orientation: currentOrientation)
+            let supported = skin.supports(currentDevice)
             
             if supported {
                 DLOG("✅ Skin \(skin.name) supports \(currentDevice) in \(currentOrientation) mode")

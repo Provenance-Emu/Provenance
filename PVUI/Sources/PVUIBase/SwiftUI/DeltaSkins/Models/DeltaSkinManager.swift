@@ -34,21 +34,6 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             try self.loadSkinFromURL(url)
         }
     }
-
-    /// Get skins for a specific game type
-    public func skins(for gameType: String) async throws -> [DeltaSkinProtocol] {
-        try await queue.asyncResult {
-            try self.scanForSkins()
-            
-            // Use case-insensitive matching for the game type
-            let matchingSkins = self.loadedSkins.filter { 
-                $0.gameType.rawValue.lowercased() == gameType.lowercased() 
-            }
-            
-            DLOG("Found \(matchingSkins.count) skins for game type '\(gameType)' (case-insensitive matching)")
-            return matchingSkins
-        }
-    }
     
     /// Get skins for a specific game type, filtered by device and orientation
     /// - Parameters:
@@ -56,15 +41,15 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     ///   - device: The device to filter by (iPhone or iPad)
     ///   - orientation: The orientation to filter by (portrait or landscape)
     /// - Returns: Array of skins that match the criteria
-    public func skins(for gameType: String, device: DeltaSkinDevice, orientation: DeltaSkinOrientation? = nil) async throws -> [DeltaSkinProtocol] {
+    public func skins(for system: SystemIdentifier, device: DeltaSkinDevice, orientation: DeltaSkinOrientation? = nil) async throws -> [DeltaSkinProtocol] {
         try await queue.asyncResult {
             try self.scanForSkins()
             
             // First get all skins for this game type (using case-insensitive matching)
             let gameSkins = self.loadedSkins.filter { 
-                $0.gameType.rawValue.lowercased() == gameType.lowercased() 
+                $0.gameType.systemIdentifier == system
             }
-            DLOG("Found \(gameSkins.count) total skins for \(gameType) (case-insensitive matching)")
+            DLOG("Found \(gameSkins.count) total skins for \(system.rawValue) (case-insensitive matching)")
             
             // Log the first few skins' details to help diagnose issues
             for (index, skin) in gameSkins.prefix(3).enumerated() {
@@ -110,37 +95,6 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             return deviceSkins
 
         }
-    }
-    
-    /// Get skins for a specific system, filtered by device and orientation
-    /// - Parameters:
-    ///   - system: The system to filter by
-    ///   - device: The device to filter by (iPhone or iPad)
-    ///   - orientation: The orientation to filter by (portrait or landscape)
-    /// - Returns: Array of skins that match the criteria
-    public func skins(for system: SystemIdentifier, device: DeltaSkinDevice, orientation: DeltaSkinOrientation? = nil) async throws -> [DeltaSkinProtocol] {
-        // First, log the system information to help diagnose issues
-        DLOG("Looking for skins for system: \(system.systemName) (ID: \(system.rawValue), full name: \(system.fullName))")
-        
-        // Get all skins first to see what's available
-        let allSkins = try await availableSkins()
-        DLOG("Total skins available: \(allSkins.count)")
-        
-        // Log the game types of the first few skins to help diagnose issues
-        for (index, skin) in allSkins.prefix(5).enumerated() {
-            DLOG("Skin \(index+1): \(skin.name), Game Type: \(skin.gameType.rawValue)")
-            if let skinSystem = skin.gameType.systemIdentifier {
-                DLOG("  System: \(skinSystem.systemName) (ID: \(skinSystem.rawValue), full name: \(skinSystem.fullName))")
-                
-                // Check if this skin matches our target system
-                let systemNameMatch = skinSystem.systemName.lowercased() == system.systemName.lowercased()
-                let systemIDMatch = skinSystem == system
-                DLOG("  Matches target system? Name: \(systemNameMatch), ID: \(systemIDMatch)")
-            }
-        }
-        
-        // Now call the original method with the system name
-        return try await skins(for: system.systemName, device: device, orientation: orientation)
     }
     
     /// Get the appropriate skin to use for a system based on current device and orientation
