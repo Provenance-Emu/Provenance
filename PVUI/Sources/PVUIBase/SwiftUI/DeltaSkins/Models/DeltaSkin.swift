@@ -77,45 +77,6 @@ public struct DeltaSkin: DeltaSkinProtocol {
     public func supports(_ traits: DeltaSkinTraits) -> Bool {
         representation(for: traits) != nil
     }
-    
-    /// Check if this skin supports a specific device, regardless of orientation or display type
-    /// - Parameter device: The device to check support for
-    /// - Returns: True if the skin supports the device in any orientation or display type
-    public func supports(_ device: DeltaSkinDevice) -> Bool {
-        // Check if we have any representations for this device
-        DLOG("Checking if skin '\(name)' supports device '\(device.rawValue)'")
-        
-        // First check if the device is directly in the representations dictionary
-        if info.representations[device] != nil {
-            DLOG("✅ Skin '\(name)' has direct representation for '\(device.rawValue)'")
-            return true
-        }
-        
-        // If not found directly, check using case-insensitive matching
-        for (deviceKey, _) in info.representations {
-            if deviceKey == device {
-                DLOG("✅ Skin '\(name)' supports '\(device.rawValue)' via case-insensitive match with '\(deviceKey)'")
-                return true
-            }
-        }
-        
-        // Also check the raw JSON representation for more flexibility
-        if let jsonRep = jsonRepresentation["representations"] as? [String: Any] {
-            for (key, value) in jsonRep {
-                // Try to match the key to our device type
-                if let matchedDevice = DeltaSkinDevice.fromString(key), 
-                   matchedDevice == device,
-                   let deviceRep = value as? [String: Any], 
-                   !deviceRep.isEmpty {
-                    DLOG("✅ Skin '\(name)' supports '\(device.rawValue)' via JSON representation with key '\(key)'")
-                    return true
-                }
-            }
-        }
-        
-        DLOG("❌ Skin '\(name)' does not support device '\(device.rawValue)'")
-        return false
-    }
 
     public func screens(for traits: DeltaSkinTraits) -> [DeltaSkinScreen]? {
         guard let rep = representation(for: traits),
@@ -290,14 +251,6 @@ public struct DeltaSkin: DeltaSkinProtocol {
         private enum CodingKeys: String, CodingKey {
             case name, identifier, gameTypeIdentifier, debug, representations
         }
-        
-        public init(name: String, identifier: String, gameTypeIdentifier: DeltaSkinGameType, debug: Bool, representations: Dictionary<DeltaSkinDevice, DeviceRepresentations>) {
-            self.name = name
-            self.identifier = identifier
-            self.gameTypeIdentifier = gameTypeIdentifier
-            self.debug = debug
-            self.representations = representations
-        }
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -341,17 +294,6 @@ public struct DeltaSkin: DeltaSkinProtocol {
         let mini: [String: OrientationRepresentations]?
         let pro13: [String: OrientationRepresentations]?
         let dedicated: [String: OrientationRepresentations]?
-        
-        public init(standard: [String : OrientationRepresentations]? = nil, edgeToEdge: [String : OrientationRepresentations]? = nil, splitView: [String : OrientationRepresentations]? = nil, stageManager: [String : OrientationRepresentations]? = nil, externalDisplay: [String : OrientationRepresentations]? = nil, mini: [String : OrientationRepresentations]? = nil, pro13: [String : OrientationRepresentations]? = nil, dedicated: [String : OrientationRepresentations]? = nil) {
-            self.standard = standard
-            self.edgeToEdge = edgeToEdge
-            self.splitView = splitView
-            self.stageManager = stageManager
-            self.externalDisplay = externalDisplay
-            self.mini = mini
-            self.pro13 = pro13
-            self.dedicated = dedicated
-        }
 
         private enum CodingKeys: String, CodingKey {
             case standard

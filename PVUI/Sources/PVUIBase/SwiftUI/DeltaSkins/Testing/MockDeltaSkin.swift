@@ -8,7 +8,6 @@ public struct MockDeltaSkin: DeltaSkinProtocol {
     public let gameType: DeltaSkinGameType
     public let fileURL: URL
     public let isDebugEnabled: Bool
-    public let info: DeltaSkin.Info
 
     private let mockRepresentation: DeltaSkin.RepresentationInfo
     private let mockImage: UIImage
@@ -120,25 +119,6 @@ public struct MockDeltaSkin: DeltaSkinProtocol {
 
         // Create default test image
         self.mockImage = UIImage()
-        
-        // Create mock info
-        self.info = DeltaSkin.Info(
-            name: name,
-            identifier: identifier,
-            gameTypeIdentifier: gameType,
-            debug: isDebugEnabled,
-            representations: [
-                .iphone: DeltaSkin.DeviceRepresentations(
-                    standard: [
-                        "Portrait": standardPortrait
-                    ],
-                    edgeToEdge: nil,
-                    splitView: nil,
-                    stageManager: nil,
-                    externalDisplay: nil
-                )
-            ]
-        )
     }
 
     /// Mock JSON representation

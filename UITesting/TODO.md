@@ -13,5 +13,3 @@
 - [ ] quick load / save and FF to default skin(s)
 - [ ] fix broken color bars
 - [ ] fix screen location
-- [ ] Detlaskins settings in settings premium (volume, button sounds too)
-- [ ] fix ci/cd (bad submodule)
