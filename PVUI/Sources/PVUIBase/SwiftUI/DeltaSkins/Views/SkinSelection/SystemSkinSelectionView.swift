@@ -222,80 +222,12 @@ public struct SystemSkinSelectionView: View {
     
     private func skinCell(for skin: any DeltaSkinProtocol) -> some View {
         ZStack {
-            // Main content
-            VStack(alignment: .leading, spacing: 8) {
-                // Preview
-                PreviewContainer {
-                    EnhancedSkinPreview(skin: skin, orientation: currentOrientation, device: currentDevice)
-                        .allowsHitTesting(false)
-                }
-                .overlay {
-                    // Rubber-like gradient overlay
-                    LinearGradient(
-                        colors: [
-                            .black.opacity(0.4),
-                            .clear,
-                            .black.opacity(0.3)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                }
-
-                // Info
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(skin.name)
-                        .font(.headline)
-                        .lineLimit(1)
-
-                    HStack {
-                        Label(system.fullName, systemImage: "gamecontroller")
-                            .lineLimit(1)
-
-                        Spacer()
-                        
-                        // Selection indicator
-                        if currentSelectedSkinId == skin.identifier {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.accentColor)
-                        }
-                    }
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                }
-                .padding(.horizontal, 12)
-                .padding(.bottom, 12)
-            }
-            .background(
-                ZStack {
-                    // Base rubber texture
-                    UIColor.systemBackground == .white ? Color.white : Color(white: 0.15)
-
-                    // Noise texture overlay for rubber effect
-                    Color.black
-                        .opacity(0.05)
-                        .blendMode(.overlay)
-                }
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .overlay {
-                // Embossed edge effect
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color(white: UIColor.systemBackground == .white ? 0.7 : 0), lineWidth: 2)
-                    .blur(radius: 2)
-                    .mask(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(lineWidth: 2)
-                    )
-                    .blendMode(.overlay)
-            }
+            SkinPreviewCell(skin: skin, manager: skinManager)
             .overlay {
                 // Selection indicator
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(currentSelectedSkinId == skin.identifier ? Color.accentColor : Color.clear, lineWidth: 3)
             }
-            .shadow(color: .black.opacity(0.2), radius: 3, x: 0, y: 2)
-            .padding(2)
             
             // Transparent overlay to capture taps and context menu
             Color.clear
