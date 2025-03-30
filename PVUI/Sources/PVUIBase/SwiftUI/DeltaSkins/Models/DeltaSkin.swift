@@ -205,84 +205,25 @@ public struct DeltaSkin: DeltaSkinProtocol {
     }
 
     public func representation(for traits: DeltaSkinTraits) -> DeltaSkin.RepresentationInfo? {
-        // First try direct lookup using the enum value
-        if let deviceReps = info.representations[traits.device] {
-            let orientationReps: OrientationRepresentations?
-            switch traits.displayType {
-            case .standard:
-                // Try to find the orientation representation using case-insensitive matching
-                if let standardDict = deviceReps.standard {
-                    // First try direct lookup
-                    if let directMatch = standardDict[traits.orientation.rawValue] {
-                        return directMatch.toRepresentationInfo()
-                    }
-                    
-                    // If direct lookup fails, try case-insensitive matching
-                    for (key, value) in standardDict {
-                        if key.lowercased() == traits.orientation.rawValue.lowercased() {
-                            DLOG("Found orientation \(traits.orientation.rawValue) using case-insensitive match with key \(key)")
-                            return value.toRepresentationInfo()
-                        }
-                    }
-                }
-                orientationReps = nil
-            case .edgeToEdge:
-                orientationReps = deviceReps.edgeToEdge?[traits.orientation.rawValue]
-            case .splitView:
-                orientationReps = deviceReps.splitView?[traits.orientation.rawValue]
-            case .stageManager:
-                orientationReps = deviceReps.stageManager?[traits.orientation.rawValue]
-            case .externalDisplay:
-                orientationReps = deviceReps.externalDisplay?[traits.orientation.rawValue]
-            }
-            
-            return orientationReps?.toRepresentationInfo()
+        guard let deviceReps = info.representations[traits.device] else {
+            return nil
         }
-        
-        // If direct lookup fails, try case-insensitive matching for device
-        DLOG("Direct device lookup failed, trying case-insensitive matching for \(traits.device.rawValue)")
-        for (deviceKey, deviceReps) in info.representations {
-            // Try to match the device key using our helper method
-            if let matchedDevice = DeltaSkinDevice.fromString(deviceKey.rawValue), 
-               matchedDevice == traits.device {
-                DLOG("Found device \(traits.device.rawValue) using case-insensitive match with key \(deviceKey)")
-                
-                // Now try to find the orientation representation
-                let orientationReps: OrientationRepresentations?
-                switch traits.displayType {
-                case .standard:
-                    // Try to find the orientation representation using case-insensitive matching
-                    if let standardDict = deviceReps.standard {
-                        // First try direct lookup
-                        if let directMatch = standardDict[traits.orientation.rawValue] {
-                            return directMatch.toRepresentationInfo()
-                        }
-                        
-                        // If direct lookup fails, try case-insensitive matching
-                        for (key, value) in standardDict {
-                            if let matchedOrientation = DeltaSkinOrientation.fromString(key),
-                               matchedOrientation == traits.orientation {
-                                DLOG("Found orientation \(traits.orientation.rawValue) using case-insensitive match with key \(key)")
-                                return value.toRepresentationInfo()
-                            }
-                        }
-                    }
-                    orientationReps = nil
-                case .edgeToEdge:
-                    orientationReps = deviceReps.edgeToEdge?[traits.orientation.rawValue]
-                case .splitView:
-                    orientationReps = deviceReps.splitView?[traits.orientation.rawValue]
-                case .stageManager:
-                    orientationReps = deviceReps.stageManager?[traits.orientation.rawValue]
-                case .externalDisplay:
-                    orientationReps = deviceReps.externalDisplay?[traits.orientation.rawValue]
-                }
-                
-                return orientationReps?.toRepresentationInfo()
-            }
+
+        let orientationReps: OrientationRepresentations?
+        switch traits.displayType {
+        case .standard:
+            orientationReps = deviceReps.standard?[traits.orientation.rawValue]
+        case .edgeToEdge:
+            orientationReps = deviceReps.edgeToEdge?[traits.orientation.rawValue]
+        case .splitView:
+            orientationReps = deviceReps.splitView?[traits.orientation.rawValue]
+        case .stageManager:
+            orientationReps = deviceReps.stageManager?[traits.orientation.rawValue]
+        case .externalDisplay:
+            orientationReps = deviceReps.externalDisplay?[traits.orientation.rawValue]
         }
-        
-        return nil
+
+        return orientationReps?.toRepresentationInfo()
     }
 
     public func image(for traits: DeltaSkinTraits) async throws -> UIImage {
