@@ -455,15 +455,15 @@ private struct SkinPreviewCell: View {
 }
 
 /// Container for preview image with rubber-like styling
-private struct PreviewContainer<Content: View>: View {
+public struct PreviewContainer<Content: View>: View {
     @Environment(\.colorScheme) private var colorScheme
-    let content: Content
+    public let content: Content
 
-    init(@ViewBuilder content: () -> Content) {
+    public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
 
-    var body: some View {
+    public var body: some View {
         content
             .aspectRatio(2/3, contentMode: .fit)
             .background(Color.black)
@@ -564,10 +564,14 @@ private struct PagedSkinTestView: View {
 
 #if !os(tvOS)
 /// ShareSheet wrapper for UIActivityViewController
-private struct ShareSheet: UIViewControllerRepresentable {
-    let activityItems: [Any]
+public struct ShareSheet: UIViewControllerRepresentable {
+    public let activityItems: [Any]
+    
+    public init(activityItems: [Any]) {
+        self.activityItems = activityItems
+    }
 
-    func makeUIViewController(context: Context) -> UIActivityViewController {
+    public func makeUIViewController(context: Context) -> UIActivityViewController {
         let controller = UIActivityViewController(
             activityItems: activityItems,
             applicationActivities: nil
@@ -575,6 +579,6 @@ private struct ShareSheet: UIViewControllerRepresentable {
         return controller
     }
 
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+    public func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 #endif

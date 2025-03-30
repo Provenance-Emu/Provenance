@@ -329,7 +329,9 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
         do {
             try await queue.asyncResult {
                 try self.scanForSkins()
-                self.objectWillChange.send()
+                DispatchQueue.main.async {
+                    self.objectWillChange.send()
+                }
             }
         } catch {
             ELOG("Failed to reload skins: \(error)")

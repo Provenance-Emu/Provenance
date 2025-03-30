@@ -1,6 +1,7 @@
 import SwiftUI
 import PVPrimitives
 import PVLogging
+import UniformTypeIdentifiers
 
 /// View for selecting a skin for a specific system
 public struct SystemSkinSelectionView: View {
@@ -127,71 +128,194 @@ public struct SystemSkinSelectionView: View {
         .padding()
     }
 
+    // Dynamic grid sizing based on size class
+    private var columns: [GridItem] {
+        let minWidth: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 200 : 160
+        return [GridItem(.adaptive(minimum: minWidth), spacing: 12)]
+    }
+    
     private var skinGridView: some View {
         ScrollView {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 200), spacing: 16)], spacing: 16) {
+            VStack(spacing: 20) {
                 // Default option (system default)
                 defaultSkinCell
-
-                // Available skins
-                ForEach(filteredSkins, id: \.identifier) { skin in
-                    skinCell(for: skin)
+                    .padding(.horizontal)
+                
+                // Divider with label
+                HStack {
+                    Rectangle()
+                        .frame(height: 1)
+                        .foregroundColor(.secondary.opacity(0.3))
+                    
+                    Text("Available Skins")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    Rectangle()
+                        .frame(height: 1)
+                        .foregroundColor(.secondary.opacity(0.3))
                 }
+                .padding(.horizontal)
+                
+                // Available skins grid
+                LazyVGrid(columns: columns, spacing: 16) {
+                    ForEach(filteredSkins, id: \.identifier) { skin in
+                        skinCell(for: skin)
+                    }
+                }
+                .padding(.horizontal)
             }
-            .padding()
+            .padding(.vertical)
         }
+        .background(Color.systemGroupedBackground)
     }
 
     private var defaultSkinCell: some View {
-        VStack {
-            ZStack {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.secondary.opacity(0.2))
-                    .aspectRatio(1.5, contentMode: .fit)
+        Button {
+            selectSkin(nil)
+        } label: {
+            HStack(spacing: 12) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.secondary.opacity(0.2))
+                        .aspectRatio(1, contentMode: .fit)
+                        .frame(width: 60, height: 60)
 
-                Image(systemName: "gamecontroller")
-                    .font(.system(size: 40))
-                    .foregroundColor(.secondary)
+                    Image(systemName: "gamecontroller")
+                        .font(.system(size: 24))
+                        .foregroundColor(.secondary)
+                }
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("System Default")
+                        .font(.headline)
+                    
+                    Text("Use the system's built-in controller layout")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineLimit(2)
+                }
+                
+                Spacer()
+                
+                if currentSelectedSkinId == nil {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.accentColor)
+                        .font(.title3)
+                }
             }
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.secondarySystemGroupedBackground)
+            )
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(currentSelectedSkinId == nil ? Color.accentColor : Color.clear, lineWidth: 3)
+                    .stroke(currentSelectedSkinId == nil ? Color.accentColor : Color.clear, lineWidth: 2)
             )
-
-            Text("System Default")
-                .font(.caption)
-                .lineLimit(1)
         }
-        .onTapGesture {
-            selectSkin(nil)
-        }
+        .buttonStyle(PlainButtonStyle())
     }
 
+    @State private var showingShareSheet = false
+    @State private var skinToShare: DeltaSkinProtocol? = nil
+    
     private func skinCell(for skin: DeltaSkinProtocol) -> some View {
-        VStack {
-            ZStack {
-                // Skin preview with real rendering
-                EnhancedSkinPreview(skin: skin, orientation: currentOrientation, device: currentDevice)
-                    .aspectRatio(1.5, contentMode: .fit)
-                    .cornerRadius(12)
-            }
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(currentSelectedSkinId == skin.identifier ? Color.accentColor : Color.clear, lineWidth: 3)
-            )
+        ZStack {
+            // Main content
+            VStack(alignment: .leading, spacing: 8) {
+                // Preview
+                PreviewContainer {
+                    EnhancedSkinPreview(skin: skin, orientation: currentOrientation, device: currentDevice)
+                        .allowsHitTesting(false)
+                }
+                .overlay {
+                    // Rubber-like gradient overlay
+                    LinearGradient(
+                        colors: [
+                            .black.opacity(0.4),
+                            .clear,
+                            .black.opacity(0.3)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                }
 
-            Text(skin.name)
-                .font(.caption)
-                .lineLimit(1)
-        }
-        .onTapGesture {
-            selectSkin(skin.identifier)
+                // Info
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(skin.name)
+                        .font(.headline)
+                        .lineLimit(1)
+
+                    HStack {
+                        Label(system.fullName, systemImage: "gamecontroller")
+                            .lineLimit(1)
+
+                        Spacer()
+                        
+                        // Selection indicator
+                        if currentSelectedSkinId == skin.identifier {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.accentColor)
+                        }
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                }
+                .padding(.horizontal, 12)
+                .padding(.bottom, 12)
+            }
+            .background(
+                ZStack {
+                    // Base rubber texture
+                    UIColor.systemBackground == .white ? Color.white : Color(white: 0.15)
+
+                    // Noise texture overlay for rubber effect
+                    Color.black
+                        .opacity(0.05)
+                        .blendMode(.overlay)
+                }
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .overlay {
+                // Embossed edge effect
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color(white: UIColor.systemBackground == .white ? 0.7 : 0), lineWidth: 2)
+                    .blur(radius: 2)
+                    .mask(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(lineWidth: 2)
+                    )
+                    .blendMode(.overlay)
+            }
+            .overlay {
+                // Selection indicator
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(currentSelectedSkinId == skin.identifier ? Color.accentColor : Color.clear, lineWidth: 3)
+            }
+            .shadow(color: .black.opacity(0.2), radius: 3, x: 0, y: 2)
+            .padding(2)
+            
+            // Transparent overlay to capture taps and context menu
+            Color.clear
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    selectSkin(skin.identifier)
+                }
         }
         .contextMenu {
             Button {
                 selectSkin(skin.identifier)
             } label: {
                 Label("Select", systemImage: "checkmark.circle")
+            }
+            
+            Button {
+                skinToShare = skin
+                showingShareSheet = true
+            } label: {
+                Label("Share", systemImage: "square.and.arrow.up")
             }
 
             if skinManager.isDeletable(skin) {
@@ -200,6 +324,11 @@ public struct SystemSkinSelectionView: View {
                 } label: {
                     Label("Delete", systemImage: "trash")
                 }
+            }
+        }
+        .sheet(isPresented: $showingShareSheet, onDismiss: { skinToShare = nil }) {
+            if let skinToShare = skinToShare {
+                ShareSheet(activityItems: [skinToShare.fileURL])
             }
         }
     }
