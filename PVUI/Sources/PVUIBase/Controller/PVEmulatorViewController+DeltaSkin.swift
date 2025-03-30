@@ -154,8 +154,13 @@ extension PVEmulatorViewController {
             DLOG("No controller view controller found")
         }
         
-        // Pass the controller view controller directly without casting
-        let inputHandler = DeltaSkinInputHandler(emulatorCore: core, controllerVC: controllerViewController)
+        // Log emulator controller availability
+        DLOG("Using self as emulator controller for special commands (quicksave/quickload)")
+        
+        // Pass the controller view controller and emulator controller (self) to the input handler
+        let inputHandler = DeltaSkinInputHandler(emulatorCore: core, 
+                                               controllerVC: controllerViewController, 
+                                               emulatorController: self)
         
         // Set up the menu button handler to show the emulator menu
         inputHandler.menuButtonHandler = { [weak self] in

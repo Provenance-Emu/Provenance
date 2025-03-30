@@ -53,7 +53,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     
 
     public let core: PVEmulatorCore
-    public let game: PVGame
+    @ThreadSafe
+    public var game: PVGame!
     public internal(set) var autosaveTimer: Timer?
     public internal(set) var gameStartTime: Date?
     // Store a reference to the skin container view

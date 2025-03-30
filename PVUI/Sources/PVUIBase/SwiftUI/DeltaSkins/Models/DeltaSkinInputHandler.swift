@@ -4,6 +4,7 @@ import Combine
 import PVEmulatorCore
 import PVCoreBridge
 import PVLogging
+import PVUIBase
 
 /// Handles input from Delta Skins and forwards it to the emulator core or controller
 public class DeltaSkinInputHandler: ObservableObject {
@@ -13,6 +14,9 @@ public class DeltaSkinInputHandler: ObservableObject {
     /// The controller view controller to send controller-based inputs to
     private weak var controllerVC: (any ControllerVC)?
     
+    /// The emulator controller for handling special commands like quicksave and quickload
+    private weak var emulatorController: (any PVEmualatorControllerProtocol)?
+    
     /// A dummy D-pad for sending directional input to the controller
     private let dummyDPad = JSDPad(frame: .zero)
 
@@ -20,9 +24,10 @@ public class DeltaSkinInputHandler: ObservableObject {
     var menuButtonHandler: (() -> Void)?
 
     /// Initialize with an emulator core and optional controller view controller
-    public init(emulatorCore: PVEmulatorCore? = nil, controllerVC: (any ControllerVC)? = nil) {
+    public init(emulatorCore: PVEmulatorCore? = nil, controllerVC: (any ControllerVC)? = nil, emulatorController: (any PVEmualatorControllerProtocol)? = nil) {
         self.emulatorCore = emulatorCore
         self.controllerVC = controllerVC
+        self.emulatorController = emulatorController
         
         // Set the tag to match the D-pad tag expected by the controller
         dummyDPad.tag = ControlTag.dpad1.rawValue
@@ -37,14 +42,34 @@ public class DeltaSkinInputHandler: ObservableObject {
     func setControllerVC(_ controller: (any ControllerVC)?) {
         self.controllerVC = controller
     }
+    
+    /// Set the emulator controller
+    func setEmulatorController(_ controller: (any PVEmualatorControllerProtocol)?) {
+        self.emulatorController = controller
+    }
 
     /// Handle button press
     func buttonPressed(_ buttonId: String) {
         DLOG("Delta Skin button pressed: \(buttonId)")
 
-        // Check if this is a menu button
-        if buttonId.lowercased().contains("menu") {
+        // Check for special commands
+        let lowercasedId = buttonId.lowercased()
+        
+        // Handle menu button
+        if lowercasedId.contains("menu") {
             menuButtonPressed()
+            return
+        }
+        
+        // Handle quicksave button
+        if lowercasedId.contains("quicksave") {
+            quicksaveButtonPressed()
+            return
+        }
+        
+        // Handle quickload button
+        if lowercasedId.contains("quickload") {
+            quickloadButtonPressed()
             return
         }
         
@@ -77,8 +102,11 @@ public class DeltaSkinInputHandler: ObservableObject {
     func buttonReleased(_ buttonId: String) {
         DLOG("Delta Skin button released: \(buttonId)")
 
-        // Skip menu button releases
-        if buttonId.lowercased().contains("menu") {
+        // Skip special button releases
+        let lowercasedId = buttonId.lowercased()
+        if lowercasedId.contains("menu") || 
+           lowercasedId.contains("quicksave") || 
+           lowercasedId.contains("quickload") {
             return
         }
         
@@ -113,6 +141,52 @@ public class DeltaSkinInputHandler: ObservableObject {
 
         // Call the menu button handler if set
         menuButtonHandler?()
+    }
+    
+    /// Handle quicksave button press
+    private func quicksaveButtonPressed() {
+        DLOG("Quicksave button pressed")
+        guard let controller = emulatorController else {
+            ELOG("Cannot perform quicksave - emulatorController is nil")
+            return
+        }
+        
+        // Perform quicksave asynchronously
+        Task {
+            do {
+                let success = try await controller.quicksave()
+                if success {
+                    DLOG("Quicksave completed successfully")
+                } else {
+                    ELOG("Quicksave failed")
+                }
+            } catch {
+                ELOG("Error during quicksave: \(error)")
+            }
+        }
+    }
+    
+    /// Handle quickload button press
+    private func quickloadButtonPressed() {
+        DLOG("Quickload button pressed")
+        guard let controller = emulatorController else {
+            ELOG("Cannot perform quickload - emulatorController is nil")
+            return
+        }
+        
+        // Perform quickload asynchronously
+        Task {
+            do {
+                let success = try await controller.quickload()
+                if success {
+                    DLOG("Quickload completed successfully")
+                } else {
+                    ELOG("Quickload failed")
+                }
+            } catch {
+                ELOG("Error during quickload: \(error)")
+            }
+        }
     }
 
     /// Handle analog stick movement

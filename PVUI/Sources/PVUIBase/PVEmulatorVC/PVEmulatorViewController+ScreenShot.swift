@@ -10,6 +10,7 @@
 
 extension PVEmulatorViewController {
     
+    @MainActor
     public func captureScreenshot() -> UIImage? {
         fpsLabel.alpha = 0.0
         if (core.skipLayout && core.touchViewController != nil) {
