@@ -6,7 +6,7 @@ import PVEmulatorCore
 
 /// Core view for rendering a DeltaSkin with test patterns and interactive elements
 public struct DeltaSkinView: View {
-    let skin: DeltaSkinProtocol
+    let skin: any DeltaSkinProtocol
     let traits: DeltaSkinTraits
     let filters: Set<TestPatternEffect>
     let showDebugOverlay: Bool
@@ -168,7 +168,7 @@ public struct DeltaSkinView: View {
     }
 
     public init(
-        skin: DeltaSkinProtocol,
+        skin: any DeltaSkinProtocol,
         traits: DeltaSkinTraits,
         filters: Set<TestPatternEffect> = [],
         showDebugOverlay: Bool = false,
@@ -1325,7 +1325,7 @@ extension EnvironmentValues {
 
 /// Overlay showing hit test areas for buttons
 private struct DeltaSkinHitTestOverlay: View {
-    let skin: DeltaSkinProtocol
+    let skin: any DeltaSkinProtocol
     let traits: DeltaSkinTraits
     let size: CGSize
 

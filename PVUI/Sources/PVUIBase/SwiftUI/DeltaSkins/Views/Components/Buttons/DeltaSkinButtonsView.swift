@@ -3,7 +3,7 @@ import PVPrimitives
 
 /// View that displays interactive buttons for a Delta skin
 public struct DeltaSkinButtonsView: View {
-    let skin: DeltaSkinProtocol
+    let skin: any DeltaSkinProtocol
     let traits: DeltaSkinTraits
     let onButtonPress: (String) -> Void
 
@@ -13,7 +13,7 @@ public struct DeltaSkinButtonsView: View {
     @State private var error: Error?
 
     public init(
-        skin: DeltaSkinProtocol,
+        skin: any DeltaSkinProtocol,
         traits: DeltaSkinTraits,
         onButtonPress: @escaping (String) -> Void
     ) {

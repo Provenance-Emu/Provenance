@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Overlay view that shows button hit areas and coordinates
 struct DeltaSkinDebugOverlay: View {
-    let skin: DeltaSkinProtocol
+    let skin: any DeltaSkinProtocol
     let traits: DeltaSkinTraits
     let size: CGSize
 

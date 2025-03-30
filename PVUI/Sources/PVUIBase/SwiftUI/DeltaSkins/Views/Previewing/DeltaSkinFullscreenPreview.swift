@@ -3,7 +3,7 @@ import PVLogging
 
 /// Fullscreen preview of skin with test pattern
 struct DeltaSkinFullscreenPreview: View {
-    let skin: DeltaSkinProtocol
+    let skin: any DeltaSkinProtocol
     let traits: DeltaSkinTraits
     let filters: Set<TestPatternEffect>
 
@@ -13,7 +13,7 @@ struct DeltaSkinFullscreenPreview: View {
     @State private var showHitTestOverlay = false
     @Environment(\.dismiss) private var dismiss
 
-    init(skin: DeltaSkinProtocol, traits: DeltaSkinTraits, filters: Set<TestPatternEffect>) {
+    init(skin: any DeltaSkinProtocol, traits: DeltaSkinTraits, filters: Set<TestPatternEffect>) {
         self.skin = skin
         self.traits = traits
         self.filters = filters
@@ -177,7 +177,7 @@ struct DeltaSkinFullscreenPreview: View {
 
 /// Overlay showing hit test areas for buttons
 private struct DeltaSkinHitTestOverlay: View {
-    let skin: DeltaSkinProtocol
+    let skin: any DeltaSkinProtocol
     let traits: DeltaSkinTraits
 
     var body: some View {
@@ -224,7 +224,7 @@ private struct DeltaSkinHitTestOverlay: View {
 
 /// Sheet showing detailed skin information
 private struct DeltaSkinInfoSheet: View {
-    let skin: DeltaSkinProtocol
+    let skin: any DeltaSkinProtocol
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {

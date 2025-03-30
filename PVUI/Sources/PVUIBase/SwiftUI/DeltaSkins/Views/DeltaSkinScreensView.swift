@@ -3,7 +3,7 @@ import PVLogging
 
 /// View that renders a DeltaSkin with its screens and buttons
 public struct DeltaSkinScreensView: View {
-    let skin: DeltaSkinProtocol
+    let skin: any DeltaSkinProtocol
     let traits: DeltaSkinTraits
     let containerSize: CGSize
 
@@ -23,7 +23,7 @@ public struct DeltaSkinScreensView: View {
     @State private var leftStickPosition: CGPoint = .zero
     @State private var rightStickPosition: CGPoint = .zero
 
-    public init(skin: DeltaSkinProtocol, traits: DeltaSkinTraits, containerSize: CGSize) {
+    public init(skin: any DeltaSkinProtocol, traits: DeltaSkinTraits, containerSize: CGSize) {
         self.skin = skin
         self.traits = traits
         self.containerSize = containerSize

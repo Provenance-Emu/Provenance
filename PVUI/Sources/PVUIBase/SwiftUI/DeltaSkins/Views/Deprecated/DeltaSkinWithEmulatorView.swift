@@ -8,7 +8,7 @@ import GameController
 
 /// A view that positions the emulator screen within a DeltaSkin and handles button inputs
 public struct DeltaSkinWithEmulatorView: View {
-    let skin: DeltaSkinProtocol
+    let skin: any DeltaSkinProtocol
     let traits: DeltaSkinTraits
     let game: PVGame
     let coreInstance: PVEmulatorCore

@@ -155,7 +155,7 @@ struct EmulatorWithSkinView: View {
 
     // MARK: - Skin Content View
 
-    private func skinContentView(skin: DeltaSkinProtocol, geometry: GeometryProxy) -> some View {
+    private func skinContentView(skin: any DeltaSkinProtocol, geometry: GeometryProxy) -> some View {
         let traits = createSkinTraits()
 
         return Group {

@@ -8,7 +8,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     public static let shared = DeltaSkinManager()
 
     /// Currently loaded skins
-    @Published public private(set) var loadedSkins: [DeltaSkinProtocol] = []
+    @Published public private(set) var loadedSkins: [any DeltaSkinProtocol] = []
 
     /// Queue for synchronizing skin operations
     private let queue = DispatchQueue(label: "com.provenance.deltaskin-manager")
@@ -21,7 +21,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     }
 
     /// Get all available skins
-    public func availableSkins() async throws -> [DeltaSkinProtocol] {
+    public func availableSkins() async throws -> [any DeltaSkinProtocol] {
         try await queue.asyncResult {
             try self.scanForSkins()
             return self.loadedSkins
@@ -29,7 +29,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     }
 
     /// Load a skin from a file URL
-    public func loadSkin(from url: URL) async throws -> DeltaSkinProtocol {
+    public func loadSkin(from url: URL) async throws -> any DeltaSkinProtocol {
         try await queue.asyncResult {
             try self.loadSkinFromURL(url)
         }
@@ -41,7 +41,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     ///   - device: The device to filter by (iPhone or iPad)
     ///   - orientation: The orientation to filter by (portrait or landscape)
     /// - Returns: Array of skins that match the criteria
-    public func skins(for system: SystemIdentifier, device: DeltaSkinDevice, orientation: DeltaSkinOrientation? = nil) async throws -> [DeltaSkinProtocol] {
+    public func skins(for system: SystemIdentifier, device: DeltaSkinDevice, orientation: DeltaSkinOrientation? = nil) async throws -> [any DeltaSkinProtocol] {
         try await queue.asyncResult {
             try self.scanForSkins()
             
@@ -105,7 +105,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     /// - Returns: The skin to use, or nil if none is available
     public func skinToUse(for system: SystemIdentifier, 
                           device: DeltaSkinDevice? = nil,
-                          orientation: DeltaSkinOrientation? = nil) async throws -> DeltaSkinProtocol? {
+                          orientation: DeltaSkinOrientation? = nil) async throws -> (any DeltaSkinProtocol)? {
         // Determine current device and orientation if not specified
         let currentDevice = device ?? (UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone)
         let currentOrientation = orientation ?? (UIDevice.current.orientation.isLandscape ? .landscape : .portrait)
@@ -182,7 +182,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
         DLOG("Total locations to scan: \(locations.count)")
 
         // Create a new array to hold all skins
-        var scannedSkins: [DeltaSkinProtocol] = []
+        var scannedSkins: [any DeltaSkinProtocol] = []
 
         for location in locations {
             DLOG("Examining location: \(location.path)")
@@ -250,7 +250,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     }
 
     /// Load a skin from URL and add to loadedSkins
-    private func loadSkinFromURL(_ url: URL) throws -> DeltaSkinProtocol {
+    private func loadSkinFromURL(_ url: URL) throws -> any DeltaSkinProtocol {
         DLOG("Loading skin from: \(url.lastPathComponent)")
 
         do {
@@ -363,7 +363,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     }
 
     /// Check if a skin can be deleted (i.e., it's in the skins directory and not bundled)
-    public func isDeletable(_ skin: DeltaSkinProtocol) -> Bool {
+    public func isDeletable(_ skin: any DeltaSkinProtocol) -> Bool {
         guard let skinsDir = try? skinsDirectory else { return false }
         return skin.fileURL.path.contains(skinsDir.path)
     }

@@ -3,7 +3,7 @@ import PVLogging
 
 /// View for testing DeltaSkin layouts and configurations
 public struct DeltaSkinTestView: View {
-    let skin: DeltaSkinProtocol
+    let skin: any DeltaSkinProtocol
 
     @State private var selectedDevice: DeltaSkinDevice
     @State private var selectedDisplayType: DeltaSkinDisplayType
@@ -16,7 +16,7 @@ public struct DeltaSkinTestView: View {
     @State private var selectedTraits: DeltaSkinTraits
     @State private var screenAspectRatio: CGFloat?
 
-    public init(skin: DeltaSkinProtocol) {
+    public init(skin: any DeltaSkinProtocol) {
         self.skin = skin
 
         // Find first fully supported configuration
@@ -433,7 +433,7 @@ private struct MetadataCell: View {
 
 /// Grid of metadata cells
 private struct MetadataGrid: View {
-    let skin: DeltaSkinProtocol
+    let skin: any DeltaSkinProtocol
     @State private var showCopiedAlert = false
 
     private var supportedTraits: String {

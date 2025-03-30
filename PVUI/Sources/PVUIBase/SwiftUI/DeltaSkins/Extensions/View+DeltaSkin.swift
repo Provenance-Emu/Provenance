@@ -43,7 +43,7 @@ struct DeltaSkinControllerModifier: ViewModifier {
     let traits: DeltaSkinTraits
     let onButtonPress: (String) -> Void
 
-    @State private var skin: DeltaSkinProtocol?
+    @State private var skin: (any DeltaSkinProtocol)?
     @State private var isLoading = true
     @State private var error: Error?
 
@@ -84,7 +84,7 @@ struct DeltaSkinControllerModifier: ViewModifier {
                 let selectedSkin = selectedSkinId.flatMap { id in allSkins.first { $0.identifier == id } }
                 
                 // Check if the selected skin supports the current traits
-                let skinToUse: DeltaSkinProtocol?
+                let skinToUse: (any DeltaSkinProtocol)?
                 if let selectedSkin = selectedSkin, selectedSkin.supports(traits) {
                     skinToUse = selectedSkin
                     DLOG("Using selected skin: \(selectedSkin.name)")
@@ -114,7 +114,7 @@ struct AdaptiveDeltaSkinControllerModifier: ViewModifier {
     let system: SystemIdentifier
     let onButtonPress: (String) -> Void
 
-    @State private var skin: DeltaSkinProtocol?
+    @State private var skin: (any DeltaSkinProtocol)?
     @State private var isLoading = true
     @State private var error: Error?
     @State private var currentOrientation: DeltaSkinOrientation = .portrait

@@ -1,6 +1,6 @@
 
 /// Protocol defining core DeltaSkin functionality
-public protocol DeltaSkinProtocol {
+public protocol DeltaSkinProtocol: Identifiable, Hashable {
     /// Unique identifier for the skin
     var identifier: String { get }
 
@@ -44,6 +44,23 @@ public protocol DeltaSkinProtocol {
     var jsonRepresentation: [String: Any] { get }
     
     func representation(for traits: DeltaSkinTraits) -> DeltaSkin.RepresentationInfo?
+}
+
+extension DeltaSkinProtocol  {
+    public var id: String { identifier }
+
+    // Add Hashable conformance
+    public static func == (lhs: any DeltaSkinProtocol, rhs: any DeltaSkinProtocol) -> Bool {
+        lhs.id == rhs.id
+    }
+    
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }
 
 public extension DeltaSkinProtocol {

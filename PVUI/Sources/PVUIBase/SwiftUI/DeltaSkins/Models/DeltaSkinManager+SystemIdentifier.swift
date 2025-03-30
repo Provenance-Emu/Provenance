@@ -6,7 +6,7 @@ public extension DeltaSkinManager {
     /// Get all skins for a specific system identifier
     /// - Parameter system: The system identifier
     /// - Returns: Array of skins compatible with the system
-    func skins(for system: SystemIdentifier) async throws -> [DeltaSkinProtocol] {
+    func skins(for system: SystemIdentifier) async throws -> [any DeltaSkinProtocol] {
         // Convert SystemIdentifier to DeltaSkinGameType
         guard let gameType = DeltaSkinGameType(systemIdentifier: system) else {
             return []
@@ -20,7 +20,7 @@ public extension DeltaSkinManager {
     /// Get the currently selected skin for a system
     /// - Parameter system: The system identifier
     /// - Returns: The selected skin, or nil if none selected
-    func selectedSkin(for system: SystemIdentifier) async throws -> DeltaSkinProtocol? {
+    func selectedSkin(for system: SystemIdentifier) async throws -> (any DeltaSkinProtocol)? {
         // Get the selected skin identifier from preferences
         guard let selectedIdentifier = DeltaSkinPreferences.shared.selectedSkinIdentifier(for: system) else {
             return nil
@@ -34,7 +34,7 @@ public extension DeltaSkinManager {
     /// Get the default skin for a system (first available)
     /// - Parameter system: The system identifier
     /// - Returns: The default skin, or nil if none available
-    func defaultSkin(for system: SystemIdentifier) async throws -> DeltaSkinProtocol? {
+    func defaultSkin(for system: SystemIdentifier) async throws -> (any DeltaSkinProtocol)? {
         let systemSkins = try await skins(for: system)
         return systemSkins.first
     }
@@ -42,7 +42,7 @@ public extension DeltaSkinManager {
     /// Get the skin to use for a system (selected or default)
     /// - Parameter system: The system identifier
     /// - Returns: The skin to use, or nil if none available
-    func skinToUse(for system: SystemIdentifier) async throws -> DeltaSkinProtocol? {
+    func skinToUse(for system: SystemIdentifier) async throws -> (any DeltaSkinProtocol)? {
         // Try to get selected skin first
         if let selected = try await selectedSkin(for: system) {
             return selected
@@ -123,12 +123,12 @@ public extension DeltaSkinManager {
 
 
     /// Get the default skin for a system
-    public func defaultSkin(for systemIdentifier: String) -> DeltaSkinProtocol? {
+    public func defaultSkin(for systemIdentifier: String) -> (any DeltaSkinProtocol)? {
         return loadedSkins.first { $0.gameType.rawValue == systemIdentifier }
     }
 
     /// Get the default skin for a system
-    public func defaultSkin(for systemIdentifier: SystemIdentifier) -> DeltaSkinProtocol? {
+    public func defaultSkin(for systemIdentifier: SystemIdentifier) -> (any DeltaSkinProtocol)? {
         return loadedSkins.first { $0.gameType.systemIdentifier == systemIdentifier }
     }
 

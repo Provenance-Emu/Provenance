@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Wrapper view for fullscreen controller display that supports paging between skins
 public struct DeltaSkinFullscreenPagerView: View {
-    let skins: [DeltaSkinProtocol]
+    let skins: [any DeltaSkinProtocol]
     let initialTraits: DeltaSkinTraits
     let screenAspectRatio: CGFloat?
 
@@ -16,7 +16,7 @@ public struct DeltaSkinFullscreenPagerView: View {
     @GestureState private var dragOffset: CGFloat = 0
 
     public init(
-        skins: [DeltaSkinProtocol],
+        skins: [any DeltaSkinProtocol],
         traits: DeltaSkinTraits,
         screenAspectRatio: CGFloat? = nil
     ) {
@@ -257,7 +257,7 @@ public struct DeltaSkinFullscreenPagerView: View {
     }
     #endif
 
-    private var currentSkin: DeltaSkinProtocol {
+    private var currentSkin: any DeltaSkinProtocol {
         skins[currentPage]
     }
 

@@ -3,8 +3,8 @@ import PVLogging
 
 /// Preview view showing both portrait and landscape orientations of a skin
 struct DeltaSkinPreviewView: View {
-    let skins: [DeltaSkinProtocol]
-    let initialSkin: DeltaSkinProtocol
+    let skins: [any DeltaSkinProtocol]
+    let initialSkin: any DeltaSkinProtocol
     let device: DeltaSkinDevice
     let displayType: DeltaSkinDisplayType
 
@@ -14,7 +14,7 @@ struct DeltaSkinPreviewView: View {
     @State private var selectedIndex: Int = 0
     @State private var showFullscreen = false
 
-    init(skins: [DeltaSkinProtocol], initialSkin: DeltaSkinProtocol, device: DeltaSkinDevice, displayType: DeltaSkinDisplayType) {
+    init(skins: [any DeltaSkinProtocol], initialSkin: any DeltaSkinProtocol, device: DeltaSkinDevice, displayType: DeltaSkinDisplayType) {
         self.skins = skins
         self.initialSkin = initialSkin
         self.device = device

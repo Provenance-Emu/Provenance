@@ -2,10 +2,10 @@ import SwiftUI
 
 /// Preview component for a skin in the list
 public struct DeltaSkinPreview: View {
-    let skin: DeltaSkinProtocol
+    let skin: any DeltaSkinProtocol
     let traits: DeltaSkinTraits
 
-    public init(skin: DeltaSkinProtocol, traits: DeltaSkinTraits) {
+    public init(skin: any DeltaSkinProtocol, traits: DeltaSkinTraits) {
         self.skin = skin
         self.traits = traits
     }
@@ -30,6 +30,7 @@ public struct DeltaSkinPreview: View {
     }
 }
 
+#if DEBUG
 //#Preview {
 //    DeltaSkinPreview(
 //        skin: try! DeltaSkin(fileURL: TestSkinResources.gbcSunriseURL),
@@ -40,3 +41,4 @@ public struct DeltaSkinPreview: View {
 //        )
 //    )
 //}
+#endif

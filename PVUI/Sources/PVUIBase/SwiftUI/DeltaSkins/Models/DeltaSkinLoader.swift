@@ -10,7 +10,7 @@ class DeltaSkinLoader: ObservableObject {
     @Published var isLoading = true
     @Published var loadingProgress: Double = 0.0
     @Published var loadingStage: LoadingStage = .initializing
-    @Published var selectedSkin: DeltaSkinProtocol?
+    @Published var selectedSkin: (any DeltaSkinProtocol)?
     @Published var loadingError: Error?
 
     // Loading stages for better progress reporting
@@ -36,7 +36,7 @@ class DeltaSkinLoader: ObservableObject {
 
     /// Load a skin for the given system identifier
     /// Returns a task that completes when the skin is loaded
-    func loadSkin(forSystem systemId: SystemIdentifier, systemName: String = "Unknown") async -> DeltaSkinProtocol? {
+    func loadSkin(forSystem systemId: SystemIdentifier, systemName: String = "Unknown") async -> (any DeltaSkinProtocol)? {
         DLOG("🎮 DeltaSkinLoader: Starting to load Delta Skin for system: \(systemId.rawValue)")
 
         // Start with initializing stage

@@ -1026,7 +1026,7 @@ struct SaveStatesMockView: View {
 // Add this helper view to handle async loading of skins
 struct DeltaSkinPreviewWrapper: View {
     @StateObject private var skinManager = DeltaSkinManager.shared
-    @State private var skins: [DeltaSkinProtocol] = []
+    @State private var skins: [any DeltaSkinProtocol] = []
     @State private var isLoading = true
     
     var body: some View {

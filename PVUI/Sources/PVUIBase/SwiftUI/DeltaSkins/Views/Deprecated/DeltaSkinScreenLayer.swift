@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Layer that renders the test pattern screens for a skin
 struct DeltaSkinScreenLayer: View {
-    let skin: DeltaSkinProtocol
+    let skin: any DeltaSkinProtocol
     let traits: DeltaSkinTraits
     let filters: Set<TestPatternEffect>
     let size: CGSize

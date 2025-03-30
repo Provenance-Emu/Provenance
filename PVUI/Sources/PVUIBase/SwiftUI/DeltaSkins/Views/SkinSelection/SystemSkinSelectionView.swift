@@ -10,8 +10,8 @@ public struct SystemSkinSelectionView: View {
     @StateObject private var skinManager = DeltaSkinManager.shared
     @StateObject private var preferences = DeltaSkinPreferences.shared
 
-    @State private var availableSkins: [DeltaSkinProtocol] = []
-    @State private var filteredSkins: [DeltaSkinProtocol] = []
+    @State private var availableSkins: [any DeltaSkinProtocol] = []
+    @State private var filteredSkins: [any DeltaSkinProtocol] = []
     @State private var selectedPortraitSkinId: String?
     @State private var selectedLandscapeSkinId: String?
     @State private var isLoading = true
@@ -218,9 +218,9 @@ public struct SystemSkinSelectionView: View {
     }
 
     @State private var showingShareSheet = false
-    @State private var skinToShare: DeltaSkinProtocol? = nil
+    @State private var skinToShare: (any DeltaSkinProtocol)? = nil
     
-    private func skinCell(for skin: DeltaSkinProtocol) -> some View {
+    private func skinCell(for skin: any DeltaSkinProtocol) -> some View {
         ZStack {
             // Main content
             VStack(alignment: .leading, spacing: 8) {
@@ -478,7 +478,7 @@ public struct SystemSkinSelectionView: View {
         }
     }
 
-    private func deleteSkin(_ skin: DeltaSkinProtocol) {
+    private func deleteSkin(_ skin: any DeltaSkinProtocol) {
         Task {
             do {
                 try await skinManager.deleteSkin(skin.identifier)
@@ -503,7 +503,7 @@ public struct SystemSkinSelectionView: View {
 
 /// Enhanced skin preview that renders the actual skin with test pattern
 struct EnhancedSkinPreview: View {
-    let skin: DeltaSkinProtocol
+    let skin: any DeltaSkinProtocol
     let orientation: DeltaSkinOrientation
     let device: DeltaSkinDevice
     
