@@ -44,7 +44,7 @@ typedef unsigned long MTLArgumentBuffersTier;
  */
 
 
-#define MVK_PRIVATE_API_VERSION   42
+#define MVK_PRIVATE_API_VERSION   43
 
 
 #pragma mark -
@@ -64,7 +64,7 @@ typedef unsigned long MTLArgumentBuffersTier;
  */
 #define MVK_VERSION_MAJOR   1
 #define MVK_VERSION_MINOR   2
-#define MVK_VERSION_PATCH   10
+#define MVK_VERSION_PATCH   11
 
 #define MVK_MAKE_VERSION(major, minor, patch)  (((major) * 10000) + ((minor) * 100) + (patch))
 #define MVK_VERSION                            MVK_MAKE_VERSION(MVK_VERSION_MAJOR, MVK_VERSION_MINOR, MVK_VERSION_PATCH)
@@ -225,7 +225,7 @@ typedef struct {
 	MVKConfigAutoGPUCaptureScope autoGPUCaptureScope;                          /**< MVK_CONFIG_AUTO_GPU_CAPTURE_SCOPE */
 	const char* autoGPUCaptureOutputFilepath;                                  /**< MVK_CONFIG_AUTO_GPU_CAPTURE_OUTPUT_FILE */
 	VkBool32 texture1DAs2D;                                                    /**< MVK_CONFIG_TEXTURE_1D_AS_2D */
-	VkBool32 preallocateDescriptors;                                           /**< MVK_CONFIG_PREALLOCATE_DESCRIPTORS */
+	VkBool32 preallocateDescriptors;                                           /**< Obsolete, deprecated, and ignored. */
 	VkBool32 useCommandPooling;                                                /**< MVK_CONFIG_USE_COMMAND_POOLING */
 	VkBool32 useMTLHeap;                                                       /**< MVK_CONFIG_USE_MTLHEAP */
 	MVKConfigActivityPerformanceLoggingStyle activityPerformanceLoggingStyle;  /**< MVK_CONFIG_ACTIVITY_PERFORMANCE_LOGGING_STYLE */
@@ -238,6 +238,7 @@ typedef struct {
 	float timestampPeriodLowPassAlpha;                                         /**< MVK_CONFIG_TIMESTAMP_PERIOD_LOWPASS_ALPHA */
 	VkBool32 useMetalPrivateAPI;                                               /**< MVK_CONFIG_USE_METAL_PRIVATE_API */
 	const char* shaderDumpDir;                                                 /**< MVK_CONFIG_SHADER_DUMP_DIR */
+	VkBool32 shaderLogEstimatedGLSL;                                           /**< MVK_CONFIG_SHADER_LOG_ESTIMATED_GLSL */
 } MVKConfiguration;
 
 // Legacy support for renamed struct elements.

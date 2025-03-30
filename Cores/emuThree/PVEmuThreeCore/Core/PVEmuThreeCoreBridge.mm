@@ -115,6 +115,7 @@ static bool _isOff = false;
 
     [[NSUserDefaults standardUserDefaults] setInteger:self.shaderType forKey:@"shader_type"];
     [[NSUserDefaults standardUserDefaults] setInteger:self.region forKey:@"region_value"];
+    [[NSUserDefaults standardUserDefaults] setInteger:self.language forKey:@"language_value"];
 
     [[NSUserDefaults standardUserDefaults] setBool:self.asyncShader  forKey:@"async_shader_compilation"];
     [[NSUserDefaults standardUserDefaults] setBool:self.asyncPresent forKey:@"async_presentation"];
@@ -150,7 +151,7 @@ static bool _isOff = false;
 
 - (void)startEmuThree {
     _isInitialized = false;
-    [CitraWrapper.sharedInstance useMetalLayer:m_view.layer];
+    [CitraWrapper.sharedInstance useMetalLayer:(CAMetalLayer *)m_view.layer];
     [CitraWrapper.sharedInstance load:_romPath];
     [self setupControllers];
     DLOG(@"VM Started\n");

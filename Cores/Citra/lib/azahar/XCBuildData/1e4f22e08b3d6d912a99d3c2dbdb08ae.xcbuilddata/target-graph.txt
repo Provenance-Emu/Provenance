@@ -1,0 +1,5 @@
+Target dependency graph (3 targets)
+Target 'emuThreeDS' in project 'emuThreeDS' (no dependencies)
+Target 'PVAzahar' in project 'PVAzahar'
+➜ Explicit dependency on target 'azahar' in project 'PVAzahar'
+Target 'azahar' in project 'PVAzahar' (no dependencies)

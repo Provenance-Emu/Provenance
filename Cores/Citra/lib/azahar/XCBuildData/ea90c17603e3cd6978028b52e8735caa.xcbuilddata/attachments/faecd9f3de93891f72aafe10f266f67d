@@ -1,0 +1,10 @@
+framework module PVAzahar {
+  umbrella header "PVAzahar.h"
+  export *
+
+  module * { export * }
+}
+
+module PVAzahar.__Swift {
+  exclude header "PVAzahar-Swift.h"
+}

@@ -14,7 +14,7 @@
 #include "common/common_types.h"
 #include "common/logging/log.h"
 #include "common/microprofile.h"
-#include "common/vector_math.h"
+#include "common/vector_math_neon.h"
 #include "video_core/pica_state.h"
 #include "video_core/pica_types.h"
 #include "video_core/shader/shader.h"
@@ -209,7 +209,7 @@ struct ShaderBatch {
     const ShaderSetup* setup;        // Shader setup for this batch
     unsigned offset;                 // Starting offset
     
-    ShaderBatch(const ShaderSetup* setup_in, unsigned offset_in) 
+    ShaderBatch(const ShaderSetup* setup_in, unsigned offset_in)
         : setup(setup_in), offset(offset_in) {}
     
     // Add a state to this batch
@@ -251,7 +251,7 @@ static void ProcessShaderBatch(ShaderBatch& batch, std::vector<DebugData<Debug>>
     
     // Process states in parallel with improved error handling
     try {
-        ParallelShaderExecution(static_cast<unsigned>(batch.Size()), 
+        ParallelShaderExecution(static_cast<unsigned>(batch.Size()),
             [&batch, &debug_data](unsigned start, unsigned end) {
                 for (unsigned i = start; i < end; ++i) {
                     if (i < batch.Size()) { // Extra bounds check for safety
@@ -843,7 +843,7 @@ static void RunInterpreter(const ShaderSetup& setup, UnitState& state, DebugData
                     // Handle division by zero or very small values
                     if (std::abs(src_val) < 1e-10f) {
                         // Use the same behavior as the standard implementation for consistency
-                        rcp_val = (src_val < 0.0f) ? -std::numeric_limits<float>::infinity() : 
+                        rcp_val = (src_val < 0.0f) ? -std::numeric_limits<float>::infinity() :
                                                      std::numeric_limits<float>::infinity();
                     } else {
                         // Use NEON's approximate reciprocal as a starting point
@@ -1159,32 +1159,32 @@ static void RunInterpreter(const ShaderSetup& setup, UnitState& state, DebugData
                     switch (op_x) {
                     case Instruction::Common::CompareOpType::Equal:
                         // Check if src1[0] == src2[0]
-                        result_x = (vgetq_lane_f32(vceqq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp), 
+                        result_x = (vgetq_lane_f32(vceqq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp),
                                                   vcombine_f32(src2_vec_cmp, src2_vec_cmp)), 0) != 0);
                         break;
                     case Instruction::Common::CompareOpType::NotEqual:
                         // Check if src1[0] != src2[0]
-                        result_x = (vgetq_lane_f32(vceqq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp), 
+                        result_x = (vgetq_lane_f32(vceqq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp),
                                                   vcombine_f32(src2_vec_cmp, src2_vec_cmp)), 0) == 0);
                         break;
                     case Instruction::Common::CompareOpType::LessThan:
                         // Check if src1[0] < src2[0]
-                        result_x = (vgetq_lane_f32(vcltq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp), 
+                        result_x = (vgetq_lane_f32(vcltq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp),
                                                   vcombine_f32(src2_vec_cmp, src2_vec_cmp)), 0) != 0);
                         break;
                     case Instruction::Common::CompareOpType::LessEqual:
                         // Check if src1[0] <= src2[0]
-                        result_x = (vgetq_lane_f32(vcleq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp), 
+                        result_x = (vgetq_lane_f32(vcleq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp),
                                                   vcombine_f32(src2_vec_cmp, src2_vec_cmp)), 0) != 0);
                         break;
                     case Instruction::Common::CompareOpType::GreaterThan:
                         // Check if src1[0] > src2[0]
-                        result_x = (vgetq_lane_f32(vcgtq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp), 
+                        result_x = (vgetq_lane_f32(vcgtq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp),
                                                   vcombine_f32(src2_vec_cmp, src2_vec_cmp)), 0) != 0);
                         break;
                     case Instruction::Common::CompareOpType::GreaterEqual:
                         // Check if src1[0] >= src2[0]
-                        result_x = (vgetq_lane_f32(vcgeq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp), 
+                        result_x = (vgetq_lane_f32(vcgeq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp),
                                                   vcombine_f32(src2_vec_cmp, src2_vec_cmp)), 0) != 0);
                         break;
                     default:
@@ -1197,32 +1197,32 @@ static void RunInterpreter(const ShaderSetup& setup, UnitState& state, DebugData
                     switch (op_y) {
                     case Instruction::Common::CompareOpType::Equal:
                         // Check if src1[1] == src2[1]
-                        result_y = (vgetq_lane_f32(vceqq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp), 
+                        result_y = (vgetq_lane_f32(vceqq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp),
                                                   vcombine_f32(src2_vec_cmp, src2_vec_cmp)), 1) != 0);
                         break;
                     case Instruction::Common::CompareOpType::NotEqual:
                         // Check if src1[1] != src2[1]
-                        result_y = (vgetq_lane_f32(vceqq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp), 
+                        result_y = (vgetq_lane_f32(vceqq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp),
                                                   vcombine_f32(src2_vec_cmp, src2_vec_cmp)), 1) == 0);
                         break;
                     case Instruction::Common::CompareOpType::LessThan:
                         // Check if src1[1] < src2[1]
-                        result_y = (vgetq_lane_f32(vcltq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp), 
+                        result_y = (vgetq_lane_f32(vcltq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp),
                                                   vcombine_f32(src2_vec_cmp, src2_vec_cmp)), 1) != 0);
                         break;
                     case Instruction::Common::CompareOpType::LessEqual:
                         // Check if src1[1] <= src2[1]
-                        result_y = (vgetq_lane_f32(vcleq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp), 
+                        result_y = (vgetq_lane_f32(vcleq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp),
                                                   vcombine_f32(src2_vec_cmp, src2_vec_cmp)), 1) != 0);
                         break;
                     case Instruction::Common::CompareOpType::GreaterThan:
                         // Check if src1[1] > src2[1]
-                        result_y = (vgetq_lane_f32(vcgtq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp), 
+                        result_y = (vgetq_lane_f32(vcgtq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp),
                                                   vcombine_f32(src2_vec_cmp, src2_vec_cmp)), 1) != 0);
                         break;
                     case Instruction::Common::CompareOpType::GreaterEqual:
                         // Check if src1[1] >= src2[1]
-                        result_y = (vgetq_lane_f32(vcgeq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp), 
+                        result_y = (vgetq_lane_f32(vcgeq_f32(vcombine_f32(src1_vec_cmp, src1_vec_cmp),
                                                   vcombine_f32(src2_vec_cmp, src2_vec_cmp)), 1) != 0);
                         break;
                     default:
@@ -1315,7 +1315,7 @@ static void RunInterpreter(const ShaderSetup& setup, UnitState& state, DebugData
                         float frac_part = src_val - int_part;
                         
                         // Polynomial approximation for 2^frac_part
-                        // 2^x ≈ 1 + x * (0.6931471805599453 + x * (0.2402265069591006 + 
+                        // 2^x ≈ 1 + x * (0.6931471805599453 + x * (0.2402265069591006 +
                         //                                      x * 0.0555041086648216))
                         // This is accurate enough for most shader operations
                         float32x4_t frac_vec = vdupq_n_f32(frac_part);
@@ -1848,7 +1848,7 @@ namespace {
         // Determine how many threads to use (at most MAX_PARALLEL_SHADERS)
         // Limit to hardware_concurrency - 1 to leave one core for the main thread
         unsigned available_cores = std::max(1u, static_cast<unsigned>(std::thread::hardware_concurrency()) - 1);
-        unsigned thread_count = std::min(MAX_PARALLEL_SHADERS, 
+        unsigned thread_count = std::min(MAX_PARALLEL_SHADERS,
                                         std::min(available_cores, total_items));
         
         // If only one item or one thread available, just run directly

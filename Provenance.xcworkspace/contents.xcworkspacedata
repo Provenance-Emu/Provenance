@@ -8,6 +8,12 @@
       location = "container:"
       name = "Cores">
       <FileRef
+         location = "group:Cores/Citra/PVAzahar.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/emuThree/PVEmuThree.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Cores/FCEU/PVFCEU.xcodeproj">
       </FileRef>
       <FileRef
@@ -21,9 +27,6 @@
       </FileRef>
       <FileRef
          location = "group:Cores/Genesis-Plus-GX/PVGenesis.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/emuThree/PVEmuThree.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/Dolphin/PVDolphin.xcodeproj">

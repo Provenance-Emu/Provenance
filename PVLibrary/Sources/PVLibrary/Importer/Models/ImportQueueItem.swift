@@ -111,7 +111,7 @@ public class ImportQueueItem: Identifiable, ObservableObject {
         if let cached = cache.md5 {
             return cached
         } else {
-            let computed = md5Provider.md5ForFile(atPath: url.path, fromOffset: 0)
+            let computed = md5Provider.md5ForFile(at: url, fromOffset: 0)
             cache.md5 = computed
             return computed
         }

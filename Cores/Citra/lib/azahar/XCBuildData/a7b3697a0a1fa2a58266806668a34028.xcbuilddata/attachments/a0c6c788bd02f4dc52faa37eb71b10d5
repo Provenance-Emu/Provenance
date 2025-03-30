@@ -1,0 +1,11 @@
+framework module PVAzahar {
+  umbrella header "PVAzahar.h"
+  export *
+
+  module * { export * }
+}
+
+module PVAzahar.Swift {
+  header "PVAzahar-Swift.h"
+  requires objc
+}

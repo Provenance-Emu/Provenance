@@ -1,0 +1,11 @@
+framework module PVEmuThree {
+  umbrella header "PVEmuThree.h"
+  export *
+
+  module * { export * }
+}
+
+module PVEmuThree.Swift {
+  header "PVEmuThree-Swift.h"
+  requires objc
+}

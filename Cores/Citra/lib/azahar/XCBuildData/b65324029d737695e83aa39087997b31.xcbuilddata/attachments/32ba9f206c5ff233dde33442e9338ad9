@@ -1,0 +1,40 @@
+{
+  "" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/azahar/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzahar-master.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/azahar/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzahar-master.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/azahar/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzahar-master.dia",
+    "emit-module-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/azahar/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzahar-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/azahar/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzahar-master-emit-module.dia",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/azahar/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzahar-master.swiftdeps"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/PVAzaharCore/Core/CorePlist-Generated.swift" : {
+    "index-unit-output-path" : "/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/CorePlist-Generated.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/azahar/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/CorePlist-Generated.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/azahar/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/CorePlist-Generated.o"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/PVAzaharCore/Core/CorePlist.swift" : {
+    "index-unit-output-path" : "/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/CorePlist.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/azahar/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/CorePlist.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/azahar/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/CorePlist.o"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/PVAzaharCore/Core/PVAzaharCore.swift" : {
+    "index-unit-output-path" : "/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzaharCore.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/azahar/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzaharCore.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/azahar/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzaharCore.o"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/PVAzaharCore/Core/PVAzaharCoreOptions.swift" : {
+    "index-unit-output-path" : "/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzaharCoreOptions.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/azahar/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzaharCoreOptions.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/azahar/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzaharCoreOptions.o"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/PVAzaharCore/Core/PVAzaharOGLViewController.swift" : {
+    "index-unit-output-path" : "/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzaharOGLViewController.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/azahar/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzaharOGLViewController.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/azahar/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzaharOGLViewController.o"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/PVAzaharCore/Core/PVAzaharVulkanViewController.swift" : {
+    "index-unit-output-path" : "/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzaharVulkanViewController.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/azahar/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzaharVulkanViewController.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/azahar/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzaharVulkanViewController.o"
+  }
+}

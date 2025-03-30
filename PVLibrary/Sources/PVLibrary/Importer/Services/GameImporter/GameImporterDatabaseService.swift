@@ -118,7 +118,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 //    @MainActor
     internal func importToDatabaseROM(forItem queueItem: ImportQueueItem, system: SystemIdentifier, relatedFiles: [URL]?) async throws {
 
-        guard let _ = queueItem.destinationUrl else {
+        guard let destinationUrl = queueItem.destinationUrl else {
             //how did we get here, throw?
             throw GameImporterError.incorrectDestinationURL
         }
@@ -136,7 +136,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             throw GameImporterError.noSystemMatched
         }
 
-        let file = PVFile(withURL: queueItem.destinationUrl!)
+        let file = PVFile(withURL: destinationUrl, relativeRoot: .iCloud)
         let game = PVGame(withFile: file, system: system)
         game.romPath = partialPath
         game.title = title
@@ -206,7 +206,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         }
         if PVMediaCache.fileExists(forKey: url) {
             if let localURL = PVMediaCache.filePath(forKey: url) {
-                let file = PVImageFile(withURL: localURL, relativeRoot: .iCloud)
+                let file = PVImageFile(withURL: localURL, relativeRoot: .documents)
                 game.originalArtworkFile = file
                 return game
             }
@@ -230,7 +230,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             if let artwork = NSImage(data: data) {
                 do {
                     let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: url)
-                    let file = PVImageFile(withURL: localURL, relativeRoot: .iCloud)
+                    let file = PVImageFile(withURL: localURL, relativeRoot: .documents)
                     game.originalArtworkFile = file
                 } catch { ELOG("\(error.localizedDescription)") }
             }
@@ -238,7 +238,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             if let artwork = UIImage(data: data) {
                 do {
                     let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: url)
-                    let file = PVImageFile(withURL: localURL, relativeRoot: .iCloud)
+                    let file = PVImageFile(withURL: localURL, relativeRoot: .documents)
                     game.originalArtworkFile = file
                 } catch { ELOG("\(error.localizedDescription)") }
             }
@@ -480,7 +480,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                 ELOG("Cannot find file at path: \(romPath)")
                 return nil
             }
-            return fm.md5ForFile(atPath: romPath.path, fromOffset: offset)
+            return fm.md5ForFile(at: romPath, fromOffset: offset)
         }
 
         return nil
