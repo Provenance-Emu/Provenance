@@ -648,16 +648,17 @@ actor SaveStateDatastore {
     
     @RealmActor
     func update(existingSave save: PVSaveState, with game: PVGame) async throws {
-        await try realm.asyncWrite {
+        await try realm.asyncWrite {//TODO: test if call sync write works with sync refresh
             save.game = game
         }
+//        await realm.asyncRefresh()
     }
     
     @RealmActor
     func write(newSave save: SaveState) async throws {
         let newSave = realm.buildSaveState(from: save)//save.asRealm()
 //        realm.writeAsync{}
-        await try realm.asyncWrite { @RealmActor in
+        await try realm.asyncWrite { @RealmActor in//TODO: test if call sync write works with sync refresh
             /*let clone = realm.create(PVSaveState.self, value: save, update: .all)
             if let game = clone.game {
                 clone.game = realm.create(PVGame.self, value: game, update: .all)
@@ -675,6 +676,7 @@ actor SaveStateDatastore {
             }*/
             realm.add(newSave, update: .all)
         }
+//        await realm.asyncRefresh()
         DLOG("Added new save \(newSave.debugDescription)")
     }
     
@@ -900,7 +902,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
                     continue
                 }
                 //TODO: move update/save Realm code to Actor
-                let saveStateDatastore = await try SaveStateDatastore()
+                let saveStateDatastore = await try SaveStateDatastore()//TODO: try moving instantiation to before loop
                 guard let existing: PVSaveState = await saveStateDatastore.findSaveState(forPrimaryKey: save.id)
                 else {
                     ILOG("Saves: processing: save #(\(processedCount)) \(json)")
