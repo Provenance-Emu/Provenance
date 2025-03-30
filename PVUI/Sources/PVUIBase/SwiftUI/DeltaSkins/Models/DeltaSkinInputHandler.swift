@@ -79,6 +79,12 @@ public class DeltaSkinInputHandler: ObservableObject {
             return
         }
         
+        // Handle hold-style fast forward button
+        if lowercasedId.contains("fastforward") && !lowercasedId.contains("toggle") {
+            fastForwardPressed()
+            return
+        }
+        
         // Handle slow motion toggle button
         if lowercasedId.contains("toggleslowmotion") {
             toggleSlowMotionPressed()
@@ -114,8 +120,14 @@ public class DeltaSkinInputHandler: ObservableObject {
     func buttonReleased(_ buttonId: String) {
         DLOG("Delta Skin button released: \(buttonId)")
 
-        // Skip special button releases
+        // Check for hold-style fast forward button release
         let lowercasedId = buttonId.lowercased()
+        if lowercasedId.contains("fastforward") && !lowercasedId.contains("toggle") {
+            fastForwardReleased()
+            return
+        }
+        
+        // Skip special button releases for toggle-style buttons
         if lowercasedId.contains("menu") || 
            lowercasedId.contains("quicksave") || 
            lowercasedId.contains("quickload") ||
@@ -208,6 +220,9 @@ public class DeltaSkinInputHandler: ObservableObject {
     /// Timer for long press detection
     private var longPressTimer: Timer?
     
+    /// Store the previous game speed when using hold-style buttons
+    private var previousGameSpeed: GameSpeed?
+    
     /// Handle toggle fast forward button press
     private func toggleFastForwardPressed() {
         DLOG("Toggle fast forward button pressed")
@@ -238,6 +253,43 @@ public class DeltaSkinInputHandler: ObservableObject {
                 core.gameSpeed = .veryFast
             }
         }
+    }
+    
+    /// Handle hold-style fast forward button press
+    private func fastForwardPressed() {
+        DLOG("Fast forward button pressed (hold style)")
+        guard let core = emulatorCore else {
+            ELOG("Cannot set fast forward - emulatorCore is nil")
+            return
+        }
+        
+        // Save the current game speed to restore it on release
+        previousGameSpeed = core.gameSpeed
+        
+        // Set to fast mode
+        DLOG("Setting game speed to fast")
+        core.gameSpeed = .fast
+    }
+    
+    /// Handle hold-style fast forward button release
+    private func fastForwardReleased() {
+        DLOG("Fast forward button released (hold style)")
+        guard let core = emulatorCore else {
+            ELOG("Cannot reset game speed - emulatorCore is nil")
+            return
+        }
+        
+        // Reset to normal speed or previous speed
+        if let previousSpeed = previousGameSpeed {
+            DLOG("Restoring previous game speed: \(previousSpeed)")
+            core.gameSpeed = previousSpeed
+        } else {
+            DLOG("Resetting game speed to normal")
+            core.gameSpeed = .normal
+        }
+        
+        // Clear the previous game speed
+        previousGameSpeed = nil
     }
     
     /// Handle toggle slow motion button press
