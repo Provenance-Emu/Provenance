@@ -16,7 +16,7 @@ public struct DeltaSkinView: View {
     let inputHandler: DeltaSkinInputHandler
 
     /// State for touch and button interactions
-    @State private var touchLocation: CGPoint?
+    @State private var touchLocations: Set<CGPoint> = []
     @State private var activeButton: (frame: CGRect, mappingSize: CGSize, buttonId: String)?
     @State private var lastButtonPressed: String?
     @State private var isButtonHapticEnabled = true  // Add this state
@@ -41,8 +41,14 @@ public struct DeltaSkinView: View {
     // Track multiple active buttons
     @State private var activeButtons: [(frame: CGRect, mappingSize: CGSize, buttonId: String, timestamp: Date)] = []
 
-    // Track the currently pressed button
+    // Track the currently pressed button (legacy support)
     @State private var currentlyPressedButton: DeltaSkinButton?
+    
+    // Track multiple touch points for multi-touch support
+    @State private var touchPoints: [UITouch: CGPoint] = [:]
+    
+    // Map touch IDs to button IDs for tracking which touch is pressing which button
+    @State private var touchToButtonMap: [UITouch: String] = [:]
     
     // Track the current preview size
     @State private var previewSize: CGSize = .zero
@@ -448,7 +454,7 @@ public struct DeltaSkinView: View {
                         }
 
                         // Touch indicators - always on top
-                        if let location = touchLocation {
+                        ForEach(Array(touchLocations), id: \.self) { location in
                             DeltaSkinTouchIndicator(at: location)
                                 .zIndex(5)
                         }
@@ -510,35 +516,30 @@ public struct DeltaSkinView: View {
                 }
             }
             #if !os(tvOS)
+            .contentShape(Rectangle())
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { value in
-                        handleTouch(at: value.location, in: geometry.size)
+                        DLOG("DragGesture onChanged: \(value.location)")
+                        // Store the touch location for visual feedback and direction detection
+                        touchLocations.insert(value.location)
+                        
+                        // Handle the touch at this location
+                        handleTouchAtLocation(value.location, in: geometry.size)
                     }
                     .onEnded { _ in
-                        // Play release sound if we had a pressed button
-                        if let button = currentlyPressedButton,
-                           let mappingSize = skin.mappingSize(for: traits) {
-                            // Use same position calculations for consistent audio
-                            let panPosition = Float((button.frame.midX / mappingSize.width) * 2 - 1)
-                            let area = button.frame.width * button.frame.height
-                            let maxArea = mappingSize.width * mappingSize.height
-                            let normalizedSize = Float((area / maxArea) * 0.5 + 0.5)
-
-                            // Play release sound using current sound setting
-                            let soundType = Defaults[.buttonSound]
-                            ButtonSoundGenerator.shared.playButtonReleaseSound(
-                                sound: soundType,
-                                pan: panPosition,
-                                volume: normalizedSize
-                            )
-                            
-                            // Extract the input command and call the input handler's buttonReleased method
-                            let inputCommand = extractInputCommand(from: button)
-                            inputHandler.buttonReleased(inputCommand)
+                        DLOG("DragGesture onEnded")
+                        // Release all pressed buttons when touch ends
+                        let buttonsToRelease = pressedButtons
+                        for buttonId in buttonsToRelease {
+                            handleButtonRelease(buttonId)
                         }
-
-                        touchLocation = nil
+                        
+                        // Clear active buttons to ensure visual feedback is removed
+                        activeButtons.removeAll()
+                        
+                        // Reset state
+                        touchLocations.removeAll()
                         currentlyPressedButton = nil
                     }
             )
@@ -617,9 +618,11 @@ public struct DeltaSkinView: View {
         ButtonSoundGenerator.shared.playButtonPressSound(pan: panPosition, volume: normalizedSize)
     }
 
-    private func handleTouch(at location: CGPoint, in size: CGSize) {
+    /// Handle a touch at the given location
+    private func handleTouchAtLocation(_ location: CGPoint, in size: CGSize) {
+        DLOG("handleTouchAtLocation: location=\(location)")
         // Store the touch location for visual feedback and direction detection
-        touchLocation = location
+        touchLocations.insert(location)
 
         guard let buttons = skin.buttons(for: traits),
               let mappingSize = skin.mappingSize(for: traits) else { return }
@@ -700,16 +703,17 @@ public struct DeltaSkinView: View {
             } else if case .directional = button.input {
                 // Special handling for D-pad buttons to allow direction changes
                 handleDPadInput(button, scale: scale, xOffset: xOffset, yOffset: yOffset, mappingSize: mappingSize)
-            } else if button != currentlyPressedButton {
-                // For non-D-pad buttons, only trigger effects for new button presses
-                // Release any previous button first
-                if let previousButton = currentlyPressedButton {
-                    let previousCommand = extractInputCommand(from: previousButton)
-                    DLOG("Releasing previous button: \(previousCommand)")
-                    inputHandler.buttonReleased(previousCommand)
+            } else {
+                // For non-D-pad buttons, use our multi-button press system
+                // Extract the input command
+                let inputCommand = extractInputCommand(from: button)
+                
+                // Use our enhanced button press handling that supports multiple buttons
+                if !pressedButtons.contains(inputCommand) {
+                    handleButtonPress(inputCommand)
                 }
                 
-                // Set the new button as current
+                // Set as current button for legacy support
                 currentlyPressedButton = button
 
                 // Add visual feedback
@@ -722,22 +726,7 @@ public struct DeltaSkinView: View {
                     timestamp: Date()
                 )
                 activeButtons.append(newButton)
-                #if !os(tvOS)
-                buttonGenerator.impactOccurred(intensity: 0.8)
-                #endif
-                // Play sound with current position
-                playClickSound(for: button)
                 
-                // Extract the input command
-                let inputCommand = extractInputCommand(from: button)
-                
-                // Log both the input command and the highlight button ID
-                DLOG("Button press - inputCommand: \(inputCommand), highlightButtonId: \(highlightButtonId)")
-                
-                // Use the input handler for all buttons
-                // The input handler will determine whether to use the controller or core
-                inputHandler.buttonPressed(inputCommand)
-
                 // Clean up old highlights after delay
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                     activeButtons.removeAll { $0.timestamp <= newButton.timestamp }
@@ -749,18 +738,18 @@ public struct DeltaSkinView: View {
             // Extract the input command using the proper method
             let inputCommand = extractInputCommand(from: previousButton)
             
-            // Log the input command for release
-            DLOG("Button release - inputCommand: \(inputCommand)")
+            // Use our enhanced button release handling
+            handleButtonRelease(inputCommand)
             
-            // Use the input handler for all buttons
-            // The input handler will determine whether to use the controller or core
-            inputHandler.buttonReleased(inputCommand)
+            // Clear the current button
             currentlyPressedButton = nil
         } else {
             // Touch is not on any button and no previous button was pressed
             currentlyPressedButton = nil
         }
     }
+    
+    // We're now using a simplified approach with DragGesture instead of individual touch tracking
 
     #if !os(tvOS)
     private let buttonGenerator: UIImpactFeedbackGenerator = {
@@ -797,9 +786,10 @@ public struct DeltaSkinView: View {
         )
     }
 
-    /// Handle D-pad input with support for direction changes
+    /// Handle D-pad input with support for direction changes and diagonals
     private func handleDPadInput(_ button: DeltaSkinButton, scale: CGFloat, xOffset: CGFloat, yOffset: CGFloat, mappingSize: CGSize) {
-        guard let touchLocation = touchLocation else { return }
+        // Use the first touch location for D-pad input
+        guard let touchLocation = touchLocations.first else { return }
         
         // Calculate the button center in view coordinates
         let buttonCenterX = button.frame.midX * scale + xOffset
@@ -817,71 +807,117 @@ public struct DeltaSkinView: View {
         // Add debug logging to help diagnose direction issues
         DLOG("D-pad highlight: relativeX=\(relativeX), relativeY=\(relativeY)")
         
-        // Determine which direction to highlight
-        let newDirection: String
+        // Track currently active directions for D-pad
+        var activeDirections: Set<String> = []
+        
+        // Determine which directions to activate based on touch position
         if sqrt(relativeX * relativeX + relativeY * relativeY) < deadZoneRadius {
-            // In dead zone, use a special center highlight
+            // In dead zone, no directions are active
             DLOG("D-pad highlight: In dead zone")
-            newDirection = "dpad_center"
-        } else if abs(relativeX) > abs(relativeY) {
-            // Horizontal movement is dominant
-            if relativeX > 0 {
-                DLOG("D-pad highlight: RIGHT direction detected")
-                newDirection = "right"
-            } else {
-                DLOG("D-pad highlight: LEFT direction detected")
-                newDirection = "left"
-            }
         } else {
-            // Vertical movement is dominant
-            if relativeY > 0 {
-                DLOG("D-pad highlight: DOWN direction detected")
-                newDirection = "down"
-            } else {
-                DLOG("D-pad highlight: UP direction detected")
-                newDirection = "up"
+            // Calculate angle to determine direction
+            let angle = atan2(relativeY, relativeX)
+            let degrees = angle * 180 / .pi
+            
+            // Determine horizontal component
+            if degrees > -135 && degrees < -45 {
+                // Up
+                activeDirections.insert("up")
+            } else if degrees > 45 && degrees < 135 {
+                // Down
+                activeDirections.insert("down")
+            }
+            
+            // Determine vertical component
+            if degrees > -45 && degrees < 45 {
+                // Right
+                activeDirections.insert("right")
+            } else if degrees > 135 || degrees < -135 {
+                // Left
+                activeDirections.insert("left")
+            }
+            
+            // Handle diagonal directions - prevent opposing directions
+            if activeDirections.contains("up") && activeDirections.contains("down") {
+                // Can't press up and down simultaneously
+                if abs(relativeY) > abs(relativeX) {
+                    // Vertical movement is stronger
+                    if relativeY < 0 {
+                        activeDirections.remove("down")
+                    } else {
+                        activeDirections.remove("up")
+                    }
+                } else {
+                    // Default to removing both in case of ambiguity
+                    activeDirections.remove("up")
+                    activeDirections.remove("down")
+                }
+            }
+            
+            if activeDirections.contains("left") && activeDirections.contains("right") {
+                // Can't press left and right simultaneously
+                if abs(relativeX) > abs(relativeY) {
+                    // Horizontal movement is stronger
+                    if relativeX < 0 {
+                        activeDirections.remove("right")
+                    } else {
+                        activeDirections.remove("left")
+                    }
+                } else {
+                    // Default to removing both in case of ambiguity
+                    activeDirections.remove("left")
+                    activeDirections.remove("right")
+                }
             }
         }
         
-        // Check if the direction has changed
-        let previousDirection = currentlyPressedButton.flatMap { extractInputCommand(from: $0) }
+        // Get currently pressed D-pad directions
+        let currentDirections: Set<String> = Set(["up", "down", "left", "right"].filter { pressedButtons.contains($0) })
         
-        // If this is a new press or the direction has changed
-        if currentlyPressedButton != button || previousDirection != newDirection {
-            // Release the previous direction if there was one
-            if let previousButton = currentlyPressedButton, let previousDirection = previousDirection, previousDirection != "dpad_center" {
-                DLOG("Releasing previous D-pad direction: \(previousDirection)")
-                inputHandler.buttonReleased(previousDirection)
+        // Release directions that are no longer active
+        for direction in currentDirections {
+            if !activeDirections.contains(direction) {
+                DLOG("Releasing D-pad direction: \(direction)")
+                handleButtonRelease(direction)
             }
-            
-            // Update the current button
-            currentlyPressedButton = button
-            
-            // Add visual feedback for the new direction
-            let newButton = (
-                frame: button.frame,
-                mappingSize: mappingSize,
-                buttonId: newDirection,
-                timestamp: Date()
-            )
-            activeButtons.append(newButton)
+        }
+        
+        // Press new directions
+        for direction in activeDirections {
+            if !currentDirections.contains(direction) {
+                DLOG("Pressing D-pad direction: \(direction)")
+                handleButtonPress(direction)
+            }
+        }
+        
+        // Update the current button for legacy support
+        currentlyPressedButton = button
+        
+        // Add visual feedback for active directions
+        if !activeDirections.isEmpty {
+            for direction in activeDirections {
+                let newButton = (
+                    frame: button.frame,
+                    mappingSize: mappingSize,
+                    buttonId: direction,
+                    timestamp: Date()
+                )
+                activeButtons.append(newButton)
+            }
             
             #if !os(tvOS)
-            buttonGenerator.impactOccurred(intensity: 0.8)
+            buttonGenerator.impactOccurred(intensity: 0.6)
             #endif
             
-            // Play sound with current position
+            // Play sound with current position (only once)
             playClickSound(for: button)
-            
-            // Press the new direction if it's not the center
-            if newDirection != "dpad_center" {
-                DLOG("Pressing new D-pad direction: \(newDirection)")
-                inputHandler.buttonPressed(newDirection)
-            }
             
             // Clean up old highlights after delay
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                activeButtons.removeAll { $0.timestamp <= newButton.timestamp }
+                self.activeButtons.removeAll { button in
+                    let now = Date()
+                    return now.timeIntervalSince(button.timestamp) > 0.2
+                }
             }
         }
     }
@@ -1051,15 +1087,15 @@ public struct DeltaSkinView: View {
                 analogStickMapping(mapping: mapping, frame: scaledFrame, absolutePosition: CGPoint(x: absoluteX, y: absoluteY))
             } else {
                 // Regular button
-                Button(action: {
-                    // Pass the button ID directly instead of the button object
-                    handleButtonPress(mapping.id)
-                }) {
+                ZStack {
+                    // Visual feedback for pressed state
+                    let isPressed = pressedButtons.contains(mapping.id)
+                    
                     if showDebugOverlay {
                         // Show debug overlay for the button
                         Rectangle()
                             .stroke(Color.red, lineWidth: 2)
-                            .background(Color.red.opacity(0.3))
+                            .background(Color.red.opacity(isPressed ? 0.6 : 0.3))
                             .overlay(
                                 Text(mapping.id)
                                     .font(.caption)
@@ -1067,13 +1103,16 @@ public struct DeltaSkinView: View {
                                     .padding(4)
                             )
                     } else {
-                        // Invisible button area in normal mode
-                        Color.clear
+                        // Invisible button area in normal mode with subtle visual feedback
+                        Rectangle()
+                            .fill(Color.clear)
+                            .background(isPressed ? Color.white.opacity(0.2) : Color.clear)
                     }
                 }
                 .frame(width: scaledFrame.width, height: scaledFrame.height)
                 .position(x: absoluteX, y: absoluteY)
                 .gesture(
+                    // Use a direct gesture without SimultaneousGesture since we removed the main gesture
                     DragGesture(minimumDistance: 0)
                         .onChanged { _ in
                             // Pass the button ID directly
@@ -1084,6 +1123,8 @@ public struct DeltaSkinView: View {
                             handleButtonRelease(mapping.id)
                         }
                 )
+                // Make sure this view doesn't block other touch events
+                .allowsHitTesting(true)
                 .accessibility(identifier: "Button-\(mapping.id)")
             }
         }
@@ -1109,7 +1150,7 @@ public struct DeltaSkinView: View {
 
             // Up region
             Rectangle()
-                .fill(showDebugOverlay ? Color.green.opacity(0.3) : Color.clear)
+                .fill(showDebugOverlay || pressedButtons.contains("up") ? Color.green.opacity(0.3) : Color.clear)
                 .frame(
                     width: frame.width * 0.33,
                     height: frame.height * 0.33
@@ -1119,10 +1160,19 @@ public struct DeltaSkinView: View {
                     y: frame.height * 0.16
                 )
                 .overlay(showDebugOverlay ? Text("Up").font(.caption2).foregroundColor(.white) : nil)
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { _ in
+                            handleButtonPress("up")
+                        }
+                        .onEnded { _ in
+                            handleButtonRelease("up")
+                        }
+                )
 
             // Down region
             Rectangle()
-                .fill(showDebugOverlay ? Color.green.opacity(0.3) : Color.clear)
+                .fill(showDebugOverlay || pressedButtons.contains("down") ? Color.green.opacity(0.3) : Color.clear)
                 .frame(
                     width: frame.width * 0.33,
                     height: frame.height * 0.33
@@ -1132,10 +1182,19 @@ public struct DeltaSkinView: View {
                     y: frame.height * 0.84
                 )
                 .overlay(showDebugOverlay ? Text("Down").font(.caption2).foregroundColor(.white) : nil)
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { _ in
+                            handleButtonPress("down")
+                        }
+                        .onEnded { _ in
+                            handleButtonRelease("down")
+                        }
+                )
 
             // Left region
             Rectangle()
-                .fill(showDebugOverlay ? Color.green.opacity(0.3) : Color.clear)
+                .fill(showDebugOverlay || pressedButtons.contains("left") ? Color.green.opacity(0.3) : Color.clear)
                 .frame(
                     width: frame.width * 0.33,
                     height: frame.height * 0.33
@@ -1145,10 +1204,19 @@ public struct DeltaSkinView: View {
                     y: frame.height / 2
                 )
                 .overlay(showDebugOverlay ? Text("Left").font(.caption2).foregroundColor(.white) : nil)
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { _ in
+                            handleButtonPress("left")
+                        }
+                        .onEnded { _ in
+                            handleButtonRelease("left")
+                        }
+                )
 
             // Right region
             Rectangle()
-                .fill(showDebugOverlay ? Color.green.opacity(0.3) : Color.clear)
+                .fill(showDebugOverlay || pressedButtons.contains("right") ? Color.green.opacity(0.3) : Color.clear)
                 .frame(
                     width: frame.width * 0.33,
                     height: frame.height * 0.33
@@ -1158,6 +1226,15 @@ public struct DeltaSkinView: View {
                     y: frame.height / 2
                 )
                 .overlay(showDebugOverlay ? Text("Right").font(.caption2).foregroundColor(.white) : nil)
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { _ in
+                            handleButtonPress("right")
+                        }
+                        .onEnded { _ in
+                            handleButtonRelease("right")
+                        }
+                )
         }
         .frame(width: frame.width, height: frame.height)
         .position(x: absolutePosition.x, y: absolutePosition.y)
@@ -1199,12 +1276,60 @@ public struct DeltaSkinView: View {
     }
 
     private func handleButtonPress(_ buttonId: String) {
-        // Pass the button ID directly to the input handler
+        DLOG("🔴 handleButtonPress called with buttonId: \(buttonId)")
+        // Safety check for duplicate press events
+        if pressedButtons.contains(buttonId) {
+            DLOG("⚠️ Button \(buttonId) already pressed, skipping press event")
+            return
+        }
+        
+        // Add to the set of currently pressed buttons
+        pressedButtons.insert(buttonId)
+        DLOG("✅ Button pressed: \(buttonId) - Total pressed buttons: \(pressedButtons.count)")
+        DLOG("Current pressed buttons: \(pressedButtons)")
+        
+        // Play button sound
+        if let button = skin.buttons(for: traits)?.first(where: { $0.id == buttonId }),
+           let mappingSize = skin.mappingSize(for: traits) {
+            // Use position calculations for audio
+            let panPosition = Float((button.frame.midX / mappingSize.width) * 2 - 1)
+            let area = button.frame.width * button.frame.height
+            let maxArea = mappingSize.width * mappingSize.height
+            let normalizedSize = Float((area / maxArea) * 0.5 + 0.5)
+            
+            // Play sound
+            ButtonSoundGenerator.shared.playButtonPressSound(
+                pan: panPosition,
+                volume: normalizedSize
+            )
+            
+            // Haptic feedback
+            #if !os(tvOS) && os(iOS)
+            if !ProcessInfo.processInfo.isiOSAppOnMac {
+                impactGenerator.impactOccurred()
+            }
+            #endif
+        }
+        
+        // Pass to the input handler
         inputHandler.buttonPressed(buttonId)
     }
 
     private func handleButtonRelease(_ buttonId: String) {
-        // Pass the button ID directly to the input handler
+        DLOG("🔵 handleButtonRelease called with buttonId: \(buttonId)")
+        // Safety check to prevent releasing buttons that weren't pressed
+        if !pressedButtons.contains(buttonId) {
+            DLOG("⚠️ Button \(buttonId) not pressed, skipping release event")
+            return
+        }
+        
+        // Remove from the set of currently pressed buttons
+        pressedButtons.remove(buttonId)
+        DLOG("✅ Button released: \(buttonId) - Remaining pressed buttons: \(pressedButtons.count)")
+        DLOG("Current pressed buttons after release: \(pressedButtons)")
+        
+        // Pass to the input handler
+        DLOG("Forwarding button release to input handler: \(buttonId)")
         inputHandler.buttonReleased(buttonId)
     }
     
@@ -1217,7 +1342,7 @@ public struct DeltaSkinView: View {
         case .directional(let commands):
             // For directional inputs, we need to determine which direction is being pressed
             // This requires checking the touch location relative to the button's center
-            if let touchLocation = touchLocation, let mappingSize = skin.mappingSize(for: traits) {
+            if let touchLocation = touchLocations.first, let mappingSize = skin.mappingSize(for: traits) {
                 // We need to use the same coordinate transformation as in handleTouch
                 // to ensure consistent direction detection
                 let scale = min(
