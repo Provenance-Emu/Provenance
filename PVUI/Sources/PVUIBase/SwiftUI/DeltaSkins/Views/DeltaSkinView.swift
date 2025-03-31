@@ -368,6 +368,18 @@ public struct DeltaSkinView: View {
             ZStack {
                 if let layout = calculateLayout(for: geometry) {
                     ZStack {
+                        if !isInEmulator {
+                            // Screen layer (color bars) - should be behind everything
+                            DeltaSkinScreenLayer(
+                                skin: skin,
+                                traits: traits,
+                                filters: filters,
+                                size: geometry.size,
+                                screenAspectRatio: screenAspectRatio
+                            )
+                            .zIndex(0)
+                        }
+
                         // Base skin image
                         if let skinImage = skinImage {
                             Image(uiImage: skinImage)

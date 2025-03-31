@@ -4,6 +4,42 @@ import ZIPFoundation
 
 /// Default screen configurations for different console types
 enum DeltaSkinDefaults {
+    
+//    /// Calculate a default screen frame based on game type and available buttons
+//    static func defaultScreenFrame(
+//        for gameType: DeltaSkinGameType,
+//        in mappingSize: CGSize,
+//        buttons: [DeltaSkinButton]?,
+//        isPreview: Bool
+//    ) -> CGRect {
+//        // Default to top half of the skin
+//        var defaultFrame = CGRect(
+//            x: 0,
+//            y: 0,
+//            width: mappingSize.width,
+//            height: mappingSize.height * 0.5
+//        )
+//        
+//        // If we have buttons, try to position above them
+//        if let buttons = buttons, !buttons.isEmpty {
+//            // Find the topmost button
+//            if let topButton = buttons.min(by: { $0.frame.minY < $1.frame.minY }) {
+//                // Position screen above the topmost button
+//                let buttonTopY = topButton.frame.minY
+//                
+//                // Use the space above the buttons for the screen
+//                defaultFrame = CGRect(
+//                    x: 0,
+//                    y: 0,
+//                    width: mappingSize.width,
+//                    height: buttonTopY * 0.95 // Leave a small gap
+//                )
+//            }
+//        }
+//        
+//        return defaultFrame
+//    }
+        
     /// Calculate default screen frame when not specified in skin
     static func defaultScreenFrame(
         for gameType: DeltaSkinGameType,

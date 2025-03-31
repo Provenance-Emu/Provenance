@@ -65,6 +65,15 @@ struct EmulatorWithSkinView: View {
                                     skinRenderComplete = true
                                     onSkinLoaded()
                                     DLOG("🎮 EmulatorWithSkinView: Skin render complete, notifying observers")
+                                    
+                                    // Post a notification that the skin is loaded
+                                    // This will trigger the GPU view positioning in PVEmulatorViewController
+                                    NotificationCenter.default.post(
+                                        name: NSNotification.Name("DeltaSkinLoaded"),
+                                        object: nil,
+                                        userInfo: ["skinId": skin.identifier]
+                                    )
+                                    DLOG("🎮 Posted DeltaSkinLoaded notification for skin: \(skin.identifier)")
 
                                     // Request a refresh after the skin is loaded
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {

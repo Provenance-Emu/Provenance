@@ -115,26 +115,20 @@ extension PVEmulatorViewController {
             DLOG("Added GPU view to view hierarchy")
         }
 
-        // Configure the GPU view
-        gameScreenView.frame = view.bounds
-        gameScreenView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        gameScreenView.isHidden = false
-        gameScreenView.alpha = 1.0
+        // Configure basic properties of the GPU view
         gameScreenView.backgroundColor = .black // Black background for the game screen
         gameScreenView.isOpaque = true // GPU view should be opaque
-
-        // Force layout
-        gameScreenView.setNeedsLayout()
-        gameScreenView.layoutIfNeeded()
+        gameScreenView.isHidden = false
+        gameScreenView.alpha = 1.0
+        
+        // Position the GPU view based on the DeltaSkin screen information
+        updateGPUViewPositionForDeltaSkin()
 
         // Force a draw to make sure content is visible
         if let metalVC = gpuViewController as? PVMetalViewController {
             DLOG("Forcing initial draw of GPU view")
             metalVC.draw(in: metalVC.mtlView)
         }
-        
-        // Make sure GPU view is in front
-        view.bringSubviewToFront(gameScreenView)
     }
 
     /// Add the skin view to the view hierarchy
@@ -254,10 +248,8 @@ extension PVEmulatorViewController {
         
         // CRITICAL: Update in the correct order to maintain z-order
         
-        // 1. First update GPU view frame (bottom layer)
-        if let gameScreenView = gpuViewController.view {
-            gameScreenView.frame = currentBounds
-        }
+        // 1. Update the GPU view position based on the DeltaSkin screen information
+        updateGPUViewPositionForDeltaSkin()
         
         // 2. Then update Metal view (middle layer)
         if let metalVC = gpuViewController as? PVMetalViewController,
@@ -280,9 +272,11 @@ extension PVEmulatorViewController {
     func refreshGPUView() {
         DLOG("Refreshing GPU view")
 
-        // Update frame
+        // Update position based on DeltaSkin screen information
+        updateGPUViewPositionForDeltaSkin()
+
+        // Make sure the GPU view is visible
         if let gameScreenView = gpuViewController.view {
-            gameScreenView.frame = view.bounds
             gameScreenView.isHidden = false
             gameScreenView.alpha = 1.0
         }

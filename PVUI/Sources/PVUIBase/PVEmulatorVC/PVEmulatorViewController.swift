@@ -61,6 +61,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     internal var skinContainerView: UIView?
     
     
+    // Store cancellables for skin loading observation
+    internal var skinLoadingCancellable: AnyCancellable?
+    
+    // Keep track of whether we've positioned the GPU view
+    internal static var hasPositionedGPUView = false
+        
     // Debug overlay view
     internal var debugOverlayView: UIView?
     internal var debugInfoLabel: UILabel?
