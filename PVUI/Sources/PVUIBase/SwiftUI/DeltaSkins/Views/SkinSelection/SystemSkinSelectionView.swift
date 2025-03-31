@@ -150,9 +150,10 @@ public struct SystemSkinSelectionView: View {
         VStack {
             ZStack {
                 // Skin preview
-                SkinPreviewImage(skin: skin)
-                    .aspectRatio(1.5, contentMode: .fit)
-                    .cornerRadius(12)
+                SkinPreviewCell(skin: skin, manager: skinManager)
+//                SkinPreviewImage(skin: skin)
+//                    .aspectRatio(1.5, contentMode: .fit)
+//                    .cornerRadius(12)
             }
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
