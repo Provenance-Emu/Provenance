@@ -45,10 +45,10 @@ public struct DeltaSkinView: View {
     @State private var currentlyPressedButton: DeltaSkinButton?
     
     // Track multiple touch points for multi-touch support
-    @State private var touchPoints: [UITouch: CGPoint] = [:]
+    @State private var touchPoints: [ObjectIdentifier: CGPoint] = [:]
     
     // Map touch IDs to button IDs for tracking which touch is pressing which button
-    @State private var touchToButtonMap: [UITouch: String] = [:]
+    @State private var touchToButtonMap: [ObjectIdentifier: String] = [:]
     
     // Track the current preview size
     @State private var previewSize: CGSize = .zero
@@ -516,32 +516,72 @@ public struct DeltaSkinView: View {
                 }
             }
             #if !os(tvOS)
-            .contentShape(Rectangle())
-            .gesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged { value in
-                        DLOG("DragGesture onChanged: \(value.location)")
-                        // Store the touch location for visual feedback and direction detection
-                        touchLocations.insert(value.location)
+            .overlay(
+                MultiTouchView { touchPhase, touches in
+                    DLOG("MultiTouchView callback: phase=\(touchPhase), touches=\(touches.count)")
+                    
+                    switch touchPhase {
+                    case .began, .moved:
+                        // Process each active touch
+                        for touch in touches {
+                            let location = touch.location
+                            DLOG("Processing touch: \(touch.id) at \(location)")
+                            
+                            // Store this touch point for visualization
+                            touchLocations.insert(location)
+                            
+                            // Store the mapping between touch ID and location
+                            touchToButtonMap[touch.id] = nil
+                            
+                            // Handle this touch location
+                            handleTouchAtLocation(location, in: geometry.size, touchId: touch.id)
+                        }
+                        DLOG("Current touch points: \(touchLocations.count)")
                         
-                        // Handle the touch at this location
-                        handleTouchAtLocation(value.location, in: geometry.size)
-                    }
-                    .onEnded { _ in
-                        DLOG("DragGesture onEnded")
-                        // Release all pressed buttons when touch ends
-                        let buttonsToRelease = pressedButtons
-                        for buttonId in buttonsToRelease {
-                            handleButtonRelease(buttonId)
+                    case .ended, .cancelled:
+                        // Process ended touches
+                        for touch in touches {
+                            DLOG("Ending touch: \(touch.id)")
+                            
+                            // Remove this touch point from visualization
+                            touchLocations.remove(touch.location)
+                            
+                            // Release any button associated with this touch
+                            if let buttonId = touchToButtonMap[touch.id] {
+                                DLOG("Releasing button \(buttonId) for touch \(touch.id)")
+                                handleButtonRelease(buttonId)
+                                touchToButtonMap.removeValue(forKey: touch.id)
+                            }
                         }
                         
-                        // Clear active buttons to ensure visual feedback is removed
-                        activeButtons.removeAll()
-                        
-                        // Reset state
-                        touchLocations.removeAll()
-                        currentlyPressedButton = nil
+                        // If all touches are gone, ensure everything is reset
+                        if touchToButtonMap.isEmpty {
+                            DLOG("All touches ended, cleaning up")
+                            
+                            // Clear active buttons to ensure visual feedback is removed
+                            activeButtons.removeAll()
+                            
+                            // Reset state
+                            touchLocations.removeAll()
+                            currentlyPressedButton = nil
+                            
+                            // Double-check that all D-pad buttons are released
+                            for direction in ["up", "down", "left", "right"] {
+                                if pressedButtons.contains(direction) {
+                                    DLOG("Force releasing stuck D-pad button: \(direction)")
+                                    handleButtonRelease(direction)
+                                }
+                            }
+                            
+                            // Clear all pressed buttons as a final safety measure
+                            let allButtons = pressedButtons
+                            for buttonId in allButtons {
+                                handleButtonRelease(buttonId)
+                            }
+                        }
                     }
+                }
+                .frame(width: geometry.size.width, height: geometry.size.height)
             )
             #endif
         }
@@ -619,8 +659,8 @@ public struct DeltaSkinView: View {
     }
 
     /// Handle a touch at the given location
-    private func handleTouchAtLocation(_ location: CGPoint, in size: CGSize) {
-        DLOG("handleTouchAtLocation: location=\(location)")
+    private func handleTouchAtLocation(_ location: CGPoint, in size: CGSize, touchId: ObjectIdentifier) {
+        DLOG("handleTouchAtLocation: location=\(location), touchId=\(touchId)")
         // Store the touch location for visual feedback and direction detection
         touchLocations.insert(location)
 
@@ -711,6 +751,10 @@ public struct DeltaSkinView: View {
                 // Use our enhanced button press handling that supports multiple buttons
                 if !pressedButtons.contains(inputCommand) {
                     handleButtonPress(inputCommand)
+                    
+                    // Associate this touch with this button
+                    touchToButtonMap[touchId] = inputCommand
+                    DLOG("Associated touch \(touchId) with button \(inputCommand)")
                 }
                 
                 // Set as current button for legacy support

@@ -10,7 +10,10 @@ public enum MultiTouchPhase {
 }
 
 /// A touch with its location
-public struct TouchPoint {
+public struct TouchPoint: Identifiable {
+    public var id: ObjectIdentifier {
+        ObjectIdentifier(touch)
+    }
     let touch: UITouch
     let location: CGPoint
 }
@@ -71,12 +74,13 @@ public struct MultiTouchView: UIViewRepresentable {
         
         private func handleTouches(_ phase: MultiTouchPhase, touches: Set<UITouch>) {
             print("⚡️ MultiTouchView: \(phase) with \(touches.count) touches")
-            print("⚡️ View frame: \(self.frame), bounds: \(self.bounds)")
-            print("⚡️ isUserInteractionEnabled: \(self.isUserInteractionEnabled)")
+            print("⚡️ View frame: \(self.frame), bounds: \(self.bounds), window: \(String(describing: self.window))")
+            print("⚡️ isUserInteractionEnabled: \(self.isUserInteractionEnabled), alpha: \(self.alpha)")
+            print("⚡️ superview: \(String(describing: self.superview))")
             
             let touchPoints = touches.map { touch in
                 let location = touch.location(in: self)
-                print("⚡️ Touch at \(location) - phase: \(phase)")
+                print("⚡️ Touch at \(location) - phase: \(phase), force: \(touch.force)")
                 return TouchPoint(touch: touch, location: location)
             }
             
