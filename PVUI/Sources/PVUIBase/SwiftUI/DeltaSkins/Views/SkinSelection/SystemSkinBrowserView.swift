@@ -144,6 +144,9 @@ public struct SystemSkinBrowserView: View {
             }
             .buttonStyle(.plain)
             .padding(.horizontal)
+            
+            // Preview of selected skins for this system
+            SystemSkinPreviewRow(system: system)
         }
         .padding(.vertical, 8)
         .background(

@@ -11,6 +11,8 @@ import SwiftUI
 struct SkinPreviewCell: View {
     let skin: any DeltaSkinProtocol
     let manager: DeltaSkinManager
+    var orientation: DeltaSkinOrientation = .portrait
+    
     @State private var showingDeleteAlert = false
     @State private var deleteError: Error?
     @State private var showingErrorAlert = false
@@ -34,24 +36,44 @@ struct SkinPreviewCell: View {
     }
 
     private var previewTraits: DeltaSkinTraits {
-        // Try current device first
+        // Try current device first with specified orientation
         let device: DeltaSkinDevice = horizontalSizeClass == .regular ? .ipad : .iphone
-        let traits = DeltaSkinTraits(device: device, displayType: .standard, orientation: .portrait)
+        let traits = DeltaSkinTraits(device: device, displayType: .standard, orientation: orientation)
 
         // Return first supported configuration
         if skin.supports(traits) {
             return traits
         }
+        
+        // Try with edge to edge display type
+        let edgeToEdgeTraits = DeltaSkinTraits(device: device, displayType: .edgeToEdge, orientation: orientation)
+        if skin.supports(edgeToEdgeTraits) {
+            return edgeToEdgeTraits
+        }
 
         // Try alternate device
         let altDevice: DeltaSkinDevice = device == .ipad ? .iphone : .ipad
-        let altTraits = DeltaSkinTraits(device: altDevice, displayType: .standard, orientation: .portrait)
+        let altTraits = DeltaSkinTraits(device: altDevice, displayType: .standard, orientation: orientation)
 
         if skin.supports(altTraits) {
             return altTraits
         }
+        
+        // Try alternate device with edge to edge
+        let altEdgeToEdgeTraits = DeltaSkinTraits(device: altDevice, displayType: .edgeToEdge, orientation: orientation)
+        if skin.supports(altEdgeToEdgeTraits) {
+            return altEdgeToEdgeTraits
+        }
+        
+        // If the requested orientation isn't supported, try the opposite orientation
+        let oppositeOrientation: DeltaSkinOrientation = orientation == .portrait ? .landscape : .portrait
+        let oppositeTraits = DeltaSkinTraits(device: device, displayType: .standard, orientation: oppositeOrientation)
+        
+        if skin.supports(oppositeTraits) {
+            return oppositeTraits
+        }
 
-        // Fallback to edge to edge
+        // Fallback to edge to edge with default orientation
         return DeltaSkinTraits(device: device, displayType: .edgeToEdge, orientation: .portrait)
     }
 
@@ -115,6 +137,7 @@ struct SkinPreviewCell: View {
             PreviewContainer {
                 DeltaSkinView(skin: skin, traits: previewTraits, inputHandler: .init(emulatorCore: nil))
                     .allowsHitTesting(false)
+                    .aspectRatio(orientation == .portrait ? 0.5 : 2.0, contentMode: .fit)
             }
             .overlay {
                 // Rubber-like gradient overlay

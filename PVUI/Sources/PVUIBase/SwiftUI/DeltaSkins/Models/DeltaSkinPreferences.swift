@@ -1,60 +1,144 @@
 import Foundation
 import PVPrimitives
 import Combine
+import SwiftUI
+
+/// Orientation for skin selection
+public enum SkinOrientation: String, Codable, CaseIterable {
+    case portrait
+    case landscape
+    
+    var displayName: String {
+        switch self {
+        case .portrait: return "Portrait"
+        case .landscape: return "Landscape"
+        }
+    }
+    
+    var icon: String {
+        switch self {
+        case .portrait: return "iphone"
+        case .landscape: return "iphone.landscape"
+        }
+    }
+    
+    var deltaSkinOrientation: DeltaSkinOrientation {
+        switch self {
+        case .portrait: return .portrait
+        case .landscape: return .landscape
+        }
+    }
+}
 
 /// Manages user preferences for Delta skins
 public final class DeltaSkinPreferences: ObservableObject {
     /// Shared instance
     public static let shared = DeltaSkinPreferences()
-
-    /// Currently selected skin identifier for each system
-    @Published public private(set) var selectedSkins: [SystemIdentifier: String] = [:]
-
+    
+    /// Currently selected skin identifier for each system and orientation
+    @Published public private(set) var selectedSkins: [SystemIdentifier: [SkinOrientation: String]] = [:]
+    
     /// UserDefaults key for storing skin preferences
-    private let preferencesKey = "com.provenance.deltaskin.preferences"
+    private let preferencesKey = "com.provenance.deltaskin.preferences.v2"
 
     private init() {
         loadPreferences()
     }
 
-    /// Get the selected skin identifier for a system
-    /// - Parameter system: The system identifier
+    /// Get the selected skin identifier for a system and orientation
+    /// - Parameters:
+    ///   - system: The system identifier
+    ///   - orientation: The orientation (portrait or landscape)
     /// - Returns: The selected skin identifier, or nil if none selected
+    public func selectedSkinIdentifier(for system: SystemIdentifier, orientation: SkinOrientation = .portrait) -> String? {
+        return selectedSkins[system]?[orientation]
+    }
+    
+    /// Get the selected skin identifier for a system (legacy method)
+    /// - Parameter system: The system identifier
+    /// - Returns: The selected skin identifier for portrait orientation, or nil if none selected
     public func selectedSkinIdentifier(for system: SystemIdentifier) -> String? {
-        return selectedSkins[system]
+        return selectedSkinIdentifier(for: system, orientation: .portrait)
     }
 
-    /// Set the selected skin for a system
+    /// Set the selected skin for a system and orientation
+    /// - Parameters:
+    ///   - skinIdentifier: The skin identifier to select
+    ///   - system: The system identifier
+    ///   - orientation: The orientation (portrait or landscape)
+    @MainActor
+    public func setSelectedSkin(_ skinIdentifier: String?, for system: SystemIdentifier, orientation: SkinOrientation = .portrait) {
+        if let skinIdentifier = skinIdentifier {
+            if selectedSkins[system] == nil {
+                selectedSkins[system] = [:]
+            }
+            selectedSkins[system]?[orientation] = skinIdentifier
+        } else {
+            selectedSkins[system]?[orientation] = nil
+            
+            // If both orientations are nil, remove the system entry entirely
+            if selectedSkins[system]?.isEmpty ?? true {
+                selectedSkins.removeValue(forKey: system)
+            }
+        }
+        savePreferences()
+    }
+    
+    /// Set the selected skin for a system (legacy method)
     /// - Parameters:
     ///   - skinIdentifier: The skin identifier to select
     ///   - system: The system identifier
     @MainActor
     public func setSelectedSkin(_ skinIdentifier: String?, for system: SystemIdentifier) {
-        if let skinIdentifier = skinIdentifier {
-            selectedSkins[system] = skinIdentifier
-        } else {
-            selectedSkins.removeValue(forKey: system)
-        }
-        savePreferences()
+        setSelectedSkin(skinIdentifier, for: system, orientation: .portrait)
     }
 
     /// Load preferences from UserDefaults
     private func loadPreferences() {
-        guard let data = UserDefaults.standard.data(forKey: preferencesKey),
-              let preferences = try? JSONDecoder().decode([String: String].self, from: data) else {
+        // Try to load new format first
+        if let data = UserDefaults.standard.data(forKey: preferencesKey),
+           let preferences = try? JSONDecoder().decode([String: [String: String]].self, from: data) {
+            
+            // Convert string keys to SystemIdentifier and SkinOrientation
+            selectedSkins = preferences.compactMapKeys { key in
+                SystemIdentifier(rawValue: key)
+            }.mapValues { orientationDict in
+                orientationDict.compactMapKeys { key in
+                    SkinOrientation(rawValue: key)
+                }
+            }
             return
         }
-
-        // Convert string keys to SystemIdentifier
-        selectedSkins = preferences.compactMapKeys { key in
-            SystemIdentifier(rawValue: key)
+        
+        // Try to load legacy format and migrate
+        let legacyKey = "com.provenance.deltaskin.preferences"
+        if let data = UserDefaults.standard.data(forKey: legacyKey),
+           let preferences = try? JSONDecoder().decode([String: String].self, from: data) {
+            
+            // Convert legacy format to new format (all portrait)
+            var newPreferences: [SystemIdentifier: [SkinOrientation: String]] = [:]
+            
+            for (systemStr, skinId) in preferences {
+                if let system = SystemIdentifier(rawValue: systemStr) {
+                    newPreferences[system] = [.portrait: skinId]
+                }
+            }
+            
+            selectedSkins = newPreferences
+            savePreferences()
+            
+            // Clear legacy preferences
+            UserDefaults.standard.removeObject(forKey: legacyKey)
         }
     }
 
     /// Save preferences to UserDefaults
     private func savePreferences() {
-        // Convert SystemIdentifier keys to strings
+        // Convert SystemIdentifier and SkinOrientation keys to strings
         let stringDict = selectedSkins.compactMapKeys { $0.rawValue }
+            .mapValues { orientationDict in
+                orientationDict.compactMapKeys { $0.rawValue }
+            }
 
         if let data = try? JSONEncoder().encode(stringDict) {
             UserDefaults.standard.set(data, forKey: preferencesKey)

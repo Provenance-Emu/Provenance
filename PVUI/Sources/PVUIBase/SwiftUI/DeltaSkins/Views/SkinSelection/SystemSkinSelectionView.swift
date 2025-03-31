@@ -9,7 +9,12 @@ public struct SystemSkinSelectionView: View {
     @StateObject private var preferences = DeltaSkinPreferences.shared
 
     @State private var availableSkins: [DeltaSkinProtocol] = []
+    @State private var portraitSkins: [DeltaSkinProtocol] = []
+    @State private var landscapeSkins: [DeltaSkinProtocol] = []
     @State private var selectedSkinId: String?
+    @State private var selectedPortraitSkinId: String?
+    @State private var selectedLandscapeSkinId: String?
+    @State private var selectedOrientation: SkinOrientation = .portrait
     @State private var isLoading = true
     @State private var errorMessage: String?
 
@@ -29,7 +34,21 @@ public struct SystemSkinSelectionView: View {
                 } else if availableSkins.isEmpty {
                     noSkinsView
                 } else {
-                    skinGridView
+                    VStack(spacing: 0) {
+                        // Orientation picker
+                        Picker("Orientation", selection: $selectedOrientation) {
+                            ForEach(SkinOrientation.allCases, id: \.self) { orientation in
+                                Label(orientation.displayName, systemImage: orientation.icon)
+                                    .tag(orientation)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        .padding(.horizontal)
+                        .padding(.top, 8)
+                        
+                        // Skin grid for selected orientation
+                        skinGridView
+                    }
                 }
             }
             .navigationTitle("Select Controller Skin")
@@ -108,16 +127,32 @@ public struct SystemSkinSelectionView: View {
 
     private var skinGridView: some View {
         ScrollView {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 200), spacing: 16)], spacing: 16) {
-                // Default option (system default)
-                defaultSkinCell
-
-                // Available skins
-                ForEach(availableSkins, id: \.identifier) { skin in
-                    skinCell(for: skin)
+            VStack(alignment: .leading, spacing: 8) {
+                // Show current selection status
+                HStack {
+                    Image(systemName: "info.circle")
+                        .foregroundColor(.secondary)
+                    Text(selectedOrientation == .portrait ? 
+                         "Selected skin will be used in portrait mode" : 
+                         "Selected skin will be used in landscape mode")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
+                .padding(.horizontal)
+                .padding(.top, 8)
+                
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 200), spacing: 16)], spacing: 16) {
+                    // Default option (system default)
+                    defaultSkinCell
+                    
+                    // Available skins for the selected orientation
+                    let filteredSkins = selectedOrientation == .portrait ? portraitSkins : landscapeSkins
+                    ForEach(filteredSkins, id: \.identifier) { skin in
+                        skinCell(for: skin)
+                    }
+                }
+                .padding()
             }
-            .padding()
         }
     }
 
@@ -134,7 +169,7 @@ public struct SystemSkinSelectionView: View {
             }
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(selectedSkinId == nil ? Color.accentColor : Color.clear, lineWidth: 3)
+                    .stroke(currentSelectedSkinId == nil ? Color.accentColor : Color.clear, lineWidth: 3)
             )
 
             Text("System Default")
@@ -145,19 +180,21 @@ public struct SystemSkinSelectionView: View {
             selectSkin(nil)
         }
     }
+    
+    // Helper property to get the current selected skin ID based on orientation
+    private var currentSelectedSkinId: String? {
+        selectedOrientation == .portrait ? selectedPortraitSkinId : selectedLandscapeSkinId
+    }
 
     private func skinCell(for skin: DeltaSkinProtocol) -> some View {
         VStack {
             ZStack {
-                // Skin preview
-                SkinPreviewCell(skin: skin, manager: skinManager)
-//                SkinPreviewImage(skin: skin)
-//                    .aspectRatio(1.5, contentMode: .fit)
-//                    .cornerRadius(12)
+                // Skin preview with correct orientation
+                SkinPreviewCell(skin: skin, manager: skinManager, orientation: selectedOrientation.deltaSkinOrientation)
             }
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(selectedSkinId == skin.identifier ? Color.accentColor : Color.clear, lineWidth: 3)
+                    .stroke(currentSelectedSkinId == skin.identifier ? Color.accentColor : Color.clear, lineWidth: 3)
             )
 
             Text(skin.name)
@@ -172,6 +209,20 @@ public struct SystemSkinSelectionView: View {
                 selectSkin(skin.identifier)
             } label: {
                 Label("Select", systemImage: "checkmark.circle")
+            }
+            
+            Button {
+                // Select for both orientations
+                Task {
+                    await preferences.setSelectedSkin(skin.identifier, for: system, orientation: .portrait)
+                    await preferences.setSelectedSkin(skin.identifier, for: system, orientation: .landscape)
+                    await MainActor.run {
+                        self.selectedPortraitSkinId = skin.identifier
+                        self.selectedLandscapeSkinId = skin.identifier
+                    }
+                }
+            } label: {
+                Label("Use for Both Orientations", systemImage: "rectangle.portrait.and.landscape")
             }
 
             if skinManager.isDeletable(skin) {
@@ -190,16 +241,38 @@ public struct SystemSkinSelectionView: View {
 
         Task {
             do {
-                // Load skins for this system
+                // Load all skins for this system
                 let skins = try await skinManager.skins(for: system)
+                
+                // Filter skins by orientation support
+                var portraitCompatible: [DeltaSkinProtocol] = []
+                var landscapeCompatible: [DeltaSkinProtocol] = []
+                
+                for skin in skins {
+                    // Check portrait support
+                    let portraitTraits = DeltaSkinTraits(device: .iphone, displayType: .standard, orientation: .portrait)
+                    if skin.supports(portraitTraits) {
+                        portraitCompatible.append(skin)
+                    }
+                    
+                    // Check landscape support
+                    let landscapeTraits = DeltaSkinTraits(device: .iphone, displayType: .standard, orientation: .landscape)
+                    if skin.supports(landscapeTraits) {
+                        landscapeCompatible.append(skin)
+                    }
+                }
 
-                // Get currently selected skin
-                let currentSelection = DeltaSkinPreferences.shared.selectedSkinIdentifier(for: system)
+                // Get currently selected skins for both orientations
+                let portraitSelection = preferences.selectedSkinIdentifier(for: system, orientation: .portrait)
+                let landscapeSelection = preferences.selectedSkinIdentifier(for: system, orientation: .landscape)
 
                 // Update UI on main thread
                 await MainActor.run {
                     self.availableSkins = skins
-                    self.selectedSkinId = currentSelection
+                    self.portraitSkins = portraitCompatible
+                    self.landscapeSkins = landscapeCompatible
+                    self.selectedPortraitSkinId = portraitSelection
+                    self.selectedLandscapeSkinId = landscapeSelection
                     self.isLoading = false
                 }
             } catch {
@@ -213,9 +286,16 @@ public struct SystemSkinSelectionView: View {
 
     private func selectSkin(_ identifier: String?) {
         Task {
-            await DeltaSkinPreferences.shared.setSelectedSkin(identifier, for: system)
+            // Set the skin for the current orientation only
+            await preferences.setSelectedSkin(identifier, for: system, orientation: selectedOrientation)
+            
+            // Update the appropriate state variable
             await MainActor.run {
-                self.selectedSkinId = identifier
+                if selectedOrientation == .portrait {
+                    self.selectedPortraitSkinId = identifier
+                } else {
+                    self.selectedLandscapeSkinId = identifier
+                }
             }
         }
     }
@@ -225,9 +305,13 @@ public struct SystemSkinSelectionView: View {
             do {
                 try await skinManager.deleteSkin(skin.identifier)
 
-                // If we deleted the selected skin, reset selection
-                if selectedSkinId == skin.identifier {
-                    await DeltaSkinPreferences.shared.setSelectedSkin(nil, for: system)
+                // If we deleted a selected skin, reset the appropriate selection(s)
+                if selectedPortraitSkinId == skin.identifier {
+                    await preferences.setSelectedSkin(nil, for: system, orientation: .portrait)
+                }
+                
+                if selectedLandscapeSkinId == skin.identifier {
+                    await preferences.setSelectedSkin(nil, for: system, orientation: .landscape)
                 }
 
                 // Reload skins
