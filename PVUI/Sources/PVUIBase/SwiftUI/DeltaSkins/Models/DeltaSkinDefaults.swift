@@ -189,8 +189,9 @@ enum DeltaSkinDefaults {
             // In landscape, position screen closer to top
             yPosition = mappingSize.height * 0.05  // 5% from top instead of 10%
         } else {
-            // In portrait, keep existing centered position
-            yPosition = (controlsTopY - finalSize.height) / 2
+            // In portrait, position screen higher (25% of the way down from top to controls)
+            // This places the screen in the upper portion of the available space
+            yPosition = (controlsTopY - finalSize.height) * 0.25
         }
 
         return CGRect(

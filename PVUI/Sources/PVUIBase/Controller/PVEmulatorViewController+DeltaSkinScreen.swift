@@ -29,6 +29,15 @@ extension PVEmulatorViewController {
             object: nil
         )
         
+        // Set up a notification observer to catch when the color bars frame is updated
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("DeltaSkinColorBarsFrameUpdated"), object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleColorBarsFrameUpdated),
+            name: NSNotification.Name("DeltaSkinColorBarsFrameUpdated"),
+            object: nil
+        )
+        
         // Try to position immediately in case the skin is already loaded
         Task {
             do {
@@ -106,6 +115,31 @@ extension PVEmulatorViewController {
     @objc private func handleSkinLoaded(_ notification: Notification) {
         DLOG("🎮 Received skin loaded notification")
         tryPositionGPUView()
+    }
+    
+    /// Handle the color bars frame updated notification
+    @objc private func handleColorBarsFrameUpdated(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let frameValue = userInfo["frame"] as? NSValue else {
+            return
+        }
+        
+        // Extract the frame from the notification
+        let colorBarsFrame = frameValue.cgRectValue
+        
+        // Log the color bars frame for debugging
+        print("🔴 Received color bars frame: \(colorBarsFrame)")
+        
+        // Apply the exact same frame to the GPU view
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            
+            // Create a debug overlay to show the frame
+            self.createDebugOverlay(frame: colorBarsFrame)
+            
+            // Apply the frame to the GPU view - DIRECTLY without any modifications
+            self.applyExactFrameToGPUView(colorBarsFrame)
+        }
     }
     
     private func tryPositionGPUView() {
@@ -755,6 +789,9 @@ extension PVEmulatorViewController {
     
     /// Create a debug overlay with the given frame
     private func createDebugOverlay(frame: CGRect) {
+        // Store the current target frame for positioning
+        currentTargetFrame = frame
+        
         // Remove any existing debug overlays
         view.subviews.forEach { subview in
             if subview.tag == 9999 {
@@ -767,7 +804,6 @@ extension PVEmulatorViewController {
             🔴 View bounds: \(view.bounds)
             """ )
         
-        #if false
         // Create a debug overlay view
         let debugOverlay = UIView(frame: frame)
         debugOverlay.tag = 9999 // Use a tag to identify it later
@@ -791,7 +827,6 @@ extension PVEmulatorViewController {
         
         // Make sure it's above everything else
         view.bringSubviewToFront(debugOverlay)
-        #endif
         // Log the current GPU view frame for comparison
         if let gameScreenView = gpuViewController.view {
             print("🔴 Current GPU view frame: \(gameScreenView.frame)")
@@ -847,45 +882,84 @@ extension PVEmulatorViewController {
     
     /// Try positioning using frame
     @objc private func tryFramePositioning() {
-        guard let debugOverlay = view.subviews.first(where: { $0.tag == 9999 && $0 is UIView && !(($0 as? UIButton) != nil) }) else {
-            print("🔴 No debug overlay found for positioning")
+        // Use the stored target frame instead of trying to find a debug overlay
+        guard let frame = currentTargetFrame else {
+            print("🔴 No target frame available for positioning")
             return
         }
         
-        // Get the frame from the debug overlay
-        let frame = debugOverlay.frame
         print("🔴 Trying frame positioning: \(frame)")
         
         // Apply the frame to the GPU view
         applyFrameToGPUView(frame)
     }
     
-    /// Apply a frame directly to the GPU view
+    /// Apply a frame directly to the GPU view with optimized positioning
     private func applyFrameToGPUView(_ frame: CGRect) {
         guard let gameScreenView = gpuViewController.view else {
             print("🔴 ERROR: GPU view not found")
             return
         }
         
-        // We're going to trust the frame calculation and not modify it
-        // This ensures we match exactly what the DeltaSkinScreenLayer does
-        let validatedFrame = frame
+        // Get the available space in the view
+        let viewBounds = view.bounds
+        
+        // Calculate the optimal frame position
+        // For portrait orientation, position in the upper third of the screen
+        // For landscape, center vertically
+        let isPortrait = viewBounds.height > viewBounds.width
+        
+        // Create a frame that preserves the aspect ratio but positions it better
+        let optimizedFrame: CGRect
+        
+        if isPortrait {
+            // In portrait mode, position the screen in the upper portion
+            let yPosition = viewBounds.height * 0.15 // 15% from the top
+            optimizedFrame = CGRect(
+                x: (viewBounds.width - frame.width) / 2, // Center horizontally
+                y: yPosition,
+                width: frame.width,
+                height: frame.height
+            )
+        } else {
+            // In landscape mode, center both horizontally and vertically
+            optimizedFrame = CGRect(
+                x: (viewBounds.width - frame.width) / 2,
+                y: (viewBounds.height - frame.height) / 2,
+                width: frame.width,
+                height: frame.height
+            )
+        }
         
         // Just log the frame for debugging
-        print("🔴 Using frame: \(validatedFrame)")
+        print("🔴 Using frame: \(optimizedFrame)")
         
-        print("🔴 Applying frame to GPU view: \(validatedFrame)")
+        print("🔴 Applying frame to GPU view: \(optimizedFrame)")
+        print("🔴 Current GPU view frame before: \(gameScreenView.frame)")
+        
+        // Apply the frame to the GPU view
+        applyExactFrameToGPUView(optimizedFrame)
+    }
+        
+    /// Apply an exact frame to the GPU view without any modifications
+    private func applyExactFrameToGPUView(_ frame: CGRect) {
+        guard let gameScreenView = gpuViewController.view else {
+            print("🔴 ERROR: GPU view not found")
+            return
+        }
+        
+        print("🔴 Applying EXACT frame to GPU view: \(frame)")
         print("🔴 Current GPU view frame before: \(gameScreenView.frame)")
         
         // Apply the frame - ONLY set the frame, nothing else
         if let metalVC = gpuViewController as? PVMetalViewController {
             // Enable custom positioning - explicitly reference properties from PVGPUViewController
             (metalVC as PVGPUViewController).useCustomPositioning = true
-            (metalVC as PVGPUViewController).customFrame = validatedFrame
+            (metalVC as PVGPUViewController).customFrame = frame
             
             // Apply the frame to both the view and MTLView
-            metalVC.view.frame = validatedFrame
-            metalVC.mtlView.frame = validatedFrame
+            metalVC.view.frame = frame
+            metalVC.mtlView.frame = frame
             
             // Force a redraw
             metalVC.mtlView.setNeedsDisplay()
@@ -895,18 +969,18 @@ extension PVEmulatorViewController {
             metalVC.view.isHidden = false
             metalVC.mtlView.isHidden = false
             
-            print("🔴 Applied frame to MTLView: \(metalVC.mtlView.frame)")
-            print("🔴 Enabled custom positioning with frame: \(validatedFrame)")
+            print("🔴 Applied EXACT frame to MTLView: \(metalVC.mtlView.frame)")
+            print("🔴 Enabled custom positioning with EXACT frame: \(frame)")
         } else {
             // For non-Metal views
-            gameScreenView.frame = validatedFrame
+            gameScreenView.frame = frame
             (gpuViewController as PVGPUViewController).useCustomPositioning = true
-            (gpuViewController as PVGPUViewController).customFrame = validatedFrame
+            (gpuViewController as PVGPUViewController).customFrame = frame
             
             // Make sure the view is visible
             gameScreenView.isHidden = false
             
-            print("🔴 Applied frame to non-Metal view: \(gameScreenView.frame)")
+            print("🔴 Applied EXACT frame to non-Metal view: \(gameScreenView.frame)")
         }
         
         // Force layout update
@@ -937,4 +1011,6 @@ extension PVEmulatorViewController {
         resetGPUViewPosition()
         print("🔴 Reset to default positioning")
     }
+    
+
 }

@@ -60,6 +60,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     // Store a reference to the skin container view
     internal var skinContainerView: UIView?
     
+    // Store the current target frame for positioning
+    internal var currentTargetFrame: CGRect?
     
     // Store cancellables for skin loading observation
     internal var skinLoadingCancellable: AnyCancellable?

@@ -146,6 +146,23 @@ struct DeltaSkinScreenLayer: View {
                                             MappingSize: \(mappingSize), Scale: \(scale), Offset: \(offset)
                                             """
                                             )
+                                        
+                                        // Broadcast the color bars frame via NotificationCenter
+                                        // This will be used by the GPU view controller to match positioning
+                                        let frameInfo: [String: Any] = [
+                                            "frame": NSValue(cgRect: finalFrame),
+                                            "screenId": screen.id,
+                                            "outputFrame": NSValue(cgRect: outputFrame),
+                                            "mappingSize": NSValue(cgSize: mappingSize),
+                                            "scale": scale,
+                                            "offset": NSValue(cgPoint: offset)
+                                        ]
+                                        
+                                        NotificationCenter.default.post(
+                                            name: NSNotification.Name("DeltaSkinColorBarsFrameUpdated"),
+                                            object: nil,
+                                            userInfo: frameInfo
+                                        )
                                     }
                                 }
                             }
@@ -158,15 +175,33 @@ struct DeltaSkinScreenLayer: View {
                                 isPreview: false
                             )
 
-                            DeltaSkinTestPatternView(
-                                frame: scaledFrame(
-                                    outputFrame,
-                                    mappingSize: mappingSize,
-                                    scale: scale,
-                                    offset: offset
-                                ),
-                                filters: filters
+                            let finalFrame = scaledFrame(
+                                outputFrame,
+                                mappingSize: mappingSize,
+                                scale: scale,
+                                offset: offset
                             )
+                            
+                            DeltaSkinTestPatternView(
+                                frame: finalFrame,
+                                filters: filters
+                            ).onAppear {
+                                // Broadcast the color bars frame via NotificationCenter
+                                // This will be used by the GPU view controller to match positioning
+                                let frameInfo: [String: Any] = [
+                                    "frame": NSValue(cgRect: finalFrame),
+                                    "outputFrame": NSValue(cgRect: outputFrame),
+                                    "mappingSize": NSValue(cgSize: mappingSize),
+                                    "scale": scale,
+                                    "offset": NSValue(cgPoint: offset)
+                                ]
+                                
+                                NotificationCenter.default.post(
+                                    name: NSNotification.Name("DeltaSkinColorBarsFrameUpdated"),
+                                    object: nil,
+                                    userInfo: frameInfo
+                                )
+                            }
                         }
                     }
                 }

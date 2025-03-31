@@ -187,7 +187,7 @@ public struct DeltaSkinView: View {
         self.inputHandler = inputHandler
     }
 
-    internal struct SkinLayout {
+    internal struct SkinLayout: Equatable, Hashable {
         let scale: CGFloat
         let width: CGFloat
         let height: CGFloat
@@ -368,17 +368,17 @@ public struct DeltaSkinView: View {
             ZStack {
                 if let layout = calculateLayout(for: geometry) {
                     ZStack {
-                        if !isInEmulator {
-                            // Screen layer (color bars) - should be behind everything
-                            DeltaSkinScreenLayer(
-                                skin: skin,
-                                traits: traits,
-                                filters: filters,
-                                size: geometry.size,
-                                screenAspectRatio: screenAspectRatio
-                            )
-                            .zIndex(0)
-                        }
+                        // Always create a screen position wrapper, even when in emulator
+                        // This ensures we can get the correct position whether color bars are visible or not
+                        DeltaSkinScreenPositionWrapper(
+                            skin: skin,
+                            traits: traits,
+                            filters: filters,
+                            size: geometry.size,
+                            screenAspectRatio: screenAspectRatio,
+                            isInEmulator: isInEmulator
+                        )
+                        .zIndex(0)
 
                         // Base skin image
                         if let skinImage = skinImage {
