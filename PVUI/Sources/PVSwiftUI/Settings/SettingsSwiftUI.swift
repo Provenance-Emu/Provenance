@@ -87,6 +87,10 @@ public struct PVSettingsView: View {
                         .environmentObject(viewModel)
                 }
 
+                CollapsibleSection(title: "Delta Skins") {
+                    DeltaSkinsSection()
+                }
+                
                 CollapsibleSection(title: "Advanced") {
                     AdvancedSection()
                 }
@@ -1514,6 +1518,55 @@ private struct SecretDPadView: View {
         }
 
         DLOG("[SecretDPadView] Current sequence: \(sequenceText)")
+    }
+}
+
+private struct DeltaSkinsSection: View {
+    @State private var showSystemSkinBrowser = false
+    @State private var showDeltaSkinList = false
+    
+    var body: some View {
+        Section {
+            // Button to select skins (premium locked)
+            PaidFeatureView {
+                Button {
+                    showSystemSkinBrowser = true
+                } label: {
+                    SettingsRow(title: "Select Controller Skins",
+                              subtitle: "Choose controller skins for each system and orientation.",
+                              icon: .sfSymbol("gamecontroller.fill"))
+                }
+            } lockedView: {
+                SettingsRow(title: "Select Controller Skins",
+                          subtitle: "Unlock to choose controller skins for each system.",
+                          icon: .sfSymbol("lock.fill"))
+            }
+            
+            // Button to manage skins (premium locked)
+            PaidFeatureView {
+                Button {
+                    showDeltaSkinList = true
+                } label: {
+                    SettingsRow(title: "Manage Controller Skins",
+                              subtitle: "View, import, and delete controller skins.",
+                              icon: .sfSymbol("folder.badge.gearshape"))
+                }
+            } lockedView: {
+                SettingsRow(title: "Manage Controller Skins",
+                          subtitle: "Unlock to manage your controller skins.",
+                          icon: .sfSymbol("lock.fill"))
+            }
+        }
+        .sheet(isPresented: $showSystemSkinBrowser) {
+            NavigationView {
+                SystemSkinBrowserView()
+            }
+        }
+        .sheet(isPresented: $showDeltaSkinList) {
+            NavigationView {
+                DeltaSkinListView(manager: DeltaSkinManager.shared)
+            }
+        }
     }
 }
 
