@@ -489,6 +489,15 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         if emulatorCore.skipLayout {
             return
         }
+        
+        // IMPORTANT: If custom positioning is being used, respect it and don't override
+        if useCustomPositioning && !customFrame.isEmpty {
+            DLOG("Using custom positioning: \(customFrame)")
+            mtlView.frame = customFrame
+            view.frame = customFrame
+            updatePreferredFPS()
+            return
+        }
 
         let parentSafeAreaInsets = parent?.view.safeAreaInsets ?? .zero
 

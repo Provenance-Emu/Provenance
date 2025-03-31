@@ -461,69 +461,228 @@ extension PVEmulatorViewController {
         }
     }
     
-    /// Force the GPU view position with hardcoded values as a last resort
+    /// Add a debug overlay to show where the GPU view should be positioned
     private func forceGPUViewPosition() {
-        guard let gameScreenView = gpuViewController.view else {
-            ELOG("GPU view not found")
+        // Remove any existing debug overlays
+        view.subviews.forEach { subview in
+            if subview.tag == 9999 {
+                subview.removeFromSuperview()
+            }
+        }
+        
+        // Create a default frame as a fallback
+        let bounds = view.bounds
+        let defaultWidth = bounds.width * 0.8
+        let defaultHeight = defaultWidth * 0.75 // Assuming 4:3 aspect ratio
+        let defaultX = (bounds.width - defaultWidth) / 2
+        let defaultY = (bounds.height - defaultHeight) / 3 // Position about 1/3 down from top
+        let defaultFrame = CGRect(x: defaultX, y: defaultY, width: defaultWidth, height: defaultHeight)
+        
+        // Create and add the debug overlay with the default frame immediately
+        createDebugOverlay(frame: defaultFrame)
+        
+        // Get the current system identifier
+        guard let systemId = game.system?.systemIdentifier else {
+            ELOG("System identifier not found")
             return
         }
         
-        // Get the view bounds
-        let bounds = view.bounds
-        
-        // Calculate a frame that's 80% of the view width, centered
-        let width = bounds.width * 0.8
-        let height = width * 0.75 // Assuming 4:3 aspect ratio
-        let x = (bounds.width - width) / 2
-        let y = (bounds.height - height) / 2
-        
-        let frame = CGRect(x: x, y: y, width: width, height: height)
-        
-        print("🔴 FORCING GPU VIEW POSITION with hardcoded values: \(frame)")
-        print("🔴 View bounds: \(bounds)")
-        
-        // Apply the frame directly to both the view and the MTLView
-        gameScreenView.frame = frame
-        gameScreenView.autoresizingMask = []
-        gameScreenView.contentMode = .scaleToFill
-        gameScreenView.isHidden = false
-        gameScreenView.alpha = 1.0
-        
-        if let metalVC = gpuViewController as? PVMetalViewController {
-            // Set both the view and layer frames directly
-            metalVC.mtlView.frame = frame
-            metalVC.mtlView.layer.frame = frame
-            metalVC.mtlView.autoresizingMask = []
-            metalVC.mtlView.contentMode = .scaleToFill
-            
-            // Force redraw
-            metalVC.mtlView.setNeedsLayout()
-            metalVC.mtlView.layoutIfNeeded()
-            metalVC.draw(in: metalVC.mtlView)
-            
-            print("🔴 MTLView frame after forcing: \(metalVC.mtlView.frame)")
-            print("🔴 MTLView layer frame after forcing: \(metalVC.mtlView.layer.frame)")
-        }
-        
-        // Force layout
-        gameScreenView.setNeedsLayout()
-        gameScreenView.layoutIfNeeded()
-        
-        // Make sure GPU view is behind the skin view
-        if let skinContainerView = view.subviews.first(where: { $0 is DeltaSkinContainerView }) {
-            view.insertSubview(gameScreenView, belowSubview: skinContainerView)
-        }
-        
-        // Schedule a delayed check to make sure the frame sticks
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self, weak gameScreenView] in
-            guard let self = self, let gameScreenView = gameScreenView else { return }
-            
-            print("🔴 DELAYED FORCE CHECK - GPU view frame: \(gameScreenView.frame)")
-            
-            if gameScreenView.frame != frame {
-                print("🔴 Frame changed after forcing, reapplying...")
-                self.forceGPUViewPosition() // Apply again if it changed
+        // Try to use the same method that works for color bars
+        Task {
+            do {
+                // Try to get the selected skin for this system
+                if let skin = try await DeltaSkinManager.shared.skinToUse(for: systemId) {
+                    // Create traits based on the current device and orientation
+                    let currentDevice: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+                    let currentOrientation: DeltaSkinOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
+                    
+                    let traits = DeltaSkinTraits(
+                        device: currentDevice,
+                        displayType: .standard,
+                        orientation: currentOrientation
+                    )
+                    
+                    // Get the skin's mapping size for scaling calculations
+                    if let mappingSize = skin.mappingSize(for: traits),
+                       let screens = skin.screens(for: traits),
+                       let firstScreen = screens.first,
+                       let outputFrame = firstScreen.outputFrame {
+                        
+                        // Calculate the view size and scale - EXACTLY matching the DeltaSkinScreenLayer
+                        let viewSize = bounds.size
+                        let scale = min(
+                            viewSize.width / mappingSize.width,
+                            viewSize.height / mappingSize.height
+                        )
+                        
+                        // Calculate the offset for centering the skin in the view
+                        let xOffset = (viewSize.width - (mappingSize.width * scale)) / 2
+                        let yOffset = (viewSize.height - (mappingSize.height * scale)) / 2
+                        let offset = CGPoint(x: xOffset, y: yOffset)
+                        
+                        // Calculate the frame using the same method as DeltaSkinScreenLayer
+                        let calculatedFrame = scaledFrame(
+                            outputFrame,
+                            mappingSize: mappingSize,
+                            scale: scale,
+                            offset: offset
+                        )
+                        
+                        await MainActor.run {
+                            createDebugOverlay(frame: calculatedFrame)
+                        }
+                    }
+                }
+            } catch {
+                ELOG("Error getting skin: \(error)")
             }
         }
+        
+    }
+    
+    /// Create a debug overlay with the given frame
+    private func createDebugOverlay(frame: CGRect) {
+        // Remove any existing debug overlays
+        view.subviews.forEach { subview in
+            if subview.tag == 9999 {
+                subview.removeFromSuperview()
+            }
+        }
+        
+        print("🔴 ADDING DEBUG OVERLAY at: \(frame)")
+        print("🔴 View bounds: \(view.bounds)")
+        
+        // Create a debug overlay view
+        let debugOverlay = UIView(frame: frame)
+        debugOverlay.tag = 9999 // Use a tag to identify it later
+        debugOverlay.backgroundColor = UIColor.red.withAlphaComponent(0.3)
+        debugOverlay.layer.borderColor = UIColor.yellow.cgColor
+        debugOverlay.layer.borderWidth = 2.0
+        
+        // Add a label to show the frame
+        let labelWidth = frame.width - 20
+        let label = UILabel(frame: CGRect(x: 10, y: 10, width: labelWidth, height: 60))
+        label.text = "Expected GPU View\nFrame: \(frame)"
+        label.textColor = UIColor.white
+        label.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        label.numberOfLines = 2
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 12)
+        debugOverlay.addSubview(label)
+        
+        // Add the debug overlay to the view
+        view.addSubview(debugOverlay)
+        
+        // Make sure it's above everything else
+        view.bringSubviewToFront(debugOverlay)
+        
+        // Log the current GPU view frame for comparison
+        if let gameScreenView = gpuViewController.view {
+            print("🔴 Current GPU view frame: \(gameScreenView.frame)")
+            
+            if let metalVC = gpuViewController as? PVMetalViewController {
+                print("🔴 Current MTLView frame: \(metalVC.mtlView.frame)")
+            }
+        }
+        
+        // Add buttons to test different positioning approaches
+        addDebugButtons(targetFrame: frame)
+    }
+    
+    /// Add debug buttons to test different positioning approaches
+    private func addDebugButtons(targetFrame: CGRect) {
+        // Create a container for the buttons
+        let buttonContainer = UIView(frame: CGRect(x: 20, y: 20, width: 200, height: 150))
+        buttonContainer.tag = 9999 // Use the same tag for easy removal
+        buttonContainer.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        buttonContainer.layer.cornerRadius = 10
+        
+        // Add a title
+        let titleLabel = UILabel(frame: CGRect(x: 10, y: 5, width: 180, height: 20))
+        titleLabel.text = "Debug Controls"
+        titleLabel.textColor = .white
+        titleLabel.textAlignment = .center
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 14)
+        buttonContainer.addSubview(titleLabel)
+        
+        // Add buttons for different positioning approaches
+        let button1 = createDebugButton(title: "Try Frame", y: 30, action: #selector(tryFramePositioning))
+        let button2 = createDebugButton(title: "Try Bounds/Position", y: 70, action: #selector(tryBoundsPositioning))
+        let button3 = createDebugButton(title: "Reset Position", y: 110, action: #selector(resetPositioning))
+        
+        buttonContainer.addSubview(button1)
+        buttonContainer.addSubview(button2)
+        buttonContainer.addSubview(button3)
+        
+        // Add the button container to the view
+        view.addSubview(buttonContainer)
+        view.bringSubviewToFront(buttonContainer)
+    }
+    
+    /// Create a debug button with the given title and action
+    private func createDebugButton(title: String, y: CGFloat, action: Selector) -> UIButton {
+        let button = UIButton(type: .system)
+        button.frame = CGRect(x: 10, y: y, width: 180, height: 30)
+        button.setTitle(title, for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.8)
+        button.layer.cornerRadius = 5
+        button.addTarget(self, action: action, for: .touchUpInside)
+        return button
+    }
+    
+    /// Try positioning using frame
+    @objc private func tryFramePositioning() {
+        guard let gameScreenView = gpuViewController.view,
+              let debugOverlay = view.subviews.first(where: { $0.tag == 9999 && $0 is UIView && !(($0 as? UIButton) != nil) }) else {
+            return
+        }
+        
+        // Get the frame from the debug overlay
+        let frame = debugOverlay.frame
+        print("🔴 Trying frame positioning: \(frame)")
+        
+        // Apply the frame - ONLY set the frame, nothing else
+        if let metalVC = gpuViewController as? PVMetalViewController {
+            // Enable custom positioning - explicitly reference properties from PVGPUViewController
+            (metalVC as PVGPUViewController).useCustomPositioning = true
+            (metalVC as PVGPUViewController).customFrame = frame
+            
+            // Apply the frame to both the view and MTLView
+            metalVC.view.frame = frame
+            metalVC.mtlView.frame = frame
+            
+            // Force a redraw
+            metalVC.draw(in: metalVC.mtlView)
+            
+            print("🔴 Applied frame to MTLView: \(metalVC.mtlView.frame)")
+            print("🔴 Enabled custom positioning with frame: \(frame)")
+        } else {
+            // For non-Metal views
+            gameScreenView.frame = frame
+            (gpuViewController as PVGPUViewController).useCustomPositioning = true
+            (gpuViewController as PVGPUViewController).customFrame = frame
+        }
+    }
+    
+    /// Try positioning using just the frame (simpler approach)
+    @objc private func tryBoundsPositioning() {
+        // Just call tryFramePositioning - we're simplifying to just use frame-based positioning
+        tryFramePositioning()
+    }
+    
+    /// Reset to default positioning
+    @objc private func resetPositioning() {
+        // Disable custom positioning first
+        if let metalVC = gpuViewController as? PVMetalViewController {
+            // Explicitly reference properties from PVGPUViewController
+            (metalVC as PVGPUViewController).useCustomPositioning = false
+            (metalVC as PVGPUViewController).customFrame = .zero
+            print("🔴 Disabled custom positioning")
+        }
+        
+        // Then reset to default
+        resetGPUViewPosition()
+        print("🔴 Reset to default positioning")
     }
 }
