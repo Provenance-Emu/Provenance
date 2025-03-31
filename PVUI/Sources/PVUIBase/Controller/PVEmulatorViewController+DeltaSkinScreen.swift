@@ -812,19 +812,19 @@ extension PVEmulatorViewController {
         
     }
     
-    /// Create a debug overlay with the given frame
+    /// Store the frame for debug overlay without creating the visual overlay
     private func createDebugOverlay(frame: CGRect) {
         // Store the current target frame for positioning in the DeltaSkin extension
         self.currentTargetFrame = frame
         
         // Log the frame information
         DLOG("""
-            Creating debug overlay at: \(frame)
+            Storing debug frame at: \(frame)
             View bounds: \(view.bounds)
             """ )
         
-        // Use the createDebugFrameOverlay method from PVEmulatorViewController+DeltaSkin.swift
-        createDebugFrameOverlay(frame: frame)
+        // Don't create the visual overlay until the debug overlay is shown
+        // The frame will be used when the debug overlay is toggled on
     }
     
     // Debug buttons have been moved to PVEmulatorViewController+DeltaSkin.swift

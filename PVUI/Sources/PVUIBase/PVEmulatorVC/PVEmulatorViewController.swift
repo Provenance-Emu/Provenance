@@ -63,6 +63,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     // Store the current target frame for positioning
     internal var currentTargetFrame: CGRect?
     
+    // Store the original calculated frame for reset functionality
+    internal var originalCalculatedFrame: CGRect?
+    
     // Store cancellables for skin loading observation
     internal var skinLoadingCancellable: AnyCancellable?
     
@@ -73,7 +76,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     internal var debugOverlayView: UIView?
     internal var debugInfoLabel: UILabel?
     internal var debugUpdateTimer: Timer?
-    
+
     var menuButton: MenuButton?
 
     private(set) lazy var gpuViewController: PVGPUViewController = {

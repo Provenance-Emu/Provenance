@@ -388,6 +388,12 @@ extension PVEmulatorViewController {
         buttonsSectionLabel.textAlignment = .center
         overlay.addSubview(buttonsSectionLabel)
         
+        // Now that the debug overlay is active, create the frame overlay if we have a stored frame
+        if let storedFrame = currentTargetFrame {
+            DLOG("Creating frame overlay with stored frame: \(storedFrame)")
+            createDebugFrameOverlay(frame: storedFrame)
+        }
+        
         // Add buttons for different positioning approaches
         let tryFrameButton = createDebugButton(title: "Try Frame", frame: CGRect(x: 20, y: 330, width: 120, height: 30))
         tryFrameButton.addTarget(self, action: #selector(tryFramePositioning), for: .touchUpInside)
@@ -396,6 +402,12 @@ extension PVEmulatorViewController {
         let resetButton = createDebugButton(title: "Reset Position", frame: CGRect(x: 160, y: 330, width: 120, height: 30))
         resetButton.addTarget(self, action: #selector(resetPositioning), for: .touchUpInside)
         overlay.addSubview(resetButton)
+        
+        // Add a button to reset to the calculated position from the skin
+        let resetToCalculatedButton = createDebugButton(title: "Reset to Calculated", frame: CGRect(x: 20, y: 370, width: 260, height: 30))
+        resetToCalculatedButton.addTarget(self, action: #selector(resetToCalculatedPosition), for: .touchUpInside)
+        resetToCalculatedButton.backgroundColor = UIColor.systemGreen.withAlphaComponent(0.8)
+        overlay.addSubview(resetToCalculatedButton)
         
         // Make overlay draggable
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleDebugOverlayPan(_:)))
@@ -432,6 +444,8 @@ extension PVEmulatorViewController {
         debugOverlayView?.removeFromSuperview()
         debugOverlayView = nil
         debugInfoLabel = nil
+        
+        // We keep the currentTargetFrame for when the debug overlay is shown again
     }
     
     /// Handle dragging the debug overlay
@@ -450,6 +464,14 @@ extension PVEmulatorViewController {
     
     /// Create a debug frame overlay to visualize where the GPU view should be
     internal func createDebugFrameOverlay(frame: CGRect) {
+        // Store the original calculated frame for reset functionality
+        if originalCalculatedFrame == nil {
+            originalCalculatedFrame = frame
+        }
+        
+        // Store the current target frame
+        currentTargetFrame = frame
+        
         // Remove any existing debug frame overlays
         view.subviews.forEach { subview in
             if subview.tag == 9999 {
@@ -483,10 +505,33 @@ extension PVEmulatorViewController {
         }
         debugOverlay.addSubview(handle)
         
+        // Add resize handle in the bottom right corner
+        let resizeHandle = UIView(frame: CGRect(x: frame.width - handleSize - 5, 
+                                              y: frame.height - handleSize - 5, 
+                                              width: handleSize, 
+                                              height: handleSize))
+        resizeHandle.backgroundColor = UIColor.white.withAlphaComponent(0.7)
+        resizeHandle.layer.cornerRadius = handleSize / 2
+        resizeHandle.layer.borderWidth = 2
+        resizeHandle.layer.borderColor = UIColor.black.cgColor
+        
+        // Add resize icon
+        let resizeIcon = UIImageView(frame: CGRect(x: (handleSize - iconSize) / 2, 
+                                                 y: (handleSize - iconSize) / 2, 
+                                                 width: iconSize, 
+                                                 height: iconSize))
+        if let resizeImage = UIImage(systemName: "arrow.up.left.and.arrow.down.right") {
+            resizeIcon.image = resizeImage
+            resizeIcon.tintColor = UIColor.black
+            resizeIcon.contentMode = .scaleAspectFit
+            resizeHandle.addSubview(resizeIcon)
+        }
+        debugOverlay.addSubview(resizeHandle)
+        
         // Add a label to show the frame
         let labelWidth = frame.width - 20
         let label = UILabel(frame: CGRect(x: 10, y: 10, width: labelWidth, height: 80))
-        label.text = "Expected GPU View\nFrame: \(frame)\n(Drag to reposition)"
+        label.text = "Expected GPU View\nFrame: \(frame)\n(Drag to move, pinch to resize)"
         label.textColor = UIColor.white
         label.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         label.numberOfLines = 3
@@ -494,9 +539,13 @@ extension PVEmulatorViewController {
         label.font = UIFont.systemFont(ofSize: 12)
         debugOverlay.addSubview(label)
         
-        // Add a pan gesture recognizer to make the overlay draggable
+        // Add gesture recognizers
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleDebugFrameOverlayPan(_:)))
         debugOverlay.addGestureRecognizer(panGesture)
+        
+        let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(handleDebugFrameOverlayPinch(_:)))
+        debugOverlay.addGestureRecognizer(pinchGesture)
+        
         debugOverlay.isUserInteractionEnabled = true
         
         // Add the debug overlay to the view
@@ -566,8 +615,8 @@ extension PVEmulatorViewController {
             gesture.setTranslation(.zero, in: view)
             
             // Update the label with the new frame
-            if let label = frameOverlay.subviews.first as? UILabel {
-                label.text = "Expected GPU View\nFrame: \(frameOverlay.frame)\n(Drag to reposition)"
+            if let label = frameOverlay.subviews.first(where: { $0 is UILabel }) as? UILabel {
+                label.text = "Expected GPU View\nFrame: \(frameOverlay.frame)\n(Drag to move, pinch to resize)"
             }
             
             // Update the current target frame
@@ -577,6 +626,77 @@ extension PVEmulatorViewController {
             // When dragging ends, update the current target frame
             currentTargetFrame = frameOverlay.frame
             DLOG("Debug frame overlay repositioned to: \(frameOverlay.frame)")
+            
+        default:
+            break
+        }
+    }
+    
+    @objc private func handleDebugFrameOverlayPinch(_ gesture: UIPinchGestureRecognizer) {
+        guard let frameOverlay = gesture.view else { return }
+        
+        switch gesture.state {
+        case .began:
+            // Store the initial frame when pinch begins
+            frameOverlay.layer.setValue(frameOverlay.frame, forKey: "initialFrame")
+            
+        case .changed:
+            // Get the initial frame and scale it
+            if let initialFrame = frameOverlay.layer.value(forKey: "initialFrame") as? CGRect {
+                let scale = gesture.scale
+                
+                // Calculate new size while maintaining aspect ratio
+                let newWidth = initialFrame.width * scale
+                let newHeight = initialFrame.height * scale
+                
+                // Ensure minimum size
+                let minSize: CGFloat = 100
+                let finalWidth = max(minSize, newWidth)
+                let finalHeight = max(minSize, newHeight)
+                
+                // Ensure it doesn't exceed screen bounds
+                let maxWidth = view.bounds.width * 0.95
+                let maxHeight = view.bounds.height * 0.95
+                
+                let boundedWidth = min(maxWidth, finalWidth)
+                let boundedHeight = min(maxHeight, finalHeight)
+                
+                // Calculate new origin to keep the center point the same
+                let newX = frameOverlay.center.x - boundedWidth / 2
+                let newY = frameOverlay.center.y - boundedHeight / 2
+                
+                // Apply the new frame
+                let newFrame = CGRect(x: newX, y: newY, width: boundedWidth, height: boundedHeight)
+                frameOverlay.frame = newFrame
+                
+                // Update the label with the new frame
+                if let label = frameOverlay.subviews.first(where: { $0 is UILabel }) as? UILabel {
+                    // Adjust label width based on new frame width
+                    let labelWidth = newFrame.width - 20
+                    label.frame = CGRect(x: 10, y: 10, width: labelWidth, height: 80)
+                    label.text = "Expected GPU View\nFrame: \(newFrame)\n(Drag to move, pinch to resize)"
+                }
+                
+                // Update handle positions
+                if let handle = frameOverlay.subviews.first(where: { $0.frame.origin.x > newFrame.width / 2 && $0.frame.origin.y < newFrame.height / 2 }) {
+                    // Top-right handle
+                    handle.frame.origin = CGPoint(x: newFrame.width - handle.frame.width - 5, y: 5)
+                }
+                
+                if let resizeHandle = frameOverlay.subviews.first(where: { $0.frame.origin.x > newFrame.width / 2 && $0.frame.origin.y > newFrame.height / 2 }) {
+                    // Bottom-right resize handle
+                    resizeHandle.frame.origin = CGPoint(x: newFrame.width - resizeHandle.frame.width - 5, 
+                                                      y: newFrame.height - resizeHandle.frame.height - 5)
+                }
+                
+                // Update the current target frame
+                currentTargetFrame = newFrame
+            }
+            
+        case .ended:
+            // When pinch ends, update the current target frame
+            currentTargetFrame = frameOverlay.frame
+            DLOG("Debug frame overlay resized to: \(frameOverlay.frame)")
             
         default:
             break
@@ -628,6 +748,37 @@ extension PVEmulatorViewController {
         
         // Reset to default position
         resetGPUViewPosition()
+    }
+    
+    /// Reset to the originally calculated position from the skin
+    @objc private func resetToCalculatedPosition() {
+        guard let calculatedFrame = originalCalculatedFrame else {
+            DLOG("No calculated frame available")
+            return
+        }
+        
+        DLOG("Resetting to calculated position: \(calculatedFrame)")
+        
+        // Update the current target frame
+        currentTargetFrame = calculatedFrame
+        
+        // Recreate the debug frame overlay with the original calculated frame
+        createDebugFrameOverlay(frame: calculatedFrame)
+        
+        // Apply the frame to the GPU view
+        applyFrameToGPUView(calculatedFrame)
+        
+        // Show success message
+        if let frameOverlay = view.subviews.first(where: { $0.tag == 9999 }) {
+            // Flash the overlay to indicate success
+            UIView.animate(withDuration: 0.3, animations: {
+                frameOverlay.backgroundColor = UIColor.green.withAlphaComponent(0.5)
+            }) { _ in
+                UIView.animate(withDuration: 0.3, delay: 0.5, options: [], animations: {
+                    frameOverlay.backgroundColor = UIColor.red.withAlphaComponent(0.3)
+                })
+            }
+        }
     }
     
     /// Apply a frame to the GPU view
