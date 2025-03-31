@@ -121,14 +121,39 @@ extension PVEmulatorViewController {
     @objc private func handleColorBarsFrameUpdated(_ notification: Notification) {
         guard let userInfo = notification.userInfo,
               let frameValue = userInfo["frame"] as? NSValue else {
+            print("🔴 Invalid notification data for color bars frame")
             return
         }
         
         // Extract the frame from the notification
         let colorBarsFrame = frameValue.cgRectValue
         
-        // Log the color bars frame for debugging
-        print("🔴 Received color bars frame: \(colorBarsFrame)")
+        // Store the frame for debugging
+        currentTargetFrame = colorBarsFrame
+        
+        // Log all the information we received
+        print("🔴 Received color bars frame notification:")
+        print("🔴   Frame: \(colorBarsFrame)")
+        
+        if let outputFrameValue = userInfo["outputFrame"] as? NSValue {
+            print("🔴   Original outputFrame: \(outputFrameValue.cgRectValue)")
+        }
+        
+        if let mappingSizeValue = userInfo["mappingSize"] as? NSValue {
+            print("🔴   Mapping Size: \(mappingSizeValue.cgSizeValue)")
+        }
+        
+        if let scale = userInfo["scale"] as? CGFloat {
+            print("🔴   Scale: \(scale)")
+        }
+        
+        if let offsetValue = userInfo["offset"] as? NSValue {
+            print("🔴   Offset: \(offsetValue.cgPointValue)")
+        }
+        
+        if let screenId = userInfo["screenId"] as? String {
+            print("🔴   Screen ID: \(screenId)")
+        }
         
         // Apply the exact same frame to the GPU view
         DispatchQueue.main.async { [weak self] in
@@ -948,6 +973,12 @@ extension PVEmulatorViewController {
             return
         }
         
+        // Validate the frame - ensure it has valid dimensions
+        guard frame.width > 0 && frame.height > 0 else {
+            print("🔴 ERROR: Invalid frame dimensions: \(frame)")
+            return
+        }
+        
         print("🔴 Applying EXACT frame to GPU view: \(frame)")
         print("🔴 Current GPU view frame before: \(gameScreenView.frame)")
         
@@ -959,7 +990,7 @@ extension PVEmulatorViewController {
             
             // Apply the frame to both the view and MTLView
             metalVC.view.frame = frame
-            metalVC.mtlView.frame = frame
+            metalVC.mtlView.frame = CGRect(origin: .zero, size: frame.size) // MTLView is positioned within its parent view
             
             // Force a redraw
             metalVC.mtlView.setNeedsDisplay()
@@ -969,7 +1000,8 @@ extension PVEmulatorViewController {
             metalVC.view.isHidden = false
             metalVC.mtlView.isHidden = false
             
-            print("🔴 Applied EXACT frame to MTLView: \(metalVC.mtlView.frame)")
+            print("🔴 Applied EXACT frame to Metal view: \(metalVC.view.frame)")
+            print("🔴 Applied size to MTLView: \(metalVC.mtlView.frame)")
             print("🔴 Enabled custom positioning with EXACT frame: \(frame)")
         } else {
             // For non-Metal views
