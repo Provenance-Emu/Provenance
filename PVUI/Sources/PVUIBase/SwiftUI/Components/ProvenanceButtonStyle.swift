@@ -11,10 +11,10 @@ import PVThemes
 // MARK: - Custom Button Style
 
 /// A button style that matches the Provenance theme
-struct ProvenanceButtonStyle: ButtonStyle {
-    var isDestructive: Bool = false
+public struct ProvenanceButtonStyle: ButtonStyle {
+    public var isDestructive: Bool = false
 
-    func makeBody(configuration: Configuration) -> some View {
+    public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
@@ -50,8 +50,8 @@ struct ProvenanceButtonStyle: ButtonStyle {
     }
 }
 
-extension View {
-    func provenanceButton(isDestructive: Bool = false) -> some View {
+public extension View {
+    public func provenanceButton(isDestructive: Bool = false) -> some View {
         self.buttonStyle(ProvenanceButtonStyle(isDestructive: isDestructive))
     }
 }

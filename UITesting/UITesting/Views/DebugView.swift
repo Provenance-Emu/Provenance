@@ -14,56 +14,6 @@ import PVRealm
 import RealmSwift
 import PVLogging
 
-// MARK: - Retrowave Design System
-
-// Retrowave color palette
-extension Color {
-    static let retroPink = Color(red: 0.98, green: 0.2, blue: 0.6)
-    static let retroPurple = Color(red: 0.5, green: 0.0, blue: 0.8)
-    static let retroBlue = Color(red: 0.0, green: 0.8, blue: 0.95)
-    static let retroYellow = Color(red: 0.98, green: 0.84, blue: 0.2)
-    static let retroOrange = Color(red: 0.98, green: 0.5, blue: 0.2)
-    static let retroBlack = Color(red: 0.05, green: 0.05, blue: 0.1)
-    
-    // Gradient helpers
-    static let retroSunset = LinearGradient(
-        gradient: Gradient(colors: [.retroYellow, .retroPink, .retroPurple]),
-        startPoint: .top,
-        endPoint: .bottom
-    )
-    
-    static let retroGrid = LinearGradient(
-        gradient: Gradient(colors: [.retroBlue.opacity(0.7), .retroPurple.opacity(0.7)]),
-        startPoint: .top,
-        endPoint: .bottom
-    )
-    
-    static let retroNeon = LinearGradient(
-        gradient: Gradient(colors: [.retroPink, .retroPurple]),
-        startPoint: .leading,
-        endPoint: .trailing
-    )
-    
-    static let retroCyber = LinearGradient(
-        gradient: Gradient(colors: [.retroBlue, .retroPurple]),
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
-    
-    // Gradient helpers
-    static let retroGradient = LinearGradient(
-        gradient: Gradient(colors: [.retroPurple, .retroPink]),
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
-    
-    static let retroSunsetGradient = LinearGradient(
-        gradient: Gradient(colors: [.retroYellow, .retroPink, .retroPurple]),
-        startPoint: .top,
-        endPoint: .bottom
-    )
-}
-
 // Add this enum at the top of your file or in a separate extension
 enum ThemeName: String, CaseIterable {
     case `default` = "Default"
@@ -116,13 +66,8 @@ struct DebugView: View {
     
     var body: some View {
         NavigationStack {
-            ZStack {
-                retrowaveBackground()
-                SunsetGradient()
-                gridlines()
-                scalineEffect()
-                contentView()
-            }
+            contentView()
+                .retrowaveBackground()
         }
         .navigationTitle("DEBUG CONSOLE")
         .navigationBarTitleDisplayMode(.large)
@@ -292,56 +237,7 @@ struct DebugView: View {
         }
     }
     
-    @ViewBuilder
-    func retrowaveBackground() -> some View {
-        // Retrowave background
-        Color.retroBlack.ignoresSafeArea()
-    }
-    
-    @ViewBuilder
-    func SunsetGradient() -> some View {
-        // Sunset gradient
-        VStack {
-            Spacer()
-            Rectangle()
-                .fill(Color.retroCyber)
-                .frame(height: 200)
-                .offset(y: 100)
-                .blur(radius: 30)
-        }
-        .ignoresSafeArea()
-    }
-    
-    @ViewBuilder
-    func gridlines() -> some View {
-        // Grid lines
-        RetroGrid(lineSpacing: 30, lineColor: Color.retroBlue.opacity(0.2))
-            .ignoresSafeArea()
-    }
-    
-    @ViewBuilder
-    func scalineEffect() -> some View {
-        // Scanline effect
-        VStack(spacing: 4) {
-            ForEach(0..<100) { _ in
-                Rectangle()
-                    .fill(Color.black.opacity(0.1))
-                    .frame(height: 1)
-            }
-        }
-        .offset(y: scanlineOffset)
-        .ignoresSafeArea()
-        .onAppear {
-            withAnimation(.linear(duration: 10).repeatForever(autoreverses: false)) {
-                scanlineOffset = 4
-            }
-            
-            // Pulsing glow effect
-            withAnimation(.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
-            }
-        }
-    }
+    // These methods have been replaced by the RetrowaveBackgroundModifier
     
     @ViewBuilder
     func contentView() -> some View {
@@ -702,178 +598,6 @@ struct ColorRow: View {
             RoundedRectangle(cornerRadius: 4)
                 .fill(color)
                 .frame(width: 30, height: 30)
-        }
-    }
-}
-
-// MARK: - Custom UI Components
-
-struct GradientButtonStyle: ButtonStyle {
-    let colors: [Color]
-    let glowColor: Color
-    let textShadow: Bool
-    
-    init(colors: [Color], glowColor: Color? = nil, textShadow: Bool = true) {
-        self.colors = colors
-        self.glowColor = glowColor ?? (colors.first ?? .retroPink)
-        self.textShadow = textShadow
-    }
-    
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.system(.body, design: .monospaced))
-            .fontWeight(.bold)
-            .tracking(1.2) // Letter spacing for that retro look
-            .lineLimit(1)
-            .minimumScaleFactor(0.8)
-            .padding(.vertical, 12)
-            .padding(.horizontal, 20)
-            .frame(maxWidth: .infinity)
-            .background(
-                ZStack {
-                    // Base gradient
-                    LinearGradient(
-                        gradient: Gradient(colors: colors),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                    
-                    // Grid overlay
-                    RetroGrid(lineSpacing: 8, lineColor: .white.opacity(0.15))
-                }
-            )
-            .foregroundColor(.white)
-            .ifApply(textShadow) { view in
-                view.shadow(color: glowColor.opacity(0.8), radius: 0, x: 1.5, y: 1.5)
-                    .shadow(color: glowColor.opacity(0.4), radius: 0, x: 3, y: 3)
-            }
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .strokeBorder(
-                        LinearGradient(
-                            gradient: Gradient(colors: [colors.last ?? .white, colors.first ?? .white]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ),
-                        lineWidth: 1.5
-                    )
-            )
-            .cornerRadius(8)
-            .shadow(color: glowColor.opacity(0.6), radius: 8, x: 0, y: 0)
-            .scaleEffect(configuration.isPressed ? 0.95 : 1)
-            .opacity(configuration.isPressed ? 0.9 : 1)
-            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: configuration.isPressed)
-    }
-}
-
-// Helper extension for conditional modifiers
-extension View {
-    @ViewBuilder
-    func ifApply<Transform: View>(_ condition: Bool, transform: (Self) -> Transform) -> some View {
-        if condition {
-            transform(self)
-        } else {
-            self
-        }
-    }
-}
-
-// Retro grid component
-struct RetroGrid: View {
-    let lineSpacing: CGFloat
-    let lineColor: Color
-    
-    var body: some View {
-        ZStack {
-            // Horizontal lines
-            VStack(spacing: lineSpacing) {
-                ForEach(0..<20) { _ in
-                    Rectangle()
-                        .fill(lineColor)
-                        .frame(height: 1)
-                }
-            }
-            
-            // Vertical lines
-            HStack(spacing: lineSpacing) {
-                ForEach(0..<20) { _ in
-                    Rectangle()
-                        .fill(lineColor)
-                        .frame(width: 1)
-                }
-            }
-        }
-    }
-}
-
-// Retrowave version of the palette preview
-struct RetroPalettePreview: View {
-    let palette: any UXThemePalette
-    @State private var glowOpacity: Double = 0.7
-    
-    var body: some View {
-        VStack(spacing: 16) {
-            Text("COLOR PALETTE")
-                .font(.system(.headline, design: .monospaced))
-                .foregroundColor(.retroPink)
-                .shadow(color: .retroBlue.opacity(0.8), radius: 2, x: 1, y: 1)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 4)
-            
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                RetroColorSwatch(color: palette.defaultTintColor.swiftUIColor, name: "TINT")
-                RetroColorSwatch(color: palette.gameLibraryBackground.swiftUIColor, name: "BG")
-                RetroColorSwatch(color: palette.gameLibraryText.swiftUIColor, name: "TEXT")
-                RetroColorSwatch(color: palette.gameLibraryHeaderText.swiftUIColor, name: "HEADER")
-                RetroColorSwatch(color: palette.gameLibraryHeaderBackground.swiftUIColor, name: "HDR BG")
-                RetroColorSwatch(color: palette.gameLibraryCellBackground?.swiftUIColor ?? .retroBlack, name: "CELL")
-            }
-        }
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.retroBlack.opacity(0.5))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [.retroBlue, .retroPink]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ),
-                            lineWidth: 1.5
-                        )
-                )
-        )
-        .shadow(color: .retroBlue.opacity(glowOpacity * 0.3), radius: 8, x: 0, y: 0)
-        .onAppear {
-            withAnimation(.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
-            }
-        }
-    }
-}
-
-// Retrowave color swatch
-struct RetroColorSwatch: View {
-    let color: Color
-    let name: String
-    
-    var body: some View {
-        VStack(spacing: 6) {
-            RoundedRectangle(cornerRadius: 8)
-                .fill(color)
-                .frame(height: 40)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(Color.white.opacity(0.3), lineWidth: 1)
-                )
-                .shadow(color: color.opacity(0.6), radius: 4, x: 0, y: 0)
-            
-            Text(name)
-                .font(.system(.caption, design: .monospaced))
-                .foregroundColor(.white)
-                .shadow(color: .retroPink.opacity(0.5), radius: 1, x: 1, y: 1)
         }
     }
 }
