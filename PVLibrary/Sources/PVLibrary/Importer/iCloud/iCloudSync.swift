@@ -623,111 +623,64 @@ actor RemoveDeletionsActor {
     }
 }
 
+
+/// Actor isolated for accessing db in background thread safely
 @globalActor
 actor RealmActor: GlobalActor {
     static let shared = RealmActor()
 }
 
+/// Datastore for accessing saves and anything related to saves.
 actor SaveStateDatastore {
     private let realm: Realm
     
-    @RealmActor
     init() async throws {
         realm = await try Realm(actor: RealmActor.shared)
     }
     
+    /// queries datastore for save using id
+    /// - Parameter id: primary key of save
+    /// - Returns: save or nil if one exists
     @RealmActor
     func findSaveState(forPrimaryKey id: String) -> PVSaveState? {
         realm.object(ofType: PVSaveState.self, forPrimaryKey: id)
     }
     
+    /// queries datastore for game that corresponds to save
+    /// - Parameter save: save to use to query for game
+    /// - Returns: game or nil if one exists
     @RealmActor
-    func findGame(forPrimaryKey id: String) -> PVGame? {
-        realm.object(ofType: PVGame.self, forPrimaryKey: id)
+    func findGame(md5: String, forSave save: PVSaveState) -> PVGame? {
+        // See if game is missing and set
+        guard save.game?.system == nil
+        else {
+            return nil
+        }
+        return realm.object(ofType: PVGame.self, forPrimaryKey: md5)
     }
     
+    /// stores game assoicated with save
+    /// - Parameters:
+    ///   - save: save to associate game with
+    ///   - game: game to store
     @RealmActor
     func update(existingSave save: PVSaveState, with game: PVGame) async throws {
-        await try realm.asyncWrite {//TODO: test if call sync write works with sync refresh
+        await try realm.asyncWrite {
             save.game = game
         }
-//        await realm.asyncRefresh()
     }
     
+    /// inserts a new save into datastore
+    /// - Parameter save: save to create
     @RealmActor
-    func write(newSave save: SaveState) async throws {
-        let newSave = realm.buildSaveState(from: save)//save.asRealm()
-//        realm.writeAsync{}
-        await try realm.asyncWrite { @RealmActor in//TODO: test if call sync write works with sync refresh
-            /*let clone = realm.create(PVSaveState.self, value: save, update: .all)
-            if let game = clone.game {
-                clone.game = realm.create(PVGame.self, value: game, update: .all)
-                if let system = game.system {
-                    clone.game.system = realm.create(PVSystem.self, value: system, update: .all)
-                }
-            }
-            if let core = clone.core {
-                clone.core = realm.create(PVCore.self, value: core, update: .all)
-                let systems: List<PVSystem> = .init()
-                core.supportedSystems.forEach { item in
-                    systems.append(realm.create(PVSystem.self, value: item, update: .all))
-                }
-                clone.core.supportedSystems = systems
-            }*/
+    func create(newSave save: SaveState) async throws {
+        let newSave = realm.buildSaveState(from: save)
+        await try realm.asyncWrite {
             realm.add(newSave, update: .all)
         }
-//        await realm.asyncRefresh()
         DLOG("Added new save \(newSave.debugDescription)")
     }
-    
-//    @RealmActor
-//    @inlinable
-//    @inline(__always)
-//    func copy(saveState: PVSaveState) -> PVSaveState {
-//        let clone = realm.create(PVSaveState.self, value: saveState, update: .all)
-//        if let game = clone.game {
-//            clone.game = realm.create(PVGame.self, value: game, update: .all)
-//            if let system = game.system {
-//                clone.game.system = realm.create(PVSystem.self, value: system, update: .all)
-//            }
-//        }
-//        if let core = clone.core {
-//            clone.core = realm.create(PVCore.self, value: core, update: .all)
-//            let systems: List<PVSystem> = .init()
-//            core.supportedSystems.forEach { item in
-//                systems.append(realm.create(PVSystem.self, value: item, update: .all))
-//            }
-//            clone.core.supportedSystems = systems
-//        }
-//        
-//        return clone
-//    }
 }
-
-//extension Realm {
-//    @RealmActor
-//    @inlinable
-//    @inline(__always)
-//    func copy(saveState: PVSaveState) -> PVSaveState {
-//        let clone = create(PVSaveState.self, value: saveState, update: .all)
-//        if let game = clone.game {
-//            clone.game = create(PVGame.self, value: game, update: .all)
-//            if let system = game.system {
-//                clone.game.system = create(PVSystem.self, value: system, update: .all)
-//            }
-//        }
-//        if let core = clone.core {
-//            clone.core = create(PVCore.self, value: core, update: .all)
-//            let systems: List<PVSystem> = .init()
-//            core.supportedSystems.forEach { item in
-//                systems.append(create(PVSystem.self, value: item, update: .all))
-//            }
-//            clone.core.supportedSystems = systems
-//        }
-//        
-//        return clone
-//    }
-//}
 
 //MARK: - iCloud syncers
 
@@ -776,7 +729,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
             ELOG("error clearing saves deleted while application was closed")
             return
         }
-        do {//TODO: should be asyncWrite
+        do {//TODO: should be asyncWrite and refactor to grab all and then create transaction, this should also be refactored to actor datastore
             try realm.write {
                 realm.objects(PVSaveState.self).forEach { save in
                     guard let file = save.file,
@@ -830,7 +783,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
             removing save: \(partialPath)
             full file: \(file)
             """)
-            try realm.write {
+            try realm.write {//TODO: should be asyncwrite, refactor to use actor datastore
                 realm.delete(save)
             }
         } catch {
@@ -886,7 +839,6 @@ class SaveStateSyncer: iCloudContainerSyncer {
         await processJsonFiles(jsonFiles)
     }
     
-    @RealmActor
     func processJsonFiles(_ jsonFiles: any Collection<URL>) async {
         //setup processed count
         await processingState.dequeue()
@@ -901,8 +853,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
                 else {
                     continue
                 }
-                //TODO: move update/save Realm code to Actor
-                let saveStateDatastore = await try SaveStateDatastore()//TODO: try moving instantiation to before loop
+                let saveStateDatastore = await try SaveStateDatastore()
                 guard let existing: PVSaveState = await saveStateDatastore.findSaveState(forPrimaryKey: save.id)
                 else {
                     ILOG("Saves: processing: save #(\(processedCount)) \(json)")
@@ -924,11 +875,8 @@ class SaveStateSyncer: iCloudContainerSyncer {
         notificationCenter.post(Notification(name: .SavesFinishedImporting))
     }
     
-    @RealmActor
     func updateExistingSave(_ existing: PVSaveState, _ saveStateDatastore: SaveStateDatastore, _ save: SaveState, _ json: URL) async {
-        // See if game is missing and set
-        guard existing.game == nil || existing.game.system == nil,
-              let game = await saveStateDatastore.findGame(forPrimaryKey: save.game.md5)
+        guard let game = await saveStateDatastore.findGame(md5: save.game.md5, forSave: existing)
         else {
             return
         }
@@ -941,10 +889,9 @@ class SaveStateSyncer: iCloudContainerSyncer {
         }
     }
     
-    @RealmActor
     func storeNewSave(_ save: SaveState, _ saveStateDatastore: SaveStateDatastore, _ json: URL) async {
         do {
-            await try saveStateDatastore.write(newSave: save)
+            await try saveStateDatastore.create(newSave: save)
         } catch {
             await errorHandler.handleError(error, file: json)
             ELOG("error adding new save \(json): \(error)")
@@ -1189,8 +1136,9 @@ class RomsSyncer: iCloudContainerSyncer {
         if await newFiles.isEmpty {
             await uploadedFiles.removeAll()
         }
-        //to ensure we do NOT go on an endless loop
-        gameImporter.startProcessing()
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            self?.gameImporter.startProcessing()
+        }
     }
 }
 
