@@ -277,6 +277,116 @@ extension PVEmulatorViewController {
         )
     }
     
+    /// Check if a skin has explicit screen position information
+    private func hasScreenPosition(skin: DeltaSkinProtocol, traits: DeltaSkinTraits) -> Bool {
+        // Check if skin has screens with output frames
+        if let screens = skin.screens(for: traits), !screens.isEmpty,
+           let firstScreen = screens.first, firstScreen.outputFrame != nil {
+            return true
+        }
+        
+        // Check if representation has gameScreenFrame in raw dictionary
+        let jsonDict = skin.jsonRepresentation
+        if let representations = jsonDict["representations"] as? [String: Any],
+           let deviceRep = representations[traits.device.rawValue] as? [String: Any],
+           let displayRep = deviceRep[traits.displayType.rawValue] as? [String: Any],
+           let orientationRep = displayRep[traits.orientation.rawValue] as? [String: Any],
+           orientationRep["gameScreenFrame"] != nil {
+            return true
+        }
+        
+        return false
+    }
+    
+    /// Try to get gameScreenFrame from raw dictionary for older skin formats
+    private func getGameScreenFrameFromRawDictionary(skin: DeltaSkinProtocol, traits: DeltaSkinTraits) -> CGRect? {
+        // Access the raw dictionary through jsonRepresentation
+        let jsonDict = skin.jsonRepresentation
+        
+        // Navigate through the representation hierarchy
+        guard let representations = jsonDict["representations"] as? [String: Any],
+              let deviceRep = representations[traits.device.rawValue] as? [String: Any],
+              let displayRep = deviceRep[traits.displayType.rawValue] as? [String: Any],
+              let orientationRep = displayRep[traits.orientation.rawValue] as? [String: Any] else {
+            return nil
+        }
+        
+        // Try to get gameScreenFrame
+        if let gameScreenFrameDict = orientationRep["gameScreenFrame"] as? [String: Any],
+           let x = gameScreenFrameDict["x"] as? CGFloat,
+           let y = gameScreenFrameDict["y"] as? CGFloat,
+           let width = gameScreenFrameDict["width"] as? CGFloat,
+           let height = gameScreenFrameDict["height"] as? CGFloat {
+            return CGRect(x: x, y: y, width: width, height: height)
+        }
+        
+        return nil
+    }
+    
+    /// Calculate frame for skins without explicit screen position
+    private func calculateFrameWithoutExplicitPosition(skin: DeltaSkinProtocol, traits: DeltaSkinTraits, viewSize: CGSize) -> CGRect {
+        // Get the buttons to determine where the controls are
+        guard let buttons = skin.buttons(for: traits),
+              let topButton = buttons.min(by: { $0.frame.minY < $1.frame.minY }) else {
+            // If no buttons, use a default centered frame
+            let width = viewSize.width * 0.8
+            let height = width * 0.75 // Assuming 4:3 aspect ratio
+            let x = (viewSize.width - width) / 2
+            let y = (viewSize.height - height) / 2
+            return CGRect(x: x, y: y, width: width, height: height)
+        }
+        
+        // Get the skin layout information
+        guard let mappingSize = skin.mappingSize(for: traits) else {
+            // If no mapping size, use a default centered frame
+            let width = viewSize.width * 0.8
+            let height = width * 0.75 // Assuming 4:3 aspect ratio
+            let x = (viewSize.width - width) / 2
+            let y = (viewSize.height - height) / 2
+            return CGRect(x: x, y: y, width: width, height: height)
+        }
+        
+        // Calculate scale for buttons
+        let scale = min(
+            viewSize.width / mappingSize.width,
+            viewSize.height / mappingSize.height
+        )
+        
+        // Calculate offset for centering
+        let xOffset = (viewSize.width - (mappingSize.width * scale)) / 2
+        let yOffset = (viewSize.height - (mappingSize.height * scale)) / 2
+        
+        // Calculate layout dimensions - EXACTLY matching DeltaSkinScreenLayer
+        let layoutWidth = mappingSize.width * scale
+        let layoutHeight = mappingSize.height * scale
+        
+        // Get the scaled top button position
+        let skinTopY = topButton.frame.minY * scale + yOffset
+        
+        // Calculate available space above skin - EXACTLY matching DeltaSkinScreenLayer
+        let availableSpace = skinTopY
+        
+        // Use full width of skin for screen width
+        let screenWidth = layoutWidth
+        
+        // Calculate height based on aspect ratio (default to 4:3)
+        let aspectRatio = 4.0/3.0 // Default aspect ratio
+        let screenHeight = screenWidth / aspectRatio
+        
+        // Center in available space above skin - EXACTLY matching DeltaSkinScreenLayer
+        let screenX = (viewSize.width - screenWidth) / 2
+        let screenY = (availableSpace - screenHeight) / 2
+        
+        print("🔴 Calculated frame without explicit position:")
+        print("🔴   View size: \(viewSize)")
+        print("🔴   Layout dimensions: width=\(layoutWidth), height=\(layoutHeight)")
+        print("🔴   Top button Y: \(topButton.frame.minY), Scaled: \(skinTopY)")
+        print("🔴   Available space: \(availableSpace)")
+        print("🔴   Screen dimensions: width=\(screenWidth), height=\(screenHeight), x=\(screenX), y=\(screenY)")
+        
+        return CGRect(x: screenX, y: screenY, width: screenWidth, height: screenHeight)
+    }
+    
     /// Apply the calculated frame to the GPU view
     private func applyFrame(_ frame: CGRect, to gameScreenView: UIView) {
         // Log the calculated frame for debugging
@@ -503,34 +613,137 @@ extension PVEmulatorViewController {
                     )
                     
                     // Get the skin's mapping size for scaling calculations
-                    if let mappingSize = skin.mappingSize(for: traits),
-                       let screens = skin.screens(for: traits),
+                    guard let mappingSize = skin.mappingSize(for: traits) else {
+                        ELOG("No mapping size available for skin")
+                        return
+                    }
+                    
+                    // Calculate the view size and scale - EXACTLY matching the DeltaSkinScreenLayer
+                    let viewSize = bounds.size
+                    let scale = min(
+                        viewSize.width / mappingSize.width,
+                        viewSize.height / mappingSize.height
+                    )
+                    
+                    // Calculate the offset for centering the skin in the view
+                    let xOffset = (viewSize.width - (mappingSize.width * scale)) / 2
+                    let yOffset = (viewSize.height - (mappingSize.height * scale)) / 2
+                    let offset = CGPoint(x: xOffset, y: yOffset)
+                    
+                    // First, try to find explicit screen position in the screens array
+                    // This is the most reliable source for screen position
+                    if let screens = skin.screens(for: traits),
                        let firstScreen = screens.first,
                        let outputFrame = firstScreen.outputFrame {
                         
-                        // Calculate the view size and scale - EXACTLY matching the DeltaSkinScreenLayer
-                        let viewSize = bounds.size
+                        // Use the explicit frame from the skin's screens array
+                        // EXACTLY match how DeltaSkinScreenLayer calculates the frame
+                        // This is the key to making all skins work correctly
+                        
+                        // Calculate the scale based on the view size and mapping size
+                        // This is exactly how DeltaSkinScreenLayer does it
                         let scale = min(
                             viewSize.width / mappingSize.width,
                             viewSize.height / mappingSize.height
                         )
                         
                         // Calculate the offset for centering the skin in the view
+                        // This is exactly how DeltaSkinScreenLayer does it
                         let xOffset = (viewSize.width - (mappingSize.width * scale)) / 2
                         let yOffset = (viewSize.height - (mappingSize.height * scale)) / 2
                         let offset = CGPoint(x: xOffset, y: yOffset)
                         
-                        // Calculate the frame using the same method as DeltaSkinScreenLayer
+                        // Calculate the frame using the exact same method as DeltaSkinScreenLayer
+                        let calculatedFrame = CGRect(
+                            x: outputFrame.minX * scale + offset.x,
+                            y: outputFrame.minY * scale + offset.y,
+                            width: outputFrame.width * scale,
+                            height: outputFrame.height * scale
+                        )
+                        
+                        print("🔴 EXACTLY matching DeltaSkinScreenLayer calculation:")
+                        print("🔴   Original OutputFrame: \(outputFrame)")
+                        print("🔴   View Size: \(viewSize)")
+                        print("🔴   Mapping Size: \(mappingSize)")
+                        print("🔴   Scale: \(scale)")
+                        print("🔴   Offset: \(offset)")
+                        print("🔴   Calculated Frame: \(calculatedFrame)")
+                        
+                        print("🔴 Using explicit screen frame from screens array:")
+                        print("🔴   Original OutputFrame: \(outputFrame)")
+                        print("🔴   Scaled Frame: \(calculatedFrame)")
+                        print("🔴   MappingSize: \(mappingSize), Scale: \(scale), Offset: \(offset)")
+                        
+                        await MainActor.run {
+                            createDebugOverlay(frame: calculatedFrame)
+                            applyFrameToGPUView(calculatedFrame)
+                        }
+                        return
+                    }
+                    
+                    // Next, try to get screen position from gameScreenFrame in the raw dictionary
+                    // This is for older skin formats
+                    let jsonDict = skin.jsonRepresentation
+                    if let representations = jsonDict["representations"] as? [String: Any],
+                       let deviceRep = representations[traits.device.rawValue] as? [String: Any],
+                       let displayRep = deviceRep[traits.displayType.rawValue] as? [String: Any],
+                       let orientationRep = displayRep[traits.orientation.rawValue] as? [String: Any],
+                       let gameScreenFrameDict = orientationRep["gameScreenFrame"] as? [String: Any],
+                       let x = gameScreenFrameDict["x"] as? CGFloat,
+                       let y = gameScreenFrameDict["y"] as? CGFloat,
+                       let width = gameScreenFrameDict["width"] as? CGFloat,
+                       let height = gameScreenFrameDict["height"] as? CGFloat {
+                        
+                        let gameScreenFrame = CGRect(x: x, y: y, width: width, height: height)
                         let calculatedFrame = scaledFrame(
-                            outputFrame,
+                            gameScreenFrame,
                             mappingSize: mappingSize,
                             scale: scale,
                             offset: offset
                         )
                         
+                        print("🔴 Using gameScreenFrame from raw dictionary:")
+                        print("🔴   Original Frame: \(gameScreenFrame)")
+                        print("🔴   Scaled Frame: \(calculatedFrame)")
+                        
                         await MainActor.run {
                             createDebugOverlay(frame: calculatedFrame)
+                            applyFrameToGPUView(calculatedFrame)
                         }
+                        return
+                    }
+                    
+                    // Check if this skin has explicit screen positions by other means
+                    let hasExplicitScreenPosition = hasScreenPosition(skin: skin, traits: traits)
+                    print("🔴 Skin has explicit screen position: \(hasExplicitScreenPosition)")
+                    
+                    var calculatedFrame: CGRect
+                    
+                    if !hasExplicitScreenPosition {
+                        // CASE 1: Skin does NOT have explicit screen position
+                        // Calculate screen position based on available space above skin
+                        calculatedFrame = calculateFrameWithoutExplicitPosition(skin: skin, traits: traits, viewSize: viewSize)
+                        print("🔴 Using calculated frame for skin without explicit position: \(calculatedFrame)")
+                    } else {
+                        // Use default screen frame as fallback
+                        let defaultFrame = DeltaSkinDefaults.defaultScreenFrame(
+                            for: skin.gameType,
+                            in: mappingSize,
+                            buttons: skin.buttons(for: traits),
+                            isPreview: false
+                        )
+                        calculatedFrame = scaledFrame(
+                            defaultFrame,
+                            mappingSize: mappingSize,
+                            scale: scale,
+                            offset: offset
+                        )
+                        print("🔴 Using default screen frame: \(defaultFrame) → \(calculatedFrame)")
+                    }
+                    
+                    await MainActor.run {
+                        createDebugOverlay(frame: calculatedFrame)
+                        applyFrameToGPUView(calculatedFrame)
                     }
                 }
             } catch {
@@ -549,9 +762,12 @@ extension PVEmulatorViewController {
             }
         }
         
-        print("🔴 ADDING DEBUG OVERLAY at: \(frame)")
-        print("🔴 View bounds: \(view.bounds)")
+        print("""
+            🔴 ADDING DEBUG OVERLAY at: \(frame)
+            🔴 View bounds: \(view.bounds)
+            """ )
         
+        #if false
         // Create a debug overlay view
         let debugOverlay = UIView(frame: frame)
         debugOverlay.tag = 9999 // Use a tag to identify it later
@@ -575,7 +791,7 @@ extension PVEmulatorViewController {
         
         // Make sure it's above everything else
         view.bringSubviewToFront(debugOverlay)
-        
+        #endif
         // Log the current GPU view frame for comparison
         if let gameScreenView = gpuViewController.view {
             print("🔴 Current GPU view frame: \(gameScreenView.frame)")
@@ -598,7 +814,7 @@ extension PVEmulatorViewController {
         buttonContainer.layer.cornerRadius = 10
         
         // Add a title
-        let titleLabel = UILabel(frame: CGRect(x: 10, y: 5, width: 180, height: 20))
+        let titleLabel = UILabel(frame: CGRect(x: 10, y: 5, width: 140, height: 20))
         titleLabel.text = "Debug Controls"
         titleLabel.textColor = .white
         titleLabel.textAlignment = .center
@@ -607,12 +823,10 @@ extension PVEmulatorViewController {
         
         // Add buttons for different positioning approaches
         let button1 = createDebugButton(title: "Try Frame", y: 30, action: #selector(tryFramePositioning))
-        let button2 = createDebugButton(title: "Try Bounds/Position", y: 70, action: #selector(tryBoundsPositioning))
-        let button3 = createDebugButton(title: "Reset Position", y: 110, action: #selector(resetPositioning))
+        let button2 = createDebugButton(title: "Reset Position", y: 70, action: #selector(resetPositioning))
         
         buttonContainer.addSubview(button1)
         buttonContainer.addSubview(button2)
-        buttonContainer.addSubview(button3)
         
         // Add the button container to the view
         view.addSubview(buttonContainer)
@@ -633,8 +847,8 @@ extension PVEmulatorViewController {
     
     /// Try positioning using frame
     @objc private func tryFramePositioning() {
-        guard let gameScreenView = gpuViewController.view,
-              let debugOverlay = view.subviews.first(where: { $0.tag == 9999 && $0 is UIView && !(($0 as? UIButton) != nil) }) else {
+        guard let debugOverlay = view.subviews.first(where: { $0.tag == 9999 && $0 is UIView && !(($0 as? UIButton) != nil) }) else {
+            print("🔴 No debug overlay found for positioning")
             return
         }
         
@@ -642,33 +856,71 @@ extension PVEmulatorViewController {
         let frame = debugOverlay.frame
         print("🔴 Trying frame positioning: \(frame)")
         
+        // Apply the frame to the GPU view
+        applyFrameToGPUView(frame)
+    }
+    
+    /// Apply a frame directly to the GPU view
+    private func applyFrameToGPUView(_ frame: CGRect) {
+        guard let gameScreenView = gpuViewController.view else {
+            print("🔴 ERROR: GPU view not found")
+            return
+        }
+        
+        // We're going to trust the frame calculation and not modify it
+        // This ensures we match exactly what the DeltaSkinScreenLayer does
+        let validatedFrame = frame
+        
+        // Just log the frame for debugging
+        print("🔴 Using frame: \(validatedFrame)")
+        
+        print("🔴 Applying frame to GPU view: \(validatedFrame)")
+        print("🔴 Current GPU view frame before: \(gameScreenView.frame)")
+        
         // Apply the frame - ONLY set the frame, nothing else
         if let metalVC = gpuViewController as? PVMetalViewController {
             // Enable custom positioning - explicitly reference properties from PVGPUViewController
             (metalVC as PVGPUViewController).useCustomPositioning = true
-            (metalVC as PVGPUViewController).customFrame = frame
+            (metalVC as PVGPUViewController).customFrame = validatedFrame
             
             // Apply the frame to both the view and MTLView
-            metalVC.view.frame = frame
-            metalVC.mtlView.frame = frame
+            metalVC.view.frame = validatedFrame
+            metalVC.mtlView.frame = validatedFrame
             
             // Force a redraw
+            metalVC.mtlView.setNeedsDisplay()
             metalVC.draw(in: metalVC.mtlView)
             
+            // Make sure the view is visible
+            metalVC.view.isHidden = false
+            metalVC.mtlView.isHidden = false
+            
             print("🔴 Applied frame to MTLView: \(metalVC.mtlView.frame)")
-            print("🔴 Enabled custom positioning with frame: \(frame)")
+            print("🔴 Enabled custom positioning with frame: \(validatedFrame)")
         } else {
             // For non-Metal views
-            gameScreenView.frame = frame
+            gameScreenView.frame = validatedFrame
             (gpuViewController as PVGPUViewController).useCustomPositioning = true
-            (gpuViewController as PVGPUViewController).customFrame = frame
+            (gpuViewController as PVGPUViewController).customFrame = validatedFrame
+            
+            // Make sure the view is visible
+            gameScreenView.isHidden = false
+            
+            print("🔴 Applied frame to non-Metal view: \(gameScreenView.frame)")
         }
-    }
-    
-    /// Try positioning using just the frame (simpler approach)
-    @objc private func tryBoundsPositioning() {
-        // Just call tryFramePositioning - we're simplifying to just use frame-based positioning
-        tryFramePositioning()
+        
+        // Force layout update
+        gameScreenView.setNeedsLayout()
+        gameScreenView.layoutIfNeeded()
+        
+        // Make sure GPU view is behind the skin view
+        if let skinContainerView = view.subviews.first(where: { $0 is DeltaSkinContainerView }) {
+            view.insertSubview(gameScreenView, belowSubview: skinContainerView)
+        }
+        
+        // Log the result
+        print("🔴 After applying frame:")
+        print("🔴   GPU view frame: \(gameScreenView.frame)")
     }
     
     /// Reset to default positioning

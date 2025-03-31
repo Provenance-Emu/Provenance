@@ -323,8 +323,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         )
 
         // Add a colored border to the MTKView for debugging
-        mtlView.layer.borderWidth = 5.0
-        mtlView.layer.borderColor = UIColor.cyan.cgColor
+//        mtlView.layer.borderWidth = 5.0
+//        mtlView.layer.borderColor = UIColor.cyan.cgColor
 
         DLOG("Metal view controller view did load")
     }
