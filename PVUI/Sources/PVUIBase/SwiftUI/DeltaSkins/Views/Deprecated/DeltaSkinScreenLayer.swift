@@ -26,7 +26,7 @@ struct DeltaSkinScreenLayer: View {
            let orientationRep = displayRep[traits.orientation.rawValue] as? [String: Any],
            orientationRep["gameScreenFrame"] != nil {
             return true
-        } 
+        }
 
         return false
     }
@@ -127,15 +127,26 @@ struct DeltaSkinScreenLayer: View {
                             // Render explicit screens (e.g. NDS dual screens)
                             ForEach(explicitScreens, id: \.id) { screen in
                                 if let outputFrame = screen.outputFrame {
-                                    DeltaSkinTestPatternView(
-                                        frame: scaledFrame(
-                                            outputFrame,
-                                            mappingSize: mappingSize,
-                                            scale: scale,
-                                            offset: offset
-                                        ),
-                                        filters: filters
+                                    let finalFrame = scaledFrame(
+                                        outputFrame,
+                                        mappingSize: mappingSize,
+                                        scale: scale,
+                                        offset: offset
                                     )
+                                                                        
+                                    DeltaSkinTestPatternView(
+                                        frame: finalFrame,
+                                        filters: filters
+                                    ).onAppear {
+                                        // DEBUG: Print the exact frame being used for color bars
+                                        DLOG(
+                                            """
+                                            COLOR BARS FRAME: \(finalFrame) for screen \(screen.id)
+                                            Original OutputFrame: \(outputFrame)
+                                            MappingSize: \(mappingSize), Scale: \(scale), Offset: \(offset)
+                                            """
+                                            )
+                                    }
                                 }
                             }
                         } else {

@@ -27,7 +27,7 @@ extension PVEmulatorViewController {
             await addSkinView()
 
             // Hide the standard controls
-            hideStandardControls()
+             hideStandardControls()
 
             // Log skin setup info
             let skinInfo = """
@@ -40,11 +40,6 @@ extension PVEmulatorViewController {
             
             // Set up observation of app state changes
             observeAppStateChanges()
-
-            // Scan for available skins in the background
-//            Task {
-//                await scanForAvailableSkins()
-//            }
         } else {
             ELOG("Delta Skin not enabled in settings")
         }
@@ -121,13 +116,28 @@ extension PVEmulatorViewController {
         gameScreenView.isHidden = false
         gameScreenView.alpha = 1.0
         
+        // IMPORTANT: Log the current frame before any positioning
+        DLOG("GPU view frame BEFORE positioning: \(gameScreenView.frame)")
+        if let metalVC = gpuViewController as? PVMetalViewController {
+            DLOG("MTLView frame BEFORE positioning: \(metalVC.mtlView.frame)")
+            DLOG("MTLView layer frame BEFORE positioning: \(metalVC.mtlView.layer.frame)")
+        }
+        
         // Position the GPU view based on the DeltaSkin screen information
+        // This will call into PVEmulatorViewController+DeltaSkinScreen.swift
         updateGPUViewPositionForDeltaSkin()
 
         // Force a draw to make sure content is visible
         if let metalVC = gpuViewController as? PVMetalViewController {
             DLOG("Forcing initial draw of GPU view")
             metalVC.draw(in: metalVC.mtlView)
+        }
+        
+        // IMPORTANT: Log the frame after positioning
+        DLOG("GPU view frame AFTER positioning: \(gameScreenView.frame)")
+        if let metalVC = gpuViewController as? PVMetalViewController {
+            DLOG("MTLView frame AFTER positioning: \(metalVC.mtlView.frame)")
+            DLOG("MTLView layer frame AFTER positioning: \(metalVC.mtlView.layer.frame)")
         }
     }
 
@@ -192,10 +202,14 @@ extension PVEmulatorViewController {
             if mtlView.superview == nil {
                 view.addSubview(mtlView)
             }
-            mtlView.frame = view.bounds
-            mtlView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            
+            // IMPORTANT: Don't override the frame here, let DeltaSkinScreen handle it
+            // Just ensure it's visible
             mtlView.isHidden = false
             mtlView.alpha = 1.0
+            
+            // Log that we're not setting the frame here
+            DLOG("MTLView added to hierarchy but not positioning it here - DeltaSkinScreen will handle that")
         }
 
         // Now add the skin container on top
@@ -203,6 +217,10 @@ extension PVEmulatorViewController {
         
         // Make sure skin is on top
         view.bringSubviewToFront(containerView)
+        
+        if let menuButton = menuButton {
+            view.bringSubviewToFront(menuButton)
+        }
         
         // Add debug overlay toggle gesture
         let debugTapGesture = UITapGestureRecognizer(target: self, action: #selector(toggleDebugOverlay))
@@ -217,6 +235,8 @@ extension PVEmulatorViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
             self?.refreshGPUView()
         }
+        
+        printViewHierarchy()
     }
 
     /// Hide the standard controller buttons

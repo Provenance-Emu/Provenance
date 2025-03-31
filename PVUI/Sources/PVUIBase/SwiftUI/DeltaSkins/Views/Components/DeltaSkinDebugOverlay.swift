@@ -82,7 +82,7 @@ struct DeltaSkinDebugOverlay: View {
         }
     }
 
-    private func scaledFrame(
+    internal func scaledFrame(
         _ frame: CGRect,
         mappingSize: CGSize,
         scale: CGFloat,

@@ -35,14 +35,6 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
         }
     }
 
-    /// Get skins for a specific game type
-    public func skins(for gameType: String) async throws -> [DeltaSkinProtocol] {
-        try await queue.asyncResult {
-            try self.scanForSkins()
-            return self.loadedSkins.filter { $0.gameType.rawValue == gameType }
-        }
-    }
-
     /// Scan for available skins
     private func scanForSkins() throws {
         DLOG("Starting skin scan...")
