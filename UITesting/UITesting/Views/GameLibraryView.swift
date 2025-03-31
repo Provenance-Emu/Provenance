@@ -257,10 +257,12 @@ struct GameLibraryView: View {
     @ViewBuilder
     private func allGamesSection() -> some View {
         Section {
-            if selectedViewMode == .grid {
-                systemGamesGrid(games: sortedGames(Array(allGames)))
-            } else {
-                systemGamesList(games: sortedGames(Array(allGames)))
+            if expandedSections.contains("all") {
+                if selectedViewMode == .grid {
+                    systemGamesGrid(games: sortedGames(Array(allGames)))
+                } else {
+                    systemGamesList(games: sortedGames(Array(allGames)))
+                }
             }
         } header: {
             sectionHeader(title: "All Games", count: allGames.count, systemId: "all")
@@ -558,9 +560,6 @@ extension GameLibraryView {
 
     /// Toggle the expanded state of a section
     private func toggleSection(_ systemId: String) {
-        // Don't allow collapsing the All Games section
-        if systemId == "all" { return }
-
         withAnimation(.easeInOut(duration: 0.2)) {
             if expandedSections.contains(systemId) {
                 expandedSections.remove(systemId)
@@ -615,13 +614,11 @@ extension GameLibraryView {
                     )
                     .cornerRadius(12)
 
-                if systemId != "all" {
                     Image(systemName: expandedSections.contains(systemId) ? "chevron.up" : "chevron.down")
                         .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                         .font(.system(size: 14, weight: .bold))
                         .frame(width: 24, height: 24)
                         .animation(.easeInOut(duration: 0.2), value: expandedSections.contains(systemId))
-                }
             }
             .padding(.vertical, 12)
             .padding(.horizontal, 16)
