@@ -540,7 +540,7 @@ extension PVEmulatorViewController {
     }
     
     /// Reset the GPU view to its default position (full screen)
-    private func resetGPUViewPosition() {
+    internal func resetGPUViewPosition() {
         guard let gameScreenView = gpuViewController.view else {
             ELOG("GPU view not found")
             return
@@ -814,110 +814,22 @@ extension PVEmulatorViewController {
     
     /// Create a debug overlay with the given frame
     private func createDebugOverlay(frame: CGRect) {
-        // Store the current target frame for positioning
-        currentTargetFrame = frame
+        // Store the current target frame for positioning in the DeltaSkin extension
+        self.currentTargetFrame = frame
         
-        // Remove any existing debug overlays
-        view.subviews.forEach { subview in
-            if subview.tag == 9999 {
-                subview.removeFromSuperview()
-            }
-        }
-        
-        print("""
-            🔴 ADDING DEBUG OVERLAY at: \(frame)
-            🔴 View bounds: \(view.bounds)
+        // Log the frame information
+        DLOG("""
+            Creating debug overlay at: \(frame)
+            View bounds: \(view.bounds)
             """ )
         
-        // Create a debug overlay view
-        let debugOverlay = UIView(frame: frame)
-        debugOverlay.tag = 9999 // Use a tag to identify it later
-        debugOverlay.backgroundColor = UIColor.red.withAlphaComponent(0.3)
-        debugOverlay.layer.borderColor = UIColor.yellow.cgColor
-        debugOverlay.layer.borderWidth = 2.0
-        
-        // Add a label to show the frame
-        let labelWidth = frame.width - 20
-        let label = UILabel(frame: CGRect(x: 10, y: 10, width: labelWidth, height: 60))
-        label.text = "Expected GPU View\nFrame: \(frame)"
-        label.textColor = UIColor.white
-        label.backgroundColor = UIColor.black.withAlphaComponent(0.7)
-        label.numberOfLines = 2
-        label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 12)
-        debugOverlay.addSubview(label)
-        
-        // Add the debug overlay to the view
-        view.addSubview(debugOverlay)
-        
-        // Make sure it's above everything else
-        view.bringSubviewToFront(debugOverlay)
-        // Log the current GPU view frame for comparison
-        if let gameScreenView = gpuViewController.view {
-            print("🔴 Current GPU view frame: \(gameScreenView.frame)")
-            
-            if let metalVC = gpuViewController as? PVMetalViewController {
-                print("🔴 Current MTLView frame: \(metalVC.mtlView.frame)")
-            }
-        }
-        
-        // Add buttons to test different positioning approaches
-        addDebugButtons(targetFrame: frame)
+        // Use the createDebugFrameOverlay method from PVEmulatorViewController+DeltaSkin.swift
+        createDebugFrameOverlay(frame: frame)
     }
     
-    /// Add debug buttons to test different positioning approaches
-    private func addDebugButtons(targetFrame: CGRect) {
-        // Create a container for the buttons
-        let buttonContainer = UIView(frame: CGRect(x: 20, y: 20, width: 200, height: 150))
-        buttonContainer.tag = 9999 // Use the same tag for easy removal
-        buttonContainer.backgroundColor = UIColor.black.withAlphaComponent(0.7)
-        buttonContainer.layer.cornerRadius = 10
-        
-        // Add a title
-        let titleLabel = UILabel(frame: CGRect(x: 10, y: 5, width: 140, height: 20))
-        titleLabel.text = "Debug Controls"
-        titleLabel.textColor = .white
-        titleLabel.textAlignment = .center
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 14)
-        buttonContainer.addSubview(titleLabel)
-        
-        // Add buttons for different positioning approaches
-        let button1 = createDebugButton(title: "Try Frame", y: 30, action: #selector(tryFramePositioning))
-        let button2 = createDebugButton(title: "Reset Position", y: 70, action: #selector(resetPositioning))
-        
-        buttonContainer.addSubview(button1)
-        buttonContainer.addSubview(button2)
-        
-        // Add the button container to the view
-        view.addSubview(buttonContainer)
-        view.bringSubviewToFront(buttonContainer)
-    }
+    // Debug buttons have been moved to PVEmulatorViewController+DeltaSkin.swift
     
-    /// Create a debug button with the given title and action
-    private func createDebugButton(title: String, y: CGFloat, action: Selector) -> UIButton {
-        let button = UIButton(type: .system)
-        button.frame = CGRect(x: 10, y: y, width: 180, height: 30)
-        button.setTitle(title, for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.8)
-        button.layer.cornerRadius = 5
-        button.addTarget(self, action: action, for: .touchUpInside)
-        return button
-    }
-    
-    /// Try positioning using frame
-    @objc private func tryFramePositioning() {
-        // Use the stored target frame instead of trying to find a debug overlay
-        guard let frame = currentTargetFrame else {
-            print("🔴 No target frame available for positioning")
-            return
-        }
-        
-        print("🔴 Trying frame positioning: \(frame)")
-        
-        // Apply the frame to the GPU view
-        applyFrameToGPUView(frame)
-    }
+    // Method moved to PVEmulatorViewController+DeltaSkin.swift
     
     /// Apply a frame directly to the GPU view with optimized positioning
     private func applyFrameToGPUView(_ frame: CGRect) {
@@ -1029,20 +941,7 @@ extension PVEmulatorViewController {
         print("🔴   GPU view frame: \(gameScreenView.frame)")
     }
     
-    /// Reset to default positioning
-    @objc private func resetPositioning() {
-        // Disable custom positioning first
-        if let metalVC = gpuViewController as? PVMetalViewController {
-            // Explicitly reference properties from PVGPUViewController
-            (metalVC as PVGPUViewController).useCustomPositioning = false
-            (metalVC as PVGPUViewController).customFrame = .zero
-            print("🔴 Disabled custom positioning")
-        }
-        
-        // Then reset to default
-        resetGPUViewPosition()
-        print("🔴 Reset to default positioning")
-    }
+    // Method moved to PVEmulatorViewController+DeltaSkin.swift
     
 
 }

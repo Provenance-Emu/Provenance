@@ -12,7 +12,7 @@ public struct SystemSkinBrowserView: View {
     @State private var selectedSystem: SystemIdentifier?
 
     public init() {
-        loadSkins()
+
     }
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass

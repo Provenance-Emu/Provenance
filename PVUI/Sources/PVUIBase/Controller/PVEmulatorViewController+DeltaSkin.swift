@@ -11,7 +11,6 @@ import Combine
 
 /// Extension to add DeltaSkin support to the emulator view controller
 extension PVEmulatorViewController {
-  
 
     /// Set up the DeltaSkin view if enabled in settings
     @objc public func setupDeltaSkinView() async throws {
@@ -351,7 +350,7 @@ extension PVEmulatorViewController {
     /// Show a debug overlay with useful information
     private func showDebugOverlay() {
         // Create overlay view
-        let overlay = UIView(frame: CGRect(x: 10, y: 50, width: 300, height: 300))
+        let overlay = UIView(frame: CGRect(x: 10, y: 50, width: 300, height: 400)) // Increased height for buttons
         overlay.backgroundColor = UIColor(white: 0.1, alpha: 0.85)
         overlay.layer.cornerRadius = 10
         overlay.layer.borderWidth = 1
@@ -381,6 +380,23 @@ extension PVEmulatorViewController {
         closeButton.addTarget(self, action: #selector(removeDebugOverlay), for: .touchUpInside)
         overlay.addSubview(closeButton)
         
+        // Add debug buttons section
+        let buttonsSectionLabel = UILabel(frame: CGRect(x: 10, y: 300, width: 280, height: 20))
+        buttonsSectionLabel.text = "Screen Positioning Controls"
+        buttonsSectionLabel.textColor = .cyan
+        buttonsSectionLabel.font = UIFont.boldSystemFont(ofSize: 12)
+        buttonsSectionLabel.textAlignment = .center
+        overlay.addSubview(buttonsSectionLabel)
+        
+        // Add buttons for different positioning approaches
+        let tryFrameButton = createDebugButton(title: "Try Frame", frame: CGRect(x: 20, y: 330, width: 120, height: 30))
+        tryFrameButton.addTarget(self, action: #selector(tryFramePositioning), for: .touchUpInside)
+        overlay.addSubview(tryFrameButton)
+        
+        let resetButton = createDebugButton(title: "Reset Position", frame: CGRect(x: 160, y: 330, width: 120, height: 30))
+        resetButton.addTarget(self, action: #selector(resetPositioning), for: .touchUpInside)
+        overlay.addSubview(resetButton)
+        
         // Make overlay draggable
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleDebugOverlayPan(_:)))
         overlay.addGestureRecognizer(panGesture)
@@ -394,11 +410,23 @@ extension PVEmulatorViewController {
         debugUpdateTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             self?.updateDebugInfo()
         }
+        
+        // Add a debug frame overlay if we have a current target frame
+        if let currentFrame = currentTargetFrame {
+            createDebugFrameOverlay(frame: currentFrame)
+        }
     }
     
     /// Remove the debug overlay
     @objc private func removeDebugOverlay() {
         debugUpdateTimer?.invalidate()
+        
+        // Also remove any debug frame overlays
+        view.subviews.forEach { subview in
+            if subview.tag == 9999 {
+                subview.removeFromSuperview()
+            }
+        }
         debugUpdateTimer = nil
         
         debugOverlayView?.removeFromSuperview()
@@ -407,15 +435,228 @@ extension PVEmulatorViewController {
     }
     
     /// Handle dragging the debug overlay
+    /// Create a debug button with the given title and frame
+    private func createDebugButton(title: String, frame: CGRect) -> UIButton {
+        let button = UIButton(type: .system)
+        button.frame = frame
+        button.setTitle(title, for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = UIColor(white: 0.2, alpha: 0.8)
+        button.layer.cornerRadius = 5
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.cyan.cgColor
+        return button
+    }
+    
+    /// Create a debug frame overlay to visualize where the GPU view should be
+    internal func createDebugFrameOverlay(frame: CGRect) {
+        // Remove any existing debug frame overlays
+        view.subviews.forEach { subview in
+            if subview.tag == 9999 {
+                subview.removeFromSuperview()
+            }
+        }
+        
+        // Create a debug overlay view
+        let debugOverlay = UIView(frame: frame)
+        debugOverlay.tag = 9999 // Use a tag to identify it later
+        debugOverlay.backgroundColor = UIColor.red.withAlphaComponent(0.3)
+        debugOverlay.layer.borderColor = UIColor.yellow.cgColor
+        debugOverlay.layer.borderWidth = 2.0
+        
+        // Add a visual handle to indicate draggability
+        let handleSize: CGFloat = 30
+        let handle = UIView(frame: CGRect(x: frame.width - handleSize - 5, y: 5, width: handleSize, height: handleSize))
+        handle.backgroundColor = UIColor.white.withAlphaComponent(0.7)
+        handle.layer.cornerRadius = handleSize / 2
+        handle.layer.borderWidth = 2
+        handle.layer.borderColor = UIColor.black.cgColor
+        
+        // Add drag icon to handle
+        let iconSize: CGFloat = 15
+        let icon = UIImageView(frame: CGRect(x: (handleSize - iconSize) / 2, y: (handleSize - iconSize) / 2, width: iconSize, height: iconSize))
+        if let moveImage = UIImage(systemName: "arrow.up.and.down.and.arrow.left.and.right") {
+            icon.image = moveImage
+            icon.tintColor = UIColor.black
+            icon.contentMode = .scaleAspectFit
+            handle.addSubview(icon)
+        }
+        debugOverlay.addSubview(handle)
+        
+        // Add a label to show the frame
+        let labelWidth = frame.width - 20
+        let label = UILabel(frame: CGRect(x: 10, y: 10, width: labelWidth, height: 80))
+        label.text = "Expected GPU View\nFrame: \(frame)\n(Drag to reposition)"
+        label.textColor = UIColor.white
+        label.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        label.numberOfLines = 3
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 12)
+        debugOverlay.addSubview(label)
+        
+        // Add a pan gesture recognizer to make the overlay draggable
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleDebugFrameOverlayPan(_:)))
+        debugOverlay.addGestureRecognizer(panGesture)
+        debugOverlay.isUserInteractionEnabled = true
+        
+        // Add the debug overlay to the view
+        view.addSubview(debugOverlay)
+        
+        // Make sure it's above everything else but below the debug info overlay
+        view.insertSubview(debugOverlay, belowSubview: debugOverlayView ?? view)
+        
+        // Log the current GPU view frame for comparison
+        if let gameScreenView = gpuViewController.view {
+            DLOG("Current GPU view frame: \(gameScreenView.frame)")
+            
+            if let metalVC = gpuViewController as? PVMetalViewController {
+                DLOG("Current MTLView frame: \(metalVC.mtlView.frame)")
+            }
+        }
+    }
+    
     @objc private func handleDebugOverlayPan(_ gesture: UIPanGestureRecognizer) {
         guard let overlay = debugOverlayView else { return }
         
         let translation = gesture.translation(in: view)
-        overlay.center = CGPoint(x: overlay.center.x + translation.x, y: overlay.center.y + translation.y)
+        
+        // Calculate new center position
+        let newCenter = CGPoint(x: overlay.center.x + translation.x, y: overlay.center.y + translation.y)
+        
+        // Ensure the overlay stays within the parent view bounds
+        let halfWidth = overlay.bounds.width / 2
+        let halfHeight = overlay.bounds.height / 2
+        
+        let minX = halfWidth
+        let maxX = view.bounds.width - halfWidth
+        let minY = halfHeight
+        let maxY = view.bounds.height - halfHeight
+        
+        let boundedX = min(maxX, max(minX, newCenter.x))
+        let boundedY = min(maxY, max(minY, newCenter.y))
+        
+        overlay.center = CGPoint(x: boundedX, y: boundedY)
         gesture.setTranslation(.zero, in: view)
     }
     
+    @objc private func handleDebugFrameOverlayPan(_ gesture: UIPanGestureRecognizer) {
+        guard let frameOverlay = gesture.view else { return }
+        
+        switch gesture.state {
+        case .began, .changed:
+            let translation = gesture.translation(in: view)
+            
+            // Calculate new center position
+            let newCenter = CGPoint(x: frameOverlay.center.x + translation.x, 
+                                    y: frameOverlay.center.y + translation.y)
+            
+            // Ensure the overlay stays within the parent view bounds
+            let halfWidth = frameOverlay.bounds.width / 2
+            let halfHeight = frameOverlay.bounds.height / 2
+            
+            let minX = halfWidth
+            let maxX = view.bounds.width - halfWidth
+            let minY = halfHeight
+            let maxY = view.bounds.height - halfHeight
+            
+            let boundedX = min(maxX, max(minX, newCenter.x))
+            let boundedY = min(maxY, max(minY, newCenter.y))
+            
+            frameOverlay.center = CGPoint(x: boundedX, y: boundedY)
+            gesture.setTranslation(.zero, in: view)
+            
+            // Update the label with the new frame
+            if let label = frameOverlay.subviews.first as? UILabel {
+                label.text = "Expected GPU View\nFrame: \(frameOverlay.frame)\n(Drag to reposition)"
+            }
+            
+            // Update the current target frame
+            currentTargetFrame = frameOverlay.frame
+            
+        case .ended:
+            // When dragging ends, update the current target frame
+            currentTargetFrame = frameOverlay.frame
+            DLOG("Debug frame overlay repositioned to: \(frameOverlay.frame)")
+            
+        default:
+            break
+        }
+    }
+    
     /// Update the debug info display
+    /// Try to position the GPU view using the current target frame
+    @objc private func tryFramePositioning() {
+        guard let frame = currentTargetFrame else {
+            DLOG("No target frame available")
+            return
+        }
+        
+        DLOG("Trying to position GPU view with frame: \(frame)")
+        applyFrameToGPUView(frame)
+        
+        // Update the debug overlay with success message
+        if let frameOverlay = view.subviews.first(where: { $0.tag == 9999 }),
+           let label = frameOverlay.subviews.first(where: { $0 is UILabel }) as? UILabel {
+            let originalText = label.text ?? ""
+            label.text = originalText + "\n✅ Applied!"
+            
+            // Flash the overlay to indicate success
+            UIView.animate(withDuration: 0.3, animations: {
+                frameOverlay.backgroundColor = UIColor.green.withAlphaComponent(0.5)
+            }) { _ in
+                UIView.animate(withDuration: 0.3, delay: 0.5, options: [], animations: {
+                    frameOverlay.backgroundColor = UIColor.red.withAlphaComponent(0.3)
+                }) { _ in
+                    // Reset the label after animation completes
+                    if let currentText = label.text, currentText.contains("✅ Applied!") {
+                        label.text = originalText
+                    }
+                }
+            }
+        }
+    }
+    
+    /// Reset the GPU view position to default
+    @objc private func resetPositioning() {
+        DLOG("Resetting GPU view position")
+        
+        // Disable custom positioning first
+        if let metalVC = gpuViewController as? PVMetalViewController {
+            // Explicitly reference properties from PVGPUViewController
+            (metalVC as PVGPUViewController).useCustomPositioning = false
+        }
+        
+        // Reset to default position
+        resetGPUViewPosition()
+    }
+    
+    /// Apply a frame to the GPU view
+    private func applyFrameToGPUView(_ frame: CGRect) {
+        guard let gameScreenView = gpuViewController.view else {
+            DLOG("ERROR: GPU view not found")
+            return
+        }
+        
+        // Enable custom positioning
+        if let metalVC = gpuViewController as? PVMetalViewController {
+            // Explicitly reference properties from PVGPUViewController
+            (metalVC as PVGPUViewController).useCustomPositioning = true
+            (metalVC as PVGPUViewController).customFrame = frame
+            
+            // Apply frame to the Metal view
+            metalVC.mtlView.frame = frame
+            
+            // Force a redraw
+            metalVC.draw(in: metalVC.mtlView)
+        }
+        
+        // Also set the frame on the gameScreenView directly
+        gameScreenView.frame = frame
+        
+        // Log the new frame
+        DLOG("Applied frame to GPU view: \(frame)")
+    }
+    
     private func updateDebugInfo() {
         guard let infoLabel = debugInfoLabel else { return }
         
