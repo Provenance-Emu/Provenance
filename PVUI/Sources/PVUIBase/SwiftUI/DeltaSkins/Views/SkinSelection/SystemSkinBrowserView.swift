@@ -10,9 +10,10 @@ public struct SystemSkinBrowserView: View {
     @State private var isLoading = true
 
     @State private var selectedSystem: SystemIdentifier?
-    @State private var showingSystemSelection = false
 
-    public init() {}
+    public init() {
+        loadSkins()
+    }
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
@@ -83,16 +84,10 @@ public struct SystemSkinBrowserView: View {
             }
         }
         .onAppear {
-            Task {
-                await skinManager.reloadSkins()
-            }
+            loadSkins()
             loadSkinCounts()
         }
-        .sheet(isPresented: $showingSystemSelection) {
-            if let system = selectedSystem {
-                SystemSkinSelectionView(system: system)
-            }
-        }
+        // Navigation handled in systemSection via NavigationLink
         #if !os(tvOS)
         .fileImporter(
             isPresented: $showingDocumentPicker,
@@ -121,11 +116,8 @@ public struct SystemSkinBrowserView: View {
         let skinCount = systemSkinCounts[system] ?? 0
         
         return VStack(alignment: .leading, spacing: 12) {
-            // Section header
-            Button {
-                selectedSystem = system
-                showingSystemSelection = true
-            } label: {
+            // Section header with NavigationLink
+            NavigationLink(destination: SystemSkinSelectionView(system: system)) {
                 HStack {
                     Text(system.fullName)
                         .font(.title2)
@@ -134,12 +126,6 @@ public struct SystemSkinBrowserView: View {
                     Text("\(skinCount) \(skinCount == 1 ? "skin" : "skins")")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
-                    
-                    Spacer()
-                    
-                    Image(systemName: "chevron.right")
-                        .foregroundStyle(.secondary)
-                        .font(.headline)
                 }
             }
             .buttonStyle(.plain)
@@ -158,6 +144,12 @@ public struct SystemSkinBrowserView: View {
 
     private var supportedSystems: [SystemIdentifier] {
         systemSkinCounts.filter { $0.value > 0 }.keys.sorted()
+    }
+    
+    private func loadSkins() {
+        Task {
+            await self.skinManager.reloadSkins()
+        }
     }
 
     private func loadSkinCounts() {

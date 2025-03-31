@@ -52,13 +52,6 @@ public struct SystemSkinSelectionView: View {
                 }
             }
             .navigationTitle("Select Controller Skin")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        dismiss()
-                    }
-                }
-            }
         }
         .onAppear {
             loadSkins()
