@@ -19,6 +19,7 @@ import PVSystems
 import Combine
 import Dispatch
 import PVLibrary
+import Perception
 
 struct GameLibraryView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -199,13 +200,14 @@ struct GameLibraryView: View {
             Divider()
                 .padding(.horizontal)
                 
-            // Show import progress bar when there are active imports
-            if !gameImporter.importQueue.isEmpty {
-                importProgressView()
-                    .padding(.horizontal)
-                    .padding(.vertical, 8)
+            WithPerceptionTracking {
+                // Show import progress bar when there are active imports
+                if !gameImporter.importQueue.isEmpty {
+                    importProgressView()
+                        .padding(.horizontal)
+                        .padding(.vertical, 8)
+                }
             }
-
             // Games organized by system
             libraryScrollView()
         }
@@ -566,72 +568,74 @@ extension GameLibraryView {
     @ViewBuilder
     private func importProgressView() -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            // Header with count of imports
-            HStack {
-                Text("IMPORTING \(gameImporter.importQueue.count) FILES")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(.retroBlue)
-                
-                Spacer()
-                
-                // Show processing status if any item is processing
-                if gameImporter.importQueue.contains(where: { $0.status == .processing }) {
-                    Text("PROCESSING")
+            WithPerceptionTracking {
+                // Header with count of imports
+                HStack {
+                    Text("IMPORTING \(gameImporter.importQueue.count) FILES")
                         .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(.retroPink)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 2)
-                        .background(
-                            RoundedRectangle(cornerRadius: 4)
-                                .fill(Color.retroBlack.opacity(0.7))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .strokeBorder(Color.retroPink, lineWidth: 1)
+                        .foregroundColor(.retroBlue)
+                    
+                    Spacer()
+                    
+                    // Show processing status if any item is processing
+                    if gameImporter.importQueue.contains(where: { $0.status == .processing }) {
+                        Text("PROCESSING")
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(.retroPink)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 2)
+                            .background(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color.retroBlack.opacity(0.7))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .strokeBorder(Color.retroPink, lineWidth: 1)
+                                    )
+                            )
+                    }
+                }
+                
+                // Progress bar with retrowave styling
+                ZStack(alignment: .leading) {
+                    // Background track
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Color.retroBlack.opacity(0.7))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .strokeBorder(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    ),
+                                    lineWidth: 1.5
                                 )
                         )
-                }
-            }
-            
-            // Progress bar with retrowave styling
-            ZStack(alignment: .leading) {
-                // Background track
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(Color.retroBlack.opacity(0.7))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .strokeBorder(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                ),
-                                lineWidth: 1.5
-                            )
+                        .frame(height: 12)
+                    
+                    // Progress fill
+                    let completedCount = gameImporter.importQueue.filter { $0.status == .success }.count
+                    let progress = gameImporter.importQueue.isEmpty ? 0.0 : Double(completedCount) / Double(gameImporter.importQueue.count)
+                    
+                    LinearGradient(
+                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                        startPoint: .leading,
+                        endPoint: .trailing
                     )
-                    .frame(height: 12)
+                    .frame(width: max(12, progress * UIScreen.main.bounds.width - 40), height: 8)
+                    .cornerRadius(4)
+                    .padding(2)
+                }
                 
-                // Progress fill
-                let completedCount = gameImporter.importQueue.filter { $0.status == .success }.count
-                let progress = gameImporter.importQueue.isEmpty ? 0.0 : Double(completedCount) / Double(gameImporter.importQueue.count)
-                
-                LinearGradient(
-                    gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-                .frame(width: max(12, progress * UIScreen.main.bounds.width - 40), height: 8)
-                .cornerRadius(4)
-                .padding(2)
-            }
-            
-            // Status details
-            HStack(spacing: 12) {
-                statusCountView(count: gameImporter.importQueue.filter { $0.status == .queued }.count, label: "QUEUED", color: .gray)
-                statusCountView(count: gameImporter.importQueue.filter { $0.status == .processing }.count, label: "PROCESSING", color: .retroBlue)
-                statusCountView(count: gameImporter.importQueue.filter { $0.status == .success }.count, label: "COMPLETED", color: .retroYellow)
-                statusCountView(count: gameImporter.importQueue.filter { $0.status == .failure }.count, label: "FAILED", color: .retroPink)
-                
-                Spacer()
+                // Status details
+                HStack(spacing: 12) {
+                    statusCountView(count: gameImporter.importQueue.filter { $0.status == .queued }.count, label: "QUEUED", color: .gray)
+                    statusCountView(count: gameImporter.importQueue.filter { $0.status == .processing }.count, label: "PROCESSING", color: .retroBlue)
+                    statusCountView(count: gameImporter.importQueue.filter { $0.status == .success }.count, label: "COMPLETED", color: .retroYellow)
+                    statusCountView(count: gameImporter.importQueue.filter { $0.status == .failure }.count, label: "FAILED", color: .retroPink)
+                    
+                    Spacer()
+                }
             }
         }
         .padding(12)
