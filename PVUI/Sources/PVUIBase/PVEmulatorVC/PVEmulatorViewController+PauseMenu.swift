@@ -33,12 +33,12 @@ extension PVEmulatorViewController: UIAdaptivePresentationControllerDelegate {
         
         // Pause the game and prepare for menu
         enableControllerInput(true)
-        core.setPauseEmulation(true)
+        // Setting isShowingMenu will handle pausing the emulation
         isShowingMenu = true
         
         // Create a hosting view controller for our custom menu
         let menuVC = UIViewController()
-        menuVC.modalPresentationStyle = .overCurrentContext
+        menuVC.modalPresentationStyle = .overFullScreen  // Use overFullScreen to ensure GPU view stays visible
         menuVC.view.backgroundColor = .clear
         
         // Create our custom menu overlay
@@ -82,12 +82,11 @@ extension PVEmulatorViewController: UIAdaptivePresentationControllerDelegate {
             // First disable controller input
             enableControllerInput(false)
             
-            // Then update emulation state
-            isShowingMenu = false
-            core.setPauseEmulation(false)
-            
             // Reset controller state
             PVControllerManager.shared.controllerUserInteractionEnabled = false
+            
+            // Setting isShowingMenu to false will handle resuming the emulation
+            isShowingMenu = false
         }
     }
 }
