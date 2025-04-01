@@ -427,6 +427,8 @@ struct DebugView: View {
 
 // MARK: - Database Stats View
 
+// MARK: - Database Stats View
+
 struct DatabaseStatsView: View {
     @Environment(\.presentationMode) var presentationMode
     
@@ -436,31 +438,184 @@ struct DatabaseStatsView: View {
     @State private var coreCount = 0
     @State private var saveStateCount = 0
     
+    // Animation states
+    @State private var scanlineOffset: CGFloat = 0
+    @State private var glowOpacity: Double = 0.7
+    @State private var isLoading = true
+    @State private var pulseOpacity = 0.0
+    
     var body: some View {
-        NavigationStack {
-            List {
-                Section("Counts") {
-                    StatRow(title: "Games", value: "\(gameCount)")
-                    StatRow(title: "Systems", value: "\(systemCount)")
-                    StatRow(title: "Cores", value: "\(coreCount)")
-                    StatRow(title: "Save States", value: "\(saveStateCount)")
-                }
+        ZStack {
+            // Retrowave background
+            RetroTheme.retroBackground
+            
+            // Grid overlay
+            RetroGrid()
+//                .opacity(0.3)
+            
+            // Content
+            VStack(spacing: 20) {
+                // Header
+                Text("DATABASE STATS")
+                    .font(.system(size: 32, weight: .bold))
+                    .foregroundColor(RetroTheme.retroPink)
+                    .padding(.top, 20)
+                    .shadow(color: RetroTheme.retroPink.opacity(0.8), radius: 10, x: 0, y: 0)
                 
-                Section("Game Stats") {
+                // Stats cards
+                VStack(spacing: 16) {
+                    // Main stats grid
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                        RetroStatCard(title: "GAMES", value: "\(gameCount)", icon: "gamecontroller.fill", color: RetroTheme.retroPink)
+                        RetroStatCard(title: "SYSTEMS", value: "\(systemCount)", icon: "cpu.fill", color: RetroTheme.retroPurple)
+                        RetroStatCard(title: "CORES", value: "\(coreCount)", icon: "memorychip.fill", color: RetroTheme.retroBlue)
+                        RetroStatCard(title: "SAVE STATES", value: "\(saveStateCount)", icon: "square.and.arrow.down.fill", color: RetroTheme.retroPink)
+                    }
+                    
+                    // Navigation button
                     if gameCount > 0 {
-                        NavigationLink("View by System", destination: GamesBySystemView())
+                        NavigationLink(destination: GamesBySystemView()) {
+                            HStack {
+                                Image(systemName: "list.bullet")
+                                    .foregroundColor(RetroTheme.retroBlue)
+                                Text("VIEW BY SYSTEM")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.white)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroBlue]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        ),
+                                        lineWidth: 2
+                                    )
+                                    .background(Color.black.opacity(0.7))
+                                    .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 8, x: 0, y: 0)
+                            )
+                        }
                     } else {
-                        Text("No games in database")
-                            .foregroundColor(.gray)
+                        Text("NO GAMES IN DATABASE")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(RetroTheme.retroPink)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(
+                                        RetroTheme.retroPink.opacity(0.8),
+                                        lineWidth: 1
+                                    )
+                                    .background(Color.black.opacity(0.7))
+                            )
+                            .opacity(pulseOpacity)
+                            .onAppear {
+                                withAnimation(Animation.easeInOut(duration: 1.5).repeatForever()) {
+                                    pulseOpacity = 1.0
+                                }
+                            }
+                    }
+                    
+                    // Done button
+                    Button(action: {
+                        presentationMode.wrappedValue.dismiss()
+                    }) {
+                        Text("DONE")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroBlue]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+                                    .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 8, x: 0, y: 0)
+                            )
                     }
                 }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.black.opacity(0.7))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .strokeBorder(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple, RetroTheme.retroBlue]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    lineWidth: 2
+                                )
+                        )
+                )
+                .padding(.horizontal)
+                
+                Spacer()
             }
-            .navigationTitle("Database Stats")
-            .navigationBarItems(trailing: Button("Done") {
-                presentationMode.wrappedValue.dismiss()
-            })
-            .onAppear {
+            .padding(.vertical)
+            
+            // Loading overlay
+            if isLoading {
+                ZStack {
+                    Color.black.opacity(0.7)
+                    
+                    VStack {
+                        Text("SCANNING DATABASE")
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundColor(RetroTheme.retroPink)
+                        
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: RetroTheme.retroPink))
+                            .scaleEffect(1.5)
+                            .padding()
+                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.black.opacity(0.8))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .strokeBorder(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroBlue]),
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        ),
+                                        lineWidth: 2
+                                    )
+                            )
+                    )
+                }
+                .transition(.opacity)
+            }
+        }
+        .onAppear {
+            // Start animations
+            withAnimation(Animation.linear(duration: 20).repeatForever(autoreverses: false)) {
+                scanlineOffset = 1000
+            }
+            
+            withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
+                glowOpacity = 1.0
+            }
+            
+            // Load stats with a slight delay to show loading animation
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 loadStats()
+                
+                withAnimation {
+                    isLoading = false
+                }
             }
         }
     }
@@ -478,16 +633,48 @@ struct DatabaseStatsView: View {
     }
 }
 
-struct StatRow: View {
+struct RetroStatCard: View {
     let title: String
     let value: String
+    let icon: String
+    let color: Color
+    
+    @State private var glowOpacity = 0.7
     
     var body: some View {
-        HStack {
-            Text(title)
-            Spacer()
+        VStack(spacing: 8) {
+            HStack {
+                Image(systemName: icon)
+                    .font(.system(size: 16))
+                    .foregroundColor(color)
+                
+                Text(title)
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(.white)
+            }
+            
             Text(value)
-                .foregroundColor(.gray)
+                .font(.system(size: 32, weight: .bold))
+                .foregroundColor(color)
+                .shadow(color: color.opacity(glowOpacity), radius: 8, x: 0, y: 0)
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.black.opacity(0.6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder(
+                            color.opacity(0.8),
+                            lineWidth: 1
+                        )
+                )
+        )
+        .onAppear {
+            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+                glowOpacity = 1.0
+            }
         }
     }
 }
@@ -496,48 +683,335 @@ struct GamesBySystemView: View {
     @ObservedResults(PVSystem.self) var systems
     
     var body: some View {
-        List {
-            ForEach(systems, id: \.self) { system in
-                let gameCount = system.games.count
-                
-                HStack {
-                    Text(system.name)
-                    Spacer()
-                    Text("\(gameCount) \(gameCount == 1 ? "game" : "games")")
-                        .foregroundColor(.gray)
+        ZStack {
+            // Retrowave background
+            RetroTheme.retroBackground
+            
+            // Grid overlay
+            RetroGrid()
+//                .opacity(0.3)
+            
+            ScrollView {
+                VStack(spacing: 16) {
+                    ForEach(systems, id: \.self) { system in
+                        let gameCount = system.games.count
+                        
+                        HStack {
+                            // System icon or placeholder
+                            ZStack {
+                                Circle()
+                                    .fill(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroBlue]),
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
+                                    .frame(width: 40, height: 40)
+                                
+                                Text(String(system.name.prefix(1)))
+                                    .font(.system(size: 18, weight: .bold))
+                                    .foregroundColor(.white)
+                            }
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(system.name)
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.white)
+                                
+                                Text("\(gameCount) \(gameCount == 1 ? "game" : "games")")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(RetroTheme.retroPink)
+                            }
+                            
+                            Spacer()
+                            
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(RetroTheme.retroBlue)
+                        }
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.black.opacity(0.6))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .strokeBorder(
+                                            LinearGradient(
+                                                gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroBlue]),
+                                                startPoint: .leading,
+                                                endPoint: .trailing
+                                            ),
+                                            lineWidth: 1
+                                        )
+                                )
+                        )
+                    }
                 }
+                .padding()
             }
         }
-        .navigationTitle("Games by System")
+        .navigationTitle("GAMES BY SYSTEM")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbarColorScheme(.dark, for: .navigationBar)
     }
 }
+// MARK: - Database Browser View
 
 // MARK: - Database Browser View
 
 struct DatabaseBrowserView: View {
     @ObservedResults(PVGame.self) var games
     
+    // Animation states
+    @State private var selectedGame: PVGame?
+    @State private var showGameDetails = false
+    @State private var searchText = ""
+    @State private var isSearching = false
+    @State private var glowOpacity = 0.7
+    @State private var scanlineOffset: CGFloat = 0
+    
+    var filteredGames: Results<PVGame> {
+        if searchText.isEmpty {
+            return games
+        } else {
+            return games.filter("title CONTAINS[c] %@", searchText)
+        }
+    }
+    
     var body: some View {
-        List {
-            ForEach(games, id: \.self) { game in
-                VStack(alignment: .leading) {
-                    Text(game.title)
-                        .font(.headline)
+        ZStack {
+            // Retrowave background
+            RetroTheme.retroBackground
+            
+            // Grid overlay
+            RetroGrid()
+//                .opacity(0.3)
+            
+            VStack(spacing: 0) {
+                // Search bar
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(isSearching ? RetroTheme.retroPink : .gray)
                     
-                    Text(game.system?.name ?? "Unknown System")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
+                    TextField("SEARCH GAMES", text: $searchText)
+                        .foregroundColor(.white)
+                        .autocapitalization(.none)
+                        .disableAutocorrection(true)
+                        .onTapGesture {
+                            isSearching = true
+                        }
                     
-                    Text(game.romPath)
-                        .font(.caption)
-                        .foregroundColor(.gray)
+                    if !searchText.isEmpty {
+                        Button(action: {
+                            searchText = ""
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(RetroTheme.retroBlue)
+                        }
+                    }
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.black.opacity(0.6))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroBlue]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    ),
+                                    lineWidth: isSearching ? 2 : 1
+                                )
+                        )
+                )
+                .padding(.horizontal)
+                .padding(.top)
+                
+                // Game count
+                Text("FOUND \(filteredGames.count) GAMES")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(RetroTheme.retroPink)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+                
+                // Game list
+                ScrollView {
+                    LazyVStack(spacing: 16) {
+                        ForEach(filteredGames, id: \.self) { game in
+                            RetroGameCard(game: game, isSelected: selectedGame == game)
+                                .onTapGesture {
+                                    withAnimation {
+                                        if selectedGame == game {
+                                            selectedGame = nil
+                                        } else {
+                                            selectedGame = game
+                                        }
+                                    }
+                                }
+                        }
+                    }
+                    .padding()
                 }
             }
         }
-        .navigationTitle("Games (\(games.count))")
+        .navigationTitle("GAME DATABASE")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbarColorScheme(.dark, for: .navigationBar)
+        .onAppear {
+            // Start animations
+            withAnimation(Animation.linear(duration: 20).repeatForever(autoreverses: false)) {
+                scanlineOffset = 1000
+            }
+            
+            withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
+                glowOpacity = 1.0
+            }
+        }
     }
 }
 
+struct RetroGameCard: View {
+    let game: PVGame
+    let isSelected: Bool
+    
+    @State private var glowOpacity = 0.7
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            // Main content
+            VStack(alignment: .leading, spacing: 8) {
+                Text(game.title)
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                
+                HStack {
+                    Image(systemName: "cpu")
+                        .foregroundColor(RetroTheme.retroPurple)
+                    
+                    Text(game.system?.name ?? "Unknown System")
+                        .font(.system(size: 14))
+                        .foregroundColor(RetroTheme.retroPurple)
+                }
+            }
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.black.opacity(0.7), Color.black.opacity(0.5)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            
+            // Expanded details
+            if isSelected {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Image(systemName: "doc.text")
+                            .foregroundColor(RetroTheme.retroBlue)
+                        
+                        Text("ROM Path:")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(RetroTheme.retroBlue)
+                    }
+                    
+                    Text(game.romPath)
+                        .font(.system(size: 12))
+                        .foregroundColor(.white)
+                        .lineLimit(2)
+                    
+                    if let md5 = game.md5 {
+                        HStack {
+                            Image(systemName: "checkmark.shield")
+                                .foregroundColor(RetroTheme.retroPink)
+                            
+                            Text("MD5: \(md5)")
+                                .font(.system(size: 12))
+                                .foregroundColor(.white)
+                                .lineLimit(1)
+                        }
+                    }
+                    
+                    if let lastPlayed = game.lastPlayed {
+                        HStack {
+                            Image(systemName: "clock")
+                                .foregroundColor(RetroTheme.retroPink)
+                            
+                            Text("Last Played: \(formattedDate(lastPlayed))")
+                                .font(.system(size: 12))
+                                .foregroundColor(.white)
+                        }
+                    }
+                    
+                    HStack {
+                        Spacer()
+                        
+                        Button(action: {
+                            // Action to play game
+                        }) {
+                            HStack {
+                                Image(systemName: "play.fill")
+                                Text("PLAY")
+                            }
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(RetroTheme.retroPink)
+                                    .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 4, x: 0, y: 0)
+                            )
+                        }
+                    }
+                }
+                .padding()
+                .background(Color.black.opacity(0.8))
+                .transition(.opacity)
+            }
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.black.opacity(0.6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder(
+                            LinearGradient(
+                                gradient: Gradient(colors: [
+                                    isSelected ? RetroTheme.retroPink : RetroTheme.retroPurple,
+                                    RetroTheme.retroBlue
+                                ]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: isSelected ? 2 : 1
+                        )
+                )
+                .shadow(
+                    color: (isSelected ? RetroTheme.retroPink : RetroTheme.retroBlue).opacity(glowOpacity * (isSelected ? 1.0 : 0.5)),
+                    radius: isSelected ? 8 : 4,
+                    x: 0,
+                    y: 0
+                )
+        )
+        .onAppear {
+            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+                glowOpacity = 1.0
+            }
+        }
+    }
+    
+    private func formattedDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
+    }
+}
 // MARK: - Theme Preview View
 
 struct ThemePreviewView: View {

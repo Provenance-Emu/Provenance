@@ -670,18 +670,71 @@ public class DeltaSkinInputHandler: ObservableObject {
             name: NSNotification.Name("DeltaSkinInputHandlerReconnect"),
             object: nil
         )
+
+        // Observer for skin change events
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleSkinChangeEvent),
+            name: NSNotification.Name("DeltaSkinChanged"),
+            object: nil
+        )
     }
 
     /// Handle reconnection event when the menu is dismissed
     @objc private func handleReconnectEvent() {
         DLOG("DeltaSkinInputHandler handling reconnect event")
+        performReconnection()
+    }
 
+    /// Handle skin change event
+    @objc private func handleSkinChangeEvent() {
+        DLOG("DeltaSkinInputHandler handling skin change event")
+        performReconnection()
+    }
+
+    /// Common logic to reconnect and reset state
+    private func performReconnection() {
         // Refresh emulator core reference on the main thread
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
 
+            ILOG("⚠️ Starting DeltaSkinInputHandler reconnection")
+
+            // Debug information about our menu button handler
+            if let _ = self.menuButtonHandler {
+                DLOG("Menu button handler is set")
+            } else {
+                ELOG("⛔️ Menu button handler is NOT set - this may cause menu functionality issues")
+            }
+
+            // Log current state
+            if let core = self.emulatorCore {
+                DLOG("Current core: \(core), isRunning: \(core.isRunning), isPaused: \(core.isEmulationPaused)")
+
+                // Verify core responds to basic inputs by sending and releasing a dummy input
+                if let responder = core as? PVControllerResponder {
+                    DLOG("Testing core responsiveness with dummy button press")
+                    // Send a dummy press and release for a non-disruptive button (select)
+                    responder.controllerPressedButton(12, forPlayer: 0)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                        responder.controllerReleasedButton(12, forPlayer: 0)
+                    }
+                } else {
+                    ELOG("Core does not conform to PVControllerResponder, cannot test responsiveness directly")
+                }
+            } else {
+                ELOG("⛔️ No emulator core available for reconnection!")
+            }
+
+            if let controller = self.controllerVC {
+                DLOG("Controller VC is available: \(controller)")
+            } else {
+                DLOG("No controller VC available")
+            }
+
             // Clear any stuck button states
             if let controller = self.controllerVC {
+                DLOG("Releasing any stuck buttons on controller")
                 // Release controller buttons
                 if let leftShoulderButton = controller.leftShoulderButton {
                     controller.buttonReleased(leftShoulderButton)
@@ -689,11 +742,24 @@ public class DeltaSkinInputHandler: ObservableObject {
                 if let rightShoulderButton = controller.rightShoulderButton {
                     controller.buttonReleased(rightShoulderButton)
                 }
+                if let leftShoulderButton2 = controller.leftShoulderButton2 {
+                    controller.buttonReleased(leftShoulderButton2)
+                }
+                if let rightShoulderButton2 = controller.rightShoulderButton2 {
+                    controller.buttonReleased(rightShoulderButton2)
+                }
+                if let buttonGroup = controller.buttonGroup {
+                    for case let button as JSButton in buttonGroup.subviews {
+                        controller.buttonReleased(button)
+                    }
+                }
 
                 // Release D-pad directions
                 for direction in [JSDPadDirection.up, .down, .left, .right, .upLeft, .upRight, .downLeft, .downRight] {
                     controller.dPad(self.dummyDPad, didRelease: direction)
                 }
+
+                DLOG("✅ Released all controller buttons")
             }
 
             // Validate and ensure the emulator core is running
@@ -702,32 +768,98 @@ public class DeltaSkinInputHandler: ObservableObject {
                 return
             }
 
+            DLOG("Reconnecting to emulator core: \(core)")
+
             // If core was paused, unpause it
             if core.isEmulationPaused {
                 DLOG("Unpausing core during reconnect")
                 core.setPauseEmulation(false)
             }
 
+            // Restore normal game speed
+            if core.gameSpeed != .normal {
+                DLOG("Resetting game speed to normal from \(core.gameSpeed)")
+                core.gameSpeed = .normal
+            }
+
             // Reset the core's input state by sending dummy button releases if the core supports it
             if let responder = core as? PVControllerResponder {
+                DLOG("Core conforms to PVControllerResponder, using direct method calls")
                 // Release all standard buttons
                 for i in 1...12 {
                     responder.controllerReleasedButton(i, forPlayer: 0)
                 }
+            } else {
+                DLOG("Core does not conform to PVControllerResponder, using notification fallback")
+                // Fallback to notifications
+                for i in 1...12 {
+                    NotificationCenter.default.post(
+                        name: NSNotification.Name("ButtonReleased"),
+                        object: nil,
+                        userInfo: ["button": i, "player": 0]
+                    )
+                }
+            }
+
+            // Reset analog sticks if supported
+            if let analogResponder = core as? PVAnalogResponder {
+                DLOG("Resetting analog stick positions")
+                analogResponder.controllerMovedLeftAnalogStick(x: 0, y: 0, forPlayer: 0)
+                analogResponder.controllerMovedRightAnalogStick(x: 0, y: 0, forPlayer: 0)
             }
 
             // Force a GPU view refresh when possible
             if let metalVC = core.renderDelegate as? PVMetalViewController {
                 DLOG("Refreshing Metal GPU view during reconnect")
-                do {
-                    try metalVC.updateInputTexture()
-                    try metalVC.mtlView.setNeedsDisplay()
-                } catch {
-                    ELOG("Failed to update input texture during reconnect: \(error)")
-                }
+                metalVC.safelyRefreshGPUView()
             }
 
-            DLOG("Reconnection complete")
+            // Test button forwarding after reconnection
+            self.testButtonForwarding()
+
+            ILOG("✅ Reconnection complete")
+        }
+    }
+
+    /// Test button forwarding to verify input handling after reconnection
+    private func testButtonForwarding() {
+        guard let core = emulatorCore else {
+            ELOG("Cannot test button forwarding - no emulator core")
+            return
+        }
+
+        DLOG("Testing button forwarding after reconnection")
+
+        // Test menu button handling
+        if let _ = menuButtonHandler {
+            DLOG("✅ Menu button handler still registered")
+        } else {
+            ELOG("⛔️ Menu button handler MISSING after reconnection")
+
+            // Attempt to fix this by posting a notification to request menu handler reattachment
+            NotificationCenter.default.post(
+                name: NSNotification.Name("DeltaSkinReconnectMenuHandler"),
+                object: nil
+            )
+        }
+
+        // Test direct button forwarding to core
+        if let responder = core as? PVControllerResponder {
+            DLOG("Testing A button forwarding to core")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                guard let self = self else { return }
+
+                // Notify the input system we're going to perform a test
+                DLOG("Performing input test sequence...")
+
+                // Send a test button press and release for the A button (non-disruptive)
+                self.forwardButtonPress("a", isPressed: true)
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                    self.forwardButtonPress("a", isPressed: false)
+                    DLOG("✅ Input test sequence completed")
+                }
+            }
         }
     }
 }

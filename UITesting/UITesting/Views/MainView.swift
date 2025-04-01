@@ -48,7 +48,9 @@ struct MainView: View {
                         } else if selectedTab == 1 {
                             SettingsView()
                         } else if selectedTab == 2 {
-                            DebugView()
+                            NavigationView {
+                                DebugView()
+                            }
                         }
                     }
                 },

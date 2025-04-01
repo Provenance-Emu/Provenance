@@ -83,7 +83,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     internal var skinHostingControllers: [UIViewController] = []
 
     // Shared input handler to maintain input state across skin changes
-    private var sharedInputHandler: DeltaSkinInputHandler?
+    internal var sharedInputHandler: DeltaSkinInputHandler?
 
     // Debug overlay view
     internal var debugOverlayView: UIView?
@@ -106,9 +106,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         return controller
     }()
 
-    #if os(tvOS)
+#if os(tvOS)
     public override var preferredUserInterfaceStyle: UIUserInterfaceStyle { ThemeManager.shared.currentPalette.dark ? .dark : .light }
-    #endif
+#endif
 
     public var audioInited: Bool = false
     public private(set) lazy var gameAudio: any AudioEngineProtocol = {
@@ -143,21 +143,25 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     public var isShowingMenu: Bool = false {
         willSet {
             DispatchQueue.main.async { [self] in
-//                if newValue == true {
-//                    if (!core.skipLayout) {
-//                        gpuViewController.isPaused = true
-//                    }
-//                }
+                if newValue == true {
+                    if (!core.skipLayout) {
+                        core.setPauseEmulation(true)
+                    }
+                }
                 core.setPauseEmulation(newValue)
             }
         }
         didSet {
             DispatchQueue.main.async { [self] in
-//                if isShowingMenu == false {
-//                    if (!core.skipLayout) {
-//                        gpuViewController.isPaused = false
-//                    }
-//                }
+                if isShowingMenu == false {
+                    if (!core.skipLayout) {
+                        core.setPauseEmulation(false)
+
+                        if let metalVC = gpuViewController as? PVMetalViewController {
+                            metalVC.safelyRefreshGPUView()
+                        }
+                    }
+                }
                 core.setPauseEmulation(isShowingMenu)
             }
         }
@@ -229,9 +233,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     deinit {
         // These need to be first or mutli-threaded cores can cause crashes on close
         NotificationCenter.default.removeObserver(self)
-//        Task { @MainActor in
-//            core.stopEmulation()
-//        }
+        //        Task { @MainActor in
+        //            core.stopEmulation()
+        //        }
         // Leave emulation loop first
         if audioInited {
             gameAudio.stopAudio()
@@ -272,6 +276,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidDisconnect(_:)), name: UIScreen.didDisconnectNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerManagerControllerReassigned(_:)), name: .PVControllerManagerControllerReassigned, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handlePause(_:)), name: Notification.Name("PauseGame"), object: nil)
+
+        // Observer for Delta skin menu button reconnection
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.reconnectDeltaSkinMenuHandler(_:)), name: Notification.Name("DeltaSkinReconnectMenuHandler"), object: nil)
+
+        // Observer for refreshing Delta skin after a skin change
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleDeltaSkinChanged(_:)), name: Notification.Name("DeltaSkinChanged"), object: nil)
     }
 
     private func addControllerOverlay() {
@@ -303,9 +313,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         menuButton?.tintColor = ThemeManager.shared.currentPalette.defaultTintColor ?? UIColor.white
         menuButton?.alpha = alpha
         menuButton?.addTarget(self, action: #selector(PVEmulatorViewController.showMenu(_:)), for: .touchUpInside)
-        #if !os(tvOS)
+#if !os(tvOS)
         menuButton?.isPointerInteractionEnabled = true
-        #endif
+#endif
         view.addSubview(menuButton!)
     }
 
@@ -410,16 +420,16 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
 
 #warning("should throw if nil?")
-//        guard let romPath = romPathMaybe else {
-//            throw CreateEmulatorError.gameHasNilRomPath
-//        }
+        //        guard let romPath = romPathMaybe else {
+        //            throw CreateEmulatorError.gameHasNilRomPath
+        //        }
 
         // Extract Zip before loading the ROM
         romPathMaybe = handleArchives(atPath: romPathMaybe)
 
-//        guard let romPath = romPathMaybe else {
-//            throw CreateEmulatorError.gameHasNilRomPath
-//        }
+        //        guard let romPath = romPathMaybe else {
+        //            throw CreateEmulatorError.gameHasNilRomPath
+        //        }
 
         if let romPath = romPathMaybe, needsDownload(romPath) {
             let hud = MBProgressHUD.showAdded(to: view, animated: true)
@@ -435,9 +445,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 ELOG("File doesn't exist at path \(path)")
 
                 // Copy path to Pasteboard
-                #if !os(tvOS)
+#if !os(tvOS)
                 UIPasteboard.general.string = path
-                #endif
+#endif
 
                 throw CreateEmulatorError.fileDoesNotExist(path: path)
             }
@@ -467,7 +477,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             }
             secondaryWindow?.isHidden = false
         } else {
-            #if os(tvOS)
+#if os(tvOS)
             if core.skipLayout {
                 // Special handling for RetroArch cores on tvOS
                 addChild(gpuViewController)
@@ -487,7 +497,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 }
                 gpuViewController.didMove(toParent: self)
             }
-            #else
+#else
             if (!core.skipLayout) {
                 // Keep existing iOS behavior unchanged
                 gpuViewController.willMove(toParent: self)
@@ -501,7 +511,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 }
             }
             gpuViewController.didMove(toParent: self)
-            #endif
+#endif
         }
 #if os(iOS) && !targetEnvironment(macCatalyst) && !os(macOS)
         addControllerOverlay()
@@ -551,11 +561,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         super.viewDidAppear(true)
         // Notifies UIKit that your view controller updated its preference regarding the visual indicator
 
-        #if os(iOS)
+#if os(iOS)
         setNeedsStatusBarAppearanceUpdate()
         setNeedsUpdateOfHomeIndicatorAutoHidden()
         setNeedsUpdateOfScreenEdgesDeferringSystemGestures()
-        #endif
+#endif
 
         if Defaults[.timedAutoSaves] {
             createAutosaveTimer()
@@ -669,16 +679,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         // Make sure the GPU view is refreshed
         if let metalVC = gpuViewController as? PVMetalViewController {
-            // Force a redraw of the GPU view to ensure it's visible and properly positioned
-            metalVC.isPaused = false
-
-            // Update the input texture with current frame and force redraw
-            do {
-                try metalVC.updateInputTexture()
-                try metalVC.mtlView.setNeedsDisplay()
-            } catch {
-                ELOG("Failed to update input texture during resume: \(error)")
-            }
+            // Use the safer method to refresh the GPU view
+            metalVC.safelyRefreshGPUView()
         }
 
         // If using a DeltaSkin, ensure game screen view is visible and positioned properly
@@ -781,6 +783,19 @@ extension PVEmulatorViewController {
             // 7. Print the final view hierarchy
             print("View hierarchy after applying new skin:")
             printViewHierarchy(view, level: 0)
+
+            // 8. Post notification that the skin has changed to trigger input handler reconnection
+            NotificationCenter.default.post(
+                name: NSNotification.Name("DeltaSkinChanged"),
+                object: nil,
+                userInfo: ["skinIdentifier": skin.identifier]
+            )
+
+            // Also post a reconnect notification to ensure proper input handling
+            NotificationCenter.default.post(
+                name: NSNotification.Name("DeltaSkinInputHandlerReconnect"),
+                object: nil
+            )
         }
     }
 
@@ -805,6 +820,30 @@ extension PVEmulatorViewController {
         if let systemId = game.system?.systemIdentifier {
             let defaultSkin = EmulatorWithSkinView.defaultSkin(for: systemId)
             try await applySkin(defaultSkin)
+
+            // Post notification that the skin has changed to trigger input handler reconnection
+            // This is in addition to the notification sent by applySkin
+            await MainActor.run {
+                NotificationCenter.default.post(
+                    name: NSNotification.Name("DeltaSkinChanged"),
+                    object: nil,
+                    userInfo: ["skinIdentifier": defaultSkin.identifier, "isDefault": true]
+                )
+            }
+        } else {
+            // If we can't load a default skin, still post the reconnect notifications
+            await MainActor.run {
+                NotificationCenter.default.post(
+                    name: NSNotification.Name("DeltaSkinChanged"),
+                    object: nil,
+                    userInfo: ["isDefault": true]
+                )
+
+                NotificationCenter.default.post(
+                    name: NSNotification.Name("DeltaSkinInputHandlerReconnect"),
+                    object: nil
+                )
+            }
         }
     }
 
@@ -929,8 +968,11 @@ extension PVEmulatorViewController {
 
         // Reuse the existing input handler or create a new one if it doesn't exist
         if sharedInputHandler == nil {
-            sharedInputHandler = DeltaSkinInputHandler(emulatorCore: core)
-            print("Created new shared input handler")
+            // This is a critical error - we should always have an input handler by this point
+            // Create a new one as a fallback, but log an error
+            ELOG("⛔️ Critical Error: No shared input handler found when creating skin view! Creating new one as fallback.")
+            sharedInputHandler = DeltaSkinInputHandler(emulatorCore: core, controllerVC: controllerViewController, emulatorController: self)
+            print("Created new shared input handler as fallback")
         } else {
             print("Reusing existing shared input handler")
         }
@@ -938,6 +980,21 @@ extension PVEmulatorViewController {
         // Ensure the input handler is properly configured
         let inputHandler = sharedInputHandler!
         print("Using input handler with isInEmulator = true")
+
+        // CRITICAL: Ensure menu button handler is set
+        inputHandler.menuButtonHandler = { [weak self] in
+            DLOG("Menu button pressed from skin view, showing menu")
+            self?.showMenu(nil)
+        }
+
+        // Ensure the emulator core reference is valid
+        inputHandler.setEmulatorCore(core)
+
+        // Ensure controller VC reference is valid
+        inputHandler.setControllerVC(controllerViewController)
+
+        // Ensure emulator controller reference is valid
+        inputHandler.setEmulatorController(self)
 
         // Create the SwiftUI skin view with environment object
         // Use AnyView to erase the type while preserving the environment object
@@ -1086,7 +1143,7 @@ extension PVEmulatorViewController {
 
                         // Determine if we need to change the skin
                         let needsSkinChange = skinIdentifier != nil &&
-                            (self.currentSkin == nil || skinIdentifier != self.currentSkin?.identifier)
+                        (self.currentSkin == nil || skinIdentifier != self.currentSkin?.identifier)
 
                         if needsSkinChange {
                             print("Need to change skin for new orientation")
@@ -1174,7 +1231,7 @@ extension PVEmulatorViewController {
     }
 
     fileprivate func startAudio() throws {
-//        gameAudio.outputDeviceID = 0
+        //        gameAudio.outputDeviceID = 0
         gameAudio.setVolume(Defaults[.volume])
         do {
             try gameAudio.startAudio()
@@ -1194,5 +1251,99 @@ extension PVEmulatorViewController {
                 }
             }
         }
+    }
+
+    // MARK: - Delta Skin Notification Handlers
+
+    /// Handler for reconnecting the menu button handler to the Delta skin input handler
+    @objc func reconnectDeltaSkinMenuHandler(_ notification: Notification) {
+        ILOG("Reconnecting Delta skin menu button handler")
+
+        // Find the Delta skin input handler
+        if let hostingControllers = skinHostingControllers as? [UIHostingController<AnyView>] {
+            for hostingController in hostingControllers {
+                // Access our skin view and input handler
+                // The direct cast won't work due to type erasure with AnyView
+                // Instead, we'll look for the shared input handler
+                if let inputHandler = sharedInputHandler {
+                    DLOG("Found shared input handler, reconnecting menu button handler")
+
+                    // Set the menu button handler to show the menu
+                    inputHandler.menuButtonHandler = { [weak self] in
+                        DLOG("Menu button pressed through reconnected handler")
+                        self?.showMenu(nil)
+                    }
+
+                    ILOG("✅ Successfully reconnected menu button handler")
+                } else {
+                    ELOG("Could not find shared input handler to reconnect menu button")
+                }
+            }
+        } else {
+            ELOG("No hosting controllers available for Delta skin menu button reconnection")
+        }
+
+        // Additional measure: refresh any input connections
+        NotificationCenter.default.post(
+            name: NSNotification.Name("DeltaSkinInputHandlerReconnect"),
+            object: nil
+        )
+    }
+
+    /// Handler for skin change notifications
+    @objc func handleDeltaSkinChanged(_ notification: Notification) {
+        ILOG("Handling Delta skin changed notification")
+
+        // After a skin change, ensure the menu button handler is still set
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+            guard let self = self else { return }
+
+            // Reconnect the menu button handler
+            if let inputHandler = self.sharedInputHandler {
+                inputHandler.menuButtonHandler = { [weak self] in
+                    DLOG("Menu button pressed through restored handler")
+                    self?.showMenu(nil)
+                }
+
+                ILOG("✅ Automatically restored menu button handler after skin change")
+            } else {
+                ELOG("Could not find shared input handler after skin change")
+            }
+
+            // Force a reconnection of input handlers
+            self.reconnectAllInputHandlers()
+        }
+    }
+
+    /// Helper to reconnect all input handlers
+    private func reconnectAllInputHandlers() {
+        DLOG("Reconnecting all input handlers")
+
+        // Reconnect input handler to core
+        if let inputHandler = sharedInputHandler {
+            DLOG("Updating shared input handler references")
+
+            // Ensure emulator core is set
+            inputHandler.setEmulatorCore(core)
+
+            // Ensure controller VC is set
+            inputHandler.setControllerVC(controllerViewController)
+
+            // Ensure emulator controller is set
+            inputHandler.setEmulatorController(self)
+
+            // Restore menu button handler
+            inputHandler.menuButtonHandler = { [weak self] in
+                self?.showMenu(nil)
+            }
+
+            DLOG("✅ Successfully updated all input handler references")
+        }
+
+        // Force a reconnection event
+        NotificationCenter.default.post(
+            name: NSNotification.Name("DeltaSkinInputHandlerReconnect"),
+            object: nil
+        )
     }
 }

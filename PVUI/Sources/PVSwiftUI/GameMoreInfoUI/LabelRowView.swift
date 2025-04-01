@@ -13,6 +13,16 @@ struct LabelRowView: View {
     let value: String?
     var onLongPress: (() -> Void)?
     var isEditable: Bool = true
+    
+    // RetroWave styling properties
+    var labelColor: Color = .secondary
+    var valueColor: Color = .primary
+    var backgroundColor: Color = Color(.systemBackground)
+    var borderGradient: LinearGradient? = nil
+    
+    // Animation states
+    @State private var glowOpacity: Double = 0.7
+    @State private var isHovered: Bool = false
 
     /// Computed property to determine what text to display
     private var displayText: String {
@@ -28,42 +38,75 @@ struct LabelRowView: View {
     /// Computed property to determine text color
     private var textColor: Color {
         if value == nil || value?.isEmpty == true {
-            return isEditable ? .gray.opacity(0.7) : .gray
+            return isEditable ? RetroTheme.retroBlue.opacity(0.7) : .gray
         } else {
-            return .primary
+            return valueColor
         }
     }
 
     var body: some View {
-        HStack {
-            // Label side - right aligned
-            Text(label + ":")
-                .frame(maxWidth: .infinity, alignment: .trailing)
-                .foregroundColor(.secondary)
-
-            // Value side - left aligned with placeholder for empty values
+        ZStack {
+            // Background with retrowave styling
+            RoundedRectangle(cornerRadius: 8)
+                .fill(backgroundColor)
+            
+            // Optional border with gradient
+            if let gradient = borderGradient {
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(gradient, lineWidth: isHovered || isEditable ? 1.5 : 1.0)
+                    .shadow(color: labelColor.opacity(glowOpacity * (isHovered ? 0.8 : 0.4)), 
+                            radius: isHovered ? 5 : 3, 
+                            x: 0, 
+                            y: 0)
+            }
+            
+            // Content
             HStack {
-                Text(displayText)
-                    .foregroundColor(textColor)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                // Label side - right aligned with retrowave styling
+                Text(label + ":")
+                    .font(.system(size: 14, weight: .bold))
+                    .frame(width: 120, alignment: .trailing)
+                    .foregroundColor(labelColor)
+                    .shadow(color: labelColor.opacity(glowOpacity * 0.5), radius: 2, x: 0, y: 0)
 
-                if isEditable {
-                    Image(systemName: "pencil")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .opacity(0.7)
+                // Value side - left aligned with placeholder for empty values
+                HStack {
+                    Text(displayText)
+                        .foregroundColor(textColor)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    if isEditable {
+                        Image(systemName: "pencil")
+                            .font(.caption)
+                            .foregroundColor(RetroTheme.retroPink)
+                            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 2, x: 0, y: 0)
+                    }
+                }
+                .contentShape(Rectangle()) // Make entire area tappable
+                .onTapGesture {
+                    if isEditable {
+                        #if !os(tvOS)
+                        Haptics.impact(style: .light)
+                        #endif
+                        onLongPress?()
+                    }
                 }
             }
-            .contentShape(Rectangle()) // Make entire area tappable
-            .onTapGesture {
-                if isEditable {
-                    #if !os(tvOS)
-                    Haptics.impact(style: .light)
-                    #endif
-                    onLongPress?()
-                }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+        }
+        .frame(height: 40)
+        .padding(.vertical, 4)
+        .onHover { hovering in
+            withAnimation(.easeInOut(duration: 0.2)) {
+                isHovered = hovering && isEditable
             }
         }
-        .padding(.vertical, 4)
+        .onAppear {
+            // Start animations
+            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+                glowOpacity = 1.0
+            }
+        }
     }
 }

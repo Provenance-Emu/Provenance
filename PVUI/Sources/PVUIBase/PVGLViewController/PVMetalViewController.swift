@@ -114,7 +114,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     var presentationFramebuffer: AnyObject? = nil
 
     weak var emulatorCore: PVEmulatorCore?
-    
+
     // Custom filter properties
     private var ciContext: CIContext? = nil
 
@@ -300,7 +300,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             // No recovery here since we're in initialization
             return
         }
-        
+
         // Initialize CIContext for filters
         if let device = device {
             ciContext = CIContext(mtlDevice: device)
@@ -498,7 +498,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         if emulatorCore.skipLayout {
             return
         }
-        
+
         // IMPORTANT: If custom positioning is being used, respect it and don't override
         if useCustomPositioning && !customFrame.isEmpty {
             DLOG("Using custom positioning: \(customFrame)")
@@ -1401,12 +1401,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             renderEncoder.endEncoding()
             return
         }
-        
+
         // Apply custom filter if available
         if let filter = self.filter, let ciContext = self.ciContext {
             // Create CIImage from the input texture
             let ciImage = CIImage(mtlTexture: inputTexture, options: nil)
-            
+
             if let ciImage = ciImage, let filteredImage = filter.apply(to: ciImage, in: CGRect(x: 0, y: 0, width: inputTexture.width, height: inputTexture.height)) {
                 // Create a temporary texture for the filtered image
                 let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(
@@ -1416,11 +1416,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                     mipmapped: false
                 )
                 textureDescriptor.usage = [.shaderRead, .renderTarget]
-                
+
                 if let filteredTexture = device?.makeTexture(descriptor: textureDescriptor) {
                     // Render the filtered image to the texture
                     ciContext.render(filteredImage, to: filteredTexture, commandBuffer: nil, bounds: CGRect(x: 0, y: 0, width: inputTexture.width, height: inputTexture.height), colorSpace: CGColorSpaceCreateDeviceRGB())
-                    
+
                     // Use the filtered texture instead
                     renderEncoder.setFragmentTexture(filteredTexture, index: 0)
                 } else {
@@ -1661,18 +1661,36 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         didSet {
             guard oldValue != isPaused else { return }
 
-#if !os(visionOS)
-            mtlView?.isPaused = isPaused
-#endif
+            // Log state change for debugging
+            ILOG("Metal view isPaused changing from \(oldValue) to \(isPaused)")
 
-            if isPaused {
-                // Ensure we finish any pending renders
-                previousCommandBuffer?.waitUntilCompleted()
+#if !os(visionOS)
+            // Set the MTKView's paused state, but only if we have a stable view
+            if let view = mtlView, view.superview != nil {
+                // We're going to intentionally defer the paused state change to avoid race conditions
+                DispatchQueue.main.async { [weak self, isPaused] in
+                    guard let self = self else { return }
+
+                    if isPaused {
+                        // When pausing, wait for any pending renders to complete first
+                        self.previousCommandBuffer?.waitUntilCompleted()
+                        DLOG("Setting MTKView isPaused = true after waiting for command buffer")
+                        self.mtlView?.isPaused = true
+                    } else {
+                        // When unpausing, reset the frame count and request a redraw through the proper channels
+                        self.frameCount = 0
+                        DLOG("Setting MTKView isPaused = false and requesting redraw")
+                        self.mtlView?.isPaused = false
+
+                        // Request a redraw through proper CADisplayLink/timer mechanisms
+                        // instead of directly calling draw()
+                        self.mtlView?.setNeedsDisplay()
+                    }
+                }
             } else {
-                // Force a new frame when unpausing
-                frameCount = 0
-                draw(in: mtlView)
+                WLOG("MTKView is nil or not in view hierarchy during isPaused change")
             }
+#endif
         }
     }
 
@@ -2464,6 +2482,111 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         recoveryAttempts = 0
         lastRecoveryTime = 0
         recoverFromGPUError()
+    }
+
+    // MARK: - Public Methods for Safe GPU View Management
+
+    /// Attempts to reset the Metal rendering pipeline to a clean state
+    private func resetRenderingPipeline() {
+        ILOG("Attempting to reset Metal rendering pipeline")
+
+        // Reset state that could be corrupted
+        frameCount = 0
+        previousCommandBuffer = nil
+
+        // Release and recreate resources
+        do {
+            // Release existing resources
+            inputTexture = nil
+            commandQueue = nil
+
+            // Recreate device if needed
+            if device == nil {
+                device = MTLCreateSystemDefaultDevice()
+                DLOG("Recreated Metal device")
+            }
+
+            // Recreate command queue
+            if let device = device {
+                commandQueue = device.makeCommandQueue()
+                DLOG("Recreated Metal command queue")
+            }
+
+            // Recreate the MTKView if needed
+            if mtlView?.superview == nil || mtlView == nil {
+                DLOG("MTKView is nil or detached, recreating...")
+                // Instead of calling setupMTKView, recreate MTKView directly
+                let screenBounds = UIScreen.main.bounds
+                let metalView = MTKView(frame: screenBounds, device: device)
+                metalView.autoresizingMask = [] // Disable autoresizing
+                self.view = metalView
+                self.mtlView = metalView
+                DLOG("Recreated MTKView")
+            }
+
+            // Recreate input texture
+            if let emulatorCore = emulatorCore, emulatorCore.bufferSize.width > 0, emulatorCore.bufferSize.height > 0 {
+                try setupTexture()
+                try updateInputTexture()
+                DLOG("Recreated and updated input texture")
+            } else {
+                ELOG("Cannot recreate input texture: Invalid buffer size or nil emulator core")
+            }
+
+            // Reset the MTKView's paused state
+            mtlView?.isPaused = false
+            mtlView?.enableSetNeedsDisplay = true
+
+            // Request a redraw
+            mtlView?.setNeedsDisplay()
+
+            ILOG("Metal rendering pipeline reset successful")
+        } catch {
+            ELOG("Failed to reset Metal rendering pipeline: \(error)")
+        }
+    }
+
+    /// Safely refreshes the GPU view without directly setting isPaused.
+    /// This method should be called after the menu is dismissed to ensure proper rendering.
+    public func safelyRefreshGPUView() {
+        ILOG("Safely refreshing GPU view")
+
+        // Make sure the view is visible
+        view.alpha = 1.0
+        view.isHidden = false
+
+        // Ensure we're on the main thread
+        if !Thread.isMainThread {
+            DispatchQueue.main.async { [weak self] in
+                self?.safelyRefreshGPUView()
+            }
+            return
+        }
+
+        // Reset frame count to force a fresh render
+        frameCount = 0
+
+        // Update input texture if needed
+        do {
+            if isTextureUpdateNeeded() {
+                DLOG("Recreating input texture during GPU view refresh")
+                try setupTexture()
+                try updateInputTexture()
+            } else {
+                DLOG("Updating existing input texture during GPU view refresh")
+                try updateInputTexture()
+            }
+
+            // Request a redraw through proper channels
+            mtlView?.setNeedsDisplay()
+
+            ILOG("GPU view refresh completed successfully")
+        } catch {
+            ELOG("Failed to refresh GPU view: \(error)")
+
+            // If an error occurs, try to reset the rendering pipeline
+            resetRenderingPipeline()
+        }
     }
 }
 

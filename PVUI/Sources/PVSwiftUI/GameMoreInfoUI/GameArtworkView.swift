@@ -11,6 +11,7 @@ import PVRealm
 import PVMediaCache
 import PVThemes
 import PVLogging
+import PVUIBase
 
 /// A view that displays game artwork with optional flipping between front and back artwork
 struct GameArtworkView: View {
@@ -75,31 +76,75 @@ struct GameArtworkView: View {
         game?.boxartAspectRatio ?? .square
     }
 
+    // Animation states for retrowave effects
+    @State private var glowOpacity: Double = 0.7
+    @State private var pulseScale: CGFloat = 1.0
+    @State private var scanlineOffset: CGFloat = 0
+    
     var body: some View {
-        Group {
-            if let currentArtwork = currentArtwork {
-                Image(uiImage: currentArtwork)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-            } else {
-                /// Use ArtworkImageBaseView for placeholder artwork
-                ArtworkImageBaseView(
-                    artwork: nil,
-                    gameTitle: gameTitle,
-                    boxartAspectRatio: boxArtAspectRatio
-                )
+        ZStack {
+            // RetroWave background for the artwork container
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.black.opacity(0.8))
+            
+            // Grid overlay for retrowave effect
+            RetroGrid()
+                .opacity(0.15)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            
+            // Artwork content
+            Group {
+                if let currentArtwork = currentArtwork {
+                    Image(uiImage: currentArtwork)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .padding(8)
+                } else {
+                    /// Use ArtworkImageBaseView for placeholder artwork with retrowave styling
+                    ArtworkImageBaseView(
+                        artwork: nil,
+                        gameTitle: gameTitle,
+                        boxartAspectRatio: boxArtAspectRatio
+                    )
+                    .padding(8)
+                }
             }
+            
+            // Scanlines effect (subtle)
+            ScanlineEffect(offset: 12)
+                .opacity(0.1)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .offset(y: scanlineOffset)
+            
+            // Neon border with glow effect
+            RoundedRectangle(cornerRadius: 12)
+                .strokeBorder(
+                    LinearGradient(
+                        gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple, RetroTheme.retroBlue]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 2
+                )
+                .scaleEffect(pulseScale)
+                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 8, x: 0, y: 0)
         }
-#if !os(tvOS)
-        .background(Color(.systemBackground))
-#endif
-        .cornerRadius(8)
-        .shadow(radius: 3)
+        .cornerRadius(12)
         .padding()
         .rotation3DEffect(
             .degrees(showingFrontArt ? 0 : 180),
-            axis: (x: 0.0, y: 1.0, z: 0.0)
-        )
+            axis: (x: 0.0, y: 1.0, z: 0.0))
+        .onAppear {
+            // Start retrowave animations
+            withAnimation(Animation.linear(duration: 10).repeatForever(autoreverses: false)) {
+                scanlineOffset = 500
+            }
+            
+            withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
+                glowOpacity = 1.0
+                pulseScale = 1.02
+            }
+        }
         .animation(.easeInOut(duration: isAnimating ? 0.4 : 0), value: showingFrontArt)
         // Only enable double tap gesture when artwork is available
         .onTapGesture(count: 2) {
