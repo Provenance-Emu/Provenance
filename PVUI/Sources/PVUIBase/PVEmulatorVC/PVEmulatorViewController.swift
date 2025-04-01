@@ -14,6 +14,7 @@ import RealmSwift
 #if canImport(UIKit)
 import UIKit
 #endif
+import SwiftUI
 import ZipArchive
 import PVEmulatorCore
 import PVCoreBridge
@@ -731,22 +732,51 @@ extension PVEmulatorViewController {
     
     /// Create a skin view from a DeltaSkin
     private func createSkinView(from skin: DeltaSkinProtocol) async throws -> UIView {
-        // This is a simplified implementation - in a real implementation, you would
-        // need to properly create the skin view based on the skin's properties
-        let skinView = UIView()
-        skinView.backgroundColor = UIColor.clear
+        // Determine the current orientation
+        let orientation = UIDevice.current.orientation.isLandscape ? DeltaSkinOrientation.landscape : .portrait
         
-        // In a real implementation, you would create a proper skin view here
-        // For example, using a SwiftUI hosting controller with EmulatorWithSkinView
-        // or by creating a custom UIKit view based on the skin properties
+        // Create the appropriate traits for the current device and orientation
+        let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
         
-        return skinView
+        // Check if device has a notch (iPhone X or newer)
+        let hasNotch: Bool
+        if #available(iOS 11.0, *) {
+            let window = UIApplication.shared.windows.first
+            let safeAreaInsets = window?.safeAreaInsets
+            hasNotch = (safeAreaInsets?.top ?? 0) > 20
+        } else {
+            hasNotch = false
+        }
+        
+        let displayType: DeltaSkinDisplayType = hasNotch ? .edgeToEdge : .standard
+        let traits = DeltaSkinTraits(device: device, displayType: displayType, orientation: orientation)
+        
+        // Create input handler connected to the emulator core
+        let inputHandler = DeltaSkinInputHandler(emulatorCore: core)
+        
+        // Create the SwiftUI skin view
+        let skinContentView = DeltaSkinView(skin: skin, traits: traits, inputHandler: inputHandler)
+            .environmentObject(DeltaSkinManager.shared)
+        
+        // Create a hosting controller for the SwiftUI view
+        let hostingController = UIHostingController(rootView: skinContentView)
+        hostingController.view.backgroundColor = UIColor.clear
+        
+        // Add the hosting controller as a child view controller
+        addChild(hostingController)
+        hostingController.didMove(toParent: self)
+        
+        return hostingController.view
     }
     
     /// Reposition the game screen based on the current skin
     private func repositionGameScreen() {
-        // This is a simplified implementation - in a real implementation, you would
-        // need to properly position the game screen based on the skin's properties
+        // Store the original frame if not already stored
+        if originalCalculatedFrame == nil {
+            originalCalculatedFrame = gpuViewController.view.frame
+        }
+        
+        // Position the game screen based on the current skin
         if let skin = currentSkin {
             // Calculate the frame based on the skin's screen position
             let screenBounds = view.bounds

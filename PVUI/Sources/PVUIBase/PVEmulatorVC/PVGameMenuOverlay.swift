@@ -760,6 +760,58 @@ struct RetroMenuView: View {
                 }
             }
         }
+        
+        // Apply screen filter change
+        Task { @MainActor in
+            // Get the filter based on selection
+            let filter: DeltaSkinScreenFilter?
+            
+            if selectedFilter == "None" {
+                filter = nil
+            } else {
+                // Find the selected filter
+                filter = DefaultScreenFilters.allFilters.first(where: { DefaultScreenFilters.displayName(for: $0) == selectedFilter })
+            }
+            
+            // Apply the filter to the emulator
+            if let emulatorVC = self.emulatorVC as? PVEmulatorViewController {
+                emulatorVC.applyScreenFilter(filter)
+                
+                // Save filter preference based on scope
+                if let filter = filter {
+                    switch skinScope {
+                    case .session:
+                        // Just for this session, no saving needed
+                        break
+                        
+                    case .game:
+                        // Save as game-specific preference
+                        let identifier = filter.metadata["identifier"] as? String ?? filter.filter.name
+                        UserDefaults.standard.set(identifier, forKey: "ScreenFilter_Game_\(gameId)")
+                        
+                    case .system:
+                        // Save as system-wide preference
+                        let identifier = filter.metadata["identifier"] as? String ?? filter.filter.name
+                        UserDefaults.standard.set(identifier, forKey: "ScreenFilter_System_\(systemId.rawValue)")
+                    }
+                } else {
+                    // Remove filter preference based on scope
+                    switch skinScope {
+                    case .session:
+                        // Just for this session, no saving needed
+                        break
+                        
+                    case .game:
+                        // Remove game-specific preference
+                        UserDefaults.standard.removeObject(forKey: "ScreenFilter_Game_\(gameId)")
+                        
+                    case .system:
+                        // Remove system-wide preference
+                        UserDefaults.standard.removeObject(forKey: "ScreenFilter_System_\(systemId.rawValue)")
+                    }
+                }
+            }
+        }
     }
     
     // Helper to apply skin to emulator
