@@ -8,20 +8,34 @@
 import SwiftUI
 import PVThemes
 
-struct ThemedToggle<Label: View>: View {
+public struct ThemedToggle<Label: View>: View {
     @ObservedObject private var themeManager = ThemeManager.shared
-    @Binding var isOn: Bool
-    @ViewBuilder let label: () -> Label
+    @Binding public var isOn: Bool
+    @ViewBuilder public let label: () -> Label
+    
+    // Use RetroToggleStyle by default, but allow fallback to system style
+    public var useRetroStyle: Bool = true
 
-    var body: some View {
+    public var body: some View {
         Toggle(isOn: $isOn) {
             label()
         }
 #if !os(tvOS)
-        .toggleStyle(SwitchThemedToggleStyle(tint: themeManager.currentPalette.switchON?.swiftUIColor ?? .white))
-        .onAppear {
-            UISwitch.appearance().thumbTintColor = themeManager.currentPalette.switchThumb
-        }
+        .modifier(ToggleStyleModifier(useRetroStyle: useRetroStyle, themeManager: themeManager))
 #endif
+    }
+}
+
+// Helper modifier to handle different toggle styles
+private struct ToggleStyleModifier: ViewModifier {
+    let useRetroStyle: Bool
+    let themeManager: ThemeManager
+    
+    func body(content: Content) -> some View {
+        if useRetroStyle {
+            content.toggleStyle(RetroTheme.RetroToggleStyle())
+        } else {
+            content.toggleStyle(SwitchThemedToggleStyle(tint: themeManager.currentPalette.switchON?.swiftUIColor ?? .white))
+        }
     }
 }

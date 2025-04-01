@@ -29,22 +29,16 @@ struct PremiumThemedToggle<Label: View>: View {
             Toggle(isOn: $isOn) {
                 label
             }
-            .toggleStyle(SwitchThemedToggleStyle(tint: themeManager.currentPalette.switchON?.swiftUIColor ?? .white))
-            .onAppear {
-                #if !os(tvOS)
-                UISwitch.appearance().thumbTintColor = themeManager.currentPalette.switchThumb
-                #endif
-            }
+            .toggleStyle(RetroTheme.RetroToggleStyle())
         } lockedView: {
             ZStack {
                 Color(.clear)
                 Toggle(isOn: $isOn) {
                     label
                 }
-                .toggleStyle(SwitchThemedToggleStyle(tint: themeManager.currentPalette.switchON?.swiftUIColor ?? .white))
-                .onAppear {
-                    UISwitch.appearance().thumbTintColor = themeManager.currentPalette.switchThumb
-                }.disabled(true)
+                .toggleStyle(RetroTheme.RetroToggleStyle())
+                .opacity(0.6)
+                .disabled(true)
             }
         }
         #else

@@ -147,72 +147,217 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
     }
     
     public func buttons(for traits: DeltaSkinTraits) -> [DeltaSkinButton]? {
-        // Create a basic set of buttons for the default skin
-        // This will vary based on the system type
+        // Create a retrowave-styled set of buttons with proper gamepad layout
         var buttons: [DeltaSkinButton] = []
         
         // The layout depends on orientation
         let isLandscape = traits.orientation == .landscape
         
-        // D-pad position and size
-        let dpadSize: CGFloat = isLandscape ? 0.15 : 0.2
-        let dpadX: CGFloat = isLandscape ? 0.1 : 0.2
-        let dpadY: CGFloat = isLandscape ? 0.75 : 0.8
+        // Common button sizes
+        let actionButtonSize: CGFloat = isLandscape ? 0.08 : 0.10
+        let shoulderButtonWidth: CGFloat = isLandscape ? 0.12 : 0.15
+        let shoulderButtonHeight: CGFloat = isLandscape ? 0.06 : 0.08
+        let menuButtonWidth: CGFloat = isLandscape ? 0.12 : 0.15
+        let menuButtonHeight: CGFloat = isLandscape ? 0.06 : 0.07
         
-        // D-pad buttons
-        let dpadUp = DeltaSkinButton(id: "dpad_up", input: .single("up"), frame: CGRect(x: dpadX, y: dpadY - dpadSize, width: dpadSize, height: dpadSize))
-        let dpadDown = DeltaSkinButton(id: "dpad_down", input: .single("down"), frame: CGRect(x: dpadX, y: dpadY + dpadSize, width: dpadSize, height: dpadSize))
-        let dpadLeft = DeltaSkinButton(id: "dpad_left", input: .single("left"), frame: CGRect(x: dpadX - dpadSize, y: dpadY, width: dpadSize, height: dpadSize))
-        let dpadRight = DeltaSkinButton(id: "dpad_right", input: .single("right"), frame: CGRect(x: dpadX + dpadSize, y: dpadY, width: dpadSize, height: dpadSize))
+        // D-pad position (left side)
+        let dpadCenterX: CGFloat = isLandscape ? 0.15 : 0.20
+        let dpadCenterY: CGFloat = isLandscape ? 0.60 : 0.70
+        let dpadRadius: CGFloat = isLandscape ? 0.10 : 0.12
         
-        buttons.append(contentsOf: [dpadUp, dpadDown, dpadLeft, dpadRight])
+        // Create a directional D-pad with a single input mapping
+        let dpad = DeltaSkinButton(
+            id: "dpad",
+            input: .directional([
+                "up": "up",
+                "down": "down",
+                "left": "left",
+                "right": "right"
+            ]),
+            frame: CGRect(
+                x: dpadCenterX - dpadRadius,
+                y: dpadCenterY - dpadRadius,
+                width: dpadRadius * 2,
+                height: dpadRadius * 2
+            )
+        )
+        buttons.append(dpad)
         
-        // Action buttons position and size
-        let actionSize: CGFloat = isLandscape ? 0.12 : 0.15
-        let actionX: CGFloat = isLandscape ? 0.8 : 0.7
-        let actionY: CGFloat = isLandscape ? 0.75 : 0.8
+        // Action buttons position (right side)
+        let actionCenterX: CGFloat = isLandscape ? 0.85 : 0.80
+        let actionCenterY: CGFloat = isLandscape ? 0.60 : 0.70
         
-        // Action buttons (A, B, X, Y)
-        let buttonA = DeltaSkinButton(id: "button_a", input: .single("a"), frame: CGRect(x: actionX + actionSize, y: actionY, width: actionSize, height: actionSize))
-        let buttonB = DeltaSkinButton(id: "button_b", input: .single("b"), frame: CGRect(x: actionX, y: actionY + actionSize, width: actionSize, height: actionSize))
-        
-        buttons.append(contentsOf: [buttonA, buttonB])
-        
-        // Add system-specific buttons based on the system type
+        // Create action buttons based on system type
         switch systemIdentifier {
-        case .NES, .SNES, .GB, .GBC, .GBA, .FDS:
-            // Add Start/Select buttons
-            let startButton = DeltaSkinButton(id: "button_start", input: .single("start"),
-                                             frame: CGRect(x: 0.6, y: 0.9, width: 0.1, height: 0.05))
-            let selectButton = DeltaSkinButton(id: "button_select", input: .single("start"),
-                                              frame: CGRect(x: 0.4, y: 0.9, width: 0.1, height: 0.05))
-            buttons.append(contentsOf: [startButton, selectButton])
+        case .SNES:
+            // SNES has 4 action buttons in a diamond pattern
+            let buttonA = DeltaSkinButton(
+                id: "button_a",
+                input: .single("a"),
+                frame: CGRect(
+                    x: actionCenterX + actionButtonSize/2,
+                    y: actionCenterY,
+                    width: actionButtonSize,
+                    height: actionButtonSize
+                )
+            )
             
-            // For SNES, add X and Y buttons
-            if systemIdentifier == .SNES {
-                let buttonX = DeltaSkinButton(id: "button_x", input: .single("x"),
-                                             frame: CGRect(x: actionX, y: actionY - actionSize, width: actionSize, height: actionSize))
-                let buttonY = DeltaSkinButton(id: "button_y", input: .single("y"),
-                                             frame: CGRect(x: actionX - actionSize, y: actionY, width: actionSize, height: actionSize))
-                buttons.append(contentsOf: [buttonX, buttonY])
-            }
+            let buttonB = DeltaSkinButton(
+                id: "button_b",
+                input: .single("b"),
+                frame: CGRect(
+                    x: actionCenterX,
+                    y: actionCenterY + actionButtonSize/2,
+                    width: actionButtonSize,
+                    height: actionButtonSize
+                )
+            )
             
-        case .Genesis, .SegaCD, .Sega32X, .MasterSystem, .SG1000:
-            // Add Start button and C button
-            let startButton = DeltaSkinButton(id: "button_start", input: .single("start"),
-                                             frame: CGRect(x: 0.5, y: 0.9, width: 0.1, height: 0.05))
-            let buttonC = DeltaSkinButton(id: "button_c", input: .single("c"),
-                                         frame: CGRect(x: actionX - actionSize, y: actionY + actionSize, width: actionSize, height: actionSize))
-            buttons.append(contentsOf: [startButton, buttonC])
+            let buttonX = DeltaSkinButton(
+                id: "button_x",
+                input: .single("x"),
+                frame: CGRect(
+                    x: actionCenterX,
+                    y: actionCenterY - actionButtonSize/2,
+                    width: actionButtonSize,
+                    height: actionButtonSize
+                )
+            )
+            
+            let buttonY = DeltaSkinButton(
+                id: "button_y",
+                input: .single("y"),
+                frame: CGRect(
+                    x: actionCenterX - actionButtonSize/2,
+                    y: actionCenterY,
+                    width: actionButtonSize,
+                    height: actionButtonSize
+                )
+            )
+            
+            buttons.append(contentsOf: [buttonA, buttonB, buttonX, buttonY])
+            
+        case .Genesis, .SegaCD, .Sega32X:
+            // Genesis has 3 action buttons in a row
+            let buttonA = DeltaSkinButton(
+                id: "button_a",
+                input: .single("a"),
+                frame: CGRect(
+                    x: actionCenterX - actionButtonSize,
+                    y: actionCenterY,
+                    width: actionButtonSize,
+                    height: actionButtonSize
+                )
+            )
+            
+            let buttonB = DeltaSkinButton(
+                id: "button_b",
+                input: .single("b"),
+                frame: CGRect(
+                    x: actionCenterX,
+                    y: actionCenterY,
+                    width: actionButtonSize,
+                    height: actionButtonSize
+                )
+            )
+            
+            let buttonC = DeltaSkinButton(
+                id: "button_c",
+                input: .single("c"),
+                frame: CGRect(
+                    x: actionCenterX + actionButtonSize,
+                    y: actionCenterY,
+                    width: actionButtonSize,
+                    height: actionButtonSize
+                )
+            )
+            
+            buttons.append(contentsOf: [buttonA, buttonB, buttonC])
             
         default:
-            // Add generic Start/Select for other systems
-            let startButton = DeltaSkinButton(id: "button_start", input: .single("start"),
-                                             frame: CGRect(x: 0.55, y: 0.9, width: 0.1, height: 0.05))
-            let selectButton = DeltaSkinButton(id: "button_select", input: .single("select"),
-                                              frame: CGRect(x: 0.45, y: 0.9, width: 0.1, height: 0.05))
-            buttons.append(contentsOf: [startButton, selectButton])
+            // Most systems have 2 action buttons (A and B)
+            let buttonA = DeltaSkinButton(
+                id: "button_a",
+                input: .single("a"),
+                frame: CGRect(
+                    x: actionCenterX + actionButtonSize/2,
+                    y: actionCenterY,
+                    width: actionButtonSize,
+                    height: actionButtonSize
+                )
+            )
+            
+            let buttonB = DeltaSkinButton(
+                id: "button_b",
+                input: .single("b"),
+                frame: CGRect(
+                    x: actionCenterX,
+                    y: actionCenterY + actionButtonSize/2,
+                    width: actionButtonSize,
+                    height: actionButtonSize
+                )
+            )
+            
+            buttons.append(contentsOf: [buttonA, buttonB])
         }
+        
+        // Add shoulder buttons at the top corners
+        if systemIdentifier == .SNES || systemIdentifier == .GBA {
+            // Left shoulder button (L)
+            let buttonL = DeltaSkinButton(
+                id: "button_l",
+                input: .single("l"),
+                frame: CGRect(
+                    x: 0.05,
+                    y: 0.05,
+                    width: shoulderButtonWidth,
+                    height: shoulderButtonHeight
+                )
+            )
+            
+            // Right shoulder button (R)
+            let buttonR = DeltaSkinButton(
+                id: "button_r",
+                input: .single("r"),
+                frame: CGRect(
+                    x: 0.95 - shoulderButtonWidth,
+                    y: 0.05,
+                    width: shoulderButtonWidth,
+                    height: shoulderButtonHeight
+                )
+            )
+            
+            buttons.append(contentsOf: [buttonL, buttonR])
+        }
+        
+        // Add Start/Select buttons centered at the bottom
+        let startX = 0.5 + menuButtonWidth/2 + 0.02
+        let selectX = 0.5 - menuButtonWidth/2 - 0.02
+        let menuY = isLandscape ? 0.90 : 0.88
+        
+        let startButton = DeltaSkinButton(
+            id: "button_start",
+            input: .single("start"),
+            frame: CGRect(
+                x: startX - menuButtonWidth/2,
+                y: menuY,
+                width: menuButtonWidth,
+                height: menuButtonHeight
+            )
+        )
+        
+        let selectButton = DeltaSkinButton(
+            id: "button_select",
+            input: .single("select"),
+            frame: CGRect(
+                x: selectX - menuButtonWidth/2,
+                y: menuY,
+                width: menuButtonWidth,
+                height: menuButtonHeight
+            )
+        )
+        
+        buttons.append(contentsOf: [startButton, selectButton])
         
         return buttons
     }
@@ -227,11 +372,11 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
     }
     
     public func representation(for traits: DeltaSkinTraits) -> DeltaSkin.RepresentationInfo? {
-        // Create a basic representation for the default skin
+        // Create a basic representation for the default skin with retrowave styling
         return DeltaSkin.RepresentationInfo(
             assets: .init(resizable: nil, small: nil, medium: nil, large: nil),
             mappingSize: .init(width: 400, height: 300),
-            translucent: nil,
+            translucent: true,  // Make the controller translucent
             screens: nil,
             items: nil,
             extendedEdges: nil,

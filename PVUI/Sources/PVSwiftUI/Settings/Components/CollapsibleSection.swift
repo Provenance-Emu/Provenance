@@ -54,6 +54,7 @@ internal struct CollapsibleSection<Content: View>: View {
                             )
                         )
                         .shadow(color: .retroPink.opacity(0.5), radius: 2, x: 0, y: 0)
+                        .padding(.leading, 8)
                     
                     Spacer()
                     
