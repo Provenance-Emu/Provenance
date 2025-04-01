@@ -111,7 +111,7 @@ struct SystemSkinPreviewRow: View {
             ZStack {
                 if let skin = skin {
                     // Show actual skin preview with retrowave styling
-                    SkinPreviewCell(
+                    SkinSelectionPreviewCell(
                         skin: skin,
                         manager: skinManager,
                         orientation: orientation.deltaSkinOrientation

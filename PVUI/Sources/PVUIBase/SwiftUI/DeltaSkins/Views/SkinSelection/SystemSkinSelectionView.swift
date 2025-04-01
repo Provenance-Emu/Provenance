@@ -434,7 +434,7 @@ public struct SystemSkinSelectionView: View {
         return VStack(spacing: 8) {
             ZStack {
                 // Skin preview with correct orientation and retrowave styling
-                SkinPreviewCell(skin: skin, manager: skinManager, orientation: selectedOrientation.deltaSkinOrientation)
+                SkinSelectionPreviewCell(skin: skin, manager: skinManager, orientation: selectedOrientation.deltaSkinOrientation)
                     .cornerRadius(12)
             }
             .overlay(
@@ -616,47 +616,83 @@ public struct SystemSkinSelectionView: View {
 }
 
 /// Helper view to display a skin preview image
-struct SkinPreviewImage: View {
+struct SkinSelectionPreviewCell: View {
     let skin: DeltaSkinProtocol
-
+    let manager: DeltaSkinManager
+    var orientation: DeltaSkinOrientation = .portrait
+    
     @State private var image: UIImage?
     @State private var isLoading = true
     @State private var error: Error?
-
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    
+    private var previewTraits: DeltaSkinTraits {
+        // Try current device first with specified orientation
+        let device: DeltaSkinDevice = horizontalSizeClass == .regular ? .ipad : .iphone
+        let traits = DeltaSkinTraits(device: device, displayType: .standard, orientation: orientation)
+        
+        // Return first supported configuration
+        if skin.supports(traits) {
+            return traits
+        }
+        
+        // Try with edge to edge display type
+        let edgeToEdgeTraits = DeltaSkinTraits(device: device, displayType: .edgeToEdge, orientation: orientation)
+        if skin.supports(edgeToEdgeTraits) {
+            return edgeToEdgeTraits
+        }
+        
+        // Try alternate device
+        let altDevice: DeltaSkinDevice = device == .ipad ? .iphone : .ipad
+        let altTraits = DeltaSkinTraits(device: altDevice, displayType: .standard, orientation: orientation)
+        
+        if skin.supports(altTraits) {
+            return altTraits
+        }
+        
+        // Try alternate device with edge to edge
+        let altEdgeToEdgeTraits = DeltaSkinTraits(device: altDevice, displayType: .edgeToEdge, orientation: orientation)
+        if skin.supports(altEdgeToEdgeTraits) {
+            return altEdgeToEdgeTraits
+        }
+        
+        // If the requested orientation isn't supported, try the opposite orientation
+        let oppositeOrientation: DeltaSkinOrientation = orientation == .portrait ? .landscape : .portrait
+        let oppositeTraits = DeltaSkinTraits(device: device, displayType: .standard, orientation: oppositeOrientation)
+        
+        if skin.supports(oppositeTraits) {
+            return oppositeTraits
+        }
+        
+        // Fallback to edge to edge with default orientation
+        return DeltaSkinTraits(device: device, displayType: .edgeToEdge, orientation: .portrait)
+    }
+    
     var body: some View {
         ZStack {
             if isLoading {
                 ProgressView()
-            } else if let image = image {
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
             } else {
-                Image(systemName: "exclamationmark.triangle")
-                    .font(.largeTitle)
-                    .foregroundColor(.orange)
+                DeltaSkinView(skin: skin, traits: previewTraits, inputHandler: .init(emulatorCore: nil))
+                    .allowsHitTesting(false)
+                    .aspectRatio(orientation == .portrait ? 0.5 : 2.0, contentMode: .fit)
             }
         }
         .onAppear {
-            loadPreview()
+            loadSkinImage()
         }
     }
-
-    private func loadPreview() {
+    
+    private func loadSkinImage() {
         Task {
             do {
-                // Use portrait orientation for preview
-                let traits = DeltaSkinTraits(
-                    device: .iphone,
-                    displayType: .standard,
-                    orientation: .portrait
-                )
-
-                // Try to load the image
-                let skinImage = try await skin.image(for: traits)
-
+                // Wait a brief moment to allow for animation
+                try? await Task.sleep(nanoseconds: 100_000_000)
+                
+                // Simulate loading the skin image
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                
                 await MainActor.run {
-                    self.image = skinImage
                     self.isLoading = false
                 }
             } catch {
