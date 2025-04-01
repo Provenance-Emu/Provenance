@@ -294,15 +294,15 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
 
                 // Remember this core as the preferred core for this game
                 Task {
-                    do {
-                        let realm = try await Realm()
-                        try await realm.asyncWrite {
-                            game.userPreferredCoreID = core.id
-                        }
-                        ILOG("EmulatorContainerView: Set preferred core ID \(core.id) for game \(game.title)")
-                    } catch {
-                        ELOG("EmulatorContainerView: Failed to set preferred core: \(error)")
-                    }
+//                    do {
+//                        let realm = try await Realm()
+//                        try await realm.asyncWrite {
+//                            game.userPreferredCoreID = core.id
+//                        }
+//                        ILOG("EmulatorContainerView: Set preferred core ID \(core.id) for game \(game.title)")
+//                    } catch {
+//                        ELOG("EmulatorContainerView: Failed to set preferred core: \(error)")
+//                    }
 
                     // Load the game with the selected core
                     if let containerVC = sender as? EmulatorContainerViewController {
@@ -316,49 +316,49 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
         }
 
         // Add a "Remember for all games of this system" option
-        let rememberSystemAction = UIAlertAction(title: "Remember choice for all \(system.name) games", style: .default) { _ in
-            // Show another alert to select which core to remember
-            let systemCoreAlert = UIAlertController(title: "Select Default Core for \(system.name)",
-                                                  message: "This core will be used for all \(system.name) games",
-                                                  preferredStyle: .actionSheet)
-
-            for core in availableCores {
-                let coreAction = UIAlertAction(title: core.projectName, style: .default) { _ in
-                    Task {
-                        do {
-                            let realm = try await Realm()
-                            try await realm.asyncWrite {
-                                // Set the preferred core for the system
-                                system.userPreferredCoreID = core.id
-                                // Also set it for this game
-                                game.userPreferredCoreID = core.id
-                            }
-                            ILOG("EmulatorContainerView: Set preferred core ID \(core.id) for system \(system.name)")
-
-                            // Load the game with the selected core
-                            if let containerVC = sender as? EmulatorContainerViewController {
-                                await containerVC.load(game, sender: nil, core: core, saveState: nil)
-                            } else {
-                                await self.load(game, sender: sender, core: core, saveState: nil)
-                            }
-                        } catch {
-                            ELOG("EmulatorContainerView: Failed to set preferred core for system: \(error)")
-                        }
-                    }
-                }
-                systemCoreAlert.addAction(coreAction)
-            }
-
-            systemCoreAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-
-            if let popover = systemCoreAlert.popoverPresentationController, let sourceView = sender as? UIView {
-                popover.sourceView = sourceView
-                popover.sourceRect = sourceView.bounds
-            }
-
-            viewController.present(systemCoreAlert, animated: true, completion: nil)
-        }
-        alertController.addAction(rememberSystemAction)
+//        let rememberSystemAction = UIAlertAction(title: "Remember choice for all \(system.name) games", style: .default) { _ in
+//            // Show another alert to select which core to remember
+//            let systemCoreAlert = UIAlertController(title: "Select Default Core for \(system.name)",
+//                                                  message: "This core will be used for all \(system.name) games",
+//                                                  preferredStyle: .actionSheet)
+//
+//            for core in availableCores {
+//                let coreAction = UIAlertAction(title: core.projectName, style: .default) { _ in
+//                    Task {
+//                        do {
+//                            let realm = try await Realm()
+//                            try await realm.asyncWrite {
+//                                // Set the preferred core for the system
+//                                system.userPreferredCoreID = core.id
+//                                // Also set it for this game
+//                                game.userPreferredCoreID = core.id
+//                            }
+//                            ILOG("EmulatorContainerView: Set preferred core ID \(core.id) for system \(system.name)")
+//
+//                            // Load the game with the selected core
+//                            if let containerVC = sender as? EmulatorContainerViewController {
+//                                await containerVC.load(game, sender: nil, core: core, saveState: nil)
+//                            } else {
+//                                await self.load(game, sender: sender, core: core, saveState: nil)
+//                            }
+//                        } catch {
+//                            ELOG("EmulatorContainerView: Failed to set preferred core for system: \(error)")
+//                        }
+//                    }
+//                }
+//                systemCoreAlert.addAction(coreAction)
+//            }
+//
+//            systemCoreAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+//
+//            if let popover = systemCoreAlert.popoverPresentationController, let sourceView = sender as? UIView {
+//                popover.sourceView = sourceView
+//                popover.sourceRect = sourceView.bounds
+//            }
+//
+//            viewController.present(systemCoreAlert, animated: true, completion: nil)
+//        }
+//        alertController.addAction(rememberSystemAction)
 
         // Add a cancel action
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
