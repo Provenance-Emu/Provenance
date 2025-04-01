@@ -124,7 +124,10 @@ struct ImportTaskRowView: View {
                         .lineLimit(2)
                 }
             }
+            .padding(.leading, 10)
+            
             Spacer()
+            
             VStack(alignment: .trailing, spacing: 6) {
                 if item.status == .processing {
                     ProgressView()

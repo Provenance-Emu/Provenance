@@ -95,28 +95,47 @@ public struct ImportStatusView: View {
                                 Spacer()
                             }
                         } else {
-                            ScrollView {
-                                LazyVStack(spacing: 12) {
-                                    ForEach(queueItems) { item in
-                                        Button(action: {
-                                            print("Tapped item: \(item.id)")
-                                        }) {
-                                            // Pass callback to ImportTaskRowView
-                                            ImportTaskRowView(
-                                                item: item,
-                                                onSystemSelected: handleSystemSelection
+                            List {
+                                ForEach(queueItems) { item in
+                                    ZStack {
+                                        // Custom background to maintain retrowave styling
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(Color.black.opacity(0.7))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .strokeBorder(
+                                                        LinearGradient(
+                                                            gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                                            startPoint: .topLeading,
+                                                            endPoint: .bottomTrailing
+                                                        ),
+                                                        lineWidth: 1.5
+                                                    )
+                                                    .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                                             )
-                                            .id(item.id)
-                                        }
-                                        .buttonStyle(PlainButtonStyle())
-#if os(tvOS)
-                                        .focusable()
-                                        .prefersDefaultFocus(in: namespace)
-#endif
+                                        
+                                        // Pass callback to ImportTaskRowView
+                                        ImportTaskRowView(
+                                            item: item,
+                                            onSystemSelected: handleSystemSelection
+                                        )
+                                        .id(item.id)
+                                        .padding(.vertical, 4) // Add padding to ensure the content doesn't touch the edges
                                     }
+                                    .listRowInsets(EdgeInsets()) // Remove default list row insets
+                                    .listRowBackground(Color.clear) // Make the list row background transparent
+#if os(tvOS)
+                                    .focusable()
+                                    .prefersDefaultFocus(in: namespace)
+#endif
                                 }
-                                .padding(.horizontal)
+                                .onDelete(perform: deleteItems) // Add swipe-to-delete functionality
+                                .listRowSeparator(.hidden) // Hide default separators
                             }
+                            .listStyle(PlainListStyle()) // Use plain style to minimize default styling
+                            .padding(.horizontal)
+                            .background(Color.clear) // Make list background transparent
+                            .scrollContentBackground(.hidden) // Hide the scroll content background on iOS 16+
                         }
                     }
                 }
@@ -131,11 +150,25 @@ public struct ImportStatusView: View {
                         // TODO: Removing from tvOS as a hack @JoeMatt
                         #if !os(tvOS)
                         if dismissAction != nil {
-                            Button("Done") {
+                            Button(action: {
                                 dismissAction?()
                                 delegate?.dismissAction()
+                            }) {
+                                Text("CLOSE")
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundColor(RetroTheme.retroPurple)
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 8)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(LinearGradient(
+                                                gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroPink]),
+                                                startPoint: .leading,
+                                                endPoint: .trailing
+                                            ), lineWidth: 1.5)
+                                    )
+                                    .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                             }
-                            .tint(currentPalette.defaultTintColor.swiftUIColor)
 #if os(tvOS)
                             .focusable(true)
 #endif
@@ -145,26 +178,63 @@ public struct ImportStatusView: View {
                     ToolbarItemGroup(placement: .topBarTrailing,
                                    content: {
                         #if !os(tvOS)
-                        Button("Add Files") {
+                        Button(action: {
                             delegate?.addImportsAction()
+                        }) {
+                            Text("ADD FILES")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundColor(RetroTheme.retroPink)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(LinearGradient(
+                                            gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        ), lineWidth: 1.5)
+                                )
+                                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                         }
-                        .tint(currentPalette.defaultTintColor.swiftUIColor)
                         #endif
 
-                        Button("Begin") {
+                        Button(action: {
                             delegate?.forceImportsAction()
+                        }) {
+                            Text("BEGIN")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundColor(RetroTheme.retroBlue)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(LinearGradient(
+                                            gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        ), lineWidth: 1.5)
+                                )
+                                .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                         }
-                        .tint(currentPalette.defaultTintColor.swiftUIColor)
                         #if os(tvOS)
                         .focusable(true)
                         #endif
                     })
                 }
-                .background(currentPalette.gameLibraryBackground.swiftUIColor)
             }
-            .background(currentPalette.gameLibraryBackground.swiftUIColor)
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
+            .onAppear {
+                // Load the queue items when the view appears
+                Task {
+                    await refreshQueueItems()
+                }
+                
+                // Start retrowave animations
+                withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
+                    glowOpacity = 1.0
+                }
+            }
         }
     }
 }
