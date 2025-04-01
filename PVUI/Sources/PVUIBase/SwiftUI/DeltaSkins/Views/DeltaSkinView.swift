@@ -43,13 +43,13 @@ public struct DeltaSkinView: View {
 
     // Track the currently pressed button (legacy support)
     @State private var currentlyPressedButton: DeltaSkinButton?
-    
+
     // Track multiple touch points for multi-touch support
     @State private var touchPoints: [ObjectIdentifier: CGPoint] = [:]
-    
+
     // Map touch IDs to button IDs for tracking which touch is pressing which button
     @State private var touchToButtonMap: [ObjectIdentifier: String] = [:]
-    
+
     // Track the current preview size
     @State private var previewSize: CGSize = .zero
 
@@ -341,7 +341,7 @@ public struct DeltaSkinView: View {
     }
 
     // Helper function to calculate screen dimensions
-    private func calculateScreenDimensions(in geometry: GeometryProxy) -> String { 
+    private func calculateScreenDimensions(in geometry: GeometryProxy) -> String {
         guard let mappingSize = skin.mappingSize(for: traits) else { return "No mapping size" }
 
         let availableWidth = geometry.size.width
@@ -519,33 +519,33 @@ public struct DeltaSkinView: View {
             .overlay(
                 MultiTouchView { touchPhase, touches in
                     DLOG("MultiTouchView callback: phase=\(touchPhase), touches=\(touches.count)")
-                    
+
                     switch touchPhase {
                     case .began, .moved:
                         // Process each active touch
                         for touch in touches {
                             let location = touch.location
                             DLOG("Processing touch: \(touch.id) at \(location)")
-                            
+
                             // Store this touch point for visualization
                             touchLocations.insert(location)
-                            
+
                             // Store the mapping between touch ID and location
                             touchToButtonMap[touch.id] = nil
-                            
+
                             // Handle this touch location
                             handleTouchAtLocation(location, in: geometry.size, touchId: touch.id)
                         }
                         DLOG("Current touch points: \(touchLocations.count)")
-                        
+
                     case .ended, .cancelled:
                         // Process ended touches
                         for touch in touches {
                             DLOG("Ending touch: \(touch.id)")
-                            
+
                             // Remove this touch point from visualization
                             touchLocations.remove(touch.location)
-                            
+
                             // Release any button associated with this touch
                             if let buttonId = touchToButtonMap[touch.id] {
                                 DLOG("Releasing button \(buttonId) for touch \(touch.id)")
@@ -553,18 +553,18 @@ public struct DeltaSkinView: View {
                                 touchToButtonMap.removeValue(forKey: touch.id)
                             }
                         }
-                        
+
                         // If all touches are gone, ensure everything is reset
                         if touchToButtonMap.isEmpty {
                             DLOG("All touches ended, cleaning up")
-                            
+
                             // Clear active buttons to ensure visual feedback is removed
                             activeButtons.removeAll()
-                            
+
                             // Reset state
                             touchLocations.removeAll()
                             currentlyPressedButton = nil
-                            
+
                             // Double-check that all D-pad buttons are released
                             for direction in ["up", "down", "left", "right"] {
                                 if pressedButtons.contains(direction) {
@@ -572,7 +572,7 @@ public struct DeltaSkinView: View {
                                     handleButtonRelease(direction)
                                 }
                             }
-                            
+
                             // Clear all pressed buttons as a final safety measure
                             let allButtons = pressedButtons
                             for buttonId in allButtons {
@@ -688,7 +688,7 @@ public struct DeltaSkinView: View {
         // Find the button being touched
         var touchedButton: DeltaSkinButton?
         var isDPadButton = false
-        
+
         // First check if we're already pressing a D-pad button and still within its extended hit area
         if let currentButton = currentlyPressedButton, case .directional = currentButton.input {
             // For D-pad, use a larger hit area to allow sliding between directions
@@ -699,7 +699,7 @@ public struct DeltaSkinView: View {
                 width: extendedHitFrame.width * scale,
                 height: extendedHitFrame.height * scale
             )
-            
+
             if scaledFrame.contains(location) {
                 touchedButton = currentButton
                 isDPadButton = true
@@ -712,7 +712,7 @@ public struct DeltaSkinView: View {
                 currentlyPressedButton = nil
             }
         }
-        
+
         // If we're not continuing with a D-pad press, check all buttons normally
         if !isDPadButton {
             for button in buttons {
@@ -747,22 +747,22 @@ public struct DeltaSkinView: View {
                 // For non-D-pad buttons, use our multi-button press system
                 // Extract the input command
                 let inputCommand = extractInputCommand(from: button)
-                
+
                 // Use our enhanced button press handling that supports multiple buttons
                 if !pressedButtons.contains(inputCommand) {
                     handleButtonPress(inputCommand)
-                    
+
                     // Associate this touch with this button
                     touchToButtonMap[touchId] = inputCommand
                     DLOG("Associated touch \(touchId) with button \(inputCommand)")
                 }
-                
+
                 // Set as current button for legacy support
                 currentlyPressedButton = button
 
                 // Add visual feedback
                 let highlightButtonId = button.id
-                
+
                 let newButton = (
                     frame: button.frame,
                     mappingSize: mappingSize,
@@ -770,21 +770,21 @@ public struct DeltaSkinView: View {
                     timestamp: Date()
                 )
                 activeButtons.append(newButton)
-                
+
                 // Clean up old highlights after delay
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                     activeButtons.removeAll { $0.timestamp <= newButton.timestamp }
                 }
             }
-        
+
         } else if let previousButton = currentlyPressedButton {
             // Touch is not on any button, but we had a pressed button
             // Extract the input command using the proper method
             let inputCommand = extractInputCommand(from: previousButton)
-            
+
             // Use our enhanced button release handling
             handleButtonRelease(inputCommand)
-            
+
             // Clear the current button
             currentlyPressedButton = nil
         } else {
@@ -792,7 +792,7 @@ public struct DeltaSkinView: View {
             currentlyPressedButton = nil
         }
     }
-    
+
     // We're now using a simplified approach with DragGesture instead of individual touch tracking
 
     #if !os(tvOS)
@@ -834,26 +834,26 @@ public struct DeltaSkinView: View {
     private func handleDPadInput(_ button: DeltaSkinButton, scale: CGFloat, xOffset: CGFloat, yOffset: CGFloat, mappingSize: CGSize) {
         // Use the first touch location for D-pad input
         guard let touchLocation = touchLocations.first else { return }
-        
+
         // Calculate the button center in view coordinates
         let buttonCenterX = button.frame.midX * scale + xOffset
         let buttonCenterY = button.frame.midY * scale + yOffset
-        
+
         // Calculate the touch position relative to the button center
         let relativeX = touchLocation.x - buttonCenterX
         let relativeY = touchLocation.y - buttonCenterY
-        
+
         // Define the center dead zone (15% of button size - smaller dead zone)
         let buttonWidth = button.frame.width * scale
         let buttonHeight = button.frame.height * scale
         let deadZoneRadius = min(buttonWidth, buttonHeight) * 0.15
-        
+
         // Add debug logging to help diagnose direction issues
         DLOG("D-pad highlight: relativeX=\(relativeX), relativeY=\(relativeY)")
-        
+
         // Track currently active directions for D-pad
         var activeDirections: Set<String> = []
-        
+
         // Determine which directions to activate based on touch position
         if sqrt(relativeX * relativeX + relativeY * relativeY) < deadZoneRadius {
             // In dead zone, no directions are active
@@ -862,7 +862,7 @@ public struct DeltaSkinView: View {
             // Calculate angle to determine direction
             let angle = atan2(relativeY, relativeX)
             let degrees = angle * 180 / .pi
-            
+
             // Determine horizontal component
             if degrees > -135 && degrees < -45 {
                 // Up
@@ -871,7 +871,7 @@ public struct DeltaSkinView: View {
                 // Down
                 activeDirections.insert("down")
             }
-            
+
             // Determine vertical component
             if degrees > -45 && degrees < 45 {
                 // Right
@@ -880,7 +880,7 @@ public struct DeltaSkinView: View {
                 // Left
                 activeDirections.insert("left")
             }
-            
+
             // Handle diagonal directions - prevent opposing directions
             if activeDirections.contains("up") && activeDirections.contains("down") {
                 // Can't press up and down simultaneously
@@ -897,7 +897,7 @@ public struct DeltaSkinView: View {
                     activeDirections.remove("down")
                 }
             }
-            
+
             if activeDirections.contains("left") && activeDirections.contains("right") {
                 // Can't press left and right simultaneously
                 if abs(relativeX) > abs(relativeY) {
@@ -914,10 +914,10 @@ public struct DeltaSkinView: View {
                 }
             }
         }
-        
+
         // Get currently pressed D-pad directions
         let currentDirections: Set<String> = Set(["up", "down", "left", "right"].filter { pressedButtons.contains($0) })
-        
+
         // Release directions that are no longer active
         for direction in currentDirections {
             if !activeDirections.contains(direction) {
@@ -925,7 +925,7 @@ public struct DeltaSkinView: View {
                 handleButtonRelease(direction)
             }
         }
-        
+
         // Press new directions
         for direction in activeDirections {
             if !currentDirections.contains(direction) {
@@ -933,10 +933,10 @@ public struct DeltaSkinView: View {
                 handleButtonPress(direction)
             }
         }
-        
+
         // Update the current button for legacy support
         currentlyPressedButton = button
-        
+
         // Add visual feedback for active directions
         if !activeDirections.isEmpty {
             for direction in activeDirections {
@@ -948,14 +948,14 @@ public struct DeltaSkinView: View {
                 )
                 activeButtons.append(newButton)
             }
-            
+
             #if !os(tvOS)
             buttonGenerator.impactOccurred(intensity: 0.6)
             #endif
-            
+
             // Play sound with current position (only once)
             playClickSound(for: button)
-            
+
             // Clean up old highlights after delay
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 self.activeButtons.removeAll { button in
@@ -965,7 +965,7 @@ public struct DeltaSkinView: View {
             }
         }
     }
-    
+
     // For hit testing
     func hitTest(_ point: CGPoint, in geometry: GeometryProxy) -> DeltaSkinButton? {
         guard let buttons = skin.buttons(for: traits),
@@ -1134,7 +1134,7 @@ public struct DeltaSkinView: View {
                 ZStack {
                     // Visual feedback for pressed state
                     let isPressed = pressedButtons.contains(mapping.id)
-                    
+
                     if showDebugOverlay {
                         // Show debug overlay for the button
                         Rectangle()
@@ -1326,12 +1326,12 @@ public struct DeltaSkinView: View {
             DLOG("⚠️ Button \(buttonId) already pressed, skipping press event")
             return
         }
-        
+
         // Add to the set of currently pressed buttons
         pressedButtons.insert(buttonId)
         DLOG("✅ Button pressed: \(buttonId) - Total pressed buttons: \(pressedButtons.count)")
         DLOG("Current pressed buttons: \(pressedButtons)")
-        
+
         // Play button sound
         if let button = skin.buttons(for: traits)?.first(where: { $0.id == buttonId }),
            let mappingSize = skin.mappingSize(for: traits) {
@@ -1340,13 +1340,13 @@ public struct DeltaSkinView: View {
             let area = button.frame.width * button.frame.height
             let maxArea = mappingSize.width * mappingSize.height
             let normalizedSize = Float((area / maxArea) * 0.5 + 0.5)
-            
+
             // Play sound
             ButtonSoundGenerator.shared.playButtonPressSound(
                 pan: panPosition,
                 volume: normalizedSize
             )
-            
+
             // Haptic feedback
             #if !os(tvOS) && os(iOS)
             if !ProcessInfo.processInfo.isiOSAppOnMac {
@@ -1354,7 +1354,7 @@ public struct DeltaSkinView: View {
             }
             #endif
         }
-        
+
         // Pass to the input handler
         inputHandler.buttonPressed(buttonId)
     }
@@ -1366,17 +1366,17 @@ public struct DeltaSkinView: View {
             DLOG("⚠️ Button \(buttonId) not pressed, skipping release event")
             return
         }
-        
+
         // Remove from the set of currently pressed buttons
         pressedButtons.remove(buttonId)
         DLOG("✅ Button released: \(buttonId) - Remaining pressed buttons: \(pressedButtons.count)")
         DLOG("Current pressed buttons after release: \(pressedButtons)")
-        
+
         // Pass to the input handler
         DLOG("Forwarding button release to input handler: \(buttonId)")
         inputHandler.buttonReleased(buttonId)
     }
-    
+
     /// Extract the actual input command from a button
     private func extractInputCommand(from button: DeltaSkinButton) -> String {
         // First, try to get the command from the button's input property
@@ -1393,35 +1393,35 @@ public struct DeltaSkinView: View {
                     previewSize.width / mappingSize.width,
                     previewSize.height / mappingSize.height
                 )
-                
+
                 let scaledSkinWidth = mappingSize.width * scale
                 let scaledSkinHeight = mappingSize.height * scale
                 let xOffset = (previewSize.width - scaledSkinWidth) / 2
-                
+
                 // Check if skin has fixed screen position
                 let hasScreenPosition = skin.screens(for: traits) != nil
-                
+
                 // Calculate Y offset based on skin type
                 let yOffset: CGFloat = hasScreenPosition ?
                     ((previewSize.height - scaledSkinHeight) / 2) :
                     (previewSize.height - scaledSkinHeight)
-                
+
                 // Calculate the button center in view coordinates
                 let buttonCenterX = button.frame.midX * scale + xOffset
                 let buttonCenterY = button.frame.midY * scale + yOffset
-                
+
                 // Calculate the touch position relative to the button center
                 let relativeX = touchLocation.x - buttonCenterX
                 let relativeY = touchLocation.y - buttonCenterY
-                
+
                 // Add debug logging to help diagnose direction issues
                 DLOG("D-pad: relativeX=\(relativeX), relativeY=\(relativeY)")
-                
+
                 // Define the center dead zone (15% of button size - smaller dead zone)
                 let buttonWidth = button.frame.width * scale
                 let buttonHeight = button.frame.height * scale
                 let deadZoneRadius = min(buttonWidth, buttonHeight) * 0.15
-                
+
                 // Check if touch is in the dead zone
                 if sqrt(relativeX * relativeX + relativeY * relativeY) < deadZoneRadius {
                     // In dead zone, return a special "center" command or nothing
@@ -1429,7 +1429,7 @@ public struct DeltaSkinView: View {
                     // Don't send any command when in the dead zone
                     return "none"
                 }
-                
+
                 // Determine which direction is being pressed based on the touch position
                 if abs(relativeX) > abs(relativeY) {
                     // Horizontal movement is dominant
@@ -1451,17 +1451,17 @@ public struct DeltaSkinView: View {
                     }
                 }
             }
-            
+
             // Fallback if we can't determine the direction
             if let firstCommand = commands.values.first {
                 return firstCommand
             }
         }
-        
+
         // If we couldn't get a command from the input, try to extract it from the button ID
         // This is a fallback for compatibility with existing code
         let buttonId = button.id.lowercased()
-        
+
         if buttonId.contains("up") {
             return "up"
         } else if buttonId.contains("down") {
@@ -1487,9 +1487,37 @@ public struct DeltaSkinView: View {
         } else if buttonId.contains("select") {
             return "select"
         }
-        
+
         // If all else fails, just use the button ID
         return button.id
+    }
+
+    /// Reset touch state completely
+    private func resetTouchState() {
+        DLOG("Resetting DeltaSkinView touch state")
+        touchLocations.removeAll()
+        touchToButtonMap.removeAll()
+        currentlyPressedButton = nil
+        activeButtons.removeAll()
+        activeThumbsticks.removeAll()
+    }
+
+    /// Release all pressed buttons
+    private func releaseAllButtons() {
+        DLOG("Releasing all pressed buttons in DeltaSkinView: \(pressedButtons)")
+
+        // Ensure all D-pad buttons are released
+        for direction in ["up", "down", "left", "right"] {
+            if pressedButtons.contains(direction) {
+                handleButtonRelease(direction)
+            }
+        }
+
+        // Release all other buttons
+        let allButtons = pressedButtons
+        for buttonId in allButtons {
+            handleButtonRelease(buttonId)
+        }
     }
 }
 

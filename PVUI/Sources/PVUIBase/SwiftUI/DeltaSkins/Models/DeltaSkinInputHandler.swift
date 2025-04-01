@@ -1,4 +1,3 @@
-
 import Foundation
 import Combine
 import PVEmulatorCore
@@ -10,13 +9,13 @@ import PVUIBase
 public class DeltaSkinInputHandler: ObservableObject {
     /// The emulator core to send inputs to
     private weak var emulatorCore: PVEmulatorCore?
-    
+
     /// The controller view controller to send controller-based inputs to
     private weak var controllerVC: (any ControllerVC)?
-    
+
     /// The emulator controller for handling special commands like quicksave and quickload
     private weak var emulatorController: (any PVEmualatorControllerProtocol)?
-    
+
     /// A dummy D-pad for sending directional input to the controller
     private let dummyDPad = JSDPad(frame: .zero)
 
@@ -28,21 +27,29 @@ public class DeltaSkinInputHandler: ObservableObject {
         self.emulatorCore = emulatorCore
         self.controllerVC = controllerVC
         self.emulatorController = emulatorController
-        
+
         // Set the tag to match the D-pad tag expected by the controller
         dummyDPad.tag = ControlTag.dpad1.rawValue
+
+        // Set up notification observers
+        setupNotificationObservers()
+    }
+
+    deinit {
+        // Clean up notification observers
+        NotificationCenter.default.removeObserver(self)
     }
 
     /// Set the emulator core
     func setEmulatorCore(_ core: PVEmulatorCore) {
         self.emulatorCore = core
     }
-    
+
     /// Set the controller view controller
     func setControllerVC(_ controller: (any ControllerVC)?) {
         self.controllerVC = controller
     }
-    
+
     /// Set the emulator controller
     func setEmulatorController(_ controller: (any PVEmualatorControllerProtocol)?) {
         self.emulatorController = controller
@@ -52,56 +59,63 @@ public class DeltaSkinInputHandler: ObservableObject {
     func buttonPressed(_ buttonId: String) {
         DLOG("Delta Skin button pressed: \(buttonId)")
 
+        // Check if the emulator is not running or is paused
+        if let core = emulatorCore, (!core.isRunning || core.isEmulationPaused) {
+            DLOG("Emulator core is not running or is paused, attempting to unpause")
+            // Attempt to unpause the emulator
+            core.setPauseEmulation(false)
+        }
+
         // Check for special commands
         let lowercasedId = buttonId.lowercased()
-        
+
         // Handle menu button
         if lowercasedId.contains("menu") {
             menuButtonPressed()
             return
         }
-        
+
         // Handle quicksave button
         if lowercasedId.contains("quicksave") {
             quicksaveButtonPressed()
             return
         }
-        
+
         // Handle quickload button
         if lowercasedId.contains("quickload") {
             quickloadButtonPressed()
             return
         }
-        
+
         // Handle fast forward toggle button
         if lowercasedId.contains("togglefastforward") {
             toggleFastForwardPressed()
             return
         }
-        
+
         // Handle hold-style fast forward button
         if lowercasedId.contains("fastforward") && !lowercasedId.contains("toggle") {
             fastForwardPressed()
             return
         }
-        
+
         // Handle slow motion toggle button
         if lowercasedId.contains("toggleslowmotion") {
             toggleSlowMotionPressed()
             return
         }
-        
+
         // Normalize the button ID
         let normalizedId = buttonId.lowercased()
         DLOG("Normalized button ID: \(normalizedId)")
-        
+
         // Log controller availability
         if let _ = controllerVC {
             DLOG("Controller VC is available")
         } else {
             DLOG("Controller VC is NOT available")
         }
-        
+
         // Check if we should use the controller VC for this button
         if let controller = controllerVC, isControllerButton(normalizedId) {
             DLOG("Using controller for button press: \(normalizedId)")
@@ -120,33 +134,40 @@ public class DeltaSkinInputHandler: ObservableObject {
     func buttonReleased(_ buttonId: String) {
         DLOG("Delta Skin button released: \(buttonId)")
 
+        // Check if the emulator is not running or is paused
+        if let core = emulatorCore, (!core.isRunning || core.isEmulationPaused) {
+            DLOG("Emulator core is not running or is paused during button release, attempting to unpause")
+            // Attempt to unpause the emulator
+            core.setPauseEmulation(false)
+        }
+
         // Check for hold-style fast forward button release
         let lowercasedId = buttonId.lowercased()
         if lowercasedId.contains("fastforward") && !lowercasedId.contains("toggle") {
             fastForwardReleased()
             return
         }
-        
+
         // Skip special button releases for toggle-style buttons
-        if lowercasedId.contains("menu") || 
-           lowercasedId.contains("quicksave") || 
+        if lowercasedId.contains("menu") ||
+           lowercasedId.contains("quicksave") ||
            lowercasedId.contains("quickload") ||
            lowercasedId.contains("togglefastforward") ||
            lowercasedId.contains("toggleslowmotion") {
             return
         }
-        
+
         // Normalize the button ID
         let normalizedId = buttonId.lowercased()
         DLOG("Normalized button ID for release: \(normalizedId)")
-        
+
         // Log controller availability
         if let _ = controllerVC {
             DLOG("Controller VC is available for release")
         } else {
             DLOG("Controller VC is NOT available for release")
         }
-        
+
         // Check if we should use the controller VC for this button
         if let controller = controllerVC, isControllerButton(normalizedId) {
             DLOG("Using controller for button release: \(normalizedId)")
@@ -168,7 +189,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         // Call the menu button handler if set
         menuButtonHandler?()
     }
-    
+
     /// Handle quicksave button press
     private func quicksaveButtonPressed() {
         DLOG("Quicksave button pressed")
@@ -176,7 +197,7 @@ public class DeltaSkinInputHandler: ObservableObject {
             ELOG("Cannot perform quicksave - emulatorController is nil")
             return
         }
-        
+
         // Perform quicksave asynchronously
         Task {
             do {
@@ -191,7 +212,7 @@ public class DeltaSkinInputHandler: ObservableObject {
             }
         }
     }
-    
+
     /// Handle quickload button press
     private func quickloadButtonPressed() {
         DLOG("Quickload button pressed")
@@ -199,7 +220,7 @@ public class DeltaSkinInputHandler: ObservableObject {
             ELOG("Cannot perform quickload - emulatorController is nil")
             return
         }
-        
+
         // Perform quickload asynchronously
         Task {
             do {
@@ -214,15 +235,15 @@ public class DeltaSkinInputHandler: ObservableObject {
             }
         }
     }
-    
+
     // MARK: - Game Speed Control
-    
+
     /// Timer for long press detection
     private var longPressTimer: Timer?
-    
+
     /// Store the previous game speed when using hold-style buttons
     private var previousGameSpeed: GameSpeed?
-    
+
     /// Handle toggle fast forward button press
     private func toggleFastForwardPressed() {
         DLOG("Toggle fast forward button pressed")
@@ -230,23 +251,23 @@ public class DeltaSkinInputHandler: ObservableObject {
             ELOG("Cannot toggle fast forward - emulatorCore is nil")
             return
         }
-        
+
         // If already in fast mode, go back to normal
         if core.gameSpeed == .fast || core.gameSpeed == .veryFast {
             DLOG("Returning to normal speed from fast mode")
             core.gameSpeed = .normal
             return
         }
-        
+
         // Otherwise, set to fast mode
         DLOG("Setting game speed to fast")
         core.gameSpeed = .fast
-        
+
         // Start a timer for long press detection (for very fast mode)
         longPressTimer?.invalidate()
         longPressTimer = Timer.scheduledTimer(withTimeInterval: 0.75, repeats: false) { [weak self] _ in
             guard let self = self, let core = self.emulatorCore else { return }
-            
+
             // If still in fast mode after the timer, switch to very fast
             if core.gameSpeed == .fast {
                 DLOG("Long press detected, setting game speed to very fast")
@@ -254,7 +275,7 @@ public class DeltaSkinInputHandler: ObservableObject {
             }
         }
     }
-    
+
     /// Handle hold-style fast forward button press
     private func fastForwardPressed() {
         DLOG("Fast forward button pressed (hold style)")
@@ -262,15 +283,15 @@ public class DeltaSkinInputHandler: ObservableObject {
             ELOG("Cannot set fast forward - emulatorCore is nil")
             return
         }
-        
+
         // Save the current game speed to restore it on release
         previousGameSpeed = core.gameSpeed
-        
+
         // Set to fast mode
         DLOG("Setting game speed to fast")
         core.gameSpeed = .fast
     }
-    
+
     /// Handle hold-style fast forward button release
     private func fastForwardReleased() {
         DLOG("Fast forward button released (hold style)")
@@ -278,7 +299,7 @@ public class DeltaSkinInputHandler: ObservableObject {
             ELOG("Cannot reset game speed - emulatorCore is nil")
             return
         }
-        
+
         // Reset to normal speed or previous speed
         if let previousSpeed = previousGameSpeed {
             DLOG("Restoring previous game speed: \(previousSpeed)")
@@ -287,11 +308,11 @@ public class DeltaSkinInputHandler: ObservableObject {
             DLOG("Resetting game speed to normal")
             core.gameSpeed = .normal
         }
-        
+
         // Clear the previous game speed
         previousGameSpeed = nil
     }
-    
+
     /// Handle toggle slow motion button press
     private func toggleSlowMotionPressed() {
         DLOG("Toggle slow motion button pressed")
@@ -299,23 +320,23 @@ public class DeltaSkinInputHandler: ObservableObject {
             ELOG("Cannot toggle slow motion - emulatorCore is nil")
             return
         }
-        
+
         // If already in slow mode, go back to normal
         if core.gameSpeed == .slow || core.gameSpeed == .verySlow {
             DLOG("Returning to normal speed from slow mode")
             core.gameSpeed = .normal
             return
         }
-        
+
         // Otherwise, set to slow mode
         DLOG("Setting game speed to slow")
         core.gameSpeed = .slow
-        
+
         // Start a timer for long press detection (for very slow mode)
         longPressTimer?.invalidate()
         longPressTimer = Timer.scheduledTimer(withTimeInterval: 0.75, repeats: false) { [weak self] _ in
             guard let self = self, let core = self.emulatorCore else { return }
-            
+
             // If still in slow mode after the timer, switch to very slow
             if core.gameSpeed == .slow {
                 DLOG("Long press detected, setting game speed to very slow")
@@ -354,7 +375,7 @@ public class DeltaSkinInputHandler: ObservableObject {
     }
 
     // MARK: - Private Methods
-    
+
     /// Check if a button should be handled by the controller
     private func isControllerButton(_ buttonId: String) -> Bool {
         // All standard controller buttons should be handled by the controller
@@ -362,7 +383,7 @@ public class DeltaSkinInputHandler: ObservableObject {
             // D-pad directions
             "up", "down", "left", "right", "upleft", "upright", "downleft", "downright",
             // Menu buttons
-            "start", "select", 
+            "start", "select",
             // Action buttons
             "a", "b", "x", "y",
             // Shoulder buttons
@@ -374,24 +395,24 @@ public class DeltaSkinInputHandler: ObservableObject {
         DLOG("isControllerButton check: \(buttonId) -> \(isController)")
         return isController
     }
-    
+
     /// Forward button press to the controller view controller
     private func forwardButtonPressToController(_ buttonId: String, isPressed: Bool) {
         guard let controller = controllerVC else {
             ELOG("Cannot forward to controller - controllerVC is nil")
             return
         }
-        
+
         DLOG("Forwarding \(isPressed ? "press" : "release") to controller: \(buttonId)")
-        
+
         // Normalize the button ID to lowercase
         let normalizedId = buttonId.lowercased()
-        
+
         // Handle special buttons first (D-pad, Start, Select)
         if handleSpecialButtons(normalizedId, isPressed: isPressed, controller: controller) {
             return
         }
-        
+
         // For other buttons (A, B, X, Y, etc.), find the button in the button group
         if let buttonGroup = controller.buttonGroup {
             // Find the button with the matching label
@@ -405,15 +426,15 @@ public class DeltaSkinInputHandler: ObservableObject {
                 return
             }
         }
-        
+
         // Handle shoulder buttons
         if handleShoulderButtons(normalizedId, isPressed: isPressed, controller: controller) {
             return
         }
-        
+
         DLOG("Unhandled controller button \(isPressed ? "press" : "release"): \(buttonId)")
     }
-    
+
     /// Handle special buttons (D-pad, Start, Select)
     private func handleSpecialButtons(_ buttonId: String, isPressed: Bool, controller: any ControllerVC) -> Bool {
         switch buttonId {
@@ -427,7 +448,7 @@ public class DeltaSkinInputHandler: ObservableObject {
                 controller.releaseStart(forPlayer: 0)
             }
             return true
-            
+
         case "select":
             if isPressed {
                 DLOG("Calling controller.pressSelect")
@@ -437,7 +458,7 @@ public class DeltaSkinInputHandler: ObservableObject {
                 controller.releaseSelect(forPlayer: 0)
             }
             return true
-            
+
         // D-pad directions
         case "up", "down", "left", "right", "upleft", "upright", "downleft", "downright":
             if isPressed {
@@ -450,17 +471,17 @@ public class DeltaSkinInputHandler: ObservableObject {
                 controller.dPad(dummyDPad, didRelease: direction)
             }
             return true
-            
+
         default:
             return false
         }
     }
-    
+
     /// Handle shoulder buttons (L, R, L2, R2, etc.)
     private func handleShoulderButtons(_ buttonId: String, isPressed: Bool, controller: any ControllerVC) -> Bool {
         // Try to find the appropriate shoulder button
         var button: JSButton? = nil
-        
+
         switch buttonId {
         case "l", "l1":
             button = controller.leftShoulderButton
@@ -479,7 +500,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         default:
             return false
         }
-        
+
         if let button = button {
             if isPressed {
                 DLOG("Pressing shoulder button: \(buttonId)")
@@ -490,23 +511,23 @@ public class DeltaSkinInputHandler: ObservableObject {
             }
             return true
         }
-        
+
         return false
     }
-    
+
     /// Find a button in the button group with the given label
     private func findButtonInGroup(_ buttonGroup: MovableButtonView, withLabel label: String) -> JSButton? {
         // Search for buttons in the button group
         for case let button as JSButton in buttonGroup.subviews {
             // Check if the button label matches (case insensitive)
-            if let buttonLabel = button.titleLabel?.text?.lowercased(), 
+            if let buttonLabel = button.titleLabel?.text?.lowercased(),
                buttonLabel == label || buttonLabel.first?.lowercased() == label {
                 return button
             }
         }
         return nil
     }
-    
+
     /// Convert string direction to JSDPadDirection
     private func stringToDirection(_ direction: String) -> JSDPadDirection {
         switch direction.lowercased() {
@@ -634,6 +655,80 @@ public class DeltaSkinInputHandler: ObservableObject {
 
         // Default to A button if unknown
         return 5
+    }
+
+    // MARK: - Notification Observers
+
+    /// Set up notification observers for reconnection events
+    private func setupNotificationObservers() {
+        DLOG("Setting up notification observers for DeltaSkinInputHandler")
+
+        // Observer for reconnection events
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleReconnectEvent),
+            name: NSNotification.Name("DeltaSkinInputHandlerReconnect"),
+            object: nil
+        )
+    }
+
+    /// Handle reconnection event when the menu is dismissed
+    @objc private func handleReconnectEvent() {
+        DLOG("DeltaSkinInputHandler handling reconnect event")
+
+        // Refresh emulator core reference on the main thread
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+
+            // Clear any stuck button states
+            if let controller = self.controllerVC {
+                // Release controller buttons
+                if let leftShoulderButton = controller.leftShoulderButton {
+                    controller.buttonReleased(leftShoulderButton)
+                }
+                if let rightShoulderButton = controller.rightShoulderButton {
+                    controller.buttonReleased(rightShoulderButton)
+                }
+
+                // Release D-pad directions
+                for direction in [JSDPadDirection.up, .down, .left, .right, .upLeft, .upRight, .downLeft, .downRight] {
+                    controller.dPad(self.dummyDPad, didRelease: direction)
+                }
+            }
+
+            // Validate and ensure the emulator core is running
+            guard let core = self.emulatorCore else {
+                ELOG("Cannot reconnect - emulatorCore is nil")
+                return
+            }
+
+            // If core was paused, unpause it
+            if core.isEmulationPaused {
+                DLOG("Unpausing core during reconnect")
+                core.setPauseEmulation(false)
+            }
+
+            // Reset the core's input state by sending dummy button releases if the core supports it
+            if let responder = core as? PVControllerResponder {
+                // Release all standard buttons
+                for i in 1...12 {
+                    responder.controllerReleasedButton(i, forPlayer: 0)
+                }
+            }
+
+            // Force a GPU view refresh when possible
+            if let metalVC = core.renderDelegate as? PVMetalViewController {
+                DLOG("Refreshing Metal GPU view during reconnect")
+                do {
+                    try metalVC.updateInputTexture()
+                    try metalVC.mtlView.setNeedsDisplay()
+                } catch {
+                    ELOG("Failed to update input texture during reconnect: \(error)")
+                }
+            }
+
+            DLOG("Reconnection complete")
+        }
     }
 }
 
