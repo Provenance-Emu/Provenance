@@ -95,6 +95,26 @@ extension PVEmulatorViewController {
         DLOG("App entering background")
         // Any cleanup needed when going to background
     }
+    
+    /// Pause emulation temporarily and then resume after a delay
+    private func pauseEmulationTemporarily() {
+        // Pause emulation
+        DLOG("Pausing emulation temporarily after skin load")
+        core.setPauseEmulation(true)
+        
+        // Resume after 1 second
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            guard let self = self else { return }
+            
+            // Only resume if we're not showing a menu
+            if !self.isShowingMenu {
+                DLOG("Resuming emulation after temporary pause")
+                self.core.setPauseEmulation(false)
+            } else {
+                DLOG("Not resuming emulation because menu is showing")
+            }
+        }
+    }
 
     /// Configure the GPU view properly
     private func configureGPUView() {
@@ -182,6 +202,9 @@ extension PVEmulatorViewController {
                     DLOG("Skin loaded, forcing GPU redraw")
                     metalVC.draw(in: metalVC.mtlView)
                 }
+                
+                // Pause emulation for 1 second after skin is loaded to ensure smooth startup
+                self?.pauseEmulationTemporarily()
             },
             onRefreshRequested: { [weak self] in
                 self?.refreshGPUView()

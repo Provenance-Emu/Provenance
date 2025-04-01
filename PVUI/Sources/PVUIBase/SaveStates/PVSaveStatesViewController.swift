@@ -14,6 +14,7 @@ import RxRealm
 import RxSwift
 import PVLogging
 import PVRealm
+import QuartzCore
 
 #if canImport(UIKit)
 import UIKit
@@ -88,7 +89,19 @@ final class PVSaveStatesViewController: UICollectionViewController {
         self.refreshSaves()
         
 #if os(iOS)
-        title = "Save States"
+        title = "SAVE STATES"
+        
+        // Apply retrowave styling to the view
+        view.backgroundColor = .retroBlack
+        
+        // Apply retrowave styling to the navigation bar
+        navigationController?.navigationBar.applyRetroWaveStyle()
+        
+        // Apply retrowave styling to the collection view
+        collectionView?.applyRetroWaveStyle()
+        
+        // Add retrowave grid background
+        RetroWaveGridBackground.createGridBackground(for: view)
 #endif
 #if os(tvOS)
         collectionView?.register(UINib(nibName: "PVSaveStateCollectionViewCell~tvOS", bundle: BundleLoader.module), forCellWithReuseIdentifier: "SaveStateView")
@@ -336,6 +349,11 @@ final class PVSaveStatesViewController: UICollectionViewController {
     
     public override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SaveStateView", for: indexPath) as! PVSaveStateCollectionViewCell
+        
+        // Apply retrowave styling to the cell
+        cell.contentView.backgroundColor = .retroBlack
+        cell.contentView.applyRetroWaveBorder(color: indexPath.section == 0 ? .retroBlue : .retroPink)
+        cell.contentView.applyRetroWaveShadow(color: indexPath.section == 0 ? .retroBlue : .retroPink)
         
 #if os(tvOS)
         cell.saveStateView = true

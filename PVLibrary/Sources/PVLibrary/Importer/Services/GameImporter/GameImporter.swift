@@ -399,9 +399,10 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     public func addImports(forPaths paths: [URL]) {
         importQueueLock.lock()
-        defer { importQueueLock.unlock() }
 
-        Task.detached {
+        Task.detached { @MainActor in
+            defer { self.importQueueLock.unlock() }
+
             for path in paths {
                 self.addImportItemToQueue(ImportQueueItem(url: path, fileType: .unknown))
             }

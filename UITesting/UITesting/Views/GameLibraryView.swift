@@ -17,23 +17,31 @@ import UniformTypeIdentifiers
 import PVLogging
 import PVSystems
 import Combine
+import Dispatch
+import PVLibrary
 
 struct GameLibraryView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var sceneCoordinator: TestSceneCoordinator
+    
+    // Reference to the GameImporter for tracking import progress
+    @ObservedObject private var gameImporter = GameImporter.shared
 
-    // Observed results for all games in the database
+    // Observed results for all games in the database with debouncing wrapper
     @ObservedResults(
         PVGame.self,
         sortDescriptor: SortDescriptor(keyPath: "title", ascending: true)
     ) var allGames
 
-    // Observed results for all systems in the database
+    // Observed results for all systems in the database with debouncing wrapper
     @ObservedResults(
         PVSystem.self,
         sortDescriptor: SortDescriptor(keyPath: "name", ascending: true)
     ) var allSystems
+    
+    // ID to force view stability and prevent flickering
+    @State private var databaseUpdateID = UUID()
 
     // Track expanded sections with AppStorage to persist between app runs
     @AppStorage("GameLibraryExpandedSections") private var expandedSectionsData: Data = Data()
@@ -43,7 +51,13 @@ struct GameLibraryView: View {
 
     // Track search text
     @State private var searchText = ""
+    @State private var debouncedSearchText = ""
     @State private var isSearching = false
+    
+    // Debouncing properties
+    private let searchDebounceTime: TimeInterval = 0.3
+    @State private var searchTextPublisher = PassthroughSubject<String, Never>()
+    @State private var cancellables = Set<AnyCancellable>()
     @State private var selectedViewMode: ViewMode = .grid
     @State private var showFilterSheet = false
     @State private var selectedSortOption: SortOption = .name
@@ -99,6 +113,22 @@ struct GameLibraryView: View {
                 Text(message)
             }
             .onAppear {
+                // Set up debouncing for search text
+                searchTextPublisher
+                    .debounce(for: .seconds(searchDebounceTime), scheduler: DispatchQueue.main)
+                    .sink { value in
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            self.debouncedSearchText = value
+                        }
+                    }
+                    .store(in: &cancellables)
+                
+                // Set up timer to debounce database updates
+                setupDatabaseUpdateTimer()
+                
+                // Set up timer to refresh the import queue status
+                setupImportQueueRefreshTimer()
+                
                 loadExpandedSections()
             }
     }
@@ -168,6 +198,13 @@ struct GameLibraryView: View {
 
             Divider()
                 .padding(.horizontal)
+                
+            // Show import progress bar when there are active imports
+            if !gameImporter.importQueue.isEmpty {
+                importProgressView()
+                    .padding(.horizontal)
+                    .padding(.vertical, 8)
+            }
 
             // Games organized by system
             libraryScrollView()
@@ -177,13 +214,38 @@ struct GameLibraryView: View {
     /// Controls for sorting and view mode
     @ViewBuilder
     private func libraryControlsView() -> some View {
-        HStack {
+        HStack(spacing: 12) {
             Text("\(filteredGames.count) Games")
                 .font(.subheadline)
                 .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.7))
 
             Spacer()
-
+            
+            // Import button
+            Button(action: {
+                showingDocumentPicker = true
+            }) {
+                HStack(spacing: 6) {
+                    Image(systemName: "plus.square")
+                        .font(.system(size: 14, weight: .bold))
+                    Text("IMPORT")
+                        .font(.system(size: 12, weight: .bold))
+                }
+                .padding(.vertical, 6)
+                .padding(.horizontal, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.retroBlack.opacity(0.7))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(Color.retroPink, lineWidth: 1.5)
+                        )
+                )
+                .foregroundColor(.retroPink)
+                .shadow(color: Color.retroPink.opacity(0.5), radius: 3, x: 0, y: 0)
+            }
+            .buttonStyle(PlainButtonStyle())
+            
             // Sort button
             Menu {
                 ForEach(SortOption.allCases) { option in
@@ -233,8 +295,13 @@ struct GameLibraryView: View {
     @ViewBuilder
     private func libraryScrollView() -> some View {
         ScrollView {
+            // Use this ID to prevent unnecessary redraws when only search text changes
+            // Also include the database update ID to stabilize during database changes
+            let viewID = "library-\(debouncedSearchText.isEmpty ? "all" : "search")-\(databaseUpdateID)"
+            
             LazyVStack(spacing: 16, pinnedViews: [.sectionHeaders]) {
-                if searchText.isEmpty {
+                // Content is identified by the search state to prevent flickering
+                if debouncedSearchText.isEmpty {
                     // All Games section
                     allGamesSection()
 
@@ -249,6 +316,7 @@ struct GameLibraryView: View {
                     searchResultsView()
                 }
             }
+            .id(viewID) // Stabilize view with ID
             .padding()
         }
     }
@@ -305,7 +373,7 @@ struct GameLibraryView: View {
                     .font(.system(size: 40))
                     .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.5))
 
-                Text("No games found matching '\(searchText)'")
+                Text("No games found matching '\(debouncedSearchText)'")
                     .font(.headline)
                     .multilineTextAlignment(.center)
                     .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
@@ -487,11 +555,152 @@ extension GameLibraryView {
 
     /// Filtered games based on search text
     private var filteredGames: [PVGame] {
-        guard !searchText.isEmpty else { return Array(allGames) }
+        guard !debouncedSearchText.isEmpty else { return Array(allGames) }
 
         return allGames.filter { game in
-            game.title.lowercased().contains(searchText.lowercased())
+            game.title.lowercased().contains(debouncedSearchText.lowercased())
         }
+    }
+    
+    /// Import progress view with retrowave styling
+    @ViewBuilder
+    private func importProgressView() -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            // Header with count of imports
+            HStack {
+                Text("IMPORTING \(gameImporter.importQueue.count) FILES")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundColor(.retroBlue)
+                
+                Spacer()
+                
+                // Show processing status if any item is processing
+                if gameImporter.importQueue.contains(where: { $0.status == .processing }) {
+                    Text("PROCESSING")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(.retroPink)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
+                        .background(
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(Color.retroBlack.opacity(0.7))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .strokeBorder(Color.retroPink, lineWidth: 1)
+                                )
+                        )
+                }
+            }
+            
+            // Progress bar with retrowave styling
+            ZStack(alignment: .leading) {
+                // Background track
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color.retroBlack.opacity(0.7))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .strokeBorder(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                ),
+                                lineWidth: 1.5
+                            )
+                    )
+                    .frame(height: 12)
+                
+                // Progress fill
+                let completedCount = gameImporter.importQueue.filter { $0.status == .success }.count
+                let progress = gameImporter.importQueue.isEmpty ? 0.0 : Double(completedCount) / Double(gameImporter.importQueue.count)
+                
+                LinearGradient(
+                    gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+                .frame(width: max(12, progress * UIScreen.main.bounds.width - 40), height: 8)
+                .cornerRadius(4)
+                .padding(2)
+            }
+            
+            // Status details
+            HStack(spacing: 12) {
+                statusCountView(count: gameImporter.importQueue.filter { $0.status == .queued }.count, label: "QUEUED", color: .gray)
+                statusCountView(count: gameImporter.importQueue.filter { $0.status == .processing }.count, label: "PROCESSING", color: .retroBlue)
+                statusCountView(count: gameImporter.importQueue.filter { $0.status == .success }.count, label: "COMPLETED", color: .retroYellow)
+                statusCountView(count: gameImporter.importQueue.filter { $0.status == .failure }.count, label: "FAILED", color: .retroPink)
+                
+                Spacer()
+            }
+        }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.retroBlack.opacity(0.7))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                )
+        )
+        .shadow(color: Color.retroPink.opacity(0.3), radius: 5, x: 0, y: 0)
+    }
+    
+    /// Helper view for status counts
+    @ViewBuilder
+    private func statusCountView(count: Int, label: String, color: Color) -> some View {
+        if count > 0 {
+            HStack(spacing: 4) {
+                Text("\(count)")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundColor(color)
+                
+                Text(label)
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundColor(color.opacity(0.8))
+            }
+        }
+    }
+    
+    /// Set up a timer to periodically regenerate the view ID to prevent flickering
+    private func setupDatabaseUpdateTimer() {
+        // Create a timer that updates the database ID every 0.5 seconds
+        // This effectively debounces rapid database changes
+        Timer.publish(every: 0.5, on: .main, in: .common)
+            .autoconnect()
+            .sink { _ in
+                // Only update if there are actual changes
+                if self.allGames.count > 0 || self.allSystems.count > 0 {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        self.databaseUpdateID = UUID()
+                    }
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
+    /// Set up a timer to refresh the import queue status
+    private func setupImportQueueRefreshTimer() {
+        // Create a timer that updates the UI every 0.5 seconds when imports are active
+        Timer.publish(every: 0.5, on: .main, in: .common)
+            .autoconnect()
+            .sink { _ in
+                // Only trigger UI updates if there are active imports
+                if !self.gameImporter.importQueue.isEmpty {
+                    // Force a UI update by triggering a state change
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        self.databaseUpdateID = UUID()
+                    }
+                }
+            }
+            .store(in: &cancellables)
     }
 
     /// Custom search bar view
@@ -513,6 +722,9 @@ extension GameLibraryView {
                         isSearching = editing
                     }
                 })
+                .onChange(of: searchText) { newValue in
+                    searchTextPublisher.send(newValue)
+                }
                 .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
 
                 if !searchText.isEmpty {
@@ -560,7 +772,8 @@ extension GameLibraryView {
 
     /// Toggle the expanded state of a section
     private func toggleSection(_ systemId: String) {
-        withAnimation(.easeInOut(duration: 0.2)) {
+        // Use slightly longer animation to reduce perceived flickering
+        withAnimation(.easeInOut(duration: 0.3)) {
             if expandedSections.contains(systemId) {
                 expandedSections.remove(systemId)
             } else {
@@ -647,6 +860,9 @@ extension GameLibraryView {
     /// Creates a grid of games for a system
     @ViewBuilder
     private func systemGamesGrid(games: [PVGame]) -> some View {
+        // Use stable ID to prevent unnecessary redraws
+        let gridID = "grid-\(debouncedSearchText)-\(games.count)"
+        
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 200), spacing: 16)], spacing: 16) {
             ForEach(games, id: \.self) { game in
                 gameGridItem(game: game)
@@ -657,6 +873,9 @@ extension GameLibraryView {
     /// Creates a single game grid item
     @ViewBuilder
     private func gameGridItem(game: PVGame) -> some View {
+        // Use ID to stabilize view and prevent unnecessary redraws
+        let gameID = "grid-item-\(game.id)"
+        
         GameItemView(
             game: game,
             constrainHeight: false,
@@ -675,21 +894,29 @@ extension GameLibraryView {
             )
         }
         .transition(.scale(scale: 0.95).combined(with: .opacity))
+        .id(gameID)
     }
 
     /// Creates a list of games for a system
     @ViewBuilder
     private func systemGamesList(games: [PVGame]) -> some View {
+        // Use stable ID to prevent unnecessary redraws
+        let listID = "list-\(debouncedSearchText)-\(games.count)"
+        
         LazyVStack(spacing: 8) {
             ForEach(games, id: \.self) { game in
                 gameListItem(game: game)
             }
         }
+        .id(listID)
     }
 
     /// Creates a single game list item
     @ViewBuilder
     private func gameListItem(game: PVGame) -> some View {
+        // Use ID to stabilize view and prevent unnecessary redraws
+        let gameID = "list-item-\(game.id)"
+        
         HStack(spacing: 12) {
             // Game cover image
             GameItemView(
