@@ -4,25 +4,33 @@ import Combine
 import SwiftUI
 
 /// Orientation for skin selection
-public enum SkinOrientation: String, Codable, CaseIterable {
+public enum SkinOrientation: String, Codable, CaseIterable, Equatable, Hashable, Identifiable {
     case portrait
     case landscape
     
-    var displayName: String {
+    public var id: String {
+        rawValue
+    }
+    
+    public static var allCases: [SkinOrientation] {
+        [.portrait, .landscape]
+    }
+    
+    public var displayName: String {
         switch self {
         case .portrait: return "Portrait"
         case .landscape: return "Landscape"
         }
     }
     
-    var icon: String {
+    public var icon: String {
         switch self {
         case .portrait: return "iphone"
         case .landscape: return "iphone.landscape"
         }
     }
     
-    var deltaSkinOrientation: DeltaSkinOrientation {
+    public var deltaSkinOrientation: DeltaSkinOrientation {
         switch self {
         case .portrait: return .portrait
         case .landscape: return .landscape

@@ -1,13 +1,16 @@
 import SwiftUI
 import PVPrimitives
 
-/// View for selecting a skin for a specific system
+/// View for selecting a skin for a specific system with retrowave styling
 public struct SystemSkinSelectionView: View {
+    // MARK: - Properties
+    
     let system: SystemIdentifier
 
     @StateObject private var skinManager = DeltaSkinManager.shared
     @StateObject private var preferences = DeltaSkinPreferences.shared
 
+    // Skin data
     @State private var availableSkins: [DeltaSkinProtocol] = []
     @State private var portraitSkins: [DeltaSkinProtocol] = []
     @State private var landscapeSkins: [DeltaSkinProtocol] = []
@@ -15,8 +18,16 @@ public struct SystemSkinSelectionView: View {
     @State private var selectedPortraitSkinId: String?
     @State private var selectedLandscapeSkinId: String?
     @State private var selectedOrientation: SkinOrientation = .portrait
+    
+    // UI state
     @State private var isLoading = true
     @State private var errorMessage: String?
+    @State private var loadingProgress: Double = 0
+    
+    // Animation properties
+    @State private var glowIntensity: CGFloat = 0.5
+    @State private var selectedCellScale: CGFloat = 1.0
+    @State private var hoveredSkinId: String? = nil
 
     @Environment(\.dismiss) private var dismiss
 
@@ -24,117 +35,332 @@ public struct SystemSkinSelectionView: View {
         self.system = system
     }
 
+    // MARK: - Body
+    
     public var body: some View {
-        NavigationView {
-            Group {
-                if isLoading {
-                    loadingView
-                } else if let error = errorMessage {
-                    errorView(message: error)
-                } else if availableSkins.isEmpty {
-                    noSkinsView
-                } else {
-                    VStack(spacing: 0) {
-                        // Orientation picker
-                        Picker("Orientation", selection: $selectedOrientation) {
-                            ForEach(SkinOrientation.allCases, id: \.self) { orientation in
-                                Label(orientation.displayName, systemImage: orientation.icon)
-                                    .tag(orientation)
-                            }
+        ZStack {
+            // Retrowave background
+            RetroTheme.retroBackground
+                .ignoresSafeArea()
+            
+            // Main content
+            NavigationView {
+                Group {
+                    if isLoading {
+                        loadingView
+                    } else if let error = errorMessage {
+                        errorView(message: error)
+                    } else if availableSkins.isEmpty {
+                        noSkinsView
+                    } else {
+                        VStack(spacing: 0) {
+                            // Header with system name
+                            headerView
+                            
+                            // Orientation picker
+                            orientationPickerView
+                            
+                            // Skin grid for selected orientation
+                            skinGridView
                         }
-                        .pickerStyle(.segmented)
-                        .padding(.horizontal)
-                        .padding(.top, 8)
-                        
-                        // Skin grid for selected orientation
-                        skinGridView
+                    }
+                }
+                .navigationTitle("\(system.fullName) Skins")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            withAnimation {
+                                loadSkins()
+                            }
+                        } label: {
+                            Image(systemName: "arrow.clockwise")
+                                .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                        }
                     }
                 }
             }
-            .navigationTitle("Select Controller Skin")
         }
         .onAppear {
-            loadSkins()
+            // Start glow animation
+            withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+                glowIntensity = 0.8
+            }
+            
+            // Load skins with a slight delay for animation
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                loadSkins()
+            }
         }
     }
 
-    private var loadingView: some View {
-        VStack {
-            ProgressView()
-                .padding()
-            Text("Loading skins...")
+    // MARK: - UI Components
+    
+    private var headerView: some View {
+        VStack(spacing: 6) {
+            Text(system.fullName.uppercased())
+                .font(.system(size: 24, weight: .bold, design: .rounded))
+                .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                .padding(.top, 16)
+                .shadow(color: RetroTheme.retroPink.opacity(glowIntensity * 0.5), radius: 2)
+            
+            Text("Select a controller skin")
+                .font(.subheadline)
+                .foregroundColor(.white.opacity(0.7))
+                .padding(.bottom, 8)
         }
+        .frame(maxWidth: .infinity)
+        .background(
+            Rectangle()
+                .fill(Color.black.opacity(0.3))
+                .overlay(
+                    Rectangle()
+                        .fill(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.clear, RetroTheme.retroPink.opacity(0.3), .clear]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .blendMode(.overlay)
+                )
+        )
+    }
+    
+    // Helper view for orientation tab button to simplify the complex ForEach
+    private func orientationTabButton(for orientation: SkinOrientation) -> some View {
+        Button {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                selectedOrientation = orientation
+            }
+        } label: {
+            HStack {
+                Image(systemName: orientation.icon)
+                    .font(.system(size: 14, weight: .bold))
+                Text(orientation.displayName.uppercased())
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .tracking(1)
+            }
+            .padding(.vertical, 10)
+            .frame(maxWidth: .infinity)
+            .background(selectedOrientation == orientation ? 
+                        Color.black.opacity(0.6) : 
+                        Color.black.opacity(0.3))
+            .foregroundColor(selectedOrientation == orientation ? 
+                             .white : 
+                             .white.opacity(0.6))
+            .overlay(selectedOrientation == orientation ? tabButtonBorder : nil)
+        }
+    }
+    
+    // Extract the border as a separate property to reduce nesting
+    private var tabButtonBorder: some View {
+        RoundedRectangle(cornerRadius: 0)
+            .strokeBorder(RetroTheme.retroGradient, lineWidth: 1.5)
+            .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 3)
+    }
+    
+    private var orientationPickerView: some View {
+        VStack(spacing: 8) {
+            // Custom segmented control with retrowave styling
+            HStack(spacing: 0) {
+                ForEach(SkinOrientation.allCases, id: \.self) { orientation in
+                    orientationTabButton(for: orientation)
+                }
+            }
+            .background(Color.black.opacity(0.2))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(Color.white.opacity(0.1), lineWidth: 0.5)
+            )
+            .padding(.horizontal)
+            .padding(.top, 16)
+            .padding(.bottom, 8)
+        }
+    }
+    
+    private var loadingView: some View {
+        VStack(spacing: 30) {
+            Spacer()
+            
+            // Retrowave styled loading indicator
+            ZStack {
+                Circle()
+                    .stroke(
+                        RetroTheme.retroHorizontalGradient,
+                        lineWidth: 4
+                    )
+                    .frame(width: 80, height: 80)
+                    .blur(radius: 2 * glowIntensity)
+                
+                Circle()
+                    .trim(from: 0, to: loadingProgress)
+                    .stroke(
+                        RetroTheme.retroHorizontalGradient,
+                        style: StrokeStyle(lineWidth: 4, lineCap: .round)
+                    )
+                    .frame(width: 80, height: 80)
+                    .rotationEffect(.degrees(-90))
+                    .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 4)
+                
+                Text("\(Int(loadingProgress * 100))%")
+                    .font(.system(size: 16, weight: .bold, design: .monospaced))
+                    .foregroundStyle(RetroTheme.retroHorizontalGradient)
+            }
+            .onAppear {
+                withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: false)) {
+                    loadingProgress = 1.0
+                }
+            }
+            
+            Text("LOADING SKINS")
+                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                .tracking(2)
+            
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
     }
 
     private func errorView(message: String) -> some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 24) {
+            Spacer()
+            
             Image(systemName: "exclamationmark.triangle")
-                .font(.largeTitle)
-                .foregroundColor(.orange)
+                .font(.system(size: 60))
+                .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 4)
+                .padding(.bottom, 10)
 
-            Text("Error loading skins")
-                .font(.headline)
+            Text("ERROR LOADING SKINS")
+                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                .tracking(2)
 
             Text(message)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+                .font(.system(size: 16))
+                .foregroundColor(.white.opacity(0.7))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
-            Button("Try Again") {
-                loadSkins()
+            Button {
+                withAnimation {
+                    loadSkins()
+                }
+            } label: {
+                Text("TRY AGAIN")
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                    .padding(.vertical, 12)
+                    .padding(.horizontal, 30)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.black.opacity(0.6))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(RetroTheme.retroGradient, lineWidth: 2)
+                            )
+                    )
+                    .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5)
             }
-            .padding()
-            .background(Color.accentColor)
-            .foregroundColor(.white)
-            .cornerRadius(8)
+            
+            Spacer()
         }
+        .frame(maxWidth: .infinity)
         .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.black.opacity(0.4))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .strokeBorder(RetroTheme.retroGradient, lineWidth: 1)
+                )
+                .padding(.horizontal)
+        )
     }
 
     private var noSkinsView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "gamecontroller")
+        VStack(spacing: 24) {
+            Spacer()
+            
+            Image(systemName: "gamecontroller.fill")
                 .font(.system(size: 60))
-                .foregroundColor(.secondary)
+                .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 4)
+                .padding(.bottom, 10)
 
-            Text("No Skins Available")
-                .font(.headline)
+            Text("NO SKINS AVAILABLE")
+                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                .tracking(2)
 
-            Text("There are no controller skins available for \(system.systemName).")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+            Text("There are no controller skins available for \(system.fullName)")
+                .font(.system(size: 16))
+                .foregroundColor(.white.opacity(0.7))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
-            Button("Import Skin") {
-                // Show skin import UI
+            Button {
+                // Show skin import UI - would be implemented in future
+                // For now, just reload to check again
+                withAnimation {
+                    loadSkins()
+                }
+            } label: {
+                Text("IMPORT SKIN")
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                    .padding(.vertical, 12)
+                    .padding(.horizontal, 30)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.black.opacity(0.6))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(RetroTheme.retroGradient, lineWidth: 2)
+                            )
+                    )
+                    .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5)
             }
-            .padding()
-            .background(Color.accentColor)
-            .foregroundColor(.white)
-            .cornerRadius(8)
+            
+            Spacer()
         }
+        .frame(maxWidth: .infinity)
         .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.black.opacity(0.4))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .strokeBorder(RetroTheme.retroGradient, lineWidth: 1)
+                )
+                .padding(.horizontal)
+        )
     }
 
     private var skinGridView: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 8) {
-                // Show current selection status
+            VStack(alignment: .leading, spacing: 12) {
+                // Show current selection status with retrowave styling
                 HStack {
                     Image(systemName: "info.circle")
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                        .font(.system(size: 14))
+                    
                     Text(selectedOrientation == .portrait ? 
                          "Selected skin will be used in portrait mode" : 
                          "Selected skin will be used in landscape mode")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.white.opacity(0.7))
                 }
-                .padding(.horizontal)
-                .padding(.top, 8)
+                .padding(.horizontal, 20)
+                .padding(.top, 16)
                 
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 200), spacing: 16)], spacing: 16) {
+                // Skin grid with retrowave styling
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 200), spacing: 20)], spacing: 24) {
                     // Default option (system default)
                     defaultSkinCell
                     
@@ -144,34 +370,56 @@ public struct SystemSkinSelectionView: View {
                         skinCell(for: skin)
                     }
                 }
-                .padding()
+                .padding(.horizontal)
+                .padding(.top, 8)
+                .padding(.bottom, 20)
             }
         }
+        .scrollIndicators(.hidden)
     }
 
     private var defaultSkinCell: some View {
-        VStack {
+        VStack(spacing: 8) {
             ZStack {
+                // Background with retrowave styling
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.secondary.opacity(0.2))
+                    .fill(Color.black.opacity(0.5))
                     .aspectRatio(1.5, contentMode: .fit)
-
-                Image(systemName: "gamecontroller")
+                
+                // Controller icon
+                Image(systemName: "gamecontroller.fill")
                     .font(.system(size: 40))
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                    .shadow(color: RetroTheme.retroPink.opacity(glowIntensity * 0.7), radius: 3)
             }
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(currentSelectedSkinId == nil ? Color.accentColor : Color.clear, lineWidth: 3)
+                // Selection indicator
+                Group {
+                    if currentSelectedSkinId == nil {
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(RetroTheme.retroGradient, lineWidth: 2.5)
+                    } else {
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(Color.clear, lineWidth: 2.5)
+                    }
+                }
+                    .shadow(color: currentSelectedSkinId == nil ? RetroTheme.retroPink.opacity(0.7) : .clear, radius: 3)
             )
+            .scaleEffect(currentSelectedSkinId == nil ? 1.05 : 1.0)
+            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: currentSelectedSkinId)
 
-            Text("System Default")
-                .font(.caption)
+            // Label
+            Text("SYSTEM DEFAULT")
+                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .foregroundColor(currentSelectedSkinId == nil ? .white : .white.opacity(0.7))
                 .lineLimit(1)
         }
         .onTapGesture {
-            selectSkin(nil)
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                selectSkin(nil)
+            }
         }
+        .padding(.bottom, 8)
     }
     
     // Helper property to get the current selected skin ID based on orientation
@@ -180,23 +428,47 @@ public struct SystemSkinSelectionView: View {
     }
 
     private func skinCell(for skin: DeltaSkinProtocol) -> some View {
-        VStack {
+        let isSelected = currentSelectedSkinId == skin.identifier
+        let isHovered = hoveredSkinId == skin.identifier
+        
+        return VStack(spacing: 8) {
             ZStack {
-                // Skin preview with correct orientation
+                // Skin preview with correct orientation and retrowave styling
                 SkinPreviewCell(skin: skin, manager: skinManager, orientation: selectedOrientation.deltaSkinOrientation)
+                    .cornerRadius(12)
             }
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(currentSelectedSkinId == skin.identifier ? Color.accentColor : Color.clear, lineWidth: 3)
+                // Selection indicator with retrowave styling
+                Group {
+                    if isSelected {
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(RetroTheme.retroGradient, lineWidth: 2.5)
+                    } else {
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(Color.clear, lineWidth: 2.5)
+                    }
+                }
+                    .shadow(color: isSelected ? RetroTheme.retroPink.opacity(0.7) : .clear, radius: 3)
             )
+            .scaleEffect(isSelected ? 1.05 : (isHovered ? 1.02 : 1.0))
+            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
+            .animation(.spring(response: 0.2, dampingFraction: 0.8), value: isHovered)
 
-            Text(skin.name)
-                .font(.caption)
+            // Skin name with retrowave styling
+            Text(skin.name.uppercased())
+                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .foregroundColor(isSelected ? .white : .white.opacity(0.7))
                 .lineLimit(1)
         }
-        .onTapGesture {
-            selectSkin(skin.identifier)
+        .onHover { hovering in
+            hoveredSkinId = hovering ? skin.identifier : nil
         }
+        .onTapGesture {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                selectSkin(skin.identifier)
+            }
+        }
+        .padding(.bottom, 8)
         .contextMenu {
             Button {
                 selectSkin(skin.identifier)
@@ -228,11 +500,24 @@ public struct SystemSkinSelectionView: View {
         }
     }
 
+    // MARK: - Data Handling
+    
     private func loadSkins() {
         isLoading = true
         errorMessage = nil
+        loadingProgress = 0.1
 
         Task {
+            // Simulate progress for better UX
+            Task {
+                for progress in stride(from: 0.1, to: 0.9, by: 0.1) {
+                    try? await Task.sleep(nanoseconds: 100_000_000)
+                    await MainActor.run {
+                        loadingProgress = progress
+                    }
+                }
+            }
+            
             do {
                 // Load all skins for this system
                 let skins = try await skinManager.skins(for: system)
@@ -259,19 +544,33 @@ public struct SystemSkinSelectionView: View {
                 let portraitSelection = preferences.selectedSkinIdentifier(for: system, orientation: .portrait)
                 let landscapeSelection = preferences.selectedSkinIdentifier(for: system, orientation: .landscape)
 
-                // Update UI on main thread
+                // Update UI on main thread with animation
                 await MainActor.run {
-                    self.availableSkins = skins
-                    self.portraitSkins = portraitCompatible
-                    self.landscapeSkins = landscapeCompatible
-                    self.selectedPortraitSkinId = portraitSelection
-                    self.selectedLandscapeSkinId = landscapeSelection
-                    self.isLoading = false
+                    loadingProgress = 1.0
+                    
+                    // Slight delay before hiding loading screen for smoother transition
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        withAnimation(.easeOut(duration: 0.3)) {
+                            self.availableSkins = skins
+                            self.portraitSkins = portraitCompatible
+                            self.landscapeSkins = landscapeCompatible
+                            self.selectedPortraitSkinId = portraitSelection
+                            self.selectedLandscapeSkinId = landscapeSelection
+                            self.isLoading = false
+                        }
+                    }
                 }
             } catch {
                 await MainActor.run {
                     self.errorMessage = error.localizedDescription
-                    self.isLoading = false
+                    loadingProgress = 1.0
+                    
+                    // Slight delay for animation
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        withAnimation {
+                            self.isLoading = false
+                        }
+                    }
                 }
             }
         }

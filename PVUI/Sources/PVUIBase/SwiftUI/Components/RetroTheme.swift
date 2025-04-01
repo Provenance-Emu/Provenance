@@ -91,6 +91,8 @@ public struct RetroTheme {
     public struct RetroToggleStyle: ToggleStyle {
         @State private var isAnimating = false
         
+        public init() {}
+        
         public func makeBody(configuration: Configuration) -> some View {
             HStack {
                 configuration.label
