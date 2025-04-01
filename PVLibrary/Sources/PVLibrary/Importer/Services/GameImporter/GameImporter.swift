@@ -944,6 +944,17 @@ public final class GameImporter: GameImporting, ObservableObject {
             //this is actually an import error
             item.status = .failure
             ELOG("No system matched for this Import Item: \(item.url.lastPathComponent)")
+            
+            // Delete the file if it exists and is in the imports directory
+            if item.url.path.contains("/Imports/") && FileManager.default.fileExists(atPath: item.url.path) {
+                do {
+                    try await FileManager.default.removeItem(at: item.url)
+                    ILOG("Deleted file with no matching system: \(item.url.path)")
+                } catch {
+                    ELOG("Failed to delete file with no matching system: \(error.localizedDescription)")
+                }
+            }
+            
             throw GameImporterError.noSystemMatched
         }
 
