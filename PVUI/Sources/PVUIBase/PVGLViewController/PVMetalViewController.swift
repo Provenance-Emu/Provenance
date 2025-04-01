@@ -113,7 +113,10 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     var presentationFramebuffer: AnyObject? = nil
 
-    weak var emulatorCore: PVEmulatorCore? = nil
+    weak var emulatorCore: PVEmulatorCore?
+    
+    // Custom filter properties
+    private var ciContext: CIContext? = nil
 
 #if !os(visionOS)
     var mtlView: MTKView!
@@ -296,6 +299,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             ELOG("Failed to create command queue")
             // No recovery here since we're in initialization
             return
+        }
+        
+        // Initialize CIContext for filters
+        if let device = device {
+            ciContext = CIContext(mtlDevice: device)
+            DLOG("Created CIContext for filters")
         }
 
         // Set up the Metal view
@@ -1392,8 +1401,40 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             renderEncoder.endEncoding()
             return
         }
-
-        renderEncoder.setFragmentTexture(inputTexture, index: 0)
+        
+        // Apply custom filter if available
+        if let filter = self.filter, let ciContext = self.ciContext {
+            // Create CIImage from the input texture
+            let ciImage = CIImage(mtlTexture: inputTexture, options: nil)
+            
+            if let ciImage = ciImage, let filteredImage = filter.apply(to: ciImage, in: CGRect(x: 0, y: 0, width: inputTexture.width, height: inputTexture.height)) {
+                // Create a temporary texture for the filtered image
+                let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(
+                    pixelFormat: inputTexture.pixelFormat,
+                    width: inputTexture.width,
+                    height: inputTexture.height,
+                    mipmapped: false
+                )
+                textureDescriptor.usage = [.shaderRead, .renderTarget]
+                
+                if let filteredTexture = device?.makeTexture(descriptor: textureDescriptor) {
+                    // Render the filtered image to the texture
+                    ciContext.render(filteredImage, to: filteredTexture, commandBuffer: nil, bounds: CGRect(x: 0, y: 0, width: inputTexture.width, height: inputTexture.height), colorSpace: CGColorSpaceCreateDeviceRGB())
+                    
+                    // Use the filtered texture instead
+                    renderEncoder.setFragmentTexture(filteredTexture, index: 0)
+                } else {
+                    // Fall back to original texture if filtering fails
+                    renderEncoder.setFragmentTexture(inputTexture, index: 0)
+                }
+            } else {
+                // Fall back to original texture if filtering fails
+                renderEncoder.setFragmentTexture(inputTexture, index: 0)
+            }
+        } else {
+            // No filter, use original texture
+            renderEncoder.setFragmentTexture(inputTexture, index: 0)
+        }
 
         // Set the sampler state - THIS IS THE KEY FIX
         if let pointSampler = pointSampler {

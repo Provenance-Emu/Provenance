@@ -30,6 +30,9 @@ struct EmulatorWithSkinView: View {
 
     // Add this to the struct to track rotation changes
     @State private var rotationCount: Int = 0
+    
+    // State for D-pad/joystick toggle in default skin
+    @State internal var useJoystick = false
 
     // Initialize with a game, extracting the necessary properties
     init(game: PVGame, coreInstance: PVEmulatorCore, onSkinLoaded: @escaping () -> Void, onRefreshRequested: @escaping () -> Void) {

@@ -9,7 +9,7 @@ import PVLibrary
 
 // Menu categories
 enum MenuCategory {
-    case main, states, options
+    case main, states, options, skins
 }
 
 /// A custom menu overlay to replace UIAlertController for game menu options
@@ -191,6 +191,23 @@ struct RetroMenuView: View {
                             )
                     }
                     .buttonStyle(PlainButtonStyle())
+                    
+                    Button(action: { selectedCategory = .skins }) {
+                        Text("SKINS")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(selectedCategory == .skins ? .white : .white.opacity(0.6))
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 12)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(selectedCategory == .skins ? Color.retroPurple.opacity(0.6) : Color.clear)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(selectedCategory == .skins ? Color.retroPink : Color.white.opacity(0.3), lineWidth: 1)
+                            )
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 16)
@@ -205,6 +222,8 @@ struct RetroMenuView: View {
                             stateMenuButtons
                         case .options:
                             optionsMenuButtons
+                        case .skins:
+                            skinsMenuButtons
                         }
                     }
                     .padding(.horizontal, 24)
@@ -295,12 +314,12 @@ struct RetroMenuView: View {
             }
             
             // Screenshot button
-            #if os(iOS) || targetEnvironment(macCatalyst)
+#if os(iOS) || targetEnvironment(macCatalyst)
             menuButton(title: "SAVE SCREENSHOT", icon: "camera", color: .retroOrange) {
                 dismissAction()
                 emulatorVC.takeScreenshot()
             }
-            #endif
+#endif
         }
     }
     
@@ -335,15 +354,360 @@ struct RetroMenuView: View {
                 }
             }
             
+            let wantsStartSelectInMenu: Bool = PVEmulatorConfiguration.systemIDWantsStartAndSelectInMenu(emulatorVC.game.system?.identifier ?? SystemIdentifier.RetroArch.rawValue)
+            
+            if let player1 = PVControllerManager.shared.player1 {
+#if os(iOS)
+                if Defaults[.missingButtonsAlwaysOn] || (player1.extendedGamepad != nil || wantsStartSelectInMenu) {
+                    menuButton(title: "P1 CONTROLS", icon: "gamecontroller", color: .retroYellow) {
+                        // Show P1 controls submenu
+                        dismissAction()
+                    }
+                }
+#else
+                if player1.extendedGamepad != nil || wantsStartSelectInMenu {
+                    menuButton(title: "P1 CONTROLS", icon: "gamecontroller", color: .retroYellow) {
+                        // Show P1 controls submenu
+                        dismissAction()
+                    }
+                }
+#endif
+                
+            }
+            
+            
             // P2 controls (if available)
             if let player2 = PVControllerManager.shared.player2 {
-                if player2.extendedGamepad != nil || Defaults[.missingButtonsAlwaysOn] {
+                if player2.extendedGamepad != nil || wantsStartSelectInMenu {
                     menuButton(title: "P2 CONTROLS", icon: "gamecontroller", color: .retroYellow) {
                         // Show P2 controls submenu
                         dismissAction()
                     }
                 }
             }
+            
+            // Core action buttons (if available)
+            if let actionableCore = emulatorVC.core as? CoreActions, let actions = actionableCore.coreActions {
+                ForEach(actions) { coreAction in
+                    menuButton(title: coreAction.title, icon: "bolt", color: .retroOrange) {
+                        dismissAction()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            actionableCore.selected(action: coreAction)
+                            self.emulatorVC.core.setPauseEmulation(false)
+                            if coreAction.requiresReset {
+                                self.emulatorVC.core.resetEmulation()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // Skins and filters related buttons
+    @State private var selectedSkin: String = "Default"
+    @State private var selectedFilter: String = "None"
+    @State private var availableSkins: [String] = ["Default"]
+    @State private var showingSkinPicker = false
+    @State private var showingFilterPicker = false
+    
+    private var skinsMenuButtons: some View {
+        VStack(spacing: 12) {
+            // Current skin selection
+            VStack(alignment: .leading, spacing: 4) {
+                Text("CURRENT SKIN")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundColor(.gray)
+                
+                Button(action: {
+                    // Show skin picker
+                    showingSkinPicker = true
+                }) {
+                    HStack {
+                        Text(selectedSkin)
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.white)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(.retroBlue)
+                    }
+                    .padding(12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.retroBlack.opacity(0.6))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(Color.retroBlue, lineWidth: 1)
+                            )
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+                .sheet(isPresented: $showingSkinPicker) {
+                    skinPickerView
+                }
+            }
+            
+            // Screen filter selection
+            VStack(alignment: .leading, spacing: 4) {
+                Text("SCREEN FILTER")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundColor(.gray)
+                
+                Button(action: {
+                    // Show filter picker
+                    showingFilterPicker = true
+                }) {
+                    HStack {
+                        Text(selectedFilter)
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.white)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(.retroPink)
+                    }
+                    .padding(12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.retroBlack.opacity(0.6))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(Color.retroPink, lineWidth: 1)
+                            )
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+                .sheet(isPresented: $showingFilterPicker) {
+                    filterPickerView
+                }
+            }
+            
+            // Apply button
+            menuButton(title: "APPLY CHANGES", icon: "checkmark.circle", color: .retroBlue) {
+                dismissAction()
+                // Apply the selected skin and filter
+                Task {
+                    await applySkinAndFilterChanges()
+                }
+            }
+        }
+    }
+    
+    // Skin picker sheet view
+    private var skinPickerView: some View {
+        NavigationView {
+            List {
+                ForEach(availableSkins, id: \.self) { skin in
+                    Button(action: {
+                        selectedSkin = skin
+                        showingSkinPicker = false
+                    }) {
+                        HStack {
+                            Text(skin)
+                                .foregroundColor(.white)
+                            
+                            Spacer()
+                            
+                            if skin == selectedSkin {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(.retroBlue)
+                            }
+                        }
+                    }
+                    .listRowBackground(Color.retroBlack.opacity(0.8))
+                }
+            }
+            .listStyle(InsetGroupedListStyle())
+            .background(Color.black)
+            .navigationTitle("Select Skin")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        showingSkinPicker = false
+                    }
+                }
+            }
+            .onAppear {
+                // Load available skins
+                Task {
+                    await loadAvailableSkins()
+                }
+            }
+        }
+        .preferredColorScheme(.dark)
+    }
+    
+    // Filter picker sheet view
+    private var filterPickerView: some View {
+        NavigationView {
+            List {
+                // Standard filter options
+                ForEach(["None", "CRT", "LCD", "Scanlines", "Game Boy", "GBA"], id: \.self) { filter in
+                    Button(action: {
+                        selectedFilter = filter
+                        showingFilterPicker = false
+                    }) {
+                        HStack {
+                            Text(filter)
+                                .foregroundColor(.white)
+                            
+                            Spacer()
+                            
+                            if filter == selectedFilter {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(.retroPink)
+                            }
+                        }
+                    }
+                    .listRowBackground(Color.retroBlack.opacity(0.8))
+                }
+            }
+            .listStyle(InsetGroupedListStyle())
+            .background(Color.black)
+            .navigationTitle("Select Filter")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        showingFilterPicker = false
+                    }
+                }
+            }
+        }
+        .preferredColorScheme(.dark)
+    }
+    
+    // Load available skins for the current system
+    private func loadAvailableSkins() async {
+        guard let systemId = emulatorVC.game.system?.systemIdentifier else { return }
+        
+        do {
+            // Get skins from DeltaSkinManager
+            let skins = try await DeltaSkinManager.shared.skins(for: systemId)
+            
+            // Update the available skins list on the main thread
+            await MainActor.run {
+                // Always include Default as the first option
+                var skinNames = ["Default"]
+                
+                // Add names of available skins
+                skinNames.append(contentsOf: skins.map { $0.name })
+                
+                // Update state
+                self.availableSkins = skinNames
+                
+                // Set current selection if not already set
+                if self.selectedSkin == "Default" && !skins.isEmpty {
+                    // Try to find the currently selected skin
+                    Task {
+                        if let selectedSkin = try? await DeltaSkinManager.shared.selectedSkin(for: systemId) {
+                            await MainActor.run {
+                                self.selectedSkin = selectedSkin.name
+                            }
+                        }
+                    }
+                }
+            }
+        } catch {
+            print("Error loading skins: \(error)")
+        }
+    }
+    
+    // Apply the selected skin and filter changes
+    private func applySkinAndFilterChanges() async {
+        guard let systemId = emulatorVC.game.system?.systemIdentifier else { return }
+        
+        // Apply skin change
+        if selectedSkin != "Default" {
+            do {
+                // Find the selected skin
+                let skins = try await DeltaSkinManager.shared.skins(for: systemId)
+                if let skin = skins.first(where: { $0.name == selectedSkin }) {
+                    // Apply the skin by recreating the skin view
+                    // This is a simplified approach - in a real implementation, you would
+                    // need to properly handle the skin application through the emulator view controller
+                    Task { @MainActor in
+                        // Store the selected skin in preferences
+                        DeltaSkinPreferences.shared.setSelectedSkin(skin.identifier, for: systemId)
+                        
+                        // Notify the emulator to refresh its skin
+                        NotificationCenter.default.post(
+                            name: NSNotification.Name("RefreshDeltaSkin"),
+                            object: nil,
+                            userInfo: ["systemId": systemId.rawValue]
+                        )
+                    }
+                }
+            } catch {
+                print("Error applying skin: \(error)")
+            }
+        } else {
+            // Apply default skin (or remove custom skin)
+            // This would need implementation in DeltaSkinManager
+        }
+        
+        // Apply filter change
+        switch selectedFilter {
+        case "None":
+            // Remove any filter
+            emulatorVC.applyScreenFilter(nil)
+        case "CRT":
+            // Apply CRT filter (pixellated look)
+            // Create a filter info dictionary with the proper parameters
+            let filterParams: [String: Any] = ["inputScale": 8.0]
+            let filterInfo = createFilterInfo(name: "CIPixellate", parameters: filterParams)
+            if let filter = DeltaSkinScreenFilter(filterInfo: filterInfo) {
+                emulatorVC.applyScreenFilter(filter)
+            }
+        case "LCD":
+            // Apply LCD filter (slight blur)
+            // Create a filter info dictionary with the proper parameters
+            let filterParams: [String: Any] = ["inputRadius": 2.0]
+            let filterInfo = createFilterInfo(name: "CIGaussianBlur", parameters: filterParams)
+            if let filter = DeltaSkinScreenFilter(filterInfo: filterInfo) {
+                emulatorVC.applyScreenFilter(filter)
+            }
+        case "Scanlines":
+            // Apply scanlines filter
+            // Create a filter info dictionary with the proper parameters
+            let filterParams: [String: Any] = [
+                "inputWidth": 2.0,
+                "inputSharpness": 0.7,
+                "inputAngle": 0.0
+            ]
+            let filterInfo = createFilterInfo(name: "CILineScreen", parameters: filterParams)
+            if let filter = DeltaSkinScreenFilter(filterInfo: filterInfo) {
+                emulatorVC.applyScreenFilter(filter)
+            }
+        case "Game Boy":
+            // Apply Game Boy filter (green tint)
+            // Create a filter info dictionary with the proper parameters
+            let filterParams: [String: Any] = [
+                "inputColor0": CIColor(red: 0.0, green: 0.3, blue: 0.0),
+                "inputColor1": CIColor(red: 0.2, green: 0.8, blue: 0.2)
+            ]
+            let filterInfo = createFilterInfo(name: "CIFalseColor", parameters: filterParams)
+            if let filter = DeltaSkinScreenFilter(filterInfo: filterInfo) {
+                emulatorVC.applyScreenFilter(filter)
+            }
+        case "GBA":
+            // Apply GBA filter (slight color adjustment)
+            // Create a filter info dictionary with the proper parameters
+            let filterParams: [String: Any] = [
+                "inputSaturation": 1.2,
+                "inputBrightness": 0.1,
+                "inputContrast": 1.1
+            ]
+            let filterInfo = createFilterInfo(name: "CIColorControls", parameters: filterParams)
+            if let filter = DeltaSkinScreenFilter(filterInfo: filterInfo) {
+                emulatorVC.applyScreenFilter(filter)
+            }
+        default:
+            break
         }
     }
     
@@ -380,6 +744,26 @@ struct RetroMenuView: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
+    
+    // Helper method to create a FilterInfo object from parameters
+   private func createFilterInfo(name: String, parameters: [String: Any]) -> DeltaSkin.FilterInfo {
+       // Convert the parameters to the format expected by DeltaSkinScreenFilter
+       var filterParameters: [String: FilterParameter] = [:]
+       
+       for (key, value) in parameters {
+           if let numberValue = value as? Float {
+               filterParameters[key] = .number(numberValue)
+           } else if let numberValue = value as? Double {
+               filterParameters[key] = .number(Float(numberValue))
+           } else if let numberValue = value as? Int {
+               filterParameters[key] = .number(Float(numberValue))
+           } else if let colorValue = value as? CIColor {
+               filterParameters[key] = .color(r: Float(colorValue.red), g: Float(colorValue.green), b: Float(colorValue.blue))
+           } else if let vectorValue = value as? CGPoint {
+               filterParameters[key] = .vector(x: Float(vectorValue.x), y: Float(vectorValue.y))
+           }
+       }
+       
+       return DeltaSkin.FilterInfo(name: name, parameters: filterParameters)
+   }
 }
-
-

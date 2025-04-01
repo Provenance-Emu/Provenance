@@ -677,8 +677,13 @@ public struct DeltaSkin: DeltaSkinProtocol {
 
     /// CoreImage filter configuration
     public struct FilterInfo: Codable {
-        let name: String
-        let parameters: [String: FilterParameter]
+        public let name: String
+        public let parameters: [String: FilterParameter]
+        
+        public init(name: String, parameters: [String: FilterParameter]) {
+            self.name = name
+            self.parameters = parameters
+        }
 
         private enum CodingKeys: String, CodingKey {
             case name, parameters
