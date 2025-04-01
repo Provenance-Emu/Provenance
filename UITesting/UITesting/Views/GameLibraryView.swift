@@ -97,8 +97,12 @@ struct GameLibraryView: View {
         mainContentView()
             .background(retroBackgroundView())
             .navigationTitle("GAME LIBRARY")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline) // Changed to inline to avoid overlap
             .toolbarColorScheme(.dark, for: .navigationBar)
+            .safeAreaInset(edge: .top) {
+                // Add a spacer with height that matches status bar
+                Color.clear.frame(height: 0)
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
@@ -145,7 +149,8 @@ struct GameLibraryView: View {
     @ViewBuilder
     private func mainContentView() -> some View {
         ZStack {
-            themeManager.currentPalette.gameLibraryBackground.swiftUIColor.ignoresSafeArea()
+            // Background that respects safe areas
+            RetroTheme.retroBackground
 
             if allGames.isEmpty {
                 emptyLibraryView()
@@ -159,8 +164,8 @@ struct GameLibraryView: View {
     @ViewBuilder
     private func retroBackgroundView() -> some View {
         ZStack {
-            // Base dark background
-            Color.retroBlack.ignoresSafeArea()
+            // Base dark background with proper safe area handling
+            RetroTheme.retroBlack.ignoresSafeArea(edges: [.horizontal, .bottom])
 
             // Grid lines (horizontal)
             VStack(spacing: 20) {
@@ -196,10 +201,10 @@ struct GameLibraryView: View {
     @ViewBuilder
     private func libraryContentView() -> some View {
         VStack(spacing: 0) {
-            // Custom search bar
+            // Custom search bar with increased top padding for status bar
             searchBar
                 .padding(.horizontal)
-                .padding(.top, 8)
+                .padding(.top, 16)
 
             // View mode and filter controls
             libraryControlsView()

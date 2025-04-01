@@ -10,52 +10,96 @@ import PVSwiftUI
 import PVUIBase
 import PVThemes
 import PVLogging
+import Combine
 
 struct MainView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var themeManager: ThemeManager
 
     @State private var selectedTab: Int = 0
+    @State private var showDynamicIslandEffects: Bool = true
+    
+    // Timer for occasional special effects
+    @State private var effectTimer: AnyCancellable?
 
     var body: some View {
         ZStack {
             // Background that adapts to the theme
-            Color(themeManager.currentPalette.gameLibraryBackground)
+            RetroTheme.retroBackground
                 .ignoresSafeArea()
-
-            TabView(selection: $selectedTab) {
-                // Game Library Tab
-                GameLibraryView()
-                .tabItem {
-                    Label("Games", systemImage: "gamecontroller")
-                }
-                .tag(0)
-
-                // Settings Tab
-                SettingsView()
-                .tabItem {
-                    Label("Settings", systemImage: "gear")
-                }
-                .tag(1)
-
-                // Debug Tab
-                DebugView()
-                .tabItem {
-                    Label("Debug", systemImage: "ladybug")
-                }
-                .tag(2)
+                
+            // Dynamic Island retrowave effects
+            if showDynamicIslandEffects {
+                RetroDynamicIsland()
+                    .allowsHitTesting(false) // Prevent interaction with the effects
             }
-            .accentColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+            
+            // Custom RetroTabView with retrowave styling
+            RetroTabView(
+                selection: $selectedTab,
+                content: {
+                    // Content views for each tab
+                    ZStack {
+                        // Show the appropriate view based on the selected tab
+                        if selectedTab == 0 {
+
+                            GameLibraryView()
+                                .padding(.top, 40)
+                        } else if selectedTab == 1 {
+                            SettingsView()
+                        } else if selectedTab == 2 {
+                            DebugView()
+                        }
+                    }
+                },
+                tabItems: [
+                    RetroTabItem(title: "Games", systemImage: "gamecontroller"),
+                    RetroTabItem(title: "Settings", systemImage: "gear"),
+                    RetroTabItem(title: "Debug", systemImage: "ladybug")
+                ]
+            )
             .onAppear {
-                // Configure TabBar appearance to respect theme
-//                configureTabBarAppearance()
-                ILOG("MainView: Appeared")
+                ILOG("MainView: Appeared with RetroTabView")
+                
+                // Set up a timer to occasionally trigger special effects around the Dynamic Island
+                setupEffectTimer()
             }
-            .preferredColorScheme(themeManager.currentPalette.dark ? .dark : .light)
-//            .onChange(of: themeManager.currentPalette) {
-//                // Update TabBar appearance when theme changes
-//                configureTabBarAppearance()
-//            }
+            .onDisappear {
+                // Clean up timer when view disappears
+                effectTimer?.cancel()
+            }
+            .preferredColorScheme(.dark) // Retrowave theme works best with dark mode
+        }
+    }
+    
+    // MARK: - Dynamic Island Effects
+    
+    /// Sets up a timer to occasionally trigger special effects around the Dynamic Island
+    private func setupEffectTimer() {
+        // Create a timer that fires every 30 seconds
+        effectTimer = Timer.publish(every: 30, on: .main, in: .common)
+            .autoconnect()
+            .sink { _ in
+                // Randomly decide whether to show a special effect
+                if Bool.random() {
+                    self.triggerDynamicIslandEffect()
+                }
+            }
+    }
+    
+    /// Triggers a special effect around the Dynamic Island
+    private func triggerDynamicIslandEffect() {
+        // First ensure effects are shown
+        showDynamicIslandEffects = true
+        
+        // After a few seconds, we can optionally hide the effects again
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            // Randomly decide whether to hide the effects
+            if Bool.random() {
+                withAnimation {
+                    showDynamicIslandEffects = false
+                }
+            }
         }
     }
 
