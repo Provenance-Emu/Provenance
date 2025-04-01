@@ -72,6 +72,9 @@ public struct RetroTheme {
     
     // MARK: - Section Styles
     public struct RetroSectionStyle: ViewModifier {
+        
+        public init() {}
+        
         public func body(content: Content) -> some View {
             content
                 .padding()

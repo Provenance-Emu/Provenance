@@ -28,51 +28,7 @@ extension Color {
     static let retroBlack = Color(red: 0.05, green: 0.0, blue: 0.1)
 }
 
-// RetroGrid creates a grid background for retrowave aesthetic
-struct RetroGrid: View {
-    var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                // Background gradient
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color.black,
-                        Color(red: 0.1, green: 0.0, blue: 0.2),
-                        Color(red: 0.2, green: 0.0, blue: 0.3)
-                    ]),
-                    startPoint: .bottom,
-                    endPoint: .top
-                )
-                
-                // Horizontal grid lines
-                VStack(spacing: 20) {
-                    ForEach(0..<Int(geometry.size.height / 20) + 1, id: \.self) { _ in
-                        Rectangle()
-                            .fill(LinearGradient(
-                                gradient: Gradient(colors: [.clear, .retroPink.opacity(0.3), .clear]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ))
-                            .frame(height: 1)
-                    }
-                }
-                
-                // Vertical grid lines
-                HStack(spacing: 20) {
-                    ForEach(0..<Int(geometry.size.width / 20) + 1, id: \.self) { _ in
-                        Rectangle()
-                            .fill(LinearGradient(
-                                gradient: Gradient(colors: [.clear, .retroPink.opacity(0.2), .clear]),
-                                startPoint: .top,
-                                endPoint: .bottom
-                            ))
-                            .frame(width: 1)
-                    }
-                }
-            }
-        }
-    }
-}
+
 #if os(tvOS)
 import GameController
 #endif
@@ -111,7 +67,7 @@ public struct PVSettingsView: View {
                 Color.black.edgesIgnoringSafeArea(.all)
                 
                 // Grid background
-                RetroGrid()
+                RetroGridForSettings()
                     .edgesIgnoringSafeArea(.all)
                     .opacity(0.3)
                 

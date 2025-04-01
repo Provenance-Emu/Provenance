@@ -11,6 +11,7 @@ public enum ProvenanceThemes: String, CaseIterable, PaletteProvider {
     case `default`
     case dark
     case light
+    case retrowave
 
     public var palette: any UXThemePalette {
         let palette: any UXThemePalette
@@ -21,6 +22,8 @@ public enum ProvenanceThemes: String, CaseIterable, PaletteProvider {
             palette = DarkThemePalette()
         case .light:
             palette = LightThemePalette()
+        case .retrowave:
+            palette = RetroWaveThemePalette()
         }
         return palette
     }
