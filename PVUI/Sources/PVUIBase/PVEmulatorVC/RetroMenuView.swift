@@ -58,18 +58,104 @@ struct RetroMenuView: View {
                 switch selectedCategory {
                 case .main:
                     mainMenuButtons
+                        .frame(height: menuContentHeight(for: .main))
                 case .states:
                     stateMenuButtons
+                        .frame(height: menuContentHeight(for: .states))
                 case .options:
                     optionsMenuButtons
+                        .frame(height: menuContentHeight(for: .options))
                 case .skins:
                     skinsMenuButtons
+                        .frame(height: menuContentHeight(for: .skins))
                 }
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 24)
         }
-        .frame(maxWidth: menuWidth, maxHeight: menuHeight)
+        .frame(maxWidth: menuWidth)
+    }
+
+    /// Calculate appropriate content height based on category
+    private func menuContentHeight(for category: MenuCategory) -> CGFloat {
+        // Define base heights for each category
+        let baseHeights: [MenuCategory: CGFloat] = [
+            .main: isLandscape ? 180 : 220,     // Main menu (4 items)
+            .states: isLandscape ? 200 : 240,   // States menu (3-4 items)
+            .options: isLandscape ? 230 : 280,  // Options menu (more items)
+            .skins: isLandscape ? 320 : 380     // Skins menu (most complex UI)
+        ]
+
+        // Get height for current category with fallback
+        return baseHeights[category] ?? 220
+    }
+
+    /// Compute the appropriate menu width based on orientation and device
+    private var menuWidth: CGFloat {
+        if isLandscape {
+            // In landscape, use a narrower menu that doesn't overwhelm the screen
+            return min(450, UIScreen.main.bounds.width * 0.45)
+        } else {
+            // In portrait, use a wider menu but with a max width
+            return min(420, UIScreen.main.bounds.width * 0.9)
+        }
+    }
+
+    /// Maximum menu height constraint to prevent overwhelming the screen
+    private var menuHeight: CGFloat {
+        if isLandscape {
+            return min(UIScreen.main.bounds.height * 0.9, 640)
+        } else {
+            return min(UIScreen.main.bounds.height * 0.8, 640)
+        }
+    }
+
+    /// Vertical spacing for menu items based on orientation
+    private var menuSpacing: CGFloat {
+        return isLandscape ? 8 : 12
+    }
+
+    // Menu container
+    var menuContainer: some View {
+        GeometryReader { geometry in
+            ZStack(alignment: .center) {
+                // Container for the menu
+                VStack(spacing: 0) {
+                    // Title with neon glow effect
+                    title
+
+                    // Retrowave scrollable category selector
+                    catagories
+
+                    // Menu content based on selected category
+                    menuContent
+                }
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(Color.retroBlack.opacity(0.9))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .strokeBorder(Color.retroNeon, lineWidth: 2)
+                        )
+                )
+                .frame(width: menuWidth)
+                // Use intrinsicSize and flexible height
+                .fixedSize(horizontal: true, vertical: true)
+                // Add animation for smooth transitions between categories
+                .animation(.easeInOut(duration: 0.2), value: selectedCategory)
+            }
+            .frame(width: geometry.size.width, height: geometry.size.height)
+        }
+    }
+
+    /// Computed height for title component
+    private var title: some View {
+        Text("GAME OPTIONS")
+            .font(.system(size: 32, weight: .bold, design: .rounded))
+            .foregroundColor(.retroPink)
+            .padding(.top, 24)
+            .padding(.bottom, 16)
+            .shadow(color: .retroPink.opacity(0.8), radius: 10, x: 0, y: 0)
     }
 
     // Retrowave scrollable category selector
@@ -105,71 +191,6 @@ struct RetroMenuView: View {
         }
         .frame(height: 50)
         .padding(.bottom, 16)
-    }
-
-    var title: some View {
-        Text("GAME OPTIONS")
-            .font(.system(size: 32, weight: .bold, design: .rounded))
-            .foregroundColor(.retroPink)
-            .padding(.top, 24)
-            .padding(.bottom, 16)
-            .shadow(color: .retroPink.opacity(0.8), radius: 10, x: 0, y: 0)
-    }
-
-    /// Compute the appropriate menu width based on orientation and device
-    private var menuWidth: CGFloat {
-        if isLandscape {
-            // In landscape, use a narrower menu that doesn't overwhelm the screen
-            return min(450, UIScreen.main.bounds.width * 0.45)
-        } else {
-            // In portrait, use a wider menu but with a max width
-            return min(420, UIScreen.main.bounds.width * 0.9)
-        }
-    }
-
-    /// Compute the appropriate menu height based on orientation and device
-    private var menuHeight: CGFloat {
-        if isLandscape {
-            // In landscape, allow the menu to take most of the height
-            return min(UIScreen.main.bounds.height * 0.9, 640)
-        } else {
-            // In portrait, limit the height to avoid overwhelming the screen
-            return min(UIScreen.main.bounds.height * 0.8, 640)
-        }
-    }
-
-    /// Vertical spacing for menu items based on orientation
-    private var menuSpacing: CGFloat {
-        return isLandscape ? 8 : 12
-    }
-
-    // Menu container
-    var menuContainer: some View {
-        GeometryReader { geometry in
-            ZStack(alignment: .center) {
-                // Container for the menu
-                VStack(spacing: 0) {
-                    // Title with neon glow effect
-                    title
-
-                    // Retrowave scrollable category selector
-                    catagories
-
-                    // Menu content based on selected category
-                    menuContent
-                }
-                .background(
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(Color.retroBlack.opacity(0.9))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 20)
-                                .strokeBorder(Color.retroNeon, lineWidth: 2)
-                        )
-                )
-                .frame(width: menuWidth, height: menuHeight)
-            }
-            .frame(width: geometry.size.width, height: geometry.size.height)
-        }
     }
 
     var body: some View {
@@ -475,76 +496,74 @@ struct RetroMenuView: View {
     // Skin picker sheet view with retrowave styling
     private var skinPickerView: some View {
         NavigationView {
-            GeometryReader { geometry in
-                ZStack {
-                    // RetroWave background
-                    RetroTheme.retroBackground
-
-                    // Grid overlay
-                    RetroGrid()
-                        .opacity(0.3)
-
-                    // Main content with loading state handling
-                    VStack {
-                        // Header
-                        Text("SELECT SKIN")
-                            .font(.system(size: geometry.size.width < 400 ? 24 : 28, weight: .bold))
-                            .foregroundColor(RetroTheme.retroPink)
-                            .padding(.top, 20)
-                            .padding(.bottom, 10)
-                            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
-
-                        // Loading indicator or content
-                        if isLoadingSkins {
-                            VStack(spacing: 20) {
-                                // Custom retrowave loading spinner
-                                ZStack {
-                                    Circle()
-                                        .stroke(lineWidth: 4)
-                                        .foregroundColor(RetroTheme.retroDarkBlue)
-                                        .frame(width: 50, height: 50)
-
-                                    Circle()
-                                        .trim(from: 0, to: 0.75)
-                                        .stroke(RetroTheme.retroGradient, lineWidth: 4)
-                                        .frame(width: 50, height: 50)
-                                        .rotationEffect(Angle(degrees: glowOpacity * 360))
-                                }
-                                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5)
-
-                                Text("LOADING SKINS...")
-                                    .font(.system(size: 16, weight: .bold))
-                                    .foregroundColor(RetroTheme.retroPink)
-                                    .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3)
+            ZStack {
+                // RetroWave background
+                RetroTheme.retroBackground
+                
+                // Grid overlay
+                RetroGrid()
+                    .opacity(0.3)
+                
+                // Main content with loading state handling
+                VStack {
+                    // Header
+                    Text("SELECT SKIN")
+                        .font(.system(size: 28, weight: .bold))
+                        .foregroundColor(RetroTheme.retroPink)
+                        .padding(.top, 20)
+                        .padding(.bottom, 10)
+                        .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
+                    
+                    // Loading indicator or content
+                    if isLoadingSkins {
+                        VStack(spacing: 20) {
+                            // Custom retrowave loading spinner
+                            ZStack {
+                                Circle()
+                                    .stroke(lineWidth: 4)
+                                    .foregroundColor(RetroTheme.retroDarkBlue)
+                                    .frame(width: 50, height: 50)
+                                
+                                Circle()
+                                    .trim(from: 0, to: 0.75)
+                                    .stroke(RetroTheme.retroGradient, lineWidth: 4)
+                                    .frame(width: 50, height: 50)
+                                    .rotationEffect(Angle(degrees: glowOpacity * 360))
                             }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .padding(.bottom, 50) // Offset to center visually
-                        } else {
-                            // Skin content when loaded
-                            ScrollView {
-                                VStack(spacing: geometry.size.width < 400 ? 12 : 16) {
-                                    // Default skin option
-                                    if !availableSkins.contains(where: { $0 == "Default" }) {
-                                        skinItemView(name: "Default", preview: nil, isSelected: selectedSkin == "Default")
-                                    }
-
-                                    // Custom skins with previews
-                                    ForEach(availableSkinObjects, id: \.identifier) { skin in
-                                        SkinPreviewItemView(
-                                            skin: skin,
-                                            isSelected: selectedSkin == skin.name,
-                                            glowOpacity: glowOpacity,
-                                            isHovered: isHoveredSkinId == skin.identifier,
-                                            onSelect: {
-                                                selectedSkin = skin.name
-                                                showingSkinPicker = false
-                                            }
-                                        )
-                                    }
+                            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5)
+                            
+                            Text("LOADING SKINS...")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(RetroTheme.retroPink)
+                                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding(.bottom, 50) // Offset to center visually
+                    } else {
+                        // Skin content when loaded
+                        ScrollView {
+                            VStack(spacing: 16) {
+                                // Default skin option
+                                if !availableSkins.contains(where: { $0 == "Default" }) {
+                                    skinItemView(name: "Default", preview: nil, isSelected: selectedSkin == "Default")
                                 }
-                                .padding(.horizontal, 16)
-                                .padding(.bottom, 20)
+                                
+                                // Custom skins with previews
+                                ForEach(availableSkinObjects, id: \.identifier) { skin in
+                                    SkinPreviewItemView(
+                                        skin: skin,
+                                        isSelected: selectedSkin == skin.name,
+                                        glowOpacity: glowOpacity,
+                                        isHovered: isHoveredSkinId == skin.identifier,
+                                        onSelect: {
+                                            selectedSkin = skin.name
+                                            showingSkinPicker = false
+                                        }
+                                    )
+                                }
                             }
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 20)
                         }
                     }
                 }
@@ -586,9 +605,9 @@ struct RetroMenuView: View {
                 }
             }
         }
-        .navigationViewStyle(StackNavigationViewStyle())
-        .frame(width: isLandscape ? UIScreen.main.bounds.width * 0.7 : UIScreen.main.bounds.width * 0.9,
-               height: isLandscape ? UIScreen.main.bounds.height * 0.8 : UIScreen.main.bounds.height * 0.7)
+//        .navigationViewStyle(StackNavigationViewStyle())
+//        .frame(width: isLandscape ? UIScreen.main.bounds.width * 0.7 : UIScreen.main.bounds.width * 0.9,
+//               height: isLandscape ? UIScreen.main.bounds.height * 0.8 : UIScreen.main.bounds.height * 0.7)
         .preferredColorScheme(.dark)
     }
 
