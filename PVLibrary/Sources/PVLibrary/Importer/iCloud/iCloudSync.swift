@@ -93,7 +93,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     }
     
     var canPurgeDatastore: Bool {
-        get async {
+        get async {//TODO: check if ROMs db has finished loading
             let arePendingFilesToDownloadEmpty = await pendingFilesToDownload.isEmpty
             let areNewFilesEmpty = await downloadedCount == 0
             let isNumberOfErrorEmpty = await errorHandler.isEmpty
@@ -760,7 +760,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
         await importNewSaves()
     }
     
-    override func deleteFromDatastore(_ file: URL) async {
+    override func deleteFromDatastore(_ file: URL) async {//TODO: do NOT delete if the ROMs database hasn't finished initializing.
         guard "jpg".caseInsensitiveCompare(file.pathExtension) == .orderedSame
         else {
             return
@@ -909,12 +909,15 @@ enum DatastorePurgeStatus {
 enum GameStatus {
     case gameExists
     case gameDoesNotExist
+    case cacheNotLoaded
+    case cacheLoaded
 }
 
 class RomsSyncer: iCloudContainerSyncer {
     let gameImporter = GameImporter.shared
     let multiFileRoms: ConcurrentDictionary<String, [URL]> = [:]
     var romsDatabaseSubscriber: AnyCancellable?
+    var gameCacheStatus: ConcurrentQueue<GameStatus> = [.cacheNotLoaded]
     
     override var downloadedCount: Int {
         get async {
@@ -927,8 +930,13 @@ class RomsSyncer: iCloudContainerSyncer {
         self.init(directories: ["ROMs"], notificationCenter: notificationCenter, errorHandler: errorHandler)
         fileImportQueueMaxCount = 1
         let publishers = [.RomsFinishedImporting, .RomDatabaseInitialized].map { notificationCenter.publisher(for: $0) }
-        romsDatabaseSubscriber = Publishers.MergeMany(publishers).sink { [weak self] _ in
+        romsDatabaseSubscriber = Publishers.MergeMany(publishers).sink { [weak self] notification in
             Task {
+                if notification.name == .RomDatabaseInitialized {
+                    RomDatabase.reloadGamesCache()
+                    await self?.gameCacheStatus.dequeue()
+                    await self?.gameCacheStatus.enqueue(entry: .cacheLoaded)
+                }
                 await self?.handleImportNewRomFiles()
             }
         }
@@ -938,14 +946,12 @@ class RomsSyncer: iCloudContainerSyncer {
         romsDatabaseSubscriber?.cancel()
     }
     
-    override func loadAllFromICloud(iterationComplete: (() async -> Void)?) async -> Completable {
-        //ensure that the games are cached so we do NOT hit the database so much when checking for existence of games
-        RomDatabase.reloadGamesCache()
-        return await super.loadAllFromICloud(iterationComplete: iterationComplete)
-    }
-    
     /// The only time that we don't know if files have been deleted by the user is when it happens while the app is closed. so we have to query the db and check
     func removeGamesDeletedWhileApplicationClosed() async {
+        guard await gameCacheStatus.peek() == .cacheLoaded
+        else {
+            return
+        }
         await removeDeletionsActor.performWithLock { [weak self] in
             guard let canPurge = await self?.canPurgeDatastore,
                   canPurge
@@ -1010,7 +1016,7 @@ class RomsSyncer: iCloudContainerSyncer {
         else {
             return
         }
-        guard getGameStatus(of: file) == .gameDoesNotExist
+        guard await getGameStatus(of: file) == .gameDoesNotExist
         else {
             DLOG("\(file) already exists in database. skipping...")
             return
@@ -1034,8 +1040,12 @@ class RomsSyncer: iCloudContainerSyncer {
     /// Checks if game exists in game cache
     /// - Parameter file: file to check against
     /// - Returns: whether or not game exists in game cache
-    func getGameStatus(of file: URL) -> GameStatus {
-        guard let (existingGame, system) = getGameFromCache(of: file),
+    func getGameStatus(of file: URL) async -> GameStatus {
+        guard await gameCacheStatus.peek() == .cacheLoaded
+        else {//in the case when the cache isn't loaded, we just assume it doesn't exist and let the importer handle an existing ROM
+            return .gameDoesNotExist
+        }
+        guard let (existingGame, system) = await getGameFromCache(of: file),
            system.rawValue == existingGame.systemIdentifier
         else {
             return .gameDoesNotExist
@@ -1043,7 +1053,11 @@ class RomsSyncer: iCloudContainerSyncer {
         return .gameExists
     }
     
-    func getGameFromCache(of file: URL) -> (PVGame, SystemIdentifier)? {
+    func getGameFromCache(of file: URL) async -> (PVGame, SystemIdentifier)? {
+        guard await gameCacheStatus.peek() == .cacheLoaded
+        else {//in the case when the cache isn't loaded, we don't delete the file. TODO: test if this case can happen and come up with a strategy to delete this after ROM db is loaded
+            return nil
+        }
         let parentDirectory = file.parentPathComponent
         guard let system = file.system,
               let parentUrl = URL(string: parentDirectory)
@@ -1071,7 +1085,7 @@ class RomsSyncer: iCloudContainerSyncer {
             return
         }
         do {
-            guard let (existingGame, _) = getGameFromCache(of: file)
+            guard let (existingGame, _) = await getGameFromCache(of: file)
             else {
                 return
             }
