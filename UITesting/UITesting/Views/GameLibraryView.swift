@@ -28,6 +28,9 @@ struct GameLibraryView: View {
     
     // Reference to the GameImporter for tracking import progress
     @ObservedObject private var gameImporter = GameImporter.shared
+    
+    // State to hold the import queue items
+    @State private var importQueueItems: [ImportQueueItem] = []
 
     // Observed results for all games in the database with debouncing wrapper
     @ObservedResults(
@@ -41,8 +44,9 @@ struct GameLibraryView: View {
         sortDescriptor: SortDescriptor(keyPath: "name", ascending: true)
     ) var allSystems
     
-    // ID to force view stability and prevent flickering
+    // IDs to force view stability and prevent flickering
     @State private var databaseUpdateID = UUID()
+    @State private var importQueueUpdateID = UUID()
 
     // Track expanded sections with AppStorage to persist between app runs
     @AppStorage("GameLibraryExpandedSections") private var expandedSectionsData: Data = Data()
@@ -114,6 +118,10 @@ struct GameLibraryView: View {
                 Text(message)
             }
             .onAppear {
+                // Initialize last counts
+                self.lastGameCount = self.allGames.count
+                self.lastSystemCount = self.allSystems.count
+                
                 // Set up debouncing for search text
                 searchTextPublisher
                     .debounce(for: .seconds(searchDebounceTime), scheduler: DispatchQueue.main)
@@ -129,6 +137,11 @@ struct GameLibraryView: View {
                 
                 // Set up timer to refresh the import queue status
                 setupImportQueueRefreshTimer()
+                
+                // Load initial import queue items
+                Task {
+                    await refreshImportQueue()
+                }
                 
                 loadExpandedSections()
             }
@@ -202,10 +215,12 @@ struct GameLibraryView: View {
                 
             WithPerceptionTracking {
                 // Show import progress bar when there are active imports
-                if !gameImporter.importQueue.isEmpty {
+                // Only show if there are items that aren't just failed items
+                if !importQueueItems.isEmpty && importQueueItems.contains(where: { $0.status != .failure }) {
                     importProgressView()
                         .padding(.horizontal)
                         .padding(.vertical, 8)
+                        .id(importQueueUpdateID) // Only redraw the import view when necessary
                 }
             }
             // Games organized by system
@@ -298,7 +313,8 @@ struct GameLibraryView: View {
     private func libraryScrollView() -> some View {
         ScrollView {
             // Use this ID to prevent unnecessary redraws when only search text changes
-            // Also include the database update ID to stabilize during database changes
+            // Only include the database update ID to stabilize during database changes
+            // Don't include the import queue update ID to avoid redrawing the entire library
             let viewID = "library-\(debouncedSearchText.isEmpty ? "all" : "search")-\(databaseUpdateID)"
             
             LazyVStack(spacing: 16, pinnedViews: [.sectionHeaders]) {
@@ -429,6 +445,14 @@ struct GameLibraryView: View {
         .padding()
     }
 
+    /// Function to refresh the import queue items
+    private func refreshImportQueue() async {
+        let queue = await gameImporter.importQueue
+        await MainActor.run {
+            self.importQueueItems = queue
+        }
+    }
+    
     private func importFiles(urls: [URL]) {
         ILOG("GameLibraryView: Importing \(urls.count) files")
 
@@ -571,14 +595,14 @@ extension GameLibraryView {
             WithPerceptionTracking {
                 // Header with count of imports
                 HStack {
-                    Text("IMPORTING \(gameImporter.importQueue.count) FILES")
+                    Text("IMPORTING \(importQueueItems.count) FILES")
                         .font(.system(size: 12, weight: .bold))
                         .foregroundColor(.retroBlue)
                     
                     Spacer()
                     
                     // Show processing status if any item is processing
-                    if gameImporter.importQueue.contains(where: { $0.status == .processing }) {
+                    if importQueueItems.contains(where: { $0.status == .processing }) {
                         Text("PROCESSING")
                             .font(.system(size: 12, weight: .bold))
                             .foregroundColor(.retroPink)
@@ -613,26 +637,33 @@ extension GameLibraryView {
                         )
                         .frame(height: 12)
                     
-                    // Progress fill
-                    let completedCount = gameImporter.importQueue.filter { $0.status == .success }.count
-                    let progress = gameImporter.importQueue.isEmpty ? 0.0 : Double(completedCount) / Double(gameImporter.importQueue.count)
+                    // Progress fill - count both completed and failed items for progress
+                    let processedCount = importQueueItems.filter { $0.status == .success || $0.status == .failure }.count
+                    let progress = importQueueItems.isEmpty ? 0.0 : Double(processedCount) / Double(importQueueItems.count)
                     
-                    LinearGradient(
-                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                    .frame(width: max(12, progress * UIScreen.main.bounds.width - 40), height: 8)
-                    .cornerRadius(4)
-                    .padding(2)
+                    // Create a GeometryReader to get the actual width of the container
+                    GeometryReader { geometry in
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                        // Calculate width as a percentage of the available width
+                        // Use max to ensure a minimum visible width
+                        .frame(width: max(12, progress * geometry.size.width), height: 8)
+                        .cornerRadius(4)
+                        .padding(2)
+                    }
+                    // Set a fixed height for the GeometryReader
+                    .frame(height: 12)
                 }
                 
                 // Status details
                 HStack(spacing: 12) {
-                    statusCountView(count: gameImporter.importQueue.filter { $0.status == .queued }.count, label: "QUEUED", color: .gray)
-                    statusCountView(count: gameImporter.importQueue.filter { $0.status == .processing }.count, label: "PROCESSING", color: .retroBlue)
-                    statusCountView(count: gameImporter.importQueue.filter { $0.status == .success }.count, label: "COMPLETED", color: .retroYellow)
-                    statusCountView(count: gameImporter.importQueue.filter { $0.status == .failure }.count, label: "FAILED", color: .retroPink)
+                    statusCountView(count: importQueueItems.filter { $0.status == .queued }.count, label: "QUEUED", color: .gray)
+                    statusCountView(count: importQueueItems.filter { $0.status == .processing }.count, label: "PROCESSING", color: .retroBlue)
+                    statusCountView(count: importQueueItems.filter { $0.status == .success }.count, label: "COMPLETED", color: .retroYellow)
+                    statusCountView(count: importQueueItems.filter { $0.status == .failure }.count, label: "FAILED", color: .retroPink)
                     
                     Spacer()
                 }
@@ -673,18 +704,29 @@ extension GameLibraryView {
         }
     }
     
+    // Track the last game and system counts to detect actual changes
+    @State private var lastGameCount = 0
+    @State private var lastSystemCount = 0
+    
     /// Set up a timer to periodically regenerate the view ID to prevent flickering
     private func setupDatabaseUpdateTimer() {
-        // Create a timer that updates the database ID every 0.5 seconds
-        // This effectively debounces rapid database changes
-        Timer.publish(every: 0.5, on: .main, in: .common)
+        // Create a timer that updates the database ID every 2 seconds
+        // Much less frequent to reduce unnecessary redraws
+        Timer.publish(every: 2.0, on: .main, in: .common)
             .autoconnect()
             .sink { _ in
-                // Only update if there are actual changes
-                if self.allGames.count > 0 || self.allSystems.count > 0 {
+                // Only update if the counts have actually changed
+                let currentGameCount = self.allGames.count
+                let currentSystemCount = self.allSystems.count
+                
+                if currentGameCount != self.lastGameCount || currentSystemCount != self.lastSystemCount {
                     withAnimation(.easeInOut(duration: 0.2)) {
                         self.databaseUpdateID = UUID()
                     }
+                    
+                    // Update the last counts
+                    self.lastGameCount = currentGameCount
+                    self.lastSystemCount = currentSystemCount
                 }
             }
             .store(in: &cancellables)
@@ -693,14 +735,28 @@ extension GameLibraryView {
     /// Set up a timer to refresh the import queue status
     private func setupImportQueueRefreshTimer() {
         // Create a timer that updates the UI every 0.5 seconds when imports are active
-        Timer.publish(every: 0.5, on: .main, in: .common)
+        Timer.publish(every: 1.0, on: .main, in: .common) // Reduced frequency to 1 second
             .autoconnect()
             .sink { _ in
                 // Only trigger UI updates if there are active imports
-                if !self.gameImporter.importQueue.isEmpty {
-                    // Force a UI update by triggering a state change
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        self.databaseUpdateID = UUID()
+                Task {
+                    // Get the current import queue
+                    let queue = await self.gameImporter.importQueue
+                    
+                    // Only update if the queue has changed
+                    if self.importQueueItems != queue {
+                        // Update the state on the main thread
+                        await MainActor.run {
+                            self.importQueueItems = queue
+                            
+                            // Only trigger UI updates if there are active imports
+                            // Use a separate ID for import queue updates to avoid redrawing the entire view
+                            if !queue.isEmpty {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    self.importQueueUpdateID = UUID()
+                                }
+                            }
+                        }
                     }
                 }
             }

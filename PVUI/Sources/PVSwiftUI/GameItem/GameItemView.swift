@@ -109,7 +109,7 @@ public struct GameItemView: SwiftUI.View {
     }
 
     private func loadArtworkWithPriority(_ priority: TaskPriority) {
-        Task {
+        Task.detached(priority: priority) { [game, isVisible] in
             let image = await ArtworkLoader.shared.loadArtwork(
                 for: game,
                 priority: priority,

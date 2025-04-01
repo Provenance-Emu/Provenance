@@ -977,7 +977,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
                         Task.detached(priority: .utility) {
                             do {
                                 //unclear if this would actually work...
-                                self.gameImporter.addImports(forPaths: paths)
+                                await self.gameImporter.addImports(forPaths: paths)
                                 self.gameImporter.startProcessing()
                             } catch {
                                 ELOG("Error: \(error.localizedDescription)")

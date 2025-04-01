@@ -287,7 +287,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         Task {
             let initialScan = await scanInitialFiles(at: importPath)
             if !initialScan.isEmpty {
-                gameImporter.addImports(forPaths: initialScan)
+                await gameImporter.addImports(forPaths: initialScan)
             }
 
             for await extractedFiles in directoryWatcher.extractedFilesStream(at: importPath) {
@@ -298,7 +298,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                     }
                 }
                 if (!readyURLs.isEmpty) {
-                    gameImporter.addImports(forPaths: readyURLs)
+                    await gameImporter.addImports(forPaths: readyURLs)
                 }
 
                 if await (!directoryWatcher.isWatchingAnyFile()) {
@@ -344,7 +344,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
             }
             if !newGames.isEmpty {
                 ILOG("PVGameLibraryUpdatesController: Adding \(newGames) to the queue")
-                gameImporter.addImports(forPaths: newGames, targetSystem:system.systemIdentifier)
+                await gameImporter.addImports(forPaths: newGames, targetSystem:system.systemIdentifier)
                 queueGames = true
             }
             ILOG("PVGameLibrary: Added items for \(system.identifier) to queue")
@@ -446,14 +446,14 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         // Process priority files first
         if !priorityFiles.isEmpty {
             DLOG("Starting import for priority files")
-            gameImporter.addImports(forPaths: priorityFiles)
+            await gameImporter.addImports(forPaths: priorityFiles)
             DLOG("Finished importing priority files")
         }
 
         // Then process other files
         if !otherFiles.isEmpty {
             DLOG("Starting import for other files")
-            gameImporter.addImports(forPaths: otherFiles)
+            await gameImporter.addImports(forPaths: otherFiles)
             DLOG("Finished importing other files")
         }
 
@@ -520,10 +520,13 @@ extension PVGameLibraryUpdatesController: ConflictsController {
     public func deleteConflict(path: URL) async {
         DLOG("Deleting conflict file at: \(path.path)")
 
-        // First find and remove the item from the import queue
-        if let index = gameImporter.importQueue.firstIndex(where: { $0.url == path }) {
-            DLOG("Found matching item in import queue, removing at index \(index)")
-            gameImporter.removeImports(at: IndexSet(integer: index))
+        // First find and remove the item from the import queue using Task to handle async property
+        Task {
+            let importQueue = await gameImporter.importQueue
+            if let index = importQueue.firstIndex(where: { $0.url == path }) {
+                DLOG("Found matching item in import queue, removing at index \(index)")
+                await gameImporter.removeImports(at: IndexSet(integer: index))
+            }
         }
 
         // Then delete the actual file

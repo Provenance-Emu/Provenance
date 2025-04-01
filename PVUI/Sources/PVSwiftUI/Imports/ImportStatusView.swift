@@ -29,6 +29,9 @@ public struct ImportStatusView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
     @Namespace private var namespace  // Add namespace for focus management
+    
+    // State to hold the import queue items
+    @State private var queueItems: [ImportQueueItem] = []
 
     public init(updatesController: PVGameLibraryUpdatesController, gameImporter: any GameImporting, delegate: ImportStatusDelegate? = nil, dismissAction: (() -> Void)? = nil) {
         self.updatesController = updatesController
@@ -38,7 +41,16 @@ public struct ImportStatusView: View {
     }
 
     private func deleteItems(at offsets: IndexSet) {
-        gameImporter.removeImports(at: offsets)
+        Task {
+            await gameImporter.removeImports(at: offsets)
+            // Refresh the queue items after deletion
+            await refreshQueueItems()
+        }
+    }
+    
+    // Function to refresh the queue items
+    private func refreshQueueItems() async {
+        queueItems = await gameImporter.importQueue
     }
 
     // Define the system selection handler
@@ -51,12 +63,12 @@ public struct ImportStatusView: View {
         WithPerceptionTracking {
             NavigationView {
                 List {
-                    if gameImporter.importQueue.isEmpty {
+                    if queueItems.isEmpty {
                         Text("No items in the import queue")
                             .foregroundColor(.secondary)
                             .padding()
                     } else {
-                        ForEach(gameImporter.importQueue) { item in
+                        ForEach(queueItems) { item in
                             Button(action: {
                                 print("Tapped item: \(item.id)")
                             }) {

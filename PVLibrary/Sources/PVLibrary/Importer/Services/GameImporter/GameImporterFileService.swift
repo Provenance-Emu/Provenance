@@ -236,10 +236,34 @@ class GameImporterFileService : GameImporterFileServicing {
     /// Move a `URL` to a destination, creating the destination directory if needed
     private func moveFile(_ file: URL, toExplicitDestination destination: URL) async throws -> URL {
         let destinationDirectory = destination.deletingLastPathComponent()
-        try FileManager.default.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
-        try FileManager.default.moveItem(at: file, to: destination)
-        DLOG("Moved file to: \(destination.path)")
-        return destination
+        let fileManager = FileManager.default
+        
+        // Create destination directory if it doesn't exist
+        try fileManager.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
+        
+        do {
+            // Try to move the file
+            try fileManager.moveItem(at: file, to: destination)
+            DLOG("Moved file to: \(destination.path)")
+            return destination
+        } catch {
+            // Check if the error is because a file with the same name already exists
+            if fileManager.fileExists(atPath: destination.path) {
+                WLOG("File already exists at destination: \(destination.path). Deleting source file.")
+                
+                // If the file is in the imports directory, delete it
+                if file.path.contains("/Imports/") {
+                    try await fileManager.removeItem(at: file)
+                    ILOG("Deleted duplicate file from imports directory: \(file.path)")
+                }
+                
+                // Return the destination since the file already exists there
+                return destination
+            } else {
+                // If it's a different error, rethrow it
+                throw error
+            }
+        }
     }
 
     func removeImportItemFile(_ importItem: ImportQueueItem) throws {
