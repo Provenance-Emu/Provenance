@@ -395,6 +395,7 @@ struct RetroMenuView: View {
     @State private var showingFilterPicker = false
     @State private var skinScope: SkinScope = .session
     @State private var currentOrientation: SkinOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
+    @State private var isLoadingSkins = false
     
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
@@ -948,7 +949,14 @@ struct RetroMenuView: View {
     
     // Load available skins for the current system
     private func loadAvailableSkins() async {
+        // Prevent multiple concurrent loads
+        guard !isLoadingSkins else { return }
         guard let systemId = emulatorVC.game.system?.systemIdentifier else { return }
+        
+        // Set loading flag to prevent loops
+        await MainActor.run {
+            isLoadingSkins = true
+        }
         
         do {
             // Get skins from DeltaSkinManager
@@ -987,9 +995,16 @@ struct RetroMenuView: View {
                 withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                     self.glowOpacity = 1.0
                 }
+                
+                // Reset loading flag when done
+                self.isLoadingSkins = false
             }
         } catch {
             print("Error loading skins: \(error)")
+            // Reset loading flag even if there's an error
+            await MainActor.run {
+                isLoadingSkins = false
+            }
         }
     }
     
