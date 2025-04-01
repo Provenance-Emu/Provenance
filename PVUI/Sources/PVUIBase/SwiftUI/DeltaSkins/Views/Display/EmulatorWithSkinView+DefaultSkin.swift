@@ -48,7 +48,9 @@ struct DefaultControllerSkinView: View {
     
     var body: some View {
         // Load control layout data when view appears
-        Group {
+        VStack {
+            Spacer() // Push the controller to the bottom of the screen
+            
             dynamicControllerSkin
                 .onAppear {
                     loadControlLayoutData()
@@ -173,8 +175,6 @@ struct DefaultControllerSkinView: View {
             }
         }
         .padding()
-        .background(Color.gray.opacity(0.5))
-        .cornerRadius(20)
     }
     
     /// D-Pad view
@@ -472,8 +472,6 @@ struct DefaultControllerSkinView: View {
             }
         }
         .padding()
-        .background(Color.gray.opacity(0.5))
-        .cornerRadius(20)
     }
     
     // Create a button group based on the system's button layout
