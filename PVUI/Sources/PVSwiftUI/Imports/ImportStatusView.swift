@@ -59,41 +59,72 @@ public struct ImportStatusView: View {
         delegate?.didSelectSystem(system, for: item)
     }
 
+    // Animation states for retrowave effects
+    @State private var glowOpacity: Double = 0.7
+    @State private var scanlineOffset: CGFloat = 0
+    
     public var body: some View {
         WithPerceptionTracking {
             NavigationView {
-                List {
-                    if queueItems.isEmpty {
-                        Text("No items in the import queue")
-                            .foregroundColor(.secondary)
-                            .padding()
-                    } else {
-                        ForEach(queueItems) { item in
-                            Button(action: {
-                                print("Tapped item: \(item.id)")
-                            }) {
-                                // Pass callback to ImportTaskRowView
-                                ImportTaskRowView(
-                                    item: item,
-                                    onSystemSelected: handleSystemSelection
-                                )
-                                .id(item.id)
+                ZStack {
+                    // RetroWave background
+                    RetroTheme.retroBackground
+                    
+                    // Grid overlay
+                    RetroGrid()
+                        .opacity(0.3)
+                    
+                    VStack {
+                        // Retrowave header
+                        Text("IMPORT QUEUE")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(RetroTheme.retroPink)
+                            .padding(.top, 20)
+                            .padding(.bottom, 10)
+                            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
+                        
+                        // Main content
+                        if queueItems.isEmpty {
+                            VStack {
+                                Spacer()
+                                Text("NO ITEMS IN QUEUE")
+                                    .font(.system(size: 20, weight: .bold))
+                                    .foregroundColor(RetroTheme.retroBlue)
+                                    .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                                    .padding()
+                                Spacer()
                             }
-                            #if os(tvOS)
-                            .buttonStyle(.bordered)
-                            .focusable()
-                            .prefersDefaultFocus(in: namespace)
-                            #endif
-                        }.onDelete(
-                            perform: deleteItems
-                        )
+                        } else {
+                            ScrollView {
+                                LazyVStack(spacing: 12) {
+                                    ForEach(queueItems) { item in
+                                        Button(action: {
+                                            print("Tapped item: \(item.id)")
+                                        }) {
+                                            // Pass callback to ImportTaskRowView
+                                            ImportTaskRowView(
+                                                item: item,
+                                                onSystemSelected: handleSystemSelection
+                                            )
+                                            .id(item.id)
+                                        }
+                                        .buttonStyle(PlainButtonStyle())
+#if os(tvOS)
+                                        .focusable()
+                                        .prefersDefaultFocus(in: namespace)
+#endif
+                                    }
+                                }
+                                .padding(.horizontal)
+                            }
+                        }
                     }
                 }
                 #if os(tvOS)
                 .focusSection()
                 .focusScope(namespace)
                 #endif
-                .navigationTitle("Import Queue")
+                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItemGroup(placement: .topBarLeading,
                                      content: {
