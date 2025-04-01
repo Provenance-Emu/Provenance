@@ -1,9 +1,13 @@
 import Foundation
 import ZIPFoundation
 import PVLogging
+import PVLibrary
+import UIKit
 
 /// Manages loading and caching of DeltaSkins
 public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol {
+    /// Cache key prefix for skin preview images
+    private static let skinPreviewCacheKeyPrefix = "deltaskin_preview_"
     /// Singleton instance
     public static let shared = DeltaSkinManager()
 
@@ -12,6 +16,17 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
 
     /// Queue for synchronizing skin operations
     private let queue = DispatchQueue(label: "com.provenance.deltaskin-manager")
+    
+    /// Default traits for preview images
+    private let defaultPreviewTraits = DeltaSkinTraits(device: .iphone, displayType: .standard, orientation: .portrait)
+    
+    /// Alternative traits to try if default traits aren't supported
+    private let alternativeTraits: [DeltaSkinTraits] = [
+        DeltaSkinTraits(device: .iphone, displayType: .edgeToEdge, orientation: .portrait),
+        DeltaSkinTraits(device: .iphone, displayType: .standard, orientation: .landscape),
+        DeltaSkinTraits(device: .ipad, displayType: .standard, orientation: .portrait),
+        DeltaSkinTraits(device: .ipad, displayType: .standard, orientation: .landscape)
+    ]
 
     public init() {
         print("Initializing DeltaSkinManager")
@@ -262,6 +277,102 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             // Then rescan on main thread
             Task { @MainActor in
                 self.objectWillChange.send()
+            }
+        }
+    }
+}
+
+// MARK: - Skin Preview Image Caching
+extension DeltaSkinManager {
+    /// Generate a cache key for a skin preview image
+    private func previewCacheKey(for skin: DeltaSkinProtocol) -> String {
+        return DeltaSkinManager.skinPreviewCacheKeyPrefix + skin.identifier
+    }
+    
+    /// Get a preview image for a skin, using cache if available
+    /// - Parameter skin: The skin to get a preview for
+    /// - Returns: A preview image if available, nil otherwise
+    public func previewImage(for skin: DeltaSkinProtocol) async -> UIImage? {
+        let cacheKey = previewCacheKey(for: skin)
+        
+        // Check if image is already cached
+        if let cachedImage = await PVMediaCache.shareInstance().image(forKey: cacheKey) {
+            DLOG("Using cached preview for skin: \(skin.name)")
+            return cachedImage
+        }
+        
+        // Generate a new preview image
+        return await generateAndCachePreview(for: skin)
+    }
+    
+    /// Generate and cache a preview image for a skin
+    /// - Parameter skin: The skin to generate a preview for
+    /// - Returns: The generated preview image, or nil if generation failed
+    private func generateAndCachePreview(for skin: DeltaSkinProtocol) async -> UIImage? {
+        DLOG("Generating preview for skin: \(skin.name)")
+        
+        // Try default traits first
+        if skin.supports(defaultPreviewTraits) {
+            return await generatePreview(for: skin, with: defaultPreviewTraits)
+        }
+        
+        // Try alternative traits if default isn't supported
+        for traits in alternativeTraits {
+            if skin.supports(traits) {
+                return await generatePreview(for: skin, with: traits)
+            }
+        }
+        
+        DLOG("No supported traits found for skin: \(skin.name)")
+        return nil
+    }
+    
+    /// Generate a preview image for a skin with specific traits and cache it
+    /// - Parameters:
+    ///   - skin: The skin to generate a preview for
+    ///   - traits: The traits to use for the preview
+    /// - Returns: The generated preview image, or nil if generation failed
+    private func generatePreview(for skin: DeltaSkinProtocol, with traits: DeltaSkinTraits) async -> UIImage? {
+        do {
+            // Get the skin image for the specified traits
+            let skinImage = try await skin.image(for: traits)
+            
+            // Create a smaller preview image for the cache
+            let previewImage = skinImage.scaledImage(withMaxResolution: 300) ?? skinImage
+            
+            // Cache the preview image
+            let cacheKey = previewCacheKey(for: skin)
+            try PVMediaCache.writeImage(toDisk: previewImage, withKey: cacheKey)
+            
+            DLOG("Generated and cached preview for skin: \(skin.name)")
+            return previewImage
+        } catch {
+            ELOG("Failed to generate preview for skin \(skin.name): \(error)")
+            return nil
+        }
+    }
+    
+    /// Invalidate cached preview for a skin
+    /// - Parameter skin: The skin to invalidate the preview for
+    public func invalidatePreview(for skin: DeltaSkinProtocol) {
+        let cacheKey = previewCacheKey(for: skin)
+        Task {
+            try? PVMediaCache.deleteImage(forKey: cacheKey)
+            DLOG("Invalidated preview cache for skin: \(skin.name)")
+        }
+    }
+    
+    /// Preload preview images for multiple skins
+    /// - Parameter skins: The skins to preload previews for
+    public func preloadPreviews(for skins: [DeltaSkinProtocol]) async {
+        DLOG("Preloading previews for \(skins.count) skins")
+        
+        // Create a task group for concurrent loading
+        await withTaskGroup(of: Void.self) { group in
+            for skin in skins {
+                group.addTask {
+                    _ = await self.previewImage(for: skin)
+                }
             }
         }
     }

@@ -368,10 +368,15 @@ struct RetroMenuView: View {
     @State private var selectedSkin: String = "Default"
     @State private var selectedFilter: String = "None"
     @State private var availableSkins: [String] = ["Default"]
+    @State private var availableSkinObjects: [DeltaSkinProtocol] = []
     @State private var showingSkinPicker = false
     @State private var showingFilterPicker = false
     @State private var skinScope: SkinScope = .session
     @State private var currentOrientation: SkinOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
+    
+    // Animation states for retrowave effects
+    @State private var glowOpacity: Double = 0.7
+    @State private var isHoveredSkinId: String? = nil
     
     private var skinsMenuButtons: some View {
         VStack(spacing: 12) {
@@ -473,38 +478,70 @@ struct RetroMenuView: View {
         }
     }
     
-    // Skin picker sheet view
+    // Skin picker sheet view with retrowave styling
     private var skinPickerView: some View {
         NavigationView {
-            List {
-                ForEach(availableSkins, id: \.self) { skin in
-                    Button(action: {
-                        selectedSkin = skin
-                        showingSkinPicker = false
-                    }) {
-                        HStack {
-                            Text(skin)
-                                .foregroundColor(.white)
-                            
-                            Spacer()
-                            
-                            if skin == selectedSkin {
-                                Image(systemName: "checkmark")
-                                    .foregroundColor(.retroBlue)
-                            }
+            ZStack {
+                // RetroWave background
+                RetroTheme.retroBackground
+                
+                // Grid overlay
+                RetroGrid()
+                    .opacity(0.3)
+                
+                ScrollView {
+                    VStack(spacing: 16) {
+                        // Header
+                        Text("SELECT SKIN")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(RetroTheme.retroPink)
+                            .padding(.top, 20)
+                            .padding(.bottom, 10)
+                            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
+                        
+                        // Default skin option
+                        if !availableSkins.contains(where: { $0 == "Default" }) {
+                            skinItemView(name: "Default", preview: nil, isSelected: selectedSkin == "Default")
+                        }
+                        
+                        // Custom skins with previews
+                        ForEach(availableSkinObjects, id: \.identifier) { skin in
+                            SkinPreviewItemView(
+                                skin: skin,
+                                isSelected: selectedSkin == skin.name,
+                                glowOpacity: glowOpacity,
+                                isHovered: isHoveredSkinId == skin.identifier,
+                                onSelect: {
+                                    selectedSkin = skin.name
+                                    showingSkinPicker = false
+                                }
+                            )
                         }
                     }
-                    .listRowBackground(Color.retroBlack.opacity(0.8))
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 20)
                 }
             }
-            .listStyle(InsetGroupedListStyle())
-            .background(Color.black)
-            .navigationTitle("Select Skin")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitle("", displayMode: .inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button(action: {
                         showingSkinPicker = false
+                    }) {
+                        Text("DONE")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(RetroTheme.retroPurple)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(LinearGradient(
+                                        gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroPink]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    ), lineWidth: 1.5)
+                            )
+                            .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                     }
                 }
             }
@@ -512,10 +549,250 @@ struct RetroMenuView: View {
                 // Load available skins
                 Task {
                     await loadAvailableSkins()
+                    
+                    // Start animations
+                    withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+                        glowOpacity = 1.0
+                    }
                 }
             }
         }
         .preferredColorScheme(.dark)
+    }
+    
+    // Custom skin item view for Default option
+    private func skinItemView(name: String, preview: UIImage?, isSelected: Bool, skinId: String? = nil) -> some View {
+        Button(action: {
+            selectedSkin = name
+            showingSkinPicker = false
+        }) {
+            HStack(spacing: 16) {
+                // Preview image or placeholder
+                ZStack {
+                    if let preview = preview {
+                        Image(uiImage: preview)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 80, height: 80)
+                            .cornerRadius(8)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        ),
+                                        lineWidth: 1.5
+                                    )
+                            )
+                    } else {
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.black.opacity(0.5))
+                            .frame(width: 80, height: 80)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        ),
+                                        lineWidth: 1.5
+                                    )
+                            )
+                            .overlay(
+                                Image(systemName: "gamecontroller.fill")
+                                    .foregroundColor(RetroTheme.retroBlue)
+                                    .font(.system(size: 30))
+                                    .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                            )
+                    }
+                }
+                
+                // Skin name and details
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(name)
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(.white)
+                        .shadow(color: RetroTheme.retroPink.opacity(glowOpacity * 0.8), radius: 2, x: 0, y: 0)
+                        .lineLimit(1)
+                    
+                    if name != "Default" {
+                        Text("Custom Skin")
+                            .font(.system(size: 14))
+                            .foregroundColor(RetroTheme.retroPurple)
+                            .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
+                    } else {
+                        Text("System Default")
+                            .font(.system(size: 14))
+                            .foregroundColor(RetroTheme.retroBlue)
+                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
+                    }
+                }
+                
+                Spacer()
+                
+                // Selection indicator
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(RetroTheme.retroBlue)
+                        .font(.system(size: 24))
+                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                }
+            }
+            .padding(.vertical, 12)
+            .padding(.horizontal, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.black.opacity(0.7))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        isSelected ? RetroTheme.retroPink : RetroTheme.retroBlue,
+                                        RetroTheme.retroPurple
+                                    ]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: isHoveredSkinId == skinId || isSelected ? 2.0 : 1.5
+                            )
+                            .shadow(color: (isSelected ? RetroTheme.retroPink : RetroTheme.retroBlue).opacity(glowOpacity),
+                                    radius: isHoveredSkinId == skinId || isSelected ? 5 : 3,
+                                    x: 0,
+                                    y: 0)
+                    )
+            )
+            .onHover { hovering in
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    isHoveredSkinId = hovering ? skinId : nil
+                }
+            }
+        }
+        .buttonStyle(PlainButtonStyle())
+#if os(tvOS)
+        .focusable(true)
+#endif
+    }
+    
+    // Skin preview item view with cached image loading
+    private struct SkinPreviewItemView: View {
+        let skin: DeltaSkinProtocol
+        let isSelected: Bool
+        let glowOpacity: Double
+        let isHovered: Bool
+        let onSelect: () -> Void
+        
+        @State private var previewImage: UIImage? = nil
+        
+        var body: some View {
+            Button(action: onSelect) {
+                HStack(spacing: 16) {
+                    // Preview image or placeholder
+                    ZStack {
+                        if let preview = previewImage {
+                            Image(uiImage: preview)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 80, height: 80)
+                                .cornerRadius(8)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(
+                                            LinearGradient(
+                                                gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            ),
+                                            lineWidth: 1.5
+                                        )
+                                )
+                        } else {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.black.opacity(0.5))
+                                .frame(width: 80, height: 80)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(
+                                            LinearGradient(
+                                                gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            ),
+                                            lineWidth: 1.5
+                                        )
+                                )
+                                .overlay(
+                                    Image(systemName: "gamecontroller.fill")
+                                        .foregroundColor(RetroTheme.retroBlue)
+                                        .font(.system(size: 30))
+                                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                                )
+                        }
+                    }
+                    
+                    // Skin name and details
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(skin.name)
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundColor(.white)
+                            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity * 0.8), radius: 2, x: 0, y: 0)
+                            .lineLimit(1)
+                        
+                        Text("Custom Skin")
+                            .font(.system(size: 14))
+                            .foregroundColor(RetroTheme.retroPurple)
+                            .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
+                    }
+                    
+                    Spacer()
+                    
+                    // Selection indicator
+                    if isSelected {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(RetroTheme.retroBlue)
+                            .font(.system(size: 24))
+                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                    }
+                }
+                .padding(.vertical, 12)
+                .padding(.horizontal, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.black.opacity(0.7))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .strokeBorder(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            isSelected ? RetroTheme.retroPink : RetroTheme.retroBlue,
+                                            RetroTheme.retroPurple
+                                        ]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    lineWidth: isHovered || isSelected ? 2.0 : 1.5
+                                )
+                                .shadow(color: (isSelected ? RetroTheme.retroPink : RetroTheme.retroBlue).opacity(glowOpacity),
+                                        radius: isHovered || isSelected ? 5 : 3,
+                                        x: 0,
+                                        y: 0)
+                        )
+                )
+            }
+            .buttonStyle(PlainButtonStyle())
+            .task {
+                // Load preview image asynchronously
+                if previewImage == nil {
+                    previewImage = await DeltaSkinManager.shared.previewImage(for: skin)
+                }
+            }
+#if os(tvOS)
+            .focusable(true)
+#endif
+        }
     }
     
     // Filter picker sheet view with retrowave styling
@@ -657,14 +934,20 @@ struct RetroMenuView: View {
             
             // Update the available skins list on the main thread
             await MainActor.run {
-                // Always include Default as the first option
-                var skinNames = ["Default"]
+                // Store the actual skin objects for previews
+                self.availableSkinObjects = skins
                 
-                // Add names of available skins
-                skinNames.append(contentsOf: skins.map { $0.name })
+                // Create a set of unique skin names to avoid duplicates
+                var uniqueSkinNames = Set<String>()
+                uniqueSkinNames.insert("Default")
                 
-                // Update state
-                self.availableSkins = skinNames
+                // Add names of available skins, avoiding duplicates
+                for skin in skins {
+                    uniqueSkinNames.insert(skin.name)
+                }
+                
+                // Convert to array and sort
+                self.availableSkins = Array(uniqueSkinNames).sorted()
                 
                 // Set current selection if not already set
                 if self.selectedSkin == "Default" && !skins.isEmpty {
@@ -676,6 +959,11 @@ struct RetroMenuView: View {
                             }
                         }
                     }
+                }
+                
+                // Start animations for retrowave effects
+                withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+                    self.glowOpacity = 1.0
                 }
             }
         } catch {
