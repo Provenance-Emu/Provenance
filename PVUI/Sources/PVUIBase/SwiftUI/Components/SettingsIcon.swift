@@ -11,7 +11,7 @@ public enum SettingsIcon: Equatable {
     case named(String, Bundle? = nil)
     case sfSymbol(String)
 
-    var image: Image {
+    public var image: Image {
         switch self {
         case .named(let name, let bundle):
             if let bundle = bundle {
@@ -24,7 +24,7 @@ public enum SettingsIcon: Equatable {
         }
     }
 
-    var highlightedImage: Image? {
+    public var highlightedImage: Image? {
         switch self {
         case .named(let name, let bundle):
             let highlightedName = name + "-highlighted"

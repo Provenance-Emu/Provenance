@@ -16,6 +16,12 @@ public struct ThemedToggle<Label: View>: View {
     // Use RetroToggleStyle by default, but allow fallback to system style
     public var useRetroStyle: Bool = true
 
+    public init(isOn: Binding<Bool>, label: @escaping () -> Label, useRetroStyle: Bool = true) {
+        self._isOn = isOn
+        self.label = label
+        self.useRetroStyle = useRetroStyle
+    }
+    
     public var body: some View {
         Toggle(isOn: $isOn) {
             label()

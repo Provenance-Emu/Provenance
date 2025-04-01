@@ -1,6 +1,7 @@
 import SwiftUI
 import PVCoreBridge
 import PVLibrary
+import PVThemes
 
 /// View model to manage core options state
 private class CoreOptionsState: ObservableObject {
@@ -21,12 +22,16 @@ private class CoreOptionsState: ObservableObject {
     }
 }
 
-/// View that displays and allows editing of core options for a specific core
+/// View that displays and allows editing of core options for a specific core with RetroWave styling
 struct CoreOptionsDetailView: View {
     let coreClass: CoreOptional.Type
     let title: String
     @StateObject private var viewModel = CoreOptionsViewModel()
     @StateObject private var state = CoreOptionsState()
+    
+    // Animation states for retrowave effects
+    @State private var isAnimating = false
+    @State private var glowOpacity = 0.0
 
     private struct IdentifiableOption: Identifiable {
         let id = UUID()

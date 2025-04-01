@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PVUIBase
 import Combine
 
 internal struct AdvancedTogglesView: View {

@@ -10,13 +10,25 @@ import PVLogging
 import AsyncAlgorithms
 
 /// Struct to hold essential system data
-private struct SystemDisplayData: Identifiable {
+public  struct SystemDisplayData: Identifiable {
     /// The identifier of the system
-    let id: String
+    public let id: String
     /// The name of the system
-    let name: String
+    public let name: String
     /// The icon name of the system
-    let iconName: String
+    public let iconName: String
+    
+    public init(system: PVSystem) {
+        self.id = system.identifier
+        self.name = system.name
+        self.iconName = system.iconName
+    }
+    
+    public init(id: String, name: String, iconName: String) {
+        self.id = id
+        self.name = name
+        self.iconName = iconName
+    }
 }
 
 fileprivate extension PVSystem {
@@ -28,22 +40,22 @@ fileprivate extension PVSystem {
 }
 
 /// A simple struct to hold core information for the list
-private struct CoreListItem: Identifiable {
+public struct CoreListItem: Identifiable {
     /// The identifier of the core
-    let id: String
+    public let id: String
     /// The name of the core
-    let name: String
+    public let name: String
     /// The class of the core
-    let coreClass: CoreOptional.Type
+    public let coreClass: CoreOptional.Type
     /// The number of options in the core
-    let optionCount: Int
+    public let optionCount: Int
     /// The systems that the core supports
-    let systems: [SystemDisplayData]
+    public let systems: [SystemDisplayData]
 
     /// Initialize the core list item
     /// - Parameter core: The core to initialize the list item from
     @MainActor
-    init?(core: PVCore) {
+    public init?(core: PVCore) {
         let id = core.identifier
         let name = core.projectName
         let principleClass = core.principleClass
@@ -91,7 +103,180 @@ private struct CoreListItem: Identifiable {
     }
 }
 
-/// View that lists all cores that implement CoreOptional
+// MARK: - RetroWave Core List Item View
+
+/// A RetroWave-styled view for a core list item
+struct RetroWaveCoreListItemView: View {
+    let item: CoreListItem
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Core name and option count
+            HStack {
+                Text(item.name)
+                    .font(.headline)
+                    .foregroundColor(.white)
+                
+                Spacer()
+                
+                Text("\(item.optionCount) options")
+                    .font(.subheadline)
+                    .foregroundColor(RetroTheme.retroBlue)
+            }
+            
+            // Systems supported
+            if !item.systems.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Supported Systems:")
+                        .font(.caption)
+                        .foregroundColor(RetroTheme.retroPurple)
+                    
+                    // System icons
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 10) {
+                            ForEach(item.systems) { system in
+                                VStack {
+                                    Image(system.iconName)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 32, height: 32)
+                                    
+                                    Text(system.name)
+                                        .font(.caption2)
+                                        .foregroundColor(.white.opacity(0.7))
+                                        .lineLimit(1)
+                                }
+                                .frame(width: 60)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.black.opacity(0.6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder(
+                            LinearGradient(
+                                gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                )
+        )
+        .shadow(color: RetroTheme.retroPurple.opacity(0.3), radius: 8)
+    }
+}
+
+// MARK: - RetroWave Core Search Bar
+
+/// A RetroWave-styled search bar for core options
+struct RetroWaveCoreSearchBar: View {
+    @Binding var text: String
+    @Binding var isSearching: Bool
+    
+    var body: some View {
+        HStack {
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(text.isEmpty ? .gray : RetroTheme.retroPink)
+                
+                TextField("Search cores", text: $text)
+                    .foregroundColor(.white)
+                    .onTapGesture {
+                        isSearching = true
+                    }
+                
+                if !text.isEmpty {
+                    Button(action: {
+                        text = ""
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(RetroTheme.retroPink)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
+            .padding(8)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.black.opacity(0.8))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(RetroTheme.retroBlue.opacity(0.7), lineWidth: 1)
+                    )
+            )
+            
+            if isSearching {
+                Button(action: {
+                    text = ""
+                    isSearching = false
+                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                }) {
+                    Text("Cancel")
+                        .foregroundColor(RetroTheme.retroPink)
+                }
+                .buttonStyle(PlainButtonStyle())
+                .transition(.move(edge: .trailing))
+                .animation(.default, value: isSearching)
+            }
+        }
+    }
+}
+
+// MARK: - RetroWave Header View
+
+/// A RetroWave-styled header view for core options
+struct RetroWaveCoreHeaderView: View {
+    let isVisible: Bool
+    let height: CGFloat
+    @Binding var searchText: String
+    @Binding var isSearching: Bool
+    let hasAppeared: Bool
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            // RetroArch note
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Note about RetroArch Cores")
+                    .font(.headline)
+                    .foregroundColor(RetroTheme.retroPink)
+                
+                Text("RetroArch cores may show additional options in the in-game core options menu that aren't available here due to RetroArch limitations.")
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.8))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.black.opacity(0.7))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(RetroTheme.retroBlue.opacity(0.5), lineWidth: 1)
+                    )
+            )
+            .padding(.horizontal)
+            
+            // Search bar
+            if hasAppeared {
+                RetroWaveCoreSearchBar(text: $searchText, isSearching: $isSearching)
+                    .padding(.horizontal)
+            }
+        }
+        .padding(.top, 8)
+        .frame(height: isVisible ? height : 0)
+        .opacity(isVisible ? 1 : 0)
+        .background(Color.black.opacity(0.5))
+    }
+}
+
+/// View that lists all cores that implement CoreOptional with RetroWave styling
 struct CoreOptionsListView: View {
     /// The cores in the database
     @ObservedResults(PVCore.self) private var cores
@@ -116,89 +301,86 @@ struct CoreOptionsListView: View {
     /// Previous scroll offset for direction detection
     @State private var previousScrollOffset: CGFloat = 0
     /// Header height when expanded
-    private let expandedHeaderHeight: CGFloat = 160
+    private let expandedHeaderHeight: CGFloat = 180
     /// Header height when collapsed
     private let collapsedHeaderHeight: CGFloat = 0
 
+    // MARK: - Content Views
+    
+    /// The main content view showing the list of cores
+    private var contentView: some View {
+        ScrollViewWithOffset(
+            offsetChanged: { offset in
+                // Detect scroll direction
+                let scrollingDown = offset < previousScrollOffset
+
+                // Update header visibility based on scroll direction
+                if scrollingDown && offset < -20 {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        isHeaderVisible = false
+                    }
+                } else if !scrollingDown {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        isHeaderVisible = true
+                    }
+                }
+
+                scrollOffset = offset
+                previousScrollOffset = offset
+            }
+        ) {
+            // Add padding to account for the header
+            VStack {
+                // Spacer to push content below the header
+                Spacer()
+                    .frame(height: expandedHeaderHeight)
+
+                LazyVStack(spacing: 16) {
+                    // Title with glow effect
+                    Text("CORE OPTIONS")
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                        .padding(.top, 20)
+                        .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 10)
+                    
+                    // Core list items
+                    ForEach(filteredCoreItems) { item in
+                        NavigationLink {
+                            CoreOptionsDetailView(coreClass: item.coreClass, title: item.name)
+                        } label: {
+                            RetroWaveCoreListItemView(item: item)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        .padding(.horizontal)
+                        .padding(.vertical, 4)
+                        .id(item.id) // Add id to help maintain identity
+                    }
+                }
+                .padding(.bottom, 30)
+            }
+        }
+        .id("coreOptionsScrollView") // Add stable ID to ScrollView
+    }
+    
+    /// The header view with RetroArch note and search bar
+    private var headerView: some View {
+        RetroWaveCoreHeaderView(
+            isVisible: isHeaderVisible,
+            height: expandedHeaderHeight,
+            searchText: $searchText,
+            isSearching: $isSearching,
+            hasAppeared: hasAppeared
+        )
+    }
+    
     /// The body of the view
     var body: some View {
         ZStack(alignment: .top) {
             // Main content
-            ScrollViewWithOffset(
-                offsetChanged: { offset in
-                    // Detect scroll direction
-                    let scrollingDown = offset < previousScrollOffset
-
-                    // Update header visibility based on scroll direction
-                    if scrollingDown && offset < -20 {
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            isHeaderVisible = false
-                        }
-                    } else if !scrollingDown {
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            isHeaderVisible = true
-                        }
-                    }
-
-                    scrollOffset = offset
-                    previousScrollOffset = offset
-                }
-            ) {
-                // Add padding to account for the header
-                VStack {
-                    // Spacer to push content below the header
-                    Spacer()
-                        .frame(height: expandedHeaderHeight)
-
-                    LazyVStack {
-                        ForEach(filteredCoreItems) { item in
-                            NavigationLink {
-                                CoreOptionsDetailView(coreClass: item.coreClass, title: item.name)
-                            } label: {
-                                CoreListItemView(item: item)
-                            }
-                            .padding(.horizontal)
-                            .padding(.vertical, 4)
-                            .id(item.id) // Add id to help maintain identity
-                        }
-                    }
-                    .padding(.bottom)
-                }
-            }
-            .id("coreOptionsScrollView") // Add stable ID to ScrollView
-
-            // Header with RetroArch note and search bar
-            VStack(spacing: 8) {
-                // RetroArch note
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Note about RetroArch Cores")
-                        .font(.headline)
-                        .foregroundColor(Color.primary)
-
-                    Text("RetroArch cores may show additional options in the in-game core options menu that aren't available here due to RetroArch limitations.")
-                        .font(.subheadline)
-                        .foregroundColor(Color.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .padding()
-                #if !os(tvOS)
-                .background(Color(.systemGray6))
-                #endif
-                .cornerRadius(8)
-                .padding(.horizontal)
-
-                // Search bar
-                if hasAppeared {
-                    CoreSearchBar(text: $searchText, isSearching: $isSearching)
-                        .padding(.horizontal)
-                }
-            }
-            .padding(.top, 8)
-            .frame(height: isHeaderVisible ? expandedHeaderHeight : collapsedHeaderHeight)
-            .opacity(isHeaderVisible ? 1 : 0)
-            #if !os(tvOS)
-            .background(Color(.systemBackground))
-            #endif
+            contentView
+            
+            // Header
+            headerView
             .animation(.easeInOut(duration: 0.3), value: isHeaderVisible)
         }
         .navigationTitle("Core Options")

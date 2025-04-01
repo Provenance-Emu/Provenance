@@ -12,18 +12,18 @@ import FreemiumKit
 #endif
 import PVThemes
 
-struct PremiumThemedToggle<Label: View>: View {
+public struct PremiumThemedToggle<Label: View>: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @Binding var isOn: Bool
     let label: Label
 
-    init(isOn: Binding<Bool>, @ViewBuilder label: () -> Label) {
+    public init(isOn: Binding<Bool>, @ViewBuilder label: () -> Label) {
         self._isOn = isOn
         self.label = label()
     }
 
 #if canImport(FreemiumKit)
-    var body: some View {
+    public var body: some View {
     #if !os(tvOS)
         PaidFeatureView {
             Toggle(isOn: $isOn) {
@@ -58,7 +58,7 @@ struct PremiumThemedToggle<Label: View>: View {
         #endif
     }
 #else
-    var body: some View {
+    public var body: some View {
         Toggle(isOn: $isOn) {
             label
         }
