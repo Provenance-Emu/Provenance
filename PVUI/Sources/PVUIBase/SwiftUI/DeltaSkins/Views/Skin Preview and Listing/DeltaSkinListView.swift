@@ -36,6 +36,7 @@ public struct DeltaSkinListView: View {
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.title2)
+                            .foregroundStyle(RetroTheme.retroHorizontalGradient)
                     }
                 }
             }
