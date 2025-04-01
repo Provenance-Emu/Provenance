@@ -60,10 +60,6 @@ struct UITestingApp: SwiftUI.App {
 //        ILOG("Configured in-memory Realm for testing")
 //    }
 
-    @StateObject
-    private var mockImportStatusDriverData = MockImportStatusDriverData()
-
-
     // Install the test ROM by copying it to the ROMs directory
     private func installTestROM() async throws {
         ILOG("UITestingApp: Installing test ROM")

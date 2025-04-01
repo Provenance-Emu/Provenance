@@ -45,7 +45,6 @@ struct GameLibraryView: View {
     ) var allSystems
     
     // IDs to force view stability and prevent flickering
-    @State private var databaseUpdateID = UUID()
     @State private var importQueueUpdateID = UUID()
 
     // Track expanded sections with AppStorage to persist between app runs
@@ -118,10 +117,7 @@ struct GameLibraryView: View {
                 Text(message)
             }
             .onAppear {
-                // Initialize last counts
-                self.lastGameCount = self.allGames.count
-                self.lastSystemCount = self.allSystems.count
-                
+
                 // Set up debouncing for search text
                 searchTextPublisher
                     .debounce(for: .seconds(searchDebounceTime), scheduler: DispatchQueue.main)
@@ -132,9 +128,7 @@ struct GameLibraryView: View {
                     }
                     .store(in: &cancellables)
                 
-                // Set up timer to debounce database updates
-                setupDatabaseUpdateTimer()
-                
+
                 // Set up timer to refresh the import queue status
                 setupImportQueueRefreshTimer()
                 
@@ -315,7 +309,7 @@ struct GameLibraryView: View {
             // Use this ID to prevent unnecessary redraws when only search text changes
             // Only include the database update ID to stabilize during database changes
             // Don't include the import queue update ID to avoid redrawing the entire library
-            let viewID = "library-\(debouncedSearchText.isEmpty ? "all" : "search")-\(databaseUpdateID)"
+            let viewID = "library-\(debouncedSearchText.isEmpty ? "all" : "search")"
             
             LazyVStack(spacing: 16, pinnedViews: [.sectionHeaders]) {
                 // Content is identified by the search state to prevent flickering
@@ -704,33 +698,7 @@ extension GameLibraryView {
         }
     }
     
-    // Track the last game and system counts to detect actual changes
-    @State private var lastGameCount = 0
-    @State private var lastSystemCount = 0
-    
-    /// Set up a timer to periodically regenerate the view ID to prevent flickering
-    private func setupDatabaseUpdateTimer() {
-        // Create a timer that updates the database ID every 2 seconds
-        // Much less frequent to reduce unnecessary redraws
-        Timer.publish(every: 2.0, on: .main, in: .common)
-            .autoconnect()
-            .sink { _ in
-                // Only update if the counts have actually changed
-                let currentGameCount = self.allGames.count
-                let currentSystemCount = self.allSystems.count
-                
-                if currentGameCount != self.lastGameCount || currentSystemCount != self.lastSystemCount {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        self.databaseUpdateID = UUID()
-                    }
-                    
-                    // Update the last counts
-                    self.lastGameCount = currentGameCount
-                    self.lastSystemCount = currentSystemCount
-                }
-            }
-            .store(in: &cancellables)
-    }
+
     
     /// Set up a timer to refresh the import queue status
     private func setupImportQueueRefreshTimer() {

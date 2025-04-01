@@ -40,7 +40,7 @@ struct DebugView: View {
     @State private var showConfirmResetAlert = false
     
     // Mock importer for testing
-    @StateObject private var mockImportStatusDriverData = MockImportStatusDriverData()
+    @StateObject private var mockImportStatusDriverData = AppState.shared.gameImporter ?? GameImporter.shared
     
     // Add these state variables at the top of the DebugView struct
     @State private var showSaveStatesMock = false
@@ -87,9 +87,9 @@ struct DebugView: View {
         }
         .sheet(isPresented: $showImportQueue) {
             ImportStatusView(
-                updatesController: mockImportStatusDriverData.pvgamelibraryUpdatesController,
-                gameImporter: mockImportStatusDriverData.gameImporter,
-                delegate: mockImportStatusDriverData) {
+                updatesController: appState.libraryUpdatesController!,
+                gameImporter: appState.gameImporter!,
+                delegate: nil) {
                     showImportQueue = false
                 }
         }
