@@ -139,77 +139,37 @@ struct RetroMenuView: View {
                     .padding(.bottom, 16)
                     .shadow(color: .retroPink.opacity(0.8), radius: 10, x: 0, y: 0)
                 
-                // Category selector
-                HStack(spacing: 16) {
-                    Button(action: { selectedCategory = .main }) {
-                        Text("MAIN")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(selectedCategory == .main ? .white : .white.opacity(0.6))
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(selectedCategory == .main ? Color.retroPurple.opacity(0.6) : Color.clear)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(selectedCategory == .main ? Color.retroPink : Color.white.opacity(0.3), lineWidth: 1)
-                            )
-                    }
-                    .buttonStyle(PlainButtonStyle())
+                // Retrowave scrollable category selector
+                ZStack {
+                    // Gradient background for scrollable area
+                    LinearGradient(
+                        gradient: Gradient(colors: [Color.clear, Color.retroPurple.opacity(0.2), Color.clear]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                    .frame(height: 50)
                     
-                    Button(action: { selectedCategory = .states }) {
-                        Text("STATES")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(selectedCategory == .states ? .white : .white.opacity(0.6))
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(selectedCategory == .states ? Color.retroPurple.opacity(0.6) : Color.clear)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(selectedCategory == .states ? Color.retroPink : Color.white.opacity(0.3), lineWidth: 1)
-                            )
+                    // Grid lines for retrowave effect
+                    HStack(spacing: 15) {
+                        ForEach(0..<10) { _ in
+                            Rectangle()
+                                .frame(width: 1)
+                                .foregroundColor(Color.retroPink.opacity(0.3))
+                        }
                     }
-                    .buttonStyle(PlainButtonStyle())
                     
-                    Button(action: { selectedCategory = .options }) {
-                        Text("OPTIONS")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(selectedCategory == .options ? .white : .white.opacity(0.6))
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(selectedCategory == .options ? Color.retroPurple.opacity(0.6) : Color.clear)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(selectedCategory == .options ? Color.retroPink : Color.white.opacity(0.3), lineWidth: 1)
-                            )
+                    // Scrollable buttons
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 20) {
+                            categoryButton(title: "MAIN", isSelected: selectedCategory == .main, action: { selectedCategory = .main })
+                            categoryButton(title: "STATES", isSelected: selectedCategory == .states, action: { selectedCategory = .states })
+                            categoryButton(title: "OPTIONS", isSelected: selectedCategory == .options, action: { selectedCategory = .options })
+                            categoryButton(title: "SKINS", isSelected: selectedCategory == .skins, action: { selectedCategory = .skins })
+                        }
+                        .padding(.horizontal, 20)
                     }
-                    .buttonStyle(PlainButtonStyle())
-                    
-                    Button(action: { selectedCategory = .skins }) {
-                        Text("SKINS")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(selectedCategory == .skins ? .white : .white.opacity(0.6))
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(selectedCategory == .skins ? Color.retroPurple.opacity(0.6) : Color.clear)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(selectedCategory == .skins ? Color.retroPink : Color.white.opacity(0.3), lineWidth: 1)
-                            )
-                    }
-                    .buttonStyle(PlainButtonStyle())
                 }
-                .padding(.horizontal)
+                .frame(height: 50)
                 .padding(.bottom, 16)
                 
                 // Menu content based on selected category
@@ -541,43 +501,132 @@ struct RetroMenuView: View {
         .preferredColorScheme(.dark)
     }
     
-    // Filter picker sheet view
+    // Filter picker sheet view with retrowave styling
     private var filterPickerView: some View {
-        NavigationView {
-            List {
-                // Standard filter options
-                ForEach(["None", "CRT", "LCD", "Scanlines", "Game Boy", "GBA"], id: \.self) { filter in
-                    Button(action: {
-                        selectedFilter = filter
-                        showingFilterPicker = false
-                    }) {
-                        HStack {
-                            Text(filter)
-                                .foregroundColor(.white)
-                            
-                            Spacer()
-                            
-                            if filter == selectedFilter {
-                                Image(systemName: "checkmark")
-                                    .foregroundColor(.retroPink)
-                            }
+        ZStack {
+            // Retrowave background
+            VStack(spacing: 0) {
+                // Gradient sky
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.black,
+                        Color(red: 0.1, green: 0.0, blue: 0.3),
+                        Color(red: 0.5, green: 0.0, blue: 0.5)
+                    ]),
+                    startPoint: .bottom,
+                    endPoint: .top
+                )
+                .frame(height: 200)
+                
+                // Grid floor
+                ZStack {
+                    // Horizontal grid lines
+                    VStack(spacing: 10) {
+                        ForEach(0..<10) { _ in
+                            Rectangle()
+                                .frame(height: 1)
+                                .foregroundColor(Color.retroPink.opacity(0.5))
+                        }
+                        Spacer()
+                    }
+                    
+                    // Vertical grid lines
+                    HStack(spacing: 20) {
+                        ForEach(0..<10) { _ in
+                            Rectangle()
+                                .frame(width: 1)
+                                .foregroundColor(Color.retroPink.opacity(0.5))
                         }
                     }
-                    .listRowBackground(Color.retroBlack.opacity(0.8))
                 }
+                .frame(maxHeight: .infinity)
+                .background(Color.black)
             }
-            .listStyle(InsetGroupedListStyle())
-            .background(Color.black)
-            .navigationTitle("Select Filter")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        showingFilterPicker = false
+            
+            // Content
+            VStack(spacing: 0) {
+                // Header
+                Text("SCREEN FILTERS")
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                    .padding(.top, 30)
+                    .padding(.bottom, 20)
+                    .shadow(color: Color.retroPink.opacity(0.8), radius: 10, x: 0, y: 0)
+                
+                // Filter options
+                VStack(spacing: 12) {
+                    ForEach(["None", "CRT", "LCD", "Scanlines", "Game Boy", "GBA"], id: \.self) { filter in
+                        Button(action: {
+                            selectedFilter = filter
+                            showingFilterPicker = false
+                        }) {
+                            HStack {
+                                Text(filter)
+                                    .font(.system(size: 18, weight: .bold))
+                                    .foregroundColor(filter == selectedFilter ? .white : .white.opacity(0.7))
+                                
+                                Spacer()
+                                
+                                if filter == selectedFilter {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .font(.system(size: 20))
+                                        .foregroundColor(.retroPink)
+                                }
+                            }
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 20)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(filter == selectedFilter ? 
+                                          Color.retroPurple.opacity(0.4) : 
+                                          Color.black.opacity(0.6))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .strokeBorder(
+                                                filter == selectedFilter ? 
+                                                    Color.retroPink : 
+                                                    Color.retroPink.opacity(0.3),
+                                                lineWidth: filter == selectedFilter ? 2 : 1
+                                            )
+                                    )
+                            )
+                        }
+                        .buttonStyle(PlainButtonStyle())
                     }
                 }
+                .padding(.horizontal, 16)
+                
+                Spacer()
+                
+                // Done button
+                Button(action: {
+                    showingFilterPicker = false
+                }) {
+                    Text("DONE")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(LinearGradient(
+                                    gradient: Gradient(colors: [Color.retroBlue, Color.retroPurple]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                ))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(Color.white.opacity(0.5), lineWidth: 1)
+                        )
+                        .shadow(color: Color.retroBlue.opacity(0.5), radius: 8, x: 0, y: 0)
+                }
+                .buttonStyle(PlainButtonStyle())
+                .padding(.horizontal, 16)
+                .padding(.bottom, 30)
             }
         }
+        .edgesIgnoringSafeArea(.all)
         .preferredColorScheme(.dark)
     }
     
@@ -709,6 +758,39 @@ struct RetroMenuView: View {
         default:
             break
         }
+    }
+    
+    // Helper function for category buttons in the header
+    private func categoryButton(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 4) {
+                Text(title)
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(isSelected ? .white : .white.opacity(0.6))
+                
+                // Indicator line
+                Rectangle()
+                    .frame(height: 2)
+                    .foregroundColor(isSelected ? .retroPink : .clear)
+            }
+            .frame(height: 40)
+            .padding(.horizontal, 8)
+            .background(
+                Group {
+                    if isSelected {
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.retroPurple.opacity(0.2), Color.retroPurple.opacity(0.5)]),
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    } else {
+                        Color.clear
+                    }
+                }
+            )
+            .cornerRadius(8)
+        }
+        .buttonStyle(PlainButtonStyle())
     }
     
     // Helper function to create menu buttons
