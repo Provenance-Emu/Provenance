@@ -10,6 +10,8 @@
 		B36DFC3E2CF1975B00BAE9BE /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B36DFC3D2CF1975B00BAE9BE /* PVUI */; };
 		B37444812D444B09002306B0 /* GBC-Sunrise.deltaskin in Resources */ = {isa = PBXBuildFile; fileRef = B374447F2D444B09002306B0 /* GBC-Sunrise.deltaskin */; };
 		B37444842D444B81002306B0 /* GBA-SharpX1.deltaskin in Resources */ = {isa = PBXBuildFile; fileRef = B37444822D444B81002306B0 /* GBA-SharpX1.deltaskin */; };
+		B3A8C35F2D9B6187005A032F /* PVCrabEmu in Frameworks */ = {isa = PBXBuildFile; productRef = B3A8C35E2D9B6187005A032F /* PVCrabEmu */; };
+		B3A8C3C12D9B6385005A032F /* PVCoremGBA in Frameworks */ = {isa = PBXBuildFile; productRef = B3A8C3C02D9B6385005A032F /* PVCoremGBA */; };
 		B3C427D72D9392F000E367CF /* PVCoreLoader in Frameworks */ = {isa = PBXBuildFile; productRef = B3C427D62D9392F000E367CF /* PVCoreLoader */; };
 		B3C42D562D9398A200E367CF /* PVCoreMednafen in Frameworks */ = {isa = PBXBuildFile; productRef = B3C42D552D9398A200E367CF /* PVCoreMednafen */; };
 		B3C42D592D93999900E367CF /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B3C42D582D93999900E367CF /* PVSupport */; };
@@ -90,7 +92,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3A8C35F2D9B6187005A032F /* PVCrabEmu in Frameworks */,
 				B3C42D592D93999900E367CF /* PVSupport in Frameworks */,
+				B3A8C3C12D9B6385005A032F /* PVCoremGBA in Frameworks */,
 				B3C427D72D9392F000E367CF /* PVCoreLoader in Frameworks */,
 				B3C42D562D9398A200E367CF /* PVCoreMednafen in Frameworks */,
 				B36DFC3E2CF1975B00BAE9BE /* PVUI in Frameworks */,
@@ -169,6 +173,8 @@
 				B3C427D62D9392F000E367CF /* PVCoreLoader */,
 				B3C42D552D9398A200E367CF /* PVCoreMednafen */,
 				B3C42D582D93999900E367CF /* PVSupport */,
+				B3A8C35E2D9B6187005A032F /* PVCrabEmu */,
+				B3A8C3C02D9B6385005A032F /* PVCoremGBA */,
 			);
 			productName = UITesting;
 			productReference = B36DFC0F2CF196D700BAE9BE /* UITesting.app */;
@@ -257,6 +263,8 @@
 				B3A213472D938DD70097C7E1 /* XCLocalSwiftPackageReference "../Cores/Mednafen" */,
 				B3C427D52D9392F000E367CF /* XCLocalSwiftPackageReference "../PVCoreLoader" */,
 				B3C42D572D93999900E367CF /* XCLocalSwiftPackageReference "../PVSupport" */,
+				B3A8C35D2D9B6110005A032F /* XCLocalSwiftPackageReference "../Cores/CrabEMU" */,
+				B3A8C3BF2D9B6385005A032F /* XCLocalSwiftPackageReference "../Cores/mGBA" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B36DFC102CF196D700BAE9BE /* Products */;
@@ -643,6 +651,14 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../Cores/Mednafen;
 		};
+		B3A8C35D2D9B6110005A032F /* XCLocalSwiftPackageReference "../Cores/CrabEMU" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Cores/CrabEMU;
+		};
+		B3A8C3BF2D9B6385005A032F /* XCLocalSwiftPackageReference "../Cores/mGBA" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Cores/mGBA;
+		};
 		B3C427D52D9392F000E367CF /* XCLocalSwiftPackageReference "../PVCoreLoader" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../PVCoreLoader;
@@ -657,6 +673,15 @@
 		B36DFC3D2CF1975B00BAE9BE /* PVUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVUI;
+		};
+		B3A8C35E2D9B6187005A032F /* PVCrabEmu */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3A8C35D2D9B6110005A032F /* XCLocalSwiftPackageReference "../Cores/CrabEMU" */;
+			productName = PVCrabEmu;
+		};
+		B3A8C3C02D9B6385005A032F /* PVCoremGBA */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoremGBA;
 		};
 		B3C427D62D9392F000E367CF /* PVCoreLoader */ = {
 			isa = XCSwiftPackageProductDependency;

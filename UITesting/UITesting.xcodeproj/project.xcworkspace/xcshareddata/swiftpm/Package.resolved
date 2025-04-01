@@ -1,5 +1,5 @@
 {
-  "originHash" : "c57cd23956482b31b49cde8a69ad901366fa9f69c20988fb483125b50c1d6bf7",
+  "originHash" : "e3181ac78f75354907d86b8e831eaa6e6107bef7d920cf6877590bf97256c0e6",
   "pins" : [
     {
       "identity" : "activityindicatorview",
@@ -152,15 +152,6 @@
       "state" : {
         "branch" : "1.2.5",
         "revision" : "ee2666a06aa1f6632d5060d1cf316520ed8aecbd"
-      }
-    },
-    {
-      "identity" : "reachability.swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ashleymills/Reachability.swift.git",
-      "state" : {
-        "revision" : "21d1dc412cfecbe6e34f1f4c4eb88d3f912654a6",
-        "version" : "5.2.4"
       }
     },
     {
@@ -348,8 +339,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ZipArchive/ZipArchive.git",
       "state" : {
-        "revision" : "38e0ce0598e06b034271f296a8e15b149c91aa19",
-        "version" : "2.4.3"
+        "branch" : "master",
+        "revision" : "168f9e2f19df89f7f1f479aa867960128a94bcf7"
       }
     },
     {
