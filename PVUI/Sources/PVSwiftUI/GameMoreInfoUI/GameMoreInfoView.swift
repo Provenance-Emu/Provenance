@@ -360,9 +360,21 @@ struct GameMoreInfoView: View {
         }
     }
 
+    // Animation states for retrowave effects
+    @State private var glowOpacity: Double = 0.7
+    @State private var scanlineOffset: CGFloat = 0
+    
     var body: some View {
-        ScrollView {
-            VStack(spacing: 20) {
+        ZStack {
+            // RetroWave background
+            RetroTheme.retroBackground
+            
+            // Grid overlay
+            RetroGrid()
+                .opacity(0.3)
+                
+            ScrollView {
+                VStack(spacing: 24) {
                 // Artwork section with direct binding to published properties
                 GameArtworkView(
                     frontArtwork: viewModel.frontArtwork,
@@ -373,13 +385,7 @@ struct GameMoreInfoView: View {
                 )
 
                 // Game information section
-                VStack(spacing: 8) {
-                    // Add instruction text at the top
-                    Text("Tap any field with a pencil icon to edit")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.bottom, 8)
+                gameInfoSection
 
                     LabelRowView(
                         label: "Name",
@@ -502,40 +508,25 @@ struct GameMoreInfoView: View {
                 // Game description section
                 if let description = viewModel.gameDescription,
                    !description.isEmpty {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Description")
-                            .font(.headline)
-
-                        ScrollView {
-                            Text(description)
-                                .font(.body)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        .frame(maxHeight: 200)
-                    }
-                    .padding()
+                    descriptionSection(description: description)
                 }
 
                 // Debug section
                 if let debugInfo = viewModel.debugDescription {
-                    #if !os(tvOS)
-                    DisclosureGroup(
-                        isExpanded: $viewModel.isDebugExpanded,
-                        content: {
-                            GameDebugInfoView(debugInfo: debugInfo)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical)
-                        },
-                        label: {
-                            Text("Debug Information")
-                                .font(.headline)
-                        }
-                    )
-                    .padding()
-                    #endif
+                    debugSection(debugInfo: debugInfo)
                 }
             }
             .padding(.bottom, 50)
+        }
+        .onAppear {
+            // Start retrowave animations
+            withAnimation(Animation.linear(duration: 20).repeatForever(autoreverses: false)) {
+                scanlineOffset = 1000
+            }
+            
+            withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
+                glowOpacity = 1.0
+            }
         }
         .alert(editingField?.title ?? "", isPresented: .init(
             get: { editingField != nil },
@@ -580,6 +571,335 @@ struct GameMoreInfoView: View {
         editingField = nil
     }
 
+    // MARK: - Component Views
+    
+    /// Game information section component
+    private var gameInfoSection: some View {
+        VStack(spacing: 16) {
+            // Add instruction text at the top with retrowave styling
+            Text("TAP ANY FIELD WITH A PENCIL ICON TO EDIT")
+                .font(.system(size: 12, weight: .bold))
+                .foregroundColor(RetroTheme.retroBlue)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.bottom, 8)
+                .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+
+            // Game info rows
+            LabelRowView(
+                label: "NAME",
+                value: viewModel.name,
+                onLongPress: { editField(.name, initialValue: viewModel.name) },
+                isEditable: true,
+                labelColor: RetroTheme.retroPink,
+                valueColor: .white,
+                backgroundColor: Color.black.opacity(0.7),
+                borderGradient: LinearGradient(
+                    gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+
+            LabelRowView(
+                label: "FILENAME",
+                value: viewModel.filename,
+                isEditable: false,
+                labelColor: RetroTheme.retroBlue,
+                valueColor: .white,
+                backgroundColor: Color.black.opacity(0.7),
+                borderGradient: LinearGradient(
+                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroDarkBlue]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+
+            LabelRowView(
+                label: "SYSTEM",
+                value: viewModel.system,
+                isEditable: false,
+                labelColor: RetroTheme.retroPurple,
+                valueColor: .white,
+                backgroundColor: Color.black.opacity(0.7),
+                borderGradient: LinearGradient(
+                    gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroBlue]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+
+            LabelRowView(
+                label: "DEVELOPER",
+                value: viewModel.developer,
+                onLongPress: { editField(.developer, initialValue: viewModel.developer) },
+                isEditable: true,
+                labelColor: RetroTheme.retroPink,
+                valueColor: .white,
+                backgroundColor: Color.black.opacity(0.7),
+                borderGradient: LinearGradient(
+                    gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+
+            LabelRowView(
+                label: "PUBLISH DATE",
+                value: viewModel.publishDate,
+                onLongPress: { editField(.publishDate, initialValue: viewModel.publishDate) },
+                isEditable: true,
+                labelColor: RetroTheme.retroBlue,
+                valueColor: .white,
+                backgroundColor: Color.black.opacity(0.7),
+                borderGradient: LinearGradient(
+                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+
+            LabelRowView(
+                label: "GENRES",
+                value: viewModel.genres,
+                onLongPress: { editField(.genres, initialValue: viewModel.genres) },
+                isEditable: true,
+                labelColor: RetroTheme.retroPurple,
+                valueColor: .white,
+                backgroundColor: Color.black.opacity(0.7),
+                borderGradient: LinearGradient(
+                    gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroPink]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+
+            LabelRowView(
+                label: "REGION",
+                value: viewModel.region.map { RegionLabel.format($0) } ?? "",
+                onLongPress: {
+                    editField(.region, initialValue: viewModel.region)
+                },
+                labelColor: RetroTheme.retroPink,
+                valueColor: .white,
+                backgroundColor: Color.black.opacity(0.7),
+                borderGradient: LinearGradient(
+                    gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroBlue]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+
+            if let timeSpent = viewModel.timeSpent {
+                LabelRowView(
+                    label: "TIME SPENT",
+                    value: formatPlayTime(timeSpent),
+                    isEditable: false,
+                    labelColor: RetroTheme.retroBlue,
+                    valueColor: .white,
+                    backgroundColor: Color.black.opacity(0.7),
+                    borderGradient: LinearGradient(
+                        gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+            }
+
+            // Star rating section with retrowave styling
+            ratingSection
+
+            if viewModel.plays != nil || viewModel.timeSpent != nil {
+                resetStatsButton
+            }
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.black.opacity(0.6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(
+                            LinearGradient(
+                                gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple, RetroTheme.retroBlue]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                        .blur(radius: 1)
+                )
+        )
+        .padding(.horizontal)
+    }
+    
+    /// Rating section component
+    private var ratingSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("RATING")
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(RetroTheme.retroPurple)
+                .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+
+            HStack {
+                StarRatingView(
+                    rating: max(0, viewModel.rating),
+                    onRatingChanged: { newRating in
+                        if !hasUnsavedRating {
+                            originalRating = viewModel.rating
+                        }
+                        hasUnsavedRating = true
+                        #if !os(tvOS)
+                        Haptics.impact(style: .light)
+                        #endif
+                        viewModel.rating = newRating
+                    },
+                    color: RetroTheme.retroPink
+                )
+
+                Spacer()
+
+                Text(viewModel.formattedRating)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            if hasUnsavedRating {
+                HStack {
+                    Button(action: {
+                        viewModel.rating = originalRating
+                        hasUnsavedRating = false
+                    }) {
+                        Text("Reset")
+                            .foregroundColor(.red)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(Color.red.opacity(0.7), lineWidth: 1)
+                            )
+                    }
+
+                    Spacer()
+
+                    Button(action: {
+                        // Rating is already updated in the viewModel
+                        hasUnsavedRating = false
+                    }) {
+                        Text("Save")
+                            .bold()
+                            .foregroundColor(RetroTheme.retroPink)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(RetroTheme.retroPink.opacity(0.7), lineWidth: 1)
+                            )
+                    }
+                }
+                .padding(.top, 8)
+            }
+        }
+        .padding(.vertical, 4)
+    }
+    
+    /// Reset stats button with retrowave styling
+    private var resetStatsButton: some View {
+        Button(action: {
+            viewModel.resetStats()
+        }) {
+            Text("RESET STATS")
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(RetroTheme.retroPink)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(LinearGradient(
+                            gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ), lineWidth: 1.5)
+                )
+                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
+        }
+        .padding(.top)
+    }
+    
+    /// Game description section component
+    private func descriptionSection(description: String) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("DESCRIPTION")
+                .font(.system(size: 16, weight: .bold))
+                .foregroundColor(RetroTheme.retroPurple)
+                .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+
+            ScrollView {
+                Text(description)
+                    .font(.body)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .frame(maxHeight: 200)
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.black.opacity(0.6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(
+                            LinearGradient(
+                                gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                        .blur(radius: 1)
+                )
+        )
+        .padding(.horizontal)
+    }
+    
+    /// Debug section component
+    private func debugSection(debugInfo: String) -> some View {
+        Group {
+            #if !os(tvOS)
+            DisclosureGroup(
+                isExpanded: $viewModel.isDebugExpanded,
+                content: {
+                    GameDebugInfoView(debugInfo: debugInfo)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical)
+                },
+                label: {
+                    Text("DEBUG INFORMATION")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(RetroTheme.retroBlue)
+                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                }
+            )
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.black.opacity(0.7))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroDarkBlue]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 1.5
+                            )
+                    )
+            )
+            .padding(.horizontal)
+            #endif
+        }
+    }
+    
     private func formatPlayTime(_ seconds: Int?) -> String {
         guard let seconds = seconds else { return "Never" }
         let hours = seconds / 3600
