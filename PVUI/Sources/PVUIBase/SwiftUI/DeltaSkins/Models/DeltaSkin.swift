@@ -733,6 +733,16 @@ public struct DeltaSkin: DeltaSkinProtocol {
 
         /// Frame for the game screen
         public let gameScreenFrame: CGRect?
+        
+        public init(assets: AssetRepresentation, mappingSize: CGSize = .zero, translucent: Bool? = nil, screens: [ScreenInfo]? = nil, items: [ItemRepresentation]? = nil, extendedEdges: UIEdgeInsets? = nil, gameScreenFrame: CGRect? = nil) {
+            self.assets = assets
+            self.mappingSize = mappingSize
+            self.translucent = translucent
+            self.screens = screens
+            self.items = items
+            self.extendedEdges = extendedEdges
+            self.gameScreenFrame = gameScreenFrame
+        }
     }
 
     public var jsonRepresentation: [String: Any] {

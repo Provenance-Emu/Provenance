@@ -38,8 +38,14 @@ public final class DeltaSkinPreferences: ObservableObject {
     /// Currently selected skin identifier for each system and orientation
     @Published public private(set) var selectedSkins: [SystemIdentifier: [SkinOrientation: String]] = [:]
     
+    /// Currently selected skin identifier for specific games
+    @Published public private(set) var gameSpecificSkins: [String: [SkinOrientation: String]] = [:]
+    
     /// UserDefaults key for storing skin preferences
     private let preferencesKey = "com.provenance.deltaskin.preferences.v2"
+    
+    /// UserDefaults key for storing game-specific skin preferences
+    private let gamePreferencesKey = "com.provenance.deltaskin.game.preferences.v1"
 
     private init() {
         loadPreferences()
@@ -52,6 +58,31 @@ public final class DeltaSkinPreferences: ObservableObject {
     /// - Returns: The selected skin identifier, or nil if none selected
     public func selectedSkinIdentifier(for system: SystemIdentifier, orientation: SkinOrientation = .portrait) -> String? {
         return selectedSkins[system]?[orientation]
+    }
+    
+    /// Get the selected skin identifier for a specific game
+    /// - Parameters:
+    ///   - gameId: The game's unique identifier
+    ///   - orientation: The orientation (portrait or landscape)
+    /// - Returns: The selected skin identifier, or nil if none selected
+    public func selectedSkinIdentifier(for gameId: String, orientation: SkinOrientation = .portrait) -> String? {
+        return gameSpecificSkins[gameId]?[orientation]
+    }
+    
+    /// Get the selected skin identifier for a game, falling back to system if not set
+    /// - Parameters:
+    ///   - gameId: The game's unique identifier
+    ///   - system: The system identifier (fallback)
+    ///   - orientation: The orientation (portrait or landscape)
+    /// - Returns: The selected skin identifier, or nil if none selected
+    public func effectiveSkinIdentifier(for gameId: String, system: SystemIdentifier, orientation: SkinOrientation = .portrait) -> String? {
+        // First check for game-specific preference
+        if let gameSkin = selectedSkinIdentifier(for: gameId, orientation: orientation) {
+            return gameSkin
+        }
+        
+        // Fall back to system preference
+        return selectedSkinIdentifier(for: system, orientation: orientation)
     }
     
     /// Get the selected skin identifier for a system (legacy method)
@@ -92,9 +123,38 @@ public final class DeltaSkinPreferences: ObservableObject {
     public func setSelectedSkin(_ skinIdentifier: String?, for system: SystemIdentifier) {
         setSelectedSkin(skinIdentifier, for: system, orientation: .portrait)
     }
+    
+    /// Set the selected skin for a specific game
+    /// - Parameters:
+    ///   - skinIdentifier: The skin identifier to select
+    ///   - gameId: The game's unique identifier
+    ///   - orientation: The orientation (portrait or landscape)
+    @MainActor
+    public func setSelectedSkin(_ skinIdentifier: String?, for gameId: String, orientation: SkinOrientation = .portrait) {
+        if let skinIdentifier = skinIdentifier {
+            if gameSpecificSkins[gameId] == nil {
+                gameSpecificSkins[gameId] = [:]
+            }
+            gameSpecificSkins[gameId]?[orientation] = skinIdentifier
+        } else {
+            gameSpecificSkins[gameId]?[orientation] = nil
+            
+            // If both orientations are nil, remove the game entry entirely
+            if gameSpecificSkins[gameId]?.isEmpty ?? true {
+                gameSpecificSkins.removeValue(forKey: gameId)
+            }
+        }
+        saveGamePreferences()
+    }
 
     /// Load preferences from UserDefaults
     private func loadPreferences() {
+        loadSystemPreferences()
+        loadGamePreferences()
+    }
+    
+    /// Load system-specific preferences
+    private func loadSystemPreferences() {
         // Try to load new format first
         if let data = UserDefaults.standard.data(forKey: preferencesKey),
            let preferences = try? JSONDecoder().decode([String: [String: String]].self, from: data) {
@@ -142,6 +202,32 @@ public final class DeltaSkinPreferences: ObservableObject {
 
         if let data = try? JSONEncoder().encode(stringDict) {
             UserDefaults.standard.set(data, forKey: preferencesKey)
+        }
+    }
+    
+    /// Load game-specific preferences
+    private func loadGamePreferences() {
+        if let data = UserDefaults.standard.data(forKey: gamePreferencesKey),
+           let preferences = try? JSONDecoder().decode([String: [String: String]].self, from: data) {
+            
+            // Convert string keys to SkinOrientation
+            gameSpecificSkins = preferences.mapValues { orientationDict in
+                orientationDict.compactMapKeys { key in
+                    SkinOrientation(rawValue: key)
+                }
+            }
+        }
+    }
+    
+    /// Save game-specific preferences to UserDefaults
+    private func saveGamePreferences() {
+        // Convert SkinOrientation keys to strings
+        let stringDict = gameSpecificSkins.mapValues { orientationDict in
+            orientationDict.compactMapKeys { $0.rawValue }
+        }
+
+        if let data = try? JSONEncoder().encode(stringDict) {
+            UserDefaults.standard.set(data, forKey: gamePreferencesKey)
         }
     }
 }

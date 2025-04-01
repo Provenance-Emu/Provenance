@@ -473,8 +473,10 @@
 				DEVELOPMENT_ASSET_PATHS = "\"UITesting/Preview Content\"";
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = UITesting/Info.plist;
+				INFOPLIST_KEY_NSDocumentsFolderUsageDescription = "To store game files";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -507,8 +509,10 @@
 				DEVELOPMENT_ASSET_PATHS = "\"UITesting/Preview Content\"";
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = UITesting/Info.plist;
+				INFOPLIST_KEY_NSDocumentsFolderUsageDescription = "To store game files";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

@@ -16,6 +16,13 @@ import PVPlists
 // MARK: - Default Controller
 extension EmulatorWithSkinView {
     
+    /// Create a default skin for a system
+    /// - Parameter systemId: The system identifier
+    /// - Returns: A default skin for the system
+    public static func defaultSkin(for systemId: SystemIdentifier) -> DeltaSkinProtocol {
+        return DefaultDeltaSkin(systemId: systemId)
+    }
+    
     /// Default controller skin as a fallback
     internal func defaultControllerSkin() -> some View {
         // Use a local state variable for the joystick toggle since we can't mutate self

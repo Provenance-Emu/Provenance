@@ -275,15 +275,6 @@ extension PVEmulatorViewController {
 
     // MARK: - Rotation Handling
     
-    /// Handle rotation properly using UIKit's standard view transition method
-    override public func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        // Log rotation for debugging
-        DLOG("View transitioning to size: \(size)")
-        
-        // Always call super first
-        super.viewWillTransition(to: size, with: coordinator)
-    }
-    
     /// Update all view frames to match current bounds - ensures proper z-order
     private func updateViewFramesForCurrentBounds() {
         let currentBounds = view.bounds

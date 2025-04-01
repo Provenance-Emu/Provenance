@@ -27,6 +27,19 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             return self.loadedSkins
         }
     }
+    
+    /// Get a skin by its identifier
+    /// - Parameter identifier: The unique identifier of the skin
+    /// - Returns: The skin if found, or nil if not found
+    public func skin(withIdentifier identifier: String) async throws -> DeltaSkinProtocol? {
+        try await queue.asyncResult {
+            // Ensure skins are loaded
+            try self.scanForSkins()
+            
+            // Find the skin with the matching identifier
+            return self.loadedSkins.first { $0.identifier == identifier }
+        }
+    }
 
     /// Load a skin from a file URL
     public func loadSkin(from url: URL) async throws -> DeltaSkinProtocol {

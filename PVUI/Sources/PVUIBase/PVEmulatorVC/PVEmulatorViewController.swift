@@ -69,6 +69,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     // Store cancellables for skin loading observation
     internal var skinLoadingCancellable: AnyCancellable?
     
+    // Store the current skin for rotation handling
+    internal var currentSkin: DeltaSkinProtocol?
+    
+    // Track current orientation
+    internal var currentOrientation: SkinOrientation = .portrait
+    
     // Keep track of whether we've positioned the GPU view
     internal static var hasPositionedGPUView = false
         
@@ -553,6 +559,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         super.viewWillDisappear(animated)
         destroyAutosaveTimer()
     }
+    
+    public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        
+        // Handle skin changes for orientation
+        handleOrientationChange(to: size, with: coordinator)
+    }
 
 #if os(iOS) && !targetEnvironment(simulator)
     // Check Controller Manager if it has a Controller connected and thus if Home Indicator should hide…
@@ -648,6 +661,160 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
 
 extension PVEmulatorViewController: GameplayDurationTrackerUtil {}
+
+// MARK: - Skin Management
+extension PVEmulatorViewController {
+    
+    /// Apply a skin to the emulator view
+    /// - Parameter skin: The skin to apply
+    public func applySkin(_ skin: DeltaSkinProtocol) async throws {
+        // Store the current skin for rotation handling
+        self.currentSkin = skin
+        
+        // Determine the current orientation
+        self.currentOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
+        
+        // Remove any existing skin view
+        skinContainerView?.removeFromSuperview()
+        
+        // Create a new skin container
+        let skinContainer = UIView()
+        skinContainer.translatesAutoresizingMaskIntoConstraints = false
+        view.insertSubview(skinContainer, at: 0) // Insert at the back
+        
+        // Set up constraints for the skin container
+        NSLayoutConstraint.activate([
+            skinContainer.topAnchor.constraint(equalTo: view.topAnchor),
+            skinContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            skinContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            skinContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+        
+        // Store reference to the skin container
+        self.skinContainerView = skinContainer
+        
+        // Create and add the skin view
+        let skinView = try await createSkinView(from: skin)
+        skinContainer.addSubview(skinView)
+        
+        // Ensure the skin view fills the container
+        skinView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            skinView.topAnchor.constraint(equalTo: skinContainer.topAnchor),
+            skinView.leadingAnchor.constraint(equalTo: skinContainer.leadingAnchor),
+            skinView.trailingAnchor.constraint(equalTo: skinContainer.trailingAnchor),
+            skinView.bottomAnchor.constraint(equalTo: skinContainer.bottomAnchor)
+        ])
+        
+        // Ensure the game screen is properly positioned
+        repositionGameScreen()
+    }
+    
+    /// Reset to the default skin
+    public func resetToDefaultSkin() async throws {
+        // Remove any existing skin view
+        skinContainerView?.removeFromSuperview()
+        skinContainerView = nil
+        currentSkin = nil
+        
+        // Reset the game screen position to its original position
+        if let originalFrame = originalCalculatedFrame {
+            gpuViewController.view.frame = originalFrame
+        }
+        
+        // Create and apply the default skin
+        if let systemId = game.system?.systemIdentifier {
+            let defaultSkin = EmulatorWithSkinView.defaultSkin(for: systemId)
+            try await applySkin(defaultSkin)
+        }
+    }
+    
+    /// Create a skin view from a DeltaSkin
+    private func createSkinView(from skin: DeltaSkinProtocol) async throws -> UIView {
+        // This is a simplified implementation - in a real implementation, you would
+        // need to properly create the skin view based on the skin's properties
+        let skinView = UIView()
+        skinView.backgroundColor = UIColor.clear
+        
+        // In a real implementation, you would create a proper skin view here
+        // For example, using a SwiftUI hosting controller with EmulatorWithSkinView
+        // or by creating a custom UIKit view based on the skin properties
+        
+        return skinView
+    }
+    
+    /// Reposition the game screen based on the current skin
+    private func repositionGameScreen() {
+        // This is a simplified implementation - in a real implementation, you would
+        // need to properly position the game screen based on the skin's properties
+        if let skin = currentSkin {
+            // Calculate the frame based on the skin's screen position
+            let screenBounds = view.bounds
+            let screenWidth = screenBounds.width
+            let screenHeight = screenBounds.height
+            
+            // Store the original frame if not already stored
+            if originalCalculatedFrame == nil {
+                originalCalculatedFrame = gpuViewController.view.frame
+            }
+            
+            // Calculate new frame based on skin properties
+            // This is a placeholder - actual implementation would use skin.screenPosition
+            let newFrame = CGRect(
+                x: screenWidth * 0.1,
+                y: screenHeight * 0.1,
+                width: screenWidth * 0.8,
+                height: screenHeight * 0.6
+            )
+            
+            // Apply the new frame
+            gpuViewController.view.frame = newFrame
+            currentTargetFrame = newFrame
+        }
+    }
+    
+    // Handle rotation and skin changes
+    func handleOrientationChange(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        // Determine new orientation
+        let newOrientation: SkinOrientation = size.width > size.height ? .landscape : .portrait
+        
+        // Only reload skin if orientation changed
+        if newOrientation != currentOrientation {
+            currentOrientation = newOrientation
+            
+            // Reload skin for new orientation
+            coordinator.animate { _ in
+                // Animation alongside rotation
+            } completion: { _ in
+                // After rotation completes, apply appropriate skin
+                Task {
+                    if let skin = self.currentSkin {
+                        try? await self.applySkin(skin)
+                    } else if let systemId = self.game.system?.systemIdentifier {
+                        // Get the game ID if available
+                        let gameId = self.game.md5 ?? self.game.crc
+                        
+                        // Try to load the appropriate skin for this orientation
+                        let skinIdentifier = DeltaSkinPreferences.shared.effectiveSkinIdentifier(
+                            for: gameId,
+                            system: systemId,
+                            orientation: newOrientation
+                        )
+                        
+                        if let skinIdentifier = skinIdentifier,
+                           let skin = try? await DeltaSkinManager.shared.skin(withIdentifier: skinIdentifier) {
+                            try? await self.applySkin(skin)
+                            return
+                        }
+                        
+                        // Fall back to default skin
+                        try? await self.resetToDefaultSkin()
+                    }
+                }
+            }
+        }
+    }
+}
 
 extension PVEmulatorViewController {
 

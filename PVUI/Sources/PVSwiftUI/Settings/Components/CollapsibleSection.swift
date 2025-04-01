@@ -9,6 +9,7 @@ import SwiftUI
 import PVSettings
 import Defaults
 import PVLogging
+import PVUIBase
 
 internal struct CollapsibleSection<Content: View>: View {
     let title: String
@@ -27,27 +28,71 @@ internal struct CollapsibleSection<Content: View>: View {
         Section {
             if isExpanded {
                 content
+                    .padding(.vertical, 8)
             }
         } header: {
             Button(action: {
-                withAnimation {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                     isExpanded.toggle()
-                    print("Setting isExpanded for '\(title)' to \(isExpanded)")
-                    print("Before - collapsed sections: \(collapsedSections)")
+                    VLOG("Setting isExpanded for '\(title)' to \(isExpanded)")
                     if isExpanded {
                         collapsedSections.remove(title)
                     } else {
                         collapsedSections.insert(title)
                     }
-                    print("After - collapsed sections: \(collapsedSections)")
                 }
             }) {
                 HStack {
-                    Text(title)
+                    // Retrowave styled section header
+                    Text(title.uppercased())
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .shadow(color: .retroPink.opacity(0.5), radius: 2, x: 0, y: 0)
+                    
                     Spacer()
-                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .foregroundColor(.accentColor)
+                    
+                    // Animated chevron with glow effect
+                    ZStack {
+                        Image(systemName: "hexagon.fill")
+                            .foregroundColor(.black.opacity(0.7))
+                            .font(.system(size: 24))
+                        
+                        Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                            .foregroundStyle(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.retroBlue, .retroPink]),
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            )
+                            .font(.system(size: 12, weight: .bold))
+                            .shadow(color: .retroBlue.opacity(0.8), radius: 3, x: 0, y: 0)
+                    }
+                    .rotationEffect(Angle(degrees: isExpanded ? 0 : 180))
                 }
+                .padding(.vertical, 8)
+                .padding(.horizontal, 4)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.black.opacity(0.6))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .strokeBorder(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [.retroPink.opacity(0.7), .retroBlue.opacity(0.7)]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    ),
+                                    lineWidth: 1.5
+                                )
+                        )
+                )
             }
         }
     }

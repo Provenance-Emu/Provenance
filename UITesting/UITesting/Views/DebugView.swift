@@ -635,7 +635,7 @@ struct RetroSectionView<Content: View>: View {
                 Color.retroBlack.opacity(0.7)
                 
                 // Grid overlay
-                RetroGrid(lineSpacing: 15, lineColor: .white.opacity(0.07))
+                RetroGrid(lineSpacing: 15, lineColor: Color.white.opacity(0.07))
             }
         )
         .cornerRadius(12)

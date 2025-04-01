@@ -18,6 +18,61 @@ import PVFeatureFlags
 import Defaults
 import AudioToolbox
 import MarkdownView
+
+// Retrowave color extensions
+extension Color {
+    static let retroPink = Color(red: 0.99, green: 0.11, blue: 0.55)
+    static let retroPurple = Color(red: 0.53, green: 0.11, blue: 0.91)
+    static let retroBlue = Color(red: 0.0, green: 0.75, blue: 0.95)
+    static let retroDarkBlue = Color(red: 0.05, green: 0.05, blue: 0.2)
+    static let retroBlack = Color(red: 0.05, green: 0.0, blue: 0.1)
+}
+
+// RetroGrid creates a grid background for retrowave aesthetic
+struct RetroGrid: View {
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                // Background gradient
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.black,
+                        Color(red: 0.1, green: 0.0, blue: 0.2),
+                        Color(red: 0.2, green: 0.0, blue: 0.3)
+                    ]),
+                    startPoint: .bottom,
+                    endPoint: .top
+                )
+                
+                // Horizontal grid lines
+                VStack(spacing: 20) {
+                    ForEach(0..<Int(geometry.size.height / 20) + 1, id: \.self) { _ in
+                        Rectangle()
+                            .fill(LinearGradient(
+                                gradient: Gradient(colors: [.clear, .retroPink.opacity(0.3), .clear]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ))
+                            .frame(height: 1)
+                    }
+                }
+                
+                // Vertical grid lines
+                HStack(spacing: 20) {
+                    ForEach(0..<Int(geometry.size.width / 20) + 1, id: \.self) { _ in
+                        Rectangle()
+                            .fill(LinearGradient(
+                                gradient: Gradient(colors: [.clear, .retroPink.opacity(0.2), .clear]),
+                                startPoint: .top,
+                                endPoint: .bottom
+                            ))
+                            .frame(width: 1)
+                    }
+                }
+            }
+        }
+    }
+}
 #if os(tvOS)
 import GameController
 #endif
@@ -51,112 +106,256 @@ public struct PVSettingsView: View {
 
     public var body: some View {
         NavigationView {
-            List {
-                CollapsibleSection(title: "App") {
-                    AppSection(viewModel: viewModel)
-                        .environmentObject(viewModel)
-                }
-
-                CollapsibleSection(title: "Core Options") {
-                    CoreOptionsSection()
-                }
-
-                CollapsibleSection(title: "Saves") {
-                    SavesSection()
-                }
-
-                CollapsibleSection(title: "Audio") {
-                    AudioSection()
-                }
-
-                CollapsibleSection(title: "Video") {
-                    VideoSection()
-                }
-
-                CollapsibleSection(title: "Controller") {
-                    ControllerSection()
-                }
-
-                CollapsibleSection(title: "Library") {
-                    LibrarySection(viewModel: viewModel)
-                        .environmentObject(viewModel)
-                }
-
-                CollapsibleSection(title: "Library Management") {
-                    LibrarySection2(viewModel: viewModel)
-                        .environmentObject(viewModel)
-                }
-
-                CollapsibleSection(title: "Delta Skins") {
-                    DeltaSkinsSection()
-                }
+            ZStack {
+                // Retrowave background
+                Color.black.edgesIgnoringSafeArea(.all)
                 
-                CollapsibleSection(title: "Advanced") {
-                    AdvancedSection()
-                }
-
-                #if !os(tvOS)
-                CollapsibleSection(title: "Social Links") {
-                    SocialLinksSection()
-                }
-
-                CollapsibleSection(title: "Documentation") {
-                    DocumentationSection()
-                }
-                #endif
-
-                CollapsibleSection(title: "Build") {
-                    BuildSection(viewModel: viewModel)
-                        .environmentObject(viewModel)
-                }
-
-                CollapsibleSection(title: "Extra Info") {
-                    ExtraInfoSection()
+                // Grid background
+                RetroGrid()
+                    .edgesIgnoringSafeArea(.all)
+                    .opacity(0.3)
+                
+                // Main content
+                ScrollView {
+                    VStack(spacing: 16) {
+                        // Title with retrowave styling
+                        Text("SETTINGS")
+                            .font(.system(size: 32, weight: .bold, design: .rounded))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .padding(.top, 20)
+                            .padding(.bottom, 10)
+                            .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
+                        
+                        // Sections
+                        VStack(spacing: 16) {
+                            CollapsibleSection(title: "App") {
+                                AppSection(viewModel: viewModel)
+                                    .environmentObject(viewModel)
+                            }
+            
+                            CollapsibleSection(title: "Core Options") {
+                                CoreOptionsSection()
+                            }
+            
+                            CollapsibleSection(title: "Saves") {
+                                SavesSection()
+                            }
+            
+                            CollapsibleSection(title: "Audio") {
+                                AudioSection()
+                            }
+            
+                            CollapsibleSection(title: "Video") {
+                                VideoSection()
+                            }
+            
+                            CollapsibleSection(title: "Controller") {
+                                ControllerSection()
+                            }
+            
+                            CollapsibleSection(title: "Library") {
+                                LibrarySection(viewModel: viewModel)
+                                    .environmentObject(viewModel)
+                            }
+            
+                            CollapsibleSection(title: "Library Management") {
+                                LibrarySection2(viewModel: viewModel)
+                                    .environmentObject(viewModel)
+                            }
+            
+                            CollapsibleSection(title: "Delta Skins") {
+                                DeltaSkinsSection()
+                            }
+                            
+                            CollapsibleSection(title: "Advanced") {
+                                AdvancedSection()
+                            }
+            
+                            #if !os(tvOS)
+                            CollapsibleSection(title: "Social Links") {
+                                SocialLinksSection()
+                            }
+            
+                            CollapsibleSection(title: "Documentation") {
+                                DocumentationSection()
+                            }
+                            #endif
+            
+                            CollapsibleSection(title: "Build") {
+                                BuildSection(viewModel: viewModel)
+                                    .environmentObject(viewModel)
+                            }
+            
+                            CollapsibleSection(title: "Extra Info") {
+                                ExtraInfoSection()
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                    .padding(.bottom, 20)
                 }
             }
-            .listStyle(GroupedListStyle())
-            .navigationTitle("Settings")
-            #if !os(tvOS)
-            .navigationBarItems(
-                leading: Button("Done") { dismissAction() },  // Use dismissAction here
-                trailing: Button("Help") { viewModel.showHelp() }
+            .navigationBarHidden(true) // Hide default navigation bar
+            .overlay(
+                // Custom navigation bar
+                VStack {
+                    HStack {
+                        // Done button with retrowave styling
+                        Button(action: { dismissAction() }) {
+                            Text("DONE")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color.black.opacity(0.6))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .strokeBorder(
+                                                    LinearGradient(
+                                                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                                        startPoint: .leading,
+                                                        endPoint: .trailing
+                                                    ),
+                                                    lineWidth: 1.5
+                                                )
+                                        )
+                                )
+                        }
+                        
+                        Spacer()
+                        
+                        // Help button with retrowave styling
+                        Button(action: { viewModel.showHelp() }) {
+                            Text("HELP")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color.black.opacity(0.6))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .strokeBorder(
+                                                    LinearGradient(
+                                                        gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                                                        startPoint: .leading,
+                                                        endPoint: .trailing
+                                                    ),
+                                                    lineWidth: 1.5
+                                                )
+                                        )
+                                )
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 10)
+                    
+                    Spacer()
+                }
             )
-            #endif
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
-/// Row View for Settings
+/// Row View for Settings with retrowave styling
 struct SettingsRow: View {
     let title: String
     var subtitle: String? = nil
     var value: String? = nil
     var icon: SettingsIcon? = nil
-
+    
+    @State private var isHovered = false
+    
     var body: some View {
-        HStack {
+        HStack(spacing: 12) {
+            // Icon with retrowave styling
             if let icon = icon {
-                icon.image
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 22, height: 22)
-                    .foregroundColor(.accentColor)
+                ZStack {
+                    Circle()
+                        .fill(Color.black.opacity(0.6))
+                        .frame(width: 36, height: 36)
+                        .overlay(
+                            Circle()
+                                .strokeBorder(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    lineWidth: 1.5
+                                )
+                        )
+                        .shadow(color: .retroPink.opacity(isHovered ? 0.5 : 0.2), radius: 5)
+                    
+                    icon.image
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 18, height: 18)
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                }
             }
-
-            VStack(alignment: .leading) {
+            
+            // Text content with retrowave styling
+            VStack(alignment: .leading, spacing: 4) {
                 Text(title)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.white)
+                
                 if let subtitle = subtitle {
                     Text(subtitle)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(Color.gray.opacity(0.8))
+                        .lineLimit(2)
                 }
             }
-
+            
+            Spacer()
+            
+            // Value with retrowave styling
             if let value = value {
-                Spacer()
                 Text(value)
-                    .foregroundColor(.secondary)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(Color.black.opacity(0.4))
+                    )
+            }
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 4)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.black.opacity(0.3))
+                .opacity(isHovered ? 1.0 : 0.0)
+        )
+        .onHover { hovering in
+            withAnimation(.easeInOut(duration: 0.2)) {
+                isHovered = hovering
             }
         }
     }

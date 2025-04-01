@@ -370,6 +370,8 @@ struct RetroMenuView: View {
     @State private var availableSkins: [String] = ["Default"]
     @State private var showingSkinPicker = false
     @State private var showingFilterPicker = false
+    @State private var skinScope: SkinScope = .session
+    @State private var currentOrientation: SkinOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
     
     private var skinsMenuButtons: some View {
         VStack(spacing: 12) {
@@ -407,6 +409,21 @@ struct RetroMenuView: View {
                 .sheet(isPresented: $showingSkinPicker) {
                     skinPickerView
                 }
+                
+                // Skin scope selector
+                Picker("Scope", selection: $skinScope) {
+                    ForEach(SkinScope.allCases) { scope in
+                        Text(scope.rawValue).tag(scope)
+                    }
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .padding(.top, 8)
+                
+                // Scope description
+                Text(skinScope.description)
+                    .font(.system(size: 12))
+                    .foregroundColor(.gray)
+                    .padding(.top, 4)
             }
             
             // Screen filter selection
@@ -577,14 +594,14 @@ struct RetroMenuView: View {
                             .padding(.horizontal, 20)
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .fill(filter == selectedFilter ? 
-                                          Color.retroPurple.opacity(0.4) : 
-                                          Color.black.opacity(0.6))
+                                    .fill(filter == selectedFilter ?
+                                          Color.retroPurple.opacity(0.4) :
+                                            Color.black.opacity(0.6))
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 8)
                                             .strokeBorder(
-                                                filter == selectedFilter ? 
-                                                    Color.retroPink : 
+                                                filter == selectedFilter ?
+                                                Color.retroPink :
                                                     Color.retroPink.opacity(0.3),
                                                 lineWidth: filter == selectedFilter ? 2 : 1
                                             )
@@ -666,9 +683,34 @@ struct RetroMenuView: View {
         }
     }
     
+    /// Skin scope for preferences
+    enum SkinScope: String, CaseIterable, Identifiable {
+        case session = "Session"
+        case game = "Game"
+        case system = "System"
+        
+        var id: String { rawValue }
+        
+        var description: String {
+            switch self {
+            case .session: return "Apply for this session only"
+            case .game: return "Save as default for this game"
+            case .system: return "Save as default for all games on this system"
+            }
+        }
+    }
+    
     // Apply the selected skin and filter changes
     private func applySkinAndFilterChanges() async {
-        guard let systemId = emulatorVC.game.system?.systemIdentifier else { return }
+        guard let systemId = emulatorVC.game.system?.systemIdentifier else {
+            ELOG("No systemId found")
+            return
+        }
+        
+        let gameId = emulatorVC.game.md5 ?? emulatorVC.game.crc
+        
+        // Get current device orientation
+        let orientation = UIDevice.current.orientation.isLandscape ? SkinOrientation.landscape : .portrait
         
         // Apply skin change
         if selectedSkin != "Default" {
@@ -676,27 +718,87 @@ struct RetroMenuView: View {
                 // Find the selected skin
                 let skins = try await DeltaSkinManager.shared.skins(for: systemId)
                 if let skin = skins.first(where: { $0.name == selectedSkin }) {
-                    // Apply the skin by recreating the skin view
-                    // This is a simplified approach - in a real implementation, you would
-                    // need to properly handle the skin application through the emulator view controller
+                    // Apply the skin based on selected scope
                     Task { @MainActor in
-                        // Store the selected skin in preferences
-                        DeltaSkinPreferences.shared.setSelectedSkin(skin.identifier, for: systemId)
-                        
-                        // Notify the emulator to refresh its skin
-                        NotificationCenter.default.post(
-                            name: NSNotification.Name("RefreshDeltaSkin"),
-                            object: nil,
-                            userInfo: ["systemId": systemId.rawValue]
-                        )
+                        switch skinScope {
+                        case .session:
+                            // Just apply for this session without saving to preferences
+                            applySkinToEmulator(skin: skin, systemId: systemId)
+                            
+                        case .game:
+                            // Save as game-specific preference
+                            DeltaSkinPreferences.shared.setSelectedSkin(skin.identifier, for: gameId, orientation: orientation)
+                            applySkinToEmulator(skin: skin, systemId: systemId)
+                            
+                        case .system:
+                            // Save as system-wide preference
+                            DeltaSkinPreferences.shared.setSelectedSkin(skin.identifier, for: systemId, orientation: orientation)
+                            applySkinToEmulator(skin: skin, systemId: systemId)
+                        }
                     }
                 }
             } catch {
                 print("Error applying skin: \(error)")
             }
         } else {
-            // Apply default skin (or remove custom skin)
-            // This would need implementation in DeltaSkinManager
+            // Apply default skin (remove custom skin)
+            Task { @MainActor in
+                switch skinScope {
+                case .session:
+                    // Just reset for this session
+                    resetSkinToDefault(systemId: systemId)
+                    
+                case .game:
+                    // Remove game-specific preference
+                    DeltaSkinPreferences.shared.setSelectedSkin(nil, for: gameId, orientation: orientation)
+                    resetSkinToDefault(systemId: systemId)
+                    
+                case .system:
+                    // Remove system-wide preference
+                    DeltaSkinPreferences.shared.setSelectedSkin(nil, for: systemId, orientation: orientation)
+                    resetSkinToDefault(systemId: systemId)
+                }
+            }
+        }
+    }
+    
+    // Helper to apply skin to emulator
+    private func applySkinToEmulator(skin: DeltaSkinProtocol, systemId: SystemIdentifier) {
+        // Notify the emulator to refresh its skin
+        NotificationCenter.default.post(
+            name: NSNotification.Name("RefreshDeltaSkin"),
+            object: nil,
+            userInfo: [
+                "systemId": systemId.rawValue,
+                "skinIdentifier": skin.identifier
+            ]
+        )
+        
+        // Directly apply skin to the current view controller if possible
+        if let emulatorVC = self.emulatorVC as? PVEmulatorViewController {
+            Task {
+                try? await emulatorVC.applySkin(skin)
+            }
+        }
+    }
+    
+    // Helper to reset skin to default
+    private func resetSkinToDefault(systemId: SystemIdentifier) {
+        // Notify the emulator to refresh its skin
+        NotificationCenter.default.post(
+            name: NSNotification.Name("RefreshDeltaSkin"),
+            object: nil,
+            userInfo: [
+                "systemId": systemId.rawValue,
+                "reset": true
+            ]
+        )
+        
+        // Directly reset the skin if possible
+        if let emulatorVC = self.emulatorVC as? PVEmulatorViewController {
+            Task {
+                try? await emulatorVC.resetToDefaultSkin()
+            }
         }
         
         // Apply filter change
@@ -828,24 +930,24 @@ struct RetroMenuView: View {
     }
     
     // Helper method to create a FilterInfo object from parameters
-   private func createFilterInfo(name: String, parameters: [String: Any]) -> DeltaSkin.FilterInfo {
-       // Convert the parameters to the format expected by DeltaSkinScreenFilter
-       var filterParameters: [String: FilterParameter] = [:]
-       
-       for (key, value) in parameters {
-           if let numberValue = value as? Float {
-               filterParameters[key] = .number(numberValue)
-           } else if let numberValue = value as? Double {
-               filterParameters[key] = .number(Float(numberValue))
-           } else if let numberValue = value as? Int {
-               filterParameters[key] = .number(Float(numberValue))
-           } else if let colorValue = value as? CIColor {
-               filterParameters[key] = .color(r: Float(colorValue.red), g: Float(colorValue.green), b: Float(colorValue.blue))
-           } else if let vectorValue = value as? CGPoint {
-               filterParameters[key] = .vector(x: Float(vectorValue.x), y: Float(vectorValue.y))
-           }
-       }
-       
-       return DeltaSkin.FilterInfo(name: name, parameters: filterParameters)
-   }
+    private func createFilterInfo(name: String, parameters: [String: Any]) -> DeltaSkin.FilterInfo {
+        // Convert the parameters to the format expected by DeltaSkinScreenFilter
+        var filterParameters: [String: FilterParameter] = [:]
+        
+        for (key, value) in parameters {
+            if let numberValue = value as? Float {
+                filterParameters[key] = .number(numberValue)
+            } else if let numberValue = value as? Double {
+                filterParameters[key] = .number(Float(numberValue))
+            } else if let numberValue = value as? Int {
+                filterParameters[key] = .number(Float(numberValue))
+            } else if let colorValue = value as? CIColor {
+                filterParameters[key] = .color(r: Float(colorValue.red), g: Float(colorValue.green), b: Float(colorValue.blue))
+            } else if let vectorValue = value as? CGPoint {
+                filterParameters[key] = .vector(x: Float(vectorValue.x), y: Float(vectorValue.y))
+            }
+        }
+        
+        return DeltaSkin.FilterInfo(name: name, parameters: filterParameters)
+    }
 }
