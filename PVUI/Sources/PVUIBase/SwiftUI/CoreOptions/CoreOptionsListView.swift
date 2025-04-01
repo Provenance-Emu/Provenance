@@ -20,7 +20,7 @@ public  struct SystemDisplayData: Identifiable {
     
     public init(system: PVSystem) {
         self.id = system.identifier
-        self.name = system.name
+        self.name = system.shortName
         self.iconName = system.iconName
     }
     
@@ -84,7 +84,7 @@ public struct CoreListItem: Identifiable {
                 DLOG("CoreOptions: Hiding options for system \(system.identifier) as it's app store disabled")
                 continue
             }
-            systemsData.append(SystemDisplayData(id: system.identifier, name: system.name, iconName: system.iconName))
+            systemsData.append(SystemDisplayData(id: system.identifier, name: system.shortName, iconName: system.iconName))
         }
 
         self.systems = systemsData
@@ -106,59 +106,119 @@ public struct CoreListItem: Identifiable {
 // MARK: - RetroWave Core List Item View
 
 /// A RetroWave-styled view for a core list item
-struct RetroWaveCoreListItemView: View {
+public struct RetroWaveCoreListItemView: View {
     let item: CoreListItem
+    @State private var isExpanded = false
     
-    var body: some View {
+    // Calculate the number of columns based on screen width
+    private var columns: [GridItem] {
+        let screenWidth = UIScreen.main.bounds.width
+        let itemWidth: CGFloat = 70 // Width of each system icon + name
+        let maxColumns = Int(screenWidth / itemWidth) - 1 // Leave space for padding
+        let numColumns = min(4, maxColumns) // Cap at 4 columns max
+        
+        return Array(repeating: GridItem(.flexible(), spacing: 8), count: numColumns)
+    }
+    
+    public var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Core name and option count
+            // Core name and option count with glow effect
             HStack {
                 Text(item.name)
-                    .font(.headline)
+                    .font(.system(size: 18, weight: .bold))
                     .foregroundColor(.white)
+                    .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 2, x: 0, y: 0)
                 
                 Spacer()
                 
                 Text("\(item.optionCount) options")
-                    .font(.subheadline)
+                    .font(.system(size: 14, weight: .medium))
                     .foregroundColor(RetroTheme.retroBlue)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(
+                        Capsule()
+                            .fill(Color.black.opacity(0.6))
+                            .overlay(
+                                Capsule()
+                                    .strokeBorder(RetroTheme.retroBlue.opacity(0.7), lineWidth: 1)
+                            )
+                    )
             }
             
             // Systems supported
             if !item.systems.isEmpty {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Supported Systems:")
-                        .font(.caption)
-                        .foregroundColor(RetroTheme.retroPurple)
-                    
-                    // System icons
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 10) {
-                            ForEach(item.systems) { system in
-                                VStack {
-                                    Image(system.iconName)
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 32, height: 32)
-                                    
-                                    Text(system.name)
-                                        .font(.caption2)
-                                        .foregroundColor(.white.opacity(0.7))
-                                        .lineLimit(1)
+                VStack(alignment: .leading, spacing: 8) {
+                    // Header with expand/collapse button
+                    HStack {
+                        Text("Supported Systems:")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(RetroTheme.retroPurple)
+                        
+                        Spacer()
+                        
+                        if item.systems.count > 4 {
+                            Button(action: {
+                                withAnimation(.spring()) {
+                                    isExpanded.toggle()
                                 }
-                                .frame(width: 60)
+                            }) {
+                                HStack(spacing: 4) {
+                                    Text(isExpanded ? "Collapse" : "Show All")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(RetroTheme.retroPink)
+                                    
+                                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                                        .font(.system(size: 10))
+                                        .foregroundColor(RetroTheme.retroPink)
+                                }
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                    }
+                    
+                    // System icons in a grid layout
+                    let displaySystems = isExpanded ? item.systems : Array(item.systems.prefix(min(8, item.systems.count)))
+                    
+                    LazyVGrid(columns: columns, spacing: 12) {
+                        ForEach(displaySystems) { system in
+                            VStack(spacing: 4) {
+                                // System icon with glow effect
+                                Image(system.iconName, bundle: PVUIBase.BundleLoader.myBundle)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 36, height: 36)
+                                    .shadow(color: RetroTheme.retroBlue.opacity(0.5), radius: 4)
+                                
+                                // System name with truncation
+                                Text(system.name)
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.white.opacity(0.8))
+                                    .lineLimit(1)
+                                    .truncationMode(.tail)
+                                    .frame(width: 60)
+                                    .multilineTextAlignment(.center)
                             }
                         }
                     }
+                    
+                    // Show count of additional systems if not expanded
+                    if !isExpanded && item.systems.count > 8 {
+                        Text("+ \(item.systems.count - 8) more systems")
+                            .font(.system(size: 12))
+                            .foregroundColor(RetroTheme.retroPurple.opacity(0.8))
+                            .padding(.top, 4)
+                    }
                 }
+                .padding(.vertical, 4)
             }
         }
         .padding()
         .background(
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: 12)
                 .fill(Color.black.opacity(0.6))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: 12)
                         .strokeBorder(
                             LinearGradient(
                                 gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple]),

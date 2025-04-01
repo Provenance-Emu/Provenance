@@ -506,13 +506,21 @@ private struct SavesSection: View {
 #if !os(tvOS)
             HStack {
                 Text("Auto-save Time")
-                Slider(value: $timedAutoSaveInterval, in: minutes(1)...minutes(30), step: minutes(1)) {
-                    Text("Auto-save Time")
-                } minimumValueLabel: {
-                    Image(systemName: "hare")
-                } maximumValueLabel: {
-                    Image(systemName: "tortoise")
-                }
+                RetroWaveSlider(value: $timedAutoSaveInterval, 
+                               in: minutes(1)...minutes(30), 
+                               step: minutes(1),
+                               onEditingChanged: { _ in },
+                               label: { Text("Auto-save Time") },
+                               minimumValueLabel: { Text("1m") },
+                               maximumValueLabel: { Text("30m") },
+                               leadingIcon: { 
+                                   Image(systemName: "hare")
+                                       .foregroundColor(RetroTheme.retroBlue)
+                               },
+                               trailingIcon: { 
+                                   Image(systemName: "tortoise")
+                                       .foregroundColor(RetroTheme.retroBlue)
+                               })
             }
             Text(timedAutosaveLabelText)
                 .font(.subheadline)
@@ -662,13 +670,21 @@ private struct AudioSection: View {
 //            }
             HStack {
                 Text("Volume")
-                Slider(value: $volume, in: 0...1, step: 0.1) {
-                    Text("Volume Level")
-                } minimumValueLabel: {
-                    Image(systemName: "speaker")
-                } maximumValueLabel: {
-                    Image(systemName: "speaker.wave.3")
-                }
+                RetroWaveSlider<Float>(value: $volume, 
+                                     in: 0...1, 
+                                     step: 0.1,
+                                     onEditingChanged: { _ in },
+                                     label: { Text("Volume Level") },
+                                     minimumValueLabel: { Text("") },
+                                     maximumValueLabel: { Text("") },
+                                     leadingIcon: { 
+                                         Image(systemName: "speaker")
+                                             .foregroundColor(RetroTheme.retroBlue)
+                                     },
+                                     trailingIcon: { 
+                                         Image(systemName: "speaker.wave.3")
+                                             .foregroundColor(RetroTheme.retroBlue)
+                                     })
             }
             Text("System-wide volume level for games.")
                 .font(.caption)
@@ -806,13 +822,21 @@ private struct OnScreenControllerSection: View {
         Section(header: Text("On-Screen Controller")) {
             HStack {
                 Text("Controller Opacity")
-                Slider(value: $controllerOpacity, in: 0...1.0, step: 0.05) {
-                    Text("Transparency amount of on-screen controls overlays.")
-                } minimumValueLabel: {
-                    Image(systemName: "sun.min")
-                } maximumValueLabel: {
-                    Image(systemName: "sun.max")
-                }
+                RetroWaveSlider<Double>(value: $controllerOpacity, 
+                                     in: 0...1.0, 
+                                     step: 0.05,
+                                     onEditingChanged: { _ in },
+                                     label: { Text("Transparency amount of on-screen controls overlays.") },
+                                     minimumValueLabel: { Text("") },
+                                     maximumValueLabel: { Text("") },
+                                     leadingIcon: { 
+                                         Image(systemName: "sun.min")
+                                             .foregroundColor(RetroTheme.retroBlue)
+                                     },
+                                     trailingIcon: { 
+                                         Image(systemName: "sun.max")
+                                             .foregroundColor(RetroTheme.retroBlue)
+                                     })
             }
             ThemedToggle(isOn: $buttonTints) {
                 SettingsRow(title: "Button Colors",
