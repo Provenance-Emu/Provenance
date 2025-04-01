@@ -119,87 +119,109 @@ struct RetroMenuView: View {
     
     @State private var selectedCategory: MenuCategory = .main
     
+    // Background with retrowave styling
+    var background: some View {
+        Color.clear
+            .modifier(RetrowaveBackgroundModifier())
+            .ignoresSafeArea()
+            .onTapGesture {
+                dismissAction()
+            }
+    }
+
+    // Menu content based on selected category
+    var menuContent: some View {
+        ScrollView {
+            VStack(spacing: 12) {
+                switch selectedCategory {
+                case .main:
+                    mainMenuButtons
+                case .states:
+                    stateMenuButtons
+                case .options:
+                    optionsMenuButtons
+                case .skins:
+                    skinsMenuButtons
+                }
+            }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 24)
+        }
+        .frame(maxWidth: 320)
+    }
+    
+    // Retrowave scrollable category selector
+    var catagories: some View {
+        ZStack {
+            // Gradient background for scrollable area
+            LinearGradient(
+                gradient: Gradient(colors: [Color.clear, Color.retroPurple.opacity(0.2), Color.clear]),
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+            .frame(height: 50)
+            
+            // Grid lines for retrowave effect
+            HStack(spacing: 15) {
+                ForEach(0..<10) { _ in
+                    Rectangle()
+                        .frame(width: 1)
+                        .foregroundColor(Color.retroPink.opacity(0.3))
+                }
+            }
+            
+            // Scrollable buttons
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 20) {
+                    categoryButton(title: "MAIN", isSelected: selectedCategory == .main, action: { selectedCategory = .main })
+                    categoryButton(title: "STATES", isSelected: selectedCategory == .states, action: { selectedCategory = .states })
+                    categoryButton(title: "OPTIONS", isSelected: selectedCategory == .options, action: { selectedCategory = .options })
+                    categoryButton(title: "SKINS", isSelected: selectedCategory == .skins, action: { selectedCategory = .skins })
+                }
+                .padding(.horizontal, 20)
+            }
+        }
+        .frame(height: 50)
+        .padding(.bottom, 16)
+    }
+    
+    var title: some View {
+        Text("GAME OPTIONS")
+            .font(.system(size: 32, weight: .bold, design: .rounded))
+            .foregroundColor(.retroPink)
+            .padding(.top, 24)
+            .padding(.bottom, 16)
+            .shadow(color: .retroPink.opacity(0.8), radius: 10, x: 0, y: 0)
+    }
+    
+    // Menu container
+    var menuContainer: some View {
+        VStack(spacing: 0) {
+            // Title with neon glow effect
+            title
+            
+            // Retrowave scrollable category selector
+            catagories
+            
+            // Menu content based on selected category
+            menuContent
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.retroBlack.opacity(0.9))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .strokeBorder(Color.retroNeon, lineWidth: 2)
+                )
+        )
+        .frame(maxWidth: 320, maxHeight: 500)
+    }
+    
     var body: some View {
         ZStack {
             // Background with retrowave styling
-            Color.clear
-                .modifier(RetrowaveBackgroundModifier())
-                .ignoresSafeArea()
-                .onTapGesture {
-                    dismissAction()
-                }
-            
-            // Menu container
-            VStack(spacing: 0) {
-                // Title with neon glow effect
-                Text("GAME OPTIONS")
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
-                    .foregroundColor(.retroPink)
-                    .padding(.top, 24)
-                    .padding(.bottom, 16)
-                    .shadow(color: .retroPink.opacity(0.8), radius: 10, x: 0, y: 0)
-                
-                // Retrowave scrollable category selector
-                ZStack {
-                    // Gradient background for scrollable area
-                    LinearGradient(
-                        gradient: Gradient(colors: [Color.clear, Color.retroPurple.opacity(0.2), Color.clear]),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                    .frame(height: 50)
-                    
-                    // Grid lines for retrowave effect
-                    HStack(spacing: 15) {
-                        ForEach(0..<10) { _ in
-                            Rectangle()
-                                .frame(width: 1)
-                                .foregroundColor(Color.retroPink.opacity(0.3))
-                        }
-                    }
-                    
-                    // Scrollable buttons
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 20) {
-                            categoryButton(title: "MAIN", isSelected: selectedCategory == .main, action: { selectedCategory = .main })
-                            categoryButton(title: "STATES", isSelected: selectedCategory == .states, action: { selectedCategory = .states })
-                            categoryButton(title: "OPTIONS", isSelected: selectedCategory == .options, action: { selectedCategory = .options })
-                            categoryButton(title: "SKINS", isSelected: selectedCategory == .skins, action: { selectedCategory = .skins })
-                        }
-                        .padding(.horizontal, 20)
-                    }
-                }
-                .frame(height: 50)
-                .padding(.bottom, 16)
-                
-                // Menu content based on selected category
-                ScrollView {
-                    VStack(spacing: 12) {
-                        switch selectedCategory {
-                        case .main:
-                            mainMenuButtons
-                        case .states:
-                            stateMenuButtons
-                        case .options:
-                            optionsMenuButtons
-                        case .skins:
-                            skinsMenuButtons
-                        }
-                    }
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 24)
-                }
-                .frame(maxWidth: 320)
-            }
-            .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color.retroBlack.opacity(0.9))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .strokeBorder(Color.retroNeon, lineWidth: 2)
-                    )
-            )
-            .frame(maxWidth: 320, maxHeight: 500)
+            background
+            menuContainer
         }
     }
     
