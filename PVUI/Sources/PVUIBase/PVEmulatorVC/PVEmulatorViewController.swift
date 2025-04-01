@@ -129,21 +129,24 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
     public var isShowingMenu: Bool = false {
         willSet {
-            if newValue == true {
-                if (!core.skipLayout) {
-                    gpuViewController.isPaused = true
+            DispatchQueue.main.async { [self] in
+                if newValue == true {
+                    if (!core.skipLayout) {
+                        gpuViewController.isPaused = true
+                    }
                 }
+                core.setPauseEmulation(newValue)
             }
-            core.setPauseEmulation(newValue)
-
         }
         didSet {
-            if isShowingMenu == false {
-                if (!core.skipLayout) {
-                    gpuViewController.isPaused = false
+            DispatchQueue.main.async { [self] in
+                if isShowingMenu == false {
+                    if (!core.skipLayout) {
+                        gpuViewController.isPaused = false
+                    }
                 }
+                core.setPauseEmulation(isShowingMenu)
             }
-            core.setPauseEmulation(isShowingMenu)
         }
     }
 
