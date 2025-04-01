@@ -21,9 +21,26 @@ import PVLibrary
 struct RetroMenuView: View {
     let emulatorVC: PVEmulatorViewController
     let dismissAction: () -> Void
-    
+
     @State private var selectedCategory: MenuCategory = .main
-    
+
+    /// Environment value to detect screen size
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
+
+    /// Get device orientation
+    @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
+
+    /// Compute if we're in landscape mode
+    private var isLandscape: Bool {
+        // Use size classes as the primary indicator (more reliable)
+        if horizontalSizeClass == .regular && verticalSizeClass == .compact {
+            return true
+        }
+        // Fall back to device orientation
+        return orientation.isLandscape
+    }
+
     // Background with retrowave styling
     var background: some View {
         Color.clear
@@ -37,7 +54,7 @@ struct RetroMenuView: View {
     // Menu content based on selected category
     var menuContent: some View {
         ScrollView {
-            VStack(spacing: 12) {
+            VStack(spacing: menuSpacing) {
                 switch selectedCategory {
                 case .main:
                     mainMenuButtons
@@ -52,9 +69,9 @@ struct RetroMenuView: View {
             .padding(.horizontal, 24)
             .padding(.bottom, 24)
         }
-        .frame(maxWidth: 320)
+        .frame(maxWidth: menuWidth, maxHeight: menuHeight)
     }
-    
+
     // Retrowave scrollable category selector
     var catagories: some View {
         ZStack {
@@ -65,7 +82,7 @@ struct RetroMenuView: View {
                 endPoint: .trailing
             )
             .frame(height: 50)
-            
+
             // Grid lines for retrowave effect
             HStack(spacing: 15) {
                 ForEach(0..<10) { _ in
@@ -74,7 +91,7 @@ struct RetroMenuView: View {
                         .foregroundColor(Color.retroPink.opacity(0.3))
                 }
             }
-            
+
             // Scrollable buttons
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 20) {
@@ -89,7 +106,7 @@ struct RetroMenuView: View {
         .frame(height: 50)
         .padding(.bottom, 16)
     }
-    
+
     var title: some View {
         Text("GAME OPTIONS")
             .font(.system(size: 32, weight: .bold, design: .rounded))
@@ -98,52 +115,95 @@ struct RetroMenuView: View {
             .padding(.bottom, 16)
             .shadow(color: .retroPink.opacity(0.8), radius: 10, x: 0, y: 0)
     }
-    
+
+    /// Compute the appropriate menu width based on orientation and device
+    private var menuWidth: CGFloat {
+        if isLandscape {
+            // In landscape, use a narrower menu that doesn't overwhelm the screen
+            return min(450, UIScreen.main.bounds.width * 0.45)
+        } else {
+            // In portrait, use a wider menu but with a max width
+            return min(420, UIScreen.main.bounds.width * 0.9)
+        }
+    }
+
+    /// Compute the appropriate menu height based on orientation and device
+    private var menuHeight: CGFloat {
+        if isLandscape {
+            // In landscape, allow the menu to take most of the height
+            return min(UIScreen.main.bounds.height * 0.9, 640)
+        } else {
+            // In portrait, limit the height to avoid overwhelming the screen
+            return min(UIScreen.main.bounds.height * 0.8, 640)
+        }
+    }
+
+    /// Vertical spacing for menu items based on orientation
+    private var menuSpacing: CGFloat {
+        return isLandscape ? 8 : 12
+    }
+
     // Menu container
     var menuContainer: some View {
-        VStack(spacing: 0) {
-            // Title with neon glow effect
-            title
-            
-            // Retrowave scrollable category selector
-            catagories
-            
-            // Menu content based on selected category
-            menuContent
-        }
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color.retroBlack.opacity(0.9))
-                .overlay(
+        GeometryReader { geometry in
+            ZStack(alignment: .center) {
+                // Container for the menu
+                VStack(spacing: 0) {
+                    // Title with neon glow effect
+                    title
+
+                    // Retrowave scrollable category selector
+                    catagories
+
+                    // Menu content based on selected category
+                    menuContent
+                }
+                .background(
                     RoundedRectangle(cornerRadius: 20)
-                        .strokeBorder(Color.retroNeon, lineWidth: 2)
+                        .fill(Color.retroBlack.opacity(0.9))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .strokeBorder(Color.retroNeon, lineWidth: 2)
+                        )
                 )
-        )
-        .frame(maxWidth: 320, maxHeight: 500)
+                .frame(width: menuWidth, height: menuHeight)
+            }
+            .frame(width: geometry.size.width, height: geometry.size.height)
+        }
     }
-    
+
     var body: some View {
         ZStack {
             // Background with retrowave styling
             background
+
+            // Menu container
             menuContainer
         }
+        // Listen for orientation changes
+        .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+            self.orientation = UIDevice.current.orientation
+        }
+        // Initial orientation detection
+        .onAppear {
+            self.orientation = UIDevice.current.orientation
+        }
     }
-    
+
     // Main menu buttons
     private var mainMenuButtons: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: menuSpacing) {
             // Resume game button
             menuButton(title: "RESUME GAME", icon: "play.fill", color: .retroBlue) {
                 dismissAction()
             }
-            
+
             // Reset game button
             menuButton(title: "RESET GAME", icon: "arrow.counterclockwise", color: .retroOrange) {
                 dismissAction()
                 emulatorVC.core.resetEmulation()
             }
-            
+
             // Game info button
             menuButton(title: "GAME INFO", icon: "info.circle", color: .retroPurple) {
                 dismissAction()
@@ -151,7 +211,7 @@ struct RetroMenuView: View {
                     emulatorVC.showMoreInfo()
                 }
             }
-            
+
             // Quit game button
             menuButton(title: "QUIT GAME", icon: "xmark.circle", color: .retroPink) {
                 dismissAction()
@@ -161,10 +221,10 @@ struct RetroMenuView: View {
             }
         }
     }
-    
+
     // Save state related buttons
     private var stateMenuButtons: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: menuSpacing) {
             if emulatorVC.core.supportsSaveStates {
                 // Save state button
                 menuButton(title: "SAVE STATE", icon: "square.and.arrow.down", color: .retroBlue) {
@@ -178,7 +238,7 @@ struct RetroMenuView: View {
                         }
                     }
                 }
-                
+
                 // Load state button
                 menuButton(title: "LOAD STATE", icon: "square.and.arrow.up", color: .retroPurple) {
                     dismissAction()
@@ -186,7 +246,7 @@ struct RetroMenuView: View {
                         emulatorVC.showSaveStateMenu()
                     }
                 }
-                
+
                 // Save states menu button
                 menuButton(title: "SAVE STATES", icon: "list.bullet", color: .retroYellow) {
                     dismissAction()
@@ -199,7 +259,7 @@ struct RetroMenuView: View {
                     .foregroundColor(.gray)
                     .padding()
             }
-            
+
             // Screenshot button
 #if os(iOS) || targetEnvironment(macCatalyst)
             menuButton(title: "SAVE SCREENSHOT", icon: "camera", color: .retroOrange) {
@@ -209,10 +269,10 @@ struct RetroMenuView: View {
 #endif
         }
     }
-    
+
     // Options related buttons
     private var optionsMenuButtons: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: menuSpacing) {
             // Game speed button
             menuButton(title: "GAME SPEED", icon: "speedometer", color: .retroBlue) {
                 dismissAction()
@@ -220,7 +280,7 @@ struct RetroMenuView: View {
                     emulatorVC.showSpeedMenu()
                 }
             }
-            
+
             // Core options button (if available)
             if emulatorVC.core is CoreOptional {
                 menuButton(title: "CORE OPTIONS", icon: "gearshape", color: .retroPurple) {
@@ -230,7 +290,7 @@ struct RetroMenuView: View {
                     }
                 }
             }
-            
+
             // Cheat codes button (if supported)
             if let gameWithCheat = emulatorVC.core as? GameWithCheat, gameWithCheat.supportsCheatCode {
                 menuButton(title: "CHEAT CODES", icon: "wand.and.stars", color: .retroPink) {
@@ -240,9 +300,9 @@ struct RetroMenuView: View {
                     }
                 }
             }
-            
+
             let wantsStartSelectInMenu: Bool = PVEmulatorConfiguration.systemIDWantsStartAndSelectInMenu(emulatorVC.game.system?.identifier ?? SystemIdentifier.RetroArch.rawValue)
-            
+
             if let player1 = PVControllerManager.shared.player1 {
 #if os(iOS)
                 if Defaults[.missingButtonsAlwaysOn] || (player1.extendedGamepad != nil || wantsStartSelectInMenu) {
@@ -259,10 +319,10 @@ struct RetroMenuView: View {
                     }
                 }
 #endif
-                
+
             }
-            
-            
+
+
             // P2 controls (if available)
             if let player2 = PVControllerManager.shared.player2 {
                 if player2.extendedGamepad != nil || wantsStartSelectInMenu {
@@ -272,7 +332,7 @@ struct RetroMenuView: View {
                     }
                 }
             }
-            
+
             // Core action buttons (if available)
             if let actionableCore = emulatorVC.core as? CoreActions, let actions = actionableCore.coreActions {
                 ForEach(actions) { coreAction in
@@ -290,7 +350,7 @@ struct RetroMenuView: View {
             }
         }
     }
-    
+
     // Skins and filters related buttons
     @State private var selectedSkin: String = "Default"
     @State private var selectedFilter: String = "None"
@@ -302,19 +362,19 @@ struct RetroMenuView: View {
     @State private var currentOrientation: SkinOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
     @State private var isLoadingSkins = false
     @State private var didLoadSkins = false
-    
+
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
     @State private var isHoveredSkinId: String? = nil
-    
+
     private var skinsMenuButtons: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: menuSpacing) {
             // Current skin selection
             VStack(alignment: .leading, spacing: 4) {
                 Text("CURRENT SKIN")
                     .font(.system(size: 12, weight: .bold))
                     .foregroundColor(.gray)
-                
+
                 Button(action: {
                     // Show skin picker
                     showingSkinPicker = true
@@ -323,9 +383,9 @@ struct RetroMenuView: View {
                         Text(selectedSkin)
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.white)
-                        
+
                         Spacer()
-                        
+
                         Image(systemName: "chevron.right")
                             .foregroundColor(.retroBlue)
                     }
@@ -348,7 +408,7 @@ struct RetroMenuView: View {
                 }) {
                     skinPickerView
                 }
-                
+
                 // Skin scope selector
                 Picker("Scope", selection: $skinScope) {
                     ForEach(SkinScope.allCases) { scope in
@@ -357,20 +417,20 @@ struct RetroMenuView: View {
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding(.top, 8)
-                
+
                 // Scope description
                 Text(skinScope.description)
                     .font(.system(size: 12))
                     .foregroundColor(.gray)
                     .padding(.top, 4)
             }
-            
+
             // Screen filter selection
             VStack(alignment: .leading, spacing: 4) {
                 Text("SCREEN FILTER")
                     .font(.system(size: 12, weight: .bold))
                     .foregroundColor(.gray)
-                
+
                 Button(action: {
                     // Show filter picker
                     showingFilterPicker = true
@@ -379,9 +439,9 @@ struct RetroMenuView: View {
                         Text(selectedFilter)
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.white)
-                        
+
                         Spacer()
-                        
+
                         Image(systemName: "chevron.right")
                             .foregroundColor(.retroPink)
                     }
@@ -400,7 +460,7 @@ struct RetroMenuView: View {
                     filterPickerView
                 }
             }
-            
+
             // Apply button
             menuButton(title: "APPLY CHANGES", icon: "checkmark.circle", color: .retroBlue) {
                 dismissAction()
@@ -411,78 +471,80 @@ struct RetroMenuView: View {
             }
         }
     }
-    
+
     // Skin picker sheet view with retrowave styling
     private var skinPickerView: some View {
         NavigationView {
-            ZStack {
-                // RetroWave background
-                RetroTheme.retroBackground
-                
-                // Grid overlay
-                RetroGrid()
-                    .opacity(0.3)
-                
-                // Main content with loading state handling
-                VStack {
-                    // Header
-                    Text("SELECT SKIN")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(RetroTheme.retroPink)
-                        .padding(.top, 20)
-                        .padding(.bottom, 10)
-                        .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
-                    
-                    // Loading indicator or content
-                    if isLoadingSkins {
-                        VStack(spacing: 20) {
-                            // Custom retrowave loading spinner
-                            ZStack {
-                                Circle()
-                                    .stroke(lineWidth: 4)
-                                    .foregroundColor(RetroTheme.retroDarkBlue)
-                                    .frame(width: 50, height: 50)
-                                
-                                Circle()
-                                    .trim(from: 0, to: 0.75)
-                                    .stroke(RetroTheme.retroGradient, lineWidth: 4)
-                                    .frame(width: 50, height: 50)
-                                    .rotationEffect(Angle(degrees: glowOpacity * 360))
-                            }
-                            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5)
-                            
-                            Text("LOADING SKINS...")
-                                .font(.system(size: 16, weight: .bold))
-                                .foregroundColor(RetroTheme.retroPink)
-                                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3)
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding(.bottom, 50) // Offset to center visually
-                    } else {
-                        // Skin content when loaded
-                        ScrollView {
-                            VStack(spacing: 16) {
-                                // Default skin option
-                                if !availableSkins.contains(where: { $0 == "Default" }) {
-                                    skinItemView(name: "Default", preview: nil, isSelected: selectedSkin == "Default")
+            GeometryReader { geometry in
+                ZStack {
+                    // RetroWave background
+                    RetroTheme.retroBackground
+
+                    // Grid overlay
+                    RetroGrid()
+                        .opacity(0.3)
+
+                    // Main content with loading state handling
+                    VStack {
+                        // Header
+                        Text("SELECT SKIN")
+                            .font(.system(size: geometry.size.width < 400 ? 24 : 28, weight: .bold))
+                            .foregroundColor(RetroTheme.retroPink)
+                            .padding(.top, 20)
+                            .padding(.bottom, 10)
+                            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
+
+                        // Loading indicator or content
+                        if isLoadingSkins {
+                            VStack(spacing: 20) {
+                                // Custom retrowave loading spinner
+                                ZStack {
+                                    Circle()
+                                        .stroke(lineWidth: 4)
+                                        .foregroundColor(RetroTheme.retroDarkBlue)
+                                        .frame(width: 50, height: 50)
+
+                                    Circle()
+                                        .trim(from: 0, to: 0.75)
+                                        .stroke(RetroTheme.retroGradient, lineWidth: 4)
+                                        .frame(width: 50, height: 50)
+                                        .rotationEffect(Angle(degrees: glowOpacity * 360))
                                 }
-                                
-                                // Custom skins with previews
-                                ForEach(availableSkinObjects, id: \.identifier) { skin in
-                                    SkinPreviewItemView(
-                                        skin: skin,
-                                        isSelected: selectedSkin == skin.name,
-                                        glowOpacity: glowOpacity,
-                                        isHovered: isHoveredSkinId == skin.identifier,
-                                        onSelect: {
-                                            selectedSkin = skin.name
-                                            showingSkinPicker = false
-                                        }
-                                    )
-                                }
+                                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5)
+
+                                Text("LOADING SKINS...")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(RetroTheme.retroPink)
+                                    .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3)
                             }
-                            .padding(.horizontal, 16)
-                            .padding(.bottom, 20)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding(.bottom, 50) // Offset to center visually
+                        } else {
+                            // Skin content when loaded
+                            ScrollView {
+                                VStack(spacing: geometry.size.width < 400 ? 12 : 16) {
+                                    // Default skin option
+                                    if !availableSkins.contains(where: { $0 == "Default" }) {
+                                        skinItemView(name: "Default", preview: nil, isSelected: selectedSkin == "Default")
+                                    }
+
+                                    // Custom skins with previews
+                                    ForEach(availableSkinObjects, id: \.identifier) { skin in
+                                        SkinPreviewItemView(
+                                            skin: skin,
+                                            isSelected: selectedSkin == skin.name,
+                                            glowOpacity: glowOpacity,
+                                            isHovered: isHoveredSkinId == skin.identifier,
+                                            onSelect: {
+                                                selectedSkin = skin.name
+                                                showingSkinPicker = false
+                                            }
+                                        )
+                                    }
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.bottom, 20)
+                            }
                         }
                     }
                 }
@@ -515,7 +577,7 @@ struct RetroMenuView: View {
                 withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                     glowOpacity = 1.0
                 }
-                
+
                 // Load available skins only if not already loaded
                 if !didLoadSkins {
                     Task {
@@ -524,146 +586,27 @@ struct RetroMenuView: View {
                 }
             }
         }
+        .navigationViewStyle(StackNavigationViewStyle())
+        .frame(width: isLandscape ? UIScreen.main.bounds.width * 0.7 : UIScreen.main.bounds.width * 0.9,
+               height: isLandscape ? UIScreen.main.bounds.height * 0.8 : UIScreen.main.bounds.height * 0.7)
         .preferredColorScheme(.dark)
     }
-    
+
     // Custom skin item view for Default option
     private func skinItemView(name: String, preview: UIImage?, isSelected: Bool, skinId: String? = nil) -> some View {
-        Button(action: {
-            selectedSkin = name
-            showingSkinPicker = false
-        }) {
-            HStack(spacing: 16) {
-                // Preview image or placeholder
-                ZStack {
-                    if let preview = preview {
-                        Image(uiImage: preview)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 80, height: 80)
-                            .cornerRadius(8)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        ),
-                                        lineWidth: 1.5
-                                    )
-                            )
-                    } else {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.black.opacity(0.5))
-                            .frame(width: 80, height: 80)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        ),
-                                        lineWidth: 1.5
-                                    )
-                            )
-                            .overlay(
-                                Image(systemName: "gamecontroller.fill")
-                                    .foregroundColor(RetroTheme.retroBlue)
-                                    .font(.system(size: 30))
-                                    .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
-                            )
-                    }
-                }
-                
-                // Skin name and details
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(name)
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundColor(.white)
-                        .shadow(color: RetroTheme.retroPink.opacity(glowOpacity * 0.8), radius: 2, x: 0, y: 0)
-                        .lineLimit(1)
-                    
-                    if name != "Default" {
-                        Text("Custom Skin")
-                            .font(.system(size: 14))
-                            .foregroundColor(RetroTheme.retroPurple)
-                            .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
-                    } else {
-                        Text("System Default")
-                            .font(.system(size: 14))
-                            .foregroundColor(RetroTheme.retroBlue)
-                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
-                    }
-                }
-                
-                Spacer()
-                
-                // Selection indicator
-                if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(RetroTheme.retroBlue)
-                        .font(.system(size: 24))
-                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
-                }
-            }
-            .padding(.vertical, 12)
-            .padding(.horizontal, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.black.opacity(0.7))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .strokeBorder(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [
-                                        isSelected ? RetroTheme.retroPink : RetroTheme.retroBlue,
-                                        RetroTheme.retroPurple
-                                    ]),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: isHoveredSkinId == skinId || isSelected ? 2.0 : 1.5
-                            )
-                            .shadow(color: (isSelected ? RetroTheme.retroPink : RetroTheme.retroBlue).opacity(glowOpacity),
-                                    radius: isHoveredSkinId == skinId || isSelected ? 5 : 3,
-                                    x: 0,
-                                    y: 0)
-                    )
-            )
-            .onHover { hovering in
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    isHoveredSkinId = hovering ? skinId : nil
-                }
-            }
-        }
-        .buttonStyle(PlainButtonStyle())
-#if os(tvOS)
-        .focusable(true)
-#endif
-    }
-    
-    // Skin preview item view with cached image loading
-    private struct SkinPreviewItemView: View {
-        let skin: DeltaSkinProtocol
-        let isSelected: Bool
-        let glowOpacity: Double
-        let isHovered: Bool
-        let onSelect: () -> Void
-        
-        @State private var previewImage: UIImage? = nil
-        
-        var body: some View {
-            Button(action: onSelect) {
-                HStack(spacing: 16) {
+        GeometryReader { geometry in
+            Button(action: {
+                selectedSkin = name
+                showingSkinPicker = false
+            }) {
+                HStack(spacing: geometry.size.width < 350 ? 8 : 16) {
                     // Preview image or placeholder
                     ZStack {
-                        if let preview = previewImage {
+                        if let preview = preview {
                             Image(uiImage: preview)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .frame(width: 80, height: 80)
+                                .frame(width: geometry.size.width < 350 ? 60 : 80, height: geometry.size.width < 350 ? 60 : 80)
                                 .cornerRadius(8)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 8)
@@ -679,7 +622,7 @@ struct RetroMenuView: View {
                         } else {
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(Color.black.opacity(0.5))
-                                .frame(width: 80, height: 80)
+                                .frame(width: geometry.size.width < 350 ? 60 : 80, height: geometry.size.width < 350 ? 60 : 80)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 8)
                                         .stroke(
@@ -694,33 +637,40 @@ struct RetroMenuView: View {
                                 .overlay(
                                     Image(systemName: "gamecontroller.fill")
                                         .foregroundColor(RetroTheme.retroBlue)
-                                        .font(.system(size: 30))
+                                        .font(.system(size: geometry.size.width < 350 ? 24 : 30))
                                         .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                                 )
                         }
                     }
-                    
+
                     // Skin name and details
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(skin.name)
-                            .font(.system(size: 18, weight: .bold))
+                    VStack(alignment: .leading, spacing: geometry.size.width < 350 ? 4 : 8) {
+                        Text(name)
+                            .font(.system(size: geometry.size.width < 350 ? 16 : 18, weight: .bold))
                             .foregroundColor(.white)
                             .shadow(color: RetroTheme.retroPink.opacity(glowOpacity * 0.8), radius: 2, x: 0, y: 0)
                             .lineLimit(1)
-                        
-                        Text("Custom Skin")
-                            .font(.system(size: 14))
-                            .foregroundColor(RetroTheme.retroPurple)
-                            .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
+
+                        if name != "Default" {
+                            Text("Custom Skin")
+                                .font(.system(size: geometry.size.width < 350 ? 12 : 14))
+                                .foregroundColor(RetroTheme.retroPurple)
+                                .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
+                        } else {
+                            Text("System Default")
+                                .font(.system(size: geometry.size.width < 350 ? 12 : 14))
+                                .foregroundColor(RetroTheme.retroBlue)
+                                .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
+                        }
                     }
-                    
+
                     Spacer()
-                    
+
                     // Selection indicator
                     if isSelected {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(RetroTheme.retroBlue)
-                            .font(.system(size: 24))
+                            .font(.system(size: geometry.size.width < 350 ? 20 : 24))
                             .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                     }
                 }
@@ -740,16 +690,137 @@ struct RetroMenuView: View {
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
                                     ),
-                                    lineWidth: isHovered || isSelected ? 2.0 : 1.5
+                                    lineWidth: isHoveredSkinId == skinId || isSelected ? 2.0 : 1.5
                                 )
                                 .shadow(color: (isSelected ? RetroTheme.retroPink : RetroTheme.retroBlue).opacity(glowOpacity),
-                                        radius: isHovered || isSelected ? 5 : 3,
+                                        radius: isHoveredSkinId == skinId || isSelected ? 5 : 3,
                                         x: 0,
                                         y: 0)
                         )
                 )
+                .onHover { hovering in
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        isHoveredSkinId = hovering ? skinId : nil
+                    }
+                }
             }
             .buttonStyle(PlainButtonStyle())
+#if os(tvOS)
+            .focusable(true)
+#endif
+        }
+        .frame(height: UIScreen.main.bounds.width < 350 ? 84 : 104)
+    }
+
+    // Skin preview item view with cached image loading
+    private struct SkinPreviewItemView: View {
+        let skin: DeltaSkinProtocol
+        let isSelected: Bool
+        let glowOpacity: Double
+        let isHovered: Bool
+        let onSelect: () -> Void
+
+        @State private var previewImage: UIImage? = nil
+
+        var body: some View {
+            GeometryReader { geometry in
+                Button(action: onSelect) {
+                    HStack(spacing: geometry.size.width < 350 ? 8 : 16) {
+                        // Preview image or placeholder
+                        ZStack {
+                            if let preview = previewImage {
+                                Image(uiImage: preview)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: geometry.size.width < 350 ? 60 : 80, height: geometry.size.width < 350 ? 60 : 80)
+                                    .cornerRadius(8)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(
+                                                LinearGradient(
+                                                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                                    startPoint: .topLeading,
+                                                    endPoint: .bottomTrailing
+                                                ),
+                                                lineWidth: 1.5
+                                            )
+                                    )
+                            } else {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.black.opacity(0.5))
+                                    .frame(width: geometry.size.width < 350 ? 60 : 80, height: geometry.size.width < 350 ? 60 : 80)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(
+                                                LinearGradient(
+                                                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                                    startPoint: .topLeading,
+                                                    endPoint: .bottomTrailing
+                                                ),
+                                                lineWidth: 1.5
+                                            )
+                                    )
+                                    .overlay(
+                                        Image(systemName: "gamecontroller.fill")
+                                            .foregroundColor(RetroTheme.retroBlue)
+                                            .font(.system(size: geometry.size.width < 350 ? 24 : 30))
+                                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                                    )
+                            }
+                        }
+
+                        // Skin name and details
+                        VStack(alignment: .leading, spacing: geometry.size.width < 350 ? 4 : 8) {
+                            Text(skin.name)
+                                .font(.system(size: geometry.size.width < 350 ? 16 : 18, weight: .bold))
+                                .foregroundColor(.white)
+                                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity * 0.8), radius: 2, x: 0, y: 0)
+                                .lineLimit(1)
+
+                            Text("Custom Skin")
+                                .font(.system(size: geometry.size.width < 350 ? 12 : 14))
+                                .foregroundColor(RetroTheme.retroPurple)
+                                .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
+                        }
+
+                        Spacer()
+
+                        // Selection indicator
+                        if isSelected {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(RetroTheme.retroBlue)
+                                .font(.system(size: geometry.size.width < 350 ? 20 : 24))
+                                .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                        }
+                    }
+                    .padding(.vertical, 12)
+                    .padding(.horizontal, 16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.black.opacity(0.7))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .strokeBorder(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [
+                                                isSelected ? RetroTheme.retroPink : RetroTheme.retroBlue,
+                                                RetroTheme.retroPurple
+                                            ]),
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        ),
+                                        lineWidth: isHovered || isSelected ? 2.0 : 1.5
+                                    )
+                                    .shadow(color: (isSelected ? RetroTheme.retroPink : RetroTheme.retroBlue).opacity(glowOpacity),
+                                            radius: isHovered || isSelected ? 5 : 3,
+                                            x: 0,
+                                            y: 0)
+                            )
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+            .frame(height: UIScreen.main.bounds.width < 350 ? 84 : 104)
             .task {
                 // Load preview image asynchronously
                 if previewImage == nil {
@@ -761,140 +832,155 @@ struct RetroMenuView: View {
 #endif
         }
     }
-    
+
     // Filter picker sheet view with retrowave styling
     private var filterPickerView: some View {
-        ZStack {
-            // Retrowave background
-            VStack(spacing: 0) {
-                // Gradient sky
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color.black,
-                        Color(red: 0.1, green: 0.0, blue: 0.3),
-                        Color(red: 0.5, green: 0.0, blue: 0.5)
-                    ]),
-                    startPoint: .bottom,
-                    endPoint: .top
-                )
-                .frame(height: 200)
-                
-                // Grid floor
-                ZStack {
-                    // Horizontal grid lines
-                    VStack(spacing: 10) {
-                        ForEach(0..<10) { _ in
-                            Rectangle()
-                                .frame(height: 1)
-                                .foregroundColor(Color.retroPink.opacity(0.5))
-                        }
-                        Spacer()
-                    }
-                    
-                    // Vertical grid lines
-                    HStack(spacing: 20) {
-                        ForEach(0..<10) { _ in
-                            Rectangle()
-                                .frame(width: 1)
-                                .foregroundColor(Color.retroPink.opacity(0.5))
-                        }
-                    }
-                }
-                .frame(maxHeight: .infinity)
-                .background(Color.black)
-            }
-            
-            // Content
-            VStack(spacing: 0) {
-                // Header
-                Text("SCREEN FILTERS")
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
-                    .padding(.top, 30)
-                    .padding(.bottom, 20)
-                    .shadow(color: Color.retroPink.opacity(0.8), radius: 10, x: 0, y: 0)
-                
-                // Filter options
-                VStack(spacing: 12) {
-                    ForEach(["None", "CRT", "LCD", "Scanlines", "Game Boy", "GBA"], id: \.self) { filter in
-                        Button(action: {
-                            selectedFilter = filter
-                            showingFilterPicker = false
-                        }) {
-                            HStack {
-                                Text(filter)
-                                    .font(.system(size: 18, weight: .bold))
-                                    .foregroundColor(filter == selectedFilter ? .white : .white.opacity(0.7))
-                                
-                                Spacer()
-                                
-                                if filter == selectedFilter {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .font(.system(size: 20))
-                                        .foregroundColor(.retroPink)
-                                }
+        GeometryReader { geometry in
+            ZStack {
+                // Retrowave background
+                VStack(spacing: 0) {
+                    // Gradient sky
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color.black,
+                            Color(red: 0.1, green: 0.0, blue: 0.3),
+                            Color(red: 0.5, green: 0.0, blue: 0.5)
+                        ]),
+                        startPoint: .bottom,
+                        endPoint: .top
+                    )
+                    .frame(height: 200)
+
+                    // Grid floor
+                    ZStack {
+                        // Horizontal grid lines
+                        VStack(spacing: 10) {
+                            ForEach(0..<10) { _ in
+                                Rectangle()
+                                    .frame(height: 1)
+                                    .foregroundColor(Color.retroPink.opacity(0.5))
                             }
-                            .padding(.vertical, 12)
-                            .padding(.horizontal, 20)
+                            Spacer()
+                        }
+
+                        // Vertical grid lines
+                        HStack(spacing: 20) {
+                            ForEach(0..<10) { _ in
+                                Rectangle()
+                                    .frame(width: 1)
+                                    .foregroundColor(Color.retroPink.opacity(0.5))
+                            }
+                        }
+                    }
+                    .frame(maxHeight: .infinity)
+                    .background(Color.black)
+                }
+
+                // Content
+                VStack(spacing: 0) {
+                    // Header
+                    Text("SCREEN FILTERS")
+                        .font(.system(size: geometry.size.width < 400 ? 24 : 28, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                        .padding(.top, 30)
+                        .padding(.bottom, 20)
+                        .shadow(color: Color.retroPink.opacity(0.8), radius: 10, x: 0, y: 0)
+
+                    // Filter options
+                    VStack(spacing: isLandscape ? 8 : 12) {
+                        ForEach(["None", "CRT", "LCD", "Scanlines", "Game Boy", "GBA"], id: \.self) { filter in
+                            Button(action: {
+                                selectedFilter = filter
+                                showingFilterPicker = false
+                            }) {
+                                HStack {
+                                    Text(filter)
+                                        .font(.system(size: geometry.size.width < 400 ? 16 : 18, weight: .bold))
+                                        .foregroundColor(filter == selectedFilter ? .white : .white.opacity(0.7))
+
+                                    Spacer()
+
+                                    if filter == selectedFilter {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .font(.system(size: 20))
+                                            .foregroundColor(.retroPink)
+                                    }
+                                }
+                                .padding(.vertical, isLandscape ? 8 : 12)
+                                .padding(.horizontal, 20)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(filter == selectedFilter ?
+                                              Color.retroPurple.opacity(0.4) :
+                                                Color.black.opacity(0.6))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .strokeBorder(
+                                                    filter == selectedFilter ?
+                                                    Color.retroPink :
+                                                        Color.retroPink.opacity(0.3),
+                                                    lineWidth: filter == selectedFilter ? 2 : 1
+                                                )
+                                        )
+                                )
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                    }
+                    .padding(.horizontal, 16)
+
+                    Spacer()
+
+                    // Done button
+                    Button(action: {
+                        showingFilterPicker = false
+                    }) {
+                        Text("DONE")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .fill(filter == selectedFilter ?
-                                          Color.retroPurple.opacity(0.4) :
-                                            Color.black.opacity(0.6))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .strokeBorder(
-                                                filter == selectedFilter ?
-                                                Color.retroPink :
-                                                    Color.retroPink.opacity(0.3),
-                                                lineWidth: filter == selectedFilter ? 2 : 1
-                                            )
-                                    )
+                                    .fill(LinearGradient(
+                                        gradient: Gradient(colors: [Color.retroBlue, Color.retroPurple]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    ))
                             )
-                        }
-                        .buttonStyle(PlainButtonStyle())
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(Color.white.opacity(0.5), lineWidth: 1)
+                            )
+                            .shadow(color: Color.retroBlue.opacity(0.5), radius: 8, x: 0, y: 0)
                     }
+                    .buttonStyle(PlainButtonStyle())
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 30)
                 }
-                .padding(.horizontal, 16)
-                
-                Spacer()
-                
-                // Done button
-                Button(action: {
-                    showingFilterPicker = false
-                }) {
-                    Text("DONE")
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(LinearGradient(
-                                    gradient: Gradient(colors: [Color.retroBlue, Color.retroPurple]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                ))
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .strokeBorder(Color.white.opacity(0.5), lineWidth: 1)
-                        )
-                        .shadow(color: Color.retroBlue.opacity(0.5), radius: 8, x: 0, y: 0)
-                }
-                .buttonStyle(PlainButtonStyle())
-                .padding(.horizontal, 16)
-                .padding(.bottom, 30)
+                .frame(
+                    width: isLandscape ? min(400, geometry.size.width * 0.8) : min(500, geometry.size.width * 0.9),
+                    height: isLandscape ? geometry.size.height * 0.9 : min(600, geometry.size.height * 0.8)
+                )
+                .background(Color.black.opacity(0.7))
+                .cornerRadius(20)
+                .shadow(color: Color.retroPink.opacity(0.3), radius: 20)
+                .position(
+                    x: geometry.size.width / 2,
+                    y: geometry.size.height / 2
+                )
             }
         }
         .edgesIgnoringSafeArea(.all)
         .preferredColorScheme(.dark)
+        .frame(width: isLandscape ? UIScreen.main.bounds.width * 0.7 : UIScreen.main.bounds.width * 0.9,
+               height: isLandscape ? UIScreen.main.bounds.height * 0.8 : UIScreen.main.bounds.height * 0.7)
     }
-    
+
     // Load available skins for the current system
     private func loadAvailableSkins() async {
         // Prevent multiple concurrent loads or reloading if already loaded
-        guard !isLoadingSkins && !didLoadSkins else { 
+        guard !isLoadingSkins && !didLoadSkins else {
             // If we're already loaded but the skin picker was dismissed and reopened,
             // make sure we're not stuck in a loading state
             if didLoadSkins && isLoadingSkins {
@@ -902,36 +988,36 @@ struct RetroMenuView: View {
                     isLoadingSkins = false
                 }
             }
-            return 
+            return
         }
         guard let systemId = emulatorVC.game.system?.systemIdentifier else { return }
-        
+
         // Set loading flag to prevent loops
         await MainActor.run {
             isLoadingSkins = true
         }
-        
+
         do {
             // Get skins from DeltaSkinManager
             let skins = try await DeltaSkinManager.shared.skins(for: systemId)
-            
+
             // Update the available skins list on the main thread
             await MainActor.run {
                 // Store the actual skin objects for previews
                 self.availableSkinObjects = skins
-                
+
                 // Create a set of unique skin names to avoid duplicates
                 var uniqueSkinNames = Set<String>()
                 uniqueSkinNames.insert("Default")
-                
+
                 // Add names of available skins, avoiding duplicates
                 for skin in skins {
                     uniqueSkinNames.insert(skin.name)
                 }
-                
+
                 // Convert to array and sort
                 self.availableSkins = Array(uniqueSkinNames).sorted()
-                
+
                 // Set current selection if not already set
                 if self.selectedSkin == "Default" && !skins.isEmpty {
                     // Try to find the currently selected skin
@@ -943,12 +1029,12 @@ struct RetroMenuView: View {
                         }
                     }
                 }
-                
+
                 // Start animations for retrowave effects
                 withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                     self.glowOpacity = 1.0
                 }
-                
+
                 // Mark as loaded and reset loading flag
                 self.didLoadSkins = true
                 self.isLoadingSkins = false
@@ -962,15 +1048,15 @@ struct RetroMenuView: View {
             }
         }
     }
-    
+
     /// Skin scope for preferences
     enum SkinScope: String, CaseIterable, Identifiable {
         case session = "Session"
         case game = "Game"
         case system = "System"
-        
+
         var id: String { rawValue }
-        
+
         var description: String {
             switch self {
             case .session: return "Apply for this session only"
@@ -979,19 +1065,19 @@ struct RetroMenuView: View {
             }
         }
     }
-    
+
     // Apply the selected skin and filter changes
     private func applySkinAndFilterChanges() async {
         guard let systemId = emulatorVC.game.system?.systemIdentifier else {
             ELOG("No systemId found")
             return
         }
-        
+
         let gameId = emulatorVC.game.md5 ?? emulatorVC.game.crc
-        
+
         // Get current device orientation
         let orientation = UIDevice.current.orientation.isLandscape ? SkinOrientation.landscape : .portrait
-        
+
         // Apply skin change
         if selectedSkin != "Default" {
             do {
@@ -1004,12 +1090,12 @@ struct RetroMenuView: View {
                         case .session:
                             // Just apply for this session without saving to preferences
                             applySkinToEmulator(skin: skin, systemId: systemId)
-                            
+
                         case .game:
                             // Save as game-specific preference
                             DeltaSkinPreferences.shared.setSelectedSkin(skin.identifier, for: gameId, orientation: orientation)
                             applySkinToEmulator(skin: skin, systemId: systemId)
-                            
+
                         case .system:
                             // Save as system-wide preference
                             DeltaSkinPreferences.shared.setSelectedSkin(skin.identifier, for: systemId, orientation: orientation)
@@ -1027,12 +1113,12 @@ struct RetroMenuView: View {
                 case .session:
                     // Just reset for this session
                     resetSkinToDefault(systemId: systemId)
-                    
+
                 case .game:
                     // Remove game-specific preference
                     DeltaSkinPreferences.shared.setSelectedSkin(nil, for: gameId, orientation: orientation)
                     resetSkinToDefault(systemId: systemId)
-                    
+
                 case .system:
                     // Remove system-wide preference
                     DeltaSkinPreferences.shared.setSelectedSkin(nil, for: systemId, orientation: orientation)
@@ -1040,35 +1126,35 @@ struct RetroMenuView: View {
                 }
             }
         }
-        
+
         // Apply screen filter change
         Task { @MainActor in
             // Get the filter based on selection
             let filter: DeltaSkinScreenFilter?
-            
+
             if selectedFilter == "None" {
                 filter = nil
             } else {
                 // Find the selected filter
                 filter = DefaultScreenFilters.allFilters.first(where: { DefaultScreenFilters.displayName(for: $0) == selectedFilter })
             }
-            
+
             // Apply the filter to the emulator
             if let emulatorVC = self.emulatorVC as? PVEmulatorViewController {
                 emulatorVC.applyScreenFilter(filter)
-                
+
                 // Save filter preference based on scope
                 if let filter = filter {
                     switch skinScope {
                     case .session:
                         // Just for this session, no saving needed
                         break
-                        
+
                     case .game:
                         // Save as game-specific preference
                         let identifier = filter.metadata["identifier"] as? String ?? filter.filter.name
                         UserDefaults.standard.set(identifier, forKey: "ScreenFilter_Game_\(gameId)")
-                        
+
                     case .system:
                         // Save as system-wide preference
                         let identifier = filter.metadata["identifier"] as? String ?? filter.filter.name
@@ -1080,11 +1166,11 @@ struct RetroMenuView: View {
                     case .session:
                         // Just for this session, no saving needed
                         break
-                        
+
                     case .game:
                         // Remove game-specific preference
                         UserDefaults.standard.removeObject(forKey: "ScreenFilter_Game_\(gameId)")
-                        
+
                     case .system:
                         // Remove system-wide preference
                         UserDefaults.standard.removeObject(forKey: "ScreenFilter_System_\(systemId.rawValue)")
@@ -1093,7 +1179,7 @@ struct RetroMenuView: View {
             }
         }
     }
-    
+
     // Helper to apply skin to emulator
     private func applySkinToEmulator(skin: DeltaSkinProtocol, systemId: SystemIdentifier) {
         // Notify the emulator to refresh its skin
@@ -1105,7 +1191,7 @@ struct RetroMenuView: View {
                 "skinIdentifier": skin.identifier
             ]
         )
-        
+
         // Directly apply skin to the current view controller if possible
         if let emulatorVC = self.emulatorVC as? PVEmulatorViewController {
             Task {
@@ -1113,7 +1199,7 @@ struct RetroMenuView: View {
             }
         }
     }
-    
+
     // Helper to reset skin to default
     private func resetSkinToDefault(systemId: SystemIdentifier) {
         // Notify the emulator to refresh its skin
@@ -1125,14 +1211,14 @@ struct RetroMenuView: View {
                 "reset": true
             ]
         )
-        
+
         // Directly reset the skin if possible
         if let emulatorVC = self.emulatorVC as? PVEmulatorViewController {
             Task {
                 try? await emulatorVC.resetToDefaultSkin()
             }
         }
-        
+
         // Apply filter change
         switch selectedFilter {
         case "None":
@@ -1193,7 +1279,29 @@ struct RetroMenuView: View {
             break
         }
     }
-    
+
+    // Helper method to create a FilterInfo object from parameters
+    private func createFilterInfo(name: String, parameters: [String: Any]) -> DeltaSkin.FilterInfo {
+        // Convert the parameters to the format expected by DeltaSkinScreenFilter
+        var filterParameters: [String: FilterParameter] = [:]
+
+        for (key, value) in parameters {
+            if let numberValue = value as? Float {
+                filterParameters[key] = .number(numberValue)
+            } else if let numberValue = value as? Double {
+                filterParameters[key] = .number(Float(numberValue))
+            } else if let numberValue = value as? Int {
+                filterParameters[key] = .number(Float(numberValue))
+            } else if let colorValue = value as? CIColor {
+                filterParameters[key] = .color(r: Float(colorValue.red), g: Float(colorValue.green), b: Float(colorValue.blue))
+            } else if let vectorValue = value as? CGPoint {
+                filterParameters[key] = .vector(x: Float(vectorValue.x), y: Float(vectorValue.y))
+            }
+        }
+
+        return DeltaSkin.FilterInfo(name: name, parameters: filterParameters)
+    }
+
     // Helper function for category buttons in the header
     private func categoryButton(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
@@ -1201,7 +1309,7 @@ struct RetroMenuView: View {
                 Text(title)
                     .font(.system(size: 16, weight: .bold))
                     .foregroundColor(isSelected ? .white : .white.opacity(0.6))
-                
+
                 // Indicator line
                 Rectangle()
                     .frame(height: 2)
@@ -1226,27 +1334,29 @@ struct RetroMenuView: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
-    
+
     // Helper function to create menu buttons
     private func menuButton(title: String, icon: String, color: Color, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack {
                 Image(systemName: icon)
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.system(size: isLandscape ? 16 : 18, weight: .bold))
                     .foregroundColor(color)
                     .frame(width: 30)
-                
+
                 Text(title)
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.system(size: isLandscape ? 16 : 18, weight: .bold))
                     .foregroundColor(.white)
-                
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+
                 Spacer()
-                
+
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 14))
+                    .font(.system(size: isLandscape ? 12 : 14))
                     .foregroundColor(.white.opacity(0.5))
             }
-            .padding(.vertical, 14)
+            .padding(.vertical, isLandscape ? 10 : 14)
             .padding(.horizontal, 16)
             .background(
                 RoundedRectangle(cornerRadius: 12)
@@ -1259,27 +1369,5 @@ struct RetroMenuView: View {
             .shadow(color: color.opacity(0.5), radius: 5, x: 0, y: 0)
         }
         .buttonStyle(PlainButtonStyle())
-    }
-    
-    // Helper method to create a FilterInfo object from parameters
-    private func createFilterInfo(name: String, parameters: [String: Any]) -> DeltaSkin.FilterInfo {
-        // Convert the parameters to the format expected by DeltaSkinScreenFilter
-        var filterParameters: [String: FilterParameter] = [:]
-        
-        for (key, value) in parameters {
-            if let numberValue = value as? Float {
-                filterParameters[key] = .number(numberValue)
-            } else if let numberValue = value as? Double {
-                filterParameters[key] = .number(Float(numberValue))
-            } else if let numberValue = value as? Int {
-                filterParameters[key] = .number(Float(numberValue))
-            } else if let colorValue = value as? CIColor {
-                filterParameters[key] = .color(r: Float(colorValue.red), g: Float(colorValue.green), b: Float(colorValue.blue))
-            } else if let vectorValue = value as? CGPoint {
-                filterParameters[key] = .vector(x: Float(vectorValue.x), y: Float(vectorValue.y))
-            }
-        }
-        
-        return DeltaSkin.FilterInfo(name: name, parameters: filterParameters)
     }
 }
