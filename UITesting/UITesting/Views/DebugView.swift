@@ -37,11 +37,14 @@ struct DebugView: View {
     // Debug state
     @State private var showDatabaseStats = false
     @State private var showImportQueue = false
+    @State private var showMockImportQueue = false
     @State private var showConfirmResetAlert = false
     
     // Mock importer for testing
-    @StateObject private var mockImportStatusDriverData = AppState.shared.gameImporter ?? GameImporter.shared
+    @StateObject private var importStatusDriverData = AppState.shared.gameImporter ?? GameImporter.shared
     
+    @StateObject private var mockImportStatusDriverData = MockImportStatusDriverData()
+
     // Add these state variables at the top of the DebugView struct
     @State private var showSaveStatesMock = false
     @State private var showGameMoreInfo = false
@@ -84,6 +87,14 @@ struct DebugView: View {
         }
         .sheet(isPresented: $showDatabaseStats) {
             DatabaseStatsView()
+        }
+        .sheet(isPresented: $showMockImportQueue) {
+            ImportStatusView(
+                updatesController: mockImportStatusDriverData.pvgamelibraryUpdatesController,
+                gameImporter: mockImportStatusDriverData.gameImporter,
+                delegate: mockImportStatusDriverData) {
+                    showMockImportQueue = false
+                }
         }
         .sheet(isPresented: $showImportQueue) {
             ImportStatusView(
@@ -274,6 +285,12 @@ struct DebugView: View {
                             showImportQueue = true
                         }
                         .buttonStyle(GradientButtonStyle(colors: [.retroYellow, .retroOrange], glowColor: .retroYellow))
+                        .frame(maxWidth: .infinity)
+                        
+                        Button("SHOW MOCK IMPORT QUEUE") {
+                            showMockImportQueue = true
+                        }
+                        .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroYellow], glowColor: .retroBlue))
                         .frame(maxWidth: .infinity)
                         
                         Button("FORCE IMPORT SCAN") {

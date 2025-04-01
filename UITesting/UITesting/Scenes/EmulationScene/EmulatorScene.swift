@@ -27,6 +27,8 @@ struct EmulatorScene: Scene {
                 .environmentObject(appState)
                 .environmentObject(sceneCoordinator)
                 .preferredColorScheme(ThemeManager.shared.currentPalette.dark ? .dark : .light)
+                .hideHomeIndicator()
+                .statusBar(hidden: true)
                 .onAppear {
                     ILOG("EmulatorScene: Scene appeared")
                     ILOG("EmulatorScene: AppState.shared instance: \(AppState.shared)")
@@ -489,7 +491,7 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
                 ILOG("EmulatorContainerViewController: Quit completion handler called")
                 // Clear emulation state
                 AppState.shared.emulationUIState.reset()
-                
+
                 // Return to main scene using TestSceneCoordinator
                 TestSceneCoordinator.shared.closeEmulator()
             }

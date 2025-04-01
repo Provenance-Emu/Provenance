@@ -17,10 +17,97 @@ import RealmSwift
 import PVSystems
 import PVMediaCache
 import PVCoreLoader
+import ObjectiveC
 
 #if canImport(FreemiumKit)
 import FreemiumKit
 #endif
+
+/// View modifier to hide the home indicator
+struct HomeIndicatorHidden: ViewModifier {
+    /// Hide the home indicator using UIKit's prefersHomeIndicatorAutoHidden
+    func body(content: Content) -> some View {
+        content
+            .background(HomeIndicatorHiddenHelper())
+    }
+
+    /// Helper view to integrate with UIKit
+    private struct HomeIndicatorHiddenHelper: UIViewControllerRepresentable {
+        func makeUIViewController(context: Context) -> UIViewController {
+            HomeIndicatorHiddenController()
+        }
+
+        func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+        }
+
+        /// Custom UIViewController that hides the home indicator
+        private class HomeIndicatorHiddenController: UIViewController {
+            override var prefersHomeIndicatorAutoHidden: Bool {
+                return true
+            }
+
+            override var preferredScreenEdgesDeferringSystemGestures: UIRectEdge {
+                return .all
+            }
+
+            override func viewDidLoad() {
+                super.viewDidLoad()
+
+                // Make the view completely transparent and non-interactive
+                view.backgroundColor = .clear
+                view.isUserInteractionEnabled = false
+            }
+        }
+    }
+}
+
+/// Extension to provide a convenient ViewModifier for View
+extension View {
+    /// Hide the home indicator and defer system gestures
+    func hideHomeIndicator() -> some View {
+        modifier(HomeIndicatorHidden())
+    }
+}
+
+/// Extension to UIWindow to help enforce hiding home indicator across the entire app
+extension UIWindow {
+    /// Sets home indicator auto-hidden for all view controllers in the hierarchy
+    func setHomeIndicatorAutoHidden(_ autoHidden: Bool = true) {
+        // Start with the root controller
+        if let rootController = self.rootViewController {
+            // Apply to root controller
+            applyHomeIndicatorSettings(to: rootController, autoHidden: autoHidden)
+
+            // Force update of the system UI
+            rootController.setNeedsUpdateOfHomeIndicatorAutoHidden()
+            rootController.setNeedsUpdateOfScreenEdgesDeferringSystemGestures()
+        }
+    }
+
+    /// Helper method to apply settings recursively to all view controllers
+    private func applyHomeIndicatorSettings(to viewController: UIViewController, autoHidden: Bool) {
+        // Use Objective-C runtime to set the property
+        // This is a workaround since these properties are read-only
+        let selector = NSSelectorFromString("_setContentHuggingPriorities:")
+        if viewController.responds(to: selector) {
+            // Set the home indicator preferences
+            objc_setAssociatedObject(viewController,
+                                    "prefersHomeIndicatorAutoHidden",
+                                    autoHidden,
+                                    .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+
+        // Apply to all child view controllers
+        for childVC in viewController.children {
+            applyHomeIndicatorSettings(to: childVC, autoHidden: autoHidden)
+        }
+
+        // Apply to presented view controller
+        if let presentedVC = viewController.presentedViewController {
+            applyHomeIndicatorSettings(to: presentedVC, autoHidden: autoHidden)
+        }
+    }
+}
 
 @main
 struct UITestingApp: SwiftUI.App {
@@ -215,6 +302,18 @@ struct UITestingApp: SwiftUI.App {
         }
     }
 
+    /// Update home indicator settings when scene phase changes
+    private func updateHomeIndicatorSettings() {
+        // Find all windows in all connected scenes and update home indicator settings
+        for scene in UIApplication.shared.connectedScenes {
+            if let windowScene = scene as? UIWindowScene {
+                for window in windowScene.windows {
+                    window.setHomeIndicatorAutoHidden(true)
+                }
+            }
+        }
+    }
+
     var body: some Scene {
         // Main window group for the UI
         WindowGroup(id: "main") {
@@ -225,6 +324,7 @@ struct UITestingApp: SwiftUI.App {
                 .environmentObject(appState)
                 .environmentObject(ThemeManager.shared)
                 .environmentObject(sceneCoordinator)
+                .hideHomeIndicator() // Hide the home indicator
 #if canImport(FreemiumKit)
                 .environmentObject(FreemiumKit.shared)
                 .onAppear {
@@ -320,6 +420,9 @@ struct UITestingApp: SwiftUI.App {
                     appState.sendEventWasSwizzled = true
                 }
 
+                // Hide home indicator when app becomes active
+                updateHomeIndicatorSettings()
+
                 // Force UI refresh when becoming active
                 viewRefreshTrigger = UUID()
             }
@@ -327,6 +430,7 @@ struct UITestingApp: SwiftUI.App {
             // Handle scene phase changes for import pausing
             appState.handleScenePhaseChange(newPhase)
         }
+
 
         // Add the emulator scene as a separate scene
         EmulatorScene()
@@ -362,5 +466,44 @@ extension UIApplication {
         }
 
         originalSendEvent(event)
+    }
+}
+
+/// A dedicated UIViewControllerRepresentable for controlling home indicator visibility
+struct HomeIndicatorController: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> UIViewController {
+        HomeIndicatorManagerController()
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+        // Force update of home indicator status
+        uiViewController.setNeedsUpdateOfHomeIndicatorAutoHidden()
+        uiViewController.setNeedsUpdateOfScreenEdgesDeferringSystemGestures()
+    }
+
+    private class HomeIndicatorManagerController: UIViewController {
+        override var prefersHomeIndicatorAutoHidden: Bool {
+            return true
+        }
+
+        override var preferredScreenEdgesDeferringSystemGestures: UIRectEdge {
+            return .all
+        }
+
+        override func viewDidLoad() {
+            super.viewDidLoad()
+            view.backgroundColor = .clear
+            view.isUserInteractionEnabled = false
+        }
+
+        override func viewDidAppear(_ animated: Bool) {
+            super.viewDidAppear(animated)
+            setNeedsUpdateOfHomeIndicatorAutoHidden()
+            setNeedsUpdateOfScreenEdgesDeferringSystemGestures()
+
+            // Also set for the parent view controller if any
+            parent?.setNeedsUpdateOfHomeIndicatorAutoHidden()
+            parent?.setNeedsUpdateOfScreenEdgesDeferringSystemGestures()
+        }
     }
 }
