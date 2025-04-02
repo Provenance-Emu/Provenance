@@ -169,6 +169,7 @@ public struct RetroTheme {
     
     /// RetroGrid creates a grid background for retrowave aesthetic
     public struct RetroGridView: View {
+        public init() {}
         public var body: some View {
             GeometryReader { geometry in
                 ZStack {
