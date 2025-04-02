@@ -1136,6 +1136,12 @@ struct RetroMenuView: View {
                         case .session:
                             // Store the session skin identifier for orientation changes
                             sessionSkinIdentifier = skin.identifier
+                            
+                            // Register the session skin with the DeltaSkinManager
+                            // This allows it to be reapplied during rotation
+                            let orientation = UIDevice.current.orientation.isLandscape ? SkinOrientation.landscape : .portrait
+                            DeltaSkinManager.shared.setSessionSkin(skin.identifier, for: systemId, orientation: orientation)
+                            
                             // Just apply for this session without saving to preferences
                             applySkinToEmulator(skin: skin, systemId: systemId)
 
@@ -1165,6 +1171,11 @@ struct RetroMenuView: View {
                 case .session:
                     // Clear the session skin identifier
                     sessionSkinIdentifier = nil
+                    
+                    // Clear the session skin in the DeltaSkinManager
+                    let orientation = UIDevice.current.orientation.isLandscape ? SkinOrientation.landscape : .portrait
+                    DeltaSkinManager.shared.setSessionSkin(nil, for: systemId, orientation: orientation)
+                    
                     // Just reset for this session
                     resetSkinToDefault(systemId: systemId)
 
@@ -1272,6 +1283,10 @@ struct RetroMenuView: View {
                 await MainActor.run {
                     selectedSkin = skin.name
                 }
+                
+                // Update the session skin in DeltaSkinManager for the new orientation
+                let orientation = UIDevice.current.orientation.isLandscape ? SkinOrientation.landscape : .portrait
+                DeltaSkinManager.shared.setSessionSkin(skinId, for: systemId, orientation: orientation)
                 
                 // Apply the skin directly without changing preferences
                 applySkinToEmulator(skin: skin, systemId: systemId)

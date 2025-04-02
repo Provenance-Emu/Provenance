@@ -1132,9 +1132,10 @@ extension PVEmulatorViewController {
                         let gameId = self.game.md5 ?? self.game.crc
 
                         // Check if we have a different skin for this orientation
-                        let skinIdentifier = DeltaSkinPreferences.shared.effectiveSkinIdentifier(
-                            for: gameId,
-                            system: systemId,
+                        // Use DeltaSkinManager which now handles session skins as well as preferences
+                        let skinIdentifier = DeltaSkinManager.shared.effectiveSkinIdentifier(
+                            for: systemId,
+                            gameId: gameId,
                             orientation: newOrientation
                         )
 

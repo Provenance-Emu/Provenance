@@ -13,6 +13,10 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
 
     /// Currently loaded skins
     @Published public private(set) var loadedSkins: [DeltaSkinProtocol] = []
+    
+    /// Session-specific skin selections that persist only for the current session
+    /// Maps [SystemIdentifier.rawValue: [SkinOrientation.rawValue: skinIdentifier]]
+    private var sessionSkins: [String: [String: String]] = [:]
 
     /// Queue for synchronizing skin operations
     private let queue = DispatchQueue(label: "com.provenance.deltaskin-manager")
@@ -33,6 +37,18 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
         Task.detached { [weak self] in
             try? self?.scanForSkins()
         }
+        
+        // Register for session skin notifications
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleSessionSkinRegistration(_:)),
+            name: NSNotification.Name("RegisterSessionSkin"),
+            object: nil
+        )
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     /// Get all available skins
@@ -54,6 +70,84 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             // Find the skin with the matching identifier
             return self.loadedSkins.first { $0.identifier == identifier }
         }
+    }
+    
+    /// Get the currently selected skin for a system in the current session
+    /// - Parameters:
+    ///   - systemId: The system identifier
+    ///   - orientation: The current orientation
+    /// - Returns: The session skin identifier if set, otherwise nil
+    public func sessionSkinIdentifier(for systemId: SystemIdentifier, orientation: SkinOrientation) -> String? {
+        return sessionSkins[systemId.rawValue]?[orientation.rawValue]
+    }
+    
+    /// Set the session skin for a system
+    /// - Parameters:
+    ///   - skinIdentifier: The skin identifier to use for the session, or nil to clear
+    ///   - systemId: The system identifier
+    ///   - orientation: The current orientation
+    public func setSessionSkin(_ skinIdentifier: String?, for systemId: SystemIdentifier, orientation: SkinOrientation) {
+        queue.sync {
+            if let skinIdentifier = skinIdentifier {
+                // Initialize the dictionary for this system if needed
+                if sessionSkins[systemId.rawValue] == nil {
+                    sessionSkins[systemId.rawValue] = [:]
+                }
+                
+                // Set the skin for this orientation
+                sessionSkins[systemId.rawValue]?[orientation.rawValue] = skinIdentifier
+                
+                print("Set session skin \(skinIdentifier) for system \(systemId.rawValue) in \(orientation.rawValue) orientation")
+            } else {
+                // Clear the skin for this orientation
+                sessionSkins[systemId.rawValue]?[orientation.rawValue] = nil
+                
+                // If both orientations are nil, remove the system entry
+                if sessionSkins[systemId.rawValue]?.isEmpty ?? true {
+                    sessionSkins.removeValue(forKey: systemId.rawValue)
+                }
+                
+                print("Cleared session skin for system \(systemId.rawValue) in \(orientation.rawValue) orientation")
+            }
+        }
+    }
+    
+    /// Get the selected skin for a system, checking session skins first, then preferences
+    /// - Parameters:
+    ///   - systemId: The system identifier
+    ///   - gameId: The game identifier (optional)
+    ///   - orientation: The current orientation
+    /// - Returns: The effective skin identifier to use
+    public func effectiveSkinIdentifier(for systemId: SystemIdentifier, gameId: String? = nil, orientation: SkinOrientation) -> String? {
+        // First check for session skin
+        if let sessionSkin = sessionSkinIdentifier(for: systemId, orientation: orientation) {
+            return sessionSkin
+        }
+        
+        // Then check preferences (game-specific, then system)
+        if let gameId = gameId {
+            return DeltaSkinPreferences.shared.effectiveSkinIdentifier(for: gameId, system: systemId, orientation: orientation)
+        } else {
+            return DeltaSkinPreferences.shared.selectedSkinIdentifier(for: systemId, orientation: orientation)
+        }
+    }
+    
+    /// Handle session skin registration notifications
+    @objc private func handleSessionSkinRegistration(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let systemIdString = userInfo["systemId"] as? String,
+              let systemId = SystemIdentifier(rawValue: systemIdString) else {
+            return
+        }
+        
+        // Get the current orientation
+        let orientation: SkinOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
+        
+        // Get the skin identifier (nil means clear)
+        let skinIdentifier = userInfo["skinIdentifier"] as? String
+        
+        // Set the session skin
+        setSessionSkin(skinIdentifier, for: systemId, orientation: orientation)
     }
 
     /// Load a skin from a file URL
