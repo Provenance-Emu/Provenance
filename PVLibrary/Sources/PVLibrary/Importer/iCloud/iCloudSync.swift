@@ -654,7 +654,7 @@ actor RealmActor: GlobalActor {
 }
 
 /// Datastore for accessing saves and anything related to saves.
-actor SaveStateDatastore {
+actor RomsDatastore {
     private let realm: Realm
     private let fileManager: FileManager
     
@@ -708,7 +708,7 @@ actor SaveStateDatastore {
     
     /// deletes all saves that do NOT exist in the file system, but exist in the database. this will happen when the user deletes on a different device, or outside of the app and the app is opened. the app won't get a notification in this case, we have to manually do this check
     @RealmActor
-    func deleteSaveStatesDeletedFromFileSystemWhileApplicationClosed() throws {
+    func deleteSaveStatesRemoveWhileApplicationClosed() throws {
         try realm.asyncWrite {
             realm.objects(PVSaveState.self).forEach { save in
                 guard let file = save.file,
@@ -725,8 +725,8 @@ actor SaveStateDatastore {
         }
     }
     
-    /// tries to delete file from the database
-    /// - Parameter file: file to attempt to delete
+    /// tries to delete save state from the database
+    /// - Parameter file: file is used to query for the save state in the database attempt to delete
     @RealmActor
     func deleteSaveState(file: URL) throws {
         DLOG("attempting to query PVSaveState by file: \(file)")
@@ -748,6 +748,48 @@ actor SaveStateDatastore {
         try realm.asyncWrite {
             realm.delete(save)
         }
+    }
+    
+    /// deletes all games that do NOT exist in the file system, but exist in the database. this will happen when the user deletes on a different device, or outside of the app and the app is opened. the app won't get a notification in this case, we have to manually do this check
+    /// - Parameter romsPath: rull ROMs path
+    @RealmActor
+    func deleteGamesDeletedWhileApplicationClosed(romsPath: String) {
+        var shouldUpdateCache = false
+        RomDatabase.gamesCache.forEach { (_, game: PVGame) in
+            let gameUrl = romsPath.appendingPathComponent(game.romPath)
+            DLOG("""
+            rom partial path: \(game.romPath)
+            full game URL: \(gameUrl)
+            """)
+            guard !fileManager.fileExists(atPath: gameUrl.pathDecoded)
+            else {
+                return
+            }
+            do {
+                if let gameToDelete = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) {
+                    ILOG("\(gameUrl) does NOT exists, removing from datastore")
+                    try realm.deleteGame(gameToDelete)
+                    shouldUpdateCache = true
+                }
+            } catch {
+                ELOG("error deleting \(gameUrl), \(error)")
+            }
+        }
+        if shouldUpdateCache {
+            RomDatabase.reloadGamesCache()
+        }
+    }
+    
+    /// tries to delete game from database
+    /// - Parameter md5Hash: hash used to query for the game in the database
+    @RealmActor
+    func deleteGame(md5Hash: String) throws {
+        guard let game: PVGame = realm.object(ofType: PVGame.self, forPrimaryKey: existingGame.md5Hash)
+        else {
+            return
+        }
+        ILOG("deleting \(game.file.url) from datastore")
+        try realm.deleteGame(game)
     }
 }
 
@@ -787,11 +829,10 @@ class SaveStateSyncer: iCloudContainerSyncer {
                 purgeStatus = .complete
             }
             do {
-                let saveStateDatastore: SaveStateDatastore = await try .init()
-                await try saveStateDatastore.deleteSaveStatesDeletedFromFileSystemWhileApplicationClosed()
+                let romsDatastore: RomsDatastore = await try .init()
+                await try romsDatastore.deleteSaveStatesRemoveWhileApplicationClosed()
             } catch {
                 ELOG("error clearing saves deleted while application was closed")
-                return
             }
         }
     }
@@ -813,8 +854,8 @@ class SaveStateSyncer: iCloudContainerSyncer {
             return
         }
         do {
-            let saveStateDatastore: SaveStateDatastore = await try .init()
-            await saveStateDatastore.deleteSaveState(file: file)
+            let romsDatastore: RomsDatastore = await try .init()
+            await romsDatastore.deleteSaveState(file: file)
         } catch {
             await errorHandler.handleError(error, file: file)
             ELOG("error deleting \(file) from database: \(error)")
@@ -882,14 +923,14 @@ class SaveStateSyncer: iCloudContainerSyncer {
                 else {
                     continue
                 }
-                let saveStateDatastore = await try SaveStateDatastore()
-                guard let existing: PVSaveState = await saveStateDatastore.findSaveState(forPrimaryKey: save.id)
+                let romsDatastore = await try romsDatastore()
+                guard let existing: PVSaveState = await romsDatastore.findSaveState(forPrimaryKey: save.id)
                 else {
                     ILOG("Saves: processing: save #(\(processedCount)) \(json)")
-                    await storeNewSave(save, saveStateDatastore, json)
+                    await storeNewSave(save, romsDatastore, json)
                     continue
                 }
-                await updateExistingSave(existing, saveStateDatastore, save, json)
+                await updateExistingSave(existing, romsDatastore, save, json)
                 
             } catch {
                 await errorHandler.handleError(error, file: json)
@@ -904,23 +945,23 @@ class SaveStateSyncer: iCloudContainerSyncer {
         notificationCenter.post(Notification(name: .SavesFinishedImporting))
     }
     
-    func updateExistingSave(_ existing: PVSaveState, _ saveStateDatastore: SaveStateDatastore, _ save: SaveState, _ json: URL) async {
-        guard let game = await saveStateDatastore.findGame(md5: save.game.md5, forSave: existing)
+    func updateExistingSave(_ existing: PVSaveState, _ romsDatastore: RomsDatastore, _ save: SaveState, _ json: URL) async {
+        guard let game = await romsDatastore.findGame(md5: save.game.md5, forSave: existing)
         else {
             return
         }
         ILOG("Saves: updating \(json)")
         do {
-            await try saveStateDatastore.update(existingSave: existing, with: game)
+            await try romsDatastore.update(existingSave: existing, with: game)
         } catch {
             await errorHandler.handleError(error, file: json)
             ELOG("Failed to update game \(json): \(error)")
         }
     }
     
-    func storeNewSave(_ save: SaveState, _ saveStateDatastore: SaveStateDatastore, _ json: URL) async {
+    func storeNewSave(_ save: SaveState, _ romsDatastore: RomsDatastore, _ json: URL) async {
         do {
-            await try saveStateDatastore.create(newSave: save)
+            await try romsDatastore.create(newSave: save)
         } catch {
             await errorHandler.handleError(error, file: json)
             ELOG("error adding new save \(json): \(error)")
@@ -938,8 +979,6 @@ enum DatastorePurgeStatus {
 enum GameStatus {
     case gameExists
     case gameDoesNotExist
-    case cacheNotLoaded
-    case cacheLoaded
 }
 
 class RomsSyncer: iCloudContainerSyncer {
@@ -983,11 +1022,11 @@ class RomsSyncer: iCloudContainerSyncer {
             else {
                 return
             }
-            self?.handleRemoveGamesDeletedWhileApplicationClosed()
+            await self?.handleRemoveGamesDeletedWhileApplicationClosed()
         }
     }
     
-    func handleRemoveGamesDeletedWhileApplicationClosed() {
+    func handleRemoveGamesDeletedWhileApplicationClosed() async {
         defer {
             purgeStatus = .complete
         }
@@ -998,36 +1037,11 @@ class RomsSyncer: iCloudContainerSyncer {
         }
         
         let romsPath = actualDocumentsUrl.appendingPathComponent(romsDirectoryName)
-        let realm: Realm
         do {
-            realm = try Realm()
+            let romsDatastore = try RomsDatastore()
+            await romsDatastore.deleteGamesDeletedWhileApplicationClosed(romsPath: romsPath)
         } catch {
             ELOG("error removing game entries that do NOT exist in the cloud container \(romsPath)")
-            return
-        }
-        var shouldUpdateCache = false
-        RomDatabase.gamesCache.forEach { (_, game: PVGame) in
-            let gameUrl = romsPath.appendingPathComponent(game.romPath)
-            DLOG("""
-            rom partial path: \(game.romPath)
-            full game URL: \(gameUrl)
-            """)
-            guard !fileManager.fileExists(atPath: gameUrl.pathDecoded)
-            else {
-                return
-            }
-            do {
-                if let gameToDelete = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) {
-                    ILOG("\(gameUrl) does NOT exists, removing from datastore")
-                    try realm.deleteGame(gameToDelete)
-                    shouldUpdateCache = true
-                }
-            } catch {
-                ELOG("error deleting \(gameUrl), \(error)")
-            }
-        }
-        if shouldUpdateCache {
-            RomDatabase.reloadGamesCache()
         }
     }
     
@@ -1111,15 +1125,10 @@ class RomsSyncer: iCloudContainerSyncer {
             else {
                 return
             }
-            let realm = try Realm(queue: nil)
             let romPath = "\(parentDirectory)/\(fileName)"
             DLOG("attempting to query PVGame by romPath: \(romPath)")
-            guard let game: PVGame = realm.object(ofType: PVGame.self, forPrimaryKey: existingGame.md5Hash)
-            else {
-                return
-            }
-            ILOG("deleting \(file) from datastore")
-            try realm.deleteGame(game)
+            let romsDatastore = await try RomsDatastore()
+            await try romsDatastore.deleteGame(md5Hash: existingGame.md5Hash)
         } catch {
             await errorHandler.handleError(error, file: file)
             ELOG("error deleting ROM \(file) from database: \(error)")
