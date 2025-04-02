@@ -25,7 +25,7 @@ struct ContentView: View {
 
     // State to track delayed transition
     @State private var showCompletedContent: Bool = false
-    
+
     var body: some View {
         // Use a local variable to track the bootup state
         let bootupState = appState.bootupStateManager.currentState
@@ -67,8 +67,8 @@ struct ContentView: View {
                     .animation(.easeInOut, value: bootupState)
                     .hideHomeIndicator()
                     .onAppear {
-                        // Schedule transition after 1 second
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        // Schedule transition after 2 seconds
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                             withAnimation {
                                 showCompletedContent = true
                             }
@@ -105,19 +105,9 @@ struct ContentView: View {
 
             // If we're already in completed state, force a refresh
             if case .completed = bootupState, showCompletedContent {
-                // Multiple refreshes with different delays to ensure the UI updates
+                // Refresh with delay to ensure the UI updates
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     ILOG("ContentView: Forcing immediate refresh for already Completed state")
-                    forceRefresh.toggle()
-                }
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    ILOG("ContentView: Forcing second refresh for already Completed state")
-                    forceRefresh.toggle()
-                }
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    ILOG("ContentView: Forcing third refresh for already Completed state")
                     forceRefresh.toggle()
                 }
             }
@@ -147,8 +137,10 @@ struct ContentView: View {
     }
 }
 
+#if DEBUG
 #Preview {
     ContentView()
         .environmentObject(AppState.shared)
         .environmentObject(ThemeManager.shared)
 }
+#endif
