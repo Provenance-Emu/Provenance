@@ -30,7 +30,7 @@ struct EmulatorWithSkinView: View {
 
     // Add this to the struct to track rotation changes
     @State private var rotationCount: Int = 0
-    
+
     // State for D-pad/joystick toggle in default skin
     @State internal var useJoystick = false
 
@@ -68,7 +68,7 @@ struct EmulatorWithSkinView: View {
                                     skinRenderComplete = true
                                     onSkinLoaded()
                                     DLOG("🎮 EmulatorWithSkinView: Skin render complete, notifying observers")
-                                    
+
                                     // Post a notification that the skin is loaded
                                     // This will trigger the GPU view positioning in PVEmulatorViewController
                                     NotificationCenter.default.post(
@@ -144,25 +144,226 @@ struct EmulatorWithSkinView: View {
     // MARK: - Loading View
 
     private var loadingView: some View {
-        VStack(spacing: 20) {
-            Text("Loading \(systemName ?? "Game") Skin...")
-                .font(.headline)
-                .foregroundColor(.white)
+        /// A retrowave-themed loading view with neon colors, grid background, and animated elements
+        GeometryReader { geometry in
+            ZStack {
+                // Retrowave background gradient
+                LinearGradient(gradient: Gradient(colors: [
+                    Color.black,
+                    Color(red: 0.1, green: 0.0, blue: 0.2),
+                    Color(red: 0.2, green: 0.0, blue: 0.3)
+                ]), startPoint: .bottom, endPoint: .top)
+                .edgesIgnoringSafeArea(.all)
 
-            ProgressView(value: skinLoader.loadingProgress, total: 1.0)
-                .progressViewStyle(LinearProgressViewStyle(tint: .white))
-                .frame(width: 200)
+                // Grid overlay
+                RetroGrid()
+                    .opacity(0.4)
 
-            Text(skinLoader.loadingStage.rawValue)
-                .font(.subheadline)
-                .foregroundColor(.white.opacity(0.8))
+                // Content container
+                VStack(spacing: 30) {
+                    // Title with glow effect
+                    Text("LOADING \(systemName?.uppercased() ?? "GAME") SKIN")
+                        .font(.custom("Futura-Bold", size: 28))
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroPurple]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .shadow(color: .retroPink.opacity(0.8), radius: 10, x: 0, y: 0)
+                        .shadow(color: .retroPink.opacity(0.4), radius: 20, x: 0, y: 0)
+                        .padding(.bottom, 10)
+
+                    // Retrowave sun with progress indicator
+                    ZStack {
+                        // Sun backdrop
+                        Circle()
+                            .fill(
+                                RadialGradient(
+                                    gradient: Gradient(colors: [
+                                        .retroYellow,
+                                        .retroPink,
+                                        Color(red: 0.1, green: 0.0, blue: 0.2)
+                                    ]),
+                                    center: .center,
+                                    startRadius: 5,
+                                    endRadius: 120
+                                )
+                            )
+                            .frame(width: 160, height: 160)
+                            .blur(radius: 5)
+
+                        // Horizon line
+                        Rectangle()
+                            .fill(Color.black)
+                            .frame(width: 220, height: 80)
+                            .offset(y: 40)
+
+                        // Progress circle
+                        Circle()
+                            .trim(from: 0, to: CGFloat(skinLoader.loadingProgress))
+                            .stroke(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                ),
+                                style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                            )
+                            .frame(width: 140, height: 140)
+                            .rotationEffect(.degrees(-90))
+                            .animation(.easeInOut(duration: 0.3), value: skinLoader.loadingProgress)
+                    }
+                    .padding(.bottom, 20)
+
+                    // Loading status with retro terminal styling
+                    VStack(spacing: 12) {
+                        Text(skinLoader.loadingStage.rawValue.uppercased())
+                            .font(.custom("Menlo", size: 14))
+                            .tracking(1.5)
+                            .foregroundColor(.retroBlue)
+                            .shadow(color: .retroBlue.opacity(0.8), radius: 5, x: 0, y: 0)
+
+                        // Percentage text
+                        Text("\(Int(skinLoader.loadingProgress * 100))%")
+                            .font(.custom("Menlo-Bold", size: 20))
+                            .foregroundColor(.retroBlue)
+                            .shadow(color: .retroBlue.opacity(0.8), radius: 8, x: 0, y: 0)
+                            .frame(width: 60)
+                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.black.opacity(0.7))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .strokeBorder(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        ),
+                                        lineWidth: 2
+                                    )
+                            )
+                    )
+
+                    // Animated cassette tape (decorative)
+                    RetroTapeAnimation()
+                        .frame(width: 120, height: 80)
+                        .opacity(0.8)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
         }
-        .padding(30)
-        .background(
-            RoundedRectangle(cornerRadius: 15)
-                .fill(Color.black.opacity(0.7))
-        )
-        .shadow(radius: 10)
+    }
+
+    /// A retrowave grid background
+    private struct RetroGrid: View {
+        @State private var animateGrid = false
+
+        var body: some View {
+            VStack(spacing: 0) {
+                ForEach(0..<20, id: \.self) { y in
+                    HStack(spacing: 0) {
+                        ForEach(0..<20, id: \.self) { x in
+                            Rectangle()
+                                .strokeBorder(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            Color.retroPurple.opacity(0.3),
+                                            Color.retroPink.opacity(0.1)
+                                        ]),
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    ),
+                                    lineWidth: 1
+                                )
+                                .aspectRatio(1, contentMode: .fit)
+                        }
+                    }
+                }
+            }
+            .scaleEffect(1.5)
+            .rotationEffect(Angle(degrees: 60))
+            .offset(y: animateGrid ? 100 : -100)
+            .animation(
+                Animation.linear(duration: 20)
+                    .repeatForever(autoreverses: false),
+                value: animateGrid
+            )
+            .onAppear {
+                animateGrid = true
+            }
+        }
+    }
+
+    /// Animated cassette tape
+    private struct RetroTapeAnimation: View {
+        @State private var rotateReels = false
+
+        var body: some View {
+            ZStack {
+                // Tape case
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.black)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                ),
+                                lineWidth: 2
+                            )
+                    )
+                    .frame(width: 100, height: 60)
+
+                // Cassette label
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color.retroPurple.opacity(0.5),
+                                Color.retroPink.opacity(0.5)
+                            ]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .frame(width: 70, height: 30)
+
+                // Reels
+                HStack(spacing: 30) {
+                    Circle()
+                        .stroke(Color.retroBlue, lineWidth: 2)
+                        .frame(width: 22, height: 22)
+                        .overlay(
+                            Circle()
+                                .stroke(Color.white, lineWidth: 1)
+                                .frame(width: 12, height: 12)
+                        )
+                        .rotationEffect(Angle(degrees: rotateReels ? 360 : 0))
+
+                    Circle()
+                        .stroke(Color.retroBlue, lineWidth: 2)
+                        .frame(width: 22, height: 22)
+                        .overlay(
+                            Circle()
+                                .stroke(Color.white, lineWidth: 1)
+                                .frame(width: 12, height: 12)
+                        )
+                        .rotationEffect(Angle(degrees: rotateReels ? 360 : 0))
+                }
+            }
+            .onAppear {
+                withAnimation(Animation.linear(duration: 2).repeatForever(autoreverses: false)) {
+                    rotateReels = true
+                }
+            }
+        }
     }
 
     // MARK: - Skin Content View
