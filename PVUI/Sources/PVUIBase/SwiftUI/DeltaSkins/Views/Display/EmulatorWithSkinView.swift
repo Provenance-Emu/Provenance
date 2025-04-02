@@ -144,7 +144,7 @@ struct EmulatorWithSkinView: View {
     // MARK: - Loading View
 
     private var loadingView: some View {
-        /// A retrowave-themed loading view with neon colors, grid background, and animated elements
+        /// A compact retrowave-themed loading view with neon colors and animated elements
         GeometryReader { geometry in
             ZStack {
                 // Retrowave background gradient
@@ -155,15 +155,16 @@ struct EmulatorWithSkinView: View {
                 ]), startPoint: .bottom, endPoint: .top)
                 .edgesIgnoringSafeArea(.all)
 
-                // Grid overlay
+                // Grid overlay - smaller scale for a more compact look
                 RetroGrid()
-                    .opacity(0.4)
+                    .opacity(0.3)
+                    .scaleEffect(0.8)
 
-                // Content container
-                VStack(spacing: 30) {
-                    // Title with glow effect
-                    Text("LOADING \(systemName?.uppercased() ?? "GAME") SKIN")
-                        .font(.custom("Futura-Bold", size: 28))
+                // Content container - reduced spacing for more compact layout
+                VStack(spacing: 15) {
+                    // Smaller title with maintained glow effect
+                    Text("LOADING SKIN")
+                        .font(.custom("Futura-Bold", size: 22))
                         .foregroundStyle(
                             LinearGradient(
                                 gradient: Gradient(colors: [.retroPink, .retroPurple]),
@@ -171,13 +172,13 @@ struct EmulatorWithSkinView: View {
                                 endPoint: .trailing
                             )
                         )
-                        .shadow(color: .retroPink.opacity(0.8), radius: 10, x: 0, y: 0)
-                        .shadow(color: .retroPink.opacity(0.4), radius: 20, x: 0, y: 0)
-                        .padding(.bottom, 10)
+                        .shadow(color: .retroPink.opacity(0.7), radius: 8, x: 0, y: 0)
+                        .shadow(color: .retroPink.opacity(0.3), radius: 15, x: 0, y: 0)
+                        .padding(.bottom, 5)
 
-                    // Retrowave sun with progress indicator
+                    // Smaller Retrowave sun with progress indicator
                     ZStack {
-                        // Sun backdrop
+                        // Sun backdrop - reduced size
                         Circle()
                             .fill(
                                 RadialGradient(
@@ -187,20 +188,20 @@ struct EmulatorWithSkinView: View {
                                         Color(red: 0.1, green: 0.0, blue: 0.2)
                                     ]),
                                     center: .center,
-                                    startRadius: 5,
-                                    endRadius: 120
+                                    startRadius: 3,
+                                    endRadius: 80
                                 )
                             )
-                            .frame(width: 160, height: 160)
-                            .blur(radius: 5)
+                            .frame(width: 100, height: 100)
+                            .blur(radius: 3)
 
-                        // Horizon line
+                        // Horizon line - reduced size
                         Rectangle()
                             .fill(Color.black)
-                            .frame(width: 220, height: 80)
-                            .offset(y: 40)
+                            .frame(width: 140, height: 50)
+                            .offset(y: 25)
 
-                        // Progress circle
+                        // Progress circle - reduced size
                         Circle()
                             .trim(from: 0, to: CGFloat(skinLoader.loadingProgress))
                             .stroke(
@@ -209,52 +210,63 @@ struct EmulatorWithSkinView: View {
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 ),
-                                style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                                style: StrokeStyle(lineWidth: 5, lineCap: .round)
                             )
-                            .frame(width: 140, height: 140)
+                            .frame(width: 85, height: 85)
                             .rotationEffect(.degrees(-90))
                             .animation(.easeInOut(duration: 0.3), value: skinLoader.loadingProgress)
                     }
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 10)
 
-                    // Loading status with retro terminal styling
-                    VStack(spacing: 12) {
-                        Text(skinLoader.loadingStage.rawValue.uppercased())
-                            .font(.custom("Menlo", size: 14))
-                            .tracking(1.5)
-                            .foregroundColor(.retroBlue)
-                            .shadow(color: .retroBlue.opacity(0.8), radius: 5, x: 0, y: 0)
+                    // Compact loading status with system name
+                    HStack(spacing: 10) {
+                        // System name and loading stage in one line
+                        VStack(alignment: .trailing, spacing: 2) {
+                            Text(systemName?.uppercased() ?? "GAME")
+                                .font(.custom("Menlo-Bold", size: 12))
+                                .tracking(1)
+                                .foregroundColor(.retroPink)
+                                .shadow(color: .retroPink.opacity(0.6), radius: 3, x: 0, y: 0)
 
-                        // Percentage text
+                            Text(skinLoader.loadingStage.rawValue.uppercased())
+                                .font(.custom("Menlo", size: 10))
+                                .tracking(1)
+                                .foregroundColor(.retroBlue)
+                                .shadow(color: .retroBlue.opacity(0.6), radius: 3, x: 0, y: 0)
+                        }
+
+                        // Percentage in more prominent display
                         Text("\(Int(skinLoader.loadingProgress * 100))%")
-                            .font(.custom("Menlo-Bold", size: 20))
+                            .font(.custom("Menlo-Bold", size: 18))
                             .foregroundColor(.retroBlue)
-                            .shadow(color: .retroBlue.opacity(0.8), radius: 8, x: 0, y: 0)
-                            .frame(width: 60)
+                            .shadow(color: .retroBlue.opacity(0.7), radius: 6, x: 0, y: 0)
+                            .frame(width: 50)
                     }
-                    .padding()
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
                     .background(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: 8)
                             .fill(Color.black.opacity(0.7))
                             .overlay(
-                                RoundedRectangle(cornerRadius: 12)
+                                RoundedRectangle(cornerRadius: 8)
                                     .strokeBorder(
                                         LinearGradient(
                                             gradient: Gradient(colors: [.retroBlue, .retroPurple]),
                                             startPoint: .leading,
                                             endPoint: .trailing
                                         ),
-                                        lineWidth: 2
+                                        lineWidth: 1.5
                                     )
                             )
                     )
 
-                    // Animated cassette tape (decorative)
+                    // Smaller animated cassette tape
                     RetroTapeAnimation()
-                        .frame(width: 120, height: 80)
-                        .opacity(0.8)
+                        .frame(width: 80, height: 50)
+                        .opacity(0.7)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .scaleEffect(0.95) // Slightly scale down the entire content for more compact look
             }
         }
     }
@@ -275,19 +287,19 @@ struct EmulatorWithSkinView: View {
                                             Color.retroPurple.opacity(0.3),
                                             Color.retroPink.opacity(0.1)
                                         ]),
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    ),
-                                    lineWidth: 1
-                                )
-                                .aspectRatio(1, contentMode: .fit)
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                ),
+                                lineWidth: 1
+                            )
+                            .aspectRatio(1, contentMode: .fit)
                         }
                     }
                 }
             }
-            .scaleEffect(1.5)
+            .scaleEffect(1.2) // Reduced scale from 1.5
             .rotationEffect(Angle(degrees: 60))
-            .offset(y: animateGrid ? 100 : -100)
+            .offset(y: animateGrid ? 80 : -80) // Reduced offset from 100
             .animation(
                 Animation.linear(duration: 20)
                     .repeatForever(autoreverses: false),
@@ -305,24 +317,24 @@ struct EmulatorWithSkinView: View {
 
         var body: some View {
             ZStack {
-                // Tape case
-                RoundedRectangle(cornerRadius: 8)
+                // Tape case - reduced size
+                RoundedRectangle(cornerRadius: 6)
                     .fill(Color.black)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: 6)
                             .strokeBorder(
                                 LinearGradient(
                                     gradient: Gradient(colors: [.retroBlue, .retroPurple]),
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 ),
-                                lineWidth: 2
+                                lineWidth: 1.5
                             )
                     )
-                    .frame(width: 100, height: 60)
+                    .frame(width: 70, height: 40)
 
-                // Cassette label
-                RoundedRectangle(cornerRadius: 4)
+                // Cassette label - reduced size
+                RoundedRectangle(cornerRadius: 3)
                     .fill(
                         LinearGradient(
                             gradient: Gradient(colors: [
@@ -333,27 +345,27 @@ struct EmulatorWithSkinView: View {
                             endPoint: .trailing
                         )
                     )
-                    .frame(width: 70, height: 30)
+                    .frame(width: 50, height: 20)
 
-                // Reels
-                HStack(spacing: 30) {
+                // Reels - reduced size and spacing
+                HStack(spacing: 20) {
                     Circle()
-                        .stroke(Color.retroBlue, lineWidth: 2)
-                        .frame(width: 22, height: 22)
+                        .stroke(Color.retroBlue, lineWidth: 1.5)
+                        .frame(width: 16, height: 16)
                         .overlay(
                             Circle()
                                 .stroke(Color.white, lineWidth: 1)
-                                .frame(width: 12, height: 12)
+                                .frame(width: 8, height: 8)
                         )
                         .rotationEffect(Angle(degrees: rotateReels ? 360 : 0))
 
                     Circle()
-                        .stroke(Color.retroBlue, lineWidth: 2)
-                        .frame(width: 22, height: 22)
+                        .stroke(Color.retroBlue, lineWidth: 1.5)
+                        .frame(width: 16, height: 16)
                         .overlay(
                             Circle()
                                 .stroke(Color.white, lineWidth: 1)
-                                .frame(width: 12, height: 12)
+                                .frame(width: 8, height: 8)
                         )
                         .rotationEffect(Angle(degrees: rotateReels ? 360 : 0))
                 }

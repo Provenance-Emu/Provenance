@@ -16,7 +16,7 @@ import PVPlists
 import PVRealm
 import PVSystems
 import PVFileSystem
-import MBProgressHUD
+import PVUIBase
 
 private let WIKI_BIOS_URL = "https://wiki.provenance-emu.com/installation-and-usage/bios-requirements"
 
@@ -294,10 +294,9 @@ extension GameLaunchingViewController where Self: UIViewController {
             return
         }
 
-        // Show loading HUD
-        let hud = MBProgressHUD.showAdded(to: self.view, animated: true)
-        hud.label.text = "Loading \(game.title)..."
-        hud.mode = .indeterminate
+        // Show retrowave-themed loading HUD
+        let hud = RetroProgressHUD.show(in: self.view, animated: true)
+        hud.setText("Loading \(game.title)...")
 
         defer {
             // Ensure HUD is hidden when function exits

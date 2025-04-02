@@ -1019,8 +1019,6 @@ struct RetroMenuView: View {
         }
         .edgesIgnoringSafeArea(.all)
         .preferredColorScheme(.dark)
-        .frame(width: isLandscape ? UIScreen.main.bounds.width * 0.7 : UIScreen.main.bounds.width * 0.9,
-               height: isLandscape ? UIScreen.main.bounds.height * 0.8 : UIScreen.main.bounds.height * 0.7)
     }
 
     // Load available skins for the current system
