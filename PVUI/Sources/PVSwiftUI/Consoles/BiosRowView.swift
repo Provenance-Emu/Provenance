@@ -7,8 +7,6 @@
 //
 
 import Foundation
-
-#if canImport(SwiftUI)
 import SwiftUI
 import RealmSwift
 import PVLibrary
@@ -80,55 +78,201 @@ struct BiosRowView: SwiftUI.View {
     var body: some SwiftUI.View {
         Group {
             HStack(alignment: .center, spacing: 0) {
-                Image(biosState?.biosStatusImageName ?? BIOSStatus.State.missing.biosStatusImageName, bundle: PVUIBase.BundleLoader.myBundle).resizable().scaledToFit()
+                // BIOS status icon with retrowave glow
+                Image(biosState?.biosStatusImageName ?? BIOSStatus.State.missing.biosStatusImageName, bundle: PVUIBase.BundleLoader.myBundle)
+                    .resizable()
+                    .scaledToFit()
                     .padding(.vertical, 4)
                     .padding(.horizontal, 12)
+                    .shadow(color: getStatusColor().opacity(0.7), radius: 3)
+                
+                // BIOS information with retrowave styling
                 VStack(alignment: .leading) {
                     Text("\(bios.descriptionText)")
-                        .font(.footnote)
+                        .font(.system(size: 13, weight: .medium))
                         .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    
                     Text("\(bios.expectedMD5.uppercased()) : \(bios.expectedSize) bytes")
-                        .font(.caption2)
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .font(.system(size: 10, weight: .light))
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [
+                                    themeManager.currentPalette.gameLibraryText.swiftUIColor ?? .white,
+                                    RetroTheme.retroBlue.opacity(0.8)
+                                ]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
                 }
                 Spacer()
                 HStack(alignment: .center, spacing: 4) {
                     switch biosState {
                     case .match:
-                        Image(systemName: "checkmark")
-                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                            .font(.footnote.weight(.light))
+                        // Retrowave-styled success indicator
+                        Text("Installed")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .stroke(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        ),
+                                        lineWidth: 1
+                                    )
+                            )
+                        
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .font(.system(size: 14, weight: .medium))
+                            .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 2)
+                            
                     case .missing:
                         if bios.optional {
+                            // Retrowave-styled optional indicator
                             Text("Optional")
-                                .font(.caption)
-                                .foregroundColor(Color.gray)
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [Color.gray, Color.white.opacity(0.7)]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .stroke(
+                                            LinearGradient(
+                                                gradient: Gradient(colors: [Color.gray, Color.white.opacity(0.7)]),
+                                                startPoint: .leading,
+                                                endPoint: .trailing
+                                            ),
+                                            lineWidth: 1
+                                        )
+                                )
+                            
                             Image(systemName: "info.circle")
-                                .foregroundColor(Color.gray)
-                                .font(.caption.weight(.light))
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [Color.gray, Color.white.opacity(0.7)]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .font(.system(size: 14, weight: .medium))
+                                .shadow(color: Color.gray.opacity(0.5), radius: 2)
                         } else {
+                            // Retrowave-styled missing indicator
                             Text("Missing")
-                                .font(.caption)
-                                .foregroundColor(Color.red)
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [RetroTheme.retroPink, Color.red]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .stroke(
+                                            LinearGradient(
+                                                gradient: Gradient(colors: [RetroTheme.retroPink, Color.red]),
+                                                startPoint: .leading,
+                                                endPoint: .trailing
+                                            ),
+                                            lineWidth: 1
+                                        )
+                                )
+                            
                             Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundColor(Color.red)
-                                .font(.caption.weight(.light))
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [RetroTheme.retroPink, Color.red]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .font(.system(size: 14, weight: .medium))
+                                .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2)
                         }
                     case .mismatch(_):
+                        // Retrowave-styled mismatch indicator
                         Text("Mismatch")
-                            .font(.caption)
-                            .foregroundColor(Color.yellow)
-                            .border(Color.yellow)
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [Color.yellow, Color.orange]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .stroke(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [Color.yellow, Color.orange]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        ),
+                                        lineWidth: 1
+                                    )
+                            )
+                        
                         Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundColor(Color.yellow)
-                            .font(.caption.weight(.medium))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [Color.yellow, Color.orange]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .font(.system(size: 14, weight: .medium))
+                            .shadow(color: Color.yellow.opacity(0.7), radius: 2)
                     case .none:
+                        // Retrowave-styled loading indicator
                         Text("Loading...")
-                            .font(.caption)
-                            .foregroundColor(Color.red)
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundColor(Color.red)
-                            .font(.caption.weight(.medium))
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [RetroTheme.retroPink, Color.red]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                        
+                        Image(systemName: "hourglass")
+                            .foregroundStyle(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [RetroTheme.retroPink, Color.red]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .font(.system(size: 14, weight: .medium))
+                            .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2)
                     }
                 }
                 .padding(.horizontal, 12)
@@ -182,5 +326,18 @@ struct BiosRowView: SwiftUI.View {
             })
         }
     }
+    
+    // Helper function to get status color for glow effects
+    private func getStatusColor() -> Color {
+        switch biosState {
+        case .match:
+            return RetroTheme.retroBlue
+        case .missing:
+            return bios.optional ? Color.gray : RetroTheme.retroPink
+        case .mismatch(_):
+            return Color.yellow
+        case .none:
+            return RetroTheme.retroPink
+        }
+    }
 }
-#endif
