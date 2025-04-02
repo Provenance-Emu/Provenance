@@ -23,6 +23,9 @@ public class SceneCoordinator: ObservableObject {
         case emulator
     }
     
+    // Published property to track which scene should be shown
+    @Published public var currentScene: Scenes = .main
+    
     public func open(scene: Scenes) {
         switch scene {
         case .main:
@@ -40,6 +43,7 @@ public class SceneCoordinator: ObservableObject {
         
         ILOG("SceneCoordinator: Opening main scene")
         UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        currentScene = .main
     }
     
     /// Opens the emulator scene with the current game from AppState
@@ -51,6 +55,7 @@ public class SceneCoordinator: ObservableObject {
         
         ILOG("SceneCoordinator: Opening emulator scene")
         UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        currentScene = .emulator
     }
     
     /// Returns to the main scene

@@ -23,11 +23,11 @@ struct MainView: View {
         WithPerceptionTracking {
             Group {
                 if appState.useUIKit {
-                    UIKitHostedProvenanceMainView()
+                    UIKitHostedProvenanceMainView(appDelegate: appDelegate)
                         .environmentObject(appDelegate)
                         .edgesIgnoringSafeArea(.all)
                 } else {
-                    SwiftUIHostedProvenanceMainView()
+                    SwiftUIHostedProvenanceMainView(appDelegate: appDelegate)
                         .environmentObject(appDelegate)
                         .edgesIgnoringSafeArea(.all)
                 }
