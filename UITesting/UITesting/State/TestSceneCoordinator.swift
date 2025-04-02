@@ -88,6 +88,8 @@ public class TestSceneCoordinator: ObservableObject {
         ILOG("TestSceneCoordinator: Closing emulator")
         
         // Clear the emulation state
+        AppState.shared.emulationUIState.core = nil
+        AppState.shared.emulationUIState.emulator = nil
         AppState.shared.emulationUIState.currentGame = nil
         
         // Return to the main scene

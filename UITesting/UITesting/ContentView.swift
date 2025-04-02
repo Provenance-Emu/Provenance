@@ -30,7 +30,7 @@ struct ContentView: View {
     var bootupView: some View {
         ZStack {
             // Show the bootup view
-            BootupView()
+            BootupViewRetroWave()
                 .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
                 .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                 .transition(.opacity)
