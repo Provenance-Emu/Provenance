@@ -15,6 +15,18 @@ struct ContentView: View {
     /// Use EnvironmentObject for app delegate
     @EnvironmentObject var appDelegate: PVAppDelegate
 
+    var bootupView: some View {
+        ZStack {
+            // Show the bootup view
+            BootupViewRetroWave()
+                .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                .transition(.opacity)
+                .animation(.easeInOut, value: appState.bootupStateManager.currentState)
+                .hideHomeIndicator()
+        }
+    }
+    
     /// Remove init since we're using environment objects now
 
     var body: some View {
@@ -32,9 +44,10 @@ struct ContentView: View {
                     appState.startBootupSequence()
                 }
             default:
-                BootupView()
-                    .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
-                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                bootupView
+//                BootupView()
+//                    .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+//                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
             }
         }
         .edgesIgnoringSafeArea(.all)

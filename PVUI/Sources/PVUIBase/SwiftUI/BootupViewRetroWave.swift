@@ -1,20 +1,19 @@
 //
-//  BootupView.swift
+//  BootupViewRetroWave.swift
 //  UITesting
 //
 //  Created by Cascade on 3/26/25.
 //
 
 import SwiftUI
-import PVSwiftUI
 import PVUIBase
 import PVThemes
 import PVLogging
 import Combine
 
-struct BootupView: View {
-    @EnvironmentObject var appState: AppState
-    @EnvironmentObject var themeManager: ThemeManager
+public struct BootupViewRetroWave: View {
+    @EnvironmentObject public var appState: AppState
+    @EnvironmentObject public var themeManager: ThemeManager
     
     // Animation properties
     @State private var glowOpacity: Double = 0.0
@@ -27,14 +26,14 @@ struct BootupView: View {
     @State private var scanlineOffset: CGFloat = 0
     
     // For the blinking text effect
-    let timer = Timer.publish(every: 0.8, on: .main, in: .common).autoconnect()
+    public let timer = Timer.publish(every: 0.8, on: .main, in: .common).autoconnect()
     @State private var showText = true
     
-    init() {
+    public init() {
         ILOG("ContentView: App is not initialized, showing BootupView")
     }
     
-    var body: some View {
+    public var body: some View {
         ZStack {
             // Background color
             Color.black.edgesIgnoringSafeArea(.all)
@@ -163,15 +162,8 @@ struct BootupView: View {
     }
 }
 
-// MARK: - Color Extensions
-extension Color {
-    static let retroPink = Color(red: 0.99, green: 0.11, blue: 0.55)
-    static let retroPurple = Color(red: 0.53, green: 0.11, blue: 0.91)
-    static let retroBlue = Color(red: 0.0, green: 0.75, blue: 0.95)
-}
-
 #Preview {
-    BootupView()
+    BootupViewRetroWave()
         .environmentObject(AppState.shared)
         .environmentObject(ThemeManager.shared)
 }
