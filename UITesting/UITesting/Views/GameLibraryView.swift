@@ -65,6 +65,43 @@ struct GameLibraryView: View {
     @State private var selectedViewMode: ViewMode = .grid
     @State private var showFilterSheet = false
     @State private var selectedSortOption: SortOption = .name
+    
+    /// GameContextMenuDelegate
+    @State internal var showImagePicker = false
+    @State internal var selectedImage: UIImage?
+    @State internal var gameToUpdateCover: PVGame?
+    @State internal var showingRenameAlert = false
+    @State internal var gameToRename: PVGame?
+    @State internal var newGameTitle = ""
+    @FocusState internal var renameTitleFieldIsFocused: Bool
+    @State internal var systemMoveState: SystemMoveState?
+    @State internal var continuesManagementState: ContinuesManagementState?
+    @State internal var showArtworkSearch = false
+    @State internal var showArtworkSourceAlert = false
+    
+    private func renameGame(_ game: PVGame, to newName: String) async {
+        guard !newName.isEmpty else { return }
+
+        // Get a reference to the Realm
+        let realm = try? await Realm()
+
+        // Update the game title
+        try? realm?.write {
+            game.thaw()?.title = newName
+        }
+
+        // Reset state
+        gameToRename = nil
+        newGameTitle = ""
+    }
+    
+    // Create a computed binding that wraps the String as String?
+    private var newGameTitleBinding: Binding<String?> {
+        Binding<String?>(
+            get: { self.newGameTitle },
+            set: { self.newGameTitle = $0 ?? "" }
+        )
+    }
 
     // Enum for view modes
     enum ViewMode: String, CaseIterable, Identifiable {
@@ -143,6 +180,101 @@ struct GameLibraryView: View {
                 
                 loadExpandedSections()
             }
+            .sheet(isPresented: $showImagePicker) {
+#if !os(tvOS)
+                ImagePicker(sourceType: .photoLibrary) { image in
+                    if let game = gameToUpdateCover {
+                        saveArtwork(image: image, forGame: game)
+                    }
+                    showImagePicker = false
+                    gameToUpdateCover = nil
+                }
+#endif
+            }
+            .sheet(isPresented: $showArtworkSearch) {
+                ArtworkSearchView(
+                    initialSearch: gameToUpdateCover?.title ?? "",
+                    initialSystem: nil
+                ) { selection in
+                    if let game = gameToUpdateCover {
+                        Task {
+                            do {
+                                // Load image data from URL
+                                let (data, _) = try await URLSession.shared.data(from: selection.metadata.url)
+                                if let uiImage = UIImage(data: data) {
+                                    await MainActor.run {
+                                        saveArtwork(image: uiImage, forGame: game)
+                                        showArtworkSearch = false
+                                        gameToUpdateCover = nil
+                                    }
+                                }
+                            } catch {
+                                DLOG("Failed to load artwork image: \(error)")
+                            }
+                        }
+                    }
+                }
+            }
+            .uiKitAlert(
+                "Rename Game",
+                message: "Enter a new name for \(gameToRename?.title ?? "")",
+                isPresented: $showingRenameAlert,
+                textValue: newGameTitleBinding,
+                preferredContentSize: CGSize(width: 300, height: 200),
+                textField: { textField in
+                    textField.placeholder = "Game name"
+                    textField.clearButtonMode = .whileEditing
+                    textField.autocapitalizationType = .words
+                }
+            ) {
+                [
+                    UIAlertAction(title: "Save", style: .default) { _ in
+                        if let game = gameToRename, !newGameTitle.isEmpty {
+                            Task {
+                                await renameGame(game, to: newGameTitle)
+                                gameToRename = nil
+                                newGameTitle = ""
+                            }
+                        }
+                    },
+                    UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                        gameToRename = nil
+                        newGameTitle = ""
+                    }
+                ]
+            }
+            .sheet(item: $systemMoveState) { state in
+                SystemPickerView(
+                    game: state.game,
+                    isPresented: Binding(
+                        get: { state.isPresenting },
+                        set: { newValue in
+                            if !newValue {
+                                systemMoveState = nil
+                            }
+                        }
+                    )
+                )
+            }
+            .uiKitAlert(
+                "Choose Artwork Source",
+                message: "Select artwork from your photo library or search online sources",
+                isPresented: $showArtworkSourceAlert,
+                buttons: {
+                    UIAlertAction(title: "Select from Photos", style: .default) { _ in
+                        showArtworkSourceAlert = false
+                        showImagePicker = true
+                    }
+                    UIAlertAction(title: "Search Online", style: .default) { [game = gameToUpdateCover] _ in
+                        showArtworkSourceAlert = false
+                        gameToUpdateCover = game  // Preserve the game reference
+                        showArtworkSearch = true
+                    }
+                    UIAlertAction(title:  NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
+                        showArtworkSourceAlert = false
+                    }
+                }
+            )
     }
 
     /// Main content view that displays either the empty state or the game library
@@ -536,40 +668,124 @@ extension GameLibraryView {
 }
 
 extension GameLibraryView: GameContextMenuDelegate {
+#if !os(tvOS)
+    @ViewBuilder
+    internal func imagePickerView() -> some View {
+        ImagePicker(sourceType: .photoLibrary) { image in
+            if let game = gameToUpdateCover {
+                saveArtwork(image: image, forGame: game)
+            }
+            gameToUpdateCover = nil
+            showImagePicker = false
+        }
+    }
+#endif
+
+    // MARK: - Rename Methods
     func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame) {
-        ILOG("GameLibraryView: Rename requested for game: \(game.title)")
+        gameToRename = game.freeze()
+        newGameTitle = game.title
+        showingRenameAlert = true
     }
 
+    private func submitRename() {
+        if !newGameTitle.isEmpty, let frozenGame = gameToRename, newGameTitle != frozenGame.title {
+            do {
+                guard let thawedGame = frozenGame.thaw() else {
+                    throw NSError(domain: "ConsoleGamesView", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to thaw game object"])
+                }
+                RomDatabase.sharedInstance.renameGame(thawedGame, toTitle: newGameTitle)
+//                rootDelegate?.showMessage("Game renamed successfully.", title: "Success")
+            } catch {
+                DLOG("Failed to rename game: \(error.localizedDescription)")
+//                rootDelegate?.showMessage("Failed to rename game: \(error.localizedDescription)", title: "Error")
+            }
+        } else if newGameTitle.isEmpty {
+//            rootDelegate?.showMessage("Cannot set a blank title.", title: "Error")
+        }
+        showingRenameAlert = false
+        gameToRename = nil
+    }
+
+    // MARK: - Image Picker Methods
+
     func gameContextMenu(_ menu: GameContextMenu, didRequestChooseCoverFor game: PVGame) {
-        ILOG("GameLibraryView: Choose cover requested for game: \(game.title)")
+        gameToUpdateCover = game
+        showImagePicker = true
+    }
+
+    internal func saveArtwork(image: UIImage, forGame game: PVGame) {
+        DLOG("GameContextMenu: Attempting to save artwork for game: \(game.title)")
+
+        let uniqueID: String = UUID().uuidString
+        let md5: String = game.md5 ?? ""
+        let key = "artwork_\(md5)_\(uniqueID)"
+        DLOG("Generated key for image: \(key)")
+
+        do {
+            DLOG("Attempting to write image to disk")
+            try PVMediaCache.writeImage(toDisk: image, withKey: key)
+            DLOG("Image successfully written to disk")
+
+            DLOG("Attempting to update game's customArtworkURL")
+            try RomDatabase.sharedInstance.writeTransaction {
+                let thawedGame = game.thaw()
+                DLOG("Game thawed: \(thawedGame?.title ?? "Unknown")")
+                thawedGame?.customArtworkURL = key
+                DLOG("Game's customArtworkURL updated to: \(key)")
+            }
+            DLOG("Database transaction completed successfully")
+//            rootDelegate?.showMessage("Artwork has been saved for \(game.title).", title: "Artwork Saved")
+
+            DLOG("Attempting to verify image retrieval")
+            PVMediaCache.shareInstance().image(forKey: key) { retrievedKey, retrievedImage in
+                if let retrievedImage = retrievedImage {
+                    DLOG("Successfully retrieved saved image for key: \(retrievedKey)")
+                    DLOG("Retrieved image size: \(retrievedImage.size)")
+                } else {
+                    DLOG("Failed to retrieve saved image for key: \(retrievedKey)")
+                }
+            }
+        } catch {
+            DLOG("Failed to set custom artwork: \(error.localizedDescription)")
+            DLOG("Error details: \(error)")
+//            rootDelegate?.showMessage("Failed to set custom artwork for \(game.title): \(error.localizedDescription)", title: "Error")
+        }
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestMoveToSystemFor game: PVGame) {
-        ILOG("GameLibraryView: Move to system requested for game: \(game.title)")
+        DLOG("ConsoleGamesView: Received request to move game to system")
+        let frozenGame = game.isFrozen ? game : game.freeze()
+        systemMoveState = SystemMoveState(game: frozenGame)
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
-        ILOG("GameLibraryView: Show save states requested for game: \(game.title)")
+        DLOG("ConsoleGamesView: Received request to show save states for game")
+        continuesManagementState = ContinuesManagementState(game: game)
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor gameId: String) {
-        ILOG("GameLibraryView: Show game info requested for game ID: \(gameId)")
+//        showGameInfo(gameId)
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame) {
-        ILOG("GameLibraryView: Show image picker requested for game: \(game.title)")
+        gameToUpdateCover = game
+        showImagePicker = true
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame) {
-        ILOG("GameLibraryView: Show artwork search requested for game: \(game.title)")
+        gameToUpdateCover = game
+        showArtworkSearch = true
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
-        ILOG("GameLibraryView: Choose artwork source requested for game: \(game.title)")
+        DLOG("Setting gameToUpdateCover with game: \(game.title)")
+        gameToUpdateCover = game
+        showArtworkSourceAlert = true
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
-        ILOG("GameLibraryView: Disc selection requested for game: \(game.title)")
+        // gamesViewModel.presentDiscSelectionAlert(for: game, rootDelegate: rootDelegate)
     }
 }
 
@@ -1009,4 +1225,22 @@ extension GameLibraryView {
             )
         }
     }
+}
+
+internal struct SystemMoveState: Identifiable {
+    var id: String {
+        guard !game.isInvalidated else { return "" }
+        return game.id
+    }
+    let game: PVGame
+    var isPresenting: Bool = true
+}
+
+internal struct ContinuesManagementState: Identifiable {
+    var id: String {
+        guard !game.isInvalidated else { return "" }
+        return game.id
+    }
+    let game: PVGame
+    var isPresenting: Bool = true
 }
