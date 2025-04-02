@@ -779,6 +779,9 @@ extension PVEmulatorViewController {
             // 6. Position the game screen within the skin view at the correct position
             // Force recalculation of screen position for the new skin
             repositionGameScreen(for: skin, orientation: currentOrientation, forceRecalculation: true)
+            
+            // Ensure proper z-order of all elements
+            ensureProperZOrder()
 
             // 7. Print the final view hierarchy
             print("View hierarchy after applying new skin:")
@@ -939,6 +942,39 @@ extension PVEmulatorViewController {
             }
         }
     }
+    
+    // Helper to ensure proper z-order of all views
+    private func ensureProperZOrder() {
+        guard let gpuView = gpuViewController.view else { return }
+        
+        // Ensure the game view is a direct child of the main view
+        if gpuView.superview !== view {
+            gpuView.removeFromSuperview()
+            view.addSubview(gpuView)
+        }
+        
+        // Ensure proper z-order: skin container at bottom, game view above it, UI elements on top
+        if let skinContainer = skinContainerView {
+            // Make sure skin container is at the bottom
+            view.sendSubviewToBack(skinContainer)
+            
+            // Place game view above skin container but below any UI elements
+            if let index = view.subviews.firstIndex(of: skinContainer) {
+                let targetIndex = min(index + 1, view.subviews.count - 1)
+                if let currentIndex = view.subviews.firstIndex(of: gpuView), currentIndex != targetIndex {
+                    view.insertSubview(gpuView, at: targetIndex)
+                    print("Fixed z-order: Repositioned game view in hierarchy")
+                }
+            }
+        }
+        
+        // Ensure any menu overlays are on top
+        for subview in view.subviews {
+            if subview is PVGameMenuOverlay {
+                view.bringSubviewToFront(subview)
+            }
+        }
+    }
 
     /// Create a skin view from a DeltaSkin
     private func createSkinView(from skin: DeltaSkinProtocol) async throws -> UIView {
@@ -1088,9 +1124,26 @@ extension PVEmulatorViewController {
             self.gpuViewController.view.frame = newFrame
         }
 
-        // Don't bring the game view to front if we want filters and transparent elements to appear over it
-        // This is commented out to allow skin elements to appear over the game screen
-        // view.bringSubviewToFront(gpuViewController.view)
+        // Ensure proper z-order by placing the game view at the correct layer
+        // The game view should be above the skin background but below interactive elements
+        if let skinContainer = skinContainerView, let gpuView = gpuViewController.view {
+            // First, make sure the GPU view is a direct child of the main view (not the skin container)
+            if gpuView.superview !== view {
+                gpuView.removeFromSuperview()
+                view.addSubview(gpuView)
+            }
+            
+            // Determine the correct z-order index
+            // We want the game view to be above the skin container but below any interactive elements
+            let skinContainerIndex = view.subviews.firstIndex(of: skinContainer) ?? 0
+            let gpuViewIndex = view.subviews.firstIndex(of: gpuView) ?? view.subviews.count - 1
+            
+            // If the GPU view is not at the right position in the hierarchy, fix it
+            if skinContainerIndex >= gpuViewIndex {
+                view.insertSubview(gpuView, aboveSubview: skinContainer)
+                print("Fixed z-order: Placed game view above skin container")
+            }
+        }
 
         // Store the current target frame
         currentTargetFrame = newFrame
@@ -1113,13 +1166,17 @@ extension PVEmulatorViewController {
             let oldOrientation = currentOrientation
             currentOrientation = newOrientation
 
+            // Save current skin for reference
+            let previousSkin = self.currentSkin
+            
             // Handle rotation in two phases to avoid visual glitches
             coordinator.animate { _ in
                 // During animation phase, just reposition the game screen
                 // but don't change the skin yet to avoid visual glitches
-                if let skin = self.currentSkin {
+                if let skin = previousSkin {
                     print("Repositioning game screen during animation")
-                    self.repositionGameScreen(for: skin, orientation: newOrientation)
+                    // Force recalculation during rotation to ensure proper positioning
+                    self.repositionGameScreen(for: skin, orientation: newOrientation, forceRecalculation: true)
                 }
             } completion: { _ in
                 // After rotation animation completes, apply the appropriate skin
@@ -1157,14 +1214,20 @@ extension PVEmulatorViewController {
                                 try await self.resetToDefaultSkin()
                             }
                         } else if self.currentSkin != nil {
-                            print("Using existing skin, just repositioning")
+                            print("Using existing skin, need to reapply for proper layout")
                             // We need to do a complete reapplication to ensure proper traits
                             // This fixes issues with skins not drawing correctly after rotation
                             try await self.applySkin(self.currentSkin!)
+                            
+                            // Ensure the game screen is properly positioned with the correct z-order
+                            self.repositionGameScreen(for: self.currentSkin!, orientation: newOrientation, forceRecalculation: true)
                         } else {
                             print("No skin at all, applying default")
                             try await self.resetToDefaultSkin()
                         }
+                        
+                        // Final check to ensure proper z-order after all changes
+                        self.ensureProperZOrder()
                     } catch {
                         print("Error handling orientation change: \(error)")
                     }
