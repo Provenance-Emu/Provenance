@@ -1622,8 +1622,6 @@ private struct SecretDPadView: View {
 }
 
 private struct DeltaSkinsSection: View {
-    @State private var showSystemSkinBrowser = false
-    @State private var showDeltaSkinList = false
     @Default(.buttonPressEffect) var buttonPressEffect
     @Default(.buttonSound) var buttonSound
 
@@ -1631,8 +1629,8 @@ private struct DeltaSkinsSection: View {
         Section {
             // Button to select skins (premium locked)
             PaidFeatureView {
-                Button {
-                    showSystemSkinBrowser = true
+                NavigationLink {
+                    SystemSkinBrowserView()
                 } label: {
                     SettingsRow(title: "Select Controller Skins",
                               subtitle: "Choose controller skins for each system and orientation.",
@@ -1646,8 +1644,8 @@ private struct DeltaSkinsSection: View {
             
             // Button to manage skins (premium locked)
             PaidFeatureView {
-                Button {
-                    showDeltaSkinList = true
+                NavigationLink {
+                    DeltaSkinListView(manager: DeltaSkinManager.shared)
                 } label: {
                     SettingsRow(title: "Manage Controller Skins",
                               subtitle: "View, import, and delete controller skins.",
@@ -1673,16 +1671,6 @@ private struct DeltaSkinsSection: View {
                 SettingsRow(title: "Button Sound Effect",
                             subtitle: "Unlock to select a button sound effect.",
                             icon: .sfSymbol("lock.fill"))
-            }
-        }
-        .sheet(isPresented: $showSystemSkinBrowser) {
-            NavigationView {
-                SystemSkinBrowserView()
-            }
-        }
-        .sheet(isPresented: $showDeltaSkinList) {
-            NavigationView {
-                DeltaSkinListView(manager: DeltaSkinManager.shared)
             }
         }
     }
