@@ -25,6 +25,28 @@ struct ContentView: View {
 
     // State to track delayed transition
     @State private var showCompletedContent: Bool = false
+    
+    
+    var bootupView: some View {
+        ZStack {
+            // Show the bootup view
+            BootupView()
+                .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                .transition(.opacity)
+                .animation(.easeInOut, value: appState.bootupStateManager.currentState)
+                .hideHomeIndicator()
+                .onAppear {
+                    // Schedule transition after 2 seconds
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                        withAnimation {
+                            showCompletedContent = true
+                        }
+                    }
+                }
+        }
+    }
+    
 
     var body: some View {
         // Use a local variable to track the bootup state
@@ -60,20 +82,7 @@ struct ContentView: View {
                 }
             } else if case .completed = bootupState, !showCompletedContent {
                 // Show bootup view for 1 second before transitioning
-                BootupView()
-                    .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
-                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                    .transition(.opacity)
-                    .animation(.easeInOut, value: bootupState)
-                    .hideHomeIndicator()
-                    .onAppear {
-                        // Schedule transition after 2 seconds
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                            withAnimation {
-                                showCompletedContent = true
-                            }
-                        }
-                    }
+                bootupView
             } else if case .error(let error) = bootupState {
                 ErrorView(error: error) {
                     appState.startBootupSequence()
@@ -82,12 +91,7 @@ struct ContentView: View {
                 .animation(.easeInOut, value: bootupState)
                 .hideHomeIndicator()
             } else {
-                BootupView()
-                    .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
-                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                    .transition(.opacity)
-                    .animation(.easeInOut, value: bootupState)
-                    .hideHomeIndicator()
+                bootupView
             }
         }
         .edgesIgnoringSafeArea(.all)
@@ -116,23 +120,23 @@ struct ContentView: View {
             ILOG("ContentView: Bootup state changed to \(newState.localizedDescription)")
 
             // Force refresh when state changes to completed
-            if case .completed = newState {
-                // Use multiple delayed refreshes with different intervals to ensure UI updates
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    ILOG("ContentView: Forcing first refresh after state changed to completed")
-                    forceRefresh.toggle()
-                }
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    ILOG("ContentView: Forcing second refresh after state changed to completed")
-                    forceRefresh.toggle()
-                }
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    ILOG("ContentView: Forcing third refresh after state changed to completed")
-                    forceRefresh.toggle()
-                }
-            }
+//            if case .completed = newState {
+//                // Use multiple delayed refreshes with different intervals to ensure UI updates
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//                    ILOG("ContentView: Forcing first refresh after state changed to completed")
+//                    forceRefresh.toggle()
+//                }
+//
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+//                    ILOG("ContentView: Forcing second refresh after state changed to completed")
+//                    forceRefresh.toggle()
+//                }
+//
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+//                    ILOG("ContentView: Forcing third refresh after state changed to completed")
+//                    forceRefresh.toggle()
+//                }
+//            }
         }
     }
 }
