@@ -363,7 +363,7 @@ public struct SaveStateRowView: View {
                             showingEditDialog = true
                         } label: {
                             Text(displayTitle)
-                                .font(.system(size: 16, weight: .bold))
+                                .font(.system(size: 16, weight: .bold, design: .monospaced))
                                 .foregroundColor(.white)
                                 .shadow(color: RetroTheme.retroPink.opacity(0.6), radius: 2, x: 0, y: 0)
                                 .multilineTextAlignment(.leading)

@@ -22,7 +22,7 @@ struct ContinuesSearchBar: View {
                     .animation(.easeInOut(duration: 0.2), value: isFocused)
                     .shadow(color: isFocused ? RetroTheme.retroPink.opacity(glowOpacity) : .clear, radius: 2, x: 0, y: 0)
                 
-                TextField("SEARCH GAMES", text: $text)
+                TextField("SEARCH SAVES", text: $text)
                     .textFieldStyle(PlainTextFieldStyle())
                     .focused($isFocused)
                     .foregroundColor(.white)
