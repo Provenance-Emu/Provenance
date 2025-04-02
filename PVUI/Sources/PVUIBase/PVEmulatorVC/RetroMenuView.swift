@@ -53,25 +53,21 @@ struct RetroMenuView: View {
 
     // Menu content based on selected category
     var menuContent: some View {
-        ScrollView {
+        ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: menuSpacing) {
                 switch selectedCategory {
                 case .main:
                     mainMenuButtons
-                        .frame(height: menuContentHeight(for: .main))
                 case .states:
                     stateMenuButtons
-                        .frame(height: menuContentHeight(for: .states))
                 case .options:
                     optionsMenuButtons
-                        .frame(height: menuContentHeight(for: .options))
                 case .skins:
                     skinsMenuButtons
-                        .frame(height: menuContentHeight(for: .skins))
                 }
             }
             .padding(.horizontal, 24)
-            .padding(.bottom, 24)
+            .padding(.vertical, 16) // Add padding at top and bottom
         }
         .frame(maxWidth: menuWidth)
     }
@@ -139,8 +135,9 @@ struct RetroMenuView: View {
                         )
                 )
                 .frame(width: menuWidth)
-                // Use intrinsicSize and flexible height
-                .fixedSize(horizontal: true, vertical: true)
+                // Fix the horizontal size, allow vertical to adjust with constraints
+                .fixedSize(horizontal: true, vertical: false)
+                .frame(maxHeight: menuHeight)
                 // Add animation for smooth transitions between categories
                 .animation(.easeInOut(duration: 0.2), value: selectedCategory)
             }
@@ -240,7 +237,10 @@ struct RetroMenuView: View {
                     await emulatorVC.quit()
                 }
             }
+
+            Spacer(minLength: 0)
         }
+        .frame(maxHeight: .infinity, alignment: .top)
     }
 
     // Save state related buttons
@@ -288,7 +288,10 @@ struct RetroMenuView: View {
                 emulatorVC.takeScreenshot()
             }
 #endif
+
+            Spacer(minLength: 0)
         }
+        .frame(maxHeight: .infinity, alignment: .top)
     }
 
     // Options related buttons
@@ -369,7 +372,10 @@ struct RetroMenuView: View {
                     }
                 }
             }
+
+            Spacer(minLength: 0)
         }
+        .frame(maxHeight: .infinity, alignment: .top)
     }
 
     // Skins and filters related buttons
@@ -490,7 +496,10 @@ struct RetroMenuView: View {
                     await applySkinAndFilterChanges()
                 }
             }
+
+            Spacer(minLength: 0)
         }
+        .frame(maxHeight: .infinity, alignment: .top)
     }
 
     // Skin picker sheet view with retrowave styling
@@ -499,11 +508,11 @@ struct RetroMenuView: View {
             ZStack {
                 // RetroWave background
                 RetroTheme.retroBackground
-                
+
                 // Grid overlay
                 RetroGrid()
                     .opacity(0.3)
-                
+
                 // Main content with loading state handling
                 VStack {
                     // Header
@@ -513,7 +522,7 @@ struct RetroMenuView: View {
                         .padding(.top, 20)
                         .padding(.bottom, 10)
                         .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
-                    
+
                     // Loading indicator or content
                     if isLoadingSkins {
                         VStack(spacing: 20) {
@@ -523,7 +532,7 @@ struct RetroMenuView: View {
                                     .stroke(lineWidth: 4)
                                     .foregroundColor(RetroTheme.retroDarkBlue)
                                     .frame(width: 50, height: 50)
-                                
+
                                 Circle()
                                     .trim(from: 0, to: 0.75)
                                     .stroke(RetroTheme.retroGradient, lineWidth: 4)
@@ -531,7 +540,7 @@ struct RetroMenuView: View {
                                     .rotationEffect(Angle(degrees: glowOpacity * 360))
                             }
                             .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5)
-                            
+
                             Text("LOADING SKINS...")
                                 .font(.system(size: 16, weight: .bold))
                                 .foregroundColor(RetroTheme.retroPink)
@@ -547,7 +556,7 @@ struct RetroMenuView: View {
                                 if !availableSkins.contains(where: { $0 == "Default" }) {
                                     skinItemView(name: "Default", preview: nil, isSelected: selectedSkin == "Default")
                                 }
-                                
+
                                 // Custom skins with previews
                                 ForEach(availableSkinObjects, id: \.identifier) { skin in
                                     SkinPreviewItemView(
