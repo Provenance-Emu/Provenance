@@ -200,7 +200,22 @@ struct RetroMenuView: View {
         }
         // Listen for orientation changes
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+            let previousOrientation = self.orientation
             self.orientation = UIDevice.current.orientation
+            
+            // Only handle actual orientation changes (not face up/down or unknown)
+            if previousOrientation.isLandscape != self.orientation.isLandscape && 
+               (self.orientation.isLandscape || self.orientation.isPortrait) {
+                // Update the current orientation for skin management
+                self.currentOrientation = self.orientation.isLandscape ? .landscape : .portrait
+                
+                // Reapply session skin if we have one stored
+                if skinScope == .session, let skinId = sessionSkinIdentifier {
+                    Task {
+                        await reapplySessionSkin(skinId: skinId)
+                    }
+                }
+            }
         }
         // Initial orientation detection
         .onAppear {
@@ -389,6 +404,9 @@ struct RetroMenuView: View {
     @State private var currentOrientation: SkinOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
     @State private var isLoadingSkins = false
     @State private var didLoadSkins = false
+    
+    // Store the session skin identifier to preserve it during orientation changes
+    @State private var sessionSkinIdentifier: String? = nil
 
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
@@ -1116,15 +1134,21 @@ struct RetroMenuView: View {
                     Task { @MainActor in
                         switch skinScope {
                         case .session:
+                            // Store the session skin identifier for orientation changes
+                            sessionSkinIdentifier = skin.identifier
                             // Just apply for this session without saving to preferences
                             applySkinToEmulator(skin: skin, systemId: systemId)
 
                         case .game:
+                            // Clear session skin identifier since we're using preferences now
+                            sessionSkinIdentifier = nil
                             // Save as game-specific preference
                             DeltaSkinPreferences.shared.setSelectedSkin(skin.identifier, for: gameId, orientation: orientation)
                             applySkinToEmulator(skin: skin, systemId: systemId)
 
                         case .system:
+                            // Clear session skin identifier since we're using preferences now
+                            sessionSkinIdentifier = nil
                             // Save as system-wide preference
                             DeltaSkinPreferences.shared.setSelectedSkin(skin.identifier, for: systemId, orientation: orientation)
                             applySkinToEmulator(skin: skin, systemId: systemId)
@@ -1139,15 +1163,21 @@ struct RetroMenuView: View {
             Task { @MainActor in
                 switch skinScope {
                 case .session:
+                    // Clear the session skin identifier
+                    sessionSkinIdentifier = nil
                     // Just reset for this session
                     resetSkinToDefault(systemId: systemId)
 
                 case .game:
+                    // Clear the session skin identifier
+                    sessionSkinIdentifier = nil
                     // Remove game-specific preference
                     DeltaSkinPreferences.shared.setSelectedSkin(nil, for: gameId, orientation: orientation)
                     resetSkinToDefault(systemId: systemId)
 
                 case .system:
+                    // Clear the session skin identifier
+                    sessionSkinIdentifier = nil
                     // Remove system-wide preference
                     DeltaSkinPreferences.shared.setSelectedSkin(nil, for: systemId, orientation: orientation)
                     resetSkinToDefault(systemId: systemId)
@@ -1225,6 +1255,29 @@ struct RetroMenuView: View {
             Task {
                 try? await emulatorVC.applySkin(skin)
             }
+        }
+    }
+    
+    // Helper to reapply a session skin after orientation change
+    private func reapplySessionSkin(skinId: String) async {
+        guard let systemId = emulatorVC.game.system?.systemIdentifier else { return }
+        
+        do {
+            // Get all available skins
+            let skins = try await DeltaSkinManager.shared.skins(for: systemId)
+            
+            // Find the skin by identifier
+            if let skin = skins.first(where: { $0.identifier == skinId }) {
+                // Update the selected skin name to match
+                await MainActor.run {
+                    selectedSkin = skin.name
+                }
+                
+                // Apply the skin directly without changing preferences
+                applySkinToEmulator(skin: skin, systemId: systemId)
+            }
+        } catch {
+            ELOG("Error reapplying session skin: \(error)")
         }
     }
 
