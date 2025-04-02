@@ -707,8 +707,7 @@ extension PVEmulatorViewController: GameplayDurationTrackerUtil {}
 // MARK: - Skin Management
 extension PVEmulatorViewController {
 
-
-    /// Apply a skin to the emulator view
+    /// Apply a skin to the emulator
     /// - Parameter skin: The skin to apply
     public func applySkin(_ skin: DeltaSkinProtocol) async throws {
         print("Applying skin: \(skin.name)")
@@ -719,8 +718,26 @@ extension PVEmulatorViewController {
         // Store the current skin for rotation handling
         self.currentSkin = skin
 
-        // Determine the current orientation
-        self.currentOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
+        // IMPORTANT: Use device orientation for skin traits
+        // First get the real device orientation
+        let deviceOrientation = UIDevice.current.orientation
+
+        // If it's not a valid orientation (face up/down/unknown), use interface orientation
+        let validOrientations: [UIDeviceOrientation] = [.portrait, .portraitUpsideDown, .landscapeLeft, .landscapeRight]
+
+        let isValidOrientation = validOrientations.contains(deviceOrientation)
+
+        // Determine the current orientation from device or interface orientation
+        if isValidOrientation {
+            self.currentOrientation = deviceOrientation.isLandscape ? .landscape : .portrait
+        } else {
+            // Fallback to interface orientation
+            let interfaceOrientation = UIApplication.shared.windows.first?.windowScene?.interfaceOrientation
+            self.currentOrientation = (interfaceOrientation == .landscapeLeft || interfaceOrientation == .landscapeRight) ? .landscape : .portrait
+        }
+
+        // Log the orientation we're using
+        print("Using orientation for skin application: \(self.currentOrientation)")
 
         // RADICAL APPROACH: Completely rebuild the view hierarchy
         await MainActor.run {
@@ -733,28 +750,14 @@ extension PVEmulatorViewController {
         }
 
         // 3. Create a new skin container with edge-to-edge layout
-        let skinContainer = UIView()
+        let skinContainer = UIView(frame: view.bounds)
         skinContainer.tag = 9876 // Unique tag for skin container views
-        skinContainer.translatesAutoresizingMaskIntoConstraints = false
         skinContainer.backgroundColor = UIColor.black // Set background to black for retrowave aesthetic
+        skinContainer.autoresizingMask = [.flexibleWidth, .flexibleHeight] // Ensure it resizes with parent
 
         // 4. Add the container at the bottom of the view hierarchy
         await MainActor.run {
-            // Insert at the very bottom of the view hierarchy
-            if view.subviews.isEmpty {
-                view.addSubview(skinContainer)
-            } else {
-                view.insertSubview(skinContainer, at: 0)
-            }
-
-            // Set up constraints for the skin container - ensure edge-to-edge coverage
-            // Use the superview bounds, not the safe area
-            NSLayoutConstraint.activate([
-                skinContainer.topAnchor.constraint(equalTo: view.topAnchor),
-                skinContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                skinContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                skinContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-            ])
+            view.addSubview(skinContainer)
 
             // Store reference to the skin container
             self.skinContainerView = skinContainer
@@ -767,25 +770,36 @@ extension PVEmulatorViewController {
             // Add the skin view to the container
             skinContainer.addSubview(skinView)
 
-            // Ensure the skin view fills the container edge-to-edge
-            skinView.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                skinView.topAnchor.constraint(equalTo: skinContainer.topAnchor),
-                skinView.leadingAnchor.constraint(equalTo: skinContainer.leadingAnchor),
-                skinView.trailingAnchor.constraint(equalTo: skinContainer.trailingAnchor),
-                skinView.bottomAnchor.constraint(equalTo: skinContainer.bottomAnchor)
-            ])
+            // Set the frame to fill the container
+            skinView.frame = skinContainer.bounds
+            skinView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
             // 6. Position the game screen within the skin view at the correct position
+            // IMPORTANT: Log the GPU view frame before repositioning
+            if let gpuView = gpuViewController.view {
+                print("GPU view frame BEFORE repositioning: \(gpuView.frame)")
+            } else {
+                print("WARNING: GPU view is nil before repositioning!")
+            }
+
             // Force recalculation of screen position for the new skin
             repositionGameScreen(for: skin, orientation: currentOrientation, forceRecalculation: true)
-            
+
+            // Log the GPU view frame after repositioning
+            if let gpuView = gpuViewController.view {
+                print("GPU view frame AFTER repositioning: \(gpuView.frame)")
+            }
+
             // Ensure proper z-order of all elements
             ensureProperZOrder()
 
+            // Force a layout update
+            view.setNeedsLayout()
+            view.layoutIfNeeded()
+
             // 7. Print the final view hierarchy
             print("View hierarchy after applying new skin:")
-            printViewHierarchy(view, level: 0)
+            printViewHierarchyRecursively(view, level: 0)
 
             // 8. Post notification that the skin has changed to trigger input handler reconnection
             NotificationCenter.default.post(
@@ -799,7 +813,222 @@ extension PVEmulatorViewController {
                 name: NSNotification.Name("DeltaSkinInputHandlerReconnect"),
                 object: nil
             )
+
+            // Make sure to reconnect all input handlers
+            reconnectAllInputHandlers()
         }
+    }
+
+    /// Create a SwiftUI view for the skin
+    /// - Parameter skin: The skin to create a view for
+    /// - Returns: A UIView containing the skin
+    private func createSkinView(from skin: DeltaSkinProtocol) async throws -> UIView {
+        /// Create traits based on the current device and orientation
+        let currentDevice: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+
+        // Create display type based on the device
+        // For iPhones with notches, use edgeToEdge
+        let displayType: DeltaSkinDisplayType = {
+            if #available(iOS 11.0, *), UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 0 > 0 {
+                return .edgeToEdge
+            } else {
+                return .standard
+            }
+        }()
+
+        // Create the traits object for the skin
+        let traits = DeltaSkinTraits(
+            device: currentDevice,
+            displayType: displayType,
+            orientation: currentOrientation == .landscape ? .landscape : .portrait
+        )
+
+        print("Creating skin view with traits: \(traits)")
+
+        // Create an input handler for the skin
+        let inputHandler = DeltaSkinInputHandler(
+            emulatorCore: core,
+            controllerVC: controllerViewController,
+            emulatorController: self
+        )
+
+        // Store the input handler for reuse
+        self.sharedInputHandler = inputHandler
+
+        // Set up menu button handler
+        inputHandler.menuButtonHandler = { [weak self] in
+            self?.showMenu(nil)
+        }
+
+        // Create the skin view with EmulatorWrapperView
+        let wrapperView = EmulatorWrapperView(
+            game: game,
+            coreInstance: core,
+            onSkinLoaded: {
+                // This is called when the skin is loaded
+                print("Skin loaded callback triggered")
+
+                // Force a redraw of the GPU view
+                if let metalVC = self.gpuViewController as? PVMetalViewController {
+                    metalVC.safelyRefreshGPUView()
+                }
+            },
+            onRefreshRequested: {
+                // This is called when a refresh is needed
+                print("Refresh requested callback triggered")
+
+                // Force a redraw of the GPU view
+                if let metalVC = self.gpuViewController as? PVMetalViewController {
+                    metalVC.safelyRefreshGPUView()
+                }
+            },
+            inputHandler: inputHandler
+        )
+
+        // Create a UIHostingController to host the SwiftUI view
+        let hostingController = UIHostingController(rootView: wrapperView)
+
+        // Add the hosting controller as a child
+        await MainActor.run {
+            addChild(hostingController)
+            hostingController.didMove(toParent: self)
+
+            // Keep track of the hosting controller
+            skinHostingControllers.append(hostingController)
+        }
+
+        // Get the view from the hosting controller
+        let uiView = hostingController.view!
+
+        // Configure the view
+        uiView.backgroundColor = UIColor.clear
+        uiView.isOpaque = false
+
+        return uiView
+    }
+
+    /// Reposition the game screen (GPU view) based on the skin and orientation
+    /// - Parameters:
+    ///   - skin: The skin to position the game screen for
+    ///   - orientation: The current orientation
+    ///   - forceRecalculation: Whether to force recalculation of the screen position
+    private func repositionGameScreen(for skin: DeltaSkinProtocol, orientation: SkinOrientation, forceRecalculation: Bool = false) {
+        // Get the GPU view
+        guard let gpuView = gpuViewController.view else {
+            print("ERROR: Cannot position game screen - GPU view is nil")
+            return
+        }
+
+        // If we have a cached target frame and we're not forcing recalculation, use it
+        if let targetFrame = currentTargetFrame, !forceRecalculation {
+            // Only apply if the frames are significantly different to avoid jitter
+            if abs(gpuView.frame.width - targetFrame.width) > 1 ||
+               abs(gpuView.frame.height - targetFrame.height) > 1 ||
+               abs(gpuView.frame.origin.x - targetFrame.origin.x) > 1 ||
+               abs(gpuView.frame.origin.y - targetFrame.origin.y) > 1 {
+
+                print("Using cached target frame: \(targetFrame)")
+                gpuView.frame = targetFrame
+            }
+            return
+        }
+
+        // Get screen position information from the skin
+        if let screenFrame = getScreenPositionFromSkin(skin, for: orientation) {
+            // Convert the relative position to absolute coordinates
+            let viewBounds = view.bounds
+            let absoluteFrame = CGRect(
+                x: viewBounds.width * screenFrame.origin.x,
+                y: viewBounds.height * screenFrame.origin.y,
+                width: viewBounds.width * screenFrame.size.width,
+                height: viewBounds.height * screenFrame.size.height
+            )
+
+            // Store the target frame for future reference
+            currentTargetFrame = absoluteFrame
+
+            // Store the original calculated frame if we haven't already
+            if originalCalculatedFrame == nil {
+                originalCalculatedFrame = absoluteFrame
+            }
+
+            // Apply the frame to the GPU view
+            print("Positioning GPU view at: \(absoluteFrame)")
+            gpuView.frame = absoluteFrame
+
+            // Make sure the GPU view is visible
+            gpuView.isHidden = false
+            gpuView.alpha = 1.0
+
+            // Force a redraw of the GPU view
+            if let metalVC = gpuViewController as? PVMetalViewController {
+                metalVC.safelyRefreshGPUView()
+            }
+        } else {
+            // Fall back to default positioning (full screen or some reasonable default)
+            let defaultFrame: CGRect
+
+            if orientation == .landscape {
+                // Default landscape position (centered, 80% of width, maintain aspect ratio)
+                let width = view.bounds.width * 0.8
+                let height = width * (3.0/4.0) // 4:3 aspect ratio typical for retro games
+                let x = (view.bounds.width - width) / 2
+                let y = (view.bounds.height - height) / 2
+                defaultFrame = CGRect(x: x, y: y, width: width, height: height)
+            } else {
+                // Default portrait position (centered, 80% of width, maintain aspect ratio)
+                let width = view.bounds.width * 0.8
+                let height = width * (3.0/4.0) // 4:3 aspect ratio typical for retro games
+                let x = (view.bounds.width - width) / 2
+                let y = view.bounds.height * 0.2 // Position in upper part of screen
+                defaultFrame = CGRect(x: x, y: y, width: width, height: height)
+            }
+
+            // Store the target frame
+            currentTargetFrame = defaultFrame
+
+            // Store the original calculated frame if we haven't already
+            if originalCalculatedFrame == nil {
+                originalCalculatedFrame = defaultFrame
+            }
+
+            // Apply the frame to the GPU view
+            print("Using default positioning for GPU view: \(defaultFrame)")
+            gpuView.frame = defaultFrame
+
+            // Make sure the GPU view is visible
+            gpuView.isHidden = false
+            gpuView.alpha = 1.0
+        }
+    }
+
+    /// Reconnect all input handlers to ensure they're properly linked after skin changes
+    private func reconnectAllInputHandlers() {
+        print("Reconnecting all input handlers")
+
+        // Update the shared input handler references
+        if let inputHandler = sharedInputHandler {
+            print("Updating shared input handler references")
+
+            // Re-link the core, controller, and emulator controller
+            inputHandler.setEmulatorCore(core)
+            inputHandler.setControllerVC(controllerViewController)
+            inputHandler.setEmulatorController(self)
+
+            // Ensure menu button handler is set
+            inputHandler.menuButtonHandler = { [weak self] in
+                DLOG("Menu button pressed from reconnected handler, showing menu")
+                self?.showMenu(nil)
+            }
+
+            print("✅ Successfully updated all input handler references")
+        }
+
+        // Trigger input handler reconnect notification as well for belt and suspenders
+        NotificationCenter.default.post(
+            name: NSNotification.Name("DeltaSkinInputHandlerReconnect"),
+            object: nil
+        )
     }
 
     /// Reset to the default skin
@@ -821,7 +1050,10 @@ extension PVEmulatorViewController {
 
         // Create and apply the default skin
         if let systemId = game.system?.systemIdentifier {
+            // Get the default skin for the system
             let defaultSkin = EmulatorWithSkinView.defaultSkin(for: systemId)
+
+            // Apply the skin - this will handle all the UI setup
             try await applySkin(defaultSkin)
 
             // Post notification that the skin has changed to trigger input handler reconnection
@@ -942,212 +1174,47 @@ extension PVEmulatorViewController {
             }
         }
     }
-    
-    // Helper to ensure proper z-order of all views
+
+    /// Ensure proper z-order of views in the hierarchy
     private func ensureProperZOrder() {
         guard let gpuView = gpuViewController.view else { return }
-        
-        // Ensure the game view is a direct child of the main view
+        guard let skinContainer = skinContainerView else { return }
+
+        // First, make sure the GPU view is a direct child of the main view (not the skin container)
         if gpuView.superview !== view {
             gpuView.removeFromSuperview()
             view.addSubview(gpuView)
         }
-        
-        // Ensure proper z-order: skin container at bottom, game view above it, UI elements on top
-        if let skinContainer = skinContainerView {
-            // Make sure skin container is at the bottom
-            view.sendSubviewToBack(skinContainer)
-            
-            // Place game view above skin container but below any UI elements
-            if let index = view.subviews.firstIndex(of: skinContainer) {
-                let targetIndex = min(index + 1, view.subviews.count - 1)
-                if let currentIndex = view.subviews.firstIndex(of: gpuView), currentIndex != targetIndex {
-                    view.insertSubview(gpuView, at: targetIndex)
-                    print("Fixed z-order: Repositioned game view in hierarchy")
-                }
-            }
+
+        // Make sure the skin container is in the view hierarchy
+        if skinContainer.superview !== view {
+            view.addSubview(skinContainer)
         }
-        
-        // Ensure any menu overlays are on top
+
+        // We want the game view to be ABOVE the skin container
+        // This ensures the game is visible above any skin background elements
+        view.bringSubviewToFront(gpuView)
+
+        // If we have a menu button, make sure it's on top of everything
+        if let menuButton = menuButton {
+            view.bringSubviewToFront(menuButton)
+        }
+    }
+
+    /// Debug print the current view hierarchy for troubleshooting
+    private func debugPrintViewHierarchy() {
+        print("View hierarchy after applying new skin:")
+        printViewHierarchyRecursively(view, level: 0)
+    }
+
+    /// Recursively print a view hierarchy for debugging
+    private func printViewHierarchyRecursively(_ view: UIView, level: Int) {
+        let indent = String(repeating: "  ", count: level)
+        print("\(indent)<\(type(of: view)): \(view); frame = \(view.frame); \(view.tag != 0 ? "tag = \(view.tag); " : "")backgroundColor = \(String(describing: view.backgroundColor)); layer = <\(type(of: view.layer)): \(view.layer)>> (tag: \(view.tag))")
+
         for subview in view.subviews {
-            if subview is PVGameMenuOverlay {
-                view.bringSubviewToFront(subview)
-            }
+            printViewHierarchyRecursively(subview, level: level + 1)
         }
-    }
-
-    /// Create a skin view from a DeltaSkin
-    private func createSkinView(from skin: DeltaSkinProtocol) async throws -> UIView {
-        print("Creating skin view for: \(skin.name)")
-
-        // Always use the current orientation from the stored property
-        // This ensures consistency with the rest of the code
-        let deltaSkinOrientation: DeltaSkinOrientation = currentOrientation == .landscape ? .landscape : .portrait
-        print("Using orientation for skin view: \(deltaSkinOrientation)")
-
-        // Create the appropriate traits for the current device and orientation
-        let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
-
-        // Check if device has a notch (iPhone X or newer)
-        let hasNotch: Bool
-        if #available(iOS 11.0, *) {
-            let window = UIApplication.shared.windows.first
-            let safeAreaInsets = window?.safeAreaInsets
-            hasNotch = (safeAreaInsets?.top ?? 0) > 20
-        } else {
-            hasNotch = false
-        }
-
-        let displayType: DeltaSkinDisplayType = hasNotch ? .edgeToEdge : .standard
-        let traits = DeltaSkinTraits(device: device, displayType: displayType, orientation: deltaSkinOrientation)
-        print("Created traits: device=\(device), displayType=\(displayType), orientation=\(deltaSkinOrientation)")
-
-        // Reuse the existing input handler or create a new one if it doesn't exist
-        if sharedInputHandler == nil {
-            // This is a critical error - we should always have an input handler by this point
-            // Create a new one as a fallback, but log an error
-            ELOG("⛔️ Critical Error: No shared input handler found when creating skin view! Creating new one as fallback.")
-            sharedInputHandler = DeltaSkinInputHandler(emulatorCore: core, controllerVC: controllerViewController, emulatorController: self)
-            print("Created new shared input handler as fallback")
-        } else {
-            print("Reusing existing shared input handler")
-        }
-
-        // Ensure the input handler is properly configured
-        let inputHandler = sharedInputHandler!
-        print("Using input handler with isInEmulator = true")
-
-        // CRITICAL: Ensure menu button handler is set
-        inputHandler.menuButtonHandler = { [weak self] in
-            DLOG("Menu button pressed from skin view, showing menu")
-            self?.showMenu(nil)
-        }
-
-        // Ensure the emulator core reference is valid
-        inputHandler.setEmulatorCore(core)
-
-        // Ensure controller VC reference is valid
-        inputHandler.setControllerVC(controllerViewController)
-
-        // Ensure emulator controller reference is valid
-        inputHandler.setEmulatorController(self)
-
-        // Create the SwiftUI skin view with environment object
-        // Use AnyView to erase the type while preserving the environment object
-        let skinContentView = AnyView(
-            DeltaSkinView(skin: skin, traits: traits, isInEmulator: true, inputHandler: inputHandler)
-                .environmentObject(DeltaSkinManager.shared)
-                .edgesIgnoringSafeArea(.all) // Ensure edge-to-edge drawing
-        )
-
-        // Create a hosting controller for the SwiftUI view with a unique identifier
-        let hostingController = UIHostingController(rootView: skinContentView)
-        hostingController.view.backgroundColor = UIColor.clear
-        hostingController.view.tag = 9877 // Unique tag for skin views
-
-        // Configure the hosting controller for edge-to-edge layout
-        if #available(iOS 11.0, *) {
-            hostingController.view.insetsLayoutMarginsFromSafeArea = false
-        }
-
-        print("Created hosting controller with skin view")
-
-        // Add the hosting controller as a child view controller
-        addChild(hostingController)
-        hostingController.didMove(toParent: self)
-
-        // Track this hosting controller
-        skinHostingControllers.append(hostingController)
-
-        print("Created new skin view for \(skin.name)")
-
-        return hostingController.view
-    }
-
-    /// Reposition the game screen based on the current skin and orientation
-    /// - Parameters:
-    ///   - skin: The skin to position the screen for
-    ///   - orientation: The current orientation
-    ///   - forceRecalculation: Whether to force recalculation of the screen position
-    private func repositionGameScreen(for skin: DeltaSkinProtocol, orientation: SkinOrientation, forceRecalculation: Bool = false) {
-        print("Repositioning game screen for skin: \(skin.name), orientation: \(orientation)")
-
-        // Always reset currentTargetFrame when changing skins to force recalculation
-        if forceRecalculation {
-            currentTargetFrame = nil
-            print("Reset currentTargetFrame to force recalculation")
-        }
-
-        // Store the original frame if not already stored
-        if originalCalculatedFrame == nil {
-            originalCalculatedFrame = gpuViewController.view.frame
-            print("Stored original frame: \(String(describing: originalCalculatedFrame))")
-        }
-
-        // Get the screen bounds
-        let screenBounds = view.bounds
-        let screenWidth = screenBounds.width
-        let screenHeight = screenBounds.height
-        print("Screen bounds: \(screenBounds)")
-
-        // Get the appropriate screen position from the skin based on orientation
-        let screenPosition: CGRect
-
-        // Get screen position from the skin
-        if let skinScreenPosition = getScreenPositionFromSkin(skin, for: orientation) {
-            screenPosition = skinScreenPosition
-            print("Using skin-specific screen position: \(screenPosition)")
-        } else {
-            // Default position if not specified in skin
-            if orientation == .landscape {
-                // Default landscape position - adjusted for retrowave styling
-                screenPosition = CGRect(x: 0.1, y: 0.1, width: 0.8, height: 0.7)
-                print("Using default landscape position")
-            } else {
-                // Default portrait position - adjusted for retrowave styling
-                screenPosition = CGRect(x: 0.1, y: 0.15, width: 0.8, height: 0.6)
-                print("Using default portrait position")
-            }
-        }
-
-        // Calculate actual frame in points
-        let newFrame = CGRect(
-            x: screenWidth * screenPosition.origin.x,
-            y: screenHeight * screenPosition.origin.y,
-            width: screenWidth * screenPosition.size.width,
-            height: screenHeight * screenPosition.size.height
-        )
-        print("New calculated frame: \(newFrame)")
-
-        // Apply the new frame with animation
-        UIView.animate(withDuration: 0.3) {
-            self.gpuViewController.view.frame = newFrame
-        }
-
-        // Ensure proper z-order by placing the game view at the correct layer
-        // The game view should be above the skin background but below interactive elements
-        if let skinContainer = skinContainerView, let gpuView = gpuViewController.view {
-            // First, make sure the GPU view is a direct child of the main view (not the skin container)
-            if gpuView.superview !== view {
-                gpuView.removeFromSuperview()
-                view.addSubview(gpuView)
-            }
-            
-            // Determine the correct z-order index
-            // We want the game view to be above the skin container but below any interactive elements
-            let skinContainerIndex = view.subviews.firstIndex(of: skinContainer) ?? 0
-            let gpuViewIndex = view.subviews.firstIndex(of: gpuView) ?? view.subviews.count - 1
-            
-            // If the GPU view is not at the right position in the hierarchy, fix it
-            if skinContainerIndex >= gpuViewIndex {
-                view.insertSubview(gpuView, aboveSubview: skinContainer)
-                print("Fixed z-order: Placed game view above skin container")
-            }
-        }
-
-        // Store the current target frame
-        currentTargetFrame = newFrame
-        print("Repositioning complete")
     }
 
     // Handle rotation and skin changes
@@ -1168,7 +1235,7 @@ extension PVEmulatorViewController {
 
             // Save current skin for reference
             let previousSkin = self.currentSkin
-            
+
             // Handle rotation in two phases to avoid visual glitches
             coordinator.animate { _ in
                 // During animation phase, just reposition the game screen
@@ -1201,7 +1268,7 @@ extension PVEmulatorViewController {
 
                         // Determine if we need to change the skin
                         let needsSkinChange = skinIdentifier != nil &&
-                        (self.currentSkin == nil || skinIdentifier != self.currentSkin?.identifier)
+                            (self.currentSkin == nil || skinIdentifier != self.currentSkin?.identifier)
 
                         if needsSkinChange {
                             print("Need to change skin for new orientation")
@@ -1218,14 +1285,14 @@ extension PVEmulatorViewController {
                             // We need to do a complete reapplication to ensure proper traits
                             // This fixes issues with skins not drawing correctly after rotation
                             try await self.applySkin(self.currentSkin!)
-                            
+
                             // Ensure the game screen is properly positioned with the correct z-order
                             self.repositionGameScreen(for: self.currentSkin!, orientation: newOrientation, forceRecalculation: true)
                         } else {
                             print("No skin at all, applying default")
                             try await self.resetToDefaultSkin()
                         }
-                        
+
                         // Final check to ensure proper z-order after all changes
                         self.ensureProperZOrder()
                     } catch {
@@ -1377,37 +1444,5 @@ extension PVEmulatorViewController {
             // Force a reconnection of input handlers
             self.reconnectAllInputHandlers()
         }
-    }
-
-    /// Helper to reconnect all input handlers
-    private func reconnectAllInputHandlers() {
-        DLOG("Reconnecting all input handlers")
-
-        // Reconnect input handler to core
-        if let inputHandler = sharedInputHandler {
-            DLOG("Updating shared input handler references")
-
-            // Ensure emulator core is set
-            inputHandler.setEmulatorCore(core)
-
-            // Ensure controller VC is set
-            inputHandler.setControllerVC(controllerViewController)
-
-            // Ensure emulator controller is set
-            inputHandler.setEmulatorController(self)
-
-            // Restore menu button handler
-            inputHandler.menuButtonHandler = { [weak self] in
-                self?.showMenu(nil)
-            }
-
-            DLOG("✅ Successfully updated all input handler references")
-        }
-
-        // Force a reconnection event
-        NotificationCenter.default.post(
-            name: NSNotification.Name("DeltaSkinInputHandlerReconnect"),
-            object: nil
-        )
     }
 }

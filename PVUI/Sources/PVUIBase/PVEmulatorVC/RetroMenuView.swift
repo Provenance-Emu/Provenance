@@ -202,13 +202,13 @@ struct RetroMenuView: View {
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
             let previousOrientation = self.orientation
             self.orientation = UIDevice.current.orientation
-            
+
             // Only handle actual orientation changes (not face up/down or unknown)
-            if previousOrientation.isLandscape != self.orientation.isLandscape && 
+            if previousOrientation.isLandscape != self.orientation.isLandscape &&
                (self.orientation.isLandscape || self.orientation.isPortrait) {
                 // Update the current orientation for skin management
                 self.currentOrientation = self.orientation.isLandscape ? .landscape : .portrait
-                
+
                 // Reapply session skin if we have one stored
                 if skinScope == .session, let skinId = sessionSkinIdentifier {
                     Task {
@@ -404,7 +404,7 @@ struct RetroMenuView: View {
     @State private var currentOrientation: SkinOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
     @State private var isLoadingSkins = false
     @State private var didLoadSkins = false
-    
+
     // Store the session skin identifier to preserve it during orientation changes
     @State private var sessionSkinIdentifier: String? = nil
 
@@ -1112,140 +1112,147 @@ struct RetroMenuView: View {
         }
     }
 
-    // Apply the selected skin and filter changes
+    // Apply skin and filter changes
     private func applySkinAndFilterChanges() async {
         guard let systemId = emulatorVC.game.system?.systemIdentifier else {
-            ELOG("No systemId found")
             return
         }
 
-        let gameId = emulatorVC.game.md5 ?? emulatorVC.game.crc
+        let gameId: String? = emulatorVC.game.md5 ?? emulatorVC.game.crc
 
-        // Get current device orientation
-        let orientation = UIDevice.current.orientation.isLandscape ? SkinOrientation.landscape : .portrait
+        do {
+            // Apply filter changes if needed
+            // Use notification pattern instead of direct property access
+            if selectedFilter != "None" {
+                // Post notification to apply the filter
+                NotificationCenter.default.post(
+                    name: NSNotification.Name("ApplyScreenFilter"),
+                    object: nil,
+                    userInfo: ["filterName": selectedFilter]
+                )
 
-        // Apply skin change
-        if selectedSkin != "Default" {
-            do {
-                // Find the selected skin
-                let skins = try await DeltaSkinManager.shared.skins(for: systemId)
-                if let skin = skins.first(where: { $0.name == selectedSkin }) {
-                    // Apply the skin based on selected scope
-                    Task { @MainActor in
-                        switch skinScope {
-                        case .session:
-                            // Store the session skin identifier for orientation changes
-                            sessionSkinIdentifier = skin.identifier
-                            
-                            // Register the session skin with the DeltaSkinManager
-                            // This allows it to be reapplied during rotation
-                            let orientation = UIDevice.current.orientation.isLandscape ? SkinOrientation.landscape : .portrait
-                            DeltaSkinManager.shared.setSessionSkin(skin.identifier, for: systemId, orientation: orientation)
-                            
-                            // Just apply for this session without saving to preferences
-                            applySkinToEmulator(skin: skin, systemId: systemId)
-
-                        case .game:
-                            // Clear session skin identifier since we're using preferences now
-                            sessionSkinIdentifier = nil
-                            // Save as game-specific preference
-                            DeltaSkinPreferences.shared.setSelectedSkin(skin.identifier, for: gameId, orientation: orientation)
-                            applySkinToEmulator(skin: skin, systemId: systemId)
-
-                        case .system:
-                            // Clear session skin identifier since we're using preferences now
-                            sessionSkinIdentifier = nil
-                            // Save as system-wide preference
-                            DeltaSkinPreferences.shared.setSelectedSkin(skin.identifier, for: systemId, orientation: orientation)
-                            applySkinToEmulator(skin: skin, systemId: systemId)
-                        }
-                    }
+                // Store filter preference based on scope
+                if skinScope == .game, let gameId = gameId {
+                    UserDefaults.standard.set(selectedFilter, forKey: "ScreenFilter_Game_\(gameId)")
+                } else if skinScope == .system {
+                    UserDefaults.standard.set(selectedFilter, forKey: "ScreenFilter_System_\(systemId.rawValue)")
                 }
-            } catch {
-                print("Error applying skin: \(error)")
-            }
-        } else {
-            // Apply default skin (remove custom skin)
-            Task { @MainActor in
-                switch skinScope {
-                case .session:
-                    // Clear the session skin identifier
-                    sessionSkinIdentifier = nil
-                    
-                    // Clear the session skin in the DeltaSkinManager
-                    let orientation = UIDevice.current.orientation.isLandscape ? SkinOrientation.landscape : .portrait
-                    DeltaSkinManager.shared.setSessionSkin(nil, for: systemId, orientation: orientation)
-                    
-                    // Just reset for this session
-                    resetSkinToDefault(systemId: systemId)
-
-                case .game:
-                    // Clear the session skin identifier
-                    sessionSkinIdentifier = nil
-                    // Remove game-specific preference
-                    DeltaSkinPreferences.shared.setSelectedSkin(nil, for: gameId, orientation: orientation)
-                    resetSkinToDefault(systemId: systemId)
-
-                case .system:
-                    // Clear the session skin identifier
-                    sessionSkinIdentifier = nil
-                    // Remove system-wide preference
-                    DeltaSkinPreferences.shared.setSelectedSkin(nil, for: systemId, orientation: orientation)
-                    resetSkinToDefault(systemId: systemId)
-                }
-            }
-        }
-
-        // Apply screen filter change
-        Task { @MainActor in
-            // Get the filter based on selection
-            let filter: DeltaSkinScreenFilter?
-
-            if selectedFilter == "None" {
-                filter = nil
             } else {
-                // Find the selected filter
-                filter = DefaultScreenFilters.allFilters.first(where: { DefaultScreenFilters.displayName(for: $0) == selectedFilter })
-            }
+                // Clear filter
+                NotificationCenter.default.post(
+                    name: NSNotification.Name("ApplyScreenFilter"),
+                    object: nil,
+                    userInfo: ["filterName": "None"]
+                )
 
-            // Apply the filter to the emulator
-            if let emulatorVC = self.emulatorVC as? PVEmulatorViewController {
-                emulatorVC.applyScreenFilter(filter)
-
-                // Save filter preference based on scope
-                if let filter = filter {
-                    switch skinScope {
-                    case .session:
-                        // Just for this session, no saving needed
-                        break
-
-                    case .game:
-                        // Save as game-specific preference
-                        let identifier = filter.metadata["identifier"] as? String ?? filter.filter.name
-                        UserDefaults.standard.set(identifier, forKey: "ScreenFilter_Game_\(gameId)")
-
-                    case .system:
-                        // Save as system-wide preference
-                        let identifier = filter.metadata["identifier"] as? String ?? filter.filter.name
-                        UserDefaults.standard.set(identifier, forKey: "ScreenFilter_System_\(systemId.rawValue)")
-                    }
-                } else {
-                    // Remove filter preference based on scope
-                    switch skinScope {
-                    case .session:
-                        // Just for this session, no saving needed
-                        break
-
-                    case .game:
-                        // Remove game-specific preference
-                        UserDefaults.standard.removeObject(forKey: "ScreenFilter_Game_\(gameId)")
-
-                    case .system:
-                        // Remove system-wide preference
-                        UserDefaults.standard.removeObject(forKey: "ScreenFilter_System_\(systemId.rawValue)")
-                    }
+                // Clear filter preferences based on scope
+                if skinScope == .game, let gameId = gameId {
+                    UserDefaults.standard.removeObject(forKey: "ScreenFilter_Game_\(gameId)")
+                } else if skinScope == .system {
+                    UserDefaults.standard.removeObject(forKey: "ScreenFilter_System_\(systemId.rawValue)")
                 }
             }
+
+            // Apply skin changes if needed
+            if selectedSkin != "Default" {
+                // Find the skin by name
+                let skins = try await DeltaSkinManager.shared.skins(for: systemId)
+                if let skin = skins.first(where: { $0.name == selectedSkin }),
+                   let emulatorVC = emulatorVC as? PVEmulatorViewController {
+
+                    // Clear any session skin for this system/game when setting an explicit preference
+                    // This ensures session skins don't override the user's explicit choice
+                    let currentOrientation = UIDevice.current.orientation.isLandscape ? SkinOrientation.landscape : .portrait
+                    let oppositeOrientation = currentOrientation == .landscape ? SkinOrientation.portrait : .landscape
+
+                    // Clear session skins for both orientations using setSessionSkin(nil, ...)
+                    DeltaSkinManager.shared.setSessionSkin(nil, for: systemId, orientation: currentOrientation)
+                    DeltaSkinManager.shared.setSessionSkin(nil, for: systemId, orientation: oppositeOrientation)
+
+                    if let gameId = gameId {
+                        // Also clear game-specific session skins
+                        DeltaSkinManager.shared.setSessionSkin(nil, for: systemId, gameId: gameId, orientation: currentOrientation)
+                        DeltaSkinManager.shared.setSessionSkin(nil, for: systemId, gameId: gameId, orientation: oppositeOrientation)
+                    }
+
+                    // Set the new preference based on scope using DeltaSkinPreferences
+                    if skinScope == .game, let gameId = gameId {
+                        // Set for specific game
+                        await DeltaSkinPreferences.shared.setSelectedSkin(skin.identifier, for: gameId, orientation: currentOrientation)
+                    } else if skinScope == .system {
+                        // Set for entire system
+                        await DeltaSkinPreferences.shared.setSelectedSkin(skin.identifier, for: systemId, orientation: currentOrientation)
+                    } else {
+                        // Session scope - store in the session skin identifier
+                        sessionSkinIdentifier = skin.identifier
+                        DeltaSkinManager.shared.setSessionSkin(skin.identifier, for: systemId, orientation: currentOrientation)
+                    }
+
+                    // Apply the skin
+                    try await emulatorVC.applySkin(skin)
+                }
+            } else {
+                // User selected "Default" skin
+                if let emulatorVC = emulatorVC as? PVEmulatorViewController {
+                    // Clear any session skins for this system/game
+                    let currentOrientation = UIDevice.current.orientation.isLandscape ? SkinOrientation.landscape : .portrait
+                    let oppositeOrientation = currentOrientation == .landscape ? SkinOrientation.portrait : .landscape
+
+                    // Clear session skins for both orientations using setSessionSkin(nil, ...)
+                    DeltaSkinManager.shared.setSessionSkin(nil, for: systemId, orientation: currentOrientation)
+                    DeltaSkinManager.shared.setSessionSkin(nil, for: systemId, orientation: oppositeOrientation)
+
+                    if let gameId = gameId {
+                        // Also clear game-specific session skins
+                        DeltaSkinManager.shared.setSessionSkin(nil, for: systemId, gameId: gameId, orientation: currentOrientation)
+                        DeltaSkinManager.shared.setSessionSkin(nil, for: systemId, gameId: gameId, orientation: oppositeOrientation)
+                    }
+
+                    // Clear preferences based on scope using DeltaSkinPreferences
+                    if skinScope == .game, let gameId = gameId {
+                        // Clear for specific game
+                        await DeltaSkinPreferences.shared.setSelectedSkin(nil, for: gameId, orientation: currentOrientation)
+                    } else if skinScope == .system {
+                        // Clear for entire system
+                        await DeltaSkinPreferences.shared.setSelectedSkin(nil, for: systemId, orientation: currentOrientation)
+                    }
+
+                    // Also clear session skin identifier
+                    sessionSkinIdentifier = nil
+
+                    // Reset to default skin
+                    try await emulatorVC.resetToDefaultSkin()
+                }
+            }
+        } catch {
+            ELOG("Error applying skin and filter changes: \(error)")
+        }
+    }
+
+    // Helper to reapply a session skin after orientation change
+    private func reapplySessionSkin(skinId: String) async {
+        guard let systemId = emulatorVC.game.system?.systemIdentifier else { return }
+
+        do {
+            // Get all available skins
+            let skins = try await DeltaSkinManager.shared.skins(for: systemId)
+
+            // Find the skin by identifier
+            if let skin = skins.first(where: { $0.identifier == skinId }) {
+                // Update the selected skin name to match
+                await MainActor.run {
+                    selectedSkin = skin.name
+                }
+
+                // Update the session skin in DeltaSkinManager for the new orientation
+                let orientation = UIDevice.current.orientation.isLandscape ? SkinOrientation.landscape : .portrait
+                DeltaSkinManager.shared.setSessionSkin(skinId, for: systemId, orientation: orientation)
+
+                // Apply the skin directly without changing preferences
+                applySkinToEmulator(skin: skin, systemId: systemId)
+            }
+        } catch {
+            ELOG("Error reapplying session skin: \(error)")
         }
     }
 
@@ -1267,135 +1274,6 @@ struct RetroMenuView: View {
                 try? await emulatorVC.applySkin(skin)
             }
         }
-    }
-    
-    // Helper to reapply a session skin after orientation change
-    private func reapplySessionSkin(skinId: String) async {
-        guard let systemId = emulatorVC.game.system?.systemIdentifier else { return }
-        
-        do {
-            // Get all available skins
-            let skins = try await DeltaSkinManager.shared.skins(for: systemId)
-            
-            // Find the skin by identifier
-            if let skin = skins.first(where: { $0.identifier == skinId }) {
-                // Update the selected skin name to match
-                await MainActor.run {
-                    selectedSkin = skin.name
-                }
-                
-                // Update the session skin in DeltaSkinManager for the new orientation
-                let orientation = UIDevice.current.orientation.isLandscape ? SkinOrientation.landscape : .portrait
-                DeltaSkinManager.shared.setSessionSkin(skinId, for: systemId, orientation: orientation)
-                
-                // Apply the skin directly without changing preferences
-                applySkinToEmulator(skin: skin, systemId: systemId)
-            }
-        } catch {
-            ELOG("Error reapplying session skin: \(error)")
-        }
-    }
-
-    // Helper to reset skin to default
-    private func resetSkinToDefault(systemId: SystemIdentifier) {
-        // Notify the emulator to refresh its skin
-        NotificationCenter.default.post(
-            name: NSNotification.Name("RefreshDeltaSkin"),
-            object: nil,
-            userInfo: [
-                "systemId": systemId.rawValue,
-                "reset": true
-            ]
-        )
-
-        // Directly reset the skin if possible
-        if let emulatorVC = self.emulatorVC as? PVEmulatorViewController {
-            Task {
-                try? await emulatorVC.resetToDefaultSkin()
-            }
-        }
-
-        // Apply filter change
-        switch selectedFilter {
-        case "None":
-            // Remove any filter
-            emulatorVC.applyScreenFilter(nil)
-        case "CRT":
-            // Apply CRT filter (pixellated look)
-            // Create a filter info dictionary with the proper parameters
-            let filterParams: [String: Any] = ["inputScale": 8.0]
-            let filterInfo = createFilterInfo(name: "CIPixellate", parameters: filterParams)
-            if let filter = DeltaSkinScreenFilter(filterInfo: filterInfo) {
-                emulatorVC.applyScreenFilter(filter)
-            }
-        case "LCD":
-            // Apply LCD filter (slight blur)
-            // Create a filter info dictionary with the proper parameters
-            let filterParams: [String: Any] = ["inputRadius": 2.0]
-            let filterInfo = createFilterInfo(name: "CIGaussianBlur", parameters: filterParams)
-            if let filter = DeltaSkinScreenFilter(filterInfo: filterInfo) {
-                emulatorVC.applyScreenFilter(filter)
-            }
-        case "Scanlines":
-            // Apply scanlines filter
-            // Create a filter info dictionary with the proper parameters
-            let filterParams: [String: Any] = [
-                "inputWidth": 2.0,
-                "inputSharpness": 0.7,
-                "inputAngle": 0.0
-            ]
-            let filterInfo = createFilterInfo(name: "CILineScreen", parameters: filterParams)
-            if let filter = DeltaSkinScreenFilter(filterInfo: filterInfo) {
-                emulatorVC.applyScreenFilter(filter)
-            }
-        case "Game Boy":
-            // Apply Game Boy filter (green tint)
-            // Create a filter info dictionary with the proper parameters
-            let filterParams: [String: Any] = [
-                "inputColor0": CIColor(red: 0.0, green: 0.3, blue: 0.0),
-                "inputColor1": CIColor(red: 0.2, green: 0.8, blue: 0.2)
-            ]
-            let filterInfo = createFilterInfo(name: "CIFalseColor", parameters: filterParams)
-            if let filter = DeltaSkinScreenFilter(filterInfo: filterInfo) {
-                emulatorVC.applyScreenFilter(filter)
-            }
-        case "GBA":
-            // Apply GBA filter (slight color adjustment)
-            // Create a filter info dictionary with the proper parameters
-            let filterParams: [String: Any] = [
-                "inputSaturation": 1.2,
-                "inputBrightness": 0.1,
-                "inputContrast": 1.1
-            ]
-            let filterInfo = createFilterInfo(name: "CIColorControls", parameters: filterParams)
-            if let filter = DeltaSkinScreenFilter(filterInfo: filterInfo) {
-                emulatorVC.applyScreenFilter(filter)
-            }
-        default:
-            break
-        }
-    }
-
-    // Helper method to create a FilterInfo object from parameters
-    private func createFilterInfo(name: String, parameters: [String: Any]) -> DeltaSkin.FilterInfo {
-        // Convert the parameters to the format expected by DeltaSkinScreenFilter
-        var filterParameters: [String: FilterParameter] = [:]
-
-        for (key, value) in parameters {
-            if let numberValue = value as? Float {
-                filterParameters[key] = .number(numberValue)
-            } else if let numberValue = value as? Double {
-                filterParameters[key] = .number(Float(numberValue))
-            } else if let numberValue = value as? Int {
-                filterParameters[key] = .number(Float(numberValue))
-            } else if let colorValue = value as? CIColor {
-                filterParameters[key] = .color(r: Float(colorValue.red), g: Float(colorValue.green), b: Float(colorValue.blue))
-            } else if let vectorValue = value as? CGPoint {
-                filterParameters[key] = .vector(x: Float(vectorValue.x), y: Float(vectorValue.y))
-            }
-        }
-
-        return DeltaSkin.FilterInfo(name: name, parameters: filterParameters)
     }
 
     // Helper function for category buttons in the header
