@@ -23,13 +23,16 @@ struct ContentView: View {
         ILOG("ContentView: init() called, current bootup state: \(AppState.shared.bootupStateManager.currentState.localizedDescription)")
     }
 
+    // State to track delayed transition
+    @State private var showCompletedContent: Bool = false
+    
     var body: some View {
         // Use a local variable to track the bootup state
         let bootupState = appState.bootupStateManager.currentState
         ILOG("ContentView: body evaluated with bootup state: \(bootupState.localizedDescription)")
 
         return Group {
-            if case .completed = bootupState {
+            if case .completed = bootupState, showCompletedContent {
                 // Use the TestSceneCoordinator to determine which view to show
                 // Only show emulator if both the scene coordinator says to AND there's a game in EmulationUIState
                 if sceneCoordinator.currentScene == .emulator && sceneCoordinator.showEmulator && appState.emulationUIState.currentGame != nil {
@@ -55,6 +58,22 @@ struct ContentView: View {
                     .animation(.easeInOut, value: sceneCoordinator.currentScene)
                     .hideHomeIndicator()
                 }
+            } else if case .completed = bootupState, !showCompletedContent {
+                // Show bootup view for 1 second before transitioning
+                BootupView()
+                    .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    .transition(.opacity)
+                    .animation(.easeInOut, value: bootupState)
+                    .hideHomeIndicator()
+                    .onAppear {
+                        // Schedule transition after 1 second
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                            withAnimation {
+                                showCompletedContent = true
+                            }
+                        }
+                    }
             } else if case .error(let error) = bootupState {
                 ErrorView(error: error) {
                     appState.startBootupSequence()
@@ -85,7 +104,7 @@ struct ContentView: View {
             }
 
             // If we're already in completed state, force a refresh
-            if case .completed = bootupState {
+            if case .completed = bootupState, showCompletedContent {
                 // Multiple refreshes with different delays to ensure the UI updates
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     ILOG("ContentView: Forcing immediate refresh for already Completed state")
