@@ -411,6 +411,12 @@ struct RetroMenuView: View {
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
     @State private var isHoveredSkinId: String? = nil
+    
+    // Button effect and sound settings
+    @Default(.buttonPressEffect) var buttonPressEffect
+    @Default(.buttonSound) var buttonSound
+    @State internal var showingButtonEffectPicker = false
+    @State internal var showingButtonSoundPicker = false
 
     private var skinsMenuButtons: some View {
         VStack(spacing: menuSpacing) {
@@ -506,6 +512,78 @@ struct RetroMenuView: View {
                 }
             }
 
+            // Button Effect Selection
+            VStack(alignment: .leading, spacing: 4) {
+                Text("BUTTON EFFECT")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundColor(.gray)
+                
+                Button(action: {
+                    // Show button effect picker
+                    showingButtonEffectPicker = true
+                }) {
+                    HStack {
+                        Text(buttonPressEffect.description)
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.white)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(.retroPurple)
+                    }
+                    .padding(12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.retroBlack.opacity(0.6))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(Color.retroPurple, lineWidth: 1)
+                            )
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+                .sheet(isPresented: $showingButtonEffectPicker) {
+                    buttonEffectPickerView
+                }
+            }
+            
+            // Button Sound Selection
+            VStack(alignment: .leading, spacing: 4) {
+                Text("BUTTON SOUND")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundColor(.gray)
+                
+                Button(action: {
+                    // Show button sound picker
+                    showingButtonSoundPicker = true
+                }) {
+                    HStack {
+                        Text(buttonSound.description)
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.white)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "speaker.wave.2")
+                            .foregroundColor(.retroBlue)
+                    }
+                    .padding(12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.retroBlack.opacity(0.6))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(Color.retroBlue, lineWidth: 1)
+                            )
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+                .sheet(isPresented: $showingButtonSoundPicker) {
+                    buttonSoundPickerView
+                }
+            }
+            
             // Apply button
             menuButton(title: "APPLY CHANGES", icon: "checkmark.circle", color: .retroBlue) {
                 dismissAction()

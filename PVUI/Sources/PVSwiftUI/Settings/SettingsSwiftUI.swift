@@ -759,8 +759,6 @@ private struct ControllerSection: View {
     @Default(.use8BitdoM30) var use8BitdoM30
     @Default(.pauseButtonIsMenuButton) var pauseButtonIsMenuButton
     @Default(.hapticFeedback) var hapticFeedback
-    @Default(.buttonPressEffect) var buttonPressEffect
-    @Default(.buttonSound) var buttonSound
 
     var body: some View {
         Group {
@@ -796,10 +794,6 @@ private struct ControllerSection: View {
             OnScreenControllerSection()
             #endif
         }
-    }
-
-    private func playButtonSound(_ sound: ButtonSound) {
-        PVUIBase.ButtonSoundGenerator.shared.playSound(sound, pan: 0, volume: 1.0)
     }
 }
 
@@ -874,80 +868,7 @@ private struct OnScreenControllerSection: View {
                             subtitle: "Allow player to move on screen controller buttons. Tap with 3-fingers 3 times to toggle.",
                             icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right"))
             }
-            #if false
-            if FeatureFlag.advancedSkinFeatures.enabled {
-                // Button Sound Effect Picker
-                NavigationLink {
-                    Form {
-                        Section(header: Text("Button Sound Effect")) {
-                            ForEach(ButtonSound.allCases, id: \.self) { sound in
-                                Button {
-                                    buttonSound = sound
-                                    // Play sample sound when selected
-                                    if sound != .none {
-                                        playButtonSound(sound)
-                                    }
-                                } label: {
-                                    HStack {
-                                        VStack(alignment: .leading) {
-                                            Text(sound.description)
-                                                .foregroundColor(.primary)
-                                            Text(sound.subtitle)
-                                                .font(.caption)
-                                                .foregroundColor(.secondary)
-                                        }
-                                        Spacer()
-                                        if buttonSound == sound {
-                                            Image(systemName: "checkmark")
-                                                .foregroundColor(.accentColor)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    .navigationTitle("Button Sound Effect")
-                } label: {
-                    SettingsRow(title: "Button Sound Effect",
-                               subtitle: buttonSound.description,
-                               icon: .sfSymbol("speaker.wave.2"))
-                }
 
-                // Button Press Effect Picker
-                NavigationLink {
-                    Form {
-                        Section(header: Text("Button Press Effect")) {
-                            ForEach(ButtonPressEffect.allCases, id: \.self) { effect in
-                                Button {
-                                    buttonPressEffect = effect
-                                } label: {
-                                    HStack {
-                                        VStack(alignment: .leading) {
-                                            Text(effect.description)
-                                                .foregroundColor(.primary)
-                                            Text(effect.subtitle)
-                                                .font(.caption)
-                                                .foregroundColor(.secondary)
-                                        }
-                                        Spacer()
-                                        if buttonPressEffect == effect {
-                                            Image(systemName: "checkmark")
-                                                .foregroundColor(.accentColor)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    .navigationTitle("Button Effect Style")
-                } label: {
-                    SettingsRow(title: "Button Effect Style",
-                               subtitle: buttonPressEffect.description,
-                               icon: .sfSymbol("circle.circle"))
-                }
-
-            }
-            #endif
         }
     }
 
@@ -1703,7 +1624,9 @@ private struct SecretDPadView: View {
 private struct DeltaSkinsSection: View {
     @State private var showSystemSkinBrowser = false
     @State private var showDeltaSkinList = false
-    
+    @Default(.buttonPressEffect) var buttonPressEffect
+    @Default(.buttonSound) var buttonSound
+
     var body: some View {
         Section {
             // Button to select skins (premium locked)
@@ -1735,6 +1658,22 @@ private struct DeltaSkinsSection: View {
                           subtitle: "Unlock to manage your controller skins.",
                           icon: .sfSymbol("lock.fill"))
             }
+            
+            PaidFeatureView {
+                buttonSoundEFfect
+            } lockedView: {
+                SettingsRow(title: "Button Sound Effect",
+                            subtitle: "Unlock to select a button sound effect.",
+                            icon: .sfSymbol("lock.fill"))
+            }
+            
+            PaidFeatureView {
+                buttonTouchFeedback
+            } lockedView: {
+                SettingsRow(title: "Button Sound Effect",
+                            subtitle: "Unlock to select a button sound effect.",
+                            icon: .sfSymbol("lock.fill"))
+            }
         }
         .sheet(isPresented: $showSystemSkinBrowser) {
             NavigationView {
@@ -1746,6 +1685,33 @@ private struct DeltaSkinsSection: View {
                 DeltaSkinListView(manager: DeltaSkinManager.shared)
             }
         }
+    }
+    
+    var buttonTouchFeedback: some View {
+        // Button Press Effect Picker
+        NavigationLink {
+            ButtonEffectPickerView(buttonPressEffect: $buttonPressEffect)
+        } label: {
+            SettingsRow(title: "Button Effect Style",
+                       subtitle: buttonPressEffect.description,
+                       icon: .sfSymbol("circle.circle"))
+        }
+    }
+    
+    var buttonSoundEFfect: some View {
+        // Button Sound Effect Picker
+        NavigationLink {
+            ButtonSoundPickerView(buttonSound: $buttonSound, playSound: playButtonSound)
+        } label: {
+            SettingsRow(title: "Button Sound Effect",
+                        subtitle: buttonSound.description,
+                        icon: .sfSymbol("speaker.wave.2"))
+        }
+    }
+    
+    
+    private func playButtonSound(_ sound: ButtonSound) {
+        PVUIBase.ButtonSoundGenerator.shared.playSound(sound, pan: 0, volume: 1.0)
     }
 }
 
