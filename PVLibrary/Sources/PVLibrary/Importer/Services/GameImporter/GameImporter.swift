@@ -31,6 +31,17 @@ import UIKit
 import AppKit
 #endif
 
+public class SkinImporterInjector: SkinImporterServicing {
+    public static let shared = SkinImporterInjector()
+    private init() {}
+    
+    public var service: (any SkinImporterServicing)?
+    
+    public func importSkin(from url: URL) async throws {
+        try await service?.importSkin(from: url)
+    }
+}
+
 /*
 
  Logic how the importer should work:
@@ -304,7 +315,9 @@ public final class GameImporter: GameImporting, ObservableObject {
                                                           GameImporterDatabaseService(),
                                                           GameImporterSystemsService(),
                                                           ArtworkImporter(),
-                                                          DefaultCDFileHandler())
+                                                          DefaultCDFileHandler(),
+                                                          SkinImporterInjector.shared
+        )
 
     /// Queue for handling import work
     let workQueue: OperationQueue = {
@@ -347,6 +360,7 @@ public final class GameImporter: GameImporting, ObservableObject {
     internal var gameImporterSystemsService:any GameImporterSystemsServicing
     internal var gameImporterArtworkImporter:any ArtworkImporting
     internal var cdRomFileHandler:CDFileHandling
+    internal var skinImporterService: any SkinImporterServicing
 
     // MARK: - Paths
 
@@ -386,7 +400,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                   _ databaseService:GameImporterDatabaseServicing,
                   _ systemsService:GameImporterSystemsServicing,
                   _ artworkImporter:ArtworkImporting,
-                  _ cdFileHandler:CDFileHandling) {
+                  _ cdFileHandler:CDFileHandling,
+                  _ skinImporterService: SkinImporterServicing) {
         // Create a local function for the auto-start callback that doesn't capture self
         // This avoids the circular reference issue
         func autoStartCallback() {
@@ -396,11 +411,12 @@ public final class GameImporter: GameImporting, ObservableObject {
         // Initialize the import queue actor with the placeholder callback
         self.importQueueActor = ImportQueueActor(autoStartCallback: autoStartCallback)
         
-        gameImporterFileService = fileService
-        gameImporterDatabaseService = databaseService
-        gameImporterSystemsService = systemsService
-        gameImporterArtworkImporter = artworkImporter
-        cdRomFileHandler = cdFileHandler
+        self.skinImporterService = skinImporterService
+        self.gameImporterFileService = fileService
+        self.gameImporterDatabaseService = databaseService
+        self.gameImporterSystemsService = systemsService
+        self.gameImporterArtworkImporter = artworkImporter
+        self.cdRomFileHandler = cdFileHandler
 
         //create defaults
         createDefaultDirectories(fm: fm)
@@ -502,15 +518,9 @@ public final class GameImporter: GameImporting, ObservableObject {
     /// Initializes core plists
     fileprivate func initCorePlists() async {
         let bundle = ThisBundle
-
-//        await Task {
-            await PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
-//        }
-//        await Task {
-            let corePlists: [EmulatorCoreInfoPlist]  = CoreLoader.getCorePlists()
-
-            await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
-//        }
+        await PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
+        let corePlists: [EmulatorCoreInfoPlist]  = CoreLoader.getCorePlists()
+        await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
     }
 
     public func getArtwork(forGame game: PVGame) async -> PVGame {
@@ -888,17 +898,13 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
 
-    private func determineImportType(_ item: ImportQueueItem) throws -> ImportQueueItem.FileType {
+    private func determineImportType(_ item: ImportQueueItem) -> ImportQueueItem.FileType {
         //detect type for updating UI and later processing
-        if (try isBIOS(item)) { //this can throw
-            return .bios
-        } else if (isCDROM(item)) {
-            return .cdRom
-        } else if (isArtwork(item)) {
-            return .artwork
-        } else {
-            return .game
-        }
+        if (isSkin(item)) { return .skin }
+        else if (isArtwork(item)) { return .artwork }
+        else if (isBIOS(item)) { return .bios }
+        else if (isCDROM(item)) { return .cdRom }
+        else { return .game }
     }
 
 //    @MainActor
@@ -908,6 +914,22 @@ public final class GameImporter: GameImporting, ObservableObject {
         //ideally this wouldn't be needed here because we'd have done it elsewhere
         item.fileType = try determineImportType(item)
         ILOG("Determined file type: \(item.fileType)")
+        
+        if item.fileType == .skin {
+            ILOG("Processing as Skin file")
+            do {
+                try await skinImporterService.importSkin(from: item.url)
+                //try await gameImporterDatabaseService.importBIOSIntoDatabase(queueItem: item)
+                ILOG("Successfully imported BIOS file")
+                Task { @MainActor in
+                    item.status = .success
+                }
+                return
+            } catch {
+                ELOG("Failed to import BIOS file: \(error)")
+                throw error
+            }
+        }
 
         // Handle BIOS files first, before any system detection
         if item.fileType == .bios {

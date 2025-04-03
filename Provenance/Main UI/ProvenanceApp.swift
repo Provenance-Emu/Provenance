@@ -165,6 +165,8 @@ struct ProvenanceApp: App {
                 if appState.bootupState == .completed {
                     openEmulatorSceneIfNeeded()
                 }
+                
+                SkinImporterInjector.shared.service = DeltaSkinManager.shared
             }
 
             // Handle scene phase changes for import pausing

@@ -28,6 +28,10 @@ class GameImporterFileService : GameImporterFileServicing {
 
         case .bios:
             _ = try await handleBIOSItem(queueItem)
+        case .skin:
+            
+            // Nothing to do, skin manager handles this
+            return
         case .artwork:
             //TODO: implement me
             return

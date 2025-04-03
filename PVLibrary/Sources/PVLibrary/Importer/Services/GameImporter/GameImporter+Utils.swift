@@ -9,6 +9,18 @@
 extension GameImporter {
 
 
+    /// Checks if a given ROM file is a Skin file
+    internal func isSkin(_ queueItem: ImportQueueItem) -> Bool {
+        return isSkin(queueItem.url)
+    }
+    
+    /// Checks if a given path is a Sk file
+    internal func isSkin(_ path: URL) -> Bool {
+        let cdromExtensions: Set<String> = Extensions.skinExtensions.union(Extensions.playlistExtensions)
+        let fileExtension = path.pathExtension.lowercased()
+        return cdromExtensions.contains(fileExtension)
+    }
+    
     /// Checks if a given ROM file is a CD-ROM
     internal func isCDROM(_ queueItem: ImportQueueItem) -> Bool {
         return isCDROM(queueItem.url)
@@ -28,7 +40,7 @@ extension GameImporter {
         return artworkExtensions.contains(fileExtension)
     }
 
-    internal func isBIOS(_ queueItem: ImportQueueItem) throws -> Bool {
+    internal func isBIOS(_ queueItem: ImportQueueItem) -> Bool {
         // First check by filename
         let filename = queueItem.url.lastPathComponent.lowercased()
         if RomDatabase.biosFilenamesCache.contains(filename) {

@@ -234,12 +234,14 @@ struct GameLibraryView: View {
                                 await renameGame(game, to: newGameTitle)
                                 gameToRename = nil
                                 newGameTitle = ""
+                                showingRenameAlert = false
                             }
                         }
                     },
                     UIAlertAction(title: "Cancel", style: .cancel) { _ in
                         gameToRename = nil
                         newGameTitle = ""
+                        showingRenameAlert = false
                     }
                 ]
             }

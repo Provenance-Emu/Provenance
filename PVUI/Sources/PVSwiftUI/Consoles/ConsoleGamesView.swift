@@ -303,12 +303,14 @@ struct ConsoleGamesView: SwiftUI.View {
                                 await renameGame(game, to: newGameTitle)
                                 gameToRename = nil
                                 newGameTitle = ""
+                                showingRenameAlert = false
                             }
                         }
                     },
                     UIAlertAction(title: "Cancel", style: .cancel) { _ in
                         gameToRename = nil
                         newGameTitle = ""
+                        showingRenameAlert = false
                     }
                 ]
             }
@@ -717,6 +719,7 @@ struct ConsoleGamesView: SwiftUI.View {
         // Reset state
         gameToRename = nil
         newGameTitle = ""
+        showingRenameAlert = false
     }
 
     // Create a computed binding that wraps the String as String?

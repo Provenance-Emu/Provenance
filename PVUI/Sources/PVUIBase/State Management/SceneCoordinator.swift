@@ -11,6 +11,13 @@ import UIKit
 import PVLogging
 import PVLibrary
 
+// DeltaSkinManager already "conforms" to but does not
+// know about SkinImporterServicing, since that's in PVLibrary
+// and we don't want to require that dependency
+extension DeltaSkinManager: SkinImporterServicing {
+    
+}
+
 /// Coordinator for managing scene transitions in the app
 @MainActor
 public class SceneCoordinator: ObservableObject {
@@ -40,6 +47,8 @@ public class SceneCoordinator: ObservableObject {
             ELOG("Failed to create URL for main scene")
             return
         }
+        
+        SkinImporterInjector.shared.service = DeltaSkinManager.shared
         
         ILOG("SceneCoordinator: Opening main scene")
         UIApplication.shared.open(url, options: [:], completionHandler: nil)
