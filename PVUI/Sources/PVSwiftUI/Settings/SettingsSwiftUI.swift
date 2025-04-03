@@ -18,6 +18,17 @@ import PVFeatureFlags
 import Defaults
 import AudioToolbox
 import MarkdownView
+
+// Retrowave color extensions
+extension Color {
+    static let retroPink = Color(red: 0.99, green: 0.11, blue: 0.55)
+    static let retroPurple = Color(red: 0.53, green: 0.11, blue: 0.91)
+    static let retroBlue = Color(red: 0.0, green: 0.75, blue: 0.95)
+    static let retroDarkBlue = Color(red: 0.05, green: 0.05, blue: 0.2)
+    static let retroBlack = Color(red: 0.05, green: 0.0, blue: 0.1)
+}
+
+
 #if os(tvOS)
 import GameController
 #endif
@@ -51,108 +62,256 @@ public struct PVSettingsView: View {
 
     public var body: some View {
         NavigationView {
-            List {
-                CollapsibleSection(title: "App") {
-                    AppSection(viewModel: viewModel)
-                        .environmentObject(viewModel)
-                }
-
-                CollapsibleSection(title: "Core Options") {
-                    CoreOptionsSection()
-                }
-
-                CollapsibleSection(title: "Saves") {
-                    SavesSection()
-                }
-
-                CollapsibleSection(title: "Audio") {
-                    AudioSection()
-                }
-
-                CollapsibleSection(title: "Video") {
-                    VideoSection()
-                }
-
-                CollapsibleSection(title: "Controller") {
-                    ControllerSection()
-                }
-
-                CollapsibleSection(title: "Library") {
-                    LibrarySection(viewModel: viewModel)
-                        .environmentObject(viewModel)
-                }
-
-                CollapsibleSection(title: "Library Management") {
-                    LibrarySection2(viewModel: viewModel)
-                        .environmentObject(viewModel)
-                }
-
-                CollapsibleSection(title: "Advanced") {
-                    AdvancedSection()
-                }
-
-                #if !os(tvOS)
-                CollapsibleSection(title: "Social Links") {
-                    SocialLinksSection()
-                }
-
-                CollapsibleSection(title: "Documentation") {
-                    DocumentationSection()
-                }
-                #endif
-
-                CollapsibleSection(title: "Build") {
-                    BuildSection(viewModel: viewModel)
-                        .environmentObject(viewModel)
-                }
-
-                CollapsibleSection(title: "Extra Info") {
-                    ExtraInfoSection()
+            ZStack {
+                // Retrowave background
+                Color.black.edgesIgnoringSafeArea(.all)
+                
+                // Grid background
+                RetroGridForSettings()
+                    .edgesIgnoringSafeArea(.all)
+                    .opacity(0.3)
+                
+                // Main content
+                ScrollView {
+                    VStack(spacing: 16) {
+                        // Title with retrowave styling
+                        Text("SETTINGS")
+                            .font(.system(size: 32, weight: .bold, design: .rounded))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .padding(.top, 20)
+                            .padding(.bottom, 10)
+                            .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
+                        
+                        // Sections
+                        VStack(spacing: 16) {
+                            CollapsibleSection(title: "App") {
+                                AppSection(viewModel: viewModel)
+                                    .environmentObject(viewModel)
+                            }
+            
+                            CollapsibleSection(title: "Core Options") {
+                                CoreOptionsSection()
+                            }
+            
+                            CollapsibleSection(title: "Saves") {
+                                SavesSection()
+                            }
+            
+                            CollapsibleSection(title: "Audio") {
+                                AudioSection()
+                            }
+            
+                            CollapsibleSection(title: "Video") {
+                                VideoSection()
+                            }
+            
+                            CollapsibleSection(title: "Controller") {
+                                ControllerSection()
+                            }
+            
+                            CollapsibleSection(title: "Library") {
+                                LibrarySection(viewModel: viewModel)
+                                    .environmentObject(viewModel)
+                            }
+            
+                            CollapsibleSection(title: "Library Management") {
+                                LibrarySection2(viewModel: viewModel)
+                                    .environmentObject(viewModel)
+                            }
+            
+                            CollapsibleSection(title: "Delta Skins") {
+                                DeltaSkinsSection()
+                            }
+                            
+                            CollapsibleSection(title: "Advanced") {
+                                AdvancedSection()
+                            }
+            
+                            #if !os(tvOS)
+                            CollapsibleSection(title: "Social Links") {
+                                SocialLinksSection()
+                            }
+            
+                            CollapsibleSection(title: "Documentation") {
+                                DocumentationSection()
+                            }
+                            #endif
+            
+                            CollapsibleSection(title: "Build") {
+                                BuildSection(viewModel: viewModel)
+                                    .environmentObject(viewModel)
+                            }
+            
+                            CollapsibleSection(title: "Extra Info") {
+                                ExtraInfoSection()
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                    .padding(.bottom, 20)
                 }
             }
-            .listStyle(GroupedListStyle())
-            .navigationTitle("Settings")
-            #if !os(tvOS)
-            .navigationBarItems(
-                leading: Button("Done") { dismissAction() },  // Use dismissAction here
-                trailing: Button("Help") { viewModel.showHelp() }
+            .navigationBarHidden(true) // Hide default navigation bar
+            .overlay(
+                // Custom navigation bar
+                VStack {
+                    HStack {
+                        // Done button with retrowave styling
+                        Button(action: { dismissAction() }) {
+                            Text("DONE")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color.black.opacity(0.6))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .strokeBorder(
+                                                    LinearGradient(
+                                                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                                        startPoint: .leading,
+                                                        endPoint: .trailing
+                                                    ),
+                                                    lineWidth: 1.5
+                                                )
+                                        )
+                                )
+                        }
+                        
+                        Spacer()
+                        
+                        // Help button with retrowave styling
+                        Button(action: { viewModel.showHelp() }) {
+                            Text("HELP")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color.black.opacity(0.6))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .strokeBorder(
+                                                    LinearGradient(
+                                                        gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                                                        startPoint: .leading,
+                                                        endPoint: .trailing
+                                                    ),
+                                                    lineWidth: 1.5
+                                                )
+                                        )
+                                )
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 10)
+                    
+                    Spacer()
+                }
             )
-            #endif
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
-/// Row View for Settings
+/// Row View for Settings with retrowave styling
 struct SettingsRow: View {
     let title: String
     var subtitle: String? = nil
     var value: String? = nil
     var icon: SettingsIcon? = nil
-
+    
+    @State private var isHovered = false
+    
     var body: some View {
-        HStack {
+        HStack(spacing: 12) {
+            // Icon with retrowave styling
             if let icon = icon {
-                icon.image
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 22, height: 22)
-                    .foregroundColor(.accentColor)
+                ZStack {
+                    Circle()
+                        .fill(Color.black.opacity(0.6))
+                        .frame(width: 36, height: 36)
+                        .overlay(
+                            Circle()
+                                .strokeBorder(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    lineWidth: 1.5
+                                )
+                        )
+                        .shadow(color: .retroPink.opacity(isHovered ? 0.5 : 0.2), radius: 5)
+                    
+                    icon.image
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 18, height: 18)
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                }
             }
-
-            VStack(alignment: .leading) {
+            
+            // Text content with retrowave styling
+            VStack(alignment: .leading, spacing: 4) {
                 Text(title)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.white)
+                
                 if let subtitle = subtitle {
                     Text(subtitle)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(Color.gray.opacity(0.8))
+                        .lineLimit(2)
                 }
             }
-
+            
+            Spacer()
+            
+            // Value with retrowave styling
             if let value = value {
-                Spacer()
                 Text(value)
-                    .foregroundColor(.secondary)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(Color.black.opacity(0.4))
+                    )
+            }
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 4)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.black.opacity(0.3))
+                .opacity(isHovered ? 1.0 : 0.0)
+        )
+        .onHover { hovering in
+            withAnimation(.easeInOut(duration: 0.2)) {
+                isHovered = hovering
             }
         }
     }
@@ -347,13 +506,21 @@ private struct SavesSection: View {
 #if !os(tvOS)
             HStack {
                 Text("Auto-save Time")
-                Slider(value: $timedAutoSaveInterval, in: minutes(1)...minutes(30), step: minutes(1)) {
-                    Text("Auto-save Time")
-                } minimumValueLabel: {
-                    Image(systemName: "hare")
-                } maximumValueLabel: {
-                    Image(systemName: "tortoise")
-                }
+                RetroWaveSlider(value: $timedAutoSaveInterval, 
+                               in: minutes(1)...minutes(30), 
+                               step: minutes(1),
+                               onEditingChanged: { _ in },
+                               label: { Text("Auto-save Time") },
+                               minimumValueLabel: { Text("1m") },
+                               maximumValueLabel: { Text("30m") },
+                               leadingIcon: { 
+                                   Image(systemName: "hare")
+                                       .foregroundColor(RetroTheme.retroBlue)
+                               },
+                               trailingIcon: { 
+                                   Image(systemName: "tortoise")
+                                       .foregroundColor(RetroTheme.retroBlue)
+                               })
             }
             Text(timedAutosaveLabelText)
                 .font(.subheadline)
@@ -503,13 +670,21 @@ private struct AudioSection: View {
 //            }
             HStack {
                 Text("Volume")
-                Slider(value: $volume, in: 0...1, step: 0.1) {
-                    Text("Volume Level")
-                } minimumValueLabel: {
-                    Image(systemName: "speaker")
-                } maximumValueLabel: {
-                    Image(systemName: "speaker.wave.3")
-                }
+                RetroWaveSlider<Float>(value: $volume, 
+                                     in: 0...1, 
+                                     step: 0.1,
+                                     onEditingChanged: { _ in },
+                                     label: { Text("Volume Level") },
+                                     minimumValueLabel: { Text("") },
+                                     maximumValueLabel: { Text("") },
+                                     leadingIcon: { 
+                                         Image(systemName: "speaker")
+                                             .foregroundColor(RetroTheme.retroBlue)
+                                     },
+                                     trailingIcon: { 
+                                         Image(systemName: "speaker.wave.3")
+                                             .foregroundColor(RetroTheme.retroBlue)
+                                     })
             }
             Text("System-wide volume level for games.")
                 .font(.caption)
@@ -584,8 +759,6 @@ private struct ControllerSection: View {
     @Default(.use8BitdoM30) var use8BitdoM30
     @Default(.pauseButtonIsMenuButton) var pauseButtonIsMenuButton
     @Default(.hapticFeedback) var hapticFeedback
-    @Default(.buttonPressEffect) var buttonPressEffect
-    @Default(.buttonSound) var buttonSound
 
     var body: some View {
         Group {
@@ -622,10 +795,6 @@ private struct ControllerSection: View {
             #endif
         }
     }
-
-    private func playButtonSound(_ sound: ButtonSound) {
-        PVUIBase.ButtonSoundGenerator.shared.playSound(sound, pan: 0, volume: 1.0)
-    }
 }
 
 #if !os(tvOS)
@@ -647,13 +816,21 @@ private struct OnScreenControllerSection: View {
         Section(header: Text("On-Screen Controller")) {
             HStack {
                 Text("Controller Opacity")
-                Slider(value: $controllerOpacity, in: 0...1.0, step: 0.05) {
-                    Text("Transparency amount of on-screen controls overlays.")
-                } minimumValueLabel: {
-                    Image(systemName: "sun.min")
-                } maximumValueLabel: {
-                    Image(systemName: "sun.max")
-                }
+                RetroWaveSlider<Double>(value: $controllerOpacity, 
+                                     in: 0...1.0, 
+                                     step: 0.05,
+                                     onEditingChanged: { _ in },
+                                     label: { Text("Transparency amount of on-screen controls overlays.") },
+                                     minimumValueLabel: { Text("") },
+                                     maximumValueLabel: { Text("") },
+                                     leadingIcon: { 
+                                         Image(systemName: "sun.min")
+                                             .foregroundColor(RetroTheme.retroBlue)
+                                     },
+                                     trailingIcon: { 
+                                         Image(systemName: "sun.max")
+                                             .foregroundColor(RetroTheme.retroBlue)
+                                     })
             }
             ThemedToggle(isOn: $buttonTints) {
                 SettingsRow(title: "Button Colors",
@@ -691,80 +868,7 @@ private struct OnScreenControllerSection: View {
                             subtitle: "Allow player to move on screen controller buttons. Tap with 3-fingers 3 times to toggle.",
                             icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right"))
             }
-            #if false
-            if FeatureFlag.advancedSkinFeatures.enabled {
-                // Button Sound Effect Picker
-                NavigationLink {
-                    Form {
-                        Section(header: Text("Button Sound Effect")) {
-                            ForEach(ButtonSound.allCases, id: \.self) { sound in
-                                Button {
-                                    buttonSound = sound
-                                    // Play sample sound when selected
-                                    if sound != .none {
-                                        playButtonSound(sound)
-                                    }
-                                } label: {
-                                    HStack {
-                                        VStack(alignment: .leading) {
-                                            Text(sound.description)
-                                                .foregroundColor(.primary)
-                                            Text(sound.subtitle)
-                                                .font(.caption)
-                                                .foregroundColor(.secondary)
-                                        }
-                                        Spacer()
-                                        if buttonSound == sound {
-                                            Image(systemName: "checkmark")
-                                                .foregroundColor(.accentColor)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    .navigationTitle("Button Sound Effect")
-                } label: {
-                    SettingsRow(title: "Button Sound Effect",
-                               subtitle: buttonSound.description,
-                               icon: .sfSymbol("speaker.wave.2"))
-                }
 
-                // Button Press Effect Picker
-                NavigationLink {
-                    Form {
-                        Section(header: Text("Button Press Effect")) {
-                            ForEach(ButtonPressEffect.allCases, id: \.self) { effect in
-                                Button {
-                                    buttonPressEffect = effect
-                                } label: {
-                                    HStack {
-                                        VStack(alignment: .leading) {
-                                            Text(effect.description)
-                                                .foregroundColor(.primary)
-                                            Text(effect.subtitle)
-                                                .font(.caption)
-                                                .foregroundColor(.secondary)
-                                        }
-                                        Spacer()
-                                        if buttonPressEffect == effect {
-                                            Image(systemName: "checkmark")
-                                                .foregroundColor(.accentColor)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    .navigationTitle("Button Effect Style")
-                } label: {
-                    SettingsRow(title: "Button Effect Style",
-                               subtitle: buttonPressEffect.description,
-                               icon: .sfSymbol("circle.circle"))
-                }
-
-            }
-            #endif
         }
     }
 
@@ -1237,7 +1341,7 @@ private struct MissingArtworkStyleView: View {
                         // Selection indicator
                         if selectedStyle == style {
                             RoundedRectangle(cornerRadius: 8)
-                                .stroke(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor, lineWidth: 2)
+                                .stroke(themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor, lineWidth: 2)
                                 .frame(width: 80, height: 80)
                         }
                     }
@@ -1514,6 +1618,88 @@ private struct SecretDPadView: View {
         }
 
         DLOG("[SecretDPadView] Current sequence: \(sequenceText)")
+    }
+}
+
+private struct DeltaSkinsSection: View {
+    @Default(.buttonPressEffect) var buttonPressEffect
+    @Default(.buttonSound) var buttonSound
+
+    var body: some View {
+        Section {
+            // Button to select skins (premium locked)
+            PaidFeatureView {
+                NavigationLink {
+                    SystemSkinBrowserView()
+                } label: {
+                    SettingsRow(title: "Select Controller Skins",
+                              subtitle: "Choose controller skins for each system and orientation.",
+                              icon: .sfSymbol("gamecontroller.fill"))
+                }
+            } lockedView: {
+                SettingsRow(title: "Select Controller Skins",
+                          subtitle: "Unlock to choose controller skins for each system.",
+                          icon: .sfSymbol("lock.fill"))
+            }
+            
+            // Button to manage skins (premium locked)
+            PaidFeatureView {
+                NavigationLink {
+                    DeltaSkinListView(manager: DeltaSkinManager.shared)
+                } label: {
+                    SettingsRow(title: "Manage Controller Skins",
+                              subtitle: "View, import, and delete controller skins.",
+                              icon: .sfSymbol("folder.badge.gearshape"))
+                }
+            } lockedView: {
+                SettingsRow(title: "Manage Controller Skins",
+                          subtitle: "Unlock to manage your controller skins.",
+                          icon: .sfSymbol("lock.fill"))
+            }
+            
+            PaidFeatureView {
+                buttonSoundEFfect
+            } lockedView: {
+                SettingsRow(title: "Button Sound Effect",
+                            subtitle: "Unlock to select a button sound effect.",
+                            icon: .sfSymbol("lock.fill"))
+            }
+            
+            PaidFeatureView {
+                buttonTouchFeedback
+            } lockedView: {
+                SettingsRow(title: "Button Sound Effect",
+                            subtitle: "Unlock to select a button sound effect.",
+                            icon: .sfSymbol("lock.fill"))
+            }
+        }
+    }
+    
+    var buttonTouchFeedback: some View {
+        // Button Press Effect Picker
+        NavigationLink {
+            ButtonEffectPickerView(buttonPressEffect: $buttonPressEffect)
+        } label: {
+            SettingsRow(title: "Button Effect Style",
+                       subtitle: buttonPressEffect.description,
+                       icon: .sfSymbol("circle.circle"))
+        }
+    }
+    
+    var buttonSoundEFfect: some View {
+        // Button Sound Effect Picker
+        NavigationLink {
+            ButtonSoundPickerView(buttonSound: $buttonSound, playSound: playButtonSound)
+        } label: {
+            SettingsRow(title: "Button Sound Effect",
+                        subtitle: buttonSound.description,
+                        icon: .sfSymbol("speaker.wave.2"))
+        }
+    }
+    
+    
+    private func playButtonSound(_ sound: ButtonSound) {
+        PVUIBase.ButtonSoundGenerator.shared.playSound(sound, pan: 0, volume: 1.0)
     }
 }
 

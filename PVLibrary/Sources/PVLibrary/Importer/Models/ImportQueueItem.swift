@@ -23,7 +23,7 @@ public class ImportQueueItem: Identifiable, ObservableObject {
 
     // Enum to define file types for each import
     public enum FileType {
-        case bios, artwork, game, cdRom, unknown
+        case bios, artwork, game, cdRom, unknown, skin
     }
 
 

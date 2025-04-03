@@ -15,7 +15,7 @@ import PVThemes
 import Combine
 import PVUIBase
 
-enum HomeSectionType: Int, CaseIterable, Sendable {
+public enum HomeSectionType: Int, CaseIterable, Sendable {
     case recentSaveStates
     case recentlyPlayedGames
     case favorites
@@ -298,11 +298,15 @@ struct HomeView: SwiftUI.View {
             [
                 UIAlertAction(title: "Save", style: .default) { _ in
                     submitRename()
+                    gameToRename = nil
+                    newGameTitle = ""
+                    showingRenameAlert = false
                 },
                 UIAlertAction(title: "Cancel", style: .cancel) { _ in
                     showingRenameAlert = false
                     gameToRename = nil
                     newGameTitle = ""
+                    showingRenameAlert = false
                 }
             ]
         }

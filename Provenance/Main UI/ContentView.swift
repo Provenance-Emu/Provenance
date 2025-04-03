@@ -10,22 +10,31 @@ import WhatsNewKit
 struct ContentView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @EnvironmentObject var appState: AppState
-    /// Add explicit observation of bootup state
-    @ObservedObject private var bootupStateManager: AppBootupState
-    let appDelegate: PVAppDelegate
+    /// Use EnvironmentObject for bootup state manager
+    @EnvironmentObject var bootupStateManager: AppBootupState
+    /// Use EnvironmentObject for app delegate
+    @EnvironmentObject var appDelegate: PVAppDelegate
 
-    init(appDelegate: PVAppDelegate) {
-        self.appDelegate = appDelegate
-        /// Initialize bootup state manager from app state
-        self._bootupStateManager = ObservedObject(wrappedValue: AppState.shared.bootupStateManager)
+    var bootupView: some View {
+        ZStack {
+            // Show the bootup view
+            BootupViewRetroWave()
+                .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                .transition(.opacity)
+                .animation(.easeInOut, value: appState.bootupStateManager.currentState)
+                .hideHomeIndicator()
+        }
     }
+    
+    /// Remove init since we're using environment objects now
 
     var body: some View {
         Group {
             switch bootupStateManager.currentState {
             case .completed:
                 ZStack {
-                    MainView(appDelegate: appDelegate)
+                    MainView()
                 }
                 .onAppear {
                     ILOG("ContentView: MainView appeared")
@@ -35,9 +44,10 @@ struct ContentView: View {
                     appState.startBootupSequence()
                 }
             default:
-                BootupView()
-                    .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
-                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                bootupView
+//                BootupView()
+//                    .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+//                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
             }
         }
         .edgesIgnoringSafeArea(.all)

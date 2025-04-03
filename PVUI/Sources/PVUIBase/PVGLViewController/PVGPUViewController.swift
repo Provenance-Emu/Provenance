@@ -86,6 +86,12 @@ import OpenGLES.ES3
 @objcMembers
 public class PVGPUViewController: BaseViewController {
     var screenType: String = "crt"
+    
+    /// Flag to indicate that custom positioning is being used
+    public var useCustomPositioning: Bool = false
+    
+    /// Custom frame to use when useCustomPositioning is true
+    public var customFrame: CGRect = .zero
 
     #if os(macOS) || targetEnvironment(macCatalyst)
     public var isPaused: Bool = false

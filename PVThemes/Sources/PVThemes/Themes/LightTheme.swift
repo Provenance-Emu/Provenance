@@ -22,7 +22,7 @@ struct LightThemePalette: UXThemePalette {
         static let white9alpha6 = UIColor(white: 0.9, alpha: 0.6)
     }
 
-    public var defaultTintColor: UIColor? { .Provenance.blue } // iOS Blue
+    public var defaultTintColor: UIColor { .Provenance.blue } // iOS Blue
 
     public var gameLibraryBackground: UIColor { .white }
     public var gameLibraryCellBackground: UIColor? { .white }

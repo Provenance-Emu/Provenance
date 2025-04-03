@@ -42,7 +42,7 @@ public struct BootupView: View {
 
                 ActivityIndicatorView(
                     isVisible: .constant(true),
-                    type: .growingArc(currentPalette.defaultTintColor?.swiftUIColor ?? .secondary,
+                    type: .growingArc(currentPalette.defaultTintColor.swiftUIColor,
                                       lineWidth: 2))
                     .frame(width: 50.0, height: 50.0)
 
@@ -53,7 +53,7 @@ public struct BootupView: View {
             .background(Color.black.opacity(0.2))
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .stroke(currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor, lineWidth: 4)
+                    .stroke(currentPalette.defaultTintColor.swiftUIColor, lineWidth: 4)
             )
             .cornerRadius(16)
         }

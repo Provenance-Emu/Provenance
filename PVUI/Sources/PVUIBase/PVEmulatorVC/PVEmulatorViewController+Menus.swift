@@ -69,7 +69,7 @@ extension PVEmulatorViewController {
             actionSheet.popoverPresentationController?.sourceView = menuButton
             actionSheet.popoverPresentationController?.sourceRect = menuButton.bounds
         }
-        let speeds = ["Slow Motion", "Normal", "Fast Forward"]
+        let speeds = GameSpeed.allCases.map { $0.description }
         speeds.enumerated().forEach { idx, title in
             let action = UIAlertAction(title: title, style: .default, handler: { (_: UIAlertAction) -> Void in
                 self.enableControllerInput(false)

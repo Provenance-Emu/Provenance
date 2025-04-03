@@ -53,7 +53,7 @@ public struct ContinuesManagementHeaderView: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(viewModel.gameTitle)
-                        .font(.title)
+                        .font(.system(.title, design: .monospaced))
                         .fontWeight(.bold)
 
                     Text(viewModel.systemTitle)

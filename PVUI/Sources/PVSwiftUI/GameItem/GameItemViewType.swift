@@ -17,7 +17,7 @@ import PVThemes
     public let PVRowHeight: CGFloat = 150.0
 #endif
 
-enum GameItemViewType {
+public enum GameItemViewType {
     case cell
     case row
 

@@ -29,6 +29,9 @@ public struct ImportStatusView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
     @Namespace private var namespace  // Add namespace for focus management
+    
+    // State to hold the import queue items
+    @State private var queueItems: [ImportQueueItem] = []
 
     public init(updatesController: PVGameLibraryUpdatesController, gameImporter: any GameImporting, delegate: ImportStatusDelegate? = nil, dismissAction: (() -> Void)? = nil) {
         self.updatesController = updatesController
@@ -38,7 +41,16 @@ public struct ImportStatusView: View {
     }
 
     private func deleteItems(at offsets: IndexSet) {
-        gameImporter.removeImports(at: offsets)
+        Task {
+            await gameImporter.removeImports(at: offsets)
+            // Refresh the queue items after deletion
+            await refreshQueueItems()
+        }
+    }
+    
+    // Function to refresh the queue items
+    private func refreshQueueItems() async {
+        queueItems = await gameImporter.importQueue
     }
 
     // Define the system selection handler
@@ -47,52 +59,116 @@ public struct ImportStatusView: View {
         delegate?.didSelectSystem(system, for: item)
     }
 
+    // Animation states for retrowave effects
+    @State private var glowOpacity: Double = 0.7
+    @State private var scanlineOffset: CGFloat = 0
+    
     public var body: some View {
         WithPerceptionTracking {
             NavigationView {
-                List {
-                    if gameImporter.importQueue.isEmpty {
-                        Text("No items in the import queue")
-                            .foregroundColor(.secondary)
-                            .padding()
-                    } else {
-                        ForEach(gameImporter.importQueue) { item in
-                            Button(action: {
-                                print("Tapped item: \(item.id)")
-                            }) {
-                                // Pass callback to ImportTaskRowView
-                                ImportTaskRowView(
-                                    item: item,
-                                    onSystemSelected: handleSystemSelection
-                                )
-                                .id(item.id)
+                ZStack {
+                    // RetroWave background
+                    RetroTheme.retroBackground
+                    
+                    // Grid overlay
+                    RetroGrid()
+                        .opacity(0.3)
+                    
+                    VStack {
+                        // Retrowave header
+                        Text("IMPORT QUEUE")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(RetroTheme.retroPink)
+                            .padding(.top, 20)
+                            .padding(.bottom, 10)
+                            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
+                        
+                        // Main content
+                        if queueItems.isEmpty {
+                            VStack {
+                                Spacer()
+                                Text("NO ITEMS IN QUEUE")
+                                    .font(.system(size: 20, weight: .bold))
+                                    .foregroundColor(RetroTheme.retroBlue)
+                                    .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                                    .padding()
+                                Spacer()
                             }
-                            #if os(tvOS)
-                            .buttonStyle(.bordered)
-                            .focusable()
-                            .prefersDefaultFocus(in: namespace)
-                            #endif
-                        }.onDelete(
-                            perform: deleteItems
-                        )
+                        } else {
+                            List {
+                                ForEach(queueItems) { item in
+                                    ZStack {
+                                        // Custom background to maintain retrowave styling
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(Color.black.opacity(0.7))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .strokeBorder(
+                                                        LinearGradient(
+                                                            gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                                            startPoint: .topLeading,
+                                                            endPoint: .bottomTrailing
+                                                        ),
+                                                        lineWidth: 1.5
+                                                    )
+                                                    .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                                            )
+                                        
+                                        // Pass callback to ImportTaskRowView
+                                        ImportTaskRowView(
+                                            item: item,
+                                            onSystemSelected: handleSystemSelection
+                                        )
+                                        .id(item.id)
+                                        .padding(.vertical, 4) // Add padding to ensure the content doesn't touch the edges
+                                    }
+                                    .listRowInsets(EdgeInsets()) // Remove default list row insets
+                                    .listRowBackground(Color.clear) // Make the list row background transparent
+#if os(tvOS)
+                                    .focusable()
+                                    .prefersDefaultFocus(in: namespace)
+#endif
+                                }
+                                .onDelete(perform: deleteItems) // Add swipe-to-delete functionality
+                                .listRowSeparator(.hidden) // Hide default separators
+                            }
+                            .listStyle(PlainListStyle()) // Use plain style to minimize default styling
+                            .padding(.horizontal)
+                            .background(Color.clear) // Make list background transparent
+                            .scrollContentBackground(.hidden) // Hide the scroll content background on iOS 16+
+                        }
                     }
                 }
                 #if os(tvOS)
                 .focusSection()
                 .focusScope(namespace)
                 #endif
-                .navigationTitle("Import Queue")
+                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItemGroup(placement: .topBarLeading,
                                      content: {
                         // TODO: Removing from tvOS as a hack @JoeMatt
                         #if !os(tvOS)
                         if dismissAction != nil {
-                            Button("Done") {
+                            Button(action: {
                                 dismissAction?()
                                 delegate?.dismissAction()
+                            }) {
+                                Text("CLOSE")
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundColor(RetroTheme.retroPurple)
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 8)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(LinearGradient(
+                                                gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroPink]),
+                                                startPoint: .leading,
+                                                endPoint: .trailing
+                                            ), lineWidth: 1.5)
+                                    )
+                                    .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                             }
-                            .tint(currentPalette.defaultTintColor?.swiftUIColor)
 #if os(tvOS)
                             .focusable(true)
 #endif
@@ -102,26 +178,63 @@ public struct ImportStatusView: View {
                     ToolbarItemGroup(placement: .topBarTrailing,
                                    content: {
                         #if !os(tvOS)
-                        Button("Add Files") {
+                        Button(action: {
                             delegate?.addImportsAction()
+                        }) {
+                            Text("ADD FILES")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundColor(RetroTheme.retroPink)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(LinearGradient(
+                                            gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        ), lineWidth: 1.5)
+                                )
+                                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                         }
-                        .tint(currentPalette.defaultTintColor?.swiftUIColor)
                         #endif
 
-                        Button("Begin") {
+                        Button(action: {
                             delegate?.forceImportsAction()
+                        }) {
+                            Text("BEGIN")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundColor(RetroTheme.retroBlue)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(LinearGradient(
+                                            gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        ), lineWidth: 1.5)
+                                )
+                                .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                         }
-                        .tint(currentPalette.defaultTintColor?.swiftUIColor)
                         #if os(tvOS)
                         .focusable(true)
                         #endif
                     })
                 }
-                .background(currentPalette.gameLibraryBackground.swiftUIColor)
             }
-            .background(currentPalette.gameLibraryBackground.swiftUIColor)
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
+            .onAppear {
+                // Load the queue items when the view appears
+                Task {
+                    await refreshQueueItems()
+                }
+                
+                // Start retrowave animations
+                withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
+                    glowOpacity = 1.0
+                }
+            }
         }
     }
 }

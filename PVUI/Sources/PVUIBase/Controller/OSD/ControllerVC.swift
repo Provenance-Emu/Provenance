@@ -13,7 +13,7 @@ import PVPlists
 import PVRealm
 
 /// Protocol for on-screen display controllers of type `UIViewController`
-protocol ControllerVC: StartSelectDelegate, JSButtonDelegate, JSDPadDelegate where Self: UIViewController {
+public protocol ControllerVC: StartSelectDelegate, JSButtonDelegate, JSDPadDelegate where Self: UIViewController {
 	associatedtype ResponderType: ResponderClient
 	var emulatorCore: ResponderType {get}
 	var system: PVSystem {get set}
@@ -22,7 +22,7 @@ protocol ControllerVC: StartSelectDelegate, JSButtonDelegate, JSDPadDelegate whe
 	var dPad: JSDPad? {get}
 	var dPad2: JSDPad? {get}
 	var joyPad: JSDPad? { get }
-  var joyPad2: JSDPad? { get }
+    var joyPad2: JSDPad? { get }
 	var buttonGroup: MovableButtonView? {get}
 	var leftShoulderButton: JSButton? {get}
 	var rightShoulderButton: JSButton? {get}

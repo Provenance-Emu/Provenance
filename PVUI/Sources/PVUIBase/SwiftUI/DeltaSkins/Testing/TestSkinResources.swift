@@ -10,8 +10,8 @@ public enum TestSkinResources {
     public static let gbaSharpX1URL = Bundle.module.url(forResource: "gba-sharpx1", withExtension: "deltaskin")!
 
     /// All available test skins
-    public static var testSkins: [DeltaSkinProtocol] {
-        var skins: [DeltaSkinProtocol] = []
+    public static var testSkins: [any DeltaSkinProtocol] {
+        var skins: [any DeltaSkinProtocol] = []
 
         do {
             if let skin = try? DeltaSkin(fileURL: gbcSunriseURL) {

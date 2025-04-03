@@ -13,7 +13,7 @@ struct AnimatedCheckerboardView: View {
     }
     
     var color2: Color {
-        currentPalette.defaultTintColor?.swiftUIColor ?? .Provenance.blue
+        currentPalette.defaultTintColor.swiftUIColor ?? .Provenance.blue
     }
     
     // Computed property for square size
