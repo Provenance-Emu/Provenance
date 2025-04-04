@@ -2,6 +2,10 @@ import SwiftUI
 import struct PVUIBase.IconImage
 import struct PVUIBase.NeumorphismView
 import PVThemes
+import PVLogging
+
+// Helper type for gradients to avoid compiler issues
+typealias RetroGradient = LinearGradient
 
 enum AppIconOption: String, CaseIterable {
     case `default` = "AppIcon"
@@ -62,204 +66,247 @@ struct AppIconSelectorView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 32) {
-                // Current icon preview with retrowave styling
-                VStack(spacing: 16) {
-                    Text("CURRENT APP ICON")
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
-                        .foregroundStyle(
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
-                                    RetroTheme.retroPurple
-                                ]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .shadow(color: (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.6), radius: 3)
-
-                    // Current icon with retrowave border
-                    ZStack {
-                        // Background with grid pattern
-                        RetroTheme.RetroGridView()
-                            .opacity(0.15)
-                            .frame(width: 200, height: 200)
-                            .clipShape(RoundedRectangle(cornerRadius: 25))
-                        
-                        // Icon image
-                        IconImage(
-                            iconName: iconManager.currentIconName ?? "AppIcon",
-                            size: 180
-                        )
-                        .padding(8)
-                        
-                        // Neon border
-                        RoundedRectangle(cornerRadius: 25)
-                            .strokeBorder(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [
-                                        themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
-                                        RetroTheme.retroPurple,
-                                        RetroTheme.retroBlue
-                                    ]),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 3
-                            )
-                            .shadow(color: (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.7), radius: 5)
-                    }
-                    .frame(width: 200, height: 200)
-                    
-                    // Status message with retrowave styling
-                    if showFeedback {
-                        Text(feedbackMessage)
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(
-                                isSuccess ? 
-                                LinearGradient(
-                                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                ) :
-                                LinearGradient(
-                                    gradient: Gradient(colors: [RetroTheme.retroPink, Color.red]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color.black.opacity(0.3))
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(
-                                        isSuccess ? RetroTheme.retroBlue : RetroTheme.retroPink,
-                                        lineWidth: 1
-                                    )
-                            )
-                            .transition(.scale.combined(with: .opacity))
-                    }
-                }
-                .padding(.top, 24)
-
-                // Section title with retrowave styling
-                Text("SELECT NEW ICON")
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
-                    .foregroundStyle(
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                RetroTheme.retroBlue,
-                                themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink
-                            ]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .shadow(color: RetroTheme.retroBlue.opacity(0.6), radius: 2)
-                    .padding(.bottom, 8)
-
-                // Icon grid with retrowave styling
-                LazyVGrid(columns: columns, spacing: 24) {
-                    ForEach(AppIconOption.allCases, id: \.self) { option in
-                        let isSelected = option.rawValue == (iconManager.currentIconName ?? "AppIcon")
-                        let isChanging = selectedOption == option && iconManager.isChangingIcon
-                        
-                        VStack(spacing: 12) {
-                            // Icon with retrowave border
-                            ZStack {
-                                // Background
-                                Color.black.opacity(0.3)
-                                    .frame(width: 80, height: 80)
-                                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                                
-                                // Icon image
-                                IconImage(
-                                    iconName: option.rawValue,
-                                    size: 64
-                                )
-                                
-                                // Border
-                                RoundedRectangle(cornerRadius: 16)
-                                    .strokeBorder(
-                                        isSelected ?
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [
-                                                themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
-                                                RetroTheme.retroPurple,
-                                                RetroTheme.retroBlue
-                                            ]),
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        ) :
-                                        Color.gray.opacity(0.5),
-                                        lineWidth: isSelected ? 2 : 1
-                                    )
-                                
-                                // Loading indicator
-                                if isChanging {
-                                    ProgressView()
-                                        .progressViewStyle(CircularProgressViewStyle(tint: RetroTheme.retroPink))
-                                        .scaleEffect(1.5)
-                                        .background(Color.black.opacity(0.5))
-                                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                                }
-                                
-                                // Selected indicator
-                                if isSelected {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .font(.system(size: 20, weight: .bold))
-                                        .foregroundColor(RetroTheme.retroBlue)
-                                        .shadow(color: RetroTheme.retroBlue.opacity(0.8), radius: 3)
-                                        .position(x: 64, y: 16)
-                                }
-                            }
-                            .frame(width: 80, height: 80)
-                            .shadow(color: isSelected ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.6) : Color.clear, radius: 4)
-                            .scaleEffect(isSelected ? 1.05 : 1.0)
-                            .animation(.spring(response: 0.3), value: isSelected)
-                            .onTapGesture {
-                                changeAppIcon(to: option)
-                            }
-
-                            // Icon name with retrowave styling
-                            Text(option.displayName)
-                                .font(.system(size: 12, weight: isSelected ? .bold : .medium))
-                                .foregroundStyle(
-                                    isSelected ?
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [
-                                            themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
-                                            RetroTheme.retroPurple
-                                        ]),
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    ) :
-                                    Color.gray
-                                )
-                                .multilineTextAlignment(.center)
-                                .lineLimit(2)
-                                .frame(height: 30)
-                        }
-                        .frame(width: 100, height: 120)
-                    }
-                }
-                .padding(.horizontal)
+               currentIcon
+                sectionTitle
+                iconGrid
             }
         }
         .onAppear {
             // Debug: Print available images
-            AppIconOption.allCases.forEach { option in
+            let outputString = AppIconOption.allCases.reduce(into: "") { result, option in
                 if UIImage(named: option.rawValue, in: .main, with: nil) != nil {
-                    print("✅ Found icon: \(option.rawValue)")
+                    result += "✅ Found icon: \(option.rawValue)\n"
                 } else {
-                    print("❌ Missing icon: \(option.rawValue)")
+                    result += "❌ Missing icon: \(option.rawValue)\n"
                 }
             }
+            DLOG(outputString)
         }
+    }
+    
+    // Helper function for title gradient
+    private func titleGradient() -> some ShapeStyle {
+        RetroGradient(
+            gradient: Gradient(colors: [
+                themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
+                RetroTheme.retroPurple
+            ]),
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+    }
+    
+    // Helper function for feedback message styling
+    private func feedbackMessageView() -> some View {
+        Group {
+            if showFeedback {
+                Text(feedbackMessage)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(
+                        isSuccess ?
+                        RetroGradient(
+                            gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ) :
+                        RetroGradient(
+                            gradient: Gradient(colors: [RetroTheme.retroPink, Color.red]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.black.opacity(0.3))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(
+                                isSuccess ? RetroTheme.retroBlue : RetroTheme.retroPink,
+                                lineWidth: 1
+                            )
+                    )
+                    .transition(.scale.combined(with: .opacity))
+            }
+        }
+    }
+    
+    // Current icon border
+    private func currentIconBorder() -> some View {
+        RoundedRectangle(cornerRadius: 25)
+            .strokeBorder(
+                RetroGradient(
+                    gradient: Gradient(colors: [
+                        themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
+                        RetroTheme.retroPurple,
+                        RetroTheme.retroBlue
+                    ]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ),
+                lineWidth: 3
+            )
+            .shadow(color: (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.7), radius: 5)
+    }
+    
+    var currentIcon: some View {
+        // Current icon preview with retrowave styling
+        VStack(spacing: 16) {
+            Text("CURRENT APP ICON")
+                .font(.system(size: 24, weight: .bold, design: .rounded))
+                .foregroundStyle(titleGradient())
+                .shadow(color: (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.6), radius: 3)
+
+            // Current icon with retrowave border
+            ZStack {
+                // Background with grid pattern
+                RetroTheme.RetroGridView()
+                    .opacity(0.15)
+                    .frame(width: 200, height: 200)
+                    .clipShape(RoundedRectangle(cornerRadius: 25))
+                
+                // Icon image
+                IconImage(
+                    iconName: iconManager.currentIconName ?? "AppIcon",
+                    size: 180
+                )
+                .padding(8)
+                
+                // Neon border
+                currentIconBorder()
+            }
+            .frame(width: 200, height: 200)
+            
+            // Status message
+            feedbackMessageView()
+        }
+        .padding(.top, 24)
+    }
+    
+    var sectionTitle: some View {
+        // Section title with retrowave styling
+        Text("SELECT NEW ICON")
+            .font(.system(size: 18, weight: .bold, design: .rounded))
+            .foregroundStyle(
+                RetroGradient(
+                    gradient: Gradient(colors: [
+                        RetroTheme.retroBlue,
+                        themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink
+                    ]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .shadow(color: RetroTheme.retroBlue.opacity(0.6), radius: 2)
+            .padding(.bottom, 8)
+    }
+    
+    // Helper function to create icon border gradient
+    private func iconBorderGradient(isSelected: Bool) -> AnyShapeStyle {
+        if isSelected {
+            return AnyShapeStyle(RetroGradient(
+                gradient: Gradient(colors: [
+                    themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
+                    RetroTheme.retroPurple,
+                    RetroTheme.retroBlue
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            ))
+        } else {
+            return AnyShapeStyle(Color.gray.opacity(0.5))
+        }
+    }
+    
+    // Helper function to create text gradient
+    private func textGradient(isSelected: Bool) -> AnyShapeStyle {
+        if isSelected {
+            return AnyShapeStyle(RetroGradient(
+                gradient: Gradient(colors: [
+                    themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
+                    RetroTheme.retroPurple
+                ]),
+                startPoint: .leading,
+                endPoint: .trailing
+            ))
+        } else {
+            return AnyShapeStyle(Color.gray)
+        }
+    }
+    
+    // Single icon view to simplify the main grid
+    private func iconView(for option: AppIconOption, isSelected: Bool, isChanging: Bool) -> some View {
+        VStack(spacing: 12) {
+            // Icon with retrowave border
+            ZStack {
+                // Background
+                Color.black.opacity(0.3)
+                    .frame(width: 80, height: 80)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                
+                // Icon image
+                IconImage(
+                    iconName: option.rawValue,
+                    size: 64
+                )
+                
+                // Border
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(
+                        iconBorderGradient(isSelected: isSelected),
+                        lineWidth: isSelected ? 2 : 1
+                    )
+                
+                // Loading indicator
+                if isChanging {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: RetroTheme.retroPink))
+                        .scaleEffect(1.5)
+                        .background(Color.black.opacity(0.5))
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                }
+                
+                // Selected indicator
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(RetroTheme.retroBlue)
+                        .shadow(color: RetroTheme.retroBlue.opacity(0.8), radius: 3)
+                        .position(x: 64, y: 16)
+                }
+            }
+            .frame(width: 80, height: 80)
+            .shadow(color: isSelected ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.6) : Color.clear, radius: 4)
+            .scaleEffect(isSelected ? 1.05 : 1.0)
+            .animation(.spring(response: 0.3), value: isSelected)
+
+            // Icon name with retrowave styling
+            Text(option.displayName)
+                .font(.system(size: 12, weight: isSelected ? .bold : .medium))
+                .foregroundStyle(textGradient(isSelected: isSelected))
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .frame(height: 30)
+        }
+        .frame(width: 100, height: 120)
+    }
+    
+    var iconGrid: some View {
+        // Icon grid with retrowave styling
+        LazyVGrid(columns: columns, spacing: 24) {
+            ForEach(AppIconOption.allCases, id: \.self) { option in
+                let isSelected = option.rawValue == (iconManager.currentIconName ?? "AppIcon")
+                let isChanging = selectedOption == option && iconManager.isChangingIcon
+                
+                iconView(for: option, isSelected: isSelected, isChanging: isChanging)
+                    .onTapGesture {
+                        changeAppIcon(to: option)
+                    }
+            }
+        }
+        .padding(.horizontal)
     }
 
     private func changeAppIcon(to option: AppIconOption) {
@@ -304,6 +351,8 @@ struct AppIconSelectorView: View {
     }
 }
 
+#if DEBUG
 #Preview {
     AppIconSelectorView()
 }
+#endif

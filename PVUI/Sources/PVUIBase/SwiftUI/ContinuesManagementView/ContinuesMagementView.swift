@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import PVSwiftUI
 import AnimatedGradient
 import PVThemes
 import Combine
@@ -67,7 +66,7 @@ public class ContinuesMagementViewModel: ObservableObject {
     @Published private(set) var saveStates: [SaveStateRowViewModel] = []
     
     /// Game image that can be updated
-    @Published var gameUIImage: UIImage? {
+    @Published public var gameUIImage: UIImage? {
         didSet {
             headerViewModel.gameUIImage = gameUIImage
         }

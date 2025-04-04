@@ -67,6 +67,24 @@ public class SceneCoordinator: ObservableObject {
         currentScene = .emulator
     }
     
+    /// Launch a specific game
+    public func launchGame(_ game: PVGame) {
+        ILOG("TestSceneCoordinator: Launching game: \(game.title) (ID: \(game.id))")
+        
+        // Set the current game in EmulationUIState
+        AppState.shared.emulationUIState.currentGame = game
+        
+        // Verify the game was set correctly
+        if let currentGame = AppState.shared.emulationUIState.currentGame {
+            ILOG("TestSceneCoordinator: Successfully set current game in EmulationUIState: \(currentGame.title) (ID: \(currentGame.id))")
+            
+            // Open the emulator scene
+            openEmulatorScene()
+        } else {
+            ELOG("TestSceneCoordinator: Failed to set current game in EmulationUIState")
+        }
+    }
+    
     /// Returns to the main scene
     public func returnToMainScene() {
         guard let url = URL(string: "provenance://main") else {

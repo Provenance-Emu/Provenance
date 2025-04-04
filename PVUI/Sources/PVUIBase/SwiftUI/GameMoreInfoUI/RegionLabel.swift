@@ -1,5 +1,5 @@
 //
-//  RegionLabel.swift
+//  RegionLabelSwiftUI.swift
 //  PVUI
 //
 //  Created by Joseph Mattiello on 12/9/24.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public struct RegionLabel {
+public struct RegionLabelSwiftUI {
     public static let regionFlags: [String: String] = [
         "japan": "🇯🇵",
         "jp": "🇯🇵",

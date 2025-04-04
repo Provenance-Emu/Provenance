@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import PVSwiftUI
 import PVThemes
 import PVUIBase
 import PVLibrary
@@ -16,7 +15,7 @@ import PVLogging
 import FreemiumKit
 #endif
 
-struct SettingsView: View {
+struct SettingsWrapperView: View {
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var themeManager: ThemeManager
     @State private var showingDocumentPicker = false

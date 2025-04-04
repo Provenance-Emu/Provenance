@@ -148,7 +148,7 @@ public final class JSDPad: MovableButtonView {
             if Defaults[.buttonTints] {
                 dPadImageView.tintColor = tintColor
             } else {
-                dPadImageView.tintColor = ThemeManager.shared.currentPalette.defaultTintColor ?? UIColor.white
+                dPadImageView.tintColor = ThemeManager.shared.currentPalette.defaultTintColor
             }
         }
     }

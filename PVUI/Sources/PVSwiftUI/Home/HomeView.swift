@@ -15,14 +15,6 @@ import PVThemes
 import Combine
 import PVUIBase
 
-public enum HomeSectionType: Int, CaseIterable, Sendable {
-    case recentSaveStates
-    case recentlyPlayedGames
-    case favorites
-    case mostPlayed
-    case allGames
-}
-
 @available(iOS 14, tvOS 14, *)
 struct HomeView: SwiftUI.View {
 

@@ -232,7 +232,7 @@ public class MovableButtonView: UIView, Moveable {
             }
         } else if let button = self as? JSButton {
             // Use the button's tag and type to create a unique identifier
-            let buttonType = String(describing: type(of: self))
+            let buttonType = String(describing: type(of: button))
             let buttonTag = tag
             return "\(buttonType)_\(buttonTag)"
         }

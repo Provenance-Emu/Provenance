@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import PVSwiftUI
 import PVUIBase
 import PVThemes
 import PVLogging
@@ -17,7 +16,7 @@ public struct RetroErrorView: View {
     
     @EnvironmentObject var themeManager: ThemeManager
     
-    public init(error: Error, retryAction: @escaping (() -> Void)? = nil) {
+    public init(error: Error, retryAction: @escaping () -> Void ) {
         self.error = error
         self.retryAction = retryAction
     }
@@ -52,7 +51,7 @@ public struct RetroErrorView: View {
                         .cornerRadius(10)
                 }
                 .padding(.top, 20)
-                .buttonStyle(ProvenanceButtonStyle(isDestructive: false)
+                .buttonStyle(ProvenanceButtonStyle(isDestructive: false))
             }
             
             Spacer()

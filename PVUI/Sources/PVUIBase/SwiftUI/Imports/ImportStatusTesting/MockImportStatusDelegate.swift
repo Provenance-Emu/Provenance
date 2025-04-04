@@ -5,7 +5,7 @@
 //  Created by Joseph Mattiello on 11/27/24.
 //
 
-import PVSwiftUI
+import Foundation
 
 public class MockImportStatusDriverData: ObservableObject {
     @MainActor

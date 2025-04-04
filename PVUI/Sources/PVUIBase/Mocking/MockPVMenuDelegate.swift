@@ -9,73 +9,76 @@ import Foundation
 import PVUIBase
 
 /// A mock implementation of the PVMenuDelegate protocol for testing
-class MockPVMenuDelegate: PVMenuDelegate {
-    func didTapImports() {
+public class MockPVMenuDelegate: PVMenuDelegate {
+    
+    public init() {}
+    
+    public func didTapImports() {
         print("MockPVMenuDelegate: didTapImports called")
 
     }
     
-    func didTapSettings() {
+    public func didTapSettings() {
         print("MockPVMenuDelegate: didTapSettings called")
 
     }
     
-    func didTapHome() {
+    public func didTapHome() {
         print("MockPVMenuDelegate: didTapHome called")
 
     }
     
-    func didTapAddGames() {
+    public func didTapAddGames() {
         print("MockPVMenuDelegate: didTapAddGames called")
 
     }
     
-    func didTapConsole(with consoleId: String) {
+    public func didTapConsole(with consoleId: String) {
         print("MockPVMenuDelegate: didTapConsole called: \(consoleId)")
 
     }
     
-    func didTapCollection(with collection: Int) {
+    public func didTapCollection(with collection: Int) {
         print("MockPVMenuDelegate: didTapCollection called: \(collection)")
 
     }
     
-    func closeMenu() {
+    public func closeMenu() {
         print("MockPVMenuDelegate: closeMenu called")
 
     }
     
-    func showSettings() {
+    public func showSettings() {
         // No-op in testing environment
         print("MockPVMenuDelegate: showSettings called")
     }
     
-    func showAbout() {
+    public func showAbout() {
         // No-op in testing environment
         print("MockPVMenuDelegate: showAbout called")
     }
     
-    func showWebServer() {
+    public func showWebServer() {
         // No-op in testing environment
         print("MockPVMenuDelegate: showWebServer called")
     }
     
-    func showGameLibrary() {
+    public func showGameLibrary() {
         // No-op in testing environment
         print("MockPVMenuDelegate: showGameLibrary called")
     }
     
-    func showSaveStates() {
+    public func showSaveStates() {
         // No-op in testing environment
         print("MockPVMenuDelegate: showSaveStates called")
     }
     
-    func showDebug() {
+    public func showDebug() {
         // No-op in testing environment
         print("MockPVMenuDelegate: showDebug called")
     }
     
-    func showLogs() {
+    public func showLogs() {
         // No-op in testing environment
         print("MockPVMenuDelegate: showLogs called")
     }

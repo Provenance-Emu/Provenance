@@ -6,9 +6,7 @@
 //
 
 import SwiftUI
-import PVSwiftUI
 import PVThemes
-import PVUIBase
 import PVLibrary
 import PVRealm
 import RealmSwift
@@ -24,7 +22,7 @@ import Perception
 public struct RetroGameLibraryView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @EnvironmentObject private var appState: AppState
-    @EnvironmentObject private var sceneCoordinator: TestSceneCoordinator
+    @EnvironmentObject private var sceneCoordinator: SceneCoordinator
     
     // Reference to the GameImporter for tracking import progress
     @ObservedObject private var gameImporter = GameImporter.shared
@@ -79,39 +77,8 @@ public struct RetroGameLibraryView: View {
     @State internal var showArtworkSearch = false
     @State internal var showArtworkSourceAlert = false
     
-    public init(themeManager: ThemeManager = ThemeManager.shared, appState: AppState, sceneCoordinator: TestSceneCoordinator, gameImporter: GameImporter = GameImporter.shared, importQueueItems: [ImportQueueItem], allGames: <#type#>, allSystems: <#type#>, importQueueUpdateID: UUID = UUID(), expandedSectionsData: Data, expandedSections: Set<String>, searchText: String = "", debouncedSearchText: String = "", isSearching: Bool = false, searchTextPublisher: PassthroughSubject<String, Never> = PassthroughSubject<String, Never>(), cancellables: Set<AnyCancellable> = Set<AnyCancellable>(), selectedViewMode: ViewMode, showFilterSheet: Bool = false, selectedSortOption: SortOption, showImagePicker: Bool = false, selectedImage: UIImage? = nil, gameToUpdateCover: PVGame? = nil, showingRenameAlert: Bool = false, gameToRename: PVGame? = nil, newGameTitle: String = "", renameTitleFieldIsFocused: Bool, systemMoveState: SystemMoveState? = nil, continuesManagementState: ContinuesManagementState? = nil, showArtworkSearch: Bool = false, showArtworkSourceAlert: Bool = false, showingDocumentPicker: Bool = false, importMessage: String? = nil, showingImportMessage: Bool = false) {
-        self.themeManager = themeManager
-        self.appState = appState
-        self.sceneCoordinator = sceneCoordinator
-        self.gameImporter = gameImporter
-        self.importQueueItems = importQueueItems
-        self.allGames = allGames
-        self.allSystems = allSystems
-        self.importQueueUpdateID = importQueueUpdateID
-        self.expandedSectionsData = expandedSectionsData
-        self.expandedSections = expandedSections
-        self.searchText = searchText
-        self.debouncedSearchText = debouncedSearchText
-        self.isSearching = isSearching
-        self.searchTextPublisher = searchTextPublisher
-        self.cancellables = cancellables
-        self.selectedViewMode = selectedViewMode
-        self.showFilterSheet = showFilterSheet
-        self.selectedSortOption = selectedSortOption
-        self.showImagePicker = showImagePicker
-        self.selectedImage = selectedImage
-        self.gameToUpdateCover = gameToUpdateCover
-        self.showingRenameAlert = showingRenameAlert
-        self.gameToRename = gameToRename
-        self.newGameTitle = newGameTitle
-        self.renameTitleFieldIsFocused = renameTitleFieldIsFocused
-        self.systemMoveState = systemMoveState
-        self.continuesManagementState = continuesManagementState
-        self.showArtworkSearch = showArtworkSearch
-        self.showArtworkSourceAlert = showArtworkSourceAlert
-        self.showingDocumentPicker = showingDocumentPicker
-        self.importMessage = importMessage
-        self.showingImportMessage = showingImportMessage
+    public init () {
+        
     }
     
     private func renameGame(_ game: PVGame, to newName: String) async {
@@ -510,7 +477,7 @@ public struct RetroGameLibraryView: View {
     /// Section displaying all games
     @ViewBuilder
     private func allGamesSection() -> some View {
-        Section {
+        SwiftUI.Section {
             if expandedSections.contains("all") {
                 if selectedViewMode == .grid {
                     systemGamesGrid(games: sortedGames(Array(allGames)))
@@ -530,7 +497,7 @@ public struct RetroGameLibraryView: View {
         ForEach(allSystems, id: \.self) { system in
             let systemGames = gamesForSystem(system)
             if !systemGames.isEmpty {
-                Section {
+                SwiftUI.Section {
                     if expandedSections.contains(system.systemIdentifier.rawValue) {
                         if selectedViewMode == .grid {
                             systemGamesGrid(games: sortedGames(systemGames))
@@ -719,7 +686,7 @@ extension RetroGameLibraryView: GameContextMenuDelegate {
 #endif
 
     // MARK: - Rename Methods
-    func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame) {
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame) {
         gameToRename = game.freeze()
         newGameTitle = game.title
         showingRenameAlert = true
@@ -746,7 +713,7 @@ extension RetroGameLibraryView: GameContextMenuDelegate {
 
     // MARK: - Image Picker Methods
 
-    func gameContextMenu(_ menu: GameContextMenu, didRequestChooseCoverFor game: PVGame) {
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestChooseCoverFor game: PVGame) {
         gameToUpdateCover = game
         showImagePicker = true
     }
@@ -790,38 +757,38 @@ extension RetroGameLibraryView: GameContextMenuDelegate {
         }
     }
 
-    func gameContextMenu(_ menu: GameContextMenu, didRequestMoveToSystemFor game: PVGame) {
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestMoveToSystemFor game: PVGame) {
         DLOG("ConsoleGamesView: Received request to move game to system")
         let frozenGame = game.isFrozen ? game : game.freeze()
         systemMoveState = SystemMoveState(game: frozenGame)
     }
 
-    func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
         DLOG("ConsoleGamesView: Received request to show save states for game")
         continuesManagementState = ContinuesManagementState(game: game)
     }
 
-    func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor gameId: String) {
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor gameId: String) {
 //        showGameInfo(gameId)
     }
 
-    func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame) {
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame) {
         gameToUpdateCover = game
         showImagePicker = true
     }
 
-    func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame) {
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame) {
         gameToUpdateCover = game
         showArtworkSearch = true
     }
 
-    func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
         DLOG("Setting gameToUpdateCover with game: \(game.title)")
         gameToUpdateCover = game
         showArtworkSourceAlert = true
     }
 
-    func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
         // gamesViewModel.presentDiscSelectionAlert(for: game, rootDelegate: rootDelegate)
     }
 }

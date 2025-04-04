@@ -6,16 +6,19 @@
 //
 
 import SwiftUI
-import PVUIBase
 import PVLibrary
 import PVThemes
 import Perception
 import PVSystems
 
 public protocol ImportStatusDelegate: AnyObject {
+    @MainActor
     func dismissAction()
+    @MainActor
     func addImportsAction()
+    @MainActor
     func forceImportsAction()
+    @MainActor
     func didSelectSystem(_ system: SystemIdentifier, for item: ImportQueueItem)
 }
 

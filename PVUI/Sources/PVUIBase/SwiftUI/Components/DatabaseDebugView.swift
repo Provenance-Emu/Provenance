@@ -16,7 +16,7 @@ public struct DatabaseDebugView: View {
     public var body: some View {
         NavigationView {
             List {
-                Section(header: Text("Database Entities")) {
+                SwiftUI.Section(header: Text("Database Entities")) {
                     DisclosureGroup(
                         isExpanded: $showGames,
                         content: {

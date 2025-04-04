@@ -9,9 +9,9 @@
 import SwiftUI
 
 /// View modifier to hide the home indicator
-struct HomeIndicatorHidden: ViewModifier {
+public struct HomeIndicatorHidden: ViewModifier {
     /// Hide the home indicator using UIKit's prefersHomeIndicatorAutoHidden
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .background(HomeIndicatorHiddenHelper())
     }
@@ -47,7 +47,7 @@ struct HomeIndicatorHidden: ViewModifier {
 }
 
 /// Extension to provide a convenient ViewModifier for View
-extension View {
+public extension View {
     /// Hide the home indicator and defer system gestures
     func hideHomeIndicator() -> some View {
         modifier(HomeIndicatorHidden())
@@ -55,7 +55,7 @@ extension View {
 }
 
 /// Extension to UIWindow to help enforce hiding home indicator across the entire app
-extension UIWindow {
+public extension UIWindow {
     /// Sets home indicator auto-hidden for all view controllers in the hierarchy
     func setHomeIndicatorAutoHidden(_ autoHidden: Bool = true) {
         // Start with the root controller

@@ -9,6 +9,8 @@
 import SwiftUI
 import PVLogging
 import PVUIBase
+import PVSwiftUI
+import PVThemes
 import Perception
 
 struct MainView: View {
@@ -28,8 +30,9 @@ struct MainView: View {
                         .environmentObject(appDelegate)
                         .edgesIgnoringSafeArea(.all)
                 case .singlePage:
-                    SwiftUIHostedProvenanceMainView(appDelegate: appDelegate)
+                    RetroMainView()
                         .environmentObject(appDelegate)
+                        .environmentObject(ThemeManager.shared)
                         .edgesIgnoringSafeArea(.all)
                 case .uikit:
                     UIKitHostedProvenanceMainView(appDelegate: appDelegate)

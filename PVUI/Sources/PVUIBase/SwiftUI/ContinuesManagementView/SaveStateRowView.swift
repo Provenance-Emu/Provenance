@@ -7,7 +7,6 @@
 
 import SwiftUI
 import PVThemes
-import PVSwiftUI
 #if !os(tvOS)
 import SwipeCellSUI
 #endif

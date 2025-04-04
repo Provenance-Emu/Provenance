@@ -8,7 +8,6 @@
 import SwiftUI
 import PVRealm
 import RealmSwift
-import PVSwiftUI
 import PVLibrary
 import PVLogging
 
@@ -65,7 +64,7 @@ public struct RetroGameGridView: View {
     @ViewBuilder
     private func gameItemView(for game: PVGame) -> some View {
         // Create a simple wrapper view to avoid GameItemView initialization issues
-        GameCellWrapper(game: game, isSelected: focusedGameID == game.id) { selectedGame in
+        RetroGameCellWrapper(game: game, isSelected: focusedGameID == game.id) { selectedGame in
             focusedGameID = selectedGame.id
             launchGame(selectedGame)
         }
@@ -87,7 +86,9 @@ public struct RetroGameGridView: View {
     }
 }
 
+#if DEBUG
 #Preview {
     RetroGameGridView()
         .environmentObject(RealmEnvironment())
 }
+#endif

@@ -1,7 +1,6 @@
 import SwiftUI
 import PVRealm
 import RealmSwift
-import PVSwiftUI
 import PVLibrary
 import PVLogging
 

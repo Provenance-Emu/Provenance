@@ -9,10 +9,14 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 // Document picker for importing game files
-struct DocumentPicker: UIViewControllerRepresentable {
-    let onImport: ([URL]) -> Void
+public struct DocumentPicker: UIViewControllerRepresentable {
+    public let onImport: ([URL]) -> Void
     
-    func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
+    public init(onImport: @escaping ([URL]) -> Void) {
+        self.onImport = onImport
+    }
+    
+    public func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
         // Define the file types we want to import (ROM files)
         let supportedTypes: [UTType] = [
             .item,      // Generic item
@@ -27,20 +31,20 @@ struct DocumentPicker: UIViewControllerRepresentable {
         return picker
     }
     
-    func updateUIViewController(_ uiViewController: UIDocumentPickerViewController, context: Context) {}
+    public func updateUIViewController(_ uiViewController: UIDocumentPickerViewController, context: Context) {}
     
-    func makeCoordinator() -> Coordinator {
+    public func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
     
-    class Coordinator: NSObject, UIDocumentPickerDelegate {
+    public class Coordinator: NSObject, UIDocumentPickerDelegate {
         let parent: DocumentPicker
         
         init(_ parent: DocumentPicker) {
             self.parent = parent
         }
         
-        func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
             parent.onImport(urls)
         }
     }

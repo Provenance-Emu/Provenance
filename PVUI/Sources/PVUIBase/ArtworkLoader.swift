@@ -15,9 +15,9 @@ import Combine
 /// A simple loader for game artwork that prioritizes visible items
 /// This class uses PVMediaCache directly without additional caching layers
 @MainActor
-class ArtworkLoader: ObservableObject {
+public class ArtworkLoader: ObservableObject {
     /// Shared instance for the application
-    static let shared = ArtworkLoader()
+    public static let shared = ArtworkLoader()
 
     /// Active loading tasks by game ID to prevent duplicate loads
     private var loadingTasks: [String: Task<UIImage?, Error>] = [:]
@@ -43,7 +43,7 @@ class ArtworkLoader: ObservableObject {
     ///   - priority: The priority of the loading operation
     ///   - isVisible: Whether the game item is currently visible
     /// - Returns: The loaded artwork image, if available
-    func loadArtwork(for game: PVGame, priority: TaskPriority = .medium, isVisible: Bool = true) async -> UIImage? {
+    public func loadArtwork(for game: PVGame, priority: TaskPriority = .medium, isVisible: Bool = true) async -> UIImage? {
         guard !game.isInvalidated else { return nil }
 
         // If game has no artwork URL, return nil early
@@ -111,7 +111,7 @@ class ArtworkLoader: ObservableObject {
     }
 
     /// Cancel loading for a specific game
-    func cancelLoading(for gameId: String) {
+    public func cancelLoading(for gameId: String) {
         loadingTasks[gameId]?.cancel()
         loadingTasks[gameId] = nil
     }
@@ -119,7 +119,7 @@ class ArtworkLoader: ObservableObject {
     /// Preload artwork for a collection of games
     /// - Parameter games: The games to preload artwork for
     /// - Parameter priority: The priority to use for preloading
-    func preloadArtwork(for games: [PVGame], priority: TaskPriority = .low) {
+    public func preloadArtwork(for games: [PVGame], priority: TaskPriority = .low) {
         // Prioritize games that were recently accessed
         let prioritizedGames = games.sorted { game1, game2 in
             let isRecent1 = recentlyAccessedIds.contains(game1.id)

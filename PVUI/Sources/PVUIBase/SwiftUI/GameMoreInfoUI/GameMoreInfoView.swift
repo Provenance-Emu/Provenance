@@ -560,7 +560,7 @@ struct GameMoreInfoView: View {
             
             LabelRowView(
                 label: "REGION",
-                value: viewModel.region.map { RegionLabel.format($0) } ?? "",
+                value: viewModel.region.map { RegionLabelSwiftUI.format($0) } ?? "",
                 onLongPress: {
                     editField(.region, initialValue: viewModel.region)
                 },

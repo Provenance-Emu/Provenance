@@ -5,18 +5,18 @@ import PVLogging
 import PVLibrary
 
 /// Environment object to provide a shared Realm instance across the app
-class RealmEnvironment: ObservableObject {
-    @Published var realm: Realm?
-    @Published var romDatabase: RomDatabase
+public class RealmEnvironment: ObservableObject {
+    @Published public var realm: Realm?
+    @Published public var romDatabase: RomDatabase
     
-    init() {
+    public init(romDatabase: RomDatabase = RomDatabase.sharedInstance, realm: Realm? = nil) {
         // Use the shared RomDatabase instance
-        romDatabase = RomDatabase.sharedInstance
-        realm = romDatabase.realm
+        self.romDatabase = RomDatabase.sharedInstance
+        self.realm = realm ?? romDatabase.realm
         ILOG("RealmEnvironment: Using shared RomDatabase instance")
     }
     
-    func refresh() {
+    public func refresh() {
         // Refresh the realm from the shared RomDatabase
         romDatabase = RomDatabase.sharedInstance
         realm = romDatabase.realm

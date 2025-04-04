@@ -6,9 +6,7 @@
 //
 
 import SwiftUI
-import PVSwiftUI
 import PVThemes
-import SwiftUI
 import UIKit
 
 /// View model for the header containing game information

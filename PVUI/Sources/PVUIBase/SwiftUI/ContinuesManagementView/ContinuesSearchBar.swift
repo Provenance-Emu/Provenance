@@ -1,5 +1,4 @@
 import SwiftUI
-import PVSwiftUI
 import PVThemes
 
 struct ContinuesSearchBar: View {

@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import PVSwiftUI
 import PVThemes
 import PVUIBase
 import PVLibrary
@@ -67,6 +66,8 @@ public struct RetroDebugView: View {
     @State private var scanlineOffset: CGFloat = 0
     @State private var glowOpacity: Double = 0.7
     
+    public init() { }
+    
     public var body: some View {
         NavigationStack {
             contentView()
@@ -105,7 +106,9 @@ public struct RetroDebugView: View {
                 }
         }
         .sheet(isPresented: $showSaveStatesMock) {
-            SaveStatesMockView()
+            if #available(iOS 17.0, tvOS 17.0, watchOS 7.0, *) {
+                SaveStatesMockView()
+            }
         }
         .sheet(isPresented: $showGameMoreInfo) {
             NavigationView {
@@ -134,7 +137,7 @@ public struct RetroDebugView: View {
 #endif
             }
 #if !os(tvOS)
-            .presentationBackground(Color(uiColor: .systemBackground))
+            .modifier(PresentationBackgroundModifier())
 #endif
         }
         .sheet(isPresented: $showFreeROMs) {
@@ -1193,6 +1196,7 @@ struct ColorSwatch: View {
 }
 
 // Add this view somewhere in your file
+@available(iOS 17.0, tvOS 17.0, watchOS 7.0, *)
 struct SaveStatesMockView: View {
     @State private var viewModel: ContinuesMagementViewModel?
     @State private var isLoading = true
@@ -1283,6 +1287,17 @@ struct DeltaSkinPreviewWrapper: View {
                     self.isLoading = false
                 }
             }
+        }
+    }
+}
+
+// Helper modifier to handle presentationBackground availability
+private struct PresentationBackgroundModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 16.4, *) {
+            content.presentationBackground(Color(uiColor: .systemBackground))
+        } else {
+            content
         }
     }
 }

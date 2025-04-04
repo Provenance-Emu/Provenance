@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import PVSwiftUI
 import PVUIBase
 import PVThemes
 import PVLogging
@@ -21,6 +20,8 @@ public struct RetroMainView: View {
 
     // Timer for occasional special effects
     @State private var effectTimer: AnyCancellable?
+    
+    public init () { }
 
     public var body: some View {
         ZStack {
@@ -47,7 +48,7 @@ public struct RetroMainView: View {
                             RetroGameLibraryView()
                                 .padding(.top, 40)
                         } else if selectedTab == 1 {
-                            SettingsView()
+                            SettingsWrapperView()
                         } else if selectedTab == 2 {
                             RetroDebugView()
                         }
