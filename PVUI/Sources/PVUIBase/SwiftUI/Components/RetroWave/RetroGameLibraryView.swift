@@ -19,15 +19,15 @@ import Dispatch
 import PVLibrary
 import Perception
 
-class RetroGameLibraryViewModel: ObservableObject {
-    @Published var showingDocumentPicker = false
-
-}
+class RetroGameLibraryViewModel: ObservableObject {}
 
 public struct RetroGameLibraryView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var sceneCoordinator: SceneCoordinator
+    
+    // Document picker manager from environment
+    @EnvironmentObject private var documentPickerManager: DocumentPickerManager
     
     // Reference to the GameImporter for tracking import progress
     @ObservedObject private var gameImporter = GameImporter.shared
@@ -153,14 +153,11 @@ public struct RetroGameLibraryView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        viewModel.showingDocumentPicker = true
+                        documentPickerManager.showDocumentPicker(onImport: importFiles)
                     }) {
                         Image(systemName: "plus")
                     }
                 }
-            }
-            .sheet(isPresented: $viewModel.showingDocumentPicker) {
-                DocumentPicker(onImport: importFiles)
             }
             .alert("Import Result", isPresented: $showingImportMessage, presenting: importMessage) { _ in
                 Button("OK", role: .cancel) {}
@@ -377,7 +374,7 @@ public struct RetroGameLibraryView: View {
             
             // Import button
             Button(action: {
-                viewModel.showingDocumentPicker = true
+                documentPickerManager.showDocumentPicker(onImport: importFiles)
             }) {
                 HStack(spacing: 6) {
                     Image(systemName: "plus.square")
@@ -566,7 +563,7 @@ public struct RetroGameLibraryView: View {
                 .padding(.horizontal)
 
             Button(action: {
-                viewModel.showingDocumentPicker = true
+                documentPickerManager.showDocumentPicker(onImport: importFiles)
             }) {
                 HStack {
                     Image(systemName: "plus.circle.fill")

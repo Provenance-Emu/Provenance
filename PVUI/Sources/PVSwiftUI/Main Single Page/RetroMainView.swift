@@ -10,10 +10,14 @@ import PVUIBase
 import PVThemes
 import PVLogging
 import Combine
+import UniformTypeIdentifiers
 
 public struct RetroMainView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var themeManager: ThemeManager
+    
+    // Document picker manager as an environment object
+    @StateObject private var documentPickerManager = DocumentPickerManager.shared
 
     @State private var selectedTab: Int = 0
     @State private var showDynamicIslandEffects: Bool = true
@@ -25,6 +29,14 @@ public struct RetroMainView: View {
 
     public var body: some View {
         ZStack {
+            // Add document picker sheet at the root level
+            Color.clear
+                .sheet(isPresented: $documentPickerManager.isShowingDocumentPicker) {
+                    DocumentPicker(onImport: { urls in
+                        // Call the callback if it exists
+                        documentPickerManager.importCallback?(urls)
+                    })
+                }
             // Background that adapts to the theme
             RetroTheme.retroBackground
                 .ignoresSafeArea()
@@ -48,6 +60,7 @@ public struct RetroMainView: View {
                             RetroGameLibraryView()
                                 .padding(.top, 40)
                                 .environmentObject(SceneCoordinator.shared)
+                                .environmentObject(documentPickerManager)
                         } else if selectedTab == 1 {
                             SettingsWrapperView()
                         } else if selectedTab == 2 {
