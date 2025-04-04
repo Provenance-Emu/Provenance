@@ -35,14 +35,9 @@ struct MainView: View {
                         .environmentObject(ThemeManager.shared)
                         .edgesIgnoringSafeArea(.all)
                 case .uikit:
-                    RetroMainView()
+                    UIKitHostedProvenanceMainView(appDelegate: appDelegate)
                         .environmentObject(appDelegate)
-                        .environmentObject(ThemeManager.shared)
                         .edgesIgnoringSafeArea(.all)
-
-//                    UIKitHostedProvenanceMainView(appDelegate: appDelegate)
-//                        .environmentObject(appDelegate)
-//                        .edgesIgnoringSafeArea(.all)
                 }
             }
             .onAppear {

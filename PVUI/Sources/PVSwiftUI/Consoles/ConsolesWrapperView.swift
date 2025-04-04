@@ -76,6 +76,9 @@ struct ConsolesWrapperView: SwiftUI.View {
     /// Track the previous tab for comparison
     @State private var previousTab: String = ""
 
+    /// State to control the presentation of ImportStatusView
+    @State private var showImportStatusView = false
+    
     /// State for game info presentation
     struct GameInfoState: Identifiable {
         let id: String
@@ -123,6 +126,8 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     var body: some View {
         Group {
+            importStatusOverlayView
+
             if consoles.isEmpty || (consoles.count == 1 && consoles.first!.identifier == SystemIdentifier.RetroArch.rawValue) {
                 noConsolesView
             } else {
@@ -217,6 +222,41 @@ struct ConsolesWrapperView: SwiftUI.View {
         }
     }
 
+    var importStatusOverlayView: some View {
+        // Import Progress View at the top
+        VStack {
+            ImportProgressView(
+                gameImporter: GameImporter.shared,
+                updatesController: AppState.shared.libraryUpdatesController!,
+                onTap: {
+                    showImportStatusView = true
+                }
+            )
+            .padding(.horizontal)
+            .padding(.top, 8)
+            
+            Spacer()
+        }
+        .sheet(isPresented: $showImportStatusView) {
+            ImportStatusView(
+                updatesController: AppState.shared.libraryUpdatesController!,
+                gameImporter: GameImporter.shared,
+                dismissAction: {
+                    showImportStatusView = false
+                }
+            )
+        }
+        .onChange(of: delegate.selectedTab) { newValue in
+            DLOG("Tab changed in view: \(newValue)")
+        }
+        .tabViewStyle(.page)
+        .indexViewStyle(.page(backgroundDisplayMode: .interactive))
+        .id(consoles.count)
+        .tint(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+        .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+        .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+    }
+    
     @ViewBuilder
     var consolesTabView: some View {
         let binding = Binding(

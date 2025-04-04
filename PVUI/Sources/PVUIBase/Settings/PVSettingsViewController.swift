@@ -434,22 +434,11 @@ public final class PVSettingsViewController: QuickTableViewController {
 
             PVSettingsSegmentedRow<MainUIMode>(text: NSLocalizedString("UI Mode", comment: "UI Mode"),
                                 detailText: .subtitle("Choose between different UI modes."),
-                                key: .mainUIMode, icon: .sfSymbol("switch.2")) { cell, row in
+                                key: .mainUIMode, icon: .sfSymbol("switch.2"), viewController: self) { cell, row in
                                     cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
                                     if let segmentedControl = cell.accessoryView as? UISegmentedControl {
                                         segmentedControl.setTitleTextAttributes([.font: UIFont.systemFont(ofSize: 12)], for: .normal)
                                     }
-                                    //                                        swiftUIDetailText = .subtitle("Only available in iOS/tvOS 14+")
-                                    //                                    }
-                                    //
-                                    //                                    var swiftUI =
-                                    //
-                                    //                                    if #available(iOS 14, tvOS 14, *) {
-                                    //                                        swiftUI.isSelectable = true
-                                    //                                    } else {
-                                    //                                        swiftUI.isSelectable = false
-                                    //                                        swiftUI.switchValue = false
-                                    //                                    }
                                 },
 
 //            PVSettingsSwitchRow(text: NSLocalizedString("Use Legacy Audio Engine", comment: "Use Legacy Audio Engine"),

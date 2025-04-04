@@ -7,10 +7,124 @@
 
 import UIKit
 import PVSettings
+import PVThemes
 
-/// A segmented control row for enum values in settings
-public final class PVSettingsSegmentedRow<T: RawRepresentable & CaseIterable & CustomStringConvertible>: Row where T: Hashable, T:Defaults.Serializable, T.RawValue == String {
-    
+/// A view controller that displays options with retrowave styling
+public class PVOptionsViewController<T: RawRepresentable & CaseIterable & CustomStringConvertible>: UITableViewController where T: Hashable, T: Defaults.Serializable, T.RawValue == String {
+
+    private let key: Defaults.Key<T>
+    private let options: [T]
+    private var selectedOption: T
+    private var onSelection: ((T) -> Void)?
+
+    public init(title: String, key: Defaults.Key<T>, options: [T]? = nil, onSelection: ((T) -> Void)? = nil) {
+        self.key = key
+        self.options = options ?? Array(T.allCases)
+        self.selectedOption = Defaults[key]
+        self.onSelection = onSelection
+
+        super.init(style: .grouped)
+        self.title = title
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // Apply retrowave styling to the table view
+        tableView.backgroundColor = UIColor(red: 0.05, green: 0.05, blue: 0.1, alpha: 1.0) // RetroTheme.retroBlack
+        tableView.separatorColor = UIColor(red: 0.99, green: 0.11, blue: 0.55, alpha: 0.3) // RetroTheme.retroPink with alpha
+
+        // Register cell class
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "OptionCell")
+    }
+
+    // MARK: - Table view data source
+
+    public override func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+
+    public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return options.count
+    }
+
+    public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "OptionCell", for: indexPath)
+
+        // Get the option for this row
+        let option = options[indexPath.row]
+
+        // Configure the cell
+        cell.textLabel?.text = option.description
+        cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+
+        // Apply retrowave styling
+        cell.backgroundColor = UIColor(red: 0.1, green: 0.1, blue: 0.15, alpha: 1.0) // RetroTheme.retroDarkBlue
+        cell.textLabel?.textColor = .white
+
+        // Show checkmark for selected option
+        if option.rawValue == selectedOption.rawValue {
+            cell.accessoryType = .checkmark
+            cell.tintColor = UIColor(red: 0.99, green: 0.11, blue: 0.55, alpha: 1.0) // RetroTheme.retroPink
+
+            // Add glow effect to the selected cell
+            cell.layer.shadowColor = UIColor(red: 0.99, green: 0.11, blue: 0.55, alpha: 0.5).cgColor
+            cell.layer.shadowOffset = CGSize(width: 0, height: 0)
+            cell.layer.shadowRadius = 5
+            cell.layer.shadowOpacity = 0.5
+
+            // Add pink text color
+            cell.textLabel?.textColor = UIColor(red: 0.99, green: 0.11, blue: 0.55, alpha: 1.0) // RetroTheme.retroPink
+        } else {
+            cell.accessoryType = .none
+            cell.layer.shadowOpacity = 0
+        }
+
+        return cell
+    }
+
+    public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // Get the selected option
+        let option = options[indexPath.row]
+
+        // Update the selected option
+        selectedOption = option
+        Defaults[key] = option
+
+        // Reload the table to update the checkmark
+        tableView.reloadData()
+
+        // Call the selection handler
+        onSelection?(option)
+
+        // Animate a brief highlight
+        if let cell = tableView.cellForRow(at: indexPath) {
+            UIView.animate(withDuration: 0.2, animations: {
+                cell.backgroundColor = UIColor(red: 0.99, green: 0.11, blue: 0.55, alpha: 0.3) // RetroTheme.retroPink with alpha
+            }) { _ in
+                UIView.animate(withDuration: 0.2) {
+                    cell.backgroundColor = UIColor(red: 0.1, green: 0.1, blue: 0.15, alpha: 1.0) // RetroTheme.retroDarkBlue
+                }
+            }
+        }
+
+        // Deselect the row with animation
+        tableView.deselectRow(at: indexPath, animated: true)
+
+        // Pop back to the previous view controller after a short delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        }
+    }
+}
+
+/// A navigation row that displays selectable options for enum values in settings
+public final class PVSettingsSegmentedRow<T: RawRepresentable & CaseIterable & CustomStringConvertible>: Row where T: Hashable, T: Defaults.Serializable, T.RawValue == String {
+
     public var text: String
     public var detailText: DetailText?
     public var icon: Icon?
@@ -19,136 +133,58 @@ public final class PVSettingsSegmentedRow<T: RawRepresentable & CaseIterable & C
 
     private let key: Defaults.Key<T>
     private let options: [T]
-    
-    public init(text: String, detailText: DetailText? = nil, key: Defaults.Key<T>, options: [T]? = nil, icon: Icon? = nil, customization: ((UITableViewCell, Row) -> Void)? = nil, action: ((any Row) -> Void)? = nil) {
+    private weak var viewController: UIViewController?
+
+    public init(text: String, detailText: DetailText? = nil, key: Defaults.Key<T>, options: [T]? = nil, icon: Icon? = nil, viewController: UIViewController, customization: ((UITableViewCell, Row) -> Void)? = nil, action: ((any Row) -> Void)? = nil) {
         self.text = text
         self.detailText = detailText
         self.key = key
         self.options = options ?? Array(T.allCases)
         self.icon = icon
+        self.viewController = viewController
         self.customization = customization
-        self.action = action
-    }
-    
-    public func configure(_ cell: UITableViewCell) {
-        cell.textLabel?.text = text
-        
-        if let detailText = detailText {
-            switch detailText {
-            case .none:
-                cell.detailTextLabel?.text = nil
-            case .subtitle(let text):
-                cell.detailTextLabel?.text = text
-            case .value1(let text):
-                cell.detailTextLabel?.text = text
-            case .value2(let text):
-                cell.detailTextLabel?.text = text
+
+        // Set up the action to navigate to the options view controller
+        self.action = { [weak self, weak viewController] _ in
+            guard let self = self, let viewController = viewController else { return }
+
+            // Create the options view controller
+            let optionsVC = PVOptionsViewController(title: self.text, key: self.key, options: self.options) { selectedOption in
+                // Call the custom action if provided
+                action?(self)
             }
+
+            // Push the options view controller
+            viewController.navigationController?.pushViewController(optionsVC, animated: true)
         }
-        
+    }
+
+    public func configure(_ cell: UITableViewCell) {
+        // Set up the cell text
+        cell.textLabel?.text = text
+
+        // Set the detail text to show the current selection
+        let currentValue = Defaults[key]
+        cell.detailTextLabel?.text = currentValue.description
+
+        // Apply retrowave styling to the detail text
+        if #available(iOS 13.0, *) {
+            cell.detailTextLabel?.textColor = UIColor(red: 0.99, green: 0.11, blue: 0.55, alpha: 1.0) // RetroTheme.retroPink
+        }
+
+        // Set icon if provided
         if let icon = icon {
             cell.imageView?.image = icon.image
             cell.imageView?.highlightedImage = icon.highlightedImage
         }
-        
-        // Create segmented control with proper styling
-        let segmentedControl = UISegmentedControl()
-        
-        // Add segments with titles
-        for (index, option) in options.enumerated() {
-            segmentedControl.insertSegment(withTitle: option.description, at: index, animated: false)
-        }
-        
-        // Set current selection
-        let currentValue = Defaults[key]
-        if let index = options.firstIndex(where: { $0 == currentValue }) {
-            segmentedControl.selectedSegmentIndex = index
-        } else if !options.isEmpty {
-            // Default to first option if current value not found
-            segmentedControl.selectedSegmentIndex = 0
-        }
-        
-        // Configure size and appearance
-        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
-        segmentedControl.apportionsSegmentWidthsByContent = true
-        segmentedControl.setContentHuggingPriority(.required, for: .horizontal)
-        segmentedControl.setContentCompressionResistancePriority(.required, for: .horizontal)
-        
-        // Add retrowave styling if available
-        if #available(iOS 13.0, *) {
-            // Use system colors that match our retrowave theme
-            segmentedControl.selectedSegmentTintColor = UIColor(red: 0.9, green: 0.2, blue: 0.6, alpha: 1.0) // Pink
-            segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
-            segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.darkGray], for: .normal)
-            
-            // Ensure proper sizing
-            segmentedControl.layer.cornerRadius = 8
-            segmentedControl.layer.masksToBounds = true
-        } else {
-            // For iOS 12 and below
-            segmentedControl.tintColor = UIColor(red: 0.9, green: 0.2, blue: 0.6, alpha: 1.0) // Pink
-        }
-        
-        // Add action
-        segmentedControl.addTarget(self, action: #selector(segmentChanged(_:)), for: .valueChanged)
-        
-        // Store key, options, and row for action handler
-        segmentedControl.tag = options.hashValue
-        objc_setAssociatedObject(segmentedControl, &AssociatedKeys.optionsKey, options, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        objc_setAssociatedObject(segmentedControl, &AssociatedKeys.defaultsKey, key, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        objc_setAssociatedObject(segmentedControl, &AssociatedKeys.rowKey, self, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        
-        // Calculate appropriate width based on number of segments and content
-        let estimatedWidth = min(max(CGFloat(options.count * 60), 200), 300)
-        
-        // Create a container view for the segmented control
-        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: estimatedWidth, height: 40))
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addSubview(segmentedControl)
-        
-        // Set constraints for the segmented control
-        NSLayoutConstraint.activate([
-            segmentedControl.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            segmentedControl.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            segmentedControl.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-            segmentedControl.heightAnchor.constraint(equalToConstant: 32),
-            containerView.widthAnchor.constraint(equalToConstant: estimatedWidth),
-            containerView.heightAnchor.constraint(equalToConstant: 40)
-        ])
-        
-        // Add to cell
-        cell.accessoryView = containerView
-        
-        // Apply custom styling
+
+        // Apply custom styling if provided
         customization?(cell, self)
     }
-    
-    @objc private func segmentChanged(_ sender: UISegmentedControl) {
-        guard let options = objc_getAssociatedObject(sender, &AssociatedKeys.optionsKey) as? [T],
-              let key = objc_getAssociatedObject(sender, &AssociatedKeys.defaultsKey) as? Defaults.Key<T>,
-              sender.selectedSegmentIndex >= 0,
-              sender.selectedSegmentIndex < options.count else {
-            return
-        }
-        
-        let selectedOption = options[sender.selectedSegmentIndex]
-        Defaults[key] = selectedOption
-        
-        // Log the selection for debugging
-        print("Selected segment: \(sender.selectedSegmentIndex), value: \(selectedOption.description)")
-        
-        // Call the action if provided
-        if let row = objc_getAssociatedObject(sender, &AssociatedKeys.rowKey) as? PVSettingsSegmentedRow<T> {
-            row.action?(row)
-        }
-    }
-}
 
-// Associated objects keys
-private struct AssociatedKeys {
-    static var optionsKey = "PVSettingsSegmentedRowOptionsKey"
-    static var defaultsKey = "PVSettingsSegmentedRowDefaultsKey"
-    static var rowKey = "PVSettingsSegmentedRowKey"
+
+
+
 }
 
 // Conform to RowStyle
@@ -156,23 +192,23 @@ extension PVSettingsSegmentedRow: RowStyle {
     public var cellType: UITableViewCell.Type {
         return UITableViewCell.self
     }
-    
+
     public var cellReuseIdentifier: String {
         return "PVSettingsSegmentedRow"
     }
-    
+
     public var cellStyle: UITableViewCell.CellStyle {
-        return .subtitle
+        return .value1
     }
-    
+
     public var accessoryType: UITableViewCell.AccessoryType {
-        return .none
+        return .disclosureIndicator
     }
-    
+
     public var isSelectable: Bool {
-        return false
+        return true
     }
-    
+
     public var customize: ((UITableViewCell, Row & RowStyle) async -> Void)? {
         return nil
     }

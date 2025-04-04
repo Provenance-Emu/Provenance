@@ -19,6 +19,11 @@ import Dispatch
 import PVLibrary
 import Perception
 
+class RetroGameLibraryViewModel: ObservableObject {
+    @Published var showingDocumentPicker = false
+
+}
+
 public struct RetroGameLibraryView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @EnvironmentObject private var appState: AppState
@@ -148,13 +153,13 @@ public struct RetroGameLibraryView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        showingDocumentPicker = true
+                        viewModel.showingDocumentPicker = true
                     }) {
                         Image(systemName: "plus")
                     }
                 }
             }
-            .sheet(isPresented: $showingDocumentPicker) {
+            .sheet(isPresented: $viewModel.showingDocumentPicker) {
                 DocumentPicker(onImport: importFiles)
             }
             .alert("Import Result", isPresented: $showingImportMessage, presenting: importMessage) { _ in
@@ -372,7 +377,7 @@ public struct RetroGameLibraryView: View {
             
             // Import button
             Button(action: {
-                showingDocumentPicker = true
+                viewModel.showingDocumentPicker = true
             }) {
                 HStack(spacing: 6) {
                     Image(systemName: "plus.square")
@@ -539,7 +544,7 @@ public struct RetroGameLibraryView: View {
         }
     }
 
-    @State private var showingDocumentPicker = false
+    @StateObject private var viewModel: RetroGameLibraryViewModel = .init()
     @State private var importMessage: String? = nil
     @State private var showingImportMessage = false
 
@@ -561,7 +566,7 @@ public struct RetroGameLibraryView: View {
                 .padding(.horizontal)
 
             Button(action: {
-                showingDocumentPicker = true
+                viewModel.showingDocumentPicker = true
             }) {
                 HStack {
                     Image(systemName: "plus.circle.fill")
