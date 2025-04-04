@@ -8,6 +8,7 @@
 
 import Foundation
 
+#if canImport(SwiftUI)
 import SwiftUI
 import RealmSwift
 import PVLibrary
@@ -15,7 +16,6 @@ import PVUIBase
 import PVRealm
 import PVThemes
 import Combine
-import PVLibrary
 #if !os(tvOS)
 import UIKit
 #endif
@@ -34,7 +34,7 @@ extension EnvironmentValues {
 @available(iOS 14, tvOS 14, *)
 class ConsolesWrapperViewDelegate: ObservableObject {
     private static let tabKey = "PVLastSelectedConsoleTab"
-    
+
     @Published var selectedTab: String {
         didSet {
             Task.detached(priority: .low) { [self] in
@@ -43,13 +43,13 @@ class ConsolesWrapperViewDelegate: ObservableObject {
             }
         }
     }
-    
+
     init() {
         // Load the saved tab on init
         selectedTab = UserDefaults.standard.string(forKey: Self.tabKey) ?? "home"
         DLOG("ConsolesWrapperViewDelegate initialized with tab: \(selectedTab)")
     }
-    
+
     func setTab(_ tab: String) {
         selectedTab = tab
         DLOG("Tab changed to: \(tab)")
@@ -58,34 +58,31 @@ class ConsolesWrapperViewDelegate: ObservableObject {
 
 @available(iOS 14, tvOS 14, *)
 struct ConsolesWrapperView: SwiftUI.View {
-    
+
     // MARK: - Properties
-    
+
     @ObservedObject var delegate: ConsolesWrapperViewDelegate
     @ObservedObject var viewModel: PVRootViewModel
     weak var rootDelegate: (PVRootDelegate & PVMenuDelegate)!
-    
+
     @State private var showEmptySystems: Bool
     @State private var gameInfoState: GameInfoState?
     @ObservedResults(PVSystem.self) private var consoles: Results<PVSystem>
     @ObservedObject private var themeManager = ThemeManager.shared
-    
+
     /// Track if view is currently visible
     @State private var isVisible: Bool = false
-    
+
     /// Track the previous tab for comparison
     @State private var previousTab: String = ""
-    
-    /// State to control the presentation of ImportStatusView
-    @State private var showImportStatusView = false
-    
+
     /// State for game info presentation
     struct GameInfoState: Identifiable {
         let id: String
     }
-    
+
     // MARK: - Initializer
-    
+
     init(
         consolesWrapperViewDelegate: ConsolesWrapperViewDelegate,
         viewModel: PVRootViewModel,
@@ -94,18 +91,18 @@ struct ConsolesWrapperView: SwiftUI.View {
         self.delegate = consolesWrapperViewDelegate
         self.viewModel = viewModel
         self.rootDelegate = rootDelegate
-        
-#if targetEnvironment(simulator)
+
+        #if targetEnvironment(simulator)
         _showEmptySystems = State(initialValue: true)
-#else
+        #else
         _showEmptySystems = State(initialValue: false)
-#endif
-        
+        #endif
+
         // Set the filter for consoles based on showEmptySystems
         let filter = showEmptySystems ? nil : NSPredicate(format: "games.@count > 0")
         _consoles = ObservedResults(PVSystem.self, filter: filter, sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: true))
     }
-    
+
     // MARK: - Body
     @ViewBuilder
     private func makeGameMoreInfoView(for state: GameInfoState) -> some View {
@@ -123,7 +120,7 @@ struct ConsolesWrapperView: SwiftUI.View {
             return AnyView(Text("Failed to load game info: \(error.localizedDescription)"))
         }
     }
-    
+
     var body: some View {
         Group {
             if consoles.isEmpty || (consoles.count == 1 && consoles.first!.identifier == SystemIdentifier.RetroArch.rawValue) {
@@ -133,9 +130,9 @@ struct ConsolesWrapperView: SwiftUI.View {
                     .sheet(item: $gameInfoState) { state in
                         NavigationView {
                             makeGameMoreInfoView(for: state)
-#if !os(tvOS)
+                            #if !os(tvOS)
                                 .navigationBarTitleDisplayMode(.inline)
-#endif
+                            #endif
                         }
                     }
             }
@@ -143,7 +140,7 @@ struct ConsolesWrapperView: SwiftUI.View {
         .environment(\.rootDelegate, rootDelegate)
         .onAppear {
             isVisible = true
-            
+
             Task(priority: .userInitiated) {
                 // Preload artwork for visible consoles
                 if let selectedConsole = consoles.first(where: { $0.identifier == delegate.selectedTab }) {
@@ -155,17 +152,17 @@ struct ConsolesWrapperView: SwiftUI.View {
             isVisible = false
         }
     }
-    
+
     // MARK: - Helper Methods
-    
+
     func showGameInfo(for gameId: String) {
         gameInfoState = GameInfoState(id: gameId)
     }
-    
+
     private func sortedConsoles() -> [PVSystem] {
         viewModel.sortConsolesAscending ? consoles.map { $0 } : consoles.reversed()
     }
-    
+
     private var glowColor: Color {
         switch themeManager.currentPalette {
         case is DarkThemePalette:
@@ -176,18 +173,18 @@ struct ConsolesWrapperView: SwiftUI.View {
             return themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .purple
         }
     }
-    
+
     /// Preload artwork for a console's games
     private func preloadArtworkForConsole(_ console: PVSystem) {
         Task(priority: .low) {
             // Get the first 20 games for this console
             let games = Array(console.games.prefix(20))
-            
+
             // Preload their artwork
             ArtworkLoader.shared.preloadArtwork(for: games)
         }
     }
-    
+
     @ViewBuilder
     private var noConsolesView: some View {
         NoConsolesView(delegate: rootDelegate as! PVMenuDelegate)
@@ -196,7 +193,7 @@ struct ConsolesWrapperView: SwiftUI.View {
             }
             .tag("noConsoles")
     }
-    
+
     @ViewBuilder
     var consolesList: some View {
         ForEach(sortedConsoles(), id: \.self) { console in
@@ -219,7 +216,7 @@ struct ConsolesWrapperView: SwiftUI.View {
             .ignoresSafeArea(.all, edges: .bottom)
         }
     }
-    
+
     @ViewBuilder
     var consolesTabView: some View {
         let binding = Binding(
@@ -228,10 +225,10 @@ struct ConsolesWrapperView: SwiftUI.View {
                 Task {
                     // Store the previous tab before changing
                     previousTab = delegate.selectedTab
-                    
+
                     // Set the new tab
                     delegate.setTab(newTab)
-                    
+
                     // Preload artwork for the selected console
                     if let selectedConsole = consoles.first(where: { console in console.identifier == newTab }) {
                         preloadArtworkForConsole(selectedConsole)
@@ -240,65 +237,40 @@ struct ConsolesWrapperView: SwiftUI.View {
                 
                 Task {
                     // Trigger haptic feedback for user-initiated tab changes
-#if !os(tvOS)
+                    #if !os(tvOS)
                     if isVisible && previousTab != newTab {
                         Haptics.impact(style: .soft)
                     }
-#endif
+                    #endif
                 }
             }
         )
-        
-        return ZStack(alignment: .top) {
-            // Main TabView
-            TabView(selection: binding) {
-                HomeView(
-                    gameLibrary: rootDelegate.gameLibrary!,
-                    delegate: rootDelegate,
-                    viewModel: viewModel,
-                    showGameInfo: showGameInfo
-                )
-                .tabItem {
-                    Label("Home", systemImage: "house")
-                }
-                .tag("home")
-                .ignoresSafeArea(.all, edges: .bottom)
-                
-                consolesList
+
+        return TabView(selection: binding) {
+            HomeView(
+                gameLibrary: rootDelegate.gameLibrary!,
+                delegate: rootDelegate,
+                viewModel: viewModel,
+                showGameInfo: showGameInfo
+            )
+            .tabItem {
+                Label("Home", systemImage: "house")
             }
-            
-            // Import Progress View at the top
-            VStack {
-                ImportProgressView(
-                    gameImporter: GameImporter.shared,
-                    updatesController: AppState.shared.libraryUpdatesController!,
-                    onTap: {
-                        showImportStatusView = true
-                    }
-                )
-                .padding(.horizontal)
-                .padding(.top, 8)
-                
-                Spacer()
-            }
-            .sheet(isPresented: $showImportStatusView) {
-                ImportStatusView(
-                    updatesController: AppState.shared.libraryUpdatesController,
-                    gameImporter: GameImporter.shared,
-                    dismissAction: {
-                        showImportStatusView = false
-                    }
-                )
-            }
-            .onChange(of: delegate.selectedTab) { newValue in
-                DLOG("Tab changed in view: \(newValue)")
-            }
-            .tabViewStyle(.page)
-            .indexViewStyle(.page(backgroundDisplayMode: .interactive))
-            .id(consoles.count)
-            .tint(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-            .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-            .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+            .tag("home")
+            .ignoresSafeArea(.all, edges: .bottom)
+
+            consolesList
         }
+        .onChange(of: delegate.selectedTab) { newValue in
+            DLOG("Tab changed in view: \(newValue)")
+        }
+        .tabViewStyle(.page)
+        .indexViewStyle(.page(backgroundDisplayMode: .interactive))
+        .id(consoles.count)
+        .tint(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+        .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+        .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
     }
 }
+
+#endif
