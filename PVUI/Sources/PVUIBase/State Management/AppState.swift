@@ -321,7 +321,7 @@ public class AppState: ObservableObject {
         }
         Task {
             do {
-                try await withTimeout(seconds: 30) {
+                try await withTimeout(seconds: 60) {
                     await self.initializeDatabase()
                 }
             } catch {
