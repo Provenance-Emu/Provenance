@@ -752,7 +752,8 @@ extension PVEmulatorViewController {
         // 3. Create a new skin container with edge-to-edge layout
         let skinContainer = UIView(frame: view.bounds)
         skinContainer.tag = 9876 // Unique tag for skin container views
-        skinContainer.backgroundColor = UIColor.black // Set background to black for retrowave aesthetic
+        skinContainer.isOpaque = false
+        skinContainer.backgroundColor = .clear //UIColor.black // Set background to black for retrowave aesthetic
         skinContainer.autoresizingMask = [.flexibleWidth, .flexibleHeight] // Ensure it resizes with parent
 
         // 4. Add the container at the bottom of the view hierarchy
