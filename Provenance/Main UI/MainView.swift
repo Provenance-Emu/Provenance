@@ -19,25 +19,39 @@ struct MainView: View {
     /// Use EnvironmentObject for app delegate
     @EnvironmentObject private var appDelegate: PVAppDelegate
 
-    /// Remove init since we're using environment objects now
+    @EnvironmentObject private var sceneCoordinator: SceneCoordinator
 
     var body: some View {
         WithPerceptionTracking {
             Group {
-                switch appState.mainUIMode {
-                case .paged:
-                    SwiftUIHostedProvenanceMainView()
-                        .environmentObject(appDelegate)
-                        .edgesIgnoringSafeArea(.all)
-                case .singlePage:
-                    RetroMainView()
-                        .environmentObject(appDelegate)
-                        .environmentObject(ThemeManager.shared)
-                        .edgesIgnoringSafeArea(.all)
-                case .uikit:
-                    UIKitHostedProvenanceMainView(appDelegate: appDelegate)
-                        .environmentObject(appDelegate)
-                        .edgesIgnoringSafeArea(.all)
+                // Only show emulator if both the scene coordinator says to AND there's a game in EmulationUIState
+                if sceneCoordinator.currentScene == .emulator && sceneCoordinator.showEmulator && appState.emulationUIState.currentGame != nil {
+                    // Show the emulator view
+                    ZStack {
+                        EmulatorContainerView()
+                    }
+                    .onAppear {
+                        ILOG("ContentView: EmulatorContainerView appeared")
+                    }
+                    .transition(.opacity)
+                    .animation(.easeInOut, value: sceneCoordinator.currentScene)
+                    .hideHomeIndicator()
+                } else {
+                    switch appState.mainUIMode {
+                    case .paged:
+                        SwiftUIHostedProvenanceMainView()
+                            .environmentObject(appDelegate)
+                            .edgesIgnoringSafeArea(.all)
+                    case .singlePage:
+                        RetroMainView()
+                            .environmentObject(appDelegate)
+                            .environmentObject(ThemeManager.shared)
+                            .edgesIgnoringSafeArea(.all)
+                    case .uikit:
+                        UIKitHostedProvenanceMainView(appDelegate: appDelegate)
+                            .environmentObject(appDelegate)
+                            .edgesIgnoringSafeArea(.all)
+                    }
                 }
             }
             .onAppear {

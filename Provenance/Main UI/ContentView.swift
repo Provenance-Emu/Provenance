@@ -37,6 +37,7 @@ struct ContentView: View {
             case .completed:
                 ZStack {
                     MainView()
+                        .environmentObject(SceneCoordinator.shared)
                 }
                 .onAppear {
                     ILOG("ContentView: MainView appeared")

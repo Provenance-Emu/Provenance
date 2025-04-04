@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import PVLogging
 import PVLibrary
+import Combine
 
 // DeltaSkinManager already "conforms" to but does not
 // know about SkinImporterServicing, since that's in PVLibrary
@@ -23,7 +24,32 @@ extension DeltaSkinManager: SkinImporterServicing {
 public class SceneCoordinator: ObservableObject {
     public static let shared = SceneCoordinator()
     
-    private init() {}
+    // Track whether we should show the emulator
+    @Published public var showEmulator: Bool = false
+    
+    // Cancellables for observation
+    private var cancellables = Set<AnyCancellable>()
+   
+    
+    private init() {
+        // Observe the EmulationUIState for changes to currentGame
+        AppState.shared.$emulationUIState
+            .map { $0.currentGame != nil }
+            .removeDuplicates()
+            .sink { [weak self] hasGame in
+                guard let self = self else { return }
+                if hasGame {
+                    ILOG("SceneCoordinator: Game detected in EmulationUIState, showing emulator scene")
+                    self.showEmulator = true
+                    self.currentScene = .emulator
+                } else {
+                    ILOG("SceneCoordinator: No game detected in EmulationUIState, returning to main scene")
+                    self.showEmulator = false
+                    self.currentScene = .main
+                }
+            }
+            .store(in: &cancellables)
+    }
     
     public enum Scenes {
         case main
@@ -43,45 +69,49 @@ public class SceneCoordinator: ObservableObject {
     }
     
     public func openMainScene() {
-        guard let url = URL(string: "provenance://main") else {
-            ELOG("Failed to create URL for main scene")
-            return
-        }
-        
+//        guard let url = URL(string: "provenance://main") else {
+//            ELOG("Failed to create URL for main scene")
+//            return
+//        }
+//        
         SkinImporterInjector.shared.service = DeltaSkinManager.shared
         
+//        ILOG("SceneCoordinator: Opening main scene")
+//        UIApplication.shared.open(url, options: [:], completionHandler: nil)
         ILOG("SceneCoordinator: Opening main scene")
-        UIApplication.shared.open(url, options: [:], completionHandler: nil)
         currentScene = .main
+        showEmulator = false
     }
     
     /// Opens the emulator scene with the current game from AppState
     public func openEmulatorScene() {
-        guard let url = URL(string: "provenance://emulator") else {
-            ELOG("Failed to create URL for emulator scene")
-            return
-        }
-        
+//        guard let url = URL(string: "provenance://emulator") else {
+//            ELOG("Failed to create URL for emulator scene")
+//            return
+//        }
+//        
+//        ILOG("SceneCoordinator: Opening emulator scene")
+//        UIApplication.shared.open(url, options: [:], completionHandler: nil)
         ILOG("SceneCoordinator: Opening emulator scene")
-        UIApplication.shared.open(url, options: [:], completionHandler: nil)
         currentScene = .emulator
+        showEmulator = true
     }
     
     /// Launch a specific game
     public func launchGame(_ game: PVGame) {
-        ILOG("TestSceneCoordinator: Launching game: \(game.title) (ID: \(game.id))")
+        ILOG("SceneCoordinator: Launching game: \(game.title) (ID: \(game.id))")
         
         // Set the current game in EmulationUIState
         AppState.shared.emulationUIState.currentGame = game
         
         // Verify the game was set correctly
         if let currentGame = AppState.shared.emulationUIState.currentGame {
-            ILOG("TestSceneCoordinator: Successfully set current game in EmulationUIState: \(currentGame.title) (ID: \(currentGame.id))")
+            ILOG("SceneCoordinator: Successfully set current game in EmulationUIState: \(currentGame.title) (ID: \(currentGame.id))")
             
             // Open the emulator scene
             openEmulatorScene()
         } else {
-            ELOG("TestSceneCoordinator: Failed to set current game in EmulationUIState")
+            ELOG("SceneCoordinator: Failed to set current game in EmulationUIState")
         }
     }
     
