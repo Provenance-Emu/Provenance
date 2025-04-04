@@ -1,6 +1,6 @@
 //
-//  GameLibraryView.swift
-//  UITesting
+//  RetroGameLibraryView.swift
+//  Provenance
 //
 //  Created by Joseph Mattiello on 11/22/24.
 //
@@ -21,7 +21,7 @@ import Dispatch
 import PVLibrary
 import Perception
 
-struct GameLibraryView: View {
+public struct RetroGameLibraryView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var sceneCoordinator: TestSceneCoordinator
@@ -79,6 +79,41 @@ struct GameLibraryView: View {
     @State internal var showArtworkSearch = false
     @State internal var showArtworkSourceAlert = false
     
+    public init(themeManager: ThemeManager = ThemeManager.shared, appState: AppState, sceneCoordinator: TestSceneCoordinator, gameImporter: GameImporter = GameImporter.shared, importQueueItems: [ImportQueueItem], allGames: <#type#>, allSystems: <#type#>, importQueueUpdateID: UUID = UUID(), expandedSectionsData: Data, expandedSections: Set<String>, searchText: String = "", debouncedSearchText: String = "", isSearching: Bool = false, searchTextPublisher: PassthroughSubject<String, Never> = PassthroughSubject<String, Never>(), cancellables: Set<AnyCancellable> = Set<AnyCancellable>(), selectedViewMode: ViewMode, showFilterSheet: Bool = false, selectedSortOption: SortOption, showImagePicker: Bool = false, selectedImage: UIImage? = nil, gameToUpdateCover: PVGame? = nil, showingRenameAlert: Bool = false, gameToRename: PVGame? = nil, newGameTitle: String = "", renameTitleFieldIsFocused: Bool, systemMoveState: SystemMoveState? = nil, continuesManagementState: ContinuesManagementState? = nil, showArtworkSearch: Bool = false, showArtworkSourceAlert: Bool = false, showingDocumentPicker: Bool = false, importMessage: String? = nil, showingImportMessage: Bool = false) {
+        self.themeManager = themeManager
+        self.appState = appState
+        self.sceneCoordinator = sceneCoordinator
+        self.gameImporter = gameImporter
+        self.importQueueItems = importQueueItems
+        self.allGames = allGames
+        self.allSystems = allSystems
+        self.importQueueUpdateID = importQueueUpdateID
+        self.expandedSectionsData = expandedSectionsData
+        self.expandedSections = expandedSections
+        self.searchText = searchText
+        self.debouncedSearchText = debouncedSearchText
+        self.isSearching = isSearching
+        self.searchTextPublisher = searchTextPublisher
+        self.cancellables = cancellables
+        self.selectedViewMode = selectedViewMode
+        self.showFilterSheet = showFilterSheet
+        self.selectedSortOption = selectedSortOption
+        self.showImagePicker = showImagePicker
+        self.selectedImage = selectedImage
+        self.gameToUpdateCover = gameToUpdateCover
+        self.showingRenameAlert = showingRenameAlert
+        self.gameToRename = gameToRename
+        self.newGameTitle = newGameTitle
+        self.renameTitleFieldIsFocused = renameTitleFieldIsFocused
+        self.systemMoveState = systemMoveState
+        self.continuesManagementState = continuesManagementState
+        self.showArtworkSearch = showArtworkSearch
+        self.showArtworkSourceAlert = showArtworkSourceAlert
+        self.showingDocumentPicker = showingDocumentPicker
+        self.importMessage = importMessage
+        self.showingImportMessage = showingImportMessage
+    }
+    
     private func renameGame(_ game: PVGame, to newName: String) async {
         guard !newName.isEmpty else { return }
 
@@ -130,7 +165,7 @@ struct GameLibraryView: View {
         }
     }
 
-    var body: some View {
+    public var body: some View {
         mainContentView()
             .background(retroBackgroundView())
             .navigationTitle("GAME LIBRARY")
@@ -587,10 +622,10 @@ struct GameLibraryView: View {
     }
     
     private func importFiles(urls: [URL]) {
-        ILOG("GameLibraryView: Importing \(urls.count) files")
+        ILOG("RetroGameLibraryView: Importing \(urls.count) files")
 
         guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            ELOG("GameLibraryView: Could not access documents directory")
+            ELOG("RetroGameLibraryView: Could not access documents directory")
             importMessage = "Error: Could not access documents directory"
             showingImportMessage = true
             return
@@ -602,7 +637,7 @@ struct GameLibraryView: View {
         do {
             try FileManager.default.createDirectory(at: importsDirectory, withIntermediateDirectories: true)
         } catch {
-            ELOG("GameLibraryView: Error creating Imports directory: \(error.localizedDescription)")
+            ELOG("RetroGameLibraryView: Error creating Imports directory: \(error.localizedDescription)")
             importMessage = "Error creating Imports directory: \(error.localizedDescription)"
             showingImportMessage = true
             return
@@ -622,10 +657,10 @@ struct GameLibraryView: View {
 
                 // Copy file to Imports directory
                 try FileManager.default.copyItem(at: url, to: destinationURL)
-                ILOG("GameLibraryView: Successfully copied \(url.lastPathComponent) to Imports directory")
+                ILOG("RetroGameLibraryView: Successfully copied \(url.lastPathComponent) to Imports directory")
                 successCount += 1
             } catch {
-                ELOG("GameLibraryView: Error copying file \(url.lastPathComponent): \(error.localizedDescription)")
+                ELOG("RetroGameLibraryView: Error copying file \(url.lastPathComponent): \(error.localizedDescription)")
                 errorMessages.append("\(url.lastPathComponent): \(error.localizedDescription)")
             }
         }
@@ -644,7 +679,7 @@ struct GameLibraryView: View {
 
     // Launch game
     private func launchGame(_ game: PVGame) {
-        ILOG("GameLibraryView: Launching game: \(game.title) (ID: \(game.id))")
+        ILOG("RetroGameLibraryView: Launching game: \(game.title) (ID: \(game.id))")
 
         // Use the TestSceneCoordinator to launch the game
         sceneCoordinator.launchGame(game)
@@ -653,7 +688,7 @@ struct GameLibraryView: View {
 
 // MARK: - GameContextMenuDelegate
 
-extension GameLibraryView {
+extension RetroGameLibraryView {
     /// Sort games based on the selected sort option
     private func sortedGames(_ games: [PVGame]) -> [PVGame] {
         switch selectedSortOption {
@@ -669,7 +704,7 @@ extension GameLibraryView {
     }
 }
 
-extension GameLibraryView: GameContextMenuDelegate {
+extension RetroGameLibraryView: GameContextMenuDelegate {
 #if !os(tvOS)
     @ViewBuilder
     internal func imagePickerView() -> some View {
@@ -793,7 +828,7 @@ extension GameLibraryView: GameContextMenuDelegate {
 
 // MARK: - System Section Helpers
 
-extension GameLibraryView {
+extension RetroGameLibraryView {
     // MARK: - Computed Properties
 
     /// Filtered games based on search text

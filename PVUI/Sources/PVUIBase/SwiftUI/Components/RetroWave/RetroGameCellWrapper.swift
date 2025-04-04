@@ -6,7 +6,7 @@ import PVLibrary
 import PVLogging
 
 /// A thread-safe game cell model that doesn't directly access Realm objects
-struct GameCellModel: Identifiable {
+struct RetroGameCellModel: Identifiable {
     let id: String
     let title: String
     let artworkURLString: String?
@@ -22,19 +22,19 @@ struct GameCellModel: Identifiable {
 }
 
 /// A wrapper view for game cells that avoids direct Realm object access
-struct GameCellWrapper: View {
+public struct RetroGameCellWrapper: View {
     // Thread-safe model instead of direct Realm object
-    let model: GameCellModel
+    let model: RetroGameCellModel
     let isSelected: Bool
     let onSelect: (PVGame) -> Void
     
-    init(game: PVGame, isSelected: Bool, onSelect: @escaping (PVGame) -> Void) {
-        self.model = GameCellModel(from: game)
+    public init(game: PVGame, isSelected: Bool, onSelect: @escaping (PVGame) -> Void) {
+        self.model = RetroGameCellModel(from: game)
         self.isSelected = isSelected
         self.onSelect = onSelect
     }
     
-    var body: some View {
+    public var body: some View {
         Button(action: {
             onSelect(model.originalGame)
         }) {
@@ -91,7 +91,7 @@ struct GameCellWrapper: View {
 
 #Preview {
     // This is just a placeholder for preview
-    GameCellWrapper(
+    RetroGameCellWrapper(
         game: PVGame(),
         isSelected: false,
         onSelect: { _ in }

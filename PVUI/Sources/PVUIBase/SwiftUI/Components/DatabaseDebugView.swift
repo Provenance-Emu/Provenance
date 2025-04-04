@@ -3,7 +3,7 @@ import RealmSwift
 import PVRealm
 import PVLogging
 
-struct DatabaseDebugView: View {
+public struct DatabaseDebugView: View {
     @State private var realm: Realm?
     @State private var games: Results<PVGame>?
     @State private var systems: Results<PVSystem>?
@@ -13,7 +13,7 @@ struct DatabaseDebugView: View {
     @State private var showSystems = false
     @State private var showCores = false
     
-    var body: some View {
+    public var body: some View {
         NavigationView {
             List {
                 Section(header: Text("Database Entities")) {
@@ -169,6 +169,8 @@ struct DatabaseDebugView: View {
     }
 }
 
+#if DEBUG
 #Preview {
     DatabaseDebugView()
 }
+#endif

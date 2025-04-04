@@ -12,7 +12,7 @@ import PVThemes
 import PVLogging
 import Combine
 
-struct MainView: View {
+public struct RetroMainView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var themeManager: ThemeManager
 
@@ -22,7 +22,7 @@ struct MainView: View {
     // Timer for occasional special effects
     @State private var effectTimer: AnyCancellable?
 
-    var body: some View {
+    public var body: some View {
         ZStack {
             // Background that adapts to the theme
             RetroTheme.retroBackground
@@ -44,12 +44,12 @@ struct MainView: View {
                         // Show the appropriate view based on the selected tab
                         if selectedTab == 0 {
 
-                            GameLibraryView()
+                            RetroGameLibraryView()
                                 .padding(.top, 40)
                         } else if selectedTab == 1 {
                             SettingsView()
                         } else if selectedTab == 2 {
-                            DebugView()
+                            RetroDebugView()
                         }
                     }
                 },
@@ -176,8 +176,10 @@ struct MainView: View {
     }
 }
 
+#if DEBUG
 #Preview {
-    MainView()
+    RetroMainView()
         .environmentObject(AppState.shared)
         .environmentObject(ThemeManager.shared)
 }
+#endif

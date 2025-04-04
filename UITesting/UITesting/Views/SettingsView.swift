@@ -23,7 +23,6 @@ struct SettingsView: View {
     @State private var importMessage: String? = nil
     @State private var showingImportMessage = false
     @State private var showingSettings = true
-    @State private var useDeltaSkins: Bool = UserDefaults.standard.bool(forKey: "useDeltaSkins")
 
     var body: some View {
         NavigationView {
@@ -52,9 +51,6 @@ struct SettingsView: View {
             Text(message)
         }
         .toggleStyle(.button)
-        .onChange(of: useDeltaSkins) { newValue in
-            UserDefaults.standard.set(newValue, forKey: "useDeltaSkins")
-        }
     }
 
     private func importFiles(urls: [URL]) {

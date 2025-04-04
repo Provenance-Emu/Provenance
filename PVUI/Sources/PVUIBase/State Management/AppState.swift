@@ -68,7 +68,7 @@ public class AppState: ObservableObject {
 
     /// User default for UI preference
     @Published
-    public var useUIKit: Bool = Defaults[.useUIKit]
+    public var mainUIMode: MainUIMode = Defaults[.mainUIMode]
 
     /// Instance of AppBootupState to manage bootup process
     @Published public private(set) var bootupStateManager: AppBootupState = AppBootupState() {
@@ -166,8 +166,8 @@ public class AppState: ObservableObject {
 
     private let disposeBag = DisposeBag()
 
-    /// Task for observing changes to useUIKit
-    private var useUIKitObservationTask: Task<Void, Never>?
+    /// Task for observing changes to mainUIMode
+    private var mainUIModeObservationTask: Task<Void, Never>?
 
     /// Settings factory for creating settings view controllers
     public var settingsFactory: PVSettingsViewControllerFactory?
@@ -178,9 +178,9 @@ public class AppState: ObservableObject {
     /// Initializer
     private init() {
         ILOG("AppState: Initializing")
-        useUIKitObservationTask = Task { @MainActor in
-            for await value in Defaults.updates(.useUIKit) {
-                useUIKit = value
+        mainUIModeObservationTask = Task { @MainActor in
+            for await value in Defaults.updates(.mainUIMode) {
+                mainUIMode = value
             }
         }
 
@@ -201,7 +201,7 @@ public class AppState: ObservableObject {
         initialImportResumeTimer = nil
 
         // Cancel task
-        useUIKitObservationTask?.cancel()
+        mainUIModeObservationTask?.cancel()
 
         ILOG("AppState: Deinitialized")
     }

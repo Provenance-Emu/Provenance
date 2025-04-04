@@ -1,6 +1,6 @@
 //
-//  DebugView.swift
-//  UITesting
+//  RetroDebugView.swift
+//  Provenance
 //
 //  Created by Joseph Mattiello on 11/22/24.
 //
@@ -30,7 +30,7 @@ enum ThemeName: String, CaseIterable {
     case cgaRainbow = "CGA Rainbow"
 }
 
-struct DebugView: View {
+public struct RetroDebugView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @EnvironmentObject private var appState: AppState
     
@@ -45,7 +45,7 @@ struct DebugView: View {
     
     @StateObject private var mockImportStatusDriverData = MockImportStatusDriverData()
 
-    // Add these state variables at the top of the DebugView struct
+    // Add these state variables at the top of the RetroDebugView struct
     @State private var showSaveStatesMock = false
     @State private var showGameMoreInfo = false
     @State private var showGameMoreInfoRealm = false
@@ -67,7 +67,7 @@ struct DebugView: View {
     @State private var scanlineOffset: CGFloat = 0
     @State private var glowOpacity: Double = 0.7
     
-    var body: some View {
+    public var body: some View {
         NavigationStack {
             contentView()
                 .retrowaveBackground()

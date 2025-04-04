@@ -15,13 +15,16 @@ public struct BootupViewRetroWave: View {
     @EnvironmentObject public var appState: AppState
     @EnvironmentObject public var themeManager: ThemeManager
     
+    @ObservedObject private var iconManager = IconManager.shared
+
     // Animation properties
     @State private var glowOpacity: Double = 0.0
     @State private var gridOffset: CGFloat = 1000
     @State private var sunOffset: CGFloat = -200
     @State private var titleScale: CGFloat = 0.8
     @State private var logoGlow: CGFloat = 0.0
-    
+    @State private var defaultIcon: UIImage?
+
     // For the scanning line effect
     @State private var scanlineOffset: CGFloat = 0
     
@@ -29,8 +32,53 @@ public struct BootupViewRetroWave: View {
     public let timer = Timer.publish(every: 0.8, on: .main, in: .common).autoconnect()
     @State private var showText = true
     
+    private var previewImageName: String {
+        "\(iconName)-Preview"
+    }
+    
+    private var iconName: String {
+        iconManager.currentIconName ?? "AppIcon"
+    }
+    
     public init() {
         ILOG("ContentView: App is not initialized, showing BootupView")
+    }
+    
+    @ViewBuilder
+    private func iconWrapper(_ uiImage: UIImage) -> some View {
+        Image(uiImage: uiImage)
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 120, height: 120)
+            .cornerRadius(20)
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(LinearGradient(
+                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ), lineWidth: 2)
+            )
+            .shadow(color: Color.retroPink.opacity(logoGlow), radius: 15, x: 0, y: 0)
+            .shadow(color: Color.retroBlue.opacity(logoGlow), radius: 15, x: 0, y: 0)
+            .scaleEffect(titleScale)
+    }
+    
+    private var fallbackIcon: some View {
+        Color.gray.opacity(0.1)
+            .frame(width: 120, height: 120)
+            .cornerRadius(20)
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(LinearGradient(
+                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ), lineWidth: 2)
+            )
+            .shadow(color: Color.retroPink.opacity(logoGlow), radius: 15, x: 0, y: 0)
+            .shadow(color: Color.retroBlue.opacity(logoGlow), radius: 15, x: 0, y: 0)
+            .scaleEffect(titleScale)
     }
     
     public var body: some View {
@@ -55,25 +103,19 @@ public struct BootupViewRetroWave: View {
             // Main content
             VStack(spacing: 30) {
                 Spacer()
-                
-                // App icon with glow effect
-                Image("AppIcon")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 120, height: 120)
-                    .cornerRadius(20)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(LinearGradient(
-                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ), lineWidth: 2)
-                    )
-                    .shadow(color: Color.retroPink.opacity(logoGlow), radius: 15, x: 0, y: 0)
-                    .shadow(color: Color.retroBlue.opacity(logoGlow), radius: 15, x: 0, y: 0)
-                    .scaleEffect(titleScale)
-                
+                Group {
+                    if iconName == "AppIcon", let defaultIcon {
+                        /// Use the default icon from info.plist
+                        iconWrapper(defaultIcon)
+                    } else if let uiImage = UIImage(named: previewImageName, in: .main, with: nil) {
+                        /// Use preview images for alternate icons
+                        iconWrapper(uiImage)
+                    } else {
+                        /// Fallback placeholder
+                        fallbackIcon
+                    }
+                }
+                                
                 // Title with neon effect
                 Text("PROVENANCE")
                     .font(.system(size: 42, weight: .bold, design: .rounded))
@@ -162,8 +204,10 @@ public struct BootupViewRetroWave: View {
     }
 }
 
+#if DEBUG
 #Preview {
     BootupViewRetroWave()
         .environmentObject(AppState.shared)
         .environmentObject(ThemeManager.shared)
 }
+#endif

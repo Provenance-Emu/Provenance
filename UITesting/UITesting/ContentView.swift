@@ -84,7 +84,7 @@ struct ContentView: View {
                 // Show bootup view for 1 second before transitioning
                 bootupView
             } else if case .error(let error) = bootupState {
-                ErrorView(error: error) {
+                RetroErrorView(error: error) {
                     appState.startBootupSequence()
                 }
                 .transition(.opacity)

@@ -22,12 +22,17 @@ struct MainView: View {
     var body: some View {
         WithPerceptionTracking {
             Group {
-                if appState.useUIKit {
-                    UIKitHostedProvenanceMainView(appDelegate: appDelegate)
+                switch appState.mainUIMode {
+                case .paged:
+                    SwiftUIHostedProvenanceMainView(appDelegate: appDelegate)
                         .environmentObject(appDelegate)
                         .edgesIgnoringSafeArea(.all)
-                } else {
+                case .singlePage:
                     SwiftUIHostedProvenanceMainView(appDelegate: appDelegate)
+                        .environmentObject(appDelegate)
+                        .edgesIgnoringSafeArea(.all)
+                case .uikit:
+                    UIKitHostedProvenanceMainView(appDelegate: appDelegate)
                         .environmentObject(appDelegate)
                         .edgesIgnoringSafeArea(.all)
                 }

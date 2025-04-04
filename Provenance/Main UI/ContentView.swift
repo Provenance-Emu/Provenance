@@ -16,7 +16,6 @@ struct ContentView: View {
     @EnvironmentObject var appDelegate: PVAppDelegate
 
     var bootupView: some View {
-        ZStack {
             // Show the bootup view
             BootupViewRetroWave()
                 .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
@@ -24,7 +23,10 @@ struct ContentView: View {
                 .transition(.opacity)
                 .animation(.easeInOut, value: appState.bootupStateManager.currentState)
                 .hideHomeIndicator()
-        }
+            
+//                BootupView()
+//                    .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+//                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
     }
     
     /// Remove init since we're using environment objects now
@@ -45,9 +47,6 @@ struct ContentView: View {
                 }
             default:
                 bootupView
-//                BootupView()
-//                    .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
-//                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
             }
         }
         .edgesIgnoringSafeArea(.all)

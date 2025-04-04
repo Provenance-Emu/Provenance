@@ -115,21 +115,6 @@ struct UITestingApp: SwiftUI.App {
 
     // MARK: - UIViewControllerRepresentable for PVEmulatorViewController
 
-    /// SwiftUI wrapper for PVEmulatorViewController
-    struct EmulatorViewControllerWrapper: UIViewControllerRepresentable {
-        let game: PVGame
-        let coreInstance: PVEmulatorCore
-
-        func makeUIViewController(context: Context) -> PVEmulatorViewController {
-            let emulatorViewController = PVEmulatorViewController(game: game, core: coreInstance)
-            return emulatorViewController
-        }
-
-        func updateUIViewController(_ uiViewController: PVEmulatorViewController, context: Context) {
-            // Update the view controller if needed
-        }
-    }
-
     // MARK: - View Builders
 
     // State to track emulator preparation status

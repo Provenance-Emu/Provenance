@@ -1,3 +1,10 @@
+//
+//  RetroGameGridView.swift
+//  Provenance
+//
+//  Created by Joseph Mattiello on 11/22/24.
+//
+
 import SwiftUI
 import PVRealm
 import RealmSwift
@@ -5,7 +12,7 @@ import PVSwiftUI
 import PVLibrary
 import PVLogging
 
-struct GameGridView: View {
+public struct RetroGameGridView: View {
     @EnvironmentObject var realmEnvironment: RealmEnvironment
     @ObservedResults(PVGame.self) var games
 
@@ -20,7 +27,7 @@ struct GameGridView: View {
         GridItem(.adaptive(minimum: 160, maximum: 200), spacing: 16)
     ]
 
-    var body: some View {
+    public var body: some View {
         VStack {
             if games.isEmpty {
                 emptyStateView
@@ -66,21 +73,21 @@ struct GameGridView: View {
     }
 
     private func launchGame(_ game: PVGame) {
-        ILOG("GameGridView: Selected game: \(game.title)")
-        ILOG("GameGridView: Game ID: \(game.id)")
-        ILOG("GameGridView: System: \(game.system?.name ?? "Unknown")")
-        ILOG("GameGridView: Core: \(game.userPreferredCoreID ?? game.system?.userPreferredCore ?? "Unknown")")
+        ILOG("RetroGameGridView: Selected game: \(game.title)")
+        ILOG("RetroGameGridView: Game ID: \(game.id)")
+        ILOG("RetroGameGridView: System: \(game.system?.name ?? "Unknown")")
+        ILOG("RetroGameGridView: Core: \(game.userPreferredCoreID ?? game.system?.userPreferredCore ?? "Unknown")")
 
         // Call the callback if provided
         if let onGameSelected = onGameSelected {
             onGameSelected(game)
         } else {
-            ILOG("GameGridView: No game selection handler provided")
+            ILOG("RetroGameGridView: No game selection handler provided")
         }
     }
 }
 
 #Preview {
-    GameGridView()
+    RetroGameGridView()
         .environmentObject(RealmEnvironment())
 }

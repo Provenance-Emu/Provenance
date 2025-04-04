@@ -154,43 +154,57 @@ struct AppearanceView: View {
     }
 }
 
-//private struct AppearanceSection: View {
-//    @Default(.showGameTitles) var showGameTitles
-//    @Default(.showRecentGames) var showRecentGames
-//    @Default(.showRecentSaveStates) var showRecentSaveStates
-//    @Default(.showGameBadges) var showGameBadges
-//    @Default(.showFavorites) var showFavorites
-//
-//    var body: some View {
-//        Section(header: Text("Appearance")) {
-//            ThemedToggle(isOn: $showGameTitles) {
-//                SettingsRow(title: "Show Game Titles",
-//                           subtitle: "Display game titles under artwork.",
-//                           icon: .sfSymbol("text.below.photo"))
-//            }
-//            ThemedToggle(isOn: $showRecentGames) {
-//                SettingsRow(title: "Show Recent Games",
-//                           subtitle: "Display recently played games section.",
-//                           icon: .sfSymbol("clock"))
-//            }
-//            ThemedToggle(isOn: $showRecentSaveStates) {
-//                SettingsRow(title: "Show Recent Saves",
-//                           subtitle: "Display recent save states section.",
-//                           icon: .sfSymbol("clock.badge.checkmark"))
-//            }
-//            ThemedToggle(isOn: $showGameBadges) {
-//                SettingsRow(title: "Show Game Badges",
-//                           subtitle: "Display badges for favorite and recent games.",
-//                           icon: .sfSymbol("star.circle"))
-//            }
-//            ThemedToggle(isOn: $showFavorites) {
-//                SettingsRow(title: "Show Favorites",
-//                           subtitle: "Display favorites section.",
-//                           icon: .sfSymbol("star"))
-//            }
-//        }
-//    }
-//}
+internal struct AppearanceSection: View {
+    @Default(.showGameTitles) var showGameTitles
+    @Default(.showRecentGames) var showRecentGames
+    @Default(.showRecentSaveStates) var showRecentSaveStates
+    @Default(.showGameBadges) var showGameBadges
+    @Default(.showFavorites) var showFavorites
+
+    internal var body: some View {
+        Section(header: Text("Appearance")) {
+            ThemedToggle(isOn: $showGameTitles) {
+                SettingsRow(title: "Show Game Titles",
+                            subtitle: "Display game titles under artwork.",
+                            icon: .sfSymbol("text.below.photo"))
+            }
+            ThemedToggle(isOn: $showRecentGames) {
+                SettingsRow(title: "Show Recent Games",
+                            subtitle: "Display recently played games section.",
+                            icon: .sfSymbol("clock"))
+            }
+            ThemedToggle(isOn: $showRecentSaveStates) {
+                SettingsRow(title: "Show Recent Saves",
+                            subtitle: "Display recent save states section.",
+                            icon: .sfSymbol("clock.badge.checkmark"))
+            }
+            ThemedToggle(isOn: $showGameBadges) {
+                SettingsRow(title: "Show Game Badges",
+                            subtitle: "Display badges for favorite and recent games.",
+                            icon: .sfSymbol("star.circle"))
+            }
+            ThemedToggle(isOn: $showFavorites) {
+                SettingsRow(title: "Show Favorites",
+                            subtitle: "Display favorites section.",
+                            icon: .sfSymbol("star"))
+            }
+
+            // Add the new navigation link wrapped in PaidFeatureView
+            PaidFeatureView {
+                NavigationLink(destination: MissingArtworkStyleView()) {
+                    SettingsRow(title: "Missing Artwork Style",
+                                subtitle: "Choose style for games without artwork.",
+                                icon: .sfSymbol("photo.artframe"))
+                }
+            } lockedView: {
+                SettingsRow(title: "Missing Artwork Style",
+                            subtitle: "Unlock to customize missing artwork style.",
+                            icon: .sfSymbol("lock.fill"))
+            }
+        }
+    }
+}
+
 
 // Add the new view for selecting missing artwork style
 fileprivate struct MissingArtworkStyleView: View {

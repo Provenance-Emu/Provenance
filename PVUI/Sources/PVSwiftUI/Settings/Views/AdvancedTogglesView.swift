@@ -14,7 +14,7 @@ internal struct AdvancedTogglesView: View {
     @Default(.disableAutoLock) var disableAutoLock
     @Default(.iCloudSync) var iCloudSync
     @Default(.useMetal) var useMetalRenderer
-    @Default(.useUIKit) var useUIKit
+    @Default(.mainUIMode) var mainUIMode
     @Default(.webDavAlwaysOn) var webDavAlwaysOn
     @Default(.unsupportedCores) var unsupportedCores
     
@@ -76,9 +76,9 @@ internal struct AdvancedTogglesView: View {
                                 icon: .sfSymbol("cpu"))
                 }
                 
-                PremiumThemedToggle(isOn: $useUIKit) {
-                    SettingsRow(title: "Use UIKit",
-                                subtitle: "Use UIKit interface instead of SwiftUI.",
+                PremiumThemedPicker(selection: $mainUIMode) {
+                    SettingsRow(title: "UI Mode",
+                                subtitle: "Choose between different UI modes: \(mainUIMode.description)",
                                 icon: .sfSymbol("switch.2"))
                 }
                 
