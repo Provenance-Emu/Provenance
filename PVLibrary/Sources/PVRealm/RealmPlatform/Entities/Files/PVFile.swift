@@ -112,6 +112,7 @@ public extension PVFile {
              private/var/mobile
          }
          */
+        isPartialPathFixed = true
     }
     
     internal func fixPartialPath(of url: URL) {
