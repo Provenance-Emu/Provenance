@@ -43,9 +43,10 @@ struct ContentView: View {
                     ILOG("ContentView: MainView appeared")
                 }
             case .error(let error):
-                ErrorView(error: error) {
+                RetroErrorView(error: error) {
                     appState.startBootupSequence()
                 }
+                .environmentObject(ThemeManager.shared)
             default:
                 bootupView
             }
