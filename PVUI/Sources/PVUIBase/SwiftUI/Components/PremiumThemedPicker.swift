@@ -32,8 +32,8 @@ public struct PremiumThemedPicker<T: CaseIterable & Identifiable & CustomStringC
             VStack(alignment: .leading) {
                 label
                 Picker.init(selection: $selection) {
-                    ForEach(ThemeName.allCases, id: \.self) { theme in
-                        Text(theme.rawValue.uppercased()).tag(theme)
+                    ForEach(options, id: \.self) { option in
+                        Text(option.description.uppercased()).tag(option)
                     }
                 } label: {
                     label
