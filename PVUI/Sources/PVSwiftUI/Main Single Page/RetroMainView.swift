@@ -47,6 +47,7 @@ public struct RetroMainView: View {
 
                             RetroGameLibraryView()
                                 .padding(.top, 40)
+                                .environmentObject(SceneCoordinator.shared)
                         } else if selectedTab == 1 {
                             SettingsWrapperView()
                         } else if selectedTab == 2 {
