@@ -126,7 +126,7 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     var body: some View {
         Group {
-            importStatusOverlayView
+            // importStatusOverlayView
 
             if consoles.isEmpty || (consoles.count == 1 && consoles.first!.identifier == SystemIdentifier.RetroArch.rawValue) {
                 noConsolesView
@@ -234,8 +234,6 @@ struct ConsolesWrapperView: SwiftUI.View {
             )
             .padding(.horizontal)
             .padding(.top, 8)
-            
-            Spacer()
         }
         .sheet(isPresented: $showImportStatusView) {
             ImportStatusView(
