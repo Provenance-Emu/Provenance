@@ -181,10 +181,6 @@ public final class PVSettingsSegmentedRow<T: RawRepresentable & CaseIterable & C
         // Apply custom styling if provided
         customization?(cell, self)
     }
-
-
-
-
 }
 
 // Conform to RowStyle

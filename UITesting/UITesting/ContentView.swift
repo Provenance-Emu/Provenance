@@ -71,7 +71,7 @@ struct ContentView: View {
                 } else {
                     // Show the main view
                     ZStack {
-                        MainView()
+                        RetroMainView()
                     }
                     .onAppear {
                         ILOG("ContentView: MainView appeared")
