@@ -676,7 +676,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         // Post notifications to reconnect inputs and refresh the GPU view
         NotificationCenter.default.post(name: NSNotification.Name("DeltaSkinInputHandlerReconnect"), object: nil)
-        NotificationCenter.default.post(name: NSNotification.Name("ResumeGame"), object: nil)
 
         // Make sure the GPU view is refreshed
         if let metalVC = gpuViewController as? PVMetalViewController {
