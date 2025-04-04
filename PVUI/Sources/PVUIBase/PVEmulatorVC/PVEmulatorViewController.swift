@@ -584,11 +584,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         handleOrientationChange(to: size, with: coordinator)
     }
 
-#if os(iOS) && !targetEnvironment(simulator)
+#if os(iOS) //&& !targetEnvironment(simulator)
     // Check Controller Manager if it has a Controller connected and thus if Home Indicator should hide…
     public override var prefersHomeIndicatorAutoHidden: Bool {
-        let shouldHideHomeIndicator: Bool = PVControllerManager.shared.hasControllers
-        return shouldHideHomeIndicator
+//        let shouldHideHomeIndicator: Bool = PVControllerManager.shared.hasControllers
+//        return shouldHideHomeIndicator
+        return true
     }
 #endif
 
