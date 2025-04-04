@@ -27,8 +27,7 @@ public struct RetroGameLibraryView: View {
     // Reference to the GameImporter for tracking import progress
     @ObservedObject private var gameImporter = GameImporter.shared
     
-    // State to hold the import queue items
-    @State private var importQueueItems: [ImportQueueItem] = []
+    // Import queue items are now handled by ImportProgressView
 
     // Observed results for all games in the database with debouncing wrapper
     @ObservedResults(
@@ -44,6 +43,10 @@ public struct RetroGameLibraryView: View {
     
     // IDs to force view stability and prevent flickering
     @State private var importQueueUpdateID = UUID()
+    @State private var importQueueItems: [ImportQueueItem] = [ImportQueueItem]()
+    
+    // State to control the presentation of ImportStatusView
+    @State private var showImportStatusView = false
 
     // Track expanded sections with AppStorage to persist between app runs
     @AppStorage("GameLibraryExpandedSections") private var expandedSectionsData: Data = Data()
@@ -172,13 +175,7 @@ public struct RetroGameLibraryView: View {
                     .store(in: &cancellables)
                 
 
-                // Set up timer to refresh the import queue status
-                setupImportQueueRefreshTimer()
-                
-                // Load initial import queue items
-                Task {
-                    await refreshImportQueue()
-                }
+                // Import queue refresh is now handled by ImportProgressView
                 
                 loadExpandedSections()
             }
@@ -581,12 +578,7 @@ public struct RetroGameLibraryView: View {
     }
 
     /// Function to refresh the import queue items
-    private func refreshImportQueue() async {
-        let queue = await gameImporter.importQueue
-        await MainActor.run {
-            self.importQueueItems = queue
-        }
-    }
+    // Import queue refresh is now handled by ImportProgressView
     
     private func importFiles(urls: [URL]) {
         ILOG("RetroGameLibraryView: Importing \(urls.count) files")
@@ -810,101 +802,22 @@ extension RetroGameLibraryView {
     /// Import progress view with retrowave styling
     @ViewBuilder
     private func importProgressView() -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            WithPerceptionTracking {
-                // Header with count of imports
-                HStack {
-                    Text("IMPORTING \(importQueueItems.count) FILES")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(.retroBlue)
-                    
-                    Spacer()
-                    
-                    // Show processing status if any item is processing
-                    if importQueueItems.contains(where: { $0.status == .processing }) {
-                        Text("PROCESSING")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(.retroPink)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 2)
-                            .background(
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color.retroBlack.opacity(0.7))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 4)
-                                            .strokeBorder(Color.retroPink, lineWidth: 1)
-                                    )
-                            )
-                    }
-                }
-                
-                // Progress bar with retrowave styling
-                ZStack(alignment: .leading) {
-                    // Background track
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(Color.retroBlack.opacity(0.7))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 6)
-                                .strokeBorder(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    ),
-                                    lineWidth: 1.5
-                                )
-                        )
-                        .frame(height: 12)
-                    
-                    // Progress fill - count both completed and failed items for progress
-                    let processedCount = importQueueItems.filter { $0.status == .success || $0.status == .failure }.count
-                    let progress = importQueueItems.isEmpty ? 0.0 : Double(processedCount) / Double(importQueueItems.count)
-                    
-                    // Create a GeometryReader to get the actual width of the container
-                    GeometryReader { geometry in
-                        LinearGradient(
-                            gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                        // Calculate width as a percentage of the available width
-                        // Use max to ensure a minimum visible width
-                        .frame(width: max(12, progress * geometry.size.width), height: 8)
-                        .cornerRadius(4)
-                        .padding(2)
-                    }
-                    // Set a fixed height for the GeometryReader
-                    .frame(height: 12)
-                }
-                
-                // Status details
-                HStack(spacing: 12) {
-                    statusCountView(count: importQueueItems.filter { $0.status == .queued }.count, label: "QUEUED", color: .gray)
-                    statusCountView(count: importQueueItems.filter { $0.status == .processing }.count, label: "PROCESSING", color: .retroBlue)
-                    statusCountView(count: importQueueItems.filter { $0.status == .success }.count, label: "COMPLETED", color: .retroYellow)
-                    statusCountView(count: importQueueItems.filter { $0.status == .failure }.count, label: "FAILED", color: .retroPink)
-                    
-                    Spacer()
-                }
+        ImportProgressView(
+            gameImporter: gameImporter,
+            updatesController: AppState.shared.libraryUpdatesController!,
+            onTap: {
+                showImportStatusView = true
             }
-        }
-        .padding(12)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.retroBlack.opacity(0.7))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ),
-                            lineWidth: 1.5
-                        )
-                )
         )
-        .shadow(color: Color.retroPink.opacity(0.3), radius: 5, x: 0, y: 0)
+        .sheet(isPresented: $showImportStatusView) {
+            ImportStatusView(
+                updatesController: AppState.shared.libraryUpdatesController!,
+                gameImporter: gameImporter,
+                dismissAction: {
+                    showImportStatusView = false
+                }
+            )
+        }
     }
     
     /// Helper view for status counts

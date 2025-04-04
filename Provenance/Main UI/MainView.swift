@@ -26,7 +26,7 @@ struct MainView: View {
             Group {
                 switch appState.mainUIMode {
                 case .paged:
-                    SwiftUIHostedProvenanceMainView(appDelegate: appDelegate)
+                    SwiftUIHostedProvenanceMainView()
                         .environmentObject(appDelegate)
                         .edgesIgnoringSafeArea(.all)
                 case .singlePage:
@@ -35,9 +35,14 @@ struct MainView: View {
                         .environmentObject(ThemeManager.shared)
                         .edgesIgnoringSafeArea(.all)
                 case .uikit:
-                    UIKitHostedProvenanceMainView(appDelegate: appDelegate)
+                    RetroMainView()
                         .environmentObject(appDelegate)
+                        .environmentObject(ThemeManager.shared)
                         .edgesIgnoringSafeArea(.all)
+
+//                    UIKitHostedProvenanceMainView(appDelegate: appDelegate)
+//                        .environmentObject(appDelegate)
+//                        .edgesIgnoringSafeArea(.all)
                 }
             }
             .onAppear {

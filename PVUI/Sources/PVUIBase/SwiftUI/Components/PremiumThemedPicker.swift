@@ -31,17 +31,31 @@ public struct PremiumThemedPicker<T: CaseIterable & Identifiable & CustomStringC
         PaidFeatureView {
             VStack(alignment: .leading) {
                 label
-                
-                // Retrowave-styled picker
-                HStack(spacing: 12) {
-                    ForEach(options) { option in
-                        RetroOptionButton(
-                            option: option,
-                            isSelected: selection == option,
-                            action: { selection = option }
-                        )
+                Picker.init(selection: $selection) {
+                    ForEach(ThemeName.allCases, id: \.self) { theme in
+                        Text(theme.rawValue.uppercased()).tag(theme)
                     }
+                } label: {
+                    label
                 }
+                .pickerStyle(.wheel)
+                .frame(height: 100)
+                .onChange(of: selection) { newValue in
+                    selection = newValue
+                }
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                )
+                .background(Color.retroBlack.opacity(0.5))
+                .cornerRadius(8)
                 .padding(.top, 8)
             }
         } lockedView: {

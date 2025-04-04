@@ -51,12 +51,15 @@ public struct PVSettingsView: View {
     weak var menuDelegate: PVMenuDelegate!
 
     @ObservedObject var conflictsController: PVGameLibraryUpdatesController
+    
+    @State public var showsDoneButton: Bool = true
 
     // Update initializer to take dismissAction
-    public init(conflictsController: PVGameLibraryUpdatesController, menuDelegate: PVMenuDelegate, dismissAction: @escaping () -> Void) {
+    public init(conflictsController: PVGameLibraryUpdatesController, menuDelegate: PVMenuDelegate, showsDoneButton: Bool = true, dismissAction: @escaping () -> Void) {
         self.conflictsController = conflictsController
         self.dismissAction = dismissAction
         _viewModel = StateObject(wrappedValue: PVSettingsViewModel(menuDelegate: menuDelegate, conflictsController: conflictsController))
+        self.showsDoneButton = showsDoneButton
     }
 
     public var body: some View {
@@ -161,28 +164,30 @@ public struct PVSettingsView: View {
                 // Custom navigation bar
                 VStack {
                     HStack {
-                        // Done button with retrowave styling
-                        Button(action: { dismissAction() }) {
-                            Text("DONE")
-                                .font(.system(size: 16, weight: .bold))
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 8)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .fill(Color.black.opacity(0.6))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .strokeBorder(
-                                                    LinearGradient(
-                                                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                                        startPoint: .leading,
-                                                        endPoint: .trailing
-                                                    ),
-                                                    lineWidth: 1.5
-                                                )
-                                        )
-                                )
+                        if showsDoneButton {
+                            // Done button with retrowave styling
+                            Button(action: { dismissAction() }) {
+                                Text("DONE")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 8)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color.black.opacity(0.6))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .strokeBorder(
+                                                        LinearGradient(
+                                                            gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                                            startPoint: .leading,
+                                                            endPoint: .trailing
+                                                        ),
+                                                        lineWidth: 1.5
+                                                    )
+                                            )
+                                    )
+                            }
                         }
                         
                         Spacer()

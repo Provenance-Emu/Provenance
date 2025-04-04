@@ -52,12 +52,20 @@ public final class PVSettingsSegmentedRow<T: RawRepresentable & CaseIterable & C
         }
         
         // Create segmented control with proper styling
-        let segmentedControl = UISegmentedControl(items: options.map { $0.description })
+        let segmentedControl = UISegmentedControl()
+        
+        // Add segments with titles
+        for (index, option) in options.enumerated() {
+            segmentedControl.insertSegment(withTitle: option.description, at: index, animated: false)
+        }
         
         // Set current selection
         let currentValue = Defaults[key]
         if let index = options.firstIndex(where: { $0 == currentValue }) {
             segmentedControl.selectedSegmentIndex = index
+        } else if !options.isEmpty {
+            // Default to first option if current value not found
+            segmentedControl.selectedSegmentIndex = 0
         }
         
         // Configure size and appearance
@@ -71,7 +79,14 @@ public final class PVSettingsSegmentedRow<T: RawRepresentable & CaseIterable & C
             // Use system colors that match our retrowave theme
             segmentedControl.selectedSegmentTintColor = UIColor(red: 0.9, green: 0.2, blue: 0.6, alpha: 1.0) // Pink
             segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
-            segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.lightGray], for: .normal)
+            segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.darkGray], for: .normal)
+            
+            // Ensure proper sizing
+            segmentedControl.layer.cornerRadius = 8
+            segmentedControl.layer.masksToBounds = true
+        } else {
+            // For iOS 12 and below
+            segmentedControl.tintColor = UIColor(red: 0.9, green: 0.2, blue: 0.6, alpha: 1.0) // Pink
         }
         
         // Add action
@@ -83,8 +98,11 @@ public final class PVSettingsSegmentedRow<T: RawRepresentable & CaseIterable & C
         objc_setAssociatedObject(segmentedControl, &AssociatedKeys.defaultsKey, key, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         objc_setAssociatedObject(segmentedControl, &AssociatedKeys.rowKey, self, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         
+        // Calculate appropriate width based on number of segments and content
+        let estimatedWidth = min(max(CGFloat(options.count * 60), 200), 300)
+        
         // Create a container view for the segmented control
-        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 200, height: 40))
+        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: estimatedWidth, height: 40))
         containerView.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(segmentedControl)
         
@@ -92,9 +110,9 @@ public final class PVSettingsSegmentedRow<T: RawRepresentable & CaseIterable & C
         NSLayoutConstraint.activate([
             segmentedControl.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             segmentedControl.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            segmentedControl.topAnchor.constraint(equalTo: containerView.topAnchor),
-            segmentedControl.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
-            containerView.widthAnchor.constraint(greaterThanOrEqualToConstant: 200),
+            segmentedControl.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            segmentedControl.heightAnchor.constraint(equalToConstant: 32),
+            containerView.widthAnchor.constraint(equalToConstant: estimatedWidth),
             containerView.heightAnchor.constraint(equalToConstant: 40)
         ])
         
@@ -115,6 +133,9 @@ public final class PVSettingsSegmentedRow<T: RawRepresentable & CaseIterable & C
         
         let selectedOption = options[sender.selectedSegmentIndex]
         Defaults[key] = selectedOption
+        
+        // Log the selection for debugging
+        print("Selected segment: \(sender.selectedSegmentIndex), value: \(selectedOption.description)")
         
         // Call the action if provided
         if let row = objc_getAssociatedObject(sender, &AssociatedKeys.rowKey) as? PVSettingsSegmentedRow<T> {

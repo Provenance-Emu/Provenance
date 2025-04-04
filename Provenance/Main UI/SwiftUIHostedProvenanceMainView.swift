@@ -11,12 +11,10 @@ import Foundation
 import PVLogging
 
 struct SwiftUIHostedProvenanceMainView: UIViewControllerRepresentable {
-    let appDelegate: PVAppDelegate
+    /// Use EnvironmentObject for app delegate
+    @EnvironmentObject private var appDelegate: PVAppDelegate
 
-    init(appDelegate: PVAppDelegate) {
-        ILOG("MainView: Using SwiftUI interface")
-        self.appDelegate = appDelegate
-    }
+    init() { }
 
     func makeUIViewController(context: Context) -> UIViewController {
         ILOG("SwiftUIHostedProvenanceMainView: Making UIViewController")

@@ -31,7 +31,8 @@ struct SettingsWrapperView: View {
 
             PVSettingsView(
                 conflictsController: pvgamelibraryUpdatesController,
-                menuDelegate: menuDelegate
+                menuDelegate: menuDelegate,
+                showsDoneButton: false
             ) {
                 showingSettings = false
             }
