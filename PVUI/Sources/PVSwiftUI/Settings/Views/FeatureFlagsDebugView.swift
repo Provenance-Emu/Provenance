@@ -724,6 +724,7 @@ private struct UserDefaultToggle: View {
                 }
                 Spacer()
                 Toggle("", isOn: $isOn)
+                    .toggleStyle(RetroTheme.RetroToggleStyle())
             }
         }
         .padding(.vertical, 4)
