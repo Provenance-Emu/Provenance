@@ -275,9 +275,6 @@ struct UITestingApp: SwiftUI.App {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                             viewRefreshTrigger = UUID()
                         }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            viewRefreshTrigger = UUID()
-                        }
                     }
                 }
                 .onReceive(NotificationCenter.default.publisher(for: Notification.Name("BootupCompleted"))) { _ in
@@ -285,12 +282,12 @@ struct UITestingApp: SwiftUI.App {
                     viewRefreshTrigger = UUID()
 
                     // Schedule multiple refreshes with different delays
-                    for delay in [0.1, 0.3, 0.5, 1.0] {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                            ILOG("UITestingApp: Forcing refresh after BootupCompleted at \(delay)s")
-                            viewRefreshTrigger = UUID()
-                        }
-                    }
+//                    for delay in [0.1, 0.3, 0.5, 1.0] {
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+//                            ILOG("UITestingApp: Forcing refresh after BootupCompleted at \(delay)s")
+//                            viewRefreshTrigger = UUID()
+//                        }
+//                    }
                 }
                 .onReceive(NotificationCenter.default.publisher(for: Notification.Name("BootupStateChanged"))) { notification in
                     if let stateName = notification.userInfo?["state"] as? String {
