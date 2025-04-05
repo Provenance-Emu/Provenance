@@ -27,6 +27,7 @@ import FreemiumKit
 struct UITestingApp: SwiftUI.App {
     // Static shared instance for access from other components
     static var shared: UITestingApp!
+    @UIApplicationDelegateAdaptor(PVAppDelegate.self) var appDelegate
 
     init() {
         UITestingApp.shared = self
@@ -36,7 +37,7 @@ struct UITestingApp: SwiftUI.App {
 
     // Use the shared AppState for state management
     @StateObject private var appState = AppState.shared
-    @StateObject private var sceneCoordinator = TestSceneCoordinator.shared
+    @StateObject private var sceneCoordinator = SceneCoordinator.shared
     @Environment(\.scenePhase) private var scenePhase
 
     // Add a state variable to force view refreshes
@@ -121,17 +122,6 @@ struct UITestingApp: SwiftUI.App {
     @State private var emulatorError: String? = nil
     @State private var coreInstance: PVEmulatorCore? = nil
 
-    /// Prepare the emulator core instance
-    private func prepareEmulatorCore(forGame game: PVGame?) {
-            // TODO: We already have the default GameLaunchingViewController.swift protocol to use to find the right core
-    }
-
-
-    /// Creates the game controls view when a test game is available
-    @ViewBuilder
-    private func gameLibraryView() -> some View {
-        // TODO: Cells for PVGames or emtpy library
-    }
 
     // MARK: - Launch Methods
 
@@ -223,13 +213,17 @@ struct UITestingApp: SwiftUI.App {
                 .environmentObject(appState)
                 .environmentObject(ThemeManager.shared)
                 .environmentObject(sceneCoordinator)
+                .environmentObject(appDelegate)
                 .hideHomeIndicator() // Hide the home indicator
 #if canImport(FreemiumKit)
                 .environmentObject(FreemiumKit.shared)
-                .onAppear {
-                    FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
-                }
 #endif
+                .onAppear {
+#if canImport(FreemiumKit)
+                    FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
+#endif
+                    appDelegate.appState = appState
+                }
                 .onReceive(bootupRefreshTimer) { _ in
                     // Only refresh during bootup process
                     if appState.bootupStateManager.currentState != .completed {
@@ -247,15 +241,15 @@ struct UITestingApp: SwiftUI.App {
                         bootupRefreshTimer.upstream.connect().cancel()
 
                         // Schedule multiple refreshes with different delays
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            viewRefreshTrigger = UUID()
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            viewRefreshTrigger = UUID()
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                            viewRefreshTrigger = UUID()
-                        }
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//                            viewRefreshTrigger = UUID()
+//                        }
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+//                            viewRefreshTrigger = UUID()
+//                        }
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+//                            viewRefreshTrigger = UUID()
+//                        }
                     }
                 }
                 .onReceive(appState.$isInitialized) { initialized in
@@ -329,7 +323,7 @@ struct UITestingApp: SwiftUI.App {
 
 
         // Add the emulator scene as a separate scene
-        EmulatorScene()
+        TestEmulatorScene()
     }
 }
 

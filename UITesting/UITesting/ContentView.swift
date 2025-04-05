@@ -14,7 +14,9 @@ import PVLogging
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var themeManager: ThemeManager
-    @EnvironmentObject var sceneCoordinator: TestSceneCoordinator
+    @EnvironmentObject var sceneCoordinator: SceneCoordinator
+    /// Use EnvironmentObject for app delegate
+    @EnvironmentObject private var appDelegate: PVAppDelegate
 
     // State to force view refresh
     @State private var forceRefresh: Bool = false
@@ -71,7 +73,21 @@ struct ContentView: View {
                 } else {
                     // Show the main view
                     ZStack {
-                        RetroMainView()
+                        switch appState.mainUIMode {
+                        case .paged:
+                            SwiftUIHostedProvenanceMainView()
+                                .environmentObject(appDelegate)
+                                .edgesIgnoringSafeArea(.all)
+                        case .singlePage:
+                            RetroMainView()
+                                .environmentObject(appDelegate)
+                                .environmentObject(ThemeManager.shared)
+                                .edgesIgnoringSafeArea(.all)
+                        case .uikit:
+                            UIKitHostedProvenanceMainView(appDelegate: appDelegate)
+                                .environmentObject(appDelegate)
+                                .edgesIgnoringSafeArea(.all)
+                        }
                     }
                     .onAppear {
                         ILOG("ContentView: MainView appeared")
@@ -99,22 +115,22 @@ struct ContentView: View {
         .onAppear {
             ILOG("ContentView: Appeared with bootup state: \(bootupState.localizedDescription)")
 
-            // Force a refresh after a delay if we're in Database Initialized state
-            if case .databaseInitialized = bootupState {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                    ILOG("ContentView: Forcing refresh for Database Initialized state")
-                    forceRefresh.toggle()
-                }
-            }
-
-            // If we're already in completed state, force a refresh
-            if case .completed = bootupState, showCompletedContent {
-                // Refresh with delay to ensure the UI updates
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    ILOG("ContentView: Forcing immediate refresh for already Completed state")
-                    forceRefresh.toggle()
-                }
-            }
+//            // Force a refresh after a delay if we're in Database Initialized state
+//            if case .databaseInitialized = bootupState {
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+//                    ILOG("ContentView: Forcing refresh for Database Initialized state")
+//                    forceRefresh.toggle()
+//                }
+//            }
+//
+//            // If we're already in completed state, force a refresh
+//            if case .completed = bootupState, showCompletedContent {
+//                // Refresh with delay to ensure the UI updates
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//                    ILOG("ContentView: Forcing immediate refresh for already Completed state")
+//                    forceRefresh.toggle()
+//                }
+//            }
         }
         .onChange(of: bootupState) { newState in
             ILOG("ContentView: Bootup state changed to \(newState.localizedDescription)")

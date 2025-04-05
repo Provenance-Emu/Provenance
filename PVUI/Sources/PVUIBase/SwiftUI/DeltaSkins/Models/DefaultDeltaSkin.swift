@@ -3,6 +3,65 @@ import SwiftUI
 import PVPrimitives
 import UIKit
 
+// RetroGrid view for the background
+struct SkinRetroGrid: Shape {
+    let lineSpacing: CGFloat
+    let lineWidth: CGFloat
+    
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        
+        // Horizontal lines
+        for y in stride(from: 0, to: rect.height, by: lineSpacing) {
+            path.move(to: CGPoint(x: 0, y: y))
+            path.addLine(to: CGPoint(x: rect.width, y: y))
+        }
+        
+        // Vertical lines
+        for x in stride(from: 0, to: rect.width, by: lineSpacing) {
+            path.move(to: CGPoint(x: x, y: 0))
+            path.addLine(to: CGPoint(x: x, y: rect.height))
+        }
+        
+        return path
+    }
+}
+
+// Retrowave sun horizon effect
+struct RetrowaveSunrise: View {
+    var body: some View {
+        ZStack {
+            // Sun circle
+            Circle()
+                .fill(
+                    RadialGradient(
+                        gradient: Gradient(colors: [
+                            Color(red: 0.99, green: 0.11, blue: 0.55, opacity: 0.7),
+                            Color(red: 0.99, green: 0.11, blue: 0.55, opacity: 0.0)
+                        ]),
+                        center: .center,
+                        startRadius: 0,
+                        endRadius: 300
+                    )
+                )
+                .frame(width: 600, height: 600)
+                .offset(y: 300)
+                .blur(radius: 30)
+            
+            // Horizontal line grid (perspective effect)
+            VStack(spacing: 8) {
+                ForEach(0..<10) { index in
+                    Rectangle()
+                        .fill(Color(red: 0.99, green: 0.11, blue: 0.55, opacity: 0.3 - Double(index) * 0.03))
+                        .frame(height: 1)
+                }
+            }
+            .frame(width: 800)
+            .offset(y: 300)
+        }
+    }
+}
+
 /// A default implementation of DeltaSkinProtocol that provides a basic skin
 public class DefaultDeltaSkin: DeltaSkinProtocol {
     // MARK: - Required Properties
@@ -74,8 +133,25 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
     }
     
     public var backgroundColor: Color {
-        // Remove the gray background as requested by the user
-        return Color.clear
+        // Deep blue/purple for retrowave background
+        return Color(red: 0.05, green: 0.0, blue: 0.15, opacity: 0.9)
+    }
+    
+    // Add retrowave grid overlay
+    public var backgroundOverlay: some View {
+        ZStack {
+            // Retrowave grid with perspective effect
+            GeometryReader { geometry in
+                SkinRetroGrid(lineSpacing: 50, lineWidth: 0.5)
+                    .stroke(Color(red: 0.99, green: 0.11, blue: 0.55, opacity: 0.3))
+                    .frame(width: geometry.size.width * 2, height: geometry.size.height * 2)
+                    .offset(x: -geometry.size.width / 2, y: -geometry.size.height / 2)
+            }
+            
+            // Retrowave sun horizon effect
+            RetrowaveSunrise()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
     }
     
     // MARK: - Initialization
@@ -98,23 +174,75 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
     }
     
     public func image(for traits: DeltaSkinTraits) async throws -> UIImage {
-        // Create a transparent image as the default skin background
-        let size = traits.device == .ipad ? CGSize(width: 1024, height: 1366) : CGSize(width: 750, height: 1334)
-        let renderer = UIGraphicsImageRenderer(size: size)
-        return renderer.image { context in
-            // Draw a very subtle gradient background
-            let colors = [
-                UIColor.black.withAlphaComponent(0.1).cgColor,
-                UIColor.clear.cgColor
-            ]
-            let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(),
-                                     colors: colors as CFArray,
-                                     locations: [0, 1])!
-            context.cgContext.drawLinearGradient(gradient,
-                                              start: CGPoint(x: 0, y: 0),
-                                              end: CGPoint(x: 0, y: size.height),
-                                              options: [])
+        // Create a retrowave-themed background image
+        let imageSize = CGSize(width: 1000, height: 1000)
+        let renderer = UIGraphicsImageRenderer(size: imageSize)
+        
+        let backgroundImage = renderer.image { context in
+            // Draw a retrowave grid background
+            let ctx = context.cgContext
+            
+            // Fill with a dark background
+            UIColor(red: 0.05, green: 0.0, blue: 0.15, alpha: 0.9).setFill()
+            ctx.fill(CGRect(origin: .zero, size: imageSize))
+            
+            // Draw grid lines with perspective effect
+            UIColor(red: 0.99, green: 0.11, blue: 0.55, alpha: 0.3).setStroke()
+            ctx.setLineWidth(1.0)
+            
+            // Horizontal lines with perspective effect
+            let horizonY = imageSize.height * 0.7
+            let vanishingPointX = imageSize.width * 0.5
+            
+            // Draw horizontal lines with perspective
+            for i in 0..<20 {
+                let y = horizonY + CGFloat(i) * CGFloat(i) * 2.5
+                if y < imageSize.height {
+                    ctx.move(to: CGPoint(x: 0, y: y))
+                    ctx.addLine(to: CGPoint(x: imageSize.width, y: y))
+                }
+            }
+            
+            // Draw vertical lines with perspective
+            for i in 0..<20 {
+                let spacing = imageSize.width / 20
+                let x = vanishingPointX + spacing * CGFloat(i)
+                if x < imageSize.width {
+                    ctx.move(to: CGPoint(x: x, y: horizonY))
+                    ctx.addLine(to: CGPoint(x: imageSize.width, y: imageSize.height))
+                }
+                
+                let x2 = vanishingPointX - spacing * CGFloat(i)
+                if x2 > 0 {
+                    ctx.move(to: CGPoint(x: x2, y: horizonY))
+                    ctx.addLine(to: CGPoint(x: 0, y: imageSize.height))
+                }
+            }
+            
+            ctx.strokePath()
+            
+            // Draw a sun/horizon glow
+            let gradient = CGGradient(
+                colorsSpace: CGColorSpaceCreateDeviceRGB(),
+                colors: [
+                    UIColor(red: 0.99, green: 0.11, blue: 0.55, alpha: 0.7).cgColor,
+                    UIColor(red: 0.99, green: 0.11, blue: 0.55, alpha: 0.0).cgColor
+                ] as CFArray,
+                locations: [0.0, 1.0]
+            )
+            
+            let center = CGPoint(x: imageSize.width / 2, y: horizonY)
+            ctx.drawRadialGradient(
+                gradient!,
+                startCenter: center,
+                startRadius: 0,
+                endCenter: center,
+                endRadius: 300,
+                options: []
+            )
         }
+        
+        return backgroundImage
     }
     
     public func screens(for traits: DeltaSkinTraits) -> [DeltaSkinScreen]? {
@@ -160,19 +288,25 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
         let menuButtonWidth: CGFloat = isLandscape ? 0.12 : 0.15
         let menuButtonHeight: CGFloat = isLandscape ? 0.06 : 0.07
         
-        // D-pad position (left side)
+        // D-pad position (left side) - positioned for optimal ergonomics
         let dpadCenterX: CGFloat = isLandscape ? 0.15 : 0.20
-        let dpadCenterY: CGFloat = isLandscape ? 0.60 : 0.70
-        let dpadRadius: CGFloat = isLandscape ? 0.10 : 0.12
+        let dpadCenterY: CGFloat = isLandscape ? 0.50 : 0.55  // Higher position for better ergonomics
+        let dpadRadius: CGFloat = isLandscape ? 0.12 : 0.14    // Larger size for better touch targets
         
         // Create a directional D-pad with a single input mapping
+        // Street Fighter style with smaller arrows for diagonals
+        // Create a proper D-pad with all directions
         let dpad = DeltaSkinButton(
             id: "dpad",
             input: .directional([
                 "up": "up",
                 "down": "down",
                 "left": "left",
-                "right": "right"
+                "right": "right",
+                "up_left": "up+left",
+                "up_right": "up+right",
+                "down_left": "down+left",
+                "down_right": "down+right"
             ]),
             frame: CGRect(
                 x: dpadCenterX - dpadRadius,
@@ -183,20 +317,20 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
         )
         buttons.append(dpad)
         
-        // Action buttons position (right side)
+        // Action buttons position (right side) - arranged in proper gamepad layout
         let actionCenterX: CGFloat = isLandscape ? 0.85 : 0.80
-        let actionCenterY: CGFloat = isLandscape ? 0.60 : 0.70
+        let actionCenterY: CGFloat = isLandscape ? 0.50 : 0.55  // Aligned with D-pad for better ergonomics
         
         // Create action buttons based on system type
         switch systemIdentifier {
         case .SNES:
-            // SNES has 4 action buttons in a diamond pattern
+            // SNES has 4 action buttons in a diamond pattern (proper SNES layout)
             let buttonA = DeltaSkinButton(
                 id: "button_a",
                 input: .single("a"),
                 frame: CGRect(
-                    x: actionCenterX + actionButtonSize/2,
-                    y: actionCenterY,
+                    x: actionCenterX + actionButtonSize * 0.6,
+                    y: actionCenterY + actionButtonSize * 0.6,
                     width: actionButtonSize,
                     height: actionButtonSize
                 )
@@ -206,8 +340,8 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
                 id: "button_b",
                 input: .single("b"),
                 frame: CGRect(
-                    x: actionCenterX,
-                    y: actionCenterY + actionButtonSize/2,
+                    x: actionCenterX - actionButtonSize * 0.6,
+                    y: actionCenterY + actionButtonSize * 0.6,
                     width: actionButtonSize,
                     height: actionButtonSize
                 )
@@ -217,8 +351,8 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
                 id: "button_x",
                 input: .single("x"),
                 frame: CGRect(
-                    x: actionCenterX,
-                    y: actionCenterY - actionButtonSize/2,
+                    x: actionCenterX + actionButtonSize * 0.6,
+                    y: actionCenterY - actionButtonSize * 0.6,
                     width: actionButtonSize,
                     height: actionButtonSize
                 )
@@ -228,8 +362,8 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
                 id: "button_y",
                 input: .single("y"),
                 frame: CGRect(
-                    x: actionCenterX - actionButtonSize/2,
-                    y: actionCenterY,
+                    x: actionCenterX - actionButtonSize * 0.6,
+                    y: actionCenterY - actionButtonSize * 0.6,
                     width: actionButtonSize,
                     height: actionButtonSize
                 )
@@ -238,13 +372,13 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
             buttons.append(contentsOf: [buttonA, buttonB, buttonX, buttonY])
             
         case .Genesis, .SegaCD, .Sega32X:
-            // Genesis has 3 action buttons in a row
+            // Genesis has 3 action buttons in an arc pattern (authentic Genesis layout)
             let buttonA = DeltaSkinButton(
                 id: "button_a",
                 input: .single("a"),
                 frame: CGRect(
-                    x: actionCenterX - actionButtonSize,
-                    y: actionCenterY,
+                    x: actionCenterX + actionButtonSize * 0.8,
+                    y: actionCenterY + actionButtonSize * 0.2,
                     width: actionButtonSize,
                     height: actionButtonSize
                 )
@@ -265,8 +399,8 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
                 id: "button_c",
                 input: .single("c"),
                 frame: CGRect(
-                    x: actionCenterX + actionButtonSize,
-                    y: actionCenterY,
+                    x: actionCenterX - actionButtonSize * 0.8,
+                    y: actionCenterY + actionButtonSize * 0.2,
                     width: actionButtonSize,
                     height: actionButtonSize
                 )
@@ -275,12 +409,12 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
             buttons.append(contentsOf: [buttonA, buttonB, buttonC])
             
         default:
-            // Most systems have 2 action buttons (A and B)
+            // Most systems have 2 action buttons (A and B) - arranged in proper NES/GB layout
             let buttonA = DeltaSkinButton(
                 id: "button_a",
                 input: .single("a"),
                 frame: CGRect(
-                    x: actionCenterX + actionButtonSize/2,
+                    x: actionCenterX + actionButtonSize * 0.7,
                     y: actionCenterY,
                     width: actionButtonSize,
                     height: actionButtonSize
@@ -291,8 +425,8 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
                 id: "button_b",
                 input: .single("b"),
                 frame: CGRect(
-                    x: actionCenterX,
-                    y: actionCenterY + actionButtonSize/2,
+                    x: actionCenterX - actionButtonSize * 0.7,
+                    y: actionCenterY,
                     width: actionButtonSize,
                     height: actionButtonSize
                 )
@@ -330,11 +464,12 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
             buttons.append(contentsOf: [buttonL, buttonR])
         }
         
-        // Add Start/Select buttons centered at the bottom
-        let startX = 0.5 + menuButtonWidth/2 + 0.02
-        let selectX = 0.5 - menuButtonWidth/2 - 0.02
-        let menuY = isLandscape ? 0.90 : 0.88
+        // Add Start/Select buttons properly centered at the bottom with proper spacing
+        let menuY = isLandscape ? 0.90 : 0.85
+        let startX = 0.5 + menuButtonWidth/2 + 0.05 // More spacing between buttons
+        let selectX = 0.5 - menuButtonWidth/2 - 0.05
         
+        // Start button with retrowave styling
         let startButton = DeltaSkinButton(
             id: "button_start",
             input: .single("start"),
@@ -346,6 +481,7 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
             )
         )
         
+        // Select button with retrowave styling
         let selectButton = DeltaSkinButton(
             id: "button_select",
             input: .single("select"),
@@ -358,6 +494,39 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
         )
         
         buttons.append(contentsOf: [startButton, selectButton])
+        
+        // Add menu and turbo buttons horizontally at the top center
+        let menuButtonX = 0.5 - menuButtonWidth - 0.02
+        let turboButtonX = 0.5 + 0.02
+        let utilityButtonY = isLandscape ? 0.05 : 0.05
+        
+        // Menu button (previously vertical, now horizontal)
+        // Menu button with retrowave styling - positioned at top left
+        let menuButton = DeltaSkinButton(
+            id: "button_menu",
+            input: .single("menu"),
+            frame: CGRect(
+                x: 0.05,
+                y: 0.05,
+                width: menuButtonWidth,
+                height: menuButtonHeight
+            )
+        )
+        
+        // Turbo button (renamed from Fast Forward)
+        // Turbo button (renamed from Fast Forward) with retrowave styling - positioned at top right
+        let turboButton = DeltaSkinButton(
+            id: "button_fast_forward",
+            input: .single("fast_forward"),
+            frame: CGRect(
+                x: 0.95 - menuButtonWidth,
+                y: 0.05,
+                width: menuButtonWidth,
+                height: menuButtonHeight
+            )
+        )
+        
+        buttons.append(contentsOf: [menuButton, turboButton])
         
         return buttons
     }

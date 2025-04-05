@@ -5,12 +5,14 @@
 //  Created by Joseph Mattiello on 11/12/22.
 //  Copyright © 2022 Provenance Emu. All rights reserved.
 //
+#if canImport(PVJIT)
+import PVJIT
+
 #if !os(tvOS)
 import Foundation
 import PVSupport
 import UIKit
 import PVSettings
-import PVJIT
 import JITManager
 import PVLogging
 
@@ -146,7 +148,7 @@ extension PVAppDelegate {
 #if os(iOS)
 // MARK: - JIT Screen Delegate
 extension PVAppDelegate: JitScreenDelegate {
-    func didFinishJitScreen(result: Bool, sender: Any) {
+    public func didFinishJitScreen(result: Bool, sender: Any) {
         ILOG("JIT: Result: \(result) Sender: \(String(describing: sender))")
         if let jitWaitScreenVC = jitWaitScreenVC {
             VLOG("JIT: jitWaitScreenVC being dismissed")
@@ -165,4 +167,5 @@ extension PVAppDelegate: JitScreenDelegate {
     }
 }
 #endif
-#endif
+#endif // !tvOS
+#endif // If can import

@@ -16,7 +16,7 @@ import PVRealm
 import PVFileSystem
 import PVUIBase
 
-#if !targetEnvironment(macCatalyst) && !os(macOS) // && canImport(SteamController)
+#if !targetEnvironment(macCatalyst) && !os(macOS) && canImport(SteamController)
 import SteamController
 import UIKit
 #endif
@@ -66,7 +66,7 @@ extension PVAppDelegate {
         }
     }
 
-    func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+    public func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         #if !os(tvOS) && canImport(SiriusRating)
         if isAppStore {
             appRatingSignifigantEvent()
@@ -98,7 +98,7 @@ extension PVAppDelegate {
     }
 
 #if os(iOS) || os(macOS)
-    func application(_: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+    public func application(_: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         defer {
             if isAppStore {
                 appRatingSignifigantEvent()
@@ -115,7 +115,7 @@ extension PVAppDelegate {
     }
 #endif
 
-    func application(_: UIApplication, continue userActivity: NSUserActivity, restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+    public func application(_: UIApplication, continue userActivity: NSUserActivity, restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         defer {
             #if !os(tvOS)
             if isAppStore {
@@ -127,6 +127,7 @@ extension PVAppDelegate {
         ILOG("PVAppDelegate: Continuing user activity: \(userActivity.activityType)")
 
         // Check if this is an intent-based user activity
+        #if false
         #if os(iOS)
         if #available(iOS 14.0, *) {
             if handleIntentUserActivity(userActivity) {
@@ -134,7 +135,7 @@ extension PVAppDelegate {
             }
         }
         #endif
-
+        #endif
         // Spotlight search click-through
 #if os(iOS) || os(macOS)
         if userActivity.activityType == CSSearchableItemActionType {
@@ -155,7 +156,7 @@ extension PVAppDelegate {
 }
 
 extension PVAppDelegate {
-    func handle(fileURL url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+    public func handle(fileURL url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         let filename = url.lastPathComponent
         let destinationPath = Paths.romsImportPath.appendingPathComponent(filename, isDirectory: false)
         var secureDocument = false
@@ -183,7 +184,7 @@ extension PVAppDelegate {
         return true
     }
 
-    func handle(appURL url: URL,  options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+    public func handle(appURL url: URL,  options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 
         guard let components = components else {

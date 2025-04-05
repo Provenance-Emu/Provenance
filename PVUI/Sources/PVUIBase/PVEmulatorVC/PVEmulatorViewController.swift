@@ -1195,6 +1195,7 @@ extension PVEmulatorViewController {
         // We want the game view to be ABOVE the skin container
         // This ensures the game is visible above any skin background elements
         view.bringSubviewToFront(gpuView)
+        view.bringSubviewToFront(skinContainer)
 
         // If we have a menu button, make sure it's on top of everything
         if let menuButton = menuButton {

@@ -5,7 +5,7 @@
 //  Created by Joseph Mattiello
 //  Copyright © 2025 Provenance Emu. All rights reserved.
 //
-
+#if false
 import Foundation
 import Intents
 import PVLogging
@@ -70,7 +70,7 @@ extension PVAppDelegate {
     ///   - application: The UIApplication instance
     ///   - intent: The intent to handle
     ///   - completion: Completion handler to call when the intent is handled
-    func application(_ application: UIApplication, handle intent: INIntent, completionHandler: @escaping (INIntentResponse) -> Void) {
+    public func application(_ application: UIApplication, handle intent: INIntent, completionHandler: @escaping (INIntentResponse) -> Void) {
         ILOG("PVAppDelegate: Handling intent: \(intent)")
 
         // Handle the Open intent
@@ -86,7 +86,7 @@ extension PVAppDelegate {
     }
 
     /// Update the application(_:continue:restorationHandler:) method to handle intents from user activities
-    func handleIntentUserActivity(_ userActivity: NSUserActivity) -> Bool {
+    public func handleIntentUserActivity(_ userActivity: NSUserActivity) -> Bool {
         ILOG("PVAppDelegate: Handling user activity for intent: \(userActivity.activityType)")
 
         // Check if this is an intent-based user activity
@@ -114,7 +114,7 @@ extension PVAppDelegate {
     ///   - application: The UIApplication instance
     ///   - intent: The intent to handle
     /// - Returns: The intent handler for the given intent
-    func application(_ application: UIApplication, handlerFor intent: INIntent) -> Any? {
+    public func application(_ application: UIApplication, handlerFor intent: INIntent) -> Any? {
         // Create and return a new instance of our intent handler
         if intent is PVOpenIntent {
             ILOG("PVAppDelegate: Providing handler for PVOpenIntent")
@@ -125,4 +125,5 @@ extension PVAppDelegate {
         return nil
     }
 }
+#endif
 #endif

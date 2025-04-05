@@ -2607,104 +2607,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B39436512CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"App Delegate/PVAppDelegate+AppRating.swift",
-				"App Delegate/PVAppDelegate+NitoTV.swift",
-			);
-			target = B3F7E422297736C200362B92 /* Provenance-XL */;
-		};
-		B39436522CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"App Delegate/PVAppDelegate+AppRating.swift",
-			);
-			target = 1A3D409317B2DCE4004DFFFC /* Provenance */;
-		};
-		B39436532CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"App Delegate/PVAppDelegate+AppRating+NOOP.swift",
-				"App Delegate/PVAppDelegate+JIT.swift",
-			);
-			platformFiltersByRelativePath = {
-				"App Delegate/PVAppDelegate+AppRating.swift" = (
-					ios,
-					maccatalyst,
-				);
-				"App Delegate/PVAppDelegate+NitoTV.swift" = (
-					tvos,
-				);
-			};
-			target = B394CC562BDEE53A006B63E8 /* Provenance (AppStore) */;
-		};
-		B39436542CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"App Delegate/PVAppDelegate+AppRating.swift",
-			);
-			platformFiltersByRelativePath = {
-				"App Delegate/PVAppDelegate+NitoTV.swift" = (
-					tvos,
-				);
-			};
-			target = B3F7E295297736BE00362B92 /* Provenance-Lite */;
-		};
-		B39436552CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"App Delegate/PVAppDelegate+AppRating+NOOP.swift",
-				"App Delegate/PVAppDelegate+JIT.swift",
-			);
-			platformFiltersByRelativePath = {
-				"App Delegate/PVAppDelegate+AppRating.swift" = (
-					ios,
-					maccatalyst,
-				);
-				"App Delegate/PVAppDelegate+NitoTV.swift" = (
-					tvos,
-				);
-			};
-			target = B35EEF542C6C6D1A00EBD1A8 /* Provenance-Lite (AppStore) */;
-		};
-		B39436562CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"App Delegate/PVAppDelegate+AppRating.swift",
-				"App Delegate/PVAppDelegate+NitoTV.swift",
-			);
-			target = 930498BE2A93073800BF257F /* Provenance-UnderDevelopment */;
-		};
-		B39436572CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"App Delegate/PVAppDelegate+AppRating.swift",
-				"App Delegate/PVAppDelegate+VolumeButton.swift",
-			);
-			target = 1AD481B31BA350A400FDA50A /* ProvenanceTV */;
-		};
-		B39436582CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"App Delegate/PVAppDelegate+AppRating.swift",
-				"App Delegate/PVAppDelegate+JIT.swift",
-			);
-			platformFiltersByRelativePath = {
-				"App Delegate/PVAppDelegate+NitoTV.swift" = (
-					tvos,
-				);
-			};
-			target = B341FCB72BE61EC100718929 /* ProvenanceTV (AppStore) */;
-		};
-		B39436592CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"App Delegate/PVAppDelegate+AppRating.swift",
-				"App Delegate/PVAppDelegate+VolumeButton.swift",
-			);
-			target = B347B2352BC4CA98006A3B2D /* ProvennaceTV-Lite */;
-		};
 		B3BE9FC12C7987B2006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -3213,7 +3115,7 @@
 		B30059402C794D6B003010F5 /* Provenance Mini Watch App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Provenance Mini Watch App"; sourceTree = "<group>"; };
 		B30059512C794D6C003010F5 /* Provenance Mini Watch AppTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Provenance Mini Watch AppTests"; sourceTree = "<group>"; };
 		B300595B2C794D6D003010F5 /* Provenance Mini Watch AppUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Provenance Mini Watch AppUITests"; sourceTree = "<group>"; };
-		B39436502CCDEC9D004D5DFB /* Main UI */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B39436512CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B39436522CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B39436532CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B39436542CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B39436552CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B39436562CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B39436572CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B39436582CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B39436592CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Main UI"; sourceTree = "<group>"; };
+		B39436502CCDEC9D004D5DFB /* Main UI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Main UI"; sourceTree = "<group>"; };
 		B3BE9FA62C7987B1006D989E /* ROM File Provider */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3BE9FC12C7987B2006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "ROM File Provider"; sourceTree = "<group>"; };
 		B3BE9FD12C7988BE006D989E /* Provenance Stickers */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3BE9FD82C7988BF006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Provenance Stickers"; sourceTree = "<group>"; };
 		B3FD95D52D613D2B00397643 /* Dependencies */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3FD984A2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD987B2D615C9400397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984B2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD986A2D615C7700397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984C2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98592D615C5100397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984D2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98912D615CF000397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984E2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98A22D615D1300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984F2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98C12D615D3300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD98502D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98D22D615D5000397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD98512D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98522D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Dependencies; sourceTree = "<group>"; };

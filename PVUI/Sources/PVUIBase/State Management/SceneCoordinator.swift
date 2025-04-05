@@ -69,15 +69,15 @@ public class SceneCoordinator: ObservableObject {
     }
     
     public func openMainScene() {
-//        guard let url = URL(string: "provenance://main") else {
-//            ELOG("Failed to create URL for main scene")
-//            return
-//        }
-//        
+        guard let url = URL(string: "provenance://main") else {
+            ELOG("Failed to create URL for main scene")
+            return
+        }
+        
         SkinImporterInjector.shared.service = DeltaSkinManager.shared
         
-//        ILOG("SceneCoordinator: Opening main scene")
-//        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        ILOG("SceneCoordinator: Opening main scene")
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
         ILOG("SceneCoordinator: Opening main scene")
         currentScene = .main
         showEmulator = false

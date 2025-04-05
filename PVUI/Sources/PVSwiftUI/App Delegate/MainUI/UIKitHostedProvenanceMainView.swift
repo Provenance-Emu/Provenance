@@ -10,20 +10,20 @@ import SwiftUI
 import Foundation
 import PVLogging
 
-struct UIKitHostedProvenanceMainView: UIViewControllerRepresentable {
-    let appDelegate: PVAppDelegate
+public struct UIKitHostedProvenanceMainView: UIViewControllerRepresentable {
+    public let appDelegate: PVAppDelegate
 
-    init(appDelegate: PVAppDelegate) {
+    public init(appDelegate: PVAppDelegate) {
         ILOG("MainView: Using UIKit interface")
         self.appDelegate = appDelegate
     }
 
-    func makeUIViewController(context: Context) -> UIViewController {
+    public func makeUIViewController(context: Context) -> UIViewController {
         ILOG("UIKitHostedProvenanceMainView: Making UIViewController")
         return appDelegate.setupUIKitInterface()
     }
 
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+    public  func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         ILOG("UIKitHostedProvenanceMainView: Updating UIViewController")
     }
 }

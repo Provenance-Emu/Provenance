@@ -5,7 +5,7 @@
 //  Created by Joseph Mattiello on 3/1/25.
 //  Copyright © 2025 Provenance Emu. All rights reserved.
 //
-
+#if false
 import Foundation
 import Intents
 import PVLogging
@@ -304,4 +304,5 @@ class PVIntentHandler: NSObject, PVOpenIntentHandling {
         completion(PVOpenIntentResponse(code: .failure, userActivity: nil))
     }
 }
+#endif
 #endif

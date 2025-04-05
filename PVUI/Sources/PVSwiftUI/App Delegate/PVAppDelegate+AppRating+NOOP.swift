@@ -8,6 +8,7 @@
 
 
 /// This is an empty version of this extension for the non-AppStore targets
+#if NOT_APPSTORE
 extension PVAppDelegate {
     func _initAppRating() {
     }
@@ -18,3 +19,4 @@ extension PVAppDelegate {
     func testAppRatingPrompt() {
     }
 }
+#endif

@@ -642,7 +642,7 @@ public struct RetroGameLibraryView: View {
     private func launchGame(_ game: PVGame) {
         ILOG("RetroGameLibraryView: Launching game: \(game.title) (ID: \(game.id))")
 
-        // Use the TestSceneCoordinator to launch the game
+        // Use the SceneCoordinator to launch the game
         sceneCoordinator.launchGame(game)
     }
 }

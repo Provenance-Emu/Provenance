@@ -11,7 +11,7 @@ import RealmSwift
 import RxSwift
 import UIKit
 import Intents
-
+import PVUIKit
 // Import custom modules for Provenance-specific functionality
 import PVSupport
 import PVEmulatorCore
@@ -19,7 +19,6 @@ import PVCoreBridge
 import PVThemes
 import PVSettings
 import PVUIBase
-import PVUIKit
 import PVSwiftUI
 import PVLogging
 import Combine
@@ -56,16 +55,16 @@ import FreemiumKit
 //#else
 //@Observable
 //#endif
-final class PVAppDelegate: UIResponder, UIApplicationDelegate, ObservableObject {
+public final class PVAppDelegate: UIResponder, UIApplicationDelegate, ObservableObject {
     /// This is set by the UIApplicationDelegateAdaptor
-    internal var window: UIWindow? = nil
+    public var window: UIWindow? = nil
 
     static func main() {
         UIApplicationMain(CommandLine.argc, CommandLine.unsafeArgv, NSStringFromClass(PVApplication.self), NSStringFromClass(PVAppDelegate.self))
     }
 
     /// This is set by the ContentView
-    var appState: AppState? {
+    public var appState: AppState? {
         didSet {
             ILOG("Did set appstate: currently is: \(appState?.bootupStateManager.currentState)")
         }
@@ -285,7 +284,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate, ObservableObject 
 
     private var autoLockTask: Task<Void, Never>?
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         #if canImport(FirebaseCore)
         FirebaseApp.configure()
         #endif
@@ -309,14 +308,16 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate, ObservableObject 
         _initThemeListener()
 
         // Register intent handler for Siri shortcuts
+#if false
         #if os(iOS)
         if #available(iOS 14.0, *) {
             registerIntentHandler()
         }
         #endif
+#endif
     }
 
-    func configureApplication(_ application: UIApplication,  launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) {
+    public func configureApplication(_ application: UIApplication,  launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) {
         // Handle if started from shortcut
 #if !os(tvOS)
         if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem,
@@ -499,7 +500,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate, ObservableObject 
     }
 
 
-    func applicationWillResignActive(_ application: UIApplication) {
+    public func applicationWillResignActive(_ application: UIApplication) {
         let emulationState = appState?.emulationUIState
         emulationState?.isInBackground = true
         pauseCore()
@@ -510,20 +511,20 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate, ObservableObject 
     }
 
     // TODO: Move to ProvenanceApp
-    func applicationDidEnterBackground(_ application: UIApplication) {
+    public func applicationDidEnterBackground(_ application: UIApplication) {
         appState?.emulationUIState.isInBackground = true
         pauseCore()
     }
 
-    func applicationWillEnterForeground(_: UIApplication) {}
+    public func applicationWillEnterForeground(_: UIApplication) {}
 
     // TODO: Move to ProvenanceApp
-    func applicationDidBecomeActive(_ application: UIApplication) {
+    public func applicationDidBecomeActive(_ application: UIApplication) {
         appState?.emulationUIState.isInBackground = false
     }
 
     // TODO: Move to ProvenanceApp
-    func applicationWillTerminate(_ application: UIApplication) {
+    public func applicationWillTerminate(_ application: UIApplication) {
         stopCore()
     }
 

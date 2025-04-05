@@ -1,5 +1,5 @@
 //
-//  EmulatorScene.swift
+//  TestEmulatorScene.swift
 //  Provenance
 //
 //  Created on 2025-03-25.
@@ -16,7 +16,7 @@ import PVThemes
 import RealmSwift
 
 /// A SwiftUI scene for displaying the emulator screen and controls
-struct EmulatorScene: Scene {
+struct TestEmulatorScene: Scene {
     @StateObject private var appState = AppState.shared
     @StateObject private var sceneCoordinator = SceneCoordinator.shared
     @Environment(\.scenePhase) private var scenePhase
@@ -30,20 +30,20 @@ struct EmulatorScene: Scene {
                 .hideHomeIndicator()
                 .statusBar(hidden: true)
                 .onAppear {
-                    ILOG("EmulatorScene: Scene appeared")
-                    ILOG("EmulatorScene: AppState.shared instance: \(AppState.shared)")
-                    ILOG("EmulatorScene: Current EmulationUIState: \(appState.emulationUIState)")
+                    ILOG("TestEmulatorScene: Scene appeared")
+                    ILOG("TestEmulatorScene: AppState.shared instance: \(AppState.shared)")
+                    ILOG("TestEmulatorScene: Current EmulationUIState: \(appState.emulationUIState)")
 
                     if let game = appState.emulationUIState.currentGame {
-                        ILOG("EmulatorScene: Current game in EmulationUIState: \(game.title) (ID: \(game.id))")
-                        ILOG("EmulatorScene: Game details - System: \(game.system?.name ?? "nil"), userPreferredCoreID: \(game.userPreferredCoreID ?? "nil")")
+                        ILOG("TestEmulatorScene: Current game in EmulationUIState: \(game.title) (ID: \(game.id))")
+                        ILOG("TestEmulatorScene: Game details - System: \(game.system?.name ?? "nil"), userPreferredCoreID: \(game.userPreferredCoreID ?? "nil")")
                     } else {
-                        ELOG("EmulatorScene: No game found in EmulationUIState")
+                        ELOG("TestEmulatorScene: No game found in EmulationUIState")
                     }
                 }
                 .onChange(of: scenePhase) { newPhase in
                     if newPhase == .active {
-                        ILOG("EmulatorScene: Scene became active")
+                        ILOG("TestEmulatorScene: Scene became active")
                         // Make sure the emulation doesn't pause when scene is active
                         if let core = appState.emulationUIState.core,
                            let emulator = appState.emulationUIState.emulator,
@@ -51,13 +51,13 @@ struct EmulatorScene: Scene {
                             core.setPauseEmulation(false)
                         }
                     } else if newPhase == .background {
-                        ILOG("EmulatorScene: Scene went to background")
+                        ILOG("TestEmulatorScene: Scene went to background")
                         // Pause emulation when scene goes to background
                         if let core = appState.emulationUIState.core {
                             core.setPauseEmulation(true)
                         }
                     } else if newPhase == .inactive {
-                        ILOG("EmulatorScene: Scene became inactive")
+                        ILOG("TestEmulatorScene: Scene became inactive")
                     }
                 }
         }

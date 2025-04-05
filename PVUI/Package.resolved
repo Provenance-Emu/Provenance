@@ -1,5 +1,5 @@
 {
-  "originHash" : "646e35e5d4de7448b071ddea3f510be0a9eb673dafc608b68062d7578621de78",
+  "originHash" : "29d83049dfefe5adbb9e4d81db12e3701422236bd3eec1c382c4757e47554206",
   "pins" : [
     {
       "identity" : "activityindicatorview",
@@ -197,6 +197,15 @@
       "state" : {
         "revision" : "c7c7d2cf50a3211fe2843f76869c698e4e417930",
         "version" : "6.8.0"
+      }
+    },
+    {
+      "identity" : "sidekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SideStore/SideKit.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "ab959a54fc2217464ffabd09322ec3351e3ca456"
       }
     },
     {
