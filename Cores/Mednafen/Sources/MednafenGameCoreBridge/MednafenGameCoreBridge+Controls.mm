@@ -21,10 +21,12 @@
 
 #pragma mark Atari Lynx
 - (void)didPushLynxButton:(PVLynxButton)button forPlayer:(NSInteger)player {
+    DLOG(@"%i, %i", button, player);
     inputBuffer[player][0] |= 1 << [InputMaps.LynxMap[button] intValue];
 }
 
 - (void)didReleaseLynxButton:(PVLynxButton)button forPlayer:(NSInteger)player {
+    DLOG(@"%i, %i", button, player);
     inputBuffer[player][0] &= ~(1 << [InputMaps.LynxMap[button] intValue]);
 }
 
@@ -341,10 +343,12 @@
 
 #pragma mark Virtual Boy
 - (void)didPushVBButton:(PVVBButton)button forPlayer:(NSInteger)player {
+    DLOG(@"%i %i", button ,[InputMaps.VBMap[button] intValue]);
     inputBuffer[player][0] |= 1 << [InputMaps.VBMap[button] intValue];
 }
 
 - (void)didReleaseVBButton:(PVVBButton)button forPlayer:(NSInteger)player {
+    DLOG(@"%i %i", button ,[InputMaps.VBMap[button] intValue]);
     inputBuffer[player][0] &= ~(1 << [InputMaps.VBMap[button] intValue]);
 }
 
