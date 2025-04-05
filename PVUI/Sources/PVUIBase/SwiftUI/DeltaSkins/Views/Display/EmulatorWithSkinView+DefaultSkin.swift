@@ -165,17 +165,24 @@ struct DefaultControllerSkinView: View {
         // Load control layout data when view appears
         GeometryReader { geometry in
             ZStack {
-                // Only show background in portrait mode and make top 50% transparent
+                // Only show background in portrait mode with a gradual fade
                 if geometry.size.width < geometry.size.height {
-                    // Portrait mode - show background with transparent top half
-                    VStack(spacing: 0) {
-                        // Top 50% - fully transparent
-                        Color.clear
-                            .frame(height: geometry.size.height * 0.5)
-                        
-                        // Bottom 50% - retrowave background
+                    // Portrait mode - show background with a gradual fade from top to bottom
+                    ZStack {
+                        // Retrowave background
                         RetrowaveBackground()
-                            .frame(height: geometry.size.height * 0.5)
+                            // Apply a gradient mask for smooth fade from transparent to visible
+                            .mask(
+                                LinearGradient(
+                                    gradient: Gradient(stops: [
+                                        .init(color: .clear, location: 0.0),   // Fully transparent at top
+                                        .init(color: .clear, location: 0.3),   // Still transparent at 30%
+                                        .init(color: .white, location: 0.7)    // Fully visible at 70%
+                                    ]),
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            )
                     }
                 }
                 
@@ -295,15 +302,15 @@ struct DefaultControllerSkinView: View {
 
                 Spacer() // Push action buttons to the right
 
-                // Right side - Action buttons (right-aligned)
-                VStack(spacing: 10) {
-                    HStack(spacing: 15) { // Increased spacing between buttons
-                        VStack(spacing: 15) { // Increased vertical spacing
+                // Right side - Action buttons (right-aligned) with increased spacing
+                VStack(spacing: 20) { // Increased vertical spacing
+                    HStack(spacing: 30) { // Significantly increased horizontal spacing
+                        VStack(spacing: 25) { // Increased vertical spacing between Y and X
                             circleButton(label: "Y", color: .yellow)
                             circleButton(label: "X", color: .blue)
                         }
 
-                        VStack(spacing: 15) { // Increased vertical spacing
+                        VStack(spacing: 25) { // Increased vertical spacing between B and A
                             circleButton(label: "B", color: .red)
                             circleButton(label: "A", color: .green)
                         }
@@ -326,66 +333,182 @@ struct DefaultControllerSkinView: View {
         .padding()
     }
 
-    /// D-Pad view with caret symbols instead of arrows
+    /// Stylized D-Pad view with retrowave aesthetic
     private func dPadView() -> some View {
-        VStack(spacing: 0) {
-            // Up button with caret (^)
-            Button(action: { inputHandler.buttonPressed("up") }) {
-                Text("^")
-                    .font(.system(size: 36, weight: .bold))
-                    .foregroundColor(.white)
-                    .frame(width: 40, height: 40)
-            }
-            .simultaneousGesture(
-                DragGesture(minimumDistance: 0)
-                    .onEnded { _ in inputHandler.buttonReleased("up") }
-            )
-
-            HStack(spacing: 0) {
-                // Left button with caret (<)
-                Button(action: { inputHandler.buttonPressed("left") }) {
-                    Text("<")
-                        .font(.system(size: 36, weight: .bold))
-                        .foregroundColor(.white)
-                        .frame(width: 40, height: 40)
-                }
-                .simultaneousGesture(
-                    DragGesture(minimumDistance: 0)
-                        .onEnded { _ in inputHandler.buttonReleased("left") }
+        ZStack {
+            // D-pad background with neon glow
+            RoundedRectangle(cornerRadius: 15)
+                .fill(Color.black.opacity(0.7))
+                .frame(width: 150, height: 150)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 15)
+                        .stroke(Color(red: 0.99, green: 0.11, blue: 0.55, opacity: 0.8), lineWidth: 2)
+                        .blur(radius: 4)
                 )
-
+                .overlay(
+                    RoundedRectangle(cornerRadius: 15)
+                        .stroke(Color.white, lineWidth: 1)
+                )
+            
+            // D-pad cross indicator (plus shape)
+            ZStack {
+                // Horizontal line
                 Rectangle()
-                    .fill(Color.clear)
-                    .frame(width: 30, height: 30)
-
-                // Right button with caret (>)
-                Button(action: { inputHandler.buttonPressed("right") }) {
-                    Text(">")
-                        .font(.system(size: 36, weight: .bold))
+                    .fill(Color.white.opacity(0.3))
+                    .frame(width: 100, height: 2)
+                
+                // Vertical line
+                Rectangle()
+                    .fill(Color.white.opacity(0.3))
+                    .frame(width: 2, height: 100)
+            }
+            
+            // Directional buttons with neon styling
+            VStack(spacing: 0) {
+                // Up button
+                Button(action: { inputHandler.buttonPressed("up") }) {
+                    Text("▲")
+                        .font(.system(size: 24, weight: .bold))
                         .foregroundColor(.white)
-                        .frame(width: 40, height: 40)
+                        .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
+                        .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
+                        .frame(width: 50, height: 50)
+                        .contentShape(Rectangle())
                 }
                 .simultaneousGesture(
                     DragGesture(minimumDistance: 0)
-                        .onEnded { _ in inputHandler.buttonReleased("right") }
+                        .onEnded { _ in inputHandler.buttonReleased("up") }
+                )
+                
+                HStack(spacing: 0) {
+                    // Left button
+                    Button(action: { inputHandler.buttonPressed("left") }) {
+                        Text("◀")
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundColor(.white)
+                            .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
+                            .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
+                            .frame(width: 50, height: 50)
+                            .contentShape(Rectangle())
+                    }
+                    .simultaneousGesture(
+                        DragGesture(minimumDistance: 0)
+                            .onEnded { _ in inputHandler.buttonReleased("left") }
+                    )
+                    
+                    // Center space
+                    Rectangle()
+                        .fill(Color.clear)
+                        .frame(width: 50, height: 50)
+                    
+                    // Right button
+                    Button(action: { inputHandler.buttonPressed("right") }) {
+                        Text("▶")
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundColor(.white)
+                            .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
+                            .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
+                            .frame(width: 50, height: 50)
+                            .contentShape(Rectangle())
+                    }
+                    .simultaneousGesture(
+                        DragGesture(minimumDistance: 0)
+                            .onEnded { _ in inputHandler.buttonReleased("right") }
+                    )
+                }
+                
+                // Down button
+                Button(action: { inputHandler.buttonPressed("down") }) {
+                    Text("▼")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundColor(.white)
+                        .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
+                        .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
+                        .frame(width: 50, height: 50)
+                        .contentShape(Rectangle())
+                }
+                .simultaneousGesture(
+                    DragGesture(minimumDistance: 0)
+                        .onEnded { _ in inputHandler.buttonReleased("down") }
                 )
             }
-
-            // Down button with caret (v)
-            Button(action: { inputHandler.buttonPressed("down") }) {
-                Text("v")
-                    .font(.system(size: 36, weight: .bold))
-                    .foregroundColor(.white)
-                    .frame(width: 40, height: 40)
+            
+            // Diagonal hit areas (invisible)
+            Group {
+                // Up-Left
+                Button(action: { 
+                    inputHandler.buttonPressed("up")
+                    inputHandler.buttonPressed("left")
+                }) {
+                    Color.clear
+                        .frame(width: 40, height: 40)
+                        .contentShape(Rectangle())
+                }
+                .position(x: 40, y: 40)
+                .simultaneousGesture(
+                    DragGesture(minimumDistance: 0)
+                        .onEnded { _ in 
+                            inputHandler.buttonReleased("up")
+                            inputHandler.buttonReleased("left")
+                        }
+                )
+                
+                // Up-Right
+                Button(action: { 
+                    inputHandler.buttonPressed("up")
+                    inputHandler.buttonPressed("right")
+                }) {
+                    Color.clear
+                        .frame(width: 40, height: 40)
+                        .contentShape(Rectangle())
+                }
+                .position(x: 110, y: 40)
+                .simultaneousGesture(
+                    DragGesture(minimumDistance: 0)
+                        .onEnded { _ in 
+                            inputHandler.buttonReleased("up")
+                            inputHandler.buttonReleased("right")
+                        }
+                )
+                
+                // Down-Left
+                Button(action: { 
+                    inputHandler.buttonPressed("down")
+                    inputHandler.buttonPressed("left")
+                }) {
+                    Color.clear
+                        .frame(width: 40, height: 40)
+                        .contentShape(Rectangle())
+                }
+                .position(x: 40, y: 110)
+                .simultaneousGesture(
+                    DragGesture(minimumDistance: 0)
+                        .onEnded { _ in 
+                            inputHandler.buttonReleased("down")
+                            inputHandler.buttonReleased("left")
+                        }
+                )
+                
+                // Down-Right
+                Button(action: { 
+                    inputHandler.buttonPressed("down")
+                    inputHandler.buttonPressed("right")
+                }) {
+                    Color.clear
+                        .frame(width: 40, height: 40)
+                        .contentShape(Rectangle())
+                }
+                .position(x: 110, y: 110)
+                .simultaneousGesture(
+                    DragGesture(minimumDistance: 0)
+                        .onEnded { _ in 
+                            inputHandler.buttonReleased("down")
+                            inputHandler.buttonReleased("right")
+                        }
+                )
             }
-            .simultaneousGesture(
-                DragGesture(minimumDistance: 0)
-                    .onEnded { _ in inputHandler.buttonReleased("down") }
-            )
         }
-        .padding()
-        .background(Color.black.opacity(0.5))
-        .cornerRadius(15)
+        .frame(width: 150, height: 150)
     }
 
     /// Joystick view
@@ -660,14 +783,14 @@ struct DefaultControllerSkinView: View {
                         // Create a grid of buttons based on the system's button group
                         createButtonGroup(from: groupedButtons)
                     } else {
-                        // Fallback to generic ABXY layout
-                        HStack(spacing: 15) { // Increased spacing between buttons
-                            VStack(spacing: 15) { // Increased vertical spacing
+                        // Fallback to generic ABXY layout with improved spacing
+                        HStack(spacing: 30) { // Significantly increased horizontal spacing
+                            VStack(spacing: 25) { // Increased vertical spacing between Y and X
                                 circleButton(label: "Y", color: .yellow)
                                 circleButton(label: "X", color: .blue)
                             }
 
-                            VStack(spacing: 15) { // Increased vertical spacing
+                            VStack(spacing: 25) { // Increased vertical spacing between B and A
                                 circleButton(label: "B", color: .red)
                                 circleButton(label: "A", color: .green)
                             }
