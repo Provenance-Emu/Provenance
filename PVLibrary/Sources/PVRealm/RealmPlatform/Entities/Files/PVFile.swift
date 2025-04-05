@@ -78,21 +78,14 @@ public extension PVFile {
         }
     }
     
-    //TODO: add unit test
     /// attempts to fix `partialPath`
     internal func fixPartialPath() {
         guard !isPartialPathFixed
         else {
             return
         }
-        if partialPath.contains("file:///private/") {
-            partialPath = partialPath.replacingOccurrences(of: "file:///private/", with: "", options: .caseInsensitive)
-        }
-        
-        if partialPath.contains("file:///") {
-            partialPath = partialPath.replacingOccurrences(of: "file:///", with: "", options: .caseInsensitive)
-        }
-        
+        fixPartialPath(substring: "file:///private/")
+        fixPartialPath(substring: "file:///")
         fixPartialPath(remove: URL.documentsDirectory)
         fixPartialPath(remove: URL.applicationDirectory)
         fixPartialPath(remove: URL.iCloudDocumentsDirectory)
@@ -107,13 +100,15 @@ public extension PVFile {
         isPartialPathFixed = true
     }
     
+    /// tries to remove url from `partialPath`
+    /// - Parameter optionalUrl: if nil, then does nothing
     internal func fixPartialPath(remove optionalUrl: URL?) {
         guard let url = optionalUrl
         else {
             return
         }
-        DLOG("attempting to remove from partialPath: \(url)")
-        let privatePrefix = "private"
+        let privatePrefix = "private/"
+        DLOG("attempting to remove from partialPath: \(url) with and without prefix: \(privatePrefix)")
         fixPartialPath(remove: url, withPercentEncoded: true)
         fixPartialPath(remove: url, withPercentEncoded: true, prefix: privatePrefix)
         fixPartialPath(remove: url, withPercentEncoded: false)
@@ -126,41 +121,48 @@ public extension PVFile {
     ///   - percentEncoded: whether or not to add percent encoding
     ///   - prefix: optional prefix to do a search on
     internal func fixPartialPath(remove url: URL, withPercentEncoded percentEncoded: Bool, prefix: String = "") {
-        if partialPath.contains("\(prefix)\(url.path(percentEncoded: percentEncoded))") {
-            partialPath = partialPath.replacingOccurrences(of: url.path(percentEncoded: percentEncoded), with: "", options: .caseInsensitive)
+        let substring = "\(prefix)\(url.path(percentEncoded: percentEncoded))"
+        fixPartialPath(substring: substring)
+    }
+    
+    /// if `substring` exists in `partialPath`, then it removes it
+    /// - Parameter substring: substring to test/remove
+    internal func fixPartialPath(substring: String) {
+        if partialPath.contains(substring) {
+            partialPath = partialPath.replacingOccurrences(of: substring, with: "", options: .caseInsensitive)
         }
     }
 
     var url: URL? {
         get {
             fixPartialPath()
+            var returnUrl: URL?
+            defer {
+                DLOG("partialPath: \(partialPath), url: \(returnUrl)")
+            }
             if partialPath.contains("iCloud") || partialPath.contains("private") {
+                DLOG("invalid partial path: \(partialPath)")
                 var pathComponents = (partialPath as NSString).pathComponents
                 pathComponents.removeFirst()
                 let path = pathComponents.joined(separator: "/")
                 let isDocumentsDir = path.contains("Documents")
-                
                 if isDocumentsDir {
                     let iCloudBase = URL.iCloudContainerDirectory
-                    let url = (iCloudBase ?? RelativeRoot.documentsDirectory).appendingPathComponent(path)
-                    DLOG("url:\(url)")
-                    return url
+                    returnUrl = (iCloudBase ?? RelativeRoot.documentsDirectory).appendingPathComponent(path)
+                    return returnUrl
                 } else {
                     if let iCloudBase = URL.iCloudDocumentsDirectory {
-                        let appendedICloudBase = iCloudBase.appendingPathComponent(path)
-                        DLOG("appendedICloudBase:\(appendedICloudBase))")
-                        return appendedICloudBase
+                        returnUrl = iCloudBase.appendingPathComponent(path)
+                        return returnUrl
                     } else {
-                        let appendedRelativeRoot = RelativeRoot.documentsDirectory.appendingPathComponent(path)
-                        DLOG("appendedRelativeRoot:\(appendedRelativeRoot)")
-                        return appendedRelativeRoot
+                        returnUrl = RelativeRoot.documentsDirectory.appendingPathComponent(path)
+                        return returnUrl
                     }
                 }
             }
-            let root = relativeRoot
-            let resolvedURL = root.appendingPath(partialPath)
-            DLOG("resolvedURL:\(resolvedURL)")
-            return resolvedURL
+            DLOG("valid partial path: \(partialPath)")
+            returnUrl = relativeRoot.appendingPath(partialPath)
+            return returnUrl
         }
     }
 
