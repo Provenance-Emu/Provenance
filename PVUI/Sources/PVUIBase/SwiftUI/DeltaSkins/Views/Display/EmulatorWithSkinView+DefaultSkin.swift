@@ -1078,10 +1078,50 @@ struct DefaultControllerSkinView: View {
 
     // Create a button from a ControlGroupButton
     private func createButton(from button: ControlGroupButton) -> some View {
-        let label = button.PVControlTitle
+        let displayLabel = button.PVControlTitle ?? "Button"
+        
+        // Map special PlayStation symbols to their proper identifiers
+        let actionIdentifier: String
+        let identifier = button.PVControlTitle
+        actionIdentifier = identifier
+//        } else {
+//            // Handle special PlayStation symbols
+//            switch displayLabel {
+//            case "○": actionIdentifier = "circle"
+//            case "✕": actionIdentifier = "cross"
+//            case "▵": actionIdentifier = "triangle"
+//            case "□": actionIdentifier = "square"
+//            default: actionIdentifier = displayLabel // Keep as-is, don't lowercase
+//            }
+//        }
+        
         let color = colorFromString(button.PVControlTint) ?? .gray
-
-        return circleButton(label: label, color: color)
+        
+        return Button(action: { inputHandler.buttonPressed(actionIdentifier) }) {
+            ZStack {
+                // Outer glow
+                Circle()
+                    .fill(Color.clear)
+                    .frame(width: 60, height: 60)
+                    .overlay(
+                        Circle()
+                            .stroke(color, lineWidth: 2)
+                            .blur(radius: 4)
+                    )
+                    .overlay(
+                        Circle()
+                            .stroke(Color.white, lineWidth: 1)
+                    )
+                
+                // Button label with neon effect
+                NeonText(displayLabel, color: color, fontSize: 20)
+            }
+            .frame(width: 60, height: 60)
+        }
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onEnded { _ in inputHandler.buttonReleased(actionIdentifier) }
+        )
     }
 
     // Convert a color string to a Color
