@@ -57,11 +57,6 @@
             case "leftAnalogLeft": self = .leftAnalogLeft
             case "leftAnalogRight": self = .leftAnalogRight
             case "leftAnalog": self = .leftAnalog
-            case "rightAnalogUp": self = .rightAnalogUp
-            case "rightAnalogDown": self = .rightAnalogDown
-            case "rightAnalogLeft": self = .rightAnalogLeft
-            case "rightAnalogRight": self = .rightAnalogRight
-            case "rightAnalog": self = .rightAnalog
             case "count": self = .count
             default: self = .up
         }
@@ -113,16 +108,6 @@
                 return "leftAnalogRight"
             case .leftAnalog:
                 return "leftAnalog"
-            case .rightAnalogUp:
-                return "rightAnalogUp"
-            case .rightAnalogDown:
-                return "rightAnalogDown"
-            case .rightAnalogLeft:
-                return "rightAnalogLeft"
-            case .rightAnalogRight:
-                return "rightAnalogRight"
-            case .rightAnalog:
-                return "rightAnalog"
             case .count:
                 return "count"
         }

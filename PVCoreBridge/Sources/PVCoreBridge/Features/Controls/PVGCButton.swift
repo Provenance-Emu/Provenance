@@ -70,6 +70,10 @@
             case "digitall", "dl": self = .digitalL
             case "digitalr", "dr": self = .digitalR
             case "count": self = .count
+            case "c▲": self = .cUp
+            case "c▼": self = .cDown
+            case "c◀": self = .cLeft
+            case "c▶": self = .cRight
             default: self = .up
         }
     }
@@ -106,6 +110,34 @@
                 return "digitalr"
             case .count:
                 return "count"
+            case .analogUp:
+                return "analogUp"
+            case .analogDown:
+                return "analogDown"
+            case .analogLeft:
+                return "analogLeft"
+            case .analogRight:
+                return "analogRight"
+            case .analogCUp:
+                return "analogCUp"
+            case .analogCDown:
+                return "analogCDown"
+            case .analogCLeft:
+                return "analogCLeft"
+            case .analogCRight:
+                return "analogCRight"
+            case .cUp:
+                return "c▲"
+            case .cDown:
+                return "c▼"
+            case .cLeft:
+                return "c◀"
+            case .cRight:
+                return "cRight"
+            case .leftAnalog:
+                return "leftAnalog"
+            case .rightAnalog:
+                return "rightAnalog"
         }
     }
 }

@@ -104,23 +104,23 @@
                 return "start"
             case .select:
                 return "select"
-            case .rightanalogup:
-                return "rightanalogup"
-            case .rightanalogdown:
+            case .rightAnalogUp:
+                return "righaAnalogup"
+            case .rightAnalogDown:
                 return "rightanalogdown"
-            case .rightanalogleft:
+            case .rightAnalogLeft:
                 return "rightanalogleft"
-            case .rightanalogright:
+            case .rightAnalogRight:
                 return "rightanalogright"
-            case .rightanalog:
-                return "rightanalog"
-            case .leftanalogup:
-                return "leftanalogup"
-            case .leftanalogdown:
-                return "leftanalogdown"
-            case .leftanalogleft:
+            case .rightAnalog:
+                return "rightAnalog"
+            case .leftAnalogUp:
+                return "leftAnalogUp"
+            case .leftAnalogDown:
+                return "leftAnalogDown"
+            case .leftAnalogLeft:
                 return "leftanalogleft"
-            case .leftanalogright:
+            case .leftAnalogRight:
                 return "leftanalogright"
             case .leftAnalog:
                 return "leftAnalog"
