@@ -93,18 +93,10 @@ public extension PVFile {
             partialPath = partialPath.replacingOccurrences(of: "file:///", with: "", options: .caseInsensitive)
         }
         
-        DLOG("documents directory: \(URL.documentsDirectory)")
-        fixPartialPath(of: URL.documentsDirectory)
-        DLOG("applications directory: \(URL.applicationDirectory)")
-        fixPartialPath(of: URL.applicationDirectory)
-        if let iCloudDocumentsDirectory = URL.iCloudDocumentsDirectory {
-            DLOG("iCloud documents directory: \(iCloudDocumentsDirectory)")
-            fixPartialPath(of: iCloudDocumentsDirectory)
-        }
-        if let iCloudContainerDirectory = URL.iCloudContainerDirectory {
-            DLOG("iCloud container directory: \(iCloudContainerDirectory)")
-            fixPartialPath(of: iCloudContainerDirectory)
-        }
+        fixPartialPath(remove: URL.documentsDirectory)
+        fixPartialPath(remove: URL.applicationDirectory)
+        fixPartialPath(remove: URL.iCloudDocumentsDirectory)
+        fixPartialPath(remove: URL.iCloudContainerDirectory)
         /*
              private/var/mobile/Library/Mobile
              var/mobile/Containers/Data/Application
@@ -115,12 +107,17 @@ public extension PVFile {
         isPartialPathFixed = true
     }
     
-    internal func fixPartialPath(of url: URL) {
+    internal func fixPartialPath(remove optionalUrl: URL?) {
+        guard let url = optionalUrl
+        else {
+            return
+        }
+        DLOG("attempting to remove from partialPath: \(url)")
         let privatePrefix = "private"
-        fixPartialPath(of: url, withPercentEncoded: true)
-        fixPartialPath(of: url, withPercentEncoded: true, prefix: privatePrefix)
-        fixPartialPath(of: url, withPercentEncoded: false)
-        fixPartialPath(of: url, withPercentEncoded: false, prefix: privatePrefix)
+        fixPartialPath(remove: url, withPercentEncoded: true)
+        fixPartialPath(remove: url, withPercentEncoded: true, prefix: privatePrefix)
+        fixPartialPath(remove: url, withPercentEncoded: false)
+        fixPartialPath(remove: url, withPercentEncoded: false, prefix: privatePrefix)
     }
     
     /// if `partialPath` contains `url.path` with the given percent encoding, then it replaces it with an empty string
@@ -128,21 +125,15 @@ public extension PVFile {
     ///   - url: url to find within `partialPath`
     ///   - percentEncoded: whether or not to add percent encoding
     ///   - prefix: optional prefix to do a search on
-    internal func fixPartialPath(of url: URL, withPercentEncoded percentEncoded: Bool, prefix: String = "") {
+    internal func fixPartialPath(remove url: URL, withPercentEncoded percentEncoded: Bool, prefix: String = "") {
         if partialPath.contains("\(prefix)\(url.path(percentEncoded: percentEncoded))") {
             partialPath = partialPath.replacingOccurrences(of: url.path(percentEncoded: percentEncoded), with: "", options: .caseInsensitive)
         }
     }
-/*
- file:///private/var/mobile/Library/Mobile%20Documents/iCloud~com~contributions~provenance/Documents/
- vs
- file:///var/mobile/Library/Mobile%20Documents/iCloud~com~contributions~provenance/Documents/
- */
+
     var url: URL? {
         get {
             fixPartialPath()
-            let url2 = urlUpdate
-            //DLOG("url2=\(url2)\tpartialPath=\(partialPath)")
             if partialPath.contains("iCloud") || partialPath.contains("private") {
                 var pathComponents = (partialPath as NSString).pathComponents
                 pathComponents.removeFirst()
@@ -170,119 +161,6 @@ public extension PVFile {
             let resolvedURL = root.appendingPath(partialPath)
             DLOG("resolvedURL:\(resolvedURL)")
             return resolvedURL
-        }
-    }
-    var urlUpdate:URL {
-        get {
-//            DLOG("relativeRoot=\(relativeRoot)\tpartialPath=\(partialPath)")
-            //TODO: lazy load this so it's only done once
-            let pathSuffix: String
-            if let bundleIdentifier = Bundle.main.bundleIdentifier {
-//                DLOG("Bundle Identifier: \(bundleIdentifier)")
-                let bundleComponents = bundleIdentifier.split(separator: ".")
-//                DLOG("bundleComponents=\(bundleComponents)")
-                let joined = bundleComponents.joined(separator: "~")
-//                DLOG("joined=\(joined)")
-                pathSuffix = joined
-            } else {
-                pathSuffix = "org~provenance-emu~provenance"
-            }
-            let privateDirectory = "private"
-            if partialPath.contains("/iCloud~\(pathSuffix)/") {//&& partialPath.hasPrefix("\(privateDirectory)/") {
-                let completePath: String
-                let filePrefix = "file:///"
-                if !partialPath.hasPrefix(filePrefix) {
-                   completePath = "\(filePrefix)\(partialPath)"
-                } else {
-                    completePath = partialPath
-                }
-                if let urlPath = URL(string: completePath) {
-//                    DLOG("urlPath=\(urlPath)")
-                    return urlPath
-                }
-                
-                var pathComponents = (partialPath as NSString).pathComponents
-//                DLOG("pathComponents=\(pathComponents)")
-                //["private", "var", "mobile", "Library", "Mobile Documents", "iCloud~\(pathSuffix)", "Documents"]
-                let mobileDocumentsEncoded = "Mobile%20Documents"
-                let mobileDocumentsDecoded = "Mobile Documents"
-                let directoryPath: String
-                
-                if let iCloudDocumentsDirectoryContainer = URL.iCloudDocumentsDirectory {
-                    var tmp = "\(iCloudDocumentsDirectoryContainer)"
-                    let filePrefix = "file://"
-                    if tmp.hasPrefix(filePrefix) {
-                        tmp = tmp.replacingOccurrences(of: filePrefix, with: "")
-                    }
-                    directoryPath = tmp
-                } else {
-                    directoryPath = "\(privateDirectory)/var/mobile/Library/\(mobileDocumentsDecoded)/\(mobileDocumentsDecoded)/iCloud~\(pathSuffix)"
-                }
-//                DLOG("directoryPath=\(directoryPath)")
-                var prefixes = directoryPath.split(separator: "/")
-                let mobileDocumentsEncodedSub = mobileDocumentsEncoded.prefix(mobileDocumentsEncoded.count)
-                //we also add an encoded one.
-                if !prefixes.contains(mobileDocumentsEncodedSub) {
-                    prefixes.append(mobileDocumentsEncodedSub)
-                }
-                let mobileDocumentsDecodedSub = mobileDocumentsDecoded.prefix(mobileDocumentsDecoded.count)
-                //we also add a decoded one.
-                if !prefixes.contains(mobileDocumentsDecodedSub) {
-                    prefixes.append(mobileDocumentsDecodedSub)
-                }
-//                DLOG("prefixes=\(prefixes)")
-                while prefixes.contains(where: {String($0) == pathComponents.first}) {
-                    /*
-                     Action Button Pressed  1706495469592 Optional(1706495461875)
-                     relativeRoot=documents    partialPath=private/var/mobile/Library/Mobile Documents/iCloud~com~pqskapps~provenance/Documents/Save States/Gremlins (USA).a52/DC271E475B4766E80151F1DA5B764E52.728185244.058265.svs
-                     pathComponents=["private", "var", "mobile", "Library", "Mobile Documents", "iCloud~com~pqskapps~provenance", "Documents", "Save States", "Gremlins (USA).a52", "DC271E475B4766E80151F1DA5B764E52.728185244.058265.svs"]
-                     pathComponentslremoveFirst()=["var", "mobile", "Library", "Mobile Documents", "iCloud~com~pqskapps~provenance", "Documents", "Save States", "Gremlins (USA).a52", "DC271E475B4766E80151F1DA5B764E52.728185244.058265.svs"]
-                     path=var/mobile/Library/Mobile Documents/iCloud~com~pqskapps~provenance/Documents/Save States/Gremlins (USA).a52/DC271E475B4766E80151F1DA5B764E52.728185244.058265.svs
-                     PVEmulatorConfiguration.iCloudContainerDirectory=Optional(file:///private/var/mobile/Library/Mobile%20Documents/iCloud~com~pqskapps~provenance/)
-                     PVEmulatorConfiguration.iCloudDocumentsDirectory=Optional(file:///private/var/mobile/Library/Mobile%20Documents/iCloud~com~pqskapps~provenance/Documents/)
-                     iCloudBase=Optional(file:///private/var/mobile/Library/Mobile%20Documents/iCloud~com~pqskapps~provenance/)
-                     url=file:///private/var/mobile/Library/Mobile%20Documents/iCloud~com~pqskapps~provenance/var/mobile/Library/Mobile%20Documents/iCloud~com~pqskapps~provenance/Documents/Save%20States/Gremlins%20(USA).a52/DC271E475B4766E80151F1DA5B764E52.728185244.058265.svs
-                     */
-                    pathComponents.removeFirst()
-//                    DLOG("pathComponentslremoveFirst()=\(pathComponents)")
-                }
-                let path = pathComponents.joined(separator: "/")
-//                DLOG("path=\(path)")
-//                DLOG("PVEmulatorConfiguration.iCloudContainerDirectory=\(String(describing: URL.iCloudContainerDirectory))")
-//                DLOG("PVEmulatorConfiguration.iCloudDocumentsDirectory=\(String(describing: URL.iCloudDocumentsDirectory))")
-                let iCloudBase = path.contains("Documents") ? URL.iCloudContainerDirectory : URL.iCloudDocumentsDirectory
-//                DLOG("iCloudBase=\(String(describing: iCloudBase))")
-                let url = (iCloudBase ?? RelativeRoot.documentsDirectory).appendingPathComponent(path)
-//                DLOG("url=\(url)")
-                return url
-            }
-            let root = relativeRoot
-//            DLOG("root=\(root)")
-            var actualPartialPath = partialPath
-            if root == .iCloud && partialPath.starts(with: "var/mobile/Containers/Data/Application/") {
-//                DLOG("iCloud path, but partialPath does NOT contain iCloud path, but instead local path")
-                var partialPathComponents = partialPath.components(separatedBy: "/")
-                let directoriesToRemove = partialPathComponents.count >= 7 ? 7 : partialPathComponents.count
-                partialPathComponents.removeFirst(directoriesToRemove)
-                actualPartialPath = partialPathComponents.joined(separator: "/")
-            }
-//            DLOG("actualPartialPath=\(actualPartialPath)")
-            if partialPath.hasPrefix(privateDirectory) {
-                var tmp = partialPath.split(separator: "/")
-                tmp.removeFirst()
-                actualPartialPath = tmp.joined(separator: "/")
-            }
-//            DLOG("actualPartialPath=\(actualPartialPath)")
-            let resolvedURL = root.appendingPath(actualPartialPath)
-//            DLOG("resolvedURL=\(resolvedURL)")
-            return resolvedURL
-            /*
-             relativeRoot=iCloud    partialPath=var/mobile/Containers/Data/Application/B8153B85-9BB5-44B6-A189-FDE9D8ABC29C/Documents/PVCache/F62D5AA941BB70E1913B787A65CD7EFC
-             Bundle Identifier: com.pqskapps.provenance
-             bundleComponents=["com", "pqskapps", "provenance"]
-             joined=com~pqskapps~provenance
-             resolvedURL=file:///private/var/mobile/Library/Mobile%20Documents/iCloud~com~pqskapps~provenance/Documents/var/mobile/Containers/Data/Application/B8153B85-9BB5-44B6-A189-FDE9D8ABC29C/Documents/PVCache/F62D5AA941BB70E1913B787A65CD7EFC
-             */
         }
     }
 
