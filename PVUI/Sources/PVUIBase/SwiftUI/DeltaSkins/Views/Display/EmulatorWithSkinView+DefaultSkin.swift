@@ -26,9 +26,11 @@ struct RetrowaveBackground: View {
 
             // Grid with perspective effect
             RetrowaveGrid()
+            .opacity(0.35)
 
             // Sun glow effect
             RetrowaveSun()
+            .opacity(0.25)
         }
     }
 }
@@ -164,9 +166,11 @@ struct DefaultControllerSkinView: View {
     var body: some View {
         // Load control layout data when view appears
         GeometryReader { geometry in
+            let isLandscape = geometry.size.width > geometry.size.height
+
             ZStack {
                 // Only show background in portrait mode with a gradual fade
-                if geometry.size.width < geometry.size.height {
+                if !isLandscape {
                     // Portrait mode - show background with a gradual fade from top to bottom
                     ZStack {
                         // Retrowave background
@@ -185,16 +189,92 @@ struct DefaultControllerSkinView: View {
                             )
                     }
                 }
-                
-                VStack {
-                    Spacer() // Push the controller to the bottom of the screen
-                    
-                    dynamicControllerSkin
+
+                if isLandscape {
+                    // Landscape layout - controls positioned at edges with safe area awareness
+                    dynamicLandscapeControllerSkin
                         .onAppear {
                             loadControlLayoutData()
                         }
+                        .edgesIgnoringSafeArea([]) // Respect safe areas for notch
+                } else {
+                    // Portrait layout - controls at bottom
+                    VStack {
+                        Spacer() // Push the controller to the bottom of the screen
+
+                        dynamicControllerSkin
+                            .onAppear {
+                                loadControlLayoutData()
+                            }
+                    }
                 }
             }
+        }
+    }
+
+    // Landscape-specific layout with controls positioned correctly
+    private var landscapeControllerLayout: some View {
+        GeometryReader { geometry in
+            ZStack {
+                // Menu and Turbo buttons at the center top
+                VStack {
+                    HStack {
+                        Spacer()
+                        HStack(spacing: 20) {
+                            utilityButton(label: "MENU", color: .purple, systemImage: "line.3.horizontal")
+                            utilityButton(label: "TURBO", color: .orange, systemImage: "forward.fill")
+                        }
+                        .padding(.top, 20)
+                        Spacer()
+                    }
+                    
+                    Spacer()
+                    
+                    // Start/Select buttons at the center bottom
+                    HStack {
+                        Spacer()
+                        HStack(spacing: 30) {
+                            pillButton(label: "SELECT", color: .black)
+                            pillButton(label: "START", color: .black)
+                        }
+                        .padding(.bottom, 20)
+                        Spacer()
+                    }
+                }
+            }
+            
+            // D-pad on the left side
+            VStack {
+                Spacer()
+                if useJoystickInternal {
+                    joystickView()
+                } else {
+                    dPadView()
+                }
+                Spacer()
+            }
+            .frame(width: 150)
+            .padding(.leading, 80)
+            .position(x: 150, y: geometry.size.height / 2)
+            
+            // Action buttons on the right side
+            VStack {
+                Spacer()
+                HStack(spacing: 30) {
+                    VStack(spacing: 25) {
+                        circleButton(label: "Y", color: .yellow)
+                        circleButton(label: "X", color: .blue)
+                    }
+                    
+                    VStack(spacing: 25) {
+                        circleButton(label: "B", color: .red)
+                        circleButton(label: "A", color: .green)
+                    }
+                }
+                Spacer()
+            }
+            .frame(width: 150)
+            .position(x: geometry.size.width - 150, y: geometry.size.height / 2)
         }
     }
 
@@ -227,6 +307,17 @@ struct DefaultControllerSkinView: View {
         } else {
             // Fallback to the generic skin if no control layout data is available
             AnyView(buildGenericSkin())
+        }
+    }
+
+    // Dynamic landscape controller skin
+    private var dynamicLandscapeControllerSkin: AnyView {
+        // If we have control layout data, use it to build a dynamic skin for landscape
+        if let controlLayout = controlLayout {
+            AnyView(buildDynamicLandscapeSkin(from: controlLayout))
+        } else {
+            // Fallback to the generic landscape skin if no control layout data is available
+            AnyView(landscapeControllerLayout)
         }
     }
 
@@ -349,20 +440,20 @@ struct DefaultControllerSkinView: View {
                     RoundedRectangle(cornerRadius: 15)
                         .stroke(Color.white, lineWidth: 1)
                 )
-            
+
             // D-pad cross indicator (plus shape)
             ZStack {
                 // Horizontal line
                 Rectangle()
                     .fill(Color.white.opacity(0.3))
                     .frame(width: 100, height: 2)
-                
+
                 // Vertical line
                 Rectangle()
                     .fill(Color.white.opacity(0.3))
                     .frame(width: 2, height: 100)
             }
-            
+
             // Directional buttons with neon styling
             VStack(spacing: 0) {
                 // Up button
@@ -379,7 +470,7 @@ struct DefaultControllerSkinView: View {
                     DragGesture(minimumDistance: 0)
                         .onEnded { _ in inputHandler.buttonReleased("up") }
                 )
-                
+
                 HStack(spacing: 0) {
                     // Left button
                     Button(action: { inputHandler.buttonPressed("left") }) {
@@ -395,12 +486,12 @@ struct DefaultControllerSkinView: View {
                         DragGesture(minimumDistance: 0)
                             .onEnded { _ in inputHandler.buttonReleased("left") }
                     )
-                    
+
                     // Center space
                     Rectangle()
                         .fill(Color.clear)
                         .frame(width: 50, height: 50)
-                    
+
                     // Right button
                     Button(action: { inputHandler.buttonPressed("right") }) {
                         Text("▶")
@@ -416,7 +507,7 @@ struct DefaultControllerSkinView: View {
                             .onEnded { _ in inputHandler.buttonReleased("right") }
                     )
                 }
-                
+
                 // Down button
                 Button(action: { inputHandler.buttonPressed("down") }) {
                     Text("▼")
@@ -432,11 +523,11 @@ struct DefaultControllerSkinView: View {
                         .onEnded { _ in inputHandler.buttonReleased("down") }
                 )
             }
-            
+
             // Diagonal hit areas (invisible)
             Group {
                 // Up-Left
-                Button(action: { 
+                Button(action: {
                     inputHandler.buttonPressed("up")
                     inputHandler.buttonPressed("left")
                 }) {
@@ -447,14 +538,14 @@ struct DefaultControllerSkinView: View {
                 .position(x: 40, y: 40)
                 .simultaneousGesture(
                     DragGesture(minimumDistance: 0)
-                        .onEnded { _ in 
+                        .onEnded { _ in
                             inputHandler.buttonReleased("up")
                             inputHandler.buttonReleased("left")
                         }
                 )
-                
+
                 // Up-Right
-                Button(action: { 
+                Button(action: {
                     inputHandler.buttonPressed("up")
                     inputHandler.buttonPressed("right")
                 }) {
@@ -465,14 +556,14 @@ struct DefaultControllerSkinView: View {
                 .position(x: 110, y: 40)
                 .simultaneousGesture(
                     DragGesture(minimumDistance: 0)
-                        .onEnded { _ in 
+                        .onEnded { _ in
                             inputHandler.buttonReleased("up")
                             inputHandler.buttonReleased("right")
                         }
                 )
-                
+
                 // Down-Left
-                Button(action: { 
+                Button(action: {
                     inputHandler.buttonPressed("down")
                     inputHandler.buttonPressed("left")
                 }) {
@@ -483,14 +574,14 @@ struct DefaultControllerSkinView: View {
                 .position(x: 40, y: 110)
                 .simultaneousGesture(
                     DragGesture(minimumDistance: 0)
-                        .onEnded { _ in 
+                        .onEnded { _ in
                             inputHandler.buttonReleased("down")
                             inputHandler.buttonReleased("left")
                         }
                 )
-                
+
                 // Down-Right
-                Button(action: { 
+                Button(action: {
                     inputHandler.buttonPressed("down")
                     inputHandler.buttonPressed("right")
                 }) {
@@ -501,7 +592,7 @@ struct DefaultControllerSkinView: View {
                 .position(x: 110, y: 110)
                 .simultaneousGesture(
                     DragGesture(minimumDistance: 0)
-                        .onEnded { _ in 
+                        .onEnded { _ in
                             inputHandler.buttonReleased("down")
                             inputHandler.buttonReleased("right")
                         }
@@ -680,6 +771,90 @@ struct DefaultControllerSkinView: View {
             DragGesture(minimumDistance: 0)
                 .onEnded { _ in inputHandler.buttonReleased(label.lowercased()) }
         )
+    }
+
+    // Build a dynamic landscape skin based on the system's control layout data
+    @ViewBuilder
+    private func buildDynamicLandscapeSkin(from layout: [ControlLayoutEntry]) -> some View {
+        GeometryReader { geometry in
+            ZStack {
+                // Menu and Turbo buttons at the center top, Start/Select at center bottom
+                VStack {
+                    HStack {
+                        Spacer()
+
+                        HStack(spacing: 20) {
+                            utilityButton(label: "MENU", color: .purple, systemImage: "line.3.horizontal")
+                            utilityButton(label: "TURBO", color: .orange, systemImage: "forward.fill")
+                        }
+                        .padding(.top, 20)
+
+                        Spacer()
+                    }
+
+                    Spacer()
+
+                    // Start/Select buttons at the center bottom
+                    HStack {
+                        Spacer()
+
+                        HStack(spacing: 30) {
+                            if hasControl(type: "PVSelectButton", in: layout) {
+                                pillButton(label: "SELECT", color: .black)
+                            }
+                            if hasControl(type: "PVStartButton", in: layout) {
+                                pillButton(label: "START", color: .black)
+                            }
+                        }
+                        .padding(.bottom, 20)
+
+                        Spacer()
+                    }
+                }
+
+                // D-pad positioned at left edge
+                VStack {
+                    Spacer()
+                    HStack {
+                        if useJoystickInternal && hasControl(type: "PVJoyPad", in: layout) {
+                            joystickView()
+                        } else if hasControl(type: "PVDPad", in: layout) {
+                            dPadView()
+                        }
+                        Spacer()
+                    }
+                    .padding(.leading, 80)
+                    Spacer()
+                }
+                .frame(width: geometry.size.width, alignment: .leading)
+
+                // Action buttons positioned at right edge using absolute positioning
+                VStack {
+                    Spacer()
+                    if let buttonGroup = layout.first(where: { $0.PVControlType == "PVButtonGroup" }),
+                       let groupedButtons = buttonGroup.PVGroupedButtons {
+                        // Create a grid of buttons based on the system's button group
+                        createButtonGroup(from: groupedButtons)
+                    } else {
+                        // Fallback to generic ABXY layout with improved spacing
+                        HStack(spacing: 30) {
+                            VStack(spacing: 25) {
+                                circleButton(label: "Y", color: .yellow)
+                                circleButton(label: "X", color: .blue)
+                            }
+
+                            VStack(spacing: 25) {
+                                circleButton(label: "B", color: .red)
+                                circleButton(label: "A", color: .green)
+                            }
+                        }
+                    }
+                    Spacer()
+                }
+                .frame(width: 150)
+                .position(x: geometry.size.width - 150, y: geometry.size.height / 2)
+            }
+        }
     }
 
     // Build a dynamic skin based on the system's control layout data
