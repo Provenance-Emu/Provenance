@@ -34,6 +34,13 @@ extension os.Logger: Sendable {
     public static let general = Logger(subsystem: subsystem, category: "general")
 }
 
+/// current Date/Time stamp using the ISO-8601 format and the device's time zone
+public var currentDatTimeStamp: String {
+    let formatter = ISO8601DateFormatter()
+    formatter.timeZone = TimeZone.current
+    return formatter.string(from: Date())
+}
+
 @inlinable
 public func log(_ message: @autoclosure () -> String,
                 level: OSLogType = .debug,
@@ -55,7 +62,7 @@ public func log(_ message: @autoclosure () -> String,
     default:
         emoji = "📝"
     }
-    let logMessage = "\(emoji) \(fileName):\(line) - \(function): \(message())"
+    let logMessage = "\(emoji) \(currentDatTimeStamp) \(fileName):\(line) - \(function): \(message())"
 
     switch level {
     case .debug:
