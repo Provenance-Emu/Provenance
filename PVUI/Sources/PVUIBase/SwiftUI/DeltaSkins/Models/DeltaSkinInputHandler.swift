@@ -619,22 +619,36 @@ public class DeltaSkinInputHandler: ObservableObject {
         
         DLOG("Using system-specific controller: \(controllerType)")
         
-        // Use the controller VC's JSButton tag mapping
-        // This works because the controller VC sets up the button tags in its layoutViews method
-        // and handles mapping button titles to the correct system-specific enum values
+        // Create a fake JSButton with the button ID as its label
+        // The controller VC will map this to the correct system-specific button
+#if canImport(UIKit)
+        let fakeButton = JSButton(frame: .zero, label: buttonId)
+        
+        // Set the button's tag based on its label
+        // This is needed because the controller VC uses the tag to determine which button was pressed
+        if isPressed {
+            DLOG("Pressing button (system-specific): \(buttonId)")
+            controllerVC.buttonPressed(fakeButton)
+        } else {
+            DLOG("Releasing button (system-specific): \(buttonId)")
+            controllerVC.buttonReleased(fakeButton)
+        }
+#else
+        // Fallback for platforms that don't support UIKit
         let buttonIndex = mapButtonToIndex(buttonId)
         
         if isPressed {
-            DLOG("Pressing button (system-specific): \(buttonId) (index: \(buttonIndex))")
+            DLOG("Pressing button (generic mapping): \(buttonId) (index: \(buttonIndex))")
             if let responder = core as? PVControllerResponder {
                 responder.controllerPressedButton(buttonIndex, forPlayer: 0)
             }
         } else {
-            DLOG("Releasing button (system-specific): \(buttonId) (index: \(buttonIndex))")
+            DLOG("Releasing button (generic mapping): \(buttonId) (index: \(buttonIndex))")
             if let responder = core as? PVControllerResponder {
                 responder.controllerReleasedButton(buttonIndex, forPlayer: 0)
             }
         }
+#endif
     }
 
     /// Map button ID to button index
