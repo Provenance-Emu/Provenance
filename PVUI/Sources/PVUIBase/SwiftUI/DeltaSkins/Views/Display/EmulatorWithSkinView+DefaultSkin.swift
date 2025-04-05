@@ -444,19 +444,55 @@ struct DefaultControllerSkinView: View {
     }
 
     /// Stylized D-Pad view with retrowave aesthetic
+    /// Custom hexagon shape with rounded corners
+    private struct RoundedHexagon: Shape {
+        var cornerRadius: CGFloat
+        
+        func path(in rect: CGRect) -> Path {
+            let width = rect.width
+            let height = rect.height
+            let sideLength = min(width, height) / 2
+            let center = CGPoint(x: rect.midX, y: rect.midY)
+            
+            // Calculate the six points of the hexagon
+            var points: [CGPoint] = []
+            for i in 0..<6 {
+                let angle = CGFloat(i) * .pi / 3
+                let x = center.x + sideLength * cos(angle)
+                let y = center.y + sideLength * sin(angle)
+                points.append(CGPoint(x: x, y: y))
+            }
+            
+            // Create a path with rounded corners
+            var path = Path()
+            for (index, point) in points.enumerated() {
+                let nextIndex = (index + 1) % points.count
+                let nextPoint = points[nextIndex]
+                
+                if index == 0 {
+                    path.move(to: point)
+                }
+                
+                path.addLine(to: nextPoint)
+            }
+            
+            return path
+        }
+    }
+    
     private func dPadView() -> some View {
         ZStack {
-            // D-pad background with neon glow
-            RoundedRectangle(cornerRadius: 15)
+            // D-pad background with neon glow using hexagon shape
+            RoundedHexagon(cornerRadius: 15)
                 .fill(Color.black.opacity(0.7))
-                .frame(width: 150, height: 150)
+                .frame(width: 180, height: 180)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 15)
+                    RoundedHexagon(cornerRadius: 15)
                         .stroke(Color(red: 0.99, green: 0.11, blue: 0.55, opacity: 0.8), lineWidth: 2)
                         .blur(radius: 4)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 15)
+                    RoundedHexagon(cornerRadius: 15)
                         .stroke(Color.white, lineWidth: 1)
                 )
 
@@ -465,158 +501,179 @@ struct DefaultControllerSkinView: View {
                 // Horizontal line
                 Rectangle()
                     .fill(Color.white.opacity(0.3))
-                    .frame(width: 100, height: 2)
+                    .frame(width: 120, height: 2)
 
                 // Vertical line
                 Rectangle()
                     .fill(Color.white.opacity(0.3))
-                    .frame(width: 2, height: 100)
+                    .frame(width: 2, height: 120)
             }
 
             // Directional buttons with neon styling
-            VStack(spacing: 0) {
-                // Up button
-                Button(action: { inputHandler.buttonPressed("up") }) {
-                    Text("▲")
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(.white)
-                        .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
-                        .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
-                        .frame(width: 50, height: 50)
-                        .contentShape(Rectangle())
-                }
-                .simultaneousGesture(
-                    DragGesture(minimumDistance: 0)
-                        .onEnded { _ in inputHandler.buttonReleased("up") }
-                )
-
-                HStack(spacing: 0) {
-                    // Left button
-                    Button(action: { inputHandler.buttonPressed("left") }) {
-                        Text("◀")
-                            .font(.system(size: 24, weight: .bold))
-                            .foregroundColor(.white)
-                            .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
-                            .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
-                            .frame(width: 50, height: 50)
-                            .contentShape(Rectangle())
+            ZStack {
+                // Main directional buttons
+                VStack(spacing: 0) {
+                    // Top row with Up-Left, Up, Up-Right
+                    HStack(spacing: 0) {
+                        // Up-Left button
+                        Button(action: { 
+                            inputHandler.buttonPressed("up")
+                            inputHandler.buttonPressed("left")
+                        }) {
+                            Text("⬉")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundColor(.white)
+                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
+                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
+                                .frame(width: 40, height: 40)
+                                .contentShape(Rectangle())
+                        }
+                        .simultaneousGesture(
+                            DragGesture(minimumDistance: 0)
+                                .onEnded { _ in 
+                                    inputHandler.buttonReleased("up")
+                                    inputHandler.buttonReleased("left")
+                                }
+                        )
+                        
+                        // Up button
+                        Button(action: { inputHandler.buttonPressed("up") }) {
+                            Text("▲")
+                                .font(.system(size: 24, weight: .bold))
+                                .foregroundColor(.white)
+                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
+                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
+                                .frame(width: 50, height: 50)
+                                .contentShape(Rectangle())
+                        }
+                        .simultaneousGesture(
+                            DragGesture(minimumDistance: 0)
+                                .onEnded { _ in inputHandler.buttonReleased("up") }
+                        )
+                        
+                        // Up-Right button
+                        Button(action: { 
+                            inputHandler.buttonPressed("up")
+                            inputHandler.buttonPressed("right")
+                        }) {
+                            Text("⬈")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundColor(.white)
+                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
+                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
+                                .frame(width: 40, height: 40)
+                                .contentShape(Rectangle())
+                        }
+                        .simultaneousGesture(
+                            DragGesture(minimumDistance: 0)
+                                .onEnded { _ in 
+                                    inputHandler.buttonReleased("up")
+                                    inputHandler.buttonReleased("right")
+                                }
+                        )
                     }
-                    .simultaneousGesture(
-                        DragGesture(minimumDistance: 0)
-                            .onEnded { _ in inputHandler.buttonReleased("left") }
-                    )
 
-                    // Center space
-                    Rectangle()
-                        .fill(Color.clear)
-                        .frame(width: 50, height: 50)
+                    // Middle row with Left, Center, Right
+                    HStack(spacing: 0) {
+                        // Left button
+                        Button(action: { inputHandler.buttonPressed("left") }) {
+                            Text("◀")
+                                .font(.system(size: 24, weight: .bold))
+                                .foregroundColor(.white)
+                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
+                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
+                                .frame(width: 50, height: 50)
+                                .contentShape(Rectangle())
+                        }
+                        .simultaneousGesture(
+                            DragGesture(minimumDistance: 0)
+                                .onEnded { _ in inputHandler.buttonReleased("left") }
+                        )
 
-                    // Right button
-                    Button(action: { inputHandler.buttonPressed("right") }) {
-                        Text("▶")
-                            .font(.system(size: 24, weight: .bold))
-                            .foregroundColor(.white)
-                            .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
-                            .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
-                            .frame(width: 50, height: 50)
-                            .contentShape(Rectangle())
+                        // Center space
+                        Rectangle()
+                            .fill(Color.clear)
+                            .frame(width: 40, height: 40)
+
+                        // Right button
+                        Button(action: { inputHandler.buttonPressed("right") }) {
+                            Text("▶")
+                                .font(.system(size: 24, weight: .bold))
+                                .foregroundColor(.white)
+                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
+                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
+                                .frame(width: 50, height: 50)
+                                .contentShape(Rectangle())
+                        }
+                        .simultaneousGesture(
+                            DragGesture(minimumDistance: 0)
+                                .onEnded { _ in inputHandler.buttonReleased("right") }
+                        )
                     }
-                    .simultaneousGesture(
-                        DragGesture(minimumDistance: 0)
-                            .onEnded { _ in inputHandler.buttonReleased("right") }
-                    )
-                }
 
-                // Down button
-                Button(action: { inputHandler.buttonPressed("down") }) {
-                    Text("▼")
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(.white)
-                        .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
-                        .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
-                        .frame(width: 50, height: 50)
-                        .contentShape(Rectangle())
+                    // Bottom row with Down-Left, Down, Down-Right
+                    HStack(spacing: 0) {
+                        // Down-Left button
+                        Button(action: { 
+                            inputHandler.buttonPressed("down")
+                            inputHandler.buttonPressed("left")
+                        }) {
+                            Text("⬋")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundColor(.white)
+                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
+                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
+                                .frame(width: 40, height: 40)
+                                .contentShape(Rectangle())
+                        }
+                        .simultaneousGesture(
+                            DragGesture(minimumDistance: 0)
+                                .onEnded { _ in 
+                                    inputHandler.buttonReleased("down")
+                                    inputHandler.buttonReleased("left")
+                                }
+                        )
+                        
+                        // Down button
+                        Button(action: { inputHandler.buttonPressed("down") }) {
+                            Text("▼")
+                                .font(.system(size: 24, weight: .bold))
+                                .foregroundColor(.white)
+                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
+                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
+                                .frame(width: 50, height: 50)
+                                .contentShape(Rectangle())
+                        }
+                        .simultaneousGesture(
+                            DragGesture(minimumDistance: 0)
+                                .onEnded { _ in inputHandler.buttonReleased("down") }
+                        )
+                        
+                        // Down-Right button
+                        Button(action: { 
+                            inputHandler.buttonPressed("down")
+                            inputHandler.buttonPressed("right")
+                        }) {
+                            Text("⬊")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundColor(.white)
+                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
+                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
+                                .frame(width: 40, height: 40)
+                                .contentShape(Rectangle())
+                        }
+                        .simultaneousGesture(
+                            DragGesture(minimumDistance: 0)
+                                .onEnded { _ in 
+                                    inputHandler.buttonReleased("down")
+                                    inputHandler.buttonReleased("right")
+                                }
+                        )
+                    }
                 }
-                .simultaneousGesture(
-                    DragGesture(minimumDistance: 0)
-                        .onEnded { _ in inputHandler.buttonReleased("down") }
-                )
             }
 
-            // Diagonal hit areas (invisible)
-            Group {
-                // Up-Left
-                Button(action: {
-                    inputHandler.buttonPressed("up")
-                    inputHandler.buttonPressed("left")
-                }) {
-                    Color.clear
-                        .frame(width: 40, height: 40)
-                        .contentShape(Rectangle())
-                }
-                .position(x: 40, y: 40)
-                .simultaneousGesture(
-                    DragGesture(minimumDistance: 0)
-                        .onEnded { _ in
-                            inputHandler.buttonReleased("up")
-                            inputHandler.buttonReleased("left")
-                        }
-                )
-
-                // Up-Right
-                Button(action: {
-                    inputHandler.buttonPressed("up")
-                    inputHandler.buttonPressed("right")
-                }) {
-                    Color.clear
-                        .frame(width: 40, height: 40)
-                        .contentShape(Rectangle())
-                }
-                .position(x: 110, y: 40)
-                .simultaneousGesture(
-                    DragGesture(minimumDistance: 0)
-                        .onEnded { _ in
-                            inputHandler.buttonReleased("up")
-                            inputHandler.buttonReleased("right")
-                        }
-                )
-
-                // Down-Left
-                Button(action: {
-                    inputHandler.buttonPressed("down")
-                    inputHandler.buttonPressed("left")
-                }) {
-                    Color.clear
-                        .frame(width: 40, height: 40)
-                        .contentShape(Rectangle())
-                }
-                .position(x: 40, y: 110)
-                .simultaneousGesture(
-                    DragGesture(minimumDistance: 0)
-                        .onEnded { _ in
-                            inputHandler.buttonReleased("down")
-                            inputHandler.buttonReleased("left")
-                        }
-                )
-
-                // Down-Right
-                Button(action: {
-                    inputHandler.buttonPressed("down")
-                    inputHandler.buttonPressed("right")
-                }) {
-                    Color.clear
-                        .frame(width: 40, height: 40)
-                        .contentShape(Rectangle())
-                }
-                .position(x: 110, y: 110)
-                .simultaneousGesture(
-                    DragGesture(minimumDistance: 0)
-                        .onEnded { _ in
-                            inputHandler.buttonReleased("down")
-                            inputHandler.buttonReleased("right")
-                        }
-                )
-            }
+            // No need for invisible diagonal hit areas anymore since we have visible buttons
         }
         .frame(width: 150, height: 150)
     }
