@@ -4,6 +4,9 @@ import PVEmulatorCore
 import PVCoreBridge
 import PVLogging
 import PVUIBase
+#if canImport(UIKit)
+import UIKit
+#endif
 
 /// Handles input from Delta Skins and forwards it to the emulator core or controller
 public class DeltaSkinInputHandler: ObservableObject {
@@ -437,22 +440,34 @@ public class DeltaSkinInputHandler: ObservableObject {
 
     /// Handle special buttons (D-pad, Start, Select)
     private func handleSpecialButtons(_ buttonId: String, isPressed: Bool, controller: any ControllerVC) -> Bool {
-        switch buttonId {
+        switch buttonId.lowercased() {
         // Menu buttons
-        case "start":
+        case "start", "run", "play":
             if isPressed {
                 DLOG("Calling controller.pressStart")
                 controller.pressStart(forPlayer: 0)
+                // Add haptic feedback
+#if os(iOS) && !targetEnvironment(macCatalyst)
+                let generator = UIImpactFeedbackGenerator(style: .light)
+                generator.prepare()
+                generator.impactOccurred()
+#endif
             } else {
                 DLOG("Calling controller.releaseStart")
                 controller.releaseStart(forPlayer: 0)
             }
             return true
 
-        case "select":
+        case "select", "mode", "option":
             if isPressed {
                 DLOG("Calling controller.pressSelect")
                 controller.pressSelect(forPlayer: 0)
+                // Add haptic feedback
+#if os(iOS) && !targetEnvironment(macCatalyst)
+                let generator = UIImpactFeedbackGenerator(style: .light)
+                generator.prepare()
+                generator.impactOccurred()
+#endif
             } else {
                 DLOG("Calling controller.releaseSelect")
                 controller.releaseSelect(forPlayer: 0)
@@ -482,7 +497,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         // Try to find the appropriate shoulder button
         var button: JSButton? = nil
 
-        switch buttonId {
+        switch buttonId.lowercased() {
         case "l", "l1":
             button = controller.leftShoulderButton
         case "r", "r1":
@@ -558,35 +573,66 @@ public class DeltaSkinInputHandler: ObservableObject {
 
         // Normalize the button ID
         let normalizedId = buttonId.lowercased()
-
-        // Map to button index and send to core
-        let buttonIndex = mapButtonToIndex(normalizedId)
-
+        
+        // Use system-specific button handling if we have a controller VC
+        if let controllerVC = controllerVC {
+            // Forward to the controller VC which knows how to map buttons for specific systems
+            forwardButtonPressToSystemSpecificCore(normalizedId, isPressed: isPressed, core: core, controllerVC: controllerVC)
+        } else {
+            // Fallback to generic mapping if we don't have a controller VC
+            let buttonIndex = mapButtonToIndex(normalizedId)
+            
+            if isPressed {
+                DLOG("Pressing button (generic mapping): \(normalizedId) (index: \(buttonIndex))")
+                // Try different methods that might be available
+                if let responder = core as? PVControllerResponder {
+                    responder.controllerPressedButton(buttonIndex, forPlayer: 0)
+                } else {
+                    // Fallback to a more generic approach
+                    NotificationCenter.default.post(
+                        name: NSNotification.Name("ButtonPressed"),
+                        object: nil,
+                        userInfo: ["button": buttonIndex, "player": 0]
+                    )
+                }
+            } else {
+                DLOG("Releasing button (generic mapping): \(normalizedId) (index: \(buttonIndex))")
+                // Try different methods that might be available
+                if let responder = core as? PVControllerResponder {
+                    responder.controllerReleasedButton(buttonIndex, forPlayer: 0)
+                } else {
+                    // Fallback to a more generic approach
+                    NotificationCenter.default.post(
+                        name: NSNotification.Name("ButtonReleased"),
+                        object: nil,
+                        userInfo: ["button": buttonIndex, "player": 0]
+                    )
+                }
+            }
+        }
+    }
+    
+    /// Forward button press to the system-specific core using the controller VC
+    private func forwardButtonPressToSystemSpecificCore(_ buttonId: String, isPressed: Bool, core: PVEmulatorCore, controllerVC: any ControllerVC) {
+        // Get the type of the controller VC to determine which system we're dealing with
+        let controllerType = type(of: controllerVC)
+        
+        DLOG("Using system-specific controller: \(controllerType)")
+        
+        // Use the controller VC's JSButton tag mapping
+        // This works because the controller VC sets up the button tags in its layoutViews method
+        // and handles mapping button titles to the correct system-specific enum values
+        let buttonIndex = mapButtonToIndex(buttonId)
+        
         if isPressed {
-            DLOG("Pressing button: \(normalizedId) (index: \(buttonIndex))")
-            // Try different methods that might be available
+            DLOG("Pressing button (system-specific): \(buttonId) (index: \(buttonIndex))")
             if let responder = core as? PVControllerResponder {
                 responder.controllerPressedButton(buttonIndex, forPlayer: 0)
-            } else {
-                // Fallback to a more generic approach
-                NotificationCenter.default.post(
-                    name: NSNotification.Name("ButtonPressed"),
-                    object: nil,
-                    userInfo: ["button": buttonIndex, "player": 0]
-                )
             }
         } else {
-            DLOG("Releasing button: \(normalizedId) (index: \(buttonIndex))")
-            // Try different methods that might be available
+            DLOG("Releasing button (system-specific): \(buttonId) (index: \(buttonIndex))")
             if let responder = core as? PVControllerResponder {
                 responder.controllerReleasedButton(buttonIndex, forPlayer: 0)
-            } else {
-                // Fallback to a more generic approach
-                NotificationCenter.default.post(
-                    name: NSNotification.Name("ButtonReleased"),
-                    object: nil,
-                    userInfo: ["button": buttonIndex, "player": 0]
-                )
             }
         }
     }
@@ -618,10 +664,18 @@ public class DeltaSkinInputHandler: ObservableObject {
             return 9  // L
         case "r", "r1":
             return 10 // R
-        case "start":
-            return 11 // Start
-        case "select":
-            return 12 // Select
+        case "start", "run", "play":
+            return 11 // Start (and common variations)
+        case "select", "mode", "option":
+            return 12 // Select (and common variations)
+        case "circle":
+            return 5  // PlayStation Circle (typically maps to A/B)
+        case "cross":
+            return 6  // PlayStation Cross (typically maps to B/A)
+        case "triangle":
+            return 7  // PlayStation Triangle (typically maps to X/Y)
+        case "square":
+            return 8  // PlayStation Square (typically maps to Y/X)
         default:
             break
         }
@@ -647,10 +701,10 @@ public class DeltaSkinInputHandler: ObservableObject {
             return 9  // L
         } else if (normalizedId.contains("r") || normalizedId.contains("r1")) && !normalizedId.contains("start") {
             return 10 // R
-        } else if normalizedId.contains("start") {
-            return 11 // Start
-        } else if normalizedId.contains("select") {
-            return 12 // Select
+        } else if normalizedId.contains("start") || normalizedId.contains("run") || normalizedId.contains("play") {
+            return 11 // Start and variations
+        } else if normalizedId.contains("select") || normalizedId.contains("mode") || normalizedId.contains("option") {
+            return 12 // Select and variations
         }
 
         // Default to A button if unknown
