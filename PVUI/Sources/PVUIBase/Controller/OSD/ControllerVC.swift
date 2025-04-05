@@ -36,5 +36,34 @@ public protocol ControllerVC: StartSelectDelegate, JSButtonDelegate, JSDPadDeleg
 
 	func layoutViews()
 	func vibrate()
+    
+    func pressStart(forPlayer _: Int)
+    func releaseStart(forPlayer _: Int)
+
+    func pressSelect(forPlayer _: Int)
+
+    func releaseSelect(forPlayer _: Int)
+
+    func pressAnalogMode(forPlayer _: Int)
+
+    func releaseAnalogMode(forPlayer _: Int)
+
+    func pressL3(forPlayer _: Int)
+
+    func releaseL3(forPlayer _: Int)
+
+    func pressR3(forPlayer _: Int)
+
+    func releaseR3(forPlayer _: Int)
+
+    func buttonPressed(_: JSButton)
+    func buttonReleased(_: JSButton)
+
+    func dPad(_: JSDPad, didPress _: JSDPadDirection)
+
+    func dPad(_: JSDPad, didRelease _: JSDPadDirection)
+    func dPad(_: JSDPad, joystick _: JoystickValue)
+    func dPad(_: JSDPad, joystick2 _: JoystickValue)
+
 }
 #endif
