@@ -216,17 +216,36 @@ struct DefaultControllerSkinView: View {
     private var landscapeControllerLayout: some View {
         GeometryReader { geometry in
             ZStack {
-                // Menu and Turbo buttons at the center top
+                // Top row with shoulder buttons, menu and turbo buttons
                 VStack {
                     HStack {
+                        // Left shoulder buttons
+                        HStack(spacing: 15) {
+                            shoulderButton(label: "L", color: .gray)
+                            shoulderButton(label: "L2", color: .gray)
+                            shoulderButton(label: "L3", color: .gray)
+                        }
+                        .padding(.leading, 20)
+                        
                         Spacer()
+                        
+                        // Menu and Turbo buttons in center
                         HStack(spacing: 20) {
                             utilityButton(label: "MENU", color: .purple, systemImage: "line.3.horizontal")
                             utilityButton(label: "TURBO", color: .orange, systemImage: "forward.fill")
                         }
-                        .padding(.top, 20)
+                        
                         Spacer()
+                        
+                        // Right shoulder buttons
+                        HStack(spacing: 15) {
+                            shoulderButton(label: "R3", color: .gray)
+                            shoulderButton(label: "R2", color: .gray)
+                            shoulderButton(label: "R", color: .gray)
+                        }
+                        .padding(.trailing, 20)
                     }
+                    .padding(.top, 20)
                     
                     Spacer()
                     
@@ -778,19 +797,48 @@ struct DefaultControllerSkinView: View {
     private func buildDynamicLandscapeSkin(from layout: [ControlLayoutEntry]) -> some View {
         GeometryReader { geometry in
             ZStack {
-                // Menu and Turbo buttons at the center top, Start/Select at center bottom
+                // Top row with shoulder buttons, menu and turbo buttons
                 VStack {
                     HStack {
+                        // Left shoulder buttons
+                        HStack(spacing: 15) {
+                            if hasControl(type: "PVLeftShoulderButton", title: "L", in: layout) {
+                                shoulderButton(label: "L", color: .gray)
+                            }
+                            if hasControl(type: "PVLeftShoulderButton", title: "L2", in: layout) {
+                                shoulderButton(label: "L2", color: .gray)
+                            }
+                            if hasControl(type: "PVLeftAnalogButton", title: "L3", in: layout) {
+                                shoulderButton(label: "L3", color: .gray)
+                            }
+                        }
+                        .padding(.leading, 20)
+                        
                         Spacer()
-
+                        
+                        // Menu and Turbo buttons in center
                         HStack(spacing: 20) {
                             utilityButton(label: "MENU", color: .purple, systemImage: "line.3.horizontal")
                             utilityButton(label: "TURBO", color: .orange, systemImage: "forward.fill")
                         }
-                        .padding(.top, 20)
-
+                        
                         Spacer()
+                        
+                        // Right shoulder buttons
+                        HStack(spacing: 15) {
+                            if hasControl(type: "PVRightAnalogButton", title: "R3", in: layout) {
+                                shoulderButton(label: "R3", color: .gray)
+                            }
+                            if hasControl(type: "PVRightShoulderButton", title: "R2", in: layout) {
+                                shoulderButton(label: "R2", color: .gray)
+                            }
+                            if hasControl(type: "PVRightShoulderButton", title: "R", in: layout) {
+                                shoulderButton(label: "R", color: .gray)
+                            }
+                        }
+                        .padding(.trailing, 20)
                     }
+                    .padding(.top, 20)
 
                     Spacer()
 
@@ -956,18 +1004,24 @@ struct DefaultControllerSkinView: View {
                     if let buttonGroup = layout.first(where: { $0.PVControlType == "PVButtonGroup" }),
                        let groupedButtons = buttonGroup.PVGroupedButtons {
                         // Create a grid of buttons based on the system's button group
-                        createButtonGroup(from: groupedButtons)
+                        HStack {
+                            Spacer() // Push buttons to the right
+                            createButtonGroup(from: groupedButtons)
+                        }
                     } else {
                         // Fallback to generic ABXY layout with improved spacing
-                        HStack(spacing: 30) { // Significantly increased horizontal spacing
-                            VStack(spacing: 25) { // Increased vertical spacing between Y and X
-                                circleButton(label: "Y", color: .yellow)
-                                circleButton(label: "X", color: .blue)
-                            }
+                        HStack {
+                            Spacer() // Push buttons to the right
+                            HStack(spacing: 30) { // Significantly increased horizontal spacing
+                                VStack(spacing: 25) { // Increased vertical spacing between Y and X
+                                    circleButton(label: "Y", color: .yellow)
+                                    circleButton(label: "X", color: .blue)
+                                }
 
-                            VStack(spacing: 25) { // Increased vertical spacing between B and A
-                                circleButton(label: "B", color: .red)
-                                circleButton(label: "A", color: .green)
+                                VStack(spacing: 25) { // Increased vertical spacing between B and A
+                                    circleButton(label: "B", color: .red)
+                                    circleButton(label: "A", color: .green)
+                                }
                             }
                         }
                     }
