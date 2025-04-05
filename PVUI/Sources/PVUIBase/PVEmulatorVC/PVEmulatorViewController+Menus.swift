@@ -7,6 +7,7 @@
 
 import Foundation
 import PVCoreBridge
+import SwiftUI
 
 // MARK: Menus
 extension PVEmulatorViewController {
@@ -96,25 +97,44 @@ extension PVEmulatorViewController {
     }
 
     public func showMoreInfo() {
-        guard let moreInfoViewController = UIStoryboard(name: "Provenance", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "gameMoreInfoVC") as? PVGameMoreInfoViewController else { return }
-        moreInfoViewController.game = self.game
-        moreInfoViewController.showsPlayButton = false
-        let newNav = UINavigationController(rootViewController: moreInfoViewController)
+        guard let game = self.game else {
+            ELOG("Game is nil, wtf you doing bruh?")
+            return
+        }
+        
+        // Create the SwiftUI view model
+        guard let driver = try? RealmGameLibraryDriver() else {
+            ELOG("No driver, no ride!")
+            return
+        }
 
+        let viewModel = GameMoreInfoViewModel(driver: driver, gameId: game.md5Hash ?? "")
+        
+        // Create the SwiftUI view
+        let gameMoreInfoView = GameMoreInfoView(viewModel: viewModel)
+            .environment(\.colorScheme, .dark) // Force dark mode for the retrowave theme
+        
+        // Create a hosting controller for the SwiftUI view
+        let hostingController = UIHostingController(rootView: gameMoreInfoView)
+        hostingController.modalPresentationStyle = .fullScreen
+        
+        // Create navigation controller
+        let newNav = UINavigationController(rootViewController: hostingController)
+        
 #if os(iOS)
-        moreInfoViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.hideMoreInfo))
+        // Add a done button
+        hostingController.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.hideMoreInfo))
 #else
+        // Add menu gesture for tvOS
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.hideMoreInfo))
         tap.allowedPressTypes = [.menu]
-        moreInfoViewController.view.addGestureRecognizer(tap)
+        hostingController.view.addGestureRecognizer(tap)
 #endif
 
-        // disable iOS 13 swipe to dismiss...
+        // Disable iOS 13 swipe to dismiss
         newNav.isModalInPresentation = true
 
         self.present(newNav, animated: true) { () -> Void in }
-        // hideMoreInfo will/should do this!
-        // self.isShowingMenu = false
-        // self.enableControllerInput(false)
+        // hideMoreInfo will handle re-enabling controller input
     }
 }
