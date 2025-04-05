@@ -614,27 +614,47 @@ public class DeltaSkinInputHandler: ObservableObject {
     
     /// Forward button press to the system-specific core using the controller VC
     private func forwardButtonPressToSystemSpecificCore(_ buttonId: String, isPressed: Bool, core: PVEmulatorCore, controllerVC: any ControllerVC) {
-        // Get the type of the controller VC to determine which system we're dealing with
-        let controllerType = type(of: controllerVC)
-        
-        DLOG("Using system-specific controller: \(controllerType)")
-        
-        // Create a fake JSButton with the button ID as its label
-        // The controller VC will map this to the correct system-specific button
-#if canImport(UIKit)
-        let fakeButton = JSButton(frame: .zero, label: buttonId)
-        
-        // Set the button's tag based on its label
-        // This is needed because the controller VC uses the tag to determine which button was pressed
-        if isPressed {
-            DLOG("Pressing button (system-specific): \(buttonId)")
-            controllerVC.buttonPressed(fakeButton)
-        } else {
-            DLOG("Releasing button (system-specific): \(buttonId)")
-            controllerVC.buttonReleased(fakeButton)
+        // Get the system identifier from the emulator core
+        guard let systemIdentifier = core.systemIdentifier else {
+            ELOG("No system identifier available, falling back to generic mapping")
+            fallbackToGenericMapping(buttonId, isPressed: isPressed, core: core)
+            return
         }
-#else
-        // Fallback for platforms that don't support UIKit
+        
+        // Convert the string system identifier to a SystemIdentifier enum
+        guard let systemId = SystemIdentifier(rawValue: systemIdentifier) else {
+            ELOG("Invalid system identifier: \(systemIdentifier), falling back to generic mapping")
+            fallbackToGenericMapping(buttonId, isPressed: isPressed, core: core)
+            return
+        }
+        
+        DLOG("Using system-specific button mapping for system: \(systemId)")
+        
+        // Get the button type for this system
+        let buttonType = systemId.controllerType
+        
+        // Create a button instance from the string
+        let button = buttonType.init(buttonId)
+        
+        // Get the raw value (button index)
+        let buttonIndex = button.rawValue
+        
+        if isPressed {
+            DLOG("Pressing button (system-specific): \(buttonId) (index: \(buttonIndex))")
+            if let responder = core as? PVControllerResponder {
+                responder.controllerPressedButton(buttonIndex, forPlayer: 0)
+            }
+        } else {
+            DLOG("Releasing button (system-specific): \(buttonId) (index: \(buttonIndex))")
+            if let responder = core as? PVControllerResponder {
+                responder.controllerReleasedButton(buttonIndex, forPlayer: 0)
+            }
+        }
+    }
+    
+    /// Fallback to generic mapping when system-specific mapping is not available
+    private func fallbackToGenericMapping(_ buttonId: String, isPressed: Bool, core: PVEmulatorCore) {
+        // Map to button index and send to core
         let buttonIndex = mapButtonToIndex(buttonId)
         
         if isPressed {
@@ -648,7 +668,6 @@ public class DeltaSkinInputHandler: ObservableObject {
                 responder.controllerReleasedButton(buttonIndex, forPlayer: 0)
             }
         }
-#endif
     }
 
     /// Map button ID to button index
