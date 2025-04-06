@@ -67,7 +67,7 @@ public struct EnhancedMetalVisualizer: View {
                                 .cornerRadius(1.5)
                                 .blur(radius: 0.5)
                         }
-                        .id("enhanced_bar_\\(index)_\\(amplitude)")
+                        .id("enhanced_bar_\(index)_\(amplitude)")
                     }
                 }
                 

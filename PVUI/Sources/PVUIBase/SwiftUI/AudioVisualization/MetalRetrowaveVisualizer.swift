@@ -215,12 +215,14 @@ public struct MetalDynamicIslandAudioVisualizer: View {
                         .frame(width: islandWidth, height: islandHeight)
                         .shadow(color: Color(hex: "#FF00FF").opacity(0.8), radius: 4, x: 0, y: 0)
                     
-                    // Use the CircularMetalBars component which properly updates with audio data
-                    CircularMetalBars(audioEngine: audioEngine, 
-                                     numberOfPoints: min(numberOfPoints, 40), 
-                                     islandWidth: islandWidth, 
-                                     islandHeight: islandHeight, 
-                                     updateInterval: updateInterval)
+                    // Use the award-winning circular Metal visualizer
+                    EnhancedCircularMetalVisualizer(
+                        audioEngine: audioEngine, 
+                        numberOfPoints: min(numberOfPoints, 40), 
+                        islandWidth: islandWidth, 
+                        islandHeight: islandHeight, 
+                        updateInterval: 0.008 // 120fps for ultra-smooth animations
+                    )
                 }
             } else {
                 // Enhanced award-winning Metal visualization positioned below the notch

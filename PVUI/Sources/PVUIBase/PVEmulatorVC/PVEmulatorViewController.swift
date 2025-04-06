@@ -1211,6 +1211,9 @@ extension PVEmulatorViewController {
         // This ensures the game is visible above any skin background elements
         view.bringSubviewToFront(gpuView)
         view.bringSubviewToFront(skinContainer)
+        if let visualizerView = audioVisualizerHostingController?.view {
+            view.bringSubviewToFront(visualizerView)
+        }
 
         // If we have a menu button, make sure it's on top of everything
         if let menuButton = menuButton {
