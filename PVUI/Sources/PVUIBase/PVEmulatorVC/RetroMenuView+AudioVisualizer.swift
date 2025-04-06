@@ -204,17 +204,30 @@ public struct AudioVisualizerButton: View {
     
     // Simulated standard visualizer for preview
     private var simulatedStandardVisualizer: some View {
-        WaveformPath(amplitudes: simulatedAmplitudes())
-            .stroke(
-                LinearGradient(
-                    colors: [Color.retroPink, Color.retroPurple, Color.retroCyan],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                ),
-                lineWidth: 2
-            )
-            .shadow(color: Color.retroCyan, radius: 4)
-            .frame(height: 60)
+        ZStack {
+            // Dynamic Island shape
+            RoundedRectangle(cornerRadius: 18)
+                .fill(Color.black)
+                .frame(width: 126, height: 37)
+            
+            // Bar visualization below the Dynamic Island
+            HStack(spacing: 1) {
+                ForEach(0..<32, id: \.self) { index in
+                    Rectangle()
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.retroPink, Color.retroPurple, Color.retroCyan],
+                                startPoint: .bottom,
+                                endPoint: .top
+                            )
+                        )
+                        .frame(width: 2, height: max(2, simulatedAmplitudes()[index % simulatedAmplitudes().count] * 20))
+                        .cornerRadius(1)
+                }
+            }
+            .offset(y: 25) // Position below the Dynamic Island
+        }
+        .frame(height: 60)
     }
     
     // Simulated metal visualizer for preview
@@ -226,26 +239,43 @@ public struct AudioVisualizerButton: View {
                 .frame(height: 60)
                 .clipShape(RoundedRectangle(cornerRadius: 18))
             
-            // Waveform
-            WaveformPath(amplitudes: simulatedAmplitudes())
-                .stroke(
-                    LinearGradient(
-                        colors: [Color.retroPink, Color.retroPurple, Color.retroCyan],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    ),
-                    lineWidth: 2.5
-                )
-                .shadow(color: Color.retroCyan, radius: 6)
-                .frame(height: 60)
+            // Dynamic Island shape
+            RoundedRectangle(cornerRadius: 18)
+                .fill(Color.black)
+                .frame(width: 126, height: 37)
             
-            // Glow effect
-            WaveformPath(amplitudes: simulatedAmplitudes())
-                .stroke(Color.retroCyan.opacity(0.5), lineWidth: 3)
-                .blur(radius: 3)
-                .frame(height: 60)
+            // Metal-style waveform with enhanced effects
+            HStack(spacing: 1) {
+                ForEach(0..<32, id: \.self) { index in
+                    Rectangle()
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.retroPink, Color.retroPurple, Color.retroCyan],
+                                startPoint: .bottom,
+                                endPoint: .top
+                            )
+                        )
+                        .frame(width: 2, height: max(2, simulatedAmplitudes()[index % simulatedAmplitudes().count] * 20))
+                        .cornerRadius(1)
+                        .shadow(color: Color.retroCyan, radius: 2)
+                        .blur(radius: 0.5)
+                }
+            }
+            .offset(y: 25) // Position below the Dynamic Island
+            
+            // Add extra glow for metal effect
+            HStack(spacing: 1) {
+                ForEach(0..<16, id: \.self) { index in
+                    Rectangle()
+                        .fill(Color.retroCyan.opacity(0.3))
+                        .frame(width: 4, height: max(2, simulatedAmplitudes()[(index*2) % simulatedAmplitudes().count] * 15))
+                        .cornerRadius(2)
+                        .blur(radius: 2)
+                }
+            }
+            .offset(y: 25) // Position below the Dynamic Island
         }
-        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .frame(height: 60)
     }
     
     // Simulated circular visualizer for preview
@@ -262,21 +292,8 @@ public struct AudioVisualizerButton: View {
                 .fill(Color.black)
                 .frame(width: 126, height: 37)
             
-            // Circular waveform
+            // Dynamic Island shape outline with glow
             RoundedRectangle(cornerRadius: 18)
-                .strokeBorder(
-                    LinearGradient(
-                        colors: [Color.retroPink, Color.retroPurple, Color.retroCyan],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    ),
-                    lineWidth: 2
-                )
-                .frame(width: 126, height: 37)
-                .shadow(color: Color.retroCyan, radius: 4)
-            
-            // Simulated circular waveform
-            Circle()
                 .strokeBorder(
                     LinearGradient(
                         colors: [Color.retroPink, Color.retroPurple, Color.retroCyan],
@@ -285,10 +302,29 @@ public struct AudioVisualizerButton: View {
                     ),
                     lineWidth: 1.5
                 )
-                .frame(width: 150, height: 50)
+                .frame(width: 126, height: 37)
                 .shadow(color: Color.retroCyan, radius: 3)
-                .scaleEffect(1.05)
-                .opacity(0.7)
+            
+            // Simulated waveform bars arranged in a circle around the Dynamic Island
+            ForEach(0..<40) { index in
+                let angle = 2 * CGFloat.pi * CGFloat(index) / 40.0
+                let amplitude = simulatedAmplitudes()[index % simulatedAmplitudes().count] * 8
+                
+                Rectangle()
+                    .fill(
+                        LinearGradient(
+                            colors: [Color.retroPink, Color.retroPurple, Color.retroCyan],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .frame(width: 2, height: max(2, amplitude))
+                    .cornerRadius(1)
+                    .offset(
+                        x: (126/2 + 6) * cos(angle),
+                        y: (37/2 + 6) * sin(angle)
+                    )
+            }
         }
         .frame(height: 70)
     }

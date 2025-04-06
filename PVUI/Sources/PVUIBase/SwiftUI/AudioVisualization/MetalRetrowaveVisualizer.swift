@@ -2,6 +2,35 @@ import SwiftUI
 import MetalKit
 import PVCoreAudio
 import PVThemes
+import Combine
+
+// Extension to create colors from hex values if not already defined elsewhere
+extension Color {
+    init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let a, r, g, b: UInt64
+        switch hex.count {
+        case 3: // RGB (12-bit)
+            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6: // RGB (24-bit)
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8: // ARGB (32-bit)
+            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (a, r, g, b) = (1, 1, 1, 0)
+        }
+
+        self.init(
+            .sRGB,
+            red: Double(r) / 255,
+            green: Double(g) / 255,
+            blue:  Double(b) / 255,
+            opacity: Double(a) / 255
+        )
+    }
+}
 
 /// A Metal-based audio visualizer with retrowave aesthetics for the Dynamic Island
 @available(iOS 14.0, *)
@@ -146,16 +175,9 @@ public struct MetalDynamicIslandAudioVisualizer: View {
     }
     
     public var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                // Dynamic Island shape with Metal visualization
-                dynamicIslandVisualization()
-            }
-            .frame(height: 60)
-            .frame(width: geometry.size.width)
-            // Explicitly center in the parent view
-            .position(x: geometry.size.width / 2, y: 30)
-        }
+        // Dynamic Island shape with Metal visualization positioned exactly at the notch
+        dynamicIslandVisualization()
+            .positionedAtDynamicIsland()
     }
     
     /// Visualization specifically designed for Dynamic Island
@@ -180,46 +202,43 @@ public struct MetalDynamicIslandAudioVisualizer: View {
             if isCircular {
                 // Circular Metal-based waveform visualization around the Dynamic Island
                 ZStack {
-                    // First, add the Metal visualizer as a background
+                    // Dynamic Island shape outline with glow
+                    RoundedRectangle(cornerRadius: islandHeight / 2)
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [Color(hex: "#FF00FF"), Color(hex: "#00FFFF")],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            lineWidth: 2.0
+                        )
+                        .frame(width: islandWidth, height: islandHeight)
+                        .shadow(color: Color(hex: "#FF00FF").opacity(0.8), radius: 4, x: 0, y: 0)
+                    
+                    // Use the CircularMetalBars component which properly updates with audio data
+                    CircularMetalBars(audioEngine: audioEngine, 
+                                     numberOfPoints: min(numberOfPoints, 40), 
+                                     islandWidth: islandWidth, 
+                                     islandHeight: islandHeight, 
+                                     updateInterval: updateInterval)
+                }
+            } else {
+                // Standard bar-style Metal visualization positioned below the notch
+                ZStack {
+                    // Dynamic Island shape
+                    RoundedRectangle(cornerRadius: islandHeight / 2)
+                        .fill(Color.black)
+                        .frame(width: islandWidth, height: islandHeight)
+                    
+                    // Metal visualizer below the Dynamic Island
                     MetalRetrowaveVisualizer(
                         audioEngine: audioEngine,
                         numberOfPoints: numberOfPoints,
                         updateInterval: updateInterval
                     )
-                    .frame(width: islandWidth + 30, height: islandHeight + 30)
-                    
-                    // Add a black overlay to hide the center
-                    RoundedRectangle(cornerRadius: islandHeight / 2)
-                        .fill(Color.black)
-                        .frame(width: islandWidth, height: islandHeight)
-                    
-                    // Add circular waveform outline with neon glow
-                    DynamicIslandCircularWaveform(
-                        amplitudes: Array(repeating: 0.5, count: 128), // Static outline
-                        islandWidth: islandWidth,
-                        islandHeight: islandHeight,
-                        amplitudeScale: 6,
-                        padding: 4
-                    )
-                    .stroke(
-                        LinearGradient(
-                            colors: [Color.retroPink, Color.retroPurple, Color.retroCyan],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ),
-                        lineWidth: 1.5
-                    )
-                    .shadow(color: Color.retroPink.opacity(0.8), radius: 3, x: 0, y: 0)
+                    .frame(width: islandWidth, height: 20)
+                    .offset(y: islandHeight / 2 + 5) // Position below the Dynamic Island
                 }
-            } else {
-                // Standard bar-style Metal visualization
-                MetalRetrowaveVisualizer(
-                    audioEngine: audioEngine,
-                    numberOfPoints: numberOfPoints,
-                    updateInterval: updateInterval
-                )
-                .frame(width: islandWidth, height: islandHeight)
-                .clipShape(RoundedRectangle(cornerRadius: islandHeight / 2))
             }
             
             // Add neon border for retrowave effect

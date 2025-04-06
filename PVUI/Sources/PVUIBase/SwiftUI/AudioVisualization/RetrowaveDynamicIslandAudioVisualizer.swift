@@ -101,30 +101,23 @@ public struct RetrowaveDynamicIslandAudioVisualizer: View {
     }
     
     public var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                // Use Dynamic Island visualization
-                dynamicIslandVisualization()
+        // Use Dynamic Island visualization positioned exactly at the notch
+        dynamicIslandVisualization()
+            .positionedAtDynamicIsland()
+            .onAppear {
+                visualizationState.startUpdating()
+                animator.startAnimations()
+                
+                // Debug: Print waveform data periodically
+                Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+                    let data = audioEngine.getWaveformData(numberOfPoints: 10)
+                    // VLOG("Waveform data sample: \(data.amplitudes[0..<min(10, data.amplitudes.count)])")
+                }
             }
-            .frame(height: 60)
-            .frame(width: geometry.size.width)
-            // Explicitly center in the parent view
-            .position(x: geometry.size.width / 2, y: 30)
-        }
-        .onAppear {
-            visualizationState.startUpdating()
-            animator.startAnimations()
-            
-            // Debug: Print waveform data periodically
-            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-                let data = audioEngine.getWaveformData(numberOfPoints: 10)
-                // VLOG("Waveform data sample: \(data.amplitudes[0..<min(10, data.amplitudes.count)])")
+            .onDisappear {
+                visualizationState.stopUpdating()
+                animator.stopAnimations()
             }
-        }
-        .onDisappear {
-            visualizationState.stopUpdating()
-            animator.stopAnimations()
-        }
     }
     
     /// Visualization specifically designed for Dynamic Island
@@ -148,23 +141,46 @@ public struct RetrowaveDynamicIslandAudioVisualizer: View {
             
             if isCircular {
                 // Animated circular waveform visualization around the Dynamic Island
-                DynamicIslandCircularWaveform(
-                    amplitudes: visualizationState.smoothedAmplitudes,
-                    islandWidth: islandWidth,
-                    islandHeight: islandHeight,
-                    amplitudeScale: 6,
-                    padding: 4
-                )
-                .stroke(
-                    LinearGradient(
-                        colors: [Color.retroPink, Color.retroPurple, Color.retroCyan],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    ),
-                    lineWidth: 2
-                )
-                .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color.cyan, radius: animator.isGlowing ? 4 : 2)
-                .animation(.easeInOut(duration: 0.3), value: visualizationState.smoothedAmplitudes)
+                ZStack {
+                    // Dynamic Island shape outline with glow
+                    RoundedRectangle(cornerRadius: islandHeight / 2)
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [Color.retroPink, Color.retroPurple, Color.retroCyan],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                        .frame(width: islandWidth, height: islandHeight)
+                        .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color.cyan,
+                                radius: animator.isGlowing ? 4 : 2)
+                    
+                    // Simple waveform bars arranged in a circle around the Dynamic Island
+                    ForEach(0..<min(visualizationState.smoothedAmplitudes.count, 40), id: \.self) { index in
+                        let angle = 2 * CGFloat.pi * CGFloat(index) / CGFloat(min(visualizationState.smoothedAmplitudes.count, 40))
+                        let amplitude = visualizationState.smoothedAmplitudes[index] * 12
+                        
+                        Rectangle()
+                            .fill(
+                                LinearGradient(
+                                    colors: [Color(hex: "#FF00FF"), Color(hex: "#00FFFF")],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .frame(width: 4, height: max(5, amplitude * 1.5))
+                            .cornerRadius(2)
+                            .shadow(color: Color(hex: "#FF00FF").opacity(0.8), radius: 3, x: 0, y: 0)
+                            .offset(
+                                x: (islandWidth/2 + 6) * cos(angle),
+                                y: (islandHeight/2 + 6) * sin(angle)
+                            )
+                        // Force view update with each amplitude change
+                            .id("bar_\(index)_\(amplitude)")
+                    }
+                }
+                .animation(.easeInOut(duration: 0.2), value: visualizationState.smoothedAmplitudes)
             } else {
                 // Standard bar visualization
                 HStack(spacing: 1) {
@@ -172,58 +188,55 @@ public struct RetrowaveDynamicIslandAudioVisualizer: View {
                         Rectangle()
                             .fill(
                                 LinearGradient(
-                                    colors: [Color.retroPink, Color.retroPurple, Color.retroCyan],
+                                    colors: [Color(hex: "#FF00FF"), Color(hex: "#00FFFF")],
                                     startPoint: .bottom,
                                     endPoint: .top
                                 )
                             )
-                            .frame(width: 2, height: max(2, visualizationState.amplitudes[index] * 20))
-                            .cornerRadius(1)
+                            .frame(width: 3, height: max(3, visualizationState.amplitudes[index] * 25))
+                            .cornerRadius(1.5)
+                            .shadow(color: Color(hex: "#FF00FF").opacity(0.8), radius: 2, x: 0, y: 0)
                     }
                 }
                 .offset(y: islandHeight / 2 + 5) // Position below the Dynamic Island
             }
-            }
-            
-            // Glow effect that pulses with the audio
-            RoundedRectangle(cornerRadius: 35 / 2)
-                .stroke(
-                    LinearGradient(
-                        colors: [Color.pink, Color.purple, Color.cyan],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    ),
-                    lineWidth: 2
-                )
-                .frame(width: islandWidth, height: islandHeight)
-                .scaleEffect(animator.pulseScale)
-                .opacity(animator.isGlowing ? 0.8 : 0.4)
-                .blur(radius: 3)
-            
-            // Special effect - rotating particles
-            ForEach(0..<8, id: \.self) { i in
-                Circle()
-                    .fill(i % 2 == 0 ? Color.retroPink : Color.retroCyan)
-                    .frame(width: 4, height: 4)
-                    .offset(x: cos(Double(i) * .pi / 4 + animator.rotationAngle) * 50 * animator.effectIntensity,
-                            y: sin(Double(i) * .pi / 4 + animator.rotationAngle) * 20 * animator.effectIntensity)
-                    .opacity(animator.effectIntensity * 0.8)
-                    .blur(radius: 2)
+        }
+        
+        // Glow effect that pulses with the audio
+        RoundedRectangle(cornerRadius: 35 / 2)
+            .stroke(
+                LinearGradient(
+                    colors: [Color.pink, Color.purple, Color.cyan],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                ),
+                lineWidth: 2
+            )
+            .frame(width: islandWidth, height: islandHeight)
+            .scaleEffect(animator.pulseScale)
+            .opacity(animator.isGlowing ? 0.8 : 0.4)
+            .blur(radius: 3)
+        
+        // Special effect - rotating particles
+        ForEach(0..<8, id: \.self) { i in
+            Circle()
+                .fill(i % 2 == 0 ? Color.retroPink : Color.retroCyan)
+                .frame(width: 4, height: 4)
+                .offset(x: cos(Double(i) * .pi / 4 + animator.rotationAngle) * 50 * animator.effectIntensity,
+                        y: sin(Double(i) * .pi / 4 + animator.rotationAngle) * 20 * animator.effectIntensity)
+                .opacity(animator.effectIntensity * 0.8)
+                .blur(radius: 2)
         }
     }
-    
-    // This function has been removed as it's no longer needed
-    
-
     
     /// Check if the device has a Dynamic Island
     private func isDynamicIslandDevice() -> Bool {
         // Dynamic Island is available on iPhone 14 Pro, iPhone 14 Pro Max, iPhone 15 series, and iPhone 16 series
         let deviceName = UIDevice.current.name
         
-        return deviceName.contains("iPhone 14 Pro") || 
-               deviceName.contains("iPhone 15") ||
-               deviceName.contains("iPhone 16")
+        return deviceName.contains("iPhone 14 Pro") ||
+        deviceName.contains("iPhone 15") ||
+        deviceName.contains("iPhone 16")
     }
     
     /// Get Dynamic Island dimensions based on device model

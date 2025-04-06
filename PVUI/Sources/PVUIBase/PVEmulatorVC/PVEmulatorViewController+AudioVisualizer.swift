@@ -13,14 +13,7 @@ import PVThemes
 
 /// Extension to add audio visualization support to the emulator view controller
 extension PVEmulatorViewController {
-    
-    /// Property to track if the audio visualizer is enabled
-    private struct AssociatedKeys {
-        static var audioVisualizerEnabledKey = "audioVisualizerEnabled"
-        static var audioVisualizerHostingControllerKey = "audioVisualizerHostingController"
-        static var audioVisualizerModeKey = "audioVisualizerMode"
-    }
-    
+
     /// Whether the audio visualizer is currently enabled
     var isAudioVisualizerEnabled: Bool {
         get {
@@ -31,35 +24,7 @@ extension PVEmulatorViewController {
             visualizerMode = newValue ? .standard : .off
         }
     }
-    
-    /// The current visualizer mode
-    var visualizerMode: VisualizerMode {
-        get {
-            return objc_getAssociatedObject(self, &AssociatedKeys.audioVisualizerModeKey) as? VisualizerMode ?? VisualizerMode.current
-        }
-        set {
-            objc_setAssociatedObject(self, &AssociatedKeys.audioVisualizerModeKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            // Save the new mode to user defaults
-            newValue.saveToUserDefaults()
-            
-            if newValue == .off {
-                removeAudioVisualizer()
-            } else {
-                setupAudioVisualizer()
-            }
-        }
-    }
-    
-    /// The hosting controller for the audio visualizer
-    private var audioVisualizerHostingController: UIHostingController<AnyView>? {
-        get {
-            return objc_getAssociatedObject(self, &AssociatedKeys.audioVisualizerHostingControllerKey) as? UIHostingController<AnyView>
-        }
-        set {
-            objc_setAssociatedObject(self, &AssociatedKeys.audioVisualizerHostingControllerKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-    }
-    
+
     /// Set up the audio visualizer if the device supports it
     @objc public func setupAudioVisualizer() {
         // Only proceed if we're on iOS 16 or later
@@ -67,17 +32,17 @@ extension PVEmulatorViewController {
             DLOG("Audio visualizer requires iOS 16 or later")
             return
         }
-        
+
         // Remove any existing visualizer first to ensure we're using the correct mode
         removeAudioVisualizer()
-        
+
         // Create the appropriate visualizer based on the selected mode
         let visualizerView: AnyView
-        
+
         switch visualizerMode {
         case .off:
             return // Don't create a visualizer if mode is off
-            
+
         case .standard:
             // Create the standard bar-style retrowave audio visualizer
             visualizerView = AnyView(
@@ -87,7 +52,7 @@ extension PVEmulatorViewController {
                     updateInterval: 0.03
                 )
             )
-            
+
         case .standardCircular:
             // Create the standard circular retrowave audio visualizer
             visualizerView = AnyView(
@@ -98,7 +63,7 @@ extension PVEmulatorViewController {
                     isCircular: true
                 )
             )
-            
+
         case .metal:
             // Create the Metal-based bar-style retrowave audio visualizer
             visualizerView = AnyView(
@@ -108,7 +73,7 @@ extension PVEmulatorViewController {
                     updateInterval: 0.016 // 60fps updates
                 )
             )
-            
+
         case .metalCircular:
             // Create the Metal-based circular retrowave audio visualizer
             visualizerView = AnyView(
@@ -120,15 +85,22 @@ extension PVEmulatorViewController {
                 )
             )
         }
-        
+
         // Create a hosting controller for the SwiftUI view
         let hostingController = UIHostingController(
             rootView: visualizerView
         )
-        
-        // Configure the hosting controller
+
+        // Configure the hosting controller to ignore safe areas and position at the notch
         hostingController.view.backgroundColor = UIColor.clear
-        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Important: Don't use auto layout constraints for this view
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = true
+        
+        // Size the hosting controller to match the screen width
+        let screenWidth = UIScreen.main.bounds.width
+        let visualizerWidth = min(screenWidth, 400) // Limit width
+        hostingController.view.frame = CGRect(x: 0, y: 0, width: visualizerWidth, height: 80)
         
         // Add the hosting controller as a child
         addChild(hostingController)
@@ -138,44 +110,41 @@ extension PVEmulatorViewController {
         // Ensure proper z-order (visualizer stays on top)
         view.bringSubviewToFront(hostingController.view)
         
-        // Set up constraints to position at the Dynamic Island
-        let screenWidth = UIScreen.main.bounds.width
-        let visualizerWidth = min(screenWidth * 0.8, 300) // Limit width
+        // Store the hosting controller for later reference
+        audioVisualizerHostingController = hostingController
         
-        // Calculate top offset based on device model
-        let topOffset = getDynamicIslandTopOffset()
-        
-        NSLayoutConstraint.activate([
-            // Position at the top center of the screen where the Dynamic Island is
-            hostingController.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            hostingController.view.topAnchor.constraint(equalTo: view.topAnchor, constant: topOffset),
-            hostingController.view.widthAnchor.constraint(equalToConstant: visualizerWidth),
-            hostingController.view.heightAnchor.constraint(equalToConstant: 60)
-        ])
-        
+        // Add observer for orientation changes
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(orientationDidChange),
+                                               name: UIDevice.orientationDidChangeNotification,
+                                               object: nil)
+
         // Store reference to the hosting controller
         audioVisualizerHostingController = hostingController
-        
+
         // Store the hosting controller
         audioVisualizerHostingController = hostingController
-        
+
         DLOG("Audio visualizer set up successfully")
     }
-    
+
     /// Remove the audio visualizer
     @objc public func removeAudioVisualizer() {
         guard let hostingController = audioVisualizerHostingController else {
             return
         }
+
+        // Remove orientation change observer
+        NotificationCenter.default.removeObserver(self, name: UIDevice.orientationDidChangeNotification, object: nil)
         
         // Remove the hosting controller
         hostingController.willMove(toParent: nil)
         hostingController.view.removeFromSuperview()
         hostingController.removeFromParent()
-        
+
         // Clear the reference
         audioVisualizerHostingController = nil
-        
+
         DLOG("Audio visualizer removed")
     }
 }
@@ -187,12 +156,12 @@ extension PVEmulatorViewController {
     @objc public func showAudioVisualizer() {
         setupAudioVisualizer()
     }
-    
+
     /// Hide the audio visualizer
     @objc public func hideAudioVisualizer() {
         removeAudioVisualizer()
     }
-    
+
     /// Toggle the audio visualizer on/off
     @objc public func toggleAudioVisualizer() {
         // Toggle between off and the last used mode (or standard if none)
@@ -202,24 +171,24 @@ extension PVEmulatorViewController {
         } else {
             visualizerMode = .off
         }
-        
+
         // Update UI based on new mode
         if visualizerMode == .off {
             hideAudioVisualizer()
         } else {
             showAudioVisualizer()
         }
-        
+
         // Save the preference
         visualizerMode.saveToUserDefaults()
     }
-    
+
     /// Set a specific visualizer mode
     @objc public func setVisualizerMode(_ mode: VisualizerMode) {
         // Only update if the mode has changed
         if visualizerMode != mode {
             visualizerMode = mode
-            
+
             // Update UI based on new mode
             if mode == .off {
                 hideAudioVisualizer()
@@ -231,14 +200,101 @@ extension PVEmulatorViewController {
             }
         }
     }
+
+    /// Handle orientation changes
+    @objc private func orientationDidChange() {
+        // The SwiftUI visualizer will automatically reposition itself
+        // using the DynamicIslandPositioner
+        
+        // Just update the frame size to match the current screen width
+        if let hostingController = audioVisualizerHostingController {
+            let screenWidth = UIScreen.main.bounds.width
+            let visualizerWidth = min(screenWidth, 400) // Limit width
+            hostingController.view.frame = CGRect(x: 0, y: 0, width: visualizerWidth, height: 80)
+            
+            // Force layout update
+            view.layoutIfNeeded()
+        }
+    }
+    
+    /// Set up constraints for the visualizer based on current orientation
+    private func setupVisualizerConstraints(for hostingController: UIHostingController<AnyView>) {
+        // Remove existing constraints from the hosting controller's view
+        hostingController.view.constraints.forEach { constraint in
+            if constraint.firstItem === hostingController.view {
+                hostingController.view.removeConstraint(constraint)
+            }
+        }
+        
+        // Deactivate any constraints where the hosting controller's view is the second item
+        NSLayoutConstraint.deactivate(view.constraints.filter { $0.secondItem === hostingController.view })
+        
+        // Get screen dimensions
+        let screenWidth = UIScreen.main.bounds.width
+        let screenHeight = UIScreen.main.bounds.height
+        let visualizerWidth = min(screenWidth * 0.8, 300) // Limit width
+        
+        // Get the actual notch/Dynamic Island position
+        let notchFrame = DynamicIslandPositioner.getDynamicIslandFrame()
+        
+        // Determine current orientation
+        let orientation = UIDevice.current.orientation
+        
+        switch orientation {
+        case .portrait, .unknown, .faceUp, .faceDown:
+            // Portrait mode - align exactly with the notch
+            NSLayoutConstraint.activate([
+                hostingController.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                hostingController.view.topAnchor.constraint(equalTo: view.topAnchor, constant: notchFrame.minY),
+                hostingController.view.widthAnchor.constraint(equalToConstant: visualizerWidth),
+                hostingController.view.heightAnchor.constraint(equalToConstant: 60)
+            ])
+            
+        case .landscapeLeft:
+            // Landscape left - visualizer on right side aligned with notch
+            NSLayoutConstraint.activate([
+                hostingController.view.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+                hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+                hostingController.view.widthAnchor.constraint(equalToConstant: 60),
+                hostingController.view.heightAnchor.constraint(equalToConstant: visualizerWidth)
+            ])
+            
+        case .landscapeRight:
+            // Landscape right - visualizer on left side aligned with notch
+            NSLayoutConstraint.activate([
+                hostingController.view.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+                hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+                hostingController.view.widthAnchor.constraint(equalToConstant: 60),
+                hostingController.view.heightAnchor.constraint(equalToConstant: visualizerWidth)
+            ])
+            
+        case .portraitUpsideDown:
+            // Portrait upside down - visualizer at bottom
+            NSLayoutConstraint.activate([
+                hostingController.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                hostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0),
+                hostingController.view.widthAnchor.constraint(equalToConstant: visualizerWidth),
+                hostingController.view.heightAnchor.constraint(equalToConstant: 60)
+            ])
+            
+        @unknown default:
+            // Default to portrait mode aligned with notch
+            NSLayoutConstraint.activate([
+                hostingController.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                hostingController.view.topAnchor.constraint(equalTo: view.topAnchor, constant: notchFrame.minY),
+                hostingController.view.widthAnchor.constraint(equalToConstant: visualizerWidth),
+                hostingController.view.heightAnchor.constraint(equalToConstant: 60)
+            ])
+        }
+    }
     
     /// Get the appropriate top offset for the Dynamic Island based on device model
     private func getDynamicIslandTopOffset() -> CGFloat {
         let deviceName = UIDevice.current.name
-        
+
         // Default offset for iPhone 14 Pro/15 Pro
         var topOffset: CGFloat = 11
-        
+
         // iPhone 14 Pro Max/15 Pro Max has slightly different dimensions
         if deviceName.contains("Max") {
             topOffset = 12
@@ -251,7 +307,7 @@ extension PVEmulatorViewController {
         else if deviceName.contains("iPhone 16 Pro") {
             topOffset = 11
         }
-        
+
         return topOffset
     }
 }

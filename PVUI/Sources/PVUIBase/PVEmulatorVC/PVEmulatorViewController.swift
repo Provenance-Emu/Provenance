@@ -84,6 +84,21 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
     // Shared input handler to maintain input state across skin changes
     internal var sharedInputHandler: DeltaSkinInputHandler?
+    
+    internal var audioVisualizerHostingController: UIHostingController<AnyView>? = nil
+    
+    /// The current visualizer mode
+    internal var visualizerMode: VisualizerMode = .off {
+        didSet {
+            if visualizerMode == .off {
+                removeAudioVisualizer()
+            } else {
+                setupAudioVisualizer()
+            }
+            // Save the new mode to user defaults
+            visualizerMode.saveToUserDefaults()
+        }
+    }
 
     // Debug overlay view
     internal var debugOverlayView: UIView?
