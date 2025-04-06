@@ -30,6 +30,13 @@ public class SceneCoordinator: ObservableObject {
     // Cancellables for observation
     private var cancellables = Set<AnyCancellable>()
    
+    public enum Scenes {
+        case main
+        case emulator
+    }
+    
+    // Published property to track which scene should be shown
+    @Published public var currentScene: Scenes = .main
     
     private init() {
         // Observe the EmulationUIState for changes to currentGame
@@ -51,14 +58,6 @@ public class SceneCoordinator: ObservableObject {
             .store(in: &cancellables)
     }
     
-    public enum Scenes {
-        case main
-        case emulator
-    }
-    
-    // Published property to track which scene should be shown
-    @Published public var currentScene: Scenes = .main
-    
     public func open(scene: Scenes) {
         switch scene {
         case .main:
@@ -77,7 +76,7 @@ public class SceneCoordinator: ObservableObject {
         SkinImporterInjector.shared.service = DeltaSkinManager.shared
         
         ILOG("SceneCoordinator: Opening main scene")
-        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+//        UIApplication.shared.open(url, options: [:], completionHandler: nil)
         ILOG("SceneCoordinator: Opening main scene")
         currentScene = .main
         showEmulator = false
@@ -115,17 +114,6 @@ public class SceneCoordinator: ObservableObject {
         }
     }
     
-    /// Returns to the main scene
-    public func returnToMainScene() {
-        guard let url = URL(string: "provenance://main") else {
-            ELOG("Failed to create URL for main scene")
-            return
-        }
-        
-        ILOG("SceneCoordinator: Returning to main scene")
-        UIApplication.shared.open(url, options: [:], completionHandler: nil)
-    }
-    
     /// Handles closing the emulator and returning to the main scene
     public func closeEmulator() {
         // Clear the emulation state
@@ -134,6 +122,6 @@ public class SceneCoordinator: ObservableObject {
         AppState.shared.emulationUIState.currentGame = nil
         
         // Return to the main scene
-        returnToMainScene()
+        openMainScene()
     }
 }
