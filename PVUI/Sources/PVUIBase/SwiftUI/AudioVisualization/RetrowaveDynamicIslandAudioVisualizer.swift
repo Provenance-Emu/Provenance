@@ -98,14 +98,16 @@ public struct RetrowaveDynamicIslandAudioVisualizer: View {
     }
     
     public var body: some View {
-        ZStack {
-            // Use Dynamic Island visualization
-            dynamicIslandVisualization()
+        GeometryReader { geometry in
+            ZStack {
+                // Use Dynamic Island visualization
+                dynamicIslandVisualization()
+            }
+            .frame(height: 60)
+            .frame(width: geometry.size.width)
+            // Explicitly center in the parent view
+            .position(x: geometry.size.width / 2, y: 30)
         }
-        .frame(height: 60)
-        .frame(maxWidth: .infinity)
-        // Position at the top center of the screen
-        .position(x: UIScreen.main.bounds.width / 2, y: 30)
         .onAppear {
             visualizationState.startUpdating()
             animator.startAnimations()
@@ -231,8 +233,8 @@ public struct RetrowaveDynamicIslandAudioVisualizer: View {
 }
 
 /// Retrowave grid background
-private struct VisualizationRetrowaveGrid: View {
-    var body: some View {
+public struct VisualizationRetrowaveGrid: View {
+    public var body: some View {
         GeometryReader { geometry in
             ZStack {
                 // Horizontal grid lines

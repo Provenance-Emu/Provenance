@@ -7,11 +7,13 @@ import UIKit
 
 // MARK: - Audio Visualizer Button
 
-/// A standalone button view for the audio visualizer toggle
+/// A standalone button view for the audio visualizer with mode selection
 public struct AudioVisualizerButton: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     private let emulatorVC: PVEmulatorViewController
     private let dismissAction: () -> Void
+    @State private var showingOptions = false
+    @State private var selectedMode: VisualizerMode = VisualizerMode.current
     
     public init(emulatorVC: PVEmulatorViewController, dismissAction: @escaping () -> Void) {
         self.emulatorVC = emulatorVC
@@ -20,54 +22,239 @@ public struct AudioVisualizerButton: View {
     
     public var body: some View {
         // Get current state from emulator view controller
-        let isEnabled = emulatorVC.isAudioVisualizerEnabled
+        let isEnabled = selectedMode != .off
                 
-                // Create toggle button with retrowave styling
-                Button(action: {
-                    // Toggle audio visualizer
-                    emulatorVC.toggleAudioVisualizer()
-                    
-                    // Play haptic feedback
-                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                    
-                    // Play sound
-                    AudioServicesPlaySystemSound(1519) // Standard button click sound
-                    
-                    // Dismiss menu
-                    dismissAction()
-                }) {
-                    HStack {
-                        // Icon with retrowave styling
-                        Image(systemName: "waveform")
-                            .font(.system(size: 18))
-                            .foregroundColor(isEnabled ? Color.cyan : .white)
-                            .shadow(color: Color.cyan.opacity(isEnabled ? 0.8 : 0), radius: isEnabled ? 4 : 0)
-                        
-                        Text("AUDIO VISUALIZER")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.white)
-                        
-                        Spacer()
-                        
-                        // Toggle indicator
-                        Image(systemName: isEnabled ? "checkmark.circle.fill" : "circle")
-                            .foregroundColor(isEnabled ? Color.cyan : Color.gray.opacity(0.7))
-                            .font(.system(size: 18))
-                    }
-                    .padding(12)
-                    .background(
+        // Create button with retrowave styling
+        Button(action: {
+            // Show options sheet
+            showingOptions = true
+            
+            // Play haptic feedback
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        }) {
+            HStack {
+                // Icon with retrowave styling
+                Image(systemName: "waveform")
+                    .font(.system(size: 18))
+                    .foregroundColor(isEnabled ? Color.cyan : .white)
+                    .shadow(color: Color.cyan.opacity(isEnabled ? 0.8 : 0), radius: isEnabled ? 4 : 0)
+                
+                Text("AUDIO VISUALIZER")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.white)
+                
+                Spacer()
+                
+                // Mode indicator
+                Text(selectedMode.description)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(isEnabled ? Color.cyan : Color.gray.opacity(0.7))
+            }
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.black.opacity(0.6))
+                    .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.black.opacity(0.6))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(
-                                        isEnabled ? Color.cyan : Color.gray.opacity(0.5),
-                                        lineWidth: isEnabled ? 1.5 : 1
-                                    )
+                            .stroke(
+                                isEnabled ? Color.cyan : Color.gray.opacity(0.5),
+                                lineWidth: isEnabled ? 1.5 : 1
                             )
                     )
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
+        .sheet(isPresented: $showingOptions) {
+            visualizerOptionsView
+        }
+        .onAppear {
+            // Update selected mode from current setting
+            selectedMode = VisualizerMode.current
+        }
+    }
+    
+    private var visualizerOptionsView: some View {
+        ZStack {
+            // Background with retrowave grid
+            VisualizationRetrowaveGrid()
+                .opacity(0.15)
+                .edgesIgnoringSafeArea(.all)
+            
+            // Overlay with dark blur
+            Color.black.opacity(0.7)
+                .edgesIgnoringSafeArea(.all)
+            
+            VStack(spacing: 30) {
+                Text("Audio Visualizer")
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                    .padding(.top, 20)
+                
+                // Retrowave picker for visualizer mode
+                RetrowaveOptionPicker(
+                    title: "Visualizer Mode",
+                    selection: $selectedMode,
+                    options: VisualizerMode.allCases.map { ($0, $0.description) }
+                )
+                .onChange(of: selectedMode) { newMode in
+                    // Update the visualizer mode
+                    emulatorVC.setVisualizerMode(newMode)
+                    newMode.saveToUserDefaults()
                 }
-                .buttonStyle(PlainButtonStyle())
+                
+                // Preview of the selected visualizer mode
+                visualizerPreview
+                    .frame(height: 150)
+                    .padding(.horizontal, 20)
+                
+                Spacer()
+                
+                // Done button
+                Button(action: {
+                    showingOptions = false
+                    dismissAction()
+                }) {
+                    Text("Done")
+                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                        .frame(width: 200, height: 50)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(
+                                    LinearGradient(
+                                        colors: [Color.retroPink, Color.retroPurple],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .strokeBorder(
+                                            LinearGradient(
+                                                colors: [Color.retroPink, Color.retroCyan],
+                                                startPoint: .leading,
+                                                endPoint: .trailing
+                                            ),
+                                            lineWidth: 1.5
+                                        )
+                                )
+                                .shadow(color: Color.retroPink.opacity(0.5), radius: 8, x: 0, y: 0)
+                        )
+                }
+                .padding(.bottom, 40)
+            }
+            .padding()
+        }
+    }
+    
+    private var visualizerPreview: some View {
+        ZStack {
+            // Background with retrowave grid
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.black.opacity(0.6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [Color.retroPink, Color.retroPurple, Color.retroCyan],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                )
+                .shadow(color: Color.retroPink.opacity(0.5), radius: 8, x: 0, y: 0)
+            
+            VStack {
+                // Preview text
+                Text("Preview")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(Color.gray)
+                    .padding(.top, 8)
+                
+                Spacer()
+                
+                // Visualizer preview based on selected mode
+                Group {
+                    switch selectedMode {
+                    case .off:
+                        Text("Visualizer Off")
+                            .foregroundColor(Color.gray)
+                    case .standard:
+                        // Simulated standard visualizer
+                        simulatedStandardVisualizer
+                    case .metal:
+                        // Simulated metal visualizer
+                        simulatedMetalVisualizer
+                    }
+                }
+                .padding(.horizontal, 20)
+                
+                Spacer()
+            }
+            .padding()
+        }
+    }
+    
+    // Simulated standard visualizer for preview
+    private var simulatedStandardVisualizer: some View {
+        WaveformPath(amplitudes: simulatedAmplitudes())
+            .stroke(
+                LinearGradient(
+                    colors: [Color.retroPink, Color.retroPurple, Color.retroCyan],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                ),
+                lineWidth: 2
+            )
+            .shadow(color: Color.retroCyan, radius: 4)
+            .frame(height: 60)
+    }
+    
+    // Simulated metal visualizer for preview
+    private var simulatedMetalVisualizer: some View {
+        ZStack {
+            // Background grid
+            VisualizationRetrowaveGrid()
+                .opacity(0.3)
+                .frame(height: 60)
+                .clipShape(RoundedRectangle(cornerRadius: 18))
+            
+            // Waveform
+            WaveformPath(amplitudes: simulatedAmplitudes())
+                .stroke(
+                    LinearGradient(
+                        colors: [Color.retroPink, Color.retroPurple, Color.retroCyan],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    ),
+                    lineWidth: 2.5
+                )
+                .shadow(color: Color.retroCyan, radius: 6)
+                .frame(height: 60)
+            
+            // Glow effect
+            WaveformPath(amplitudes: simulatedAmplitudes())
+                .stroke(Color.retroCyan.opacity(0.5), lineWidth: 3)
+                .blur(radius: 3)
+                .frame(height: 60)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+    }
+    
+    // Generate simulated waveform data for preview
+    private func simulatedAmplitudes() -> [CGFloat] {
+        var amplitudes = [CGFloat]()
+        let count = 60
+        
+        for i in 0..<count {
+            let t = Double(i) / Double(count - 1)
+            let frequency = 2.0 + Double(i) / 10.0
+            let value = sin(t * .pi * frequency) * 0.3 + sin(t * .pi * frequency * 2) * 0.2
+            amplitudes.append(CGFloat(value))
+        }
+        
+        return amplitudes
     }
 }
 

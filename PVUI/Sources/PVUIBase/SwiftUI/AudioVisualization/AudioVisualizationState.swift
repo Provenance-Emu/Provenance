@@ -69,7 +69,7 @@ public class AudioVisualizationState: ObservableObject {
         let waveformData = audioEngine.getWaveformData(numberOfPoints: numberOfPoints)
         
         // Convert to CGFloat for SwiftUI and apply amplification
-        let amplificationFactor: CGFloat = 5.0 // Increased for better visibility
+        let amplificationFactor: CGFloat = 2.0 // Reduced to avoid excessive amplitude
         let newAmplitudes = waveformData.amplitudes.map { CGFloat($0) * amplificationFactor }
         
         // Ensure we have non-zero values (add some noise if silent)

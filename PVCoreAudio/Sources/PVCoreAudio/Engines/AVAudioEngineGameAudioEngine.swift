@@ -441,26 +441,82 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
             return WaveformData(amplitudes: result)
         }
         
-        // Use Accelerate framework to downsample the audio buffer to the requested number of points
-        let inputLength = vDSP_Length(audioBufferForVisualization.count)
-        let stride = max(1, Int(inputLength) / numberOfPoints)
+        // Perform frequency analysis using FFT
+        let fftSize = 1024 // Power of 2 for efficient FFT
+        var paddedBuffer = [Float](repeating: 0, count: fftSize)
         
-        for i in 0..<numberOfPoints {
-            let startIdx = i * stride
-            let endIdx = min(startIdx + stride, audioBufferForVisualization.count)
-            
-            if startIdx < endIdx {
-                // Take absolute values for visualization
-                var absValues = [Float](repeating: 0, count: endIdx - startIdx)
-                vDSP_vabs(Array(audioBufferForVisualization[startIdx..<endIdx]), 1, &absValues, 1, vDSP_Length(endIdx - startIdx))
-                
-                // Find the maximum value in this segment
-                var maxValue: Float = 0
-                vDSP_maxv(absValues, 1, &maxValue, vDSP_Length(absValues.count))
-                
-                result[i] = maxValue
+        // Copy audio data to padded buffer
+        let copySize = min(audioBufferForVisualization.count, fftSize)
+        for i in 0..<copySize {
+            paddedBuffer[i] = audioBufferForVisualization[i]
+        }
+        
+        // Apply window function to reduce spectral leakage
+        var window = [Float](repeating: 0, count: fftSize)
+        vDSP_hann_window(&window, vDSP_Length(fftSize), Int32(0))
+        vDSP_vmul(paddedBuffer, 1, window, 1, &paddedBuffer, 1, vDSP_Length(fftSize))
+        
+        // Prepare for FFT
+        let log2n = vDSP_Length(log2(Float(fftSize)))
+        let fftSetup = vDSP_create_fftsetup(log2n, FFTRadix(kFFTRadix2))
+        
+        var realp = [Float](repeating: 0, count: fftSize/2)
+        var imagp = [Float](repeating: 0, count: fftSize/2)
+        var splitComplex = DSPSplitComplex(realp: &realp, imagp: &imagp)
+        
+        // Convert to split complex format
+        paddedBuffer.withUnsafeBufferPointer { bufferPtr in
+            vDSP_ctoz(bufferPtr.baseAddress!.withMemoryRebound(to: DSPComplex.self, capacity: fftSize/2) { $0 },
+                     2, &splitComplex, 1, vDSP_Length(fftSize/2))
+        }
+        
+        // Perform forward FFT
+        vDSP_fft_zrip(fftSetup!, &splitComplex, 1, log2n, FFTDirection(kFFTDirection_Forward))
+        
+        // Calculate magnitude spectrum
+        var magnitudes = [Float](repeating: 0, count: fftSize/2)
+        vDSP_zvmags(&splitComplex, 1, &magnitudes, 1, vDSP_Length(fftSize/2))
+        
+        // Scale magnitudes and convert to dB scale
+        var scaledMagnitudes = [Float](repeating: 0, count: fftSize/2)
+        var scale = 1.0 / Float(fftSize)
+        vDSP_vsmul(magnitudes, 1, &scale, &scaledMagnitudes, 1, vDSP_Length(fftSize/2))
+        
+        // Convert to dB scale (20 * log10(x))
+        for i in 0..<fftSize/2 {
+            if scaledMagnitudes[i] > 0 {
+                scaledMagnitudes[i] = 20.0 * log10(scaledMagnitudes[i])
+            } else {
+                scaledMagnitudes[i] = -100.0 // -100 dB floor
             }
         }
+        
+        // Normalize to 0-1 range
+        var minValue: Float = -100.0
+        var maxValue: Float = 0.0
+        vDSP_vclip(scaledMagnitudes, 1, &minValue, &maxValue, &scaledMagnitudes, 1, vDSP_Length(fftSize/2))
+        vDSP_vsmsa(scaledMagnitudes, 1, [Float(1.0 / 100.0)], [1.0], &scaledMagnitudes, 1, vDSP_Length(fftSize/2))
+        
+        // Map frequency bins to output points using logarithmic scale (to match human hearing)
+        // Human hearing is logarithmic from ~20Hz to ~20kHz
+        let sampleRate: Float = 44100.0 // Assuming 44.1kHz sample rate
+        let minFreq: Float = 40.0 // Minimum frequency (Hz)
+        let maxFreq: Float = 20000.0 // Maximum frequency (Hz)
+        
+        for i in 0..<numberOfPoints {
+            // Calculate frequency for this point using logarithmic scale
+            let t = Float(i) / Float(numberOfPoints - 1)
+            let freq = minFreq * pow(maxFreq / minFreq, t)
+            
+            // Map frequency to FFT bin
+            let bin = Int(freq * Float(fftSize) / sampleRate)
+            if bin < fftSize/2 && bin >= 0 {
+                result[i] = scaledMagnitudes[bin]
+            }
+        }
+        
+        // Clean up
+        vDSP_destroy_fftsetup(fftSetup)
         
         return WaveformData(amplitudes: result)
     }

@@ -18,19 +18,31 @@ extension PVEmulatorViewController {
     private struct AssociatedKeys {
         static var audioVisualizerEnabledKey = "audioVisualizerEnabled"
         static var audioVisualizerHostingControllerKey = "audioVisualizerHostingController"
+        static var audioVisualizerModeKey = "audioVisualizerMode"
     }
     
     /// Whether the audio visualizer is currently enabled
     var isAudioVisualizerEnabled: Bool {
         get {
-            return objc_getAssociatedObject(self, &AssociatedKeys.audioVisualizerEnabledKey) as? Bool ?? false
+            return visualizerMode != .off
         }
         set {
-            objc_setAssociatedObject(self, &AssociatedKeys.audioVisualizerEnabledKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            if newValue {
-                setupAudioVisualizer()
-            } else {
+            // For backward compatibility
+            visualizerMode = newValue ? .standard : .off
+        }
+    }
+    
+    /// The current visualizer mode
+    var visualizerMode: VisualizerMode {
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKeys.audioVisualizerModeKey) as? VisualizerMode ?? VisualizerMode.current
+        }
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.audioVisualizerModeKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            if newValue == .off {
                 removeAudioVisualizer()
+            } else {
+                setupAudioVisualizer()
             }
         }
     }
@@ -58,26 +70,50 @@ extension PVEmulatorViewController {
             return
         }
         
-        // Create the retrowave-styled audio visualizer view
-        let visualizerView = RetrowaveDynamicIslandAudioVisualizer(
-            audioEngine: gameAudio,
-            numberOfPoints: 60,
-            updateInterval: 0.03 // More frequent updates for better responsiveness
-        )
+        // Create the appropriate visualizer based on the selected mode
+        let visualizerView: AnyView
+        
+        switch visualizerMode {
+        case .off:
+            return // Don't create a visualizer if mode is off
+            
+        case .standard:
+            // Create the standard retrowave audio visualizer
+            visualizerView = AnyView(
+                RetrowaveDynamicIslandAudioVisualizer(
+                    audioEngine: gameAudio,
+                    numberOfPoints: 60,
+                    updateInterval: 0.03
+                )
+            )
+            
+        case .metal:
+            // Create the Metal-based retrowave audio visualizer
+            visualizerView = AnyView(
+                MetalDynamicIslandAudioVisualizer(
+                    audioEngine: gameAudio,
+                    numberOfPoints: 128, // More points for higher resolution
+                    updateInterval: 0.016 // 60fps updates
+                )
+            )
+        }
         
         // Create a hosting controller for the SwiftUI view
         let hostingController = UIHostingController(
-            rootView: AnyView(visualizerView)
+            rootView: visualizerView
         )
         
         // Configure the hosting controller
-        hostingController.view.backgroundColor = .clear
+        hostingController.view.backgroundColor = UIColor.clear
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         
         // Add the hosting controller as a child
         addChild(hostingController)
         view.addSubview(hostingController.view)
         hostingController.didMove(toParent: self)
+        
+        // Ensure proper z-order (visualizer stays on top)
+        view.bringSubviewToFront(hostingController.view)
         
         // Set up constraints to position at the Dynamic Island
         let screenWidth = UIScreen.main.bounds.width
@@ -93,6 +129,9 @@ extension PVEmulatorViewController {
             hostingController.view.widthAnchor.constraint(equalToConstant: visualizerWidth),
             hostingController.view.heightAnchor.constraint(equalToConstant: 60)
         ])
+        
+        // Store reference to the hosting controller
+        audioVisualizerHostingController = hostingController
         
         // Store the hosting controller
         audioVisualizerHostingController = hostingController
@@ -133,16 +172,41 @@ extension PVEmulatorViewController {
     
     /// Toggle the audio visualizer on/off
     @objc public func toggleAudioVisualizer() {
-        isAudioVisualizerEnabled.toggle()
-        
-        if isAudioVisualizerEnabled {
-            showAudioVisualizer()
+        // Toggle between off and the last used mode (or standard if none)
+        if visualizerMode == .off {
+            // Get the last used mode from user defaults, or use standard as default
+            visualizerMode = VisualizerMode.current != .off ? VisualizerMode.current : .standard
         } else {
+            visualizerMode = .off
+        }
+        
+        // Update UI based on new mode
+        if visualizerMode == .off {
             hideAudioVisualizer()
+        } else {
+            showAudioVisualizer()
         }
         
         // Save the preference
-        UserDefaults.standard.set(isAudioVisualizerEnabled, forKey: "PVAudioVisualizerEnabled")
+        visualizerMode.saveToUserDefaults()
+    }
+    
+    /// Set a specific visualizer mode
+    @objc public func setVisualizerMode(_ mode: VisualizerMode) {
+        // Only update if the mode has changed
+        if visualizerMode != mode {
+            visualizerMode = mode
+            
+            // Update UI based on new mode
+            if mode == .off {
+                hideAudioVisualizer()
+            } else {
+                // Remove existing visualizer if any
+                removeAudioVisualizer()
+                // Set up new visualizer with the selected mode
+                setupAudioVisualizer()
+            }
+        }
     }
     
     /// Get the appropriate top offset for the Dynamic Island based on device model
