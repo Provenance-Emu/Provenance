@@ -39,7 +39,7 @@ struct DynamicIslandPositioner {
             // In portrait, the notch is at the top center
             return CGRect(
                 x: UIScreen.main.bounds.width/2 - notchWidth/2,
-                y: 0,  // Position it at the very top edge
+                y: 14,
                 width: notchWidth,
                 height: notchHeight
             )
@@ -75,7 +75,7 @@ struct DynamicIslandPositioner {
             // Default to portrait
             return CGRect(
                 x: UIScreen.main.bounds.width/2 - notchWidth/2,
-                y: 0,
+                y: 10,
                 width: notchWidth,
                 height: notchHeight
             )

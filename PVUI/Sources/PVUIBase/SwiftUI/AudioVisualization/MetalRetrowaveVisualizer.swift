@@ -223,21 +223,28 @@ public struct MetalDynamicIslandAudioVisualizer: View {
                                      updateInterval: updateInterval)
                 }
             } else {
-                // Standard bar-style Metal visualization positioned below the notch
+                // Enhanced award-winning Metal visualization positioned below the notch
                 ZStack {
                     // Dynamic Island shape
                     RoundedRectangle(cornerRadius: islandHeight / 2)
                         .fill(Color.black)
                         .frame(width: islandWidth, height: islandHeight)
                     
-                    // Metal visualizer below the Dynamic Island
-                    MetalRetrowaveVisualizer(
+                    // Animated background grid for retrowave effect
+                    VisualizationRetrowaveGrid()
+                        .opacity(0.4)
+                        .frame(width: islandWidth + 20, height: 40)
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                        .offset(y: islandHeight / 2 + 10)
+                    
+                    // Enhanced Metal visualizer below the Dynamic Island
+                    EnhancedMetalVisualizer(
                         audioEngine: audioEngine,
                         numberOfPoints: numberOfPoints,
-                        updateInterval: updateInterval
+                        updateInterval: 0.008 // Twice as fast (120fps)
                     )
-                    .frame(width: islandWidth, height: 20)
-                    .offset(y: islandHeight / 2 + 5) // Position below the Dynamic Island
+                    .frame(width: islandWidth, height: 30)
+                    .offset(y: islandHeight / 2 + 10) // Position below the Dynamic Island
                 }
             }
             
@@ -245,13 +252,14 @@ public struct MetalDynamicIslandAudioVisualizer: View {
             RoundedRectangle(cornerRadius: islandHeight / 2)
                 .strokeBorder(
                     LinearGradient(
-                        colors: [Color.retroPink, Color.retroPurple, Color.retroCyan],
+                        colors: [Color(hex: "#FF00FF"), Color(hex: "#00FFFF")],
                         startPoint: .leading,
                         endPoint: .trailing
                     ),
-                    lineWidth: 1.5
+                    lineWidth: 2.0
                 )
                 .frame(width: islandWidth, height: islandHeight)
+                .shadow(color: Color(hex: "#FF00FF").opacity(0.8), radius: 4, x: 0, y: 0)
         }
     }
     
