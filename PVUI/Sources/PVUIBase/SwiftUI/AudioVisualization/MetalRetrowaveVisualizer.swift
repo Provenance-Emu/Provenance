@@ -21,7 +21,7 @@ extension Color {
         default:
             (a, r, g, b) = (1, 1, 1, 0)
         }
-
+        
         self.init(
             .sRGB,
             red: Double(r) / 255,
@@ -41,7 +41,7 @@ public struct MetalRetrowaveVisualizer: UIViewRepresentable {
     private let updateInterval: TimeInterval
     
     // MARK: - Initialization
-    public init(audioEngine: AudioEngineProtocol, 
+    public init(audioEngine: AudioEngineProtocol,
                 numberOfPoints: Int = 128,
                 updateInterval: TimeInterval = 0.03) {
         self.audioEngine = audioEngine
@@ -153,7 +153,6 @@ public struct MetalDynamicIslandAudioVisualizer: View {
     private let audioEngine: AudioEngineProtocol
     private let numberOfPoints: Int
     private let updateInterval: TimeInterval
-    private let isCircular: Bool
     
     @Environment(\.colorScheme) private var colorScheme
     
@@ -165,13 +164,11 @@ public struct MetalDynamicIslandAudioVisualizer: View {
     public init(
         audioEngine: AudioEngineProtocol,
         numberOfPoints: Int = 128,
-        updateInterval: TimeInterval = 0.03,
-        isCircular: Bool = false
+        updateInterval: TimeInterval = 0.03
     ) {
         self.audioEngine = audioEngine
         self.numberOfPoints = numberOfPoints
         self.updateInterval = updateInterval
-        self.isCircular = isCircular
     }
     
     public var body: some View {
@@ -199,56 +196,30 @@ public struct MetalDynamicIslandAudioVisualizer: View {
                 .fill(Color.black)
                 .frame(width: islandWidth, height: islandHeight)
             
-            if isCircular {
-                // Circular Metal-based waveform visualization around the Dynamic Island
-                ZStack {
-                    // Dynamic Island shape outline with glow
-                    RoundedRectangle(cornerRadius: islandHeight / 2)
-                        .strokeBorder(
-                            LinearGradient(
-                                colors: [Color(hex: "#FF00FF"), Color(hex: "#00FFFF")],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ),
-                            lineWidth: 2.0
-                        )
-                        .frame(width: islandWidth, height: islandHeight)
-                        .shadow(color: Color(hex: "#FF00FF").opacity(0.8), radius: 4, x: 0, y: 0)
-                    
-                    // Use the award-winning circular Metal visualizer
-                    EnhancedCircularMetalVisualizer(
-                        audioEngine: audioEngine, 
-                        numberOfPoints: min(numberOfPoints, 40), 
-                        islandWidth: islandWidth, 
-                        islandHeight: islandHeight, 
-                        updateInterval: 0.008 // 120fps for ultra-smooth animations
-                    )
-                }
-            } else {
-                // Enhanced award-winning Metal visualization positioned below the notch
-                ZStack {
-                    // Dynamic Island shape
-                    RoundedRectangle(cornerRadius: islandHeight / 2)
-                        .fill(Color.black)
-                        .frame(width: islandWidth, height: islandHeight)
-                    
-                    // Animated background grid for retrowave effect
-                    VisualizationRetrowaveGrid()
-                        .opacity(0.4)
-                        .frame(width: islandWidth + 20, height: 40)
-                        .clipShape(RoundedRectangle(cornerRadius: 4))
-                        .offset(y: islandHeight / 2 + 10)
-                    
-                    // Enhanced Metal visualizer below the Dynamic Island
-                    EnhancedMetalVisualizer(
-                        audioEngine: audioEngine,
-                        numberOfPoints: numberOfPoints,
-                        updateInterval: 0.008 // Twice as fast (120fps)
-                    )
-                    .frame(width: islandWidth, height: 30)
-                    .offset(y: islandHeight / 2 + 10) // Position below the Dynamic Island
-                }
+            // Enhanced award-winning Metal visualization positioned below the notch
+            ZStack {
+                // Dynamic Island shape
+                RoundedRectangle(cornerRadius: islandHeight / 2)
+                    .fill(Color.black)
+                    .frame(width: islandWidth, height: islandHeight)
+                
+                // Animated background grid for retrowave effect
+                VisualizationRetrowaveGrid()
+                    .opacity(0.4)
+                    .frame(width: islandWidth + 20, height: 40)
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+                    .offset(y: islandHeight / 2 + 10)
+                
+                // Enhanced Metal visualizer below the Dynamic Island
+                EnhancedMetalVisualizer(
+                    audioEngine: audioEngine,
+                    numberOfPoints: numberOfPoints,
+                    updateInterval: 0.008 // Twice as fast (120fps)
+                )
+                .frame(width: islandWidth, height: 30)
+                .offset(y: islandHeight / 2 + 10) // Position below the Dynamic Island
             }
+            
             
             // Add neon border for retrowave effect
             RoundedRectangle(cornerRadius: islandHeight / 2)
@@ -270,9 +241,9 @@ public struct MetalDynamicIslandAudioVisualizer: View {
         // Dynamic Island is available on iPhone 14 Pro, iPhone 14 Pro Max, iPhone 15 series, and iPhone 16 series
         let deviceName = UIDevice.current.name
         
-        return deviceName.contains("iPhone 14 Pro") || 
-               deviceName.contains("iPhone 15") ||
-               deviceName.contains("iPhone 16")
+        return deviceName.contains("iPhone 14 Pro") ||
+        deviceName.contains("iPhone 15") ||
+        deviceName.contains("iPhone 16")
     }
     
     /// Get Dynamic Island dimensions based on device model

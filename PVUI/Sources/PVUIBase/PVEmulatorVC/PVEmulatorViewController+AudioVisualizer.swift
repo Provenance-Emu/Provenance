@@ -92,6 +92,7 @@ extension PVEmulatorViewController {
                     islandHeight: islandFrame.height,
                     updateInterval: 0.008 // 120fps updates for smoother animation
                 )
+                .positionedAtDynamicIsland()
             )
         }
 

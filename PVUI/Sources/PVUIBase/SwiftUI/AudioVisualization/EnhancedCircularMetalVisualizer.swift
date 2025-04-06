@@ -47,54 +47,58 @@ public struct EnhancedCircularMetalVisualizer: View {
     // MARK: - Body
     public var body: some View {
         GeometryReader { geometry in
-            ZStack {
-                // Background grid for retrowave effect
-                VisualizationRetrowaveGrid()
-                    .opacity(0.3)
-                    .frame(width: geometry.size.width * 1.2, height: geometry.size.height * 1.2)
-                    .scaleEffect(1.0 + beatPulse * 0.05)
-                
-                // Dynamic Island shape with glow
-                RoundedRectangle(cornerRadius: islandHeight / 2)
-                    .fill(Color.black)
-                    .frame(width: islandWidth, height: islandHeight)
-                
-                // Reactive energy waves emanating from the pill
-                ForEach(0..<3) { layer in
-                    createEnergyWave(layer: layer, in: geometry)
+            VStack(alignment: .center) {
+                // Offset the entire ZStack to center properly on the pill
+                ZStack(alignment: .center) {
+                    // Background grid for retrowave effect
+                    VisualizationRetrowaveGrid()
+                        .opacity(0.3)
+                        .frame(width: geometry.size.width * 1.2, height: geometry.size.height * 1.2)
+                        .scaleEffect(1.0 + beatPulse * 0.05)
+                    
+                    // Dynamic Island shape with glow
+                    RoundedRectangle(cornerRadius: islandHeight / 2)
+                        .fill(Color.black)
+                        .frame(width: islandWidth, height: islandHeight)
+                    
+                    // Reactive energy waves emanating from the pill
+                    ForEach(0..<3) { layer in
+                        createEnergyWave(layer: layer, in: geometry)
+                    }
+                    
+                    // Dynamic Island outline with premium glow
+                    RoundedRectangle(cornerRadius: islandHeight / 2)
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [Color(hex: "#FF00FF"), Color(hex: "#00FFFF")],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            lineWidth: 2.0 + beatPulse * 1.5
+                        )
+                        .frame(width: islandWidth, height: islandHeight)
+                        .shadow(
+                            color: Color(hex: "#FF00FF").opacity(0.5 + islandGlow * 0.5),
+                            radius: 8 + islandGlow * 4,
+                            x: 0,
+                            y: 0
+                        )
+                    
+                    // Particle system
+                    ForEach(0..<20) { i in
+                        createParticle(index: i, in: geometry)
+                    }
+                    
+                    // Frequency spectrum visualization
+                    createFrequencySpectrum()
                 }
-                
-                // Dynamic Island outline with premium glow
-                RoundedRectangle(cornerRadius: islandHeight / 2)
-                    .strokeBorder(
-                        LinearGradient(
-                            colors: [Color(hex: "#FF00FF"), Color(hex: "#00FFFF")],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ),
-                        lineWidth: 2.0 + beatPulse * 1.5
-                    )
-                    .frame(width: islandWidth, height: islandHeight)
-                    .shadow(
-                        color: Color(hex: "#FF00FF").opacity(0.5 + islandGlow * 0.5),
-                        radius: 8 + islandGlow * 4,
-                        x: 0,
-                        y: 0
-                    )
-                
-                // Particle system
-                ForEach(0..<20) { i in
-                    createParticle(index: i, in: geometry)
+                .onChange(of: audioState.smoothedAmplitudes) { newAmplitudes in
+                    updateVisualization(with: newAmplitudes)
                 }
-                
-                // Frequency spectrum visualization
-                createFrequencySpectrum()
-            }
-            .onChange(of: audioState.smoothedAmplitudes) { newAmplitudes in
-                updateVisualization(with: newAmplitudes)
             }
         }
-        .positionedAtDynamicIsland() // Ensure perfect alignment with Dynamic Island
+        // Use the centered positioning with a horizontal offset to align perfectly
+        .centeredAtDynamicIsland(horizontalOffset: -islandWidth/2)
         .onAppear {
             audioState.startUpdating()
             
@@ -191,7 +195,7 @@ public struct EnhancedCircularMetalVisualizer: View {
                 let xPos = normalizedIndex * islandWidth - islandWidth/2
                 
                 let amplitude = audioState.smoothedAmplitudes.count > index ?
-                    audioState.smoothedAmplitudes[index] * 12 : 2
+                audioState.smoothedAmplitudes[index] * 12 : 2
                 
                 Rectangle()
                     .fill(
@@ -262,7 +266,7 @@ public struct EnhancedCircularMetalVisualizer: View {
         }
         
         return audioState.smoothedAmplitudes.count > adjustedIndex ?
-            audioState.smoothedAmplitudes[adjustedIndex] : 0
+        audioState.smoothedAmplitudes[adjustedIndex] : 0
     }
     
     /// Gets the appropriate gradient for a specific layer
@@ -301,6 +305,8 @@ public struct EnhancedCircularMetalVisualizer: View {
         case 0: return .retroCyan // Cyan for high frequencies
         case 1: return .retroPink // Pink for mid frequencies
         case 2: return Color(hex: "#FF00FF") // Magenta for low frequencies
+        case 3: return .retroBlue
+        case 4: return .retroGreen
         default: return Color(hex: "#FF00FF")
         }
     }

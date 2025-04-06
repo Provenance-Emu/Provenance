@@ -92,11 +92,31 @@ struct DynamicIslandPositioner {
                 .ignoresSafeArea()
         }
     }
+    
+    /// Create a modifier that centers a view at the Dynamic Island with a horizontal offset
+    struct CenteredAtDynamicIslandModifier: ViewModifier {
+        let horizontalOffset: CGFloat
+        
+        func body(content: Content) -> some View {
+            let frame = getDynamicIslandFrame()
+            
+            content
+                .position(x: frame.midX + horizontalOffset, y: frame.midY)
+                .ignoresSafeArea()
+        }
+    }
 }
+
+
 
 extension View {
     /// Position this view at the Dynamic Island
     func positionedAtDynamicIsland() -> some View {
         self.modifier(DynamicIslandPositioner.AtDynamicIslandModifier())
+    }
+    
+    /// Position this view centered at the Dynamic Island with a horizontal offset
+    func centeredAtDynamicIsland(horizontalOffset: CGFloat = 0) -> some View {
+        self.modifier(DynamicIslandPositioner.CenteredAtDynamicIslandModifier(horizontalOffset: horizontalOffset))
     }
 }
