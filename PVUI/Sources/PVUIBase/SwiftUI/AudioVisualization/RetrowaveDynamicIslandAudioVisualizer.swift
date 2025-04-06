@@ -98,41 +98,43 @@ public struct RetrowaveDynamicIslandAudioVisualizer: View {
     }
     
     public var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                // Dynamic Island detection and layout
-                if isDynamicIslandDevice() {
-                    dynamicIslandVisualization(in: geometry)
-                } else {
-                    standardVisualization(in: geometry)
-                }
-            }
-            .onAppear {
-                visualizationState.startUpdating()
-                animator.startAnimations()
-            }
-            .onDisappear {
-                visualizationState.stopUpdating()
-                animator.stopAnimations()
-            }
+        ZStack {
+            // Use Dynamic Island visualization
+            dynamicIslandVisualization()
         }
         .frame(height: 60)
+        .frame(maxWidth: .infinity)
+        // Position at the top center of the screen
+        .position(x: UIScreen.main.bounds.width / 2, y: 30)
+        .onAppear {
+            visualizationState.startUpdating()
+            animator.startAnimations()
+            
+            // Debug: Print waveform data periodically
+            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+                let data = audioEngine.getWaveformData(numberOfPoints: 10)
+                print("Waveform data sample: \(data.amplitudes[0..<min(10, data.amplitudes.count)])")
+            }
+        }
+        .onDisappear {
+            visualizationState.stopUpdating()
+            animator.stopAnimations()
+        }
     }
     
     /// Visualization specifically designed for Dynamic Island
-    private func dynamicIslandVisualization(in geometry: GeometryProxy) -> some View {
-        let width = geometry.size.width
-        let height: CGFloat = 60
+    private func dynamicIslandVisualization() -> some View {
+        // Get dimensions based on device model
+        let dimensions = dynamicIslandDimensions()
+        let islandWidth = dimensions.width
+        let islandHeight = dimensions.height
         
-        return ZStack {
+        return ZStack(alignment: .center) {
             // Background grid for retrowave effect
             VisualizationRetrowaveGrid()
                 .opacity(0.3)
-                .mask(
-                    RoundedRectangle(cornerRadius: 35 / 2)
-                        .frame(width: 120, height: 35)
-                        .position(x: width / 2, y: 25)
-                )
+                .frame(width: islandWidth, height: islandHeight)
+                .clipShape(RoundedRectangle(cornerRadius: islandHeight / 2))
             
             // Waveform visualization
                 WaveformPath(amplitudes: visualizationState.smoothedAmplitudes)
@@ -145,11 +147,8 @@ public struct RetrowaveDynamicIslandAudioVisualizer: View {
                         lineWidth: 2
                     )
                     .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color.cyan, radius: animator.isGlowing ? 4 : 2)
-                    .mask(
-                        RoundedRectangle(cornerRadius: 35 / 2)
-                            .frame(width: 120, height: 35)
-                            .position(x: width / 2, y: 25)
-                    )
+                    .frame(width: islandWidth, height: islandHeight)
+                    .clipShape(RoundedRectangle(cornerRadius: islandHeight / 2))
             }
             
             // Glow effect that pulses with the audio
@@ -162,7 +161,7 @@ public struct RetrowaveDynamicIslandAudioVisualizer: View {
                     ),
                     lineWidth: 2
                 )
-                .frame(width: 120, height: 35)
+                .frame(width: islandWidth, height: islandHeight)
                 .scaleEffect(animator.pulseScale)
                 .opacity(animator.isGlowing ? 0.8 : 0.4)
                 .blur(radius: 3)
@@ -177,62 +176,57 @@ public struct RetrowaveDynamicIslandAudioVisualizer: View {
                     .opacity(animator.effectIntensity * 0.8)
                     .blur(radius: 2)
         }
-        .frame(width: width, height: height)
     }
     
-    /// Standard visualization for devices without Dynamic Island
-    private func standardVisualization(in geometry: GeometryProxy) -> some View {
-        let width = geometry.size.width
-        let height: CGFloat = 60
-        
-        return ZStack {
-            // Background grid for retrowave effect
-            VisualizationRetrowaveGrid()
-                .opacity(0.3)
-            
-            // Waveform visualization
-                WaveformPath(amplitudes: visualizationState.smoothedAmplitudes)
-                    .stroke(
-                        LinearGradient(
-                            colors: [Color.pink, Color.purple, Color.cyan],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ),
-                        lineWidth: 2
-                    )
-                    .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color.cyan, radius: animator.isGlowing ? 4 : 2)
-            
-            // Glow effect
-                WaveformPath(amplitudes: visualizationState.smoothedAmplitudes)
-                    .stroke(Color.cyan.opacity(0.5), lineWidth: 3)
-                    .blur(radius: 3)
-                    .scaleEffect(animator.pulseScale)
-                    .opacity(animator.isGlowing ? 0.8 : 0.4)
-        }
-        .frame(width: width, height: height)
-        .padding(.horizontal, 20)
-    }
+    // This function has been removed as it's no longer needed
     
 
     
     /// Check if the device has a Dynamic Island
     private func isDynamicIslandDevice() -> Bool {
-        // Approximate detection based on device model
+        // Dynamic Island is available on iPhone 14 Pro, iPhone 14 Pro Max, iPhone 15 series, and iPhone 16 series
         let deviceName = UIDevice.current.name
+        
         return deviceName.contains("iPhone 14 Pro") || 
-               deviceName.contains("iPhone 15 Pro") ||
-               deviceName.contains("iPhone 15")
+               deviceName.contains("iPhone 15") ||
+               deviceName.contains("iPhone 16")
+    }
+    
+    /// Get Dynamic Island dimensions based on device model
+    private func dynamicIslandDimensions() -> (width: CGFloat, height: CGFloat, topOffset: CGFloat) {
+        let screenWidth = UIScreen.main.bounds.width
+        let deviceName = UIDevice.current.name
+        
+        // Default dimensions for iPhone 14 Pro/15 Pro
+        var islandWidth: CGFloat = 126
+        var islandHeight: CGFloat = 37
+        var topOffset: CGFloat = 11 // Distance from top of screen to center of island
+        
+        // iPhone 14 Pro Max/15 Pro Max has slightly different dimensions
+        if deviceName.contains("Max") {
+            islandWidth = 126
+            islandHeight = 37
+            topOffset = 12
+        }
+        // iPhone 15/16 base models
+        else if deviceName.contains("iPhone 15") || deviceName.contains("iPhone 16") {
+            islandWidth = 126
+            islandHeight = 37
+            topOffset = 11
+        }
+        
+        return (islandWidth, islandHeight, topOffset)
     }
     
     /// Create a shape that matches the Dynamic Island
     private func dynamicIslandShape(width: CGFloat) -> some View {
-        let islandWidth: CGFloat = 120
-        let islandHeight: CGFloat = 35
+        // Adjust these values based on the actual Dynamic Island dimensions
+        let islandWidth: CGFloat = 125
+        let islandHeight: CGFloat = 37
         let cornerRadius: CGFloat = islandHeight / 2
         
         return RoundedRectangle(cornerRadius: cornerRadius)
             .frame(width: islandWidth, height: islandHeight)
-            .position(x: width / 2, y: 25)
     }
 }
 

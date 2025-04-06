@@ -68,23 +68,39 @@ public class AudioVisualizationState: ObservableObject {
         // Get waveform data from the audio engine
         let waveformData = audioEngine.getWaveformData(numberOfPoints: numberOfPoints)
         
-        // Convert to CGFloat for SwiftUI
-        let newAmplitudes = waveformData.amplitudes.map { CGFloat($0) }
+        // Convert to CGFloat for SwiftUI and apply amplification
+        let amplificationFactor: CGFloat = 5.0 // Increased for better visibility
+        let newAmplitudes = waveformData.amplitudes.map { CGFloat($0) * amplificationFactor }
         
-        // Apply smoothing
-        let smoothingFactor: CGFloat = 0.3
+        // Ensure we have non-zero values (add some noise if silent)
+        var processedAmplitudes = newAmplitudes
+        let isFlat = newAmplitudes.allSatisfy { abs($0) < 0.05 }
+        
+        if isFlat {
+            // Add some small random values to prevent a completely flat line
+            processedAmplitudes = newAmplitudes.map { _ in CGFloat.random(in: 0.1...0.3) * sin(Double.random(in: 0...2 * .pi)) }
+        } else {
+            // Add a small amount of noise to make the visualization more dynamic
+            processedAmplitudes = newAmplitudes.map { $0 + CGFloat.random(in: -0.1...0.1) }
+        }
+        
+        // Apply smoothing - lower value makes it more responsive
+        let smoothingFactor: CGFloat = 0.2
         var smoothed: [CGFloat] = []
         
-        for i in 0..<newAmplitudes.count {
+        for i in 0..<processedAmplitudes.count {
             let previous = i < previousAmplitudes.count ? previousAmplitudes[i] : 0
-            let current = newAmplitudes[i]
+            let current = processedAmplitudes[i]
             let smoothedValue = previous + smoothingFactor * (current - previous)
-            smoothed.append(smoothedValue)
+            
+            // Clamp values to prevent extreme amplitudes
+            let clampedValue = min(max(smoothedValue, -1.0), 1.0)
+            smoothed.append(clampedValue)
         }
         
         // Update the published values on the main thread
         DispatchQueue.main.async { [weak self] in
-            self?.amplitudes = newAmplitudes
+            self?.amplitudes = processedAmplitudes
             self?.smoothedAmplitudes = smoothed
             self?.previousAmplitudes = smoothed
         }

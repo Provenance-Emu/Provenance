@@ -58,10 +58,11 @@ extension PVEmulatorViewController {
             return
         }
         
-        // Create the audio visualizer view
-        let visualizerView = DynamicIslandAudioVisualizer(
+        // Create the retrowave-styled audio visualizer view
+        let visualizerView = RetrowaveDynamicIslandAudioVisualizer(
             audioEngine: gameAudio,
-            primaryColor: ThemeManager.shared.currentPalette.defaultTintColor.swiftUIColor
+            numberOfPoints: 60,
+            updateInterval: 0.03 // More frequent updates for better responsiveness
         )
         
         // Create a hosting controller for the SwiftUI view
@@ -78,11 +79,18 @@ extension PVEmulatorViewController {
         view.addSubview(hostingController.view)
         hostingController.didMove(toParent: self)
         
-        // Set up constraints to position at the top of the screen
+        // Set up constraints to position at the Dynamic Island
+        let screenWidth = UIScreen.main.bounds.width
+        let visualizerWidth = min(screenWidth * 0.8, 300) // Limit width
+        
+        // Calculate top offset based on device model
+        let topOffset = getDynamicIslandTopOffset()
+        
         NSLayoutConstraint.activate([
-            hostingController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            // Position at the top center of the screen where the Dynamic Island is
+            hostingController.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            hostingController.view.topAnchor.constraint(equalTo: view.topAnchor, constant: topOffset),
+            hostingController.view.widthAnchor.constraint(equalToConstant: visualizerWidth),
             hostingController.view.heightAnchor.constraint(equalToConstant: 60)
         ])
         
@@ -135,5 +143,28 @@ extension PVEmulatorViewController {
         
         // Save the preference
         UserDefaults.standard.set(isAudioVisualizerEnabled, forKey: "PVAudioVisualizerEnabled")
+    }
+    
+    /// Get the appropriate top offset for the Dynamic Island based on device model
+    private func getDynamicIslandTopOffset() -> CGFloat {
+        let deviceName = UIDevice.current.name
+        
+        // Default offset for iPhone 14 Pro/15 Pro
+        var topOffset: CGFloat = 11
+        
+        // iPhone 14 Pro Max/15 Pro Max has slightly different dimensions
+        if deviceName.contains("Max") {
+            topOffset = 12
+        }
+        // iPhone 15/16 base models
+        else if deviceName.contains("iPhone 15") || deviceName.contains("iPhone 16") {
+            topOffset = 11
+        }
+        // iPhone 16 Pro/Pro Max
+        else if deviceName.contains("iPhone 16 Pro") {
+            topOffset = 11
+        }
+        
+        return topOffset
     }
 }
