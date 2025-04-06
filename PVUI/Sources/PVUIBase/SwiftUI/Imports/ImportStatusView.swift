@@ -225,6 +225,7 @@ public struct ImportStatusView: View {
                     })
                 }
             }
+            .preferredColorScheme(.dark)
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
             .onAppear {
