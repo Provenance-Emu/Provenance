@@ -444,22 +444,22 @@ struct DefaultControllerSkinView: View {
     }
 
     /// Stylized D-Pad view with retrowave aesthetic
-    /// Custom hexagon shape with rounded corners
-    private struct RoundedHexagon: Shape {
+    /// Custom octagon shape with rounded corners
+    private struct RoundedOctagon: Shape {
         var cornerRadius: CGFloat
         
         func path(in rect: CGRect) -> Path {
             let width = rect.width
             let height = rect.height
-            let sideLength = min(width, height) / 2
+            let radius = min(width, height) / 2
             let center = CGPoint(x: rect.midX, y: rect.midY)
             
-            // Calculate the six points of the hexagon
+            // Calculate the eight points of the octagon
             var points: [CGPoint] = []
-            for i in 0..<6 {
-                let angle = CGFloat(i) * .pi / 3
-                let x = center.x + sideLength * cos(angle)
-                let y = center.y + sideLength * sin(angle)
+            for i in 0..<8 {
+                let angle = CGFloat(i) * .pi / 4
+                let x = center.x + radius * cos(angle)
+                let y = center.y + radius * sin(angle)
                 points.append(CGPoint(x: x, y: y))
             }
             
@@ -482,17 +482,17 @@ struct DefaultControllerSkinView: View {
     
     private func dPadView() -> some View {
         ZStack {
-            // D-pad background with neon glow using hexagon shape
-            RoundedHexagon(cornerRadius: 15)
+            // D-pad background with neon glow using octagon shape
+            RoundedOctagon(cornerRadius: 15)
                 .fill(Color.black.opacity(0.7))
                 .frame(width: 180, height: 180)
                 .overlay(
-                    RoundedHexagon(cornerRadius: 15)
+                    RoundedOctagon(cornerRadius: 15)
                         .stroke(Color(red: 0.99, green: 0.11, blue: 0.55, opacity: 0.8), lineWidth: 2)
                         .blur(radius: 4)
                 )
                 .overlay(
-                    RoundedHexagon(cornerRadius: 15)
+                    RoundedOctagon(cornerRadius: 15)
                         .stroke(Color.white, lineWidth: 1)
                 )
 
@@ -516,10 +516,7 @@ struct DefaultControllerSkinView: View {
                     // Top row with Up-Left, Up, Up-Right
                     HStack(spacing: 0) {
                         // Up-Left button
-                        Button(action: { 
-                            inputHandler.buttonPressed("up")
-                            inputHandler.buttonPressed("left")
-                        }) {
+                        ZStack {
                             Text("⬉")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.white)
@@ -528,8 +525,13 @@ struct DefaultControllerSkinView: View {
                                 .frame(width: 40, height: 40)
                                 .contentShape(Rectangle())
                         }
-                        .simultaneousGesture(
+                        .onTapGesture { } // Empty gesture to prevent propagation
+                        .gesture(
                             DragGesture(minimumDistance: 0)
+                                .onChanged { _ in
+                                    inputHandler.buttonPressed("up")
+                                    inputHandler.buttonPressed("left")
+                                }
                                 .onEnded { _ in 
                                     inputHandler.buttonReleased("up")
                                     inputHandler.buttonReleased("left")
@@ -537,7 +539,7 @@ struct DefaultControllerSkinView: View {
                         )
                         
                         // Up button
-                        Button(action: { inputHandler.buttonPressed("up") }) {
+                        ZStack {
                             Text("▲")
                                 .font(.system(size: 24, weight: .bold))
                                 .foregroundColor(.white)
@@ -546,16 +548,15 @@ struct DefaultControllerSkinView: View {
                                 .frame(width: 50, height: 50)
                                 .contentShape(Rectangle())
                         }
-                        .simultaneousGesture(
+                        .onTapGesture { } // Empty gesture to prevent propagation
+                        .gesture(
                             DragGesture(minimumDistance: 0)
+                                .onChanged { _ in inputHandler.buttonPressed("up") }
                                 .onEnded { _ in inputHandler.buttonReleased("up") }
                         )
                         
                         // Up-Right button
-                        Button(action: { 
-                            inputHandler.buttonPressed("up")
-                            inputHandler.buttonPressed("right")
-                        }) {
+                        ZStack {
                             Text("⬈")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.white)
@@ -564,8 +565,13 @@ struct DefaultControllerSkinView: View {
                                 .frame(width: 40, height: 40)
                                 .contentShape(Rectangle())
                         }
-                        .simultaneousGesture(
+                        .onTapGesture { } // Empty gesture to prevent propagation
+                        .gesture(
                             DragGesture(minimumDistance: 0)
+                                .onChanged { _ in
+                                    inputHandler.buttonPressed("up")
+                                    inputHandler.buttonPressed("right")
+                                }
                                 .onEnded { _ in 
                                     inputHandler.buttonReleased("up")
                                     inputHandler.buttonReleased("right")
@@ -576,7 +582,7 @@ struct DefaultControllerSkinView: View {
                     // Middle row with Left, Center, Right
                     HStack(spacing: 0) {
                         // Left button
-                        Button(action: { inputHandler.buttonPressed("left") }) {
+                        ZStack {
                             Text("◀")
                                 .font(.system(size: 24, weight: .bold))
                                 .foregroundColor(.white)
@@ -585,8 +591,10 @@ struct DefaultControllerSkinView: View {
                                 .frame(width: 50, height: 50)
                                 .contentShape(Rectangle())
                         }
-                        .simultaneousGesture(
+                        .onTapGesture { } // Empty gesture to prevent propagation
+                        .gesture(
                             DragGesture(minimumDistance: 0)
+                                .onChanged { _ in inputHandler.buttonPressed("left") }
                                 .onEnded { _ in inputHandler.buttonReleased("left") }
                         )
 
@@ -596,7 +604,7 @@ struct DefaultControllerSkinView: View {
                             .frame(width: 40, height: 40)
 
                         // Right button
-                        Button(action: { inputHandler.buttonPressed("right") }) {
+                        ZStack {
                             Text("▶")
                                 .font(.system(size: 24, weight: .bold))
                                 .foregroundColor(.white)
@@ -605,8 +613,10 @@ struct DefaultControllerSkinView: View {
                                 .frame(width: 50, height: 50)
                                 .contentShape(Rectangle())
                         }
-                        .simultaneousGesture(
+                        .onTapGesture { } // Empty gesture to prevent propagation
+                        .gesture(
                             DragGesture(minimumDistance: 0)
+                                .onChanged { _ in inputHandler.buttonPressed("right") }
                                 .onEnded { _ in inputHandler.buttonReleased("right") }
                         )
                     }
@@ -614,10 +624,7 @@ struct DefaultControllerSkinView: View {
                     // Bottom row with Down-Left, Down, Down-Right
                     HStack(spacing: 0) {
                         // Down-Left button
-                        Button(action: { 
-                            inputHandler.buttonPressed("down")
-                            inputHandler.buttonPressed("left")
-                        }) {
+                        ZStack {
                             Text("⬋")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.white)
@@ -626,8 +633,13 @@ struct DefaultControllerSkinView: View {
                                 .frame(width: 40, height: 40)
                                 .contentShape(Rectangle())
                         }
-                        .simultaneousGesture(
+                        .onTapGesture { } // Empty gesture to prevent propagation
+                        .gesture(
                             DragGesture(minimumDistance: 0)
+                                .onChanged { _ in
+                                    inputHandler.buttonPressed("down")
+                                    inputHandler.buttonPressed("left")
+                                }
                                 .onEnded { _ in 
                                     inputHandler.buttonReleased("down")
                                     inputHandler.buttonReleased("left")
@@ -635,7 +647,7 @@ struct DefaultControllerSkinView: View {
                         )
                         
                         // Down button
-                        Button(action: { inputHandler.buttonPressed("down") }) {
+                        ZStack {
                             Text("▼")
                                 .font(.system(size: 24, weight: .bold))
                                 .foregroundColor(.white)
@@ -644,16 +656,15 @@ struct DefaultControllerSkinView: View {
                                 .frame(width: 50, height: 50)
                                 .contentShape(Rectangle())
                         }
-                        .simultaneousGesture(
+                        .onTapGesture { } // Empty gesture to prevent propagation
+                        .gesture(
                             DragGesture(minimumDistance: 0)
+                                .onChanged { _ in inputHandler.buttonPressed("down") }
                                 .onEnded { _ in inputHandler.buttonReleased("down") }
                         )
                         
                         // Down-Right button
-                        Button(action: { 
-                            inputHandler.buttonPressed("down")
-                            inputHandler.buttonPressed("right")
-                        }) {
+                        ZStack {
                             Text("⬊")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.white)
@@ -662,8 +673,13 @@ struct DefaultControllerSkinView: View {
                                 .frame(width: 40, height: 40)
                                 .contentShape(Rectangle())
                         }
-                        .simultaneousGesture(
+                        .onTapGesture { } // Empty gesture to prevent propagation
+                        .gesture(
                             DragGesture(minimumDistance: 0)
+                                .onChanged { _ in
+                                    inputHandler.buttonPressed("down")
+                                    inputHandler.buttonPressed("right")
+                                }
                                 .onEnded { _ in 
                                     inputHandler.buttonReleased("down")
                                     inputHandler.buttonReleased("right")
@@ -727,87 +743,87 @@ struct DefaultControllerSkinView: View {
 
     /// Circle button view with retrowave styling
     private func circleButton(label: String, color: Color) -> some View {
-        Button(action: { inputHandler.buttonPressed(label.lowercased()) }) {
-            ZStack {
-                // Outer glow
-                Circle()
-                    .fill(Color.clear)
-                    .frame(width: 60, height: 60)
-                    .overlay(
-                        Circle()
-                            .stroke(color, lineWidth: 2)
-                            .blur(radius: 4)
-                    )
-                    .overlay(
-                        Circle()
-                            .stroke(Color.white, lineWidth: 1)
-                    )
+        ZStack {
+            // Outer glow
+            Circle()
+                .fill(Color.clear)
+                .frame(width: 60, height: 60)
+                .overlay(
+                    Circle()
+                        .stroke(color, lineWidth: 2)
+                        .blur(radius: 4)
+                )
+                .overlay(
+                    Circle()
+                        .stroke(Color.white, lineWidth: 1)
+                )
 
-                // Button label with neon effect
-                NeonText(label, color: color, fontSize: 20)
-            }
-            .frame(width: 60, height: 60)
+            // Button label with neon effect
+            NeonText(label, color: color, fontSize: 20)
         }
-        .simultaneousGesture(
+        .frame(width: 60, height: 60)
+        .onTapGesture { } // Empty gesture to prevent propagation
+        .gesture(
             DragGesture(minimumDistance: 0)
+                .onChanged { _ in inputHandler.buttonPressed(label.lowercased()) }
                 .onEnded { _ in inputHandler.buttonReleased(label.lowercased()) }
         )
     }
 
     /// Pill-shaped button view with retrowave styling
     private func pillButton(label: String, color: Color) -> some View {
-        Button(action: { inputHandler.buttonPressed(label.lowercased()) }) {
-            ZStack {
-                // Outer glow
-                Capsule()
-                    .fill(Color.clear)
-                    .frame(width: 80, height: 35)
-                    .overlay(
-                        Capsule()
-                            .stroke(Color(red: 0.99, green: 0.11, blue: 0.55, opacity: 0.8), lineWidth: 2)
-                            .blur(radius: 4)
-                    )
-                    .overlay(
-                        Capsule()
-                            .stroke(Color.white, lineWidth: 1)
-                    )
+        ZStack {
+            // Outer glow
+            Capsule()
+                .fill(Color.clear)
+                .frame(width: 80, height: 35)
+                .overlay(
+                    Capsule()
+                        .stroke(Color(red: 0.99, green: 0.11, blue: 0.55, opacity: 0.8), lineWidth: 2)
+                        .blur(radius: 4)
+                )
+                .overlay(
+                    Capsule()
+                        .stroke(Color.white, lineWidth: 1)
+                )
 
-                // Button label with neon effect
-                NeonText(label, color: Color(red: 0.99, green: 0.11, blue: 0.55), fontSize: 14)
-            }
-            .frame(width: 80, height: 35)
+            // Button label with neon effect
+            NeonText(label, color: Color(red: 0.99, green: 0.11, blue: 0.55), fontSize: 14)
         }
-        .simultaneousGesture(
+        .frame(width: 80, height: 35)
+        .onTapGesture { } // Empty gesture to prevent propagation
+        .gesture(
             DragGesture(minimumDistance: 0)
+                .onChanged { _ in inputHandler.buttonPressed(label.lowercased()) }
                 .onEnded { _ in inputHandler.buttonReleased(label.lowercased()) }
         )
     }
 
     /// Shoulder button view with retrowave styling
     private func shoulderButton(label: String, color: Color) -> some View {
-        Button(action: { inputHandler.buttonPressed(label.lowercased()) }) {
-            ZStack {
-                // Outer glow
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.clear)
-                    .frame(width: 45, height: 35)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color(red: 0.0, green: 0.8, blue: 0.9, opacity: 0.8), lineWidth: 2)
-                            .blur(radius: 4)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.white, lineWidth: 1)
-                    )
+        ZStack {
+            // Outer glow
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.clear)
+                .frame(width: 45, height: 35)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color(red: 0.0, green: 0.8, blue: 0.9, opacity: 0.8), lineWidth: 2)
+                        .blur(radius: 4)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.white, lineWidth: 1)
+                )
 
-                // Button label with neon effect
-                NeonText(label, color: Color(red: 0.0, green: 0.8, blue: 0.9), fontSize: 14)
-            }
-            .frame(width: 45, height: 35)
+            // Button label with neon effect
+            NeonText(label, color: Color(red: 0.0, green: 0.8, blue: 0.9), fontSize: 14)
         }
-        .simultaneousGesture(
+        .frame(width: 45, height: 35)
+        .onTapGesture { } // Empty gesture to prevent propagation
+        .gesture(
             DragGesture(minimumDistance: 0)
+                .onChanged { _ in inputHandler.buttonPressed(label.lowercased()) }
                 .onEnded { _ in inputHandler.buttonReleased(label.lowercased()) }
         )
     }
