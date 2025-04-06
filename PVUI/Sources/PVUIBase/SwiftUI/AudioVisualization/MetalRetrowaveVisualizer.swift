@@ -124,6 +124,7 @@ public struct MetalDynamicIslandAudioVisualizer: View {
     private let audioEngine: AudioEngineProtocol
     private let numberOfPoints: Int
     private let updateInterval: TimeInterval
+    private let isCircular: Bool
     
     @Environment(\.colorScheme) private var colorScheme
     
@@ -135,11 +136,13 @@ public struct MetalDynamicIslandAudioVisualizer: View {
     public init(
         audioEngine: AudioEngineProtocol,
         numberOfPoints: Int = 128,
-        updateInterval: TimeInterval = 0.03
+        updateInterval: TimeInterval = 0.03,
+        isCircular: Bool = false
     ) {
         self.audioEngine = audioEngine
         self.numberOfPoints = numberOfPoints
         self.updateInterval = updateInterval
+        self.isCircular = isCircular
     }
     
     public var body: some View {
@@ -166,17 +169,58 @@ public struct MetalDynamicIslandAudioVisualizer: View {
             // Background grid for retrowave effect
             VisualizationRetrowaveGrid()
                 .opacity(0.3)
+                .frame(width: islandWidth + 20, height: islandHeight + 20)
+                .clipShape(RoundedRectangle(cornerRadius: (islandHeight + 20) / 2))
+            
+            // Dynamic Island shape
+            RoundedRectangle(cornerRadius: islandHeight / 2)
+                .fill(Color.black)
+                .frame(width: islandWidth, height: islandHeight)
+            
+            if isCircular {
+                // Circular Metal-based waveform visualization around the Dynamic Island
+                ZStack {
+                    // First, add the Metal visualizer as a background
+                    MetalRetrowaveVisualizer(
+                        audioEngine: audioEngine,
+                        numberOfPoints: numberOfPoints,
+                        updateInterval: updateInterval
+                    )
+                    .frame(width: islandWidth + 30, height: islandHeight + 30)
+                    
+                    // Add a black overlay to hide the center
+                    RoundedRectangle(cornerRadius: islandHeight / 2)
+                        .fill(Color.black)
+                        .frame(width: islandWidth, height: islandHeight)
+                    
+                    // Add circular waveform outline with neon glow
+                    DynamicIslandCircularWaveform(
+                        amplitudes: Array(repeating: 0.5, count: 128), // Static outline
+                        islandWidth: islandWidth,
+                        islandHeight: islandHeight,
+                        amplitudeScale: 6,
+                        padding: 4
+                    )
+                    .stroke(
+                        LinearGradient(
+                            colors: [Color.retroPink, Color.retroPurple, Color.retroCyan],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ),
+                        lineWidth: 1.5
+                    )
+                    .shadow(color: Color.retroPink.opacity(0.8), radius: 3, x: 0, y: 0)
+                }
+            } else {
+                // Standard bar-style Metal visualization
+                MetalRetrowaveVisualizer(
+                    audioEngine: audioEngine,
+                    numberOfPoints: numberOfPoints,
+                    updateInterval: updateInterval
+                )
                 .frame(width: islandWidth, height: islandHeight)
                 .clipShape(RoundedRectangle(cornerRadius: islandHeight / 2))
-            
-            // Metal-based waveform visualization
-            MetalRetrowaveVisualizer(
-                audioEngine: audioEngine,
-                numberOfPoints: numberOfPoints,
-                updateInterval: updateInterval
-            )
-            .frame(width: islandWidth, height: islandHeight)
-            .clipShape(RoundedRectangle(cornerRadius: islandHeight / 2))
+            }
             
             // Add neon border for retrowave effect
             RoundedRectangle(cornerRadius: islandHeight / 2)

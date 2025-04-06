@@ -183,9 +183,15 @@ public struct AudioVisualizerButton: View {
                     case .standard:
                         // Simulated standard visualizer
                         simulatedStandardVisualizer
+                    case .standardCircular:
+                        // Simulated standard circular visualizer
+                        simulatedCircularVisualizer
                     case .metal:
                         // Simulated metal visualizer
                         simulatedMetalVisualizer
+                    case .metalCircular:
+                        // Simulated metal circular visualizer
+                        simulatedCircularVisualizer
                     }
                 }
                 .padding(.horizontal, 20)
@@ -240,6 +246,51 @@ public struct AudioVisualizerButton: View {
                 .frame(height: 60)
         }
         .clipShape(RoundedRectangle(cornerRadius: 18))
+    }
+    
+    // Simulated circular visualizer for preview
+    private var simulatedCircularVisualizer: some View {
+        ZStack {
+            // Background grid
+            VisualizationRetrowaveGrid()
+                .opacity(0.3)
+                .frame(height: 70)
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+            
+            // Dynamic Island shape
+            RoundedRectangle(cornerRadius: 18)
+                .fill(Color.black)
+                .frame(width: 126, height: 37)
+            
+            // Circular waveform
+            RoundedRectangle(cornerRadius: 18)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [Color.retroPink, Color.retroPurple, Color.retroCyan],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    ),
+                    lineWidth: 2
+                )
+                .frame(width: 126, height: 37)
+                .shadow(color: Color.retroCyan, radius: 4)
+            
+            // Simulated circular waveform
+            Circle()
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [Color.retroPink, Color.retroPurple, Color.retroCyan],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    ),
+                    lineWidth: 1.5
+                )
+                .frame(width: 150, height: 50)
+                .shadow(color: Color.retroCyan, radius: 3)
+                .scaleEffect(1.05)
+                .opacity(0.7)
+        }
+        .frame(height: 70)
     }
     
     // Generate simulated waveform data for preview

@@ -39,7 +39,7 @@ public class MetalWaveformRenderer {
         var secondaryColor: SIMD4<Float>
     }
     
-    public init(maxPoints: Int = 128, amplificationFactor: Float = 5.0) {
+    public init(maxPoints: Int = 128, amplificationFactor: Float = 1.0) {
         self.maxPoints = maxPoints
         self.amplificationFactor = amplificationFactor
         self.fftSize = maxPoints * 2

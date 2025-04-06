@@ -39,6 +39,9 @@ extension PVEmulatorViewController {
         }
         set {
             objc_setAssociatedObject(self, &AssociatedKeys.audioVisualizerModeKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            // Save the new mode to user defaults
+            newValue.saveToUserDefaults()
+            
             if newValue == .off {
                 removeAudioVisualizer()
             } else {
@@ -65,10 +68,8 @@ extension PVEmulatorViewController {
             return
         }
         
-        // Check if we already have a visualizer
-        if audioVisualizerHostingController != nil {
-            return
-        }
+        // Remove any existing visualizer first to ensure we're using the correct mode
+        removeAudioVisualizer()
         
         // Create the appropriate visualizer based on the selected mode
         let visualizerView: AnyView
@@ -78,7 +79,7 @@ extension PVEmulatorViewController {
             return // Don't create a visualizer if mode is off
             
         case .standard:
-            // Create the standard retrowave audio visualizer
+            // Create the standard bar-style retrowave audio visualizer
             visualizerView = AnyView(
                 RetrowaveDynamicIslandAudioVisualizer(
                     audioEngine: gameAudio,
@@ -87,13 +88,35 @@ extension PVEmulatorViewController {
                 )
             )
             
+        case .standardCircular:
+            // Create the standard circular retrowave audio visualizer
+            visualizerView = AnyView(
+                RetrowaveDynamicIslandAudioVisualizer(
+                    audioEngine: gameAudio,
+                    numberOfPoints: 60,
+                    updateInterval: 0.03,
+                    isCircular: true
+                )
+            )
+            
         case .metal:
-            // Create the Metal-based retrowave audio visualizer
+            // Create the Metal-based bar-style retrowave audio visualizer
             visualizerView = AnyView(
                 MetalDynamicIslandAudioVisualizer(
                     audioEngine: gameAudio,
                     numberOfPoints: 128, // More points for higher resolution
                     updateInterval: 0.016 // 60fps updates
+                )
+            )
+            
+        case .metalCircular:
+            // Create the Metal-based circular retrowave audio visualizer
+            visualizerView = AnyView(
+                MetalDynamicIslandAudioVisualizer(
+                    audioEngine: gameAudio,
+                    numberOfPoints: 128, // More points for higher resolution
+                    updateInterval: 0.016, // 60fps updates
+                    isCircular: true
                 )
             )
         }

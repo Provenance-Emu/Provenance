@@ -70,6 +70,7 @@ public struct RetrowaveDynamicIslandAudioVisualizer: View {
     private let audioEngine: AudioEngineProtocol
     private let numberOfPoints: Int
     private let updateInterval: TimeInterval
+    private let isCircular: Bool
     
     @ObservedObject private var visualizationState: AudioVisualizationState
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -85,11 +86,13 @@ public struct RetrowaveDynamicIslandAudioVisualizer: View {
     public init(
         audioEngine: AudioEngineProtocol,
         numberOfPoints: Int = 60,
-        updateInterval: TimeInterval = 0.05
+        updateInterval: TimeInterval = 0.05,
+        isCircular: Bool = false
     ) {
         self.audioEngine = audioEngine
         self.numberOfPoints = numberOfPoints
         self.updateInterval = updateInterval
+        self.isCircular = isCircular
         self.visualizationState = AudioVisualizationState(
             audioEngine: audioEngine,
             numberOfPoints: numberOfPoints,
@@ -115,7 +118,7 @@ public struct RetrowaveDynamicIslandAudioVisualizer: View {
             // Debug: Print waveform data periodically
             Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
                 let data = audioEngine.getWaveformData(numberOfPoints: 10)
-                print("Waveform data sample: \(data.amplitudes[0..<min(10, data.amplitudes.count)])")
+                // VLOG("Waveform data sample: \(data.amplitudes[0..<min(10, data.amplitudes.count)])")
             }
         }
         .onDisappear {
@@ -135,22 +138,51 @@ public struct RetrowaveDynamicIslandAudioVisualizer: View {
             // Background grid for retrowave effect
             VisualizationRetrowaveGrid()
                 .opacity(0.3)
-                .frame(width: islandWidth, height: islandHeight)
-                .clipShape(RoundedRectangle(cornerRadius: islandHeight / 2))
+                .frame(width: islandWidth + 20, height: islandHeight + 20)
+                .clipShape(RoundedRectangle(cornerRadius: (islandHeight + 20) / 2))
             
-            // Waveform visualization
-                WaveformPath(amplitudes: visualizationState.smoothedAmplitudes)
-                    .stroke(
-                        LinearGradient(
-                            colors: [Color.pink, Color.purple, Color.cyan],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ),
-                        lineWidth: 2
-                    )
-                    .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color.cyan, radius: animator.isGlowing ? 4 : 2)
-                    .frame(width: islandWidth, height: islandHeight)
-                    .clipShape(RoundedRectangle(cornerRadius: islandHeight / 2))
+            // Dynamic Island shape
+            RoundedRectangle(cornerRadius: islandHeight / 2)
+                .fill(Color.black)
+                .frame(width: islandWidth, height: islandHeight)
+            
+            if isCircular {
+                // Animated circular waveform visualization around the Dynamic Island
+                DynamicIslandCircularWaveform(
+                    amplitudes: visualizationState.smoothedAmplitudes,
+                    islandWidth: islandWidth,
+                    islandHeight: islandHeight,
+                    amplitudeScale: 6,
+                    padding: 4
+                )
+                .stroke(
+                    LinearGradient(
+                        colors: [Color.retroPink, Color.retroPurple, Color.retroCyan],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    ),
+                    lineWidth: 2
+                )
+                .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color.cyan, radius: animator.isGlowing ? 4 : 2)
+                .animation(.easeInOut(duration: 0.3), value: visualizationState.smoothedAmplitudes)
+            } else {
+                // Standard bar visualization
+                HStack(spacing: 1) {
+                    ForEach(0..<min(visualizationState.amplitudes.count, 32), id: \.self) { index in
+                        Rectangle()
+                            .fill(
+                                LinearGradient(
+                                    colors: [Color.retroPink, Color.retroPurple, Color.retroCyan],
+                                    startPoint: .bottom,
+                                    endPoint: .top
+                                )
+                            )
+                            .frame(width: 2, height: max(2, visualizationState.amplitudes[index] * 20))
+                            .cornerRadius(1)
+                    }
+                }
+                .offset(y: islandHeight / 2 + 5) // Position below the Dynamic Island
+            }
             }
             
             // Glow effect that pulses with the audio
