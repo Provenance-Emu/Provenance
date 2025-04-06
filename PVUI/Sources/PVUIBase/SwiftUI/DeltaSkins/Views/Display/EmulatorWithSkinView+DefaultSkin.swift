@@ -23,14 +23,14 @@ struct RetrowaveBackground: View {
             // Deep blue/purple background
             Color(red: 0.05, green: 0.0, blue: 0.15, opacity: 0.9)
                 .edgesIgnoringSafeArea(.all)
-
+            
             // Grid with perspective effect
             RetrowaveGrid()
-            .opacity(0.35)
-
+                .opacity(0.35)
+            
             // Sun glow effect
             RetrowaveSun()
-            .opacity(0.25)
+                .opacity(0.25)
         }
     }
 }
@@ -44,7 +44,7 @@ struct RetrowaveGrid: View {
                 let height = geometry.size.height
                 let horizonY = height * 0.6
                 let centerX = width / 2
-
+                
                 // Horizontal grid lines
                 for i in 0..<20 {
                     let y = horizonY + CGFloat(i) * CGFloat(i) * 2.0
@@ -53,7 +53,7 @@ struct RetrowaveGrid: View {
                         path.addLine(to: CGPoint(x: width, y: y))
                     }
                 }
-
+                
                 // Vertical grid lines with perspective
                 for i in 0..<20 {
                     let spacing = width / 20
@@ -62,7 +62,7 @@ struct RetrowaveGrid: View {
                         path.move(to: CGPoint(x: x, y: horizonY))
                         path.addLine(to: CGPoint(x: width, y: height))
                     }
-
+                    
                     let x2 = centerX - spacing * CGFloat(i)
                     if x2 > 0 {
                         path.move(to: CGPoint(x: x2, y: horizonY))
@@ -82,7 +82,7 @@ struct RetrowaveSun: View {
             let width = geometry.size.width
             let height = geometry.size.height
             let horizonY = height * 0.6
-
+            
             Circle()
                 .fill(
                     RadialGradient(
@@ -107,13 +107,13 @@ struct NeonText: View {
     let text: String
     let color: Color
     let fontSize: CGFloat
-
+    
     init(_ text: String, color: Color = Color(red: 0.99, green: 0.11, blue: 0.55), fontSize: CGFloat = 14) {
         self.text = text
         self.color = color
         self.fontSize = fontSize
     }
-
+    
     var body: some View {
         Text(text)
             .font(.system(size: fontSize, weight: .bold))
@@ -125,14 +125,14 @@ struct NeonText: View {
 
 // MARK: - Default Controller
 extension EmulatorWithSkinView {
-
+    
     /// Create a default skin for a system
     /// - Parameter systemId: The system identifier
     /// - Returns: A default skin for the system
     public static func defaultSkin(for systemId: SystemIdentifier) -> DeltaSkinProtocol {
         return DefaultDeltaSkin(systemId: systemId)
     }
-
+    
     /// Default controller skin as a fallback
     internal func defaultControllerSkin() -> some View {
         // Use a local state variable for the joystick toggle since we can't mutate self
@@ -152,22 +152,22 @@ struct DefaultControllerSkinView: View {
     let inputHandler: DeltaSkinInputHandler
     let systemId: SystemIdentifier?
     let coreInstance: PVEmulatorCore
-
+    
     // State for control layout data
     @State private var controlLayout: [ControlLayoutEntry]? = nil
-
+    
     init(useJoystick: Bool, inputHandler: DeltaSkinInputHandler, systemId: SystemIdentifier?, coreInstance: PVEmulatorCore) {
         self._useJoystickInternal = State(initialValue: useJoystick)
         self.inputHandler = inputHandler
         self.systemId = systemId
         self.coreInstance = coreInstance
     }
-
+    
     var body: some View {
         // Load control layout data when view appears
         GeometryReader { geometry in
             let isLandscape = geometry.size.width > geometry.size.height
-
+            
             ZStack {
                 // Only show background in portrait mode with a gradual fade
                 if !isLandscape {
@@ -175,7 +175,7 @@ struct DefaultControllerSkinView: View {
                     ZStack {
                         // Retrowave background
                         RetrowaveBackground()
-                            // Apply a gradient mask for smooth fade from transparent to visible
+                        // Apply a gradient mask for smooth fade from transparent to visible
                             .mask(
                                 LinearGradient(
                                     gradient: Gradient(stops: [
@@ -189,7 +189,7 @@ struct DefaultControllerSkinView: View {
                             )
                     }
                 }
-
+                
                 if isLandscape {
                     // Landscape layout - controls positioned at edges with safe area awareness
                     dynamicLandscapeControllerSkin
@@ -201,7 +201,7 @@ struct DefaultControllerSkinView: View {
                     // Portrait layout - controls at bottom
                     VStack {
                         Spacer() // Push the controller to the bottom of the screen
-
+                        
                         dynamicControllerSkin
                             .onAppear {
                                 loadControlLayoutData()
@@ -211,7 +211,7 @@ struct DefaultControllerSkinView: View {
             }
         }
     }
-
+    
     // Landscape-specific layout with controls positioned correctly
     private var landscapeControllerLayout: some View {
         GeometryReader { geometry in
@@ -296,17 +296,17 @@ struct DefaultControllerSkinView: View {
             .position(x: geometry.size.width - 150, y: geometry.size.height / 2)
         }
     }
-
+    
     // Get the screen size based on the core's aspect size
     private func getScreenSize() -> CGSize {
         // Use the core's aspectSize property
         return coreInstance.aspectSize
     }
-
+    
     // Load control layout data from the system
     private func loadControlLayoutData() {
         guard let systemId = systemId else { return }
-
+        
         // Access Realm to get the system
         do {
             let realm = try Realm()
@@ -317,7 +317,7 @@ struct DefaultControllerSkinView: View {
             print("Error accessing Realm: \(error)")
         }
     }
-
+    
     // Dynamic controller skin based on system's control layout
     private var dynamicControllerSkin: AnyView {
         // If we have control layout data, use it to build a dynamic skin
@@ -328,7 +328,7 @@ struct DefaultControllerSkinView: View {
             AnyView(buildGenericSkin())
         }
     }
-
+    
     // Dynamic landscape controller skin
     private var dynamicLandscapeControllerSkin: AnyView {
         // If we have control layout data, use it to build a dynamic skin for landscape
@@ -339,7 +339,7 @@ struct DefaultControllerSkinView: View {
             AnyView(landscapeControllerLayout)
         }
     }
-
+    
     // Generic skin when no control layout data is available
     @ViewBuilder
     private func buildGenericSkin() -> some View {
@@ -354,17 +354,17 @@ struct DefaultControllerSkinView: View {
                     }
                     shoulderButton(label: "L3", color: .gray)
                 }
-
+                
                 Spacer()
-
+                
                 // Menu and Turbo buttons - horizontally aligned
                 HStack(spacing: 15) {
                     utilityButton(label: "MENU", color: .purple, systemImage: "line.3.horizontal")
                     utilityButton(label: "TURBO", color: .orange, systemImage: "forward.fill")
                 }
-
+                
                 Spacer()
-
+                
                 // R buttons
                 VStack(spacing: 5) {
                     HStack(spacing: 5) {
@@ -375,9 +375,9 @@ struct DefaultControllerSkinView: View {
                 }
             }
             .padding(.horizontal)
-
+            
             Spacer().frame(height: 20) // Add space to raise D-pad position
-
+            
             HStack(spacing: 30) { // Increased spacing between D-pad and action buttons
                 // Left side - D-Pad or Joystick
                 VStack(spacing: 5) {
@@ -390,7 +390,7 @@ struct DefaultControllerSkinView: View {
                             Image(systemName: useJoystickInternal ? "circle.grid.cross" : "dpad")
                                 .font(.system(size: 14))
                                 .foregroundColor(.white)
-
+                            
                             Text(useJoystickInternal ? "JOYSTICK" : "D-PAD")
                                 .font(.system(size: 10, weight: .bold))
                                 .foregroundColor(.white)
@@ -401,11 +401,11 @@ struct DefaultControllerSkinView: View {
                         .cornerRadius(10)
                     }
                     .buttonStyle(GameButtonStyle(pressAction: {
-            inputHandler.buttonPressed("toggle")
-        }, releaseAction: {
-            inputHandler.buttonReleased("toggle")
-        }))
-
+                        inputHandler.buttonPressed("toggle")
+                    }, releaseAction: {
+                        inputHandler.buttonReleased("toggle")
+                    }))
+                    
                     // Show either D-pad or joystick based on toggle
                     if useJoystickInternal {
                         joystickView()
@@ -413,9 +413,9 @@ struct DefaultControllerSkinView: View {
                         dPadView()
                     }
                 }
-
+                
                 Spacer() // Push action buttons to the right
-
+                
                 // Right side - Action buttons (right-aligned) with increased spacing
                 VStack(spacing: 20) { // Increased vertical spacing
                     HStack(spacing: 30) { // Significantly increased horizontal spacing
@@ -423,7 +423,7 @@ struct DefaultControllerSkinView: View {
                             circleButton(label: "Y", color: .yellow)
                             circleButton(label: "X", color: .blue)
                         }
-
+                        
                         VStack(spacing: 25) { // Increased vertical spacing between B and A
                             circleButton(label: "B", color: .red)
                             circleButton(label: "A", color: .green)
@@ -431,9 +431,9 @@ struct DefaultControllerSkinView: View {
                     }
                 }
             }
-
+            
             Spacer().frame(height: 20) // Add space before Start/Select buttons
-
+            
             // Start/Select buttons centered at the bottom
             HStack {
                 Spacer() // Center the buttons
@@ -446,7 +446,7 @@ struct DefaultControllerSkinView: View {
         }
         .padding()
     }
-
+    
     /// Stylized D-Pad view with retrowave aesthetic
     /// Custom octagon shape with rounded corners
     private struct RoundedOctagon: Shape {
@@ -484,8 +484,29 @@ struct DefaultControllerSkinView: View {
         }
     }
     
+    // Track active D-pad directions and touch position
+    private class DPadState: ObservableObject {
+        @Published var up = false
+        @Published var down = false
+        @Published var left = false
+        @Published var right = false
+        @Published var touchPosition: CGPoint = .zero
+        @Published var isTouching = false
+        
+        func reset() {
+            up = false
+            down = false
+            left = false
+            right = false
+            isTouching = false
+        }
+    }
+    
     private func dPadView() -> some View {
-        ZStack {
+        // Create a state object to track active directions
+        let dpadState = DPadState()
+        
+        return ZStack {
             // D-pad background with neon glow using octagon shape
             RoundedOctagon(cornerRadius: 15)
                 .fill(Color.black.opacity(0.7))
@@ -499,179 +520,137 @@ struct DefaultControllerSkinView: View {
                     RoundedOctagon(cornerRadius: 15)
                         .stroke(Color.white, lineWidth: 1)
                 )
-
+            
             // D-pad cross indicator (plus shape)
             ZStack {
                 // Horizontal line
                 Rectangle()
                     .fill(Color.white.opacity(0.3))
                     .frame(width: 120, height: 2)
-
+                
                 // Vertical line
                 Rectangle()
                     .fill(Color.white.opacity(0.3))
                     .frame(width: 2, height: 120)
             }
-
-            // Directional buttons with neon styling
+            
+            // Directional indicators that highlight when active
             ZStack {
-                // Main directional buttons
-                VStack(spacing: 0) {
-                    // Top row with Up-Left, Up, Up-Right
-                    HStack(spacing: 0) {
-                        // Up-Left button
-                        Button(action: {}) {
-                            Text("⬉")
-                                .font(.system(size: 20, weight: .bold))
-                                .foregroundColor(.white)
-                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
-                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
-                                .frame(width: 40, height: 40)
-                                .contentShape(Rectangle())
-                        }
-                        .buttonStyle(GameButtonStyle(pressAction: {
-                            inputHandler.buttonPressed("up")
-                        }, releaseAction: {
-                            inputHandler.buttonReleased("up")
-                        }))
-                        
-                        // Up button
-                        Button(action: {}) {
-                            Text("▲")
-                                .font(.system(size: 24, weight: .bold))
-                                .foregroundColor(.white)
-                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
-                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
-                                .frame(width: 50, height: 50)
-                                .contentShape(Rectangle())
-                        }
-                        .buttonStyle(GameButtonStyle(pressAction: {
-                            inputHandler.buttonPressed("up")
-                        }, releaseAction: {
-                            inputHandler.buttonReleased("up")
-                        }))
-                        
-                        // Up-Right button
-                        Button(action: {}) {
-                            Text("⬈")
-                                .font(.system(size: 20, weight: .bold))
-                                .foregroundColor(.white)
-                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
-                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
-                                .frame(width: 40, height: 40)
-                                .contentShape(Rectangle())
-                        }
-                        .buttonStyle(GameButtonStyle(pressAction: {
-                            inputHandler.buttonPressed("up")
-                            inputHandler.buttonPressed("right")
-                        }, releaseAction: {
-                            inputHandler.buttonReleased("up")
-                            inputHandler.buttonReleased("right")
-                        }))
-                    }
-
-                    // Middle row with Left, Center, Right
-                    HStack(spacing: 0) {
-                        // Left button
-                        Button(action: {}) {
-                            Text("◀")
-                                .font(.system(size: 24, weight: .bold))
-                                .foregroundColor(.white)
-                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
-                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
-                                .frame(width: 50, height: 50)
-                                .contentShape(Rectangle())
-                        }
-                        .buttonStyle(GameButtonStyle(pressAction: {
-                            inputHandler.buttonPressed("left")
-                        }, releaseAction: {
-                            inputHandler.buttonReleased("left")
-                        }))
-
-                        // Center space
-                        Rectangle()
-                            .fill(Color.clear)
-                            .frame(width: 40, height: 40)
-
-                        // Right button
-                        Button(action: {}) {
-                            Text("▶")
-                                .font(.system(size: 24, weight: .bold))
-                                .foregroundColor(.white)
-                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
-                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
-                                .frame(width: 50, height: 50)
-                                .contentShape(Rectangle())
-                        }
-                        .buttonStyle(GameButtonStyle(pressAction: {
-                            inputHandler.buttonPressed("right")
-                        }, releaseAction: {
-                            inputHandler.buttonReleased("right")
-                        }))
-                    }
-
-                    // Bottom row with Down-Left, Down, Down-Right
-                    HStack(spacing: 0) {
-                        // Down-Left button
-                        Button(action: {}) {
-                            Text("⬋")
-                                .font(.system(size: 20, weight: .bold))
-                                .foregroundColor(.white)
-                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
-                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
-                                .frame(width: 40, height: 40)
-                                .contentShape(Rectangle())
-                        }
-                        .buttonStyle(GameButtonStyle(pressAction: {
-                            inputHandler.buttonPressed("down")
-                            inputHandler.buttonPressed("left")
-                        }, releaseAction: {
-                            inputHandler.buttonReleased("down")
-                            inputHandler.buttonReleased("left")
-                        }))
-                        
-                        // Down button
-                        Button(action: {}) {
-                            Text("▼")
-                                .font(.system(size: 24, weight: .bold))
-                                .foregroundColor(.white)
-                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
-                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
-                                .frame(width: 50, height: 50)
-                                .contentShape(Rectangle())
-                        }
-                        .buttonStyle(GameButtonStyle(pressAction: {
-                            inputHandler.buttonPressed("down")
-                        }, releaseAction: {
-                            inputHandler.buttonReleased("down")
-                        }))
-                        
-                        // Down-Right button
-                        Button(action: {}) {
-                            Text("⬊")
-                                .font(.system(size: 20, weight: .bold))
-                                .foregroundColor(.white)
-                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 2)
-                                .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: 4)
-                                .frame(width: 40, height: 40)
-                                .contentShape(Rectangle())
-                        }
-                        .buttonStyle(GameButtonStyle(pressAction: {
-                            inputHandler.buttonPressed("down")
-                            inputHandler.buttonPressed("right")
-                        }, releaseAction: {
-                            inputHandler.buttonReleased("down")
-                            inputHandler.buttonReleased("right")
-                        }))
-                    }
-                }
+                // Up indicator
+                Text("▲")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(dpadState.up ? Color(red: 0.99, green: 0.11, blue: 0.55) : .white)
+                    .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: dpadState.up ? 6 : 2)
+                    .position(x: 90, y: 45)
+                
+                // Down indicator
+                Text("▼")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(dpadState.down ? Color(red: 0.99, green: 0.11, blue: 0.55) : .white)
+                    .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: dpadState.down ? 6 : 2)
+                    .position(x: 90, y: 135)
+                
+                // Left indicator
+                Text("◀")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(dpadState.left ? Color(red: 0.99, green: 0.11, blue: 0.55) : .white)
+                    .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: dpadState.left ? 6 : 2)
+                    .position(x: 45, y: 90)
+                
+                // Right indicator
+                Text("▶")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(dpadState.right ? Color(red: 0.99, green: 0.11, blue: 0.55) : .white)
+                    .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: dpadState.right ? 6 : 2)
+                    .position(x: 135, y: 90)
             }
-
-            // No need for invisible diagonal hit areas anymore since we have visible buttons
+            
+            // Touch indicator overlay - positioned above the gesture area but below the gesture recognizer
+            if dpadState.isTouching {
+                DeltaSkinTouchIndicator(at: dpadState.touchPosition)
+                    .allowsHitTesting(false) // Prevent the indicator from interfering with touches
+            }
+            
+            // Gesture area
+            Color.clear
+                .contentShape(Rectangle())
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { value in
+                            // Calculate position relative to center
+                            let center = CGPoint(x: 90, y: 90)
+                            let location = value.location
+                            let dx = location.x - center.x
+                            let dy = location.y - center.y
+                            
+                            // Update touch position for the indicator
+                            dpadState.touchPosition = location
+                            dpadState.isTouching = true
+                            
+                            // Determine which directions should be active
+                            let newUp = dy < -20
+                            let newDown = dy > 20
+                            let newLeft = dx < -20
+                            let newRight = dx > 20
+                            
+                            // Handle direction changes
+                            if newUp != dpadState.up {
+                                dpadState.up = newUp
+                                if newUp {
+                                    inputHandler.buttonPressed("up")
+                                } else {
+                                    inputHandler.buttonReleased("up")
+                                }
+                            }
+                            
+                            if newDown != dpadState.down {
+                                dpadState.down = newDown
+                                if newDown {
+                                    inputHandler.buttonPressed("down")
+                                } else {
+                                    inputHandler.buttonReleased("down")
+                                }
+                            }
+                            
+                            if newLeft != dpadState.left {
+                                dpadState.left = newLeft
+                                if newLeft {
+                                    inputHandler.buttonPressed("left")
+                                } else {
+                                    inputHandler.buttonReleased("left")
+                                }
+                            }
+                            
+                            if newRight != dpadState.right {
+                                dpadState.right = newRight
+                                if newRight {
+                                    inputHandler.buttonPressed("right")
+                                } else {
+                                    inputHandler.buttonReleased("right")
+                                }
+                            }
+                        }
+                        .onEnded { _ in
+                            // Release all directions when touch ends
+                            if dpadState.up {
+                                inputHandler.buttonReleased("up")
+                            }
+                            if dpadState.down {
+                                inputHandler.buttonReleased("down")
+                            }
+                            if dpadState.left {
+                                inputHandler.buttonReleased("left")
+                            }
+                            if dpadState.right {
+                                inputHandler.buttonReleased("right")
+                            }
+                            dpadState.reset()
+                        }
+                )
         }
         .frame(width: 150, height: 150)
     }
-
+    
     /// Joystick view
     private func joystickView() -> some View {
         // State for joystick position
@@ -681,7 +660,7 @@ struct DefaultControllerSkinView: View {
                 Circle()
                     .fill(Color.black.opacity(0.7))
                     .frame(width: geometry.size.width, height: geometry.size.width)
-
+                
                 // Joystick handle
                 Circle()
                     .fill(Color.gray)
@@ -692,19 +671,19 @@ struct DefaultControllerSkinView: View {
                                 // Calculate position relative to center
                                 let center = CGPoint(x: geometry.size.width/2, y: geometry.size.width/2)
                                 let location = value.location
-
+                                
                                 // Calculate distance from center
                                 let deltaX = location.x - center.x
                                 let deltaY = location.y - center.y
-
+                                
                                 // Calculate distance and angle
                                 let distance = sqrt(deltaX*deltaX + deltaY*deltaY)
-
+                                
                                 // Normalize to -1.0 to 1.0 range
                                 let maxDistance = geometry.size.width/2 * 0.8
                                 let normalizedX = Float(min(max(deltaX / maxDistance, -1.0), 1.0))
                                 let normalizedY = Float(min(max(-deltaY / maxDistance, -1.0), 1.0)) // Invert Y for proper direction
-
+                                
                                 // Send to input handler
                                 inputHandler.analogStickMoved("leftAnalog", x: normalizedX, y: normalizedY)
                             }
@@ -718,7 +697,7 @@ struct DefaultControllerSkinView: View {
         .aspectRatio(1, contentMode: .fit)
         .frame(width: 120, height: 120)
     }
-
+    
     /// Circle button view with retrowave styling
     private func circleButton(label: String, color: Color) -> some View {
         Button(action: {}) {
@@ -736,7 +715,7 @@ struct DefaultControllerSkinView: View {
                         Circle()
                             .stroke(Color.white, lineWidth: 1)
                     )
-
+                
                 // Button label with neon effect
                 NeonText(label, color: color, fontSize: 20)
             }
@@ -748,7 +727,7 @@ struct DefaultControllerSkinView: View {
             inputHandler.buttonReleased(label.lowercased())
         }))
     }
-
+    
     /// Pill-shaped button view with retrowave styling
     private func pillButton(label: String, color: Color) -> some View {
         Button(action: {}) {
@@ -766,7 +745,7 @@ struct DefaultControllerSkinView: View {
                         Capsule()
                             .stroke(Color.white, lineWidth: 1)
                     )
-
+                
                 // Button label with neon effect
                 NeonText(label, color: Color(red: 0.99, green: 0.11, blue: 0.55), fontSize: 14)
             }
@@ -778,7 +757,7 @@ struct DefaultControllerSkinView: View {
             inputHandler.buttonReleased(label.lowercased())
         }))
     }
-
+    
     /// Shoulder button view with retrowave styling
     private func shoulderButton(label: String, color: Color) -> some View {
         Button(action: {}) {
@@ -796,7 +775,7 @@ struct DefaultControllerSkinView: View {
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(Color.white, lineWidth: 1)
                     )
-
+                
                 // Button label with neon effect
                 NeonText(label, color: Color(red: 0.0, green: 0.8, blue: 0.9), fontSize: 14)
             }
@@ -808,7 +787,7 @@ struct DefaultControllerSkinView: View {
             inputHandler.buttonReleased(label.lowercased())
         }))
     }
-
+    
     /// Utility button with icon and retrowave styling
     private func utilityButton(label: String, color: Color, systemImage: String) -> some View {
         Button(action: {}) {
@@ -826,7 +805,7 @@ struct DefaultControllerSkinView: View {
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(Color.white, lineWidth: 1)
                     )
-
+                
                 // Button content with neon effect
                 VStack(spacing: 4) {
                     Image(systemName: systemImage)
@@ -834,7 +813,7 @@ struct DefaultControllerSkinView: View {
                         .foregroundColor(.white)
                         .shadow(color: color, radius: 2)
                         .shadow(color: color, radius: 4)
-
+                    
                     NeonText(label, color: color, fontSize: 12)
                 }
             }
@@ -846,7 +825,7 @@ struct DefaultControllerSkinView: View {
             inputHandler.buttonReleased(label.lowercased())
         }))
     }
-
+    
     // Build a dynamic landscape skin based on the system's control layout data
     @ViewBuilder
     private func buildDynamicLandscapeSkin(from layout: [ControlLayoutEntry]) -> some View {
@@ -894,13 +873,13 @@ struct DefaultControllerSkinView: View {
                         .padding(.trailing, 20)
                     }
                     .padding(.top, 20)
-
+                    
                     Spacer()
-
+                    
                     // Start/Select buttons at the center bottom
                     HStack {
                         Spacer()
-
+                        
                         HStack(spacing: 30) {
                             if hasControl(type: "PVSelectButton", in: layout) {
                                 pillButton(label: "SELECT", color: .black)
@@ -910,11 +889,11 @@ struct DefaultControllerSkinView: View {
                             }
                         }
                         .padding(.bottom, 20)
-
+                        
                         Spacer()
                     }
                 }
-
+                
                 // D-pad positioned at left edge
                 VStack {
                     Spacer()
@@ -930,7 +909,7 @@ struct DefaultControllerSkinView: View {
                     Spacer()
                 }
                 .frame(width: geometry.size.width, alignment: .leading)
-
+                
                 // Action buttons positioned at right edge using absolute positioning
                 VStack {
                     Spacer()
@@ -954,7 +933,7 @@ struct DefaultControllerSkinView: View {
                                 circleButton(label: "Y", color: .yellow)
                                 circleButton(label: "X", color: .blue)
                             }
-
+                            
                             VStack(spacing: 25) {
                                 circleButton(label: "B", color: .red)
                                 circleButton(label: "A", color: .green)
@@ -968,7 +947,7 @@ struct DefaultControllerSkinView: View {
             }
         }
     }
-
+    
     // Build a dynamic skin based on the system's control layout data
     @ViewBuilder
     private func buildDynamicSkin(from layout: [ControlLayoutEntry]) -> some View {
@@ -993,17 +972,17 @@ struct DefaultControllerSkinView: View {
                         shoulderButton(label: "L3", color: .gray)
                     }
                 }
-
+                
                 Spacer()
-
+                
                 // Menu and Turbo buttons - horizontally aligned
                 HStack(spacing: 15) {
                     utilityButton(label: "MENU", color: .purple, systemImage: "line.3.horizontal")
                     utilityButton(label: "TURBO", color: .orange, systemImage: "forward.fill")
                 }
-
+                
                 Spacer()
-
+                
                 // R buttons
                 VStack(spacing: 5) {
                     HStack(spacing: 5) {
@@ -1024,9 +1003,9 @@ struct DefaultControllerSkinView: View {
                 }
             }
             .padding(.horizontal)
-
+            
             Spacer().frame(height: 20) // Add space to raise D-pad position
-
+            
             HStack(spacing: 30) { // Increased spacing between D-pad and action buttons
                 // Left side - D-Pad or Joystick
                 VStack(spacing: 5) {
@@ -1039,7 +1018,7 @@ struct DefaultControllerSkinView: View {
                                 Image(systemName: useJoystickInternal ? "circle.grid.cross" : "dpad")
                                     .font(.system(size: 14))
                                     .foregroundColor(.white)
-
+                                
                                 Text(useJoystickInternal ? "JOYSTICK" : "D-PAD")
                                     .font(.system(size: 10, weight: .bold))
                                     .foregroundColor(.white)
@@ -1055,7 +1034,7 @@ struct DefaultControllerSkinView: View {
                             inputHandler.buttonReleased("up")
                         }))
                     }
-
+                    
                     // Show either D-pad or joystick based on toggle and system support
                     if useJoystickInternal && hasControl(type: "PVJoyPad", in: layout) {
                         joystickView()
@@ -1063,9 +1042,9 @@ struct DefaultControllerSkinView: View {
                         dPadView()
                     }
                 }
-
+                
                 Spacer() // Push action buttons to the right
-
+                
                 // Right side - Action buttons (right-aligned)
                 VStack(spacing: 10) {
                     // Find all button groups in the layout
@@ -1094,7 +1073,7 @@ struct DefaultControllerSkinView: View {
                                     circleButton(label: "Y", color: .yellow)
                                     circleButton(label: "X", color: .blue)
                                 }
-
+                                
                                 VStack(spacing: 25) { // Increased vertical spacing between B and A
                                     circleButton(label: "B", color: .red)
                                     circleButton(label: "A", color: .green)
@@ -1104,9 +1083,9 @@ struct DefaultControllerSkinView: View {
                     }
                 }
             }
-
+            
             Spacer().frame(height: 20) // Add space before Start/Select buttons
-
+            
             // Start/Select buttons centered at the bottom
             HStack {
                 Spacer() // Center the buttons
@@ -1123,7 +1102,7 @@ struct DefaultControllerSkinView: View {
         }
         .padding()
     }
-
+    
     // Create a button group based on the system's button layout
     private func createButtonGroup(from buttons: [ControlGroupButton]) -> some View {
         // Determine the best layout based on button count
@@ -1208,7 +1187,7 @@ struct DefaultControllerSkinView: View {
             )
         }
     }
-
+    
     // Create a button from a ControlGroupButton
     private func createButton(from button: ControlGroupButton) -> some View {
         let displayLabel = button.PVControlTitle ?? "Button"
@@ -1250,51 +1229,72 @@ struct DefaultControllerSkinView: View {
         }))
         .id("button_\(actionIdentifier)_\(UUID().uuidString)") // Ensure each button has a unique ID
     }
-
-    // Custom button style that handles press and release events
-struct GameButtonStyle: ButtonStyle {
-    let pressAction: () -> Void
-    let releaseAction: () -> Void
     
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .opacity(configuration.isPressed ? 0.7 : 1.0)
+    // Custom button style that handles press and release events
+    struct GameButtonStyle: ButtonStyle {
+        let pressAction: () -> Void
+        let releaseAction: () -> Void
+        
+        @State private var isShowingOverlay = false
+        @State private var touchPosition: CGPoint = CGPoint(x: 30, y: 30)
+        
+        func makeBody(configuration: Configuration) -> some View {
+            ZStack {
+                // The button itself
+                configuration.label
+                    .opacity(configuration.isPressed ? 0.7 : 1.0)
+                    .overlay(
+                        // Touch overlay that appears when pressed - positioned as an overlay to avoid layout issues
+                        Group {
+                            if configuration.isPressed || isShowingOverlay {
+                                DeltaSkinTouchIndicator(at: touchPosition)
+                                    .allowsHitTesting(false) // Prevent the indicator from interfering with touches
+                            }
+                        }
+                    )
+            }
             .onChange(of: configuration.isPressed) { isPressed in
                 if isPressed {
+                    withAnimation(.easeIn(duration: 0.1)) {
+                        isShowingOverlay = true
+                    }
                     pressAction()
                 } else {
+                    withAnimation(.easeOut(duration: 0.2)) {
+                        isShowingOverlay = false
+                    }
                     releaseAction()
                 }
             }
+        }
     }
-}
-
-// Convert a color string to a Color
+    
+    // Convert a color string to a Color
     private func colorFromString(_ colorString: String?) -> Color? {
         guard let hexString = colorString else { return nil }
-
+        
         // Remove the # prefix if present
         var hex = hexString
         if hex.hasPrefix("#") {
             hex = String(hex.dropFirst())
         }
-
+        
         // Parse the hex color
         var rgb: UInt64 = 0
         Scanner(string: hex).scanHexInt64(&rgb)
-
+        
         let r = Double((rgb & 0xFF0000) >> 16) / 255.0
         let g = Double((rgb & 0x00FF00) >> 8) / 255.0
         let b = Double(rgb & 0x0000FF) / 255.0
-
+        
         return Color(red: r, green: g, blue: b)
     }
-
+    
     // Check if a specific control type exists in the layout
     private func hasControl(type: String, in layout: [ControlLayoutEntry]) -> Bool {
         return layout.contains(where: { $0.PVControlType == type })
     }
-
+    
     // Check if a specific control type with a specific title exists in the layout
     private func hasControl(type: String, title: String, in layout: [ControlLayoutEntry]) -> Bool {
         return layout.contains(where: { $0.PVControlType == type && $0.PVControlTitle == title })
