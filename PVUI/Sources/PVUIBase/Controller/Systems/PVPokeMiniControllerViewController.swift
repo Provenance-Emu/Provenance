@@ -27,12 +27,21 @@ final class PVPokeMiniControllerViewController: PVControllerViewController<PVPok
             guard let button = $0 as? JSButton else {
                 return
             }
-            if button.titleLabel?.text == "A" {
+            switch button.titleLabel?.text?.lowercased() {
+            case "a", "0":
                 button.buttonTag = .a
-            } else if button.titleLabel?.text == "B" {
+            case "b", "1":
                 button.buttonTag = .b
-            } else if button.titleLabel?.text == "C" {
+            case "c", "2":
                 button.buttonTag = .c
+            case "menu":
+                button.buttonTag = .menu
+            case "power":
+                button.buttonTag = .power
+            case "shake":
+                button.buttonTag = .shake
+            default:
+                break
             }
         }
 

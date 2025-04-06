@@ -27,10 +27,13 @@ final class PVLynxControllerViewController: PVControllerViewController<PVLynxSys
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
-            if title == "A" {
+            switch title.lowercased() {
+            case "a":
                 button.buttonTag = .a
-            } else if title == "B" {
+            case "b":
                 button.buttonTag = .b
+            default:
+                break
             }
         }
 
@@ -108,6 +111,7 @@ final class PVLynxControllerViewController: PVControllerViewController<PVLynxSys
 
     override func pressStart(forPlayer player: Int) {
         emulatorCore.didPush(LynxButton: .option1, forPlayer: player)
+        vibrate()
     }
 
     override func releaseStart(forPlayer player: Int) {
@@ -116,6 +120,7 @@ final class PVLynxControllerViewController: PVControllerViewController<PVLynxSys
 
     override func pressSelect(forPlayer player: Int) {
         emulatorCore.didPush(LynxButton: .option2, forPlayer: player)
+        vibrate()
     }
 
     override func releaseSelect(forPlayer player: Int) {

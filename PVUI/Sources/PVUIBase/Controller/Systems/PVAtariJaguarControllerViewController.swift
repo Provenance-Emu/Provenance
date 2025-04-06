@@ -26,16 +26,19 @@ final class PVAtariJaguarControllerViewController: PVControllerViewController<PV
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
-            if title == "C" {
-                button.buttonTag = .c
-            } else if title == "B" {
-                button.buttonTag = .b
-            } else if title == "A" {
+            switch title.lowercased() {
+            case "a":
                 button.buttonTag = .a
-            } else if title == "Option" {
+            case "b":
+                button.buttonTag = .b
+            case "c":
+                button.buttonTag = .c
+            case "option", "start":
                 button.buttonTag = .option
-            } else if title == "Pause" {
+            case "pause":
                 button.buttonTag = .pause
+            default:
+                break
             }
         }
 

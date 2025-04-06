@@ -26,10 +26,25 @@ final class PVVBControllerViewController: PVControllerViewController<PVVirtualBo
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
-            if title == "A" {
+            switch title.lowercased() {
+            case "a":
                 button.buttonTag = .a
-            } else if title == "B" {
+            case "b":
                 button.buttonTag = .b
+            case "select":
+                button.buttonTag = .select
+            case "start":
+                button.buttonTag = .start
+            case "l", "l1":
+                button.buttonTag = .l
+            case "r", "r1":
+                button.buttonTag = .r
+            case "select":
+                button.buttonTag = .select
+            case "start":
+                button.buttonTag = .start
+            default:
+                break
             }
         }
 

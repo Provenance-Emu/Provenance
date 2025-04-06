@@ -27,14 +27,17 @@ final class PVSNESControllerViewController: PVControllerViewController<PVSNESSys
             guard let button = $0 as? JSButton else {
                 return
             }
-            if button.titleLabel?.text == "A" {
+            switch button.titleLabel?.text?.lowercased() {
+            case "a", "0":
                 button.buttonTag = .a
-            } else if (button.titleLabel?.text == "B") || (button.titleLabel?.text == "1") {
+            case "b", "1":
                 button.buttonTag = .b
-            } else if (button.titleLabel?.text == "X") || (button.titleLabel?.text == "2") {
+            case "x", "2":
                 button.buttonTag = .x
-            } else if button.titleLabel?.text == "Y" {
+            case "y", "3":
                 button.buttonTag = .y
+            default:
+                break
             }
         }
 

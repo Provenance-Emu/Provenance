@@ -26,10 +26,13 @@ final class PVGBControllerViewController: PVControllerViewController<PVGBSystemR
             guard let button = $0 as? JSButton else {
                 return
             }
-            if button.titleLabel?.text == "A" {
+            switch button.titleLabel?.text?.lowercased() {
+            case "a":
                 button.buttonTag = .a
-            } else if button.titleLabel?.text == "B" {
+            case "b":
                 button.buttonTag = .b
+            default:
+                break
             }
         }
 
