@@ -14,10 +14,12 @@ public extension Color {
     public static let retroPink = Color(red: 0.98, green: 0.2, blue: 0.6)
     public static let retroPurple = Color(red: 0.5, green: 0.0, blue: 0.8)
     public static let retroBlue = Color(red: 0.0, green: 0.8, blue: 0.95)
+    public static let retroDarkBlue = Color(red: 0.05, green: 0.05, blue: 0.2)
     public static let retroGreen = Color(red: 0.0, green: 0.95, blue: 0.8)
     public static let retroYellow = Color(red: 0.98, green: 0.84, blue: 0.2)
     public static let retroOrange = Color(red: 0.98, green: 0.5, blue: 0.2)
     public static let retroBlack = Color(red: 0.05, green: 0.05, blue: 0.1)
+    public static let retroCyan = Color(red: 0.0, green: 0.95, blue: 0.95)
     
     // Gradient helpers
     public static let retroSunset = LinearGradient(

@@ -4,11 +4,11 @@ import PVUIBase
 /// RetroTheme provides retrowave styling elements for the Settings UI
 public struct RetroTheme {
     // MARK: - Colors
-    public static let retroPink = Color(red: 0.99, green: 0.11, blue: 0.55)
-    public static let retroPurple = Color(red: 0.53, green: 0.11, blue: 0.91)
-    public static let retroBlue = Color(red: 0.0, green: 0.75, blue: 0.95)
-    public static let retroDarkBlue = Color(red: 0.05, green: 0.05, blue: 0.2)
-    public static let retroBlack = Color(red: 0.05, green: 0.0, blue: 0.1)
+    public static let retroPink = Color.retroPink
+    public static let retroPurple = Color.retroPurple
+    public static let retroBlue = Color.retroBlue
+    public static let retroDarkBlue = Color.retroDarkBlue
+    public static let retroBlack = Color.retroBlack
     
     // MARK: - Gradients
     public static let retroGradient = LinearGradient(

@@ -319,6 +319,9 @@ struct RetroMenuView: View {
                     emulatorVC.showSpeedMenu()
                 }
             }
+            
+            // Audio visualizer button (iOS 16+ only)
+            AudioVisualizerButton(emulatorVC: emulatorVC, dismissAction: dismissAction)
 
             // Core options button (if available)
             if emulatorVC.core is CoreOptional {
@@ -710,9 +713,6 @@ struct RetroMenuView: View {
                 }
             }
         }
-//        .navigationViewStyle(StackNavigationViewStyle())
-//        .frame(width: isLandscape ? UIScreen.main.bounds.width * 0.7 : UIScreen.main.bounds.width * 0.9,
-//               height: isLandscape ? UIScreen.main.bounds.height * 0.8 : UIScreen.main.bounds.height * 0.7)
         .preferredColorScheme(.dark)
     }
 

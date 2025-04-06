@@ -221,6 +221,7 @@ public extension Defaults.Keys {
     
     static let volume = Key<Float>("volume", default: 1.0)
     static let volumeHUD = Key<Bool>("volumeHUD", default: true)
+    static let audioVisulaizer = Key<Bool>("audioVisulaizer", default: true)
 
     static let monoAudio = Key<Bool>("monoAudio", default: false)
 
