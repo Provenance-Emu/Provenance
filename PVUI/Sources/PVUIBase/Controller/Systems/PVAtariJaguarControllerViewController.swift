@@ -37,6 +37,30 @@ final class PVAtariJaguarControllerViewController: PVControllerViewController<PV
                 button.buttonTag = .option
             case "pause", "select":
                 button.buttonTag = .pause
+            case "0", "button0":
+                button.buttonTag = .button0
+            case "1", "button1":
+                button.buttonTag = .button1
+            case "2", "button2":
+                button.buttonTag = .button2
+            case "3", "button3":
+                button.buttonTag = .button3
+            case "4", "button4":
+                button.buttonTag = .button4
+            case "5", "button5":
+                button.buttonTag = .button5
+            case "6", "button6":
+                button.buttonTag = .button6
+            case "7", "button7":
+                button.buttonTag = .button7
+            case "8", "button8":
+                button.buttonTag = .button8
+            case "9", "button9":
+                button.buttonTag = .button9
+            case "#", "button#":
+                button.buttonTag = .pound
+            case "*", "button*":
+                button.buttonTag = .asterisk
             default:
                 break
             }
