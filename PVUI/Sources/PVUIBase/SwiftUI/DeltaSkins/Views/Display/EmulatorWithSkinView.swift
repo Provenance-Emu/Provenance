@@ -196,10 +196,10 @@ struct EmulatorWithSkinView: View {
                             .blur(radius: 3)
 
                         // Horizon line - reduced size
-                        Rectangle()
-                            .fill(Color.black)
-                            .frame(width: 140, height: 50)
-                            .offset(y: 25)
+//                        Rectangle()
+//                            .fill(Color.black)
+//                            .frame(width: 140, height: 50)
+//                            .offset(y: 25)
 
                         // Progress circle - reduced size
                         Circle()

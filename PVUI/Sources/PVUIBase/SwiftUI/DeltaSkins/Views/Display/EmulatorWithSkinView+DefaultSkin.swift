@@ -436,7 +436,7 @@ struct DefaultControllerSkinView: View {
                 }
             }
             
-            Spacer().frame(height: 20) // Add space before Start/Select buttons
+            Spacer().frame(height: 15) // Reduced space before Start/Select buttons to move them up
             
             // Start/Select buttons centered at the bottom
             HStack {
@@ -920,6 +920,9 @@ struct DefaultControllerSkinView: View {
             ZStack {
                 // Top row with shoulder buttons, menu and turbo buttons
                 VStack {
+                    // Add minimal spacing at the top
+                    Spacer().frame(height: 5)
+                    
                     HStack {
                         // Left shoulder buttons
                         HStack(spacing: 15) {
@@ -1029,8 +1032,8 @@ struct DefaultControllerSkinView: View {
                     }
                     Spacer()
                 }
-                .frame(width: 250) // Increased width to accommodate multiple button groups
-                .position(x: geometry.size.width - 150, y: geometry.size.height / 2)
+                .frame(width: 300) // Further increased width to prevent clipping
+                .position(x: geometry.size.width - 200, y: geometry.size.height / 2)
             }
         }
     }
@@ -1171,7 +1174,7 @@ struct DefaultControllerSkinView: View {
                 }
             }
             
-            Spacer().frame(height: 20) // Add space before Start/Select buttons
+            Spacer().frame(height: 15) // Reduced space before Start/Select buttons to move them up
             
             // Start/Select buttons centered at the bottom
             HStack {
