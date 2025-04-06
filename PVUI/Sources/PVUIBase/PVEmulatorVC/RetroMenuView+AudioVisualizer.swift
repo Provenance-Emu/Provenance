@@ -76,16 +76,16 @@ public struct AudioVisualizerButton: View {
     
     private var visualizerOptionsView: some View {
         ZStack {
-            Color.black.opacity(0.6)
+            Color.retroBlack
                 .edgesIgnoringSafeArea(.all)
             
             // Background with retrowave grid
             VisualizationRetrowaveGrid()
-                .opacity(0.55)
+                .opacity(0.65)
                 .edgesIgnoringSafeArea(.all)
             
             // Overlay with dark blur
-            Color.black.opacity(0.2)
+            Color.black.opacity(0.5)
                 .edgesIgnoringSafeArea(.all)
      
             VStack(spacing: 30) {
