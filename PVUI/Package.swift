@@ -52,7 +52,7 @@ let package = Package(
         /// SwiftUIX
         /// https://github.com/SwiftUIX/SwiftUIX/wiki
         .package(url: "https://github.com/SwiftUIX/SwiftUIX.git", from: "0.2.3"),
-
+        .package(url: "https://github.com/theappcapital/SiriusRating-iOS.git", from: "1.0.8"),
         /// https://github.com/exyte/ScalingHeaderScrollView
 //        .package(url:"https://github.com/exyte/ScalingHeaderScrollView.git", from: "1.1.5"),
 
@@ -219,6 +219,7 @@ let package = Package(
                 "FloatingButton",
                 "ActivityIndicatorView",
                 "PVFeatureFlags",
+                .product(name: "SiriusRating", package: "siriusrating-ios"),
                 .byNameItem(name: "SwipeCellSUI", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
                 .byNameItem(name: "DateRangePicker", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
             ]
