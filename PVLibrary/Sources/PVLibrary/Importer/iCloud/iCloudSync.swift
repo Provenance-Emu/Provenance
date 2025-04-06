@@ -1215,17 +1215,14 @@ actor ConcurrentQueue<Element>: Queue, ExpressibleByArrayLiteral {
         collection = Array(elements)
     }
     
-    @inlinable
     var count: Int {
         collection.count
     }
     
-    @inlinable
     func enqueue(entry: Element) {
         collection.insert(entry, at: 0)
     }
     
-    @inlinable
     @discardableResult
     func dequeue() -> Element? {
         guard !collection.isEmpty
@@ -1235,32 +1232,26 @@ actor ConcurrentQueue<Element>: Queue, ExpressibleByArrayLiteral {
         return collection.removeFirst()
     }
     
-    @inlinable
     func peek() -> Element? {
         collection.first
     }
     
-    @inlinable
     func clear() {
         collection.removeAll()
     }
     
-    @inlinable
     public var description: String {
         collection.description
     }
     
-    @inlinable
     func map<T>(_ transform: (Element) throws -> T) throws -> [T] {
         try collection.map(transform)
     }
     
-    @inlinable
     var allElements: [Element] {
         collection
     }
     
-    @inlinable
     var isEmpty: Bool {
         collection.isEmpty
     }
@@ -1280,35 +1271,30 @@ actor iCloudErrorHandler: ErrorHandler {
     static let shared = iCloudErrorHandler()
     private let queue = ConcurrentQueue<iCloudSyncError>()
     
-    @inlinable
     var allErrorSummaries: [String] {
         get async throws {
             await try queue.map { $0.summary }
         }
     }
     
-    @inlinable
     var allFullErrors: [String] {
         get async throws {
             await try queue.map { "\($0.error)" }
         }
     }
     
-    @inlinable
     var allErrors: [iCloudSyncError] {
         get async {
             await queue.allElements
         }
     }
     
-    @inlinable
     var isEmpty: Bool {
         get async {
             await queue.isEmpty
         }
     }
     
-    @inlinable
     var numberOfErrors: Int {
         get async {
             await queue.count
@@ -1320,7 +1306,6 @@ actor iCloudErrorHandler: ErrorHandler {
         await queue.enqueue(entry: syncError)
     }
     
-    @inlinable
     func clear() async {
         await queue.clear()
     }
@@ -1365,7 +1350,6 @@ actor ConcurrentDictionary<Key: Hashable, Value>: ExpressibleByDictionaryLiteral
         dictionary = Dictionary(uniqueKeysWithValues: elements)
     }
     
-    @inlinable
     subscript(key: Key) -> Value? {
         get {
             dictionary[key]
@@ -1375,22 +1359,18 @@ actor ConcurrentDictionary<Key: Hashable, Value>: ExpressibleByDictionaryLiteral
         }
     }
     
-    @inlinable
     func set(_ value: Value?, forKey key: Key) {
         dictionary[key] = value
     }
     
-    @inlinable
     var first: (key: Key, value: Value)? {
         dictionary.first
     }
     
-    @inlinable
     var isEmpty: Bool {
         dictionary.isEmpty
     }
     
-    @inlinable
     var count: Int {
         dictionary.count
     }
