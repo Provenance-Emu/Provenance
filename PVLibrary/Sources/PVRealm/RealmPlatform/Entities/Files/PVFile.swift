@@ -122,12 +122,12 @@ public extension PVFile {
         let actualPrefix = suffix.starts(with: prefix) ? "" : prefix
         let substring = "\(actualPrefix)\(suffix)"
         fixPartialPath(substring: substring, &mutatingPartialPath)
-        DLOG("""
+        /*DLOG("""
         prefix: \(prefix)
         actualPrefix: \(actualPrefix)
         suffix: \(suffix)
         partialPath: \(mutatingPartialPath)
-        """)
+        """)*/
         guard prefix.isEmpty || !actualPrefix.isEmpty
         else {
             return
@@ -140,10 +140,10 @@ public extension PVFile {
     /// if `substring` exists in `partialPath`, then it removes it
     /// - Parameter substring: substring to test/remove
     internal func fixPartialPath(substring: String, _ mutatingPartialPath: inout String) {
-        DLOG("attempting to remove \(substring) from partialPath \(mutatingPartialPath)")
+        //DLOG("attempting to remove \(substring) from partialPath \(mutatingPartialPath)")
         if mutatingPartialPath.localizedCaseInsensitiveContains(substring) {
             mutatingPartialPath = mutatingPartialPath.replacingOccurrences(of: substring, with: "", options: .caseInsensitive)
-            DLOG("removed \(substring) and now partialPath is \(mutatingPartialPath)")
+            //DLOG("removed \(substring) and now partialPath is \(mutatingPartialPath)")
         }
     }
     
@@ -155,14 +155,14 @@ public extension PVFile {
             var returnUrl: URL
             var failedToFixPartialPath = false
             defer {
-                if !isPartialPathFixed {
+                /*if !isPartialPathFixed {
                     DLOG("""
                     original partialPath: \(ogPartialPath)
                     fixed partialPath: \(fixedPartialPath)
                     url: \(returnUrl)
                     relativeRoot: \(relativeRoot)
                     """)
-                }
+                }*/
                 if !isPartialPathFixed && failedToFixPartialPath {
                     ELOG("""
                     invalid partial path: \(fixedPartialPath)
@@ -193,13 +193,13 @@ public extension PVFile {
                 }
             }
             returnUrl = relativeRoot.appendingPath(fixedPartialPath)
-            if !isPartialPathFixed {
+            /*if !isPartialPathFixed {
                 DLOG("""
                 valid partial path: \(fixedPartialPath)
                 url: \(returnUrl)
                 relativeRoot: \(relativeRoot)
                 """)
-            }
+            }*/
             return returnUrl
         }
     }
