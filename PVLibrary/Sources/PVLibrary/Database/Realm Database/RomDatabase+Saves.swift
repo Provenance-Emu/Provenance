@@ -102,7 +102,7 @@ public extension RomDatabase {
                     WLOG("Save state file not found: \(saveFileURL.path)")
                     continue
                 }
-                let saveFile = PVFile(withURL: saveFileURL)
+                let saveFile = PVFile(withURL: saveFileURL, relativeRoot: .iCloud)
 
                 // 6. Create PVImageFile for the screenshot if it exists
                 var imageFile: PVImageFile?

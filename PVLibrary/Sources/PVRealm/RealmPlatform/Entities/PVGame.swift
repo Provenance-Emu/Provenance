@@ -297,7 +297,7 @@ public extension Realm {
             object.regionID = game.regionID
             object.systemShortName = game.systemShortName
             object.language = game.language
-            object.file =  PVFile(withPartialPath: game.file.fileName)
+            object.file =  PVFile(withPartialPath: game.file.fileName, relativeRoot: .iCloud)
         }
     }
 }

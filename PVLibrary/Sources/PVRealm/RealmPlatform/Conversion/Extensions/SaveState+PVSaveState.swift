@@ -72,7 +72,7 @@ public extension Realm {
             }
             //we remove the extension in order to get the correct path
             let path = save.game.file.fileName.saveStatePath.deletingPathExtension().appendingPathComponent(save.file.fileName)
-            object.file = PVFile(withURL: path)
+            object.file = PVFile(withURL: path, relativeRoot: .iCloud)
             DLOG("file path: \(path)")
             
             object.date = save.date
