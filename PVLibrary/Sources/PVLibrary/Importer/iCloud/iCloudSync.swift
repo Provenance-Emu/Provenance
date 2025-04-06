@@ -1147,12 +1147,11 @@ class RomsSyncer: iCloudContainerSyncer {
         }
         gameImporter.clearCompleted()
         await removeGamesDeletedWhileApplicationClosed()
-        guard await !newFiles.isEmpty
-        else {
-            return
-        }
         let arePendingFilesToDownloadEmpty = await pendingFilesToDownload.isEmpty
-        guard await !multiFileRoms.isEmpty && arePendingFilesToDownloadEmpty
+        let areMultiFileRomsEmpty = await multiFileRoms.isEmpty
+        //we only proceed if there are actual ROMs to import
+        guard await !newFiles.isEmpty//OR there are multi file ROMs to import and there are no more pending files to download. this is to ensure that we have all of the files. an improvement would be to read the cue, ccd or m3u file to know how many files correspond
+                || !areMultiFileRomsEmpty && arePendingFilesToDownloadEmpty
         else {
             return
         }
