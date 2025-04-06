@@ -7,14 +7,18 @@ import PVThemes
 import WhatsNewKit
 #endif
 
-struct ContentView: View {
-    @ObservedObject private var themeManager = ThemeManager.shared
+public struct ContentView: View {
+    /// Use EnvironmentObject for ThemeManager
+    @EnvironmentObject var themeManager: ThemeManager
+    /// Use EnvironmentObject for AppState
     @EnvironmentObject var appState: AppState
     /// Use EnvironmentObject for bootup state manager
     @EnvironmentObject var bootupStateManager: AppBootupState
     /// Use EnvironmentObject for app delegate
     @EnvironmentObject var appDelegate: PVAppDelegate
 
+    public init() { }
+    
     var bootupView: some View {
             // Show the bootup view
             BootupViewRetroWave()
@@ -31,7 +35,7 @@ struct ContentView: View {
     
     /// Remove init since we're using environment objects now
 
-    var body: some View {
+    public var body: some View {
         Group {
             switch bootupStateManager.currentState {
             case .completed:

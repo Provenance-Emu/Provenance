@@ -21,7 +21,7 @@ import SteamController
 import UIKit
 #endif
 
-extension Array<URLQueryItem> {
+public extension Array<URLQueryItem> {
     subscript(key: String) -> String? {
         get {
             return first(where: {$0.name == key})?.value
@@ -39,7 +39,7 @@ extension Array<URLQueryItem> {
     }
 }
 
-extension PVAppDelegate {
+public extension PVAppDelegate {
     /// Helper method to safely fetch a game from Realm by its MD5 hash
     /// - Parameter md5: The MD5 hash of the game
     /// - Returns: The game if found, nil otherwise

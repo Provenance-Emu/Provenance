@@ -24,31 +24,31 @@ struct ProvenanceApp: App {
     @Environment(\.scenePhase) private var scenePhase
     @StateObject private var featureFlags = PVFeatureFlagsManager.shared
     @StateObject private var sceneCoordinator = SceneCoordinator.shared
-
+    
     init() {
-//#if canImport(Sentry)
-//        if appState.isAppStore {
-//            SentrySDK.start { options in
-//                options.dsn = "https://f9976bad538343d59606a8ef312d4720@o199354.ingest.us.sentry.io/1309415"
-//                #if DEBUG
-//                options.debug = true // Enabled debug when first installing is always helpful
-//                // Enable tracing to capture 100% of transactions for tracing.
-//                // Use 'options.tracesSampleRate' to set the sampling rate.
-//                // We recommend setting a sample rate in production.
-//                options.tracesSampleRate = 1.0 // tracing must be enabled for profiling
-//                options.profilesSampleRate = 1.0 // see also `profilesSampler` if you need custom sampling logic
-//                options.enableAppLaunchProfiling = true // experimental new feature to start profiling in the pre-main launch phase
-//                options.sessionReplay.onErrorSampleRate = 1.0
-//                options.sessionReplay.sessionSampleRate = 0.1
-//                #else
-//                options.tracesSampleRate = 0.5
-//                options.sessionReplay.onErrorSampleRate = 1.0
-//                #endif
-//            }
-//        }
-//#endif
-      }
-
+        //#if canImport(Sentry)
+        //        if appState.isAppStore {
+        //            SentrySDK.start { options in
+        //                options.dsn = "https://f9976bad538343d59606a8ef312d4720@o199354.ingest.us.sentry.io/1309415"
+        //                #if DEBUG
+        //                options.debug = true // Enabled debug when first installing is always helpful
+        //                // Enable tracing to capture 100% of transactions for tracing.
+        //                // Use 'options.tracesSampleRate' to set the sampling rate.
+        //                // We recommend setting a sample rate in production.
+        //                options.tracesSampleRate = 1.0 // tracing must be enabled for profiling
+        //                options.profilesSampleRate = 1.0 // see also `profilesSampler` if you need custom sampling logic
+        //                options.enableAppLaunchProfiling = true // experimental new feature to start profiling in the pre-main launch phase
+        //                options.sessionReplay.onErrorSampleRate = 1.0
+        //                options.sessionReplay.sessionSampleRate = 0.1
+        //                #else
+        //                options.tracesSampleRate = 0.5
+        //                options.sessionReplay.onErrorSampleRate = 1.0
+        //                #endif
+        //            }
+        //        }
+        //#endif
+    }
+    
     var body: some Scene {
         WindowGroup(id: "main") {
             ContentView()
@@ -56,55 +56,56 @@ struct ProvenanceApp: App {
                 .environmentObject(featureFlags)
                 .environmentObject(appDelegate)
                 .environmentObject(appState.bootupStateManager)
+                .environmentObject(ThemeManager.shared)
                 .task {
                     try? await featureFlags.loadConfiguration(
                         from: URL(string: "https://data.provenance-emu.com/features/features.json")!
                     )
                 }
-            #if canImport(FreemiumKit)
+#if canImport(FreemiumKit)
                 .environmentObject(FreemiumKit.shared)
-            #endif
-            #if canImport(WhatsNewKit)
+#endif
+#if canImport(WhatsNewKit)
                 .environment(
-                       \.whatsNew,
-                       WhatsNewEnvironment(
-                           // Specify in which way the presented WhatsNew Versions are stored.
-                           // In default the `UserDefaultsWhatsNewVersionStore` is used.
-                           versionStore:
-//                             InMemoryWhatsNewVersionStore(),
-                           NSUbiquitousKeyValueWhatsNewVersionStore(),
-                           // UserDefaultsWhatsNewVersionStore(),
-                           // Pass a `WhatsNewCollectionProvider` or an array of WhatsNew instances
-                           whatsNewCollection: self
-                       )
-                   )
-            #endif
+                    \.whatsNew,
+                     WhatsNewEnvironment(
+                        // Specify in which way the presented WhatsNew Versions are stored.
+                        // In default the `UserDefaultsWhatsNewVersionStore` is used.
+                        versionStore:
+                            //                             InMemoryWhatsNewVersionStore(),
+                        NSUbiquitousKeyValueWhatsNewVersionStore(),
+                        // UserDefaultsWhatsNewVersionStore(),
+                        // Pass a `WhatsNewCollectionProvider` or an array of WhatsNew instances
+                        whatsNewCollection: self
+                     )
+                )
+#endif
                 .onAppear {
                     ILOG("ProvenanceApp: onAppear called, setting `appDelegate.appState = appState`")
                     appDelegate.appState = appState
-
+                    
                     // Initialize the settings factory and import presenter
-                    #if os(tvOS)
+#if os(tvOS)
                     appState.settingsFactory = SwiftUISettingsViewControllerFactory()
                     appState.importOptionsPresenter = SwiftUIImportOptionsPresenter()
-                    #endif
-
-            #if canImport(FreemiumKit)
-                #if targetEnvironment(simulator) || DEBUG
+#endif
+                    
+#if canImport(FreemiumKit)
+#if targetEnvironment(simulator) || DEBUG
                     FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
-                #else
+#else
                     if !appDelegate.isAppStore {
                         FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
                     }
-                #endif
-            #endif
+#endif
+#endif
                 }
                 .onOpenURL { url in
                     // Handle the URL
                     let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-
+                    
                     ILOG("ProvenanceApp: Received URL to open: \(url.absoluteString)")
-
+                    
                     // Debug log the URL structure in detail
                     if let components = components {
                         DLOG("ProvenanceApp: URL scheme: \(components.scheme ?? "nil"), host: \(components.host ?? "nil"), path: \(components.path)")
@@ -114,14 +115,14 @@ struct ProvenanceApp: App {
                             DLOG("ProvenanceApp: No query items found in URL")
                         }
                     }
-
+                    
                     if url.isFileURL {
                         ILOG("ProvenanceApp: Handling file URL")
                         return handle(fileURL: url)
                     }
                     else if let scheme = url.scheme, scheme.lowercased() == PVAppURLKey {
                         ILOG("ProvenanceApp: Handling app URL with scheme: \(scheme)")
-
+                        
                         // Check for direct md5 parameter in the URL
                         if let components = components,
                            components.host?.lowercased() == "open",
@@ -133,7 +134,7 @@ struct ProvenanceApp: App {
                             openEmulatorSceneIfNeeded()
                             return
                         }
-
+                        
                         handle(appURL: url)
                     } else if let components = components,
                               components.path == PVGameControllerKey,
@@ -154,13 +155,13 @@ struct ProvenanceApp: App {
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
                 appState.startBootupSequence()
-
+                
                 /// Swizzle sendEvent(UIEvent)
                 if !appState.sendEventWasSwizzled {
                     UIApplication.swizzleSendEvent()
                     appState.sendEventWasSwizzled = true
                 }
-
+                
                 // Check if we need to open the emulator scene based on app open action
                 if appState.bootupState == .completed {
                     openEmulatorSceneIfNeeded()
@@ -168,11 +169,11 @@ struct ProvenanceApp: App {
                 
                 SkinImporterInjector.shared.service = DeltaSkinManager.shared
             }
-
+            
             // Handle scene phase changes for import pausing
             appState.handleScenePhaseChange(newPhase)
         }
-
+        
         // Add the emulator scene
         EmulatorScene()
             .handlesExternalEvents(matching: ["emulator"])
@@ -182,31 +183,31 @@ struct ProvenanceApp: App {
 /// Hack to get touches send to RetroArch
 
 extension UIApplication {
-
+    
     /// Swap implipmentations of sendEvent() while
     /// maintaing a reference back to the original
     @objc static func swizzleSendEvent() {
-            let originalSelector = #selector(UIApplication.sendEvent(_:))
-            let swizzledSelector = #selector(UIApplication.pv_sendEvent(_:))
-            let orginalStoreSelector = #selector(UIApplication.originalSendEvent(_:))
-            guard let originalMethod = class_getInstanceMethod(self, originalSelector),
-                let swizzledMethod = class_getInstanceMethod(self, swizzledSelector),
-                  let orginalStoreMethod = class_getInstanceMethod(self, orginalStoreSelector)
-            else { return }
-            method_exchangeImplementations(originalMethod, orginalStoreMethod)
-            method_exchangeImplementations(originalMethod, swizzledMethod)
+        let originalSelector = #selector(UIApplication.sendEvent(_:))
+        let swizzledSelector = #selector(UIApplication.pv_sendEvent(_:))
+        let orginalStoreSelector = #selector(UIApplication.originalSendEvent(_:))
+        guard let originalMethod = class_getInstanceMethod(self, originalSelector),
+              let swizzledMethod = class_getInstanceMethod(self, swizzledSelector),
+              let orginalStoreMethod = class_getInstanceMethod(self, orginalStoreSelector)
+        else { return }
+        method_exchangeImplementations(originalMethod, orginalStoreMethod)
+        method_exchangeImplementations(originalMethod, swizzledMethod)
     }
-
+    
     /// Placeholder for storing original selector
     @objc func originalSendEvent(_ event: UIEvent) { }
-
+    
     /// The sendEvent that will be called
     @objc func pv_sendEvent(_ event: UIEvent) {
-//        print("Handling touch event: \(event.type.rawValue ?? -1)")
+        //        print("Handling touch event: \(event.type.rawValue ?? -1)")
         if let core = AppState.shared.emulationUIState.core {
             core.sendEvent(event)
         }
-
+        
         originalSendEvent(event)
     }
 }
@@ -221,53 +222,53 @@ extension ProvenanceApp {
             sceneCoordinator.openEmulatorScene()
         }
     }
-
+    
     func handle(appURL url: URL) -> Bool {
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-
+        
         guard let components = components else {
             ELOG("Failed to parse url <\(url.absoluteString)>")
             return false
         }
-
+        
         ILOG("App to open url \(url.absoluteString). Parsed components: \(String(describing: components))")
-
+        
         // Debug log the URL structure in detail
         DLOG("URL scheme: \(components.scheme ?? "nil"), host: \(components.host ?? "nil"), path: \(components.path)")
-        if let queryItems = components.queryItems {
+        if let queryItems: [URLQueryItem] = components.queryItems {
             DLOG("Query items: \(queryItems.map { "\($0.name)=\($0.value ?? "nil")" }.joined(separator: ", "))")
         } else {
             DLOG("No query items found in URL")
         }
-
+        
         guard let action = AppURLKeys(rawValue: components.host ?? "") else {
             ELOG("Invalid host/action: \(components.host ?? "nil")")
             return false
         }
-
+        
         switch action {
         case .save:
             guard let queryItems = components.queryItems, !queryItems.isEmpty else {
                 ELOG("Query items is nil")
                 return false
             }
-
+            
             guard let a = queryItems["action"] else {
                 return false
             }
-
+            
             let md5QueryItem = queryItems["PVGameMD5Key"]
             let systemItem = queryItems["system"]
             let nameItem = queryItems["title"]
-
+            
             if let md5QueryItem = md5QueryItem {
-
+                
             }
             if let systemItem = systemItem {
-
+                
             }
             if let nameItem = nameItem {
-
+                
             }
             return false
             // .filter("systemIdentifier == %@ AND title == %@", matchedSystem.identifier, gameName)
@@ -276,9 +277,9 @@ extension ProvenanceApp {
                 ELOG("No query items found for open action")
                 return false
             }
-
+            
             DLOG("Processing open action with \(queryItems.count) query items")
-
+            
             // Check for direct md5 parameter (provenance://open?md5=...)
             if let md5Value = queryItems.first(where: { $0.name == "md5" })?.value, !md5Value.isEmpty {
                 DLOG("Found direct md5 parameter: \(md5Value)")
@@ -291,14 +292,14 @@ extension ProvenanceApp {
                     return false
                 }
             }
-
+            
             // Fall back to the original parameter names if direct md5 not found
             let md5QueryItem = queryItems["PVGameMD5Key"]
             let systemItem = queryItems["system"]
             let nameItem = queryItems["title"]
-
+            
             DLOG("Fallback parameters - PVGameMD5Key: \(md5QueryItem ?? "nil"), system: \(systemItem ?? "nil"), title: \(nameItem ?? "nil")")
-
+            
             if let value = md5QueryItem, !value.isEmpty,
                let matchedGame = fetchGame(byMD5: value) {
                 // Match by md5
@@ -338,7 +339,7 @@ extension ProvenanceApp {
             }
         }
     }
-
+    
     func handle(fileURL url: URL) {
         let filename = url.lastPathComponent
         let destinationPath = Paths.romsImportPath.appendingPathComponent(filename, isDirectory: false)
@@ -348,38 +349,38 @@ extension ProvenanceApp {
                 if secureDocument {
                     url.stopAccessingSecurityScopedResource()
                 }
-
+                
             }
-
+            
             // Doesn't seem we need access in dev builds?
             secureDocument = url.startAccessingSecurityScopedResource()
-
-//            if let openInPlace = options[.openInPlace] as? Bool, openInPlace {
-                try FileManager.default.copyItem(at: url, to: destinationPath)
-//            } else {
-//                try FileManager.default.moveItem(at: url, to: destinationPath)
-//            }
-
+            
+            //            if let openInPlace = options[.openInPlace] as? Bool, openInPlace {
+            try FileManager.default.copyItem(at: url, to: destinationPath)
+            //            } else {
+            //                try FileManager.default.moveItem(at: url, to: destinationPath)
+            //            }
+            
             // Set the app open action to open the file
             AppState.shared.appOpenAction = .openFile(destinationPath)
-
+            
             // Open the emulator scene
             openEmulatorSceneIfNeeded()
         } catch {
             ELOG("Unable to move file from \(url.path) to \(destinationPath.path) because \(error.localizedDescription)")
             return
         }
-
+        
         return
     }
-
+    
     /// Helper method to safely fetch a game from Realm by its MD5 hash
     /// - Parameter md5: The MD5 hash of the game
     /// - Returns: The game if found, nil otherwise
     private func fetchGame(byMD5 md5: String) -> PVGame? {
         return RomDatabase.sharedInstance.object(ofType: PVGame.self, wherePrimaryKeyEquals: md5)
     }
-
+    
     /// Helper method to safely fetch a system from Realm by its identifier
     /// - Parameter identifier: The system identifier
     /// - Returns: The system if found, nil otherwise
@@ -393,7 +394,7 @@ extension ProvenanceApp {
 // MARK: - App+WhatsNewCollectionProvider
 
 extension ProvenanceApp: WhatsNewCollectionProvider {
-
+    
     /// Declare your WhatsNew instances per version
     var whatsNewCollection: WhatsNewCollection {
         WhatsNew(

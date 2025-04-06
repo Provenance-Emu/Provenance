@@ -16,12 +16,14 @@ import PVThemes
 import RealmSwift
 
 /// A SwiftUI scene for displaying the emulator screen and controls
-struct EmulatorScene: Scene {
+public struct EmulatorScene: Scene {
     @StateObject private var appState = AppState.shared
     @StateObject private var sceneCoordinator = SceneCoordinator.shared
     @Environment(\.scenePhase) private var scenePhase
 
-    var body: some Scene {
+    public init() {}
+    
+    public var body: some Scene {
         WindowGroup(id: "emulator") {
             EmulatorContainerView()
                 .environmentObject(appState)

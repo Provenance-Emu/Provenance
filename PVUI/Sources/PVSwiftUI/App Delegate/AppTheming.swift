@@ -14,7 +14,7 @@ import PVUIKit
 import PVSwiftUI
 
 @MainActor
-func themeAppUI(withPalette palette: any UXThemePalette) {
+public func themeAppUI(withPalette palette: any UXThemePalette) {
     applySettingsTheme(palette: palette)
 //    applyTableViewCellTheme(palette: palette)
 //    applyGameLibraryTheme(palette: palette)
