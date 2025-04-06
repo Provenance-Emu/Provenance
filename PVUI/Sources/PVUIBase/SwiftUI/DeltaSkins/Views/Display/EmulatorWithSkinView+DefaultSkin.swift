@@ -13,6 +13,7 @@ import PVRealm
 import RealmSwift
 import PVLibrary
 import PVPlists
+import PVThemes
 
 // MARK: - Retrowave Styling Components
 
@@ -152,6 +153,9 @@ struct DefaultControllerSkinView: View {
     let inputHandler: DeltaSkinInputHandler
     let systemId: SystemIdentifier?
     let coreInstance: PVEmulatorCore
+    
+    // Access theme manager for colors
+    @ObservedObject private var themeManager = ThemeManager.shared
     
     // State for control layout data
     @State private var controlLayout: [ControlLayoutEntry]? = nil
@@ -513,7 +517,7 @@ struct DefaultControllerSkinView: View {
                 .frame(width: 180, height: 180)
                 .overlay(
                     RoundedOctagon(cornerRadius: 15)
-                        .stroke(Color(red: 0.99, green: 0.11, blue: 0.55, opacity: 0.8), lineWidth: 2)
+                        .stroke(themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55, opacity: 0.8), lineWidth: 2)
                         .blur(radius: 4)
                 )
                 .overlay(
@@ -539,30 +543,58 @@ struct DefaultControllerSkinView: View {
                 // Up indicator
                 Text("▲")
                     .font(.system(size: 24, weight: .bold))
-                    .foregroundColor(dpadState.up ? Color(red: 0.99, green: 0.11, blue: 0.55) : .white)
-                    .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: dpadState.up ? 6 : 2)
+                    .foregroundColor(dpadState.up ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55)) : .white)
+                    .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55), radius: dpadState.up ? 6 : 2)
                     .position(x: 90, y: 45)
                 
                 // Down indicator
                 Text("▼")
                     .font(.system(size: 24, weight: .bold))
-                    .foregroundColor(dpadState.down ? Color(red: 0.99, green: 0.11, blue: 0.55) : .white)
-                    .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: dpadState.down ? 6 : 2)
+                    .foregroundColor(dpadState.down ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55)) : .white)
+                    .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55), radius: dpadState.down ? 6 : 2)
                     .position(x: 90, y: 135)
                 
                 // Left indicator
                 Text("◀")
                     .font(.system(size: 24, weight: .bold))
-                    .foregroundColor(dpadState.left ? Color(red: 0.99, green: 0.11, blue: 0.55) : .white)
-                    .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: dpadState.left ? 6 : 2)
+                    .foregroundColor(dpadState.left ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55)) : .white)
+                    .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55), radius: dpadState.left ? 6 : 2)
                     .position(x: 45, y: 90)
                 
                 // Right indicator
                 Text("▶")
                     .font(.system(size: 24, weight: .bold))
-                    .foregroundColor(dpadState.right ? Color(red: 0.99, green: 0.11, blue: 0.55) : .white)
-                    .shadow(color: Color(red: 0.99, green: 0.11, blue: 0.55), radius: dpadState.right ? 6 : 2)
+                    .foregroundColor(dpadState.right ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55)) : .white)
+                    .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55), radius: dpadState.right ? 6 : 2)
                     .position(x: 135, y: 90)
+                
+                // Up-Left diagonal indicator
+                Text("⬉")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundColor((dpadState.up && dpadState.left) ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55)) : .white)
+                    .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55), radius: (dpadState.up && dpadState.left) ? 6 : 2)
+                    .position(x: 45, y: 45)
+                
+                // Up-Right diagonal indicator
+                Text("⬈")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundColor((dpadState.up && dpadState.right) ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55)) : .white)
+                    .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55), radius: (dpadState.up && dpadState.right) ? 6 : 2)
+                    .position(x: 135, y: 45)
+                
+                // Down-Left diagonal indicator
+                Text("⬋")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundColor((dpadState.down && dpadState.left) ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55)) : .white)
+                    .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55), radius: (dpadState.down && dpadState.left) ? 6 : 2)
+                    .position(x: 45, y: 135)
+                
+                // Down-Right diagonal indicator
+                Text("⬊")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundColor((dpadState.down && dpadState.right) ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55)) : .white)
+                    .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55), radius: (dpadState.down && dpadState.right) ? 6 : 2)
+                    .position(x: 135, y: 135)
             }
             
             // Touch indicator overlay - positioned above the gesture area but below the gesture recognizer
@@ -651,26 +683,62 @@ struct DefaultControllerSkinView: View {
         .frame(width: 150, height: 150)
     }
     
-    /// Joystick view
+    // State class for joystick
+    private class JoystickState: ObservableObject {
+        @Published var position: CGSize = .zero
+        @Published var touchPosition: CGPoint = .zero
+        @Published var isTouching = false
+        @Published var isActive = false
+    }
+    
+    /// Joystick view with touch tracking
     private func joystickView() -> some View {
         // State for joystick position
-        GeometryReader { geometry in
+        let joystickState = JoystickState()
+        
+        return GeometryReader { geometry in
             ZStack {
                 // Joystick background
                 Circle()
                     .fill(Color.black.opacity(0.7))
                     .frame(width: geometry.size.width, height: geometry.size.width)
+                    .overlay(
+                        Circle()
+                            .stroke(themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.0, green: 0.8, blue: 0.9, opacity: 0.8), lineWidth: 2)
+                            .blur(radius: 4)
+                    )
+                    .overlay(
+                        Circle()
+                            .stroke(Color.white, lineWidth: 1)
+                    )
                 
                 // Joystick handle
                 Circle()
-                    .fill(Color.gray)
+                    .fill(joystickState.isActive ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.0, green: 0.8, blue: 0.9)) : Color.gray)
                     .frame(width: geometry.size.width * 0.4, height: geometry.size.width * 0.4)
+                    .offset(x: joystickState.position.width, y: joystickState.position.height)
+                    .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.0, green: 0.8, blue: 0.9), radius: joystickState.isActive ? 10 : 0)
+                
+                // Touch indicator overlay
+                if joystickState.isTouching {
+                    DeltaSkinTouchIndicator(at: joystickState.touchPosition)
+                        .allowsHitTesting(false) // Prevent the indicator from interfering with touches
+                }
+                
+                // Gesture area
+                Color.clear
+                    .contentShape(Circle())
                     .gesture(
                         DragGesture(minimumDistance: 0)
                             .onChanged { value in
                                 // Calculate position relative to center
                                 let center = CGPoint(x: geometry.size.width/2, y: geometry.size.width/2)
                                 let location = value.location
+                                
+                                // Update touch position for the indicator
+                                joystickState.touchPosition = location
+                                joystickState.isTouching = true
+                                joystickState.isActive = true
                                 
                                 // Calculate distance from center
                                 let deltaX = location.x - center.x
@@ -679,8 +747,19 @@ struct DefaultControllerSkinView: View {
                                 // Calculate distance and angle
                                 let distance = sqrt(deltaX*deltaX + deltaY*deltaY)
                                 
+                                // Limit the joystick movement to the maximum radius
+                                let maxDistance = geometry.size.width/2 * 0.6
+                                let limitedDistance = min(distance, maxDistance)
+                                let angle = atan2(deltaY, deltaX)
+                                
+                                // Calculate the limited position
+                                let limitedX = limitedDistance * cos(angle)
+                                let limitedY = limitedDistance * sin(angle)
+                                
+                                // Update joystick position
+                                joystickState.position = CGSize(width: limitedX, height: limitedY)
+                                
                                 // Normalize to -1.0 to 1.0 range
-                                let maxDistance = geometry.size.width/2 * 0.8
                                 let normalizedX = Float(min(max(deltaX / maxDistance, -1.0), 1.0))
                                 let normalizedY = Float(min(max(-deltaY / maxDistance, -1.0), 1.0)) // Invert Y for proper direction
                                 
@@ -688,7 +767,12 @@ struct DefaultControllerSkinView: View {
                                 inputHandler.analogStickMoved("leftAnalog", x: normalizedX, y: normalizedY)
                             }
                             .onEnded { _ in
-                                // Reset to center position
+                                // Reset to center when released
+                                withAnimation(.spring()) {
+                                    joystickState.position = .zero
+                                    joystickState.isActive = false
+                                    joystickState.isTouching = false
+                                }
                                 inputHandler.analogStickMoved("leftAnalog", x: 0, y: 0)
                             }
                     )
@@ -700,7 +784,10 @@ struct DefaultControllerSkinView: View {
     
     /// Circle button view with retrowave styling
     private func circleButton(label: String, color: Color) -> some View {
-        Button(action: {}) {
+        // Use theme's tint color if no specific color is provided
+        let buttonColor = color == .gray ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? color) : color
+        
+        return Button(action: {}) {
             ZStack {
                 // Outer glow
                 Circle()
@@ -708,7 +795,7 @@ struct DefaultControllerSkinView: View {
                     .frame(width: 60, height: 60)
                     .overlay(
                         Circle()
-                            .stroke(color, lineWidth: 2)
+                            .stroke(buttonColor, lineWidth: 2)
                             .blur(radius: 4)
                     )
                     .overlay(
@@ -717,7 +804,7 @@ struct DefaultControllerSkinView: View {
                     )
                 
                 // Button label with neon effect
-                NeonText(label, color: color, fontSize: 20)
+                NeonText(label, color: buttonColor, fontSize: 20)
             }
             .frame(width: 60, height: 60)
         }
@@ -738,7 +825,7 @@ struct DefaultControllerSkinView: View {
                     .frame(width: 80, height: 35)
                     .overlay(
                         Capsule()
-                            .stroke(Color(red: 0.99, green: 0.11, blue: 0.55, opacity: 0.8), lineWidth: 2)
+                            .stroke(themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55, opacity: 0.8), lineWidth: 2)
                             .blur(radius: 4)
                     )
                     .overlay(
@@ -747,7 +834,7 @@ struct DefaultControllerSkinView: View {
                     )
                 
                 // Button label with neon effect
-                NeonText(label, color: Color(red: 0.99, green: 0.11, blue: 0.55), fontSize: 14)
+                NeonText(label, color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55), fontSize: 14)
             }
             .frame(width: 80, height: 35)
         }
@@ -768,7 +855,7 @@ struct DefaultControllerSkinView: View {
                     .frame(width: 45, height: 35)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color(red: 0.0, green: 0.8, blue: 0.9, opacity: 0.8), lineWidth: 2)
+                            .stroke(themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.0, green: 0.8, blue: 0.9, opacity: 0.8), lineWidth: 2)
                             .blur(radius: 4)
                     )
                     .overlay(
@@ -777,7 +864,7 @@ struct DefaultControllerSkinView: View {
                     )
                 
                 // Button label with neon effect
-                NeonText(label, color: Color(red: 0.0, green: 0.8, blue: 0.9), fontSize: 14)
+                NeonText(label, color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.0, green: 0.8, blue: 0.9), fontSize: 14)
             }
             .frame(width: 45, height: 35)
         }
