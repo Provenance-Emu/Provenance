@@ -415,8 +415,13 @@ public class DeltaSkinInputHandler: ObservableObject {
         if handleSpecialButtons(normalizedId, isPressed: isPressed, controller: controller) {
             return
         }
+        
+        // Try to forward directly to the core for standard buttons
+        if forwardButtonPressToSystemSpecificCore(normalizedId, isPressed: isPressed) {
+            return
+        }
 
-        // For other buttons (A, B, X, Y, etc.), find the button in the button group
+        // As a fallback, try to find the button in the button group
         if let buttonGroup = controller.buttonGroup {
             // Find the button with the matching label
             if let button = findButtonInGroup(buttonGroup, withLabel: normalizedId) {
@@ -440,11 +445,14 @@ public class DeltaSkinInputHandler: ObservableObject {
 
     /// Handle special buttons (D-pad, Start, Select)
     private func handleSpecialButtons(_ buttonId: String, isPressed: Bool, controller: any ControllerVC) -> Bool {
-        switch buttonId.lowercased() {
-        // Menu buttons
-        case "start", "run", "play":
+        // Map common start button variations
+        let startVariations = ["start", "run", "play", "option", "pause"]
+        let selectVariations = ["select", "mode", "option", "pause"]
+        
+        // Check if this is a start button
+        if startVariations.contains(buttonId.lowercased()) {
             if isPressed {
-                DLOG("Calling controller.pressStart")
+                DLOG("Calling controller.pressStart for button: \(buttonId)")
                 controller.pressStart(forPlayer: 0)
                 // Add haptic feedback
 #if os(iOS) && !targetEnvironment(macCatalyst)
@@ -453,14 +461,16 @@ public class DeltaSkinInputHandler: ObservableObject {
                 generator.impactOccurred()
 #endif
             } else {
-                DLOG("Calling controller.releaseStart")
+                DLOG("Calling controller.releaseStart for button: \(buttonId)")
                 controller.releaseStart(forPlayer: 0)
             }
             return true
-
-        case "select", "mode", "option":
+        }
+        
+        // Check if this is a select button
+        if selectVariations.contains(buttonId.lowercased()) {
             if isPressed {
-                DLOG("Calling controller.pressSelect")
+                DLOG("Calling controller.pressSelect for button: \(buttonId)")
                 controller.pressSelect(forPlayer: 0)
                 // Add haptic feedback
 #if os(iOS) && !targetEnvironment(macCatalyst)
@@ -469,13 +479,15 @@ public class DeltaSkinInputHandler: ObservableObject {
                 generator.impactOccurred()
 #endif
             } else {
-                DLOG("Calling controller.releaseSelect")
+                DLOG("Calling controller.releaseSelect for button: \(buttonId)")
                 controller.releaseSelect(forPlayer: 0)
             }
             return true
+        }
 
         // D-pad directions
-        case "up", "down", "left", "right", "upleft", "upright", "downleft", "downright":
+        let dpadDirections = ["up", "down", "left", "right", "upleft", "upright", "downleft", "downright"]
+        if dpadDirections.contains(buttonId.lowercased()) {
             if isPressed {
                 let direction = stringToDirection(buttonId)
                 DLOG("Calling controller.dPad with press direction: \(direction)")
@@ -486,10 +498,10 @@ public class DeltaSkinInputHandler: ObservableObject {
                 controller.dPad(dummyDPad, didRelease: direction)
             }
             return true
-
-        default:
-            return false
         }
+        
+        // No special button matched
+        return false
     }
 
     /// Handle shoulder buttons (L, R, L2, R2, etc.)
@@ -542,7 +554,54 @@ public class DeltaSkinInputHandler: ObservableObject {
         }
         return nil
     }
+    
 
+
+    /// Forward button press directly to the system-specific core
+    private func forwardButtonPressToSystemSpecificCore(_ buttonId: String, isPressed: Bool) -> Bool {
+        guard let core = emulatorCore else {
+            return false
+        }
+        
+        // Map common button IDs to their indices
+        var buttonIndex: Int? = nil
+        
+        switch buttonId.lowercased() {
+        case "a":
+            buttonIndex = 0 // Most systems use 0 for A button
+        case "b":
+            buttonIndex = 1 // Most systems use 1 for B button
+        case "x":
+            buttonIndex = 2 // Most systems use 2 for X button
+        case "y":
+            buttonIndex = 3 // Most systems use 3 for Y button
+        case "c":
+            buttonIndex = 4 // Some systems use 4 for C button
+        case "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "#", "*":
+            // Numeric buttons for systems like Jaguar
+            // These are handled by the specific system controllers
+            return false
+        default:
+            return false
+        }
+        
+        if let index = buttonIndex {
+            if isPressed {
+                if let responder = core as? PVControllerResponder {
+                    responder.controllerPressedButton(index, forPlayer: 0)
+                    return true
+                }
+            } else {
+                if let responder = core as? PVControllerResponder {
+                    responder.controllerReleasedButton(index, forPlayer: 0)
+                    return true
+                }
+            }
+        }
+        
+        return false
+    }
+    
     /// Convert string direction to JSDPadDirection
     private func stringToDirection(_ direction: String) -> JSDPadDirection {
         switch direction.lowercased() {

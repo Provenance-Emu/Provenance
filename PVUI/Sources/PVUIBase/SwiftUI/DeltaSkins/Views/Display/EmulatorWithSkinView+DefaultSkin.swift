@@ -400,7 +400,11 @@ struct DefaultControllerSkinView: View {
                         .background(Color.blue.opacity(0.7))
                         .cornerRadius(10)
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(GameButtonStyle(pressAction: {
+            inputHandler.buttonPressed("toggle")
+        }, releaseAction: {
+            inputHandler.buttonReleased("toggle")
+        }))
 
                     // Show either D-pad or joystick based on toggle
                     if useJoystickInternal {
@@ -516,7 +520,7 @@ struct DefaultControllerSkinView: View {
                     // Top row with Up-Left, Up, Up-Right
                     HStack(spacing: 0) {
                         // Up-Left button
-                        ZStack {
+                        Button(action: {}) {
                             Text("⬉")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.white)
@@ -525,21 +529,14 @@ struct DefaultControllerSkinView: View {
                                 .frame(width: 40, height: 40)
                                 .contentShape(Rectangle())
                         }
-                        .onTapGesture { } // Empty gesture to prevent propagation
-                        .gesture(
-                            DragGesture(minimumDistance: 0)
-                                .onChanged { _ in
-                                    inputHandler.buttonPressed("up")
-                                    inputHandler.buttonPressed("left")
-                                }
-                                .onEnded { _ in 
-                                    inputHandler.buttonReleased("up")
-                                    inputHandler.buttonReleased("left")
-                                }
-                        )
+                        .buttonStyle(GameButtonStyle(pressAction: {
+                            inputHandler.buttonPressed("up")
+                        }, releaseAction: {
+                            inputHandler.buttonReleased("up")
+                        }))
                         
                         // Up button
-                        ZStack {
+                        Button(action: {}) {
                             Text("▲")
                                 .font(.system(size: 24, weight: .bold))
                                 .foregroundColor(.white)
@@ -548,15 +545,14 @@ struct DefaultControllerSkinView: View {
                                 .frame(width: 50, height: 50)
                                 .contentShape(Rectangle())
                         }
-                        .onTapGesture { } // Empty gesture to prevent propagation
-                        .gesture(
-                            DragGesture(minimumDistance: 0)
-                                .onChanged { _ in inputHandler.buttonPressed("up") }
-                                .onEnded { _ in inputHandler.buttonReleased("up") }
-                        )
+                        .buttonStyle(GameButtonStyle(pressAction: {
+                            inputHandler.buttonPressed("up")
+                        }, releaseAction: {
+                            inputHandler.buttonReleased("up")
+                        }))
                         
                         // Up-Right button
-                        ZStack {
+                        Button(action: {}) {
                             Text("⬈")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.white)
@@ -565,24 +561,19 @@ struct DefaultControllerSkinView: View {
                                 .frame(width: 40, height: 40)
                                 .contentShape(Rectangle())
                         }
-                        .onTapGesture { } // Empty gesture to prevent propagation
-                        .gesture(
-                            DragGesture(minimumDistance: 0)
-                                .onChanged { _ in
-                                    inputHandler.buttonPressed("up")
-                                    inputHandler.buttonPressed("right")
-                                }
-                                .onEnded { _ in 
-                                    inputHandler.buttonReleased("up")
-                                    inputHandler.buttonReleased("right")
-                                }
-                        )
+                        .buttonStyle(GameButtonStyle(pressAction: {
+                            inputHandler.buttonPressed("up")
+                            inputHandler.buttonPressed("right")
+                        }, releaseAction: {
+                            inputHandler.buttonReleased("up")
+                            inputHandler.buttonReleased("right")
+                        }))
                     }
 
                     // Middle row with Left, Center, Right
                     HStack(spacing: 0) {
                         // Left button
-                        ZStack {
+                        Button(action: {}) {
                             Text("◀")
                                 .font(.system(size: 24, weight: .bold))
                                 .foregroundColor(.white)
@@ -591,12 +582,11 @@ struct DefaultControllerSkinView: View {
                                 .frame(width: 50, height: 50)
                                 .contentShape(Rectangle())
                         }
-                        .onTapGesture { } // Empty gesture to prevent propagation
-                        .gesture(
-                            DragGesture(minimumDistance: 0)
-                                .onChanged { _ in inputHandler.buttonPressed("left") }
-                                .onEnded { _ in inputHandler.buttonReleased("left") }
-                        )
+                        .buttonStyle(GameButtonStyle(pressAction: {
+                            inputHandler.buttonPressed("left")
+                        }, releaseAction: {
+                            inputHandler.buttonReleased("left")
+                        }))
 
                         // Center space
                         Rectangle()
@@ -604,7 +594,7 @@ struct DefaultControllerSkinView: View {
                             .frame(width: 40, height: 40)
 
                         // Right button
-                        ZStack {
+                        Button(action: {}) {
                             Text("▶")
                                 .font(.system(size: 24, weight: .bold))
                                 .foregroundColor(.white)
@@ -613,18 +603,17 @@ struct DefaultControllerSkinView: View {
                                 .frame(width: 50, height: 50)
                                 .contentShape(Rectangle())
                         }
-                        .onTapGesture { } // Empty gesture to prevent propagation
-                        .gesture(
-                            DragGesture(minimumDistance: 0)
-                                .onChanged { _ in inputHandler.buttonPressed("right") }
-                                .onEnded { _ in inputHandler.buttonReleased("right") }
-                        )
+                        .buttonStyle(GameButtonStyle(pressAction: {
+                            inputHandler.buttonPressed("right")
+                        }, releaseAction: {
+                            inputHandler.buttonReleased("right")
+                        }))
                     }
 
                     // Bottom row with Down-Left, Down, Down-Right
                     HStack(spacing: 0) {
                         // Down-Left button
-                        ZStack {
+                        Button(action: {}) {
                             Text("⬋")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.white)
@@ -633,21 +622,16 @@ struct DefaultControllerSkinView: View {
                                 .frame(width: 40, height: 40)
                                 .contentShape(Rectangle())
                         }
-                        .onTapGesture { } // Empty gesture to prevent propagation
-                        .gesture(
-                            DragGesture(minimumDistance: 0)
-                                .onChanged { _ in
-                                    inputHandler.buttonPressed("down")
-                                    inputHandler.buttonPressed("left")
-                                }
-                                .onEnded { _ in 
-                                    inputHandler.buttonReleased("down")
-                                    inputHandler.buttonReleased("left")
-                                }
-                        )
+                        .buttonStyle(GameButtonStyle(pressAction: {
+                            inputHandler.buttonPressed("down")
+                            inputHandler.buttonPressed("left")
+                        }, releaseAction: {
+                            inputHandler.buttonReleased("down")
+                            inputHandler.buttonReleased("left")
+                        }))
                         
                         // Down button
-                        ZStack {
+                        Button(action: {}) {
                             Text("▼")
                                 .font(.system(size: 24, weight: .bold))
                                 .foregroundColor(.white)
@@ -656,15 +640,14 @@ struct DefaultControllerSkinView: View {
                                 .frame(width: 50, height: 50)
                                 .contentShape(Rectangle())
                         }
-                        .onTapGesture { } // Empty gesture to prevent propagation
-                        .gesture(
-                            DragGesture(minimumDistance: 0)
-                                .onChanged { _ in inputHandler.buttonPressed("down") }
-                                .onEnded { _ in inputHandler.buttonReleased("down") }
-                        )
+                        .buttonStyle(GameButtonStyle(pressAction: {
+                            inputHandler.buttonPressed("down")
+                        }, releaseAction: {
+                            inputHandler.buttonReleased("down")
+                        }))
                         
                         // Down-Right button
-                        ZStack {
+                        Button(action: {}) {
                             Text("⬊")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.white)
@@ -673,18 +656,13 @@ struct DefaultControllerSkinView: View {
                                 .frame(width: 40, height: 40)
                                 .contentShape(Rectangle())
                         }
-                        .onTapGesture { } // Empty gesture to prevent propagation
-                        .gesture(
-                            DragGesture(minimumDistance: 0)
-                                .onChanged { _ in
-                                    inputHandler.buttonPressed("down")
-                                    inputHandler.buttonPressed("right")
-                                }
-                                .onEnded { _ in 
-                                    inputHandler.buttonReleased("down")
-                                    inputHandler.buttonReleased("right")
-                                }
-                        )
+                        .buttonStyle(GameButtonStyle(pressAction: {
+                            inputHandler.buttonPressed("down")
+                            inputHandler.buttonPressed("right")
+                        }, releaseAction: {
+                            inputHandler.buttonReleased("down")
+                            inputHandler.buttonReleased("right")
+                        }))
                     }
                 }
             }
@@ -743,94 +721,97 @@ struct DefaultControllerSkinView: View {
 
     /// Circle button view with retrowave styling
     private func circleButton(label: String, color: Color) -> some View {
-        ZStack {
-            // Outer glow
-            Circle()
-                .fill(Color.clear)
-                .frame(width: 60, height: 60)
-                .overlay(
-                    Circle()
-                        .stroke(color, lineWidth: 2)
-                        .blur(radius: 4)
-                )
-                .overlay(
-                    Circle()
-                        .stroke(Color.white, lineWidth: 1)
-                )
+        Button(action: {}) {
+            ZStack {
+                // Outer glow
+                Circle()
+                    .fill(Color.clear)
+                    .frame(width: 60, height: 60)
+                    .overlay(
+                        Circle()
+                            .stroke(color, lineWidth: 2)
+                            .blur(radius: 4)
+                    )
+                    .overlay(
+                        Circle()
+                            .stroke(Color.white, lineWidth: 1)
+                    )
 
-            // Button label with neon effect
-            NeonText(label, color: color, fontSize: 20)
+                // Button label with neon effect
+                NeonText(label, color: color, fontSize: 20)
+            }
+            .frame(width: 60, height: 60)
         }
-        .frame(width: 60, height: 60)
-        .onTapGesture { } // Empty gesture to prevent propagation
-        .gesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in inputHandler.buttonPressed(label.lowercased()) }
-                .onEnded { _ in inputHandler.buttonReleased(label.lowercased()) }
-        )
+        .buttonStyle(GameButtonStyle(pressAction: {
+            inputHandler.buttonPressed(label.lowercased())
+        }, releaseAction: {
+            inputHandler.buttonReleased(label.lowercased())
+        }))
     }
 
     /// Pill-shaped button view with retrowave styling
     private func pillButton(label: String, color: Color) -> some View {
-        ZStack {
-            // Outer glow
-            Capsule()
-                .fill(Color.clear)
-                .frame(width: 80, height: 35)
-                .overlay(
-                    Capsule()
-                        .stroke(Color(red: 0.99, green: 0.11, blue: 0.55, opacity: 0.8), lineWidth: 2)
-                        .blur(radius: 4)
-                )
-                .overlay(
-                    Capsule()
-                        .stroke(Color.white, lineWidth: 1)
-                )
+        Button(action: {}) {
+            ZStack {
+                // Outer glow
+                Capsule()
+                    .fill(Color.clear)
+                    .frame(width: 80, height: 35)
+                    .overlay(
+                        Capsule()
+                            .stroke(Color(red: 0.99, green: 0.11, blue: 0.55, opacity: 0.8), lineWidth: 2)
+                            .blur(radius: 4)
+                    )
+                    .overlay(
+                        Capsule()
+                            .stroke(Color.white, lineWidth: 1)
+                    )
 
-            // Button label with neon effect
-            NeonText(label, color: Color(red: 0.99, green: 0.11, blue: 0.55), fontSize: 14)
+                // Button label with neon effect
+                NeonText(label, color: Color(red: 0.99, green: 0.11, blue: 0.55), fontSize: 14)
+            }
+            .frame(width: 80, height: 35)
         }
-        .frame(width: 80, height: 35)
-        .onTapGesture { } // Empty gesture to prevent propagation
-        .gesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in inputHandler.buttonPressed(label.lowercased()) }
-                .onEnded { _ in inputHandler.buttonReleased(label.lowercased()) }
-        )
+        .buttonStyle(GameButtonStyle(pressAction: {
+            inputHandler.buttonPressed(label.lowercased())
+        }, releaseAction: {
+            inputHandler.buttonReleased(label.lowercased())
+        }))
     }
 
     /// Shoulder button view with retrowave styling
     private func shoulderButton(label: String, color: Color) -> some View {
-        ZStack {
-            // Outer glow
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color.clear)
-                .frame(width: 45, height: 35)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color(red: 0.0, green: 0.8, blue: 0.9, opacity: 0.8), lineWidth: 2)
-                        .blur(radius: 4)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.white, lineWidth: 1)
-                )
+        Button(action: {}) {
+            ZStack {
+                // Outer glow
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.clear)
+                    .frame(width: 45, height: 35)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color(red: 0.0, green: 0.8, blue: 0.9, opacity: 0.8), lineWidth: 2)
+                            .blur(radius: 4)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.white, lineWidth: 1)
+                    )
 
-            // Button label with neon effect
-            NeonText(label, color: Color(red: 0.0, green: 0.8, blue: 0.9), fontSize: 14)
+                // Button label with neon effect
+                NeonText(label, color: Color(red: 0.0, green: 0.8, blue: 0.9), fontSize: 14)
+            }
+            .frame(width: 45, height: 35)
         }
-        .frame(width: 45, height: 35)
-        .onTapGesture { } // Empty gesture to prevent propagation
-        .gesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in inputHandler.buttonPressed(label.lowercased()) }
-                .onEnded { _ in inputHandler.buttonReleased(label.lowercased()) }
-        )
+        .buttonStyle(GameButtonStyle(pressAction: {
+            inputHandler.buttonPressed(label.lowercased())
+        }, releaseAction: {
+            inputHandler.buttonReleased(label.lowercased())
+        }))
     }
 
     /// Utility button with icon and retrowave styling
     private func utilityButton(label: String, color: Color, systemImage: String) -> some View {
-        Button(action: { inputHandler.buttonPressed(label.lowercased()) }) {
+        Button(action: {}) {
             ZStack {
                 // Outer glow
                 RoundedRectangle(cornerRadius: 10)
@@ -859,10 +840,11 @@ struct DefaultControllerSkinView: View {
             }
             .frame(width: 60, height: 50)
         }
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-                .onEnded { _ in inputHandler.buttonReleased(label.lowercased()) }
-        )
+        .buttonStyle(GameButtonStyle(pressAction: {
+            inputHandler.buttonPressed(label.lowercased())
+        }, releaseAction: {
+            inputHandler.buttonReleased(label.lowercased())
+        }))
     }
 
     // Build a dynamic landscape skin based on the system's control layout data
@@ -952,10 +934,19 @@ struct DefaultControllerSkinView: View {
                 // Action buttons positioned at right edge using absolute positioning
                 VStack {
                     Spacer()
-                    if let buttonGroup = layout.first(where: { $0.PVControlType == "PVButtonGroup" }),
-                       let groupedButtons = buttonGroup.PVGroupedButtons {
-                        // Create a grid of buttons based on the system's button group
-                        createButtonGroup(from: groupedButtons)
+                    // Find all button groups in the layout
+                    let buttonGroups = layout.filter { $0.PVControlType == "PVButtonGroup" }
+                    
+                    if !buttonGroups.isEmpty {
+                        // If we have button groups, display them in a VStack
+                        VStack(spacing: 20) {
+                            ForEach(0..<buttonGroups.count, id: \.self) { index in
+                                if let groupedButtons = buttonGroups[index].PVGroupedButtons {
+                                    // Create a grid of buttons for each button group
+                                    createButtonGroup(from: groupedButtons)
+                                }
+                            }
+                        }
                     } else {
                         // Fallback to generic ABXY layout with improved spacing
                         HStack(spacing: 30) {
@@ -972,7 +963,7 @@ struct DefaultControllerSkinView: View {
                     }
                     Spacer()
                 }
-                .frame(width: 150)
+                .frame(width: 250) // Increased width to accommodate multiple button groups
                 .position(x: geometry.size.width - 150, y: geometry.size.height / 2)
             }
         }
@@ -1058,7 +1049,11 @@ struct DefaultControllerSkinView: View {
                             .background(Color.blue.opacity(0.7))
                             .cornerRadius(10)
                         }
-                        .buttonStyle(PlainButtonStyle())
+                        .buttonStyle(GameButtonStyle(pressAction: {
+                            inputHandler.buttonPressed("up")
+                        }, releaseAction: {
+                            inputHandler.buttonReleased("up")
+                        }))
                     }
 
                     // Show either D-pad or joystick based on toggle and system support
@@ -1073,13 +1068,22 @@ struct DefaultControllerSkinView: View {
 
                 // Right side - Action buttons (right-aligned)
                 VStack(spacing: 10) {
-                    // Check if the system has a button group (action buttons)
-                    if let buttonGroup = layout.first(where: { $0.PVControlType == "PVButtonGroup" }),
-                       let groupedButtons = buttonGroup.PVGroupedButtons {
-                        // Create a grid of buttons based on the system's button group
-                        HStack {
-                            Spacer() // Push buttons to the right
-                            createButtonGroup(from: groupedButtons)
+                    // Find all button groups in the layout
+                    let buttonGroups = layout.filter { $0.PVControlType == "PVButtonGroup" }
+                    
+                    if !buttonGroups.isEmpty {
+                        // If we have button groups, display them in a VStack
+                        VStack(spacing: 20) {
+                            ForEach(0..<buttonGroups.count, id: \.self) { index in
+                                if let groupedButtons = buttonGroups[index].PVGroupedButtons {
+                                    // Create a grid of buttons for each button group
+                                    HStack {
+                                        Spacer() // Push buttons to the right
+                                        createButtonGroup(from: groupedButtons)
+                                            .id("buttonGroup_\(index)") // Add unique ID to force redraw
+                                    }
+                                }
+                            }
                         }
                     } else {
                         // Fallback to generic ABXY layout with improved spacing
@@ -1122,7 +1126,7 @@ struct DefaultControllerSkinView: View {
 
     // Create a button group based on the system's button layout
     private func createButtonGroup(from buttons: [ControlGroupButton]) -> some View {
-        // Determine if we should use a 2x2 grid or another arrangement
+        // Determine the best layout based on button count
         if buttons.count == 4 {
             // Standard 2x2 grid for 4 buttons
             return AnyView(
@@ -1134,6 +1138,55 @@ struct DefaultControllerSkinView: View {
                     HStack(spacing: 10) {
                         createButton(from: buttons[2])
                         createButton(from: buttons[3])
+                    }
+                }
+            )
+        } else if buttons.count == 3 {
+            // Triangle arrangement for 3 buttons (like Jaguar ABC)
+            return AnyView(
+                VStack(spacing: 10) {
+                    HStack(spacing: 10) {
+                        createButton(from: buttons[0])
+                    }
+                    HStack(spacing: 10) {
+                        createButton(from: buttons[1])
+                        createButton(from: buttons[2])
+                    }
+                }
+            )
+        } else if buttons.count >= 9 && buttons.count <= 12 {
+            // Number pad layout (3x4 grid for 9-12 buttons)
+            return AnyView(
+                VStack(spacing: 10) {
+                    // First row
+                    HStack(spacing: 10) {
+                        ForEach(0..<min(3, buttons.count), id: \.self) { index in
+                            createButton(from: buttons[index])
+                        }
+                    }
+                    // Second row
+                    if buttons.count > 3 {
+                        HStack(spacing: 10) {
+                            ForEach(3..<min(6, buttons.count), id: \.self) { index in
+                                createButton(from: buttons[index])
+                            }
+                        }
+                    }
+                    // Third row
+                    if buttons.count > 6 {
+                        HStack(spacing: 10) {
+                            ForEach(6..<min(9, buttons.count), id: \.self) { index in
+                                createButton(from: buttons[index])
+                            }
+                        }
+                    }
+                    // Fourth row
+                    if buttons.count > 9 {
+                        HStack(spacing: 10) {
+                            ForEach(9..<min(12, buttons.count), id: \.self) { index in
+                                createButton(from: buttons[index])
+                            }
+                        }
                     }
                 }
             )
@@ -1154,23 +1207,11 @@ struct DefaultControllerSkinView: View {
         let displayLabel = button.PVControlTitle ?? "Button"
         
         // Map special PlayStation symbols to their proper identifiers
-        let actionIdentifier: String
-        let identifier = button.PVControlTitle
-        actionIdentifier = identifier
-//        } else {
-//            // Handle special PlayStation symbols
-//            switch displayLabel {
-//            case "○": actionIdentifier = "circle"
-//            case "✕": actionIdentifier = "cross"
-//            case "▵": actionIdentifier = "triangle"
-//            case "□": actionIdentifier = "square"
-//            default: actionIdentifier = displayLabel // Keep as-is, don't lowercase
-//            }
-//        }
+        let actionIdentifier = button.PVControlTitle ?? displayLabel
         
         let color = colorFromString(button.PVControlTint) ?? .gray
         
-        return Button(action: { inputHandler.buttonPressed(actionIdentifier) }) {
+        return Button(action: {}) {
             ZStack {
                 // Outer glow
                 Circle()
@@ -1191,13 +1232,32 @@ struct DefaultControllerSkinView: View {
             }
             .frame(width: 60, height: 60)
         }
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-                .onEnded { _ in inputHandler.buttonReleased(actionIdentifier) }
-        )
+        .buttonStyle(GameButtonStyle(pressAction: {
+            inputHandler.buttonPressed(actionIdentifier)
+        }, releaseAction: {
+            inputHandler.buttonReleased(actionIdentifier)
+        }))
     }
 
-    // Convert a color string to a Color
+    // Custom button style that handles press and release events
+struct GameButtonStyle: ButtonStyle {
+    let pressAction: () -> Void
+    let releaseAction: () -> Void
+    
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .opacity(configuration.isPressed ? 0.7 : 1.0)
+            .onChange(of: configuration.isPressed) { isPressed in
+                if isPressed {
+                    pressAction()
+                } else {
+                    releaseAction()
+                }
+            }
+    }
+}
+
+// Convert a color string to a Color
     private func colorFromString(_ colorString: String?) -> Color? {
         guard let hexString = colorString else { return nil }
 

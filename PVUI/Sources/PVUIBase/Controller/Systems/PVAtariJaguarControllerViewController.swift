@@ -35,7 +35,7 @@ final class PVAtariJaguarControllerViewController: PVControllerViewController<PV
                 button.buttonTag = .c
             case "option", "start":
                 button.buttonTag = .option
-            case "pause":
+            case "pause", "select":
                 button.buttonTag = .pause
             default:
                 break
@@ -116,6 +116,7 @@ final class PVAtariJaguarControllerViewController: PVControllerViewController<PV
 
     override func pressStart(forPlayer player: Int) {
         emulatorCore.didPush(jaguarButton: .pause, forPlayer: player)
+        vibrate()
     }
 
     override func releaseStart(forPlayer player: Int) {
@@ -124,6 +125,7 @@ final class PVAtariJaguarControllerViewController: PVControllerViewController<PV
 
     override func pressSelect(forPlayer player: Int) {
         emulatorCore.didPush(jaguarButton: .option, forPlayer: player)
+        vibrate()
     }
 
     override func releaseSelect(forPlayer player: Int) {
