@@ -585,6 +585,18 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         if Defaults[.timedAutoSaves] {
             createAutosaveTimer()
         }
+        
+        // Initialize the audio visualizer based on saved preferences
+        if visualizerMode == .off {
+            // Load the last used mode from user defaults
+            visualizerMode = VisualizerMode.current
+        }
+        
+        // If visualizer is enabled, set it up and ensure it's on top
+        if visualizerMode != .off {
+            setupAudioVisualizer()
+            ensureVisualizerOnTop()
+        }
     }
 
     public override func viewWillDisappear(_ animated: Bool) {
