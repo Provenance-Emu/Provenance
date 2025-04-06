@@ -388,9 +388,19 @@ public class DeltaSkinInputHandler: ObservableObject {
             // Menu buttons
             "start", "select",
             // Action buttons
-            "a", "b", "x", "y",
+            "a", "b", "c", "x", "y", "z",
+            // Numberic buttons
+            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+            // Numpad buttons
+            "#", "*", "(", ")", "+", "-", ".", "/",
+            // PCFX buttons
+            "i", "ii", "iii", "iv", "v", "vi", "vii", "viii",
             // Shoulder buttons
             "l", "r", "l1", "r1", "l2", "r2", "l3", "r3",
+            // Other
+            "mode", "cdbc", "option", "pause",
+            // N64
+            "c▲", "▲", "▼", "c▼", "c←", "←", "c→", "→", "c◄", "◄", "c►", "►", "c↗", "↗", "c↘", "↘", "c◀", "◀", "c▶", "▶", "c▼", "▼",
             // Analog buttons
             "leftanalog", "rightanalog"
         ]
@@ -421,18 +431,15 @@ public class DeltaSkinInputHandler: ObservableObject {
             return
         }
 
-        // As a fallback, try to find the button in the button group
-        if let buttonGroup = controller.buttonGroup {
-            // Find the button with the matching label
-            if let button = findButtonInGroup(buttonGroup, withLabel: normalizedId) {
-                DLOG("Found button with label \(normalizedId) in button group")
-                if isPressed {
-                    controller.buttonPressed(button)
-                } else {
-                    controller.buttonReleased(button)
-                }
-                return
+        // Try to find the button in the controller view
+        if let button = findButtonInControllerView(controller.view, withLabel: normalizedId) {
+            DLOG("Found button with label \(normalizedId) in controller view")
+            if isPressed {
+                controller.buttonPressed(button)
+            } else {
+                controller.buttonReleased(button)
             }
+            return
         }
 
         // Handle shoulder buttons
@@ -555,6 +562,80 @@ public class DeltaSkinInputHandler: ObservableObject {
         return nil
     }
     
+    /// Find a button in the controller view with the given label (searches all button groups)
+    private func findButtonInControllerView(_ view: UIView, withLabel label: String) -> JSButton? {
+        DLOG("Searching for button with label: \(label) in view: \(view)")
+        
+        // Special handling for A, B, C buttons which might be case-sensitive
+        let normalizedLabel = label.lowercased()
+        let isLetterButton = normalizedLabel == "a" || normalizedLabel == "b" || normalizedLabel == "c"
+        
+        // First try to find the button directly in the view's subviews
+        for case let button as JSButton in view.subviews {
+            if let buttonText = button.titleLabel?.text {
+                let buttonLabel = buttonText.lowercased()
+                DLOG("Found button with label: \(buttonText)")
+                
+                // For A, B, C buttons, try exact match first (case sensitive)
+                if isLetterButton && buttonText == label {
+                    DLOG("EXACT MATCH FOUND for \(label) -> \(buttonText)")
+                    return button
+                }
+                
+                // Then try case-insensitive match
+                if buttonLabel == normalizedLabel {
+                    DLOG("MATCH FOUND for \(label) -> \(buttonLabel)")
+                    return button
+                }
+                
+                // Finally try first character match
+                if buttonLabel.first?.lowercased() == normalizedLabel.first?.lowercased() {
+                    DLOG("FIRST CHAR MATCH FOUND for \(label) -> \(buttonLabel)")
+                    return button
+                }
+            }
+        }
+        
+        // Then recursively search through all subviews (including button groups)
+        for subview in view.subviews {
+            // If this is a button group, search through its buttons directly
+            if let buttonGroup = subview as? MovableButtonView {
+                DLOG("Searching button group: \(buttonGroup)")
+                for case let button as JSButton in buttonGroup.subviews {
+                    if let buttonText = button.titleLabel?.text {
+                        let buttonLabel = buttonText.lowercased()
+                        DLOG("Found button in group with label: \(buttonText)")
+                        
+                        // For A, B, C buttons, try exact match first (case sensitive)
+                        if isLetterButton && buttonText == label {
+                            DLOG("EXACT MATCH FOUND in group for \(label) -> \(buttonText)")
+                            return button
+                        }
+                        
+                        // Then try case-insensitive match
+                        if buttonLabel == normalizedLabel {
+                            DLOG("MATCH FOUND in group for \(label) -> \(buttonLabel)")
+                            return button
+                        }
+                        
+                        // Finally try first character match
+                        if buttonLabel.first?.lowercased() == normalizedLabel.first?.lowercased() {
+                            DLOG("FIRST CHAR MATCH FOUND in group for \(label) -> \(buttonLabel)")
+                            return button
+                        }
+                    }
+                }
+            }
+            
+            // Recursively search through other subviews
+            if let button = findButtonInControllerView(subview, withLabel: label) {
+                return button
+            }
+        }
+        
+        return nil
+    }
+    
 
 
     /// Forward button press directly to the system-specific core
@@ -577,10 +658,30 @@ public class DeltaSkinInputHandler: ObservableObject {
             buttonIndex = 3 // Most systems use 3 for Y button
         case "c":
             buttonIndex = 4 // Some systems use 4 for C button
-        case "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "#", "*":
-            // Numeric buttons for systems like Jaguar
-            // These are handled by the specific system controllers
-            return false
+        case "1":
+            buttonIndex = 5 // Numeric buttons (for systems like Jaguar)
+        case "2":
+            buttonIndex = 6
+        case "3":
+            buttonIndex = 7
+        case "4":
+            buttonIndex = 8
+        case "5":
+            buttonIndex = 9
+        case "6":
+            buttonIndex = 10
+        case "7":
+            buttonIndex = 11
+        case "8":
+            buttonIndex = 12
+        case "9":
+            buttonIndex = 13
+        case "0":
+            buttonIndex = 14
+        case "#":
+            buttonIndex = 15
+        case "*":
+            buttonIndex = 16
         default:
             return false
         }
