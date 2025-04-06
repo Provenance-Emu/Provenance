@@ -49,6 +49,7 @@ public struct AudioVisualizerButton: View {
                 Text(selectedMode.description)
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(isEnabled ? Color.cyan : Color.gray.opacity(0.7))
+                    .lineLimit(2)
             }
             .padding(12)
             .background(
@@ -75,20 +76,24 @@ public struct AudioVisualizerButton: View {
     
     private var visualizerOptionsView: some View {
         ZStack {
+            Color.black.opacity(0.6)
+                .edgesIgnoringSafeArea(.all)
+            
             // Background with retrowave grid
             VisualizationRetrowaveGrid()
-                .opacity(0.15)
+                .opacity(0.55)
                 .edgesIgnoringSafeArea(.all)
             
             // Overlay with dark blur
-            Color.black.opacity(0.7)
+            Color.black.opacity(0.2)
                 .edgesIgnoringSafeArea(.all)
-            
+     
             VStack(spacing: 30) {
-                Text("Audio Visualizer")
-                    .font(.system(size: 24, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
+                Text("AUDIO VISUALIZER")
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .foregroundColor(.retroPink)
                     .padding(.top, 20)
+                    .shadow(color: .retroPink.opacity(0.8), radius: 10, x: 0, y: 0)
                 
                 // Retrowave picker for visualizer mode
                 RetrowaveOptionPicker(

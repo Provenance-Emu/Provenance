@@ -4,9 +4,10 @@ import PVCoreAudio
 import PVThemes
 import Combine
 
-/// An award-winning circular Metal visualizer with premium retrowave aesthetics
+/// An award-winning audio visualizer that perfectly incorporates the Dynamic Island pill design
 @available(iOS 14.0, *)
 public struct EnhancedCircularMetalVisualizer: View {
+    // MARK: - Properties
     private let audioEngine: AudioEngineProtocol
     private let numberOfPoints: Int
     private let islandWidth: CGFloat
@@ -17,7 +18,11 @@ public struct EnhancedCircularMetalVisualizer: View {
     @State private var rotation: Double = 0
     @State private var pulseScale: CGFloat = 1.0
     @State private var glowIntensity: Double = 0.8
+    @State private var beatPulse: CGFloat = 0.0
+    @State private var energyLevel: CGFloat = 0.0
+    @State private var islandGlow: CGFloat = 1.0
     
+    // MARK: - Initialization
     public init(
         audioEngine: AudioEngineProtocol,
         numberOfPoints: Int,
@@ -39,77 +44,57 @@ public struct EnhancedCircularMetalVisualizer: View {
         ))
     }
     
+    // MARK: - Body
     public var body: some View {
-        ZStack {
-            // Dynamic Island shape outline with premium glow
-            RoundedRectangle(cornerRadius: islandHeight / 2)
-                .strokeBorder(
-                    LinearGradient(
-                        colors: [Color(hex: "#FF00FF"), Color(hex: "#00FFFF")],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    ),
-                    lineWidth: 2.0
-                )
-                .frame(width: islandWidth, height: islandHeight)
-                .shadow(color: Color(hex: "#FF00FF").opacity(glowIntensity), radius: 4, x: 0, y: 0)
-            
-            // Premium circular visualization with multiple layers
-            ForEach(0..<min(numberOfPoints, 40), id: \.self) { index in
-                let angle = 2 * CGFloat.pi * CGFloat(index) / CGFloat(min(numberOfPoints, 40))
-                let amplitude = audioState.smoothedAmplitudes.count > index ? audioState.smoothedAmplitudes[index] * 15 : 2
-                let baseOffset = (islandWidth/2 + 6)
+        GeometryReader { geometry in
+            ZStack {
+                // Background grid for retrowave effect
+                VisualizationRetrowaveGrid()
+                    .opacity(0.3)
+                    .frame(width: geometry.size.width * 1.2, height: geometry.size.height * 1.2)
+                    .scaleEffect(1.0 + beatPulse * 0.05)
                 
-                // Main bar
-                ZStack {
-                    // Glow background
-                    Rectangle()
-                        .fill(Color(hex: "#FF00FF").opacity(0.3))
-                        .frame(width: 4, height: max(5, amplitude * 1.5))
-                        .cornerRadius(2)
-                        .blur(radius: 2)
-                        .offset(
-                            x: baseOffset * cos(angle),
-                            y: baseOffset * sin(angle)
-                        )
-                    
-                    // Main bar with gradient
-                    Rectangle()
-                        .fill(
-                            LinearGradient(
-                                colors: [Color(hex: "#FF00FF"), Color(hex: "#00FFFF")],
-                                startPoint: .bottom,
-                                endPoint: .top
-                            )
-                        )
-                        .frame(width: 4, height: max(5, amplitude * 1.5))
-                        .cornerRadius(2)
-                        .shadow(color: Color(hex: "#FF00FF").opacity(0.8), radius: 3, x: 0, y: 0)
-                        .offset(
-                            x: baseOffset * cos(angle),
-                            y: baseOffset * sin(angle)
-                        )
+                // Dynamic Island shape with glow
+                RoundedRectangle(cornerRadius: islandHeight / 2)
+                    .fill(Color.black)
+                    .frame(width: islandWidth, height: islandHeight)
+                
+                // Reactive energy waves emanating from the pill
+                ForEach(0..<3) { layer in
+                    createEnergyWave(layer: layer, in: geometry)
                 }
-                .rotationEffect(.degrees(rotation * (index % 2 == 0 ? 1 : -1) * 0.05))
-                .id("enhanced_circular_bar_\(index)_\(amplitude)")
-            }
-            
-            // Circular particle effects
-            ForEach(0..<12, id: \.self) { i in
-                let angle = Double(i) * .pi / 6 + rotation * 0.02
-                let distance = 50.0 + sin(rotation * 0.01 + Double(i)) * 5.0
                 
-                Circle()
-                    .fill(i % 2 == 0 ? Color(hex: "#FF00FF") : Color(hex: "#00FFFF"))
-                    .frame(width: 3, height: 3)
-                    .offset(
-                        x: cos(angle) * distance,
-                        y: sin(angle) * distance
+                // Dynamic Island outline with premium glow
+                RoundedRectangle(cornerRadius: islandHeight / 2)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [Color(hex: "#FF00FF"), Color(hex: "#00FFFF")],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ),
+                        lineWidth: 2.0 + beatPulse * 1.5
                     )
-                    .opacity(0.7)
-                    .blur(radius: 1)
+                    .frame(width: islandWidth, height: islandHeight)
+                    .shadow(
+                        color: Color(hex: "#FF00FF").opacity(0.5 + islandGlow * 0.5),
+                        radius: 8 + islandGlow * 4,
+                        x: 0,
+                        y: 0
+                    )
+                
+                // Particle system
+                ForEach(0..<20) { i in
+                    createParticle(index: i, in: geometry)
+                }
+                
+                // Frequency spectrum visualization
+                createFrequencySpectrum()
+            }
+            .onChange(of: audioState.smoothedAmplitudes) { newAmplitudes in
+                updateVisualization(with: newAmplitudes)
             }
         }
+        .positionedAtDynamicIsland() // Ensure perfect alignment with Dynamic Island
         .onAppear {
             audioState.startUpdating()
             
@@ -127,6 +112,196 @@ public struct EnhancedCircularMetalVisualizer: View {
         .onDisappear {
             audioState.stopUpdating()
         }
-        .scaleEffect(pulseScale)
+    }
+    
+    // MARK: - Helper Methods
+    
+    /// Creates an energy wave that emanates from the Dynamic Island pill
+    private func createEnergyWave(layer: Int, in geometry: GeometryProxy) -> some View {
+        let baseScale = 1.0 + CGFloat(layer) * 0.15
+        let baseOpacity = 0.7 - CGFloat(layer) * 0.15
+        let animationOffset = Double(layer) * 0.1
+        
+        return ZStack {
+            // Create a pill shape that scales with the audio
+            RoundedRectangle(cornerRadius: (islandHeight * baseScale) / 2)
+                .strokeBorder(
+                    getGradientForLayer(layer),
+                    lineWidth: 2.0 - CGFloat(layer) * 0.3
+                )
+                .frame(
+                    width: islandWidth * baseScale + energyLevel * 20.0 * CGFloat(layer + 1),
+                    height: islandHeight * baseScale + energyLevel * 10.0 * CGFloat(layer + 1)
+                )
+                .opacity(baseOpacity)
+                .scaleEffect(1.0 + beatPulse * 0.1 * CGFloat(3 - layer))
+                .rotationEffect(.degrees(rotation * (layer % 2 == 0 ? 0.02 : -0.02)))
+                .shadow(
+                    color: getGlowColorForLayer(layer).opacity(0.5 + energyLevel * 0.5),
+                    radius: 5 + energyLevel * 5,
+                    x: 0,
+                    y: 0
+                )
+            
+            // Add frequency-specific details to each layer
+            ForEach(0..<min(numberOfPoints, 40), id: \.self) { index in
+                let angle = 2 * CGFloat.pi * CGFloat(index) / CGFloat(min(numberOfPoints, 40))
+                let layerOffset = CGFloat(layer) * 20.0
+                let amplitude = getAmplitudeForLayer(layer, at: index) * 15.0
+                
+                if amplitude > 3.0 {
+                    Circle()
+                        .fill(getGlowColorForLayer(layer))
+                        .frame(width: 3 + amplitude * 0.3, height: 3 + amplitude * 0.3)
+                        .offset(
+                            x: cos(angle) * (islandWidth/2 + layerOffset + amplitude),
+                            y: sin(angle) * (islandHeight/2 + layerOffset/2 + amplitude/2)
+                        )
+                        .opacity(min(amplitude * 0.1, 0.8))
+                        .blur(radius: 1)
+                }
+            }
+        }
+    }
+    
+    /// Creates a particle that orbits around the Dynamic Island
+    private func createParticle(index: Int, in geometry: GeometryProxy) -> some View {
+        let angle = Double(index) * .pi / 10 + rotation * 0.02
+        let baseDistance = 40.0 + Double(index % 5) * 10.0
+        let distance = baseDistance + sin(rotation * 0.01 + Double(index)) * 5.0
+        let particleSize = 2.0 + energyLevel * 3.0 * (index % 3 == 0 ? 1.5 : 1.0)
+        
+        return Circle()
+            .fill(index % 2 == 0 ? Color(hex: "#FF00FF") : Color(hex: "#00FFFF"))
+            .frame(width: particleSize, height: particleSize)
+            .offset(
+                x: cos(angle) * distance,
+                y: sin(angle) * distance * (islandHeight / islandWidth)
+            )
+            .opacity(0.7 + energyLevel * 0.3)
+            .blur(radius: energyLevel * 1.5)
+            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: energyLevel)
+    }
+    
+    /// Creates a frequency spectrum visualization
+    private func createFrequencySpectrum() -> some View {
+        ZStack {
+            ForEach(0..<min(numberOfPoints/4, 30), id: \.self) { index in
+                let normalizedIndex = CGFloat(index) / CGFloat(min(numberOfPoints/4, 30))
+                let xPos = normalizedIndex * islandWidth - islandWidth/2
+                
+                let amplitude = audioState.smoothedAmplitudes.count > index ?
+                    audioState.smoothedAmplitudes[index] * 12 : 2
+                
+                Rectangle()
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color(hex: "#00FFFF").opacity(0.7),
+                                Color(hex: "#FF00FF").opacity(0.7)
+                            ],
+                            startPoint: .bottom,
+                            endPoint: .top
+                        )
+                    )
+                    .frame(width: islandWidth / CGFloat(min(numberOfPoints/4, 30)) * 0.8, height: max(2, amplitude * 3))
+                    .cornerRadius(1)
+                    .offset(x: xPos, y: islandHeight/2 + 5 + amplitude/2)
+                    .opacity(0.7)
+            }
+        }
+    }
+    
+    /// Updates the visualization based on new audio data
+    private func updateVisualization(with amplitudes: [CGFloat]) {
+        // Calculate overall energy level for this frame
+        let newEnergyLevel = amplitudes.prefix(10).reduce(0, +) / 10
+        
+        // Detect beats for pulse effect
+        let bassEnergy = amplitudes.prefix(5).reduce(0, +) / 5
+        if bassEnergy > energyLevel * 1.5 && bassEnergy > 0.4 {
+            withAnimation(.spring(response: 0.2, dampingFraction: 0.6)) {
+                beatPulse = min(bassEnergy * 2, 1.0)
+                islandGlow = min(bassEnergy * 3, 1.0)
+            }
+            
+            // Reset beat pulse after a short delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
+                    beatPulse = 0.0
+                }
+            }
+            
+            // Reset island glow after a slightly longer delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                withAnimation(.spring(response: 0.5, dampingFraction: 0.5)) {
+                    islandGlow = 0.2
+                }
+            }
+        }
+        
+        // Smoothly update energy level
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+            energyLevel = newEnergyLevel
+        }
+    }
+    
+    /// Gets the appropriate amplitude for a specific layer and index
+    private func getAmplitudeForLayer(_ layer: Int, at index: Int) -> CGFloat {
+        let adjustedIndex: Int
+        
+        switch layer {
+        case 0: // High frequencies
+            adjustedIndex = Int(Double(numberOfPoints) * 0.66) + (index % (numberOfPoints / 3))
+        case 1: // Mid frequencies
+            adjustedIndex = Int(Double(numberOfPoints) * 0.33) + (index % (numberOfPoints / 3))
+        case 2: // Low frequencies
+            adjustedIndex = index % (numberOfPoints / 3)
+        default:
+            adjustedIndex = index
+        }
+        
+        return audioState.smoothedAmplitudes.count > adjustedIndex ?
+            audioState.smoothedAmplitudes[adjustedIndex] : 0
+    }
+    
+    /// Gets the appropriate gradient for a specific layer
+    private func getGradientForLayer(_ layer: Int) -> LinearGradient {
+        switch layer {
+        case 0: // High frequencies - Cyan/Blue
+            return LinearGradient(
+                colors: [Color(hex: "#00FFFF"), Color(hex: "#0088FF")],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+        case 1: // Mid frequencies - Pink/Orange
+            return LinearGradient(
+                colors: [Color(hex: "#FF00AA"), Color(hex: "#FF5500")],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+        case 2: // Low frequencies - Magenta/Purple
+            return LinearGradient(
+                colors: [Color(hex: "#FF00FF"), Color(hex: "#AA00FF")],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+        default:
+            return LinearGradient(
+                colors: [Color(hex: "#FF00FF"), Color(hex: "#00FFFF")],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+        }
+    }
+    
+    /// Gets the appropriate glow color for a specific layer
+    private func getGlowColorForLayer(_ layer: Int) -> Color {
+        switch layer {
+        case 0: return .retroCyan // Cyan for high frequencies
+        case 1: return .retroPink // Pink for mid frequencies
+        case 2: return Color(hex: "#FF00FF") // Magenta for low frequencies
+        default: return Color(hex: "#FF00FF")
+        }
     }
 }

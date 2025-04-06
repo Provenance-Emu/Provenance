@@ -54,7 +54,7 @@ extension PVEmulatorViewController {
                 RetrowaveDynamicIslandAudioVisualizer(
                     audioEngine: gameAudio,
                     numberOfPoints: 60,
-                    updateInterval: 0.03
+                    updateInterval: 0.008 // 120fps updates for smoother animation
                 )
             )
 
@@ -64,7 +64,7 @@ extension PVEmulatorViewController {
                 RetrowaveDynamicIslandAudioVisualizer(
                     audioEngine: gameAudio,
                     numberOfPoints: 60,
-                    updateInterval: 0.03,
+                    updateInterval: 0.008, // 120fps updates for smoother animation
                     isCircular: true
                 )
             )
@@ -82,7 +82,7 @@ extension PVEmulatorViewController {
         case .metalCircular:
             // Get the actual Dynamic Island dimensions
             let islandFrame = DynamicIslandPositioner.getDynamicIslandFrame()
-            
+
             // Create the enhanced circular Metal visualizer with actual dimensions
             visualizerView = AnyView(
                 EnhancedCircularMetalVisualizer(
