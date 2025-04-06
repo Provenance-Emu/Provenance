@@ -425,7 +425,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         if handleSpecialButtons(normalizedId, isPressed: isPressed, controller: controller) {
             return
         }
-        
+
         // Try to forward directly to the core for standard buttons
         if forwardButtonPressToSystemSpecificCore(normalizedId, isPressed: isPressed) {
             return
@@ -455,7 +455,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         // Map common start button variations
         let startVariations = ["start", "run", "play", "option", "pause"]
         let selectVariations = ["select", "mode", "option", "pause"]
-        
+
         // Check if this is a start button
         if startVariations.contains(buttonId.lowercased()) {
             if isPressed {
@@ -473,7 +473,7 @@ public class DeltaSkinInputHandler: ObservableObject {
             }
             return true
         }
-        
+
         // Check if this is a select button
         if selectVariations.contains(buttonId.lowercased()) {
             if isPressed {
@@ -506,7 +506,7 @@ public class DeltaSkinInputHandler: ObservableObject {
             }
             return true
         }
-        
+
         // No special button matched
         return false
     }
@@ -561,41 +561,34 @@ public class DeltaSkinInputHandler: ObservableObject {
         }
         return nil
     }
-    
+
     /// Find a button in the controller view with the given label (searches all button groups)
     private func findButtonInControllerView(_ view: UIView, withLabel label: String) -> JSButton? {
         DLOG("Searching for button with label: \(label) in view: \(view)")
-        
-        // Special handling for A, B, C buttons which might be case-sensitive
+
+        // Normalize the input label for case-insensitive comparison
         let normalizedLabel = label.lowercased()
-        let isLetterButton = normalizedLabel == "a" || normalizedLabel == "b" || normalizedLabel == "c"
-        
+
         // First try to find the button directly in the view's subviews
         for case let button as JSButton in view.subviews {
             if let buttonText = button.titleLabel?.text {
                 let buttonLabel = buttonText.lowercased()
                 DLOG("Found button with label: \(buttonText)")
-                
-                // For A, B, C buttons, try exact match first (case sensitive)
-                if isLetterButton && buttonText == label {
-                    DLOG("EXACT MATCH FOUND for \(label) -> \(buttonText)")
-                    return button
-                }
-                
-                // Then try case-insensitive match
+
+                // Case-insensitive match
                 if buttonLabel == normalizedLabel {
                     DLOG("MATCH FOUND for \(label) -> \(buttonLabel)")
                     return button
                 }
                 
-                // Finally try first character match
+                // First character match as fallback
                 if buttonLabel.first?.lowercased() == normalizedLabel.first?.lowercased() {
                     DLOG("FIRST CHAR MATCH FOUND for \(label) -> \(buttonLabel)")
                     return button
                 }
             }
         }
-        
+
         // Then recursively search through all subviews (including button groups)
         for subview in view.subviews {
             // If this is a button group, search through its buttons directly
@@ -605,20 +598,14 @@ public class DeltaSkinInputHandler: ObservableObject {
                     if let buttonText = button.titleLabel?.text {
                         let buttonLabel = buttonText.lowercased()
                         DLOG("Found button in group with label: \(buttonText)")
-                        
-                        // For A, B, C buttons, try exact match first (case sensitive)
-                        if isLetterButton && buttonText == label {
-                            DLOG("EXACT MATCH FOUND in group for \(label) -> \(buttonText)")
-                            return button
-                        }
-                        
-                        // Then try case-insensitive match
+
+                        // Case-insensitive match
                         if buttonLabel == normalizedLabel {
                             DLOG("MATCH FOUND in group for \(label) -> \(buttonLabel)")
                             return button
                         }
                         
-                        // Finally try first character match
+                        // First character match as fallback
                         if buttonLabel.first?.lowercased() == normalizedLabel.first?.lowercased() {
                             DLOG("FIRST CHAR MATCH FOUND in group for \(label) -> \(buttonLabel)")
                             return button
@@ -626,16 +613,16 @@ public class DeltaSkinInputHandler: ObservableObject {
                     }
                 }
             }
-            
+
             // Recursively search through other subviews
             if let button = findButtonInControllerView(subview, withLabel: label) {
                 return button
             }
         }
-        
+
         return nil
     }
-    
+
 
 
     /// Forward button press directly to the system-specific core
@@ -643,10 +630,10 @@ public class DeltaSkinInputHandler: ObservableObject {
         guard let core = emulatorCore else {
             return false
         }
-        
+
         // Map common button IDs to their indices
         var buttonIndex: Int? = nil
-        
+
         switch buttonId.lowercased() {
         case "a":
             buttonIndex = 0 // Most systems use 0 for A button
@@ -685,7 +672,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         default:
             return false
         }
-        
+
         if let index = buttonIndex {
             if isPressed {
                 if let responder = core as? PVControllerResponder {
@@ -699,10 +686,10 @@ public class DeltaSkinInputHandler: ObservableObject {
                 }
             }
         }
-        
+
         return false
     }
-    
+
     /// Convert string direction to JSDPadDirection
     private func stringToDirection(_ direction: String) -> JSDPadDirection {
         switch direction.lowercased() {
@@ -733,7 +720,7 @@ public class DeltaSkinInputHandler: ObservableObject {
 
         // Normalize the button ID
         let normalizedId = buttonId.lowercased()
-        
+
         // Use system-specific button handling if we have a controller VC
         if let controllerVC = controllerVC {
             // Forward to the controller VC which knows how to map buttons for specific systems
@@ -741,7 +728,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         } else {
             // Fallback to generic mapping if we don't have a controller VC
             let buttonIndex = mapButtonToIndex(normalizedId)
-            
+
             if isPressed {
                 DLOG("Pressing button (generic mapping): \(normalizedId) (index: \(buttonIndex))")
                 // Try different methods that might be available
@@ -771,7 +758,7 @@ public class DeltaSkinInputHandler: ObservableObject {
             }
         }
     }
-    
+
     /// Forward button press to the system-specific core using the controller VC
     private func forwardButtonPressToSystemSpecificCore(_ buttonId: String, isPressed: Bool, core: PVEmulatorCore, controllerVC: any ControllerVC) {
         // Get the system identifier from the emulator core
@@ -780,25 +767,25 @@ public class DeltaSkinInputHandler: ObservableObject {
             fallbackToGenericMapping(buttonId, isPressed: isPressed, core: core)
             return
         }
-        
+
         // Convert the string system identifier to a SystemIdentifier enum
         guard let systemId = SystemIdentifier(rawValue: systemIdentifier) else {
             ELOG("Invalid system identifier: \(systemIdentifier), falling back to generic mapping")
             fallbackToGenericMapping(buttonId, isPressed: isPressed, core: core)
             return
         }
-        
+
         DLOG("Using system-specific button mapping for system: \(systemId)")
-        
+
         // Get the button type for this system
         let buttonType = systemId.controllerType
-        
+
         // Create a button instance from the string
         let button = buttonType.init(buttonId)
-        
+
         // Get the raw value (button index)
         let buttonIndex = button.rawValue
-        
+
         if isPressed {
             DLOG("Pressing button (system-specific): \(buttonId) (index: \(buttonIndex))")
             if let responder = core as? PVControllerResponder {
@@ -811,12 +798,12 @@ public class DeltaSkinInputHandler: ObservableObject {
             }
         }
     }
-    
+
     /// Fallback to generic mapping when system-specific mapping is not available
     private func fallbackToGenericMapping(_ buttonId: String, isPressed: Bool, core: PVEmulatorCore) {
         // Map to button index and send to core
         let buttonIndex = mapButtonToIndex(buttonId)
-        
+
         if isPressed {
             DLOG("Pressing button (generic mapping): \(buttonId) (index: \(buttonIndex))")
             if let responder = core as? PVControllerResponder {

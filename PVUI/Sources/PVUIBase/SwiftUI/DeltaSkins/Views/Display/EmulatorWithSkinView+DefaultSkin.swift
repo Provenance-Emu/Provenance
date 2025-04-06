@@ -1133,11 +1133,15 @@ struct DefaultControllerSkinView: View {
                 VStack(spacing: 10) {
                     HStack(spacing: 10) {
                         createButton(from: buttons[0])
+                            .id("button_group_0_\(buttons[0].PVControlTitle ?? "unknown")")
                         createButton(from: buttons[1])
+                            .id("button_group_0_\(buttons[1].PVControlTitle ?? "unknown")")
                     }
                     HStack(spacing: 10) {
                         createButton(from: buttons[2])
+                            .id("button_group_0_\(buttons[2].PVControlTitle ?? "unknown")")
                         createButton(from: buttons[3])
+                            .id("button_group_0_\(buttons[3].PVControlTitle ?? "unknown")")
                     }
                 }
             )
@@ -1147,10 +1151,13 @@ struct DefaultControllerSkinView: View {
                 VStack(spacing: 10) {
                     HStack(spacing: 10) {
                         createButton(from: buttons[0])
+                            .id("button_group_1_\(buttons[0].PVControlTitle ?? "unknown")")
                     }
                     HStack(spacing: 10) {
                         createButton(from: buttons[1])
+                            .id("button_group_1_\(buttons[1].PVControlTitle ?? "unknown")")
                         createButton(from: buttons[2])
+                            .id("button_group_1_\(buttons[2].PVControlTitle ?? "unknown")")
                     }
                 }
             )
@@ -1233,10 +1240,15 @@ struct DefaultControllerSkinView: View {
             .frame(width: 60, height: 60)
         }
         .buttonStyle(GameButtonStyle(pressAction: {
+            // Log button press for debugging
+            print("Button pressed: \(actionIdentifier)")
             inputHandler.buttonPressed(actionIdentifier)
         }, releaseAction: {
+            // Log button release for debugging
+            print("Button released: \(actionIdentifier)")
             inputHandler.buttonReleased(actionIdentifier)
         }))
+        .id("button_\(actionIdentifier)_\(UUID().uuidString)") // Ensure each button has a unique ID
     }
 
     // Custom button style that handles press and release events
