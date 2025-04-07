@@ -31,10 +31,17 @@ public struct RetroMainView: View {
         ZStack {
             // Add document picker sheet at the root level
             Color.clear
-                .sheet(isPresented: $documentPickerManager.isShowingDocumentPicker) {
+                .sheet(isPresented: $documentPickerManager.isShowingDocumentPicker, onDismiss: {
+                    // Nothing needed here - the DocumentPickerManager handles state reset
+                }) {
                     DocumentPicker(onImport: { urls in
                         // Call the callback if it exists
-                        documentPickerManager.importCallback?(urls)
+                        documentPickerManager.documentPickerCompleted(urls: urls)
+                        
+                        // Explicitly set isShowingDocumentPicker to false to ensure proper state update
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            documentPickerManager.isShowingDocumentPicker = false
+                        }
                     })
                 }
             // Background that adapts to the theme

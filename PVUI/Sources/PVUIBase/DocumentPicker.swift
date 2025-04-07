@@ -1,22 +1,31 @@
 //
 //  DocumentPicker.swift
-//  UITesting
+//  Provenance
 //
-//  Created by Cascade on 3/26/25.
+//  Created by Joseph Mattiello on 3/26/25.
 //
 
 import SwiftUI
 import UniformTypeIdentifiers
+import PVLogging
 
-// Document picker for importing game files
+/// Document picker for importing game files
+/// This is a UIViewControllerRepresentable wrapper around UIDocumentPickerViewController
 public struct DocumentPicker: UIViewControllerRepresentable {
+    /// The callback to be executed when files are imported
     public let onImport: ([URL]) -> Void
+    
+    /// Reference to the document picker manager to handle state
+    @EnvironmentObject private var documentPickerManager: DocumentPickerManager
     
     public init(onImport: @escaping ([URL]) -> Void) {
         self.onImport = onImport
+        VLOG("DocumentPicker: Initialized with onImport callback")
     }
     
     public func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
+        ILOG("DocumentPicker: Creating UIDocumentPickerViewController")
+        
         // Define the file types we want to import (ROM files)
         let supportedTypes: [UTType] = [
             .item,      // Generic item
@@ -28,10 +37,16 @@ public struct DocumentPicker: UIViewControllerRepresentable {
         let picker = UIDocumentPickerViewController(forOpeningContentTypes: supportedTypes, asCopy: true)
         picker.allowsMultipleSelection = true
         picker.delegate = context.coordinator
+        
+        // Ensure the picker doesn't get dismissed prematurely
+        picker.modalPresentationStyle = .fullScreen
+        
         return picker
     }
     
-    public func updateUIViewController(_ uiViewController: UIDocumentPickerViewController, context: Context) {}
+    public func updateUIViewController(_ uiViewController: UIDocumentPickerViewController, context: Context) {
+        // No updates needed
+    }
     
     public func makeCoordinator() -> Coordinator {
         Coordinator(self)
@@ -42,10 +57,37 @@ public struct DocumentPicker: UIViewControllerRepresentable {
         
         init(_ parent: DocumentPicker) {
             self.parent = parent
+            super.init()
         }
         
         public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-            parent.onImport(urls)
+            ILOG("DocumentPicker: Selected \(urls.count) documents")
+            
+            // Notify the document picker manager that selection is complete
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                
+                // Call the document picker manager's completion handler
+                self.parent.documentPickerManager.documentPickerCompleted(urls: urls)
+                
+                // Also call the direct callback for backward compatibility
+                self.parent.onImport(urls)
+            }
+        }
+        
+        public func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+            ILOG("DocumentPicker: Cancelled by user")
+            
+            // Notify the document picker manager that selection was cancelled
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                
+                // Call the document picker manager's completion handler with empty array
+                self.parent.documentPickerManager.documentPickerCompleted(urls: [])
+                
+                // Also call the direct callback for backward compatibility
+                self.parent.onImport([])
+            }
         }
     }
 }
