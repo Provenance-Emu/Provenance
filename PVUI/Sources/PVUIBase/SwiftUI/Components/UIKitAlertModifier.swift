@@ -113,6 +113,10 @@ public struct UIKitAlertModifier: ViewModifier {
 
 // UIKit Alert wrapper as UIViewController
 struct UIKitAlertWrapper: UIViewControllerRepresentable {
+    // Use a class type to track presentation state
+    class AlertState {
+        var hasBeenPresented = false
+    }
     let title: String
     let message: String
     @Binding var isPresented: Bool
@@ -127,32 +131,42 @@ struct UIKitAlertWrapper: UIViewControllerRepresentable {
 
     @MainActor
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        guard isPresented else {
-            // Ensure any presented controller is dismissed
-            if uiViewController.presentedViewController != nil {
-                uiViewController.dismiss(animated: true)
+        // Track if we've already presented an alert to avoid duplicate presentations
+        let alertAlreadyPresented = uiViewController.presentedViewController is TVAlertController
+        
+        // Only handle presentation state changes
+        if isPresented && !alertAlreadyPresented {
+            // Create and present the alert
+            let alert = TVAlertController(title: title, message: message, preferredStyle: .alert)
+            
+            // Add text field if needed
+            if let textFieldConfig = textField {
+                alert.addTextField { textField in
+                    textField.text = self.textValue
+                    textFieldConfig(textField)
+                    textField.addTarget(
+                        context.coordinator,
+                        action: #selector(Coordinator.textFieldDidChange(_:)),
+                        for: .editingChanged
+                    )
+                }
             }
-            return
-        }
-
-        let alert = TVAlertController(title: title, message: message, preferredStyle: .alert)
-
-        if let textFieldConfig = textField {
-            alert.addTextField { textField in
-                textField.text = self.textValue
-                textFieldConfig(textField)
-                textField.addTarget(
-                    context.coordinator,
-                    action: #selector(Coordinator.textFieldDidChange(_:)),
-                    for: .editingChanged
-                )
+            
+            // Add buttons
+            buttons.forEach { alert.addAction($0) }
+            
+            // Set a completion handler to update the binding
+            alert.didDismiss = { [self] in
+                DispatchQueue.main.async {
+                    self.isPresented = false
+                }
             }
-        }
-
-        buttons.forEach { alert.addAction($0) }
-
-        if uiViewController.presentedViewController == nil {
+            
+            // Present the alert
             uiViewController.present(alert, animated: true)
+        } else if !isPresented && alertAlreadyPresented {
+            // Only dismiss if our alert is being presented and isPresented is false
+            uiViewController.dismiss(animated: true)
         }
     }
 
