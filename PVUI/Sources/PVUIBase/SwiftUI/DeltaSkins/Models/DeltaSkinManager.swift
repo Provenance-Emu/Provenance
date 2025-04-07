@@ -119,18 +119,19 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     ///   - orientation: The current orientation
     /// - Returns: The effective skin identifier to use
     public func effectiveSkinIdentifier(for systemId: SystemIdentifier, gameId: String? = nil, orientation: SkinOrientation) -> String? {
-        // If we have a game ID, check game-specific session skin first
+        
+        // Check for system session skin first
+        if let sessionSkin = sessionSkinIdentifier(for: systemId, orientation: orientation) {
+            return sessionSkin
+        }
+        
+        // Then, ff we have a game ID, check game-specific session skin first
         if let gameId = gameId {
             // Use the composite key for game-specific session skins
             let compositeKey = "\(systemId.rawValue)_\(gameId)"
             if let gameSpecificSessionSkin = sessionSkins[compositeKey]?[orientation.rawValue] {
                 return gameSpecificSessionSkin
             }
-        }
-
-        // Then check for system session skin
-        if let sessionSkin = sessionSkinIdentifier(for: systemId, orientation: orientation) {
-            return sessionSkin
         }
 
         // Then check preferences (game-specific, then system)
