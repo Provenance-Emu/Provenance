@@ -37,23 +37,23 @@ final class PVColecoVisionControllerViewController: PVControllerViewController<P
                 button.buttonTag = .button2
             case "3", "button3":
                 button.buttonTag = .button3
-            case "4":
+            case "4", "button4":
                 button.buttonTag = .button4
-            case "5":
+            case "5", "button5":
                 button.buttonTag = .button5
-            case "6":
+            case "6", "button6":
                 button.buttonTag = .button6
-            case "7":
+            case "7", "button7":
                 button.buttonTag = .button7
-            case "8":
+            case "8", "button8":
                 button.buttonTag = .button8
-            case "9":
+            case "9", "button9":
                 button.buttonTag = .button9
-            case "0":
+            case "0", "button0":
                 button.buttonTag = .button0
-            case "#":
+            case "#", "pound":
                 button.buttonTag = .pound
-            case "*":
+            case "*", "asterisk":
                 button.buttonTag = .asterisk
             default:
                 break
