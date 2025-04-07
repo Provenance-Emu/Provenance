@@ -1,5 +1,5 @@
 //
-//  ContinuesMagementView.swift
+//  ContinuesManagementView.swift
 //  UITesting
 //
 //  Created by Joseph Mattiello on 11/22/24.
@@ -412,7 +412,7 @@ public enum SaveStateEditField: Identifiable {
     }
 }
 
-public struct ContinuesMagementView: View {
+public struct ContinuesManagementView: View {
     /// Main view model
     @StateObject private var viewModel: ContinuesMagementViewModel
     
@@ -642,7 +642,7 @@ internal struct EmptyStateView: View {
         }
     )
     
-    ContinuesMagementView(viewModel: viewModel)
+    ContinuesManagementView(viewModel: viewModel)
         .onAppear {
             let theme = CGAThemes.purple
             ThemeManager.shared.setCurrentPalette(theme.palette)
@@ -672,7 +672,7 @@ internal struct EmptyStateView: View {
         }
     )
     
-    ContinuesMagementView(viewModel: viewModel)
+    ContinuesManagementView(viewModel: viewModel)
         .onAppear {
             let theme = CGAThemes.purple
             ThemeManager.shared.setCurrentPalette(theme.palette)
@@ -699,7 +699,7 @@ internal struct EmptyStateView: View {
         }
     )
     
-    ContinuesMagementView(viewModel: viewModel)
+    ContinuesManagementView(viewModel: viewModel)
         .onAppear {
             let theme = CGAThemes.purple
             ThemeManager.shared.setCurrentPalette(theme.palette)

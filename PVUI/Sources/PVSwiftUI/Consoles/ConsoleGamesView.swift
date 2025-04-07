@@ -350,7 +350,7 @@ struct ConsoleGamesView: SwiftUI.View {
 
                     /// Create and configure the view
                     if #available(iOS 16.4, tvOS 16.4, *) {
-                        ContinuesMagementView(viewModel: viewModel)
+                        ContinuesManagementView(viewModel: viewModel)
                             .onAppear {
                                 /// Set the game ID filter
                                 driver.gameId = game.id
@@ -363,7 +363,7 @@ struct ConsoleGamesView: SwiftUI.View {
                             }
                             .presentationBackground(content: {Color.clear})
                     } else {
-                        ContinuesMagementView(viewModel: viewModel)
+                        ContinuesManagementView(viewModel: viewModel)
                             .onAppear {
                                 /// Set the game ID filter
                                 driver.gameId = game.id

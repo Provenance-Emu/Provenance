@@ -464,7 +464,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         }
 
         // Create and present the view
-        let continuesView = ContinuesMagementView(viewModel: viewModel)
+        let continuesView = ContinuesManagementView(viewModel: viewModel)
                             .onAppear {
                                 if let game = game {
                                     /// Set the game ID filter
@@ -523,7 +523,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         driver.loadAllSaveStates(forSystemID: systemID)
         
         // Create and present the view
-        let continuesView = ContinuesMagementView(viewModel: viewModel)
+        let continuesView = ContinuesManagementView(viewModel: viewModel)
             .onAppear {
                 // Use system icon
                 Task { @MainActor in

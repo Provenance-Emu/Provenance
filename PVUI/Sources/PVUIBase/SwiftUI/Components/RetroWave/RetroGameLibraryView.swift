@@ -25,51 +25,51 @@ public struct RetroGameLibraryView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var sceneCoordinator: SceneCoordinator
-    
+
     // Document picker manager from environment
     @EnvironmentObject private var documentPickerManager: DocumentPickerManager
-    
+
     // MARK: - ViewModel
     @StateObject private var viewModel = RetroGameLibraryViewModel()
-    
+
     // Observed results for all games in the database
     @ObservedResults(
         PVGame.self,
         sortDescriptor: SortDescriptor(keyPath: "title", ascending: true)
     ) var allGames
-    
+
     // Observed results for all systems in the database
     @ObservedResults(
         PVSystem.self,
         sortDescriptor: SortDescriptor(keyPath: "name", ascending: true)
     ) var allSystems
-    
+
     // Track expanded sections with AppStorage to persist between app runs
     @AppStorage("GameLibraryExpandedSections") private var expandedSectionsData: Data = Data()
-    
+
     // Focus state for rename field
     @FocusState internal var renameTitleFieldIsFocused: Bool
-    
+
     public init () {
-        
+
     }
-    
+
     private func renameGame(_ game: PVGame, to newName: String) async {
         guard !newName.isEmpty else { return }
-        
+
         // Get a reference to the Realm
         let realm = try? await Realm()
-        
+
         // Update the game title
         try? realm?.write {
             game.thaw()?.title = newName
         }
-        
+
         // Reset state
         viewModel.gameToRename = nil
         viewModel.newGameTitle = ""
     }
-    
+
     // Create a computed binding that wraps the String as String?
     private var newGameTitleBinding: Binding<String?> {
         Binding<String?>(
@@ -77,20 +77,7 @@ public struct RetroGameLibraryView: View {
             set: { self.viewModel.newGameTitle = $0 ?? "" }
         )
     }
-    
-    // Enum for view modes
-    enum ViewMode: String, CaseIterable, Identifiable {
-        case grid, list
-        var id: Self { self }
-        
-        var iconName: String {
-            switch self {
-            case .grid: return "square.grid.2x2"
-            case .list: return "list.bullet"
-            }
-        }
-    }
-    
+
     public var body: some View {
         mainContentView()
             .background(retroBackgroundView())
@@ -112,8 +99,8 @@ public struct RetroGameLibraryView: View {
                     }
                 }
             }
-        /// Use a sheet modifier connected to the DocumentPickerManager's state
-        /// This is the key to fixing the document picker dismissal issue
+            /// Use a sheet modifier connected to the DocumentPickerManager's state
+            /// This is the key to fixing the document picker dismissal issue
             .sheet(isPresented: $documentPickerManager.isShowingDocumentPicker) {
                 /// When the sheet is dismissed, ensure we reset any state
                 VLOG("RetroGameLibraryView: Document picker sheet dismissed")
@@ -133,22 +120,6 @@ public struct RetroGameLibraryView: View {
             .onAppear {
                 // Load expanded sections from AppStorage
                 viewModel.loadExpandedSections(from: expandedSectionsData, allSystems: Array(allSystems))
-//                
-//                // Set up binding between view's searchText and viewModel's searchText
-//                $searchText
-//                    .sink { [weak viewModel] value in
-//                        viewModel?.searchText = value
-//                    }
-//                    .store(in: &viewModel.cancellables)
-//                
-//                // Set up binding for debounced search text from viewModel
-//                viewModel.$debouncedSearchText
-//                    .sink { [weak self] value in
-//                        withAnimation(.easeInOut(duration: 0.2)) {
-//                            self?.debouncedSearchText = value
-//                        }
-//                    }
-//                    .store(in: &viewModel.cancellables)
             }
             .sheet(isPresented: $viewModel.showImagePicker) {
 #if !os(tvOS)
@@ -161,7 +132,7 @@ public struct RetroGameLibraryView: View {
                 }
 #endif
             }
-            .sheet(isPresented: $viewModel.showArtworkSearch) {
+            .fullScreenCover(isPresented: $viewModel.showArtworkSearch) {
                 ArtworkSearchView(
                     initialSearch: viewModel.gameToUpdateCover?.title ?? "",
                     initialSystem: viewModel.gameToUpdateCover?.system?.enumValue ?? SystemIdentifier.Unknown
@@ -228,6 +199,24 @@ public struct RetroGameLibraryView: View {
                     )
                 )
             }
+        // The compiler is choking on this
+//            .fullScreenCover(item: $viewModel.continuesManagementState) { state in
+//                let driver = RealmSaveStateDriver()
+//                // Load save states for the specific game
+//                driver.loadSaveStates(forGameId: state.game.id)
+//
+//                ContinuesManagementView(
+//                    driver: driver,
+//                    gameTitle: state.game.title,
+//                    systemTitle: state.game.system?.name ?? "",
+//                    numberOfSaves: 0, // This will be updated by the driver
+//                    gameUIImage: state.game.boxartImage,
+//                    onLoadSave: { saveID in
+//                        // Handle loading the save state
+//                        viewModel.continuesManagementState = nil
+//                    }
+//                )
+//            }
             .uiKitAlert(
                 "Choose Artwork Source",
                 message: "Select artwork from your photo library or search online sources",
@@ -248,14 +237,14 @@ public struct RetroGameLibraryView: View {
                 }
             )
     }
-    
+
     /// Main content view that displays either the empty state or the game library
     @ViewBuilder
     private func mainContentView() -> some View {
         ZStack {
             // Background that respects safe areas
             RetroTheme.retroBackground
-            
+
             if allGames.isEmpty {
                 emptyLibraryView()
             } else {
@@ -263,14 +252,14 @@ public struct RetroGameLibraryView: View {
             }
         }
     }
-    
+
     /// Background view with retro aesthetics
     @ViewBuilder
     private func retroBackgroundView() -> some View {
         ZStack {
             // Base dark background with proper safe area handling
             RetroTheme.retroBlack.ignoresSafeArea(edges: [.horizontal, .bottom])
-            
+
             // Grid lines (horizontal)
             VStack(spacing: 20) {
                 ForEach(0..<20) { _ in
@@ -279,7 +268,7 @@ public struct RetroGameLibraryView: View {
                         .frame(height: 1)
                 }
             }
-            
+
             // Grid lines (vertical)
             HStack(spacing: 20) {
                 ForEach(0..<20) { _ in
@@ -288,7 +277,7 @@ public struct RetroGameLibraryView: View {
                         .frame(width: 1)
                 }
             }
-            
+
             // Sunset gradient at bottom
             VStack {
                 Spacer()
@@ -300,7 +289,7 @@ public struct RetroGameLibraryView: View {
             }
         }
     }
-    
+
     /// Content view for the library when games are present
     @ViewBuilder
     private func libraryContentView() -> some View {
@@ -309,13 +298,13 @@ public struct RetroGameLibraryView: View {
             searchBar
                 .padding(.horizontal)
                 .padding(.top, 16)
-            
+
             // View mode and filter controls
             libraryControlsView()
-            
+
             Divider()
                 .padding(.horizontal)
-            
+
             WithPerceptionTracking {
                 // Show import progress bar when there are active imports
                 // Only show if there are items that aren't just failed items
@@ -330,7 +319,7 @@ public struct RetroGameLibraryView: View {
             libraryScrollView()
         }
     }
-    
+
     /// Controls for sorting and view mode
     @ViewBuilder
     private func libraryControlsView() -> some View {
@@ -338,9 +327,9 @@ public struct RetroGameLibraryView: View {
             Text("\(filteredGames.count) Games")
                 .font(.subheadline)
                 .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.7))
-            
+
             Spacer()
-            
+
             // Import button
             Button(action: {
                 documentPickerManager.showDocumentPicker(onImport: viewModel.importFiles)
@@ -365,15 +354,15 @@ public struct RetroGameLibraryView: View {
                 .shadow(color: Color.retroPink.opacity(0.5), radius: 3, x: 0, y: 0)
             }
             .buttonStyle(PlainButtonStyle())
-            
+
             // Sort button
             Menu {
-                ForEach(SortOption.allCases) { option in
+                ForEach(SortOptions.allCases, id: \.self) { option in
                     Button(action: {
                         viewModel.selectedSortOption = option
                     }) {
                         HStack {
-                            Text(option.displayName)
+                            Text(option.description)
                             if viewModel.selectedSortOption == option {
                                 Image(systemName: "checkmark")
                             }
@@ -385,7 +374,7 @@ public struct RetroGameLibraryView: View {
                     .font(.subheadline)
                     .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
             }
-            
+
             // View mode toggle
             Menu {
                 ForEach(ViewMode.allCases) { mode in
@@ -410,7 +399,7 @@ public struct RetroGameLibraryView: View {
         .padding(.horizontal)
         .padding(.vertical, 8)
     }
-    
+
     /// Main scroll view containing all game sections
     @ViewBuilder
     private func libraryScrollView() -> some View {
@@ -419,17 +408,17 @@ public struct RetroGameLibraryView: View {
             // Only include the database update ID to stabilize during database changes
             // Don't include the import queue update ID to avoid redrawing the entire library
             let viewID = "library-\(viewModel.debouncedSearchText.isEmpty ? "all" : "search")"
-            
+
             LazyVStack(spacing: 16, pinnedViews: [.sectionHeaders]) {
                 // Content is identified by the search state to prevent flickering
                 if viewModel.debouncedSearchText.isEmpty {
                     // All Games section
                     allGamesSection()
-                    
+
                     // Divider between All Games and systems
                     Divider()
                         .padding(.horizontal)
-                    
+
                     // Individual system sections
                     systemSections()
                 } else {
@@ -441,7 +430,7 @@ public struct RetroGameLibraryView: View {
             .padding()
         }
     }
-    
+
     /// Section displaying all games
     @ViewBuilder
     private func allGamesSection() -> some View {
@@ -458,7 +447,7 @@ public struct RetroGameLibraryView: View {
         }
         .padding(.bottom, 8)
     }
-    
+
     /// Sections for individual systems
     @ViewBuilder
     private func systemSections() -> some View {
@@ -484,7 +473,7 @@ public struct RetroGameLibraryView: View {
             }
         }
     }
-    
+
     /// View displaying search results
     @ViewBuilder
     private func searchResultsView() -> some View {
@@ -493,7 +482,7 @@ public struct RetroGameLibraryView: View {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 40))
                     .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.5))
-                
+
                 Text("No games found matching '\(viewModel.debouncedSearchText)'")
                     .font(.headline)
                     .multilineTextAlignment(.center)
@@ -509,9 +498,9 @@ public struct RetroGameLibraryView: View {
             }
         }
     }
-    
+
     // State properties have been moved to the ViewModel
-    
+
     // Empty library view
     @ViewBuilder
     private func emptyLibraryView() -> some View {
@@ -519,16 +508,16 @@ public struct RetroGameLibraryView: View {
             Image(systemName: "gamecontroller")
                 .font(.system(size: 60))
                 .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.5))
-            
+
             Text("No Games Found")
                 .font(.title)
                 .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-            
+
             Text("Add games to your library to get started")
                 .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
-            
+
             Button(action: {
                 documentPickerManager.showDocumentPicker(onImport: importFiles)
             }) {
@@ -545,22 +534,22 @@ public struct RetroGameLibraryView: View {
         }
         .padding()
     }
-    
+
     /// Function to refresh the import queue items
     // Import queue refresh is now handled by ImportProgressView
-    
+
     private func importFiles(urls: [URL]) {
         ILOG("RetroGameLibraryView: Importing \(urls.count) files")
-        
+
         guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
             ELOG("RetroGameLibraryView: Could not access documents directory")
             viewModel.importMessage = "Error: Could not access documents directory"
             viewModel.showingImportMessage = true
             return
         }
-        
+
         let importsDirectory = documentsDirectory.appendingPathComponent("Imports", isDirectory: true)
-        
+
         // Create Imports directory if it doesn't exist
         do {
             try FileManager.default.createDirectory(at: importsDirectory, withIntermediateDirectories: true)
@@ -570,19 +559,19 @@ public struct RetroGameLibraryView: View {
             viewModel.showingImportMessage = true
             return
         }
-        
+
         var successCount = 0
         var errorMessages = [String]()
-        
+
         for url in urls {
             let destinationURL = importsDirectory.appendingPathComponent(url.lastPathComponent)
-            
+
             do {
                 // If file already exists, remove it first
                 if FileManager.default.fileExists(atPath: destinationURL.path) {
                     try FileManager.default.removeItem(at: destinationURL)
                 }
-                
+
                 // Copy file to Imports directory
                 try FileManager.default.copyItem(at: url, to: destinationURL)
                 ILOG("RetroGameLibraryView: Successfully copied \(url.lastPathComponent) to Imports directory")
@@ -592,7 +581,7 @@ public struct RetroGameLibraryView: View {
                 errorMessages.append("\(url.lastPathComponent): \(error.localizedDescription)")
             }
         }
-        
+
         // Prepare result message
         if successCount == urls.count {
             viewModel.importMessage = "Successfully imported \(successCount) file(s). The game importer will process them shortly."
@@ -601,14 +590,14 @@ public struct RetroGameLibraryView: View {
         } else {
             viewModel.importMessage = "Failed to import any files. \(errorMessages.first ?? "Unknown error")"
         }
-        
+
         viewModel.showingImportMessage = true
     }
-    
+
     // Launch game
     private func launchGame(_ game: PVGame) {
         ILOG("RetroGameLibraryView: Launching game: \(game.title) (ID: \(game.id))")
-        
+
         // Use the SceneCoordinator to launch the game
         sceneCoordinator.launchGame(game)
     }
@@ -620,14 +609,16 @@ extension RetroGameLibraryView {
     /// Sort games based on the selected sort option
     private func sortedGames(_ games: [PVGame]) -> [PVGame] {
         switch viewModel.selectedSortOption {
-        case .name:
+        case .title:
             return games.sorted(by: { $0.title < $1.title })
-        case .recentlyPlayed:
+        case .lastPlayed:
             // This would ideally use a lastPlayed date property
             // For now, just return alphabetically sorted
-            return games.sorted(by: { $0.title < $1.title })
-        case .recentlyAdded:
+            return games.sorted(by: { ($0.lastPlayed ?? .distantPast) < ($1.lastPlayed ?? .distantPast) })
+        case .importDate:
             return games.sorted(by: { $0.importDate > $1.importDate })
+        case .mostPlayed:
+            return games.sorted(by: { $0.playCount > $1.playCount })
         }
     }
 }
@@ -645,14 +636,14 @@ extension RetroGameLibraryView: GameContextMenuDelegate {
         }
     }
 #endif
-    
+
     // MARK: - Rename Methods
     public func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame) {
         viewModel.gameToRename = game.freeze()
         viewModel.newGameTitle = game.title
         viewModel.showingRenameAlert = true
     }
-    
+
     private func submitRename() {
         if !viewModel.newGameTitle.isEmpty, let frozenGame = viewModel.gameToRename, viewModel.newGameTitle != frozenGame.title {
             do {
@@ -671,52 +662,58 @@ extension RetroGameLibraryView: GameContextMenuDelegate {
         viewModel.showingRenameAlert = false
         viewModel.gameToRename = nil
     }
-    
+
     // MARK: - Image Picker Methods
-    
+
     public func gameContextMenu(_ menu: GameContextMenu, didRequestChooseCoverFor game: PVGame) {
         viewModel.gameToUpdateCover = game
         viewModel.showImagePicker = true
     }
-    
+
     // saveArtwork method has been moved to the ViewModel
-    
+    private func availableSystems(forGame game: PVGame) -> [PVSystem] {
+        PVEmulatorConfiguration.systems.filter {
+            $0.identifier != game.systemIdentifier &&
+            !(AppState.shared.isAppStore && $0.appStoreDisabled && !Defaults[.unsupportedCores])
+        }
+    }
+
     public func gameContextMenu(_ menu: GameContextMenu, didRequestMoveToSystemFor game: PVGame) {
         DLOG("RetroGameLibraryView: Received request to move game to system")
         let frozenGame = game.isFrozen ? game : game.freeze()
-        viewModel.systemMoveState = RetroGameLibrarySystemMoveState(game: frozenGame)
+        viewModel.systemMoveState = RetroGameLibrarySystemMoveState(game: frozenGame, availableSystems: availableSystems(forGame: frozenGame))
     }
-    
+
     public func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
         DLOG("RetroGameLibraryView: Received request to show save states for game")
         viewModel.continuesManagementState = RetroGameLibraryContinuesManagementState(game: game)
     }
-    
+
     public func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor gameId: String) {
         /// Show the GameMoreInfoView for the selected game
         DLOG("RetroGameLibraryView: Showing game info for game ID: \(gameId)")
-        
+
         /// Delegate to the ViewModel to handle showing the game info
         /// This ensures proper state management and consistent presentation
         viewModel.showGameInfo(gameId: gameId, appState: appState)
     }
-    
+
     public func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame) {
         viewModel.gameToUpdateCover = game
         viewModel.showImagePicker = true
     }
-    
+
     public func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame) {
         viewModel.gameToUpdateCover = game
         viewModel.showArtworkSearch = true
     }
-    
+
     public func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
         DLOG("Setting gameToUpdateCover with game: \(game.title)")
         viewModel.gameToUpdateCover = game
         viewModel.showArtworkSourceAlert = true
     }
-    
+
     public func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
         // gamesViewModel.presentDiscSelectionAlert(for: game, rootDelegate: rootDelegate)
     }
@@ -726,12 +723,12 @@ extension RetroGameLibraryView: GameContextMenuDelegate {
 
 extension RetroGameLibraryView {
     // MARK: - Computed Properties
-    
+
     /// Filtered games based on search text
     private var filteredGames: [PVGame] {
         viewModel.filteredGames
     }
-    
+
     /// Import progress view with retrowave styling
     @ViewBuilder
     private func importProgressView() -> some View {
@@ -752,7 +749,7 @@ extension RetroGameLibraryView {
             )
         }
     }
-    
+
     /// Helper view for status counts
     @ViewBuilder
     private func statusCountView(count: Int, label: String, color: Color) -> some View {
@@ -761,19 +758,19 @@ extension RetroGameLibraryView {
                 Text("\(count)")
                     .font(.system(size: 12, weight: .bold))
                     .foregroundColor(color)
-                
+
                 Text(label)
                     .font(.system(size: 10, weight: .medium))
                     .foregroundColor(color.opacity(0.8))
             }
         }
     }
-    
+
     /// Custom search bar view
     private var searchBar: some View {
         customSearchBar()
     }
-    
+
     /// Creates a custom search bar
     @ViewBuilder
     private func customSearchBar() -> some View {
@@ -782,14 +779,14 @@ extension RetroGameLibraryView {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(viewModel.isSearching ? themeManager.currentPalette.defaultTintColor.swiftUIColor : .gray)
                     .animation(.easeInOut(duration: 0.2), value: viewModel.isSearching)
-                
+
                 TextField("Search Games", text: $viewModel.searchText, onEditingChanged: { editing in
                     withAnimation {
                         viewModel.isSearching = editing
                     }
                 })
                 .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                
+
                 if !viewModel.searchText.isEmpty {
                     Button(action: {
                         viewModel.searchText = ""
@@ -810,12 +807,12 @@ extension RetroGameLibraryView {
             )
         }
     }
-    
+
     /// Get games for a specific system
     private func gamesForSystem(_ system: PVSystem) -> [PVGame] {
         return Array(system.games.sorted(by: { $0.title < $1.title }))
     }
-        
+
     /// Creates a collapsible section header for a system
     @ViewBuilder
     private func sectionHeader(title: String, subtitle: String? = nil, count: Int, systemId: String) -> some View {
@@ -827,7 +824,7 @@ extension RetroGameLibraryView {
                     Text(title)
                         .font(.headline)
                         .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                    
+
                     if let subtitle = subtitle, !subtitle.isEmpty {
                         Text(subtitle.uppercased())
                             .font(.system(.subheadline, design: .monospaced))
@@ -835,9 +832,9 @@ extension RetroGameLibraryView {
                             .shadow(color: Color.retroPink.opacity(0.5), radius: 1, x: 1, y: 1)
                     }
                 }
-                
+
                 Spacer()
-                
+
                 Text("\(count)")
                     .font(.caption)
                     .fontWeight(.medium)
@@ -850,7 +847,7 @@ extension RetroGameLibraryView {
                             .strokeBorder(Color.retroBlue, lineWidth: 1)
                     )
                     .cornerRadius(12)
-                
+
                 Image(systemName: viewModel.expandedSections.contains(systemId) ? "chevron.up" : "chevron.down")
                     .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                     .font(.system(size: 14, weight: .bold))
@@ -880,26 +877,26 @@ extension RetroGameLibraryView {
         }
         .buttonStyle(PlainButtonStyle())
     }
-    
+
     /// Creates a grid of games for a system
     @ViewBuilder
     private func systemGamesGrid(games: [PVGame]) -> some View {
         // Use stable ID to prevent unnecessary redraws
         let gridID = "grid-\(viewModel.debouncedSearchText)-\(games.count)"
-        
+
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 200), spacing: 16)], spacing: 16) {
             ForEach(games, id: \.self) { game in
                 gameGridItem(game: game)
             }
         }
     }
-    
+
     /// Creates a single game grid item
     @ViewBuilder
     private func gameGridItem(game: PVGame) -> some View {
         // Use ID to stabilize view and prevent unnecessary redraws
         let gameID = "grid-item-\(game.id)"
-        
+
         GameItemView(
             game: game,
             constrainHeight: false,
@@ -920,13 +917,13 @@ extension RetroGameLibraryView {
         .transition(.scale(scale: 0.95).combined(with: .opacity))
         .id(gameID)
     }
-    
+
     /// Creates a list of games for a system
     @ViewBuilder
     private func systemGamesList(games: [PVGame]) -> some View {
         // Use stable ID to prevent unnecessary redraws
         let listID = "list-\(viewModel.debouncedSearchText)-\(games.count)"
-        
+
         LazyVStack(spacing: 8) {
             ForEach(games, id: \.self) { game in
                 gameListItem(game: game)
@@ -934,13 +931,13 @@ extension RetroGameLibraryView {
         }
         .id(listID)
     }
-    
+
     /// Creates a single game list item
     @ViewBuilder
     private func gameListItem(game: PVGame) -> some View {
         // Use ID to stabilize view and prevent unnecessary redraws
         let gameID = "list-item-\(game.id)"
-        
+
         HStack(spacing: 12) {
             // Game cover image
             GameItemView(
@@ -953,7 +950,7 @@ extension RetroGameLibraryView {
                 // Empty action as we'll handle it in the parent HStack
             }
             .frame(width: 60, height: 60)
-            
+
             // Game details
             VStack(alignment: .leading, spacing: 4) {
                 Text(game.title.uppercased())
@@ -961,7 +958,7 @@ extension RetroGameLibraryView {
                     .foregroundColor(Color.retroYellow)
                     .shadow(color: Color.retroPink.opacity(0.5), radius: 1, x: 1, y: 1)
                     .lineLimit(1)
-                
+
                 if let system = game.system {
                     Text(system.shortName.uppercased())
                         .font(.system(.caption, design: .monospaced))
@@ -969,9 +966,9 @@ extension RetroGameLibraryView {
                         .shadow(color: Color.retroPink.opacity(0.5), radius: 1, x: 0, y: 0)
                 }
             }
-            
+
             Spacer()
-            
+
             // Play button
             Button(action: {
                 launchGame(game)

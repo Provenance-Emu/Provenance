@@ -1206,7 +1206,7 @@ struct SaveStatesMockView: View {
             if isLoading {
                 ProgressView("Loading save states...")
             } else if let viewModel = viewModel {
-                ContinuesMagementView(viewModel: viewModel)
+                ContinuesManagementView(viewModel: viewModel)
                     .presentationBackground(.clear)
             } else {
                 Text("Failed to load save states")
