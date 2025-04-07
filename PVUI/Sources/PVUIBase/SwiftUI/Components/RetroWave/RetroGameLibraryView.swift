@@ -598,7 +598,7 @@ extension RetroGameLibraryView {
         case .lastPlayed:
             // This would ideally use a lastPlayed date property
             // For now, just return alphabetically sorted
-            return games.sorted(by: { ($0.lastPlayed ?? .distantPast) < ($1.lastPlayed ?? .distantPast) })
+            return games.sorted(by: { ($0.lastPlayed ?? .distantPast) > ($1.lastPlayed ?? .distantPast) })
         case .importDate:
             return games.sorted(by: { $0.importDate > $1.importDate })
         case .mostPlayed:

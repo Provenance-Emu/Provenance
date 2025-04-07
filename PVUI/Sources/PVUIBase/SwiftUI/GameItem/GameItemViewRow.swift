@@ -45,8 +45,12 @@ struct GameItemViewRow: SwiftUI.View, Equatable {
         discCount > 1
     }
     
+//    private var textColor: Color {
+//        Color.retroPink
+//    }
     private var textColor: Color {
-        Color.retroPink
+        let backgroundColor = themeManager.currentPalette.gameLibraryBackground.swiftUIColor
+        return backgroundColor.isDarkColor() ? .white : .black
     }
     
     private var glowColor: Color {
