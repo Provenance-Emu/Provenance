@@ -16,6 +16,7 @@
     case b
     case option1
     case option2
+    case pause
     case count
 
     public init(_ value: String) {
@@ -29,6 +30,7 @@
             case "option1", "o1": self = .option1
             case "option2", "o2": self = .option2
             case "count": self = .count
+            case "pause": self = .pause
             default: self = .up
         }
     }
@@ -51,6 +53,8 @@
                 return "o1"
             case .option2:
                 return "o2"
+            case .pause:
+                return "pause"
             case .count:
                 return "count"
         }

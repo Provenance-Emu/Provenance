@@ -32,6 +32,10 @@ final class PVLynxControllerViewController: PVControllerViewController<PVLynxSys
                 button.buttonTag = .a
             case "b":
                 button.buttonTag = .b
+            case "o1", "option1":
+                button.buttonTag = .option1
+            case "o2", "option2":
+                button.buttonTag = .option2
             default:
                 break
             }

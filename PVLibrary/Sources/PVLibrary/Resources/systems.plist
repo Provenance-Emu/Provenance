@@ -1251,17 +1251,19 @@
 		<array>
 			<dict>
 				<key>PVControlType</key>
-				<string>PVDPad</string>
-				<key>PVControlSize</key>
-				<string>{180,180}</string>
-			</dict>
-			<dict>
-				<key>PVControlType</key>
 				<string>PVButtonGroup</string>
 				<key>PVControlSize</key>
 				<string>{180, 180}</string>
 				<key>PVGroupedButtons</key>
 				<array>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>Pause</string>
+						<key>PVControlFrame</key>
+						<string>{{90,50},{60,50}}</string>
+					</dict>
 					<dict>
 						<key>PVControlType</key>
 						<string>PVButton</string>
@@ -1279,6 +1281,12 @@
 						<string>{{90,50},{60,50}}</string>
 					</dict>
 				</array>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVDPad</string>
+				<key>PVControlSize</key>
+				<string>{180,180}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
