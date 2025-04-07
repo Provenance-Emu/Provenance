@@ -494,7 +494,7 @@ public enum iCloudSync {
                 guard !isDirectory.boolValue,
                       checkDownloadStatus(of: currentUrl) != .current
                 else {
-                    return
+                    continue
                 }
                  let parentDirectory = currentUrl.parentPathComponent
                  //we should only add to the import queue files that are actual ROMs, anything else can be ignored.
@@ -502,7 +502,7 @@ public enum iCloudSync {
                         || parentDirectory.range(of: parentDirectoryPrefix!,
                                              options: [.caseInsensitive, .anchored]) != nil
                 else {
-                    return
+                    continue
                 }
                 DLOG("processing \(currentUrl)")
                 do {
@@ -756,7 +756,7 @@ actor RomsDatastore {
             """)
             guard !fileManager.fileExists(atPath: gameUrl.pathDecoded)
             else {
-                return
+                continue
             }
             do {
                 if let gameToDelete = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) {
@@ -787,12 +787,14 @@ actor RomsDatastore {
     
     /// helper to delete saves/cheats/recentPlays/screenShots related to the game
     /// - Parameter game: game entity to delete related entities
+    @RealmActor
     private func deleteGame(_ game: PVGame) async throws {
         await try realm.asyncWrite {
-            game.saveStates.forEach { try? $0.delete() }
+            //TODO: validate what needs to be deleted because currently it's crashing if it's already deleted so only deleting game works
+            /*game.saveStates.forEach { try? $0.delete() }
             game.cheats.forEach { try? $0.delete() }
             game.recentPlays.forEach { try? $0.delete() }
-            game.screenShots.forEach { try? $0.delete() }
+            game.screenShots.forEach { try? $0.delete() }*/
             realm.delete(game)
         }
     }
@@ -1079,7 +1081,8 @@ class RomsSyncer: iCloudContainerSyncer {
                     var files = await multiFileRoms[multiKey] ?? [URL]()
                     files.append(file)
                     await multiFileRoms.set(files, forKey: multiKey)
-                } else {
+                    //for sega cd ROMs, ignore the .brm file that is used for saves
+                } else if file.system != .SegaCD || "brm".caseInsensitiveCompare(file.pathExtension) != .orderedSame {
                     await newFiles.insert(file)
                 }
             }
