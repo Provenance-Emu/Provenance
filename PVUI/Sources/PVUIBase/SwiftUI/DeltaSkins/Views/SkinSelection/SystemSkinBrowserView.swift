@@ -121,10 +121,10 @@ public struct SystemSkinBrowserView: View {
             }
         }
         #endif
-        .alert("Import Error", isPresented: $showingImportError) {
+        .retroAlert("Import Error",
+                    message: importError?.localizedDescription ?? "Failed to import skin",
+                    isPresented: $showingImportError) {
             Button("OK", role: .cancel) { }
-        } message: {
-            Text(importError?.localizedDescription ?? "Failed to import skin")
         }
     }
 
