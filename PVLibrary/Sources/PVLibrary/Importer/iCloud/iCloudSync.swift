@@ -84,7 +84,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         self.errorHandler = errorHandler
     }
     
-    deinit {
+    func stopObserving() {
         metadataQuery.disableUpdates()
         if metadataQuery.isStarted {
             metadataQuery.stop()
@@ -108,8 +108,13 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         }
     }
     
+    var alliCloudDirectories: [URL: URL]!
     var localAndCloudDirectories: [URL: URL] {
-        var alliCloudDirectories = [URL: URL]()
+        guard alliCloudDirectories == nil
+        else {
+            return alliCloudDirectories
+        }
+        alliCloudDirectories = [URL: URL]()
         guard let parentContainer = documentsURL
         else {
             return alliCloudDirectories
@@ -327,6 +332,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     
     @discardableResult
     func removeFromiCloud() async -> SyncResult {
+        stopObserving()
         var result: SyncResult = .indeterminate
         defer {
             DLOG("removed: \(result)")
@@ -821,7 +827,8 @@ class SaveStateSyncer: iCloudContainerSyncer {
         }
     }
     
-    deinit {
+    override func stopObserving() {
+        super.stopObserving()
         savesDatabaseSubscriber?.cancel()
     }
     
@@ -1011,7 +1018,8 @@ class RomsSyncer: iCloudContainerSyncer {
         }
     }
     
-    deinit {
+    override func stopObserving() {
+        super.stopObserving()
         romsDatabaseSubscriber?.cancel()
     }
     
