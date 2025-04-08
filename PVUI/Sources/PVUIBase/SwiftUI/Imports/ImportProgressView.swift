@@ -53,15 +53,17 @@ public struct ImportProgressView: View {
     public var body: some View {
         // Fixed height approach to prevent flickering
         VStack {
-            if !importQueueItems.isEmpty {
-                contentView
-                    .onTapGesture {
-                        onTap?()
-                    }
-                    .fixedSize(horizontal: false, vertical: true) // Fix the height to prevent layout shifts
-            } else {
-                // Empty spacer with a fixed height when no items to prevent layout shifts
-                Color.clear.frame(height: 10)
+            WithPerceptionTracking {
+                if !importQueueItems.isEmpty {
+                    contentView
+                        .onTapGesture {
+                            onTap?()
+                        }
+                        .fixedSize(horizontal: false, vertical: true) // Fix the height to prevent layout shifts
+                } else {
+                    // Empty spacer with a fixed height when no items to prevent layout shifts
+                    Color.clear.frame(height: 10)
+                }
             }
         }
         // Disable animations on this section to prevent flickering
@@ -87,27 +89,28 @@ public struct ImportProgressView: View {
         VStack(alignment: .leading, spacing: 6) {
             // Header with count of imports
             HStack {
-                Text("IMPORTING \(importQueueItems.count) FILES")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(.retroBlue)
-                
-                Spacer()
-                
-                // Show processing status if any item is processing
-                if importQueueItems.contains(where: { $0.status == .processing }) {
-                    Text("PROCESSING")
+                WithPerceptionTracking {
+                    Text("IMPORTING \(importQueueItems.count) FILES")
                         .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(.retroPink)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 2)
-                        .background(
-                            RoundedRectangle(cornerRadius: 4)
-                                .fill(Color.retroBlack.opacity(0.7))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .strokeBorder(Color.retroPink, lineWidth: 1)
-                                )
-                        )
+                        .foregroundColor(.retroBlue)
+                    Spacer()
+                    
+                    // Show processing status if any item is processing
+                    if importQueueItems.contains(where: { $0.status == .processing }) {
+                        Text("PROCESSING")
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(.retroPink)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 2)
+                            .background(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color.retroBlack.opacity(0.7))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .strokeBorder(Color.retroPink, lineWidth: 1)
+                                    )
+                            )
+                    }
                 }
             }
             
@@ -130,34 +133,38 @@ public struct ImportProgressView: View {
                     .frame(height: 12)
                 
                 // Progress fill - count both completed and failed items for progress
-                let processedCount = importQueueItems.filter { $0.status == .success || $0.status == .failure }.count
-                let progress = importQueueItems.isEmpty ? 0.0 : Double(processedCount) / Double(importQueueItems.count)
-                
-                // Create a GeometryReader to get the actual width of the container
-                GeometryReader { geometry in
-                    LinearGradient(
-                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                    // Calculate width as a percentage of the available width
-                    // Use max to ensure a minimum visible width
-                    .frame(width: max(12, progress * geometry.size.width), height: 8)
-                    .cornerRadius(4)
-                    .padding(2)
+                WithPerceptionTracking {
+                    let processedCount = importQueueItems.filter { $0.status == .success || $0.status == .failure }.count
+                    let progress = importQueueItems.isEmpty ? 0.0 : Double(processedCount) / Double(importQueueItems.count)
+                    
+                    // Create a GeometryReader to get the actual width of the container
+                    GeometryReader { geometry in
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                        // Calculate width as a percentage of the available width
+                        // Use max to ensure a minimum visible width
+                        .frame(width: max(12, progress * geometry.size.width), height: 8)
+                        .cornerRadius(4)
+                        .padding(2)
+                    }
+                    // Set a fixed height for the GeometryReader
+                    .frame(height: 12)
                 }
-                // Set a fixed height for the GeometryReader
-                .frame(height: 12)
             }
             
             // Status details
-            HStack(spacing: 12) {
-                statusCountView(count: importQueueItems.filter { $0.status == .queued }.count, label: "QUEUED", color: .gray)
-                statusCountView(count: importQueueItems.filter { $0.status == .processing }.count, label: "PROCESSING", color: .retroBlue)
-                statusCountView(count: importQueueItems.filter { $0.status == .success }.count, label: "COMPLETED", color: .retroYellow)
-                statusCountView(count: importQueueItems.filter { $0.status == .failure }.count, label: "FAILED", color: .retroPink)
-                
-                Spacer()
+            WithPerceptionTracking {
+                HStack(spacing: 12) {
+                    statusCountView(count: importQueueItems.filter { $0.status == .queued }.count, label: "QUEUED", color: .gray)
+                    statusCountView(count: importQueueItems.filter { $0.status == .processing }.count, label: "PROCESSING", color: .retroBlue)
+                    statusCountView(count: importQueueItems.filter { $0.status == .success }.count, label: "COMPLETED", color: .retroYellow)
+                    statusCountView(count: importQueueItems.filter { $0.status == .failure }.count, label: "FAILED", color: .retroPink)
+                    
+                    Spacer()
+                }
             }
         }
         .padding(12)

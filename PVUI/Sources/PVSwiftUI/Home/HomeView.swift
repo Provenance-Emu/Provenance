@@ -14,12 +14,6 @@ import PVLibrary
 import PVThemes
 import Combine
 import PVUIBase
-#if canImport(PVWebServer)
-import PVWebServer
-#endif
-#if canImport(SafariServices)
-import SafariServices
-#endif
 
 @available(iOS 14, tvOS 14, *)
 struct HomeView: SwiftUI.View {
@@ -36,9 +30,6 @@ struct HomeView: SwiftUI.View {
     
     // Import status view properties
     @State private var showImportStatusView = false
-    @State private var importStatusDelegate: ImportStatusDelegateHelper?
-    @State private var isShowingDocumentPicker = false
-    @State private var showingImportOptionsAlert = false
 
     @ObservedResults(
         PVSaveState.self,
@@ -143,6 +134,17 @@ struct HomeView: SwiftUI.View {
                         .frame(height: isSearchBarVisible ? nil : 0)
                         .animation(.easeInOut(duration: 0.3), value: isSearchBarVisible)
                 }
+                
+                // Import Progress View
+                ImportProgressView(
+                    gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
+                    updatesController: AppState.shared.libraryUpdatesController!,
+                    onTap: {
+                        withAnimation {
+                            showImportStatusView = true
+                        }
+                    }
+                )
 
                 ScrollViewWithOffset(
                     offsetChanged: { offset in
@@ -252,6 +254,18 @@ struct HomeView: SwiftUI.View {
         }
         /// GameContextMenuDelegate
         /// TODO: This is an ugly copy/paste from `ConsolesGameView.swift`
+        // Import Status View
+        .fullScreenCover(isPresented: $showImportStatusView) {
+            ImportStatusView(
+                updatesController: AppState.shared.libraryUpdatesController!,
+                gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
+                dismissAction: {
+                    withAnimation {
+                        showImportStatusView = false
+                    }
+                }
+            )
+        }
         .sheet(isPresented: $showImagePicker) {
 #if !os(tvOS)
             ImagePicker(sourceType: .photoLibrary) { image in
@@ -377,53 +391,6 @@ struct HomeView: SwiftUI.View {
                 }
             } else {
                 Text("Error: Could not load save states")
-            }
-        }
-        // Import Status View
-        .fullScreenCover(isPresented: $showImportStatusView) {
-            ImportStatusView(
-                updatesController: AppState.shared.libraryUpdatesController!,
-                gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
-                delegate: importStatusDelegate,
-                dismissAction: {
-                    showImportStatusView = false
-                }
-            )
-            .onAppear {
-                // Setup the delegate when the view appears
-                setupImportStatusDelegate()
-            }
-        }
-        // Document Picker
-        .sheet(isPresented: $isShowingDocumentPicker) {
-            DocumentPicker(onImport: importFiles)
-        }
-        // Import Options Alert
-        .retroAlert("Select Import Source",
-                   message: "Choose how you want to import files",
-                   isPresented: $showingImportOptionsAlert) {
-            VStack(spacing: 10) {
-                RetroButton(title: "Files", isPrimary: true) {
-                    showingImportOptionsAlert = false
-                    // Use a slight delay to avoid SwiftUI sheet presentation issues
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        isShowingDocumentPicker = true
-                    }
-                }
-                
-                #if canImport(PVWebServer)
-                RetroButton(title: "Web Server", isPrimary: true) {
-                    showingImportOptionsAlert = false
-                    // Use a slight delay to avoid SwiftUI sheet presentation issues
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        startWebServer()
-                    }
-                }
-                #endif
-                
-                RetroButton(title: "Cancel", isPrimary: false) {
-                    showingImportOptionsAlert = false
-                }
             }
         }
         .uiKitAlert(
@@ -1138,99 +1105,6 @@ struct HomeView: SwiftUI.View {
     }
 }
 #endif
-
-// MARK: - Import Methods
-extension HomeView {
-    /// Initialize the import status delegate helper
-    private func setupImportStatusDelegate() {
-        if importStatusDelegate == nil {
-            self.importStatusDelegate = ImportStatusDelegateHelper(
-                showDocumentPicker: { self.showImportOptions() },
-                dismissImportStatusView: { showImportStatusView = false },
-                gameImporter: AppState.shared.gameImporter ?? GameImporter.shared
-            )
-        }
-    }
-    
-    /// Shows import options alert with document picker and web server options
-    private func showImportOptions() {
-        showingImportOptionsAlert = true
-    }
-    
-    /// Starts the web server for importing files
-    private func startWebServer() {
-        #if canImport(PVWebServer)
-        // Start the web server
-        ILOG("HomeView: Starting web server for imports")
-        PVWebServer.shared.startServers()
-        
-        // Show the web server URL
-        if let serverURL = PVWebServer.shared.urlString {
-            // Open Safari with the web server URL
-            #if canImport(SafariServices)
-            if let url = URL(string: serverURL) {
-                let safariVC = SFSafariViewController(url: url)
-                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let rootViewController = windowScene.windows.first?.rootViewController {
-                    rootViewController.present(safariVC, animated: true)
-                }
-            }
-            #endif
-        } else {
-            // Show error message if server URL is not available
-            ELOG("HomeView: Could not start web server")
-        }
-        #endif
-    }
-    
-    private func importFiles(urls: [URL]) {
-        ILOG("HomeView: Importing \(urls.count) files")
-        
-        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            ELOG("HomeView: Could not access documents directory")
-            return
-        }
-        
-        let importsDirectory = documentsDirectory.appendingPathComponent("Imports", isDirectory: true)
-        
-        // Create Imports directory if it doesn't exist
-        do {
-            try FileManager.default.createDirectory(at: importsDirectory, withIntermediateDirectories: true)
-        } catch {
-            ELOG("HomeView: Error creating Imports directory: \(error.localizedDescription)")
-            return
-        }
-        
-        var successCount = 0
-        var errorMessages = [String]()
-        
-        for url in urls {
-            let destinationURL = importsDirectory.appendingPathComponent(url.lastPathComponent)
-            
-            do {
-                // If file already exists, remove it first
-                if FileManager.default.fileExists(atPath: destinationURL.path) {
-                    try FileManager.default.removeItem(at: destinationURL)
-                }
-                
-                // Copy file to Imports directory
-                try FileManager.default.copyItem(at: url, to: destinationURL)
-                ILOG("HomeView: Successfully copied \(url.lastPathComponent) to Imports directory")
-                successCount += 1
-            } catch {
-                ELOG("HomeView: Error copying file \(url.lastPathComponent): \(error.localizedDescription)")
-                errorMessages.append("\(url.lastPathComponent): \(error.localizedDescription)")
-            }
-        }
-        
-        // Show import status view after importing files
-        if successCount > 0 {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.showImportStatusView = true
-            }
-        }
-    }
-}
 
 extension HomeView: GameContextMenuDelegate {
 
