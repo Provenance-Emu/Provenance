@@ -104,7 +104,9 @@ struct SkinPreviewCell: View {
                 }
             }
         }
-        .alert("Delete Skin?", isPresented: $showingDeleteAlert) {
+        .retroAlert("Delete Skin?",
+                    message: "Are you sure you want to delete '\(skin.name)'? This cannot be undone.",
+                    isPresented: $showingDeleteAlert) {
             Button("Cancel", role: .cancel) { }
             Button("Delete", role: .destructive) {
                 Task {
@@ -116,13 +118,11 @@ struct SkinPreviewCell: View {
                     }
                 }
             }
-        } message: {
-            Text("Are you sure you want to delete '\(skin.name)'? This cannot be undone.")
         }
-        .alert("Delete Error", isPresented: $showingErrorAlert, presenting: deleteError) { _ in
+        .retroAlert("Delete Error",
+                    message: deleteError?.localizedDescription ?? "",
+                    isPresented: $showingErrorAlert) {
             Button("OK", role: .cancel) { }
-        } message: { error in
-            Text(error.localizedDescription)
         }
         #if !os(tvOS)
         .sheet(isPresented: $showingShareSheet) {
