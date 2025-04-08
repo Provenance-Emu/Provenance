@@ -45,10 +45,10 @@ struct SettingsWrapperView: View {
         .sheet(isPresented: $showingDocumentPicker) {
             DocumentPicker(onImport: importFiles)
         }
-        .alert("Import Result", isPresented: $showingImportMessage, presenting: importMessage) { _ in
+        .retroAlert("Import Result",
+                    message: importMessage ?? "",
+                    isPresented: $showingImportMessage) {
             Button("OK", role: .cancel) {}
-        } message: { message in
-            Text(message)
         }
         .toggleStyle(.button)
     }
