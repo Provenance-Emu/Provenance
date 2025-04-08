@@ -63,15 +63,31 @@ public struct DocumentPicker: UIViewControllerRepresentable {
         public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
             ILOG("DocumentPicker: Selected \(urls.count) documents")
             
-            // Notify the document picker manager that selection is complete
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
+            // Immediately capture the selected URLs to prevent loss
+            let selectedURLs = urls
+            
+            // Immediately store the callback to prevent it from being lost if the view service terminates
+            let importCallback = parent.onImport
+            let documentPickerManager = parent.documentPickerManager
+            
+            // Execute the callbacks immediately on the main thread
+            // This ensures they're called even if the view service terminates
+            DispatchQueue.main.async {
+                ILOG("DocumentPicker: Immediately executing callback with \(selectedURLs.count) URLs")
                 
-                // Call the document picker manager's completion handler
-                self.parent.documentPickerManager.documentPickerCompleted(urls: urls)
+                // Call the direct callback first
+                importCallback(selectedURLs)
                 
-                // Also call the direct callback for backward compatibility
-                self.parent.onImport(urls)
+                // Then notify the document picker manager
+                documentPickerManager.documentPickerCompleted(urls: selectedURLs)
+            }
+            
+            // Also set up a backup execution with a delay in case the immediate execution is interrupted
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                ILOG("DocumentPicker: Backup execution of callback with \(selectedURLs.count) URLs")
+                
+                // Call the callback again (it's idempotent, so calling twice is safe)
+                importCallback(selectedURLs)
             }
         }
         

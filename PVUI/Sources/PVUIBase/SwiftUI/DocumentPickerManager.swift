@@ -48,30 +48,25 @@ public class DocumentPickerManager: ObservableObject {
     
     /// Shows the document picker and sets up the import callback
     public func showDocumentPicker(onImport: @escaping ([URL]) -> Void) {
-        // Prevent multiple activations during view redraws
-        guard !isProcessingImport else {
-            VLOG("DocumentPickerManager: Ignoring duplicate showDocumentPicker call, already processing")
-            return
-        }
+        // Reset any existing state first to ensure a clean start
+        resetState()
         
-        ILOG("DocumentPickerManager: Showing document picker")
+        ILOG("DocumentPickerManager: Showing document picker with new callback")
+        
+        // Store the callback immediately
+        self.importCallback = onImport
         
         // Set the processing flag to prevent duplicate activations
         isProcessingImport = true
         
-        // Store the callback
-        self.importCallback = onImport
-        
-        // Use a slight delay to break the current render cycle
-        // This helps prevent SwiftUI state conflicts that can cause premature dismissal
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+        // Present the document picker with minimal delay
+        // Using a shorter delay to reduce the chance of state conflicts
+        DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             
-            // Only set if still processing (to prevent race conditions)
-            if self.isProcessingImport {
-                self.isShowingDocumentPicker = true
-                VLOG("DocumentPickerManager: Set isShowingDocumentPicker to true")
-            }
+            // Set the flag to show the document picker
+            ILOG("DocumentPickerManager: Presenting document picker sheet")
+            self.isShowingDocumentPicker = true
         }
     }
     
@@ -79,18 +74,33 @@ public class DocumentPickerManager: ObservableObject {
     public func documentPickerCompleted(urls: [URL]?) {
         ILOG("DocumentPickerManager: Document picker completed with \(urls?.count ?? 0) URLs")
         
+        // Capture the current callback before resetting it
+        let currentCallback = importCallback
+        
+        // Reset state immediately to avoid any potential conflicts
+        // This is important - we need to reset the state before executing the callback
+        // to prevent SwiftUI view update cycles from interfering
+        isShowingDocumentPicker = false
+        isProcessingImport = false
+        importCallback = nil
+        
         // Execute the callback if we have URLs
-        if let urls = urls, !urls.isEmpty, let callback = importCallback {
-            // Use a slight delay to ensure the view hierarchy has settled
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        if let urls = urls, !urls.isEmpty, let callback = currentCallback {
+            ILOG("DocumentPickerManager: Executing callback with \(urls.count) URLs")
+            
+            // Execute immediately on the main thread to ensure it runs even if the view service terminates
+            DispatchQueue.main.async {
+                callback(urls)
+            }
+            
+            // Also set up a backup execution with a delay in case the immediate execution is interrupted
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                ILOG("DocumentPickerManager: Backup execution of callback with \(urls.count) URLs")
                 callback(urls)
             }
         } else if urls?.isEmpty ?? true {
             VLOG("DocumentPickerManager: Document picker was cancelled or returned no URLs")
         }
-        
-        // Reset the callback
-        importCallback = nil
     }
     
     /// Manually reset state - can be called when needed to clear any stuck state

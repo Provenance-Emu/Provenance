@@ -402,27 +402,52 @@ public class RetroGameLibraryViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    /// Set up a timer to refresh the import queue status
+    /// Set up direct subscription to the import queue
     private func setupImportQueueTimer() {
-        // Create a timer that updates the UI every 0.5 seconds when imports are active
-        importQueueTimer = Timer.publish(every: 0.5, on: .main, in: .common)
-            .autoconnect()
-            .sink { [weak self] _ in
-                Task { @MainActor in
-                    // Only trigger UI updates if there are items in the import queue
-                    if let queue = await self?.gameImporter.importQueue, !queue.isEmpty {
-                        // Get the current import queue
-                        let queue = await self?.gameImporter.importQueue ?? []
-
-                        // Only update if the queue has changed
-                        if self?.importQueueItems != queue {
-                            // Update the queue and force a redraw
-                            self?.importQueueItems = queue
-                            self?.importQueueUpdateID = UUID()
+        ILOG("RetroGameLibraryViewModel: Setting up direct import queue subscription")
+        
+        // Get a publisher for the import queue
+        // This is more efficient than polling and avoids the infinite loop
+        gameImporter.importQueuePublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] queue in
+                guard let self = self else { return }
+                
+                // Log queue state when it changes
+                if queue.isEmpty {
+                    VLOG("RetroGameLibraryViewModel: Import queue is empty")
+                } else {
+                    let activeItems = queue.filter { $0.status != .failure }
+                    ILOG("""
+                         RetroGameLibraryViewModel: Import queue has \(queue.count) items
+                         Active items: \(activeItems.count)
+                         Statuses: \(queue.map { $0.status.description }.joined(separator: ", "))
+                         """)
+                }
+                
+                // Check if the queue has changed
+                let hasChanged = self.importQueueItems != queue
+                
+                // Only update if there's a change to avoid unnecessary view updates
+                if hasChanged {
+                    // Update the queue
+                    self.importQueueItems = queue
+                    
+                    // Force a redraw if the queue has active items
+                    let hasActiveItems = !queue.isEmpty && queue.contains(where: { $0.status != .failure })
+                    
+                    if hasActiveItems {
+                        ILOG("RetroGameLibraryViewModel: Queue has active items, updating UI")
+                        // Update the ID to ensure the view redraws
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            self.importQueueUpdateID = UUID()
                         }
+                    } else {
+                        ILOG("RetroGameLibraryViewModel: Queue changed but no active items")
                     }
                 }
             }
+            .store(in: &cancellables)
     }
 }
 

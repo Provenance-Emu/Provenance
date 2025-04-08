@@ -15,6 +15,11 @@ class MockGameImporter: GameImporting, ObservableObject {
     @Published private(set) public var importStatus: String = "Ready"
     @Published public var importQueue: [ImportQueueItem] = []
     @Published private(set) public var processingState: ProcessingState = .idle
+    
+    /// Publisher that emits the current import queue whenever it changes
+    public var importQueuePublisher: AnyPublisher<[ImportQueueItem], Never> {
+        $importQueue.eraseToAnyPublisher()
+    }
 
     @MainActor
     public init(importStatus: String = "", importQueue: [ImportQueueItem] = [], processingState: ProcessingState = .idle, importStartedHandler: GameImporterImportStartedHandler? = nil, completionHandler: GameImporterCompletionHandler? = nil, finishedImportHandler: GameImporterFinishedImportingGameHandler? = nil, finishedArtworkHandler: GameImporterFinishedGettingArtworkHandler? = nil, spotlightCompletionHandler: GameImporterCompletionHandler? = nil, spotlightFinishedImportHandler: GameImporterFinishedImportingGameHandler? = nil) {

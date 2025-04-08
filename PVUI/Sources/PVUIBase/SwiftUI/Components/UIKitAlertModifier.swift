@@ -134,8 +134,13 @@ struct UIKitAlertWrapper: UIViewControllerRepresentable {
         // Track if we've already presented an alert to avoid duplicate presentations
         let alertAlreadyPresented = uiViewController.presentedViewController is TVAlertController
         
+        // Store a reference to the presented alert controller for state tracking
+        let presentedAlert = alertAlreadyPresented ? uiViewController.presentedViewController as? TVAlertController : nil
+        
         // Only handle presentation state changes
         if isPresented && !alertAlreadyPresented {
+            DLOG("UIKitAlertModifier: Presenting alert with title: \(title ?? "nil")")
+            
             // Create and present the alert
             let alert = TVAlertController(title: title, message: message, preferredStyle: .alert)
             
@@ -156,17 +161,29 @@ struct UIKitAlertWrapper: UIViewControllerRepresentable {
             buttons.forEach { alert.addAction($0) }
             
             // Set a completion handler to update the binding
-            alert.didDismiss = { [self] in
+            // This should only be called when the alert is actually dismissed by user interaction
+            // or programmatically, not during view updates
+            alert.didDismiss = { [isPresented] in
+                DLOG("UIKitAlertModifier: Alert dismissed, updating isPresented state")
                 DispatchQueue.main.async {
+                    // Capture binding directly since we can't use weak self on a struct
                     self.isPresented = false
                 }
             }
             
-            // Present the alert
-            uiViewController.present(alert, animated: true)
+            // Present the alert - use a slight delay to avoid conflicts with SwiftUI view updates
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                if uiViewController.presentedViewController == nil {
+                    uiViewController.present(alert, animated: true)
+                }
+            }
         } else if !isPresented && alertAlreadyPresented {
             // Only dismiss if our alert is being presented and isPresented is false
-            uiViewController.dismiss(animated: true)
+            // and the alert was previously presented by user interaction
+            if let presentedAlert = presentedAlert, presentedAlert.presentingViewController != nil {
+                DLOG("UIKitAlertModifier: Dismissing alert programmatically")
+                uiViewController.dismiss(animated: true)
+            }
         }
     }
 

@@ -24,6 +24,7 @@ import PVPrimitives
 import PVRealm
 import Perception
 import SwiftUI
+import Combine
 
 #if canImport(UIKit)
 import UIKit
@@ -93,7 +94,11 @@ internal actor ImportCoordinator {
 }
 
 /// Actor for managing the import queue with thread safety
-internal actor ImportQueueActor {
+public actor ImportQueueActor {
+    /// Subject to publish queue changes
+    let queueSubject = CurrentValueSubject<[ImportQueueItem], Never>([])    
+    
+    /// The current queue of import items
     private(set) var queue: [ImportQueueItem] = [] {
         didSet {
             // Schedule auto-start if there are queued items OR items with a user-chosen system
@@ -102,7 +107,24 @@ internal actor ImportQueueActor {
             }) {
                 autoStartCallback()
             }
+            
+            // Update the published queue on the main thread
+            Task { @MainActor in
+                // Send the updated queue to the subject
+                await queueSubject.send(queue)
+                
+                // Call the queue update handler to notify subscribers (for backward compatibility)
+                await queueUpdateHandler?(queue)
+            }
         }
+    }
+    
+    // Callback that will be invoked when the queue changes
+    private var queueUpdateHandler: (([ImportQueueItem]) -> Void)?
+    
+    /// Sets the queue update handler from outside the actor
+    func setQueueUpdateHandler(_ handler: @escaping ([ImportQueueItem]) -> Void) {
+        self.queueUpdateHandler = handler
     }
     
     private var autoStartCallback: () -> Void
@@ -247,6 +269,9 @@ public protocol GameImporting {
     var importStatus: String { get }
 
     var importQueue: [ImportQueueItemType] { get async }
+    
+    /// Publisher that emits the current import queue whenever it changes
+    var importQueuePublisher: AnyPublisher<[ImportQueueItemType], Never> { get }
 
     var processingState: ProcessingState { get }
 
@@ -292,6 +317,16 @@ public protocol GameImporting {
 @Perceptible
 //#endif
 public final class GameImporter: GameImporting, ObservableObject {
+    
+    /// Publisher that emits the current import queue whenever it changes
+    public var importQueuePublisher: AnyPublisher<[ImportQueueItemType], Never> {
+        // Create a publisher that connects to the queue actor's subject
+        return importQueueSubject.eraseToAnyPublisher()
+    }
+    
+    /// Subject that publishes import queue updates
+    private let importQueueSubject = CurrentValueSubject<[ImportQueueItemType], Never>([]) 
+
     /// Closure called when import starts
     public var importStartedHandler: GameImporterImportStartedHandler?
     /// Closure called when import completes
@@ -344,7 +379,7 @@ public final class GameImporter: GameImporting, ObservableObject {
     var importAutoStartDelayTask: Task<Void, Never>?
     
     // Actor to manage the import queue with thread safety
-    private let importQueueActor: ImportQueueActor
+    public let importQueueActor: ImportQueueActor
     
     // Public computed property to access the import queue
     public var importQueue: [ImportQueueItem] {
@@ -417,6 +452,17 @@ public final class GameImporter: GameImporting, ObservableObject {
         self.gameImporterSystemsService = systemsService
         self.gameImporterArtworkImporter = artworkImporter
         self.cdRomFileHandler = cdFileHandler
+        
+        // Set up the queue update handler for logging purposes
+        Task {
+            // Use the proper method to set the queue update handler
+            await importQueueActor.setQueueUpdateHandler { queue in
+                Task { @MainActor in
+                    // Log queue updates
+                    VLOG("GameImporter: Import queue updated with \(queue.count) items")
+                }
+            }
+        }
 
         //create defaults
         createDefaultDirectories(fm: fm)
@@ -501,6 +547,9 @@ public final class GameImporter: GameImporting, ObservableObject {
                         ILOG("RealmCollection changed state to .initial")
                         self.systemToPathMap = await updateSystemToPathMap()
                         self.initialized.leave()
+                        
+                        // Set up the queue subscription after all members are initialized
+                        self.setupQueueSubscription()
                     }
                 case .update:
                     Task.detached {
@@ -511,6 +560,27 @@ public final class GameImporter: GameImporting, ObservableObject {
                     ELOG("RealmCollection changed state to .error")
                     fatalError("\(error)")
                 }
+            }
+        }
+    }
+    
+    /// Sets up the subscription to the import queue actor's queue subject
+    /// This must be called after all members are initialized
+    private func setupQueueSubscription() {
+        ILOG("GameImporter: Setting up queue subscription")
+        
+        // Set up a task to connect the ImportQueueActor's queueSubject to our importQueueSubject
+        Task {
+            do {
+                // Create a continuous stream from the actor's subject
+                for await queue in await self.importQueueActor.queueSubject.values {
+                    // Update our subject on the main thread
+                    await MainActor.run {
+                        self.importQueueSubject.send(queue)
+                    }
+                }
+            } catch {
+                ELOG("GameImporter: Error in queue subscription - \(error)")
             }
         }
     }
