@@ -413,7 +413,7 @@ public class RetroGameLibraryViewModel: ObservableObject {
             .sink { [weak self] queue in
                 guard let self = self else { return }
                 
-                // Log queue state when it changes
+                // Always log the queue state for debugging
                 if queue.isEmpty {
                     VLOG("RetroGameLibraryViewModel: Import queue is empty")
                 } else {
@@ -425,25 +425,16 @@ public class RetroGameLibraryViewModel: ObservableObject {
                          """)
                 }
                 
-                // Check if the queue has changed
-                let hasChanged = self.importQueueItems != queue
+                // Always update the queue items to ensure the view has the latest data
+                self.importQueueItems = queue
                 
-                // Only update if there's a change to avoid unnecessary view updates
-                if hasChanged {
-                    // Update the queue
-                    self.importQueueItems = queue
-                    
-                    // Force a redraw if the queue has active items
-                    let hasActiveItems = !queue.isEmpty && queue.contains(where: { $0.status != .failure })
-                    
-                    if hasActiveItems {
-                        ILOG("RetroGameLibraryViewModel: Queue has active items, updating UI")
-                        // Update the ID to ensure the view redraws
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            self.importQueueUpdateID = UUID()
-                        }
-                    } else {
-                        ILOG("RetroGameLibraryViewModel: Queue changed but no active items")
+                // Force a redraw if the queue has any items (not just active ones)
+                // This ensures the view updates even if all items are completed or failed
+                if !queue.isEmpty {
+                    ILOG("RetroGameLibraryViewModel: Queue has items, updating UI")
+                    // Update the ID to ensure the view redraws
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        self.importQueueUpdateID = UUID()
                     }
                 }
             }
