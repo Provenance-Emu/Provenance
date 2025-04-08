@@ -28,24 +28,24 @@ import SafariServices
 // ViewModel is defined in RetroGameLibraryViewModel.swift
 
 /// Helper class to implement ImportStatusDelegate for RetroGameLibraryView
-final class ImportStatusDelegateHelper: ImportStatusDelegate {
-    var showDocumentPicker: () -> Void
-    var dismissImportStatusView: () -> Void
-    var gameImporter: any GameImporting
+public final class ImportStatusDelegateHelper: ImportStatusDelegate {
+    public var showDocumentPicker: () -> Void
+    public var dismissImportStatusView: () -> Void
+    public var gameImporter: any GameImporting
     
-    init(showDocumentPicker: @escaping () -> Void, dismissImportStatusView: @escaping () -> Void, gameImporter: any GameImporting) {
+    public init(showDocumentPicker: @escaping () -> Void, dismissImportStatusView: @escaping () -> Void, gameImporter: any GameImporting) {
         self.showDocumentPicker = showDocumentPicker
         self.dismissImportStatusView = dismissImportStatusView
         self.gameImporter = gameImporter
     }
     
     @MainActor
-    func dismissAction() {
+    public func dismissAction() {
         dismissImportStatusView()
     }
     
     @MainActor
-    func addImportsAction() {
+    public func addImportsAction() {
         // First dismiss the import status view
         dismissImportStatusView()
         
@@ -56,13 +56,13 @@ final class ImportStatusDelegateHelper: ImportStatusDelegate {
     }
     
     @MainActor
-    func forceImportsAction() {
+    public func forceImportsAction() {
         // Force the game importer to start processing
         gameImporter.startProcessing()
     }
     
     @MainActor
-    func didSelectSystem(_ system: SystemIdentifier, for item: ImportQueueItem) {
+    public func didSelectSystem(_ system: SystemIdentifier, for item: ImportQueueItem) {
         // For now, we'll just log this action since updateSystem is not available
         // We would need to implement this in the GameImporting protocol
         ILOG("Selected system \(system.rawValue) for import item \(item.id)")

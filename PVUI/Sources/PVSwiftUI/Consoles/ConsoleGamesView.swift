@@ -18,6 +18,7 @@ import PVRealm
 import PVSettings
 import Combine
 import RealmSwift
+import PVLibrary
 
 struct ConsoleGamesFilterModeFlags: OptionSet {
     let rawValue: Int
@@ -49,6 +50,12 @@ struct ConsoleGamesView: SwiftUI.View {
     @State internal var gameToUpdateCover: PVGame?
     @State internal var showingRenameAlert = false
     @State internal var gameToRename: PVGame?
+    
+    // Import status delegate helper
+    @State private var importStatusDelegate: ImportStatusDelegateHelper?
+    
+    // State for document picker presentation
+    @State private var isShowingDocumentPicker = false
     @State internal var newGameTitle = ""
     @FocusState internal var renameTitleFieldIsFocused: Bool
     @State internal var systemMoveState: SystemMoveState?
@@ -427,6 +434,21 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                 }
             )
+            // Import Status View
+            .fullScreenCover(isPresented: $gamesViewModel.showImportStatusView) {
+                ImportStatusView(
+                    updatesController: AppState.shared.libraryUpdatesController!,
+                    gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
+                    delegate: importStatusDelegate,
+                    dismissAction: {
+                        gamesViewModel.showImportStatusView = false
+                    }
+                )
+                .onAppear {
+                    // Setup the delegate when the view appears
+                    setupImportStatusDelegate()
+                }
+            }
             .task {
                 // Rescan specific system directory
                 let systemPath = Paths.biosesPath.appendingPathComponent(console.identifier)
@@ -792,6 +814,75 @@ struct ConsoleGamesView: SwiftUI.View {
                         GamesDividerView()
                     }
                 }
+            }
+        }
+    }
+}
+
+// MARK: - Import Methods
+extension ConsoleGamesView {
+    /// Initialize the import status delegate helper
+    private func setupImportStatusDelegate() {
+        if importStatusDelegate == nil {
+            self.importStatusDelegate = ImportStatusDelegateHelper(
+                showDocumentPicker: { self.showImportOptions() },
+                dismissImportStatusView: { gamesViewModel.showImportStatusView = false },
+                gameImporter: AppState.shared.gameImporter ?? GameImporter.shared
+            )
+        }
+    }
+    
+    /// Shows import options alert with document picker and web server options
+    private func showImportOptions() {
+        // For now, just show the document picker
+        // In the future, this could be expanded to show options like in RetroGameLibraryView
+        isShowingDocumentPicker = true
+    }
+    
+    private func importFiles(urls: [URL]) {
+        ILOG("ConsoleGamesView: Importing \(urls.count) files")
+        
+        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            ELOG("ConsoleGamesView: Could not access documents directory")
+            return
+        }
+        
+        let importsDirectory = documentsDirectory.appendingPathComponent("Imports", isDirectory: true)
+        
+        // Create Imports directory if it doesn't exist
+        do {
+            try FileManager.default.createDirectory(at: importsDirectory, withIntermediateDirectories: true)
+        } catch {
+            ELOG("ConsoleGamesView: Error creating Imports directory: \(error.localizedDescription)")
+            return
+        }
+        
+        var successCount = 0
+        var errorMessages = [String]()
+        
+        for url in urls {
+            let destinationURL = importsDirectory.appendingPathComponent(url.lastPathComponent)
+            
+            do {
+                // If file already exists, remove it first
+                if FileManager.default.fileExists(atPath: destinationURL.path) {
+                    try FileManager.default.removeItem(at: destinationURL)
+                }
+                
+                // Copy file to Imports directory
+                try FileManager.default.copyItem(at: url, to: destinationURL)
+                ILOG("ConsoleGamesView: Successfully copied \(url.lastPathComponent) to Imports directory")
+                successCount += 1
+            } catch {
+                ELOG("ConsoleGamesView: Error copying file \(url.lastPathComponent): \(error.localizedDescription)")
+                errorMessages.append("\(url.lastPathComponent): \(error.localizedDescription)")
+            }
+        }
+        
+        // Show import status view after importing files
+        if successCount > 0 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.gamesViewModel.showImportStatusView = true
             }
         }
     }
