@@ -18,8 +18,56 @@ import Combine
 import Dispatch
 import PVLibrary
 import Perception
+#if canImport(PVWebServer)
+import PVWebServer
+#endif
+#if canImport(SafariServices)
+import SafariServices
+#endif
 
 // ViewModel is defined in RetroGameLibraryViewModel.swift
+
+/// Helper class to implement ImportStatusDelegate for RetroGameLibraryView
+final class ImportStatusDelegateHelper: ImportStatusDelegate {
+    var showDocumentPicker: () -> Void
+    var dismissImportStatusView: () -> Void
+    var gameImporter: any GameImporting
+    
+    init(showDocumentPicker: @escaping () -> Void, dismissImportStatusView: @escaping () -> Void, gameImporter: any GameImporting) {
+        self.showDocumentPicker = showDocumentPicker
+        self.dismissImportStatusView = dismissImportStatusView
+        self.gameImporter = gameImporter
+    }
+    
+    @MainActor
+    func dismissAction() {
+        dismissImportStatusView()
+    }
+    
+    @MainActor
+    func addImportsAction() {
+        // First dismiss the import status view
+        dismissImportStatusView()
+        
+        // Then show the import options
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.showDocumentPicker()
+        }
+    }
+    
+    @MainActor
+    func forceImportsAction() {
+        // Force the game importer to start processing
+        gameImporter.startProcessing()
+    }
+    
+    @MainActor
+    func didSelectSystem(_ system: SystemIdentifier, for item: ImportQueueItem) {
+        // For now, we'll just log this action since updateSystem is not available
+        // We would need to implement this in the GameImporting protocol
+        ILOG("Selected system \(system.rawValue) for import item \(item.id)")
+    }
+}
 
 public struct RetroGameLibraryView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -28,6 +76,12 @@ public struct RetroGameLibraryView: View {
     
     // State for document picker presentation
     @State private var isShowingDocumentPicker = false
+    
+    // State for import options alert
+    @State private var showingImportOptionsAlert = false
+    
+    // Helper for ImportStatusDelegate
+    @State private var importStatusDelegate: ImportStatusDelegateHelper?
     
     // MARK: - ViewModel
     @StateObject private var viewModel = RetroGameLibraryViewModel()
@@ -50,8 +104,17 @@ public struct RetroGameLibraryView: View {
     // Focus state for rename field
     @FocusState internal var renameTitleFieldIsFocused: Bool
     
-    public init () {
-        
+    public init() {}
+    
+    /// Initialize the import status delegate helper
+    private func setupImportStatusDelegate() {
+        if importStatusDelegate == nil {
+            self.importStatusDelegate = ImportStatusDelegateHelper(
+                showDocumentPicker: { self.showImportOptions() },
+                dismissImportStatusView: { viewModel.showImportStatusView = false },
+                gameImporter: viewModel.gameImporter
+            )
+        }
     }
     
     // Create a computed binding that wraps the String as String?
@@ -96,6 +159,33 @@ public struct RetroGameLibraryView: View {
                         message: viewModel.importMessage ?? "",
                         isPresented: $viewModel.showingImportMessage) {
                 Button("OK", role: .cancel) {}
+            }
+            .retroAlert("Select Import Source",
+                       message: "Choose how you want to import files",
+                       isPresented: $showingImportOptionsAlert) {
+                VStack(spacing: 10) {
+                    RetroButton(title: "Files", isPrimary: true) {
+                        showingImportOptionsAlert = false
+                        // Use a slight delay to avoid SwiftUI sheet presentation issues
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            isShowingDocumentPicker = true
+                        }
+                    }
+                    
+                    #if canImport(PVWebServer)
+                    RetroButton(title: "Web Server", isPrimary: true) {
+                        showingImportOptionsAlert = false
+                        // Use a slight delay to avoid SwiftUI sheet presentation issues
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            startWebServer()
+                        }
+                    }
+                    #endif
+                    
+                    RetroButton(title: "Cancel", isPrimary: false) {
+                        showingImportOptionsAlert = false
+                    }
+                }
             }
         .onAppear {
             // Load expanded sections from AppStorage
@@ -312,7 +402,7 @@ public struct RetroGameLibraryView: View {
             
             // Import button
             Button(action: {
-                isShowingDocumentPicker = true
+                showImportOptions()
             }) {
                 HStack(spacing: 6) {
                     Image(systemName: "plus.square")
@@ -578,6 +668,38 @@ public struct RetroGameLibraryView: View {
     /// Function to refresh the import queue items
     // Import queue refresh is now handled by ImportProgressView
     
+    /// Shows import options alert with document picker and web server options
+    private func showImportOptions() {
+        showingImportOptionsAlert = true
+    }
+    
+    /// Starts the web server for importing files
+    private func startWebServer() {
+        #if canImport(PVWebServer)
+        // Start the web server
+        ILOG("RetroGameLibraryView: Starting web server for imports")
+        PVWebServer.shared.startServers()
+        
+        // Show the web server URL
+        if let serverURL = PVWebServer.shared.urlString {
+            // Open Safari with the web server URL
+            #if canImport(SafariServices)
+            if let url = URL(string: serverURL) {
+                let safariVC = SFSafariViewController(url: url)
+                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let rootViewController = windowScene.windows.first?.rootViewController {
+                    rootViewController.present(safariVC, animated: true)
+                }
+            }
+            #endif
+        } else {
+            // Show error message if server URL is not available
+            viewModel.importMessage = "Error: Could not start web server"
+            viewModel.showingImportMessage = true
+        }
+        #endif
+    }
+    
     private func importFiles(urls: [URL]) {
         ILOG("RetroGameLibraryView: Importing \(urls.count) files")
         
@@ -783,13 +905,20 @@ extension RetroGameLibraryView {
             ImportStatusView(
                 updatesController: AppState.shared.libraryUpdatesController!,
                 gameImporter: viewModel.gameImporter,
+                delegate: self.importStatusDelegate,
                 dismissAction: {
                     viewModel.showImportStatusView = false
                 }
             )
+            .onAppear {
+                // Setup the delegate when the view appears
+                setupImportStatusDelegate()
+            }
         }
     }
     // statusCountView has been moved to ImportProgressView
+    
+    // ImportStatusDelegate implementation moved to ImportStatusDelegateHelper class
     
     /// Custom search bar view
     private var searchBar: some View {
