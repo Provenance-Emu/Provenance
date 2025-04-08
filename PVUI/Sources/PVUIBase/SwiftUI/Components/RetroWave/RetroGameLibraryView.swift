@@ -290,21 +290,10 @@ public struct RetroGameLibraryView: View {
             Divider()
                 .padding(.horizontal)
             
-            // Import progress view section with fixed height to prevent layout shifts
-            VStack {
-                if !viewModel.importQueueItems.isEmpty {
-                    directImportProgressView(items: viewModel.importQueueItems)
-                        .padding(.horizontal)
-                        .padding(.vertical, 8)
-                        .fixedSize(horizontal: false, vertical: true) // Fix the height
-                } else {
-                    // Empty spacer with a fixed height when no items to prevent layout shifts
-                    Color.clear.frame(height: 10)
-                }
-            }
-            // Disable animations on this section to prevent flickering
-            .animation(nil, value: viewModel.importQueueItems.count)
-            .animation(nil, value: viewModel.importQueueUpdateID)
+            // Import progress view - now using the improved ImportProgressView
+            importProgressView()
+                .padding(.horizontal)
+                .padding(.vertical, 8)
             
             // Games organized by system
             libraryScrollView()
@@ -783,137 +772,24 @@ extension RetroGameLibraryView {
     /// Import progress view with retrowave styling
     @ViewBuilder
     private func importProgressView() -> some View {
-        // Use the direct implementation instead of ImportProgressView
-        directImportProgressView(items: viewModel.importQueueItems)
-            .sheet(isPresented: $viewModel.showImportStatusView) {
-                ImportStatusView(
-                    updatesController: AppState.shared.libraryUpdatesController!,
-                    gameImporter: viewModel.gameImporter,
-                    dismissAction: {
-                        viewModel.showImportStatusView = false
-                    }
-                )
+        ImportProgressView(
+            gameImporter: viewModel.gameImporter,
+            updatesController: AppState.shared.libraryUpdatesController!,
+            onTap: {
+                viewModel.showImportStatusView = true
             }
-    }
-    
-    /// Direct implementation of ImportProgressView content
-    @ViewBuilder
-    private func directImportProgressView(items: [ImportQueueItem]) -> some View {
-        /// A direct copy of the ImportProgressView that doesn't use animations or transitions
-        VStack(alignment: .leading, spacing: 6) {
-            // Header with count of imports
-            HStack {
-                Text("IMPORTING \(items.count) FILES")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(.retroBlue)
-                
-                Spacer()
-                
-                // Show processing status if any item is processing
-                if items.contains(where: { $0.status == .processing }) {
-                    Text("PROCESSING")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(.retroPink)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 2)
-                        .background(
-                            RoundedRectangle(cornerRadius: 4)
-                                .fill(Color.retroBlack.opacity(0.7))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .strokeBorder(Color.retroPink, lineWidth: 1)
-                                )
-                        )
-                }
-            }
-            
-            // Progress bar with retrowave styling
-            ZStack(alignment: .leading) {
-                // Background track
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(Color.retroBlack.opacity(0.7))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .strokeBorder(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                ),
-                                lineWidth: 1.5
-                            )
-                    )
-                    .frame(height: 12)
-                
-                // Progress fill - count both completed and failed items for progress
-                let processedCount = items.filter { $0.status == .success || $0.status == .failure }.count
-                let progress = items.isEmpty ? 0.0 : Double(processedCount) / Double(items.count)
-                
-                // Create a GeometryReader to get the actual width of the container
-                GeometryReader { geometry in
-                    LinearGradient(
-                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                    // Calculate width as a percentage of the available width
-                    // Use max to ensure a minimum visible width
-                    .frame(width: max(12, progress * geometry.size.width), height: 8)
-                    .cornerRadius(4)
-                    .padding(2)
-                }
-                // Set a fixed height for the GeometryReader
-                .frame(height: 12)
-            }
-            
-            // Status details
-            HStack(spacing: 12) {
-                statusCountView(count: items.filter { $0.status == .queued }.count, label: "QUEUED", color: .gray)
-                statusCountView(count: items.filter { $0.status == .processing }.count, label: "PROCESSING", color: .retroBlue)
-                statusCountView(count: items.filter { $0.status == .success }.count, label: "COMPLETED", color: .retroYellow)
-                statusCountView(count: items.filter { $0.status == .failure }.count, label: "FAILED", color: .retroPink)
-                
-                Spacer()
-            }
-        }
-        .padding(12)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.retroBlack.opacity(0.7))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ),
-                            lineWidth: 1.5
-                        )
-                )
         )
-        .shadow(color: Color.retroPink.opacity(0.3), radius: 5, x: 0, y: 0)
-        .onTapGesture {
-            // Show the import status view when tapped
-            viewModel.showImportStatusView = true
+        .sheet(isPresented: $viewModel.showImportStatusView) {
+            ImportStatusView(
+                updatesController: AppState.shared.libraryUpdatesController!,
+                gameImporter: viewModel.gameImporter,
+                dismissAction: {
+                    viewModel.showImportStatusView = false
+                }
+            )
         }
     }
-    
-    /// Helper view for status counts - exact copy from ImportProgressView
-    @ViewBuilder
-    private func statusCountView(count: Int, label: String, color: Color) -> some View {
-        if count > 0 {
-            HStack(spacing: 4) {
-                Text("\(count)")
-                    .font(.system(size: 10, weight: .bold))
-                    .foregroundColor(color)
-                
-                Text(label)
-                    .font(.system(size: 8, weight: .bold))
-                    .foregroundColor(color.opacity(0.7))
-            }
-        }
-    }
+    // statusCountView has been moved to ImportProgressView
     
     /// Custom search bar view
     private var searchBar: some View {

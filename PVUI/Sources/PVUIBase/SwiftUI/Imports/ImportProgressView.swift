@@ -50,20 +50,22 @@ public struct ImportProgressView: View {
     
     // MARK: - Body
     
-    public var body: some View {        
-        // Always show the view when there are items
-        Group {
+    public var body: some View {
+        // Fixed height approach to prevent flickering
+        VStack {
             if !importQueueItems.isEmpty {
                 contentView
                     .onTapGesture {
                         onTap?()
                     }
-                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .fixedSize(horizontal: false, vertical: true) // Fix the height to prevent layout shifts
             } else {
-                // Empty view when no items
-                EmptyView()
+                // Empty spacer with a fixed height when no items to prevent layout shifts
+                Color.clear.frame(height: 10)
             }
         }
+        // Disable animations on this section to prevent flickering
+        .animation(nil, value: importQueueItems.count)
         .onAppear {
             ILOG("ImportProgressView: View appeared")
             // Start a timer to refresh the queue status
