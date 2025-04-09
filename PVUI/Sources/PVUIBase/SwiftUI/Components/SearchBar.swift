@@ -29,8 +29,21 @@ public class SearchBar: NSObject, ObservableObject {
     #else
     public required init(searchResultsController: UIViewController? = nil) {
         searchController = UISearchController(searchResultsController: searchResultsController)
-        searchController.searchBar.searchTextField.textColor = ThemeManager.shared.currentPalette.menuHeaderText
-//        searchController.searchBar.searchTextField.defaultTextAttributes = [.foregroundColor: ThemeManager.shared.currentPalette.menuHeaderText]
+        
+        // Apply retrowave styling to UIKit search bar
+        let searchBar = searchController.searchBar
+        searchBar.searchTextField.textColor = UIColor(RetroTheme.retroBlue)
+        searchBar.searchTextField.tintColor = UIColor(RetroTheme.retroPink)
+        
+        // Style the search text field
+        if let textField = searchBar.value(forKey: "searchField") as? UITextField {
+            textField.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+            textField.layer.cornerRadius = 10
+            textField.layer.borderWidth = 1.5
+            
+            // Create gradient border - note this is simplified as UIKit doesn't support gradients as easily
+            textField.layer.borderColor = UIColor(RetroTheme.retroPurple).cgColor
+        }
 
         super.init()
 
@@ -82,6 +95,8 @@ public extension SwiftUI.View {
 
 public struct PVSearchBar: View {
     @Binding public var text: String
+    @State private var isSearching: Bool = false
+    @ObservedObject private var themeManager = ThemeManager.shared
     
     public init(text: Binding<String>) {
         _text = text
@@ -89,24 +104,50 @@ public struct PVSearchBar: View {
     
     public var body: some View {
         HStack {
-            TextField("Search", text: $text)
-                .padding(8)
-            #if !os(tvOS)
-                .background(Color(.systemGray6))
-            #endif
-                .cornerRadius(8)
-                .padding(.horizontal, 8)
-
-            if !text.isEmpty {
-                Button(action: {
-                    text = ""
-                }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.gray)
+            HStack {
+                // Magnifying glass icon with animation
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(isSearching ? RetroTheme.retroPink : Color.gray)
+                    .animation(.easeInOut(duration: 0.2), value: isSearching)
+                
+                // Search text field
+                TextField("SEARCH", text: $text, onEditingChanged: { editing in
+                    withAnimation {
+                        isSearching = editing
+                    }
+                })
+                .foregroundColor(RetroTheme.retroBlue)
+                .font(.system(size: 14, weight: .medium))
+                
+                // Clear button
+                if !text.isEmpty {
+                    Button(action: {
+                        text = ""
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(RetroTheme.retroPurple.opacity(0.8))
+                    }
                 }
-                .padding(.trailing, 8)
             }
+            .padding(10)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.retroBlack.opacity(0.7))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .strokeBorder(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 1.5
+                            )
+                    )
+            )
+            .shadow(color: RetroTheme.retroBlue.opacity(0.5), radius: 3, x: 0, y: 0)
         }
         .padding(.vertical, 8)
+        .padding(.horizontal, 8)
     }
 }
