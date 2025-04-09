@@ -68,7 +68,7 @@ struct BiosesView: View {
             )
             // Neon border with gradient
             .overlay(
-                RoundedRectangle(cornerRadius: 0)
+                RoundedRectangle(cornerRadius: 12)
                     .strokeBorder(
                         LinearGradient(
                             gradient: Gradient(colors: [
@@ -194,73 +194,6 @@ struct BiosesView: View {
         return CGFloat(console.bioses.count) * rowHeight +
                CGFloat(console.bioses.count + 1) * dividerHeight +
                padding
-    }
-}
-
-// MARK: - Supporting Views
-
-/// Retrowave-styled divider
-struct RetroDividerView: View {
-    @ObservedObject private var themeManager = ThemeManager.shared
-    
-    var body: some View {
-        Rectangle()
-            .fill(
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color.clear,
-                        themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
-                        Color.clear
-                    ]),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
-            .frame(height: 1)
-            .opacity(0.7)
-    }
-}
-
-/// Pulse animation modifier for retrowave effect
-struct PulseAnimation: ViewModifier {
-    let isExpanded: Bool
-    @State private var isPulsing = false
-    
-    func body(content: Content) -> some View {
-        content
-            .scaleEffect(isPulsing ? 1.02 : 1.0)
-            .onAppear {
-                // Only animate when not expanded
-                if !isExpanded {
-                    withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                        isPulsing = true
-                    }
-                }
-            }
-            .onChange(of: isExpanded) { newValue in
-                // Stop animation when expanded
-                if newValue {
-                    isPulsing = false
-                } else {
-                    withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                        isPulsing = true
-                    }
-                }
-            }
-    }
-}
-
-/// Hover effect modifier for retrowave rows
-struct HoverEffect: ViewModifier {
-    @State private var isHovered = false
-    
-    func body(content: Content) -> some View {
-        content
-            .background(isHovered ? Color.white.opacity(0.05) : Color.clear)
-            .animation(.easeInOut(duration: 0.2), value: isHovered)
-            .onHover { hovering in
-                isHovered = hovering
-            }
     }
 }
 
