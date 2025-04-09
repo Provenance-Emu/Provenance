@@ -207,7 +207,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                 ) {
                     ScrollViewReader { proxy in
-                        LazyVStack(spacing: 20) {
+                        LazyVStack(spacing: 0) {
                             // Add search bar with visibility control
                             if games.count > 8 {
                                 PVSearchBar(text: $searchText)
@@ -218,6 +218,7 @@ struct ConsoleGamesView: SwiftUI.View {
                             
                             continueSection()
                                 .id("section_continues")
+                                .padding(.horizontal, 10)
                             favoritesSection()
                                 .id("section_favorites")
                                 .padding(.horizontal, 10)
@@ -845,7 +846,8 @@ extension ConsoleGamesView {
             toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }
         )
         .padding(.vertical, 12)
-        .padding(.horizontal, 12)
+        .padding(.top, 8)
+//        .padding(.horizontal, 12)
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.black.opacity(0.7))
@@ -861,9 +863,9 @@ extension ConsoleGamesView {
                         )
                 )
         )
-//        .shadow(color: RetroTheme.retroPurple.opacity(0.7), radius: 3, x: 0, y: 0)
+        .shadow(color: RetroTheme.retroPurple.opacity(0.2), radius: 3, x: 0, y: 0)
         .padding(.horizontal, 8)
-        .padding(.vertical, 8)
+//        .padding(.vertical, 8)
         .allowsHitTesting(true)
         .contentShape(Rectangle())
     }
