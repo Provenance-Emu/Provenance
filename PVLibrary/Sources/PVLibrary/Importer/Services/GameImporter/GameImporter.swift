@@ -39,7 +39,13 @@ public class SkinImporterInjector: SkinImporterServicing {
     public var service: (any SkinImporterServicing)?
     
     public func importSkin(from url: URL) async throws {
+//        if url.startAccessingSecurityScopedResource() {
         try await service?.importSkin(from: url)
+        if url.path(percentEncoded: false).contains("Imports") {
+            Task {
+                try await FileManager.default.removeItem(at: url)
+            }
+        }
     }
 }
 
