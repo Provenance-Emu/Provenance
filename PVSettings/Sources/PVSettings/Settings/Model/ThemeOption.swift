@@ -39,7 +39,7 @@ public struct ThemeOptionBridge: Defaults.Bridge, Sendable {
     }
 }
 
-public enum ThemeOption: Defaults.Serializable {
+public enum ThemeOption: Defaults.Serializable, Equatable, CustomStringConvertible {
     case standard(ThemeOptionsStandard)
     case cga(ThemeOptionsCGA)
     
@@ -55,6 +55,14 @@ public enum ThemeOption: Defaults.Serializable {
     public static var allCases: [ThemeOption] {
         return ThemeOptionsStandard.allCases.map { ThemeOption.standard($0) } +
                ThemeOptionsCGA.allCases.map { ThemeOption.cga($0) }
+    }
+    
+    public static func == (lhs: ThemeOption, rhs: ThemeOption) -> Bool {
+        switch (lhs, rhs) {
+        case (.standard(let l), .standard(let r)): return l == r
+        case (.cga(let l), .cga(let r)): return l == r
+        default: return false
+        }
     }
 }
 

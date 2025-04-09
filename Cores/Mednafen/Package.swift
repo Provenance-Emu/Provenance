@@ -53,7 +53,8 @@ let GCC_PREPROCESSOR_DEFINITIONS: [CSetting] = [
     .define("SIZEOF_SHORT", to: "2"),
     .define("SIZEOF_SIZE_T", to: "8"),
     .define("SIZEOF_VOID_P", to: "8"),
-    .define("__STDC_LIMIT_MACROS", to: "1")
+    .define("__STDC_LIMIT_MACROS", to: "1"),
+    .define("HAVE_POSIX_SOCKETS", to: "1"),
 ]
 
 let OTHER_CFLAGS: [CSetting] = [
@@ -140,7 +141,7 @@ let package = Package(
         .library(
             name: "PVCoreMednafen-Static",
             type: .static,
-            targets: ["MednafenGameCore"])
+            targets: ["MednafenGameCore"]),
     ],
     dependencies: [
         .package(path: "../../PVAudio"),
@@ -249,6 +250,7 @@ let package = Package(
                 "neogeopocket",
                 "megadrive",
                 "nes",
+                "net",
                 "pce",
                 "pcefast",
                 "pcfx",
@@ -541,6 +543,13 @@ let package = Package(
             sources: Sources.Video.map { "mednafen/src/video/\($0)" },
             cSettings: MEDNAFEN_C_SETTINGS
         ),
+        // MARK: --------- Net ------------ //
+        .target(
+            name: "net",
+            path: "Sources/mednafen/",
+            sources: Sources.Net.Server.map { "mednafen/src/net/\($0)" },
+            cSettings: MEDNAFEN_C_SETTINGS + Sources.Net.DEFINES
+        ),
         // MARK: --------- Tests ------------ //
         // MARK: --------- ====  ------------ //
 
@@ -556,6 +565,36 @@ let package = Package(
 //            dependencies: ["MednafenGameCoreC"],
 //            swiftSettings: [.interoperabilityMode(.Cxx)]
 //        )
+        // MARK: --------- MednafenServer ------------ //
+        // MARK: C Server
+        .target(
+            name: "mednafen-server",
+            path: "Sources/mednafen-server/",
+            sources: Sources.Server.map { "src/\($0)" },
+            cSettings: [
+                .headerSearchPath("include"),
+            ]
+        ),
+        // MARK: Bridge
+        .target(
+            name: "MednafenServerBridge",
+            path: "Sources/MednafenServerBridge",
+            sources: [
+                "MednafenServerBridge.c"
+            ],
+            cSettings: [
+                .headerSearchPath("include"),
+            ]
+        ),
+        // MARK: Swift Wrapper
+        .target(
+            name: "Server.swift",
+            dependencies: [
+                "mednafen-server",
+                "MednafenServerBridge"
+            ],
+            path: "Sources/Server.swift/"
+        ),
     ],
     swiftLanguageModes: [.v5, .v6],
     cLanguageStandard: .gnu99,
@@ -700,8 +739,6 @@ extension Sources {
         "minilzo/minilzo.c",
         "movie.cpp",
         "mthreading/MThreading_POSIX.cpp",
-        "net/Net.cpp",
-        "net/Net_POSIX.cpp",
         "netplay.cpp",
         "player.cpp",
         "qtrecord.cpp",
@@ -962,6 +999,12 @@ extension Sources {
     ]
     static let QuickLZ: [String] = ["quicklz.c"]
     static let SASPlay: [String] = ["sasplay.cpp"]
+    static let Server: [String] = [
+        "errno_holder.cpp",
+        "md5.cpp",
+        "mednafen-server.cpp",
+        "time64.cpp"
+    ]
     static let Saturn: [String] = [
         "ak93c45.cpp",
         "cart.cpp",
@@ -1252,6 +1295,18 @@ extension Sources {
         ]
         static let Video: [String] = [
             "huc6270/vdc.cpp",
+        ]
+    }
+}
+
+extension Sources {
+    enum Net {
+        static let Server: [String] = [
+            "Net.cpp",
+            "Net_POSIX.cpp"
+        ]
+        static let DEFINES: [CSetting] = [
+            .define("HAVE_POSIX_SOCKETS", to: "1"),
         ]
     }
 }

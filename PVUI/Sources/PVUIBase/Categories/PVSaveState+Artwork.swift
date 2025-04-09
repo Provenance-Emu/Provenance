@@ -13,7 +13,7 @@ public extension PVSaveState {
     /// Fetch the UI image for the save state
     /// This is a convenience method that uses the PVImageFile+Artwork extension
     /// - Returns: The image if available, nil otherwise
-    public func fetchUIImage() -> UIImage? {
+    func fetchUIImage() -> UIImage? {
         // If there's no image file, return nil
         guard let imageFile = image else {
             return nil
@@ -42,7 +42,7 @@ public extension PVSaveState {
     /// Fetch the UI image for the save state asynchronously
     /// This is a convenience method that uses the PVImageFile+Artwork extension
     /// - Returns: The image if available, nil otherwise
-    public func fetchUIImageAsync() async -> UIImage? {
+    func fetchUIImageAsync() async -> UIImage? {
         // If there's no image file, return nil
         guard let imageFile = image else {
             return nil

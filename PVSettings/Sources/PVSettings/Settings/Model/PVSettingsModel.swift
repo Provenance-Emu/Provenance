@@ -221,12 +221,45 @@ public extension Defaults.Keys {
     
     static let volume = Key<Float>("volume", default: 1.0)
     static let volumeHUD = Key<Bool>("volumeHUD", default: true)
+    static let audioVisulaizer = Key<Bool>("audioVisulaizer", default: true)
 
     static let monoAudio = Key<Bool>("monoAudio", default: false)
 
     static let audioLatency = Key<TimeInterval>("audioLatency", default: 10.0)
     
     static let respectMuteSwitch = Key<Bool>("respectMuteSwitch", default: true)
+}
+
+public enum MainUIMode: String, Codable, Equatable, UserDefaultsRepresentable, Defaults.Serializable, CaseIterable, CustomStringConvertible, Identifiable {
+    case paged = "Paged"
+    case singlePage = "Single Page"
+    case uikit = "UIKit"
+    
+    public var id: String {
+        rawValue
+    }
+
+    public var description: String {
+        switch self {
+        case .paged:
+            return "Paged (Default)"
+        case .singlePage:
+            return "Single Page (RetroWave)"
+        case .uikit:
+            return "UIKit (Legacy)"
+        }
+    }
+
+    public var subtitle: String {
+        switch self {
+        case .paged:
+            return "The default paged mode."
+        case .singlePage:
+            return "All consoles in a single page, reduced features."
+        case .uikit:
+            return "Original UIKit mode from 1.X/2.X (Legacy)"
+        }
+    }
 }
 
 // MARK: Beta Options
@@ -238,13 +271,13 @@ public extension Defaults.Keys {
 #endif
     static let autoJIT = Key<Bool>("autoJIT", default: false)
 #if os(tvOS)
-    static let useUIKit = Key<Bool>("useUIKit", default: true)
+    static let mainUIMode = Key<MainUIMode>("mainUIMode", default: .singlePage)
 #elseif os(macOS) || targetEnvironment(macCatalyst) || APP_STORE
-    static let useUIKit = Key<Bool>("useUIKit", default: false)
+    static let mainUIMode = Key<MainUIMode>("mainUIMode", default: .paged)
 #elseif os(visionOS)
-    static let useUIKit = Key<Bool>("useUIKit", default: false)
+    static let mainUIMode = Key<MainUIMode>("mainUIMode", default: .singlePage)
 #else
-    static let useUIKit = Key<Bool>("useUIKit", default:false)
+    static let mainUIMode = Key<MainUIMode>("mainUIMode", default: .paged)
 #endif
     static let iCloudSync = Key<Bool>("iCloudSync", default: false)
     static let unsupportedCores = Key<Bool>("unsupportedCores", default: false)

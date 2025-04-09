@@ -118,20 +118,30 @@ final class PVN64ControllerViewController: PVControllerViewController<PVN64Syste
             guard let button = $0 as? JSButton else {
                 return
             }
-            if button.titleLabel?.text == "A" {
+
+            switch button.titleLabel?.text?.lowercased() {
+            case "a":
                 button.buttonTag = .a
-            } else if button.titleLabel?.text == "B" {
+            case "b":
                 button.buttonTag = .b
-            } else if button.titleLabel?.text == "Z" {
+            case "z":
                 button.buttonTag = .z
-            } else if button.titleLabel?.text == "C▲" {
+            case "c▲":
                 button.buttonTag = .cUp
-            } else if button.titleLabel?.text == "C▼" {
+            case "c▼":
                 button.buttonTag = .cDown
-            } else if button.titleLabel?.text == "C◀" {
+            case "c◀":
                 button.buttonTag = .cLeft
-            } else if button.titleLabel?.text == "C▶" {
+            case "c▶":
                 button.buttonTag = .cRight
+            case "start":
+                button.buttonTag = .start
+            case "l":
+                button.buttonTag = .l
+            case "r":
+                button.buttonTag = .r
+            default:
+                break
             }
         }
 
@@ -141,7 +151,7 @@ final class PVN64ControllerViewController: PVControllerViewController<PVN64Syste
         startButton?.buttonTag = .start
     }
 
-    
+
     override func dPad(_ dPad: JSDPad, joystick value: JoystickValue) {
         var y:CGFloat = -CGFloat(value.y - 0.5) * 3
         var x:CGFloat = CGFloat(value.x - 0.5) * 3

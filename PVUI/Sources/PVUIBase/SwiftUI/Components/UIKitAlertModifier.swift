@@ -113,6 +113,10 @@ public struct UIKitAlertModifier: ViewModifier {
 
 // UIKit Alert wrapper as UIViewController
 struct UIKitAlertWrapper: UIViewControllerRepresentable {
+    // Use a class type to track presentation state
+    class AlertState {
+        var hasBeenPresented = false
+    }
     let title: String
     let message: String
     @Binding var isPresented: Bool
@@ -127,32 +131,59 @@ struct UIKitAlertWrapper: UIViewControllerRepresentable {
 
     @MainActor
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        guard isPresented else {
-            // Ensure any presented controller is dismissed
-            if uiViewController.presentedViewController != nil {
+        // Track if we've already presented an alert to avoid duplicate presentations
+        let alertAlreadyPresented = uiViewController.presentedViewController is TVAlertController
+        
+        // Store a reference to the presented alert controller for state tracking
+        let presentedAlert = alertAlreadyPresented ? uiViewController.presentedViewController as? TVAlertController : nil
+        
+        // Only handle presentation state changes
+        if isPresented && !alertAlreadyPresented {
+            DLOG("UIKitAlertModifier: Presenting alert with title: \(title ?? "nil")")
+            
+            // Create and present the alert
+            let alert = TVAlertController(title: title, message: message, preferredStyle: .alert)
+            
+            // Add text field if needed
+            if let textFieldConfig = textField {
+                alert.addTextField { textField in
+                    textField.text = self.textValue
+                    textFieldConfig(textField)
+                    textField.addTarget(
+                        context.coordinator,
+                        action: #selector(Coordinator.textFieldDidChange(_:)),
+                        for: .editingChanged
+                    )
+                }
+            }
+            
+            // Add buttons
+            buttons.forEach { alert.addAction($0) }
+            
+            // Set a completion handler to update the binding
+            // This should only be called when the alert is actually dismissed by user interaction
+            // or programmatically, not during view updates
+            alert.didDismiss = { [isPresented] in
+                DLOG("UIKitAlertModifier: Alert dismissed, updating isPresented state")
+                DispatchQueue.main.async {
+                    // Capture binding directly since we can't use weak self on a struct
+                    self.isPresented = false
+                }
+            }
+            
+            // Present the alert - use a slight delay to avoid conflicts with SwiftUI view updates
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                if uiViewController.presentedViewController == nil {
+                    uiViewController.present(alert, animated: true)
+                }
+            }
+        } else if !isPresented && alertAlreadyPresented {
+            // Only dismiss if our alert is being presented and isPresented is false
+            // and the alert was previously presented by user interaction
+            if let presentedAlert = presentedAlert, presentedAlert.presentingViewController != nil {
+                DLOG("UIKitAlertModifier: Dismissing alert programmatically")
                 uiViewController.dismiss(animated: true)
             }
-            return
-        }
-
-        let alert = TVAlertController(title: title, message: message, preferredStyle: .alert)
-
-        if let textFieldConfig = textField {
-            alert.addTextField { textField in
-                textField.text = self.textValue
-                textFieldConfig(textField)
-                textField.addTarget(
-                    context.coordinator,
-                    action: #selector(Coordinator.textFieldDidChange(_:)),
-                    for: .editingChanged
-                )
-            }
-        }
-
-        buttons.forEach { alert.addAction($0) }
-
-        if uiViewController.presentedViewController == nil {
-            uiViewController.present(alert, animated: true)
         }
     }
 

@@ -15,7 +15,7 @@ import PVLogging
 import PVSettings
 import PVThemes
 
-enum JSDPadDirection: Int, CaseIterable {
+public enum JSDPadDirection: Int, CaseIterable {
     case upLeft = 1
     case up
     case upRight
@@ -27,17 +27,17 @@ enum JSDPadDirection: Int, CaseIterable {
     case downRight
 }
 
-typealias JoystickValue = (x: Float, y: Float)
+public typealias JoystickValue = (x: Float, y: Float)
 
-protocol JSDPadDelegate: AnyObject {
+public protocol JSDPadDelegate: AnyObject {
     func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection)
     func dPad(_ dPad: JSDPad, joystick value: JoystickValue)
     func dPad(_ dPad: JSDPad, joystick2 value: JoystickValue)
     func dPad(_ dPad: JSDPad, didRelease direction: JSDPadDirection)
 }
 
-final class JSDPad: MovableButtonView {
-    enum PadType {
+public final class JSDPad: MovableButtonView {
+    public enum PadType {
         case dpad1
         case dpad2
         case joystick1
@@ -143,12 +143,12 @@ final class JSDPad: MovableButtonView {
         isUserInteractionEnabled = enabled
     }
 
-    override var tintColor: UIColor? {
+    public override var tintColor: UIColor? {
         didSet {
             if Defaults[.buttonTints] {
                 dPadImageView.tintColor = tintColor
             } else {
-                dPadImageView.tintColor = ThemeManager.shared.currentPalette.defaultTintColor ?? UIColor.white
+                dPadImageView.tintColor = ThemeManager.shared.currentPalette.defaultTintColor
             }
         }
     }
@@ -216,7 +216,7 @@ final class JSDPad: MovableButtonView {
         return image
     }
 
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 		if inMoveMode || !isUserInteractionEnabled {
 			super.touchesBegan(touches, with: event)
 			return
@@ -255,7 +255,7 @@ final class JSDPad: MovableButtonView {
         }
     }
 
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+    public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
 		if inMoveMode || !isUserInteractionEnabled {
 			super.touchesMoved(touches, with: event)
 			return
@@ -279,7 +279,7 @@ final class JSDPad: MovableButtonView {
         }
     }
 
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+    public override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
 		if inMoveMode || !isUserInteractionEnabled {
 			super.touchesCancelled(touches, with: event)
 			return
@@ -300,7 +300,7 @@ final class JSDPad: MovableButtonView {
         }
     }
 
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
 		if inMoveMode || !isUserInteractionEnabled {
 			super.touchesEnded(touches, with: event)
 			return
@@ -321,7 +321,7 @@ final class JSDPad: MovableButtonView {
         }
     }
 
-    override func draw(_ rect: CGRect) {
+    public override func draw(_ rect: CGRect) {
         guard analogMode else {
             super.draw(rect)
             return

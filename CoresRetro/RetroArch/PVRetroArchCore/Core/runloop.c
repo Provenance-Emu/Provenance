@@ -7728,6 +7728,10 @@ void core_run(void)
    bool netplay_preframe       = netplay_driver_ctl(
          RARCH_NETPLAY_CTL_PRE_FRAME, NULL);
 
+    if (current_core == NULL) {
+        return;
+    }
+
    if (!netplay_preframe)
    {
       /* Paused due to netplay. We must poll and display something so that a
@@ -7742,7 +7746,7 @@ void core_run(void)
       input_driver_poll();
    else if (late_polling)
       current_core->flags &= ~RETRO_CORE_FLAG_INPUT_POLLED;
-
+    
    current_core->retro_run();
 
 #ifdef HAVE_GAME_AI

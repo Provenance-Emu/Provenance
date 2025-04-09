@@ -16,7 +16,7 @@ import PVPlists
 import PVRealm
 import PVSystems
 import PVFileSystem
-import MBProgressHUD
+import PVUIBase
 
 private let WIKI_BIOS_URL = "https://wiki.provenance-emu.com/installation-and-usage/bios-requirements"
 
@@ -294,10 +294,9 @@ extension GameLaunchingViewController where Self: UIViewController {
             return
         }
 
-        // Show loading HUD
-        let hud = MBProgressHUD.showAdded(to: self.view, animated: true)
-        hud.label.text = "Loading \(game.title)..."
-        hud.mode = .indeterminate
+        // Show retrowave-themed loading HUD
+        let hud = RetroProgressHUD.show(in: self.view, animated: true)
+        hud.setText("Loading \(game.title)...")
 
         defer {
             // Ensure HUD is hidden when function exits
@@ -456,9 +455,11 @@ extension GameLaunchingViewController where Self: UIViewController {
                     UIApplication.shared.open(URL(string: WIKI_BIOS_URL)!, options: [:], completionHandler: nil)
                 }
             })
-            displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [guideAction])
+            let cancelAction =  UIAlertAction(title: "Close", style: .destructive)
+            displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [guideAction, cancelAction])
 #else
-            displayAndLogError(withTitle: "Missing BIOS files", message: message)
+            let cancelAction =  UIAlertAction(title: "Close", style: .destructive)
+            displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [cancelAction])
 #endif
         } catch GameLaunchingError.systemNotFound {
             displayAndLogError(withTitle: "Core not found", message: "No Core was found to run system '\(system.name)'.")

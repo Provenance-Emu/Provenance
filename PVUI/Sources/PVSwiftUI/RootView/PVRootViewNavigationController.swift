@@ -59,11 +59,11 @@ public final class PVRootViewNavigationController: UINavigationController {
             backgroundColor = palette.gameLibraryBackground.withAlphaComponent(Constants.backgroundOpacity)
 
             // Update border with glow effect
-            borderLayer.strokeColor = palette.defaultTintColor?.cgColor
+            borderLayer.strokeColor = palette.defaultTintColor.cgColor
             borderLayer.lineWidth = Constants.borderWidth
 
             // Add subtle glow effect
-            layer.shadowColor = palette.defaultTintColor?.cgColor
+            layer.shadowColor = palette.defaultTintColor.cgColor
             layer.shadowOffset = .zero
             layer.shadowRadius = 2
             layer.shadowOpacity = 0.5

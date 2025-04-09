@@ -319,6 +319,11 @@ static void mednafen_init(MednafenGameCoreBridge* current)
     Mednafen::MDFNI_SetSetting("pcfx.slstart", "4"); // PCFX: First rendered scanline 4 default
     Mednafen::MDFNI_SetSetting("pcfx.slend", "235"); // PCFX: Last rendered scanline 235 default, 239max
     
+    // MARK: Lynx Settings
+    
+    Mednafen::MDFNI_SetSettingB("lynx.lowpass", true); // Low pass filter
+    Mednafen::MDFNI_SetSettingB("lynx.rotateinput", false); // Rotate dpad input
+
     // MARK: Cheats
     Mednafen::MDFNI_SetSetting("cheats", "1");       //
     
@@ -384,6 +389,17 @@ static void mednafen_init(MednafenGameCoreBridge* current)
         SNESMap[PVSNESButtonSelect]       = 2;
         SNESMap[PVSNESButtonStart]        = 3;
         
+        //  { 6, 7, 4, 5, 0, 1, 3, 2 };
+//        LynxMap[PVLynxButtonUp] = 6;
+//        LynxMap[PVLynxButtonDown] = 7;
+//        LynxMap[PVLynxButtonLeft] = 4;
+//        LynxMap[PVLynxButtonRight] = 5;
+//        LynxMap[PVLynxButtonA] = 0;
+//        LynxMap[PVLynxButtonB] = 1;
+//        LynxMap[PVLynxButtonOption1] = 3;
+//        LynxMap[PVLynxButtonOption2] = 2;
+//        LynxMap[PVLynxButtonPause] = 8;
+
         // NES Map
 //        NESMap[PVNESButtonUp]           = 4;
 //        NESMap[PVNESButtonDown]         = 5;
@@ -874,15 +890,17 @@ static void emulation_run(BOOL skipFrame) {
         //                return NO;
         //            }
         //        }
-    }
-    else if (self.systemType == MednaSystemGBA) {
+    } else if (self.systemType == MednaSystemLynx) {
+        // lynx sets all of these in 1 variable, so setting the one we use
+        game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
+    } else if (self.systemType == MednaSystemGBA) {
         // gba sets all of these in 1 variable, so setting the one we use
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
     } else {
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
         game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
-//        game.SetInput(2, "gamepad", (uint8_t *)inputBuffer[2]);
-//        game.SetInput(3, "gamepad", (uint8_t *)inputBuffer[3]);
+        game->SetInput(2, "gamepad", (uint8_t *)inputBuffer[2]);
+        game->SetInput(3, "gamepad", (uint8_t *)inputBuffer[3]);
     }
     
     if (multiDiscGame && ![path.pathExtension.lowercaseString isEqualToString:@"m3u"]) {

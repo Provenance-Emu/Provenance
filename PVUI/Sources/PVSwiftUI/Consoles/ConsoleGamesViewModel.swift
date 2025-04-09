@@ -22,6 +22,9 @@ class ConsoleGamesViewModel: ObservableObject {
     @Published var focusedItemInSection: String?
     @Published var showDiscSelectionAlert = false
     @Published var discSelectionAlert: DiscSelectionAlert?
+    
+    // Import status view properties
+    @Published var showImportStatusView = false
 
     init(console: PVSystem) {
         self.console = console

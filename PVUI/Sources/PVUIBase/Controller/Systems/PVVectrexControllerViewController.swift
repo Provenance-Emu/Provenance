@@ -26,14 +26,25 @@ final class PVVectrexControllerViewController: PVControllerViewController<PVVect
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
-            if title == "1" || title == "" {
+            switch title.lowercased() {
+            case "up", "analogup":
+                button.buttonTag = .analogUp
+            case "down", "analogdown":
+                button.buttonTag = .analogDown
+            case "left", "analogleft":
+                button.buttonTag = .analogLeft
+            case "right", "analogright":
+                button.buttonTag = .analogRight
+            case "1", "11":
                 button.buttonTag = .button1
-            } else if title == "2" {
+            case "2", "21":
                 button.buttonTag = .button2
-            } else if title == "3" {
+            case "3", "31":
                 button.buttonTag = .button3
-            } else if title == "4" {
+            case "4", "41":
                 button.buttonTag = .button4
+            default:
+                break
             }
         }
 

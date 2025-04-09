@@ -677,8 +677,13 @@ public struct DeltaSkin: DeltaSkinProtocol {
 
     /// CoreImage filter configuration
     public struct FilterInfo: Codable {
-        let name: String
-        let parameters: [String: FilterParameter]
+        public let name: String
+        public let parameters: [String: FilterParameter]
+        
+        public init(name: String, parameters: [String: FilterParameter]) {
+            self.name = name
+            self.parameters = parameters
+        }
 
         private enum CodingKeys: String, CodingKey {
             case name, parameters
@@ -728,6 +733,16 @@ public struct DeltaSkin: DeltaSkinProtocol {
 
         /// Frame for the game screen
         public let gameScreenFrame: CGRect?
+        
+        public init(assets: AssetRepresentation, mappingSize: CGSize = .zero, translucent: Bool? = nil, screens: [ScreenInfo]? = nil, items: [ItemRepresentation]? = nil, extendedEdges: UIEdgeInsets? = nil, gameScreenFrame: CGRect? = nil) {
+            self.assets = assets
+            self.mappingSize = mappingSize
+            self.translucent = translucent
+            self.screens = screens
+            self.items = items
+            self.extendedEdges = extendedEdges
+            self.gameScreenFrame = gameScreenFrame
+        }
     }
 
     public var jsonRepresentation: [String: Any] {

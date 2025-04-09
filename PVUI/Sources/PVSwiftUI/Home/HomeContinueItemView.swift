@@ -20,11 +20,16 @@ struct HomeContinueItemView: SwiftUI.View {
 
     @State private var showDeleteAlert = false
 
-    /// Constants for CRT effects
+    /// Constants for CRT and retrowave effects
     internal enum CRTEffects {
         // Scanline effects
         static let scanlineOpacity: CGFloat = 0.3
         static let lcdOpacity: CGFloat = 0.1
+        
+        // Retrowave effects
+        static let glowRadius: CGFloat = 4.0
+        static let glowOpacity: CGFloat = 0.7
+        static let borderWidth: CGFloat = 2.0
 
         // Image presentation
         static let zoomFactor: CGFloat = 1.15
@@ -58,10 +63,32 @@ struct HomeContinueItemView: SwiftUI.View {
                 }
                 .frame(height: height)
                 .clipShape(Rectangle())
+                // Retrowave-styled border with gradient and glow when focused
                 .overlay(
                     RoundedRectangle(cornerRadius: 4)
-                        .stroke(themeManager.currentPalette.gameLibraryText.swiftUIColor, lineWidth: isFocused ? 4 : 0)
+                        .strokeBorder(
+                            // Use AnyShapeStyle to handle different types
+                            isFocused ?
+                            // Gradient border when focused
+                            AnyShapeStyle(LinearGradient(
+                                gradient: Gradient(colors: [
+                                    themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
+                                    RetroTheme.retroPurple,
+                                    RetroTheme.retroBlue
+                                ]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )) :
+                            // No border when not focused
+                            AnyShapeStyle(Color.clear),
+                            lineWidth: isFocused ? CRTEffects.borderWidth : 0
+                        )
                 )
+                // Add glow effect when focused
+                .shadow(color: isFocused ? 
+                        (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(CRTEffects.glowOpacity) : 
+                        Color.clear, 
+                        radius: CRTEffects.glowRadius)
                 .scaleEffect(isFocused ? 1.05 : 1.0)
                 .brightness(isFocused ? 0.1 : 0)
                 .animation(.easeInOut(duration: 0.15), value: isFocused)
@@ -134,10 +161,23 @@ struct HomeContinueItemView: SwiftUI.View {
     }
 }
 
-/// Combined retro effects overlay
+/// Combined retro effects overlay with enhanced retrowave styling
 private struct RetroEffects: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
+    @State private var isAnimating = false
+    
     var body: some View {
         ZStack {
+            // Subtle color tint overlay for retrowave effect
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.1),
+                    RetroTheme.retroPurple.opacity(0.05)
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            
             // Scanlines
             GeometryReader { geometry in
                 Path { path in
@@ -159,6 +199,23 @@ private struct RetroEffects: View {
                 }
                 .stroke(.black.opacity(HomeContinueItemView.CRTEffects.lcdOpacity), lineWidth: 1)
             }
+            
+            // Subtle vignette effect
+            RadialGradient(
+                gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.3)]),
+                center: .center,
+                startRadius: 50,
+                endRadius: 150
+            )
+            
+            // Subtle flicker animation for CRT effect
+            Color.white.opacity(isAnimating ? 0.03 : 0.0)
+                .blendMode(.overlay)
+                .onAppear {
+                    withAnimation(Animation.easeInOut(duration: 0.2).repeatForever(autoreverses: true)) {
+                        isAnimating = true
+                    }
+                }
         }
         .allowsHitTesting(false)
     }

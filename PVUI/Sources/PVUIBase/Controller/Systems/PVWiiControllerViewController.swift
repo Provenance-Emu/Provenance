@@ -31,22 +31,25 @@ final class PVWiiControllerViewController: PVControllerViewController<PVWiiSyste
 			guard let button = $0 as? JSButton, let text = button.titleLabel.text else {
 				return
 			}
-			if text == "A" || text == "A" {
+			switch text.lowercased() {
+			case "a", "wii":
 				button.buttonTag = .wiiA
-			} else if text == "B" || text == "B" {
+			case "b", "wiib":
 				button.buttonTag = .wiiB
-			} else if text == "+" || text == "+" {
+			case "+", "wii+":
 				button.buttonTag = .wiiPlus
-			} else if text == "-" || text == "-" {
+			case "-", "wii-":
 				button.buttonTag = .wiiMinus
-			} else if text == "1" || text == "1" {
+			case "1", "wii1":
 				button.buttonTag = .wiiOne
-			} else if text == "2" || text == "2" {
+			case "2", "wii2":
 				button.buttonTag = .wiiTwo
-			} else if text == "C" || text == "C" {
+			case "c", "wii-c", "wiic":
 				button.buttonTag = .nunchukC
-			} else if text == "Z" || text == "Z" {
+			case "z", "wii-z", "wiiz":
 				button.buttonTag = .nunchukZ
+			default:
+				break
 			}
 		}
 	}
