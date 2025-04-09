@@ -158,9 +158,17 @@ struct ConsoleGamesView: SwiftUI.View {
 
     var body: some SwiftUI.View {
         GeometryReader { geometry in
-            VStack(spacing: 0) {
-                displayOptionsView()
-                    .allowsHitTesting(true)
+            ZStack {
+                // RetroWave background
+                RetroTheme.retroBackground
+                
+                // Grid overlay
+                RetroGrid(lineColor: themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                    .opacity(0.2)
+                
+                VStack(spacing: 0) {
+                    displayOptionsView()
+                        .allowsHitTesting(true)
                 
                 // Import Progress View
                 ImportProgressView(
@@ -172,17 +180,7 @@ struct ConsoleGamesView: SwiftUI.View {
                         }
                     }
                 )
-                    .contentShape(Rectangle())
-
-                // Add search bar with visibility control
-                if games.count > 8 {
-                    PVSearchBar(text: $searchText)
-                        .padding(.horizontal)
-                        .padding(.bottom, 8)
-                        .opacity(isSearchBarVisible ? 1 : 0)
-                        .frame(height: isSearchBarVisible ? nil : 0)
-                        .animation(.easeInOut(duration: 0.3), value: isSearchBarVisible)
-                }
+                .padding(.horizontal, 8)
 
                 ScrollViewWithOffset(
                     offsetChanged: { offset in
@@ -210,6 +208,14 @@ struct ConsoleGamesView: SwiftUI.View {
                 ) {
                     ScrollViewReader { proxy in
                         LazyVStack(spacing: 20) {
+                            // Add search bar with visibility control
+                            if games.count > 8 {
+                                PVSearchBar(text: $searchText)
+                                    .opacity(isSearchBarVisible ? 1 : 0)
+                                    .frame(height: isSearchBarVisible ? nil : 0)
+                                    .animation(.easeInOut(duration: 0.3), value: isSearchBarVisible)
+                            }
+                            
                             continueSection()
                                 .id("section_continues")
                             favoritesSection()
@@ -249,7 +255,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 /// Position BiosesView above the tab bar
                 if !console.bioses.isEmpty {
                     BiosesView(console: console)
-                        .padding(.horizontal, 0)
+                        .padding(.horizontal, 8)
                         .padding(.bottom, 66) // Account for tab bar height
                 } else {
                     // Empty paddview view
@@ -270,6 +276,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     gameToUpdateCover = nil
                 }
 #endif
+            }
             }
             .sheet(isPresented: $showArtworkSearch) {
                 ArtworkSearchView(
@@ -347,7 +354,9 @@ struct ConsoleGamesView: SwiftUI.View {
                     updatesController: AppState.shared.libraryUpdatesController!,
                     gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
                     dismissAction: {
-                        gamesViewModel.showImportStatusView = false
+                        withAnimation {
+                            gamesViewModel.showImportStatusView = false
+                        }
                     }
                 )
             }
@@ -533,6 +542,7 @@ struct ConsoleGamesView: SwiftUI.View {
         let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: itemsPerRow)
         return ScrollViewReader { proxy in
             LazyVGrid(columns: columns, spacing: 10) {
+                // Custom styling for grid items
                 ForEach(games.filter{!$0.isInvalidated}, id: \.self) { game in
                     GameItemView(
                         game: game,
@@ -775,8 +785,10 @@ struct ConsoleGamesView: SwiftUI.View {
             LazyVStack(spacing: 0) {
                 let results = filteredSearchResults()
                 if results.isEmpty {
-                    Text("No games found")
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    Text("NO GAMES FOUND")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(RetroTheme.retroBlue)
+                        .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 3, x: 0, y: 0)
                         .padding()
                 } else {
                     ForEach(results, id: \.self) { game in
@@ -832,8 +844,26 @@ extension ConsoleGamesView {
             toggleSortAction: { viewModel.sortGamesAscending.toggle() },
             toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }
         )
-        .padding(.top, 16)
-        .padding(.bottom, 16)
+        .padding(.vertical, 12)
+        .padding(.horizontal, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.black.opacity(0.7))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(
+                            LinearGradient(
+                                gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroPink]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                )
+        )
+//        .shadow(color: RetroTheme.retroPurple.opacity(0.7), radius: 3, x: 0, y: 0)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 8)
         .allowsHitTesting(true)
         .contentShape(Rectangle())
     }
@@ -854,6 +884,7 @@ extension ConsoleGamesView {
                         set: { gamesViewModel.focusedItemInSection = $0 }
                     )
                 )
+                .padding(.horizontal, 8)
                 HomeDividerView()
             }
         }
