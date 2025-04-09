@@ -145,6 +145,10 @@ struct HomeView: SwiftUI.View {
                         }
                     }
                 )
+//                .padding(.vertical, 6)
+//                .padding(.horizontal, 8)
+//                .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 3, x: 0, y: 0)
+//                .padding(.horizontal, 8)
 
                 ScrollViewWithOffset(
                     offsetChanged: { offset in
@@ -523,8 +527,26 @@ struct HomeView: SwiftUI.View {
             toggleSortAction: { viewModel.sortGamesAscending.toggle() },
             toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }
         )
-        .padding(.top, 16)
-        .padding(.bottom, 16)
+        .padding(.vertical, 12)
+        .padding(.horizontal, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.black.opacity(0.7))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(
+                            LinearGradient(
+                                gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroPink]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                )
+        )
+        .shadow(color: RetroTheme.retroPurple.opacity(0.7), radius: 3, x: 0, y: 0)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 8)
     }
 
     @ViewBuilder
@@ -1067,8 +1089,10 @@ struct HomeView: SwiftUI.View {
             LazyVStack(spacing: 0) {
                 let results = filteredSearchResults()
                 if results.isEmpty {
-                    Text("No games found")
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    Text("NO GAMES FOUND")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(RetroTheme.retroBlue)
+                        .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 3, x: 0, y: 0)
                         .padding()
                 } else {
                     ForEach(results, id: \.self) { game in
