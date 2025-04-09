@@ -234,7 +234,7 @@ private struct ContinuesFooterView: View {
             )
             .overlay(
                 // Top border glow
-                Rectangle()
+                RoundedRectangle(cornerRadius: 12)
                     .fill(
                         LinearGradient(
                             gradient: Gradient(colors: [
@@ -373,7 +373,7 @@ struct HomeContinueSection: SwiftUI.View {
     /// Constants for styling
     private enum Constants {
         static let cornerRadius: CGFloat = 16
-        static let borderWidth: CGFloat = 4
+        static let borderWidth: CGFloat = 1.5
         static let containerPadding: CGFloat = 16
     }
 
@@ -506,7 +506,7 @@ struct HomeContinueSection: SwiftUI.View {
             )
             // Neon border with gradient
             .overlay(
-                RoundedRectangle(cornerRadius: 0)
+                RoundedRectangle(cornerRadius: 12)
                     .strokeBorder(
                         LinearGradient(
                             gradient: Gradient(colors: [
