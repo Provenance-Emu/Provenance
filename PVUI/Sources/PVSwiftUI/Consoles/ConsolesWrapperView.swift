@@ -127,7 +127,12 @@ struct ConsolesWrapperView: SwiftUI.View {
     var body: some View {
         Group {
             // importStatusOverlayView
-
+            
+            // Add a glowing border line using glowColor
+            RetroDividerView()
+                .shadow(color: .retroPink, radius: 4, x: 0, y: 1)
+            
+            
             if consoles.isEmpty || (consoles.count == 1 && consoles.first!.identifier == SystemIdentifier.RetroArch.rawValue) {
                 noConsolesView
             } else {
@@ -156,6 +161,8 @@ struct ConsolesWrapperView: SwiftUI.View {
         .onDisappear {
             isVisible = false
         }
+        .ignoresSafeArea(edges: .all)
+        .padding(.top, 14)
     }
 
     // MARK: - Helper Methods
@@ -232,8 +239,8 @@ struct ConsolesWrapperView: SwiftUI.View {
                     showImportStatusView = true
                 }
             )
-            .padding(.horizontal)
-            .padding(.top, 8)
+//            .padding(.horizontal)
+//            .padding(.top, 8)
         }
         .sheet(isPresented: $showImportStatusView) {
             ImportStatusView(
