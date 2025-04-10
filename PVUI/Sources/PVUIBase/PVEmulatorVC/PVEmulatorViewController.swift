@@ -305,7 +305,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
         if let aView = controllerViewController?.view {
             view.addSubview(aView)
-            print("controllerViewController \(controllerViewController), core: \(core)")
+            ILOG("controllerViewController \(controllerViewController), core: \(core)")
             core.touchViewController = controllerViewController
         }
         controllerViewController?.didMove(toParent: self)
@@ -737,7 +737,18 @@ extension PVEmulatorViewController {
     /// Apply a skin to the emulator
     /// - Parameter skin: The skin to apply
     public func applySkin(_ skin: DeltaSkinProtocol) async throws {
-        print("Applying skin: \(skin.name)")
+        ILOG("Applying skin: \(skin.name)")
+        
+        // Log core dimensions before skin application
+        if let metalVC = gpuViewController as? PVMetalViewController {
+            ILOG("""
+                 Core dimensions before skin application:
+                 Buffer size: \(core.bufferSize)
+                 Screen rect: \(core.screenRect)
+                 GPU view frame: \(metalVC.view.frame)
+                 Orientation: \(currentOrientation)
+                 """)
+        }
 
         // Reset the current target frame to force recalculation for the new skin
         currentTargetFrame = nil
@@ -764,7 +775,7 @@ extension PVEmulatorViewController {
         }
 
         // Log the orientation we're using
-        print("Using orientation for skin application: \(self.currentOrientation)")
+        DLOG("Using orientation for skin application: \(self.currentOrientation)")
 
         // RADICAL APPROACH: Completely rebuild the view hierarchy
         await MainActor.run {
@@ -772,7 +783,7 @@ extension PVEmulatorViewController {
             radicalCleanup()
 
             // 2. Print the view hierarchy after cleanup to verify it's clean
-            print("View hierarchy after radical cleanup:")
+            ILOG("View hierarchy after radical cleanup:")
             printViewHierarchy(view, level: 0)
         }
 
@@ -805,9 +816,9 @@ extension PVEmulatorViewController {
             // 6. Position the game screen within the skin view at the correct position
             // IMPORTANT: Log the GPU view frame before repositioning
             if let gpuView = gpuViewController.view {
-                print("GPU view frame BEFORE repositioning: \(gpuView.frame)")
+                DLOG("GPU view frame BEFORE repositioning: \(gpuView.frame)")
             } else {
-                print("WARNING: GPU view is nil before repositioning!")
+                WLOG("WARNING: GPU view is nil before repositioning!")
             }
 
             // Force recalculation of screen position for the new skin
@@ -815,7 +826,7 @@ extension PVEmulatorViewController {
 
             // Log the GPU view frame after repositioning
             if let gpuView = gpuViewController.view {
-                print("GPU view frame AFTER repositioning: \(gpuView.frame)")
+                DLOG("GPU view frame AFTER repositioning: \(gpuView.frame)")
             }
 
             // Ensure proper z-order of all elements
@@ -826,7 +837,7 @@ extension PVEmulatorViewController {
             view.layoutIfNeeded()
 
             // 7. Print the final view hierarchy
-            print("View hierarchy after applying new skin:")
+            DLOG("View hierarchy after applying new skin:")
             printViewHierarchyRecursively(view, level: 0)
 
             // 8. Post notification that the skin has changed to trigger input handler reconnection
@@ -871,7 +882,7 @@ extension PVEmulatorViewController {
             orientation: currentOrientation == .landscape ? .landscape : .portrait
         )
 
-        print("Creating skin view with traits: \(traits)")
+        DLOG("Creating skin view with traits: \(traits)")
 
         // Create an input handler for the skin
         let inputHandler = DeltaSkinInputHandler(
@@ -894,7 +905,7 @@ extension PVEmulatorViewController {
             coreInstance: core,
             onSkinLoaded: {
                 // This is called when the skin is loaded
-                print("Skin loaded callback triggered")
+                DLOG("Skin loaded callback triggered")
 
                 // Force a redraw of the GPU view
                 if let metalVC = self.gpuViewController as? PVMetalViewController {
@@ -903,7 +914,7 @@ extension PVEmulatorViewController {
             },
             onRefreshRequested: {
                 // This is called when a refresh is needed
-                print("Refresh requested callback triggered")
+                DLOG("Refresh requested callback triggered")
 
                 // Force a redraw of the GPU view
                 if let metalVC = self.gpuViewController as? PVMetalViewController {
@@ -943,9 +954,19 @@ extension PVEmulatorViewController {
     private func repositionGameScreen(for skin: DeltaSkinProtocol, orientation: SkinOrientation, forceRecalculation: Bool = false) {
         // Get the GPU view
         guard let gpuView = gpuViewController.view else {
-            print("ERROR: Cannot position game screen - GPU view is nil")
+            ELOG("Cannot position game screen - GPU view is nil")
             return
         }
+        
+        // Log core dimensions before repositioning
+        ILOG("""
+             Core dimensions before repositioning game screen:
+             Buffer size: \(core.bufferSize)
+             Screen rect: \(core.screenRect)
+             GPU view frame: \(gpuView.frame)
+             Orientation: \(orientation)
+             Force recalculation: \(forceRecalculation)
+            """)
 
         // If we have a cached target frame and we're not forcing recalculation, use it
         if let targetFrame = currentTargetFrame, !forceRecalculation {
@@ -955,7 +976,7 @@ extension PVEmulatorViewController {
                abs(gpuView.frame.origin.x - targetFrame.origin.x) > 1 ||
                abs(gpuView.frame.origin.y - targetFrame.origin.y) > 1 {
 
-                print("Using cached target frame: \(targetFrame)")
+                DLOG("Using cached target frame: \(targetFrame)")
                 gpuView.frame = targetFrame
             }
             return
@@ -981,8 +1002,29 @@ extension PVEmulatorViewController {
             }
 
             // Apply the frame to the GPU view
-            print("Positioning GPU view at: \(absoluteFrame)")
+            ILOG("Positioning GPU view at: \(absoluteFrame)")
             gpuView.frame = absoluteFrame
+            
+            // Log core dimensions after repositioning
+            if let metalVC = gpuViewController as? PVMetalViewController {
+                // Force a refresh of the GPU view after repositioning
+                DispatchQueue.main.async {
+                    metalVC.safelyRefreshGPUView()
+                    
+                    // Log dimensions after refresh
+                    ILOG("""
+                         Core dimensions after repositioning game screen:
+                         Buffer size: \(self.core.bufferSize)
+                         Screen rect: \(self.core.screenRect)
+                         GPU view frame: \(gpuView.frame)
+                         Metal view drawable size: \(metalVC.mtlView.drawableSize)
+                         Orientation: \(orientation)
+                         """)
+                    
+                    // Dump texture info for debugging
+                    metalVC.dumpTextureInfo()
+                }
+            }
 
             // Make sure the GPU view is visible
             gpuView.isHidden = false
@@ -1021,7 +1063,7 @@ extension PVEmulatorViewController {
             }
 
             // Apply the frame to the GPU view
-            print("Using default positioning for GPU view: \(defaultFrame)")
+            DLOG("Using default positioning for GPU view: \(defaultFrame)")
             gpuView.frame = defaultFrame
 
             // Make sure the GPU view is visible
@@ -1032,11 +1074,11 @@ extension PVEmulatorViewController {
 
     /// Reconnect all input handlers to ensure they're properly linked after skin changes
     private func reconnectAllInputHandlers() {
-        print("Reconnecting all input handlers")
+        DLOG("Reconnecting all input handlers")
 
         // Update the shared input handler references
         if let inputHandler = sharedInputHandler {
-            print("Updating shared input handler references")
+            DLOG("Updating shared input handler references")
 
             // Re-link the core, controller, and emulator controller
             inputHandler.setEmulatorCore(core)
@@ -1049,7 +1091,7 @@ extension PVEmulatorViewController {
                 self?.showMenu(nil)
             }
 
-            print("✅ Successfully updated all input handler references")
+            DLOG("✅ Successfully updated all input handler references")
         }
 
         // Trigger input handler reconnect notification as well for belt and suspenders
@@ -1061,7 +1103,7 @@ extension PVEmulatorViewController {
 
     /// Reset to the default skin
     public func resetToDefaultSkin() async throws {
-        print("Resetting to default skin")
+        DLOG("Resetting to default skin")
 
         // Clean up any existing skin views and hosting controllers
         await MainActor.run {
@@ -1112,7 +1154,7 @@ extension PVEmulatorViewController {
 
     /// Perform a radical cleanup of the entire view hierarchy
     private func radicalCleanup() {
-        print("Performing RADICAL cleanup of view hierarchy")
+        DLOG("Performing RADICAL cleanup of view hierarchy")
 
         // 1. Save reference to essential views we need to keep
         let gpuView = gpuViewController.view
@@ -1120,7 +1162,7 @@ extension PVEmulatorViewController {
         // 2. Remove ALL child view controllers except the GPU controller
         for child in children {
             if child !== gpuViewController {
-                print("Removing controller: \(child)")
+                DLOG("Removing controller: \(child)")
                 child.willMove(toParent: nil)
                 child.view.removeFromSuperview()
                 child.removeFromParent()
@@ -1133,7 +1175,7 @@ extension PVEmulatorViewController {
         // 4. Remove ALL subviews from the main view except the GPU view
         for subview in view.subviews {
             if subview !== gpuView {
-                print("Removing view: \(subview)")
+                DLOG("Removing view: \(subview)")
                 subview.removeFromSuperview()
             }
         }
@@ -1147,7 +1189,7 @@ extension PVEmulatorViewController {
 
         // 6. Make sure the GPU view is still in the hierarchy
         if let gpuView = gpuView, gpuView.superview == nil {
-            print("Re-adding GPU view")
+            DLOG("Re-adding GPU view")
             view.addSubview(gpuView)
         }
 
@@ -1159,7 +1201,7 @@ extension PVEmulatorViewController {
     /// Debug helper to print the view hierarchy
     private func printViewHierarchy(_ view: UIView, level: Int) {
         let indent = String(repeating: "  ", count: level)
-        print("\(indent)\(view) (tag: \(view.tag))")
+        DLOG("\(indent)\(view) (tag: \(view.tag))")
         for subview in view.subviews {
             printViewHierarchy(subview, level: level + 1)
         }
@@ -1235,14 +1277,14 @@ extension PVEmulatorViewController {
 
     /// Debug print the current view hierarchy for troubleshooting
     private func debugPrintViewHierarchy() {
-        print("View hierarchy after applying new skin:")
+        DLOG("View hierarchy after applying new skin:")
         printViewHierarchyRecursively(view, level: 0)
     }
 
     /// Recursively print a view hierarchy for debugging
     private func printViewHierarchyRecursively(_ view: UIView, level: Int) {
         let indent = String(repeating: "  ", count: level)
-        print("\(indent)<\(type(of: view)): \(view); frame = \(view.frame); \(view.tag != 0 ? "tag = \(view.tag); " : "")backgroundColor = \(String(describing: view.backgroundColor)); layer = <\(type(of: view.layer)): \(view.layer)>> (tag: \(view.tag))")
+        DLOG("\(indent)<\(type(of: view)): \(view); frame = \(view.frame); \(view.tag != 0 ? "tag = \(view.tag); " : "")backgroundColor = \(String(describing: view.backgroundColor)); layer = <\(type(of: view.layer)): \(view.layer)>> (tag: \(view.tag))")
 
         for subview in view.subviews {
             printViewHierarchyRecursively(subview, level: level + 1)
@@ -1251,15 +1293,23 @@ extension PVEmulatorViewController {
 
     // Handle rotation and skin changes
     func handleOrientationChange(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        print("Handling orientation change to size: \(size)")
+        ILOG("Handling orientation change to size: \(size)")
 
         // Determine new orientation
         let newOrientation: SkinOrientation = size.width > size.height ? .landscape : .portrait
-        print("New orientation: \(newOrientation)")
+        
+        // Log core dimensions before orientation change
+        ILOG("""
+             Core dimensions before orientation change:
+             Buffer size: \(core.bufferSize)
+             Screen rect: \(core.screenRect)
+             New orientation: \(newOrientation)
+             """)
+        ILOG("New orientation: \(newOrientation)")
 
         // Only reload skin if orientation changed
         if newOrientation != currentOrientation {
-            print("Orientation changed from \(currentOrientation) to \(newOrientation)")
+            ILOG("Orientation changed from \(currentOrientation) to \(newOrientation)")
 
             // Update orientation first
             let oldOrientation = currentOrientation
@@ -1273,7 +1323,7 @@ extension PVEmulatorViewController {
                 // During animation phase, just reposition the game screen
                 // but don't change the skin yet to avoid visual glitches
                 if let skin = previousSkin {
-                    print("Repositioning game screen during animation")
+                    DLOG("Repositioning game screen during animation")
                     // Force recalculation during rotation to ensure proper positioning
                     self.repositionGameScreen(for: skin, orientation: newOrientation, forceRecalculation: true)
                 }
@@ -1281,7 +1331,7 @@ extension PVEmulatorViewController {
                 // After rotation animation completes, apply the appropriate skin
                 Task {
                     do {
-                        print("Rotation animation completed, applying appropriate skin")
+                        DLOG("Rotation animation completed, applying appropriate skin")
 
                         // Get the system and game IDs
                         guard let systemId = self.game.system?.systemIdentifier else { return }
@@ -1295,25 +1345,25 @@ extension PVEmulatorViewController {
                             orientation: newOrientation
                         )
 
-                        print("Effective skin identifier for new orientation: \(skinIdentifier ?? "nil")")
-                        print("Current skin identifier: \(self.currentSkin?.identifier ?? "nil")")
+                        DLOG("Effective skin identifier for new orientation: \(skinIdentifier ?? "nil")")
+                        DLOG("Current skin identifier: \(self.currentSkin?.identifier ?? "nil")")
 
                         // Determine if we need to change the skin
                         let needsSkinChange = skinIdentifier != nil &&
                             (self.currentSkin == nil || skinIdentifier != self.currentSkin?.identifier)
 
                         if needsSkinChange {
-                            print("Need to change skin for new orientation")
+                            DLOG("Need to change skin for new orientation")
                             if let skinId = skinIdentifier,
                                let skin = try? await DeltaSkinManager.shared.skin(withIdentifier: skinId) {
-                                print("Applying new skin: \(skin.name)")
+                                DLOG("Applying new skin: \(skin.name)")
                                 try await self.applySkin(skin)
                             } else {
-                                print("Falling back to default skin")
+                                DLOG("Falling back to default skin")
                                 try await self.resetToDefaultSkin()
                             }
                         } else if self.currentSkin != nil {
-                            print("Using existing skin, need to reapply for proper layout")
+                            DLOG("Using existing skin, need to reapply for proper layout")
                             // We need to do a complete reapplication to ensure proper traits
                             // This fixes issues with skins not drawing correctly after rotation
                             try await self.applySkin(self.currentSkin!)
@@ -1321,19 +1371,19 @@ extension PVEmulatorViewController {
                             // Ensure the game screen is properly positioned with the correct z-order
                             self.repositionGameScreen(for: self.currentSkin!, orientation: newOrientation, forceRecalculation: true)
                         } else {
-                            print("No skin at all, applying default")
+                            DLOG("No skin at all, applying default")
                             try await self.resetToDefaultSkin()
                         }
 
                         // Final check to ensure proper z-order after all changes
                         self.ensureProperZOrder()
                     } catch {
-                        print("Error handling orientation change: \(error)")
+                        DLOG("Error handling orientation change: \(error)")
                     }
                 }
             }
         } else {
-            print("Orientation didn't change, just repositioning")
+            ILOG("Orientation didn't change, just repositioning")
             // Even if orientation didn't change, we might need to reposition due to size changes
             if let skin = self.currentSkin {
                 self.repositionGameScreen(for: skin, orientation: newOrientation)
