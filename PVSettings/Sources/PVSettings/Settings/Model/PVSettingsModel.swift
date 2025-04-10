@@ -17,6 +17,29 @@ fileprivate var IsAppStore: Bool {
     Bundle.main.infoDictionary?["ALTDeviceID"] != nil
 }
 
+// Video
+public
+extension Defaults.Keys {
+#if os(iOS) || os(watchOS) || targetEnvironment(macCatalyst)
+    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: true)
+#else
+    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: true)
+#endif
+    static let imageSmoothing = Key<Bool>("imageSmoothing", default: false)
+
+    static let integerScaleEnabled = Key<Bool>("integerScaleEnabled", default: false)
+
+    static let showRecentSaveStates = Key<Bool>("showRecentSaveStates", default: true)
+    static let showGameBadges = Key<Bool>("showGameBadges", default: true)
+    
+    static let showRecentGames = Key<Bool>("showRecentGames", default: true)
+
+    static let showFPSCount = Key<Bool>("showFPSCount", default: false)
+    
+    static let vsyncEnabled = Key<Bool>("vsyncEnabled", default: true)
+
+}
+
 public
 extension Defaults.Keys {
     static let autoSave = Key<Bool>("autoSave", default: true)
@@ -33,21 +56,6 @@ extension Defaults.Keys {
 #endif
 
     static let buttonVibration = Key<Bool>("buttonVibration", default: true)
-#if os(iOS) || os(watchOS) || targetEnvironment(macCatalyst)
-    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: true)
-#else
-    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: true)
-#endif
-    static let imageSmoothing = Key<Bool>("imageSmoothing", default: false)
-
-    static let integerScaleEnabled = Key<Bool>("integerScaleEnabled", default: false)
-
-    static let showRecentSaveStates = Key<Bool>("showRecentSaveStates", default: true)
-    static let showGameBadges = Key<Bool>("showGameBadges", default: true)
-    
-    static let showRecentGames = Key<Bool>("showRecentGames", default: true)
-
-    static let showFPSCount = Key<Bool>("showFPSCount", default: false)
 
     static let showGameTitles = Key<Bool>("showGameTitles", default: true)
 
@@ -321,6 +329,11 @@ public final class PVSettingsWrapper: NSObject {
     public static var integerScaleEnabled: Bool {
         get { Defaults[.integerScaleEnabled] }
         set { Defaults[.integerScaleEnabled] = newValue }}
+    
+    @objc
+    public static var vsyncEnabled: Bool {
+        get { Defaults[.vsyncEnabled] }
+        set { Defaults[.vsyncEnabled] = newValue }}
 
     @objc
     public static var imageSmoothing: Bool {

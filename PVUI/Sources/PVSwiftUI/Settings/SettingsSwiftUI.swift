@@ -717,9 +717,15 @@ private struct VideoSection: View {
     @Default(.showFPSCount) var showFPSCount
     @Default(.nativeScaleEnabled) var nativeScaleEnabled
     @Default(.integerScaleEnabled) var integerScaleEnabled
+    @Default(.vsyncEnabled) var vsyncEnabled
 
     var body: some View {
         Section(header: Text("Video")) {
+            ThemedToggle(isOn: $vsyncEnabled) {
+                SettingsRow(title: "V-Sync",
+                            subtitle: "Synchronizes the rendering frame rate with the monitor refresh rate.",
+                            icon: vsyncEnabled ? .sfSymbol("tv.fill") : .sfSymbol("tv"))
+            }
             ThemedToggle(isOn: $multiThreadedGL) {
                 SettingsRow(title: "Multi-threaded Rendering",
                             subtitle: "Improves performance but may cause graphical glitches.",
