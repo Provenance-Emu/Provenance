@@ -82,6 +82,9 @@ let OTHER_CFLAGS: [CSetting] = [
         "-Wdisabled-optimization",
         "-fmodules",
         "-fvisibility=default",
+        "-mcpu=apple-a10",
+        "-mtune=apple-a12",
+        "-march=armv8-a+simd"
 //        "-fvisibility-inlines-hidden",
 //        "-fvisibility=hidden"
     ])]
