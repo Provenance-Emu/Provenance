@@ -64,11 +64,14 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     /// - Returns: The skin if found, or nil if not found
     public func skin(withIdentifier identifier: String) async throws -> DeltaSkinProtocol? {
         try await queue.asyncResult {
-            // Ensure skins are loaded
-            try self.scanForSkins()
-
             // Find the skin with the matching identifier
-            return self.loadedSkins.first { $0.identifier == identifier }
+            if let skin = self.loadedSkins.first { $0.identifier == identifier } {
+                return skin
+            } else {
+                // Ensure skins are loaded
+                try self.scanForSkins()
+                return self.loadedSkins.first { $0.identifier == identifier }
+            }
         }
     }
 
@@ -348,7 +351,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             try FileManager.default.copyItem(at: url, to: destinationURL)
 
             // Scan to reload all skins
-            try self.scanForSkins()
+            // try self.scanForSkins()
         }
     }
 
