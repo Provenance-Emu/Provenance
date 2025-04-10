@@ -540,16 +540,18 @@ static void emulation_run(BOOL skipFrame) {
     // Fix for game stutter. mednafenCoreTiming flutters on init before settling so
     // now we reset the game speed each frame to make sure current.gameInterval
     // is up to date while respecting the current game speed setting
-    [current setGameSpeed:[current gameSpeed]];
+    if(!skipFrame) {
+        [current setGameSpeed:[current gameSpeed]];
+    }
     
     current->videoOffsetX = current->spec.DisplayRect.x;
     current->videoOffsetY = current->spec.DisplayRect.y;
-    if(game->multires || current.systemType == MednaSystemPSX) {
-        current->videoWidth = rects[current->spec.DisplayRect.y];
-    }
-    else {
+//    if(game->multires || current.systemType == MednaSystemPSX) {
+//        current->videoWidth = rects[current->spec.DisplayRect.y];
+//    }
+//    else {
         current->videoWidth = current->spec.DisplayRect.w ?: rects[current->spec.DisplayRect.y];
-    }
+//    }
     current->videoHeight  = current->spec.DisplayRect.h;
     
     update_audio_batch(current->spec.SoundBuf, current->spec.SoundBufSize);
