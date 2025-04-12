@@ -161,6 +161,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 if newValue == true {
                     if (!core.skipLayout) {
                         core.setPauseEmulation(true)
+//                        gpuViewController.isPaused = true
                     }
                 }
                 core.setPauseEmulation(newValue)
@@ -171,7 +172,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 if isShowingMenu == false {
                     if (!core.skipLayout) {
                         core.setPauseEmulation(false)
-
+//                        gpuViewController.isPaused = false
                         if let metalVC = gpuViewController as? PVMetalViewController {
 //                            metalVC.safelyRefreshGPUView()
                         }
