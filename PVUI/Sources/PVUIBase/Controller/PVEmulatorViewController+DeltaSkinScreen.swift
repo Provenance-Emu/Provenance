@@ -63,9 +63,9 @@ extension PVEmulatorViewController {
                         }
                         
                         // IMPORTANT: Force position with a hardcoded frame as a last resort
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                            self?.forceGPUViewPosition()
-                        }
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+//                            self?.forceGPUViewPosition()
+//                        }
                     }
                 } else {
                     DLOG("No skin found for \(systemId), using default GPU view position")
@@ -74,9 +74,9 @@ extension PVEmulatorViewController {
                         resetGPUViewPosition()
                         
                         // IMPORTANT: Force position with a hardcoded frame as a last resort
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                            self?.forceGPUViewPosition()
-                        }
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+//                            self?.forceGPUViewPosition()
+//                        }
                     }
                 }
             } catch {
@@ -86,24 +86,24 @@ extension PVEmulatorViewController {
                     resetGPUViewPosition()
                     
                     // IMPORTANT: Force position with a hardcoded frame as a last resort
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                        self?.forceGPUViewPosition()
-                    }
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+//                        self?.forceGPUViewPosition()
+//                    }
                 }
             }
         }
         
         // Also schedule delayed positioning attempts to catch any race conditions
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-            self?.tryPositionGPUView()
-        }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
-            self?.tryPositionGPUView()
-            
-            // IMPORTANT: Force position with a hardcoded frame as a final attempt
-            self?.forceGPUViewPosition()
-        }
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+//            self?.tryPositionGPUView()
+//        }
+//        
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+//            self?.tryPositionGPUView()
+//            
+//            // IMPORTANT: Force position with a hardcoded frame as a final attempt
+//            self?.forceGPUViewPosition()
+//        }
     }
     
     /// Calculate screen height based on width and aspect ratio
@@ -121,7 +121,7 @@ extension PVEmulatorViewController {
     @objc private func handleColorBarsFrameUpdated(_ notification: Notification) {
         guard let userInfo = notification.userInfo,
               let frameValue = userInfo["frame"] as? NSValue else {
-            print("🔴 Invalid notification data for color bars frame")
+            DLOG("🔴 Invalid notification data for color bars frame")
             return
         }
         
@@ -132,27 +132,27 @@ extension PVEmulatorViewController {
         currentTargetFrame = colorBarsFrame
         
         // Log all the information we received
-        print("🔴 Received color bars frame notification:")
-        print("🔴   Frame: \(colorBarsFrame)")
+        DLOG("🔴 Received color bars frame notification:")
+        DLOG("🔴   Frame: \(colorBarsFrame)")
         
         if let outputFrameValue = userInfo["outputFrame"] as? NSValue {
-            print("🔴   Original outputFrame: \(outputFrameValue.cgRectValue)")
+            DLOG("🔴   Original outputFrame: \(outputFrameValue.cgRectValue)")
         }
         
         if let mappingSizeValue = userInfo["mappingSize"] as? NSValue {
-            print("🔴   Mapping Size: \(mappingSizeValue.cgSizeValue)")
+            DLOG("🔴   Mapping Size: \(mappingSizeValue.cgSizeValue)")
         }
         
         if let scale = userInfo["scale"] as? CGFloat {
-            print("🔴   Scale: \(scale)")
+            DLOG("🔴   Scale: \(scale)")
         }
         
         if let offsetValue = userInfo["offset"] as? NSValue {
-            print("🔴   Offset: \(offsetValue.cgPointValue)")
+            DLOG("🔴   Offset: \(offsetValue.cgPointValue)")
         }
         
         if let screenId = userInfo["screenId"] as? String {
-            print("🔴   Screen ID: \(screenId)")
+            DLOG("🔴   Screen ID: \(screenId)")
         }
         
         // Apply the exact same frame to the GPU view
@@ -244,10 +244,10 @@ extension PVEmulatorViewController {
                     )
                     
                     // DEBUG: Print the exact frame being used for GPU view
-                    print("GPU VIEW FRAME: \(finalFrame) for screen \(firstScreen.id)")
-                    print("  Original OutputFrame: \(outputFrame)")
-                    print("  MappingSize: \(mappingSize), Scale: \(scale), Offset: \(offset)")
-                    print("  View Bounds: \(view.bounds)")
+                    DLOG("GPU VIEW FRAME: \(finalFrame) for screen \(firstScreen.id)")
+                    DLOG("  Original OutputFrame: \(outputFrame)")
+                    DLOG("  MappingSize: \(mappingSize), Scale: \(scale), Offset: \(offset)")
+                    DLOG("  View Bounds: \(view.bounds)")
                     
                     DLOG("Positioning GPU view using explicit screen: \(finalFrame)")
                     applyFrame(finalFrame, to: gameScreenView)
@@ -436,12 +436,12 @@ extension PVEmulatorViewController {
         let screenX = (viewSize.width - screenWidth) / 2
         let screenY = (availableSpace - screenHeight) / 2
         
-        print("🔴 Calculated frame without explicit position:")
-        print("🔴   View size: \(viewSize)")
-        print("🔴   Layout dimensions: width=\(layoutWidth), height=\(layoutHeight)")
-        print("🔴   Top button Y: \(topButton.frame.minY), Scaled: \(skinTopY)")
-        print("🔴   Available space: \(availableSpace)")
-        print("🔴   Screen dimensions: width=\(screenWidth), height=\(screenHeight), x=\(screenX), y=\(screenY)")
+        DLOG("🔴 Calculated frame without explicit position:")
+        DLOG("🔴   View size: \(viewSize)")
+        DLOG("🔴   Layout dimensions: width=\(layoutWidth), height=\(layoutHeight)")
+        DLOG("🔴   Top button Y: \(topButton.frame.minY), Scaled: \(skinTopY)")
+        DLOG("🔴   Available space: \(availableSpace)")
+        DLOG("🔴   Screen dimensions: width=\(screenWidth), height=\(screenHeight), x=\(screenX), y=\(screenY)")
         
         return CGRect(x: screenX, y: screenY, width: screenWidth, height: screenHeight)
     }
@@ -458,11 +458,11 @@ extension PVEmulatorViewController {
         """)
         
         // DEBUG: Print current transform and constraints
-        print("GPU VIEW BEFORE POSITIONING:")
-        print("  Current frame: \(gameScreenView.frame)")
-        print("  Transform: \(gameScreenView.transform)")
-        print("  AutoresizingMask: \(gameScreenView.autoresizingMask.rawValue)")
-        print("  ContentMode: \(gameScreenView.contentMode.rawValue)")
+        DLOG("GPU VIEW BEFORE POSITIONING:")
+        DLOG("  Current frame: \(gameScreenView.frame)")
+        DLOG("  Transform: \(gameScreenView.transform)")
+        DLOG("  AutoresizingMask: \(gameScreenView.autoresizingMask.rawValue)")
+        DLOG("  ContentMode: \(gameScreenView.contentMode.rawValue)")
         
         // Apply the calculated frame to the GPU view
         gameScreenView.frame = frame
@@ -483,9 +483,9 @@ extension PVEmulatorViewController {
         
         // IMPORTANT: Set the MTLView layer frame directly
         if let metalVC = gpuViewController as? PVMetalViewController {
-            print("Setting MTLView layer frame directly: \(frame)")
-            print("  Current MTLView frame: \(metalVC.mtlView.frame)")
-            print("  Current MTLView layer frame: \(metalVC.mtlView.layer.frame)")
+            DLOG("Setting MTLView layer frame directly: \(frame)")
+            DLOG("  Current MTLView frame: \(metalVC.mtlView.frame)")
+            DLOG("  Current MTLView layer frame: \(metalVC.mtlView.layer.frame)")
             
             // Set both the view and layer frames
             metalVC.mtlView.frame = frame
@@ -496,16 +496,16 @@ extension PVEmulatorViewController {
             metalVC.mtlView.layoutIfNeeded()
             metalVC.draw(in: metalVC.mtlView)
             
-            print("  After MTLView frame: \(metalVC.mtlView.frame)")
-            print("  After MTLView layer frame: \(metalVC.mtlView.layer.frame)")
+            DLOG("  After MTLView frame: \(metalVC.mtlView.frame)")
+            DLOG("  After MTLView layer frame: \(metalVC.mtlView.layer.frame)")
         }
         
         // DEBUG: Print after positioning
-        print("GPU VIEW AFTER POSITIONING:")
-        print("  New frame: \(gameScreenView.frame)")
-        print("  Transform: \(gameScreenView.transform)")
-        print("  AutoresizingMask: \(gameScreenView.autoresizingMask.rawValue)")
-        print("  ContentMode: \(gameScreenView.contentMode.rawValue)")
+        DLOG("GPU VIEW AFTER POSITIONING:")
+        DLOG("  New frame: \(gameScreenView.frame)")
+        DLOG("  Transform: \(gameScreenView.transform)")
+        DLOG("  AutoresizingMask: \(gameScreenView.autoresizingMask.rawValue)")
+        DLOG("  ContentMode: \(gameScreenView.contentMode.rawValue)")
         
         // Make sure GPU view is behind the skin view
         if let skinContainerView = view.subviews.first(where: { $0 is DeltaSkinContainerView }) {
@@ -516,12 +516,12 @@ extension PVEmulatorViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self, weak gameScreenView] in
             guard let self = self, let gameScreenView = gameScreenView else { return }
             
-            print("DELAYED GPU VIEW CHECK:")
-            print("  Frame after delay: \(gameScreenView.frame)")
+            DLOG("DELAYED GPU VIEW CHECK:")
+            DLOG("  Frame after delay: \(gameScreenView.frame)")
             
             // If the frame has changed, reapply it
             if gameScreenView.frame != frame {
-                print("  Frame changed, reapplying...")
+                DLOG("  Frame changed, reapplying...")
                 gameScreenView.frame = frame
                 
                 // Also reapply to MTLView if available
@@ -579,7 +579,7 @@ extension PVEmulatorViewController {
         }
         
         let frame = CGRect(x: x, y: y, width: width, height: height)
-        print("MANUALLY POSITIONING GPU VIEW: \(frame)")
+        DLOG("MANUALLY POSITIONING GPU VIEW: \(frame)")
         
         // Apply the frame
         gameScreenView.frame = frame
@@ -594,7 +594,7 @@ extension PVEmulatorViewController {
         
         // IMPORTANT: Set the MTLView layer frame directly
         if let metalVC = gpuViewController as? PVMetalViewController {
-            print("Setting MTLView layer frame directly: \(frame)")
+            DLOG("Setting MTLView layer frame directly: \(frame)")
             
             // Set both the view and layer frames
             metalVC.mtlView.frame = frame
@@ -609,12 +609,12 @@ extension PVEmulatorViewController {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak metalVC] in
                 guard let metalVC = metalVC else { return }
                 
-                print("DELAYED CHECK - MTLView frame: \(metalVC.mtlView.frame)")
-                print("DELAYED CHECK - MTLView layer frame: \(metalVC.mtlView.layer.frame)")
+                DLOG("DELAYED CHECK - MTLView frame: \(metalVC.mtlView.frame)")
+                DLOG("DELAYED CHECK - MTLView layer frame: \(metalVC.mtlView.layer.frame)")
                 
                 // If the frame changed, reapply it
                 if metalVC.mtlView.frame != frame || metalVC.mtlView.layer.frame != frame {
-                    print("Frame changed after positioning, reapplying...")
+                    DLOG("Frame changed after positioning, reapplying...")
                     metalVC.mtlView.frame = frame
                     metalVC.mtlView.layer.frame = frame
                     metalVC.mtlView.setNeedsLayout()
@@ -632,6 +632,7 @@ extension PVEmulatorViewController {
     
     /// Add a debug overlay to show where the GPU view should be positioned
     private func forceGPUViewPosition() {
+
         // Remove any existing debug overlays
         view.subviews.forEach { subview in
             if subview.tag == 9999 {
@@ -649,7 +650,7 @@ extension PVEmulatorViewController {
         
         // Create and add the debug overlay with the default frame immediately
         createDebugOverlay(frame: defaultFrame)
-        
+        return
         // Get the current system identifier
         guard let systemId = game.system?.systemIdentifier else {
             ELOG("System identifier not found")
@@ -720,18 +721,18 @@ extension PVEmulatorViewController {
                             height: outputFrame.height * scale
                         )
                         
-                        print("🔴 EXACTLY matching DeltaSkinScreenLayer calculation:")
-                        print("🔴   Original OutputFrame: \(outputFrame)")
-                        print("🔴   View Size: \(viewSize)")
-                        print("🔴   Mapping Size: \(mappingSize)")
-                        print("🔴   Scale: \(scale)")
-                        print("🔴   Offset: \(offset)")
-                        print("🔴   Calculated Frame: \(calculatedFrame)")
+                        DLOG("🔴 EXACTLY matching DeltaSkinScreenLayer calculation:")
+                        DLOG("🔴   Original OutputFrame: \(outputFrame)")
+                        DLOG("🔴   View Size: \(viewSize)")
+                        DLOG("🔴   Mapping Size: \(mappingSize)")
+                        DLOG("🔴   Scale: \(scale)")
+                        DLOG("🔴   Offset: \(offset)")
+                        DLOG("🔴   Calculated Frame: \(calculatedFrame)")
                         
-                        print("🔴 Using explicit screen frame from screens array:")
-                        print("🔴   Original OutputFrame: \(outputFrame)")
-                        print("🔴   Scaled Frame: \(calculatedFrame)")
-                        print("🔴   MappingSize: \(mappingSize), Scale: \(scale), Offset: \(offset)")
+                        DLOG("🔴 Using explicit screen frame from screens array:")
+                        DLOG("🔴   Original OutputFrame: \(outputFrame)")
+                        DLOG("🔴   Scaled Frame: \(calculatedFrame)")
+                        DLOG("🔴   MappingSize: \(mappingSize), Scale: \(scale), Offset: \(offset)")
                         
                         await MainActor.run {
                             createDebugOverlay(frame: calculatedFrame)
@@ -761,9 +762,9 @@ extension PVEmulatorViewController {
                             offset: offset
                         )
                         
-                        print("🔴 Using gameScreenFrame from raw dictionary:")
-                        print("🔴   Original Frame: \(gameScreenFrame)")
-                        print("🔴   Scaled Frame: \(calculatedFrame)")
+                        DLOG("🔴 Using gameScreenFrame from raw dictionary:")
+                        DLOG("🔴   Original Frame: \(gameScreenFrame)")
+                        DLOG("🔴   Scaled Frame: \(calculatedFrame)")
                         
                         await MainActor.run {
                             createDebugOverlay(frame: calculatedFrame)
@@ -774,7 +775,7 @@ extension PVEmulatorViewController {
                     
                     // Check if this skin has explicit screen positions by other means
                     let hasExplicitScreenPosition = hasScreenPosition(skin: skin, traits: traits)
-                    print("🔴 Skin has explicit screen position: \(hasExplicitScreenPosition)")
+                    DLOG("🔴 Skin has explicit screen position: \(hasExplicitScreenPosition)")
                     
                     var calculatedFrame: CGRect
                     
@@ -782,7 +783,7 @@ extension PVEmulatorViewController {
                         // CASE 1: Skin does NOT have explicit screen position
                         // Calculate screen position based on available space above skin
                         calculatedFrame = calculateFrameWithoutExplicitPosition(skin: skin, traits: traits, viewSize: viewSize)
-                        print("🔴 Using calculated frame for skin without explicit position: \(calculatedFrame)")
+                        DLOG("🔴 Using calculated frame for skin without explicit position: \(calculatedFrame)")
                     } else {
                         // Use default screen frame as fallback
                         let defaultFrame = DeltaSkinDefaults.defaultScreenFrame(
@@ -797,7 +798,7 @@ extension PVEmulatorViewController {
                             scale: scale,
                             offset: offset
                         )
-                        print("🔴 Using default screen frame: \(defaultFrame) → \(calculatedFrame)")
+                        DLOG("🔴 Using default screen frame: \(defaultFrame) → \(calculatedFrame)")
                     }
                     
                     await MainActor.run {
@@ -834,7 +835,7 @@ extension PVEmulatorViewController {
     /// Apply a frame directly to the GPU view with optimized positioning
     private func applyFrameToGPUView(_ frame: CGRect) {
         guard let gameScreenView = gpuViewController.view else {
-            print("🔴 ERROR: GPU view not found")
+            DLOG("🔴 ERROR: GPU view not found")
             return
         }
         
@@ -869,10 +870,10 @@ extension PVEmulatorViewController {
         }
         
         // Just log the frame for debugging
-        print("🔴 Using frame: \(optimizedFrame)")
+        DLOG("🔴 Using frame: \(optimizedFrame)")
         
-        print("🔴 Applying frame to GPU view: \(optimizedFrame)")
-        print("🔴 Current GPU view frame before: \(gameScreenView.frame)")
+        DLOG("🔴 Applying frame to GPU view: \(optimizedFrame)")
+        DLOG("🔴 Current GPU view frame before: \(gameScreenView.frame)")
         
         // Apply the frame to the GPU view
         applyExactFrameToGPUView(optimizedFrame)
@@ -881,18 +882,18 @@ extension PVEmulatorViewController {
     /// Apply an exact frame to the GPU view without any modifications
     private func applyExactFrameToGPUView(_ frame: CGRect) {
         guard let gameScreenView = gpuViewController.view else {
-            print("🔴 ERROR: GPU view not found")
+            DLOG("🔴 ERROR: GPU view not found")
             return
         }
         
         // Validate the frame - ensure it has valid dimensions
         guard frame.width > 0 && frame.height > 0 else {
-            print("🔴 ERROR: Invalid frame dimensions: \(frame)")
+            DLOG("🔴 ERROR: Invalid frame dimensions: \(frame)")
             return
         }
         
-        print("🔴 Applying EXACT frame to GPU view: \(frame)")
-        print("🔴 Current GPU view frame before: \(gameScreenView.frame)")
+        DLOG("🔴 Applying EXACT frame to GPU view: \(frame)")
+        DLOG("🔴 Current GPU view frame before: \(gameScreenView.frame)")
         
         // Apply the frame - ONLY set the frame, nothing else
         if let metalVC = gpuViewController as? PVMetalViewController {
@@ -912,9 +913,9 @@ extension PVEmulatorViewController {
             metalVC.view.isHidden = false
             metalVC.mtlView.isHidden = false
             
-            print("🔴 Applied EXACT frame to Metal view: \(metalVC.view.frame)")
-            print("🔴 Applied size to MTLView: \(metalVC.mtlView.frame)")
-            print("🔴 Enabled custom positioning with EXACT frame: \(frame)")
+            DLOG("🔴 Applied EXACT frame to Metal view: \(metalVC.view.frame)")
+            DLOG("🔴 Applied size to MTLView: \(metalVC.mtlView.frame)")
+            DLOG("🔴 Enabled custom positioning with EXACT frame: \(frame)")
         } else {
             // For non-Metal views
             gameScreenView.frame = frame
@@ -924,7 +925,7 @@ extension PVEmulatorViewController {
             // Make sure the view is visible
             gameScreenView.isHidden = false
             
-            print("🔴 Applied EXACT frame to non-Metal view: \(gameScreenView.frame)")
+            DLOG("🔴 Applied EXACT frame to non-Metal view: \(gameScreenView.frame)")
         }
         
         // Force layout update
@@ -937,8 +938,8 @@ extension PVEmulatorViewController {
         }
         
         // Log the result
-        print("🔴 After applying frame:")
-        print("🔴   GPU view frame: \(gameScreenView.frame)")
+        DLOG("🔴 After applying frame:")
+        DLOG("🔴   GPU view frame: \(gameScreenView.frame)")
     }
     
     // Method moved to PVEmulatorViewController+DeltaSkin.swift
