@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import PVLogging
 
 /// A touch phase for the MultiTouchView
 public enum MultiTouchPhase {
@@ -29,7 +30,7 @@ public struct MultiTouchView: UIViewRepresentable {
         view.isMultipleTouchEnabled = true
         // Use a slightly visible background for debugging
         view.backgroundColor = UIColor(white: 0.5, alpha: 0.1)
-        print("MultiTouchView created with frame: \(view.frame)")
+        DLOG("MultiTouchView created with frame: \(view.frame)")
         return view
     }
     
@@ -41,7 +42,7 @@ public struct MultiTouchView: UIViewRepresentable {
     public class TouchDetectingView: UIView {
         override init(frame: CGRect) {
             super.init(frame: frame)
-            print("TouchDetectingView initialized with frame: \(frame)")
+            DLOG("TouchDetectingView initialized with frame: \(frame)")
             self.isUserInteractionEnabled = true
         }
         
@@ -52,7 +53,7 @@ public struct MultiTouchView: UIViewRepresentable {
         
         override public func layoutSubviews() {
             super.layoutSubviews()
-            print("TouchDetectingView layout updated: \(self.frame)")
+            DLOG("TouchDetectingView layout updated: \(self.frame)")
         }
         var touchHandler: ((MultiTouchPhase, [TouchPoint]) -> Void)?
         
@@ -73,18 +74,20 @@ public struct MultiTouchView: UIViewRepresentable {
         }
         
         private func handleTouches(_ phase: MultiTouchPhase, touches: Set<UITouch>) {
-            print("⚡️ MultiTouchView: \(phase) with \(touches.count) touches")
-            print("⚡️ View frame: \(self.frame), bounds: \(self.bounds), window: \(String(describing: self.window))")
-            print("⚡️ isUserInteractionEnabled: \(self.isUserInteractionEnabled), alpha: \(self.alpha)")
-            print("⚡️ superview: \(String(describing: self.superview))")
+            DLOG("""
+                    ⚡️ MultiTouchView: \(phase) with \(touches.count) touches
+                    ⚡️ View frame: \(self.frame), bounds: \(self.bounds), window: \(String(describing: self.window))
+                    ⚡️ isUserInteractionEnabled: \(self.isUserInteractionEnabled), alpha: \(self.alpha)
+                    ⚡️ superview: \(String(describing: self.superview))
+                """)
             
             let touchPoints = touches.map { touch in
                 let location = touch.location(in: self)
-                print("⚡️ Touch at \(location) - phase: \(phase), force: \(touch.force)")
+                DLOG("⚡️ Touch at \(location) - phase: \(phase), force: \(touch.force)")
                 return TouchPoint(touch: touch, location: location)
             }
             
-            print("⚡️ MultiTouchView: Handling \(touchPoints.count) touches in phase \(phase)")
+            DLOG("⚡️ MultiTouchView: Handling \(touchPoints.count) touches in phase \(phase)")
             touchHandler?(phase, touchPoints)
         }
     }
