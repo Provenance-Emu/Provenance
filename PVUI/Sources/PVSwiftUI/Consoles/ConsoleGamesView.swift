@@ -863,10 +863,10 @@ extension ConsoleGamesView {
                         )
                 )
         )
+        .clipShape(RoundedRectangle(cornerRadius: 12))
         .shadow(color: RetroTheme.retroPurple.opacity(0.4), radius: 3, x: 0, y: 0)
         .padding(.horizontal, 8)
         .allowsHitTesting(true)
-        .contentShape(RoundedRectangle(cornerRadius: 12))
     }
 
     @ViewBuilder
