@@ -301,6 +301,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
         
+        // Initialize OpenGL context if core renders to OpenGL
+        if let emulatorCore = emulatorCore, emulatorCore.rendersToOpenGL {
+            ILOG("Initializing OpenGL context for OpenGL core")
+            initializeOpenGLContext()
+        }
+        
         // Create a command queue
         commandQueue = device?.makeCommandQueue()
         
@@ -470,6 +476,27 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return nil
         }
     }()
+    
+    /// Initialize OpenGL context for cores that render to OpenGL
+    private func initializeOpenGLContext() {
+        ILOG("Initializing OpenGL context")
+        
+        // Get the best available OpenGL context
+        glContext = bestContext
+        
+        guard let glContext = glContext else {
+            ELOG("Failed to create OpenGL context")
+            return
+        }
+        
+        // Configure multi-threading support if enabled in settings
+        glContext.isMultiThreaded = Defaults[.multiThreadedGL]
+        
+        // Set the current context
+        EAGLContext.setCurrent(glContext)
+        
+        ILOG("Successfully initialized OpenGL context with API version \(glContext.api.rawValue)")
+    }
 #endif
     
     func updatePreferredFPS() {
@@ -1559,16 +1586,25 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     func startRenderingOnAlternateThread() {
         emulatorCore?.glesVersion = glesVersion
         
+        // Ensure we have an OpenGL context for OpenGL cores
+        if glContext == nil, let emulatorCore = emulatorCore, emulatorCore.rendersToOpenGL {
+            ILOG("OpenGL context not initialized yet, initializing now")
+            initializeOpenGLContext()
+        }
+        
 #if !(targetEnvironment(macCatalyst) || os(macOS))
         guard let glContext = self.glContext else {
             ELOG("glContext was nil, cannot start rendering on alternate thread")
             return
         }
+        
+        // Create contexts for alternate thread rendering
         alternateThreadBufferCopyGLContext = EAGLContext(api: glContext.api,
                                                          sharegroup: glContext.sharegroup)
         alternateThreadGLContext = EAGLContext(api: glContext.api,
                                                sharegroup: glContext.sharegroup)
         EAGLContext.setCurrent(alternateThreadGLContext)
+        ILOG("Successfully initialized alternate thread GL contexts")
 #endif
         
         if alternateThreadFramebufferBack == 0 {
@@ -1636,17 +1672,23 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     }
     
     func didRenderFrameOnAlternateThread() {
-        guard backingMTLTexture != nil else {
+        /// Ensure we have a valid backing texture
+        guard let backingTexture = backingMTLTexture else {
             ELOG("backingMTLTexture was nil")
             recoverFromGPUError()
             return
         }
+        
+        /// Ensure OpenGL commands are flushed before using the shared texture
         glFlush()
         
+        /// Lock the front buffer to prevent concurrent access
         emulatorCore?.frontBufferLock.lock()
         
+        /// Wait for any previous command buffer to be scheduled
         previousCommandBuffer?.waitUntilScheduled()
         
+        /// Create a new command buffer
         guard let commandBuffer = commandQueue?.makeCommandBuffer() else {
             ELOG("commandBuffer was nil")
             emulatorCore?.frontBufferLock.unlock()
@@ -1654,6 +1696,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
         
+        /// Create a blit encoder for copying textures
         guard let encoder = commandBuffer.makeBlitCommandEncoder() else {
             ELOG("encoder was nil")
             emulatorCore?.frontBufferLock.unlock()
@@ -1661,27 +1704,97 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
         
-        let screenRect = emulatorCore?.screenRect ?? .zero
+        // Get the screen rect or use a default
+        guard let emulatorCore = emulatorCore else {
+            ELOG("Emulator core is nil")
+            encoder.endEncoding()
+            commandBuffer.commit()
+            return
+        }
         
-        encoder.copy(from: backingMTLTexture!,
-                     sourceSlice: 0, sourceLevel: 0,
-                     sourceOrigin: MTLOrigin(x: Int(screenRect.origin.x),
-                                             y: Int(screenRect.origin.y), z: 0),
-                     sourceSize: MTLSize(width: Int(screenRect.width),
-                                         height: Int(screenRect.height), depth: 1),
-                     to: inputTexture!,
-                     destinationSlice: 0, destinationLevel: 0,
-                     destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
+        let screenRect = emulatorCore.screenRect
         
+        // For OpenGL cores, create the input texture on demand if needed
+        if inputTexture == nil || 
+           (inputTexture != nil && 
+            (inputTexture!.width != Int(screenRect.width) || 
+             inputTexture!.height != Int(screenRect.height))) {
+            
+            ILOG("Creating/updating input texture for OpenGL core: \(Int(screenRect.width))x\(Int(screenRect.height))")
+            
+            do {
+                try updateInputTexture()
+            } catch {
+                ELOG("Failed to create input texture for OpenGL core: \(error)")
+                encoder.endEncoding()
+                commandBuffer.commit()
+                emulatorCore.frontBufferLock.unlock()
+                return
+            }
+        }
+        
+        // Ensure we have a valid input texture after potential creation
+        guard let destTexture = inputTexture else {
+            ELOG("Input texture is still nil after creation attempt")
+            encoder.endEncoding()
+            commandBuffer.commit()
+            emulatorCore.frontBufferLock.unlock()
+            return
+        }
+        
+        // Verify dimensions to avoid crashes
+        let isValidRect = screenRect.width > 0 && screenRect.height > 0 && 
+                          Int(screenRect.width) <= backingTexture.width && 
+                          Int(screenRect.height) <= backingTexture.height
+        
+        if !isValidRect {
+            WLOG("Invalid screen rect for OpenGL texture copy: \(screenRect)")
+            WLOG("Backing texture size: \(backingTexture.width)x\(backingTexture.height)")
+            
+            // Use the entire backing texture as fallback
+            let safeWidth = min(backingTexture.width, destTexture.width)
+            let safeHeight = min(backingTexture.height, destTexture.height)
+            
+            DLOG("Using fallback texture copy: size=(\(safeWidth),\(safeHeight))")
+            
+            encoder.copy(from: backingTexture,
+                         sourceSlice: 0, sourceLevel: 0,
+                         sourceOrigin: MTLOrigin(x: 0, y: 0, z: 0),
+                         sourceSize: MTLSize(width: safeWidth, height: safeHeight, depth: 1),
+                         to: destTexture,
+                         destinationSlice: 0, destinationLevel: 0,
+                         destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
+        } else {
+            /// Use safe dimensions that won't exceed the texture bounds
+            let safeX = max(0, Int(screenRect.origin.x))
+            let safeY = max(0, Int(screenRect.origin.y))
+            let safeWidth = min(Int(screenRect.width), backingTexture.width - safeX)
+            let safeHeight = min(Int(screenRect.height), backingTexture.height - safeY)
+            
+            DLOG("OpenGL texture copy: origin=(\(safeX),\(safeY)), size=(\(safeWidth),\(safeHeight))")
+            
+            /// Copy from the backing texture to the input texture
+            encoder.copy(from: backingTexture,
+                         sourceSlice: 0, sourceLevel: 0,
+                         sourceOrigin: MTLOrigin(x: safeX, y: safeY, z: 0),
+                         sourceSize: MTLSize(width: safeWidth, height: safeHeight, depth: 1),
+                         to: destTexture,
+                         destinationSlice: 0, destinationLevel: 0,
+                         destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
+        }
+        
+        /// End encoding and commit the command buffer
         encoder.endEncoding()
         commandBuffer.commit()
         
-        emulatorCore?.frontBufferLock.unlock()
+        /// Unlock the front buffer
+        emulatorCore.frontBufferLock.unlock()
         
-        emulatorCore?.frontBufferCondition.lock()
-        emulatorCore?.isFrontBufferReady = true
-        emulatorCore?.frontBufferCondition.signal()
-        emulatorCore?.frontBufferCondition.unlock()
+        /// Signal that the front buffer is ready
+        emulatorCore.frontBufferCondition.lock()
+        emulatorCore.isFrontBufferReady = true
+        emulatorCore.frontBufferCondition.signal()
+        emulatorCore.frontBufferCondition.unlock()
     }
     
     /// Cached viewport values
@@ -2157,12 +2270,20 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     }
     
     // Helper method to update texture from core's buffer
+    /// Updates the texture from the emulator core's video buffer
+    /// Returns true if the update was successful, false otherwise
     private func updateTextureFromCore() -> Bool {
         guard let emulatorCore = emulatorCore,
               let device = device else {
             DLOG("Missing required resources for texture update")
             // Don't call recovery here as this is often a normal initial state
             return false
+        }
+        
+        // Skip texture update for OpenGL cores - they use a different path
+        if emulatorCore.rendersToOpenGL {
+            DLOG("Skipping texture update for OpenGL core - handled in didRenderFrameOnAlternateThread")
+            return true
         }
         
         // Track changes in buffer size and screen rect for debugging
@@ -2310,20 +2431,27 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return false
         }
         
-        // Calculate source offset if we're using a portion of the buffer
+        // Calculate safe source offset if we're using a portion of the buffer
         let xOffset = Int(effectiveScreenRect.origin.x)
         let yOffset = Int(effectiveScreenRect.origin.y)
         
-        // Safety check: ensure offsets are non-negative
-        let safeXOffset = max(0, xOffset)
-        let safeYOffset = max(0, yOffset)
+        // Ensure offsets are non-negative and within buffer bounds
+        let safeXOffset = max(0, min(xOffset, Int(bufferSize.width) - 1))
+        let safeYOffset = max(0, min(yOffset, Int(bufferSize.height) - 1))
+        
+        // Calculate maximum allowed width and height from the offset
+        let maxWidth = Int(bufferSize.width) - safeXOffset
+        let maxHeight = Int(bufferSize.height) - safeYOffset
+        
+        // Calculate safe dimensions that won't exceed the buffer
+        let safeWidth = min(effectiveWidth, maxWidth)
+        let safeHeight = min(effectiveHeight, maxHeight)
         
         // Calculate source offset with safety bounds
-        let sourceOffset = isScreenRectValid ? (safeYOffset * bytesPerRow) + (safeXOffset * Int(bytesPerPixel)) : 0
+        let sourceOffset = (safeYOffset * bytesPerRow) + (safeXOffset * Int(bytesPerPixel))
         
-        // Verify source offset is valid - ensure we don't exceed buffer bounds
-        // For safety, we'll use a more conservative check
-        if sourceOffset >= totalBytes || sourceOffset < 0 {
+        // Verify source offset and dimensions are valid
+        if sourceOffset >= totalBytes || sourceOffset < 0 || safeWidth <= 0 || safeHeight <= 0 {
             ELOG("""
                  Invalid source offset during buffer copy:  
                  Source offset: \(sourceOffset)
@@ -2351,12 +2479,26 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         // Log the final copy parameters for debugging
 //        VLOG("Final copy parameters: sourceOffset=\(finalSourceOffset), bytesPerRow=\(bytesPerRow)")
         
+        // Calculate final safe dimensions based on the source offset and buffer size
+        // Ensure we don't exceed the buffer boundaries
+        let finalWidth = min(safeWidth, (totalBytes - finalSourceOffset) / Int(bytesPerPixel) / effectiveHeight * bytesPerRow)
+        let finalHeight = min(safeHeight, (totalBytes - finalSourceOffset) / bytesPerRow)
+        
+        // Ensure we have valid dimensions
+        if finalWidth <= 0 || finalHeight <= 0 {
+            ELOG("Invalid dimensions for texture copy: width=\(finalWidth), height=\(finalHeight)")
+            return false
+        }
+        
+        DLOG("Copying buffer to texture: size=(\(finalWidth)x\(finalHeight)), offset=\(finalSourceOffset)")
+        
+        // Copy from the upload buffer to the texture with safe dimensions
         blitEncoder.copy(
             from: tempBuffer,
             sourceOffset: finalSourceOffset,
             sourceBytesPerRow: bytesPerRow,
             sourceBytesPerImage: totalBytes,
-            sourceSize: MTLSizeMake(effectiveWidth, effectiveHeight, 1),
+            sourceSize: MTLSizeMake(finalWidth, finalHeight, 1),
             to: inputTexture,
             destinationSlice: 0,
             destinationLevel: 0,
