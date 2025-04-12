@@ -270,6 +270,38 @@ public enum MainUIMode: String, Codable, Equatable, UserDefaultsRepresentable, D
     }
 }
 
+public enum SkinMode: String, Codable, Equatable, UserDefaultsRepresentable, Defaults.Serializable, CaseIterable, CustomStringConvertible, Identifiable {
+    case off = "Off"
+    case selectedOnly = "Selected Only"
+    case always = "Always"
+    
+    public var id: String {
+        rawValue
+    }
+
+    public var description: String {
+        switch self {
+        case .off:
+            return "Off (Classic)"
+        case .selectedOnly:
+            return "Selected systems only"
+        case .always:
+            return "Always use"
+        }
+    }
+
+    public var subtitle: String {
+        switch self {
+        case .off:
+            return "Always use the classic on-screen controller"
+        case .selectedOnly:
+            return "Use skins for selected sytems, use classic controller as default"
+        case .always:
+            return "Always use skins including the default generated skins"
+        }
+    }
+}
+
 // MARK: Beta Options
 public extension Defaults.Keys {
 #if os(macOS) || targetEnvironment(macCatalyst) || os(visionOS)
@@ -301,6 +333,8 @@ public extension Defaults.Keys {
     static let onscreenJoypad = Key<Bool>("onscreenJoypad", default: true)
     static let onscreenJoypadWithKeyboard = Key<Bool>("onscreenJoypadWithKeyboard", default: true)
 #endif
+    
+    static let skinMode = Key<SkinMode>("skinMOde", default: .off)
 }
 
 // MARK: Video Options
