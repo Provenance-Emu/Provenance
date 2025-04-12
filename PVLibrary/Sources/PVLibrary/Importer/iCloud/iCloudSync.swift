@@ -69,7 +69,8 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     var fileImportQueueMaxCount = 1000
     var purgeStatus: DatastorePurgeStatus = .incomplete
     private var querySubscriber: AnyCancellable?
-    let removeDeletionsActor: RemoveDeletionsActor = .init()
+    //used for removing ROMs/Saves that were removed by the user when the application is closed. This is to ensure if this is called several times, only 1 block is used at a time
+    let removeDeletionsCriticalSection: CriticalSectionActor = .init()
     var downloadedCount: Int {
         get async {
             await newFiles.count
@@ -265,7 +266,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             DLOG("\(directories): actualRemovedObjects: (\(actualRemovedObjects.count)) \(actualRemovedObjects)")
             for item in actualRemovedObjects {
                 if let file = item.value(forAttribute: NSMetadataItemURLKey) as? URL {
-                    DLOG("file DELETED from iCloud: \(file)")
+                    ILOG("file DELETED from iCloud: \(file)")
                     await deleteFromDatastore(file)
                 }
             }
@@ -292,9 +293,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     func handleDownloadedFile(_ file: URL) async {
         DLOG("item up to date: \(file)")
         if !fileManager.fileExists(atPath: file.pathDecoded) {
-            DLOG("file DELETED from iCloud: \(file)")
-            await deleteFromDatastore(file)
-            return
+            WLOG("file marked as current, but does NOT exist locally. This may be a mistake, processing anyways: \(file)")
         }
         //in the case when we are initially turning on iCloud or the app is opened and coming into the foreground for the first time, we try to import any files already downloaded. this is to ensure that a downloaded file gets imported and we do this just when the icloud switch is turned on and subsequent updates only happen after they are downloaded
         if await status.contains(.initialUpload) {
@@ -335,7 +334,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         stopObserving()
         var result: SyncResult = .indeterminate
         defer {
-            DLOG("removed: \(result)")
+            ILOG("\(directories) removed from iCloud result: \(result)")
         }
         let allDirectories = localAndCloudDirectories
         guard allDirectories.count > 0
@@ -636,8 +635,8 @@ public enum iCloudSync {
     }
 }
 
-/// used for removing ROMs/Saves that were removed by the user when the application is closed. This is to ensure if this is called several times, only 1 block is used at a time
-actor RemoveDeletionsActor {
+/// actor for adding locks on closures
+actor CriticalSectionActor {
     /// executes closure
     /// - Parameter criticalSection: critical section code to execute
     func performWithLock(_ criticalSection: @Sendable @escaping () async -> Void) async {
@@ -806,6 +805,13 @@ actor RomsDatastore {
     }
 }
 
+enum SaveStateUpdateError: Error {
+    case failedToConvertToString
+    case missingOpeningCurlyBrace
+    case missingCoreKey
+    case errorConvertingStringToBinary
+}
+
 //MARK: - iCloud syncers
 
 class SaveStateSyncer: iCloudContainerSyncer {
@@ -813,6 +819,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
     let processed = ConcurrentQueue<Int>(arrayLiteral: 0)
     let processingState: ConcurrentQueue<ProcessingState> = .init(arrayLiteral: .idle)
     var savesDatabaseSubscriber: AnyCancellable?
+    let savesProcessingCriticalSection: CriticalSectionActor = .init()
     
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
         self.init(directories: ["Save States"], notificationCenter: notificationCenter, errorHandler: errorHandler)
@@ -833,7 +840,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
     }
     
     func removeSavesDeletedWhileApplicationClosed() async {
-        await removeDeletionsActor.performWithLock { [weak self] in
+        await removeDeletionsCriticalSection.performWithLock { [weak self] in
             guard let canPurge = await self?.canPurgeDatastore,
                   canPurge
             else {
@@ -897,10 +904,45 @@ class SaveStateSyncer: iCloudContainerSyncer {
             throw iCloudError.dataReadFail
         }
 
-        DLOG("Data read \(String(data: data, encoding: .utf8) ?? "Nil")")
-        let save = try jsonDecorder.decode(SaveState.self, from: data)
+        DLOG("Data read \(String(describing: String(data: data, encoding: .utf8)))")
+        let save: SaveState
+        do {
+            save = try jsonDecorder.decode(SaveState.self, from: data)
+        } catch {
+            save = try jsonDecorder.decode(SaveState.self, from: try getUpdatedSaveState2(from: data, json: json))
+        }
         DLOG("Read JSON data at (\(json.pathDecoded)")
         return save
+    }
+    
+    /// Attempts to fix/migrate a SaveState from 2.x to 3.x
+    /// - Parameters:
+    ///   - fileContents: binary of json save state
+    ///   - json: URL of save state
+    /// - Returns: new binary if succeeds or nil if there is any error
+    func getUpdatedSaveState2(from fileContents: Data, json: URL) throws -> Data {
+        guard var stringContents = String(data: fileContents, encoding: .utf8)
+        else {
+            ELOG("error converting \(json) to a string")
+            throw SaveStateUpdateError.failedToConvertToString
+        }
+        if let firstCurlyBrace = stringContents.range(of: "{") {
+            stringContents.insert(contentsOf: "\"isPinned\":false,\"isFavorite\":false,", at: firstCurlyBrace.upperBound)
+        } else {
+            ELOG("error \(json) does NOT contain an opening curly brace {")
+            throw SaveStateUpdateError.missingOpeningCurlyBrace
+        }
+        if let range = stringContents.range(of: "\"core\":{") {
+            stringContents.insert(contentsOf: "\"systems\":[],", at: range.upperBound)
+        } else {
+            ELOG("error \(json) does NOT contain a 'core' field")
+            throw SaveStateUpdateError.missingCoreKey
+        }
+        guard let updated = stringContents.data(using: .utf8)
+        else {
+            throw SaveStateUpdateError.errorConvertingStringToBinary
+        }
+        return updated
     }
     
     func importNewSaves() async {
@@ -919,8 +961,11 @@ class SaveStateSyncer: iCloudContainerSyncer {
         else {
             return
         }
-        //process save files batch
-        await processJsonFiles(jsonFiles)
+        //perform processing of save states with an actor critical section because without this the processing count goes up and down and the number is never accurate
+        await savesProcessingCriticalSection.performWithLock { [weak self] in
+            //process save files batch
+            await self?.processJsonFiles(jsonFiles)
+        }
     }
     
     func processJsonFiles(_ jsonFiles: any Collection<URL>) async {
@@ -944,7 +989,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
                     await storeNewSave(save, romsDatastore, json)
                     continue
                 }
-                await updateExistingSave(existing, romsDatastore, save, json)
+                await updateExistingSave(existing, romsDatastore, save, json, processedCount)
                 
             } catch {
                 await errorHandler.handleError(error, file: json)
@@ -959,12 +1004,12 @@ class SaveStateSyncer: iCloudContainerSyncer {
         notificationCenter.post(Notification(name: .SavesFinishedImporting))
     }
     
-    func updateExistingSave(_ existing: PVSaveState, _ romsDatastore: RomsDatastore, _ save: SaveState, _ json: URL) async {
+    func updateExistingSave(_ existing: PVSaveState, _ romsDatastore: RomsDatastore, _ save: SaveState, _ json: URL, _ processedCount: Int) async {
         guard let game = await romsDatastore.findGame(md5: save.game.md5, forSave: existing)
         else {
             return
         }
-        ILOG("Saves: updating \(json)")
+        ILOG("Saves: updating: save #(\(processedCount)) \(json)")
         do {
             await try romsDatastore.update(existingSave: existing, with: game)
         } catch {
@@ -1031,7 +1076,7 @@ class RomsSyncer: iCloudContainerSyncer {
     
     /// The only time that we don't know if files have been deleted by the user is when it happens while the app is closed. so we have to query the db and check
     func removeGamesDeletedWhileApplicationClosed() async {
-        await removeDeletionsActor.performWithLock { [weak self] in
+        await removeDeletionsCriticalSection.performWithLock { [weak self] in
             guard let canPurge = await self?.canPurgeDatastore,
                   canPurge
             else {
