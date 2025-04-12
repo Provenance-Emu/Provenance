@@ -147,7 +147,7 @@ public struct PVSearchBar: View {
             )
             .shadow(color: RetroTheme.retroBlue.opacity(0.5), radius: 3, x: 0, y: 0)
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 8)
+//        .padding(.vertical, 8)
+//        .padding(.horizontal, 8)
     }
 }

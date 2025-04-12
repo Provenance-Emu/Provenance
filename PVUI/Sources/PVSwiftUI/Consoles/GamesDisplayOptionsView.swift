@@ -23,8 +23,8 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     @Default(.showFavorites) private var showFavorites
     @Default(.showGameBadges) private var showGameBadges
 
-    var sortAscending = true
-    var isGrid = true
+    @State var sortAscending = true
+    @State var isGrid = true
 
     var toggleFilterAction: () -> Void
     var toggleSortAction: () -> Void
@@ -136,7 +136,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 .contentShape(Rectangle())
 
                 OptionsIndicator(pointDown: true, action: {
-#if !os(tvOS)
+                    #if !os(tvOS)
                     Haptics.impact(style: .light)
                     #endif
                     toggleViewTypeAction()
@@ -148,7 +148,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 .contentShape(Rectangle())
 
                 Button(action: {
-#if !os(tvOS)
+                    #if !os(tvOS)
                     Haptics.impact(style: .light)
                     #endif
                     zoomOut()
@@ -162,7 +162,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 .padding(.leading, padding)
 
                 Button(action: {
-#if !os(tvOS)
+                    #if !os(tvOS)
                     Haptics.impact(style: .light)
                     #endif
                     zoomIn()
@@ -186,7 +186,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
     private func zoomIn() {
         if canZoomIn {
-#if !os(tvOS)
+            #if !os(tvOS)
             Haptics.impact(style: .light)
             #endif
             Defaults[.gameLibraryScale] -= 1
@@ -195,7 +195,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
     private func zoomOut() {
         if canZoomOut {
-#if !os(tvOS)
+            #if !os(tvOS)
             Haptics.impact(style: .light)
             #endif
             Defaults[.gameLibraryScale] += 1

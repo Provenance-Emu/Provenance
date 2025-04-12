@@ -133,6 +133,8 @@ struct HomeView: SwiftUI.View {
                         .opacity(isSearchBarVisible ? 1 : 0)
                         .frame(height: isSearchBarVisible ? nil : 0)
                         .animation(.easeInOut(duration: 0.3), value: isSearchBarVisible)
+                        .padding(.horizontal, 8)
+                        .padding(.bottom, 8)
                 }
                 
                 // Import Progress View

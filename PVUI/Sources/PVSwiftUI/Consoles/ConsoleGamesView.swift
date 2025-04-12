@@ -214,6 +214,8 @@ struct ConsoleGamesView: SwiftUI.View {
                                     .opacity(isSearchBarVisible ? 1 : 0)
                                     .frame(height: isSearchBarVisible ? nil : 0)
                                     .animation(.easeInOut(duration: 0.3), value: isSearchBarVisible)
+                                    .padding(.horizontal, 8)
+                                    .padding(.bottom, 8)
                             }
                             
                             continueSection()
@@ -846,8 +848,6 @@ extension ConsoleGamesView {
             toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }
         )
         .padding(.vertical, 12)
-        .padding(.top, 8)
-//        .padding(.horizontal, 12)
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.black.opacity(0.7))
@@ -863,11 +863,10 @@ extension ConsoleGamesView {
                         )
                 )
         )
-        .shadow(color: RetroTheme.retroPurple.opacity(0.2), radius: 3, x: 0, y: 0)
+        .shadow(color: RetroTheme.retroPurple.opacity(0.4), radius: 3, x: 0, y: 0)
         .padding(.horizontal, 8)
-//        .padding(.vertical, 8)
         .allowsHitTesting(true)
-        .contentShape(Rectangle())
+        .contentShape(RoundedRectangle(cornerRadius: 12))
     }
 
     @ViewBuilder
@@ -886,7 +885,7 @@ extension ConsoleGamesView {
                         set: { gamesViewModel.focusedItemInSection = $0 }
                     )
                 )
-                .padding(.horizontal, 8)
+                //.padding(.horizontal, 8)
                 HomeDividerView()
             }
         }
