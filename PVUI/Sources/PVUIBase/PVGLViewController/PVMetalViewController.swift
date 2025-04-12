@@ -599,7 +599,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 }
             }
             
-            ILOG("Calculated dimensions: \(width)x\(height) with ratio: \(ratio)")
+            DLOG("Calculated dimensions: \(width)x\(height) with ratio: \(ratio)")
             
             /// Calculate center position
             let x = (parentSize.width - width) / 2
@@ -650,14 +650,16 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         ILOG("Full view hierarchy:")
         var currentView: UIView? = mtlView
         while let view = currentView {
-            ILOG("View: \(type(of: view))")
-            ILOG("Frame: \(view.frame)")
-            ILOG("Bounds: \(view.bounds)")
-            ILOG("Transform: \(view.transform)")
-            ILOG("AutoresizingMask: \(view.autoresizingMask)")
-            ILOG("Constraints: \(view.constraints)")
-            ILOG("SuperView: \(String(describing: view.superview))")
-            ILOG("----------------")
+            ILOG("""
+                View: \(type(of: view))
+                Frame: \(view.frame)
+                Bounds: \(view.bounds)
+                Transform: \(view.transform)
+                AutoresizingMask: \(view.autoresizingMask)
+                Constraints: \(view.constraints)
+                SuperView: \(String(describing: view.superview))
+                ----------------
+                """)
             currentView = view.superview
         }
     }
@@ -2008,14 +2010,14 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
         
         // Log the current rendering dimensions for debugging
-        VLOG("""
-             DirectRender dimensions:  
-             Input texture: \(inputTexture.width)x\(inputTexture.height)
-             Drawable size: \(drawable.texture.width)x\(drawable.texture.height)
-             View size: \(view.frame.size)
-             Buffer size: \(emulatorCore.bufferSize)
-             Screen rect: \(emulatorCore.screenRect)
-            """)
+//        VLOG("""
+//             DirectRender dimensions:  
+//             Input texture: \(inputTexture.width)x\(inputTexture.height)
+//             Drawable size: \(drawable.texture.width)x\(drawable.texture.height)
+//             View size: \(view.frame.size)
+//             Buffer size: \(emulatorCore.bufferSize)
+//             Screen rect: \(emulatorCore.screenRect)
+//            """)
         
         // Validate screen rect dimensions
         let screenRect = emulatorCore.screenRect
@@ -2043,12 +2045,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             }
         }
         
-        DLOG("""
-             Using effective screen rect: \(effectiveScreenRect)
-             Original screen rect: \(screenRect)
-             Is screen rect valid: \(isScreenRectValid)
-             Texture matches effective: \(textureMatchesEffective)
-            """)
+//        DLOG("""
+//             Using effective screen rect: \(effectiveScreenRect)
+//             Original screen rect: \(screenRect)
+//             Is screen rect valid: \(isScreenRectValid)
+//             Texture matches effective: \(textureMatchesEffective)
+//            """)
         
         // Check if we have a valid pipeline
         if customPipeline == nil && blitPipeline == nil {
@@ -2096,11 +2098,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         renderEncoder.setViewport(viewport)
         
         // Log the viewport dimensions for debugging
-        VLOG("""
-             Setting viewport: 
-             Origin: (\(viewport.originX), \(viewport.originY))
-             Size: \(viewport.width)x\(viewport.height)
-            """)
+//        VLOG("""
+//             Setting viewport: 
+//             Origin: (\(viewport.originX), \(viewport.originY))
+//             Size: \(viewport.width)x\(viewport.height)
+//            """)
         
         // Use the custom pipeline if available, otherwise fall back to the blit pipeline
         if let customPipeline = customPipeline {
@@ -2333,21 +2335,21 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return false
         }
         
-        DLOG("""
-             Copying buffer to texture:  
-             Effective dimensions: \(effectiveWidth)x\(effectiveHeight)
-             Source offset: \(sourceOffset) (x:\(xOffset), y:\(yOffset))
-             Bytes per row: \(bytesPerRow)
-             Input texture size: \(inputTexture.width)x\(inputTexture.height)
-             Total buffer size: \(totalBytes) bytes
-            """)
+//        VLOG("""
+//             Copying buffer to texture:  
+//             Effective dimensions: \(effectiveWidth)x\(effectiveHeight)
+//             Source offset: \(sourceOffset) (x:\(xOffset), y:\(yOffset))
+//             Bytes per row: \(bytesPerRow)
+//             Input texture size: \(inputTexture.width)x\(inputTexture.height)
+//             Total buffer size: \(totalBytes) bytes
+//            """)
         
         // Copy from the upload buffer to the texture
         // Always use a safe source offset (either valid calculated offset or 0)
         let finalSourceOffset = (isScreenRectValid && sourceOffset < totalBytes && sourceOffset >= 0) ? sourceOffset : 0
         
         // Log the final copy parameters for debugging
-        DLOG("Final copy parameters: sourceOffset=\(finalSourceOffset), bytesPerRow=\(bytesPerRow)")
+//        VLOG("Final copy parameters: sourceOffset=\(finalSourceOffset), bytesPerRow=\(bytesPerRow)")
         
         blitEncoder.copy(
             from: tempBuffer,
