@@ -809,7 +809,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         let linearDesc = MTLSamplerDescriptor()
         linearDesc.minFilter = .linear
         linearDesc.magFilter = .linear
-        linearDesc.mipFilter = .linear
+        linearDesc.mipFilter = .linear // .nearest
         linearDesc.sAddressMode = .clampToZero
         linearDesc.tAddressMode = .clampToZero
         linearDesc.rAddressMode = .clampToZero
@@ -1478,7 +1478,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         if useEffectFilter {
             guard let effectFilterPipeline = effectFilterPipeline else {
-                DLOG("Error: Effect filter pipeline is nil")
+                ELOG("Error: Effect filter pipeline is nil")
                 renderEncoder.endEncoding()
                 return
             }
@@ -1486,7 +1486,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             DLOG("Using effect filter pipeline")
         } else {
             guard let blitPipeline = blitPipeline else {
-                DLOG("Error: Blit pipeline is nil")
+                ELOG("Error: Blit pipeline is nil")
                 renderEncoder.endEncoding()
                 return
             }
