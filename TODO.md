@@ -8,7 +8,7 @@
 - [ ] save and quit in the new pause menu
 - [ ] retroarch audio visualizer
 - [ ] test v-sync
-- [ ] uikit settings needs useUIKit replaced with new selections
+- [X] uikit settings needs useUIKit replaced with new selections
 - [ ] remove slow metalvc logs
 - [ ] fix deltaskin showing up on rotate when off
 - [ ] fix deltaskin joysticks
