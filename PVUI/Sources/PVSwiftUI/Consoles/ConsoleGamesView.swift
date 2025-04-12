@@ -935,9 +935,10 @@ extension ConsoleGamesView {
                 }
             } else {
                 VStack(alignment: .leading) {
-                    Text("\(console.name) Games")
+                    Text("\(console.name) Games (\(console.games.count))")
                         .font(.title2)
                         .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .padding(.top, 4)
 
                     if viewModel.viewGamesAsGrid {
                         showGamesGrid(games)
