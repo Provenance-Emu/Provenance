@@ -29,25 +29,6 @@ import OpenGLES.gltypes
 
 fileprivate let BUFFER_COUNT: UInt = 3
 
-// MARK: - GLenum Extensions
-extension GLenum {
-    /// Convert GLenum to String
-    var toString: String {
-        switch self {
-        case GLenum(GL_UNSIGNED_BYTE): return "GL_UNSIGNED_BYTE"
-        case GLenum(GL_BGRA): return "GL_BGRA"
-        case GLenum(GL_RGBA): return "GL_RGBA"
-        case GLenum(GL_RGB): return "GL_RGB"
-        case GLenum(GL_RGB8): return "GL_RGB8"
-        case GLenum(GL_RGB565): return "GL_RGB565"
-        case GLenum(GL_RGB5_A1): return "GL_RGB5_A1"
-        case GLenum(GL_RGB10_A2): return "GL_RGB10_A2"
-        case GLenum(GL_RGB10_A2UI): return "GL_RGB10_A2UI"
-            // Add more cases as needed
-        default: return String(format: "0x%04X", self)
-        }
-    }
-}
 
 // MARK: - EffectFilterShaderError
 enum EffectFilterShaderError: Error {
