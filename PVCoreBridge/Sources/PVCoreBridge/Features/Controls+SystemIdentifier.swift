@@ -5,7 +5,6 @@
 //  Created by Joseph Mattiello on 4/5/25.
 //
 
-import PVPrimitives
 import PVSystems
 
 public extension SystemIdentifier {
@@ -84,5 +83,4 @@ public extension SystemIdentifier {
         }
 
     }
-
 }

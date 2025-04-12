@@ -71,7 +71,7 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
     }
 
     // Check if the app is running in App Store mode
-    var isAppStore: Bool {
+    public var isAppStore: Bool {
         guard let appType = Bundle.main.infoDictionary?["PVAppType"] as? String else { return false }
         return appType.lowercased().contains("appstore")
     }
