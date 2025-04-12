@@ -956,9 +956,51 @@ private struct AdvancedSection: View {
 private struct DeltaSkinsSection: View {
     @Default(.buttonPressEffect) var buttonPressEffect
     @Default(.buttonSound) var buttonSound
+    @Default(.skinMode) var skinMode
 
     var body: some View {
         Section {
+            // Button to select skins (premium locked)
+            PaidFeatureView {
+                VStack {
+                    Text("SKIN MODE")
+                        .font(.system(.headline, design: .monospaced))
+                        .foregroundColor(.retroBlue)
+                        .shadow(color: .retroPink.opacity(0.8), radius: 2, x: 1, y: 1)
+                    
+                    Picker("Select skin mode", selection: $skinMode) {
+                        ForEach(SkinMode.allCases, id: \.self) { theme in
+                            Text(theme.rawValue.uppercased()).tag(theme)
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                    .frame(height: 100)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                ),
+                                lineWidth: 1.5
+                            )
+                    )
+                    .background(Color.retroBlack.opacity(0.5))
+                    .cornerRadius(8)
+                    
+                    Text(skinMode.subtitle)
+                        .font(.system(.subheadline, design: .monospaced))
+                        .foregroundColor(.retroBlue)
+                        .shadow(color: .retroPink.opacity(0.8), radius: 2, x: 1, y: 1)
+                }
+                .frame(maxWidth: .infinity)
+            } lockedView: {
+                SettingsRow(title: "Controller skin mode",
+                          subtitle: "Unlock to to active controller skin mode.",
+                          icon: .sfSymbol("lock.fill"))
+            }
+            
             // Button to select skins (premium locked)
             PaidFeatureView {
                 NavigationLink {

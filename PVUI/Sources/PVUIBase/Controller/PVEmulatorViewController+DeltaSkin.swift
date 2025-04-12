@@ -15,7 +15,9 @@ extension PVEmulatorViewController {
     /// Set up the DeltaSkin view if enabled in settings
     @objc public func setupDeltaSkinView() async throws {
         // Check if DeltaSkins are enabled (hardcoded to true for now, but should use UserDefaults in production)
-        let useDeltaSkins = true // UserDefaults.standard.bool(forKey: "useDeltaSkins")
+        let skinMode = Defaults[.skinMode] // UserDefaults.standard.bool(forKey: "useDeltaSkins")
+        
+        let useDeltaSkins = skinMode != .off
         ILOG("Delta Skin setting: \(useDeltaSkins)")
 
         if useDeltaSkins {
