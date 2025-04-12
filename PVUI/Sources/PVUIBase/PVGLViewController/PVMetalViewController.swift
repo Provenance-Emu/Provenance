@@ -1404,6 +1404,10 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                     emulatorCore.frontBufferCondition.signal()
                     emulatorCore.frontBufferCondition.unlock()
                 }
+            } else {
+                // Not speed modifed or paused, just keep rendering
+                // TODO: We should only render when the front buffer is ready perhaps?
+                directRender(in: view)
             }
         } else {
             // For non-OpenGL cores, we need to update the texture from the core's buffer
@@ -1412,7 +1416,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 // Render the updated texture
                 directRender(in: view)
             } else {
-                DLOG("Failed to update texture from core")
+                WLOG("Failed to update texture from core")
             }
         }
 
@@ -1434,7 +1438,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             emulatorCore.frontBufferLock.lock()
         }
 
-        // Fix #1 & #2: Reuse command buffers efficiently
+        // Reuse command buffers efficiently
         let commandBuffer: MTLCommandBuffer
         if let queue = self.commandQueue {
             commandBuffer = queue.makeCommandBuffer()!
