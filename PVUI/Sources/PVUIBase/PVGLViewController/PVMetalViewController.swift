@@ -737,7 +737,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         let bytesPerRow = Int(bufferSize.width) * Int(bytesPerPixel)
         let totalBytes = bytesPerRow * Int(bufferSize.height)
         
-        if uploadBuffer == nil || uploadBuffer!.length < totalBytes {
+        if uploadBuffer == nil || uploadBuffer!.length < totalBytes, totalBytes > 0 {
             uploadBuffer = device.makeBuffer(length: totalBytes, options: .storageModeShared)
             if uploadBuffer == nil {
                 throw MetalViewControllerError.failedToCreateTexture("upload buffer")
