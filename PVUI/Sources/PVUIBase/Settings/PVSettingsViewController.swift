@@ -440,6 +440,15 @@ public final class PVSettingsViewController: QuickTableViewController {
                                         segmentedControl.setTitleTextAttributes([.font: UIFont.systemFont(ofSize: 12)], for: .normal)
                                     }
                                 },
+            
+            PVSettingsSegmentedRow<SkinMode>(text: NSLocalizedString("Controller Skin Mode", comment: "Controller Skin Mode"),
+                                detailText: .subtitle("Choose between different on-screen controller skin modes."),
+                                             key: .skinMode, icon: .sfSymbol("switch.2"), viewController: self) { cell, row in
+                                    cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+                                    if let segmentedControl = cell.accessoryView as? UISegmentedControl {
+                                        segmentedControl.setTitleTextAttributes([.font: UIFont.systemFont(ofSize: 12)], for: .normal)
+                                    }
+                                },
 
 //            PVSettingsSwitchRow(text: NSLocalizedString("Use Legacy Audio Engine", comment: "Use Legacy Audio Engine"),
 //                                detailText: .subtitle("Use the older CoreAudio audio engine instead of AVAudioEngine"),
