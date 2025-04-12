@@ -54,7 +54,7 @@ class DeltaSkinLoader: ObservableObject {
                 await updateLoadingState(.processingAssets)
 
                 // Simulate asset processing time (in a real implementation, this would be actual processing)
-                try await Task.sleep(nanoseconds: 200_000_000)
+//                try await Task.sleep(nanoseconds: 200_000_000)
 
                 // Move to rendering layout stage
                 await updateLoadingState(.renderingLayout)
@@ -69,7 +69,7 @@ class DeltaSkinLoader: ObservableObject {
                 }
 
                 // Wait a moment to ensure UI updates
-                try await Task.sleep(nanoseconds: 300_000_000)
+//                try await Task.sleep(nanoseconds: 300_000_000)
 
                 // Complete loading
                 await updateLoadingState(.complete)
