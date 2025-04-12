@@ -173,7 +173,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                         core.setPauseEmulation(false)
 
                         if let metalVC = gpuViewController as? PVMetalViewController {
-                            metalVC.safelyRefreshGPUView()
+//                            metalVC.safelyRefreshGPUView()
                         }
                     }
                 }
@@ -707,7 +707,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // Make sure the GPU view is refreshed
         if let metalVC = gpuViewController as? PVMetalViewController {
             // Use the safer method to refresh the GPU view
-            metalVC.safelyRefreshGPUView()
+//            metalVC.safelyRefreshGPUView()
         }
 
         // If using a DeltaSkin, ensure game screen view is visible and positioned properly
@@ -909,7 +909,7 @@ extension PVEmulatorViewController {
 
                 // Force a redraw of the GPU view
                 if let metalVC = self.gpuViewController as? PVMetalViewController {
-                    metalVC.safelyRefreshGPUView()
+//                    metalVC.safelyRefreshGPUView()
                 }
             },
             onRefreshRequested: {
@@ -918,7 +918,7 @@ extension PVEmulatorViewController {
 
                 // Force a redraw of the GPU view
                 if let metalVC = self.gpuViewController as? PVMetalViewController {
-                    metalVC.safelyRefreshGPUView()
+//                    metalVC.safelyRefreshGPUView()
                 }
             },
             inputHandler: inputHandler
@@ -1009,7 +1009,7 @@ extension PVEmulatorViewController {
             if let metalVC = gpuViewController as? PVMetalViewController {
                 // Force a refresh of the GPU view after repositioning
                 DispatchQueue.main.async {
-                    metalVC.safelyRefreshGPUView()
+//                    metalVC.safelyRefreshGPUView()
                     
                     // Log dimensions after refresh
                     ILOG("""
@@ -1022,7 +1022,7 @@ extension PVEmulatorViewController {
                          """)
                     
                     // Dump texture info for debugging
-                    metalVC.dumpTextureInfo()
+//                    metalVC.dumpTextureInfo()
                 }
             }
 
@@ -1032,7 +1032,7 @@ extension PVEmulatorViewController {
 
             // Force a redraw of the GPU view
             if let metalVC = gpuViewController as? PVMetalViewController {
-                metalVC.safelyRefreshGPUView()
+//                metalVC.safelyRefreshGPUView()
             }
         } else {
             // Fall back to default positioning (full screen or some reasonable default)
