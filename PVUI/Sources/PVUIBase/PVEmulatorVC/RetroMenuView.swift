@@ -225,7 +225,23 @@ struct RetroMenuView: View {
 
     // Main menu buttons
     private var mainMenuButtons: some View {
-        VStack(spacing: menuSpacing) {
+        // Calculate if we should show the save & quit option
+        let shouldSave: Bool = {
+            guard let game = emulatorVC.game else { return false }
+            
+            let lastPlayed = game.lastPlayed ?? Date()
+            let minimumPlayTimeToMakeAutosave: TimeInterval = 60 * 2 // 2 minutes
+            
+            var shouldSave = Defaults[.autoSave]
+            shouldSave = shouldSave && abs(lastPlayed.timeIntervalSinceNow) > minimumPlayTimeToMakeAutosave
+            shouldSave = shouldSave && (game.lastAutosaveAge ?? minutes(2)) > minutes(1)
+            shouldSave = shouldSave && abs(game.saveStates.sorted(byKeyPath: "date", ascending: true).last?.date.timeIntervalSinceNow ?? minutes(2)) > minutes(1)
+            shouldSave = shouldSave && emulatorVC.core.supportsSaveStates
+            
+            return shouldSave
+        }()
+        
+        return VStack(spacing: menuSpacing) {
             // Resume game button
             menuButton(title: "RESUME GAME", icon: "play.fill", color: .retroBlue) {
                 dismissAction()
@@ -245,11 +261,28 @@ struct RetroMenuView: View {
                 }
             }
 
-            // Quit game button
-            menuButton(title: "QUIT GAME", icon: "xmark.circle", color: .retroPink) {
+            // Quit game button - show different title if save option is available
+            menuButton(title: shouldSave ? "QUIT (WITHOUT SAVING)" : "QUIT GAME", icon: "xmark.circle", color: .retroPink) {
                 dismissAction()
                 Task {
-                    await emulatorVC.quit()
+                    await emulatorVC.quit(optionallySave: false)
+                }
+            }
+            
+            // Save & Quit button - only show if save option is available
+            if shouldSave {
+                menuButton(title: "SAVE & QUIT", icon: "square.and.arrow.down", color: .retroPink) {
+                    dismissAction()
+                    let image = emulatorVC.captureScreenshot()
+                    
+                    Task {
+                        do {
+                            try await emulatorVC.createNewSaveState(auto: true, screenshot: image)
+                            await emulatorVC.quit(optionallySave: false)
+                        } catch {
+                            ELOG("Autosave failed to make save state: \(error.localizedDescription)")
+                        }
+                    }
                 }
             }
 
