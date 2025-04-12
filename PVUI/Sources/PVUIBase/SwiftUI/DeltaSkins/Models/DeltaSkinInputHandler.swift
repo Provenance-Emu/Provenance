@@ -1045,7 +1045,7 @@ public class DeltaSkinInputHandler: ObservableObject {
             // Force a GPU view refresh when possible
             if let metalVC = core.renderDelegate as? PVMetalViewController {
                 DLOG("Refreshing Metal GPU view during reconnect")
-                metalVC.safelyRefreshGPUView()
+//                metalVC.safelyRefreshGPUView()
             }
 
             // Test button forwarding after reconnection
