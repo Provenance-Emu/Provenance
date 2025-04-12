@@ -522,7 +522,8 @@ struct HomeContinueSection: SwiftUI.View {
             )
             // Add subtle glow effect
             .shadow(color: (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.6), radius: 5)
-            .padding(.top, 4) // Add top padding to the bordered container
+            //.padding(.top, 4) // Add top padding to the bordered container
+            .clipShape(RoundedRectangle(cornerRadius: 12))
         }
         .onAppear {
             setupGamepadHandling()
