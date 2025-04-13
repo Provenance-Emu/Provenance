@@ -100,7 +100,6 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             let isNumberOfErrorEmpty = await errorHandler.isEmpty
             return purgeStatus == .incomplete
                 && initialSyncResult == .success
-                && initialSyncResult == .success
                 //if we have errors, it's better to just assume something happened while importing, so instead of creating a bigger mess, just NOT delete any files
                 && isNumberOfErrorEmpty
                 //we have to ensure that everything has been downloaded/imported before attempting to remove anything
