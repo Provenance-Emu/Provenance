@@ -1,0 +1,5 @@
+ extern const unsigned char azaharVersionString[];
+ extern const double azaharVersionNumber;
+
+ const unsigned char azaharVersionString[] __attribute__ ((used)) = "@(#)PROGRAM:azahar  PROJECT:PVAzahar-1" "\n";
+ const double azaharVersionNumber __attribute__ ((used)) = (double)1.;

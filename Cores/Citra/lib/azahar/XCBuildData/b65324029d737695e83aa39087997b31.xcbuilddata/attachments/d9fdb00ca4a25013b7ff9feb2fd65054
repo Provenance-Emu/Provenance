@@ -1,0 +1,5 @@
+ extern const unsigned char PVAzaharVersionString[];
+ extern const double PVAzaharVersionNumber;
+
+ const unsigned char PVAzaharVersionString[] __attribute__ ((used)) = "@(#)PROGRAM:PVAzahar  PROJECT:PVAzahar-1" "\n";
+ const double PVAzaharVersionNumber __attribute__ ((used)) = (double)1.;

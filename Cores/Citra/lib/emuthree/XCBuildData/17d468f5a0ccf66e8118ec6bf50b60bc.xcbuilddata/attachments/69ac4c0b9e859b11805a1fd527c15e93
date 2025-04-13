@@ -1,0 +1,228 @@
+{
+  "" : {
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/emuThreeDS-master.dia",
+    "emit-module-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/emuThreeDS-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/emuThreeDS-master-emit-module.dia",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/emuThreeDS-master.swiftdeps"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/GeneratedAssetSymbols~partial.swiftmodule"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/emuThreeDS/Swift/Classes/Bruno.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Bruno.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Bruno.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Bruno.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Bruno.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Bruno.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Bruno.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Bruno.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Bruno~partial.swiftmodule"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/emuThreeDS/Swift/Classes/EmulationInput.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationInput.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationInput.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationInput.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationInput.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationInput.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationInput.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationInput.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationInput~partial.swiftmodule"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/emuThreeDS/Swift/Classes/EmulationManager.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationManager.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationManager.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationManager.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationManager.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationManager.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationManager.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationManager.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationManager~partial.swiftmodule"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/emuThreeDS/Swift/Classes/GlobalManager.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/GlobalManager.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/GlobalManager.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/GlobalManager.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/GlobalManager.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/GlobalManager.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/GlobalManager.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/GlobalManager.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/GlobalManager~partial.swiftmodule"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/emuThreeDS/Swift/Classes/Initial.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Initial.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Initial.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Initial.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Initial.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Initial.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Initial.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Initial.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Initial~partial.swiftmodule"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/emuThreeDS/Swift/Classes/LibraryManager.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LibraryManager.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LibraryManager.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LibraryManager.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LibraryManager.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LibraryManager.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LibraryManager.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LibraryManager.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LibraryManager~partial.swiftmodule"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/emuThreeDS/Swift/Classes/Rom.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Rom.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Rom.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Rom.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Rom.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Rom.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Rom.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Rom.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/Rom~partial.swiftmodule"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/emuThreeDS/Swift/Classes/SuperController.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/SuperController.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/SuperController.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/SuperController.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/SuperController.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/SuperController.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/SuperController.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/SuperController.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/SuperController~partial.swiftmodule"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/emuThreeDS/Swift/ViewControllers/EmulationViewController.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationViewController.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationViewController.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationViewController.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationViewController.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationViewController.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationViewController.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationViewController.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationViewController~partial.swiftmodule"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/emuThreeDS/Swift/Views/ContentView.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ContentView.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ContentView.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ContentView.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ContentView.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ContentView.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ContentView.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ContentView.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ContentView~partial.swiftmodule"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/emuThreeDS/Swift/Views/EmulationView.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationView.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationView.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationView.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationView.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationView.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationView.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationView.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationView~partial.swiftmodule"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/emuThreeDS/Swift/Views/EmulationViewControllerRepresentable.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationViewControllerRepresentable.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationViewControllerRepresentable.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationViewControllerRepresentable.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationViewControllerRepresentable.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationViewControllerRepresentable.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationViewControllerRepresentable.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationViewControllerRepresentable.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/EmulationViewControllerRepresentable~partial.swiftmodule"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/emuThreeDS/Swift/Views/LibraryView.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LibraryView.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LibraryView.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LibraryView.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LibraryView.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LibraryView.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LibraryView.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LibraryView.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LibraryView~partial.swiftmodule"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/emuThreeDS/Swift/Views/RomView.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/RomView.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/RomView.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/RomView.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/RomView.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/RomView.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/RomView.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/RomView.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/RomView~partial.swiftmodule"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/emuThreeDS/Swift/Views/Settings/LayoutOptionsSettingView.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LayoutOptionsSettingView.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LayoutOptionsSettingView.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LayoutOptionsSettingView.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LayoutOptionsSettingView.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LayoutOptionsSettingView.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LayoutOptionsSettingView.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LayoutOptionsSettingView.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/LayoutOptionsSettingView~partial.swiftmodule"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/emuThreeDS/Swift/Views/Settings/ResolutionFactorSettingView.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ResolutionFactorSettingView.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ResolutionFactorSettingView.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ResolutionFactorSettingView.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ResolutionFactorSettingView.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ResolutionFactorSettingView.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ResolutionFactorSettingView.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ResolutionFactorSettingView.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ResolutionFactorSettingView~partial.swiftmodule"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/emuThreeDS/Swift/Views/Settings/StepperSettingView.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/StepperSettingView.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/StepperSettingView.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/StepperSettingView.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/StepperSettingView.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/StepperSettingView.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/StepperSettingView.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/StepperSettingView.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/StepperSettingView~partial.swiftmodule"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/emuThreeDS/Swift/Views/Settings/StereoRenderSettingView.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/StereoRenderSettingView.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/StereoRenderSettingView.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/StereoRenderSettingView.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/StereoRenderSettingView.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/StereoRenderSettingView.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/StereoRenderSettingView.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/StereoRenderSettingView.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/StereoRenderSettingView~partial.swiftmodule"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/emuThreeDS/Swift/Views/Settings/ToggleSettingView.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ToggleSettingView.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ToggleSettingView.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ToggleSettingView.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ToggleSettingView.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ToggleSettingView.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ToggleSettingView.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ToggleSettingView.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/ToggleSettingView~partial.swiftmodule"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/emuThreeDS/Swift/Views/SettingsView.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/SettingsView.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/SettingsView.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/SettingsView.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/SettingsView.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/SettingsView.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/SettingsView.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/SettingsView.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/SettingsView~partial.swiftmodule"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/emuThreeDS/emuThreeDSApp.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/emuThreeDSApp.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/emuThreeDSApp.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/emuThreeDSApp.dia",
+    "index-unit-output-path" : "/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/emuThreeDSApp.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/emuThreeDSApp.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/emuThreeDSApp.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/emuThreeDSApp.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/citra/build/emuThreeDS.build/Debug/emuThreeDS.build/Objects-normal/x86_64/emuThreeDSApp~partial.swiftmodule"
+  }
+}

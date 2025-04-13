@@ -13,6 +13,11 @@
 #include "video_core/renderer_vulkan/vk_scheduler.h"
 #include "video_core/renderer_vulkan/vk_swapchain.h"
 
+// Turn on PRESENT_WAIT_IDLE to wait for all operations to complete before presenting.
+// This helps avoid timing issues with Metal's command buffer scheduling
+// Set to 1 to enable, 0 to disable @JoeMatt
+#define PRESENT_WAIT_IDLE 1
+
 MICROPROFILE_DEFINE(Vulkan_Acquire, "Vulkan", "Swapchain Acquire", MP_RGB(185, 66, 245));
 MICROPROFILE_DEFINE(Vulkan_Present, "Vulkan", "Swapchain Present", MP_RGB(66, 185, 245));
 
@@ -98,6 +103,7 @@ bool Swapchain::AcquireNextImage() {
     case vk::Result::eSuccess:
         break;
     case vk::Result::eSuboptimalKHR:
+    case vk::Result::eErrorSurfaceLostKHR:
     case vk::Result::eErrorOutOfDateKHR:
         needs_recreation = true;
         break;
@@ -111,9 +117,9 @@ bool Swapchain::AcquireNextImage() {
 }
 
 void Swapchain::Present() {
-    if (needs_recreation) {
-        return;
-    }
+    // if (needs_recreation) {
+    //     return;
+    // }
 
     const vk::PresentInfoKHR present_info = {
         .waitSemaphoreCount = 1,
@@ -125,7 +131,7 @@ void Swapchain::Present() {
 
     MICROPROFILE_SCOPE(Vulkan_Present);
     try {
-#if defined(__APPLE__)
+#if defined(__APPLE__) && PRESENT_WAIT_IDLE
         // On MoltenVK, make sure we wait for all operations to complete before presenting
         // This helps avoid timing issues with Metal's command buffer scheduling
         instance.GetPresentQueue().waitIdle();
@@ -167,21 +173,42 @@ void Swapchain::FindPresentFormat() {
     LOG_CRITICAL(Render_Vulkan, "Unable to find required swapchain format!");
     UNREACHABLE();
 }
-
 void Swapchain::SetPresentMode() {
+    const auto modes = instance.GetPhysicalDevice().getSurfacePresentModesKHR(surface);
+    const bool use_vsync = Settings::values.use_vsync_new.GetValue();
+    const auto find_mode = [&modes](vk::PresentModeKHR requested) {
+        const auto it =
+            std::find_if(modes.begin(), modes.end(),
+                         [&requested](vk::PresentModeKHR mode) { return mode == requested; });
+
+        return it != modes.end();
+    };
+
     present_mode = vk::PresentModeKHR::eFifo;
-    if (!Settings::values.use_vsync_new) {
-        const auto modes = instance.GetPhysicalDevice().getSurfacePresentModesKHR(surface);
-        const auto find_mode = [&modes](vk::PresentModeKHR requested) {
-            auto it =
-                std::find_if(modes.begin(), modes.end(),
-                             [&requested](vk::PresentModeKHR mode) { return mode == requested; });
+    const bool has_immediate = find_mode(vk::PresentModeKHR::eImmediate);
+    const bool has_mailbox = find_mode(vk::PresentModeKHR::eMailbox);
+    if (!has_immediate && !has_mailbox) {
+        LOG_WARNING(Render_Vulkan, "Forcing Fifo present mode as no alternatives are available");
+        return;
+    }
 
-            return it != modes.end();
-        };
-
-        const bool has_mailbox = find_mode(vk::PresentModeKHR::eMailbox);
+    // If the user has disabled vsync use immediate mode for the least latency.
+    // This may have screen tearing.
+    if (!use_vsync) {
+        present_mode =
+            has_immediate ? vk::PresentModeKHR::eImmediate : vk::PresentModeKHR::eMailbox;
+        return;
+    }
+    // If vsync is enabled attempt to use mailbox mode in case the user wants to speedup/slowdown
+    // the game. If mailbox is not available use immediate and warn about it.
+    if (use_vsync && Settings::GetFrameLimit() > 100) {
         present_mode = has_mailbox ? vk::PresentModeKHR::eMailbox : vk::PresentModeKHR::eImmediate;
+        if (!has_mailbox) {
+            LOG_WARNING(
+                Render_Vulkan,
+                "Vsync enabled while frame limiting and no mailbox support, expect tearing");
+        }
+        return;
     }
 }
 

@@ -1,0 +1,40 @@
+{
+  "" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/emuthree/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzahar-master.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/emuthree/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzahar-master.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/emuthree/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzahar-master.dia",
+    "emit-module-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/emuthree/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzahar-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/emuthree/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzahar-master-emit-module.dia",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/emuthree/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVAzahar-master.swiftdeps"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/PVEmuThreeCore/Core/CorePlist-Generated.swift" : {
+    "index-unit-output-path" : "/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/CorePlist-Generated.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/emuthree/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/CorePlist-Generated.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/emuthree/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/CorePlist-Generated.o"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/PVEmuThreeCore/Core/CorePlist.swift" : {
+    "index-unit-output-path" : "/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/CorePlist.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/emuthree/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/CorePlist.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/emuthree/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/CorePlist.o"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/PVEmuThreeCore/Core/EmuThreeOGLViewController.swift" : {
+    "index-unit-output-path" : "/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/EmuThreeOGLViewController.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/emuthree/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/EmuThreeOGLViewController.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/emuthree/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/EmuThreeOGLViewController.o"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/PVEmuThreeCore/Core/EmuThreeVulkanViewController.swift" : {
+    "index-unit-output-path" : "/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/EmuThreeVulkanViewController.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/emuthree/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/EmuThreeVulkanViewController.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/emuthree/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/EmuThreeVulkanViewController.o"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/PVEmuThreeCore/Core/PVEmuThreeCore.swift" : {
+    "index-unit-output-path" : "/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVEmuThreeCore.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/emuthree/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVEmuThreeCore.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/emuthree/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVEmuThreeCore.o"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/PVEmuThreeCore/Core/PVEmuThreeCoreOptions.swift" : {
+    "index-unit-output-path" : "/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVEmuThreeCoreOptions.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/emuthree/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVEmuThreeCoreOptions.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Citra/lib/emuthree/build/PVAzahar.build/Debug-iphoneos/PVAzahar.build/Objects-normal/arm64/PVEmuThreeCoreOptions.o"
+  }
+}

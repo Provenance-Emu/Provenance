@@ -1,0 +1,5 @@
+To update / sync to source tree:
+
+* Update emuthree to latest code 
+* Erase / Add emuthree as group to PVEmuThree project
+* Copy/Replace/Update files in PVEmuThreeCore/emuThree as needed

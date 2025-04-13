@@ -74,6 +74,8 @@ std::string_view GetTextureFilterName(TextureFilter filter) {
 
 Values values = {};
 static bool configuring_global = true;
+bool is_temporary_frame_limit;
+double temporary_frame_limit;
 
 void Apply() {
     GDBStub::SetServerPort(values.gdbstub_port.GetValue());
@@ -140,6 +142,7 @@ void LogSettings() {
 
     LOG_INFO(Config, "Citra Configuration:");
     log_setting("Core_UseCpuJit", values.use_cpu_jit.GetValue());
+    log_setting("Core_UseBlockBasedOptimization", values.use_block_based_optimization.GetValue());
     log_setting("Core_CPUClockPercentage", values.cpu_clock_percentage.GetValue());
     log_setting("Renderer_UseGLES", values.use_gles.GetValue());
     log_setting("Renderer_GraphicsAPI", GetGraphicsAPIName(values.graphics_api.GetValue()));

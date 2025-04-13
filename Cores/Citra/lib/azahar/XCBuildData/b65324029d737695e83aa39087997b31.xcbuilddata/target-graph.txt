@@ -1,0 +1,4 @@
+Target dependency graph (2 targets)
+Target 'PVAzahar' in project 'PVAzahar'
+➜ Explicit dependency on target 'azahar' in project 'PVAzahar'
+Target 'azahar' in project 'PVAzahar' (no dependencies)
