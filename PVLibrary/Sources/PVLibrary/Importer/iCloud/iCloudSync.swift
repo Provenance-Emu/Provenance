@@ -56,6 +56,14 @@ enum iCloudSyncStatus {
     case filesAlreadyMoved
 }
 
+/// a useless enumeration I created because I just got so angry with the shitty way iCloud Documents deals with hundreds and thousands of files on the initial download. you can virtually hit the icloud API with your choice
+enum iCloudHittingTool {
+    case wrench
+    case hammer
+    case sledgeHammer
+    case mallet
+}
+
 class iCloudContainerSyncer: iCloudTypeSyncer {
     lazy var pendingFilesToDownload: ConcurrentSet<URL> = []
     lazy var newFiles: ConcurrentSet<URL> = []
@@ -63,7 +71,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     let directories: Set<String>
     let fileManager: FileManager = .default
     let notificationCenter: NotificationCenter
-    var status: ConcurrentSet<iCloudSyncStatus> = [.initialUpload]
+    var status: ConcurrentSingle<iCloudSyncStatus> = .init(.initialUpload)
     let errorHandler: ErrorHandler
     var initialSyncResult: SyncResult = .indeterminate
     var fileImportQueueMaxCount = 1000
@@ -146,7 +154,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     
     func setNewCloudFilesAvailable() async {
         if await pendingFilesToDownload.isEmpty {
-            status = [.filesAlreadyMoved]
+            await status.set(value: .filesAlreadyMoved)
             await uploadedFiles.removeAll()
         }
         let uploadedCount = await uploadedFiles.count
@@ -214,6 +222,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                 await iterationComplete?()
             }
         }
+        //has to be on the main thread, otherwise it won't work
         Task { @MainActor [weak self] in
             self?.metadataQuery.start()
         }
@@ -274,12 +283,30 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         let pendingFilesToDownloadCount = await pendingFilesToDownload.count
         let totalDownloadedCount = await downloadedCount
         ILOG("\(notification.name): \(directories): current iteration: files pending to be downloaded: \(pendingFilesToDownloadCount), files downloaded pending to process: \(totalDownloadedCount)")
+        await hitiCloud(with: .wrench)
+    }
+    
+    /// When there's a large library, thousands of files, but even 500+ files, the innitial download starts, but we do NOT get the events when the download completes. So we have to disable/stop and then start again and that does the trick. We only do this initially, ie the first time the user taps on the icloud switch or when the app opens for the first time and icloud is enabled. after the initial process, we don't do this because small chunks of updates work. this is essentially the equiv of hitting hardware with a wrench when it doesn't work.
+    func hitiCloud(with tool: iCloudHittingTool) async {
+        guard await status.value == .initialUpload
+        else {
+            return
+        }
+        DLOG("hitting iCloud with \(tool)")
+        metadataQuery.disableUpdates()
+        metadataQuery.stop()
+        //has to be on the main thread, otherwise it won't work
+        Task { @MainActor [weak self] in
+            self?.metadataQuery.start()
+        }
     }
     
     func handleFileToDownload(_ file: URL, isDownloading: Bool, percentDownload: Double) async {
         do {//only start download if we haven't already started
             if let fileToDownload = await insertDownloadingFile(file),
-               !isDownloading || percentDownload < 100 {
+               !isDownloading || percentDownload < 100,
+               //during the initial run we do NOT do any downloads otherwise we run into issues where the query gets stuck for large libraries.
+               await status.value != .initialUpload {
                 try fileManager.startDownloadingUbiquitousItem(at: fileToDownload)
                 ILOG("Download started for: \(file.pathDecoded)")
             }
@@ -295,7 +322,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             WLOG("file marked as current, but does NOT exist locally. This may be a mistake, processing anyways: \(file)")
         }
         //in the case when we are initially turning on iCloud or the app is opened and coming into the foreground for the first time, we try to import any files already downloaded. this is to ensure that a downloaded file gets imported and we do this just when the icloud switch is turned on and subsequent updates only happen after they are downloaded
-        if await status.contains(.initialUpload) {
+        if await status.value == .initialUpload {
             await insertDownloadingFile(file)
         }
         await insertDownloadedFile(file)
@@ -348,7 +375,14 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                                         existingClosure: { existing in
                 do {
                     try fileManager.evictUbiquitousItem(at: existing)
-                } catch {//this happens when a file is being presented on the UI (saved states image) and thus we can't remove the icloud download
+                } catch {
+                    /*
+                     this usually just happens when a file is being presented on the UI (saved states image) and thus we can't remove the icloud download. In this case the icloud file wouldn't be removed locally, but the file does get copied to the local container properly. Here's a sample Error:
+                     
+                     Error Domain=NSCocoaErrorDomain Code=255 "The file couldn’t be locked." UserInfo={NSUnderlyingError=0x3046f1740 {Error Domain=NSPOSIXErrorDomain Code=16 "Resource busy" UserInfo={NSURL=file:///some/path/file.extension, NSLocalizedDescription=The file ‘file.extension’ is currently in use by an application.}}}
+                     
+                     of course there could be a real error when this happens, but this is significant enough to document in case you see it in the log.
+                     */
                     await errorHandler.handleError(error, file: existing)
                     ELOG("error evicting iCloud file: \(existing), \(error)")
                 }
@@ -373,6 +407,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                    containerDestination: URL,
                    existingClosure: ((URL) async -> Void),
                    moveClosure: (URL, URL) async throws -> Void) async -> SyncResult {
+        //TODO: if there a lot of files, this will take some time. we could fire off 2 threads to at least make it execute in half the time at a minimum.
         DLOG("source: \(source)")
         guard fileManager.fileExists(atPath: source.pathDecoded)
         else {
@@ -386,6 +421,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             ELOG("failed to get directory contents \(source): \(error)")
             return .saveFailure
         }
+        var totalMoved = 0
         DLOG("subdirectories of \(source): \(subdirectories)")
         for currentChild in subdirectories {
             let currentItem = source.appendingPathComponent(currentChild)
@@ -412,15 +448,17 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                 continue
             }
             do {
-                ILOG("Trying to move \(currentItem.pathDecoded) to \(destination.pathDecoded)")
+                totalMoved += 1
+                DLOG("#\(totalMoved) Trying to move \(currentItem.pathDecoded) to \(destination.pathDecoded)")
                 await try moveClosure(currentItem, destination)
                 await insertUploadedFile(destination)
             } catch {
                 await errorHandler.handleError(error, file: currentItem)
                 //this could indicate no more space is left when moving to iCloud
-                ELOG("failed to move \(currentItem.pathDecoded) to \(destination.pathDecoded): \(error)")
+                ELOG("#\(totalMoved) failed to move \(currentItem.pathDecoded) to \(destination.pathDecoded): \(error)")
             }
         }
+        ILOG("\(directories) moved a total of \(totalMoved)")
         return .success
     }
 }
@@ -457,70 +495,81 @@ public enum iCloudSync {
         await turnOn()
     }
     
-    /// in order to account for large libraries, we go through each directory/file and tell the iCloud API to start downloading. this way it starts and by the time we query, we can get actual events that the downloads complete.
-    static func initiateRomsSavesDownload() async {
+    /// in order to account for large libraries, we go through each directory/file and tell the iCloud API to start downloading. this way it starts and by the time we query, we can get actual events that the downloads complete. If the files are already downloaded, then a query to get the latest version will be done.
+    static func initiateDownloadOfiCloudDocumentsContainer() async {
         guard let documentsDirectory = URL.iCloudDocumentsDirectory
         else {
-            ELOG("error obtaining iCloud documents directory")
+            ELOG("Initial Download: error obtaining iCloud documents directory")
             return
         }
+        //TODO: add retroarch
         let romsDirectory = documentsDirectory.appendingPathComponent("ROMs")
-        let savesDirectory = documentsDirectory.appendingPathComponent("Save States")
+        let saveStatesDirectory = documentsDirectory.appendingPathComponent("Save States")
+        let biosDirectory = documentsDirectory.appendingPathComponent("BIOS")
+        let batteryStatesDirectory = documentsDirectory.appendingPathComponent("Battery States")
+        let screenshotsDirectory = documentsDirectory.appendingPathComponent("Screenshots")
         await withTaskGroup(of: Void.self) { group in
             group.addTask {
-                await startDownloading(directory: romsDirectory, parentDirectoryPrefix: "com.provenance.")
+                await startDownloading(directory: romsDirectory)
             }
             group.addTask {
-                await startDownloading(directory: savesDirectory)
+                await startDownloading(directory: saveStatesDirectory)
+            }
+            group.addTask {
+                await startDownloading(directory: batteryStatesDirectory)
+            }
+            group.addTask {
+                await startDownloading(directory: biosDirectory)
+            }
+            group.addTask {
+                await startDownloading(directory: screenshotsDirectory)
             }
             await group.waitForAll()
         }
     }
     
-    static func startDownloading(directory: URL, parentDirectoryPrefix: String? = nil) async {
-        ILOG("attempting to start downloading iCloud directory: \(directory)")
+    static func startDownloading(directory: URL) async {
+        ILOG("Initial Download: attempting to start downloading iCloud directory: \(directory)")
         let fileManager: FileManager = .default
         let children: [String]
         do {
             children = try fileManager.subpathsOfDirectory(atPath: directory.pathDecoded)
-            DLOG("found \(children.count) in \(directory)")
+            ILOG("Initial Download: found \(children.count) in \(directory)")
         } catch {
-            DLOG("error grabbing sub directories of \(directory)")
+            ELOG("Initial Download: error grabbing sub-directories of \(directory)")
             await errorHandler.handleError(error, file: directory)
             return
         }
-        var childrenUrls: Set<URL> = []
+        var count = 0
         for child in children {
             let currentUrl = directory.appendingPathComponent(child)
             do {
                 var isDirectory: ObjCBool = false
-                _ = try fileManager.fileExists(atPath: currentUrl.pathDecoded, isDirectory: &isDirectory)
+                let doesUrlExist = try fileManager.fileExists(atPath: currentUrl.pathDecoded, isDirectory: &isDirectory)
+                let downloadStatus = checkDownloadStatus(of: currentUrl)
+                DLOG("""
+                Initial Download:
+                    doesUrlExist: \(doesUrlExist)
+                    isDirectory: \(isDirectory.boolValue)
+                    downloadStatus: \(downloadStatus)
+                    url: \(currentUrl)
+                """)
                 guard !isDirectory.boolValue,
-                      checkDownloadStatus(of: currentUrl) != .current
+                      downloadStatus != .current
                 else {
                     continue
                 }
-                 let parentDirectory = currentUrl.parentPathComponent
-                 //we should only add to the import queue files that are actual ROMs, anything else can be ignored.
-                guard parentDirectoryPrefix == nil
-                        || parentDirectory.range(of: parentDirectoryPrefix!,
-                                             options: [.caseInsensitive, .anchored]) != nil
-                else {
-                    continue
-                }
-                DLOG("processing \(currentUrl)")
+                count += 1
+                let parentDirectory = currentUrl.parentPathComponent
                 do {
                     try fileManager.startDownloadingUbiquitousItem(at: currentUrl)
+                    DLOG("Initial Download: #\(count) downloading \(currentUrl)")
                 } catch {
-                    DLOG("error initiating download of \(currentUrl)")
+                    ELOG("Initial Download: #\(count) error initiating download of \(currentUrl)")
                     await errorHandler.handleError(error, file: currentUrl)
                 }
-                childrenUrls.insert(currentUrl)
-                if childrenUrls.count % 10 == 0 {
-                    Thread.sleep(forTimeInterval: 0.5)
-                }
             } catch {
-                DLOG("error checking if \(currentUrl) is a directory")
+                ELOG("Initial Download: #\(count) error checking if \(currentUrl) is a directory")
             }
         }
     }
@@ -530,7 +579,7 @@ public enum iCloudSync {
             return try url.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey,
                                                     .ubiquitousItemIsDownloadingKey]).ubiquitousItemDownloadingStatus
         } catch {
-            DLOG("Error checking iCloud file status for: \(url), error: \(error)")
+            ELOG("Initial Download: Error checking iCloud file status for: \(url), error: \(error)")
             return nil
         }
     }
@@ -556,7 +605,9 @@ public enum iCloudSync {
         } else {
             UserDefaults.standard.removeObject(forKey: UbiquityIdentityTokenKey)
         }
+        await initiateDownloadOfiCloudDocumentsContainer()
         disposeBag = DisposeBag()
+        //TODO: add retroarch
         var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots"],
                                                                   notificationCenter: .default,
                                                                   errorHandler: iCloudErrorHandler.shared)
@@ -571,7 +622,6 @@ public enum iCloudSync {
                     nonDatabaseFileSyncer = nil
                 }
             }.disposed(by: disposeBag)
-        await initiateRomsSavesDownload()
         //wait for the ROMs database to initialize
         guard !RomDatabase.databaseInitialized
         else {
@@ -632,6 +682,35 @@ public enum iCloudSync {
         //reset ROMs path
         gameImporter.gameImporterDatabaseService.setRomsPath(url: gameImporter.romsPath)
     }
+}
+
+/// single value DS that is thread safe
+actor ConcurrentSingle<T> {
+    private var _value: T
+    
+    /// initially set value
+    /// - Parameter value: value to set initially
+    init(_ value: T) {
+        self._value = value
+    }
+    
+    /// gets current value
+    var value: T {
+        get {
+            _value
+        }
+    }
+    
+    /// sets new value
+    /// - Parameter value: value to set
+    func set(value: T) {
+        _value = value
+    }
+    
+    var description: String {
+        String(describing: _value)
+    }
+    
 }
 
 /// actor for adding locks on closures
@@ -815,10 +894,12 @@ enum SaveStateUpdateError: Error {
 
 class SaveStateSyncer: iCloudContainerSyncer {
     let jsonDecorder = JSONDecoder()
-    let processed = ConcurrentQueue<Int>(arrayLiteral: 0)
-    let processingState: ConcurrentQueue<ProcessingState> = .init(arrayLiteral: .idle)
+    let processed = ConcurrentSingle<Int>(0)
+    let processingState: ConcurrentSingle<ProcessingState> = .init(.idle)
     var savesDatabaseSubscriber: AnyCancellable?
     let savesProcessingCriticalSection: CriticalSectionActor = .init()
+    //initially when downloading, we need to keep a local cache of what has been processed. for large libraries we are pausing/stopping/starting query after an event processed. so when this happens, the saves are inserted several times and 2000 files, from the test where this happened, turned into 10k files and the app got a lot of app hangs.
+    lazy var initiallyProcessedFiles: ConcurrentSet<URL> = []
     
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
         self.init(directories: ["Save States"], notificationCenter: notificationCenter, errorHandler: errorHandler)
@@ -836,6 +917,15 @@ class SaveStateSyncer: iCloudContainerSyncer {
     override func stopObserving() {
         super.stopObserving()
         savesDatabaseSubscriber?.cancel()
+    }
+    
+    override func setNewCloudFilesAvailable() async {
+        await super.setNewCloudFilesAvailable()
+        guard await status.value == .filesAlreadyMoved
+        else {
+            return
+        }
+        await initiallyProcessedFiles.removeAll()
     }
     
     func removeSavesDeletedWhileApplicationClosed() async {
@@ -859,6 +949,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
     
     override func insertDownloadedFile(_ file: URL) async {
         guard let _ = await pendingFilesToDownload.remove(file),
+              await !initiallyProcessedFiles.contains(file),
               "json".caseInsensitiveCompare(file.pathExtension) == .orderedSame
         else {
             return
@@ -951,7 +1042,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
         }
         await removeSavesDeletedWhileApplicationClosed()
         guard await !newFiles.isEmpty,
-              await processingState.peek() == .idle
+              await processingState.value == .idle
         else {
             return
         }
@@ -969,14 +1060,14 @@ class SaveStateSyncer: iCloudContainerSyncer {
     
     func processJsonFiles(_ jsonFiles: any Collection<URL>) async {
         //setup processed count
-        await processingState.dequeue()
-        await processingState.enqueue(entry: .processing)
-        var processedCount = await processed.dequeue() ?? 0
+        await processingState.set(value: .processing)
+        var processedCount = await processed.value
         let pendingFilesToDownloadCount = await pendingFilesToDownload.count
         ILOG("Saves: downloading: \(pendingFilesToDownloadCount), processing: \(jsonFiles.count), total processed: \(processedCount)")
         for json in jsonFiles {
             do {
-                processedCount += 1
+                await processed.set(value: await processed.value + 1)
+                processedCount = await processed.value
                 guard let save: SaveState = try getSaveFrom(json)
                 else {
                     continue
@@ -996,9 +1087,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
             }
         }
         //update processed count
-        await processed.enqueue(entry: processedCount)
-        await processingState.dequeue()
-        await processingState.enqueue(entry: .idle)
+        await processingState.set(value: .idle)
         await removeSavesDeletedWhileApplicationClosed()
         notificationCenter.post(Notification(name: .SavesFinishedImporting))
     }
@@ -1020,6 +1109,9 @@ class SaveStateSyncer: iCloudContainerSyncer {
     func storeNewSave(_ save: SaveState, _ romsDatastore: RomsDatastore, _ json: URL) async {
         do {
             await try romsDatastore.create(newSave: save)
+            if await status.value == .initialUpload {
+                await initiallyProcessedFiles.insert(json)
+            }
         } catch {
             await errorHandler.handleError(error, file: json)
             ELOG("error adding new save \(json): \(error)")
@@ -1200,7 +1292,9 @@ class RomsSyncer: iCloudContainerSyncer {
         else {
             return
         }
+#if DEBUG
         gameImporter.clearCompleted()
+#endif
         await removeGamesDeletedWhileApplicationClosed()
         let arePendingFilesToDownloadEmpty = await pendingFilesToDownload.isEmpty
         let areMultiFileRomsEmpty = await multiFileRoms.isEmpty
