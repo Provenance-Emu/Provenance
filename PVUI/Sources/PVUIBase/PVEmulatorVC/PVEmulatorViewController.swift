@@ -74,7 +74,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     internal var currentSkin: DeltaSkinProtocol?
 
     // Track current orientation
+#if !os(tvOS)
     internal var currentOrientation: SkinOrientation = .portrait
+    #else
+    internal var currentOrientation: SkinOrientation = .landscape
+    #endif
 
     // Keep track of whether we've positioned the GPU view
     internal static var hasPositionedGPUView = false
@@ -759,6 +763,7 @@ extension PVEmulatorViewController {
 
         // IMPORTANT: Use device orientation for skin traits
         // First get the real device orientation
+        #if !os(tvOS)
         let deviceOrientation = UIDevice.current.orientation
 
         // If it's not a valid orientation (face up/down/unknown), use interface orientation
@@ -774,6 +779,8 @@ extension PVEmulatorViewController {
             let interfaceOrientation = UIApplication.shared.windows.first?.windowScene?.interfaceOrientation
             self.currentOrientation = (interfaceOrientation == .landscapeLeft || interfaceOrientation == .landscapeRight) ? .landscape : .portrait
         }
+        #else
+        #endif
 
         // Log the orientation we're using
         DLOG("Using orientation for skin application: \(self.currentOrientation)")

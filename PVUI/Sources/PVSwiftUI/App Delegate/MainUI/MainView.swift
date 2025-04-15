@@ -38,10 +38,12 @@ struct MainView: View {
                     .hideHomeIndicator()
                 } else {
                     switch appState.mainUIMode {
+#if !os(tvOS)
                     case .paged:
                         SwiftUIHostedProvenanceMainView()
                             .environmentObject(appDelegate)
                             .edgesIgnoringSafeArea(.all)
+#endif
                     case .singlePage:
                         RetroMainView()
                             .environmentObject(appDelegate)

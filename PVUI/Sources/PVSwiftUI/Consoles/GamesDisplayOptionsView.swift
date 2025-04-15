@@ -19,6 +19,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     @Default(.gameLibraryScale) private var gameLibraryScale
     @Default(.showGameTitles) private var showGameTitles
     @Default(.showRecentGames) private var showRecentGames
+    @Default(.showSearchbar) private var showSearchbar
     @Default(.showRecentSaveStates) private var showRecentSaveStates
     @Default(.showFavorites) private var showFavorites
     @Default(.showGameBadges) private var showGameBadges
@@ -48,6 +49,12 @@ struct GamesDisplayOptionsView: SwiftUI.View {
             Menu {
                 Toggle(isOn: $showGameTitles) {
                     Label("Show Game Titles", systemImage: "textformat")
+                }
+                .onChange(of: showGameTitles) { _ in
+                    Haptics.impact(style: .light)
+                }
+                Toggle(isOn: $showSearchbar) {
+                    Label("Show Search Bar", systemImage: "magnifyingglass")
                 }
                 .onChange(of: showGameTitles) { _ in
                     Haptics.impact(style: .light)
@@ -90,6 +97,11 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                         Label("Show Game Titles", systemImage: "textformat")
                     }
                     .onChange(of: showGameTitles) { _ in
+                    }
+                    Toggle(isOn: $showSearchbar) {
+                        Label("Show Search Bar", systemImage: "magnifyingglass")
+                    }
+                    .onChange(of: showRecentGames) { _ in
                     }
                     Toggle(isOn: $showRecentGames) {
                         Label("Show Recent Games", systemImage: "clock")

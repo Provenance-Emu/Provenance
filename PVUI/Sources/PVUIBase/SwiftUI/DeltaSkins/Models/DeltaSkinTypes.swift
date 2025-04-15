@@ -2,6 +2,7 @@
 public enum DeltaSkinDevice: String, Codable, Hashable, Equatable, CaseIterable {
     case iphone
     case ipad
+    case tv
 }
 
 public enum DeltaSkinDisplayType: String, Codable, Hashable, Equatable, CaseIterable {
@@ -124,6 +125,8 @@ extension DeltaSkinDevice {
             }
         case .ipad:
             // iPad always uses PDF assets
+            return .zero
+        case .tv:
             return .zero
         }
     }

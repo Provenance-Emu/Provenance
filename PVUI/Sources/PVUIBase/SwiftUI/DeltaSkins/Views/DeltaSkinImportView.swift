@@ -98,6 +98,7 @@ public struct DeltaSkinImportView: View {
                     }
                 }
             }
+            #if !os(tvOS)
             .fileImporter(
                 isPresented: $isShowingFilePicker,
                 allowedContentTypes: [UTType.deltaSkin],
@@ -105,6 +106,7 @@ public struct DeltaSkinImportView: View {
             ) { result in
                 handleFileImport(result)
             }
+            #endif
         }
     }
 

@@ -148,6 +148,9 @@ public struct RetroWaveSlider<Value: BinaryFloatingPoint>: View where Value.Stri
                 }
                 .frame(height: 24) // Height for the slider track
                 .contentShape(Rectangle()) // Make the entire area tappable
+#if os(tvOS)
+                .focusable(false)
+#else
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { gesture in
@@ -158,7 +161,6 @@ public struct RetroWaveSlider<Value: BinaryFloatingPoint>: View where Value.Stri
                                     glowOpacity = 0.8
                                 }
                             }
-                            
                             updateValue(for: gesture.location.x, in: geo)
                         }
                         .onEnded { _ in
@@ -167,6 +169,7 @@ public struct RetroWaveSlider<Value: BinaryFloatingPoint>: View where Value.Stri
                             glowOpacity = 0.0
                         }
                 )
+#endif
                 
                 // Value labels
                 HStack {

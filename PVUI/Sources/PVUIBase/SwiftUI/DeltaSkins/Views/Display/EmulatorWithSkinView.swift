@@ -23,8 +23,10 @@ struct EmulatorWithSkinView: View {
     @State private var skinRenderComplete = false
 
     // State for orientation
+    #if os(iOS)
     @State private var currentOrientation: UIDeviceOrientation = UIDevice.current.orientation
-
+    #endif
+    
     // Debug mode
     @State private var showDebugOverlay = false
 
@@ -427,9 +429,10 @@ struct EmulatorWithSkinView: View {
 
             Text("Progress: \(Int(skinLoader.loadingProgress * 100))%")
                 .foregroundColor(.white)
-
+            #if os(iOS)
             Text("Orientation: \(currentOrientation.isLandscape ? "Landscape" : "Portrait")")
                 .foregroundColor(.white)
+            #endif
 
             Text("Rotation Count: \(rotationCount)")
                 .foregroundColor(.white)
@@ -466,6 +469,7 @@ struct EmulatorWithSkinView: View {
     private func setupOrientationHandling() {
         // We still need to use NotificationCenter for device orientation changes
         // as it's a system notification
+#if os(iOS)
         NotificationCenter.default.addObserver(
             forName: UIDevice.orientationDidChangeNotification,
             object: nil,
@@ -481,6 +485,7 @@ struct EmulatorWithSkinView: View {
                 self.refreshView()
             }
         }
+#endif
     }
 
     /// Refresh the view after orientation changes
@@ -493,9 +498,13 @@ struct EmulatorWithSkinView: View {
 
     /// Create skin traits based on current device and orientation
     private func createSkinTraits() -> DeltaSkinTraits {
+        #if !os(tvOS)
         let isLandscape = currentOrientation.isLandscape ||
                          UIDevice.current.orientation == .unknown &&
                          UIScreen.main.bounds.width > UIScreen.main.bounds.height
+        #else
+        let isLandscape = true
+        #endif
 
         // Determine device type
         let deviceType: DeltaSkinDevice

@@ -9,6 +9,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 import PVLogging
 
+#if !os(tvOS)
 /// Document picker for importing game files
 /// This is a UIViewControllerRepresentable wrapper around UIDocumentPickerViewController
 public struct DocumentPicker: UIViewControllerRepresentable {
@@ -107,3 +108,4 @@ public struct DocumentPicker: UIViewControllerRepresentable {
         }
     }
 }
+#endif

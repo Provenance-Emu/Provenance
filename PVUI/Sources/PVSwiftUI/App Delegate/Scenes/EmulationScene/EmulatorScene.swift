@@ -30,7 +30,9 @@ public struct EmulatorScene: Scene {
                 .environmentObject(sceneCoordinator)
                 .preferredColorScheme(ThemeManager.shared.currentPalette.dark ? .dark : .light)
                 .hideHomeIndicator()
+#if !os(tvOS)
                 .statusBar(hidden: true)
+#endif
                 .onAppear {
                     ILOG("EmulatorScene: Scene appeared")
                     ILOG("EmulatorScene: AppState.shared instance: \(AppState.shared)")
@@ -63,6 +65,7 @@ public struct EmulatorScene: Scene {
                     }
                 }
         }
+#if !os(tvOS)
         .handlesExternalEvents(matching: ["emulator"])
         .commands {
             // Add any menu commands specific to the emulator scene
@@ -119,6 +122,7 @@ public struct EmulatorScene: Scene {
                 .keyboardShortcut("q", modifiers: [.command, .shift])
             }
         }
+#endif
     }
 }
 
@@ -482,7 +486,7 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
             // Set up Delta Skin directly
             Task {
                 do {
-                    try await emulatorViewController.setupDeltaSkinView()
+//                    try await emulatorViewController.setupDeltaSkinView()
                 } catch {
                     print("Error setting up Delta Skin: \(error)")
                 }

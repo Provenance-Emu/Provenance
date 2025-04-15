@@ -18,7 +18,9 @@ import FreemiumKit
 struct SettingsWrapperView: View {
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var themeManager: ThemeManager
+    #if !os(tvOS)
     @State private var showingDocumentPicker = false
+    #endif
     @State private var importMessage: String? = nil
     @State private var showingImportMessage = false
     @State private var showingSettings = true
@@ -42,15 +44,21 @@ struct SettingsWrapperView: View {
 #endif
         }
         .navigationViewStyle(.stack)
+        #if !os(tvOS)
         .sheet(isPresented: $showingDocumentPicker) {
             DocumentPicker(onImport: importFiles)
         }
+        #endif
         .retroAlert("Import Result",
                     message: importMessage ?? "",
                     isPresented: $showingImportMessage) {
             Button("OK", role: .cancel) {}
         }
+        #if os(tvOS)
+        .toggleStyle(.automatic)
+        #else
         .toggleStyle(.button)
+        #endif
     }
 
     private func importFiles(urls: [URL]) {

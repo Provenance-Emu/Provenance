@@ -18,6 +18,8 @@ import GameController
 @objc
 @objcMembers
 public final class PVEmuThreeCore: PVEmulatorCore {
+    
+    public override var supportsSkins: Bool { false }
 
     let _bridge: PVEmuThreeCoreBridge = .init()
     

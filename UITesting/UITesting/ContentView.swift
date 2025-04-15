@@ -74,10 +74,12 @@ struct ContentView: View {
                     // Show the main view
                     ZStack {
                         switch appState.mainUIMode {
+                            #if !os(tvOS)
                         case .paged:
                             SwiftUIHostedProvenanceMainView()
                                 .environmentObject(appDelegate)
                                 .edgesIgnoringSafeArea(.all)
+                            #endif
                         case .singlePage:
                             RetroMainView()
                                 .environmentObject(appDelegate)

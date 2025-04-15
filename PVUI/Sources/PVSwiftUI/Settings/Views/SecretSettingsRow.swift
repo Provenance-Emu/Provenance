@@ -7,6 +7,7 @@
 
 import SwiftUI
 import MarkdownView
+import AudioToolbox
 
 internal struct SecretSettingsRow: View {
     @State private var showSecretView = false

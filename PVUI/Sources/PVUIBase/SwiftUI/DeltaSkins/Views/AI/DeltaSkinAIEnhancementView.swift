@@ -31,10 +31,26 @@ public struct DeltaSkinAIEnhancementView: View {
                 .padding()
             }
         }
-        .background(Color(.systemGroupedBackground))
+        .background(backgroundStyle)
         .navigationTitle("AI Enhancements")
     }
 
+    private var backgroundStyle: Color {
+        #if os(tvOS)
+        return Color.retroDarkBlue.opacity(0.9)
+        #else
+        return Color(.systemGroupedBackground)
+        #endif
+    }
+    
+    private var secondaryBackgroundColor: Color {
+        #if os(tvOS)
+        return Color.retroDarkBlue.opacity(0.7)
+        #else
+        return Color(.secondarySystemGroupedBackground)
+        #endif
+    }
+    
     private var headerView: some View {
         ZStack {
             LinearGradient(
@@ -132,14 +148,22 @@ public struct DeltaSkinAIEnhancementView: View {
             if isSelected {
                 return AnyShapeStyle(
                     LinearGradient(
-                        gradient: Gradient(colors: [.blue, .purple]),
+                        gradient: Gradient(colors: [.retroPink, .retroPurple]),
                         startPoint: .leading,
                         endPoint: .trailing
                     )
                 )
             } else {
-                return AnyShapeStyle(Color(.secondarySystemGroupedBackground))
+                return AnyShapeStyle(secondaryBackgroundStyle)
             }
+        }
+        
+        private var secondaryBackgroundStyle: Color {
+            #if os(tvOS)
+            return Color.retroDarkBlue.opacity(0.7)
+            #else
+            return Color(.secondarySystemGroupedBackground)
+            #endif
         }
     }
 
@@ -184,7 +208,7 @@ public struct DeltaSkinAIEnhancementView: View {
             }
         }
         .padding()
-        .background(Color(.secondarySystemGroupedBackground))
+        .background(secondaryBackgroundColor)
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
     }
@@ -247,7 +271,7 @@ public struct DeltaSkinAIEnhancementView: View {
             }
         }
         .padding()
-        .background(Color(.secondarySystemGroupedBackground))
+        .background(secondaryBackgroundColor)
         .cornerRadius(16)
     }
 

@@ -29,16 +29,22 @@ struct RetroMenuView: View {
     @Environment(\.verticalSizeClass) private var verticalSizeClass
 
     /// Get device orientation
+    #if os(iOS)
     @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
+    #endif
 
     /// Compute if we're in landscape mode
     private var isLandscape: Bool {
+        #if os(iOS)
         // Use size classes as the primary indicator (more reliable)
         if horizontalSizeClass == .regular && verticalSizeClass == .compact {
             return true
         }
         // Fall back to device orientation
         return orientation.isLandscape
+        #else
+        return true
+        #endif
     }
 
     // Background with retrowave styling
@@ -199,6 +205,7 @@ struct RetroMenuView: View {
             menuContainer
         }
         // Listen for orientation changes
+#if !os(tvOS)
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
             let previousOrientation = self.orientation
             self.orientation = UIDevice.current.orientation
@@ -217,10 +224,13 @@ struct RetroMenuView: View {
                 }
             }
         }
+        #endif
         // Initial orientation detection
+#if !os(tvOS)
         .onAppear {
             self.orientation = UIDevice.current.orientation
         }
+#endif
     }
 
     // Main menu buttons
@@ -437,7 +447,11 @@ struct RetroMenuView: View {
     @State private var showingSkinPicker = false
     @State private var showingFilterPicker = false
     @State private var skinScope: SkinScope = .session
+    #if os(iOS)
     @State private var currentOrientation: SkinOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
+    #else
+    @State private var currentOrientation: SkinOrientation = .landscape
+    #endif
     @State private var isLoadingSkins = false
     @State private var didLoadSkins = false
 
@@ -709,6 +723,7 @@ struct RetroMenuView: View {
                     }
                 }
             }
+            #if !os(tvOS)
             .navigationBarTitle("", displayMode: .inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -732,6 +747,7 @@ struct RetroMenuView: View {
                     }
                 }
             }
+            #endif
             .onAppear {
                 // Start animations
                 withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
@@ -855,11 +871,13 @@ struct RetroMenuView: View {
                                         y: 0)
                         )
                 )
+#if !os(tvOS)
                 .onHover { hovering in
                     withAnimation(.easeInOut(duration: 0.2)) {
                         isHoveredSkinId = hovering ? skinId : nil
                     }
                 }
+                #endif
             }
             .buttonStyle(PlainButtonStyle())
 #if os(tvOS)
@@ -1271,8 +1289,13 @@ struct RetroMenuView: View {
 
                     // Clear any session skin for this system/game when setting an explicit preference
                     // This ensures session skins don't override the user's explicit choice
+                    #if !os(tvOS)
                     let currentOrientation = UIDevice.current.orientation.isLandscape ? SkinOrientation.landscape : .portrait
                     let oppositeOrientation = currentOrientation == .landscape ? SkinOrientation.portrait : .landscape
+                    #else
+                    let currentOrientation = SkinOrientation.landscape
+                    let oppositeOrientation = SkinOrientation.landscape
+                    #endif
 
                     // Clear session skins for both orientations using setSessionSkin(nil, ...)
                     DeltaSkinManager.shared.setSessionSkin(nil, for: systemId, orientation: currentOrientation)
@@ -1304,8 +1327,13 @@ struct RetroMenuView: View {
                 // User selected "Default" skin
                 if let emulatorVC = emulatorVC as? PVEmulatorViewController {
                     // Clear any session skins for this system/game
+                    #if !os(tvOS)
                     let currentOrientation = UIDevice.current.orientation.isLandscape ? SkinOrientation.landscape : .portrait
                     let oppositeOrientation = currentOrientation == .landscape ? SkinOrientation.portrait : .landscape
+                    #else
+                    let currentOrientation = SkinOrientation.landscape
+                    let oppositeOrientation = SkinOrientation.portrait
+                    #endif
 
                     // Clear session skins for both orientations using setSessionSkin(nil, ...)
                     DeltaSkinManager.shared.setSessionSkin(nil, for: systemId, orientation: currentOrientation)
@@ -1354,7 +1382,11 @@ struct RetroMenuView: View {
                 }
 
                 // Update the session skin in DeltaSkinManager for the new orientation
+                #if !os(tvOS)
                 let orientation = UIDevice.current.orientation.isLandscape ? SkinOrientation.landscape : .portrait
+                #else
+                let orientation = SkinOrientation.landscape
+                #endif
                 DeltaSkinManager.shared.setSessionSkin(skinId, for: systemId, orientation: orientation)
 
                 // Apply the skin directly without changing preferences

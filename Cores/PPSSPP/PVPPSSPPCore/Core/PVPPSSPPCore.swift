@@ -24,6 +24,8 @@ import PVCoreObjCBridge
 @objcMembers
 final class PVPPSSPPCore: PVEmulatorCore, @unchecked Sendable {
     
+    public override var supportsSkins: Bool { false }
+    
     // PVEmulatorCoreBridged
     public lazy var _bridge: PVPPSSPPCoreBridge = .init()
 

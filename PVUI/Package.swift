@@ -104,7 +104,7 @@ let package = Package(
                 "PVThemes",
                 "PVUIObjC",
                 "PVWebServer",
-                "PVJIT",
+                .byNameItem(name: "PVJIT", condition: .when(platforms: [.iOS])),
                 .byNameItem(name: "DateRangePicker", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
                 .byNameItem(name: "MBProgressHUD", condition: .when(platforms: [.iOS, .macCatalyst, .tvOS, .watchOS])),
                 .byNameItem(name: "SwipeCellSUI", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
@@ -219,7 +219,7 @@ let package = Package(
                 "FloatingButton",
                 "ActivityIndicatorView",
                 "PVFeatureFlags",
-                .product(name: "SiriusRating", package: "siriusrating-ios"),
+                .product(name: "SiriusRating", package: "siriusrating-ios", condition: .when(platforms: [.iOS])),
                 .byNameItem(name: "SwipeCellSUI", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
                 .byNameItem(name: "DateRangePicker", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
             ]

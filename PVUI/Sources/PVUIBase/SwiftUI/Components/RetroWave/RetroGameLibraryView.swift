@@ -130,12 +130,15 @@ public struct RetroGameLibraryView: View {
         mainContentView()
             .background(retroBackgroundView())
             .navigationTitle("GAME LIBRARY")
+#if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline) // Changed to inline to avoid overlap
+#endif
             .toolbarColorScheme(.dark, for: .navigationBar)
             .safeAreaInset(edge: .top) {
                 // Add a spacer with height that matches status bar
                 Color.clear.frame(height: 0)
             }
+#if !os(tvOS)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
@@ -155,6 +158,7 @@ public struct RetroGameLibraryView: View {
                 /// Present the DocumentPicker directly with the importFiles callback
                 DocumentPicker(onImport: importFiles)
             }
+#endif
             .retroAlert("Import Result",
                         message: viewModel.importMessage ?? "",
                         isPresented: $viewModel.showingImportMessage) {
@@ -426,44 +430,52 @@ public struct RetroGameLibraryView: View {
             .buttonStyle(PlainButtonStyle())
             
             // Sort button
-            Menu {
-                ForEach(SortOptions.allCases, id: \.self) { option in
-                    Button(action: {
-                        viewModel.selectedSortOption = option
-                    }) {
-                        HStack {
-                            Text(option.description)
-                            if viewModel.selectedSortOption == option {
-                                Image(systemName: "checkmark")
+            if #available(tvOS 17.0, *) {
+                Menu {
+                    ForEach(SortOptions.allCases, id: \.self) { option in
+                        Button(action: {
+                            viewModel.selectedSortOption = option
+                        }) {
+                            HStack {
+                                Text(option.description)
+                                if viewModel.selectedSortOption == option {
+                                    Image(systemName: "checkmark")
+                                }
                             }
                         }
                     }
+                } label: {
+                    Label("Sort", systemImage: "arrow.up.arrow.down")
+                        .font(.subheadline)
+                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                 }
-            } label: {
-                Label("Sort", systemImage: "arrow.up.arrow.down")
-                    .font(.subheadline)
-                    .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+            } else {
+                // Fallback on earlier versions
             }
             
             // View mode toggle
-            Menu {
-                ForEach(ViewMode.allCases) { mode in
-                    Button(action: {
-                        withAnimation {
-                            viewModel.selectedViewMode = mode
-                        }
-                    }) {
-                        HStack {
-                            Text(mode.rawValue.capitalized)
-                            if viewModel.selectedViewMode == mode {
-                                Image(systemName: "checkmark")
+            if #available(tvOS 17.0, *) {
+                Menu {
+                    ForEach(ViewMode.allCases) { mode in
+                        Button(action: {
+                            withAnimation {
+                                viewModel.selectedViewMode = mode
+                            }
+                        }) {
+                            HStack {
+                                Text(mode.rawValue.capitalized)
+                                if viewModel.selectedViewMode == mode {
+                                    Image(systemName: "checkmark")
+                                }
                             }
                         }
                     }
+                } label: {
+                    Image(systemName: viewModel.selectedViewMode.iconName)
+                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                 }
-            } label: {
-                Image(systemName: viewModel.selectedViewMode.iconName)
-                    .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+            } else {
+                // Fallback on earlier versions
             }
         }
         .padding(.horizontal)
@@ -619,7 +631,7 @@ public struct RetroGameLibraryView: View {
                     .frame(maxWidth: .infinity)
                     .background(Color.retroBlack.opacity(0.5))
                     .overlay(RetroScanlineEffect())
-                
+#if !os(tvOS)
                 // Add games button with retrowave styling
                 Button(action: {
                     isShowingDocumentPicker = true
@@ -655,7 +667,7 @@ public struct RetroGameLibraryView: View {
                     .shadow(color: .retroBlue.opacity(0.7), radius: 10, x: 0, y: 0)
                 }
                 .padding(.top, 20)
-                
+#endif
                 // VHS tracking line
                 RetroTrackingLine()
                     .frame(height: 4)

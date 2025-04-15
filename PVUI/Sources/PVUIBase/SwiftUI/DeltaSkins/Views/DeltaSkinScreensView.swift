@@ -165,6 +165,7 @@ public struct DeltaSkinScreensView: View {
                     x: frame.midX * geometry.size.width,
                     y: frame.midY * geometry.size.height
                 )
+                #if !os(tvOS)
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { _ in
@@ -174,6 +175,7 @@ public struct DeltaSkinScreensView: View {
                             handleButtonRelease(mapping.id)
                         }
                 )
+                #endif
                 .accessibility(identifier: "Button-\(mapping.id)")
             }
         }
@@ -208,11 +210,13 @@ public struct DeltaSkinScreensView: View {
                     x: frame.midX * geometry.size.width,
                     y: (frame.minY + frame.height * 0.16) * geometry.size.height
                 )
+#if !os(tvOS)
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { _ in handleButtonPress("up") }
                         .onEnded { _ in handleButtonRelease("up") }
                 )
+#endif
                 .overlay(showDebug ? Text("Up").font(.caption2).foregroundColor(.white) : nil)
 
             // Down region
@@ -226,11 +230,13 @@ public struct DeltaSkinScreensView: View {
                     x: frame.midX * geometry.size.width,
                     y: (frame.maxY - frame.height * 0.16) * geometry.size.height
                 )
+#if !os(tvOS)
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { _ in handleButtonPress("down") }
                         .onEnded { _ in handleButtonRelease("down") }
                 )
+#endif
                 .overlay(showDebug ? Text("Down").font(.caption2).foregroundColor(.white) : nil)
 
             // Left region
@@ -244,11 +250,13 @@ public struct DeltaSkinScreensView: View {
                     x: (frame.minX + frame.width * 0.16) * geometry.size.width,
                     y: frame.midY * geometry.size.height
                 )
+#if !os(tvOS)
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { _ in handleButtonPress("left") }
                         .onEnded { _ in handleButtonRelease("left") }
                 )
+#endif
                 .overlay(showDebug ? Text("Left").font(.caption2).foregroundColor(.white) : nil)
 
             // Right region
@@ -262,11 +270,13 @@ public struct DeltaSkinScreensView: View {
                     x: (frame.maxX - frame.width * 0.16) * geometry.size.width,
                     y: frame.midY * geometry.size.height
                 )
+#if !os(tvOS)
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { _ in handleButtonPress("right") }
                         .onEnded { _ in handleButtonRelease("right") }
                 )
+#endif
                 .overlay(showDebug ? Text("Right").font(.caption2).foregroundColor(.white) : nil)
         }
         .frame(
@@ -311,6 +321,7 @@ public struct DeltaSkinScreensView: View {
             x: frame.midX * geometry.size.width,
             y: frame.midY * geometry.size.height
         )
+#if !os(tvOS)
         .gesture(
             DragGesture()
                 .onChanged { value in
@@ -322,6 +333,7 @@ public struct DeltaSkinScreensView: View {
                     handleAnalogStick(position: .zero, isLeftStick: isLeftStick)
                 }
         )
+#endif
         .overlay(
             showDebug ?
                 Text(isLeftStick ? "Left Analog" : "Right Analog")

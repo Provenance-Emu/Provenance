@@ -105,7 +105,9 @@ struct SystemSelectionView: View {
                 }
             }
         }
+#if !os(tvOS)
         .navigationBarTitle("", displayMode: .inline)
+        #endif
         .onAppear {
             // Start retrowave animations
             withAnimation(Animation.linear(duration: 20).repeatForever(autoreverses: false)) {

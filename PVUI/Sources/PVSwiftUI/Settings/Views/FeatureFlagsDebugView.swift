@@ -73,7 +73,9 @@ struct FeatureFlagsDebugView: View {
             }
         }
         .navigationTitle("Feature Flags Debug")
+#if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
+#endif
         .task {
             await loadInitialConfiguration()
             

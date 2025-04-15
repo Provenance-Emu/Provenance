@@ -5,7 +5,7 @@
 - [ ] Option to use a custom skin or not
 - [ ] Fix rotation
 - [ ] if rotate and same skin, don't reload
-- [ ] save and quit in the new pause menu
+- [X] save and quit in the new pause menu
 - [ ] retroarch audio visualizer
 - [ ] test v-sync
 - [X] uikit settings needs useUIKit replaced with new selections
@@ -14,4 +14,5 @@
 - [ ] fix deltaskin joysticks
 - [ ] some cores, like quake not showing retroarch controller even though it should be on for them
 - [ ] homeview settings bar size and padding
-
+- [ ] singlepage error on loading core results in stuck screen
+- [ ] GL RetroArch cores don't work with skins

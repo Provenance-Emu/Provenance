@@ -1155,6 +1155,7 @@ public struct DeltaSkinView: View {
                 }
                 .frame(width: scaledFrame.width, height: scaledFrame.height)
                 .position(x: absoluteX, y: absoluteY)
+                #if !os(tvOS)
                 .gesture(
                     // Use a direct gesture without SimultaneousGesture since we removed the main gesture
                     DragGesture(minimumDistance: 0)
@@ -1167,6 +1168,7 @@ public struct DeltaSkinView: View {
                             handleButtonRelease(mapping.id)
                         }
                 )
+                #endif
                 // Make sure this view doesn't block other touch events
                 .allowsHitTesting(true)
                 .accessibility(identifier: "Button-\(mapping.id)")
@@ -1204,6 +1206,7 @@ public struct DeltaSkinView: View {
                     y: frame.height * 0.16
                 )
                 .overlay(showDebugOverlay ? Text("Up").font(.caption2).foregroundColor(.white) : nil)
+#if !os(tvOS)
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { _ in
@@ -1213,7 +1216,7 @@ public struct DeltaSkinView: View {
                             handleButtonRelease("up")
                         }
                 )
-
+            #endif
             // Down region
             Rectangle()
                 .fill(showDebugOverlay || pressedButtons.contains("down") ? Color.green.opacity(0.3) : Color.clear)
@@ -1226,6 +1229,7 @@ public struct DeltaSkinView: View {
                     y: frame.height * 0.84
                 )
                 .overlay(showDebugOverlay ? Text("Down").font(.caption2).foregroundColor(.white) : nil)
+#if !os(tvOS)
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { _ in
@@ -1235,6 +1239,7 @@ public struct DeltaSkinView: View {
                             handleButtonRelease("down")
                         }
                 )
+            #endif
 
             // Left region
             Rectangle()
@@ -1248,6 +1253,7 @@ public struct DeltaSkinView: View {
                     y: frame.height / 2
                 )
                 .overlay(showDebugOverlay ? Text("Left").font(.caption2).foregroundColor(.white) : nil)
+#if !os(tvOS)
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { _ in
@@ -1257,6 +1263,7 @@ public struct DeltaSkinView: View {
                             handleButtonRelease("left")
                         }
                 )
+            #endif
 
             // Right region
             Rectangle()
@@ -1270,6 +1277,7 @@ public struct DeltaSkinView: View {
                     y: frame.height / 2
                 )
                 .overlay(showDebugOverlay ? Text("Right").font(.caption2).foregroundColor(.white) : nil)
+#if !os(tvOS)
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { _ in
@@ -1279,6 +1287,7 @@ public struct DeltaSkinView: View {
                             handleButtonRelease("right")
                         }
                 )
+            #endif
         }
         .frame(width: frame.width, height: frame.height)
         .position(x: absolutePosition.x, y: absolutePosition.y)

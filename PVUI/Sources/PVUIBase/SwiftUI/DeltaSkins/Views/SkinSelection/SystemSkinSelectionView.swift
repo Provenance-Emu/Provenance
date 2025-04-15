@@ -66,7 +66,9 @@ public struct SystemSkinSelectionView: View {
                     }
                 }
                 .navigationTitle("\(system.fullName) Skins")
+#if !os(tvOS)
                 .navigationBarTitleDisplayMode(.inline)
+                #endif
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
@@ -460,9 +462,11 @@ public struct SystemSkinSelectionView: View {
                 .foregroundColor(isSelected ? .white : .white.opacity(0.7))
                 .lineLimit(1)
         }
+#if !os(tvOS)
         .onHover { hovering in
             hoveredSkinId = hovering ? skin.identifier : nil
         }
+        #endif
         .onTapGesture {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                 selectSkin(skin.identifier)

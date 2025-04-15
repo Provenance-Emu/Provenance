@@ -17,7 +17,11 @@ struct LabelRowView: View {
     // RetroWave styling properties
     var labelColor: Color = .secondary
     var valueColor: Color = .primary
+    #if os(tvOS)
+    var backgroundColor: Color = .init(red: 0.96, green: 0.96, blue: 0.96)
+    #else
     var backgroundColor: Color = Color(.systemBackground)
+    #endif
     var borderGradient: LinearGradient? = nil
     
     // Animation states
@@ -47,8 +51,11 @@ struct LabelRowView: View {
     var body: some View {
         ZStack {
             // Background with retrowave styling
+            #if os(tvOS)
+            #else
             RoundedRectangle(cornerRadius: 8)
                 .fill(backgroundColor)
+            #endif
             
             // Optional border with gradient
             if let gradient = borderGradient {
@@ -97,11 +104,13 @@ struct LabelRowView: View {
         }
         .frame(height: 40)
         .padding(.vertical, 4)
+        #if !os(tvOS)
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.2)) {
                 isHovered = hovering && isEditable
             }
         }
+        #endif
         .onAppear {
             // Start animations
             withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {

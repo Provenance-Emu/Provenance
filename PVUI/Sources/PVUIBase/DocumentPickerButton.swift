@@ -1,6 +1,7 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
+#if !os(tvOS)
 /// A button that presents a document picker when tapped
 /// This component isolates the document picker presentation from the parent view's lifecycle
 public struct DocumentPickerButton<Label: View>: View {
@@ -80,3 +81,4 @@ private struct DocumentPickerRepresentable: UIViewControllerRepresentable {
         }
     }
 }
+#endif

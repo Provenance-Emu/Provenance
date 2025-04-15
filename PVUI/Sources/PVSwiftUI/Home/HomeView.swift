@@ -26,6 +26,7 @@ struct HomeView: SwiftUI.View {
 
     @Default(.showRecentSaveStates) private var showRecentSaveStates
     @Default(.showRecentGames) private var showRecentGames
+    @Default(.showSearchbar) private var showSearchbar
     @Default(.showFavorites) private var showFavorites
     
     // Import status view properties
@@ -126,7 +127,7 @@ struct HomeView: SwiftUI.View {
         StatusBarProtectionWrapper {
             VStack(spacing: 0) {
                 // Add search bar with visibility control
-                if allGames.count > 8 {
+                if allGames.count > 8 && showSearchbar {
                     PVSearchBar(text: $searchText)
                         .padding(.horizontal)
                         .padding(.bottom, 8)

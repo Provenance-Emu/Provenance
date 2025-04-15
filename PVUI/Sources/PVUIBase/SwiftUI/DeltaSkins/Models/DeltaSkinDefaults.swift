@@ -209,6 +209,8 @@ enum DeltaSkinDefaults {
             return CGSize(width: 390, height: 844)  // iPhone 14 dimensions
         case .ipad:
             return CGSize(width: 820, height: 1180)  // iPad Air dimensions
+        case .tv:
+            return CGSize(width: 1920, height: 1080)
         }
     }
 }

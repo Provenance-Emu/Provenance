@@ -11,13 +11,17 @@ import Combine
 
 /// Extension to add DeltaSkin support to the emulator view controller
 extension PVEmulatorViewController {
+    
+    var isDeltaSkinEnabled: Bool {
+        return Defaults[.skinMode] != .off && core.supportsSkins
+//        return true
+    }
 
     /// Set up the DeltaSkin view if enabled in settings
     @objc public func setupDeltaSkinView() async throws {
-        // Check if DeltaSkins are enabled (hardcoded to true for now, but should use UserDefaults in production)
-        let skinMode = Defaults[.skinMode] // UserDefaults.standard.bool(forKey: "useDeltaSkins")
         
-        let useDeltaSkins = skinMode != .off
+        // Check if DeltaSkin is enabled
+        let useDeltaSkins = isDeltaSkinEnabled
         ILOG("Delta Skin setting: \(useDeltaSkins)")
 
         if useDeltaSkins {
@@ -164,6 +168,9 @@ extension PVEmulatorViewController {
 
     /// Add the skin view to the view hierarchy
     private func addSkinView() async {
+        
+        guard isDeltaSkinEnabled else { return }
+        
         // Get the GPU view from the gpuViewController
         guard let gameScreenView = gpuViewController.view else {
             ELOG("GPU view not found")
@@ -250,13 +257,13 @@ extension PVEmulatorViewController {
         if let menuButton = menuButton {
             view.bringSubviewToFront(menuButton)
         }
-
+        #if !os(tvOS)
         // Add debug overlay toggle gesture
         let debugTapGesture = UITapGestureRecognizer(target: self, action: #selector(toggleDebugOverlay))
         debugTapGesture.numberOfTapsRequired = 3
-        debugTapGesture.numberOfTouchesRequired = 2
+        debugTapGesture.numberOfTouchesRequired = 3
         view.addGestureRecognizer(debugTapGesture)
-
+        #endif
         // Force a redraw of GPU view to make sure it's visible
         refreshGPUView()
 
@@ -272,10 +279,10 @@ extension PVEmulatorViewController {
     private func hideStandardControls() {
         // Find the controller view controller
         for childVC in children {
-            if let controllerVC = childVC as? UIViewController {
+            if let controllerVC = childVC as? any ControllerVC {
                 // Hide the entire controller view
                 controllerVC.view.isHidden = true
-                print("Hidden standard controller view")
+                ILOG("Hidden standard controller view")
             }
         }
     }
@@ -564,9 +571,10 @@ extension PVEmulatorViewController {
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleDebugFrameOverlayPan(_:)))
         debugOverlay.addGestureRecognizer(panGesture)
 
+        #if !os(tvOS)
         let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(handleDebugFrameOverlayPinch(_:)))
         debugOverlay.addGestureRecognizer(pinchGesture)
-
+        #endif
         debugOverlay.isUserInteractionEnabled = true
 
         // Add the debug overlay to the view
@@ -653,6 +661,7 @@ extension PVEmulatorViewController {
         }
     }
 
+#if !os(tvOS)
     @objc private func handleDebugFrameOverlayPinch(_ gesture: UIPinchGestureRecognizer) {
         guard let frameOverlay = gesture.view else { return }
 
@@ -723,6 +732,7 @@ extension PVEmulatorViewController {
             break
         }
     }
+#endif
 
     /// Update the debug info display
     /// Try to position the GPU view using the current target frame
@@ -756,7 +766,6 @@ extension PVEmulatorViewController {
             }
         }
     }
-
     /// Reset the GPU view position to default
     @objc private func resetPositioning() {
         DLOG("Resetting GPU view position")
@@ -852,9 +861,12 @@ extension PVEmulatorViewController {
         }
 
         // Get device orientation
+#if !os(tvOS)
         let orientation = UIDevice.current.orientation
         let orientationStr = orientation.isPortrait ? "Portrait" : (orientation.isLandscape ? "Landscape" : "Other")
-
+        #else
+        let orientationStr = "Landspace"
+#endif
         // Get FPS if available
         var fpsInfo = "FPS: N/A"
         if let metalVC = gpuViewController as? PVMetalViewController {

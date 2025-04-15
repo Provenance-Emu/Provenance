@@ -169,11 +169,13 @@ struct ImportTaskRowView: View {
         }
         .frame(height: 90)
         .padding(.vertical, 4)
+#if !os(tvOS)
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.2)) {
                 isHovered = hovering
             }
         }
+        #endif
         .onAppear {
             // Start animations
             withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {

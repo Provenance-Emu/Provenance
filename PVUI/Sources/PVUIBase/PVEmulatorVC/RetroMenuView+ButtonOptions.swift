@@ -25,7 +25,9 @@ extension RetroMenuView {
                                              onSelect: { selectedEffect in
                                                  buttonPressEffect = selectedEffect
                                                  // Add haptic feedback
+                                #if !os(tvOS)
                                                  UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                #endif
                                                  // Dismiss the sheet
                                                  showingButtonEffectPicker = false
                                              })
@@ -70,7 +72,9 @@ extension RetroMenuView {
                                                     playButtonSound(selectedSound)
                                                 }
                                                 // Add haptic feedback
+#if !os(tvOS)
                                                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                #endif
                                                 // Dismiss the sheet
                                                 showingButtonSoundPicker = false
                                             })

@@ -27,6 +27,7 @@ public struct HomeIndicatorHidden: ViewModifier {
 
         /// Custom UIViewController that hides the home indicator
         private class HomeIndicatorHiddenController: UIViewController {
+#if os(iOS)
             override var prefersHomeIndicatorAutoHidden: Bool {
                 return true
             }
@@ -34,7 +35,7 @@ public struct HomeIndicatorHidden: ViewModifier {
             override var preferredScreenEdgesDeferringSystemGestures: UIRectEdge {
                 return .all
             }
-
+#endif
             override func viewDidLoad() {
                 super.viewDidLoad()
 
@@ -64,8 +65,10 @@ public extension UIWindow {
             applyHomeIndicatorSettings(to: rootController, autoHidden: autoHidden)
 
             // Force update of the system UI
+            #if !os(tvOS)
             rootController.setNeedsUpdateOfHomeIndicatorAutoHidden()
             rootController.setNeedsUpdateOfScreenEdgesDeferringSystemGestures()
+            #endif
         }
     }
 

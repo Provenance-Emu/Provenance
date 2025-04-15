@@ -179,11 +179,11 @@ public struct FreeROMsView: View {
                                         .buttonStyle(PlainButtonStyle())
 #if os(tvOS)
                                         .focusable(true)
-                                        .onFocusChange { focused in
-                                            if focused {
-                                                selectedSystemId = system.id
-                                            }
-                                        }
+//                                        .onFocusChange { focused in
+//                                            if focused {
+//                                                selectedSystemId = system.id
+//                                            }
+//                                        }
 #endif
                                         
                                     }
@@ -236,7 +236,9 @@ public struct FreeROMsView: View {
                 }
             }
             .navigationTitle("FREE ROMS")
+#if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .searchable(text: $searchText, prompt: "SEARCH ROMS")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -468,11 +470,11 @@ struct ROMRowView: View {
 #endif
 #if os(tvOS)
         .focusable(true)
-        .onFocusChange { focused in
-            withAnimation(.easeInOut(duration: 0.2)) {
-                isHovered = focused
-            }
-        }
+//        .onFocusChange { focused in
+//            withAnimation(.easeInOut(duration: 0.2)) {
+//                isHovered = focused
+//            }
+//        }
 #endif
         .onAppear {
             // Start animations

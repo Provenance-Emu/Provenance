@@ -124,11 +124,12 @@ extension PVEmulatorViewController {
         ensureVisualizerOnTop()
 
         // Add observer for orientation changes
+        #if os(iOS)
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(orientationDidChange),
                                                name: UIDevice.orientationDidChangeNotification,
                                                object: nil)
-
+        #endif
         DLOG("Audio visualizer set up successfully")
     }
 
@@ -138,9 +139,11 @@ extension PVEmulatorViewController {
             return
         }
 
+#if os(iOS)
         // Remove orientation change observer
         NotificationCenter.default.removeObserver(self, name: UIDevice.orientationDidChangeNotification, object: nil)
-
+#endif
+        
         // Remove the hosting controller
         hostingController.willMove(toParent: nil)
         hostingController.view.removeFromSuperview()
@@ -268,6 +271,7 @@ extension PVEmulatorViewController {
         let notchFrame = DynamicIslandPositioner.getDynamicIslandFrame()
 
         // Determine current orientation
+#if os(iOS)
         let orientation = UIDevice.current.orientation
 
         switch orientation {
@@ -316,8 +320,18 @@ extension PVEmulatorViewController {
                 hostingController.view.heightAnchor.constraint(equalToConstant: 60)
             ])
         }
+        #else // not ios
+        // Default to portrait mode aligned with notch
+        NSLayoutConstraint.activate([
+            hostingController.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            hostingController.view.topAnchor.constraint(equalTo: view.topAnchor, constant: notchFrame.minY),
+            hostingController.view.widthAnchor.constraint(equalToConstant: visualizerWidth),
+            hostingController.view.heightAnchor.constraint(equalToConstant: 60)
+        ])
+        #endif
     }
 
+    
     /// Get the appropriate top offset for the Dynamic Island based on device model
     private func getDynamicIslandTopOffset() -> CGFloat {
         let deviceName = UIDevice.current.name

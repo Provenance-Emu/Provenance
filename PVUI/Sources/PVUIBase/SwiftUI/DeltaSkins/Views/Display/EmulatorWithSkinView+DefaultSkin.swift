@@ -602,7 +602,7 @@ struct DefaultControllerSkinView: View {
                 DeltaSkinTouchIndicator(at: dpadState.touchPosition)
                     .allowsHitTesting(false) // Prevent the indicator from interfering with touches
             }
-            
+            #if !os(tvOS)
             // Gesture area
             Color.clear
                 .contentShape(Rectangle())
@@ -679,6 +679,7 @@ struct DefaultControllerSkinView: View {
                             dpadState.reset()
                         }
                 )
+            #endif // !tvOS
         }
         .frame(width: 150, height: 150)
     }
@@ -725,6 +726,7 @@ struct DefaultControllerSkinView: View {
                         .allowsHitTesting(false) // Prevent the indicator from interfering with touches
                 }
                 
+#if !os(tvOS)
                 // Gesture area
                 Color.clear
                     .contentShape(Circle())
@@ -776,6 +778,7 @@ struct DefaultControllerSkinView: View {
                                 inputHandler.analogStickMoved("leftAnalog", x: 0, y: 0)
                             }
                     )
+                #endif
             }
         }
         .aspectRatio(1, contentMode: .fit)

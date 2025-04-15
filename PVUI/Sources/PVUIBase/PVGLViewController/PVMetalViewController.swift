@@ -1386,7 +1386,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         // Handle rendering based on the core type
         if emulatorCore.rendersToOpenGL {
             // For OpenGL cores, we need to handle the front buffer synchronization
-            if !emulatorCore.isSpeedModified && !emulatorCore.isEmulationPaused || emulatorCore.isFrontBufferReady {
+            if !emulatorCore.isSpeedModified
+                && (!emulatorCore.isEmulationPaused || emulatorCore.isFrontBufferReady)
+                && !emulatorCore.skipLayout { // Skip layout is mostly for Retroarch
                 emulatorCore.frontBufferCondition.lock()
                 while !emulatorCore.isFrontBufferReady && !emulatorCore.isEmulationPaused {
                     emulatorCore.frontBufferCondition.wait()
@@ -2230,9 +2232,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         // Get the flipY parameter - set to true for non-OpenGL cores, false for OpenGL cores
         var flipY: Bool = !emulatorCore.rendersToOpenGL
-
-        // Log the Y-flip setting for debugging
-        DLOG("Using flipY=\(flipY) for \(emulatorCore.rendersToOpenGL ? "OpenGL" : "non-OpenGL") core")
 
         // Use the custom pipeline if available, otherwise fall back to the blit pipeline
         if let customPipeline = customPipeline {
@@ -3104,10 +3103,21 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             // Recreate the MTKView if needed
             if mtlView?.superview == nil || mtlView == nil {
                 DLOG("MTKView is nil or detached, recreating...")
+                // TODO: Shouldn't use UIScreen.main instead use the current scene screen
                 // Instead of calling setupMTKView, recreate MTKView directly
                 let screenBounds = UIScreen.main.bounds
                 let metalView = MTKView(frame: screenBounds, device: device)
                 metalView.autoresizingMask = [] // Disable autoresizing
+                
+                if Defaults[.nativeScaleEnabled] {
+                    let scale = UIScreen.main.scale
+                    if scale != 1.0 {
+                        mtlView.layer.contentsScale = scale;
+                        mtlView.layer.rasterizationScale = scale;
+                        mtlView.contentScaleFactor = scale;
+                    }
+                }
+
                 self.view = metalView
                 self.mtlView = metalView
                 DLOG("Recreated MTKView")

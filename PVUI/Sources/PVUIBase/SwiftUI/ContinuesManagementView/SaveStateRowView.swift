@@ -439,11 +439,13 @@ public struct SaveStateRowView: View {
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
         .frame(height: 100)
+#if !os(tvOS)
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.2)) {
                 isHovered = hovering
             }
         }
+        #endif
         .onAppear {
             // Start animations
             withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {

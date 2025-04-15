@@ -57,6 +57,7 @@ struct ConsoleGamesView: SwiftUI.View {
     @Default(.showRecentSaveStates) internal var showRecentSaveStates
     @Default(.showFavorites) internal var showFavorites
     @Default(.showRecentGames) internal var showRecentGames
+    @Default(.showSearchbar) internal var showSearchbar
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
@@ -209,7 +210,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     ScrollViewReader { proxy in
                         LazyVStack(spacing: 0) {
                             // Add search bar with visibility control
-                            if games.count > 8 {
+                            if games.count > 8 && showSearchbar {
                                 PVSearchBar(text: $searchText)
                                     .opacity(isSearchBarVisible ? 1 : 0)
                                     .frame(height: isSearchBarVisible ? nil : 0)
@@ -935,11 +936,9 @@ extension ConsoleGamesView {
                 }
             } else {
                 VStack(alignment: .leading) {
-                    Text("\(console.name) Games (\(console.games.count))")
-                        .font(.title2)
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                        .padding(.top, 4)
-
+                    
+                    titleBar()
+                    
                     if viewModel.viewGamesAsGrid {
                         showGamesGrid(games)
                     } else {
@@ -949,7 +948,67 @@ extension ConsoleGamesView {
             }
         }
     }
-
+    
+    @ViewBuilder
+    private func titleBar() -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(console.name)
+                    .font(.headline)
+                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    .shadow(color: .retroPink.opacity(0.3), radius: 5, x: 0, y: 0)
+                HStack {
+                    Text(console.manufacturer)
+                        .font(.system(.subheadline, design: .monospaced))
+                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                        .shadow(color: Color.retroPink.opacity(0.5), radius: 1, x: 1, y: 1)
+                    
+                    if console.releaseYear > 1970 {
+                        Text("\(console.releaseYear)")
+                            .font(.system(.subheadline, design: .monospaced))
+                            .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                            .shadow(color: Color.retroPink.opacity(0.5), radius: 1, x: 1, y: 1)
+                    }
+                }
+            }
+            
+            Spacer()
+            
+            Text("\(console.games.count)")
+                .font(.caption)
+                .fontWeight(.medium)
+                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Color.retroPurple.opacity(0.3))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(Color.retroBlue, lineWidth: 1)
+                )
+                .cornerRadius(12)
+        }
+        .padding(.vertical, 12)
+        .padding(.horizontal, 16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.retroBlack.opacity(0.7))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                )
+                .shadow(color: Color.retroPink.opacity(0.3), radius: 5, x: 0, y: 0)
+        )
+        .contentShape(Rectangle())
+    }
+    
     @ViewBuilder
     private func gameItem(_ game: PVGame, section: HomeSectionType) -> some View {
         if !game.isInvalidated {

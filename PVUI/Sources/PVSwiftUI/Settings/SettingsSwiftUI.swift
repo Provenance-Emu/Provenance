@@ -313,11 +313,13 @@ struct SettingsRow: View {
                 .fill(Color.black.opacity(0.3))
                 .opacity(isHovered ? 1.0 : 0.0)
         )
+#if !os(tvOS)
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.2)) {
                 isHovered = hovering
             }
         }
+#endif
     }
 }
 
@@ -973,7 +975,11 @@ private struct DeltaSkinsSection: View {
                             Text(theme.rawValue.uppercased()).tag(theme)
                         }
                     }
+                    #if !os(tvOS)
                     .pickerStyle(.wheel)
+                    #else
+                    .pickerStyle(.automatic)
+                    #endif
                     .frame(height: 100)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)

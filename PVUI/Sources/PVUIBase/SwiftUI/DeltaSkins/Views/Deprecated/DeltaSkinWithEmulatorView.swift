@@ -161,6 +161,7 @@ public struct DeltaSkinWithEmulatorView: View {
                 y: scaledFrame.midY
             )
             .contentShape(Rectangle())
+#if !os(tvOS)
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { _ in
@@ -170,6 +171,7 @@ public struct DeltaSkinWithEmulatorView: View {
                         handleButtonRelease(button)
                     }
             )
+        #endif
     }
 
     // Handle button press events

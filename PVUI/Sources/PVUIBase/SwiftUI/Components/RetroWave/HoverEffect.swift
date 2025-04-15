@@ -17,8 +17,12 @@ public struct HoverEffect: ViewModifier {
         content
             .background(isHovered ? Color.white.opacity(0.05) : Color.clear)
             .animation(.easeInOut(duration: 0.2), value: isHovered)
+        #if !os(tvOS)
             .onHover { hovering in
                 isHovered = hovering
             }
+        #else
+        // TODO: TVOS version of hover
+        #endif
     }
 }

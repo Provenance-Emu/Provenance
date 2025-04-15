@@ -83,8 +83,9 @@ extension PVEmulatorViewController: UIAdaptivePresentationControllerDelegate {
             enableControllerInput(false)
             
             // Reset controller state
+            #if !os(tvOS)
             PVControllerManager.shared.controllerUserInteractionEnabled = false
-            
+            #endif
             // Setting isShowingMenu to false will handle resuming the emulation
             isShowingMenu = false
         }

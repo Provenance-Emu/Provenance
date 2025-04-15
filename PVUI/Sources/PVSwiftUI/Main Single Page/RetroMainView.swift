@@ -29,6 +29,7 @@ public struct RetroMainView: View {
 
     public var body: some View {
         ZStack {
+        #if !os(tvOS)
             // Add document picker sheet at the root level
             Color.clear
                 .sheet(isPresented: $documentPickerManager.isShowingDocumentPicker, onDismiss: {
@@ -44,6 +45,7 @@ public struct RetroMainView: View {
                         }
                     })
                 }
+            #endif
             // Background that adapts to the theme
             RetroTheme.retroBackground
                 .ignoresSafeArea()
@@ -190,9 +192,10 @@ public struct RetroMainView: View {
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let rootViewController = windowScene.windows.first?.rootViewController {
             // Request an update of the home indicator state
+            #if !os(tvOS)
             rootViewController.setNeedsUpdateOfHomeIndicatorAutoHidden()
             rootViewController.setNeedsUpdateOfScreenEdgesDeferringSystemGestures()
-
+            #endif
             DLOG("MainView: Requested update of home indicator state")
         }
     }

@@ -17,7 +17,9 @@ struct DynamicIslandPositioner {
         let safeAreaInsets = window.safeAreaInsets
         
         // Get device orientation
+        #if !os(tvOS)
         let orientation = UIDevice.current.orientation
+        #endif
         
         // Get device model to determine notch dimensions
         let deviceName = UIDevice.current.name
@@ -34,6 +36,7 @@ struct DynamicIslandPositioner {
         }
         
         // Calculate the frame based on orientation
+        #if !os(tvOS)
         switch orientation {
         case .portrait, .unknown, .faceUp, .faceDown:
             // In portrait, the notch is at the top center
@@ -80,6 +83,14 @@ struct DynamicIslandPositioner {
                 height: notchHeight
             )
         }
+        #else
+        return CGRect(
+            x: 0,
+            y: UIScreen.main.bounds.height/2 - notchWidth/2,
+            width: notchHeight,
+            height: notchWidth
+        )
+        #endif
     }
     
     /// Create a modifier that positions a view at the Dynamic Island

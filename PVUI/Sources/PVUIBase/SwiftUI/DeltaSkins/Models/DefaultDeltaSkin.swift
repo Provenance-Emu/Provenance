@@ -271,6 +271,8 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
             return CGSize(width: 750, height: 1334)
         case .ipad:
             return CGSize(width: 1024, height: 1366)
+        case .tv:
+            return CGSize(width: 1920, height: 1080)
         }
     }
     

@@ -27,7 +27,9 @@ public struct MultiTouchView: UIViewRepresentable {
     public func makeUIView(context: Context) -> TouchDetectingView {
         let view = TouchDetectingView()
         view.touchHandler = touchHandler
+#if !os(tvOS)
         view.isMultipleTouchEnabled = true
+        #endif
         // Use a slightly visible background for debugging
         view.backgroundColor = UIColor(white: 0.5, alpha: 0.1)
         DLOG("MultiTouchView created with frame: \(view.frame)")

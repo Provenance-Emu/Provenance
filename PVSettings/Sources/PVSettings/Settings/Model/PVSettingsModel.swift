@@ -33,6 +33,9 @@ extension Defaults.Keys {
     static let showGameBadges = Key<Bool>("showGameBadges", default: true)
     
     static let showRecentGames = Key<Bool>("showRecentGames", default: true)
+    
+    static let showSearchbar = Key<Bool>("showSearchbar", default: true)
+
 
     static let showFPSCount = Key<Bool>("showFPSCount", default: false)
     
@@ -239,7 +242,9 @@ public extension Defaults.Keys {
 }
 
 public enum MainUIMode: String, Codable, Equatable, UserDefaultsRepresentable, Defaults.Serializable, CaseIterable, CustomStringConvertible, Identifiable {
+    #if !os(tvOS)
     case paged = "Paged"
+    #endif
     case singlePage = "Single Page"
     case uikit = "UIKit"
     
@@ -249,23 +254,38 @@ public enum MainUIMode: String, Codable, Equatable, UserDefaultsRepresentable, D
 
     public var description: String {
         switch self {
+#if !os(tvOS)
         case .paged:
             return "Paged (Default)"
         case .singlePage:
             return "Single Page (RetroWave)"
         case .uikit:
             return "UIKit (Legacy)"
+#else
+        case .singlePage:
+            return "Single Page (RetroWave)"
+        case .uikit:
+            return "UIKit (Default)"
+#endif
+
         }
     }
 
     public var subtitle: String {
         switch self {
+#if !os(tvOS)
         case .paged:
             return "The default paged mode."
         case .singlePage:
             return "All consoles in a single page, reduced features."
         case .uikit:
-            return "Original UIKit mode from 1.X/2.X (Legacy)"
+            return "Original UIKit mode from 1.X/2.X (Legacy)."
+#else
+        case .singlePage:
+            return "New SwiftUI single page mode."
+        case .uikit:
+            return "Original UIKit mode."
+#endif
         }
     }
 }

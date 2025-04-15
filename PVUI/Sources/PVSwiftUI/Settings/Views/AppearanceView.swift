@@ -15,6 +15,7 @@ import FreemiumKit
 struct AppearanceView: View {
     @Default(.showGameTitles) var showGameTitles
     @Default(.showRecentGames) var showRecentGames
+    @Default(.showSearchbar) var showSearchbar
     @Default(.showRecentSaveStates) var showRecentSaveStates
     @Default(.showGameBadges) var showGameBadges
     @Default(.showFavorites) var showFavorites
@@ -71,6 +72,13 @@ struct AppearanceView: View {
                                 SettingsRow(title: "Show Game Titles",
                                             subtitle: "Display game titles under artwork.",
                                             icon: .sfSymbol("textformat"))
+                            }
+                            .padding(.vertical, 4)
+                            
+                            ThemedToggle(isOn: $showGameTitles) {
+                                SettingsRow(title: "Show Search Bar",
+                                            subtitle: "Show searcbar for quick game searching.",
+                                            icon: .sfSymbol("magnifyingglass"))
                             }
                             .padding(.vertical, 4)
                             
@@ -157,6 +165,7 @@ struct AppearanceView: View {
 internal struct AppearanceSection: View {
     @Default(.showGameTitles) var showGameTitles
     @Default(.showRecentGames) var showRecentGames
+    @Default(.showSearchbar) var showSearchbar
     @Default(.showRecentSaveStates) var showRecentSaveStates
     @Default(.showGameBadges) var showGameBadges
     @Default(.showFavorites) var showFavorites
@@ -167,6 +176,11 @@ internal struct AppearanceSection: View {
                 SettingsRow(title: "Show Game Titles",
                             subtitle: "Display game titles under artwork.",
                             icon: .sfSymbol("text.below.photo"))
+            }
+            ThemedToggle(isOn: $showSearchbar) {
+                SettingsRow(title: "Show Search Bar",
+                            subtitle: "Show searcbar for quick game searching.",
+                            icon: .sfSymbol("magnifyingglass"))
             }
             ThemedToggle(isOn: $showRecentGames) {
                 SettingsRow(title: "Show Recent Games",

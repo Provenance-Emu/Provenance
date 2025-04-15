@@ -30,7 +30,9 @@ public struct AudioVisualizerButton: View {
             showingOptions = true
             
             // Play haptic feedback
+            #if !os(tvOS)
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            #endif
         }) {
             HStack {
                 // Icon with retrowave styling

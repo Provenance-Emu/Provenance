@@ -154,7 +154,11 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
         }
 
         // Get the current orientation
+        #if !os(tvOS)
         let orientation: SkinOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
+        #else
+        let orientation: SkinOrientation = .landscape
+        #endif
 
         // Get the skin identifier (nil means clear)
         let skinIdentifier = userInfo["skinIdentifier"] as? String

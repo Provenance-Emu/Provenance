@@ -74,7 +74,9 @@ public struct RetroDebugView: View {
                 .retrowaveBackground()
         }
         .navigationTitle("DEBUG CONSOLE")
+#if !os(tvOS)
         .navigationBarTitleDisplayMode(.large)
+        #endif
         .toolbarColorScheme(.dark, for: .navigationBar)
         .alert(isPresented: $showConfirmResetAlert) {
             Alert(
@@ -381,7 +383,11 @@ public struct RetroDebugView: View {
                                     Text(theme.rawValue.uppercased()).tag(theme)
                                 }
                             }
+                            #if !os(tvOS)
                             .pickerStyle(.wheel)
+                            #else
+                            .pickerStyle(.automatic)
+                            #endif
                             .frame(height: 100)
                             .onChange(of: selectedTheme) { newValue in
                                 applyTheme(newValue)
@@ -771,7 +777,9 @@ struct GamesBySystemView: View {
             }
         }
         .navigationTitle("GAMES BY SYSTEM")
+        #if !os(tvOS)
         .navigationBarTitleDisplayMode(.large)
+        #endif
         .toolbarColorScheme(.dark, for: .navigationBar)
     }
 }
@@ -878,7 +886,9 @@ struct DatabaseBrowserView: View {
             }
         }
         .navigationTitle("GAME DATABASE")
+#if !os(tvOS)
         .navigationBarTitleDisplayMode(.large)
+        #endif
         .toolbarColorScheme(.dark, for: .navigationBar)
         .onAppear {
             // Start animations
@@ -1070,11 +1080,12 @@ struct ThemePreviewView: View {
                 Button("Button") {
                     // Action
                 }
-                
+                #if !os(tvOS)
                 HStack {
                     Text("Slider")
                     Slider(value: .constant(0.5))
                 }
+                #endif
             }
         }
         .navigationTitle("Theme Preview")
@@ -1294,8 +1305,13 @@ struct DeltaSkinPreviewWrapper: View {
 // Helper modifier to handle presentationBackground availability
 private struct PresentationBackgroundModifier: ViewModifier {
     func body(content: Content) -> some View {
-        if #available(iOS 16.4, *) {
+        if #available(iOS 16.4, tvOS 16.4, *) {
+            #if !os(tvOS)
             content.presentationBackground(Color(uiColor: .systemBackground))
+            #else
+            // TODO: What color here?
+            // content.presentationBackground(.secondary)
+            #endif
         } else {
             content
         }

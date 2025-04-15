@@ -133,12 +133,16 @@ public struct ImportStatusView: View {
 #endif
                                 }
                                 .onDelete(perform: deleteItems) // Add swipe-to-delete functionality
+#if !os(tvOS)
                                 .listRowSeparator(.hidden) // Hide default separators
+                                #endif
                             }
                             .listStyle(PlainListStyle()) // Use plain style to minimize default styling
                             .padding(.horizontal)
                             .background(Color.clear) // Make list background transparent
+                             #if !os(tvOS)
                             .scrollContentBackground(.hidden) // Hide the scroll content background on iOS 16+
+                            #endif
                         }
                     }
                 }
@@ -146,7 +150,9 @@ public struct ImportStatusView: View {
                 .focusSection()
                 .focusScope(namespace)
                 #endif
+                #if !os(tvOS)
                 .navigationBarTitleDisplayMode(.inline)
+                #endif
                 .toolbar {
                     ToolbarItemGroup(placement: .topBarLeading,
                                      content: {

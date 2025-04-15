@@ -36,7 +36,9 @@ public class PVOptionsViewController<T: RawRepresentable & CaseIterable & Custom
 
         // Apply retrowave styling to the table view
         tableView.backgroundColor = UIColor(red: 0.05, green: 0.05, blue: 0.1, alpha: 1.0) // RetroTheme.retroBlack
+        #if !os(tvOS)
         tableView.separatorColor = UIColor(red: 0.99, green: 0.11, blue: 0.55, alpha: 0.3) // RetroTheme.retroPink with alpha
+        #endif
 
         // Register cell class
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "OptionCell")

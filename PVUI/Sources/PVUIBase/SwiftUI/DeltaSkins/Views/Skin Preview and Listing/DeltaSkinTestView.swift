@@ -361,6 +361,7 @@ public struct DeltaSkinTestView: View {
         switch device {
         case .iphone: return "iphone"
         case .ipad: return "ipad"
+        case .tv: return "tv"
         }
     }
 

@@ -99,8 +99,10 @@ public extension UILabel {
 public extension UITableView {
     func applyRetroWaveStyle() {
         backgroundColor = .retroBlack
+        #if !os(tvOS)
         separatorColor = .retroPink.withAlphaComponent(0.3)
         separatorStyle = .singleLine
+        #endif
         indicatorStyle = .white
     }
 }

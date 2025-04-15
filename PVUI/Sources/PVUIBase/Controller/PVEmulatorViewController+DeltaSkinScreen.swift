@@ -192,7 +192,11 @@ extension PVEmulatorViewController {
         
         // Create traits based on the current device and orientation
         let currentDevice: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+        #if os(tvOS)
+        let currentOrientation: DeltaSkinOrientation = .landscape
+        #else
         let currentOrientation: DeltaSkinOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
+        #endif
         
         let traits = DeltaSkinTraits(
             device: currentDevice,
@@ -663,8 +667,13 @@ extension PVEmulatorViewController {
                 // Try to get the selected skin for this system
                 if let skin = try await DeltaSkinManager.shared.skinToUse(for: systemId) {
                     // Create traits based on the current device and orientation
+                    #if os(tvOS)
+                    let currentDevice: DeltaSkinDevice = .tv
+                    let currentOrientation: DeltaSkinOrientation = .landscape
+                    #else
                     let currentDevice: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
                     let currentOrientation: DeltaSkinOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
+                    #endif
                     
                     let traits = DeltaSkinTraits(
                         device: currentDevice,

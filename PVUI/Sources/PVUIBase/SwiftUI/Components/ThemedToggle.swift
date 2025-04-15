@@ -26,9 +26,7 @@ public struct ThemedToggle<Label: View>: View {
         Toggle(isOn: $isOn) {
             label()
         }
-#if !os(tvOS)
         .modifier(ToggleStyleModifier(useRetroStyle: useRetroStyle, themeManager: themeManager))
-#endif
     }
 }
 
@@ -38,10 +36,14 @@ private struct ToggleStyleModifier: ViewModifier {
     let themeManager: ThemeManager
     
     func body(content: Content) -> some View {
+        #if os(tvOS)
+            content.toggleStyle(RetroTheme.RetroToggleStyle())
+        #else
         if useRetroStyle {
             content.toggleStyle(RetroTheme.RetroToggleStyle())
         } else {
             content.toggleStyle(SwitchThemedToggleStyle(tint: themeManager.currentPalette.switchON?.swiftUIColor ?? .white))
         }
+        #endif
     }
 }

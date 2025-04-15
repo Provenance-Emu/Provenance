@@ -35,6 +35,13 @@
 		<key>NSExtensionPrincipalClass</key>
 		<string>$(PRODUCT_MODULE_NAME).IndexRequestHandler</string>
 	</dict>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>org.provenance-emu.game-search</string>
+		<string>org.provenance-emu.game-launch</string>
+	</array>
+	<key>CSSearchableItemsProtocol</key>
+	<string>com.apple.coreservices.spotlight.search</string>
 	<key>NSUbiquitousContainers</key>
 	<dict>
 		<key>iCloud.org.provenance-emu.provenance</key>

@@ -61,7 +61,9 @@ public struct SystemSkinBrowserView: View {
             }
         }
         .navigationTitle("Controller Skins")
+#if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {

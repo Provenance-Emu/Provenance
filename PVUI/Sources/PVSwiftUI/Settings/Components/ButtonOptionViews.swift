@@ -11,7 +11,9 @@ struct ButtonEffectOptionItem: View {
         Button {
             selectedEffect = effect
             // Add haptic feedback
+#if !os(tvOS)
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+#endif
         } label: {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
@@ -70,7 +72,9 @@ struct ButtonSoundOptionItem: View {
                 playSound(sound)
             }
             // Add haptic feedback
+#if !os(tvOS)
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+#endif
         } label: {
             HStack {
                 // Sound icon
@@ -194,6 +198,7 @@ struct ButtonEffectPickerView: View {
             .padding()
         }
         .edgesIgnoringSafeArea(.all)
+#if !os(tvOS)
         .navigationBarTitle("", displayMode: .inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
@@ -202,6 +207,7 @@ struct ButtonEffectPickerView: View {
                     .foregroundStyle(RetroTheme.retroHorizontalGradient)
             }
         }
+#endif
     }
 }
 
@@ -237,6 +243,7 @@ struct ButtonSoundPickerView: View {
             .padding()
         }
         .edgesIgnoringSafeArea(.all)
+#if !os(tvOS)
         .navigationBarTitle("", displayMode: .inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
@@ -245,5 +252,6 @@ struct ButtonSoundPickerView: View {
                     .foregroundStyle(RetroTheme.retroHorizontalGradient)
             }
         }
+#endif
     }
 }

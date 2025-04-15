@@ -252,6 +252,12 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
             }
         }
     }
+    
+    // MARK: Skins
+    
+    /// Default skins off while we develop the feature
+    @objc dynamic open var supportsSkins: Bool { true }
+
 }
 
 #if !os(macOS) && !os(watchOS)

@@ -1,6 +1,41 @@
 import SwiftUI
 import PVPrimitives
 
+/// Modifier that handles button interactions differently on iOS and tvOS
+struct ButtonInteractionModifier: ViewModifier {
+    let isPressed: Bool
+    let buttonId: String
+    @Binding var pressedButtons: Set<String>
+    let action: () -> Void
+    
+    func body(content: Content) -> some View {
+        #if os(tvOS)
+        content
+            .onTapGesture {
+                pressedButtons.insert(buttonId)
+                action()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    pressedButtons.remove(buttonId)
+                }
+            }
+        #else
+        content
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { _ in
+                        if !isPressed {
+                            pressedButtons.insert(buttonId)
+                            action()
+                        }
+                    }
+                    .onEnded { _ in
+                        pressedButtons.remove(buttonId)
+                    }
+            )
+        #endif
+    }
+}
+
 /// View that displays interactive buttons for a Delta skin
 public struct DeltaSkinButtonsView: View {
     let skin: any DeltaSkinProtocol
@@ -65,7 +100,7 @@ public struct DeltaSkinButtonsView: View {
                             .padding()
                     }
                     .padding()
-                    .background(Color(.systemBackground).opacity(0.8))
+                    .background(errorBackgroundColor)
                     .cornerRadius(12)
                 }
             }
@@ -105,20 +140,22 @@ public struct DeltaSkinButtonsView: View {
                     .stroke(Color.white.opacity(isPressed ? 0.5 : 0), lineWidth: 2)
             )
             .contentShape(Rectangle())
-            .gesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged { _ in
-                        if !isPressed {
-                            pressedButtons.insert(button.id)
-                            handleButtonPress(button)
-                        }
-                    }
-                    .onEnded { _ in
-                        pressedButtons.remove(button.id)
-                    }
-            )
+            .modifier(ButtonInteractionModifier(
+                isPressed: isPressed,
+                buttonId: button.id,
+                pressedButtons: $pressedButtons,
+                action: { self.handleButtonPress(button) }
+            ))
     }
 
+    private var errorBackgroundColor: Color {
+        #if os(tvOS)
+        return Color.retroDarkBlue.opacity(0.8)
+        #else
+        return Color(.systemBackground).opacity(0.8)
+        #endif
+    }
+    
     private func handleButtonPress(_ button: DeltaSkinButton) {
         switch button.input {
         case .single(let input):
