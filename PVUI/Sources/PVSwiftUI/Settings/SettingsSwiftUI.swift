@@ -159,6 +159,7 @@ public struct PVSettingsView: View {
                     .padding(.bottom, 20)
                 }
             }
+            #if os(iOS)
             .navigationBarHidden(true) // Hide default navigation bar
             .overlay(
                 // Custom navigation bar
@@ -188,32 +189,33 @@ public struct PVSettingsView: View {
                                             )
                                     )
                             }
-                        }
-                        
-                        Spacer()
-                        
-                        // Help button with retrowave styling
-                        Button(action: { viewModel.showHelp() }) {
-                            Text("HELP")
-                                .font(.system(size: 16, weight: .bold))
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 8)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .fill(Color.black.opacity(0.6))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .strokeBorder(
-                                                    LinearGradient(
-                                                        gradient: Gradient(colors: [.retroBlue, .retroPurple]),
-                                                        startPoint: .leading,
-                                                        endPoint: .trailing
-                                                    ),
-                                                    lineWidth: 1.5
-                                                )
-                                        )
-                                )
+                            
+                            Spacer()
+                            
+                            // Help button with retrowave styling
+                            Button(action: { viewModel.showHelp() }) {
+                                Text("HELP")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 8)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color.black.opacity(0.6))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .strokeBorder(
+                                                        LinearGradient(
+                                                            gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                                                            startPoint: .leading,
+                                                            endPoint: .trailing
+                                                        ),
+                                                        lineWidth: 1.5
+                                                    )
+                                            )
+                                    )
+                            }
+
                         }
                     }
                     .padding(.horizontal)
@@ -222,6 +224,7 @@ public struct PVSettingsView: View {
                     Spacer()
                 }
             )
+            #endif
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }
@@ -512,18 +515,18 @@ private struct SavesSection: View {
 #if !os(tvOS)
             HStack {
                 Text("Auto-save Time")
-                RetroWaveSlider(value: $timedAutoSaveInterval, 
-                               in: minutes(1)...minutes(30), 
+                RetroWaveSlider(value: $timedAutoSaveInterval,
+                               in: minutes(1)...minutes(30),
                                step: minutes(1),
                                onEditingChanged: { _ in },
                                label: { Text("Auto-save Time") },
                                minimumValueLabel: { Text("1m") },
                                maximumValueLabel: { Text("30m") },
-                               leadingIcon: { 
+                               leadingIcon: {
                                    Image(systemName: "hare")
                                        .foregroundColor(RetroTheme.retroBlue)
                                },
-                               trailingIcon: { 
+                               trailingIcon: {
                                    Image(systemName: "tortoise")
                                        .foregroundColor(RetroTheme.retroBlue)
                                })
@@ -676,18 +679,18 @@ private struct AudioSection: View {
 //            }
             HStack {
                 Text("Volume")
-                RetroWaveSlider<Float>(value: $volume, 
-                                     in: 0...1, 
+                RetroWaveSlider<Float>(value: $volume,
+                                     in: 0...1,
                                      step: 0.1,
                                      onEditingChanged: { _ in },
                                      label: { Text("Volume Level") },
                                      minimumValueLabel: { Text("") },
                                      maximumValueLabel: { Text("") },
-                                     leadingIcon: { 
+                                     leadingIcon: {
                                          Image(systemName: "speaker")
                                              .foregroundColor(RetroTheme.retroBlue)
                                      },
-                                     trailingIcon: { 
+                                     trailingIcon: {
                                          Image(systemName: "speaker.wave.3")
                                              .foregroundColor(RetroTheme.retroBlue)
                                      })
@@ -828,18 +831,18 @@ private struct OnScreenControllerSection: View {
         Section(header: Text("On-Screen Controller")) {
             HStack {
                 Text("Controller Opacity")
-                RetroWaveSlider<Double>(value: $controllerOpacity, 
-                                     in: 0...1.0, 
+                RetroWaveSlider<Double>(value: $controllerOpacity,
+                                     in: 0...1.0,
                                      step: 0.05,
                                      onEditingChanged: { _ in },
                                      label: { Text("Transparency amount of on-screen controls overlays.") },
                                      minimumValueLabel: { Text("") },
                                      maximumValueLabel: { Text("") },
-                                     leadingIcon: { 
+                                     leadingIcon: {
                                          Image(systemName: "sun.min")
                                              .foregroundColor(RetroTheme.retroBlue)
                                      },
-                                     trailingIcon: { 
+                                     trailingIcon: {
                                          Image(systemName: "sun.max")
                                              .foregroundColor(RetroTheme.retroBlue)
                                      })
