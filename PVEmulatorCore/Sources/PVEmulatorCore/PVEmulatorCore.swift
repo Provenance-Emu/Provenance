@@ -258,6 +258,8 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     /// Default skins off while we develop the feature
     @objc dynamic open var supportsSkins: Bool { true }
 
+    @objc dynamic open var supportsAudioVisualizer: Bool { true }
+
 }
 
 #if !os(macOS) && !os(watchOS)

@@ -16,3 +16,4 @@
 - [ ] homeview settings bar size and padding
 - [ ] singlepage error on loading core results in stuck screen
 - [ ] GL RetroArch cores don't work with skins
+- [ ] RETRO_ENVIRONMENT_SET_PROC_ADDRESS_CALLBACK for Melon DS specific screen layout, reference JesseTG message in Discord for details, https://github.com/libretro/RetroArch/blob/master/libretro-common/include/libretro.h#L1366-L1387

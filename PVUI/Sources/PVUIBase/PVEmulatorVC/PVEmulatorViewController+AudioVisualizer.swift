@@ -25,11 +25,17 @@ extension PVEmulatorViewController {
         }
     }
 
-    /// Set up the audio visualizer if the device supports it
+    /// Set up the audio visualizer if the device and core support it
     @objc public func setupAudioVisualizer() {
         // Only proceed if we're on iOS 16 or later
         guard #available(iOS 16.0, *) else {
             DLOG("Audio visualizer requires iOS 16 or later")
+            return
+        }
+        
+        // Check if the core supports audio visualizer
+        guard core.supportsAudioVisualizer else {
+            DLOG("Core does not support audio visualizer: \(core.description)")
             return
         }
 

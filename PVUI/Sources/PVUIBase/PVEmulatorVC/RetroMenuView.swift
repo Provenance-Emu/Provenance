@@ -187,7 +187,10 @@ struct RetroMenuView: View {
                     categoryButton(title: "MAIN", isSelected: selectedCategory == .main, action: { selectedCategory = .main })
                     categoryButton(title: "STATES", isSelected: selectedCategory == .states, action: { selectedCategory = .states })
                     categoryButton(title: "OPTIONS", isSelected: selectedCategory == .options, action: { selectedCategory = .options })
-                    categoryButton(title: "SKINS", isSelected: selectedCategory == .skins, action: { selectedCategory = .skins })
+                    // Only show skins category if core supports skins
+                    if emulatorVC.core.supportsSkins {
+                        categoryButton(title: "SKINS", isSelected: selectedCategory == .skins, action: { selectedCategory = .skins })
+                    }
                 }
                 .padding(.horizontal, 20)
             }
@@ -363,8 +366,10 @@ struct RetroMenuView: View {
                 }
             }
             
-            // Audio visualizer button (iOS 16+ only)
-            AudioVisualizerButton(emulatorVC: emulatorVC, dismissAction: dismissAction)
+            // Audio visualizer button (iOS 16+ only, if supported by core)
+            if emulatorVC.core.supportsAudioVisualizer {
+                AudioVisualizerButton(emulatorVC: emulatorVC, dismissAction: dismissAction)
+            }
 
             // Core options button (if available)
             if emulatorVC.core is CoreOptional {

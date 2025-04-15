@@ -742,6 +742,12 @@ extension PVEmulatorViewController {
     /// Apply a skin to the emulator
     /// - Parameter skin: The skin to apply
     public func applySkin(_ skin: DeltaSkinProtocol) async throws {
+        // Check if the core supports skins
+        guard core.supportsSkins else {
+            DLOG("Core does not support skins: \(core.description)")
+            throw NSError(domain: "PVEmulatorViewController", code: 1001, userInfo: [NSLocalizedDescriptionKey: "This core does not support skins"])
+        }
+        
         ILOG("Applying skin: \(skin.name)")
         
         // Log core dimensions before skin application
