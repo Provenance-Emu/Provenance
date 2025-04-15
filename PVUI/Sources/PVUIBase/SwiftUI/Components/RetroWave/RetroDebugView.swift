@@ -30,6 +30,8 @@ enum ThemeName: String, CaseIterable {
 }
 
 public struct RetroDebugView: View {
+    // For tvOS focus management
+    @Namespace private var namespace
     @ObservedObject private var themeManager = ThemeManager.shared
     @EnvironmentObject private var appState: AppState
     
@@ -69,10 +71,26 @@ public struct RetroDebugView: View {
     public init() { }
     
     public var body: some View {
+        #if os(tvOS)
+        NavigationStack {
+            contentView()
+                .retrowaveBackground()
+                // Add keyboard navigation support for tvOS
+                .onMoveCommand { direction in
+                    // Handle keyboard navigation
+                    switch direction {
+                    case .up, .down, .left, .right:
+                        // Let the system handle focus movement
+                        break
+                    }
+                }
+        }
+        #else
         NavigationStack {
             contentView()
                 .retrowaveBackground()
         }
+        #endif
         .navigationTitle("DEBUG CONSOLE")
 #if !os(tvOS)
         .navigationBarTitleDisplayMode(.large)
@@ -259,6 +277,11 @@ public struct RetroDebugView: View {
     func contentView() -> some View {
         // Content
         ScrollView {
+            #if os(tvOS)
+            // Add padding for tvOS to ensure content is visible in safe areas
+            .padding(.horizontal, 60)
+            .padding(.vertical, 40)
+            #endif
             VStack(spacing: 24) {
                 // DATABASE Section
                 RetroSectionView(title: "DATABASE") {
@@ -268,18 +291,29 @@ public struct RetroDebugView: View {
                         }
                         .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroPurple], glowColor: .retroBlue))
                         .frame(maxWidth: .infinity)
+                        #if os(tvOS)
+                        .focusable(true)
+                        .padding(.vertical, 8) // Add more padding for tvOS remote navigation
+                        #endif
                         
                         Button("RESET DATABASE") {
                             showConfirmResetAlert = true
                         }
                         .buttonStyle(GradientButtonStyle(colors: [.retroPink, .retroOrange], glowColor: .retroPink))
                         .frame(maxWidth: .infinity)
+                        #if os(tvOS)
+                        .focusable(true)
+                        .padding(.vertical, 8) // Add more padding for tvOS remote navigation
+                        #endif
                         
                         NavigationLink("BROWSE GAMES") {
                             DatabaseBrowserView()
                         }
                         .buttonStyle(GradientButtonStyle(colors: [.retroPurple, .retroBlue], glowColor: .retroPurple))
                         .frame(maxWidth: .infinity)
+                        #if os(tvOS)
+                        .padding(.vertical, 8) // Add more padding for tvOS remote navigation
+                        #endif
                     }
                 }
                 
@@ -291,12 +325,20 @@ public struct RetroDebugView: View {
                         }
                         .buttonStyle(GradientButtonStyle(colors: [.retroYellow, .retroOrange], glowColor: .retroYellow))
                         .frame(maxWidth: .infinity)
+                        #if os(tvOS)
+                        .focusable(true)
+                        .padding(.vertical, 8)
+                        #endif
                         
                         Button("SHOW MOCK IMPORT QUEUE") {
                             showMockImportQueue = true
                         }
                         .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroYellow], glowColor: .retroBlue))
                         .frame(maxWidth: .infinity)
+                        #if os(tvOS)
+                        .focusable(true)
+                        .padding(.vertical, 8)
+                        #endif
                         
                         Button("FORCE IMPORT SCAN") {
                             // Force a scan of the import directories
@@ -304,6 +346,10 @@ public struct RetroDebugView: View {
                         }
                         .buttonStyle(GradientButtonStyle(colors: [.retroOrange, .retroPink], glowColor: .retroOrange))
                         .frame(maxWidth: .infinity)
+                        #if os(tvOS)
+                        .focusable(true)
+                        .padding(.vertical, 8)
+                        #endif
                         
                         Button("INSTALL TEST ROM") {
                             // Install the test ROM
@@ -317,6 +363,10 @@ public struct RetroDebugView: View {
                         }
                         .buttonStyle(GradientButtonStyle(colors: [.retroPink, .retroPurple], glowColor: .retroPink))
                         .frame(maxWidth: .infinity)
+                        #if os(tvOS)
+                        .focusable(true)
+                        .padding(.vertical, 8)
+                        #endif
                     }
                 }
                 
@@ -328,7 +378,66 @@ public struct RetroDebugView: View {
                         }
                         .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroPurple], glowColor: .retroBlue))
                         .frame(maxWidth: .infinity)
+                        #if os(tvOS)
+                        .padding(.vertical, 8)
+                        #endif
                         
+                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                            Button("SAVE STATES") {
+                                showSaveStatesMock = true
+                            }
+                            .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroPurple]))
+                            .frame(maxWidth: .infinity)
+                            #if os(tvOS)
+                            .focusable(true)
+                            .padding(.vertical, 8)
+                            #endif
+                            
+                            Button("GAME INFO") {
+                                showGameMoreInfo = true
+                            }
+                            .buttonStyle(GradientButtonStyle(colors: [.retroPurple, .retroPink]))
+                            .frame(maxWidth: .infinity)
+                            #if os(tvOS)
+                            .focusable(true)
+                            .padding(.vertical, 8)
+                            #endif
+                            
+                            Button("GAME INFO (REALM)") {
+                                showGameMoreInfoRealm = true
+                            }
+                            .buttonStyle(GradientButtonStyle(colors: [.retroPink, .retroOrange]))
+                            .frame(maxWidth: .infinity)
+                            #if os(tvOS)
+                            .focusable(true)
+                            .padding(.vertical, 8)
+                            #endif
+                            
+                            Button("ARTWORK SEARCH") {
+                                showArtworkSearch = true
+                            }
+                            .buttonStyle(GradientButtonStyle(colors: [.retroOrange, .retroYellow]))
+                            .frame(maxWidth: .infinity)
+                            #if os(tvOS)
+                            .focusable(true)
+                            .padding(.vertical, 8)
+                            #endif
+                            
+                            Button("FREE ROMS") {
+                                showFreeROMs = true
+                            }
+                            .buttonStyle(GradientButtonStyle(colors: [.retroYellow, .retroBlue]))
+                            .frame(maxWidth: .infinity)
+                            
+                            Button("DELTA SKIN LIST") {
+                                showDeltaSkinList = true
+                            }
+                            .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroPurple]))
+                            .frame(maxWidth: .infinity)
+                            .focusable(true)
+                            .padding(.vertical, 8)
+                        }
+                        #else
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                             Button("SAVE STATES") {
                                 showSaveStatesMock = true
@@ -366,6 +475,7 @@ public struct RetroDebugView: View {
                             .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroPurple]))
                             .frame(maxWidth: .infinity)
                         }
+                        #endif
                     }
                 }
                 
@@ -422,6 +532,33 @@ public struct RetroDebugView: View {
                         .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroPurple], glowColor: .retroBlue))
                         .frame(maxWidth: .infinity)
                         
+                        #if os(tvOS)
+                        VStack(spacing: 16) {
+                            Button("IMPORT SKIN") {
+                                showDeltaSkinImport = true
+                            }
+                            .buttonStyle(GradientButtonStyle(colors: [.retroPurple, .retroPink]))
+                            .frame(maxWidth: .infinity)
+                            .focusable(true)
+                            .padding(.vertical, 8)
+                            
+                            Button("SKIN PREVIEW") {
+                                showDeltaSkinPreview = true
+                            }
+                            .buttonStyle(GradientButtonStyle(colors: [.retroPink, .retroYellow]))
+                            .frame(maxWidth: .infinity)
+                            .focusable(true)
+                            .padding(.vertical, 8)
+                            
+                            Button("AI ENHANCEMENTS") {
+                                showAIEnhancements = true
+                            }
+                            .buttonStyle(GradientButtonStyle(colors: [.retroYellow, .retroBlue]))
+                            .frame(maxWidth: .infinity)
+                            .focusable(true)
+                            .padding(.vertical, 8)
+                        }
+                        #else
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                             Button("IMPORT SKIN") {
                                 showDeltaSkinImport = true
@@ -435,12 +572,13 @@ public struct RetroDebugView: View {
                             .buttonStyle(GradientButtonStyle(colors: [.retroPink, .retroYellow]))
                             .frame(maxWidth: .infinity)
                             
-                            Button("AI ENHANCE") {
+                            Button("AI ENHANCEMENTS") {
                                 showAIEnhancements = true
                             }
                             .buttonStyle(GradientButtonStyle(colors: [.retroYellow, .retroBlue]))
                             .frame(maxWidth: .infinity)
                         }
+                        #endif
                     }
                 }
             }
