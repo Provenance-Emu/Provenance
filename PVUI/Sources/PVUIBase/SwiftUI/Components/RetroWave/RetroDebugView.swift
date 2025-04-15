@@ -35,6 +35,9 @@ public struct RetroDebugView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @EnvironmentObject private var appState: AppState
     
+    // For tvOS navigation
+    @Environment(\.presentationMode) private var presentationMode
+    
     // Debug state
     @State private var showDatabaseStats = false
     @State private var showImportQueue = false
