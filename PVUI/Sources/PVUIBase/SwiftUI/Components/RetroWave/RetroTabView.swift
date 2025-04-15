@@ -13,6 +13,11 @@ public struct RetroTabView<Content: View>: View {
     @State private var tabBarHeight: CGFloat = 60
     @State private var bottomSafeAreaInset: CGFloat = 0
     
+    // Focus management for tvOS
+    @State private var contentHasFocus: Bool = true
+    @FocusState private var tabBarFocused: Bool
+    @State private var focusedTabIndex: Int = 0
+    
     public init(selection: Binding<Int>, @ViewBuilder content: () -> Content, tabItems: [RetroTabItem]) {
         self._selection = selection
         self.content = content()
@@ -27,10 +32,27 @@ public struct RetroTabView<Content: View>: View {
                 content
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(.bottom, tabBarHeight + bottomSafeAreaInset)
+#if os(tvOS)
+                    // Handle tvOS back button to focus tab bar instead of exiting app
+                    .onExitCommand {
+                        if contentHasFocus {
+                            // When back button is pressed, focus the tab bar instead of exiting
+                            contentHasFocus = false
+                            tabBarFocused = true
+                            focusedTabIndex = localSelection
+                        }
+                    }
+#endif
                 
                 // Custom tab bar
                 retroTabBar
                     .frame(height: tabBarHeight + bottomSafeAreaInset)
+#if os(tvOS)
+                    .focused($tabBarFocused)
+                    .onChange(of: tabBarFocused) { newValue in
+                        contentHasFocus = !newValue
+                    }
+#endif
                     .background(
                         GeometryReader { geo in
                             Color.clear.onAppear {
@@ -142,6 +164,11 @@ public struct RetroTabView<Content: View>: View {
         
         return Button(action: {
             localSelection = index
+#if os(tvOS)
+            // When a tab is selected, return focus to the content
+            contentHasFocus = true
+            tabBarFocused = false
+#endif
         }) {
             VStack(spacing: 4) {
                 // Icon
@@ -177,7 +204,21 @@ public struct RetroTabView<Content: View>: View {
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
         }
+#if os(tvOS)
         .buttonStyle(PlainButtonStyle())
+        // Apply focus styling for tvOS
+        .scaleEffect(tabBarFocused && focusedTabIndex == index ? 1.1 : 1.0)
+        .brightness(tabBarFocused && focusedTabIndex == index ? 0.1 : 0)
+        .animation(.easeInOut(duration: 0.2), value: tabBarFocused && focusedTabIndex == index)
+        // Handle focus navigation within the tab bar
+        .onChange(of: tabBarFocused) { newValue in
+            if newValue && localSelection == index {
+                focusedTabIndex = index
+            }
+        }
+#else
+        .buttonStyle(PlainButtonStyle())
+#endif
     }
     
     private var selectionIndicator: some View {
