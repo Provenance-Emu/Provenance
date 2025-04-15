@@ -706,6 +706,7 @@ private struct UserDefaultsSection: View {
                 isOn: $iCloudSync
             )
         }
+        .focusable(true)
     }
 }
 
