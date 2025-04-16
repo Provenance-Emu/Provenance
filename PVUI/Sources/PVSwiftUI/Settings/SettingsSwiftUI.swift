@@ -969,6 +969,13 @@ private struct AdvancedSection: View {
                                 subtitle: "View logs from the TopShelf extension.",
                                 icon: .sfSymbol("doc.text.magnifyingglass"))
                 }
+                
+                // Spotlight Debug View
+                NavigationLink(destination: SpotlightDebugView()) {
+                    SettingsRow(title: "Spotlight Debug",
+                                subtitle: "View and manage Spotlight indexing for games and save states.",
+                                icon: .sfSymbol("magnifyingglass.circle"))
+                }
             }
         }
     }
