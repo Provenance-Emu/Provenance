@@ -133,6 +133,11 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
             .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
             .store(in: &cancellables)
 
+        // Trigger a refresh
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+            NotificationCenter.default.post(name: NSNotification.Name.PVReimportLibrary, object: nil)
+        }
+        
         /// Refresh the library
         NotificationCenter.default.publisher(for: .PVRefreshLibrary)
             .flatMap { _ in
