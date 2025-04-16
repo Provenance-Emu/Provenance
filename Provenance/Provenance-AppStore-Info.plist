@@ -279,15 +279,17 @@
 	<string>standard.appstore</string>
 	<key>Revision</key>
 	<string>78dc628</string>
-	<key>TVTopShelflmage</key>
+	<key>TVTopShelfImage</key>
 	<dict>
-		<key>TVTopShelfPrimary|mageWide</key>
+		<key>TVTopShelfPrimaryImageWide</key>
 		<string>Top Shelf Image Wide</string>
 	</dict>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
 	</array>
+	<key>NSExtensionPointIdentifier</key>
+	<string>com.apple.tv-top-shelf</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchScreen</key>

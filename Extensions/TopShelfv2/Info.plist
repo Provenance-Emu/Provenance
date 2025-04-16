@@ -44,7 +44,7 @@
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.tv-top-shelf</string>
 		<key>NSExtensionPrincipalClass</key>
-		<string>$(PRODUCT_MODULE_NAME).ServiceProvider</string>
+		<string>$(PRODUCT_MODULE_NAME).ContentProvider</string>
 	</dict>
 	<key>NSUbiquitousContainers</key>
 	<dict>
@@ -53,16 +53,10 @@
 			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
 			<true/>
 			<key>NSUbiquitousContainerName</key>
-			<string>provenance</string>
+			<string>Provenance</string>
 			<key>NSUbiquitousContainerSupportedFolderLevels</key>
 			<string>Any</string>
 		</dict>
 	</dict>
-	<key>Revision</key>
-	<string></string>
-	<key>UIRequiredDeviceCapabilities</key>
-	<array>
-		<string>arm64</string>
-	</array>
 </dict>
 </plist>
