@@ -182,6 +182,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                 )
                 .padding(.horizontal, 8)
+                .padding(.top, 4)
 
                 ScrollViewWithOffset(
                     offsetChanged: { offset in
