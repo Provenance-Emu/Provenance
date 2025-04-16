@@ -953,6 +953,22 @@ private struct AdvancedSection: View {
                 #endif
                 AdvancedTogglesView()
                 SecretSettingsRow()
+                
+                // App Group File Browser for debugging
+                #if DEBUG
+                NavigationLink(destination: AppGroupFileBrowserView()) {
+                    SettingsRow(title: "App Group File Browser",
+                                subtitle: "Browse files in the app group container for debugging.",
+                                icon: .sfSymbol("folder.badge.gear"))
+                }
+                #endif
+                
+                // TopShelf Log Viewer
+                NavigationLink(destination: TopShelfLogView()) {
+                    SettingsRow(title: "TopShelf Log",
+                                subtitle: "View logs from the TopShelf extension.",
+                                icon: .sfSymbol("doc.text.magnifyingglass"))
+                }
             }
         }
     }
