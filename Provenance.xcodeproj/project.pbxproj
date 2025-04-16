@@ -9335,6 +9335,7 @@
 				1AD9AA341ACC988F00EC87A0 /* Provenance Tests */,
 				B3E21D6A203211BE009939D3 /* Spotlight */,
 				BE9FDCB61C210B9E0046DF0E /* TopShelf */,
+				B39B10AA2DAF3D16004EEF79 /* TopShelfv2 */,
 				B3B29D4D21561F0600903290 /* Setup Code-Signing */,
 				B383225D26ED9C530029D12F /* Check Git Submodules */,
 				B30E94832793B8BE00871E57 /* Check CodeSigning */,
@@ -9349,7 +9350,6 @@
 				B3BE9FA32C7987B1006D989E /* ROM File Provider */,
 				B3BE9FB22C7987B1006D989E /* ROM File ProviderUI */,
 				B3BE9FCF2C7988BD006D989E /* Provenance Stickers */,
-				B39B10AA2DAF3D16004EEF79 /* TopShelfv2 */,
 			);
 		};
 /* End PBXProject section */

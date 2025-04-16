@@ -44,7 +44,7 @@ extension PVGame {
         }
 
         // Set display actions with deep link to game
-        item.playAction = TVTopShelfAction(url: URL(string: "\(PVAppURLKey)://game/\(md5Hash)")!)
+        item.playAction = TVTopShelfAction(url: URL(string: "provenance://game/\(md5Hash)")!)
 
         return item
     }
@@ -54,10 +54,10 @@ extension PVGame {
 extension PVSystem {
     /// Map system to appropriate top shelf image shape
     var imageType: TVTopShelfSectionedItem.ImageShape {
-        switch identifier {
-        case "GB", "GBC", "GBA":
+        switch systemIdentifier {
+        case .GB, .GBC, .GBA:
             return .square
-        case "SNES", "NES", "Genesis", "SMS":
+        case .SNES, .NES, .Genesis, .MasterSystem:
             return .hdtv
         default:
             return .square
