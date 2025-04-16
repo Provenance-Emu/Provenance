@@ -21,6 +21,7 @@ import RealmSwift
 import Perception
 import PVFeatureFlags
 import Defaults
+import PVLibrary
 
 struct FeatureFlagsDebugView: View {
     @StateObject private var featureFlags = PVFeatureFlagsManager.shared
@@ -482,6 +483,7 @@ private struct DebugControlsSection: View {
     
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
+    @State private var isReindexingSpotlight = false
     @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = false
 
     var body: some View {
@@ -527,6 +529,49 @@ private struct DebugControlsSection: View {
                     .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                 }
                 .buttonStyle(PlainButtonStyle())
+                
+                // Spotlight Re-indexing button
+                Button(action: {
+                    isReindexingSpotlight = true
+                    SpotlightHelper.shared.forceReindexAll {
+                        isReindexingSpotlight = false
+                    }
+                }) {
+                    HStack {
+                        if isReindexingSpotlight {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle())
+                                .scaleEffect(0.8)
+                                .frame(width: 16, height: 16)
+                        } else {
+                            Image(systemName: "magnifyingglass")
+                                .font(.system(size: 16))
+                        }
+                        Text(isReindexingSpotlight ? "REINDEXING SPOTLIGHT..." : "REINDEX SPOTLIGHT")
+                            .font(.system(size: 16, weight: .bold))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.black.opacity(0.6))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        ),
+                                        lineWidth: 2
+                                    )
+                            )
+                    )
+                    .foregroundColor(RetroTheme.retroPink)
+                    .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                }
+                .buttonStyle(PlainButtonStyle())
+                .disabled(isReindexingSpotlight)
                 
                 // Refresh Flags button
                 Button(action: {
@@ -693,20 +738,26 @@ private struct UserDefaultsSection: View {
                 subtitle: "Use App Groups for shared storage",
                 isOn: $useAppGroups
             )
+            .focusableIfAvailable()
 
             UserDefaultToggle(
                 title: "unsupportedCores",
                 subtitle: "Enable experimental and unsupported cores",
                 isOn: $unsupportedCores
             )
+            .focusableIfAvailable()
 
             UserDefaultToggle(
                 title: "iCloudSync",
                 subtitle: "Sync save states and settings with iCloud",
                 isOn: $iCloudSync
             )
+            .focusableIfAvailable()
+
         }
-        .focusable(true)
+        #if os(tvOS)
+        .focusSection()
+        #endif
     }
 }
 
@@ -728,6 +779,7 @@ private struct UserDefaultToggle: View {
                 Spacer()
                 Toggle("", isOn: $isOn)
                     .toggleStyle(RetroTheme.RetroToggleStyle())
+                    .focusableIfAvailable()
             }
         }
         .padding(.vertical, 4)

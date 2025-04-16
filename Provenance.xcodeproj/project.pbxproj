@@ -629,6 +629,7 @@
 		B39B21CD2DAF4A7A004EEF79 /* TopShelfv2.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B39B10AB2DAF3D16004EEF79 /* TopShelfv2.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B39B53882C66E7A900C220C6 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B39B53872C66E7A900C220C6 /* PVSettings */; };
 		B39B538A2C66E7BA00C220C6 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B39B53892C66E7BA00C220C6 /* PVSettings */; };
+		B39B54E42DAF722B004EEF79 /* SpotlightMockDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39B54E32DAF722B004EEF79 /* SpotlightMockDriver.swift */; };
 		B39CE2882C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B39CE2872C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic */; };
 		B39CE2892C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B39CE2872C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B39D8F092D0CEC5300577667 /* Assets-Lite.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B39D8F082D0CEC5300577667 /* Assets-Lite.xcassets */; };
@@ -2230,6 +2231,7 @@
 		B3995E4E2058229F001D4985 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39B10AB2DAF3D16004EEF79 /* TopShelfv2.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TopShelfv2.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39B10AC2DAF3D16004EEF79 /* TVServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVServices.framework; path = Library/Frameworks/TVServices.framework; sourceTree = DEVELOPER_DIR; };
+		B39B54E32DAF722B004EEF79 /* SpotlightMockDriver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightMockDriver.swift; sourceTree = "<group>"; };
 		B39C4B5E2BF09AD300F199BB /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39C4B652BF09F0400F199BB /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = Cores/PPSSPP/lib/libMoltenVK.dylib; sourceTree = "<group>"; };
 		B39C4B682BF0A2AD00F199BB /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework; sourceTree = "<group>"; };
@@ -6636,6 +6638,7 @@
 				B3E21D7E20321EE0009939D3 /* Spotlight-Bridging-Header.h */,
 				B3579D0221069B4E00DDEBD6 /* Spotlight.entitlements */,
 				B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */,
+				B39B54E32DAF722B004EEF79 /* SpotlightMockDriver.swift */,
 				B3E21D6F203211BE009939D3 /* Info.plist */,
 			);
 			path = Spotlight;
@@ -10311,6 +10314,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B39B54E42DAF722B004EEF79 /* SpotlightMockDriver.swift in Sources */,
 				B3E21D6E203211BE009939D3 /* IndexRequestHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

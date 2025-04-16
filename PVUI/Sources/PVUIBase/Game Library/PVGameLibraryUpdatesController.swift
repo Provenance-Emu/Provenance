@@ -359,77 +359,154 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
     /// Spotlight indexing support
     @MainActor
-    public func addImportedGames(to spotlightIndex: CSSearchableIndex, database: RomDatabase) async {
-        enum ImportEvent {
-            case finished(md5: String, modified: Bool)
-            case completed(encounteredConflicts: Bool)
-        }
-
-        /// Create a batch processor to handle multiple items at once
+    public func addImportedGames(to spotlightIndex: CSSearchableIndex = CSSearchableIndex.default(), database: RomDatabase = RomDatabase.sharedInstance) async {
+        ILOG("Starting Spotlight indexing for all games")
+        
+        // Create a batch processor to handle multiple items at once
         var pendingItems: [CSSearchableItem] = []
-        let batchSize = 50 /// Smaller batch size for more frequent updates
-
+        let batchSize = 50 // Smaller batch size for more frequent updates
+        var totalIndexed = 0
+        
+        // Function to process a batch of items
         func processBatch() async {
             guard !pendingItems.isEmpty else { return }
-
+            
             do {
                 try await spotlightIndex.indexSearchableItems(pendingItems)
-                DLOG("Indexed batch of \(pendingItems.count) items")
+                totalIndexed += pendingItems.count
+                ILOG("Indexed batch of \(pendingItems.count) items (Total: \(totalIndexed))")
                 pendingItems.removeAll(keepingCapacity: true)
             } catch {
                 ELOG("Error batch indexing games: \(error)")
             }
         }
-
-        let eventStream = AsyncStream<ImportEvent> { continuation in
-            GameImporter.shared.spotlightFinishedImportHandler = { md5, modified in
-                continuation.yield(.finished(md5: md5, modified: modified))
-            }
-            GameImporter.shared.spotlightCompletionHandler = { encounteredConflicts in
-                continuation.yield(.completed(encounteredConflicts: encounteredConflicts))
-                continuation.finish()
-            }
-        }
-
-        for await event in eventStream {
-            switch event {
-            case .finished(let md5, _):
-                do {
-                    let realm = try await Realm()
-                    guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5) else {
-                        DLOG("No game found for MD5: \(md5)")
-                        continue
-                    }
-
-                    /// Create a detached copy of the game object
-                    let detachedGame = game.detached()
-
-                    let item = CSSearchableItem(
-                        uniqueIdentifier: detachedGame.spotlightUniqueIdentifier,
-                        domainIdentifier: "org.provenance-emu.game",
-                        attributeSet: detachedGame.spotlightContentSet
-                    )
-
-                    pendingItems.append(item)
-
-                    /// Process batch if we've reached the batch size
-                    if pendingItems.count >= batchSize {
-                        await processBatch()
-                    }
-
-                } catch {
-                    ELOG("Error accessing Realm or indexing game (MD5: \(md5)): \(error)")
+        
+        do {
+            // Use the RealmActor pattern to safely access Realm
+            let config = RealmConfiguration.realmConfig
+            let realm = try await Realm(configuration: config)
+            
+            // Get all games from the database
+            let allGames = realm.objects(PVGame.self)
+            ILOG("Found \(allGames.count) games to index")
+            
+            // Process each game
+            for game in allGames {
+                // Create a frozen copy of the game to safely use across threads
+                let frozenGame = game.freeze()
+                
+                // Create the searchable item
+                let attributeSet = frozenGame.spotlightContentSet
+                
+                // Add system information if available
+                if let system = frozenGame.system {
+                    attributeSet.contentType = "\(system.manufacturer) \(system.name)"
                 }
-            case .completed:
-                /// Process any remaining items
-                await processBatch()
-                break
+                
+                // Add keywords for better searchability
+                if var keywords = attributeSet.keywords as? [String] {
+                    if let systemName = frozenGame.system?.name, !keywords.contains(systemName) {
+                        keywords.append(systemName)
+                    }
+                    if let manufacturer = frozenGame.system?.manufacturer, !keywords.contains(manufacturer) {
+                        keywords.append(manufacturer)
+                    }
+                    attributeSet.keywords = keywords
+                }
+                
+                // Create the searchable item
+                let item = CSSearchableItem(
+                    uniqueIdentifier: "org.provenance-emu.game.\(frozenGame.md5Hash)",
+                    domainIdentifier: "org.provenance-emu.games",
+                    attributeSet: attributeSet
+                )
+                
+                pendingItems.append(item)
+                
+                // Process batch if we've reached the batch size
+                if pendingItems.count >= batchSize {
+                    await processBatch()
+                }
+            }
+            
+            // Process any remaining items
+            await processBatch()
+            
+            // Now index save states
+            await indexSaveStates(spotlightIndex: spotlightIndex, realm: realm)
+            
+            ILOG("Completed Spotlight indexing")
+        } catch {
+            ELOG("Error during Spotlight indexing: \(error)")
+        }
+    }
+    
+    /// Index all save states in Spotlight
+    private func indexSaveStates(spotlightIndex: CSSearchableIndex, realm: Realm) async {
+        ILOG("Starting Spotlight indexing for save states")
+        
+        var pendingItems: [CSSearchableItem] = []
+        let batchSize = 50
+        var totalIndexed = 0
+        
+        func processBatch() async {
+            guard !pendingItems.isEmpty else { return }
+            
+            do {
+                try await spotlightIndex.indexSearchableItems(pendingItems)
+                totalIndexed += pendingItems.count
+                ILOG("Indexed batch of \(pendingItems.count) save states (Total: \(totalIndexed))")
+                pendingItems.removeAll(keepingCapacity: true)
+            } catch {
+                ELOG("Error batch indexing save states: \(error)")
             }
         }
-
-        /// Clean up handlers
-        GameImporter.shared.spotlightFinishedImportHandler = nil
-        GameImporter.shared.spotlightCompletionHandler = nil
+        
+        // Get all save states
+        let saveStates = realm.objects(PVSaveState.self)
+        ILOG("Found \(saveStates.count) save states to index")
+        
+        for saveState in saveStates {
+            // Create a frozen copy
+            let frozenSaveState = saveState.freeze()
+            
+            // Get the associated game
+            guard let game = frozenSaveState.game else { continue }
+            
+            // Create attribute set
+            let attributeSet = CSSearchableItemAttributeSet(contentType: .data)
+            attributeSet.displayName = "Save State: \(game.title)"
+            attributeSet.contentDescription = "Save state for \(game.title) on \(game.system?.name ?? "Unknown System")"
+            
+            // Add date information
+            attributeSet.contentCreationDate = frozenSaveState.date
+            attributeSet.contentModificationDate = frozenSaveState.date
+            
+            // Add keywords
+            var keywords = ["save state", "saved game", "provenance", "emulator"]
+            if let systemName = game.system?.name {
+                keywords.append(systemName)
+            }
+            attributeSet.keywords = keywords
+            
+            // Create searchable item
+            let item = CSSearchableItem(
+                uniqueIdentifier: "org.provenance-emu.savestate.\(frozenSaveState.id)",
+                domainIdentifier: "org.provenance-emu.games",
+                attributeSet: attributeSet
+            )
+            
+            pendingItems.append(item)
+            
+            // Process batch if we've reached the batch size
+            if pendingItems.count >= batchSize {
+                await processBatch()
+            }
+        }
+        
+        // Process any remaining items
+        await processBatch()
+        ILOG("Completed save state indexing")
     }
     #endif
 

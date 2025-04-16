@@ -78,6 +78,7 @@ public struct RetroDebugView: View {
             contentView()
                 .retrowaveBackground()
                 // Add keyboard navigation support for tvOS
+            #if !os(iOS)
                 .onMoveCommand { direction in
                     // Handle keyboard navigation
                     switch direction {
@@ -86,6 +87,7 @@ public struct RetroDebugView: View {
                         break
                     }
                 }
+            #endif
         }
 #if !os(tvOS)
         .navigationTitle("DEBUG CONSOLE")
@@ -425,7 +427,9 @@ public struct RetroDebugView: View {
                             }
                             .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroPurple]))
                             .frame(maxWidth: .infinity)
+                            #if os(tvOS)
                             .focusable(true)
+                            #endif
                             .padding(.vertical, 8)
                         }
                     }

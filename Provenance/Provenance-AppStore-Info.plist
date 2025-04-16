@@ -290,6 +290,18 @@
 	</array>
 	<key>NSExtensionPointIdentifier</key>
 	<string>com.apple.tv-top-shelf</string>
+	
+	<!-- Spotlight Extensions Registration -->
+	<key>CSSearchableItemTypes</key>
+	<array>
+		<string>com.provenance-emu.game</string>
+		<string>com.provenance-emu.rom</string>
+		<string>com.provenance-emu.save-state</string>
+	</array>
+	<key>CoreSpotlightContinuation</key>
+	<true/>
+	<key>CSSearchableItemIndexDidRegisterItemsNotification</key>
+	<true/>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchScreen</key>
