@@ -230,12 +230,16 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
     
     func queryFinished(notification: Notification) async {
         DLOG("directories: \(directories)")
-        guard (notification.object as? NSMetadataQuery) === metadataQuery
+        guard (notification.object as? NSMetadataQuery) === metadataQuery,
+              metadataQuery.isStarted
         else {
             return
         }
         DLOG("\(notification.name): \(directories) -> number of items: \(metadataQuery.results.count)")
         for item in metadataQuery.results {
+            if metadataQuery.isStopped {
+                return
+            }
             if let fileItem = item as? NSMetadataItem,
                let file = fileItem.value(forAttribute: NSMetadataItemURLKey) as? URL,
                let isDirectory = try? file.resourceValues(forKeys: [.isDirectoryKey]).isDirectory,
@@ -273,6 +277,9 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         if let actualRemovedObjects = removedObjects as? [NSMetadataItem] {
             DLOG("\(directories): actualRemovedObjects: (\(actualRemovedObjects.count)) \(actualRemovedObjects)")
             for item in actualRemovedObjects {
+                if metadataQuery.isStopped {
+                    return
+                }
                 if let file = item.value(forAttribute: NSMetadataItemURLKey) as? URL {
                     ILOG("file DELETED from iCloud: \(file)")
                     await deleteFromDatastore(file)
@@ -525,6 +532,7 @@ public enum iCloudSync {
                 await startDownloading(directory: screenshotsDirectory)
             }
             await group.waitForAll()
+            sleep(5)
         }
     }
     
@@ -539,6 +547,9 @@ public enum iCloudSync {
             ELOG("Initial Download: error grabbing sub-directories of \(directory)")
             await errorHandler.handleError(error, file: directory)
             return
+        }
+        defer {
+            sleep(5)
         }
         var count = 0
         for child in children {
@@ -564,6 +575,9 @@ public enum iCloudSync {
                 do {
                     try fileManager.startDownloadingUbiquitousItem(at: currentUrl)
                     DLOG("Initial Download: #\(count) downloading \(currentUrl)")
+                    if count % 10 == 0 {
+                        Thread.sleep(forTimeInterval: 0.5)
+                    }
                 } catch {
                     ELOG("Initial Download: #\(count) error initiating download of \(currentUrl)")
                     await errorHandler.handleError(error, file: currentUrl)
@@ -897,7 +911,6 @@ class SaveStateSyncer: iCloudContainerSyncer {
     let processed = ConcurrentSingle<Int>(0)
     let processingState: ConcurrentSingle<ProcessingState> = .init(.idle)
     var savesDatabaseSubscriber: AnyCancellable?
-    let savesProcessingCriticalSection: CriticalSectionActor = .init()
     //initially when downloading, we need to keep a local cache of what has been processed. for large libraries we are pausing/stopping/starting query after an event processed. so when this happens, the saves are inserted several times and 2000 files, from the test where this happened, turned into 10k files and the app got a lot of app hangs.
     lazy var initiallyProcessedFiles: ConcurrentSet<URL> = []
     
@@ -1051,11 +1064,8 @@ class SaveStateSyncer: iCloudContainerSyncer {
         else {
             return
         }
-        //perform processing of save states with an actor critical section because without this the processing count goes up and down and the number is never accurate
-        await savesProcessingCriticalSection.performWithLock { [weak self] in
-            //process save files batch
-            await self?.processJsonFiles(jsonFiles)
-        }
+        //process save files batch
+        await processJsonFiles(jsonFiles)
     }
     
     func processJsonFiles(_ jsonFiles: any Collection<URL>) async {
