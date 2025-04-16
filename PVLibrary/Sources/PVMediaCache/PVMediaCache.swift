@@ -176,6 +176,58 @@ public final class PVMediaCache: NSObject, Sendable {
         let filePath = cachePath.appendingPathComponent(keyHash, isDirectory: false)
         return FileManager.default.fileExists(atPath: filePath.path)
     }
+    
+    /// Find existing custom artwork files with a specific MD5 prefix
+    /// - Parameter md5: The MD5 hash of the game to search for
+    /// - Returns: The key of the most recently modified custom artwork file, if any
+    @objc public static func findExistingCustomArtwork(forMD5 md5: String) -> String? {
+        guard !md5.isEmpty else { return nil }
+        
+        let prefix = "artwork_\(md5)_"
+        DLOG("Searching for existing custom artwork with prefix: \(prefix)")
+        
+        // Get the cache directory
+        let cachesDir = URL.documentsPath
+        let cachePath = cachesDir.appendingPathComponent(kPVCachePath)
+        
+        do {
+            // Get all files in the cache directory
+            let fileManager = FileManager.default
+            let files = try fileManager.contentsOfDirectory(at: cachePath, includingPropertiesForKeys: [.contentModificationDateKey], options: .skipsHiddenFiles)
+            
+            // Filter files that match our prefix
+            let matchingFiles = files.filter { url in
+                let filename = url.lastPathComponent
+                let key: String = (filename as NSString).deletingPathExtension
+                return key.hasPrefix(prefix)
+            }
+            
+            DLOG("Found \(matchingFiles.count) matching custom artwork files")
+            
+            if matchingFiles.isEmpty {
+                return nil
+            }
+            
+            // Sort by modification date (newest first)
+            let sortedFiles = try matchingFiles.sorted { url1, url2 in
+                let date1 = try url1.resourceValues(forKeys: Set([URLResourceKey.contentModificationDateKey])).contentModificationDate ?? Date.distantPast
+                let date2 = try url2.resourceValues(forKeys: Set([URLResourceKey.contentModificationDateKey])).contentModificationDate ?? Date.distantPast
+                return date1 > date2
+            }
+            
+            // Return the key of the most recently modified file
+            if let mostRecentFile = sortedFiles.first {
+                let filename = mostRecentFile.lastPathComponent
+                let key = filename.deletingPathExtension()
+                DLOG("Found most recent custom artwork: \(key)")
+                return key
+            }
+        } catch {
+            ELOG("Error finding existing custom artwork: \(error)")
+        }
+        
+        return nil
+    }
 
     #if canImport(UIKit)
     @objc
