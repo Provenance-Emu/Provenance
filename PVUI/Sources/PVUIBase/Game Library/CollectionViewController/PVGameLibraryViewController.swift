@@ -1461,9 +1461,10 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
                     let lastPhoto2 = UIImage(cgImage: image!.cgImage!, scale: CGFloat(image!.scale), orientation: orientation)
                     lastPhoto!.requestContentEditingInput(with: PHContentEditingInputRequestOptions()) { (input, _) in
                         do {
-                            try PVMediaCache.writeImage(toDisk: lastPhoto2, withKey: (input?.fullSizeImageURL!.absoluteString)!)
+                            let key =  (input?.fullSizeImageURL!.absoluteString)!
+                            try PVMediaCache.writeImage(toDisk: lastPhoto2, withKey: key)
                             try RomDatabase.sharedInstance.writeTransaction {
-                                game.customArtworkURL = (input?.fullSizeImageURL!.absoluteString)!
+                                game.customArtworkURL = key
                             }
                         } catch {
                             ELOG("Failed to set custom artwork URL for game \(game.title) \n \(error.localizedDescription)")
