@@ -910,6 +910,12 @@ private struct LibrarySection: View {
                             subtitle: "Visual options for Game Library",
                             icon: .sfSymbol("eye"))
             }
+            
+            NavigationLink(destination: BatchArtworkMatchingView()) {
+                SettingsRow(title: "Batch Artwork Matcher",
+                            subtitle: "Find and apply artwork for multiple games at once",
+                            icon: .sfSymbol("photo.on.rectangle.angled"))
+            }
         }
     }
 }
