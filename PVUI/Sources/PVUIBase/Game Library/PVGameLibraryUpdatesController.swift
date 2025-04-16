@@ -382,18 +382,35 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         }
         
         do {
+            // Create an actor to isolate Realm access
+            actor RealmIsolator {
+                let config: Realm.Configuration
+                
+                init(config: Realm.Configuration) {
+                    self.config = config
+                }
+                
+                func getAllGames() async throws -> [PVGame] {
+                    let realm = RomDatabase.sharedInstance.realm
+                    
+                    // Get all games and freeze them
+                    let allGames = realm.objects(PVGame.self)
+                    ILOG("Found \(allGames.count) games to process")
+                    
+                    // Return frozen copies of all games
+                    return allGames.map { $0.freeze() }
+                }
+            }
+            
             // Use the RealmActor pattern to safely access Realm
             let config = RealmConfiguration.realmConfig
-            let realm = try await Realm(configuration: config)
+            let isolator = RealmIsolator(config: config)
+            let allGames = try await isolator.getAllGames()
             
-            // Get all games from the database
-            let allGames = realm.objects(PVGame.self)
-            ILOG("Found \(allGames.count) games to index")
+            ILOG("Processing \(allGames.count) games for indexing")
             
             // Process each game
-            for game in allGames {
-                // Create a frozen copy of the game to safely use across threads
-                let frozenGame = game.freeze()
+            for frozenGame in allGames {
                 
                 // Create the searchable item
                 let attributeSet = frozenGame.spotlightContentSet
@@ -432,6 +449,8 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
             // Process any remaining items
             await processBatch()
             
+            let realm = RomDatabase.sharedInstance.realm
+
             // Now index save states
             await indexSaveStates(spotlightIndex: spotlightIndex, realm: realm)
             
@@ -444,6 +463,36 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     /// Index all save states in Spotlight
     private func indexSaveStates(spotlightIndex: CSSearchableIndex, realm: Realm) async {
         ILOG("Starting Spotlight indexing for save states")
+        
+        // Create an actor to isolate Realm access
+        actor RealmIsolator {
+            let config: Realm.Configuration
+            
+            init(config: Realm.Configuration) {
+                // Store the configuration
+                self.config = config
+            }
+            
+            func getSaveStatesWithGames() async throws -> [(saveState: PVSaveState, game: PVGame)] {
+                // Create a new Realm instance with the configuration
+                let realm = RomDatabase.sharedInstance.realm
+
+                // Get all save states with valid games
+                var results: [(saveState: PVSaveState, game: PVGame)] = []
+                
+                let saveStates = realm.objects(PVSaveState.self)
+                ILOG("Found \(saveStates.count) save states to process")
+                
+                for saveState in saveStates {
+                    if let game = saveState.game {
+                        // Freeze both objects to safely pass across thread boundaries
+                        results.append((saveState: saveState.freeze(), game: game.freeze()))
+                    }
+                }
+                
+                return results
+            }
+        }
         
         var pendingItems: [CSSearchableItem] = []
         let batchSize = 50
@@ -462,48 +511,49 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
             }
         }
         
-        // Get all save states
-        let saveStates = realm.objects(PVSaveState.self)
-        ILOG("Found \(saveStates.count) save states to index")
-        
-        for saveState in saveStates {
-            // Create a frozen copy
-            let frozenSaveState = saveState.freeze()
+        // Create the isolator and get save states with games
+        let isolator = RealmIsolator(config: realm.configuration)
+        do {
+            let saveStatesWithGames = try await isolator.getSaveStatesWithGames()
             
-            // Get the associated game
-            guard let game = frozenSaveState.game else { continue }
+            ILOG("Found \(saveStatesWithGames.count) save states with games to index")
             
-            // Create attribute set
-            let attributeSet = CSSearchableItemAttributeSet(contentType: .data)
-            attributeSet.displayName = "Save State: \(game.title)"
-            attributeSet.contentDescription = "Save state for \(game.title) on \(game.system?.name ?? "Unknown System")"
-            
-            // Add date information
-            attributeSet.contentCreationDate = frozenSaveState.date
-            attributeSet.contentModificationDate = frozenSaveState.date
-            
-            // Add keywords
-            var keywords = ["save state", "saved game", "provenance", "emulator"]
-            if let systemName = game.system?.name {
-                keywords.append(systemName)
-            }
-            attributeSet.keywords = keywords
-            
-            // Create searchable item
-            let item = CSSearchableItem(
-                uniqueIdentifier: "org.provenance-emu.savestate.\(frozenSaveState.id)",
-                domainIdentifier: "org.provenance-emu.games",
-                attributeSet: attributeSet
-            )
-            
-            pendingItems.append(item)
-            
-            // Process batch if we've reached the batch size
-            if pendingItems.count >= batchSize {
-                await processBatch()
+            // Process each save state
+            for (saveState, game) in saveStatesWithGames {
+                // Create attribute set
+                let attributeSet = CSSearchableItemAttributeSet(contentType: .data)
+                attributeSet.displayName = "Save State: \(game.title)"
+                attributeSet.contentDescription = "Save state for \(game.title) on \(game.system?.name ?? "Unknown System")"
+                
+                // Add date information
+                attributeSet.contentCreationDate = saveState.date
+                attributeSet.contentModificationDate = saveState.date
+                
+                // Add keywords
+                var keywords = ["save state", "saved game", "provenance", "emulator"]
+                if let systemName = game.system?.name {
+                    keywords.append(systemName)
+                }
+                attributeSet.keywords = keywords
+                
+                // Create searchable item
+                let item = CSSearchableItem(
+                    uniqueIdentifier: "org.provenance-emu.savestate.\(saveState.id)",
+                    domainIdentifier: "org.provenance-emu.games",
+                    attributeSet: attributeSet
+                )
+                
+                pendingItems.append(item)
+                
+                // Process batch if we've reached the batch size
+                if pendingItems.count >= batchSize {
+                    await processBatch()
+                }
             }
         }
-        
+        catch {
+            ELOG("Error getting save states with games: \(error)")
+        }
         // Process any remaining items
         await processBatch()
         ILOG("Completed save state indexing")
