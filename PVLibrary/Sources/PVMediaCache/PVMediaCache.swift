@@ -218,7 +218,7 @@ public final class PVMediaCache: NSObject, Sendable {
             // Return the key of the most recently modified file
             if let mostRecentFile = sortedFiles.first {
                 let filename = mostRecentFile.lastPathComponent
-                let key = filename.deletingPathExtension()
+                let key: String = (filename as NSString).deletingPathExtension
                 DLOG("Found most recent custom artwork: \(key)")
                 return key
             }
