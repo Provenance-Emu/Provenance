@@ -883,13 +883,13 @@ public final class GameImporter: GameImporting, ObservableObject {
         return sorted
     }
 
-    // Processes each ImportItem in the queue sequentially
+    // Processes items in the queue in parallel with controlled concurrency
     private func processQueue() async {
         // Check for items that are either queued or have a user-chosen system
         let itemsToProcess = await importQueue.filter {
             $0.status == .queued || $0.userChosenSystem != nil
         }
-
+        
         guard !itemsToProcess.isEmpty else {
             DispatchQueue.main.async {
                 // Only change to idle if we're not paused
@@ -899,30 +899,59 @@ public final class GameImporter: GameImporting, ObservableObject {
             }
             return
         }
-
-        ILOG("GameImportQueue - processQueue beginning Import Processing")
-
+        
+        ILOG("GameImportQueue - processQueue beginning Import Processing with \(itemsToProcess.count) items")
+        
         // Only update to processing if we're not paused
         if processingState != .paused {
             DispatchQueue.main.async {
                 self.processingState = .processing
             }
         }
-
-        for item in itemsToProcess {
-            // Check if we've been paused before processing each item
-            if await checkIfPaused() {
-                ILOG("GameImportQueue - processing paused, waiting for resume")
-                return
+        
+        // Group related files that should be processed together
+        let groupedItems = groupRelatedFiles(itemsToProcess)
+        ILOG("Grouped \(itemsToProcess.count) items into \(groupedItems.count) processing groups")
+        
+        // Maximum number of concurrent imports
+        let maxConcurrentImports = 4
+        
+        // Process groups in parallel with controlled concurrency
+        await withTaskGroup(of: Void.self) { group in
+            var activeTaskCount = 0
+            
+            for fileGroup in groupedItems {
+                // Check if we've been paused before adding each group
+                if await checkIfPaused() {
+                    ILOG("GameImportQueue - processing paused, waiting for resume")
+                    break
+                }
+                
+                // Wait until we have capacity for more tasks
+                while activeTaskCount >= maxConcurrentImports {
+                    // Wait for a task to complete
+                    await group.next()
+                    activeTaskCount -= 1
+                }
+                
+                // Add a new task for this group
+                group.addTask {
+                    for item in fileGroup {
+                        // If there's a user-chosen system, ensure the item is queued
+                        if item.userChosenSystem != nil {
+                            item.status = .queued
+                        }
+                        await self.processItem(item)
+                    }
+                }
+                
+                activeTaskCount += 1
             }
-
-            // If there's a user-chosen system, ensure the item is queued
-            if item.userChosenSystem != nil {
-                item.status = .queued
-            }
-            await processItem(item)
+            
+            // Wait for all remaining tasks to complete
+            await group.waitForAll()
         }
-
+        
         DispatchQueue.main.async {
             // Only change to idle if we're not paused
             if self.processingState != .paused {
@@ -981,6 +1010,73 @@ public final class GameImporter: GameImporting, ObservableObject {
         else if (isBIOS(item)) { return .bios }
         else if (isCDROM(item)) { return .cdRom }
         else { return .game }
+    }
+    
+    /// Groups related files that should be processed together
+    /// - Parameter items: The items to group
+    /// - Returns: An array of item groups, where each group contains related files
+    private func groupRelatedFiles(_ items: [ImportQueueItem]) -> [[ImportQueueItem]] {
+        var result: [[ImportQueueItem]] = []
+        var processedItems = Set<String>()
+        
+        // First pass: group CD-ROM related files (cue/bin pairs)
+        for item in items {
+            let itemPath = item.url.path
+            
+            // Skip if already processed
+            if processedItems.contains(itemPath) {
+                continue
+            }
+            
+            // If it's a cue file, find related bin files
+            if item.url.pathExtension.lowercased() == "cue" {
+                var group = [item]
+                let baseName = item.url.deletingPathExtension().lastPathComponent
+                
+                // Find related bin files
+                for binItem in items where binItem.url.pathExtension.lowercased() == "bin" {
+                    let binBaseName = binItem.url.deletingPathExtension().lastPathComponent
+                    if binBaseName.contains(baseName) || baseName.contains(binBaseName) {
+                        group.append(binItem)
+                        processedItems.insert(binItem.url.path)
+                    }
+                }
+                
+                result.append(group)
+                processedItems.insert(itemPath)
+            }
+            // If it's an m3u file, find related files
+            else if item.url.pathExtension.lowercased() == "m3u" {
+                var group = [item]
+                
+                // Try to read the m3u file to find referenced files
+                if let content = try? String(contentsOf: item.url) {
+                    let lines = content.components(separatedBy: .newlines)
+                    for line in lines where !line.isEmpty && !line.hasPrefix("#") {
+                        // Find the referenced file in our items list
+                        for refItem in items {
+                            if refItem.url.lastPathComponent == line || refItem.url.path.hasSuffix("/\(line)") {
+                                group.append(refItem)
+                                processedItems.insert(refItem.url.path)
+                            }
+                        }
+                    }
+                }
+                
+                result.append(group)
+                processedItems.insert(itemPath)
+            }
+        }
+        
+        // Second pass: add remaining items as individual groups
+        for item in items {
+            if !processedItems.contains(item.url.path) {
+                result.append([item])
+                processedItems.insert(item.url.path)
+            }
+        }
+        
+        return result
     }
 
 //    @MainActor
