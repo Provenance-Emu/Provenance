@@ -85,9 +85,9 @@ public struct BatchArtworkMatchingView: View {
             .padding(.bottom, 20)
         }
         .navigationTitle("Batch Artwork Matcher")
-        #if !os(tvOS)
+#if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
-        #endif
+#endif
         .task {
             // Start animation for glow effect
             withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
@@ -404,18 +404,17 @@ public struct BatchArtworkMatchingView: View {
                 
                 // Clean the game title for search
                 let searchTitle = game.title.cleanedForSearch()
+                DLOG("Searching for artwork for '\(game.title)' using cleaned title: '\(searchTitle)'")
                 
-                // Search for artwork
-                if let results = try await PVLookup.shared.searchArtwork(
-                    byGameName: searchTitle,
-                    systemID: SystemIdentifier(rawValue: game.systemIdentifier),
-                    artworkTypes: [.boxFront]  // Only look for box front art
-                ), let firstResult = results.first {
+                // Try to find artwork with the full cleaned title
+                if let results = try await searchWithFallback(gameTitle: searchTitle, systemID: game.systemIdentifier),
+                    let firstResult = results.first {
                     // Store the first result
                     artworkResults[md5] = firstResult
                     
                     // Automatically select this result
                     selectedArtworks.insert(md5)
+                    DLOG("Found artwork for '\(game.title)' at \(firstResult.url)")
                 }
                 
                 // Small delay to avoid hammering the API
@@ -447,6 +446,69 @@ public struct BatchArtworkMatchingView: View {
         }
     }
     
+    /// Search for artwork with fallback to fewer words if initial search fails
+    private func searchWithFallback(gameTitle: String, systemID: String) async throws -> [ArtworkMetadata]? {
+        // First try with the full cleaned title
+        if let results = try await PVLookup.shared.searchArtwork(
+            byGameName: gameTitle,
+            systemID: SystemIdentifier(rawValue: systemID),
+            artworkTypes: [.boxFront]
+        ), !results.isEmpty {
+            return results
+        }
+        
+        // Count words in the title
+        let words = gameTitle.components(separatedBy: .whitespacesAndNewlines)
+            .filter { !$0.isEmpty }
+        
+        // If we have more than 3 words, try with just the first 3
+        if words.count > 3 {
+            let shortenedTitle = gameTitle.firstNWords(3)
+            DLOG("No results found with full title. Trying with first 3 words: '\(shortenedTitle)'")
+            
+            if let results = try await PVLookup.shared.searchArtwork(
+                byGameName: shortenedTitle,
+                systemID: SystemIdentifier(rawValue: systemID),
+                artworkTypes: [.boxFront]
+            ), !results.isEmpty {
+                return results
+            }
+        }
+        
+        // This is probably excessive
+        //        // If we have more than 2 words, try with just the first 2
+        //        if words.count > 2 {
+        //            let shortenedTitle = gameTitle.firstNWords(2)
+        //            DLOG("No results found with 3 words. Trying with first 2 words: '\(shortenedTitle)'")
+        //
+        //            if let results = try await PVLookup.shared.searchArtwork(
+        //                byGameName: shortenedTitle,
+        //                systemID: SystemIdentifier(rawValue: systemID),
+        //                artworkTypes: [.boxFront]
+        //            ), !results.isEmpty {
+        //                return results
+        //            }
+        //        }
+        //
+        //        // If we have more than 1 word, try with just the first word
+        //        if words.count > 1 {
+        //            let shortenedTitle = gameTitle.firstNWords(1)
+        //            DLOG("No results found with 2 words. Trying with first word: '\(shortenedTitle)'")
+        //
+        //            if let results = try await PVLookup.shared.searchArtwork(
+        //                byGameName: shortenedTitle,
+        //                systemID: SystemIdentifier(rawValue: systemID),
+        //                artworkTypes: [.boxFront]
+        //            ), !results.isEmpty {
+        //                return results
+        //            }
+        //        }
+        
+        // No results found with any approach
+        DLOG("No artwork found for '\(gameTitle)' after trying multiple word combinations")
+        return nil
+    }
+    
     /// Apply selected artwork to games
     private func applySelectedArtwork() async {
         isLoading = true
@@ -471,7 +533,7 @@ public struct BatchArtworkMatchingView: View {
                 do {
                     let (data, _) = try await URLSession.shared.data(from: artwork.url)
                     
-                    #if os(macOS)
+#if os(macOS)
                     if let image = NSImage(data: data) {
                         // Generate a unique ID for this artwork
                         let uniqueID = UUID().uuidString
@@ -489,7 +551,7 @@ public struct BatchArtworkMatchingView: View {
                         
                         successCount += 1
                     }
-                    #else
+#else
                     if let image = UIImage(data: data) {
                         // Generate a unique ID for this artwork
                         let uniqueID = UUID().uuidString
@@ -505,7 +567,7 @@ public struct BatchArtworkMatchingView: View {
                         
                         successCount += 1
                     }
-                    #endif
+#endif
                 } catch {
                     ELOG("Error downloading artwork for game \(game.title): \(error)")
                 }
@@ -599,9 +661,9 @@ struct GameArtworkRow: View {
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(
                             LinearGradient(
-                                gradient: Gradient(colors: isSelected ? 
-                                                 [.retroPink, .retroPurple] : 
-                                                 [.retroBlue.opacity(0.5), .retroPurple.opacity(0.5)]),
+                                gradient: Gradient(colors: isSelected ?
+                                                   [.retroPink, .retroPurple] :
+                                                    [.retroBlue.opacity(0.5), .retroPurple.opacity(0.5)]),
                                 startPoint: .leading,
                                 endPoint: .trailing
                             ),
@@ -626,21 +688,21 @@ struct GameArtworkRow: View {
             do {
                 let (data, _) = try await URLSession.shared.data(from: url)
                 
-                #if os(macOS)
+#if os(macOS)
                 if let nsImage = NSImage(data: data) {
                     await MainActor.run {
                         artworkImage = Image(nsImage: nsImage)
                         isLoading = false
                     }
                 }
-                #else
+#else
                 if let uiImage = UIImage(data: data) {
                     await MainActor.run {
                         artworkImage = Image(uiImage: uiImage)
                         isLoading = false
                     }
                 }
-                #endif
+#endif
             } catch {
                 await MainActor.run {
                     isLoading = false
@@ -654,21 +716,56 @@ struct GameArtworkRow: View {
 // MARK: - String Extensions
 
 extension String {
-    /// Clean a string for artwork search
+    /// Clean a string for artwork search with enhanced handling of special cases
     func cleanedForSearch() -> String {
         var cleaned = self
+        let originalCleaned = cleaned
+        
+        // Remove PAL/NTSC indicators
+        cleaned = cleaned.replacingOccurrences(of: "\\bPAL\\b", with: "", options: [.regularExpression, .caseInsensitive])
+        cleaned = cleaned.replacingOccurrences(of: "\\bNTSC\\b", with: "", options: [.regularExpression, .caseInsensitive])
         
         // Remove text in brackets: [], (), {}
         let bracketPatterns = ["\\[.*?\\]", "\\(.*?\\)", "\\{.*?\\}"]
         for pattern in bracketPatterns {
             if let regex = try? NSRegularExpression(pattern: pattern, options: .dotMatchesLineSeparators) {
-                cleaned = regex.stringByReplacingMatches(in: cleaned, options: [], range: NSRange(location: 0, length: cleaned.utf16.count), withTemplate: "")
+                cleaned = regex.stringByReplacingMatches(in: cleaned, options: [], range: NSRange(location: 0, length: cleaned.utf16.count), withTemplate: " ")
             }
         }
         
-        // Remove special characters
-        let characterSet = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: " ")).inverted
-        cleaned = cleaned.components(separatedBy: characterSet).joined(separator: " ")
+        // Handle leading numbers with dash (e.g., "234324 - SomeGame" -> "SomeGame")
+        if let regex = try? NSRegularExpression(pattern: "^\\d+\\s*-\\s*", options: []) {
+            cleaned = regex.stringByReplacingMatches(in: cleaned, options: [], range: NSRange(location: 0, length: cleaned.utf16.count), withTemplate: "")
+        }
+        
+        // Replace special characters with spaces, but preserve word-joining dashes
+        // First, protect word-joining dashes by replacing them with a placeholder
+        let wordJoiningDashPattern = "[a-zA-Z]-[a-zA-Z]"
+        var protectedDashes: [String: String] = [:]
+        
+        if let regex = try? NSRegularExpression(pattern: wordJoiningDashPattern, options: []) {
+            let matches = regex.matches(in: cleaned, options: [], range: NSRange(location: 0, length: cleaned.utf16.count))
+            
+            for match in matches.reversed() { // Process in reverse to avoid offset issues
+                if let range = Range(match.range, in: cleaned) {
+                    let dashText = String(cleaned[range])
+                    let placeholder = "__DASH_\(UUID().uuidString)__"
+                    protectedDashes[placeholder] = dashText
+                    cleaned = cleaned.replacingOccurrences(of: dashText, with: placeholder)
+                }
+            }
+        }
+        
+        // Replace special characters with spaces
+        let specialChars = [",", ";", "'", "`", "-", "+", "_", "~"]
+        for char in specialChars {
+            cleaned = cleaned.replacingOccurrences(of: char, with: " ")
+        }
+        
+        // Restore protected dashes
+        for (placeholder, original) in protectedDashes {
+            cleaned = cleaned.replacingOccurrences(of: placeholder, with: original)
+        }
         
         // Remove extra spaces
         cleaned = cleaned.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
@@ -676,7 +773,36 @@ extension String {
         // Trim whitespace
         cleaned = cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
         
+        // Handle "vs." and similar abbreviations
+        cleaned = cleaned.replacingOccurrences(of: "vs\\.", with: "vs", options: .regularExpression)
+        
+        // If cleaning resulted in an empty string, use the original with just brackets removed
+        if cleaned.isEmpty {
+            // Just remove bracket contents without replacing the entire match
+            var bracketsRemoved = originalCleaned
+            for pattern in bracketPatterns {
+                if let regex = try? NSRegularExpression(pattern: pattern, options: .dotMatchesLineSeparators) {
+                    bracketsRemoved = regex.stringByReplacingMatches(in: bracketsRemoved, options: [], range: NSRange(location: 0, length: bracketsRemoved.utf16.count), withTemplate: "")
+                }
+            }
+            // Clean up any resulting multiple spaces
+            bracketsRemoved = bracketsRemoved.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            return bracketsRemoved.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        
         return cleaned
+    }
+    
+    /// Get first N words from a string
+    func firstNWords(_ n: Int) -> String {
+        let words = self.components(separatedBy: .whitespacesAndNewlines)
+            .filter { !$0.isEmpty }
+        
+        if words.count <= n {
+            return self
+        }
+        
+        return words.prefix(n).joined(separator: " ")
     }
 }
 
