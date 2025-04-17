@@ -125,71 +125,14 @@ private struct GradientButtonStyleBody: View {
             .opacity(configuration.isPressed ? 0.9 : 1)
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: configuration.isPressed)
             .animation(.easeInOut(duration: 0.2), value: isFocused)
-    }
-}
-
-/// A button style specifically for tvOS buttons that need focus indicators
-public struct TVFocusableButtonStyle: ButtonStyle {
-    private let colors: [Color]
-    private let glowColor: Color
-    
-    public init(colors: [Color], glowColor: Color? = nil) {
-        self.colors = colors
-        self.glowColor = glowColor ?? (colors.first ?? .retroPink)
-    }
-    
-    public func makeBody(configuration: Configuration) -> some View {
-        TVFocusableButton(configuration: configuration, colors: colors, glowColor: glowColor)
-    }
-    
-    private struct TVFocusableButton: View {
-        @Environment(\.isFocused) private var isFocused: Bool
-        let configuration: ButtonStyle.Configuration
-        let colors: [Color]
-        let glowColor: Color
-        
-        var body: some View {
-            configuration.label
-                .padding(.vertical, 12)
-                .padding(.horizontal, 16)
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.black.opacity(0.7))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .strokeBorder(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: colors),
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    ),
-                                    lineWidth: isFocused ? 3 : 1.5
-                                )
-                        )
-                )
-                .shadow(color: glowColor.opacity(isFocused ? 0.9 : 0.0), radius: isFocused ? 8 : 0)
-                .scaleEffect(isFocused ? 1.05 : 1.0)
-                .brightness(configuration.isPressed ? 0.1 : 0)
-                .animation(.easeInOut(duration: 0.2), value: isFocused)
-                .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
-        }
-    }
-}
-
-/// Extension to add a modifier that enhances tvOS buttons with focus effects
-public extension View {
-    /// Adds tvOS-specific focus enhancements to buttons
-    /// - Parameter glowColor: The color to use for the focus glow effect
-    /// - Returns: A modified view with enhanced focus effects on tvOS
-    func tvOSFocusEnhancement(glowColor: Color) -> some View {
-        #if os(tvOS)
-        self
-            .buttonStyle(TVFocusableButtonStyle(colors: [glowColor, glowColor.opacity(0.7)], glowColor: glowColor))
+            // Make sure the button is focusable on tvOS
             .focusable(true)
-            .padding(.vertical, 8) // Add more padding for tvOS remote navigation
-        #else
-        self
-        #endif
+            // Add vertical padding for better tvOS navigation
+            .padding(.vertical, 8)
     }
 }
+
+// This style is no longer needed since GradientButtonStyle now handles tvOS focus
+
+// This extension is no longer needed since GradientButtonStyle now handles tvOS focus
 #endif
