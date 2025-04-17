@@ -129,6 +129,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
     let collapsedSystems = BehaviorSubject(value: Defaults[.collapsedSystems])
     let showSaveStates = BehaviorSubject(value: Defaults[.showRecentSaveStates])
     let showRecentGames = BehaviorSubject(value: Defaults[.showRecentGames])
+    let showSearchBar = BehaviorSubject(value: Defaults[.showSearchbar])
 
     // MARK: - Lifecycle
 
@@ -261,9 +262,15 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.automaticallyShowsCancelButton = true
         navigationItem.hidesSearchBarWhenScrolling = true
-        navigationItem.searchController = searchController
 
-        self.searchController = searchController
+        showSearchBar
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { show in
+                self.searchController = show ? searchController : nil
+                self.navigationItem.searchController = show ? searchController : nil
+            })
+            .disposed(by: disposeBag)
+
         searchText = Observable.merge(searchController.rx.searchText, searchController.rx.didDismiss.map { _ in nil })
 #else
         searchText = .never()
@@ -306,6 +313,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
         currentSort.bind(onNext: { Defaults[.sort] = $0 }).disposed(by: disposeBag)
         showSaveStates.bind(onNext: { Defaults[.showRecentSaveStates] = $0 }).disposed(by: disposeBag)
         showRecentGames.bind(onNext: { Defaults[.showRecentGames] = $0 }).disposed(by: disposeBag)
+        showSearchBar.bind(onNext: { Defaults[.showSearchbar] = $0 }).disposed(by: disposeBag)
 
         let layout = PVGameLibraryCollectionFlowLayout()
         layout.scrollDirection = .vertical
@@ -977,7 +985,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
                         Task.detached(priority: .utility) {
                             do {
                                 //unclear if this would actually work...
-                                self.gameImporter.addImports(forPaths: paths)
+                                await self.gameImporter.addImports(forPaths: paths)
                                 self.gameImporter.startProcessing()
                             } catch {
                                 ELOG("Error: \(error.localizedDescription)")
@@ -1453,9 +1461,10 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
                     let lastPhoto2 = UIImage(cgImage: image!.cgImage!, scale: CGFloat(image!.scale), orientation: orientation)
                     lastPhoto!.requestContentEditingInput(with: PHContentEditingInputRequestOptions()) { (input, _) in
                         do {
-                            try PVMediaCache.writeImage(toDisk: lastPhoto2, withKey: (input?.fullSizeImageURL!.absoluteString)!)
+                            let key =  (input?.fullSizeImageURL!.absoluteString)!
+                            try PVMediaCache.writeImage(toDisk: lastPhoto2, withKey: key)
                             try RomDatabase.sharedInstance.writeTransaction {
-                                game.customArtworkURL = (input?.fullSizeImageURL!.absoluteString)!
+                                game.customArtworkURL = key
                             }
                         } catch {
                             ELOG("Failed to set custom artwork URL for game \(game.title) \n \(error.localizedDescription)")

@@ -15,14 +15,6 @@ import PVThemes
 import Combine
 import PVUIBase
 
-enum HomeSectionType: Int, CaseIterable, Sendable {
-    case recentSaveStates
-    case recentlyPlayedGames
-    case favorites
-    case mostPlayed
-    case allGames
-}
-
 @available(iOS 14, tvOS 14, *)
 struct HomeView: SwiftUI.View {
 
@@ -34,7 +26,11 @@ struct HomeView: SwiftUI.View {
 
     @Default(.showRecentSaveStates) private var showRecentSaveStates
     @Default(.showRecentGames) private var showRecentGames
+    @Default(.showSearchbar) private var showSearchbar
     @Default(.showFavorites) private var showFavorites
+    
+    // Import status view properties
+    @State private var showImportStatusView = false
 
     @ObservedResults(
         PVSaveState.self,
@@ -131,14 +127,31 @@ struct HomeView: SwiftUI.View {
         StatusBarProtectionWrapper {
             VStack(spacing: 0) {
                 // Add search bar with visibility control
-                if allGames.count > 8 {
+                if allGames.count > 8 && showSearchbar {
                     PVSearchBar(text: $searchText)
                         .padding(.horizontal)
                         .padding(.bottom, 8)
                         .opacity(isSearchBarVisible ? 1 : 0)
                         .frame(height: isSearchBarVisible ? nil : 0)
                         .animation(.easeInOut(duration: 0.3), value: isSearchBarVisible)
+                        .padding(.horizontal, 8)
+                        .padding(.bottom, 8)
                 }
+                
+                // Import Progress View
+                ImportProgressView(
+                    gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
+                    updatesController: AppState.shared.libraryUpdatesController!,
+                    onTap: {
+                        withAnimation {
+                            showImportStatusView = true
+                        }
+                    }
+                )
+//                .padding(.vertical, 6)
+//                .padding(.horizontal, 8)
+//                .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 3, x: 0, y: 0)
+//                .padding(.horizontal, 8)
 
                 ScrollViewWithOffset(
                     offsetChanged: { offset in
@@ -248,6 +261,18 @@ struct HomeView: SwiftUI.View {
         }
         /// GameContextMenuDelegate
         /// TODO: This is an ugly copy/paste from `ConsolesGameView.swift`
+        // Import Status View
+        .fullScreenCover(isPresented: $showImportStatusView) {
+            ImportStatusView(
+                updatesController: AppState.shared.libraryUpdatesController!,
+                gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
+                dismissAction: {
+                    withAnimation {
+                        showImportStatusView = false
+                    }
+                }
+            )
+        }
         .sheet(isPresented: $showImagePicker) {
 #if !os(tvOS)
             ImagePicker(sourceType: .photoLibrary) { image in
@@ -298,11 +323,15 @@ struct HomeView: SwiftUI.View {
             [
                 UIAlertAction(title: "Save", style: .default) { _ in
                     submitRename()
+                    gameToRename = nil
+                    newGameTitle = ""
+                    showingRenameAlert = false
                 },
                 UIAlertAction(title: "Cancel", style: .cancel) { _ in
                     showingRenameAlert = false
                     gameToRename = nil
                     newGameTitle = ""
+                    showingRenameAlert = false
                 }
             ]
         }
@@ -342,7 +371,7 @@ struct HomeView: SwiftUI.View {
 
                 /// Create and configure the view
                 if #available(iOS 16.4, tvOS 16.4, *) {
-                    ContinuesMagementView(viewModel: viewModel)
+                    ContinuesManagementView(viewModel: viewModel)
                         .onAppear {
                             /// Set the game ID filter
                             driver.gameId = game.id
@@ -355,7 +384,7 @@ struct HomeView: SwiftUI.View {
                         }
                         .presentationBackground(content: {Color.clear})
                 } else {
-                    ContinuesMagementView(viewModel: viewModel)
+                    ContinuesManagementView(viewModel: viewModel)
                         .onAppear {
                             /// Set the game ID filter
                             driver.gameId = game.id
@@ -501,8 +530,26 @@ struct HomeView: SwiftUI.View {
             toggleSortAction: { viewModel.sortGamesAscending.toggle() },
             toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }
         )
-        .padding(.top, 16)
-        .padding(.bottom, 16)
+        .padding(.vertical, 12)
+        .padding(.horizontal, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.black.opacity(0.7))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(
+                            LinearGradient(
+                                gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroPink]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                )
+        )
+        .shadow(color: RetroTheme.retroPurple.opacity(0.7), radius: 3, x: 0, y: 0)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 8)
     }
 
     @ViewBuilder
@@ -1045,8 +1092,10 @@ struct HomeView: SwiftUI.View {
             LazyVStack(spacing: 0) {
                 let results = filteredSearchResults()
                 if results.isEmpty {
-                    Text("No games found")
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    Text("NO GAMES FOUND")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(RetroTheme.retroBlue)
+                        .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 3, x: 0, y: 0)
                         .padding()
                 } else {
                     ForEach(results, id: \.self) { game in

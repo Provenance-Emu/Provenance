@@ -4,6 +4,8 @@
 <dict>
 	<key>ALTDeviceID</key>
 	<string>dummy</string>
+	<key>APP_GROUP_IDENTIFIER</key>
+	<string>$(APP_GROUP_IDENTIFIER)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -40,7 +42,7 @@
 			</array>
 		</dict>
 		<key>NSExtensionPointIdentifier</key>
-		<string>com.apple.tv-services</string>
+		<string>com.apple.tv-top-shelf</string>
 		<key>NSExtensionPrincipalClass</key>
 		<string>$(PRODUCT_MODULE_NAME).ServiceProvider</string>
 	</dict>

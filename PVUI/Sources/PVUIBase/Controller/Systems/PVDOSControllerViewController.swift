@@ -26,16 +26,19 @@ final class PVDOSControllerViewController: PVControllerViewController<PVDOSSyste
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
-            if title == "Fire 1" || title == "1" {
+            switch title.lowercased() {
+            case "fire 1", "1":
                 button.buttonTag = .fire1
-            } else if title == "Fire 2" || title == "2" {
+            case "fire 2", "2":
                 button.buttonTag = .fire2
-            } else if title == "Select" {
+            case "select":
                 button.buttonTag = .select
-            } else if title == "Reset" {
+            case "reset", "start":
                 button.buttonTag = .reset
-            } else if title == "Pause" {
+            case "pause":
                 button.buttonTag = .pause
+            default:
+                break
             }
         }
 

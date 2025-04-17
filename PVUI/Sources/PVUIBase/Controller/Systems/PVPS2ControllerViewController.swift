@@ -28,7 +28,7 @@ final class PVPS2ControllerViewController: PVControllerViewController<PVPS2Syste
             guard let button = $0 as? JSButton, let text = button.titleLabel.text else {
                 return
             }
-            if text == "✖" || text == "✕" {
+            if text == "✖" || text.lowercased() == "✕" {
                 button.buttonTag = .cross
             } else if text == "●" || text == "○" {
                 button.buttonTag = .circle
@@ -46,7 +46,7 @@ final class PVPS2ControllerViewController: PVControllerViewController<PVPS2Syste
         selectButton?.buttonTag = .select
         startButton?.buttonTag = .start
     }
-    
+
     override func prelayoutSettings() {
         //alwaysRightAlign = true
         alwaysJoypadOverDpad = false

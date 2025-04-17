@@ -25,18 +25,27 @@ final class PVSaturnControllerViewController: PVControllerViewController<PVSatur
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
-            if title == "A" {
+            switch title.lowercased() {
+            case "a":
                 button.buttonTag = .a
-            } else if title == "B" {
+            case "b":
                 button.buttonTag = .b
-            } else if title == "C" {
+            case "c":
                 button.buttonTag = .c
-            } else if title == "X" {
+            case "x":
                 button.buttonTag = .x
-            } else if title == "Y" {
+            case "y":
                 button.buttonTag = .y
-            } else if title == "Z" {
+            case "z":
                 button.buttonTag = .z
+            case "l", "l1":
+                button.buttonTag = .l
+            case "r", "r1":
+                button.buttonTag = .r
+            case "start":
+                button.buttonTag = .start
+            default:
+                break
             }
         }
 

@@ -277,6 +277,7 @@ static NSString *_systemName;
         @synchronized (self) {
             if (_isRunning) {
                 if (self.isSpeedModified) {
+                    // TODO: Is this correct? We should expose the skip version
                     [self executeFrame];
                 } else {
                     [self executeFrame];

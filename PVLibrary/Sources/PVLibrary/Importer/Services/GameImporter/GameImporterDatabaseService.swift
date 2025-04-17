@@ -200,6 +200,26 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
     @discardableResult
     func getArtwork(forGame game: PVGame) async -> PVGame {
+        // Check for existing custom artwork first
+        let md5 = game.md5Hash
+        if !md5.isEmpty {
+            DLOG("Checking for existing custom artwork for game with MD5: \(md5)")
+            
+            // Try to find existing custom artwork with this MD5
+            if let customArtworkKey = PVMediaCache.findExistingCustomArtwork(forMD5: md5) {
+                DLOG("Found existing custom artwork with key: \(customArtworkKey)")
+                
+                // If we found a custom artwork key, set it as the customArtworkURL
+                if let localURL = PVMediaCache.filePath(forKey: customArtworkKey) {
+                    DLOG("Setting custom artwork URL: \(localURL.path)")
+                    game.customArtworkURL = customArtworkKey
+                }
+            } else {
+                DLOG("No existing custom artwork found for game with MD5: \(md5)")
+            }
+        }
+        
+        // Continue with original artwork handling
         var url = game.originalArtworkURL
         if url.isEmpty {
             return game

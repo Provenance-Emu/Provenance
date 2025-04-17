@@ -13,7 +13,9 @@ public enum SaveStateError: Error {
     case noCoreFound(String)
     case realmWriteError(Error)
     case realmDeletionError(Error)
-
+    case noSaveStatesFound
+    case saveStateFileNotFound
+    
     var localizedDescription: String {
         switch self {
         case let .coreSaveError(coreError): return "Core failed to save: \(coreError?.localizedDescription ?? "No reason given.")"
@@ -23,6 +25,8 @@ public enum SaveStateError: Error {
         case let .noCoreFound(id): return "No core found to match id: \(id)"
         case let .realmWriteError(realmError): return "Unable to write save state to realm: \(realmError.localizedDescription)"
         case let .realmDeletionError(realmError): return "Unable to delete old auto-save from database: \(realmError.localizedDescription)"
+        case let .noSaveStatesFound: return "Save state file not found"
+        case let .saveStateFileNotFound: return "Save state file not found"
         }
     }
 }

@@ -219,8 +219,16 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 
                 // Only process if bootup is completed
                 if AppState.shared.bootupState == .completed {
-                    ILOG("PVRootViewController: Processing app open action immediately")
-                    await handleAppOpenEvents(action)
+                    // Check if this action requires the emulator scene
+                    if action.requiresEmulatorScene {
+                        ILOG("PVRootViewController: Action requires emulator scene, delegating to emulator scene")
+                        // Store game info in app state for the emulator scene to use
+                        prepareGameForEmulatorScene(action)
+                        // The ProvenanceApp will handle opening the emulator scene
+                    } else {
+                        ILOG("PVRootViewController: Processing app open action in main scene")
+                        await handleAppOpenEvents(action)
+                    }
                 } else {
                     ILOG("PVRootViewController: Bootup not completed, action will be handled after bootup")
                     // The action will be handled by the bootup state observer when bootup completes
@@ -377,6 +385,25 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
     }
 
     /// Sets up an observer for the bootup state to handle app open events when bootup completes
+    // Helper method to prepare game information for the emulator scene
+    private func prepareGameForEmulatorScene(_ action: AppState.AppOpenAction) {
+        switch action {
+        case .openMD5(let md5):
+            if let game = RomDatabase.sharedInstance.object(ofType: PVGame.self, wherePrimaryKeyEquals: md5) {
+                ILOG("PVRootViewController: Preparing game '\(game.title)' for emulator scene")
+                AppState.shared.emulationUIState.currentGame = game
+            }
+        case .openGame(let game):
+            ILOG("PVRootViewController: Preparing game '\(game.title)' for emulator scene")
+            AppState.shared.emulationUIState.currentGame = game
+        case .openFile(let url):
+            ILOG("PVRootViewController: Preparing file '\(url.lastPathComponent)' for emulator scene")
+            // The emulator scene will handle importing the file
+        case .none:
+            break
+        }
+    }
+    
     private func setupBootupStateObserver() {
         Task { @MainActor in
             for await _ in await AppState.shared.bootupStateManager.$currentState.values {
@@ -437,7 +464,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         }
 
         // Create and present the view
-        let continuesView = ContinuesMagementView(viewModel: viewModel)
+        let continuesView = ContinuesManagementView(viewModel: viewModel)
                             .onAppear {
                                 if let game = game {
                                     /// Set the game ID filter
@@ -496,7 +523,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         driver.loadAllSaveStates(forSystemID: systemID)
         
         // Create and present the view
-        let continuesView = ContinuesMagementView(viewModel: viewModel)
+        let continuesView = ContinuesManagementView(viewModel: viewModel)
             .onAppear {
                 // Use system icon
                 Task { @MainActor in

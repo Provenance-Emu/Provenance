@@ -10,6 +10,10 @@ import PVLookup
 import PVSystems
 import PVPrimitives
 
+public protocol SkinImporterServicing {
+    func importSkin(from url: URL) async throws
+}
+
 public protocol GameImporterSystemsServicing {
     /// The type of game this service works with
     typealias GameType = PVGame

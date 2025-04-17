@@ -10,7 +10,8 @@ import Foundation
 import PVLogging
 import Defaults
 
-public enum SortOptions: UInt, CustomStringConvertible, CaseIterable, UserDefaultsRepresentable, Defaults.Serializable {
+public enum SortOptions: UInt, CustomStringConvertible, CaseIterable, UserDefaultsRepresentable, Defaults.Serializable, Identifiable {
+    
     case title
     case importDate
     case lastPlayed
@@ -24,6 +25,8 @@ public enum SortOptions: UInt, CustomStringConvertible, CaseIterable, UserDefaul
         case .mostPlayed: return "Most Played"
         }
     }
+
+    public var id: UInt { row }
 
     public var row: UInt {
         return rawValue

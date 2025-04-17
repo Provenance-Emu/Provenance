@@ -4,6 +4,9 @@ import PVLogging
 import PVSwiftUI
 import PVFeatureFlags
 import PVThemes
+import PVLibrary
+import PVEmulatorCore
+import PVCoreBridge
 #if canImport(FreemiumKit)
 import FreemiumKit
 #endif
@@ -20,79 +23,110 @@ struct ProvenanceApp: App {
     @UIApplicationDelegateAdaptor(PVAppDelegate.self) var appDelegate
     @Environment(\.scenePhase) private var scenePhase
     @StateObject private var featureFlags = PVFeatureFlagsManager.shared
+    @StateObject private var sceneCoordinator = SceneCoordinator.shared
+
+    /// Handles the spotlight indexing background task identifier
+    @State private var spotlightBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
 
     init() {
-//#if canImport(Sentry)
-//        if appState.isAppStore {
-//            SentrySDK.start { options in
-//                options.dsn = "https://f9976bad538343d59606a8ef312d4720@o199354.ingest.us.sentry.io/1309415"
-//                #if DEBUG
-//                options.debug = true // Enabled debug when first installing is always helpful
-//                // Enable tracing to capture 100% of transactions for tracing.
-//                // Use 'options.tracesSampleRate' to set the sampling rate.
-//                // We recommend setting a sample rate in production.
-//                options.tracesSampleRate = 1.0 // tracing must be enabled for profiling
-//                options.profilesSampleRate = 1.0 // see also `profilesSampler` if you need custom sampling logic
-//                options.enableAppLaunchProfiling = true // experimental new feature to start profiling in the pre-main launch phase
-//                options.sessionReplay.onErrorSampleRate = 1.0
-//                options.sessionReplay.sessionSampleRate = 0.1
-//                #else
-//                options.tracesSampleRate = 0.5
-//                options.sessionReplay.onErrorSampleRate = 1.0
-//                #endif
-//            }
-//        }
-//#endif
-      }
+        //#if canImport(Sentry)
+        //        if appState.isAppStore {
+        //            SentrySDK.start { options in
+        //                options.dsn = "https://f9976bad538343d59606a8ef312d4720@o199354.ingest.us.sentry.io/1309415"
+        //                #if DEBUG
+        //                options.debug = true // Enabled debug when first installing is always helpful
+        //                // Enable tracing to capture 100% of transactions for tracing.
+        //                // Use 'options.tracesSampleRate' to set the sampling rate.
+        //                // We recommend setting a sample rate in production.
+        //                options.tracesSampleRate = 1.0 // tracing must be enabled for profiling
+        //                options.profilesSampleRate = 1.0 // see also `profilesSampler` if you need custom sampling logic
+        //                options.enableAppLaunchProfiling = true // experimental new feature to start profiling in the pre-main launch phase
+        //                options.sessionReplay.onErrorSampleRate = 1.0
+        //                options.sessionReplay.sessionSampleRate = 0.1
+        //                #else
+        //                options.tracesSampleRate = 0.5
+        //                options.sessionReplay.onErrorSampleRate = 1.0
+        //                #endif
+        //            }
+        //        }
+        //#endif
+
+        // Register for Spotlight background processing
+        registerSpotlightBackgroundTask()
+    }
+
+    /// Register a background task for Spotlight indexing
+    private func registerSpotlightBackgroundTask() {
+        // Register a background task identifier for Spotlight indexing
+        var backgroundTaskIdentifier: UIBackgroundTaskIdentifier
+        backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(withName: "SpotlightIndexing") {
+            // This will be called if the background task expires
+            WLOG("Spotlight indexing background task expired")
+//            UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+        }
+
+        // Store the background task identifier for later use
+        spotlightBackgroundTaskIdentifier = backgroundTaskIdentifier
+
+        ILOG("Registered background task for Spotlight indexing with identifier: \(backgroundTaskIdentifier)")
+    }
 
     var body: some Scene {
-        WindowGroup {
-            ContentView(appDelegate: appDelegate)
+        WindowGroup(id: "main") {
+            ContentView()
                 .environmentObject(appState)
                 .environmentObject(featureFlags)
+                .environmentObject(appDelegate)
+                .environmentObject(appState.bootupStateManager)
+                .environmentObject(ThemeManager.shared)
                 .task {
                     try? await featureFlags.loadConfiguration(
                         from: URL(string: "https://data.provenance-emu.com/features/features.json")!
                     )
                 }
-            #if canImport(FreemiumKit)
+#if canImport(FreemiumKit)
                 .environmentObject(FreemiumKit.shared)
-            #endif
-            #if canImport(WhatsNewKit)
+#endif
+#if canImport(WhatsNewKit)
                 .environment(
-                       \.whatsNew,
-                       WhatsNewEnvironment(
-                           // Specify in which way the presented WhatsNew Versions are stored.
-                           // In default the `UserDefaultsWhatsNewVersionStore` is used.
-                           versionStore:
-//                             InMemoryWhatsNewVersionStore(),
-                           NSUbiquitousKeyValueWhatsNewVersionStore(),
-                           // UserDefaultsWhatsNewVersionStore(),
-                           // Pass a `WhatsNewCollectionProvider` or an array of WhatsNew instances
-                           whatsNewCollection: self
-                       )
-                   )
-            #endif
+                    \.whatsNew,
+                     WhatsNewEnvironment(
+                        // Specify in which way the presented WhatsNew Versions are stored.
+                        // In default the `UserDefaultsWhatsNewVersionStore` is used.
+                        versionStore:
+                            //                             InMemoryWhatsNewVersionStore(),
+                        NSUbiquitousKeyValueWhatsNewVersionStore(),
+                        // UserDefaultsWhatsNewVersionStore(),
+                        // Pass a `WhatsNewCollectionProvider` or an array of WhatsNew instances
+                        whatsNewCollection: self
+                     )
+                )
+#endif
                 .onAppear {
                     ILOG("ProvenanceApp: onAppear called, setting `appDelegate.appState = appState`")
                     appDelegate.appState = appState
 
                     // Initialize the settings factory and import presenter
-                    #if os(tvOS)
+#if os(tvOS)
                     appState.settingsFactory = SwiftUISettingsViewControllerFactory()
                     appState.importOptionsPresenter = SwiftUIImportOptionsPresenter()
-                    #endif
+#endif
 
-            #if canImport(FreemiumKit)
-                #if targetEnvironment(simulator) || DEBUG
+#if canImport(FreemiumKit)
+#if targetEnvironment(simulator) || DEBUG
                     FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
-                #else
+#else
                     if !appDelegate.isAppStore {
                         FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
                     }
-                #endif
-            #endif
+#endif
+#endif
                 }
+            #if !os(tvOS)
+                .onContinueUserActivity(CSSearchableItemActionType) { userActivity in
+                    handleSpotlightActivity(userActivity)
+                }
+            #endif
                 .onOpenURL { url in
                     // Handle the URL
                     let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
@@ -124,6 +158,7 @@ struct ProvenanceApp: App {
                            !md5Value.isEmpty {
                             ILOG("ProvenanceApp: Found direct md5 parameter in URL: \(md5Value)")
                             AppState.shared.appOpenAction = .openMD5(md5Value)
+                            openEmulatorSceneIfNeeded()
                             return
                         }
 
@@ -135,9 +170,25 @@ struct ProvenanceApp: App {
                               let md5Value = first.value {
                         ILOG("ProvenanceApp: Found game controller path with MD5: \(md5Value)")
                         AppState.shared.appOpenAction = .openMD5(md5Value)
+                        openEmulatorSceneIfNeeded()
                         return
                     } else {
                         WLOG("ProvenanceApp: Unrecognized URL format: \(url.absoluteString)")
+                    }
+                }
+            #if !os(tvOS)
+                .handlesExternalEvents(preferring: ["main"], allowing: ["main"])
+            #endif
+                .preferredColorScheme(ThemeManager.shared.currentPalette.dark ? .dark : .light)
+                // Add listener for bootup state changes to trigger Spotlight reindexing
+                .onReceive(appState.bootupStateManager.$currentState) { state in
+                    if case .completed = state {
+                        // When bootup is completed, trigger Spotlight reindexing
+                        // This is a good time to do it as the database is fully loaded
+                        ILOG("Bootup completed, triggering Spotlight reindexing")
+//                        DispatchQueue.global(qos: .utility).async {
+//                            self.forceSpotlightReindexing()
+//                        }
                     }
                 }
         }
@@ -150,11 +201,24 @@ struct ProvenanceApp: App {
                     UIApplication.swizzleSendEvent()
                     appState.sendEventWasSwizzled = true
                 }
+
+                // Check if we need to open the emulator scene based on app open action
+                if appState.bootupState == .completed {
+                    openEmulatorSceneIfNeeded()
+                }
+
+                SkinImporterInjector.shared.service = DeltaSkinManager.shared
             }
 
             // Handle scene phase changes for import pausing
             appState.handleScenePhaseChange(newPhase)
         }
+
+        // Add the emulator scene
+        EmulatorScene()
+        #if !os(tvOS)
+            .handlesExternalEvents(matching: ["emulator"])
+        #endif
     }
 }
 
@@ -165,15 +229,15 @@ extension UIApplication {
     /// Swap implipmentations of sendEvent() while
     /// maintaing a reference back to the original
     @objc static func swizzleSendEvent() {
-            let originalSelector = #selector(UIApplication.sendEvent(_:))
-            let swizzledSelector = #selector(UIApplication.pv_sendEvent(_:))
-            let orginalStoreSelector = #selector(UIApplication.originalSendEvent(_:))
-            guard let originalMethod = class_getInstanceMethod(self, originalSelector),
-                let swizzledMethod = class_getInstanceMethod(self, swizzledSelector),
-                  let orginalStoreMethod = class_getInstanceMethod(self, orginalStoreSelector)
-            else { return }
-            method_exchangeImplementations(originalMethod, orginalStoreMethod)
-            method_exchangeImplementations(originalMethod, swizzledMethod)
+        let originalSelector = #selector(UIApplication.sendEvent(_:))
+        let swizzledSelector = #selector(UIApplication.pv_sendEvent(_:))
+        let orginalStoreSelector = #selector(UIApplication.originalSendEvent(_:))
+        guard let originalMethod = class_getInstanceMethod(self, originalSelector),
+              let swizzledMethod = class_getInstanceMethod(self, swizzledSelector),
+              let orginalStoreMethod = class_getInstanceMethod(self, orginalStoreSelector)
+        else { return }
+        method_exchangeImplementations(originalMethod, orginalStoreMethod)
+        method_exchangeImplementations(originalMethod, swizzledMethod)
     }
 
     /// Placeholder for storing original selector
@@ -181,7 +245,7 @@ extension UIApplication {
 
     /// The sendEvent that will be called
     @objc func pv_sendEvent(_ event: UIEvent) {
-//        print("Handling touch event: \(event.type.rawValue ?? -1)")
+        //        print("Handling touch event: \(event.type.rawValue ?? -1)")
         if let core = AppState.shared.emulationUIState.core {
             core.sendEvent(event)
         }
@@ -193,6 +257,14 @@ extension UIApplication {
 
 // MARK: - URL Handling
 extension ProvenanceApp {
+    // Helper method to open the emulator scene if needed based on app open action
+    private func openEmulatorSceneIfNeeded() {
+        if appState.appOpenAction.requiresEmulatorScene {
+            ILOG("Opening emulator scene for action: \(appState.appOpenAction)")
+            sceneCoordinator.openEmulatorScene()
+        }
+    }
+
     func handle(appURL url: URL) -> Bool {
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 
@@ -205,7 +277,7 @@ extension ProvenanceApp {
 
         // Debug log the URL structure in detail
         DLOG("URL scheme: \(components.scheme ?? "nil"), host: \(components.host ?? "nil"), path: \(components.path)")
-        if let queryItems = components.queryItems {
+        if let queryItems: [URLQueryItem] = components.queryItems {
             DLOG("Query items: \(queryItems.map { "\($0.name)=\($0.value ?? "nil")" }.joined(separator: ", "))")
         } else {
             DLOG("No query items found in URL")
@@ -325,11 +397,17 @@ extension ProvenanceApp {
             // Doesn't seem we need access in dev builds?
             secureDocument = url.startAccessingSecurityScopedResource()
 
-//            if let openInPlace = options[.openInPlace] as? Bool, openInPlace {
-                try FileManager.default.copyItem(at: url, to: destinationPath)
-//            } else {
-//                try FileManager.default.moveItem(at: url, to: destinationPath)
-//            }
+            //            if let openInPlace = options[.openInPlace] as? Bool, openInPlace {
+            try FileManager.default.copyItem(at: url, to: destinationPath)
+            //            } else {
+            //                try FileManager.default.moveItem(at: url, to: destinationPath)
+            //            }
+
+            // Set the app open action to open the file
+            AppState.shared.appOpenAction = .openFile(destinationPath)
+
+            // Open the emulator scene
+            openEmulatorSceneIfNeeded()
         } catch {
             ELOG("Unable to move file from \(url.path) to \(destinationPath.path) because \(error.localizedDescription)")
             return
@@ -350,6 +428,154 @@ extension ProvenanceApp {
     /// - Returns: The system if found, nil otherwise
     private func fetchSystem(byIdentifier identifier: String) -> PVSystem? {
         return RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: identifier)
+    }
+}
+
+import CoreSpotlight
+extension ProvenanceApp {
+    /// Force a reindexing of all Spotlight items
+    func forceSpotlightReindexing() {
+//        ILOG("Forcing Spotlight reindexing")
+//
+//        // Register a new background task if needed
+//        if spotlightBackgroundTaskIdentifier == .invalid {
+//            registerSpotlightBackgroundTask()
+//        }
+//
+//        Task {
+//            do {
+//                // First delete existing items to ensure a clean slate
+//                try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+//                    CSSearchableIndex.default().deleteAllSearchableItems { error in
+//                        if let error = error {
+//                            continuation.resume(throwing: error)
+//                        } else {
+//                            continuation.resume(returning: ())
+//                        }
+//                    }
+//                }
+//
+//                ILOG("Successfully deleted all searchable items")
+//
+//                // Get the extension identifier
+//                guard let extensionIdentifier = Bundle.main.bundleIdentifier.map({ $0 + ".Spotlight" }) else {
+//                    WLOG("Could not determine Spotlight extension identifier")
+//                    return
+//                }
+//
+//                // After deleting all items, we let the Spotlight extension handle reindexing
+//                // This occurs automatically when the user searches in Spotlight
+//                // For a more proactive approach, we can manually index a few key items
+//
+//                // Get some games to trigger the indexing
+//                let database = RomDatabase.sharedInstance
+//                let games = database.all(PVGame.self).prefix(5) // Get first 5 games to create searchable items
+//
+//                if !games.isEmpty {
+//                    // Create searchable items from games
+//                    let items = games.compactMap { game -> CSSearchableItem? in
+//                        // Make sure the game has a valid MD5 hash
+//                        guard !game.md5Hash.isEmpty else { return nil }
+//
+//                        // Create a searchable item with the game's spotlight content
+//                        return CSSearchableItem(
+//                            uniqueIdentifier: game.spotlightUniqueIdentifier,
+//                            domainIdentifier: "org.provenance-emu.games",
+//                            attributeSet: game.spotlightContentSet
+//                        )
+//                    }
+//
+//                    if !items.isEmpty {
+//                        // Index these items to trigger the extension
+//                        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+//                            CSSearchableIndex.default().indexSearchableItems(items) { error in
+//                                if let error = error {
+//                                    continuation.resume(throwing: error)
+//                                } else {
+//                                    continuation.resume(returning: ())
+//                                }
+//                            }
+//                        }
+//
+//                        ILOG("Successfully indexed \(items.count) sample items to trigger the extension")
+//                    } else {
+//                        WLOG("No valid searchable items could be created from games")
+//                    }
+//                } else {
+//                    WLOG("No games found to create sample searchable items")
+//                }
+//
+//                ILOG("Spotlight reindexing process completed. Extension \(extensionIdentifier) will handle full reindexing when needed.")
+//
+//                // End the background task if it's valid
+//                if spotlightBackgroundTaskIdentifier != .invalid {
+//                    ILOG("Ending Spotlight indexing background task: \(spotlightBackgroundTaskIdentifier)")
+//                    UIApplication.shared.endBackgroundTask(spotlightBackgroundTaskIdentifier)
+//                    spotlightBackgroundTaskIdentifier = .invalid
+//                }
+//
+//            } catch {
+//                ELOG("Error during Spotlight reindexing: \(error.localizedDescription)")
+//
+//                // End the background task even if there was an error
+//                if spotlightBackgroundTaskIdentifier != .invalid {
+//                    ILOG("Ending Spotlight indexing background task due to error: \(spotlightBackgroundTaskIdentifier)")
+//                    UIApplication.shared.endBackgroundTask(spotlightBackgroundTaskIdentifier)
+//                    spotlightBackgroundTaskIdentifier = .invalid
+//                }
+//            }
+//        }
+    }
+
+    /// Handle a Spotlight search result activation
+    func handleSpotlightActivity(_ userActivity: NSUserActivity) {
+        ILOG("Handling Spotlight activity: \(userActivity.activityType)")
+        #if !os(tvOS)
+        // Check if this is a Spotlight search result
+        if userActivity.activityType == CSSearchableItemActionType {
+            // Get the unique identifier from the activity
+            guard let uniqueIdentifier = userActivity.userInfo?[CSSearchableItemActivityIdentifier] as? String else {
+                ELOG("Failed to get unique identifier from Spotlight activity")
+                return
+            }
+
+            ILOG("Spotlight item selected with identifier: \(uniqueIdentifier)")
+
+            // Check if this is a game identifier (format: org.provenance-emu.game.MD5HASH)
+            if uniqueIdentifier.hasPrefix("org.provenance-emu.game.") {
+                let md5Hash = uniqueIdentifier.replacingOccurrences(of: "org.provenance-emu.game.", with: "")
+                ILOG("Extracted game MD5 hash: \(md5Hash)")
+
+                // Look up the game by MD5 hash
+                if let game = fetchGame(byMD5: md5Hash) {
+                    ILOG("Found game by MD5 \(md5Hash): \(game.title)")
+                    // Set the app open action to open this game
+                    AppState.shared.appOpenAction = .openGame(game)
+                    // Open the emulator scene to play the game
+                    openEmulatorSceneIfNeeded()
+                } else {
+                    WLOG("No game found with MD5 hash: \(md5Hash)")
+                }
+            }
+            // Check if this is a save state identifier
+            else if uniqueIdentifier.hasPrefix("org.provenance-emu.savestate.") {
+                let saveStateId = uniqueIdentifier.replacingOccurrences(of: "org.provenance-emu.savestate.", with: "")
+                ILOG("Save state selected: \(saveStateId)")
+
+                // Parse the save state filename to extract the game MD5
+                let components = saveStateId.components(separatedBy: "-")
+                if components.count >= 2 {
+                    let potentialMD5 = components[components.count - 2]
+                    if let game = fetchGame(byMD5: potentialMD5) {
+                        ILOG("Found game for save state: \(game.title)")
+                        // For now, just open the game
+                        AppState.shared.appOpenAction = .openGame(game)
+                        openEmulatorSceneIfNeeded()
+                    }
+                }
+            }
+        }
+        #endif //!tvOS
     }
 }
 

@@ -1,12 +1,16 @@
 import CoreImage
 import CoreGraphics
 import UIKit
+import PVLibrary
 
 /// Custom filter for screen effects in Delta skins
 public class DeltaSkinScreenFilter {
     public let filter: CIFilter
     public let center: CGPoint?
     public let radius: CGFloat
+    
+    /// Metadata for additional information (display name, identifier, etc.)
+    public var metadata: [String: Any] = [:]
 
     public init?(filterInfo: DeltaSkin.FilterInfo) {
         // Handle different filter types
@@ -52,7 +56,7 @@ public class DeltaSkinScreenFilter {
     }
 
     /// Apply the filter to a specific region of the screen
-    func apply(to image: CIImage, in frame: CGRect) -> CIImage? {
+    public func apply(to image: CIImage, in frame: CGRect) -> CIImage? {
         switch filter.name {
         case "CIGaussianBlur":
             // Create blur effect centered on game screen
@@ -89,3 +93,5 @@ public class DeltaSkinScreenFilter {
         }
     }
 }
+
+

@@ -53,10 +53,11 @@ struct ConsoleGamesView: SwiftUI.View {
     @FocusState internal var renameTitleFieldIsFocused: Bool
     @State internal var systemMoveState: SystemMoveState?
     @State internal var continuesManagementState: ContinuesManagementState?
-
+    
     @Default(.showRecentSaveStates) internal var showRecentSaveStates
     @Default(.showFavorites) internal var showFavorites
     @Default(.showRecentGames) internal var showRecentGames
+    @Default(.showSearchbar) internal var showSearchbar
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
@@ -158,20 +159,30 @@ struct ConsoleGamesView: SwiftUI.View {
 
     var body: some SwiftUI.View {
         GeometryReader { geometry in
-            VStack(spacing: 0) {
-                displayOptionsView()
-                    .allowsHitTesting(true)
-                    .contentShape(Rectangle())
-
-                // Add search bar with visibility control
-                if games.count > 8 {
-                    PVSearchBar(text: $searchText)
-                        .padding(.horizontal)
-                        .padding(.bottom, 8)
-                        .opacity(isSearchBarVisible ? 1 : 0)
-                        .frame(height: isSearchBarVisible ? nil : 0)
-                        .animation(.easeInOut(duration: 0.3), value: isSearchBarVisible)
-                }
+            ZStack {
+                // RetroWave background
+                RetroTheme.retroBackground
+                
+                // Grid overlay
+                RetroGrid(lineColor: themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                    .opacity(0.2)
+                
+                VStack(spacing: 0) {
+                    displayOptionsView()
+                        .allowsHitTesting(true)
+                
+                // Import Progress View
+                ImportProgressView(
+                    gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
+                    updatesController: AppState.shared.libraryUpdatesController!,
+                    onTap: {
+                        withAnimation {
+                            gamesViewModel.showImportStatusView = true
+                        }
+                    }
+                )
+                .padding(.horizontal, 8)
+                .padding(.top, 4)
 
                 ScrollViewWithOffset(
                     offsetChanged: { offset in
@@ -198,9 +209,20 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                 ) {
                     ScrollViewReader { proxy in
-                        LazyVStack(spacing: 20) {
+                        LazyVStack(spacing: 0) {
+                            // Add search bar with visibility control
+                            if games.count > 8 && showSearchbar {
+                                PVSearchBar(text: $searchText)
+                                    .opacity(isSearchBarVisible ? 1 : 0)
+                                    .frame(height: isSearchBarVisible ? nil : 0)
+                                    .animation(.easeInOut(duration: 0.3), value: isSearchBarVisible)
+                                    .padding(.horizontal, 8)
+                                    .padding(.bottom, 8)
+                            }
+                            
                             continueSection()
                                 .id("section_continues")
+                                .padding(.horizontal, 10)
                             favoritesSection()
                                 .id("section_favorites")
                                 .padding(.horizontal, 10)
@@ -238,7 +260,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 /// Position BiosesView above the tab bar
                 if !console.bioses.isEmpty {
                     BiosesView(console: console)
-                        .padding(.horizontal, 0)
+                        .padding(.horizontal, 8)
                         .padding(.bottom, 66) // Account for tab bar height
                 } else {
                     // Empty paddview view
@@ -259,6 +281,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     gameToUpdateCover = nil
                 }
 #endif
+            }
             }
             .sheet(isPresented: $showArtworkSearch) {
                 ArtworkSearchView(
@@ -303,12 +326,14 @@ struct ConsoleGamesView: SwiftUI.View {
                                 await renameGame(game, to: newGameTitle)
                                 gameToRename = nil
                                 newGameTitle = ""
+                                showingRenameAlert = false
                             }
                         }
                     },
                     UIAlertAction(title: "Cancel", style: .cancel) { _ in
                         gameToRename = nil
                         newGameTitle = ""
+                        showingRenameAlert = false
                     }
                 ]
             }
@@ -323,6 +348,21 @@ struct ConsoleGamesView: SwiftUI.View {
                             }
                         }
                     )
+                )
+            }
+            // Import Status View
+            .fullScreenCover(isPresented: Binding<Bool>(
+                get: { gamesViewModel.showImportStatusView },
+                set: { gamesViewModel.showImportStatusView = $0 }
+            )) {
+                ImportStatusView(
+                    updatesController: AppState.shared.libraryUpdatesController!,
+                    gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
+                    dismissAction: {
+                        withAnimation {
+                            gamesViewModel.showImportStatusView = false
+                        }
+                    }
                 )
             }
             .sheet(item: $continuesManagementState) { state in
@@ -348,7 +388,7 @@ struct ConsoleGamesView: SwiftUI.View {
 
                     /// Create and configure the view
                     if #available(iOS 16.4, tvOS 16.4, *) {
-                        ContinuesMagementView(viewModel: viewModel)
+                        ContinuesManagementView(viewModel: viewModel)
                             .onAppear {
                                 /// Set the game ID filter
                                 driver.gameId = game.id
@@ -361,7 +401,7 @@ struct ConsoleGamesView: SwiftUI.View {
                             }
                             .presentationBackground(content: {Color.clear})
                     } else {
-                        ContinuesMagementView(viewModel: viewModel)
+                        ContinuesManagementView(viewModel: viewModel)
                             .onAppear {
                                 /// Set the game ID filter
                                 driver.gameId = game.id
@@ -437,8 +477,7 @@ struct ConsoleGamesView: SwiftUI.View {
         ))
         .ignoresSafeArea(.all)
     }
-
-    // MARK: - Helper Methods
+    
     private var hasRecentSaveStates: Bool {
         !recentSaveStates.filter("game.systemIdentifier == %@", console.identifier).isEmpty
     }
@@ -508,6 +547,7 @@ struct ConsoleGamesView: SwiftUI.View {
         let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: itemsPerRow)
         return ScrollViewReader { proxy in
             LazyVGrid(columns: columns, spacing: 10) {
+                // Custom styling for grid items
                 ForEach(games.filter{!$0.isInvalidated}, id: \.self) { game in
                     GameItemView(
                         game: game,
@@ -717,6 +757,7 @@ struct ConsoleGamesView: SwiftUI.View {
         // Reset state
         gameToRename = nil
         newGameTitle = ""
+        showingRenameAlert = false
     }
 
     // Create a computed binding that wraps the String as String?
@@ -749,8 +790,10 @@ struct ConsoleGamesView: SwiftUI.View {
             LazyVStack(spacing: 0) {
                 let results = filteredSearchResults()
                 if results.isEmpty {
-                    Text("No games found")
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    Text("NO GAMES FOUND")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(RetroTheme.retroBlue)
+                        .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 3, x: 0, y: 0)
                         .padding()
                 } else {
                     ForEach(results, id: \.self) { game in
@@ -806,10 +849,26 @@ extension ConsoleGamesView {
             toggleSortAction: { viewModel.sortGamesAscending.toggle() },
             toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }
         )
-        .padding(.top, 16)
-        .padding(.bottom, 16)
+        .padding(.vertical, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.black.opacity(0.7))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(
+                            LinearGradient(
+                                gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroPink]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                )
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .shadow(color: RetroTheme.retroPurple.opacity(0.4), radius: 3, x: 0, y: 0)
+        .padding(.horizontal, 8)
         .allowsHitTesting(true)
-        .contentShape(Rectangle())
     }
 
     @ViewBuilder
@@ -828,6 +887,7 @@ extension ConsoleGamesView {
                         set: { gamesViewModel.focusedItemInSection = $0 }
                     )
                 )
+                //.padding(.horizontal, 8)
                 HomeDividerView()
             }
         }
@@ -877,10 +937,9 @@ extension ConsoleGamesView {
                 }
             } else {
                 VStack(alignment: .leading) {
-                    Text("\(console.name) Games")
-                        .font(.title2)
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-
+                    
+                    titleBar()
+                    
                     if viewModel.viewGamesAsGrid {
                         showGamesGrid(games)
                     } else {
@@ -890,7 +949,67 @@ extension ConsoleGamesView {
             }
         }
     }
-
+    
+    @ViewBuilder
+    private func titleBar() -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(console.name)
+                    .font(.headline)
+                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    .shadow(color: .retroPink.opacity(0.3), radius: 5, x: 0, y: 0)
+                HStack {
+                    Text(console.manufacturer)
+                        .font(.system(.subheadline, design: .monospaced))
+                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                        .shadow(color: Color.retroPink.opacity(0.5), radius: 1, x: 1, y: 1)
+                    
+                    if console.releaseYear > 1970 {
+                        Text("\(console.releaseYear)")
+                            .font(.system(.subheadline, design: .monospaced))
+                            .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                            .shadow(color: Color.retroPink.opacity(0.5), radius: 1, x: 1, y: 1)
+                    }
+                }
+            }
+            
+            Spacer()
+            
+            Text("\(console.games.count)")
+                .font(.caption)
+                .fontWeight(.medium)
+                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Color.retroPurple.opacity(0.3))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(Color.retroBlue, lineWidth: 1)
+                )
+                .cornerRadius(12)
+        }
+        .padding(.vertical, 12)
+        .padding(.horizontal, 16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.retroBlack.opacity(0.7))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                )
+                .shadow(color: Color.retroPink.opacity(0.3), radius: 5, x: 0, y: 0)
+        )
+        .contentShape(Rectangle())
+    }
+    
     @ViewBuilder
     private func gameItem(_ game: PVGame, section: HomeSectionType) -> some View {
         if !game.isInvalidated {

@@ -29,25 +29,6 @@ import OpenGLES.gltypes
 
 fileprivate let BUFFER_COUNT: UInt = 3
 
-// MARK: - GLenum Extensions
-extension GLenum {
-    /// Convert GLenum to String
-    var toString: String {
-        switch self {
-        case GLenum(GL_UNSIGNED_BYTE): return "GL_UNSIGNED_BYTE"
-        case GLenum(GL_BGRA): return "GL_BGRA"
-        case GLenum(GL_RGBA): return "GL_RGBA"
-        case GLenum(GL_RGB): return "GL_RGB"
-        case GLenum(GL_RGB8): return "GL_RGB8"
-        case GLenum(GL_RGB565): return "GL_RGB565"
-        case GLenum(GL_RGB5_A1): return "GL_RGB5_A1"
-        case GLenum(GL_RGB10_A2): return "GL_RGB10_A2"
-        case GLenum(GL_RGB10_A2UI): return "GL_RGB10_A2UI"
-            // Add more cases as needed
-        default: return String(format: "0x%04X", self)
-        }
-    }
-}
 
 // MARK: - EffectFilterShaderError
 enum EffectFilterShaderError: Error {
@@ -68,40 +49,40 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     func setPreferredRefreshRate(_ rate: Float) {
         ILOG("Setting preferred refresh rate to \(rate) Hz")
 
-//        #if os(iOS) || os(tvOS)
-//        if #available(iOS 15.0, tvOS 15.0, *) {
-//            if let window = view.window {
-//                let preferredFrameRateRange: CAFrameRateRange
-//
-//                if rate > 0 {
-//                    // Create a range with the specified rate as the preferred rate
-//                    preferredFrameRateRange = CAFrameRateRange(minimum: max(30, rate/2),
-//                                                              maximum: rate * 1.1,
-//                                                              preferred: rate)
-//                } else {
-//                    // Default to device capabilities if rate is 0 or negative
-//                    preferredFrameRateRange = CAFrameRateRange(minimum: 30,
-//                                                              maximum: 120,
-//                                                              preferred: 60)
-//                }
-//
-//                window.windowScene?.screen.maximumFramesPerSecond = Int(rate)
-//
-//                // Apply the frame rate range to the display
-//                CATransaction.begin()
-//                window.windowScene?.screen.preferredFrameRateRange = preferredFrameRateRange
-//                CATransaction.commit()
-//
-//                ILOG("Set display refresh rate range: \(preferredFrameRateRange.minimum)-\(preferredFrameRateRange.maximum) Hz (preferred: \(preferredFrameRateRange.preferred) Hz)")
-//            } else {
-//                WLOG("Cannot set refresh rate - window is nil")
-//            }
-//        } else {
-//            WLOG("Setting refresh rate not supported on this iOS/tvOS version")
-//        }
-//        #else
-//        WLOG("Setting refresh rate not supported on this platform")
-//        #endif
+        //        #if os(iOS) || os(tvOS)
+        //        if #available(iOS 15.0, tvOS 15.0, *) {
+        //            if let window = view.window {
+        //                let preferredFrameRateRange: CAFrameRateRange
+        //
+        //                if rate > 0 {
+        //                    // Create a range with the specified rate as the preferred rate
+        //                    preferredFrameRateRange = CAFrameRateRange(minimum: max(30, rate/2),
+        //                                                              maximum: rate * 1.1,
+        //                                                              preferred: rate)
+        //                } else {
+        //                    // Default to device capabilities if rate is 0 or negative
+        //                    preferredFrameRateRange = CAFrameRateRange(minimum: 30,
+        //                                                              maximum: 120,
+        //                                                              preferred: 60)
+        //                }
+        //
+        //                window.windowScene?.screen.maximumFramesPerSecond = Int(rate)
+        //
+        //                // Apply the frame rate range to the display
+        //                CATransaction.begin()
+        //                window.windowScene?.screen.preferredFrameRateRange = preferredFrameRateRange
+        //                CATransaction.commit()
+        //
+        //                ILOG("Set display refresh rate range: \(preferredFrameRateRange.minimum)-\(preferredFrameRateRange.maximum) Hz (preferred: \(preferredFrameRateRange.preferred) Hz)")
+        //            } else {
+        //                WLOG("Cannot set refresh rate - window is nil")
+        //            }
+        //        } else {
+        //            WLOG("Setting refresh rate not supported on this iOS/tvOS version")
+        //        }
+        //        #else
+        //        WLOG("Setting refresh rate not supported on this platform")
+        //        #endif
 
         // Also update the MTKView's preferred FPS
         if let mtlView = self.mtlView {
@@ -113,7 +94,10 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     var presentationFramebuffer: AnyObject? = nil
 
-    weak var emulatorCore: PVEmulatorCore? = nil
+    weak var emulatorCore: PVEmulatorCore?
+
+    // Custom filter properties
+    private var ciContext: CIContext? = nil
 
 #if !os(visionOS)
     var mtlView: MTKView!
@@ -189,6 +173,23 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     private var lastScreenBounds: CGRect = .zero
     private var lastNativeScaleEnabled: Bool = false
 
+    /// Tracks the number of buffer allocations for performance monitoring
+    private var bufferCreationCount: Int = 0
+
+    // Add this property to the class
+    private var customPipeline: MTLRenderPipelineState?
+
+    /// Controls whether VSync is enabled (synchronizes rendering with display refresh rate)
+    public var vsyncEnabled: Bool = true
+
+    // Track recovery attempts to prevent infinite loops
+    private var recoveryAttempts: Int = 0
+    private let maxRecoveryAttempts: Int = 3
+    private var lastRecoveryTime: TimeInterval = 0
+
+    // Add a property to store shader constants
+    private var shaderConstants = MTLFunctionConstantValues()
+
     // MARK: Methods
 
     required init?(coder: NSCoder) {
@@ -241,13 +242,18 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
+        DLOG("View will transition to size: \(size)")
+
         // Invalidate cached values to force recalculation of the viewport on rotation.
         lastScreenBounds = .zero
         lastBufferSize = .zero
         lastNativeScaleEnabled = false
 
+        // Schedule a texture update after the rotation completes
         coordinator.animate(alongsideTransition: { _ in
             self.view.setNeedsLayout()
+        }, completion: { _ in
+            DLOG("Rotation completed")
         })
     }
 
@@ -267,135 +273,157 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        guard let metalView = view as? MTKView else {
+        // Create a Metal device
+        device = MTLCreateSystemDefaultDevice()
+
+        // Load VSync setting from user defaults
+        vsyncEnabled = Defaults[.vsyncEnabled]
+
+        if device == nil {
+            ELOG("Failed to create Metal device")
+            // No recovery here since we're in initialization
             return
         }
 
-        /// Setup OpenGL context if core renders to OpenGL
-        if emulatorCore?.rendersToOpenGL ?? false {
-#if os(macOS) || targetEnvironment(macCatalyst)
-            if let context = createMacOpenGLContext() {
-                glContext = context
-                alternateThreadGLContext = createMacOpenGLContext()
-                alternateThreadBufferCopyGLContext = createMacOpenGLContext()
-
-#if DEBUG
-                ILOG("Created macOS/Catalyst OpenGL contexts for core that renders to OpenGL")
-#endif
-            } else {
-                ELOG("Failed to create macOS/Catalyst OpenGL context")
-            }
-#else
-            if let context = bestContext {
-                glContext = context
-                alternateThreadGLContext = EAGLContext(api: context.api)
-                alternateThreadBufferCopyGLContext = EAGLContext(api: context.api)
-
-#if DEBUG
-                ILOG("Created iOS OpenGL contexts for core that renders to OpenGL")
-#endif
-            } else {
-                ELOG("Failed to create iOS OpenGL context")
-            }
-#endif
+        // Initialize OpenGL context if core renders to OpenGL
+        if let emulatorCore = emulatorCore, emulatorCore.rendersToOpenGL {
+            ILOG("Initializing OpenGL context for OpenGL core")
+            initializeOpenGLContext()
         }
 
-        metalView.device = device
-        metalView.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
-        metalView.depthStencilPixelFormat = .depth32Float_stencil8
-        metalView.sampleCount = 1
-        metalView.delegate = self
-        metalView.autoResizeDrawable = true
-
-        // Set paused and only trigger redraw when needs display is set.
-        metalView.isPaused = false
-        metalView.enableSetNeedsDisplay = false
-
-        view.isOpaque = true
-        view.layer.isOpaque = true
-        view.isUserInteractionEnabled = false
-
-#if DEBUG
-        ILOG("MTKView frame after setup: \(metalView.frame)")
-#endif
-
-        frameCount = 0
-        device = MTLCreateSystemDefaultDevice()
-
-        metalView.device = device
-        metalView.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
-        metalView.depthStencilPixelFormat = .depth32Float_stencil8
-        metalView.sampleCount = 1
-        metalView.delegate = self
-        metalView.autoResizeDrawable = true
+        // Create a command queue
         commandQueue = device?.makeCommandQueue()
 
-        // Set paused and only trigger redraw when needs display is set.
-        metalView.isPaused = false
-        metalView.enableSetNeedsDisplay = false
-
-        view.isOpaque = true
-        view.layer.isOpaque = true
-
-        view.isUserInteractionEnabled = false
-
-        updatePreferredFPS()
-
-        if let emulatorCore = emulatorCore {
-            let depthFormat: Int32 = Int32(emulatorCore.depthFormat)
-            switch depthFormat {
-            case GL_DEPTH_COMPONENT16:
-                metalView.depthStencilPixelFormat = .depth16Unorm
-            case GL_DEPTH_COMPONENT24:
-                metalView.depthStencilPixelFormat = .x32_stencil8
-#if !(targetEnvironment(macCatalyst) || os(iOS) || os(tvOS) || os(watchOS))
-                if device?.isDepth24Stencil8PixelFormatSupported ?? false {
-                    view.depthStencilPixelFormat = .x24_stencil8
-                }
-#endif
-            default:
-                break
-            }
+        if commandQueue == nil {
+            ELOG("Failed to create command queue")
+            // No recovery here since we're in initialization
+            return
         }
 
-        if Defaults[.nativeScaleEnabled]  || renderSettings.nativeScaleEnabled {
-            let scale = UIScreen.main.scale
-            if scale != 1 {
-                view.layer.contentsScale = scale
-                view.layer.rasterizationScale = scale
-                view.contentScaleFactor = scale
-            }
+        // Initialize CIContext for filters
+        if let device = device {
+            ciContext = CIContext(mtlDevice: device)
+            DLOG("Created CIContext for filters")
         }
 
+        // Set up the Metal view
+        mtlView.device = device
+        mtlView.delegate = self
+        mtlView.framebufferOnly = true
+        mtlView.colorPixelFormat = .bgra8Unorm
+        mtlView.clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
+        mtlView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
+        // Configure VSync settings
+        updateVsyncSettings()
+
+        // Try to set up shaders using different approaches
+        createBasicShaders()
+
+        // If that didn't work, try the default library approach
+        if customPipeline == nil && blitPipeline == nil {
+            createBasicShadersWithDefaultLibrary()
+        }
+
+        // Add notification observers
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(emulatorCoreDidInitialize),
+            name: Notification.Name("EmulatorCoreDidInitialize"),
+            object: nil
+        )
+
+        // Add a colored border to the MTKView for debugging
+        //        mtlView.layer.borderWidth = 5.0
+        //        mtlView.layer.borderColor = UIColor.cyan.cgColor
+
+        DLOG("Metal view controller view did load")
+    }
+
+    @objc private func emulatorCoreDidInitialize() {
+        DLOG("Emulator core did initialize, updating texture...")
+
+        // Update the texture now that the emulator core has initialized
+        DispatchQueue.main.async {
+            do {
+                try self.updateInputTexture()
+
+                // Force a redraw
+                self.draw(in: self.mtlView)
+            } catch {
+                ELOG("Error updating texture after emulator core initialization: \(error)")
+            }
+        }
+    }
+
+    @objc private func refreshTexture() {
+        // Update the texture
         do {
-            try setupTexture()
-        } catch {
-            ELOG("Setup texture shader creation error: \(error.localizedDescription)")
-        }
+            try updateInputTexture()
 
-        do {
-            try setupBlitShader()
+            // Force a redraw
+            draw(in: mtlView)
         } catch {
-            ELOG("Setup blit shader creation error: \(error.localizedDescription)")
-        }
-        if let emulatorCore = emulatorCore {
-            ILOG("Setting up shader for screen type: \(emulatorCore.screenType)")
-            if let filterShader = MetalShaderManager.shared.filterShader(forOption: renderSettings.metalFilterMode,
-                                                                         screenType: emulatorCore.screenType) {
-                ILOG("Selected filter shader: \(filterShader.name)")
-                do {
-                    try setupEffectFilterShader(filterShader)
-                } catch {
-                    ELOG("Failed to setup effect filter shader: \(error)")
-                }
-            } else {
-                WLOG("No filter shader selected for mode: \(renderSettings.metalFilterMode)")
+            ELOG("Error updating texture: \(error)")
+
+            // Try to create a default texture
+            do {
+                try createDefaultTexture()
+
+                // Force a redraw
+                draw(in: mtlView)
+            } catch {
+                ELOG("Error creating default texture: \(error)")
+                // Attempt recovery
+                recoverFromGPUError()
             }
         }
+    }
 
-        alternateThreadFramebufferBack = 0
-        alternateThreadColorTextureBack = 0
-        alternateThreadDepthRenderbuffer = 0
+    private func createDefaultTexture() throws {
+        guard let device = device else {
+            throw MetalViewControllerError.deviceIsNil
+        }
+
+        // Use a default size
+        let defaultWidth: Int = 256
+        let defaultHeight: Int = 240
+
+        // Create a texture descriptor with the default size
+        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(
+            pixelFormat: .rgba8Unorm,
+            width: defaultWidth,
+            height: defaultHeight,
+            mipmapped: false
+        )
+
+        textureDescriptor.usage = [.shaderRead, .renderTarget]
+
+        // Create the texture
+        inputTexture = device.makeTexture(descriptor: textureDescriptor)
+
+        if inputTexture == nil {
+            throw MetalViewControllerError.failedToCreateTexture("default texture")
+        }
+
+        // Fill the texture with a solid color
+        if let texture = inputTexture {
+            let region = MTLRegionMake2D(0, 0, defaultWidth, defaultHeight)
+            let bytesPerRow = 4 * defaultWidth
+            let totalBytes = bytesPerRow * defaultHeight
+
+            // Create a buffer with a solid color (black with alpha)
+            var buffer = [UInt8](repeating: 0, count: totalBytes)
+            for i in stride(from: 0, to: totalBytes, by: 4) {
+                buffer[i] = 0     // R
+                buffer[i+1] = 0   // G
+                buffer[i+2] = 0   // B
+                buffer[i+3] = 255 // A
+            }
+
+            // Replace the texture contents
+            texture.replace(region: region, mipmapLevel: 0, withBytes: buffer, bytesPerRow: bytesPerRow)
+        }
     }
 
 #if os(macOS) || targetEnvironment(macCatalyst)
@@ -432,17 +460,49 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return nil
         }
     }()
+
+    /// Initialize OpenGL context for cores that render to OpenGL
+    private func initializeOpenGLContext() {
+        ILOG("Initializing OpenGL context")
+
+        // Get the best available OpenGL context
+        glContext = bestContext
+
+        guard let glContext = glContext else {
+            ELOG("Failed to create OpenGL context")
+            return
+        }
+
+        // Configure multi-threading support if enabled in settings
+        glContext.isMultiThreaded = Defaults[.multiThreadedGL]
+
+        // Set the current context
+        EAGLContext.setCurrent(glContext)
+
+        ILOG("Successfully initialized OpenGL context with API version \(glContext.api.rawValue)")
+    }
 #endif
 
     func updatePreferredFPS() {
         let preferredFPS: Int = Int(emulatorCore?.frameInterval ?? 0)
         ILOG("updatePreferredFPS (\(preferredFPS))")
+
         if preferredFPS < 10 {
             WLOG("Cores frame interval (\(preferredFPS)) too low. Setting to 60")
             mtlView.preferredFramesPerSecond = 60
         } else {
-            mtlView.preferredFramesPerSecond = preferredFPS
+            if vsyncEnabled {
+                // With VSync enabled, we synchronize with the display's refresh rate
+                // but still set the preferred FPS as a hint to the system
+                mtlView.preferredFramesPerSecond = preferredFPS
+            } else {
+                // With VSync disabled, we try to run at the exact core rate
+                // Note: This may not be fully honored by Metal on all platforms
+                mtlView.preferredFramesPerSecond = preferredFPS
+            }
         }
+
+        ILOG("Set MTKView preferred FPS to \(mtlView.preferredFramesPerSecond) (VSync: \(vsyncEnabled))")
     }
 
 #if !(targetEnvironment(macCatalyst) || os(macOS))
@@ -459,6 +519,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
+        DLOG("viewDidLayoutSubviews called")
+
         guard let emulatorCore = emulatorCore else {
             return
         }
@@ -471,15 +533,43 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
+        // IMPORTANT: If custom positioning is being used, respect it and don't override
+        if useCustomPositioning && !customFrame.isEmpty {
+            DLOG("Using custom positioning: \(customFrame)")
+            mtlView.frame = customFrame
+            view.frame = customFrame
+            updatePreferredFPS()
+            return
+        }
+
         let parentSafeAreaInsets = parent?.view.safeAreaInsets ?? .zero
 
-        if !emulatorCore.screenRect.isEmpty {
-            let aspectSize = emulatorCore.aspectSize
+        // Get screen rect and buffer size
+        let screenRect = emulatorCore.screenRect
+        let bufferSize = emulatorCore.bufferSize
+
+        // Check if screen rect is valid (has reasonable dimensions)
+        let isScreenRectValid = screenRect.width > 10 && screenRect.height > 10
+
+        // Use effective dimensions when screen rect is invalid
+        let effectiveRect = isScreenRectValid ? screenRect : CGRect(x: 0, y: 0, width: bufferSize.width, height: bufferSize.height)
+
+        DLOG("""
+             Layout calculations:
+             Screen rect: \(screenRect)
+             Buffer size: \(bufferSize)
+             Is screen rect valid: \(isScreenRectValid)
+             Using effective rect: \(effectiveRect)
+            """)
+
+        if !effectiveRect.isEmpty {
+            // Use the effective dimensions for aspect ratio calculation
+            let effectiveSize = CGSize(width: effectiveRect.width, height: effectiveRect.height)
             var ratio: CGFloat = 0
-            if aspectSize.width > aspectSize.height {
-                ratio = aspectSize.width / aspectSize.height
+            if effectiveSize.width > effectiveSize.height {
+                ratio = effectiveSize.width / effectiveSize.height
             } else {
-                ratio = aspectSize.height / aspectSize.width
+                ratio = effectiveSize.height / effectiveSize.width
             }
 
             /// Get parent size in points (not scaled)
@@ -498,7 +588,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             /// Calculate dimensions in points first
             if parentSize.width > parentSize.height {
                 if Defaults[.integerScaleEnabled] {
-                    height = floor(parentSize.height / aspectSize.height) * aspectSize.height
+                    height = floor(parentSize.height / effectiveSize.height) * effectiveSize.height
                 } else {
                     height = parentSize.height
                 }
@@ -509,7 +599,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 }
             } else {
                 if Defaults[.integerScaleEnabled] {
-                    width = floor(parentSize.width / aspectSize.width) * aspectSize.width
+                    width = floor(parentSize.width / effectiveSize.width) * effectiveSize.width
                 } else {
                     width = parentSize.width
                 }
@@ -519,6 +609,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                     width = height * ratio
                 }
             }
+
+            DLOG("Calculated dimensions: \(width)x\(height) with ratio: \(ratio)")
 
             /// Calculate center position
             let x = (parentSize.width - width) / 2
@@ -569,14 +661,16 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         ILOG("Full view hierarchy:")
         var currentView: UIView? = mtlView
         while let view = currentView {
-            ILOG("View: \(type(of: view))")
-            ILOG("Frame: \(view.frame)")
-            ILOG("Bounds: \(view.bounds)")
-            ILOG("Transform: \(view.transform)")
-            ILOG("AutoresizingMask: \(view.autoresizingMask)")
-            ILOG("Constraints: \(view.constraints)")
-            ILOG("SuperView: \(String(describing: view.superview))")
-            ILOG("----------------")
+            ILOG("""
+                View: \(type(of: view))
+                Frame: \(view.frame)
+                Bounds: \(view.bounds)
+                Transform: \(view.transform)
+                AutoresizingMask: \(view.autoresizingMask)
+                Constraints: \(view.constraints)
+                SuperView: \(String(describing: view.superview))
+                ----------------
+                """)
             currentView = view.superview
         }
     }
@@ -587,6 +681,28 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             throw MetalViewControllerError.emulatorCoreIsNil
         }
 
+        // Get the screen rect and buffer size from the emulator core
+        let screenRect = emulatorCore.screenRect
+        let bufferSize = emulatorCore.bufferSize
+
+        // Check if screen rect is valid (has reasonable dimensions)
+        let isScreenRectValid = screenRect.width > 10 && screenRect.height > 10
+
+        // Use effective dimensions - if screen rect is invalid, use buffer size instead
+        let effectiveWidth = isScreenRectValid ? screenRect.width : bufferSize.width
+        let effectiveHeight = isScreenRectValid ? screenRect.height : bufferSize.height
+
+        // Log the current buffer size and screen rect when updating the texture
+        DLOG("""
+             Updating input texture with:
+             Buffer size: \(bufferSize)
+             Screen rect: \(screenRect)
+             Effective dimensions: \(effectiveWidth)x\(effectiveHeight)
+             Screen rect valid: \(isScreenRectValid)
+             Pixel format: \(GLenum(emulatorCore.pixelFormat).toString)
+             Pixel type: \(GLenum(emulatorCore.pixelType).toString)
+            """)
+
         guard let device = device else {
             throw MetalViewControllerError.deviceIsNil
         }
@@ -596,67 +712,50 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
-        let screenRect = emulatorCore.screenRect
+        // Check if effective dimensions are valid
+        if effectiveWidth <= 0 || effectiveHeight <= 0 {
+            DLOG("Warning: Invalid dimensions: \(effectiveWidth) x \(effectiveHeight)")
+            throw MetalViewControllerError.invalidBufferSize(width: effectiveWidth, height: effectiveHeight)
+        }
 
-        #if targetEnvironment(simulator)
-        let mtlPixelFormat: MTLPixelFormat = .astc_6x5_srgb
-        #else
+        // Determine the pixel format
+#if targetEnvironment(simulator)
+        let mtlPixelFormat: MTLPixelFormat = .rgba8Unorm
+#else
         let mtlPixelFormat: MTLPixelFormat = emulatorCore.rendersToOpenGL ? .rgba8Unorm : getMTLPixelFormat(from: emulatorCore.pixelFormat, type: emulatorCore.pixelType)
-        #endif
+#endif
 
-        if emulatorCore.rendersToOpenGL {
-            if inputTexture == nil ||
-                inputTexture?.width != Int(screenRect.width) ||
-                inputTexture?.height != Int(screenRect.height) ||
-                inputTexture?.pixelFormat != mtlPixelFormat {
+        // Create a texture descriptor - always use the effective dimensions
+        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(
+            pixelFormat: mtlPixelFormat,
+            width: Int(effectiveWidth),
+            height: Int(effectiveHeight),
+            mipmapped: false
+        )
 
-                let desc = MTLTextureDescriptor()
-                desc.textureType = .type2D
-                desc.pixelFormat = mtlPixelFormat
-                desc.width = Int(screenRect.width)
-                desc.height = Int(screenRect.height)
-                desc.storageMode = .private
-                desc.usage = .shaderRead
+        // Set usage options
+        textureDescriptor.usage = [.shaderRead, .renderTarget]
 
-                inputTexture = device.makeTexture(descriptor: desc)
+        // Create the texture
+        inputTexture = device.makeTexture(descriptor: textureDescriptor)
 
-                if inputTexture == nil {
-                    throw MetalViewControllerError.failedToCreateTexture("input texture")
-                }
-            }
-        } else {
-            if inputTexture == nil ||
-                inputTexture?.width != Int(screenRect.width) ||
-                inputTexture?.height != Int(screenRect.height) ||
-                inputTexture?.pixelFormat != mtlPixelFormat {
+        if inputTexture == nil {
+            throw MetalViewControllerError.failedToCreateTexture("input texture")
+        }
 
-                let textureDescriptor = MTLTextureDescriptor()
-                textureDescriptor.width = Int(screenRect.width)
-                textureDescriptor.height = Int(screenRect.height)
+        // Create an upload buffer if needed - always use buffer size for this
+        let bytesPerPixel = getByteWidth(for: Int32(emulatorCore.pixelFormat), type: Int32(emulatorCore.pixelType))
+        let bytesPerRow = Int(bufferSize.width) * Int(bytesPerPixel)
+        let totalBytes = bytesPerRow * Int(bufferSize.height)
 
-                // Handle different pixel formats
-                if emulatorCore.pixelFormat == GLenum(GL_RGB565) ||
-                   emulatorCore.pixelType == GLenum(GL_UNSIGNED_SHORT_5_6_5) {
-                    textureDescriptor.pixelFormat = .b5g6r5Unorm  // Use BGR565 for RGB565 input
-//                    DLOG("Using B5G6R5 format for RGB565 input")
-                } else if emulatorCore.pixelFormat == GLenum(GL_BGRA) {
-                    textureDescriptor.pixelFormat = .bgra8Unorm
-//                    DLOG("Using BGRA8 format")
-                } else {
-                    textureDescriptor.pixelFormat = .rgba8Unorm
-//                    DLOG("Using RGBA8 format")
-                }
-
-                textureDescriptor.usage = [.shaderRead, .shaderWrite, .pixelFormatView]
-                textureDescriptor.storageMode = .private
-
-                inputTexture = device.makeTexture(descriptor: textureDescriptor)
-
-                if inputTexture == nil {
-                    throw MetalViewControllerError.failedToCreateTexture("input texture")
-                }
+        if uploadBuffer == nil || uploadBuffer!.length < totalBytes, totalBytes > 0 {
+            uploadBuffer = device.makeBuffer(length: totalBytes, options: .storageModeShared)
+            if uploadBuffer == nil {
+                throw MetalViewControllerError.failedToCreateTexture("upload buffer")
             }
         }
+
+        ILOG("Created input texture: \(effectiveWidth)x\(effectiveHeight), format: \(mtlPixelFormat)")
     }
 
     // TODO: Make throw
@@ -681,13 +780,14 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
             if length > 0 {
                 uploadBuffer = device.makeBuffer(length: length,
-                                               options: .storageModeShared)
+                                                 options: .storageModeShared)
                 ILOG("Created upload buffer with length: \(length)")
             } else {
                 throw MetalViewControllerError.invalidBufferSize(width: width, height: height)
             }
         }
 
+        // Create point sampler
         let pointDesc = MTLSamplerDescriptor()
         pointDesc.minFilter = .nearest
         pointDesc.magFilter = .nearest
@@ -695,6 +795,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         pointDesc.sAddressMode = .clampToZero
         pointDesc.tAddressMode = .clampToZero
         pointDesc.rAddressMode = .clampToZero
+        pointDesc.label = "Point Sampler"
 
         pointSampler = device.makeSamplerState(descriptor: pointDesc)
 
@@ -702,19 +803,25 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             throw MetalViewControllerError.failedToCreateSamplerState("point sampler")
         }
 
+        DLOG("Created point sampler: \(String(describing: pointSampler))")
+
+        // Create linear sampler
         let linearDesc = MTLSamplerDescriptor()
         linearDesc.minFilter = .linear
         linearDesc.magFilter = .linear
-        linearDesc.mipFilter = .nearest
+        linearDesc.mipFilter = .linear // .nearest
         linearDesc.sAddressMode = .clampToZero
         linearDesc.tAddressMode = .clampToZero
         linearDesc.rAddressMode = .clampToZero
+        linearDesc.label = "Linear Sampler"
 
         linearSampler = device.makeSamplerState(descriptor: linearDesc)
 
         if linearSampler == nil {
             throw MetalViewControllerError.failedToCreateSamplerState("linear sampler")
         }
+
+        DLOG("Created linear sampler: \(String(describing: linearSampler))")
     }
 
     func getByteWidth(for pixelFormat: Int32, type pixelType: Int32) -> UInt {
@@ -950,68 +1057,140 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return .rgba16Unorm
         }
 #endif
-        print("Error: Unknown GL pixelFormat. Add pixelFormat: \(pixelFormat) pixelType: \(pixelType)")
+        DLOG("Error: Unknown GL pixelFormat. Add pixelFormat: \(pixelFormat) pixelType: \(pixelType)")
         assertionFailure("Unknown GL pixelFormat. Add pixelFormat: \(pixelFormat) pixelType: \(pixelType)")
         return .invalid
     }
 
-    func setupBlitShader() throws {
-        guard let emulatorCore = emulatorCore else {
-            ELOG("emulatorCore is nil in setupBlitShader()")
-            throw EffectFilterShaderError.emulatorCoreIsNil
-        }
-
+    private func setupBlitShader() throws {
         guard let device = device else {
-            ELOG("device is nil in setupBlitShader()")
-            throw EffectFilterShaderError.deviceIsNIl
+            throw MetalViewControllerError.deviceIsNil
         }
 
-        let constants = MTLFunctionConstantValues()
-        var flipY = emulatorCore.rendersToOpenGL
-        constants.setConstantValue(&flipY, type: .bool, withName: "FlipY")
+        // Create a simple vertex shader that accepts a flipY parameter
+        let vertexShaderSource = """
+        #include <metal_stdlib>
+        using namespace metal;
 
-        let lib: MTLLibrary
+        struct VertexOut {
+            float4 position [[position]];
+            float2 texCoord;
+        };
+
+        vertex VertexOut blit_vertex(uint vertexID [[vertex_id]], constant bool &flipY [[buffer(1)]]) {
+            // Define positions for a fullscreen quad
+            const float2 positions[4] = {
+                float2(-1.0, -1.0),
+                float2(1.0, -1.0),
+                float2(-1.0, 1.0),
+                float2(1.0, 1.0)
+            };
+
+            // Define standard texture coordinates
+            float2 texCoords[4] = {
+                float2(0.0, 0.0),
+                float2(1.0, 0.0),
+                float2(0.0, 1.0),
+                float2(1.0, 1.0)
+            };
+
+            VertexOut out;
+            out.position = float4(positions[vertexID], 0.0, 1.0);
+            
+            // Apply Y-flip if needed (for OpenGL textures)
+            if (flipY) {
+                // Flip the Y coordinate
+                texCoords[0].y = 1.0 - texCoords[0].y;
+                texCoords[1].y = 1.0 - texCoords[1].y;
+                texCoords[2].y = 1.0 - texCoords[2].y;
+                texCoords[3].y = 1.0 - texCoords[3].y;
+            }
+            
+            out.texCoord = texCoords[vertexID];
+            return out;
+        }
+        """
+
+        // Create a simple fragment shader
+        let fragmentShaderSource = """
+        #include <metal_stdlib>
+        using namespace metal;
+
+        struct VertexOut {
+            float4 position [[position]];
+            float2 texCoord;
+        };
+
+        fragment float4 blit_fragment(VertexOut in [[stage_in]],
+                                     texture2d<float> texture [[texture(0)]],
+                                     sampler textureSampler [[sampler(0)]]) {
+            return texture.sample(textureSampler, in.texCoord);
+        }
+        """
+
+        // Create a Metal library from the shader source
+        let library: MTLLibrary
         do {
-            lib = try device.makeDefaultLibrary(bundle: Bundle.module)
+            library = try device.makeLibrary(source: vertexShaderSource + fragmentShaderSource, options: nil)
+            DLOG("Successfully created Metal library")
         } catch {
-            ELOG("Failed to create default library")
-            throw EffectFilterShaderError.failedToCreateDefaultLibrary(error)
+            ELOG("Error creating Metal library: \(error)")
+            throw error
         }
 
-        let desc = MTLRenderPipelineDescriptor()
-        guard let fillScreenShader = MetalShaderManager.shared.vertexShaders.first else {
-            ELOG("No fill screen shader found")
-            throw EffectFilterShaderError.noFillScreenShaderFound
-        }
-
-        do {
-            desc.vertexFunction = try lib.makeFunction(name: fillScreenShader.function, constantValues: constants)
-        } catch let error {
-            ELOG("Error creating vertex function: \(error)")
-            throw EffectFilterShaderError.errorCreatingVertexShader(error)
-        }
-
-        guard let blitterShader = MetalShaderManager.shared.blitterShaders.first else {
-            ELOG("No blitter shader found")
+        // Get the vertex and fragment functions
+        guard let vertexFunction = library.makeFunction(name: "blit_vertex") else {
+            ELOG("Failed to create vertex function")
             throw EffectFilterShaderError.noBlitterShaderFound
         }
 
-        desc.fragmentFunction = lib.makeFunction(name: blitterShader.function)
-
-        if let currentDrawable = mtlView.currentDrawable {
-            desc.colorAttachments[0].pixelFormat = currentDrawable.texture.pixelFormat
-        } else {
-            ELOG("No current drawable available")
-            throw EffectFilterShaderError.noCurrentDrawableAvailable
+        guard let fragmentFunction = library.makeFunction(name: "blit_fragment") else {
+            ELOG("Failed to create fragment function")
+            throw EffectFilterShaderError.noBlitterShaderFound
         }
 
+        // Create a render pipeline descriptor
+        let pipelineDescriptor = MTLRenderPipelineDescriptor()
+        pipelineDescriptor.vertexFunction = vertexFunction
+        pipelineDescriptor.fragmentFunction = fragmentFunction
+        pipelineDescriptor.colorAttachments[0].pixelFormat = mtlView.colorPixelFormat
+
+        // Create the render pipeline state
         do {
-            blitPipeline = try device.makeRenderPipelineState(descriptor: desc)
-            ILOG("Successfully created blit pipeline state")
-        } catch let error {
-            ELOG("Error creating render pipeline state: \(error)")
-            throw EffectFilterShaderError.errorCreatingPipelineState(error)
+            blitPipeline = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+            DLOG("Successfully created blit pipeline state")
+        } catch {
+            ELOG("Failed to create blit pipeline state: \(error)")
+            throw error
         }
+
+        // Create a sampler descriptor
+        let samplerDescriptor = MTLSamplerDescriptor()
+        samplerDescriptor.minFilter = .nearest
+        samplerDescriptor.magFilter = .nearest
+
+        // Create the sampler state
+        pointSampler = device.makeSamplerState(descriptor: samplerDescriptor)
+
+        if pointSampler == nil {
+            ELOG("Failed to create point sampler state")
+            throw MetalViewControllerError.failedToCreateSamplerState("point sampler")
+        }
+
+        // Create a linear sampler descriptor
+        let linearSamplerDescriptor = MTLSamplerDescriptor()
+        linearSamplerDescriptor.minFilter = .linear
+        linearSamplerDescriptor.magFilter = .linear
+
+        // Create the linear sampler state
+        linearSampler = device.makeSamplerState(descriptor: linearSamplerDescriptor)
+
+        if linearSampler == nil {
+            ELOG("Failed to create linear sampler state")
+            throw MetalViewControllerError.failedToCreateSamplerState("linear sampler")
+        }
+
+        DLOG("Successfully set up blit shader and samplers")
     }
 
     func setupEffectFilterShader(_ filterShader: Shader) throws {
@@ -1148,55 +1327,105 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     @inlinable
     func draw(in view: MTKView) {
-        guard let emulatorCore = emulatorCore else {
-            ELOG("EmulatorCore is nil")
+        guard let emulatorCore = emulatorCore, !isPaused else {
             return
+        }
+
+        // Get screen rect and buffer size
+        let screenRect = emulatorCore.screenRect
+        let bufferSize = emulatorCore.bufferSize
+
+        // Check if screen rect is valid (has reasonable dimensions)
+        let isScreenRectValid = screenRect.width > 10 && screenRect.height > 10
+
+        // Use effective dimensions when screen rect is invalid
+        let effectiveRect = isScreenRectValid ? screenRect : CGRect(x: 0, y: 0, width: bufferSize.width, height: bufferSize.height)
+
+        // Log frame draw at a lower frequency to avoid log spam
+        if frameCount % 60 == 0 {
+            VLOG("""
+                 Drawing frame \(frameCount):
+                 Buffer size: \(bufferSize)
+                 Screen rect: \(screenRect)
+                 Effective rect: \(effectiveRect)
+                 Is screen rect valid: \(isScreenRectValid)
+                 View size: \(view.frame.size)
+                 Drawable size: \(view.drawableSize)
+                """)
+        }
+
+        // Check if the texture needs to be created or updated
+        if inputTexture == nil {
+            do {
+                try updateInputTexture()
+                DLOG("Created input texture")
+            } catch {
+                ELOG("Error creating texture in draw: \(error)")
+
+                // Use our recovery method instead of just retrying
+                recoverFromGPUError()
+                return
+            }
         }
 
         if emulatorCore.skipEmulationLoop {
             return
         }
 
+        // Check if we have a valid pipeline
+        if customPipeline == nil && blitPipeline == nil {
+            DLOG("No valid pipeline available, trying to set up shaders directly")
+            createBasicShaders()
+
+            // If that didn't work, try the default library approach
+            if customPipeline == nil && blitPipeline == nil {
+                createBasicShadersWithDefaultLibrary()
+            }
+        }
+
+        // Handle rendering based on the core type
         if emulatorCore.rendersToOpenGL {
-            if !emulatorCore.isSpeedModified && !emulatorCore.isEmulationPaused || emulatorCore.isFrontBufferReady {
+            // For OpenGL cores, we need to handle the front buffer synchronization
+            if !emulatorCore.isSpeedModified
+                && (!emulatorCore.isEmulationPaused || emulatorCore.isFrontBufferReady)
+                && !emulatorCore.skipLayout { // Skip layout is mostly for Retroarch
                 emulatorCore.frontBufferCondition.lock()
                 while !emulatorCore.isFrontBufferReady && !emulatorCore.isEmulationPaused {
                     emulatorCore.frontBufferCondition.wait()
                 }
                 let isFrontBufferReady = emulatorCore.isFrontBufferReady
                 emulatorCore.frontBufferCondition.unlock()
-                if isFrontBufferReady {
-                    calculateViewportIfNeeded()
-                    glViewport(GLint(cachedViewportX),
-                               GLint(cachedViewportY),
-                               GLsizei(cachedViewportWidth),
-                               GLsizei(cachedViewportHeight))
 
-                    self._render(emulatorCore, in: view)
+                if isFrontBufferReady {
+                    // For OpenGL cores, the texture is updated in didRenderFrameOnAlternateThread
+                    // We just need to render it here
+                    directRender(in: view)
+
                     emulatorCore.frontBufferCondition.lock()
                     emulatorCore.isFrontBufferReady = false
                     emulatorCore.frontBufferCondition.signal()
                     emulatorCore.frontBufferCondition.unlock()
                 }
+            } else {
+                // Not speed modifed or paused, just keep rendering
+                // TODO: We should only render when the front buffer is ready perhaps?
+                directRender(in: view)
             }
         } else {
-            if emulatorCore.isSpeedModified {
-                self._render(emulatorCore, in: view)
-            } else if emulatorCore.isDoubleBuffered {
-                emulatorCore.frontBufferCondition.lock()
-                while !emulatorCore.isFrontBufferReady && !emulatorCore.isEmulationPaused {
-                    emulatorCore.frontBufferCondition.wait()
-                }
-                emulatorCore.isFrontBufferReady = false
-                emulatorCore.frontBufferLock.lock()
-                self._render(emulatorCore, in: view)
-                emulatorCore.frontBufferLock.unlock()
-                emulatorCore.frontBufferCondition.unlock()
+            // For non-OpenGL cores, we need to update the texture from the core's buffer
+            let updated = updateTextureFromCore()
+            if updated {
+                // Render the updated texture
+                directRender(in: view)
             } else {
-                objc_sync_enter(emulatorCore)
-                self._render(emulatorCore, in: view)
-                objc_sync_exit(emulatorCore)
+                WLOG("Failed to update texture from core")
             }
+        }
+
+        // Schedule the next frame if needed
+        if !isPaused {
+            // Request another draw on the next frame
+            view.setNeedsDisplay()
         }
     }
 
@@ -1211,436 +1440,150 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             emulatorCore.frontBufferLock.lock()
         }
 
-        // Fix #1 & #2: Reuse command buffers efficiently
+        // Reuse command buffers efficiently
         let commandBuffer: MTLCommandBuffer
         if let queue = self.commandQueue {
             commandBuffer = queue.makeCommandBuffer()!
             self.previousCommandBuffer = commandBuffer
-
-            // Add completion handler immediately after creation, before any encoding
-            commandBuffer.addCompletedHandler { [weak self] _ in
-                // This runs when the GPU has finished processing this command buffer
-                // Could be used for performance metrics or resource cleanup
-            }
         } else {
-            ELOG("Failed to create command buffer - no command queue")
+            DLOG("Error: Command queue is nil")
             return
         }
 
-        let screenRect = emulatorCore.screenRect
+        // Create a render pass descriptor
+        let renderPassDescriptor = MTLRenderPassDescriptor()
+        renderPassDescriptor.colorAttachments[0].texture = outputTexture
+        renderPassDescriptor.colorAttachments[0].loadAction = .clear
+        renderPassDescriptor.colorAttachments[0].storeAction = .store
+        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
 
-        // Only update input texture if necessary
-        do {
-            try self.updateInputTexture()
-        } catch {
-            ELOG(error.localizedDescription)
+        // Create a render command encoder
+        guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
+            DLOG("Error: Could not create render encoder")
             return
         }
 
-        if !emulatorCore.rendersToOpenGL, let videoBuffer: UnsafeMutableRawPointer = emulatorCore.videoBuffer {
-            let bufferSize = emulatorCore.bufferSize
-            let bytesPerPixel = emulatorCore.pixelType == GLenum(GL_UNSIGNED_BYTE) ? 4 : 4
+        // Set the viewport
+        let viewport = MTLViewport(
+            originX: 0,
+            originY: 0,
+            width: Double(outputTexture.width),
+            height: Double(outputTexture.height),
+            znear: 0.0,
+            zfar: 1.0
+        )
+        renderEncoder.setViewport(viewport)
 
-            // Calculate aligned bytes per row for the full buffer width
-            let sourceBytesPerRow = alignedBytesPerRow(Int(bufferSize.width), bytesPerPixel: bytesPerPixel)
-            let totalBufferSize = sourceBytesPerRow * Int(bufferSize.height)
+        // Choose the appropriate pipeline state
+        let pipelineState: MTLRenderPipelineState
+        let useEffectFilter = effectFilterPipeline != nil && renderSettings.metalFilterMode != .none
 
-            // Fix #5: Optimize upload buffer creation and reuse
-            let bufferSizeChanged = lastBufferSize.width != bufferSize.width ||
-                                   lastBufferSize.height != bufferSize.height
-            let pixelFormatChanged = lastPixelFormat != emulatorCore.pixelFormat ||
-                                    lastPixelType != emulatorCore.pixelType
-
-            if (uploadBuffer == nil || uploadBuffer?.length ?? 0 < totalBufferSize ||
-                bufferSizeChanged || pixelFormatChanged),
-               let device = device {
-                // Only create a new buffer when necessary
-                uploadBuffer = device.makeBuffer(length: totalBufferSize,
-                                               options: .storageModeShared)
-
-                // Update cached values
-                lastBufferSize = bufferSize
-                lastPixelFormat = emulatorCore.pixelFormat
-                lastPixelType = emulatorCore.pixelType
-
-                DLOG("Created new upload buffer with size: \(totalBufferSize)")
+        if useEffectFilter {
+            guard let effectFilterPipeline = effectFilterPipeline else {
+                ELOG("Error: Effect filter pipeline is nil")
+                renderEncoder.endEncoding()
+                return
             }
-
-            // Fix #6: Optimize memory copying
-            if let videoBuffer = emulatorCore.videoBuffer,
-               let uploadBuffer = uploadBuffer {
-                // Use memcpy with specific length to avoid unnecessary copying
-                let actualCopySize = min(totalBufferSize, uploadBuffer.length)
-
-                // Use direct pointer arithmetic for potentially faster copying
-                let uploadContents = uploadBuffer.contents()
-                memcpy(uploadContents, videoBuffer, actualCopySize)
-
-                // didModifyRange is only available on macOS, not iOS
-                #if os(macOS)
-                uploadBuffer.didModifyRange(0..<actualCopySize)
-                #endif
+            pipelineState = effectFilterPipeline
+            DLOG("Using effect filter pipeline")
+        } else {
+            guard let blitPipeline = blitPipeline else {
+                ELOG("Error: Blit pipeline is nil")
+                renderEncoder.endEncoding()
+                return
             }
+            pipelineState = blitPipeline
+            DLOG("Using blit pipeline")
+        }
 
-            if let blitEncoder = commandBuffer.makeBlitCommandEncoder(),
-               let uploadBuffer = uploadBuffer {
-                let sourceSize = MTLSize(width: Int(screenRect.width),
-                                         height: Int(screenRect.height),
-                                         depth: 1)
+        DLOG("Blit pipeline state: \(blitPipeline != nil)")
 
-                // Calculate bytes per pixel based on format
-                let bytesPerPixel: Int
-                if emulatorCore.pixelFormat == GLenum(GL_RGB565) ||
-                    emulatorCore.pixelType == GLenum(GL_UNSIGNED_SHORT_5_6_5) {
-                    bytesPerPixel = 2  // RGB565 is 16-bit (2 bytes) per pixel
+        // Set the render pipeline state
+        renderEncoder.setRenderPipelineState(pipelineState)
+        DLOG("🔬 Drawing primitives with pipeline state: \(pipelineState)")
+
+        // Set the vertex buffer with conditional texture coordinates based on the core type
+        let vertices: [Float]
+
+        // For both OpenGL and non-OpenGL cores, we use the same vertex positions
+        // but the shader will handle the Y-flip based on the flipY parameter
+        vertices = [
+            -1.0, -1.0, 0.0, 0.0, 0.0, // bottom-left: (u=0, v=0)
+             1.0, -1.0, 0.0, 1.0, 0.0, // bottom-right: (u=1, v=0)
+            -1.0,  1.0, 0.0, 0.0, 1.0, // top-left: (u=0, v=1)
+             1.0,  1.0, 0.0, 1.0, 1.0  // top-right: (u=1, v=1)
+        ]
+        
+        DLOG("Using standard texture coordinates, flipY will be handled by shader")
+
+        let vertexBuffer = device?.makeBuffer(bytes: vertices, length: vertices.count * MemoryLayout<Float>.size, options: .storageModeShared)
+        renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+
+        // Set the texture
+        guard let inputTexture = inputTexture else {
+            DLOG("Error: Input texture is nil")
+            renderEncoder.endEncoding()
+            return
+        }
+
+        // Apply custom filter if available
+        if let filter = self.filter, let ciContext = self.ciContext {
+            // Create CIImage from the input texture
+            let ciImage = CIImage(mtlTexture: inputTexture, options: nil)
+
+            if let ciImage = ciImage, let filteredImage = filter.apply(to: ciImage, in: CGRect(x: 0, y: 0, width: inputTexture.width, height: inputTexture.height)) {
+                // Create a temporary texture for the filtered image
+                let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(
+                    pixelFormat: inputTexture.pixelFormat,
+                    width: inputTexture.width,
+                    height: inputTexture.height,
+                    mipmapped: false
+                )
+                textureDescriptor.usage = [.shaderRead, .renderTarget]
+
+                if let filteredTexture = device?.makeTexture(descriptor: textureDescriptor) {
+                    // Render the filtered image to the texture
+                    ciContext.render(filteredImage, to: filteredTexture, commandBuffer: nil, bounds: CGRect(x: 0, y: 0, width: inputTexture.width, height: inputTexture.height), colorSpace: CGColorSpaceCreateDeviceRGB())
+
+                    // Use the filtered texture instead
+                    renderEncoder.setFragmentTexture(filteredTexture, index: 0)
                 } else {
-                    bytesPerPixel = 4  // RGBA/BGRA is 32-bit (4 bytes) per pixel
+                    // Fall back to original texture if filtering fails
+                    renderEncoder.setFragmentTexture(inputTexture, index: 0)
                 }
-
-                // Calculate the actual bytes per row of the source buffer
-                let actualBytesPerRow = Int(bufferSize.width) * bytesPerPixel
-
-                // Calculate offsets
-                let xOffset = Int(screenRect.origin.x)
-                let yOffset = Int(screenRect.origin.y)
-
-                // Calculate the source offset in bytes
-                let sourceOffset = (yOffset * actualBytesPerRow) + (xOffset * bytesPerPixel)
-
-//                ILOG("""
-//            Metal copy details:
-//            - Buffer size: \(bufferSize)
-//            - Screen rect: \(screenRect)
-//            - Source offset: (\(xOffset), \(yOffset))
-//            - Bytes per pixel: \(bytesPerPixel)
-//            - Core pitch: \(emulatorCore.bufferSize.width * CGFloat(bytesPerPixel))
-//            - Actual bytes per row: \(actualBytesPerRow)
-//            - Buffer size: \(totalBufferSize)
-//            - Source size: \(sourceSize)
-//            - Source offset in bytes: \(sourceOffset)
-//            """)
-
-                blitEncoder.copy(from: uploadBuffer,
-                                 sourceOffset: sourceOffset,
-                                 sourceBytesPerRow: Int(emulatorCore.bufferSize.width) * bytesPerPixel,  // Use core's buffer width
-                                 sourceBytesPerImage: totalBufferSize,
-                                 sourceSize: sourceSize,
-                                 to: inputTexture!,
-                                 destinationSlice: 0,
-                                 destinationLevel: 0,
-                                 destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
-
-                blitEncoder.endEncoding()
-            }
-        }
-
-        // Reuse render pass descriptor
-        if renderPassDescriptor == nil {
-            renderPassDescriptor = MTLRenderPassDescriptor()
-        }
-
-        guard let desc = renderPassDescriptor else {
-            ELOG("Failed to create render pass descriptor")
-            return
-        }
-
-        desc.colorAttachments[0].texture = outputTexture
-        desc.colorAttachments[0].loadAction = .clear
-        desc.colorAttachments[0].storeAction = .store
-        desc.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
-
-        guard let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: desc) else {
-            ELOG("Failed to create render command encoder")
-            return
-        }
-
-        var pipelineState: MTLRenderPipelineState?
-
-        let metalFilterOption: MetalFilterModeOption = self.renderSettings.metalFilterMode
-        let useLCD: Bool
-        let useCRT: Bool
-        switch metalFilterOption {
-        case .none:
-            useLCD = false
-            useCRT = false
-        case .always(let filter):
-            switch filter {
-            case .none:
-                useCRT = false
-                useLCD = false
-            case .complexCRT, .simpleCRT:
-                useLCD = false
-                useCRT = true
-            case .lcd:
-                useLCD = true
-                useCRT = false
-                //            case .lineTron:
-                //                useLCD = false
-                //                useCRT = true
-            case .megaTron:
-                useLCD = false
-                useCRT = true
-           case .ulTron:
-               useLCD = false
-               useCRT = true
-            case .gameBoy:
-                useLCD = true
-                useCRT = false
-            case .vhs:
-                useLCD = false
-                useCRT = true
-            }
-        case .auto(let crt, let lcd):
-            useLCD = emulatorCore.screenType.isLCD
-            useCRT = emulatorCore.screenType.isCRT
-        }
-
-
-        if useLCD {
-            let sourceSize = SIMD4<Float>(
-                Float(inputTexture!.width),
-                Float(inputTexture!.height),
-                1.0 / Float(inputTexture!.width),
-                1.0 / Float(inputTexture!.height)
-            )
-            let outputSize = SIMD4<Float>(
-                Float(view.drawableSize.width),
-                Float(view.drawableSize.height),
-                1.0 / Float(view.drawableSize.width),
-                1.0 / Float(view.drawableSize.height)
-            )
-
-            /// Check which LCD filter to use
-            if self.effectFilterShader?.name == "Game Boy" {
-                /// Classic Game Boy green palette
-                let darkestGreen = SIMD4<Float>(0.0588, 0.2196, 0.0588, 1.0)  /// #0F380F
-                let darkGreen = SIMD4<Float>(0.1882, 0.3882, 0.1882, 1.0)     /// #306230
-                let lightGreen = SIMD4<Float>(0.5451, 0.6745, 0.0588, 1.0)    /// #8BAC0F
-                let lightestGreen = SIMD4<Float>(0.6078, 0.7373, 0.0588, 1.0) /// #9BBC0F
-
-                var uniforms = GameBoyUniforms(
-                    SourceSize: sourceSize,
-                    OutputSize: outputSize,
-                    dotMatrix: 0.7,        /// Dot matrix effect intensity (0.0-1.0)
-                    contrast: 1.2,         /// Contrast adjustment
-                    palette: (darkestGreen, darkGreen, lightGreen, lightestGreen)
-                )
-
-                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<GameBoyUniforms>.stride, index: 0)
-                pipelineState = self.effectFilterPipeline
             } else {
-                /// Default LCD filter
-                let displayRect = SIMD4<Float>(Float(screenRect.origin.x), Float(screenRect.origin.y),
-                                               Float(screenRect.width), Float(screenRect.height))
-                let textureSize = SIMD2<Float>(Float(self.inputTexture!.width),
-                                               Float(self.inputTexture!.height))
-
-                var uniforms = LCDFilterUniforms(
-                    screenRect:     displayRect,
-                    textureSize:    textureSize,
-                    gridDensity:    1.75,    /// Adjust these values to taste
-                    gridBrightness: 0.25,    /// Lower value = more subtle effect
-                    contrast:       1.2,     /// Slight contrast boost
-                    saturation:     1.1,     /// Slight saturation boost
-                    ghosting:       0.15,    /// Subtle ghosting effect
-                    scanlineDepth:  0.20,    /// From MonoLCD
-                    bloomAmount:    0.2,     /// From MonoLCD
-                    colorLow:       0.8,     /// From LCD.fsh
-                    colorHigh:      1.05     /// From LCD.fsh
-                )
-
-                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<LCDFilterUniforms>.stride, index: 0)
-                pipelineState = self.effectFilterPipeline
-            }
-        } else if useCRT {
-            if self.effectFilterShader?.name == "Complex CRT", let inputTexture = self.inputTexture {
-                let displayRect = SIMD4<Float>(Float(screenRect.origin.x), Float(screenRect.origin.y),
-                                               Float(screenRect.width), Float(screenRect.height))
-                let emulatedImageSize = SIMD2<Float>(Float(inputTexture.width),
-                                                     Float(inputTexture.height))
-                let finalRes = SIMD2<Float>(Float(view.drawableSize.width),
-                                            Float(view.drawableSize.height))
-                var cbData = CRT_Data(
-                    DisplayRect: displayRect,
-                    EmulatedImageSize: emulatedImageSize,
-                    FinalRes: finalRes)
-
-                encoder.setFragmentBytes(&cbData, length: MemoryLayout<CRT_Data>.stride, index: 0)
-                pipelineState = self.effectFilterPipeline
-            } else if self.effectFilterShader?.name == "Simple CRT", let inputTexture = self.inputTexture {
-
-                let mameScreenSrcRect: SIMD4<Float> = SIMD4<Float>.init(0, 0, Float(screenRect.size.width), Float(screenRect.size.height))
-                let mameScreenDstRect: SIMD4<Float> = SIMD4<Float>.init(Float(inputTexture.width), Float(inputTexture.height), Float(view.drawableSize.width), Float(view.drawableSize.height))
-
-                var cbData = SimpleCrtUniforms(
-                    mame_screen_dst_rect: mameScreenDstRect,
-                    mame_screen_src_rect: mameScreenSrcRect,
-                    curv_vert: 5.0,
-                    curv_horiz: 4.0,
-                    curv_strength: 0.25,
-                    light_boost: 1.3,
-                    vign_strength: 0.05,
-                    zoom_out: 1.1,
-                    brightness: 1.0
-                )
-
-                encoder.setFragmentBytes(&cbData, length: MemoryLayout<SimpleCrtUniforms>.stride, index: 0)
-                pipelineState = self.effectFilterPipeline
-                DLOG("Effect filter pipeline state: \(self.effectFilterPipeline != nil)")
-            } else if self.effectFilterShader?.name == "Line Tron", let inputTexture = self.inputTexture {
-                let time = Float(CACurrentMediaTime())
-                let sourceSize = SIMD4<Float>(
-                    Float(inputTexture.width),
-                    Float(inputTexture.height),
-                    1.0 / Float(inputTexture.width),
-                    1.0 / Float(inputTexture.height)
-                )
-                let outputSize = SIMD4<Float>(
-                    Float(view.drawableSize.width),
-                    Float(view.drawableSize.height),
-                    1.0 / Float(view.drawableSize.width),
-                    1.0 / Float(view.drawableSize.height)
-                )
-
-                var uniforms = LineTronUniforms(
-                    SourceSize: sourceSize,
-                    OutputSize: outputSize,
-                    width_scale: 1.0,    /// Line width multiplier
-                    line_time: time,     /// Current time in seconds
-                    falloff: 2.0,        /// Line edge falloff
-                    strength: 1.0        /// Line brightness
-                )
-
-                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<LineTronUniforms>.stride, index: 0)
-                pipelineState = self.effectFilterPipeline
-
-            } else if self.effectFilterShader?.name == "Mega Tron", let inputTexture = self.inputTexture {
-                let sourceSize = SIMD4<Float>.init(0, 0, Float(screenRect.size.width), Float(screenRect.size.height))
-                let outputSize = SIMD4<Float>.init(Float(inputTexture.width), Float(inputTexture.height), Float(view.drawableSize.width), Float(view.drawableSize.height))
-
-                var uniforms = MegaTronUniforms(
-                    SourceSize: sourceSize,
-                    OutputSize: outputSize,
-                    MASK: 3.0,              /// 0=none, 1=RGB, 2=RGB(2), 3=RGB(3)
-                    MASK_INTENSITY: 0.25,    /// Mask intensity (0.0-1.0)
-                    SCANLINE_THINNESS: 0.5, /// Scanline thickness
-                    SCAN_BLUR: 2.5,         /// Scanline blur
-                    CURVATURE: 0.02,        /// Screen curvature
-                    TRINITRON_CURVE: 1.0,   /// 0=normal curve, 1=trinitron style
-                    CORNER: 1.0,           /// Corner size
-                    CRT_GAMMA: 2.2          /// CRT gamma correction
-                )
-
-                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<MegaTronUniforms>.stride, index: 0)
-                pipelineState = self.effectFilterPipeline
-
-            } else if self.effectFilterShader?.name == "ulTron", let inputTexture = self.inputTexture {
-                let sourceSize = SIMD4<Float>.init(0, 0, Float(screenRect.size.width), Float(screenRect.size.height))
-                let outputSize = SIMD4<Float>.init(Float(inputTexture.width), Float(inputTexture.height), Float(view.drawableSize.width), Float(view.drawableSize.height))
-
-                var uniforms = UlTronUniforms(
-                    SourceSize: sourceSize,
-                    OutputSize: outputSize,
-                    hardScan: -8.0,        /// Scanline intensity
-                    hardPix: -3.0,         /// Pixel sharpness
-                    warpX: 0.031,          /// Horizontal curvature
-                    warpY: 0.041,          /// Vertical curvature
-                    maskDark: 0.5,         /// Dark color mask
-                    maskLight: 1.5,        /// Light color mask
-                    shadowMask: 3,         /// Mask type (0-4)
-                    brightBoost: 1.0,      /// Brightness boost
-                    hardBloomScan: -2.0,   /// Bloom scanline
-                    hardBloomPix: -1.5,    /// Bloom pixel
-                    bloomAmount: 0.15,     /// Bloom strength
-                    shape: 2.0            /// Curvature shape
-                )
-
-                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<UlTronUniforms>.stride, index: 0)
-                pipelineState = self.effectFilterPipeline
-            } else if self.effectFilterShader?.name == "Game Boy",  let inputTexture = self.inputTexture {
-                let sourceSize = SIMD4<Float>(
-                    Float(inputTexture.width),
-                    Float(inputTexture.height),
-                    1.0 / Float(inputTexture.width),
-                    1.0 / Float(inputTexture.height)
-                )
-                let outputSize = SIMD4<Float>(
-                    Float(view.drawableSize.width),
-                    Float(view.drawableSize.height),
-                    1.0 / Float(view.drawableSize.width),
-                    1.0 / Float(view.drawableSize.height)
-                )
-
-                // Classic Game Boy green palette
-                let darkestGreen = SIMD4<Float>(0.0588, 0.2196, 0.0588, 1.0)  // #0F380F
-                let darkGreen = SIMD4<Float>(0.1882, 0.3882, 0.1882, 1.0)     // #306230
-                let lightGreen = SIMD4<Float>(0.5451, 0.6745, 0.0588, 1.0)    // #8BAC0F
-                let lightestGreen = SIMD4<Float>(0.6078, 0.7373, 0.0588, 1.0) // #9BBC0F
-
-                var uniforms = GameBoyUniforms(
-                    SourceSize: sourceSize,
-                    OutputSize: outputSize,
-                    dotMatrix: 0.7,        /// Dot matrix effect intensity (0.0-1.0)
-                    contrast: 1.2,         /// Contrast adjustment
-                    palette: (darkestGreen, darkGreen, lightGreen, lightestGreen)
-                )
-
-                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<GameBoyUniforms>.stride, index: 0)
-                pipelineState = self.effectFilterPipeline
-            } else if self.effectFilterShader?.name == "VHS", let inputTexture = self.inputTexture {
-                let sourceSize = SIMD4<Float>(
-                    Float(inputTexture.width),
-                    Float(inputTexture.height),
-                    1.0 / Float(inputTexture.width),
-                    1.0 / Float(inputTexture.height)
-                )
-                let outputSize = SIMD4<Float>(
-                    Float(view.drawableSize.width),
-                    Float(view.drawableSize.height),
-                    1.0 / Float(view.drawableSize.width),
-                    1.0 / Float(view.drawableSize.height)
-                )
-
-                var uniforms = VHSUniforms(
-                    SourceSize: sourceSize,
-                    OutputSize: outputSize,
-                    time: Float(CACurrentMediaTime()),  /// Current time for animated effects
-                    noiseAmount: 0.05,                 /// Static noise intensity
-                    scanlineJitter: 0.003,             /// Horizontal line displacement
-                    colorBleed: 0.5,                   /// Vertical color bleeding
-                    trackingNoise: 0.1,                /// Vertical noise bands
-                    tapeWobble: 0.001,                /// Horizontal wobble amount
-                    ghosting: 0.1,                     /// Double-image effect
-                    vignette: 0.2                      /// Screen edge darkening
-                )
-
-                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<VHSUniforms>.stride, index: 0)
-                pipelineState = self.effectFilterPipeline
+                // Fall back to original texture if filtering fails
+                renderEncoder.setFragmentTexture(inputTexture, index: 0)
             }
         } else {
-            //            DLOG("Using blit pipeline")
-            pipelineState = self.blitPipeline
-            //            DLOG("Blit pipeline state: \(self.blitPipeline != nil)")
+            // No filter, use original texture
+            renderEncoder.setFragmentTexture(inputTexture, index: 0)
         }
 
-        if let pipelineState = pipelineState {
-            // DLOG("Drawing with pipeline state")
-            encoder.setRenderPipelineState(pipelineState)
-
-            encoder.setFragmentTexture(self.inputTexture, index: 0)
-            encoder.setFragmentSamplerState(self.renderSettings.smoothingEnabled ? self.linearSampler : self.pointSampler, index: 0)
-
-            //            VLOG("Drawing primitives with pipeline state: \(pipelineState)")
-            encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
-            encoder.endEncoding()
-
-            commandBuffer.present(view.currentDrawable!)
-            commandBuffer.commit()
+        // Set the sampler state - THIS IS THE KEY FIX
+        if let pointSampler = pointSampler {
+            renderEncoder.setFragmentSamplerState(pointSampler, index: 0)
+            DLOG("Set point sampler at index 0")
+        } else if let linearSampler = linearSampler {
+            renderEncoder.setFragmentSamplerState(linearSampler, index: 0)
+            DLOG("Set linear sampler at index 0")
         } else {
-            ELOG("No valid pipeline state selected. Skipping draw call.")
-            encoder.endEncoding()
-            commandBuffer.commit()
+            DLOG("Error: No sampler state available")
+            renderEncoder.endEncoding()
+            return
         }
+
+        // Draw the primitives
+        renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
+
+        // End encoding
+        renderEncoder.endEncoding()
+
+        // Present the drawable
+        commandBuffer.present(view.currentDrawable!)
+
+        // Commit the command buffer
+        commandBuffer.commit()
 
         if emulatorCore.rendersToOpenGL {
             emulatorCore.frontBufferLock.unlock()
@@ -1651,16 +1594,25 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     func startRenderingOnAlternateThread() {
         emulatorCore?.glesVersion = glesVersion
 
+        // Ensure we have an OpenGL context for OpenGL cores
+        if glContext == nil, let emulatorCore = emulatorCore, emulatorCore.rendersToOpenGL {
+            ILOG("OpenGL context not initialized yet, initializing now")
+            initializeOpenGLContext()
+        }
+
 #if !(targetEnvironment(macCatalyst) || os(macOS))
         guard let glContext = self.glContext else {
             ELOG("glContext was nil, cannot start rendering on alternate thread")
             return
         }
+
+        // Create contexts for alternate thread rendering
         alternateThreadBufferCopyGLContext = EAGLContext(api: glContext.api,
                                                          sharegroup: glContext.sharegroup)
         alternateThreadGLContext = EAGLContext(api: glContext.api,
                                                sharegroup: glContext.sharegroup)
         EAGLContext.setCurrent(alternateThreadGLContext)
+        ILOG("Successfully initialized alternate thread GL contexts")
 #endif
 
         if alternateThreadFramebufferBack == 0 {
@@ -1728,47 +1680,129 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     }
 
     func didRenderFrameOnAlternateThread() {
-        guard backingMTLTexture != nil else {
+        /// Ensure we have a valid backing texture
+        guard let backingTexture = backingMTLTexture else {
             ELOG("backingMTLTexture was nil")
+            recoverFromGPUError()
             return
         }
+
+        /// Ensure OpenGL commands are flushed before using the shared texture
         glFlush()
 
+        /// Lock the front buffer to prevent concurrent access
         emulatorCore?.frontBufferLock.lock()
 
+        /// Wait for any previous command buffer to be scheduled
         previousCommandBuffer?.waitUntilScheduled()
 
+        /// Create a new command buffer
         guard let commandBuffer = commandQueue?.makeCommandBuffer() else {
             ELOG("commandBuffer was nil")
+            emulatorCore?.frontBufferLock.unlock()
+            recoverFromGPUError()
             return
         }
 
+        /// Create a blit encoder for copying textures
         guard let encoder = commandBuffer.makeBlitCommandEncoder() else {
             ELOG("encoder was nil")
+            emulatorCore?.frontBufferLock.unlock()
+            recoverFromGPUError()
             return
         }
 
-        let screenRect = emulatorCore?.screenRect ?? .zero
+        // Get the screen rect or use a default
+        guard let emulatorCore = emulatorCore else {
+            ELOG("Emulator core is nil")
+            encoder.endEncoding()
+            commandBuffer.commit()
+            return
+        }
 
-        encoder.copy(from: backingMTLTexture!,
-                     sourceSlice: 0, sourceLevel: 0,
-                     sourceOrigin: MTLOrigin(x: Int(screenRect.origin.x),
-                                             y: Int(screenRect.origin.y), z: 0),
-                     sourceSize: MTLSize(width: Int(screenRect.width),
-                                         height: Int(screenRect.height), depth: 1),
-                     to: inputTexture!,
-                     destinationSlice: 0, destinationLevel: 0,
-                     destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
+        let screenRect = emulatorCore.screenRect
 
+        // For OpenGL cores, create the input texture on demand if needed
+        if inputTexture == nil ||
+           (inputTexture != nil &&
+            (inputTexture!.width != Int(screenRect.width) ||
+             inputTexture!.height != Int(screenRect.height))) {
+
+            ILOG("Creating/updating input texture for OpenGL core: \(Int(screenRect.width))x\(Int(screenRect.height))")
+
+            do {
+                try updateInputTexture()
+            } catch {
+                ELOG("Failed to create input texture for OpenGL core: \(error)")
+                encoder.endEncoding()
+                commandBuffer.commit()
+                emulatorCore.frontBufferLock.unlock()
+                return
+            }
+        }
+
+        // Ensure we have a valid input texture after potential creation
+        guard let destTexture = inputTexture else {
+            ELOG("Input texture is still nil after creation attempt")
+            encoder.endEncoding()
+            commandBuffer.commit()
+            emulatorCore.frontBufferLock.unlock()
+            return
+        }
+
+        // Verify dimensions to avoid crashes
+        let isValidRect = screenRect.width > 0 && screenRect.height > 0 &&
+                          Int(screenRect.width) <= backingTexture.width &&
+                          Int(screenRect.height) <= backingTexture.height
+
+        if !isValidRect {
+            WLOG("Invalid screen rect for OpenGL texture copy: \(screenRect)")
+            WLOG("Backing texture size: \(backingTexture.width)x\(backingTexture.height)")
+
+            // Use the entire backing texture as fallback
+            let safeWidth = min(backingTexture.width, destTexture.width)
+            let safeHeight = min(backingTexture.height, destTexture.height)
+
+            DLOG("Using fallback texture copy: size=(\(safeWidth),\(safeHeight))")
+
+            encoder.copy(from: backingTexture,
+                         sourceSlice: 0, sourceLevel: 0,
+                         sourceOrigin: MTLOrigin(x: 0, y: 0, z: 0),
+                         sourceSize: MTLSize(width: safeWidth, height: safeHeight, depth: 1),
+                         to: destTexture,
+                         destinationSlice: 0, destinationLevel: 0,
+                         destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
+        } else {
+            /// Use safe dimensions that won't exceed the texture bounds
+            let safeX = max(0, Int(screenRect.origin.x))
+            let safeY = max(0, Int(screenRect.origin.y))
+            let safeWidth = min(Int(screenRect.width), backingTexture.width - safeX)
+            let safeHeight = min(Int(screenRect.height), backingTexture.height - safeY)
+
+            DLOG("OpenGL texture copy: origin=(\(safeX),\(safeY)), size=(\(safeWidth),\(safeHeight))")
+
+            /// Copy from the backing texture to the input texture
+            encoder.copy(from: backingTexture,
+                         sourceSlice: 0, sourceLevel: 0,
+                         sourceOrigin: MTLOrigin(x: safeX, y: safeY, z: 0),
+                         sourceSize: MTLSize(width: safeWidth, height: safeHeight, depth: 1),
+                         to: destTexture,
+                         destinationSlice: 0, destinationLevel: 0,
+                         destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
+        }
+
+        /// End encoding and commit the command buffer
         encoder.endEncoding()
         commandBuffer.commit()
 
-        emulatorCore?.frontBufferLock.unlock()
+        /// Unlock the front buffer
+        emulatorCore.frontBufferLock.unlock()
 
-        emulatorCore?.frontBufferCondition.lock()
-        emulatorCore?.isFrontBufferReady = true
-        emulatorCore?.frontBufferCondition.signal()
-        emulatorCore?.frontBufferCondition.unlock()
+        /// Signal that the front buffer is ready
+        emulatorCore.frontBufferCondition.lock()
+        emulatorCore.isFrontBufferReady = true
+        emulatorCore.frontBufferCondition.signal()
+        emulatorCore.frontBufferCondition.unlock()
     }
 
     /// Cached viewport values
@@ -1837,18 +1871,36 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         didSet {
             guard oldValue != isPaused else { return }
 
-#if !os(visionOS)
-            mtlView?.isPaused = isPaused
-#endif
+            // Log state change for debugging
+            ILOG("Metal view isPaused changing from \(oldValue) to \(isPaused)")
 
-            if isPaused {
-                // Ensure we finish any pending renders
-                previousCommandBuffer?.waitUntilCompleted()
+#if !os(visionOS)
+            // Set the MTKView's paused state, but only if we have a stable view
+            if let view = mtlView, view.superview != nil {
+                // We're going to intentionally defer the paused state change to avoid race conditions
+                DispatchQueue.main.async { [weak self, isPaused] in
+                    guard let self = self else { return }
+
+                    if isPaused {
+                        // When pausing, wait for any pending renders to complete first
+                        self.previousCommandBuffer?.waitUntilCompleted()
+                        DLOG("Setting MTKView isPaused = true after waiting for command buffer")
+                        self.mtlView?.isPaused = true
+                    } else {
+                        // When unpausing, reset the frame count and request a redraw through the proper channels
+                        self.frameCount = 0
+                        DLOG("Setting MTKView isPaused = false and requesting redraw")
+                        self.mtlView?.isPaused = false
+
+                        // Request a redraw through proper CADisplayLink/timer mechanisms
+                        // instead of directly calling draw()
+                        self.mtlView?.setNeedsDisplay()
+                    }
+                }
             } else {
-                // Force a new frame when unpausing
-                frameCount = 0
-                draw(in: mtlView)
+                WLOG("MTKView is nil or not in view hierarchy during isPaused change")
             }
+#endif
         }
     }
 
@@ -1862,44 +1914,1278 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     }
 
     // Add this helper method to check if texture update is needed
+    /// Determines if a texture update is needed based on changes in dimensions, format, or settings
+    /// This optimized version includes additional checks for valid screen rects and effective dimensions
     private func isTextureUpdateNeeded() -> Bool {
         guard let emulatorCore = emulatorCore else { return false }
 
+        // Get current state
+        let bufferSize = emulatorCore.bufferSize
         let screenRect = emulatorCore.screenRect
-        let currentScreenBounds = CGRect(x: screenRect.origin.x,
-                                        y: screenRect.origin.y,
-                                        width: screenRect.width,
-                                        height: screenRect.height)
         let currentNativeScaleEnabled = renderSettings.nativeScaleEnabled
 
-        // Check if screen bounds or native scale setting has changed
-        if currentScreenBounds != lastScreenBounds ||
-           currentNativeScaleEnabled != lastNativeScaleEnabled {
-            lastScreenBounds = currentScreenBounds
-            lastNativeScaleEnabled = currentNativeScaleEnabled
-            return true
-        }
+        // Check if screen rect is valid (has reasonable dimensions)
+        let isScreenRectValid = screenRect.width > 10 && screenRect.height > 10
 
+        // Use effective dimensions when screen rect is invalid
+        let effectiveRect = isScreenRectValid ? screenRect :
+        CGRect(x: 0, y: 0, width: bufferSize.width, height: bufferSize.height)
+
+        // Log the current state for debugging
+        DLOG("isTextureUpdateNeeded: bufferSize=\(bufferSize), currentNativeScaleEnabled=\(currentNativeScaleEnabled)")
+
+        // If no texture exists, we definitely need to create one
         if inputTexture == nil {
+            DLOG("isTextureUpdateNeeded: inputTexture is nil")
             return true
         }
 
-        if inputTexture?.width != Int(screenRect.width) ||
-           inputTexture?.height != Int(screenRect.height) {
+        // Check if texture dimensions match effective dimensions
+        if inputTexture?.width != Int(effectiveRect.width) ||
+            inputTexture?.height != Int(effectiveRect.height) {
+            DLOG("isTextureUpdateNeeded: texture size doesn't match effective dimensions")
             return true
         }
 
-        #if targetEnvironment(simulator)
-        let mtlPixelFormat: MTLPixelFormat = .astc_6x5_srgb
-        #else
+        // Check if pixel format has changed
+#if targetEnvironment(simulator)
+        let mtlPixelFormat: MTLPixelFormat = .rgba8Unorm
+#else
         let mtlPixelFormat: MTLPixelFormat = emulatorCore.rendersToOpenGL ? .rgba8Unorm : getMTLPixelFormat(from: emulatorCore.pixelFormat, type: emulatorCore.pixelType)
-        #endif
+#endif
 
         if inputTexture?.pixelFormat != mtlPixelFormat {
+            DLOG("isTextureUpdateNeeded: pixel format changed")
             return true
         }
 
+        // Check if other relevant properties have changed
+        if lastBufferSize != bufferSize ||
+            lastScreenBounds != screenRect ||
+            lastPixelFormat != emulatorCore.pixelFormat ||
+            lastPixelType != emulatorCore.pixelType ||
+            lastNativeScaleEnabled != currentNativeScaleEnabled {
+            DLOG("isTextureUpdateNeeded: core properties changed")
+            return true
+        }
+
+        // No update needed
         return false
+    }
+
+    // Add this method to the PVMetalViewController class
+    private func fallbackRender(_ emulatorCore: PVEmulatorCore, in view: MTKView) {
+        DLOG("Using fallback rendering method")
+
+        guard let device = device,
+              let commandQueue = commandQueue,
+              let drawable = view.currentDrawable,
+              let inputTexture = inputTexture else {
+            DLOG("Missing required resources for fallback rendering")
+            return
+        }
+
+        // Create a command buffer
+        guard let commandBuffer = commandQueue.makeCommandBuffer() else {
+            DLOG("Failed to create command buffer")
+            return
+        }
+
+        // Create a blit command encoder
+        guard let blitEncoder = commandBuffer.makeBlitCommandEncoder() else {
+            DLOG("Failed to create blit encoder")
+            return
+        }
+
+        // Copy the input texture to the drawable texture
+        blitEncoder.copy(
+            from: inputTexture,
+            sourceSlice: 0,
+            sourceLevel: 0,
+            sourceOrigin: MTLOrigin(x: 0, y: 0, z: 0),
+            sourceSize: MTLSize(
+                width: inputTexture.width,
+                height: inputTexture.height,
+                depth: 1
+            ),
+            to: drawable.texture,
+            destinationSlice: 0,
+            destinationLevel: 0,
+            destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0)
+        )
+
+        // End encoding
+        blitEncoder.endEncoding()
+
+        // Present the drawable
+        commandBuffer.present(drawable)
+
+        // Commit the command buffer
+        commandBuffer.commit()
+
+        DLOG("Fallback rendering completed")
+    }
+
+    // Add this method to create a custom shader that doesn't require a sampler
+    private func setupCustomShader() throws {
+        guard let device = device else {
+            throw MetalViewControllerError.deviceIsNil
+        }
+
+        // Create a simple vertex shader
+        let vertexShaderSource = """
+        #include <metal_stdlib>
+        using namespace metal;
+
+        struct VertexOut {
+            float4 position [[position]];
+            float2 texCoord;
+        };
+
+        vertex VertexOut custom_vertex(uint vertexID [[vertex_id]], constant bool &flipY [[buffer(1)]]) {
+            // Define positions for a fullscreen quad
+            const float2 positions[4] = {
+                float2(-1.0, -1.0),
+                float2(1.0, -1.0),
+                float2(-1.0, 1.0),
+                float2(1.0, 1.0)
+            };
+
+            // Define standard texture coordinates
+            float2 texCoords[4] = {
+                float2(0.0, 0.0),
+                float2(1.0, 0.0),
+                float2(0.0, 1.0),
+                float2(1.0, 1.0)
+            };
+
+            VertexOut out;
+            out.position = float4(positions[vertexID], 0.0, 1.0);
+            
+            // Apply Y-flip if needed (for OpenGL textures)
+            if (flipY) {
+                // Flip the Y coordinate
+                texCoords[0].y = 1.0 - texCoords[0].y;
+                texCoords[1].y = 1.0 - texCoords[1].y;
+                texCoords[2].y = 1.0 - texCoords[2].y;
+                texCoords[3].y = 1.0 - texCoords[3].y;
+            }
+            
+            out.texCoord = texCoords[vertexID];
+            return out;
+        }
+        """
+
+        // Create a simple fragment shader with built-in sampler
+        let fragmentShaderSource = """
+        #include <metal_stdlib>
+        using namespace metal;
+
+        struct VertexOut {
+            float4 position [[position]];
+            float2 texCoord;
+        };
+
+        fragment float4 custom_fragment(VertexOut in [[stage_in]],
+                                      texture2d<float> texture [[texture(0)]]) {
+            constexpr sampler textureSampler(mag_filter::linear, min_filter::linear);
+            return texture.sample(textureSampler, in.texCoord);
+        }
+        """
+
+        // Create a Metal library from the shader source
+        let library: MTLLibrary
+        do {
+            library = try device.makeLibrary(source: vertexShaderSource + fragmentShaderSource, options: nil)
+            DLOG("Successfully created custom Metal library")
+        } catch {
+            ELOG("Error creating custom Metal library: \(error)")
+            throw error
+        }
+
+        // Get the vertex and fragment functions
+        guard let vertexFunction = library.makeFunction(name: "custom_vertex") else {
+            ELOG("Failed to create custom vertex function")
+            throw EffectFilterShaderError.noBlitterShaderFound
+        }
+
+        guard let fragmentFunction = library.makeFunction(name: "custom_fragment") else {
+            ELOG("Failed to create custom fragment function")
+            throw EffectFilterShaderError.noBlitterShaderFound
+        }
+
+        // Create a render pipeline descriptor
+        let pipelineDescriptor = MTLRenderPipelineDescriptor()
+        pipelineDescriptor.vertexFunction = vertexFunction
+        pipelineDescriptor.fragmentFunction = fragmentFunction
+        pipelineDescriptor.colorAttachments[0].pixelFormat = mtlView.colorPixelFormat
+
+        // Create the render pipeline state
+        do {
+            customPipeline = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+            DLOG("Successfully created custom pipeline state")
+        } catch {
+            ELOG("Failed to create custom pipeline state: \(error)")
+            throw error
+        }
+    }
+
+    private func directRender(in view: MTKView) {
+        guard let device = device,
+              let commandQueue = commandQueue,
+              let drawable = view.currentDrawable,
+              let inputTexture = inputTexture,
+              let emulatorCore = emulatorCore else {
+            ELOG("Missing required resources for direct rendering")
+            // Call the recovery method when resources are missing
+            recoverFromGPUError()
+            return
+        }
+
+        // Log the current rendering dimensions for debugging
+//        VLOG("""
+//             DirectRender dimensions:
+//             Input texture: \(inputTexture.width)x\(inputTexture.height)
+//             Drawable size: \(drawable.texture.width)x\(drawable.texture.height)
+//             View size: \(view.frame.size)
+//             Buffer size: \(emulatorCore.bufferSize)
+//             Screen rect: \(emulatorCore.screenRect)
+//            """)
+
+        // Validate screen rect dimensions
+        let screenRect = emulatorCore.screenRect
+        let bufferSize = emulatorCore.bufferSize
+
+        // Check if screen rect is valid (has reasonable dimensions)
+        let isScreenRectValid = screenRect.width > 10 && screenRect.height > 10
+
+        // If screen rect is invalid or unusually small, use the full buffer size instead
+        let effectiveScreenRect = isScreenRectValid ? screenRect : CGRect(x: 0, y: 0, width: bufferSize.width, height: bufferSize.height)
+
+        // Check if input texture dimensions match effective dimensions
+        let textureMatchesEffective = inputTexture.width == Int(effectiveScreenRect.width) &&
+        inputTexture.height == Int(effectiveScreenRect.height)
+
+        // If texture doesn't match effective dimensions, recreate it
+        if !textureMatchesEffective {
+            ILOG("Texture dimensions (\(inputTexture.width)x\(inputTexture.height)) don't match effective dimensions (\(effectiveScreenRect.width)x\(effectiveScreenRect.height))")
+            do {
+                try updateInputTexture()
+            } catch {
+                ELOG("Failed to update texture: \(error)")
+                recoverFromGPUError()
+                return
+            }
+        }
+
+//        DLOG("""
+//             Using effective screen rect: \(effectiveScreenRect)
+//             Original screen rect: \(screenRect)
+//             Is screen rect valid: \(isScreenRectValid)
+//             Texture matches effective: \(textureMatchesEffective)
+//            """)
+
+        // Check if we have a valid pipeline
+        if customPipeline == nil && blitPipeline == nil {
+            WLOG("No valid pipeline available in directRender, trying to set up shaders directly")
+            createBasicShaders()
+
+            // If we still don't have a pipeline, attempt recovery
+            if customPipeline == nil && blitPipeline == nil {
+                ELOG("Failed to create a pipeline, cannot render")
+                recoverFromGPUError()
+                return
+            }
+        }
+
+        // Create a command buffer
+        guard let commandBuffer = commandQueue.makeCommandBuffer() else {
+            ELOG("Failed to create command buffer")
+            recoverFromGPUError()
+            return
+        }
+
+        // Create a render pass descriptor
+        let renderPassDescriptor = MTLRenderPassDescriptor()
+        renderPassDescriptor.colorAttachments[0].texture = drawable.texture
+        renderPassDescriptor.colorAttachments[0].loadAction = .clear
+        renderPassDescriptor.colorAttachments[0].storeAction = .store
+        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
+
+        // Create a render command encoder
+        guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
+            ELOG("Failed to create render encoder")
+            return
+        }
+
+        // Set the viewport to match the drawable size
+        // Ensure we're using the proper aspect ratio based on the effective screen rect
+        let viewport = MTLViewport(
+            originX: 0,
+            originY: 0,
+            width: Double(drawable.texture.width),
+            height: Double(drawable.texture.height),
+            znear: 0.0,
+            zfar: 1.0
+        )
+        renderEncoder.setViewport(viewport)
+
+        // Get the flipY parameter - set to true for non-OpenGL cores, false for OpenGL cores
+        var flipY: Bool = !emulatorCore.rendersToOpenGL
+
+        // Use the custom pipeline if available, otherwise fall back to the blit pipeline
+        if let customPipeline = customPipeline {
+            renderEncoder.setRenderPipelineState(customPipeline)
+
+            // Set the texture
+            renderEncoder.setFragmentTexture(inputTexture, index: 0)
+
+            // Pass the flipY parameter to the vertex shader
+            let flipYBuffer = device.makeBuffer(bytes: &flipY, length: MemoryLayout<Bool>.size, options: .storageModeShared)
+            renderEncoder.setVertexBuffer(flipYBuffer, offset: 0, index: 1)
+
+            // Draw the primitives
+            renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
+        } else if let blitPipeline = blitPipeline {
+            // Fall back to the blit pipeline
+            renderEncoder.setRenderPipelineState(blitPipeline)
+
+            // Set the texture
+            renderEncoder.setFragmentTexture(inputTexture, index: 0)
+
+            // Pass the flipY parameter to the vertex shader
+            let flipYBuffer = device.makeBuffer(bytes: &flipY, length: MemoryLayout<Bool>.size, options: .storageModeShared)
+            renderEncoder.setVertexBuffer(flipYBuffer, offset: 0, index: 1)
+
+            // Set the sampler state - use the appropriate sampler based on smoothing setting
+            let sampler = renderSettings.smoothingEnabled ? linearSampler : pointSampler
+            if let sampler = sampler {
+                renderEncoder.setFragmentSamplerState(sampler, index: 0)
+            }
+
+            // Draw the primitives
+            renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
+        } else {
+            ELOG("No pipeline available")
+        }
+
+        // End encoding
+        renderEncoder.endEncoding()
+
+        // Present the drawable
+        commandBuffer.present(drawable)
+
+        // Add completion handler to detect GPU errors
+        commandBuffer.addCompletedHandler { [weak self] buffer in
+            if let error = buffer.error {
+                ELOG("GPU error during rendering: \(error)")
+                self?.recoverFromGPUError()
+            }
+        }
+
+        // Commit the command buffer
+        commandBuffer.commit()
+
+        // Store the command buffer for synchronization
+        previousCommandBuffer = commandBuffer
+
+        // Increment frame count
+        frameCount += 1
+    }
+
+    // Helper method to update texture from core's buffer
+    /// Updates the texture from the emulator core's video buffer
+    /// Returns true if the update was successful, false otherwise
+    private func updateTextureFromCore() -> Bool {
+        guard let emulatorCore = emulatorCore,
+              let device = device else {
+            DLOG("Missing required resources for texture update")
+            // Don't call recovery here as this is often a normal initial state
+            return false
+        }
+
+        // Skip texture update for OpenGL cores - they use a different path
+        if emulatorCore.rendersToOpenGL {
+            DLOG("Skipping texture update for OpenGL core - handled in didRenderFrameOnAlternateThread")
+            return true
+        }
+
+        // Track changes in buffer size and screen rect for debugging
+        let currentBufferSize = emulatorCore.bufferSize
+        let currentScreenRect = emulatorCore.screenRect
+        let currentPixelFormat = emulatorCore.pixelFormat
+        let currentPixelType = emulatorCore.pixelType
+
+        // Check if screen rect is valid (has reasonable dimensions)
+        let isScreenRectValid = currentScreenRect.width > 10 && currentScreenRect.height > 10
+
+        // Use effective screen rect when the original is invalid
+        let effectiveScreenRect = isScreenRectValid ? currentScreenRect :
+        CGRect(x: 0, y: 0, width: currentBufferSize.width, height: currentBufferSize.height)
+
+        // Check if we need to update the texture
+        let dimensionsChanged = currentBufferSize != lastBufferSize ||
+        currentScreenRect != lastScreenBounds ||
+        currentPixelFormat != lastPixelFormat ||
+        currentPixelType != lastPixelType
+
+        // Check if texture exists and has correct dimensions
+        let textureNeedsUpdate = inputTexture == nil ||
+        (inputTexture != nil &&
+         (inputTexture!.width != Int(effectiveScreenRect.width) ||
+          inputTexture!.height != Int(effectiveScreenRect.height)))
+
+        // Log if any of these values have changed since last frame
+        if dimensionsChanged {
+            DLOG("""
+                 Core rendering parameters changed:
+                 Previous buffer size: \(lastBufferSize), Current: \(currentBufferSize)
+                 Previous screen rect: \(lastScreenBounds), Current: \(currentScreenRect)
+                 Effective screen rect: \(effectiveScreenRect)
+                 Previous pixel format: \(GLenum(lastPixelFormat).toString), Current: \(GLenum(currentPixelFormat).toString)
+                 Previous pixel type: \(GLenum(lastPixelType).toString), Current: \(GLenum(currentPixelType).toString)
+                 Input texture size: \(inputTexture?.width ?? 0)x\(inputTexture?.height ?? 0)
+                 Metal view size: \(mtlView.drawableSize.width)x\(mtlView.drawableSize.height)
+                 Native scale enabled: \(renderSettings.nativeScaleEnabled)
+                 Screen rect valid: \(isScreenRectValid)
+                 Texture needs update: \(textureNeedsUpdate)
+                """)
+        }
+
+        // If we need to update the texture, do it before proceeding
+        if textureNeedsUpdate {
+            ILOG("Detected texture needs update, recreating texture with dimensions: \(effectiveScreenRect.width)x\(effectiveScreenRect.height)")
+            do {
+                try updateInputTexture()
+                ILOG("Successfully recreated texture with dimensions: \(effectiveScreenRect.width)x\(effectiveScreenRect.height)")
+            } catch {
+                ELOG("Failed to recreate texture: \(error)")
+                return false
+            }
+        }
+
+        // Update the stored values if dimensions changed
+        if dimensionsChanged {
+            lastBufferSize = currentBufferSize
+            lastScreenBounds = currentScreenRect
+            lastPixelFormat = currentPixelFormat
+            lastPixelType = currentPixelType
+        }
+
+        // Get the video buffer from the core
+        guard let videoBuffer = emulatorCore.videoBuffer,
+              let inputTexture = inputTexture else {
+            DLOG("Missing video buffer or input texture")
+            return false
+        }
+
+        // Verify texture dimensions match effective screen rect
+        if inputTexture.width != Int(effectiveScreenRect.width) ||
+            inputTexture.height != Int(effectiveScreenRect.height) {
+            ELOG("Texture dimensions (\(inputTexture.width)x\(inputTexture.height)) don't match effective dimensions (\(effectiveScreenRect.width)x\(effectiveScreenRect.height))")
+            return false
+        }
+
+        let bufferSize = emulatorCore.bufferSize
+
+        // Calculate buffer size
+        let bytesPerPixel = getByteWidth(for: Int32(emulatorCore.pixelFormat), type: Int32(emulatorCore.pixelType))
+        let bytesPerRow = Int(bufferSize.width) * Int(bytesPerPixel)
+        let totalBytes = bytesPerRow * Int(bufferSize.height)
+
+        // Use a buffer pool to reduce allocations and improve performance
+        let tempBuffer: MTLBuffer
+        if let uploadBuffer = uploadBuffer, uploadBuffer.length >= totalBytes {
+            // Reuse existing buffer if it's large enough
+            tempBuffer = uploadBuffer
+        } else {
+            // Create a new buffer with some extra capacity to avoid frequent reallocations
+            let paddedSize = Int(Double(totalBytes) * 1.2) // Add 20% extra capacity
+            DLOG("Creating new upload buffer of size \(paddedSize) (requested: \(totalBytes))")
+
+            guard let newBuffer = device.makeBuffer(length: paddedSize, options: .storageModeShared) else {
+                ELOG("Failed to create upload buffer")
+                recoverFromGPUError()
+                return false
+            }
+
+            // Track buffer creation for debugging
+            bufferCreationCount += 1
+            DLOG("Buffer creation count: \(bufferCreationCount)")
+
+            uploadBuffer = newBuffer
+            tempBuffer = newBuffer
+        }
+
+        // Copy the video buffer to the upload buffer
+        let uploadContents = tempBuffer.contents()
+        memcpy(uploadContents, videoBuffer, totalBytes)
+
+        // Create a command buffer
+        guard let commandQueue = commandQueue,
+              let commandBuffer = commandQueue.makeCommandBuffer() else {
+            DLOG("Failed to create command buffer")
+            return false
+        }
+
+        // Create a blit command encoder
+        guard let blitEncoder = commandBuffer.makeBlitCommandEncoder() else {
+            DLOG("Failed to create blit encoder")
+            return false
+        }
+
+        defer {
+            blitEncoder.endEncoding()
+            commandBuffer.commit()
+            commandBuffer.waitUntilCompleted()  // Wait for the copy to complete
+        }
+
+        // Calculate effective source size using the effective screen rect
+        let effectiveWidth = Int(effectiveScreenRect.width)
+        let effectiveHeight = Int(effectiveScreenRect.height)
+
+        // Verify the dimensions match the texture
+        guard effectiveWidth == inputTexture.width && effectiveHeight == inputTexture.height else {
+            ELOG("""
+                 Dimension mismatch during buffer copy:
+                 Effective dimensions: \(effectiveWidth)x\(effectiveHeight)
+                 Input texture size: \(inputTexture.width)x\(inputTexture.height)
+                 This would cause a crash - aborting copy operation
+                """)
+            return false
+        }
+
+        // Calculate safe source offset if we're using a portion of the buffer
+        let xOffset = Int(effectiveScreenRect.origin.x)
+        let yOffset = Int(effectiveScreenRect.origin.y)
+
+        // Ensure offsets are non-negative and within buffer bounds
+        let safeXOffset = max(0, min(xOffset, Int(bufferSize.width) - 1))
+        let safeYOffset = max(0, min(yOffset, Int(bufferSize.height) - 1))
+
+        // Calculate maximum allowed width and height from the offset
+        let maxWidth = Int(bufferSize.width) - safeXOffset
+        let maxHeight = Int(bufferSize.height) - safeYOffset
+
+        // Calculate safe dimensions that won't exceed the buffer
+        let safeWidth = min(effectiveWidth, maxWidth)
+        let safeHeight = min(effectiveHeight, maxHeight)
+
+        // Calculate source offset with safety bounds
+        let sourceOffset = (safeYOffset * bytesPerRow) + (safeXOffset * Int(bytesPerPixel))
+
+        // Verify source offset and dimensions are valid
+        if sourceOffset >= totalBytes || sourceOffset < 0 || safeWidth <= 0 || safeHeight <= 0 {
+            ELOG("""
+                 Invalid source offset during buffer copy:
+                 Source offset: \(sourceOffset)
+                 Max valid offset: \(totalBytes > 0 ? totalBytes - 1 : 0)
+                 Buffer size: \(totalBytes) bytes
+                 Effective dimensions: \(effectiveWidth)x\(effectiveHeight)
+                 This would cause a crash - aborting copy operation
+                """)
+            return false
+        }
+
+//        VLOG("""
+//             Copying buffer to texture:
+//             Effective dimensions: \(effectiveWidth)x\(effectiveHeight)
+//             Source offset: \(sourceOffset) (x:\(xOffset), y:\(yOffset))
+//             Bytes per row: \(bytesPerRow)
+//             Input texture size: \(inputTexture.width)x\(inputTexture.height)
+//             Total buffer size: \(totalBytes) bytes
+//            """)
+
+        // Copy from the upload buffer to the texture
+        // Always use a safe source offset (either valid calculated offset or 0)
+        let finalSourceOffset = (isScreenRectValid && sourceOffset < totalBytes && sourceOffset >= 0) ? sourceOffset : 0
+
+        // Log the final copy parameters for debugging
+//        VLOG("Final copy parameters: sourceOffset=\(finalSourceOffset), bytesPerRow=\(bytesPerRow)")
+
+        // Calculate final safe dimensions based on the source offset and buffer size
+        // Ensure we don't exceed the buffer boundaries
+        let finalWidth = min(safeWidth, (totalBytes - finalSourceOffset) / Int(bytesPerPixel) / effectiveHeight * bytesPerRow)
+        let finalHeight = min(safeHeight, (totalBytes - finalSourceOffset) / bytesPerRow)
+
+        // Ensure we have valid dimensions
+        if finalWidth <= 0 || finalHeight <= 0 {
+            ELOG("Invalid dimensions for texture copy: width=\(finalWidth), height=\(finalHeight)")
+            return false
+        }
+
+        DLOG("Copying buffer to texture: size=(\(finalWidth)x\(finalHeight)), offset=\(finalSourceOffset)")
+
+        // Copy from the upload buffer to the texture with safe dimensions
+        blitEncoder.copy(
+            from: tempBuffer,
+            sourceOffset: finalSourceOffset,
+            sourceBytesPerRow: bytesPerRow,
+            sourceBytesPerImage: totalBytes,
+            sourceSize: MTLSizeMake(finalWidth, finalHeight, 1),
+            to: inputTexture,
+            destinationSlice: 0,
+            destinationLevel: 0,
+            destinationOrigin: MTLOriginMake(0, 0, 0)
+        )
+
+
+
+        //        DLOG("Updated texture from core: \(bufferSize.width)x\(bufferSize.height), bytes per pixel: \(bytesPerPixel)")
+        return true
+    }
+
+    /// Enhanced debug method to provide comprehensive information about the current rendering state
+    /// This is useful for diagnosing rendering issues and understanding the state of the Metal pipeline
+    internal func dumpTextureInfo() {
+        guard let emulatorCore = emulatorCore else {
+            ELOG("Cannot dump texture info - missing emulator core")
+            return
+        }
+
+        // Get screen rect and buffer size
+        let screenRect = emulatorCore.screenRect
+        let bufferSize = emulatorCore.bufferSize
+
+        // Check if screen rect is valid
+        let isScreenRectValid = screenRect.width > 10 && screenRect.height > 10
+
+        // Calculate effective dimensions
+        let effectiveRect = isScreenRectValid ? screenRect :
+        CGRect(x: 0, y: 0, width: bufferSize.width, height: bufferSize.height)
+
+        ILOG("""
+             ===== Texture Debug Info =====
+             Input Texture: \(inputTexture != nil ? "Valid" : "Nil")
+             Width: \(inputTexture?.width ?? 0)
+             Height: \(inputTexture?.height ?? 0)
+             Pixel Format: \(inputTexture?.pixelFormat.rawValue ?? 0)
+
+             Emulator Core: \(type(of: emulatorCore))
+             Buffer Size: \(bufferSize)
+             Screen Rect: \(screenRect)
+             Effective Rect: \(effectiveRect)
+             Screen Rect Valid: \(isScreenRectValid)
+             Pixel Format: \(GLenum(emulatorCore.pixelFormat).toString) (\(emulatorCore.pixelFormat))
+             Pixel Type: \(GLenum(emulatorCore.pixelType).toString) (\(emulatorCore.pixelType))
+
+             Metal View: \(mtlView.frame.size)
+             Drawable Size: \(mtlView.drawableSize)
+             Content Scale: \(mtlView.contentScaleFactor)
+             Native Scale Enabled: \(renderSettings.nativeScaleEnabled)
+
+             Last Buffer Size: \(lastBufferSize)
+             Last Screen Bounds: \(lastScreenBounds)
+             Last Pixel Format: \(GLenum(lastPixelFormat).toString)
+             Last Pixel Type: \(GLenum(lastPixelType).toString)
+            """)
+
+        if let videoBuffer = emulatorCore.videoBuffer {
+            // Calculate buffer size
+            let bytesPerPixel = getByteWidth(for: Int32(emulatorCore.pixelFormat), type: Int32(emulatorCore.pixelType))
+            let bytesPerRow = Int(bufferSize.width) * Int(bytesPerPixel)
+            let totalBytes = bytesPerRow * Int(bufferSize.height)
+
+            // Calculate source offset
+            let xOffset = Int(effectiveRect.origin.x)
+            let yOffset = Int(effectiveRect.origin.y)
+            let sourceOffset = (yOffset * bytesPerRow) + (xOffset * Int(bytesPerPixel))
+
+            // Check if offset is valid
+            let isOffsetValid = sourceOffset < totalBytes
+
+            ILOG("""
+                 Video Buffer Details:
+                 Address: \(videoBuffer)
+                 Bytes Per Pixel: \(bytesPerPixel)
+                 Bytes Per Row: \(bytesPerRow)
+                 Total Bytes: \(totalBytes)
+                 Source Offset: \(sourceOffset) (x:\(xOffset), y:\(yOffset))
+                 Offset Valid: \(isOffsetValid)
+                """)
+
+            // Check first few bytes of the buffer
+            let buffer = videoBuffer.assumingMemoryBound(to: UInt8.self)
+            var byteSample = "First 16 bytes: "
+            for i in 0..<min(16, totalBytes) {
+                byteSample += String(format: "%02X ", buffer[i])
+            }
+            DLOG("  \(byteSample)")
+
+            // If source offset is valid, show bytes at that position too
+            if isOffsetValid && sourceOffset > 0 && sourceOffset + 16 < totalBytes {
+                var offsetSample = "Bytes at offset \(sourceOffset): "
+                for i in 0..<16 {
+                    offsetSample += String(format: "%02X ", buffer[sourceOffset + i])
+                }
+                DLOG("  \(offsetSample)")
+            }
+        }
+
+        // Check for potential issues and provide warnings
+        var issues: [String] = []
+
+        if inputTexture == nil {
+            issues.append("Input texture is nil")
+        } else if let inputTexture = inputTexture {
+            if let effectiveWidth = Int(exactly: effectiveRect.width),
+               let effectiveHeight = Int(exactly: effectiveRect.height),
+               inputTexture.width != effectiveWidth || inputTexture.height != effectiveHeight {
+                issues.append("Texture dimensions (\(inputTexture.width)x\(inputTexture.height)) don't match effective dimensions (\(effectiveRect.width)x\(effectiveRect.height))")
+            }
+        }
+
+        if !isScreenRectValid {
+            issues.append("Screen rect is invalid (\(screenRect.width)x\(screenRect.height))")
+        }
+
+        if !issues.isEmpty {
+            WLOG("Potential rendering issues detected:")
+            for (index, issue) in issues.enumerated() {
+                WLOG("  \(index + 1). \(issue)")
+            }
+        }
+    }
+
+    private func setupShaders() {
+        DLOG("Setting up shaders...")
+
+        // Set up the blit shader
+        do {
+            try setupBlitShader()
+            DLOG("Successfully set up blit shader")
+        } catch {
+            ELOG("Failed to set up blit shader: \(error)")
+        }
+
+        // Set up the custom shader
+        do {
+            try setupCustomShader()
+            DLOG("Successfully set up custom shader")
+        } catch {
+            ELOG("Failed to set up custom shader: \(error)")
+        }
+    }
+
+    /// Updates the VSync settings for the Metal renderer
+    private func updateVsyncSettings() {
+        guard let mtlView = mtlView else { return }
+
+        // In Metal, VSync is controlled through the displaySyncEnabled property
+        mtlView.isPaused = false
+
+        #if os(iOS) || os(tvOS)
+        if #available(iOS 16.0, tvOS 16.0, *) {
+            // On iOS/tvOS 16+, we can directly control display sync
+            mtlView.preferredFramesPerSecond = vsyncEnabled ? Int(emulatorCore?.frameInterval ?? 60) : 0
+            ILOG("Setting VSync to \(vsyncEnabled ? "enabled" : "disabled")")
+        } else {
+            // On older iOS versions, we can only provide hints through preferredFramesPerSecond
+            updatePreferredFPS()
+            ILOG("VSync control limited on older iOS versions")
+        }
+        #else
+        // For other platforms, update preferred FPS
+        updatePreferredFPS()
+        #endif
+    }
+
+    /// Toggle VSync on/off
+    public func toggleVSync() {
+        vsyncEnabled = !vsyncEnabled
+        ILOG("VSync \(vsyncEnabled ? "enabled" : "disabled")")
+        updateVsyncSettings()
+    }
+
+    private func createBasicShaders() {
+        DLOG("Creating basic shaders directly...")
+
+        guard let device = device else {
+            ELOG("No Metal device available")
+            return
+        }
+
+        // Create a simple vertex shader with proper OpenGL texture orientation handling
+        let vertexSource = """
+        #include <metal_stdlib>
+        using namespace metal;
+
+        struct VertexIn {
+            float4 position [[attribute(0)]];
+            float2 texCoord [[attribute(1)]];
+        };
+
+        struct VertexOut {
+            float4 position [[position]];
+            float2 texCoord;
+        };
+
+        vertex VertexOut basic_vertex(uint vertexID [[vertex_id]], constant bool &flipY [[buffer(1)]]) {
+            // Define positions and texture coordinates directly
+            float2 positions[4] = {
+                float2(-1.0, -1.0),
+                float2(1.0, -1.0),
+                float2(-1.0, 1.0),
+                float2(1.0, 1.0)
+            };
+
+            // Define standard texture coordinates
+            float2 texCoords[4] = {
+                float2(0.0, 0.0),  // Bottom-left
+                float2(1.0, 0.0),  // Bottom-right
+                float2(0.0, 1.0),  // Top-left
+                float2(1.0, 1.0)   // Top-right
+            };
+            
+            // Apply Y-flip if needed (for OpenGL textures)
+            if (flipY) {
+                // Flip the Y coordinate
+                texCoords[0].y = 1.0 - texCoords[0].y;
+                texCoords[1].y = 1.0 - texCoords[1].y;
+                texCoords[2].y = 1.0 - texCoords[2].y;
+                texCoords[3].y = 1.0 - texCoords[3].y;
+            }
+
+            VertexOut out;
+            out.position = float4(positions[vertexID], 0.0, 1.0);
+            out.texCoord = texCoords[vertexID];
+            return out;
+        }
+        """
+
+        // Create a separate fragment shader
+        let fragmentSource = """
+        #include <metal_stdlib>
+        using namespace metal;
+
+        struct VertexOut {
+            float4 position [[position]];
+            float2 texCoord;
+        };
+
+        fragment float4 basic_fragment(VertexOut in [[stage_in]],
+                                     texture2d<float> texture [[texture(0)]]) {
+            constexpr sampler textureSampler(mag_filter::linear, min_filter::linear);
+            return texture.sample(textureSampler, in.texCoord);
+        }
+        """
+
+        // Try to create the vertex shader library
+        do {
+            let vertexLibrary = try device.makeLibrary(source: vertexSource, options: nil)
+            DLOG("Successfully created vertex shader library")
+
+            // Try to create the fragment shader library
+            do {
+                let fragmentLibrary = try device.makeLibrary(source: fragmentSource, options: nil)
+                DLOG("Successfully created fragment shader library")
+
+                // Get the vertex function
+                guard let vertexFunction = vertexLibrary.makeFunction(name: "basic_vertex") else {
+                    ELOG("Failed to get vertex function")
+                    return
+                }
+
+                // Get the fragment function
+                guard let fragmentFunction = fragmentLibrary.makeFunction(name: "basic_fragment") else {
+                    ELOG("Failed to get fragment function")
+                    return
+                }
+
+                // Set up the flipY constant for OpenGL textures
+                var flipY = !(emulatorCore?.rendersToOpenGL ?? false)
+                let constants = MTLFunctionConstantValues()
+                constants.setConstantValue(&flipY, type: .bool, index: 0)
+                
+                // Get the vertex function with constants
+                let vertexFunctionWithConstants: MTLFunction
+                do {
+                    vertexFunctionWithConstants = try vertexLibrary.makeFunction(name: "basic_vertex", constantValues: constants)
+                } catch {
+                    ELOG("Failed to create vertex function with constants: \(error)")
+                    vertexFunctionWithConstants = vertexFunction
+                }
+                
+                // Create a render pipeline descriptor
+                let pipelineDescriptor = MTLRenderPipelineDescriptor()
+                pipelineDescriptor.vertexFunction = vertexFunctionWithConstants
+                pipelineDescriptor.fragmentFunction = fragmentFunction
+                pipelineDescriptor.colorAttachments[0].pixelFormat = mtlView.colorPixelFormat
+
+                // Create the render pipeline state
+                do {
+                    customPipeline = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+                    DLOG("Successfully created custom pipeline state")
+
+                    // Create a sampler descriptor for linear filtering
+                    let linearSamplerDescriptor = MTLSamplerDescriptor()
+                    linearSamplerDescriptor.minFilter = .linear
+                    linearSamplerDescriptor.magFilter = .linear
+
+                    // Create the linear sampler state
+                    linearSampler = device.makeSamplerState(descriptor: linearSamplerDescriptor)
+
+                    // Create a sampler descriptor for point filtering
+                    let pointSamplerDescriptor = MTLSamplerDescriptor()
+                    pointSamplerDescriptor.minFilter = .nearest
+                    pointSamplerDescriptor.magFilter = .nearest
+
+                    // Create the point sampler state
+                    pointSampler = device.makeSamplerState(descriptor: pointSamplerDescriptor)
+
+                    DLOG("Successfully created sampler states")
+                } catch {
+                    ELOG("Failed to create pipeline state: \(error)")
+                    // Recovery might be needed here
+                    recoverFromGPUError()
+                }
+            } catch {
+                ELOG("Failed to create fragment shader library: \(error)")
+                // Recovery might be needed here
+                recoverFromGPUError()
+            }
+        } catch {
+            ELOG("Failed to create vertex shader library: \(error)")
+            // Recovery might be needed here
+            recoverFromGPUError()
+        }
+    }
+
+    private func createBasicShadersWithDefaultLibrary() {
+        DLOG("Creating basic shaders with default library...")
+
+        guard let device = device else {
+            ELOG("No Metal device available")
+            return
+        }
+
+        // Create a simple shader source
+        let shaderSource = """
+        #include <metal_stdlib>
+        using namespace metal;
+
+        struct VertexOut {
+            float4 position [[position]];
+            float2 texCoord;
+        };
+
+        vertex VertexOut vertexShader(uint vid [[vertex_id]]) {
+            const float2 vertices[] = {
+                float2(-1, -1),
+                float2(-1,  1),
+                float2( 1, -1),
+                float2( 1,  1)
+            };
+
+            const float2 texCoords[] = {
+                float2(0, 1),
+                float2(0, 0),
+                float2(1, 1),
+                float2(1, 0)
+            };
+
+            VertexOut out;
+            out.position = float4(vertices[vid], 0, 1);
+            out.texCoord = texCoords[vid];
+            return out;
+        }
+
+        fragment float4 fragmentShader(VertexOut in [[stage_in]],
+                                      texture2d<float> tex [[texture(0)]]) {
+            constexpr sampler s(address::clamp_to_edge, filter::linear);
+            return tex.sample(s, in.texCoord);
+        }
+        """
+
+        do {
+            // Create a library from the shader source
+            let library = try device.makeLibrary(source: shaderSource, options: nil)
+
+            // Get the vertex and fragment functions
+            guard let vertexFunction = library.makeFunction(name: "vertexShader"),
+                  let fragmentFunction = library.makeFunction(name: "fragmentShader") else {
+                ELOG("Failed to get shader functions")
+                recoverFromGPUError()
+                return
+            }
+
+            // Create a render pipeline descriptor
+            let pipelineDescriptor = MTLRenderPipelineDescriptor()
+            pipelineDescriptor.vertexFunction = vertexFunction
+            pipelineDescriptor.fragmentFunction = fragmentFunction
+            pipelineDescriptor.colorAttachments[0].pixelFormat = mtlView.colorPixelFormat
+
+            // Create the render pipeline state
+            do {
+                customPipeline = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+                DLOG("Successfully created custom pipeline state with default library")
+            } catch {
+                ELOG("Failed to create pipeline state with default library: \(error)")
+                recoverFromGPUError()
+            }
+        } catch {
+            ELOG("Failed to create shader library with default library: \(error)")
+            recoverFromGPUError()
+        }
+    }
+
+    @objc private func handleOrientationChange() {
+        DLOG("Orientation changed, updating view and texture")
+
+        // Reset cached values to force recalculation
+        lastScreenBounds = .zero
+        lastBufferSize = .zero
+        lastNativeScaleEnabled = false
+
+        // Force a layout update
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+
+        // Update the texture
+        do {
+            // Force recreation of the texture
+            inputTexture = nil
+            try updateInputTexture()
+
+            // Force a redraw
+            draw(in: mtlView)
+
+            // Post a notification to refresh the GPU view
+            //    /        NotificationCenter.default.post(name: Notification.Name("RefreshGPUView"), object: nil)
+        } catch {
+            ELOG("Error updating texture after orientation change: \(error)")
+        }
+    }
+
+    // Add this method to check and refresh the texture if needed
+    func checkAndRefreshTextureIfNeeded() {
+        //        // Check if we have a valid input texture
+        //        if inputTexture == nil {
+        //            DLOG("Input texture is nil, attempting to recreate")
+        //            do {
+        //                // Just call the existing updateInputTexture method without modifying it
+        //                try updateInputTexture()
+        //                DLOG("Successfully recreated input texture")
+        //
+        //                // Force a redraw using the existing draw method, but with a delay to avoid GPU overload
+        //                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+        //                    guard let self = self, let mtlView = self.mtlView else { return }
+        //                    self.draw(in: mtlView)
+        //                }
+        //            } catch {
+        //                ELOG("Failed to recreate input texture: \(error)")
+        //            }
+        //        }
+    }
+
+    // Add this method to recover from GPU errors
+    private func recoverFromGPUError() {
+        let currentTime = Date().timeIntervalSince1970
+        let timeSinceLastRecovery = currentTime - lastRecoveryTime
+
+        // If we've tried recovery recently, increment counter
+        if timeSinceLastRecovery < 5.0 {
+            recoveryAttempts += 1
+        } else {
+            // Reset counter if it's been a while since last recovery attempt
+            recoveryAttempts = 1
+        }
+
+        lastRecoveryTime = currentTime
+
+        ELOG("Attempting to recover from GPU error (attempt \(recoveryAttempts) of \(maxRecoveryAttempts))")
+
+        // If we've tried too many times in succession, just log and return
+        if recoveryAttempts > maxRecoveryAttempts {
+            ELOG("Too many recovery attempts (\(recoveryAttempts)). Giving up until next render cycle.")
+            return
+        }
+
+        // Reset the command queue
+        commandQueue = device?.makeCommandQueue()
+
+        // Reset the texture
+        inputTexture = nil
+
+        // Reset the pipelines
+        blitPipeline = nil
+        customPipeline = nil
+        effectFilterPipeline = nil
+
+        // Reset samplers
+        pointSampler = nil
+        linearSampler = nil
+
+        // Wait a bit before trying to recreate everything, with increasing delay for repeated attempts
+        let delay = 0.5 * Double(recoveryAttempts)
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+            guard let self = self else { return }
+
+            do {
+                // Recreate the texture
+                try self.updateInputTexture()
+
+                // Recreate the shaders
+                self.createBasicShaders()
+
+                if self.customPipeline == nil && self.blitPipeline == nil {
+                    self.createBasicShadersWithDefaultLibrary()
+                }
+
+                // Create samplers if needed
+                if self.pointSampler == nil || self.linearSampler == nil {
+                    do {
+                        try self.setupTexture()
+                    } catch {
+                        ELOG("Failed to recreate samplers during recovery: \(error)")
+                    }
+                }
+
+                // Force a redraw after another delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    if let mtlView = self.mtlView {
+                        self.draw(in: mtlView)
+                    }
+                }
+
+                // Log success
+                ILOG("Successfully recovered from GPU error on attempt \(self.recoveryAttempts)")
+            } catch {
+                ELOG("Failed to recover from GPU error: \(error)")
+
+                // Try one more time with a longer delay if we haven't reached max attempts
+                if self.recoveryAttempts < self.maxRecoveryAttempts {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        self.recoverFromGPUError()
+                    }
+                }
+            }
+        }
+    }
+
+    // Public method to allow recovery to be triggered from outside
+    func triggerGPUErrorRecovery() {
+        ILOG("Manual GPU error recovery triggered")
+        // Reset recovery attempts to ensure we start fresh
+        recoveryAttempts = 0
+        lastRecoveryTime = 0
+        recoverFromGPUError()
+    }
+
+    // MARK: - Public Methods for Safe GPU View Management
+
+    /// Attempts to reset the Metal rendering pipeline to a clean state
+    private func resetRenderingPipeline() {
+        ILOG("Attempting to reset Metal rendering pipeline")
+
+        // Reset state that could be corrupted
+        frameCount = 0
+        previousCommandBuffer = nil
+
+        // Release and recreate resources
+        do {
+            // Release existing resources
+            inputTexture = nil
+            commandQueue = nil
+
+            // Recreate device if needed
+            if device == nil {
+                device = MTLCreateSystemDefaultDevice()
+                DLOG("Recreated Metal device")
+            }
+
+            // Recreate command queue
+            if let device = device {
+                commandQueue = device.makeCommandQueue()
+                DLOG("Recreated Metal command queue")
+            }
+
+            // Recreate the MTKView if needed
+            if mtlView?.superview == nil || mtlView == nil {
+                DLOG("MTKView is nil or detached, recreating...")
+                // TODO: Shouldn't use UIScreen.main instead use the current scene screen
+                // Instead of calling setupMTKView, recreate MTKView directly
+                let screenBounds = UIScreen.main.bounds
+                let metalView = MTKView(frame: screenBounds, device: device)
+                metalView.autoresizingMask = [] // Disable autoresizing
+                
+                if Defaults[.nativeScaleEnabled] {
+                    let scale = UIScreen.main.scale
+                    if scale != 1.0 {
+                        mtlView.layer.contentsScale = scale;
+                        mtlView.layer.rasterizationScale = scale;
+                        mtlView.contentScaleFactor = scale;
+                    }
+                }
+
+                self.view = metalView
+                self.mtlView = metalView
+                DLOG("Recreated MTKView")
+            }
+
+            // Recreate input texture
+            if let emulatorCore = emulatorCore, emulatorCore.bufferSize.width > 0, emulatorCore.bufferSize.height > 0 {
+                try setupTexture()
+                try updateInputTexture()
+                DLOG("Recreated and updated input texture")
+            } else {
+                ELOG("Cannot recreate input texture: Invalid buffer size or nil emulator core")
+            }
+
+            // Reset the MTKView's paused state
+            mtlView?.isPaused = false
+            mtlView?.enableSetNeedsDisplay = true
+
+            // Request a redraw
+            mtlView?.setNeedsDisplay()
+
+            ILOG("Metal rendering pipeline reset successful")
+        } catch {
+            ELOG("Failed to reset Metal rendering pipeline: \(error)")
+        }
+    }
+
+    /// Safely refreshes the GPU view without directly setting isPaused.
+    /// This method should be called after the menu is dismissed to ensure proper rendering.
+    public func safelyRefreshGPUView() {
+        ILOG("Safely refreshing GPU view")
+
+        // Make sure the view is visible
+        view.alpha = 1.0
+        view.isHidden = false
+
+        // Ensure we're on the main thread
+        if !Thread.isMainThread {
+            DispatchQueue.main.async { [weak self] in
+                self?.safelyRefreshGPUView()
+            }
+            return
+        }
+
+        // Reset frame count to force a fresh render
+        frameCount = 0
+
+        // Update input texture if needed
+        do {
+            if isTextureUpdateNeeded() {
+                DLOG("Recreating input texture during GPU view refresh")
+                try setupTexture()
+                try updateInputTexture()
+            } else {
+                DLOG("Updating existing input texture during GPU view refresh")
+                try updateInputTexture()
+            }
+
+            // Request a redraw through proper channels
+            mtlView?.setNeedsDisplay()
+
+            ILOG("GPU view refresh completed successfully")
+        } catch {
+            ELOG("Failed to refresh GPU view: \(error)")
+
+            // If an error occurs, try to reset the rendering pipeline
+            resetRenderingPipeline()
+        }
     }
 }
 

@@ -27,18 +27,25 @@ final class PVPCEControllerViewController: PVControllerViewController<PVPCESyste
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
-            if title == "Ⅰ" {
+            switch title.lowercased() {
+            case "i", "1":
                 button.buttonTag = .button1
-            } else if title == "Ⅱ" {
+            case "ii", "2":
                 button.buttonTag = .button2
-            } else if title == "Ⅲ" {
+            case "iii", "3":
                 button.buttonTag = .button3
-            } else if title == "Ⅳ" {
+            case "iv", "4":
                 button.buttonTag = .button4
-            } else if title == "Ⅴ" {
+            case "v", "5":
                 button.buttonTag = .button5
-            } else if title == "Ⅵ" {
+            case "vi", "6":
                 button.buttonTag = .button6
+            case "start", "run":
+                button.buttonTag = .run
+            case "select":
+                button.buttonTag = .select
+            default:
+                break
             }
         }
 
