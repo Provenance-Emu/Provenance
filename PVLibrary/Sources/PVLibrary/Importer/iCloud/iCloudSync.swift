@@ -509,12 +509,13 @@ public enum iCloudSync {
             ELOG("Initial Download: error obtaining iCloud documents directory")
             return
         }
-        //TODO: add retroarch
+        ILOG("Initial Download: initiate downloading all files...")
         let romsDirectory = documentsDirectory.appendingPathComponent("ROMs")
         let saveStatesDirectory = documentsDirectory.appendingPathComponent("Save States")
         let biosDirectory = documentsDirectory.appendingPathComponent("BIOS")
         let batteryStatesDirectory = documentsDirectory.appendingPathComponent("Battery States")
         let screenshotsDirectory = documentsDirectory.appendingPathComponent("Screenshots")
+        let retroArchDirectory = documentsDirectory.appendingPathComponent("RetroArch")
         await withTaskGroup(of: Void.self) { group in
             group.addTask {
                 await startDownloading(directory: romsDirectory)
@@ -531,8 +532,11 @@ public enum iCloudSync {
             group.addTask {
                 await startDownloading(directory: screenshotsDirectory)
             }
+            group.addTask {
+                await startDownloading(directory: retroArchDirectory)
+            }
             await group.waitForAll()
-            sleep(5)
+            ILOG("Initial Download: completed initiating downloading of all files...")
         }
     }
     
@@ -576,7 +580,7 @@ public enum iCloudSync {
                     try fileManager.startDownloadingUbiquitousItem(at: currentUrl)
                     DLOG("Initial Download: #\(count) downloading \(currentUrl)")
                     if count % 10 == 0 {
-                        Thread.sleep(forTimeInterval: 0.5)
+                        sleep(1)
                     }
                 } catch {
                     ELOG("Initial Download: #\(count) error initiating download of \(currentUrl)")
@@ -603,7 +607,7 @@ public enum iCloudSync {
             DLOG("attempted to turn on iCloud, but iCloud is NOT setup on the device")
             return
         }
-        DLOG("turning on iCloud")
+        ILOG("turning on iCloud")
         //reset ROMs path
         gameImporter.gameImporterDatabaseService.setRomsPath(url: gameImporter.romsPath)
         await errorHandler.clear()
@@ -621,8 +625,7 @@ public enum iCloudSync {
         }
         await initiateDownloadOfiCloudDocumentsContainer()
         disposeBag = DisposeBag()
-        //TODO: add retroarch
-        var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots"],
+        var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots", "RetroArch"],
                                                                   notificationCenter: .default,
                                                                   errorHandler: iCloudErrorHandler.shared)
         await nonDatabaseFileSyncer.loadAllFromICloud()
@@ -689,7 +692,7 @@ public enum iCloudSync {
     }
     
     static func turnOff() async {
-        DLOG("turning off iCloud")
+        ILOG("turning off iCloud")
         romDatabaseInitialized?.cancel()
         await errorHandler.clear()
         disposeBag = nil
