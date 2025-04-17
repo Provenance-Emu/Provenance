@@ -46,8 +46,9 @@ class ImportExtension: CSImportExtension {
             }
             
             // Create a new Realm instance for this operation
-            let realm = try Realm(configuration: config)
-            
+//            let realm = try Realm(configuration: config)
+            let realm = try RomDatabase.sharedInstance.realm
+
             // Get the game and freeze it so it can be used across threads
             let predicate = NSPredicate(format: "md5Hash == %@", md5)
             return realm.objects(PVGame.self).filter(predicate).first?.freeze()
@@ -125,10 +126,12 @@ class ImportExtension: CSImportExtension {
         do {
             // This is a synchronous method, so we need to use a fully synchronous approach
             // Get the configuration directly
-            let config = RealmConfiguration.realmConfig
+//            let config = RealmConfiguration.realmConfig
             
             // Create a new Realm instance directly
-            let realm = try Realm(configuration: config)
+//            let realm = try Realm(configuration: config)
+            let realm = try RomDatabase.sharedInstance.realm
+
             let predicate = NSPredicate(format: "md5Hash == %@", md5Hash)
             let game = realm.objects(PVGame.self).filter(predicate).first
             
@@ -174,10 +177,12 @@ class ImportExtension: CSImportExtension {
             do {
                 // This is a synchronous method, so we need to use a fully synchronous approach
                 // Get the configuration directly
-                let config = RealmConfiguration.realmConfig
+//                let config = RealmConfiguration.realmConfig
                 
                 // Create a new Realm instance directly
-                let realm = try Realm(configuration: config)
+//                let realm = try Realm(configuration: config)
+                let realm = RomDatabase.sharedInstance.realm
+
                 let predicate = NSPredicate(format: "md5Hash == %@", potentialMD5)
                 let game = realm.objects(PVGame.self).filter(predicate).first
                 

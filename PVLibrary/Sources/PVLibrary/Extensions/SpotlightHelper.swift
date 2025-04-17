@@ -80,9 +80,10 @@ public class SpotlightHelper {
             pendingItems.removeAll(keepingCapacity: true)
         }
         
-        // Get Realm configuration
-        let config = RealmConfiguration.realmConfig
-        let realm = try await Realm(configuration: config)
+        // Use the shared RomDatabase instance to access Realm safely
+        // This ensures we use the same database as the main app
+        let database = RomDatabase.sharedInstance
+        let realm = database.realm
         
         // Get all games from the database
         let allGames = realm.objects(PVGame.self)
@@ -153,9 +154,10 @@ public class SpotlightHelper {
             pendingItems.removeAll(keepingCapacity: true)
         }
         
-        // Get Realm configuration
-        let config = RealmConfiguration.realmConfig
-        let realm = try await Realm(configuration: config)
+        // Use the shared RomDatabase instance to access Realm safely
+        // This ensures we use the same database as the main app
+        let database = RomDatabase.sharedInstance
+        let realm = database.realm
         
         // Get all save states from the database
         let allSaveStates = realm.objects(PVSaveState.self)

@@ -45,12 +45,9 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
         
         /// Get a game by its MD5 hash
         func getGame(byMD5 md5: String) throws -> PVGame? {
-            guard let config = configuration else { 
-                throw SpotlightError.configurationError
-            }
-            
-            // Create a new Realm instance for this operation
-            let realm = try Realm(configuration: config)
+            // Use the shared RomDatabase instance to access Realm safely
+            let database = RomDatabase.sharedInstance
+            let realm = database.realm
             
             // Get the game and freeze it so it can be used across threads
             return realm.object(ofType: PVGame.self, forPrimaryKey: md5)?.freeze()
@@ -58,12 +55,9 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
         
         /// Get all games
         func getAllGames() throws -> [PVGame] {
-            guard let config = configuration else {
-                throw SpotlightError.configurationError
-            }
-            
-            // Create a new Realm instance for this operation
-            let realm = try Realm(configuration: config)
+            // Use the shared RomDatabase instance to access Realm safely
+            let database = RomDatabase.sharedInstance
+            let realm = database.realm
             
             // Get all games and freeze them
             return realm.objects(PVGame.self).map { $0.freeze() }
@@ -71,12 +65,9 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
         
         /// Get games matching specific identifiers
         func getGames(withIdentifiers identifiers: [String]) throws -> [PVGame] {
-            guard let config = configuration else {
-                throw SpotlightError.configurationError
-            }
-            
-            // Create a new Realm instance for this operation
-            let realm = try Realm(configuration: config)
+            // Use the shared RomDatabase instance to access Realm safely
+            let database = RomDatabase.sharedInstance
+            let realm = database.realm
             
             // Get games matching the identifiers and freeze them
             let predicate = NSPredicate(format: "md5Hash IN %@", identifiers)
@@ -102,17 +93,9 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
                     ELOG("Spotlight: Error initializing mock driver: \(error)")
                 }
             }
-        } else if RealmConfiguration.supportsAppGroups {
-            // Set up the Realm configuration
-            let config = RealmConfiguration.realmConfig
-            
-            // Store the configuration in the actor
-            Task {
-                await realmActor.setConfiguration(config)
-                ILOG("Spotlight: Realm configuration set up successfully")
-            }
         } else {
-            WLOG("Spotlight: App Groups not supported during initialization")
+            // We'll use RomDatabase.sharedInstance.realm directly when needed
+            ILOG("Spotlight: Using shared RomDatabase instance")
         }
     }
     
@@ -267,10 +250,10 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
                 
                 // This is a synchronous method, so we need to use a fully synchronous approach
                 // Get the Realm configuration directly
-                let config = RealmConfiguration.realmConfig
+                // let config = RealmConfiguration.realmConfig
                 
                 // Create a new Realm instance directly
-                let realm = try Realm(configuration: config)
+                let realm = try RomDatabase.sharedInstance.realm
                 let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5)
                 
                 if let game = game, let artworkURL = game.pathOfCachedImage {

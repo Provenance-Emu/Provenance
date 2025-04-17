@@ -191,8 +191,9 @@ class RealmTopShelfDataDriver: TopShelfDataDriver {
             guard let config = configuration else { return [] }
             
             // Create a new Realm instance for this operation
-            guard let realm = try? Realm(configuration: config) else { return [] }
-            
+//            guard let realm = try? Realm(configuration: config) else { return [] }
+            let realm = RomDatabase.sharedInstance.realm
+
             // Get recently played games
             let recentlyPlayedGames = realm.objects(PVRecentGame.self).sorted(byKeyPath: "lastPlayedDate", ascending: false)
                 .prefix(limit)
@@ -213,8 +214,9 @@ class RealmTopShelfDataDriver: TopShelfDataDriver {
             guard let config = configuration else { return [] }
             
             // Create a new Realm instance for this operation
-            guard let realm = try? Realm(configuration: config) else { return [] }
-            
+//            guard let realm = try? Realm(configuration: config) else { return [] }
+            let realm = RomDatabase.sharedInstance.realm
+
             // Get favorite games
             let favoriteGames = realm.objects(PVGame.self).filter("isFavorite == true")
                 .sorted(byKeyPath: "title", ascending: true)
@@ -228,8 +230,9 @@ class RealmTopShelfDataDriver: TopShelfDataDriver {
             guard let config = configuration else { return [] }
             
             // Create a new Realm instance for this operation
-            guard let realm = try? Realm(configuration: config) else { return [] }
-            
+//            guard let realm = try? Realm(configuration: config) else { return [] }
+            let realm = RomDatabase.sharedInstance.realm
+
             // Get recently added games
             let recentlyAddedGames = realm.objects(PVGame.self).sorted(byKeyPath: "importDate", ascending: false)
                 .prefix(limit)
@@ -242,7 +245,8 @@ class RealmTopShelfDataDriver: TopShelfDataDriver {
             guard let config = configuration else { return nil }
             
             // Create a new Realm instance for this operation
-            guard let realm = try? Realm(configuration: config) else { return nil }
+//            guard let realm = try? Realm(configuration: config) else { return nil }
+            let realm = RomDatabase.sharedInstance.realm
             
             // Get the game and freeze it so it can be used across threads
             return realm.object(ofType: PVGame.self, forPrimaryKey: id)?.freeze()
