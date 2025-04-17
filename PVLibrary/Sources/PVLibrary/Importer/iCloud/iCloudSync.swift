@@ -493,7 +493,7 @@ public enum iCloudSync {
     }
     
     static func iCloudSyncChanged(_ newValue: Bool) async {
-        DLOG("new iCloudSync value: \(newValue)")
+        ILOG("new iCloudSync value: \(newValue)")
         guard newValue
         else {
             await turnOff()
@@ -604,7 +604,7 @@ public enum iCloudSync {
     
     static func turnOn() async {
         guard URL.supportsICloud else {
-            DLOG("attempted to turn on iCloud, but iCloud is NOT setup on the device")
+            ELOG("attempted to turn on iCloud, but iCloud is NOT setup on the device")
             return
         }
         ILOG("turning on iCloud")
