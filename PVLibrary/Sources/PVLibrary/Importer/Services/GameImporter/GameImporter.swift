@@ -678,18 +678,21 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     // Processes each ImportItem in the queue sequentially
     private func processQueue() async {
+        defer {
+            DispatchQueue.main.async {
+                // Only change to idle if we're not paused
+                if self.processingState != .paused {
+                    self.processingState = .idle
+                }
+                NotificationCenter.default.post(name: .RomsFinishedImporting, object: nil)
+            }
+        }
         // Check for items that are either queued or have a user-chosen system
         let itemsToProcess = importQueue.filter {
             $0.status == .queued || $0.userChosenSystem != nil
         }
 
         guard !itemsToProcess.isEmpty else {
-            DispatchQueue.main.async {
-                // Only change to idle if we're not paused
-                if self.processingState != .paused {
-                    self.processingState = .idle
-                }
-            }
             return
         }
 
@@ -716,12 +719,6 @@ public final class GameImporter: GameImporting, ObservableObject {
             await processItem(item)
         }
 
-        DispatchQueue.main.async {
-            // Only change to idle if we're not paused
-            if self.processingState != .paused {
-                self.processingState = .idle
-            }
-        }
         ILOG("GameImportQueue - processQueue complete Import Processing")
     }
 
