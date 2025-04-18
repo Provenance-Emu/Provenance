@@ -152,7 +152,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             DLOG("Checking file \(url.lastPathComponent) with relative name: \(relativeName)")
             if relativeName == name {
                 DLOG("Found matching related file: \(url.lastPathComponent)")
-                relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent)))
+                relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent), relativeRoot: .iCloud))
             }
         }
 
@@ -160,7 +160,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             DLOG("Processing \(relatedFiles.count) additional related files")
             for url in relatedFiles {
                 DLOG("Adding related file: \(url.lastPathComponent)")
-                relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent)))
+                relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent), relativeRoot: .iCloud))
             }
         }
 

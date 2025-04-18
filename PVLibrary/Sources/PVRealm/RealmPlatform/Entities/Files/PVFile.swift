@@ -37,6 +37,8 @@ public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
     /// Last time size was checked
     nonisolated(unsafe)
     internal dynamic var lastSizeCheck: Date?
+    nonisolated(unsafe)
+    internal var _actualPartialPath: String?
 
     public convenience init(withPartialPath partialPath: String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault, size: Int = 0, md5: String? = nil) {
         self.init()
@@ -61,7 +63,7 @@ public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
     }
 
     public override static func ignoredProperties() -> [String] {
-        return ["sizeCache", "lastSizeCheck"]
+        return ["sizeCache", "lastSizeCheck", "_actualPartialPath"]
     }
 }
 
@@ -75,30 +77,130 @@ public extension PVFile {
             _relativeRoot = newValue.rawValue
         }
     }
-
+    
+    /// attempts to fix `partialPath`
+    var actualPartialPath: String {
+        if let fixedPartialPath = _actualPartialPath {
+            return fixedPartialPath
+        }
+        var mutatingPartialPath = partialPath
+        fixPartialPath(substring: "file:///private/", &mutatingPartialPath)
+        fixPartialPath(substring: "file:///", &mutatingPartialPath)
+        fixPartialPath(remove: URL.documentsDirectory, &mutatingPartialPath)
+        fixPartialPath(remove: URL.iCloudDocumentsDirectory, &mutatingPartialPath)
+        fixPartialPath(remove: URL.iCloudContainerDirectory, &mutatingPartialPath)
+        _actualPartialPath = mutatingPartialPath
+        return mutatingPartialPath
+    }
+    
+    /// tries to remove url from `partialPath`
+    /// - Parameter optionalUrl: if nil, then does nothing
+    internal func fixPartialPath(remove optionalUrl: URL?, _ mutatingPartialPath: inout String) {
+        guard let url = optionalUrl
+        else {
+            return
+        }
+        let privatePrefix = "private/"
+        fixPartialPath(remove: url, withPercentEncoded: true, &mutatingPartialPath)
+        fixPartialPath(remove: url, withPercentEncoded: true, &mutatingPartialPath, prefix: privatePrefix)
+        fixPartialPath(remove: url, withPercentEncoded: false, &mutatingPartialPath)
+        fixPartialPath(remove: url, withPercentEncoded: false, &mutatingPartialPath, prefix: privatePrefix)
+    }
+    
+    /// if `partialPath` contains `url.path` with the given percent encoding, then it replaces it with an empty string
+    /// - Parameters:
+    ///   - url: url to find within `partialPath`
+    ///   - percentEncoded: whether or not to add percent encoding
+    ///   - prefix: optional prefix to do a search on
+    internal func fixPartialPath(remove url: URL, withPercentEncoded percentEncoded: Bool, _ mutatingPartialPath: inout String, prefix: String = "") {
+        var suffix = url.path(percentEncoded: percentEncoded)
+        if suffix.hasPrefix("/") {
+            //remove the first character
+            suffix = String(suffix.suffix(from: suffix.index(after: suffix.startIndex)))
+        }
+        //ensure the prefix isn't already contained
+        let actualPrefix = suffix.starts(with: prefix) ? "" : prefix
+        let substring = "\(actualPrefix)\(suffix)"
+        fixPartialPath(substring: substring, &mutatingPartialPath)
+        /*DLOG("""
+        prefix: \(prefix)
+        actualPrefix: \(actualPrefix)
+        suffix: \(suffix)
+        partialPath: \(mutatingPartialPath)
+        """)*/
+        guard prefix.isEmpty || !actualPrefix.isEmpty
+        else {
+            return
+        }
+        //remove the prefix if it exists already, so if suffix starts with "private/" and the prefix passed in is "private/", then we want to remove "private/" from the beginning of "suffix" and attempt to remove the new substring from mutatingPartialPath
+        let newSubstring = String(suffix.suffix(from: suffix.index(suffix.startIndex, offsetBy: prefix.count)))
+        fixPartialPath(substring: newSubstring, &mutatingPartialPath)
+    }
+    
+    /// if `substring` exists in `partialPath`, then it removes it
+    /// - Parameter substring: substring to test/remove
+    internal func fixPartialPath(substring: String, _ mutatingPartialPath: inout String) {
+        //DLOG("attempting to remove \(substring) from partialPath \(mutatingPartialPath)")
+        if mutatingPartialPath.localizedCaseInsensitiveContains(substring) {
+            mutatingPartialPath = mutatingPartialPath.replacingOccurrences(of: substring, with: "", options: .caseInsensitive)
+            //DLOG("removed \(substring) and now partialPath is \(mutatingPartialPath)")
+        }
+    }
+    
     var url: URL? {
         get {
-            if partialPath.contains("iCloud") || partialPath.contains("private") {
-                var pathComponents = (partialPath as NSString).pathComponents
+            let isPartialPathFixed = _actualPartialPath != nil
+            var ogPartialPath = partialPath
+            let fixedPartialPath = actualPartialPath
+            var returnUrl: URL
+            var failedToFixPartialPath = false
+            defer {
+                /*if !isPartialPathFixed {
+                    DLOG("""
+                    original partialPath: \(ogPartialPath)
+                    fixed partialPath: \(fixedPartialPath)
+                    url: \(returnUrl)
+                    relativeRoot: \(relativeRoot)
+                    """)
+                }*/
+                if !isPartialPathFixed && failedToFixPartialPath {
+                    ELOG("""
+                    invalid partial path: \(fixedPartialPath)
+                    original partialPath: \(ogPartialPath)
+                    url generated: \(returnUrl)
+                    relativeRoot: \(relativeRoot)   
+                    """)
+                }
+            }
+            if fixedPartialPath.contains("iCloud") || fixedPartialPath.contains("private") {
+                failedToFixPartialPath = true
+                var pathComponents = (fixedPartialPath as NSString).pathComponents
                 pathComponents.removeFirst()
                 let path = pathComponents.joined(separator: "/")
                 let isDocumentsDir = path.contains("Documents")
-
                 if isDocumentsDir {
                     let iCloudBase = URL.iCloudContainerDirectory
-                    let url = (iCloudBase ?? RelativeRoot.documentsDirectory).appendingPathComponent(path)
-                    return url
+                    returnUrl = (iCloudBase ?? RelativeRoot.documentsDirectory).appendingPathComponent(path)
+                    return returnUrl
                 } else {
                     if let iCloudBase = URL.iCloudDocumentsDirectory {
-                        return iCloudBase.appendingPathComponent(path)
+                        returnUrl = iCloudBase.appendingPathComponent(path)
+                        return returnUrl
                     } else {
-                        return RelativeRoot.documentsDirectory.appendingPathComponent(path)
+                        returnUrl = RelativeRoot.documentsDirectory.appendingPathComponent(path)
+                        return returnUrl
                     }
                 }
             }
-            let root = relativeRoot
-            let resolvedURL = root.appendingPath(partialPath)
-            return resolvedURL
+            returnUrl = relativeRoot.appendingPath(fixedPartialPath)
+            /*if !isPartialPathFixed {
+                DLOG("""
+                valid partial path: \(fixedPartialPath)
+                url: \(returnUrl)
+                relativeRoot: \(relativeRoot)
+                """)
+            }*/
+            return returnUrl
         }
     }
 
