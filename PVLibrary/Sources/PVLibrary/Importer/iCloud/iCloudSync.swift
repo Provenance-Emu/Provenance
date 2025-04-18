@@ -314,6 +314,12 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                !isDownloading || percentDownload < 100,
                //during the initial run we do NOT do any downloads otherwise we run into issues where the query gets stuck for large libraries.
                await status.value != .initialUpload {
+                let secureAccess = fileToDownload.startAccessingSecurityScopedResource()
+                defer {
+                    if secureAccess {
+                        fileToDownload.stopAccessingSecurityScopedResource()
+                    }
+                }
                 try fileManager.startDownloadingUbiquitousItem(at: fileToDownload)
                 ILOG("Download started for: \(file.pathDecoded)")
             }
