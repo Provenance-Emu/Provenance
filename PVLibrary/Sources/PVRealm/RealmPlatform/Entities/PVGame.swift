@@ -283,7 +283,7 @@ public extension Realm {
             object.playCount = Int(game.playCount)
             object.lastPlayed = game.lastPlayed
             
-            object.system = self.object(ofType: PVSystem.self, forPrimaryKey: "identifier")
+            object.system = self.object(ofType: PVSystem.self, forPrimaryKey: game.system?.identifier ?? "identifier")
 
             object.gameDescription = game.gameDescription
             object.boxBackArtworkURL = game.boxBackArtworkURL
