@@ -6,7 +6,7 @@
 - [ ] Option to use a custom skin or not
 - [ ] if rotate and same skin, don't reload
 - [ ] Retroarch needs to pause showing menu
-- [ ] remove slow metalvc logs
+- [X] remove slow metalvc logs
 - [ ] fix deltaskin showing up on rotate when off
 - [ ] fix deltaskin joysticks
 - [ ] singlepage error on loading core results in stuck screen
