@@ -968,10 +968,12 @@ class RomsSyncer: iCloudContainerSyncer {
         if newFiles.isEmpty {
             uploadedFiles.removeAll()
         }
-        gameImporter.addImports(forPaths: importPaths)
-        ILOG("ROMs: downloading: \(pendingFilesToDownload.count), pending to process: \(newFiles.count), processing: \(newProcessingCount)")
-        //to ensure we do NOT go on an endless loop
-        gameImporter.startProcessing()
+        Task {
+            await gameImporter.addImports(forPaths: importPaths)
+            ILOG("ROMs: downloading: \(pendingFilesToDownload.count), pending to process: \(newFiles.count), processing: \(newProcessingCount)")
+            //to ensure we do NOT go on an endless loop
+            gameImporter.startProcessing()
+        }
     }
 }
 
