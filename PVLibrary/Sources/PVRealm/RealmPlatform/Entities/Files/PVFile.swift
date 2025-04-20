@@ -15,6 +15,7 @@ import UIKit
 #endif
 import PVPrimitives
 import PVFileSystem
+import PVSettings
 
 @objcMembers
 public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
@@ -80,6 +81,46 @@ public extension PVFile {
             _relativeRoot = newValue.rawValue
         }
     }
+    
+    /// Determines if this file requires syncing to iCloud
+    /// Returns true if:
+    /// 1. iCloud sync is enabled in settings
+    /// 2. The file exists locally but not in iCloud
+    var requiresSync: Bool {
+        get {
+            // Only check if iCloud sync is enabled
+            guard Defaults[.iCloudSync] else {
+                return false
+            }
+            
+            // Check if the file exists locally
+            guard let localURL = self.url, FileManager.default.fileExists(atPath: localURL.path) else {
+                return false
+            }
+            
+            // Check if the file exists in iCloud
+            guard let iCloudURL = self.iCloudURL else {
+                // If we can't determine the iCloud URL, assume sync is required
+                return true
+            }
+            
+            // If the file doesn't exist in iCloud, it requires sync
+            return !FileManager.default.fileExists(atPath: iCloudURL.path)
+        }
+    }
+    
+    /// Returns the iCloud URL for this file if available
+    var iCloudURL: URL? {
+        get {
+            guard let iCloudContainerURL = URL.iCloudContainerDirectory else {
+                return nil
+            }
+            
+            // Create the path relative to the iCloud container
+            let relativePath = self.partialPath
+            return iCloudContainerURL.appendingPathComponent(relativePath)
+        }
+    }
 /*
  file:///private/var/mobile/Library/Mobile%20Documents/iCloud~com~contributions~provenance/Documents/
  vs
@@ -94,7 +135,11 @@ public extension PVFile {
                 var pathComponents = (partialPath as NSString).pathComponents
                 pathComponents.removeFirst()
                 let path = pathComponents.joined(separator: "/")
+                #if os(tvOS)
+                let isDocumentsDir = path.contains("Documents") || path.contains("Caches")
+                #else
                 let isDocumentsDir = path.contains("Documents")
+                #endif
                 
                 if isDocumentsDir {
                     let iCloudBase = URL.iCloudContainerDirectory
