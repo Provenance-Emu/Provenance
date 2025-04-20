@@ -14,6 +14,8 @@ import PVThemes
 import Combine
 import RealmSwift
 
+#if !os(tvOS)
+
 /// Debug view for Spotlight integration
 public struct SpotlightDebugView: View {
     // State for the view
@@ -492,3 +494,4 @@ extension SpotlightHelper {
         }
     }
 }
+#endif

@@ -96,15 +96,6 @@ internal struct AdvancedTogglesView: View {
                                     icon: .sfSymbol("exclamationmark.triangle"))
                     }
                 }
-                
-                #if DEBUG
-                NavigationLink(destination: TopShelfLogView()) {
-                    SettingsRow(title: "TopShelf Log",
-                               subtitle: "View the TopShelf extension log file.",
-                               icon: .sfSymbol("doc.text.magnifyingglass"))
-                }
-                .padding(.vertical, 4)
-                #endif
             }
         }
     }

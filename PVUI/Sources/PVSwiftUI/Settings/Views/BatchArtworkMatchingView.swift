@@ -126,7 +126,9 @@ public struct BatchArtworkMatchingView: View {
                 Text("Include games with original artwork")
                     .foregroundColor(.white)
             }
+            #if !os(tvOS)
             .toggleStyle(SwitchToggleStyle(tint: .retroPink))
+            #endif
             .onChange(of: includeGamesWithOriginalArtwork) { _ in
                 Task {
                     await loadGamesNeedingArtwork()

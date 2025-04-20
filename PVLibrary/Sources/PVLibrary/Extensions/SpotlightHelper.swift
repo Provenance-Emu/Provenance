@@ -25,6 +25,7 @@ public class SpotlightHelper {
     /// Force reindex all Provenance content in Spotlight
     /// - Parameter completion: Optional completion handler called when reindexing is complete
     public func forceReindexAll(completion: (() -> Void)? = nil) {
+        #if !os(tvOS)
         ILOG("Starting Spotlight reindexing for all Provenance content")
         
         // Get the default searchable index
@@ -56,12 +57,14 @@ public class SpotlightHelper {
                 }
             }
         }
+        #endif
     }
     
     /// Reindex all games in Spotlight
     private func reindexAllGames() async throws {
         ILOG("Reindexing all games in Spotlight")
-        
+        #if !os(tvOS)
+
         // Get the default searchable index
         let searchableIndex = CSSearchableIndex.default()
         
@@ -130,12 +133,13 @@ public class SpotlightHelper {
         
         // Process any remaining items
         try await processBatch()
+        #endif
     }
     
     /// Reindex all save states in Spotlight
     private func reindexAllSaveStates() async throws {
         ILOG("Reindexing all save states in Spotlight")
-        
+        #if !os(tvOS)
         // Get the default searchable index
         let searchableIndex = CSSearchableIndex.default()
         
@@ -204,5 +208,6 @@ public class SpotlightHelper {
         
         // Process any remaining items
         try await processBatch()
+        #endif
     }
 }
