@@ -12,42 +12,42 @@ import AudioToolbox
 internal struct SecretSettingsRow: View {
     @State private var showSecretView = false
     @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = false
-
+    
     var body: some View {
         Group {
-            #if DEBUG
+#if DEBUG
             NavigationLink(destination: FeatureFlagsDebugView()) {
                 SettingsRow(title: "Feature Flags Debug",
-                           subtitle: "Override feature flags for testing",
-                           icon: .sfSymbol("flag.fill"))
+                            subtitle: "Override feature flags for testing",
+                            icon: .sfSymbol("flag.fill"))
                 
             }
             Button {
                 showSecretView = true
             } label: {
                 SettingsRow(title: "About",
-                           subtitle: "Version information",
-                           icon: .sfSymbol("info.circle"))
+                            subtitle: "Version information",
+                            icon: .sfSymbol("info.circle"))
             }
             .buttonStyle(.plain)
-            #else
+#else
             if showFeatureFlagsDebug {
                 NavigationLink(destination: FeatureFlagsDebugView()) {
                     SettingsRow(title: "Feature Flags Debug",
-                               subtitle: "Override feature flags for testing",
-                               icon: .sfSymbol("flag.fill"))
+                                subtitle: "Override feature flags for testing",
+                                icon: .sfSymbol("flag.fill"))
                 }
             } else {
                 Button {
                     showSecretView = true
                 } label: {
                     SettingsRow(title: "About",
-                               subtitle: "Version information",
-                               icon: .sfSymbol("info.circle"))
+                                subtitle: "Version information",
+                                icon: .sfSymbol("info.circle"))
                 }
                 .buttonStyle(.plain)
             }
-            #endif
+#endif
         }
         .sheet(isPresented: $showSecretView) {
             SecretDPadView {
@@ -55,36 +55,39 @@ internal struct SecretSettingsRow: View {
             }
         }
     }
+    
 }
 
 private struct SecretDPadView: View {
     enum Direction {
         case up, down, left, right
     }
-
+    
     let onComplete: () -> Void
     @State private var pressedButtons: [Direction] = []
     @State private var showDPad = false
     @FocusState private var isFocused: Bool
     @Environment(\.dismiss) private var dismiss
-    #if os(tvOS)
+#if os(tvOS)
     @State private var controller: GCController?
     @State private var isHandlingX = false
     @State private var isHandlingY = false
-    #endif
-
+#endif
+    
     private let konamiCode: [Direction] = [.up, .up, .down, .down, .left, .right, .left, .right]
-
+    
     var body: some View {
+        // On tvOS, we need to ensure the view is ready to receive input
+        // even before showDPad becomes true
         VStack {
             if showDPad {
-                #if os(tvOS)
+#if os(tvOS)
                 // tvOS: Show instructions and handle Siri Remote gestures
                 VStack {
                     Text("Use Siri Remote to enter the code")
                         .font(.headline)
                         .padding()
-
+                    
                     // Show current sequence with better visibility
                     Text(sequenceText.isEmpty ? "No input yet" : sequenceText)
                         .font(.title)
@@ -95,7 +98,7 @@ private struct SecretDPadView: View {
                                 .fill(Color.secondary.opacity(0.2))
                         )
                         .padding()
-
+                    
                     // Show hint about remaining inputs needed
                     Text("\(konamiCode.count - (pressedButtons.count % konamiCode.count)) more inputs needed")
                         .font(.caption)
@@ -103,7 +106,7 @@ private struct SecretDPadView: View {
                         .padding(.top)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                #else
+#else
                 // iOS: Show D-Pad buttons
                 VStack(spacing: 0) {
                     Button(action: { pressButton(.up) }) {
@@ -111,21 +114,21 @@ private struct SecretDPadView: View {
                             .resizable()
                             .frame(width: 60, height: 60)
                     }
-
+                    
                     HStack(spacing: 60) {
                         Button(action: { pressButton(.left) }) {
                             Image(systemName: "arrow.left.circle.fill")
                                 .resizable()
                                 .frame(width: 60, height: 60)
                         }
-
+                        
                         Button(action: { pressButton(.right) }) {
                             Image(systemName: "arrow.right.circle.fill")
                                 .resizable()
                                 .frame(width: 60, height: 60)
                         }
                     }
-
+                    
                     Button(action: { pressButton(.down) }) {
                         Image(systemName: "arrow.down.circle.fill")
                             .resizable()
@@ -133,12 +136,12 @@ private struct SecretDPadView: View {
                     }
                 }
                 .foregroundColor(.accentColor)
-
+                
                 Text(sequenceText)
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .padding(.top)
-                #endif
+#endif
             } else {
                 ScrollView {
                     if let markdownPath = Bundle.main.path(forResource: "CONTRIBUTORS", ofType: "md"),
@@ -152,15 +155,39 @@ private struct SecretDPadView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .contentShape(Rectangle())
-        #if os(tvOS)
-        .focusable()
+#if os(tvOS)
+        // Capture physical D-pad button presses from Siri Remote
+        .onMoveCommand { direction in
+            DLOG("[SecretDPadView] onMoveCommand received: \(direction)")
+            switch direction {
+            case .up:
+                DLOG("[SecretDPadView] UP button pressed")
+                handleDirection(.up)
+            case .down:
+                DLOG("[SecretDPadView] DOWN button pressed")
+                handleDirection(.down)
+            case .left:
+                DLOG("[SecretDPadView] LEFT button pressed")
+                handleDirection(.left)
+            case .right:
+                DLOG("[SecretDPadView] RIGHT button pressed")
+                handleDirection(.right)
+            default:
+                DLOG("[SecretDPadView] Unknown direction: \(direction)")
+                break
+            }
+        }
+        // Make sure the view can receive focus for remote input
+        .focusable(true)
         .focused($isFocused)
         .onLongPressGesture(minimumDuration: 5) {
             DLOG("[SecretDPadView] Long press detected")
             withAnimation(.easeInOut) {
                 showDPad = true
+                // Ensure the view has focus to receive remote input
                 isFocused = true
                 setupController()
+                DLOG("[SecretDPadView] View is now focused and ready for input")
             }
         }
         .onChange(of: showDPad) { newValue in
@@ -181,25 +208,25 @@ private struct SecretDPadView: View {
         .onDisappear {
             removeController()
         }
-        #else
+#else
         // iOS: Handle long press gesture
         .onLongPressGesture(minimumDuration: 5) {
             withAnimation {
                 showDPad = true
             }
         }
-        #endif
+#endif
     }
-
-    #if os(tvOS)
+    
+#if os(tvOS)
     private func setupController() {
         DLOG("[SecretDPadView] Setting up controller")
         // Get the first connected controller (Siri Remote)
         controller = GCController.controllers().first
-
+        
         controller?.microGamepad?.dpad.valueChangedHandler = { [self] dpad, xValue, yValue in
             DLOG("[SecretDPadView] Dpad input - x: \(xValue), y: \(yValue)")
-
+            
             // Handle X-axis (left/right)
             if xValue == 1.0 && !isHandlingX {
                 isHandlingX = true
@@ -210,7 +237,7 @@ private struct SecretDPadView: View {
             } else if xValue == 0 {
                 isHandlingX = false
             }
-
+            
             // Handle Y-axis (up/down)
             if yValue == 1.0 && !isHandlingY {
                 isHandlingY = true
@@ -222,11 +249,11 @@ private struct SecretDPadView: View {
                 isHandlingY = false
             }
         }
-
+        
         // Enable basic gamepad input profile for Siri Remote
         controller?.microGamepad?.reportsAbsoluteDpadValues = false
     }
-
+    
     private func removeController() {
         DLOG("[SecretDPadView] Removing controller")
         controller?.microGamepad?.dpad.valueChangedHandler = nil
@@ -234,8 +261,8 @@ private struct SecretDPadView: View {
         isHandlingX = false
         isHandlingY = false
     }
-    #endif
-
+#endif
+    
     private var sequenceText: String {
         pressedButtons.map { direction in
             switch direction {
@@ -246,16 +273,51 @@ private struct SecretDPadView: View {
             }
         }.joined(separator: " ")
     }
+    
+    // Handle D-pad direction input from tvOS physical remote buttons
+#if os(tvOS)
+    private func handleDirection(_ direction: Direction) {
+        DLOG("[SecretDPadView] D-pad pressed: \(direction)")
+        // Always show the D-pad UI when we receive input
+        if !showDPad {
+            withAnimation {
+                showDPad = true
+                isFocused = true
+            }
+        }
+        
+        // Add the direction to our sequence
+        pressedButtons.append(direction)
+        DLOG("[SecretDPadView] Current sequence: \(pressedButtons)")
+        
+        // Keep only the last N inputs
+        if pressedButtons.count > konamiCode.count {
+            pressedButtons.removeFirst(pressedButtons.count - konamiCode.count)
+        }
+        
+        // Check if the sequence matches the Konami code
+        if pressedButtons == konamiCode {
+            DLOG("[SecretDPadView] KONAMI CODE MATCHED!")
+            AudioServicesPlaySystemSound(1104) // Play a sound
+            onComplete()
+            pressedButtons.removeAll()
+            dismiss()
+        } else {
+            // Provide feedback for each button press
+            AudioServicesPlaySystemSound(1519)
+        }
+    }
+#endif
 
     private func pressButton(_ direction: Direction) {
         DLOG("[SecretDPadView] Button pressed: \(direction)")
         pressedButtons.append(direction)
-
-        #if os(tvOS)
+        
+#if os(tvOS)
         // Use AudioServicesPlaySystemSound for tvOS feedback
         AudioServicesPlaySystemSound(1519) // Standard system sound
-        #endif
-
+#endif
+        
         // Check if the sequence matches the Konami code
         if pressedButtons.count >= konamiCode.count {
             let lastEight = Array(pressedButtons.suffix(konamiCode.count))
@@ -266,12 +328,12 @@ private struct SecretDPadView: View {
                 dismiss()
             }
         }
-
+        
         // Limit the stored sequence length
         if pressedButtons.count > 16 {
             pressedButtons.removeFirst(8)
         }
-
+        
         DLOG("[SecretDPadView] Current sequence: \(sequenceText)")
     }
 }

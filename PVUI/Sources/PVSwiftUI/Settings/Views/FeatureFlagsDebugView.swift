@@ -22,6 +22,7 @@ import Perception
 import PVFeatureFlags
 import Defaults
 import PVLibrary
+import AudioToolbox
 
 struct FeatureFlagsDebugView: View {
     @StateObject private var featureFlags = PVFeatureFlagsManager.shared
@@ -733,26 +734,36 @@ private struct UserDefaultsSection: View {
 
     #if os(tvOS)
     var body: some View {
-        List {
-            Section(header: Text("User Defaults")) {
-                UserDefaultToggle(
-                    title: "useAppGroups",
-                    subtitle: "Use App Groups for shared storage",
-                    isOn: $useAppGroups
-                )
-                UserDefaultToggle(
-                    title: "unsupportedCores",
-                    subtitle: "Enable experimental and unsupported cores",
-                    isOn: $unsupportedCores
-                )
-                UserDefaultToggle(
-                    title: "iCloudSync",
-                    subtitle: "Sync save states and settings with iCloud",
-                    isOn: $iCloudSync
-                )
-            }
+        VStack(alignment: .leading, spacing: 8) {
+            Text("User Defaults")
+                .font(.headline)
+                .foregroundColor(RetroTheme.retroPink)
+                .padding(.bottom, 5)
+            
+            // User App Groups toggle
+            UserDefaultRow(
+                title: "useAppGroups",
+                subtitle: "Use App Groups for shared storage",
+                isOn: $useAppGroups
+            )
+            
+            // Unsupported Cores toggle
+            UserDefaultRow(
+                title: "unsupportedCores",
+                subtitle: "Enable experimental and unsupported cores",
+                isOn: $unsupportedCores
+            )
+            
+            // iCloud Sync toggle
+            UserDefaultRow(
+                title: "iCloudSync",
+                subtitle: "Sync save states and settings with iCloud",
+                isOn: $iCloudSync
+            )
         }
-        .listStyle(.grouped)
+        .padding()
+        .background(RetroTheme.retroDarkBlue.opacity(0.3))
+        .cornerRadius(8)
     }
     #else
     var body: some View {
@@ -782,6 +793,7 @@ private struct UserDefaultsSection: View {
     #endif
 }
 
+// Standard toggle for iOS/macOS
 private struct UserDefaultToggle: View {
     let title: String
     let subtitle: String
@@ -804,5 +816,46 @@ private struct UserDefaultToggle: View {
             }
         }
         .padding(.vertical, 4)
+    }
+}
+
+// User Default row for tvOS that matches the style of FeatureFlagRow
+private struct UserDefaultRow: View {
+    let title: String
+    let subtitle: String
+    @Binding var isOn: Bool
+    @State private var glowOpacity: Double = 0.6
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                // Left side - title and description
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.headline)
+                        .foregroundColor(.white)
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
+                
+                Spacer()
+                
+                // Right side - ON/OFF button
+                Button(action: {
+                    isOn.toggle()
+                    AudioServicesPlaySystemSound(1519)
+                }) {
+                    Text(isOn ? "ON" : "OFF")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(isOn ? RetroTheme.retroBlue : RetroTheme.retroPink)
+                        .shadow(color: isOn ? RetroTheme.retroBlue.opacity(glowOpacity) : RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+            .padding(10)
+            .background(Color.black.opacity(0.3))
+            .cornerRadius(8)
+        }
     }
 }
