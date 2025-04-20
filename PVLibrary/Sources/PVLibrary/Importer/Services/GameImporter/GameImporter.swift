@@ -569,7 +569,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             }
         }
     }
-    
+
     /// Sets up the subscription to the import queue actor's queue subject
     /// This must be called after all members are initialized
     private func setupQueueSubscription() {
@@ -594,9 +594,9 @@ public final class GameImporter: GameImporting, ObservableObject {
     /// Initializes core plists
     fileprivate func initCorePlists() async {
         let bundle = ThisBundle
-        await PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
-        let corePlists: [EmulatorCoreInfoPlist]  = CoreLoader.getCorePlists()
-        await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
+            await PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
+            let corePlists: [EmulatorCoreInfoPlist]  = CoreLoader.getCorePlists()
+            await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
     }
 
     public func getArtwork(forGame game: PVGame) async -> PVGame {
@@ -616,7 +616,7 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
     public func addImports(forPaths paths: [URL]) async {
-        for path in paths {
+            for path in paths {
             await self.addImportItemToQueue(ImportQueueItem(url: path, fileType: .unknown))
         }
     }
@@ -637,7 +637,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                 itemsToRemove.append(item)
             }
         }
-        
+
         // Remove files
         for item in itemsToRemove {
             do {
@@ -674,14 +674,14 @@ public final class GameImporter: GameImporting, ObservableObject {
     private func preProcessQueue() async {
         // Get the current queue
         let currentQueue = await importQueueActor.getQueue()
-        
+
         // Process each item to determine its type
         var processedQueue = currentQueue
         for i in 0..<processedQueue.count {
-            do {
+                do {
                 processedQueue[i].fileType = try determineImportType(processedQueue[i])
-            } catch {
-                ELOG("Caught error trying to assign file type \(error.localizedDescription)")
+                } catch {
+                    ELOG("Caught error trying to assign file type \(error.localizedDescription)")
             }
         }
         
@@ -885,30 +885,33 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     // Processes items in the queue in parallel with controlled concurrency
     private func processQueue() async {
-        // Check for items that are either queued or have a user-chosen system
-        let itemsToProcess = await importQueue.filter {
-            $0.status == .queued || $0.userChosenSystem != nil
-        }
-        
-        guard !itemsToProcess.isEmpty else {
+        defer {
             DispatchQueue.main.async {
                 // Only change to idle if we're not paused
                 if self.processingState != .paused {
                     self.processingState = .idle
                 }
+                NotificationCenter.default.post(Notification(name: .RomsFinishedImporting))
             }
+        }
+        // Check for items that are either queued or have a user-chosen system
+        let itemsToProcess = await importQueue.filter {
+            $0.status == .queued || $0.userChosenSystem != nil
+        }
+
+        guard !itemsToProcess.isEmpty else {
             return
         }
-        
+
         ILOG("GameImportQueue - processQueue beginning Import Processing with \(itemsToProcess.count) items")
-        
+
         // Only update to processing if we're not paused
         if processingState != .paused {
             DispatchQueue.main.async {
                 self.processingState = .processing
             }
         }
-        
+
         // Group related files that should be processed together
         let groupedItems = groupRelatedFiles(itemsToProcess)
         ILOG("Grouped \(itemsToProcess.count) items into \(groupedItems.count) processing groups")
@@ -922,8 +925,8 @@ public final class GameImporter: GameImporting, ObservableObject {
             
             for fileGroup in groupedItems {
                 // Check if we've been paused before adding each group
-                if await checkIfPaused() {
-                    ILOG("GameImportQueue - processing paused, waiting for resume")
+            if await checkIfPaused() {
+                ILOG("GameImportQueue - processing paused, waiting for resume")
                     break
                 }
                 
@@ -937,10 +940,10 @@ public final class GameImporter: GameImporting, ObservableObject {
                 // Add a new task for this group
                 group.addTask {
                     for item in fileGroup {
-                        // If there's a user-chosen system, ensure the item is queued
-                        if item.userChosenSystem != nil {
-                            item.status = .queued
-                        }
+            // If there's a user-chosen system, ensure the item is queued
+            if item.userChosenSystem != nil {
+                item.status = .queued
+            }
                         await self.processItem(item)
                     }
                 }
@@ -951,13 +954,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             // Wait for all remaining tasks to complete
             await group.waitForAll()
         }
-        
-        DispatchQueue.main.async {
-            // Only change to idle if we're not paused
-            if self.processingState != .paused {
-                self.processingState = .idle
-            }
-        }
+
         ILOG("GameImportQueue - processQueue complete Import Processing")
     }
 
@@ -1086,7 +1083,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         //ideally this wouldn't be needed here because we'd have done it elsewhere
         item.fileType = try determineImportType(item)
         ILOG("Determined file type: \(item.fileType)")
-        
+
         if item.fileType == .skin {
             ILOG("Processing as Skin file")
             do {

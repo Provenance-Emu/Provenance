@@ -4,6 +4,6 @@ extension URL {
     /// This is useful when working with file paths that may contain special characters
     var pathDecoded: String {
         /// Decode the path component of the URL to handle special characters
-        return path.removingPercentEncoding ?? path
+        return path(percentEncoded: false)
     }
 }
