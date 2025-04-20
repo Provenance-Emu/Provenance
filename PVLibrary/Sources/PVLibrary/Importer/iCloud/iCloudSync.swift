@@ -502,7 +502,7 @@ public enum iCloudSync {
 
         //TODO: should we pause when a game starts so we don't interfere with the game and continue listening when no game is running?
         disposeBag = DisposeBag()
-        var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots"],
+        var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots", "DeltaSkins"],
                                                                   notificationCenter: .default,
                                                                   errorHandler: iCloudErrorHandler.shared)
         nonDatabaseFileSyncer.loadAllFromICloud()
@@ -779,7 +779,7 @@ class RomsSyncer: iCloudContainerSyncer {
     var romsFinishedImportingSubscriber: AnyCancellable?
     
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
-        self.init(directories: ["ROMs"], notificationCenter: notificationCenter, errorHandler: errorHandler)
+        self.init(directories:  ["ROMs", "Save States", "BIOS", "DeltaSkins"], notificationCenter: notificationCenter, errorHandler: errorHandler)
         romsFinishedImportingSubscriber = notificationCenter.publisher(for: .RomsFinishedImporting).sink { [weak self] _ in
             Task {
                 self?.handleImportNewRomFiles()
