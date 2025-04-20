@@ -10,14 +10,64 @@ import SwiftUI
 import PVLibrary
 import PVSupport
 import PVLogging
+import PVSettings
+import Defaults
 
-/// A view that allows browsing the App Group container files
+/// A view modifier that applies the appropriate picker style based on OS version
+struct PickerStyleModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        #if os(tvOS)
+            if #available(tvOS 17.0, *) {
+                content.pickerStyle(MenuPickerStyle())
+            } else {
+                // Fallback for older tvOS versions
+                content.pickerStyle(DefaultPickerStyle())
+            }
+        #else
+            // On iOS, MenuPickerStyle is available on all supported versions
+            content.pickerStyle(MenuPickerStyle())
+        #endif
+    }
+}
+
+/// A view that allows browsing the App Group container files, local app storage, and iCloud directory
 public struct AppGroupFileBrowserView: View {
     
     // MARK: - Properties
     
+    /// Enum to represent different directory sources
+    enum DirectorySource: String, CaseIterable, Identifiable {
+        case appGroup = "App Group"
+        case localAppStorage = "Local Storage"
+        case iCloudStorage = "iCloud"
+        
+        var id: String { self.rawValue }
+        
+        /// Get the root URL for this directory source
+        func getRootURL() -> URL? {
+            switch self {
+            case .appGroup:
+                return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)
+            case .localAppStorage:
+                #if os(tvOS)
+                return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+                #else
+                return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+                #endif
+            case .iCloudStorage:
+                return URL.iCloudContainerDirectory
+            }
+        }
+    }
+    
+    /// Current directory source
+    @State private var directorySource: DirectorySource = .appGroup
+    
     /// Current directory being displayed
     @State private var currentDirectory: URL
+    
+    /// Root directory for the current source
+    @State private var rootDirectory: URL
     
     /// Items in the current directory
     @State private var directoryItems: [DirectoryItem] = []
@@ -37,6 +87,9 @@ public struct AppGroupFileBrowserView: View {
     /// Loading state
     @State private var isLoading = false
     
+    /// iCloud availability
+    @State private var iCloudAvailable = false
+    
     // MARK: - Initialization
     
     public init() {
@@ -45,9 +98,12 @@ public struct AppGroupFileBrowserView: View {
         
         if let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) {
             self._currentDirectory = State(initialValue: containerURL)
+            self._rootDirectory = State(initialValue: containerURL)
         } else {
             // Fallback to documents directory if app group container is not available
-            self._currentDirectory = State(initialValue: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!)
+            let docsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+            self._currentDirectory = State(initialValue: docsURL)
+            self._rootDirectory = State(initialValue: docsURL)
             ELOG("Could not access app group container: \(appGroupID)")
         }
     }
@@ -60,13 +116,30 @@ public struct AppGroupFileBrowserView: View {
             Color.retroDarkBlue.edgesIgnoringSafeArea(.all)
             
             VStack {
-                // Header with current path
+                // Header with directory source picker
                 HStack {
-                    Text("App Group Browser")
+                    Text("File Browser")
                         .font(.headline)
                         .foregroundColor(.retroBlue)
                     
                     Spacer()
+                    
+                    // Directory source picker
+                    Picker("Source", selection: $directorySource) {
+                        ForEach(DirectorySource.allCases) { source in
+                            if source != .iCloudStorage || iCloudAvailable {
+                                Text(source.rawValue).tag(source)
+                            }
+                        }
+                    }
+                    .modifier(PickerStyleModifier())
+                    .onChange(of: directorySource) { newSource in
+                        switchDirectorySource(to: newSource)
+                    }
+                    .foregroundColor(.retroPink)
+                    .padding(8)
+                    .background(Color.retroPurple.opacity(0.3))
+                    .cornerRadius(8)
                     
                     // Go up button - larger for tvOS
                     Button(action: navigateUp) {
@@ -151,7 +224,11 @@ public struct AppGroupFileBrowserView: View {
                     .padding(20)
             }
         }
-        .onAppear(perform: loadDirectoryContents)
+        .onAppear {
+            // Check iCloud availability when view appears
+            checkICloudAvailability()
+            loadDirectoryContents()
+        }
         .navigationTitle("App Group Files")
         .sheet(isPresented: $showingFileContents) {
             FileContentsView(fileName: selectedItem?.name ?? "", contents: fileContents)
@@ -164,6 +241,9 @@ public struct AppGroupFileBrowserView: View {
     private func loadDirectoryContents() {
         isLoading = true
         errorMessage = nil
+        
+        // Check iCloud availability when loading contents
+        checkICloudAvailability()
         
         DispatchQueue.global(qos: .userInitiated).async {
             do {
@@ -225,6 +305,7 @@ public struct AppGroupFileBrowserView: View {
             // View file contents
             selectedItem = item
             loadFileContents(item)
+            showingFileContents = true
         }
     }
     
@@ -288,6 +369,26 @@ public struct AppGroupFileBrowserView: View {
             return currentDirectory.path == containerURL.path
         }
         return false
+    }
+    
+    /// Check if iCloud is available
+    private func checkICloudAvailability() {
+        iCloudAvailable = FileManager.default.ubiquityIdentityToken != nil && URL.iCloudContainerDirectory != nil
+        DLOG("iCloud availability: \(iCloudAvailable)")
+    }
+    
+    /// Switch to a different directory source
+    private func switchDirectorySource(to source: DirectorySource) {
+        guard let newRootURL = source.getRootURL() else {
+            errorMessage = "Could not access \(source.rawValue) directory"
+            return
+        }
+        
+        rootDirectory = newRootURL
+        currentDirectory = newRootURL
+        loadDirectoryContents()
+        
+        DLOG("Switched to directory source: \(source.rawValue) at path: \(newRootURL.path)")
     }
 }
 
