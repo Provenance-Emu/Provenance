@@ -916,6 +916,12 @@ private struct LibrarySection: View {
                             subtitle: "Find and apply artwork for multiple games at once",
                             icon: .sfSymbol("photo.on.rectangle.angled"))
             }
+            
+            NavigationLink(destination: iCloudSyncStatusView()) {
+                SettingsRow(title: "iCloud Sync Status",
+                            subtitle: "Monitor sync status between local and iCloud files",
+                            icon: .sfSymbol("icloud"))
+            }
         }
     }
 }
