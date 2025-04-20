@@ -52,9 +52,10 @@ extension Core: RealmRepresentable {
             object.projectURL = project.url.absoluteString
             object.disabled = disabled
             object.contentless = contentless
-
+            let frozenObject = object.freeze()
             Task {
-                let realm = try! await Realm()
+                guard let object = frozenObject.thaw() else { return }
+                guard let realm = try? await Realm() else { return }
                 let rmSystems = systems.compactMap { realm.object(ofType: PVSystem.self, forPrimaryKey: $0.identifier) }
                 object.supportedSystems.append(objectsIn: rmSystems)
             }
