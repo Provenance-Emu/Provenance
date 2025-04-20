@@ -274,6 +274,10 @@ public extension Realm {
         }
 
         return PVGame.build { object in
+            guard var object = object as? PVGame else {
+                ELOG("Wrong object type")
+                return
+            }
             object.id = game.id
             object.title = game.title
             // TODO: Test that file is correct
@@ -283,7 +287,7 @@ public extension Realm {
             object.playCount = Int(game.playCount)
             object.lastPlayed = game.lastPlayed
             
-            object.system = self.object(ofType: PVSystem.self, forPrimaryKey: game.system?.identifier ?? "identifier")
+            object.system = self.object(ofType: PVSystem.self, forPrimaryKey: game.systemIdentifier)
 
             object.gameDescription = game.gameDescription
             object.boxBackArtworkURL = game.boxBackArtworkURL
