@@ -731,6 +731,30 @@ private struct UserDefaultsSection: View {
     @Default(.unsupportedCores) var unsupportedCores
     @Default(.iCloudSync) var iCloudSync
 
+    #if os(tvOS)
+    var body: some View {
+        List {
+            Section(header: Text("User Defaults")) {
+                UserDefaultToggle(
+                    title: "useAppGroups",
+                    subtitle: "Use App Groups for shared storage",
+                    isOn: $useAppGroups
+                )
+                UserDefaultToggle(
+                    title: "unsupportedCores",
+                    subtitle: "Enable experimental and unsupported cores",
+                    isOn: $unsupportedCores
+                )
+                UserDefaultToggle(
+                    title: "iCloudSync",
+                    subtitle: "Sync save states and settings with iCloud",
+                    isOn: $iCloudSync
+                )
+            }
+        }
+        .listStyle(.grouped)
+    }
+    #else
     var body: some View {
         Section(header: Text("User Defaults")) {
             UserDefaultToggle(
@@ -753,12 +777,9 @@ private struct UserDefaultsSection: View {
                 isOn: $iCloudSync
             )
             .focusableIfAvailable()
-
         }
-        #if os(tvOS)
-        .focusSection()
-        #endif
     }
+    #endif
 }
 
 private struct UserDefaultToggle: View {
