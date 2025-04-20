@@ -31,7 +31,7 @@ struct iCloudSyncStatusView: View {
     @State private var syncDifferences: [SyncDifference] = []
     
     // Directories to monitor
-    private let monitoredDirectories = ["roms", "Saves", "BIOS"]
+    private let monitoredDirectories = ["ROMs", "Save States", "BIOS"]
     
     // Cancellables
     private var cancellables = Set<AnyCancellable>()
@@ -238,7 +238,11 @@ struct iCloudSyncStatusView: View {
     
     private func scanLocalDirectory(_ directory: String, completion: @escaping ([URL]) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async {
+            #if os(tvOS)
+            let documentsPath = URL.cachesDirectory
+            #else
             let documentsPath = URL.documentsDirectory
+            #endif
             let directoryPath = documentsPath.appendingPathComponent(directory)
             
             do {
