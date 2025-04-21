@@ -61,7 +61,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
     public lazy var uploadedFiles: ConcurrentSet<URL> = []
     public let directories: Set<String>
     public let fileManager: FileManager = .default
-    private let notificationCenter: NotificationCenter
+    public let notificationCenter: NotificationCenter
     public var status: iCloudSyncStatus = .initialUpload
     public let errorHandler: ErrorHandler
     public var initialSyncResult: SyncResult = .indeterminate
