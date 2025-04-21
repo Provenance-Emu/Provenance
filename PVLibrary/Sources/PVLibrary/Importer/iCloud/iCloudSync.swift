@@ -35,7 +35,7 @@ public protocol Container {
 
 extension Container {
     public var containerURL: URL? { get { return URL.iCloudContainerDirectory }}
-    var documentsURL: URL? { get { return URL.iCloudDocumentsDirectory }}
+    public var documentsURL: URL? { get { return URL.iCloudDocumentsDirectory }}
 }
 
 public protocol iCloudTypeSyncer: Container {
@@ -50,34 +50,39 @@ public protocol iCloudTypeSyncer: Container {
     func setNewCloudFilesAvailable()
 }
 
-enum iCloudSyncStatus {
+public enum iCloudSyncStatus {
     case initialUpload
     case filesAlreadyMoved
 }
 
-class iCloudContainerSyncer: iCloudTypeSyncer {
-    lazy var pendingFilesToDownload: ConcurrentSet<URL> = []
-    lazy var newFiles: ConcurrentSet<URL> = []
-    lazy var uploadedFiles: ConcurrentSet<URL> = []
-    let directories: Set<String>
-    let fileManager: FileManager = .default
-    let notificationCenter: NotificationCenter
-    var status: iCloudSyncStatus = .initialUpload
-    let errorHandler: ErrorHandler
-    var initialSyncResult: SyncResult = .indeterminate
-    var fileImportQueueMaxCount = 1000
-    var purgeStatus: DatastorePurgeStatus = .incomplete
+public class iCloudContainerSyncer: iCloudTypeSyncer {
+    public lazy var pendingFilesToDownload: ConcurrentSet<URL> = []
+    public lazy var newFiles: ConcurrentSet<URL> = []
+    public lazy var uploadedFiles: ConcurrentSet<URL> = []
+    public let directories: Set<String>
+    public let fileManager: FileManager = .default
+    private let notificationCenter: NotificationCenter
+    public var status: iCloudSyncStatus = .initialUpload
+    public let errorHandler: ErrorHandler
+    public var initialSyncResult: SyncResult = .indeterminate
+    public var fileImportQueueMaxCount = 1000
+    public var purgeStatus: DatastorePurgeStatus = .incomplete
     private var querySubscriber: AnyCancellable?
     
-    init(directories: Set<String>,
+    public init(directories: Set<String>,
          notificationCenter: NotificationCenter,
          errorHandler: ErrorHandler) {
         self.notificationCenter = notificationCenter
         self.directories = directories
         self.errorHandler = errorHandler
+        
+        // Register with the syncer store
+        iCloudSyncerStore.shared.register(syncer: self)
     }
     
     deinit {
+        // Unregister from the syncer store
+        iCloudSyncerStore.shared.unregister(syncer: self)
         metadataQuery.disableUpdates()
         if metadataQuery.isStarted {
             metadataQuery.stop()
@@ -110,9 +115,9 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         return alliCloudDirectories
     }
     
-    let metadataQuery: NSMetadataQuery = .init()
+    public let metadataQuery: NSMetadataQuery = .init()
     
-    func insertDownloadingFile(_ file: URL) -> URL? {
+    public func insertDownloadingFile(_ file: URL) -> URL? {
         guard !uploadedFiles.contains(file)
         else {
             return nil
@@ -121,15 +126,15 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         return file
     }
     
-    func insertDownloadedFile(_ file: URL) {
+    public func insertDownloadedFile(_ file: URL) {
         pendingFilesToDownload.remove(file)
     }
     
-    func insertUploadedFile(_ file: URL) {
+    public func insertUploadedFile(_ file: URL) {
         uploadedFiles.insert(file)
     }
     
-    func setNewCloudFilesAvailable() {
+    public func setNewCloudFilesAvailable() {
         if pendingFilesToDownload.isEmpty {
             status = .filesAlreadyMoved
             DLOG("set status to \(status) and removing all uploaded files in \(directories)")
@@ -137,7 +142,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         }
     }
     
-    func deleteFromDatastore(_ file: URL) {
+    public func deleteFromDatastore(_ file: URL) {
         //no-op
     }
     
@@ -154,7 +159,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         return nextFilesToProcess
     }
     
-    func loadAllFromICloud(iterationComplete: (() -> Void)? = nil) -> Completable {
+    public func loadAllFromICloud(iterationComplete: (() -> Void)? = nil) -> Completable {
         return Completable.create { [weak self] completable in
             self?.setupObservers(completable: completable, iterationComplete: iterationComplete)
             return Disposables.create()
@@ -762,21 +767,21 @@ class SaveStateSyncer: iCloudContainerSyncer {
 }
 
 /// used for only purging database entries that no longer exist (files deleted from icloud while the app was shut off)
-enum DatastorePurgeStatus {
+public enum DatastorePurgeStatus {
     case incomplete
     case complete
 }
 
-enum GameStatus {
+public enum GameStatus {
     case gameExists
     case gameDoesNotExist
 }
 
-class RomsSyncer: iCloudContainerSyncer {
+public class RomsSyncer: iCloudContainerSyncer {
     let gameImporter = GameImporter.shared
-    let processingFiles = ConcurrentQueue(arrayLiteral: 0)
-    let multiFileRoms: ConcurrentDictionary<String, [URL]> = [:]
-    var romsFinishedImportingSubscriber: AnyCancellable?
+    public let processingFiles = ConcurrentQueue(arrayLiteral: 0)
+    public let multiFileRoms: ConcurrentDictionary<String, [URL]> = [:]
+    public var romsFinishedImportingSubscriber: AnyCancellable?
     
     convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
         self.init(directories:  ["ROMs", "Save States", "BIOS", "DeltaSkins"], notificationCenter: notificationCenter, errorHandler: errorHandler)
@@ -791,7 +796,7 @@ class RomsSyncer: iCloudContainerSyncer {
         romsFinishedImportingSubscriber?.cancel()
     }
     
-    override func loadAllFromICloud(iterationComplete: (() -> Void)?) -> Completable {
+    public override func loadAllFromICloud(iterationComplete: (() -> Void)?) -> Completable {
         //ensure that the games are cached so we do NOT hit the database so much when checking for existence of games
         RomDatabase.reloadGamesCache()
         return super.loadAllFromICloud(iterationComplete: iterationComplete)
@@ -837,7 +842,7 @@ class RomsSyncer: iCloudContainerSyncer {
         }
     }
     
-    override func insertDownloadedFile(_ file: URL) {
+    public override func insertDownloadedFile(_ file: URL) {
         guard let _ = pendingFilesToDownload.remove(file)
         else {
             return
@@ -900,7 +905,7 @@ class RomsSyncer: iCloudContainerSyncer {
         return (existingGame, system)
     }
     
-    override func deleteFromDatastore(_ file: URL) {
+    public override func deleteFromDatastore(_ file: URL) {
         guard let fileName = file.lastPathComponent.removingPercentEncoding,
               let parentDirectory = file.parentPathComponent.removingPercentEncoding
         else {
@@ -977,7 +982,7 @@ class RomsSyncer: iCloudContainerSyncer {
     }
 }
 
-struct iCloudSyncError {
+public struct iCloudSyncError {
     let file: String?
     var summary: String {
         error.localizedDescription
@@ -995,31 +1000,28 @@ protocol Queue {
     var allElements: [Entry] { get }
 }
 
-class ConcurrentQueue<Element>: Queue, ExpressibleByArrayLiteral {
+public class ConcurrentQueue<Element>: Queue, ExpressibleByArrayLiteral {
     private var collection = [Element]()
     private let queue = DispatchQueue(label: "com.provenance.concurrent.queue")
     
-    required init(arrayLiteral elements: Element...) {
+    required public init(arrayLiteral elements: Element...) {
         collection = Array(elements)
     }
     
-    @inlinable
-    var count: Int {
+    public var count: Int {
         queue.sync {
             collection.count
         }
     }
     
-    @inlinable
-    func enqueue(entry: Element) {
+    public func enqueue(entry: Element) {
         queue.async { [weak self] in
             self?.collection.insert(entry, at: 0)
         }
     }
     
-    @inlinable
     @discardableResult
-    func dequeue() -> Element? {
+    public func dequeue() -> Element? {
         queue.sync {
             guard !collection.isEmpty
             else {
@@ -1029,43 +1031,38 @@ class ConcurrentQueue<Element>: Queue, ExpressibleByArrayLiteral {
         }
     }
     
-    @inlinable
-    func peek() -> Element? {
+    public func peek() -> Element? {
         queue.sync {
             collection.first
         }
     }
     
-    @inlinable
-    func clear() {
+    public func clear() {
         queue.async { [weak self] in
             self?.collection.removeAll()
         }
     }
     
-    @inlinable
     public var description: String {
         queue.sync {
             collection.description
         }
     }
     
-    @inlinable
-    func map<T>(_ transform: (Element) throws -> T) throws -> [T] {
+    public func map<T>(_ transform: (Element) throws -> T) throws -> [T] {
         try queue.sync {
             try collection.map(transform)
         }
     }
     
-    @inlinable
-    var allElements: [Element] {
+    public var allElements: [Element] {
         queue.sync {
             collection
         }
     }
 }
 
-protocol ErrorHandler {
+public protocol ErrorHandler {
     var allErrorSummaries: [String] { get throws }
     var allFullErrors: [String] { get throws }
     var allErrors: [iCloudSyncError] { get }
@@ -1141,7 +1138,7 @@ extension URL {
     }
 }
 
-class ConcurrentDictionary<Key: Hashable, Value>: ExpressibleByDictionaryLiteral, CustomStringConvertible {
+public class ConcurrentDictionary<Key: Hashable, Value>: ExpressibleByDictionaryLiteral, CustomStringConvertible {
     private var dictionary: [Key: Value] = [:]
     private let queue = DispatchQueue(label: "com.provenance.concurrent.dictionary")
     
@@ -1149,7 +1146,7 @@ class ConcurrentDictionary<Key: Hashable, Value>: ExpressibleByDictionaryLiteral
         dictionary = Dictionary(uniqueKeysWithValues: elements)
     }
     
-    @inlinable
+    public
     subscript(key: Key) -> Value? {
         get {
             queue.sync {
@@ -1163,21 +1160,21 @@ class ConcurrentDictionary<Key: Hashable, Value>: ExpressibleByDictionaryLiteral
         }
     }
     
-    @inlinable
+    public
     var first: (key: Key, value: Value)? {
         queue.sync {
             dictionary.first
         }
     }
     
-    @inlinable
+    public
     var isEmpty: Bool {
         queue.sync {
             dictionary.isEmpty
         }
     }
     
-    @inlinable
+    public
     var count: Int {
         queue.sync {
             dictionary.count
