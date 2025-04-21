@@ -11,6 +11,8 @@ import RealmSwift
 import CoreImage
 import CoreImage.CIFilterBuiltins
 import PVThemes
+import PVSettings
+import Defaults
 
 /// A view that displays a game item in a cell layout
 struct GameItemViewCell: View, Equatable {
@@ -25,12 +27,14 @@ struct GameItemViewCell: View, Equatable {
 
     @ObservedRealmObject var game: PVGame
     @Default(.showGameTitles) private var showGameTitles
+    @Default(.iCloudSync) private var iCloudSyncEnabled
     var artwork: SwiftImage?
     var constrainHeight: Bool = false
     var viewType: GameItemViewType
     @State private var textMaxWidth: CGFloat = PVRowHeight
     @State private var hoverScale: CGFloat = 1.0
     @State private var glowIntensity: CGFloat = 0.0
+    @State private var needsSync: Bool = false
 
     /// Track if this cell is currently visible on screen
     @State private var isVisible: Bool = false
@@ -118,6 +122,12 @@ struct GameItemViewCell: View, Equatable {
             /// Main artwork - always shown
             GameItemThumbnail(artwork: artwork, gameTitle: game.title, boxartAspectRatio: game.boxartAspectRatio)
                 .scaleEffect(hoverScale)
+                .overlay(alignment: .topTrailing) {
+                    if iCloudSyncEnabled && needsSync {
+                        cloudSyncStatusIndicator
+                            .padding(8)
+                    }
+                }
                 /// Only apply overlay when hovering
                 .overlay(
                     Group {
@@ -192,6 +202,34 @@ struct GameItemViewCell: View, Equatable {
             .padding(.top, -2) /// Negative padding to remove default spacing
         }
         .frame(height: viewType.subtitleFontSize + 2) /// Reduced fixed height for text container
+    }
+}
+
+/// Cloud sync indicator view
+private extension GameItemViewCell {
+    var cloudSyncStatusIndicator: some View {
+        Image(systemName: "icloud")
+            .font(.system(size: 14, weight: .bold))
+            .foregroundColor(.white)
+            .padding(6)
+            .background(
+                Circle()
+                    .fill(Color.retroPink.opacity(0.9))
+                    .shadow(color: .black.opacity(0.4), radius: 2, x: 0, y: 1)
+            )
+    }
+    
+    /// Check if the game file needs to be synced to iCloud
+    func checkSyncStatus() {
+        // Check if the game has a file that needs syncing
+        if let file = game.file {
+            needsSync = file.requiresSync
+        } else if !game.relatedFiles.isEmpty {
+            // Check if any related files need syncing
+            needsSync = game.relatedFiles.contains { $0.requiresSync }
+        } else {
+            needsSync = false
+        }
     }
 }
 
