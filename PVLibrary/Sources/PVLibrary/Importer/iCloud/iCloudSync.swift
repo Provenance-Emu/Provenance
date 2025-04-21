@@ -1196,12 +1196,30 @@ enum ConcurrentCopyOptions {
     case retainCopiedItems
 }
 
-public class ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral, CustomStringConvertible {
+public class ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral, CustomStringConvertible, ObservableObject {
+    // MARK: - Combine Support
+    
+    /// Subject for publishing set changes
+    private let changeSubject = PassthroughSubject<Set<T>, Never>()
+    
+    /// Subject for publishing count changes
+    private let countSubject = CurrentValueSubject<Int, Never>(0)
+    
+    /// Publisher for set changes
+    public var publisher: AnyPublisher<Set<T>, Never> {
+        changeSubject.eraseToAnyPublisher()
+    }
+    
+    /// Publisher for count changes
+    public var countPublisher: AnyPublisher<Int, Never> {
+        countSubject.eraseToAnyPublisher()
+    }
     private var set: Set<T>
     private let queue = DispatchQueue(label: "com.provenance.concurrent.set")
     
     public required init(arrayLiteral elements: T...) {
         set = Set(elements)
+        countSubject.send(set.count)
     }
     
     convenience init(fromSet set: Set<T>) {
@@ -1211,13 +1229,17 @@ public class ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral, CustomString
     
     func insert(_ element: T) {
         queue.async { [weak self] in
-            self?.set.insert(element)
+            guard let self = self else { return }
+            self.set.insert(element)
+            self.notifyChanges()
         }
     }
     
     func remove(_ element: T) -> T? {
         queue.sync {
-            set.remove(element)
+            let removed = set.remove(element)
+            notifyChanges()
+            return removed
         }
     }
     
@@ -1229,7 +1251,9 @@ public class ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral, CustomString
     
     func removeAll() {
         queue.async { [weak self] in
-            self?.set.removeAll()
+            guard let self = self else { return }
+            self.set.removeAll()
+            self.notifyChanges()
         }
     }
     
@@ -1248,6 +1272,7 @@ public class ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral, CustomString
     func subtract<S>(_ other: S) where T == S.Element, S : Sequence {
         queue.sync {
             set.subtract(other)
+            notifyChanges()
         }
     }
     
@@ -1263,7 +1288,9 @@ public class ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral, CustomString
     
     func formUnion<S>(_ other: S) where T == S.Element, S : Sequence {
         queue.async { [weak self] in
-            self?.set.formUnion(other)
+            guard let self = self else { return }
+            self.set.formUnion(other)
+            self.notifyChanges()
         }
     }
     
@@ -1280,14 +1307,32 @@ public class ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral, CustomString
     }
     
     var count: Int {
-        queue.sync {
-            set.count
-        }
+        queue.sync { set.count }
+    }
+    
+    /// Current elements in the set as a Set
+    var elements: Set<T> {
+        queue.sync { set }
+    }
+    
+    /// Current elements in the set as an Array
+    var asArray: [T] {
+        queue.sync { Array(set) }
     }
     
     public var description: String {
         queue.sync {
             set.description
+        }
+    }
+    
+    /// Notify subscribers of changes to the set
+    private func notifyChanges() {
+        let currentSet = set
+        let currentCount = currentSet.count
+        DispatchQueue.main.async { [weak self] in
+            self?.changeSubject.send(currentSet)
+            self?.countSubject.send(currentCount)
         }
     }
 }
