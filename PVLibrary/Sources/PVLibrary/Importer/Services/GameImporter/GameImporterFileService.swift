@@ -250,6 +250,42 @@ class GameImporterFileService : GameImporterFileServicing {
         
         let destinationFolder = targetSystem.romsDirectory
         
+        // Check if the file is already in the correct system directory
+        let currentDirectory = queueItem.url.deletingLastPathComponent()
+        let fileName = queueItem.url.lastPathComponent
+        let expectedPath = destinationFolder.appendingPathComponent(fileName)
+        
+        // If the file is already in the correct location, just set the destination URL and return
+        if currentDirectory.path == destinationFolder.path {
+            ILOG("ROM file \(fileName) is already in the correct location for system \(targetSystem.rawValue), skipping move")
+            queueItem.destinationUrl = queueItem.url
+            
+            // Check if there are child items that need to be processed
+            if !queueItem.childQueueItems.isEmpty {
+                try await moveChildImports(forQueueItem: queueItem, to: destinationFolder)
+            }
+            return
+        }
+        
+        // If the file already exists at the destination, handle it specially
+        if FileManager.default.fileExists(atPath: expectedPath.path) {
+            ILOG("ROM file \(fileName) already exists at destination, skipping move and using existing file")
+            queueItem.destinationUrl = expectedPath
+            
+            // If the file is in the imports directory, delete it to avoid duplicates
+            if queueItem.url.path.contains("/Imports/") {
+                try await FileManager.default.removeItem(at: queueItem.url)
+                ILOG("Deleted duplicate file from imports directory: \(queueItem.url.path)")
+            }
+            
+            // Process child items if needed
+            if !queueItem.childQueueItems.isEmpty {
+                try await moveChildImports(forQueueItem: queueItem, to: destinationFolder)
+            }
+            return
+        }
+        
+        // If we get here, we need to move the file
         do {
             queueItem.destinationUrl = try await moveFile(queueItem.url, to: destinationFolder)
             try await moveChildImports(forQueueItem: queueItem, to: destinationFolder)
