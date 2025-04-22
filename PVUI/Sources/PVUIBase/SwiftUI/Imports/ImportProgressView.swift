@@ -82,160 +82,185 @@ public struct ImportProgressView: View {
     
     private var contentView: some View {
         VStack(alignment: .leading, spacing: 6) {
-            // Header with count of imports or iCloud sync
+            // Header with count of imports
             HStack {
                 WithPerceptionTracking {
-                    if !viewModel.importQueueItems.isEmpty {
-                        Text("IMPORTING \(viewModel.importQueueItems.count) FILES")
+                    Text(viewModel.importQueueItems.isEmpty ? "" : "IMPORTING \(viewModel.importQueueItems.count) FILES")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(.retroBlue)
+                    Spacer()
+                    
+                    // Show processing status if any item is processing
+                    if viewModel.importQueueItems.contains(where: { $0.status == .processing }) {
+                        Text("PROCESSING")
                             .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(.retroBlue)
-                        Spacer()
-                        
-                        // Show processing status if any item is processing
-                        if viewModel.importQueueItems.contains(where: { $0.status == .processing }) {
-                            Text("PROCESSING")
-                                .font(.system(size: 12, weight: .bold))
-                                .foregroundColor(.retroPink)
-                        }
-                    } else if iCloudSyncEnabled && viewModel.isSyncing {
-                        Text("iCLOUD SYNC")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(.retroBlue)
-                        Spacer()
+                            .foregroundColor(.retroPink)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 2)
+                            .background(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color.retroBlack.opacity(0.7))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .strokeBorder(Color.retroPink, lineWidth: 1)
+                                    )
+                            )
                     }
                 }
             }
             
-            // Progress bar for imports (only show if there are imports)
-            if !viewModel.importQueueItems.isEmpty {
-                // Simple progress view for now
-                ProgressView()
-                    .tint(Color.retroPink)
-            }
-            
-            // Show iCloud sync status if enabled and active
-            if iCloudSyncEnabled && (viewModel.isSyncing || !viewModel.importQueueItems.isEmpty) {
+            // iCloud sync status (only show if iCloud sync is enabled)
+            if iCloudSyncEnabled && viewModel.isSyncing {
                 iCloudSyncStatusView
             }
             
-            // Import queue items list
-            ForEach(viewModel.importQueueItems) { item in
-                VStack(alignment: .leading) {
-                    Text(item.url.lastPathComponent)
-                        .font(.system(size: 10))
-                        .foregroundColor(.white)
-                    Text(item.status.description)
-                        .font(.system(size: 8))
-                        .foregroundColor(item.status.color)
-                }
-                .padding(.vertical, 2)
-            }
-        }
-    }
-    
-    /// iCloud sync status view
-    private var iCloudSyncStatusView: some View {
-        WithPerceptionTracking {
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Image(systemName: "icloud")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(.retroBlue)
+            // Progress bar with retrowave styling
+            ZStack(alignment: .leading) {
+                // Background track
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color.retroBlack.opacity(0.7))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .strokeBorder(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                ),
+                                lineWidth: 1.5
+                            )
+                    )
+                    .frame(height: 12)
+                
+                // Progress fill - count both completed and failed items for progress
+                WithPerceptionTracking {
+                    let processedCount = viewModel.importQueueItems.filter { $0.status == .success || $0.status == .failure }.count
+                    let progress = viewModel.importQueueItems.isEmpty ? 0.0 : Double(processedCount) / Double(viewModel.importQueueItems.count)
                     
-                    Text(viewModel.isSyncing ? "iCLOUD SYNC ACTIVE" : "iCLOUD SYNC READY")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(.retroBlue)
+                    // Create a GeometryReader to get the actual width of the container
+                    GeometryReader { geometry in
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                        // Calculate width as a percentage of the available width
+                        // Use max to ensure a minimum visible width
+                        .frame(width: max(12, progress * geometry.size.width), height: 8)
+                        .cornerRadius(4)
+                        .padding(2)
+                    }
+                    // Set a fixed height for the GeometryReader
+                    .frame(height: 12)
+                }
+            }
+            
+            // Status details
+            WithPerceptionTracking {
+                HStack(spacing: 12) {
+                    statusCountView(count: viewModel.importQueueItems.filter { $0.status == .queued }.count, label: "QUEUED", color: .gray)
+                    statusCountView(count: viewModel.importQueueItems.filter { $0.status == .processing }.count, label: "PROCESSING", color: .retroBlue)
+                    statusCountView(count: viewModel.importQueueItems.filter { $0.status == .success }.count, label: "COMPLETED", color: .green)
+                    statusCountView(count: viewModel.importQueueItems.filter { $0.status == .failure }.count, label: "FAILED", color: .retroPink)
                     
                     Spacer()
+                }
+            }
+        }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.retroBlack.opacity(0.7))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                )
+        )
+        .shadow(color: Color.retroPink.opacity(0.3), radius: 5, x: 0, y: 0)
+    }
+    
+    /// iCloud sync status view - compact version
+    private var iCloudSyncStatusView: some View {
+        WithPerceptionTracking {
+            HStack(spacing: 8) {
+                Image(systemName: "icloud")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundColor(.retroBlue)
+                
+                Text("iCLOUD")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(.retroBlue)
+                
+                // Show sync counts in a compact format
+                HStack(spacing: 8) {
+                    if viewModel.pendingDownloads > 0 {
+                        HStack(spacing: 2) {
+                            Image(systemName: "arrow.down")
+                                .font(.system(size: 8))
+                            Text("\(viewModel.pendingDownloads)")
+                                .font(.system(size: 8, weight: .bold))
+                        }
+                        .foregroundColor(.retroBlue)
+                    }
                     
-                    // Show sync counts
-                    if viewModel.pendingDownloads > 0 || viewModel.pendingUploads > 0 || viewModel.newFilesCount > 0 {
-                        HStack(spacing: 8) {
-                            if viewModel.pendingDownloads > 0 {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "arrow.down.circle")
-                                        .font(.system(size: 10))
-                                    Text("\(viewModel.pendingDownloads)")
-                                        .font(.system(size: 10, weight: .bold))
-                                }
-                                .foregroundColor(.retroBlue)
-                            }
-                            
-                            if viewModel.pendingUploads > 0 {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "arrow.up.circle")
-                                        .font(.system(size: 10))
-                                    Text("\(viewModel.pendingUploads)")
-                                        .font(.system(size: 10, weight: .bold))
-                                }
-                                .foregroundColor(.retroPink)
-                            }
-                            
-                            if viewModel.newFilesCount > 0 {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "plus.circle")
-                                        .font(.system(size: 10))
-                                    Text("\(viewModel.newFilesCount)")
-                                        .font(.system(size: 10, weight: .bold))
-                                }
-                                .foregroundColor(.retroPurple)
-                            }
+                    if viewModel.pendingUploads > 0 {
+                        HStack(spacing: 2) {
+                            Image(systemName: "arrow.up")
+                                .font(.system(size: 8))
+                            Text("\(viewModel.pendingUploads)")
+                                .font(.system(size: 8, weight: .bold))
                         }
-                    } else if viewModel.isSyncing {
-                        // Show sync indicator when syncing but no counts
-                        HStack(spacing: 4) {
-                            Image(systemName: "arrow.triangle.2.circlepath")
-                                .font(.system(size: 10))
-                                .foregroundColor(.retroPink)
+                        .foregroundColor(.retroPink)
+                    }
+                    
+                    if viewModel.newFilesCount > 0 {
+                        HStack(spacing: 2) {
+                            Image(systemName: "plus")
+                                .font(.system(size: 8))
+                            Text("\(viewModel.newFilesCount)")
+                                .font(.system(size: 8, weight: .bold))
                         }
+                        .foregroundColor(.retroPurple)
                     }
                 }
                 
-                // Progress bar for iCloud sync - only show when actively syncing
+                // Animated indicator when syncing
                 if viewModel.isSyncing {
-                    ZStack(alignment: .leading) {
-                        // Background track
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(Color.retroBlack.opacity(0.7))
-                            .frame(height: 4)
-                        
-                        // Progress indicator with animation
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [.retroBlue, .retroPink]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .frame(height: 4)
-                            .frame(width: 50)
-                            .offset(x: viewModel.animatedProgressOffset)
-                            .animation(
-                                Animation.linear(duration: 1.0)
-                                    .repeatForever(autoreverses: true),
-                                value: viewModel.animatedProgressOffset
-                            )
-                            .onAppear {
-                                viewModel.startAnimation()
-                            }
-                    }
+                    Image(systemName: "arrow.triangle.2.circlepath")
+                        .font(.system(size: 8))
+                        .foregroundColor(.retroPink)
+                        .rotationEffect(Angle(degrees: viewModel.animatedProgressOffset))
+                        .animation(
+                            Animation.linear(duration: 2.0)
+                                .repeatForever(autoreverses: false),
+                            value: viewModel.animatedProgressOffset
+                        )
+                        .onAppear {
+                            viewModel.startAnimation()
+                        }
                 }
             }
-            .padding(.vertical, 4)
-            .padding(.horizontal, 8)
+            .padding(.vertical, 2)
+            .padding(.horizontal, 6)
             .background(
-                RoundedRectangle(cornerRadius: 6)
+                RoundedRectangle(cornerRadius: 4)
                     .fill(Color.retroBlack.opacity(0.5))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 6)
+                        RoundedRectangle(cornerRadius: 4)
                             .strokeBorder(
                                 LinearGradient(
                                     gradient: Gradient(colors: [.retroBlue, .retroPurple]),
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 ),
-                                lineWidth: 1
+                                lineWidth: 0.5
                             )
                     )
             )
@@ -338,7 +363,7 @@ public struct ImportProgressView: View {
         
         /// Start animation for progress bar
         func startAnimation() {
-            animatedProgressOffset = 100
+            animatedProgressOffset = 360
         }
         
         /// Setup tracking based on iCloud enabled status
