@@ -1236,7 +1236,25 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
     private func addImportItemToQueue(_ item: ImportQueueItem) async {
-        // Check for duplicates using the actor
+        // First, check if this is a BIOS file
+        let fileType = try? determineImportType(item)
+        if fileType == .bios {
+            // For BIOS files, check if we already have a matching BIOS entry with a file
+            let biosExists = await BIOSWatcher.shared.checkBIOSFile(at: item.url)
+            if biosExists {
+                ILOG("GameImportQueue - Skipping BIOS file that already exists in database: \(item.url.lastPathComponent)")
+                return
+            }
+        } else if fileType == .game || fileType == .cdRom {
+            // For ROM files, check if we already have a matching game entry in the database
+            let isROMAlreadyImported = await isROMAlreadyInDatabase(item)
+            if isROMAlreadyImported {
+                ILOG("GameImportQueue - Skipping ROM file that already exists in database: \(item.url.lastPathComponent)")
+                return
+            }
+        }
+        
+        // Check for duplicates in the current queue
         let isDuplicate = await importQueueActor.containsDuplicate(ofItem: item) { existing, newItem in
             // Check if the URL is the same
             if existing.url == newItem.url {
@@ -1309,5 +1327,58 @@ public final class GameImporter: GameImporting, ObservableObject {
             isPaused = self.processingState == .paused
         }
         return isPaused
+    }
+    
+    /// Checks if a ROM file already exists in the database with a valid file
+    /// - Parameter item: The ImportQueueItem to check
+    /// - Returns: True if the ROM already exists in the database with a valid file
+    private func isROMAlreadyInDatabase(_ item: ImportQueueItem) async -> Bool {
+        // First try to determine the system for this ROM
+        do {
+            let systems = try await gameImporterSystemsService.determineSystems(for: item)
+            guard !systems.isEmpty else {
+                // If we can't determine the system, we can't check the database
+                return false
+            }
+            
+            // For each potential system, check if the ROM already exists
+            for system in systems {
+                // Check by filename in the system's directory
+                let filename = item.url.lastPathComponent
+                let partialPath = (system.rawValue as NSString).appendingPathComponent(filename)
+                let similarName = RomDatabase.altName(item.url, systemIdentifier: system)
+                
+                // Check the games cache for this ROM
+                let gamesCache = RomDatabase.gamesCache
+                
+                if let existingGame = gamesCache[partialPath] ?? gamesCache[similarName],
+                   system.rawValue == existingGame.systemIdentifier,
+                   existingGame.file != nil {
+                    // The game exists in the database with a valid file
+                    ILOG("Found existing game in database: \(existingGame.title) with valid file")
+                    return true
+                }
+                
+                // If we have an MD5 hash, check for matches by MD5
+                if let md5 = item.md5?.uppercased() {
+                    let realm = RomDatabase.sharedInstance.realm
+                    let gamesWithSameMD5 = realm.objects(PVGame.self).filter("md5Hash == %@", md5)
+                    
+                    if let existingGameWithSameMD5 = gamesWithSameMD5.first,
+                       system.rawValue == existingGameWithSameMD5.systemIdentifier,
+                       existingGameWithSameMD5.file != nil {
+                        // The game exists in the database with a valid file and matching MD5
+                        ILOG("Found existing game with same MD5 hash: \(existingGameWithSameMD5.title) with valid file")
+                        return true
+                    }
+                }
+            }
+            
+            // If we get here, the ROM doesn't exist in the database with a valid file
+            return false
+        } catch {
+            ELOG("Error checking if ROM is already in database: \(error.localizedDescription)")
+            return false
+        }
     }
 }
