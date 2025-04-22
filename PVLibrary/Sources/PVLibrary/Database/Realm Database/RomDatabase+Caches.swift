@@ -152,6 +152,36 @@ public extension RomDatabase {
             _gamesCache = await addGameCache(game, cache: RomDatabase.gamesCache ?? [:])
         }
     }
+    
+    /// Removes a game from the games cache without reloading the entire cache
+    /// - Parameter game: The game to remove from the cache
+    static func removeGameFromCache(_ game: PVGame) {
+        DLOG("Removing game from cache: \(game.title)")
+        guard var cache = _gamesCache else {
+            // Cache doesn't exist, nothing to remove
+            return
+        }
+        
+        // Remove the main entry for the game's ROM path
+        cache.removeValue(forKey: game.romPath)
+        
+        // Remove any entries for the game's file URL
+        if let url = game.file?.url {
+            cache.removeValue(forKey: altName(url, systemIdentifier: game.systemIdentifier))
+        }
+        
+        // Remove any entries for related files
+        game.relatedFiles.forEach { relatedFile in
+            if let url = relatedFile.url {
+                let key = (game.systemIdentifier as NSString).appendingPathComponent(url.lastPathComponent)
+                cache.removeValue(forKey: key)
+                cache.removeValue(forKey: altName(url, systemIdentifier: game.systemIdentifier))
+            }
+        }
+        
+        // Update the cache
+        _gamesCache = cache
+    }
     static func altName(_ romPath:URL, systemIdentifier:String) -> String {
         var similarName = romPath.deletingPathExtension().lastPathComponent
         similarName = PVEmulatorConfiguration.stripDiscNames(fromFilename: similarName)

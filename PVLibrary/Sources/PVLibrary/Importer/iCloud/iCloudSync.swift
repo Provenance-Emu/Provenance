@@ -427,14 +427,19 @@ extension URL {
 
 extension Realm {
     func deleteGame(_ game: PVGame) throws {
-        guard !game.isInvalidated else { return }
+        // Make a frozen copy of the game before deletion to use for cache removal
+        let frozenGame = game.freeze()
+        
         try write {
+            guard !game.isInvalidated else { return }
             game.saveStates.forEach { try? $0.delete() }
             game.cheats.forEach { try? $0.delete() }
             game.recentPlays.forEach { try? $0.delete() }
             game.screenShots.forEach { try? $0.delete() }
             delete(game)
-            RomDatabase.reloadGamesCache()
+            
+            // Use the more efficient cache removal instead of reloading the entire cache
+            RomDatabase.removeGameFromCache(frozenGame)
         }
     }
 }
