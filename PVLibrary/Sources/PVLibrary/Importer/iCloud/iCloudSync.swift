@@ -3,10 +3,12 @@
 //  PVLibrary
 //
 //  Created by Joseph Mattiello on 11/13/18.
-//  Copyright © 2018 Provenance Emu. All rights reserved.
+//  Copyright 2018 Provenance Emu. All rights reserved.
 //
 
 import Foundation
+import CloudKit
+import Combine
 import PVLogging
 import PVSupport
 import RealmSwift
@@ -15,7 +17,6 @@ import RxSwift
 import PVPrimitives
 import PVFileSystem
 import PVRealm
-import Combine
 
 public enum SyncError: Error {
     case noUbiquityURL
@@ -38,16 +39,8 @@ extension Container {
     public var documentsURL: URL? { get { return URL.iCloudDocumentsDirectory }}
 }
 
-public protocol iCloudTypeSyncer: Container {
-    var directories: Set<String> { get }
+public protocol iCloudTypeSyncer: Container, SyncProvider {
     var metadataQuery: NSMetadataQuery { get }
-
-    func loadAllFromICloud(iterationComplete: (() -> Void)?) -> Completable
-    func insertDownloadingFile(_ file: URL) -> URL?
-    func insertDownloadedFile(_ file: URL)
-    func insertUploadedFile(_ file: URL)
-    func deleteFromDatastore(_ file: URL)
-    func setNewCloudFilesAvailable()
 }
 
 public enum iCloudSyncStatus {
@@ -55,6 +48,7 @@ public enum iCloudSyncStatus {
     case filesAlreadyMoved
 }
 
+#if !os(tvOS)
 public class iCloudContainerSyncer: iCloudTypeSyncer {
     public lazy var pendingFilesToDownload: ConcurrentSet<URL> = []
     public lazy var newFiles: ConcurrentSet<URL> = []
@@ -63,7 +57,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
     public let fileManager: FileManager = .default
     public let notificationCenter: NotificationCenter
     public var status: iCloudSyncStatus = .initialUpload
-    public let errorHandler: ErrorHandler
+    public let errorHandler: CloudSyncErrorHandler
     public var initialSyncResult: SyncResult = .indeterminate
     public var fileImportQueueMaxCount = 1000
     public var purgeStatus: DatastorePurgeStatus = .incomplete
@@ -71,7 +65,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
     
     public init(directories: Set<String>,
          notificationCenter: NotificationCenter,
-         errorHandler: ErrorHandler) {
+         errorHandler: CloudSyncErrorHandler) {
         self.notificationCenter = notificationCenter
         self.directories = directories
         self.errorHandler = errorHandler
@@ -146,7 +140,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
         //no-op
     }
     
-    func prepareNextBatchToProcess() -> any Collection<URL> {
+    public func prepareNextBatchToProcess() -> any Collection<URL> {
         DLOG("\(directories): newFiles: (\(newFiles.count)):")
         DLOG("\(directories): \(newFiles)")
         let nextFilesToProcess = newFiles.prefix(fileImportQueueMaxCount)
@@ -159,7 +153,11 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
         return nextFilesToProcess
     }
     
-    public func loadAllFromICloud(iterationComplete: (() -> Void)? = nil) -> Completable {
+    public func loadAllFromCloud(iterationComplete: (() -> Void)?) -> Completable {
+        return loadAllFromICloud(iterationComplete: iterationComplete)
+    }
+    
+    public func loadAllFromICloud(iterationComplete: (() -> Void)?) -> Completable {
         return Completable.create { [weak self] completable in
             self?.setupObservers(completable: completable, iterationComplete: iterationComplete)
             return Disposables.create()
@@ -425,6 +423,8 @@ extension URL {
     }
 }
 
+#endif
+
 extension Realm {
     func deleteGame(_ game: PVGame) throws {
         // Make a frozen copy of the game before deletion to use for cache removal
@@ -455,7 +455,7 @@ public enum iCloudSync {
     static var disposeBag: DisposeBag!
     static var gameImporter = GameImporter.shared
     static var state: iCloudSync = .initialAppLoad
-    static let errorHandler: ErrorHandler = iCloudErrorHandler.shared
+    static let errorHandler: CloudSyncErrorHandler = iCloudErrorHandler.shared
     static var romDatabaseInitializedSubscriber: AnyCancellable?
     public static func initICloudDocuments() {
         romDatabaseInitializedSubscriber = NotificationCenter.default.publisher(for: .RomDatabaseInitialized).sink { _ in
@@ -516,7 +516,11 @@ public enum iCloudSync {
         var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots", "DeltaSkins"],
                                                                   notificationCenter: .default,
                                                                   errorHandler: iCloudErrorHandler.shared)
-        nonDatabaseFileSyncer.loadAllFromICloud()
+        nonDatabaseFileSyncer.loadAllFromICloud() {
+                // Refresh BIOS cache after each iteration
+                DLOG("Refreshing BIOS cache after iCloud sync iteration")
+                RomDatabase.reloadBIOSCache()
+            }
             .observe(on: MainScheduler.instance)
             .subscribe(onError: { error in
                 ELOG(error.localizedDescription)
@@ -524,10 +528,13 @@ public enum iCloudSync {
                 DLOG("disposing nonDatabaseFileSyncer")
                 nonDatabaseFileSyncer = nil
             }.disposed(by: disposeBag)
-        var saveStateSyncer: SaveStateSyncer! = .init(notificationCenter: .default, errorHandler: iCloudErrorHandler.shared)
+        var saveStateSyncer: iCloudSaveStateSyncer! = .init(notificationCenter: .default, errorHandler: iCloudErrorHandler.shared)
         saveStateSyncer.loadAllFromICloud() {
+                // Import new saves after each iteration
+                DLOG("Importing new save states after iCloud sync iteration")
                 saveStateSyncer.importNewSaves()
-            }.observe(on: MainScheduler.instance)
+            }
+            .observe(on: MainScheduler.instance)
             .subscribe(onError: { error in
                 ELOG(error.localizedDescription)
             }) {
@@ -535,10 +542,13 @@ public enum iCloudSync {
                 saveStateSyncer = nil
             }.disposed(by: disposeBag)
         
-        var romsSyncer: RomsSyncer! = .init(notificationCenter: .default, errorHandler: iCloudErrorHandler.shared)
+        var romsSyncer: iCloudRomsSyncer! = .init(notificationCenter: .default, errorHandler: iCloudErrorHandler.shared)
         romsSyncer.loadAllFromICloud() {
+                // Import new ROMs after each iteration
+                DLOG("Importing new ROM files after iCloud sync iteration")
                 romsSyncer.handleImportNewRomFiles()
-            }.observe(on: MainScheduler.instance)
+            }
+            .observe(on: MainScheduler.instance)
             .subscribe(onError: { error in
                 ELOG(error.localizedDescription)
             }) {
@@ -558,13 +568,13 @@ public enum iCloudSync {
 
 //MARK: - iCloud syncers
 
-class SaveStateSyncer: iCloudContainerSyncer {
+class iCloudSaveStateSyncer: iCloudContainerSyncer {
     let jsonDecorder = JSONDecoder()
     let processed = ConcurrentQueue<Int>(arrayLiteral: 0)
     let processingState: ConcurrentQueue<ProcessingState> = .init(arrayLiteral: .idle)
     var savesFinishedImportingSubscriber: AnyCancellable?
     
-    convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
+    convenience init(notificationCenter: NotificationCenter, errorHandler: CloudSyncErrorHandler) {
         self.init(directories: ["Save States"], notificationCenter: notificationCenter, errorHandler: errorHandler)
         fileImportQueueMaxCount = 10
         jsonDecorder.dataDecodingStrategy = .deferredToData
@@ -783,13 +793,13 @@ public enum GameStatus {
     case gameDoesNotExist
 }
 
-public class RomsSyncer: iCloudContainerSyncer {
+public class iCloudRomsSyncer: iCloudContainerSyncer {
     let gameImporter = GameImporter.shared
     public let processingFiles = ConcurrentQueue(arrayLiteral: 0)
     public let multiFileRoms: ConcurrentDictionary<String, [URL]> = [:]
     public var romsFinishedImportingSubscriber: AnyCancellable?
     
-    convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
+    convenience init(notificationCenter: NotificationCenter, errorHandler: CloudSyncErrorHandler) {
         self.init(directories:  ["ROMs", "Save States", "BIOS", "DeltaSkins"], notificationCenter: notificationCenter, errorHandler: errorHandler)
         romsFinishedImportingSubscriber = notificationCenter.publisher(for: .RomsFinishedImporting).sink { [weak self] _ in
             Task {
@@ -988,13 +998,7 @@ public class RomsSyncer: iCloudContainerSyncer {
     }
 }
 
-public struct iCloudSyncError {
-    let file: String?
-    var summary: String {
-        error.localizedDescription
-    }
-    let error: Error
-}
+// iCloudSyncError moved to SyncErrorHandler.swift
 
 protocol Queue {
     associatedtype Entry
@@ -1068,51 +1072,50 @@ public class ConcurrentQueue<Element>: Queue, ExpressibleByArrayLiteral {
     }
 }
 
-public protocol ErrorHandler {
-    var allErrorSummaries: [String] { get throws }
-    var allFullErrors: [String] { get throws }
-    var allErrors: [iCloudSyncError] { get }
-    var numberOfErrors: Int { get }
-    func handleError(_ error: Error, file: URL?)
-    func clear()
-}
+// SyncErrorHandler protocol moved to SyncErrorHandler.swift
 
-class iCloudErrorHandler: ErrorHandler {
+class iCloudErrorHandler: CloudSyncErrorHandler {
     static let shared = iCloudErrorHandler()
     private let queue = ConcurrentQueue<iCloudSyncError>()
     
     @inlinable
-    var allErrorSummaries: [String] {
+    override var allErrorSummaries: [String] {
         get throws {
             try queue.map { $0.summary }
         }
     }
     
     @inlinable
-    var allFullErrors: [String] {
+    override var allFullErrors: [String] {
         get throws {
             try queue.map { "\($0.error)" }
         }
     }
     
     @inlinable
-    var allErrors: [iCloudSyncError] {
+    override var allErrors: [iCloudSyncError] {
         queue.allElements
     }
     
     @inlinable
-    var numberOfErrors: Int {
+    override var numberOfErrors: Int {
         queue.count
     }
     
-    func handleError(_ error: any Error, file: URL?) {
+    override func handleError(_ error: any Error, file: URL?) {
         let syncError = iCloudSyncError(file: file?.path(percentEncoded: false), error: error)
         queue.enqueue(entry: syncError)
     }
     
     @inlinable
-    func clear() {
+    override func clear() {
         queue.clear()
+    }
+    
+    /// Handle an error with optional context
+    /// - Parameter error: The error to handle
+    override func handle(error: Error) {
+        handleError(error, file: nil)
     }
 }
 
@@ -1128,7 +1131,7 @@ extension URL {
     //TODO: needs to be updated to not include .bin files for non multi-file ROMs
     var multiFileNameKey: String? {
         guard "cue".caseInsensitiveCompare(pathExtension) == .orderedSame
-                || "bin".caseInsensitiveCompare(pathExtension) == .orderedSame
+//                || "bin".caseInsensitiveCompare(pathExtension) == .orderedSame
                 || "ccd".caseInsensitiveCompare(pathExtension) == .orderedSame
                 || "img".caseInsensitiveCompare(pathExtension) == .orderedSame
                 || "sub".caseInsensitiveCompare(pathExtension) == .orderedSame
@@ -1194,12 +1197,12 @@ public class ConcurrentDictionary<Key: Hashable, Value>: ExpressibleByDictionary
     }
 }
 
-enum ConcurrentCopyOptions {
-    case removeCopiedItems
-    case retainCopiedItems
-}
-
 public class ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral, CustomStringConvertible, ObservableObject {
+    public enum ConcurrentCopyOptions {
+        case removeCopiedItems
+        case retainCopiedItems
+    }
+
     // MARK: - Combine Support
     
     /// Subject for publishing set changes
@@ -1217,6 +1220,8 @@ public class ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral, CustomString
     public var countPublisher: AnyPublisher<Int, Never> {
         countSubject.eraseToAnyPublisher()
     }
+    
+    // MARK: - Properties
     private var set: Set<T>
     private let queue = DispatchQueue(label: "com.provenance.concurrent.set")
     
@@ -1225,12 +1230,12 @@ public class ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral, CustomString
         countSubject.send(set.count)
     }
     
-    convenience init(fromSet set: Set<T>) {
+    public convenience init(fromSet set: Set<T>) {
         self.init()
         self.set.formUnion(set)
     }
     
-    func insert(_ element: T) {
+    public func insert(_ element: T) {
         queue.async { [weak self] in
             guard let self = self else { return }
             self.set.insert(element)
@@ -1238,7 +1243,7 @@ public class ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral, CustomString
         }
     }
     
-    func remove(_ element: T) -> T? {
+    public func remove(_ element: T) -> T? {
         queue.sync {
             let removed = set.remove(element)
             notifyChanges()
@@ -1246,13 +1251,13 @@ public class ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral, CustomString
         }
     }
     
-    func contains(_ element: T) -> Bool {
+    public func contains(_ element: T) -> Bool {
         queue.sync {
             set.contains(element)
         }
     }
     
-    func removeAll() {
+    public func removeAll() {
         queue.async { [weak self] in
             guard let self = self else { return }
             self.set.removeAll()
@@ -1260,26 +1265,26 @@ public class ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral, CustomString
         }
     }
     
-    func forEach(_ body: (T) throws -> Void) rethrows {
+    public func forEach(_ body: (T) throws -> Void) rethrows {
         try queue.sync {
             try set.forEach(body)
         }
     }
     
-    func prefix(_ maxLength: Int) -> Slice<Set<T>> {
+    public func prefix(_ maxLength: Int) -> Slice<Set<T>> {
         queue.sync {
             set.prefix(maxLength)
         }
     }
     
-    func subtract<S>(_ other: S) where T == S.Element, S : Sequence {
+    public func subtract<S>(_ other: S) where T == S.Element, S : Sequence {
         queue.sync {
             set.subtract(other)
             notifyChanges()
         }
     }
     
-    func copy(options: ConcurrentCopyOptions) -> Set<T> {
+    public func copy(options: ConcurrentCopyOptions) -> Set<T> {
         queue.sync {
             var copiedSet: Set<T> = .init(set)
             if options == .removeCopiedItems {
@@ -1289,7 +1294,7 @@ public class ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral, CustomString
         }
     }
     
-    func formUnion<S>(_ other: S) where T == S.Element, S : Sequence {
+    public func formUnion<S>(_ other: S) where T == S.Element, S : Sequence {
         queue.async { [weak self] in
             guard let self = self else { return }
             self.set.formUnion(other)
@@ -1297,29 +1302,29 @@ public class ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral, CustomString
         }
     }
     
-    var isEmpty: Bool {
+    public var isEmpty: Bool {
         queue.sync {
             set.isEmpty
         }
     }
     
-    var first: T? {
+    public var first: T? {
         queue.sync {
             set.first
         }
     }
     
-    var count: Int {
+    public var count: Int {
         queue.sync { set.count }
     }
     
     /// Current elements in the set as a Set
-    var elements: Set<T> {
+    public var elements: Set<T> {
         queue.sync { set }
     }
     
     /// Current elements in the set as an Array
-    var asArray: [T] {
+    public var asArray: [T] {
         queue.sync { Array(set) }
     }
     

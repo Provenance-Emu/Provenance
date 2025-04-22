@@ -468,7 +468,7 @@ public struct ImportProgressView: View {
         }
         
         /// Track all syncers for activity
-        private func trackSyncers(_ syncers: [iCloudContainerSyncer]) {
+        private func trackSyncers(_ syncers: [any SyncProvider]) {
             for syncer in syncers {
                 // Track pending downloads
                 let downloadSubscription = syncer.pendingFilesToDownload.countPublisher
@@ -509,7 +509,7 @@ public struct ImportProgressView: View {
         }
         
         /// Get active syncers from iCloudSync
-        private func getSyncers() -> [iCloudContainerSyncer]? {
+        private func getSyncers() -> [any SyncProvider]? {
             // Get the actual syncer instances from the store
             return iCloudSyncerStore.shared.activeSyncers
         }

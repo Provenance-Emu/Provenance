@@ -311,6 +311,11 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         _initICloud()
         _initUITheme()
         _initThemeListener()
+        
+        #if os(tvOS)
+        // Initialize CloudKit for tvOS
+        initializeCloudKit()
+        #endif
 
         // Register intent handler for Siri shortcuts
 #if false

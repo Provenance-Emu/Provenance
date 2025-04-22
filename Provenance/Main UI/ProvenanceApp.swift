@@ -7,6 +7,10 @@ import PVThemes
 import PVLibrary
 import PVEmulatorCore
 import PVCoreBridge
+import UserNotifications
+#if os(tvOS)
+import CloudKit
+#endif
 #if canImport(FreemiumKit)
 import FreemiumKit
 #endif
@@ -194,6 +198,16 @@ struct ProvenanceApp: App {
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
+                #if os(tvOS)
+                // Initialize CloudKit subscription manager when app becomes active
+                if Defaults[.iCloudSync] {
+                    Task {
+                        await CloudKitSubscriptionManager.shared.setupSubscriptions()
+                    }
+                }
+                #endif
+                
+                // Start bootup sequence
                 appState.startBootupSequence()
 
                 /// Swizzle sendEvent(UIEvent)
