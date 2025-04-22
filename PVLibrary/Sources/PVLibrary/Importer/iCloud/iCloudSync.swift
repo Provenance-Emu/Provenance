@@ -347,25 +347,30 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         else {
             return .denied
         }
-        var moveResult: SyncResult? = nil
+        return .success
+        //TODO: this has to be refactored so it happens initially, but this version we'll just call the move to icloud in the static function initiateDownloadOfiCloudDocumentsContainer
+        /*var moveResult: SyncResult? = nil
         for (localDirectory, iCloudDirectory) in allDirectories {
-            let moved = await moveFiles(at: localDirectory,
-                                        containerDestination: iCloudDirectory,
-                                        existingClosure: { existing in
+            let moved = await iCloudContainerSyncer.moveFiles(at: localDirectory,
+                                                              containerDestination: iCloudDirectory,
+                                                              logPrefix: "\(directories)",
+                                                              existingClosure: { existing in
                 do {
                     try fileManager.removeItem(atPath: existing.pathDecoded)
                 } catch {
                     await errorHandler.handleError(error, file: existing)
                     ELOG("error deleting existing file \(existing) that already exists in iCloud: \(error)")
                 }
-            }) { currentSource, currentDestination in
+            }, moveClosure: { currentSource, currentDestination in
                 try fileManager.setUbiquitous(true, itemAt: currentSource, destinationURL: currentDestination)
+            }) { [weak self] destination in
+                await self?.insertUploadedFile(destination)
             }
             if moved == .saveFailure {
                 moveResult = .saveFailure
             }
         }
-        return moveResult ?? .success
+        return moveResult ?? .success*/
     }
     
     @discardableResult
@@ -383,9 +388,10 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         }
         var moveResult: SyncResult?
         for (localDirectory, iCloudDirectory) in allDirectories {
-            let moved = await moveFiles(at: iCloudDirectory,
-                                        containerDestination: localDirectory,
-                                        existingClosure: { existing in
+            let moved = await iCloudContainerSyncer.moveFiles(at: iCloudDirectory,
+                                                              containerDestination: localDirectory,
+                                                              logPrefix: "\(directories)",
+                                                              existingClosure: { existing in
                 do {
                     try fileManager.evictUbiquitousItem(at: existing)
                 } catch {
@@ -399,7 +405,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                     await errorHandler.handleError(error, file: existing)
                     ELOG("error evicting iCloud file: \(existing), \(error)")
                 }
-            }) { currentSource, currentDestination in
+            }, moveClosure: { currentSource, currentDestination in
                 try fileManager.copyItem(at: currentSource, to: currentDestination)
                 do {
                     try fileManager.evictUbiquitousItem(at: currentSource)
@@ -407,7 +413,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                     await errorHandler.handleError(error, file: currentSource)
                     ELOG("error evicting iCloud file: \(currentSource), \(error)")
                 }
-            }
+            })
             if moved == .saveFailure {
                 moveResult = .saveFailure
             }
@@ -416,12 +422,17 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         return result
     }
     
-    func moveFiles(at source: URL,
-                   containerDestination: URL,
-                   existingClosure: ((URL) async -> Void),
-                   moveClosure: (URL, URL) async throws -> Void) async -> SyncResult {
+    //TODO: refactor this so it's not static.
+    static func moveFiles(at source: URL,
+                          containerDestination: URL,
+                          logPrefix: String,
+                          existingClosure: ((URL) async -> Void),
+                          moveClosure: (URL, URL) async throws -> Void,
+                          insertUploadedFileClosure: ((URL) async -> Void)? = nil) async -> SyncResult {
         //TODO: if there a lot of files, this will take some time. we could fire off 2 threads to at least make it execute in half the time at a minimum.
-        DLOG("source: \(source)")
+        let fileManager: FileManager = .default
+        let errorHandler: ErrorHandler = iCloudErrorHandler.shared
+        ILOG("source: \(source), destination: \(containerDestination)")
         guard fileManager.fileExists(atPath: source.pathDecoded)
         else {
             return .fileNotExist
@@ -464,14 +475,14 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
                 totalMoved += 1
                 DLOG("#\(totalMoved) Trying to move \(currentItem.pathDecoded) to \(destination.pathDecoded)")
                 await try moveClosure(currentItem, destination)
-                await insertUploadedFile(destination)
+                await insertUploadedFileClosure?(destination)
             } catch {
                 await errorHandler.handleError(error, file: currentItem)
                 //this could indicate no more space is left when moving to iCloud
                 ELOG("#\(totalMoved) failed to move \(currentItem.pathDecoded) to \(destination.pathDecoded): \(error)")
             }
         }
-        ILOG("\(directories) moved a total of \(totalMoved)")
+        ILOG("\(logPrefix) moved a total of \(totalMoved)")
         return .success
     }
 }
@@ -508,6 +519,51 @@ public enum iCloudSync {
         await turnOn()
     }
     
+    /// Moves local app container files to the cloud container
+    /// - Parameters:
+    ///   - directories: directorie names to process
+    ///   - parentContainer: cloud container
+    /// - Returns: `success` if successful otherwise `saveFailure`
+    static func moveLocalFilesToCloudContainer(directories: [String], parentContainer: URL) async {
+        var alliCloudDirectories = [URL: URL]()
+        directories.forEach { directory in
+            alliCloudDirectories[URL.documentsDirectory.appendingPathComponent(directory)] = parentContainer.appendingPathComponent(directory)
+        }
+        let fileManager: FileManager = .default
+        for (localDirectory, iCloudDirectory) in alliCloudDirectories {
+            let _ = await iCloudContainerSyncer.moveFiles(at: localDirectory,
+                                                          containerDestination: iCloudDirectory,
+                                                          logPrefix: "\(directories)",
+                                                          existingClosure: { existing in
+                do {
+                    try fileManager.removeItem(atPath: existing.pathDecoded)
+                } catch {
+                    await errorHandler.handleError(error, file: existing)
+                    ELOG("error deleting existing file \(existing) that already exists in iCloud: \(error)")
+                }
+            }, moveClosure: { currentSource, currentDestination in
+                try fileManager.setUbiquitous(true, itemAt: currentSource, destinationURL: currentDestination)
+            })
+        }
+    }
+    
+    static func moveAllLocalFilesToCloudContainer(_ documentsDirectory: URL) async {
+        ILOG("Initial Download: moving all local files to cloud container: \(documentsDirectory)")
+        await withTaskGroup(of: Void.self) { group in
+            group.addTask {
+                await moveLocalFilesToCloudContainer(directories: ["BIOS", "Battery States", "Screenshots", "RetroArch"], parentContainer: documentsDirectory)
+            }
+            group.addTask {
+                await moveLocalFilesToCloudContainer(directories: ["Save States"], parentContainer: documentsDirectory)
+            }
+            group.addTask {
+                await moveLocalFilesToCloudContainer(directories: ["ROMs"], parentContainer: documentsDirectory)
+            }
+            await group.waitForAll()
+            ILOG("Initial Download: finished moving all local files to cloud container: \(documentsDirectory)")
+        }
+    }
+    
     /// in order to account for large libraries, we go through each directory/file and tell the iCloud API to start downloading. this way it starts and by the time we query, we can get actual events that the downloads complete. If the files are already downloaded, then a query to get the latest version will be done.
     static func initiateDownloadOfiCloudDocumentsContainer() async {
         guard let documentsDirectory = URL.iCloudDocumentsDirectory
@@ -515,6 +571,7 @@ public enum iCloudSync {
             ELOG("Initial Download: error obtaining iCloud documents directory")
             return
         }
+        await moveAllLocalFilesToCloudContainer(documentsDirectory)
         ILOG("Initial Download: initiate downloading all files...")
         let romsDirectory = documentsDirectory.appendingPathComponent("ROMs")
         let saveStatesDirectory = documentsDirectory.appendingPathComponent("Save States")
