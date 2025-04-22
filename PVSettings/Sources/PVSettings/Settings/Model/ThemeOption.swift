@@ -93,5 +93,5 @@ public enum ThemeOptionsCGA: String, ThemeOptions {
 }
 
 public extension Defaults.Keys {
-    static let theme = Key<ThemeOption>("theme", default: .standard(.auto))
+    static let theme = Key<ThemeOption>("theme", default: .standard(.dark))
 }
