@@ -427,6 +427,7 @@ extension URL {
 
 extension Realm {
     func deleteGame(_ game: PVGame) throws {
+        guard !game.isInvalidated else { return }
         try write {
             game.saveStates.forEach { try? $0.delete() }
             game.cheats.forEach { try? $0.delete() }
