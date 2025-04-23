@@ -885,37 +885,69 @@ struct iCloudSyncStatusView: View {
     private func fetchCloudKitRecordCounts() {
         Task {
             do {
+                DLOG("Starting CloudKit record count fetch")
+                
                 // Set loading state
                 await MainActor.run {
                     isLoadingCloudKitRecords = true
                 }
                 
+                // Check if we have any active syncers
+                let activeSyncers = CloudKitSyncerStore.shared.activeSyncers
+                DLOG("Total active syncers: \(activeSyncers.count)")
+                
                 // Get ROM syncer record count
                 var romCount = 0
-                if let romSyncers = CloudKitSyncerStore.shared.romSyncers as? [CloudKitRomsSyncer] {
-                    for syncer in romSyncers {
+                let romSyncers = CloudKitSyncerStore.shared.romSyncers
+                DLOG("Found \(romSyncers.count) ROM syncers")
+                
+                if let cloudKitRomSyncers = romSyncers as? [CloudKitRomsSyncer] {
+                    DLOG("Found \(cloudKitRomSyncers.count) CloudKit ROM syncers")
+                    for (index, syncer) in cloudKitRomSyncers.enumerated() {
+                        DLOG("Fetching record count for ROM syncer \(index + 1)")
                         let count = await syncer.getRecordCount()
+                        DLOG("ROM syncer \(index + 1) has \(count) records")
                         romCount += count
                     }
+                } else {
+                    DLOG("No CloudKit ROM syncers found")
                 }
                 
                 // Get save state syncer record count
                 var saveStateCount = 0
-                if let saveStateSyncers = CloudKitSyncerStore.shared.saveStateSyncers as? [CloudKitSaveStatesSyncer] {
-                    for syncer in saveStateSyncers {
+                let saveStateSyncers = CloudKitSyncerStore.shared.saveStateSyncers
+                DLOG("Found \(saveStateSyncers.count) save state syncers")
+                
+                if let cloudKitSaveStateSyncers = saveStateSyncers as? [CloudKitSaveStatesSyncer] {
+                    DLOG("Found \(cloudKitSaveStateSyncers.count) CloudKit save state syncers")
+                    for (index, syncer) in cloudKitSaveStateSyncers.enumerated() {
+                        DLOG("Fetching record count for save state syncer \(index + 1)")
                         let count = await syncer.getRecordCount()
+                        DLOG("Save state syncer \(index + 1) has \(count) records")
                         saveStateCount += count
                     }
+                } else {
+                    DLOG("No CloudKit save state syncers found")
                 }
                 
                 // Get BIOS syncer record count
                 var biosCount = 0
-                if let biosSyncers = CloudKitSyncerStore.shared.biosSyncers as? [CloudKitBIOSSyncer] {
-                    for syncer in biosSyncers {
+                let biosSyncers = CloudKitSyncerStore.shared.biosSyncers
+                DLOG("Found \(biosSyncers.count) BIOS syncers")
+                
+                if let cloudKitBiosSyncers = biosSyncers as? [CloudKitBIOSSyncer] {
+                    DLOG("Found \(cloudKitBiosSyncers.count) CloudKit BIOS syncers")
+                    for (index, syncer) in cloudKitBiosSyncers.enumerated() {
+                        DLOG("Fetching record count for BIOS syncer \(index + 1)")
                         let count = await syncer.getRecordCount()
+                        DLOG("BIOS syncer \(index + 1) has \(count) records")
                         biosCount += count
                     }
+                } else {
+                    DLOG("No CloudKit BIOS syncers found")
                 }
+                
+                DLOG("CloudKit record counts - ROMs: \(romCount), Save States: \(saveStateCount), BIOS: \(biosCount)")
                 
                 // Update UI on main thread
                 await MainActor.run {
@@ -925,6 +957,7 @@ struct iCloudSyncStatusView: View {
                         bios: biosCount
                     )
                     isLoadingCloudKitRecords = false
+                    DLOG("Updated UI with CloudKit record counts")
                 }
             } catch {
                 ELOG("Error fetching CloudKit record counts: \(error.localizedDescription)")

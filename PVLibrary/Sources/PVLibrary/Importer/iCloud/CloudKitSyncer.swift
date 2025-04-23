@@ -221,27 +221,27 @@ public class CloudKitSyncer: SyncProvider {
                 subscriptionID: subscriptionID,
                 options: [.firesOnRecordCreation, .firesOnRecordUpdate, .firesOnRecordDeletion]
             )
-                    
+            
             let notificationInfo = CKSubscription.NotificationInfo()
             notificationInfo.shouldSendContentAvailable = true
             subscription.notificationInfo = notificationInfo
-                    
+            
             Task {
                 do {
                     try await privateDatabase.save(subscription)
                     DLOG("Created CloudKit subscription for directory: \(directory)")
+                } catch {
+                    ELOG("Failed to create CloudKit subscription: \(error.localizedDescription)")
+                    errorHandler.handle(error: error)
                 }
-            } catch {
-                ELOG("Failed to create CloudKit subscription: \(error.localizedDescription)")
-                errorHandler.handle(error: error)
             }
+            
+            // Set up notification handler for remote notifications
+            subscriptionToken = NotificationCenter.default.publisher(for: .CKAccountChanged)
+                .sink { [weak self] _ in
+                    self?.handleCloudKitAccountChanged()
+                }
         }
-        
-        // Set up notification handler for remote notifications
-        subscriptionToken = NotificationCenter.default.publisher(for: .CKAccountChanged)
-            .sink { [weak self] _ in
-                self?.handleCloudKitAccountChanged()
-            }
     }
     
     /// Handle CloudKit account changes
@@ -397,6 +397,11 @@ public class CloudKitSyncer: SyncProvider {
     /// - Returns: The number of records
     public func getRecordCount() async -> Int {
         do {
+            // Ensure the CloudKit schema is initialized first
+            await initializeCloudKitSchema()
+            
+            DLOG("Getting record count for record type: \(recordType)")
+            
             // Create a query for all records of this syncer's type
             let query = CKQuery(recordType: recordType, predicate: NSPredicate(value: true))
             
@@ -412,15 +417,17 @@ public class CloudKitSyncer: SyncProvider {
             return try await withCheckedThrowingContinuation { continuation in
                 // Set up the record fetched block to count records
                 queryOperation.recordFetchedBlock = { (record: CKRecord) in
+                    DLOG("Found record: \(record.recordID.recordName)")
                     recordCount += 1
                 }
                 
                 // Set up the completion block
                 queryOperation.queryCompletionBlock = { (cursor: CKQueryOperation.Cursor?, error: Error?) in
                     if let error = error {
-                        ELOG("Error getting record count: \(error.localizedDescription)")
+                        ELOG("Error getting record count for \(self.recordType): \(error.localizedDescription)")
                         continuation.resume(returning: 0)
                     } else {
+                        DLOG("Found \(recordCount) records for record type: \(self.recordType)")
                         // If there's a cursor, there are more records
                         // But for simplicity, we'll just return the count we have
                         continuation.resume(returning: recordCount)
@@ -431,7 +438,7 @@ public class CloudKitSyncer: SyncProvider {
                 privateDatabase.add(queryOperation)
             }
         } catch {
-            ELOG("Error getting record count: \(error.localizedDescription)")
+            ELOG("Error getting record count for \(recordType): \(error.localizedDescription)")
             return 0
         }
     }

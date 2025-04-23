@@ -11,6 +11,7 @@ import CloudKit
 import PVLogging
 import Combine
 import UIKit
+import PVLibrary
 
 /// Manager for CloudKit subscriptions
 /// Handles creating and managing subscriptions for real-time updates
@@ -62,10 +63,26 @@ public class CloudKitSubscriptionManager {
     /// Set up subscriptions for CloudKit updates
     public func setupSubscriptions() async {
         do {
+            // Initialize CloudKit schema first
+            let bundleIdentifier = Bundle.main.bundleIdentifier ?? "com.provenance-emu.provenance"
+            let containerIdentifier = "iCloud." + bundleIdentifier
+            let container = CKContainer(identifier: containerIdentifier)
+            let privateDatabase = container.privateCloudDatabase
+            
+            // Initialize CloudKit schema
+            DLOG("Initializing CloudKit schema before setting up subscriptions...")
+            let success = await CloudKitSchema.initializeSchema(in: privateDatabase)
+            if success {
+                DLOG("CloudKit schema initialized successfully")
+            } else {
+                ELOG("Failed to initialize CloudKit schema")
+            }
+            
             // Create subscriptions for each record type
-            try await createFileSubscription()
-            try await createGameSubscription()
+            try await createROMSubscription()
             try await createSaveStateSubscription()
+            try await createBIOSSubscription()
+            try await createFileSubscription()
             
             DLOG("CloudKit subscriptions set up successfully")
         } catch {
@@ -149,7 +166,7 @@ public class CloudKitSubscriptionManager {
         
         // Create subscription
         let subscription = CKQuerySubscription(
-            recordType: "File",
+            recordType: CloudKitSchema.RecordType.file,
             predicate: predicate,
             subscriptionID: subscriptionID,
             options: [.firesOnRecordCreation, .firesOnRecordUpdate, .firesOnRecordDeletion]
@@ -168,26 +185,26 @@ public class CloudKitSubscriptionManager {
         subscriptionSubject.send(subscription)
     }
     
-    /// Create a subscription for game records
-    private func createGameSubscription() async throws {
+    /// Create a subscription for ROM records
+    private func createROMSubscription() async throws {
         // Create subscription ID
-        let subscriptionID = "game-changes"
+        let subscriptionID = "rom-changes"
         
         // Check if subscription already exists
         do {
             _ = try await privateDatabase.subscription(for: subscriptionID)
-            DLOG("Game subscription already exists")
+            DLOG("ROM subscription already exists")
             return
         } catch {
             // Subscription doesn't exist, create it
         }
         
-        // Create predicate for all game records
+        // Create predicate for all ROM records
         let predicate = NSPredicate(value: true)
         
         // Create subscription
         let subscription = CKQuerySubscription(
-            recordType: "Game",
+            recordType: CloudKitSchema.RecordType.rom,
             predicate: predicate,
             subscriptionID: subscriptionID,
             options: [.firesOnRecordCreation, .firesOnRecordUpdate, .firesOnRecordDeletion]
@@ -225,7 +242,7 @@ public class CloudKitSubscriptionManager {
         
         // Create subscription
         let subscription = CKQuerySubscription(
-            recordType: "SaveState",
+            recordType: CloudKitSchema.RecordType.saveState,
             predicate: predicate,
             subscriptionID: subscriptionID,
             options: [.firesOnRecordCreation, .firesOnRecordUpdate, .firesOnRecordDeletion]
@@ -239,6 +256,44 @@ public class CloudKitSubscriptionManager {
         // Save subscription
         _ = try await privateDatabase.save(subscription)
         DLOG("Created save state subscription")
+        
+        // Notify subscribers
+        subscriptionSubject.send(subscription)
+    }
+    
+    /// Create a subscription for BIOS records
+    private func createBIOSSubscription() async throws {
+        // Create subscription ID
+        let subscriptionID = "bios-changes"
+        
+        // Check if subscription already exists
+        do {
+            _ = try await privateDatabase.subscription(for: subscriptionID)
+            DLOG("BIOS subscription already exists")
+            return
+        } catch {
+            // Subscription doesn't exist, create it
+        }
+        
+        // Create predicate for all BIOS records
+        let predicate = NSPredicate(value: true)
+        
+        // Create subscription
+        let subscription = CKQuerySubscription(
+            recordType: CloudKitSchema.RecordType.bios,
+            predicate: predicate,
+            subscriptionID: subscriptionID,
+            options: [.firesOnRecordCreation, .firesOnRecordUpdate, .firesOnRecordDeletion]
+        )
+        
+        // Create notification info
+        let notificationInfo = CKSubscription.NotificationInfo()
+        notificationInfo.shouldSendContentAvailable = true
+        subscription.notificationInfo = notificationInfo
+        
+        // Save subscription
+        _ = try await privateDatabase.save(subscription)
+        DLOG("Created BIOS subscription")
         
         // Notify subscribers
         subscriptionSubject.send(subscription)
