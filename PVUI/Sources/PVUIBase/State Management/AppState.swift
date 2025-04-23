@@ -33,8 +33,17 @@ public class AppState: ObservableObject {
         case openFile(URL)
         case openMD5(String)
         case openGame(PVGame)
+
+        public var requiresEmulatorScene: Bool {
+            switch self {
+            case .openGame, .openMD5, .openFile:
+                return true
+            case .none:
+                return false
+            }
+        }
     }
-    
+
     @ObservedObject
     public static private(set) var shared: AppState = .init()
 
@@ -44,7 +53,7 @@ public class AppState: ObservableObject {
             bootupStateManager.currentState
         }
     }
-    
+
     /// Action to be performed after bootup
     @Published
     public var appOpenAction: AppOpenAction = .none
@@ -59,12 +68,37 @@ public class AppState: ObservableObject {
 
     /// User default for UI preference
     @Published
-    public var useUIKit: Bool = Defaults[.useUIKit]
+    public var mainUIMode: MainUIMode = Defaults[.mainUIMode]
 
     /// Instance of AppBootupState to manage bootup process
     @Published public private(set) var bootupStateManager: AppBootupState = AppBootupState() {
         willSet {
             objectWillChange.send()
+        }
+        didSet {
+            // Force immediate notification
+            objectWillChange.send()
+
+            // Schedule delayed notifications to ensure UI updates
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.objectWillChange.send()
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.objectWillChange.send()
+            }
+
+            // Post a notification for the bootup state change
+            let stateName = bootupStateManager.currentState.localizedDescription
+            ILOG("AppState: bootupStateManager changed to state: \(stateName)")
+
+            // Post a notification for the bootup state change
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(
+                    name: Notification.Name("BootupStateChanged"),
+                    object: nil,
+                    userInfo: ["state": stateName]
+                )
+            }
         }
     }
 
@@ -82,6 +116,9 @@ public class AppState: ObservableObject {
 
     /// Coordinator for Popover HUD
     public let hudCoordinator = HUDCoordinator()
+
+    /// Coordinator for Scene management
+    @Published public var sceneCoordinator: SceneCoordinator?
 
     /// Whether the app has been initialized
     @Published public var isInitialized = false {
@@ -129,8 +166,8 @@ public class AppState: ObservableObject {
 
     private let disposeBag = DisposeBag()
 
-    /// Task for observing changes to useUIKit
-    private var useUIKitObservationTask: Task<Void, Never>?
+    /// Task for observing changes to mainUIMode
+    private var mainUIModeObservationTask: Task<Void, Never>?
 
     /// Settings factory for creating settings view controllers
     public var settingsFactory: PVSettingsViewControllerFactory?
@@ -141,9 +178,9 @@ public class AppState: ObservableObject {
     /// Initializer
     private init() {
         ILOG("AppState: Initializing")
-        useUIKitObservationTask = Task { @MainActor in
-            for await value in Defaults.updates(.useUIKit) {
-                useUIKit = value
+        mainUIModeObservationTask = Task { @MainActor in
+            for await value in Defaults.updates(.mainUIMode) {
+                mainUIMode = value
             }
         }
 
@@ -164,7 +201,7 @@ public class AppState: ObservableObject {
         initialImportResumeTimer = nil
 
         // Cancel task
-        useUIKitObservationTask?.cancel()
+        mainUIModeObservationTask?.cancel()
 
         ILOG("AppState: Deinitialized")
     }
@@ -284,7 +321,7 @@ public class AppState: ObservableObject {
         }
         Task {
             do {
-                try await withTimeout(seconds: 30) {
+                try await withTimeout(seconds: 60) {
                     await self.initializeDatabase()
                 }
             } catch {
@@ -353,7 +390,7 @@ public class AppState: ObservableObject {
             guard let self = self else { return }
             do {
                 /// Increased timeout and added progress logging
-                try await withTimeout(seconds: 120) { // Increased from 30 to 120 seconds
+                try await withTimeout(seconds: 30) {
                     await self.libraryUpdatesController?.addImportedGames(
                         to: CSSearchableIndex.default(),
                         database: RomDatabase.sharedInstance
@@ -381,10 +418,36 @@ public class AppState: ObservableObject {
         }
 
         ILOG("AppState: Bootup state transitioning to completed...")
-        bootupStateManager.transition(to: .completed)
-        ILOG("AppState: Bootup state transitioned to completed.")
-        ILOG("AppState: Bootup finalized")
 
+        // Log the current state before transition
+        ILOG("AppState: Current state before transition: \(bootupStateManager.currentState.localizedDescription)")
+
+        // Transition to completed state
+        bootupStateManager.transition(to: .completed)
+
+        // Log the current state after transition
+        ILOG("AppState: Current state after transition: \(bootupStateManager.currentState.localizedDescription)")
+
+        // Force UI updates with more logging
+        ILOG("AppState: Sending objectWillChange notification")
+        objectWillChange.send()
+
+        // Schedule additional UI updates with delays
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            ILOG("AppState: Sending delayed objectWillChange notification (0.1s)")
+            self.objectWillChange.send()
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            ILOG("AppState: Sending delayed objectWillChange notification (0.5s)")
+            self.objectWillChange.send()
+        }
+
+        // Set isInitialized to trigger additional UI updates
+        ILOG("AppState: Setting isInitialized to true")
+        isInitialized = true
+
+        ILOG("AppState: Bootup finalized")
 
         Task { @MainActor in
             try? await self.withTimeout(seconds: 15) {

@@ -19,12 +19,13 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     @Default(.gameLibraryScale) private var gameLibraryScale
     @Default(.showGameTitles) private var showGameTitles
     @Default(.showRecentGames) private var showRecentGames
+    @Default(.showSearchbar) private var showSearchbar
     @Default(.showRecentSaveStates) private var showRecentSaveStates
     @Default(.showFavorites) private var showFavorites
     @Default(.showGameBadges) private var showGameBadges
 
-    var sortAscending = true
-    var isGrid = true
+    @State var sortAscending = true
+    @State var isGrid = true
 
     var toggleFilterAction: () -> Void
     var toggleSortAction: () -> Void
@@ -48,6 +49,12 @@ struct GamesDisplayOptionsView: SwiftUI.View {
             Menu {
                 Toggle(isOn: $showGameTitles) {
                     Label("Show Game Titles", systemImage: "textformat")
+                }
+                .onChange(of: showGameTitles) { _ in
+                    Haptics.impact(style: .light)
+                }
+                Toggle(isOn: $showSearchbar) {
+                    Label("Show Search Bar", systemImage: "magnifyingglass")
                 }
                 .onChange(of: showGameTitles) { _ in
                     Haptics.impact(style: .light)
@@ -90,6 +97,11 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                         Label("Show Game Titles", systemImage: "textformat")
                     }
                     .onChange(of: showGameTitles) { _ in
+                    }
+                    Toggle(isOn: $showSearchbar) {
+                        Label("Show Search Bar", systemImage: "magnifyingglass")
+                    }
+                    .onChange(of: showRecentGames) { _ in
                     }
                     Toggle(isOn: $showRecentGames) {
                         Label("Show Recent Games", systemImage: "clock")
@@ -136,7 +148,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 .contentShape(Rectangle())
 
                 OptionsIndicator(pointDown: true, action: {
-#if !os(tvOS)
+                    #if !os(tvOS)
                     Haptics.impact(style: .light)
                     #endif
                     toggleViewTypeAction()
@@ -148,7 +160,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 .contentShape(Rectangle())
 
                 Button(action: {
-#if !os(tvOS)
+                    #if !os(tvOS)
                     Haptics.impact(style: .light)
                     #endif
                     zoomOut()
@@ -162,7 +174,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 .padding(.leading, padding)
 
                 Button(action: {
-#if !os(tvOS)
+                    #if !os(tvOS)
                     Haptics.impact(style: .light)
                     #endif
                     zoomIn()
@@ -186,7 +198,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
     private func zoomIn() {
         if canZoomIn {
-#if !os(tvOS)
+            #if !os(tvOS)
             Haptics.impact(style: .light)
             #endif
             Defaults[.gameLibraryScale] -= 1
@@ -195,7 +207,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
     private func zoomOut() {
         if canZoomOut {
-#if !os(tvOS)
+            #if !os(tvOS)
             Haptics.impact(style: .light)
             #endif
             Defaults[.gameLibraryScale] += 1

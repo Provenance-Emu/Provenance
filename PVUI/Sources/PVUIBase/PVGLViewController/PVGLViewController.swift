@@ -431,6 +431,14 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             ELOG("Emulator core is nil")
             return
         }
+        
+        // IMPORTANT: If custom positioning is being used, respect it and don't override
+        if useCustomPositioning && !customFrame.isEmpty {
+            DLOG("Using custom positioning: \(customFrame)")
+            view.frame = customFrame
+            updatePreferredFPS()
+            return
+        }
 
         let parentSafeAreaInsets = parent?.view.safeAreaInsets ?? .zero
 

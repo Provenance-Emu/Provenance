@@ -44,7 +44,7 @@ final class PVPSPControllerViewController: PVControllerViewController<PVPSPSyste
             }
         }
     }
-    
+
     override func prelayoutSettings() {
         //alwaysRightAlign = true
         //alwaysJoypadOverDpad = true
@@ -60,7 +60,7 @@ final class PVPSPControllerViewController: PVControllerViewController<PVPSPSyste
         x = x < -1 ? -1 : x > 1 ? 1 : x;
         emulatorCore.didMoveJoystick(.leftAnalog, withXValue: x, withYValue: y, forPlayer: 0)
     }
-    
+
     override func dPad(_: JSDPad, didPress direction: JSDPadDirection) {
         emulatorCore.didRelease(.up, forPlayer: 0)
         emulatorCore.didRelease(.down, forPlayer: 0)

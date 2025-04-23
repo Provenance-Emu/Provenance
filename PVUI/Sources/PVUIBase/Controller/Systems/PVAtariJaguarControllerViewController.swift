@@ -26,16 +26,43 @@ final class PVAtariJaguarControllerViewController: PVControllerViewController<PV
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
-            if title == "C" {
-                button.buttonTag = .c
-            } else if title == "B" {
-                button.buttonTag = .b
-            } else if title == "A" {
+            switch title.lowercased() {
+            case "a":
                 button.buttonTag = .a
-            } else if title == "Option" {
+            case "b":
+                button.buttonTag = .b
+            case "c":
+                button.buttonTag = .c
+            case "option", "start":
                 button.buttonTag = .option
-            } else if title == "Pause" {
+            case "pause", "select":
                 button.buttonTag = .pause
+            case "0", "button0":
+                button.buttonTag = .button0
+            case "1", "button1":
+                button.buttonTag = .button1
+            case "2", "button2":
+                button.buttonTag = .button2
+            case "3", "button3":
+                button.buttonTag = .button3
+            case "4", "button4":
+                button.buttonTag = .button4
+            case "5", "button5":
+                button.buttonTag = .button5
+            case "6", "button6":
+                button.buttonTag = .button6
+            case "7", "button7":
+                button.buttonTag = .button7
+            case "8", "button8":
+                button.buttonTag = .button8
+            case "9", "button9":
+                button.buttonTag = .button9
+            case "#", "button#":
+                button.buttonTag = .pound
+            case "*", "button*":
+                button.buttonTag = .asterisk
+            default:
+                break
             }
         }
 
@@ -113,6 +140,7 @@ final class PVAtariJaguarControllerViewController: PVControllerViewController<PV
 
     override func pressStart(forPlayer player: Int) {
         emulatorCore.didPush(jaguarButton: .pause, forPlayer: player)
+        vibrate()
     }
 
     override func releaseStart(forPlayer player: Int) {
@@ -121,6 +149,7 @@ final class PVAtariJaguarControllerViewController: PVControllerViewController<PV
 
     override func pressSelect(forPlayer player: Int) {
         emulatorCore.didPush(jaguarButton: .option, forPlayer: player)
+        vibrate()
     }
 
     override func releaseSelect(forPlayer player: Int) {

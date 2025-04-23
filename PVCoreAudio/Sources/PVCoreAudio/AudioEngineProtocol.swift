@@ -42,6 +42,19 @@ extension AudioEngineError: CustomNSError {
     }
 }
 
+/// Structure to hold waveform data for visualization
+public struct WaveformData {
+    /// Array of normalized amplitude values (between 0.0 and 1.0)
+    public let amplitudes: [Float]
+    /// Timestamp when this data was captured
+    public let timestamp: TimeInterval
+    
+    public init(amplitudes: [Float], timestamp: TimeInterval = CACurrentMediaTime()) {
+        self.amplitudes = amplitudes
+        self.timestamp = timestamp
+    }
+}
+
 public protocol AudioEngineProtocol {
     func startAudio() throws
     func pauseAudio()
@@ -53,6 +66,11 @@ public protocol AudioEngineProtocol {
     
     func setupAudioGraph(for gameCore: EmulatorCoreAudioDataSource) throws
     
+    /// Get current waveform data for visualization
+    /// - Parameter numberOfPoints: The number of data points to return
+    /// - Returns: WaveformData containing normalized amplitude values
+    func getWaveformData(numberOfPoints: Int) -> WaveformData
+    
 //    func setOutputDeviceID(_ newOutputDeviceID: AudioDeviceID)
 }
 
@@ -60,6 +78,12 @@ public extension AudioEngineProtocol {
     mutating func setVolume(_ volume: Float)
     {
         self.volume = volume
+    }
+    
+    /// Default implementation returns empty waveform data
+    /// Subclasses should override this with actual implementation
+    func getWaveformData(numberOfPoints: Int) -> WaveformData {
+        return WaveformData(amplitudes: Array(repeating: 0.0, count: numberOfPoints))
     }
 }
 

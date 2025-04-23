@@ -1,13 +1,13 @@
 {
-  "originHash" : "c57cd23956482b31b49cde8a69ad901366fa9f69c20988fb483125b50c1d6bf7",
+  "originHash" : "41b778a74825c283bca8ed48f853ed7e74b62a80aa73c46ccd91002c3575d06f",
   "pins" : [
     {
       "identity" : "activityindicatorview",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/exyte/ActivityIndicatorView.git",
       "state" : {
-        "revision" : "9970fd0bb7a05dad0b6566ae1f56937716686b24",
-        "version" : "1.1.1"
+        "revision" : "36140867802ae4a1d2b11490bcbbefe058001d14",
+        "version" : "1.2.1"
       }
     },
     {
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/exyte/AnimatedGradient.git",
       "state" : {
-        "revision" : "70f5d34bc553483936e86eca3984b6e12302ead2",
-        "version" : "1.0.0"
+        "revision" : "c0e19120abda483a61058721c6c7d65c82c4ebe9",
+        "version" : "1.0.1"
       }
     },
     {
@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/MrAsterisco/DateRangePicker",
       "state" : {
-        "revision" : "9fd27bed5a951e7a48e2211465fdfc7e9bf2cbe7",
-        "version" : "1.0.2"
+        "revision" : "8bad437603a0559cfe29e69df4ef1981ddfb5f2b",
+        "version" : "1.0.4"
       }
     },
     {
@@ -61,7 +61,7 @@
       "location" : "https://github.com/sindresorhus/Defaults.git",
       "state" : {
         "branch" : "main",
-        "revision" : "ef1b2318fb549002bb533bec3a8ad98ae09f2cb6"
+        "revision" : "cc938ecf0bed848dc80a9726ac5455104e3f9dae"
       }
     },
     {
@@ -69,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/exyte/FloatingButton.git",
       "state" : {
-        "revision" : "cf77c2f124df1423d90a9a1985e9b9ccfa4b9b3e",
-        "version" : "1.3.0"
+        "revision" : "c1e3e6a641ef5bacbcbc2b2c80db54793f75f974",
+        "version" : "1.4.0"
       }
     },
     {
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/FlineDev/FreemiumKit.git",
       "state" : {
-        "revision" : "ff45d8e3fc7af5255f97e059cc95524dfa320196",
-        "version" : "1.15.0"
+        "revision" : "3ba71311448d2c7f706b0b5e34b014999a1af856",
+        "version" : "1.18.0"
       }
     },
     {
@@ -155,21 +155,12 @@
       }
     },
     {
-      "identity" : "reachability.swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ashleymills/Reachability.swift.git",
-      "state" : {
-        "revision" : "21d1dc412cfecbe6e34f1f4c4eb88d3f912654a6",
-        "version" : "5.2.4"
-      }
-    },
-    {
       "identity" : "realm-core",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "85eeca41654cc9070ad81a21a4b1d153ad467c33",
-        "version" : "14.13.1"
+        "revision" : "cccb3ca9e26ec452a29f2f0d4050d1e38b8a3d43",
+        "version" : "14.14.0"
       }
     },
     {
@@ -177,8 +168,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift.git",
       "state" : {
-        "revision" : "5553cfd1c789efdb3d6daf7f0cc0733cfe601846",
-        "version" : "10.54.1"
+        "revision" : "8cb364a6a63695df296f05b53f7c3f3b1dda6af3",
+        "version" : "10.54.3"
       }
     },
     {
@@ -204,8 +195,26 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ReactiveX/RxSwift.git",
       "state" : {
-        "revision" : "c7c7d2cf50a3211fe2843f76869c698e4e417930",
-        "version" : "6.8.0"
+        "revision" : "5dd1907d64f0d36f158f61a466bab75067224893",
+        "version" : "6.9.0"
+      }
+    },
+    {
+      "identity" : "sidekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SideStore/SideKit.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "ab959a54fc2217464ffabd09322ec3351e3ca456"
+      }
+    },
+    {
+      "identity" : "siriusrating-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/theappcapital/SiriusRating-iOS.git",
+      "state" : {
+        "revision" : "f2f1d88d960c6438f4b2e2562744f7814304cbf4",
+        "version" : "1.0.8"
       }
     },
     {
@@ -231,8 +240,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-async-algorithms",
       "state" : {
-        "revision" : "5c8bd186f48c16af0775972700626f0b74588278",
-        "version" : "1.0.2"
+        "revision" : "4c3ea81f81f0a25d0470188459c6d4bf20cf2f97",
+        "version" : "1.0.3"
       }
     },
     {
@@ -285,8 +294,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-openapi-runtime",
       "state" : {
-        "revision" : "5e119a3d52dde0229312ed586be99c666c6b6f64",
-        "version" : "1.7.0"
+        "revision" : "81c309c7b43cd56b2d2b90ca0170f17ff3d0c433",
+        "version" : "1.8.1"
       }
     },
     {
@@ -295,7 +304,7 @@
       "location" : "https://github.com/pointfreeco/swift-perception.git",
       "state" : {
         "branch" : "main",
-        "revision" : "8d52279b9809ef27eabe7d5420f03734528f19da"
+        "revision" : "d79e4a94c79f266411192a5e809de6842666b5be"
       }
     },
     {
@@ -330,8 +339,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/DominikButz/SwipeCellSUI.git",
       "state" : {
-        "revision" : "d1b121a9b30789b603d7fa7559889925f20fe47e",
-        "version" : "2.1.4"
+        "revision" : "980921a595b098f2ad51198becada43bd0f5888e",
+        "version" : "2.1.6"
       }
     },
     {
@@ -339,8 +348,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
       "state" : {
-        "revision" : "a3f634d1a409c7979cabc0a71b3f26ffa9fc8af1",
-        "version" : "1.4.3"
+        "revision" : "39de59b2d47f7ef3ca88a039dff3084688fe27f4",
+        "version" : "1.5.2"
       }
     },
     {
@@ -348,8 +357,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ZipArchive/ZipArchive.git",
       "state" : {
-        "revision" : "38e0ce0598e06b034271f296a8e15b149c91aa19",
-        "version" : "2.4.3"
+        "branch" : "master",
+        "revision" : "168f9e2f19df89f7f1f479aa867960128a94bcf7"
       }
     },
     {

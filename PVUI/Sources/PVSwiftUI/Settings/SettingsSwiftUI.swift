@@ -17,7 +17,17 @@ import Perception
 import PVFeatureFlags
 import Defaults
 import AudioToolbox
-import MarkdownView
+
+// Retrowave color extensions
+extension Color {
+    static let retroPink = Color(red: 0.99, green: 0.11, blue: 0.55)
+    static let retroPurple = Color(red: 0.53, green: 0.11, blue: 0.91)
+    static let retroBlue = Color(red: 0.0, green: 0.75, blue: 0.95)
+    static let retroDarkBlue = Color(red: 0.05, green: 0.05, blue: 0.2)
+    static let retroBlack = Color(red: 0.05, green: 0.0, blue: 0.1)
+}
+
+
 #if os(tvOS)
 import GameController
 #endif
@@ -41,81 +51,178 @@ public struct PVSettingsView: View {
     weak var menuDelegate: PVMenuDelegate!
 
     @ObservedObject var conflictsController: PVGameLibraryUpdatesController
+    
+    @State public var showsDoneButton: Bool = true
 
     // Update initializer to take dismissAction
-    public init(conflictsController: PVGameLibraryUpdatesController, menuDelegate: PVMenuDelegate, dismissAction: @escaping () -> Void) {
+    public init(conflictsController: PVGameLibraryUpdatesController, menuDelegate: PVMenuDelegate, showsDoneButton: Bool = true, dismissAction: @escaping () -> Void) {
         self.conflictsController = conflictsController
         self.dismissAction = dismissAction
         _viewModel = StateObject(wrappedValue: PVSettingsViewModel(menuDelegate: menuDelegate, conflictsController: conflictsController))
+        self.showsDoneButton = showsDoneButton
     }
 
     public var body: some View {
         NavigationView {
-            List {
-                CollapsibleSection(title: "App") {
-                    AppSection(viewModel: viewModel)
-                        .environmentObject(viewModel)
-                }
-
-                CollapsibleSection(title: "Core Options") {
-                    CoreOptionsSection()
-                }
-
-                CollapsibleSection(title: "Saves") {
-                    SavesSection()
-                }
-
-                CollapsibleSection(title: "Audio") {
-                    AudioSection()
-                }
-
-                CollapsibleSection(title: "Video") {
-                    VideoSection()
-                }
-
-                CollapsibleSection(title: "Controller") {
-                    ControllerSection()
-                }
-
-                CollapsibleSection(title: "Library") {
-                    LibrarySection(viewModel: viewModel)
-                        .environmentObject(viewModel)
-                }
-
-                CollapsibleSection(title: "Library Management") {
-                    LibrarySection2(viewModel: viewModel)
-                        .environmentObject(viewModel)
-                }
-
-                CollapsibleSection(title: "Advanced") {
-                    AdvancedSection()
-                }
-
-                #if !os(tvOS)
-                CollapsibleSection(title: "Social Links") {
-                    SocialLinksSection()
-                }
-
-                CollapsibleSection(title: "Documentation") {
-                    DocumentationSection()
-                }
-                #endif
-
-                CollapsibleSection(title: "Build") {
-                    BuildSection(viewModel: viewModel)
-                        .environmentObject(viewModel)
-                }
-
-                CollapsibleSection(title: "Extra Info") {
-                    ExtraInfoSection()
+            ZStack {
+                // Retrowave background
+                Color.black.edgesIgnoringSafeArea(.all)
+                
+                // Grid background
+                RetroGridForSettings()
+                    .edgesIgnoringSafeArea(.all)
+                    .opacity(0.5)
+                
+                // Main content
+                ScrollView {
+                    VStack(spacing: 16) {
+                        // Title with retrowave styling
+                        Text("SETTINGS")
+                            .font(.system(size: 32, weight: .bold, design: .rounded))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .padding(.top, 20)
+                            .padding(.bottom, 10)
+                            .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
+                        
+                        // Sections
+                        VStack(spacing: 16) {
+                            CollapsibleSection(title: "App") {
+                                AppSection(viewModel: viewModel)
+                                    .environmentObject(viewModel)
+                            }
+            
+                            CollapsibleSection(title: "Core Options") {
+                                CoreOptionsSection()
+                            }
+            
+                            CollapsibleSection(title: "Saves") {
+                                SavesSection()
+                            }
+            
+                            CollapsibleSection(title: "Audio") {
+                                AudioSection()
+                            }
+            
+                            CollapsibleSection(title: "Video") {
+                                VideoSection()
+                            }
+            
+                            CollapsibleSection(title: "Controller") {
+                                ControllerSection()
+                            }
+            
+                            CollapsibleSection(title: "Library") {
+                                LibrarySection(viewModel: viewModel)
+                                    .environmentObject(viewModel)
+                            }
+            
+                            CollapsibleSection(title: "Library Management") {
+                                LibrarySection2(viewModel: viewModel)
+                                    .environmentObject(viewModel)
+                            }
+            
+                            CollapsibleSection(title: "Delta Skins") {
+                                DeltaSkinsSection()
+                            }
+                            
+                            CollapsibleSection(title: "Advanced") {
+                                AdvancedSection()
+                            }
+            
+                            #if !os(tvOS)
+                            CollapsibleSection(title: "Social Links") {
+                                SocialLinksSection()
+                            }
+            
+                            CollapsibleSection(title: "Documentation") {
+                                DocumentationSection()
+                            }
+                            #endif
+            
+                            CollapsibleSection(title: "Build") {
+                                BuildSection(viewModel: viewModel)
+                                    .environmentObject(viewModel)
+                            }
+            
+                            CollapsibleSection(title: "Extra Info") {
+                                ExtraInfoSection()
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                    .padding(.bottom, 20)
                 }
             }
-            .listStyle(GroupedListStyle())
-            .navigationTitle("Settings")
-            #if !os(tvOS)
-            .navigationBarItems(
-                leading: Button("Done") { dismissAction() },  // Use dismissAction here
-                trailing: Button("Help") { viewModel.showHelp() }
+            #if os(iOS)
+            .navigationBarHidden(true) // Hide default navigation bar
+            .overlay(
+                // Custom navigation bar
+                VStack {
+                    HStack {
+                        if showsDoneButton {
+                            // Done button with retrowave styling
+                            Button(action: { dismissAction() }) {
+                                Text("DONE")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 8)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color.black.opacity(0.6))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .strokeBorder(
+                                                        LinearGradient(
+                                                            gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                                            startPoint: .leading,
+                                                            endPoint: .trailing
+                                                        ),
+                                                        lineWidth: 1.5
+                                                    )
+                                            )
+                                    )
+                            }
+                            
+                            Spacer()
+                            
+                            // Help button with retrowave styling
+                            Button(action: { viewModel.showHelp() }) {
+                                Text("HELP")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 8)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color.black.opacity(0.6))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .strokeBorder(
+                                                        LinearGradient(
+                                                            gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                                                            startPoint: .leading,
+                                                            endPoint: .trailing
+                                                        ),
+                                                        lineWidth: 1.5
+                                                    )
+                                            )
+                                    )
+                            }
+
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 10)
+                    
+                    Spacer()
+                }
             )
             #endif
         }
@@ -123,38 +230,99 @@ public struct PVSettingsView: View {
     }
 }
 
-/// Row View for Settings
+/// Row View for Settings with retrowave styling
 struct SettingsRow: View {
     let title: String
     var subtitle: String? = nil
     var value: String? = nil
     var icon: SettingsIcon? = nil
-
+    
+    @State private var isHovered = false
+    
     var body: some View {
-        HStack {
+        HStack(spacing: 12) {
+            // Icon with retrowave styling
             if let icon = icon {
-                icon.image
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 22, height: 22)
-                    .foregroundColor(.accentColor)
+                ZStack {
+                    Circle()
+                        .fill(Color.black.opacity(0.6))
+                        .frame(width: 36, height: 36)
+                        .overlay(
+                            Circle()
+                                .strokeBorder(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    lineWidth: 1.5
+                                )
+                        )
+                        .shadow(color: .retroPink.opacity(isHovered ? 0.5 : 0.2), radius: 5)
+                    
+                    icon.image
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 18, height: 18)
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                }
             }
-
-            VStack(alignment: .leading) {
+            
+            // Text content with retrowave styling
+            VStack(alignment: .leading, spacing: 4) {
                 Text(title)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.white)
+                
                 if let subtitle = subtitle {
                     Text(subtitle)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(Color.gray.opacity(0.8))
+                        .lineLimit(2)
                 }
             }
-
+            
+            Spacer()
+            
+            // Value with retrowave styling
             if let value = value {
-                Spacer()
                 Text(value)
-                    .foregroundColor(.secondary)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(Color.black.opacity(0.4))
+                    )
             }
         }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 4)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.black.opacity(0.3))
+                .opacity(isHovered ? 1.0 : 0.0)
+        )
+#if !os(tvOS)
+        .onHover { hovering in
+            withAnimation(.easeInOut(duration: 0.2)) {
+                isHovered = hovering
+            }
+        }
+#endif
     }
 }
 
@@ -347,13 +515,21 @@ private struct SavesSection: View {
 #if !os(tvOS)
             HStack {
                 Text("Auto-save Time")
-                Slider(value: $timedAutoSaveInterval, in: minutes(1)...minutes(30), step: minutes(1)) {
-                    Text("Auto-save Time")
-                } minimumValueLabel: {
-                    Image(systemName: "hare")
-                } maximumValueLabel: {
-                    Image(systemName: "tortoise")
-                }
+                RetroWaveSlider(value: $timedAutoSaveInterval,
+                               in: minutes(1)...minutes(30),
+                               step: minutes(1),
+                               onEditingChanged: { _ in },
+                               label: { Text("Auto-save Time") },
+                               minimumValueLabel: { Text("1m") },
+                               maximumValueLabel: { Text("30m") },
+                               leadingIcon: {
+                                   Image(systemName: "hare")
+                                       .foregroundColor(RetroTheme.retroBlue)
+                               },
+                               trailingIcon: {
+                                   Image(systemName: "tortoise")
+                                       .foregroundColor(RetroTheme.retroBlue)
+                               })
             }
             Text(timedAutosaveLabelText)
                 .font(.subheadline)
@@ -503,13 +679,21 @@ private struct AudioSection: View {
 //            }
             HStack {
                 Text("Volume")
-                Slider(value: $volume, in: 0...1, step: 0.1) {
-                    Text("Volume Level")
-                } minimumValueLabel: {
-                    Image(systemName: "speaker")
-                } maximumValueLabel: {
-                    Image(systemName: "speaker.wave.3")
-                }
+                RetroWaveSlider<Float>(value: $volume,
+                                     in: 0...1,
+                                     step: 0.1,
+                                     onEditingChanged: { _ in },
+                                     label: { Text("Volume Level") },
+                                     minimumValueLabel: { Text("") },
+                                     maximumValueLabel: { Text("") },
+                                     leadingIcon: {
+                                         Image(systemName: "speaker")
+                                             .foregroundColor(RetroTheme.retroBlue)
+                                     },
+                                     trailingIcon: {
+                                         Image(systemName: "speaker.wave.3")
+                                             .foregroundColor(RetroTheme.retroBlue)
+                                     })
             }
             Text("System-wide volume level for games.")
                 .font(.caption)
@@ -538,9 +722,15 @@ private struct VideoSection: View {
     @Default(.showFPSCount) var showFPSCount
     @Default(.nativeScaleEnabled) var nativeScaleEnabled
     @Default(.integerScaleEnabled) var integerScaleEnabled
+    @Default(.vsyncEnabled) var vsyncEnabled
 
     var body: some View {
         Section(header: Text("Video")) {
+            ThemedToggle(isOn: $vsyncEnabled) {
+                SettingsRow(title: "V-Sync",
+                            subtitle: "Synchronizes the rendering frame rate with the monitor refresh rate.",
+                            icon: vsyncEnabled ? .sfSymbol("tv.fill") : .sfSymbol("tv"))
+            }
             ThemedToggle(isOn: $multiThreadedGL) {
                 SettingsRow(title: "Multi-threaded Rendering",
                             subtitle: "Improves performance but may cause graphical glitches.",
@@ -584,8 +774,6 @@ private struct ControllerSection: View {
     @Default(.use8BitdoM30) var use8BitdoM30
     @Default(.pauseButtonIsMenuButton) var pauseButtonIsMenuButton
     @Default(.hapticFeedback) var hapticFeedback
-    @Default(.buttonPressEffect) var buttonPressEffect
-    @Default(.buttonSound) var buttonSound
 
     var body: some View {
         Group {
@@ -622,10 +810,6 @@ private struct ControllerSection: View {
             #endif
         }
     }
-
-    private func playButtonSound(_ sound: ButtonSound) {
-        PVUIBase.ButtonSoundGenerator.shared.playSound(sound, pan: 0, volume: 1.0)
-    }
 }
 
 #if !os(tvOS)
@@ -647,13 +831,21 @@ private struct OnScreenControllerSection: View {
         Section(header: Text("On-Screen Controller")) {
             HStack {
                 Text("Controller Opacity")
-                Slider(value: $controllerOpacity, in: 0...1.0, step: 0.05) {
-                    Text("Transparency amount of on-screen controls overlays.")
-                } minimumValueLabel: {
-                    Image(systemName: "sun.min")
-                } maximumValueLabel: {
-                    Image(systemName: "sun.max")
-                }
+                RetroWaveSlider<Double>(value: $controllerOpacity,
+                                     in: 0...1.0,
+                                     step: 0.05,
+                                     onEditingChanged: { _ in },
+                                     label: { Text("Transparency amount of on-screen controls overlays.") },
+                                     minimumValueLabel: { Text("") },
+                                     maximumValueLabel: { Text("") },
+                                     leadingIcon: {
+                                         Image(systemName: "sun.min")
+                                             .foregroundColor(RetroTheme.retroBlue)
+                                     },
+                                     trailingIcon: {
+                                         Image(systemName: "sun.max")
+                                             .foregroundColor(RetroTheme.retroBlue)
+                                     })
             }
             ThemedToggle(isOn: $buttonTints) {
                 SettingsRow(title: "Button Colors",
@@ -691,80 +883,7 @@ private struct OnScreenControllerSection: View {
                             subtitle: "Allow player to move on screen controller buttons. Tap with 3-fingers 3 times to toggle.",
                             icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right"))
             }
-            #if false
-            if FeatureFlag.advancedSkinFeatures.enabled {
-                // Button Sound Effect Picker
-                NavigationLink {
-                    Form {
-                        Section(header: Text("Button Sound Effect")) {
-                            ForEach(ButtonSound.allCases, id: \.self) { sound in
-                                Button {
-                                    buttonSound = sound
-                                    // Play sample sound when selected
-                                    if sound != .none {
-                                        playButtonSound(sound)
-                                    }
-                                } label: {
-                                    HStack {
-                                        VStack(alignment: .leading) {
-                                            Text(sound.description)
-                                                .foregroundColor(.primary)
-                                            Text(sound.subtitle)
-                                                .font(.caption)
-                                                .foregroundColor(.secondary)
-                                        }
-                                        Spacer()
-                                        if buttonSound == sound {
-                                            Image(systemName: "checkmark")
-                                                .foregroundColor(.accentColor)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    .navigationTitle("Button Sound Effect")
-                } label: {
-                    SettingsRow(title: "Button Sound Effect",
-                               subtitle: buttonSound.description,
-                               icon: .sfSymbol("speaker.wave.2"))
-                }
 
-                // Button Press Effect Picker
-                NavigationLink {
-                    Form {
-                        Section(header: Text("Button Press Effect")) {
-                            ForEach(ButtonPressEffect.allCases, id: \.self) { effect in
-                                Button {
-                                    buttonPressEffect = effect
-                                } label: {
-                                    HStack {
-                                        VStack(alignment: .leading) {
-                                            Text(effect.description)
-                                                .foregroundColor(.primary)
-                                            Text(effect.subtitle)
-                                                .font(.caption)
-                                                .foregroundColor(.secondary)
-                                        }
-                                        Spacer()
-                                        if buttonPressEffect == effect {
-                                            Image(systemName: "checkmark")
-                                                .foregroundColor(.accentColor)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    .navigationTitle("Button Effect Style")
-                } label: {
-                    SettingsRow(title: "Button Effect Style",
-                               subtitle: buttonPressEffect.description,
-                               icon: .sfSymbol("circle.circle"))
-                }
-
-            }
-            #endif
         }
     }
 
@@ -790,6 +909,18 @@ private struct LibrarySection: View {
                 SettingsRow(title: "Appearance",
                             subtitle: "Visual options for Game Library",
                             icon: .sfSymbol("eye"))
+            }
+            
+            NavigationLink(destination: BatchArtworkMatchingView()) {
+                SettingsRow(title: "Batch Artwork Matcher",
+                            subtitle: "Find and apply artwork for multiple games at once",
+                            icon: .sfSymbol("photo.on.rectangle.angled"))
+            }
+            
+            NavigationLink(destination: iCloudSyncStatusView()) {
+                SettingsRow(title: "iCloud Sync Status",
+                            subtitle: "Monitor sync status between local and iCloud files",
+                            icon: .sfSymbol("icloud"))
             }
         }
     }
@@ -834,736 +965,160 @@ private struct AdvancedSection: View {
                 #endif
                 AdvancedTogglesView()
                 SecretSettingsRow()
-            }
-        }
-    }
-}
-
-private struct FeatureFlagsDebugView: View {
-    @StateObject private var featureFlags = PVFeatureFlagsManager.shared
-    @State private var flags: [(key: String, flag: FeatureFlag, enabled: Bool)] = []
-    @State private var isLoading = false
-    @State private var errorMessage: String?
-
-    var body: some View {
-        List {
-            LoadingSection(isLoading: isLoading, flags: flags)
-            FeatureFlagsSection(flags: flags, featureFlags: featureFlags)
-            UserDefaultsSection()
-            ConfigurationSection()
-            DebugControlsSection(featureFlags: featureFlags, flags: $flags, isLoading: $isLoading, errorMessage: $errorMessage)
-        }
-        .navigationTitle("Feature Flags Debug")
-        .task {
-            await loadInitialConfiguration()
-        }
-        .uiKitAlert(
-            "Error",
-            message: errorMessage ?? "",
-            isPresented: .constant(errorMessage != nil),
-            preferredContentSize: CGSize(width: 500, height: 300)
-        ) {
-            UIAlertAction(title: "OK", style: .default) { _ in
-                print("OK tapped")
-                errorMessage = nil
-            }
-        }
-    }
-
-    @MainActor
-    private func loadInitialConfiguration() async {
-        isLoading = true
-
-        do {
-            // First try to refresh from remote
-            try await loadDefaultConfiguration()
-            flags = featureFlags.getAllFeatureFlags()
-            print("Initial flags loaded: \(flags)")
-        } catch {
-            errorMessage = "Failed to load remote configuration: \(error.localizedDescription)"
-            print("Error loading remote configuration: \(error)")
-
-            // If remote fails, try to refresh from current state
-            flags = featureFlags.getAllFeatureFlags()
-        }
-
-        isLoading = false
-    }
-
-    @MainActor
-    private func loadDefaultConfiguration() async throws {
-        try await PVFeatureFlagsManager.shared.loadConfiguration(
-            from: URL(string: "https://data.provenance-emu.com/features/features.json")!
-        )
-    }
-}
-
-private struct LoadingSection: View {
-    let isLoading: Bool
-    let flags: [(key: String, flag: FeatureFlag, enabled: Bool)]
-
-    var body: some View {
-        if isLoading {
-            Section {
-                ProgressView("Loading configuration...")
-            }
-        }
-    }
-}
-
-private struct FeatureFlagsSection: View {
-    let flags: [(key: String, flag: FeatureFlag, enabled: Bool)]
-    @ObservedObject var featureFlags: PVFeatureFlagsManager
-
-    var body: some View {
-        Section(header: Text("Feature Flags Status")) {
-            if flags.isEmpty {
-                Text("No feature flags found")
-                    .foregroundColor(.secondary)
-            } else {
-                ForEach(flags, id: \.key) { flag in
-                    FeatureFlagRow(flag: flag, featureFlags: featureFlags)
+                
+                // App Group File Browser for debugging
+                #if DEBUG
+                NavigationLink(destination: AppGroupFileBrowserView()) {
+                    SettingsRow(title: "App Group File Browser",
+                                subtitle: "Browse files in the app group container for debugging.",
+                                icon: .sfSymbol("folder.badge.gear"))
                 }
-            }
-        }
-    }
-}
-
-private struct FeatureFlagRow: View {
-    let flag: (key: String, flag: FeatureFlag, enabled: Bool)
-    @ObservedObject var featureFlags: PVFeatureFlagsManager
-    @State private var isEnabled: Bool
-
-    init(flag: (key: String, flag: FeatureFlag, enabled: Bool), featureFlags: PVFeatureFlagsManager) {
-        self.flag = flag
-        self.featureFlags = featureFlags
-        // Initialize state with current value
-        if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
-            _isEnabled = State(initialValue: featureFlags.debugOverrides[feature] ?? flag.enabled)
-        } else {
-            _isEnabled = State(initialValue: flag.enabled)
-        }
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                FeatureFlagInfo(flag: flag)
-                Spacer()
-                FeatureFlagStatus(flag: flag, featureFlags: featureFlags, isEnabled: isEnabled)
-                #if os(tvOS)
-                Button(action: {
-                    if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
-                        isEnabled.toggle()
-                        featureFlags.setDebugOverride(feature: feature, enabled: isEnabled)
-                    }
-                }) {
-                    Text(isEnabled ? "On" : "Off")
-                        .foregroundColor(isEnabled ? .green : .red)
+                #endif
+                
+                // TopShelf Log Viewer
+                NavigationLink(destination: TopShelfLogView()) {
+                    SettingsRow(title: "TopShelf Log",
+                                subtitle: "View logs from the TopShelf extension.",
+                                icon: .sfSymbol("doc.text.magnifyingglass"))
                 }
-                #else
-                Toggle("", isOn: Binding(
-                    get: { isEnabled },
-                    set: { newValue in
-                        if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
-                            isEnabled = newValue
-                            featureFlags.setDebugOverride(feature: feature, enabled: newValue)
-                        }
-                    }
-                ))
+                
+                #if !os(tvOS)
+                // Spotlight Debug View
+                NavigationLink(destination: SpotlightDebugView()) {
+                    SettingsRow(title: "Spotlight Debug",
+                                subtitle: "View and manage Spotlight indexing for games and save states.",
+                                icon: .sfSymbol("magnifyingglass.circle"))
+                }
                 #endif
             }
-            FeatureFlagDetails(flag: flag.flag)
-        }
-        .padding(.vertical, 4)
-        .onChange(of: featureFlags.debugOverrides) { _ in
-            // Update state when debug overrides change
-            if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
-                isEnabled = featureFlags.debugOverrides[feature] ?? flag.enabled
-            }
         }
     }
 }
 
-private struct FeatureFlagInfo: View {
-    let flag: (key: String, flag: FeatureFlag, enabled: Bool)
+private struct DeltaSkinsSection: View {
+    @Default(.buttonPressEffect) var buttonPressEffect
+    @Default(.buttonSound) var buttonSound
+    @Default(.skinMode) var skinMode
 
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(flag.key)
-                .font(.headline)
-            if let description = flag.flag.description {
-                Text(description)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-        }
-    }
-}
-
-private struct FeatureFlagStatus: View {
-    let flag: (key: String, flag: FeatureFlag, enabled: Bool)
-    @ObservedObject var featureFlags: PVFeatureFlagsManager
-    let isEnabled: Bool
-
-    var body: some View {
-        VStack(alignment: .trailing) {
-            // Show base configuration state
-            Text("Base Config: \(flag.flag.enabled ? "On" : "Off")")
-                .font(.caption)
-                .foregroundColor(flag.flag.enabled ? .green : .red)
-
-            // Show effective state
-            Text("Effective: \(isEnabled ? "On" : "Off")")
-                .font(.caption)
-                .foregroundColor(isEnabled ? .green : .red)
-
-            // Show debug override if present
-            if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key),
-               let override = featureFlags.debugOverrides[feature] {
-                Text("Override: \(override ? "On" : "Off")")
-                    .font(.caption)
-                    .foregroundColor(.blue)
-            }
-
-            // Show restrictions if any
-            let restrictions = featureFlags.getFeatureRestrictions(flag.key)
-            if !restrictions.isEmpty {
-                ForEach(restrictions, id: \.self) { restriction in
-                    Text(restriction)
-                        .font(.caption)
-                        .foregroundColor(.red)
-                }
-            }
-        }
-    }
-}
-
-private struct FeatureFlagDetails: View {
-    let flag: FeatureFlag
-
-    var body: some View {
-        Group {
-            if let minVersion = flag.minVersion {
-                Text("Min Version: \(minVersion)")
-            }
-            if let minBuild = flag.minBuildNumber {
-                Text("Min Build: \(minBuild)")
-            }
-            if let allowedTypes = flag.allowedAppTypes {
-                Text("Allowed Types: \(allowedTypes.joined(separator: ", "))")
-            }
-        }
-        .font(.caption)
-        .foregroundColor(.secondary)
-    }
-}
-
-private struct ConfigurationSection: View {
-    var body: some View {
-        Section(header: Text("Current Configuration")) {
-            Text("App Type: \(PVFeatureFlags.getCurrentAppType().rawValue)")
-            Text("App Version: \(PVFeatureFlags.getCurrentAppVersion())")
-            if let buildNumber = PVFeatureFlags.getCurrentBuildNumber() {
-                Text("Build Number: \(buildNumber)")
-            }
-            Text("Remote URL: https://data.provenance-emu.com/features/features.json")
-                .font(.caption)
-                .foregroundColor(.secondary)
-        }
-    }
-}
-
-private struct DebugControlsSection: View {
-    let featureFlags: PVFeatureFlagsManager
-    @Binding var flags: [(key: String, flag: FeatureFlag, enabled: Bool)]
-    @Binding var isLoading: Bool
-    @Binding var errorMessage: String?
-    @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = false
-
-    var body: some View {
-        Section(header: Text("Debug Controls")) {
-            Button("Clear All Overrides") {
-                featureFlags.clearDebugOverrides()
-                flags = featureFlags.getAllFeatureFlags()
-            }
-
-            Button("Refresh Flags") {
-                flags = featureFlags.getAllFeatureFlags()
-            }
-
-            Button("Load Test Configuration") {
-                loadTestConfiguration()
-                flags = featureFlags.getAllFeatureFlags()
-            }
-
-            Button("Reset to Default") {
-                Task {
-                    do {
-                        // Reset feature flags to default
-                        try await loadDefaultConfiguration()
-                        flags = featureFlags.getAllFeatureFlags()
-
-                        // Reset unlock status
-                        showFeatureFlagsDebug = false
-
-                        // Reset all user defaults to their default values
-                        Defaults.Keys.useAppGroups.reset()
-                        Defaults.Keys.unsupportedCores.reset()
-                        Defaults.Keys.iCloudSync.reset()
-                    } catch {
-                        errorMessage = "Failed to load default configuration: \(error.localizedDescription)"
-                    }
-                }
-            }
-            .foregroundColor(.red) // Make it stand out as a destructive action
-        }
-    }
-
-    @MainActor
-    private func loadTestConfiguration() {
-        let testFeatures: [String: FeatureFlag] = [
-            "inAppFreeROMs": FeatureFlag(
-                enabled: true,
-                minVersion: "1.0.0",
-                minBuildNumber: "100",
-                allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
-                description: "Test configuration - enabled for all builds"
-            ),
-            "romPathMigrator": FeatureFlag(
-                enabled: true,
-                minVersion: "1.0.0",
-                minBuildNumber: "100",
-                allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
-                description: "Test configuration - enabled for all builds"
-            )
-        ]
-
-        featureFlags.setDebugConfiguration(features: testFeatures)
-    }
-
-    @MainActor
-    private func loadDefaultConfiguration() async throws {
-        try await PVFeatureFlagsManager.shared.loadConfiguration(
-            from: URL(string: "https://data.provenance-emu.com/features/features.json")!
-        )
-    }
-}
-
-private struct AppearanceSection: View {
-    @Default(.showGameTitles) var showGameTitles
-    @Default(.showRecentGames) var showRecentGames
-    @Default(.showRecentSaveStates) var showRecentSaveStates
-    @Default(.showGameBadges) var showGameBadges
-    @Default(.showFavorites) var showFavorites
-
-    var body: some View {
-        Section(header: Text("Appearance")) {
-            ThemedToggle(isOn: $showGameTitles) {
-                SettingsRow(title: "Show Game Titles",
-                            subtitle: "Display game titles under artwork.",
-                            icon: .sfSymbol("text.below.photo"))
-            }
-            ThemedToggle(isOn: $showRecentGames) {
-                SettingsRow(title: "Show Recent Games",
-                            subtitle: "Display recently played games section.",
-                            icon: .sfSymbol("clock"))
-            }
-            ThemedToggle(isOn: $showRecentSaveStates) {
-                SettingsRow(title: "Show Recent Saves",
-                            subtitle: "Display recent save states section.",
-                            icon: .sfSymbol("clock.badge.checkmark"))
-            }
-            ThemedToggle(isOn: $showGameBadges) {
-                SettingsRow(title: "Show Game Badges",
-                            subtitle: "Display badges for favorite and recent games.",
-                            icon: .sfSymbol("star.circle"))
-            }
-            ThemedToggle(isOn: $showFavorites) {
-                SettingsRow(title: "Show Favorites",
-                            subtitle: "Display favorites section.",
-                            icon: .sfSymbol("star"))
-            }
-
-            // Add the new navigation link wrapped in PaidFeatureView
+        Section {
+            // Button to select skins (premium locked)
             PaidFeatureView {
-                NavigationLink(destination: MissingArtworkStyleView()) {
-                    SettingsRow(title: "Missing Artwork Style",
-                                subtitle: "Choose style for games without artwork.",
-                                icon: .sfSymbol("photo.artframe"))
+                VStack {
+                    Text("SKIN MODE")
+                        .font(.system(.headline, design: .monospaced))
+                        .foregroundColor(.retroBlue)
+                        .shadow(color: .retroPink.opacity(0.8), radius: 2, x: 1, y: 1)
+                    
+                    Picker("Select skin mode", selection: $skinMode) {
+                        ForEach(SkinMode.allCases, id: \.self) { theme in
+                            Text(theme.rawValue.uppercased()).tag(theme)
+                        }
+                    }
+                    #if !os(tvOS)
+                    .pickerStyle(.wheel)
+                    #else
+                    .pickerStyle(.automatic)
+                    #endif
+                    .frame(height: 100)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                ),
+                                lineWidth: 1.5
+                            )
+                    )
+                    .background(Color.retroBlack.opacity(0.5))
+                    .cornerRadius(8)
+                    
+                    Text(skinMode.subtitle)
+                        .font(.system(.subheadline, design: .monospaced))
+                        .foregroundColor(.retroBlue)
+                        .shadow(color: .retroPink.opacity(0.8), radius: 2, x: 1, y: 1)
+                }
+                .frame(maxWidth: .infinity)
+            } lockedView: {
+                SettingsRow(title: "Controller skin mode",
+                          subtitle: "Unlock to to active controller skin mode.",
+                          icon: .sfSymbol("lock.fill"))
+            }
+            
+            // Button to select skins (premium locked)
+            PaidFeatureView {
+                NavigationLink {
+                    SystemSkinBrowserView()
+                } label: {
+                    SettingsRow(title: "Select Controller Skins",
+                              subtitle: "Choose controller skins for each system and orientation.",
+                              icon: .sfSymbol("gamecontroller.fill"))
                 }
             } lockedView: {
-                SettingsRow(title: "Missing Artwork Style",
-                            subtitle: "Unlock to customize missing artwork style.",
+                SettingsRow(title: "Select Controller Skins",
+                          subtitle: "Unlock to choose controller skins for each system.",
+                          icon: .sfSymbol("lock.fill"))
+            }
+            
+            // Button to manage skins (premium locked)
+            PaidFeatureView {
+                NavigationLink {
+                    DeltaSkinListView(manager: DeltaSkinManager.shared)
+                } label: {
+                    SettingsRow(title: "Manage Controller Skins",
+                              subtitle: "View, import, and delete controller skins.",
+                              icon: .sfSymbol("folder.badge.gearshape"))
+                }
+            } lockedView: {
+                SettingsRow(title: "Manage Controller Skins",
+                          subtitle: "Unlock to manage your controller skins.",
+                          icon: .sfSymbol("lock.fill"))
+            }
+            
+            PaidFeatureView {
+                buttonSoundEFfect
+            } lockedView: {
+                SettingsRow(title: "Button Sound Effect",
+                            subtitle: "Unlock to select a button sound effect.",
+                            icon: .sfSymbol("lock.fill"))
+            }
+            
+            PaidFeatureView {
+                buttonTouchFeedback
+            } lockedView: {
+                SettingsRow(title: "Button Sound Effect",
+                            subtitle: "Unlock to select a button sound effect.",
                             icon: .sfSymbol("lock.fill"))
             }
         }
     }
-}
-
-// Add the new view for selecting missing artwork style
-private struct MissingArtworkStyleView: View {
-    @ObservedObject private var themeManager = ThemeManager.shared
-    @Default(.missingArtworkStyle) private var selectedStyle
-
-    var body: some View {
-        List {
-            ForEach(RetroTestPattern.allCases, id: \.self) { style in
-                Button(action: { selectedStyle = style }) {
-                    HStack {
-                        // Preview of the style
-                        Image(uiImage: UIImage.missingArtworkImage(
-                            gameTitle: "Preview",
-                            ratio: 1.0,
-                            pattern: style
-                        ))
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 80, height: 80)
-                        .cornerRadius(8)
-
-                        // Style description
-                        VStack(alignment: .leading) {
-                            Text(style.description)
-                                .font(.headline)
-                            Text(style.subtitle)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                        .padding(.leading, 8)
-
-                        HomeDividerView()
-
-                        // Selection indicator
-                        if selectedStyle == style {
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor, lineWidth: 2)
-                                .frame(width: 80, height: 80)
-                        }
-                    }
-                }
-                .buttonStyle(PlainButtonStyle())
-                .padding(.vertical, 4)
-            }
-        }
-        .navigationTitle("Missing Artwork Style")
-    }
-}
-
-private struct SecretSettingsRow: View {
-    @State private var showSecretView = false
-    @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = false
-
-    var body: some View {
-        Group {
-            #if DEBUG
-            NavigationLink(destination: FeatureFlagsDebugView()) {
-                SettingsRow(title: "Feature Flags Debug",
-                           subtitle: "Override feature flags for testing",
-                           icon: .sfSymbol("flag.fill"))
-                
-            }
-            Button {
-                showSecretView = true
-            } label: {
-                SettingsRow(title: "About",
-                           subtitle: "Version information",
-                           icon: .sfSymbol("info.circle"))
-            }
-            .buttonStyle(.plain)
-            #else
-            if showFeatureFlagsDebug {
-                NavigationLink(destination: FeatureFlagsDebugView()) {
-                    SettingsRow(title: "Feature Flags Debug",
-                               subtitle: "Override feature flags for testing",
-                               icon: .sfSymbol("flag.fill"))
-                }
-            } else {
-                Button {
-                    showSecretView = true
-                } label: {
-                    SettingsRow(title: "About",
-                               subtitle: "Version information",
-                               icon: .sfSymbol("info.circle"))
-                }
-                .buttonStyle(.plain)
-            }
-            #endif
-        }
-        .sheet(isPresented: $showSecretView) {
-            SecretDPadView {
-                showFeatureFlagsDebug = true
-            }
+    
+    var buttonTouchFeedback: some View {
+        // Button Press Effect Picker
+        NavigationLink {
+            ButtonEffectPickerView(buttonPressEffect: $buttonPressEffect)
+        } label: {
+            SettingsRow(title: "Button Effect Style",
+                       subtitle: buttonPressEffect.description,
+                       icon: .sfSymbol("circle.circle"))
         }
     }
-}
-
-private struct SecretDPadView: View {
-    enum Direction {
-        case up, down, left, right
-    }
-
-    let onComplete: () -> Void
-    @State private var pressedButtons: [Direction] = []
-    @State private var showDPad = false
-    @FocusState private var isFocused: Bool
-    @Environment(\.dismiss) private var dismiss
-    #if os(tvOS)
-    @State private var controller: GCController?
-    @State private var isHandlingX = false
-    @State private var isHandlingY = false
-    #endif
-
-    private let konamiCode: [Direction] = [.up, .up, .down, .down, .left, .right, .left, .right]
-
-    var body: some View {
-        VStack {
-            if showDPad {
-                #if os(tvOS)
-                // tvOS: Show instructions and handle Siri Remote gestures
-                VStack {
-                    Text("Use Siri Remote to enter the code")
-                        .font(.headline)
-                        .padding()
-
-                    // Show current sequence with better visibility
-                    Text(sequenceText.isEmpty ? "No input yet" : sequenceText)
-                        .font(.title)
-                        .foregroundColor(.primary)
-                        .padding()
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.secondary.opacity(0.2))
-                        )
-                        .padding()
-
-                    // Show hint about remaining inputs needed
-                    Text("\(konamiCode.count - (pressedButtons.count % konamiCode.count)) more inputs needed")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .padding(.top)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                #else
-                // iOS: Show D-Pad buttons
-                VStack(spacing: 0) {
-                    Button(action: { pressButton(.up) }) {
-                        Image(systemName: "arrow.up.circle.fill")
-                            .resizable()
-                            .frame(width: 60, height: 60)
-                    }
-
-                    HStack(spacing: 60) {
-                        Button(action: { pressButton(.left) }) {
-                            Image(systemName: "arrow.left.circle.fill")
-                                .resizable()
-                                .frame(width: 60, height: 60)
-                        }
-
-                        Button(action: { pressButton(.right) }) {
-                            Image(systemName: "arrow.right.circle.fill")
-                                .resizable()
-                                .frame(width: 60, height: 60)
-                        }
-                    }
-
-                    Button(action: { pressButton(.down) }) {
-                        Image(systemName: "arrow.down.circle.fill")
-                            .resizable()
-                            .frame(width: 60, height: 60)
-                    }
-                }
-                .foregroundColor(.accentColor)
-
-                Text(sequenceText)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .padding(.top)
-                #endif
-            } else {
-                ScrollView {
-                    if let markdownPath = Bundle.main.path(forResource: "CONTRIBUTORS", ofType: "md"),
-                       let markdown = FileManager.default.contents(atPath: markdownPath) {
-                        MarkdownView(text: String(data: markdown, encoding: .utf8) ?? "# CONTRIBUTORS\n\nNo CONTRIBUTORS file found.", baseURL: nil)
-                    } else {
-                        MarkdownView(text: "# CONTRIBUTORS\n\nNo CONTRIBUTORS file found.", baseURL: nil)
-                    }
-                }
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .contentShape(Rectangle())
-        #if os(tvOS)
-        .focusable()
-        .focused($isFocused)
-        .onLongPressGesture(minimumDuration: 5) {
-            DLOG("[SecretDPadView] Long press detected")
-            withAnimation(.easeInOut) {
-                showDPad = true
-                isFocused = true
-                setupController()
-            }
-        }
-        .onChange(of: showDPad) { newValue in
-            DLOG("[SecretDPadView] showDPad changed to: \(newValue)")
-            if newValue {
-                setupController()
-            }
-        }
-        .onChange(of: isFocused) { focused in
-            DLOG("[SecretDPadView] Focus changed to: \(focused)")
-            if !focused {
-                pressedButtons.removeAll()
-                removeController()
-            } else if showDPad {
-                setupController()
-            }
-        }
-        .onDisappear {
-            removeController()
-        }
-        #else
-        // iOS: Handle long press gesture
-        .onLongPressGesture(minimumDuration: 5) {
-            withAnimation {
-                showDPad = true
-            }
-        }
-        #endif
-    }
-
-    #if os(tvOS)
-    private func setupController() {
-        DLOG("[SecretDPadView] Setting up controller")
-        // Get the first connected controller (Siri Remote)
-        controller = GCController.controllers().first
-
-        controller?.microGamepad?.dpad.valueChangedHandler = { [self] dpad, xValue, yValue in
-            DLOG("[SecretDPadView] Dpad input - x: \(xValue), y: \(yValue)")
-
-            // Handle X-axis (left/right)
-            if xValue == 1.0 && !isHandlingX {
-                isHandlingX = true
-                pressButton(.right)
-            } else if xValue == -1.0 && !isHandlingX {
-                isHandlingX = true
-                pressButton(.left)
-            } else if xValue == 0 {
-                isHandlingX = false
-            }
-
-            // Handle Y-axis (up/down)
-            if yValue == 1.0 && !isHandlingY {
-                isHandlingY = true
-                pressButton(.up)
-            } else if yValue == -1.0 && !isHandlingY {
-                isHandlingY = true
-                pressButton(.down)
-            } else if yValue == 0 {
-                isHandlingY = false
-            }
-        }
-
-        // Enable basic gamepad input profile for Siri Remote
-        controller?.microGamepad?.reportsAbsoluteDpadValues = false
-    }
-
-    private func removeController() {
-        DLOG("[SecretDPadView] Removing controller")
-        controller?.microGamepad?.dpad.valueChangedHandler = nil
-        controller = nil
-        isHandlingX = false
-        isHandlingY = false
-    }
-    #endif
-
-    private var sequenceText: String {
-        pressedButtons.map { direction in
-            switch direction {
-            case .up: return "↑"
-            case .down: return "↓"
-            case .left: return "←"
-            case .right: return "→"
-            }
-        }.joined(separator: " ")
-    }
-
-    private func pressButton(_ direction: Direction) {
-        DLOG("[SecretDPadView] Button pressed: \(direction)")
-        pressedButtons.append(direction)
-
-        #if os(tvOS)
-        // Use AudioServicesPlaySystemSound for tvOS feedback
-        AudioServicesPlaySystemSound(1519) // Standard system sound
-        #endif
-
-        // Check if the sequence matches the Konami code
-        if pressedButtons.count >= konamiCode.count {
-            let lastEight = Array(pressedButtons.suffix(konamiCode.count))
-            DLOG("[SecretDPadView] Checking sequence: \(lastEight) against \(konamiCode)")
-            if lastEight == konamiCode {
-                DLOG("[SecretDPadView] Konami code matched!")
-                onComplete()
-                dismiss()
-            }
-        }
-
-        // Limit the stored sequence length
-        if pressedButtons.count > 16 {
-            pressedButtons.removeFirst(8)
-        }
-
-        DLOG("[SecretDPadView] Current sequence: \(sequenceText)")
-    }
-}
-
-private struct UserDefaultsSection: View {
-    @Default(.useAppGroups) var useAppGroups
-    @Default(.unsupportedCores) var unsupportedCores
-    @Default(.iCloudSync) var iCloudSync
-
-    var body: some View {
-        Section(header: Text("User Defaults")) {
-            UserDefaultToggle(
-                title: "useAppGroups",
-                subtitle: "Use App Groups for shared storage",
-                isOn: $useAppGroups
-            )
-
-            UserDefaultToggle(
-                title: "unsupportedCores",
-                subtitle: "Enable experimental and unsupported cores",
-                isOn: $unsupportedCores
-            )
-
-            UserDefaultToggle(
-                title: "iCloudSync",
-                subtitle: "Sync save states and settings with iCloud",
-                isOn: $iCloudSync
-            )
+    
+    var buttonSoundEFfect: some View {
+        // Button Sound Effect Picker
+        NavigationLink {
+            ButtonSoundPickerView(buttonSound: $buttonSound, playSound: playButtonSound)
+        } label: {
+            SettingsRow(title: "Button Sound Effect",
+                        subtitle: buttonSound.description,
+                        icon: .sfSymbol("speaker.wave.2"))
         }
     }
-}
-
-private struct UserDefaultToggle: View {
-    let title: String
-    let subtitle: String
-    @Binding var isOn: Bool
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                VStack(alignment: .leading) {
-                    Text(title)
-                        .font(.headline)
-                    Text(subtitle)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                Spacer()
-                Toggle("", isOn: $isOn)
-            }
-        }
-        .padding(.vertical, 4)
+    
+    
+    private func playButtonSound(_ sound: ButtonSound) {
+        PVUIBase.ButtonSoundGenerator.shared.playSound(sound, pan: 0, volume: 1.0)
     }
 }

@@ -17,6 +17,32 @@ fileprivate var IsAppStore: Bool {
     Bundle.main.infoDictionary?["ALTDeviceID"] != nil
 }
 
+// Video
+public
+extension Defaults.Keys {
+#if os(iOS) || os(watchOS) || targetEnvironment(macCatalyst)
+    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: true)
+#else
+    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: true)
+#endif
+    static let imageSmoothing = Key<Bool>("imageSmoothing", default: false)
+
+    static let integerScaleEnabled = Key<Bool>("integerScaleEnabled", default: false)
+
+    static let showRecentSaveStates = Key<Bool>("showRecentSaveStates", default: true)
+    static let showGameBadges = Key<Bool>("showGameBadges", default: true)
+    
+    static let showRecentGames = Key<Bool>("showRecentGames", default: true)
+    
+    static let showSearchbar = Key<Bool>("showSearchbar", default: true)
+
+
+    static let showFPSCount = Key<Bool>("showFPSCount", default: false)
+    
+    static let vsyncEnabled = Key<Bool>("vsyncEnabled", default: true)
+
+}
+
 public
 extension Defaults.Keys {
     static let autoSave = Key<Bool>("autoSave", default: true)
@@ -33,21 +59,6 @@ extension Defaults.Keys {
 #endif
 
     static let buttonVibration = Key<Bool>("buttonVibration", default: true)
-#if os(iOS) || os(watchOS) || targetEnvironment(macCatalyst)
-    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: true)
-#else
-    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: true)
-#endif
-    static let imageSmoothing = Key<Bool>("imageSmoothing", default: false)
-
-    static let integerScaleEnabled = Key<Bool>("integerScaleEnabled", default: false)
-
-    static let showRecentSaveStates = Key<Bool>("showRecentSaveStates", default: true)
-    static let showGameBadges = Key<Bool>("showGameBadges", default: true)
-    
-    static let showRecentGames = Key<Bool>("showRecentGames", default: true)
-
-    static let showFPSCount = Key<Bool>("showFPSCount", default: false)
 
     static let showGameTitles = Key<Bool>("showGameTitles", default: true)
 
@@ -221,12 +232,94 @@ public extension Defaults.Keys {
     
     static let volume = Key<Float>("volume", default: 1.0)
     static let volumeHUD = Key<Bool>("volumeHUD", default: true)
+    static let audioVisulaizer = Key<Bool>("audioVisulaizer", default: true)
 
     static let monoAudio = Key<Bool>("monoAudio", default: false)
 
     static let audioLatency = Key<TimeInterval>("audioLatency", default: 10.0)
     
     static let respectMuteSwitch = Key<Bool>("respectMuteSwitch", default: true)
+}
+
+public enum MainUIMode: String, Codable, Equatable, UserDefaultsRepresentable, Defaults.Serializable, CaseIterable, CustomStringConvertible, Identifiable {
+    #if !os(tvOS)
+    case paged = "Paged"
+    #endif
+    case singlePage = "Single Page"
+    case uikit = "UIKit"
+    
+    public var id: String {
+        rawValue
+    }
+
+    public var description: String {
+        switch self {
+#if !os(tvOS)
+        case .paged:
+            return "Paged (Default)"
+        case .singlePage:
+            return "Single Page (RetroWave)"
+        case .uikit:
+            return "UIKit (Legacy)"
+#else
+        case .singlePage:
+            return "Single Page (RetroWave)"
+        case .uikit:
+            return "UIKit (Default)"
+#endif
+
+        }
+    }
+
+    public var subtitle: String {
+        switch self {
+#if !os(tvOS)
+        case .paged:
+            return "The default paged mode."
+        case .singlePage:
+            return "All consoles in a single page, reduced features."
+        case .uikit:
+            return "Original UIKit mode from 1.X/2.X (Legacy)."
+#else
+        case .singlePage:
+            return "New SwiftUI single page mode."
+        case .uikit:
+            return "Original UIKit mode."
+#endif
+        }
+    }
+}
+
+public enum SkinMode: String, Codable, Equatable, UserDefaultsRepresentable, Defaults.Serializable, CaseIterable, CustomStringConvertible, Identifiable {
+    case off = "Off"
+    case selectedOnly = "Selected Only"
+    case always = "Always"
+    
+    public var id: String {
+        rawValue
+    }
+
+    public var description: String {
+        switch self {
+        case .off:
+            return "Off (Classic)"
+        case .selectedOnly:
+            return "Selected systems only"
+        case .always:
+            return "Always use"
+        }
+    }
+
+    public var subtitle: String {
+        switch self {
+        case .off:
+            return "Always use the classic on-screen controller"
+        case .selectedOnly:
+            return "Use skins for selected sytems, use classic controller as default"
+        case .always:
+            return "Always use skins including the default generated skins"
+        }
+    }
 }
 
 // MARK: Beta Options
@@ -238,13 +331,13 @@ public extension Defaults.Keys {
 #endif
     static let autoJIT = Key<Bool>("autoJIT", default: false)
 #if os(tvOS)
-    static let useUIKit = Key<Bool>("useUIKit", default: true)
+    static let mainUIMode = Key<MainUIMode>("mainUIMode", default: .singlePage)
 #elseif os(macOS) || targetEnvironment(macCatalyst) || APP_STORE
-    static let useUIKit = Key<Bool>("useUIKit", default: false)
+    static let mainUIMode = Key<MainUIMode>("mainUIMode", default: .paged)
 #elseif os(visionOS)
-    static let useUIKit = Key<Bool>("useUIKit", default: false)
+    static let mainUIMode = Key<MainUIMode>("mainUIMode", default: .singlePage)
 #else
-    static let useUIKit = Key<Bool>("useUIKit", default:false)
+    static let mainUIMode = Key<MainUIMode>("mainUIMode", default: .paged)
 #endif
     static let iCloudSync = Key<Bool>("iCloudSync", default: false)
     static let unsupportedCores = Key<Bool>("unsupportedCores", default: false)
@@ -260,6 +353,8 @@ public extension Defaults.Keys {
     static let onscreenJoypad = Key<Bool>("onscreenJoypad", default: true)
     static let onscreenJoypadWithKeyboard = Key<Bool>("onscreenJoypadWithKeyboard", default: true)
 #endif
+    
+    static let skinMode = Key<SkinMode>("skinMOde", default: .off)
 }
 
 // MARK: Video Options
@@ -288,6 +383,11 @@ public final class PVSettingsWrapper: NSObject {
     public static var integerScaleEnabled: Bool {
         get { Defaults[.integerScaleEnabled] }
         set { Defaults[.integerScaleEnabled] = newValue }}
+    
+    @objc
+    public static var vsyncEnabled: Bool {
+        get { Defaults[.vsyncEnabled] }
+        set { Defaults[.vsyncEnabled] = newValue }}
 
     @objc
     public static var imageSmoothing: Bool {

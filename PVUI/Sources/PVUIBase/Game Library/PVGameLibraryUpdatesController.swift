@@ -287,7 +287,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         Task {
             let initialScan = await scanInitialFiles(at: importPath)
             if !initialScan.isEmpty {
-                gameImporter.addImports(forPaths: initialScan)
+                await gameImporter.addImports(forPaths: initialScan)
             }
 
             for await extractedFiles in directoryWatcher.extractedFilesStream(at: importPath) {
@@ -298,7 +298,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                     }
                 }
                 if (!readyURLs.isEmpty) {
-                    gameImporter.addImports(forPaths: readyURLs)
+                    await gameImporter.addImports(forPaths: readyURLs)
                 }
 
                 if await (!directoryWatcher.isWatchingAnyFile()) {
@@ -344,7 +344,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
             }
             if !newGames.isEmpty {
                 ILOG("PVGameLibraryUpdatesController: Adding \(newGames) to the queue")
-                gameImporter.addImports(forPaths: newGames, targetSystem:system.systemIdentifier)
+                await gameImporter.addImports(forPaths: newGames, targetSystem:system.systemIdentifier)
                 queueGames = true
             }
             ILOG("PVGameLibrary: Added items for \(system.identifier) to queue")
@@ -359,77 +359,204 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
     /// Spotlight indexing support
     @MainActor
-    public func addImportedGames(to spotlightIndex: CSSearchableIndex, database: RomDatabase) async {
-        enum ImportEvent {
-            case finished(md5: String, modified: Bool)
-            case completed(encounteredConflicts: Bool)
-        }
-
-        /// Create a batch processor to handle multiple items at once
+    public func addImportedGames(to spotlightIndex: CSSearchableIndex = CSSearchableIndex.default(), database: RomDatabase = RomDatabase.sharedInstance) async {
+        ILOG("Starting Spotlight indexing for all games")
+        
+        // Create a batch processor to handle multiple items at once
         var pendingItems: [CSSearchableItem] = []
-        let batchSize = 50 /// Smaller batch size for more frequent updates
-
+        let batchSize = 50 // Smaller batch size for more frequent updates
+        var totalIndexed = 0
+        
+        // Function to process a batch of items
         func processBatch() async {
             guard !pendingItems.isEmpty else { return }
-
+            
             do {
                 try await spotlightIndex.indexSearchableItems(pendingItems)
-                DLOG("Indexed batch of \(pendingItems.count) items")
+                totalIndexed += pendingItems.count
+                ILOG("Indexed batch of \(pendingItems.count) items (Total: \(totalIndexed))")
                 pendingItems.removeAll(keepingCapacity: true)
             } catch {
                 ELOG("Error batch indexing games: \(error)")
             }
         }
-
-        let eventStream = AsyncStream<ImportEvent> { continuation in
-            GameImporter.shared.spotlightFinishedImportHandler = { md5, modified in
-                continuation.yield(.finished(md5: md5, modified: modified))
-            }
-            GameImporter.shared.spotlightCompletionHandler = { encounteredConflicts in
-                continuation.yield(.completed(encounteredConflicts: encounteredConflicts))
-                continuation.finish()
-            }
-        }
-
-        for await event in eventStream {
-            switch event {
-            case .finished(let md5, _):
-                do {
-                    let realm = try await Realm()
-                    guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5) else {
-                        DLOG("No game found for MD5: \(md5)")
-                        continue
-                    }
-
-                    /// Create a detached copy of the game object
-                    let detachedGame = game.detached()
-
-                    let item = CSSearchableItem(
-                        uniqueIdentifier: detachedGame.spotlightUniqueIdentifier,
-                        domainIdentifier: "org.provenance-emu.game",
-                        attributeSet: detachedGame.spotlightContentSet
-                    )
-
-                    pendingItems.append(item)
-
-                    /// Process batch if we've reached the batch size
-                    if pendingItems.count >= batchSize {
-                        await processBatch()
-                    }
-
-                } catch {
-                    ELOG("Error accessing Realm or indexing game (MD5: \(md5)): \(error)")
+        
+        do {
+            // Create an actor to isolate Realm access
+            actor RealmIsolator {
+                let config: Realm.Configuration
+                
+                init(config: Realm.Configuration) {
+                    self.config = config
                 }
-            case .completed:
-                /// Process any remaining items
-                await processBatch()
-                break
+                
+                func getAllGames() async throws -> [PVGame] {
+                    let realm = RomDatabase.sharedInstance.realm
+                    
+                    // Get all games and freeze them
+                    let allGames = realm.objects(PVGame.self)
+                    ILOG("Found \(allGames.count) games to process")
+                    
+                    // Return frozen copies of all games
+                    return allGames.map { $0.freeze() }
+                }
+            }
+            
+            // Use the RealmActor pattern to safely access Realm
+            let config = RealmConfiguration.realmConfig
+            let isolator = RealmIsolator(config: config)
+            let allGames = try await isolator.getAllGames()
+            
+            ILOG("Processing \(allGames.count) games for indexing")
+            
+            // Process each game
+            for frozenGame in allGames {
+                
+                // Create the searchable item
+                let attributeSet = frozenGame.spotlightContentSet
+                
+                // Add system information if available
+                if let system = frozenGame.system {
+                    attributeSet.contentType = "\(system.manufacturer) \(system.name)"
+                }
+                
+                // Add keywords for better searchability
+                if var keywords = attributeSet.keywords as? [String] {
+                    if let systemName = frozenGame.system?.name, !keywords.contains(systemName) {
+                        keywords.append(systemName)
+                    }
+                    if let manufacturer = frozenGame.system?.manufacturer, !keywords.contains(manufacturer) {
+                        keywords.append(manufacturer)
+                    }
+                    attributeSet.keywords = keywords
+                }
+                
+                // Create the searchable item
+                let item = CSSearchableItem(
+                    uniqueIdentifier: "org.provenance-emu.game.\(frozenGame.md5Hash)",
+                    domainIdentifier: "org.provenance-emu.games",
+                    attributeSet: attributeSet
+                )
+                
+                pendingItems.append(item)
+                
+                // Process batch if we've reached the batch size
+                if pendingItems.count >= batchSize {
+                    await processBatch()
+                }
+            }
+            
+            // Process any remaining items
+            await processBatch()
+            
+            let realm = RomDatabase.sharedInstance.realm
+
+            // Now index save states
+            await indexSaveStates(spotlightIndex: spotlightIndex, realm: realm)
+            
+            ILOG("Completed Spotlight indexing")
+        } catch {
+            ELOG("Error during Spotlight indexing: \(error)")
+        }
+    }
+    
+    /// Index all save states in Spotlight
+    private func indexSaveStates(spotlightIndex: CSSearchableIndex, realm: Realm) async {
+        ILOG("Starting Spotlight indexing for save states")
+        
+        // Create an actor to isolate Realm access
+        actor RealmIsolator {
+            let config: Realm.Configuration
+            
+            init(config: Realm.Configuration) {
+                // Store the configuration
+                self.config = config
+            }
+            
+            func getSaveStatesWithGames() async throws -> [(saveState: PVSaveState, game: PVGame)] {
+                // Create a new Realm instance with the configuration
+                let realm = RomDatabase.sharedInstance.realm
+
+                // Get all save states with valid games
+                var results: [(saveState: PVSaveState, game: PVGame)] = []
+                
+                let saveStates = realm.objects(PVSaveState.self)
+                ILOG("Found \(saveStates.count) save states to process")
+                
+                for saveState in saveStates {
+                    if let game = saveState.game {
+                        // Freeze both objects to safely pass across thread boundaries
+                        results.append((saveState: saveState.freeze(), game: game.freeze()))
+                    }
+                }
+                
+                return results
             }
         }
-
-        /// Clean up handlers
-        GameImporter.shared.spotlightFinishedImportHandler = nil
-        GameImporter.shared.spotlightCompletionHandler = nil
+        
+        var pendingItems: [CSSearchableItem] = []
+        let batchSize = 50
+        var totalIndexed = 0
+        
+        func processBatch() async {
+            guard !pendingItems.isEmpty else { return }
+            
+            do {
+                try await spotlightIndex.indexSearchableItems(pendingItems)
+                totalIndexed += pendingItems.count
+                ILOG("Indexed batch of \(pendingItems.count) save states (Total: \(totalIndexed))")
+                pendingItems.removeAll(keepingCapacity: true)
+            } catch {
+                ELOG("Error batch indexing save states: \(error)")
+            }
+        }
+        
+        // Create the isolator and get save states with games
+        let isolator = RealmIsolator(config: realm.configuration)
+        do {
+            let saveStatesWithGames = try await isolator.getSaveStatesWithGames()
+            
+            ILOG("Found \(saveStatesWithGames.count) save states with games to index")
+            
+            // Process each save state
+            for (saveState, game) in saveStatesWithGames {
+                // Create attribute set
+                let attributeSet = CSSearchableItemAttributeSet(contentType: .data)
+                attributeSet.displayName = "Save State: \(game.title)"
+                attributeSet.contentDescription = "Save state for \(game.title) on \(game.system?.name ?? "Unknown System")"
+                
+                // Add date information
+                attributeSet.contentCreationDate = saveState.date
+                attributeSet.contentModificationDate = saveState.date
+                
+                // Add keywords
+                var keywords = ["save state", "saved game", "provenance", "emulator"]
+                if let systemName = game.system?.name {
+                    keywords.append(systemName)
+                }
+                attributeSet.keywords = keywords
+                
+                // Create searchable item
+                let item = CSSearchableItem(
+                    uniqueIdentifier: "org.provenance-emu.savestate.\(saveState.id)",
+                    domainIdentifier: "org.provenance-emu.games",
+                    attributeSet: attributeSet
+                )
+                
+                pendingItems.append(item)
+                
+                // Process batch if we've reached the batch size
+                if pendingItems.count >= batchSize {
+                    await processBatch()
+                }
+            }
+        }
+        catch {
+            ELOG("Error getting save states with games: \(error)")
+        }
+        // Process any remaining items
+        await processBatch()
+        ILOG("Completed save state indexing")
     }
     #endif
 
@@ -446,14 +573,14 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         // Process priority files first
         if !priorityFiles.isEmpty {
             DLOG("Starting import for priority files")
-            gameImporter.addImports(forPaths: priorityFiles)
+            await gameImporter.addImports(forPaths: priorityFiles)
             DLOG("Finished importing priority files")
         }
 
         // Then process other files
         if !otherFiles.isEmpty {
             DLOG("Starting import for other files")
-            gameImporter.addImports(forPaths: otherFiles)
+            await gameImporter.addImports(forPaths: otherFiles)
             DLOG("Finished importing other files")
         }
 
@@ -520,10 +647,13 @@ extension PVGameLibraryUpdatesController: ConflictsController {
     public func deleteConflict(path: URL) async {
         DLOG("Deleting conflict file at: \(path.path)")
 
-        // First find and remove the item from the import queue
-        if let index = gameImporter.importQueue.firstIndex(where: { $0.url == path }) {
-            DLOG("Found matching item in import queue, removing at index \(index)")
-            gameImporter.removeImports(at: IndexSet(integer: index))
+        // First find and remove the item from the import queue using Task to handle async property
+        Task {
+            let importQueue = await gameImporter.importQueue
+            if let index = importQueue.firstIndex(where: { $0.url == path }) {
+                DLOG("Found matching item in import queue, removing at index \(index)")
+                await gameImporter.removeImports(at: IndexSet(integer: index))
+            }
         }
 
         // Then delete the actual file

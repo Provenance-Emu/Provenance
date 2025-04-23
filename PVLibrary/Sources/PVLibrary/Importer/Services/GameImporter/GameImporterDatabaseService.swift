@@ -85,12 +85,36 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
         DLOG("Checking game cache for partialPath: \(partialPath) or similarName: \(similarName)")
         let gamesCache = RomDatabase.gamesCache
-
+        
+        // Check if the file is already in the correct location and has a database entry
+        let isInCorrectLocation = destUrl.path == queueItem.url.path
+        
         if let existingGame = gamesCache[partialPath] ?? gamesCache[similarName],
            targetSystem.rawValue == existingGame.systemIdentifier {
-            DLOG("Found existing game in cache, saving relative path")
+            DLOG("Found existing game in cache: \(existingGame.title)")
+            
+            // If the game already has a valid file and is in the correct location, we can skip further processing
+            if isInCorrectLocation && existingGame.file != nil {
+                ILOG("Game \(existingGame.title) already has a database entry with a valid file and is in the correct location, skipping import")
+                return
+            }
+            
+            // Otherwise, just update the relative path
+            DLOG("Updating relative path for existing game")
             await saveRelativePath(existingGame, partialPath: partialPath, file: queueItem.url)
         } else {
+            // Check if this is a duplicate by MD5 hash
+            if let md5 = queueItem.md5?.uppercased() {
+                let realm = RomDatabase.sharedInstance.realm
+                let gamesWithSameMD5 = realm.objects(PVGame.self).filter("md5Hash == %@", md5)
+                
+                if let existingGameWithSameMD5 = gamesWithSameMD5.first, targetSystem.rawValue == existingGameWithSameMD5.systemIdentifier {
+                    ILOG("Found existing game with same MD5 hash: \(existingGameWithSameMD5.title), updating relative path")
+                    await saveRelativePath(existingGameWithSameMD5, partialPath: partialPath, file: queueItem.url)
+                    return
+                }
+            }
+            
             DLOG("No existing game found, starting import to database")
             try await self.importToDatabaseROM(forItem: queueItem, system: targetSystem, relatedFiles: nil)
         }
@@ -200,6 +224,26 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
     @discardableResult
     func getArtwork(forGame game: PVGame) async -> PVGame {
+        // Check for existing custom artwork first
+        let md5 = game.md5Hash
+        if !md5.isEmpty {
+            DLOG("Checking for existing custom artwork for game with MD5: \(md5)")
+            
+            // Try to find existing custom artwork with this MD5
+            if let customArtworkKey = PVMediaCache.findExistingCustomArtwork(forMD5: md5) {
+                DLOG("Found existing custom artwork with key: \(customArtworkKey)")
+                
+                // If we found a custom artwork key, set it as the customArtworkURL
+                if let localURL = PVMediaCache.filePath(forKey: customArtworkKey) {
+                    DLOG("Setting custom artwork URL: \(localURL.path)")
+                    game.customArtworkURL = customArtworkKey
+                }
+            } else {
+                DLOG("No existing custom artwork found for game with MD5: \(md5)")
+            }
+        }
+        
+        // Continue with original artwork handling
         var url = game.originalArtworkURL
         if url.isEmpty {
             return game

@@ -20,7 +20,7 @@ import AsyncAlgorithms
 import PVSystems
 import PVMediaCache
 
-let schemaVersion: UInt64 = 16
+public let schemaVersion: UInt64 = 16
 
 public enum RomDeletionError: Error {
     case relatedFiledDeletionError
@@ -65,7 +65,7 @@ public final class RealmConfiguration {
         Realm.Configuration.defaultConfiguration = config
     }
     
-    private static var realmConfig: Realm.Configuration = {
+    public static var realmConfig: Realm.Configuration = {
         let realmFilename = "default.realm"
         let nonGroupPath = URL.documentsPath.appendingPathComponent(realmFilename, isDirectory: false)
         

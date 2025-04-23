@@ -148,37 +148,116 @@ private struct ContinuesFooterView: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
                         if let core = continueState.core {
+                            // Retrowave-styled core name
                             Text("\(core.projectName): Continue...")
-                                .font(.system(size: 10))
-                                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
+                                            RetroTheme.retroBlue
+                                        ]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
                         } else {
+                            // Retrowave-styled continue text
                             Text("Continue...")
-                                .font(.system(size: 10))
-                                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
+                                            RetroTheme.retroBlue
+                                        ]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
                         }
+                        
+                        // Retrowave-styled game title
                         Text(continueState.game?.isInvalidated == true ? "Deleted" : (continueState.game?.title ?? "Deleted"))
-                            .font(.system(size: 13))
+                            .font(.system(size: 13, weight: .medium))
                             .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                            .shadow(color: (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.5), radius: 1)
                     }
                     Spacer()
                     if !hideSystemLabel, let system = continueState.game?.system, !system.isInvalidated {
+                        // Retrowave-styled system name
                         Text(system.name)
-                            .font(.system(size: 8))
-                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                            .font(.system(size: 8, weight: .bold))
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .stroke(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [
+                                                RetroTheme.retroBlue,
+                                                themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink
+                                            ]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        ),
+                                        lineWidth: 1
+                                    )
+                            )
+                            .foregroundStyle(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        RetroTheme.retroBlue,
+                                        themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink
+                                    ]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
                     }
                 }
                 .padding(.vertical, 10)
                 .padding(.horizontal, 10)
             }
             .frame(height: Constants.overlayHeight)
-            .background(.ultraThinMaterial)
+            .background(
+                // Retrowave-style background with blur and grid
+                ZStack {
+                    // Blurred background
+                    Color.black.opacity(0.7)
+                        .blur(radius: 3)
+                    
+                    // Grid overlay for retrowave effect (subtle)
+                    RetroTheme.RetroGridView()
+                        .opacity(0.1)
+                }
+            )
+            .overlay(
+                // Top border glow
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
+                                RetroTheme.retroPurple,
+                                RetroTheme.retroBlue
+                            ]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .frame(height: 1)
+                    .blur(radius: 0.5)
+                    .opacity(0.7),
+                alignment: .top
+            )
             .frame(maxWidth: .infinity)
             .allowsHitTesting(false)
         }
     }
 }
 
-/// Custom page indicator with animated pills
+/// Custom page indicator with animated pills - retrowave styled
 private struct CustomPageIndicator: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     let numberOfPages: Int
@@ -200,13 +279,31 @@ private struct CustomPageIndicator: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: Constants.spacing) {
                         ForEach(0..<numberOfPages, id: \.self) { index in
+                            // Retrowave-styled indicator with glow effect
                             Capsule()
-                                .fill(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
-                                .opacity(currentPage == index ? 1.0 : 0.5)
+                                .fill(
+                                    // Use AnyShapeStyle to handle different types
+                                    currentPage == index ?
+                                    AnyShapeStyle(LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
+                                            RetroTheme.retroPurple
+                                        ]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )) :
+                                    // Use solid color with opacity for non-selected indicators
+                                    AnyShapeStyle((themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.5))
+                                )
                                 .frame(
                                     width: currentPage == index ? Constants.selectedWidth : Constants.defaultWidth,
                                     height: Constants.indicatorHeight
                                 )
+                                // Add glow effect to selected indicator
+                                .shadow(color: currentPage == index ? 
+                                        (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.8) : 
+                                        Color.clear, 
+                                        radius: 3)
                                 .id(index)
                                 .animation(.spring(response: 0.3), value: currentPage)
                         }
@@ -276,7 +373,7 @@ struct HomeContinueSection: SwiftUI.View {
     /// Constants for styling
     private enum Constants {
         static let cornerRadius: CGFloat = 16
-        static let borderWidth: CGFloat = 4
+        static let borderWidth: CGFloat = 1.5
         static let containerPadding: CGFloat = 16
     }
 
@@ -395,20 +492,38 @@ struct HomeContinueSection: SwiftUI.View {
                     }
                 }
             }
-            // Replace rounded rectangle with top and bottom borders
-            .overlay(alignment: .top) {
-                Rectangle()
-                    .fill(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
-                    .frame(height: Constants.borderWidth)
-                    .edgesIgnoringSafeArea(.horizontal)
-            }
-            .overlay(alignment: .bottom) {
-                Rectangle()
-                    .fill(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
-                    .frame(height: Constants.borderWidth)
-                    .edgesIgnoringSafeArea(.horizontal)
-            }
-            .padding(.top, 4) // Add top padding to the bordered container
+            // Retrowave-style border with gradient and glow
+            .background(
+                // Retrowave-style background
+                ZStack {
+                    // Dark background
+                    Color.black.opacity(0.8)
+                    
+                    // Grid overlay for retrowave effect
+                    RetroTheme.RetroGridView()
+                        .opacity(0.15)
+                }
+            )
+            // Neon border with gradient
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
+                                RetroTheme.retroPurple,
+                                RetroTheme.retroBlue
+                            ]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ),
+                        lineWidth: Constants.borderWidth
+                    )
+            )
+            // Add subtle glow effect
+            .shadow(color: (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.6), radius: 5)
+            //.padding(.top, 4) // Add top padding to the bordered container
+            .clipShape(RoundedRectangle(cornerRadius: 12))
         }
         .onAppear {
             setupGamepadHandling()

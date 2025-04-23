@@ -1,5 +1,5 @@
 {
-  "originHash" : "65c263185fdaa962965ea2a300e90b0e43c27eb6e58ffd6c129c514de4abe587",
+  "originHash" : "cbc44d7d39e8a5798f7a01de17a33c6430743bb3d26724e1549d1facd5c9d540",
   "pins" : [
     {
       "identity" : "activityindicatorview",
@@ -155,15 +155,6 @@
       }
     },
     {
-      "identity" : "reachability.swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ashleymills/Reachability.swift.git",
-      "state" : {
-        "revision" : "21d1dc412cfecbe6e34f1f4c4eb88d3f912654a6",
-        "version" : "5.2.4"
-      }
-    },
-    {
       "identity" : "realm-core",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
@@ -206,6 +197,24 @@
       "state" : {
         "revision" : "c7c7d2cf50a3211fe2843f76869c698e4e417930",
         "version" : "6.8.0"
+      }
+    },
+    {
+      "identity" : "sidekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SideStore/SideKit.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "ab959a54fc2217464ffabd09322ec3351e3ca456"
+      }
+    },
+    {
+      "identity" : "siriusrating-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/theappcapital/SiriusRating-iOS.git",
+      "state" : {
+        "revision" : "f2f1d88d960c6438f4b2e2562744f7814304cbf4",
+        "version" : "1.0.8"
       }
     },
     {

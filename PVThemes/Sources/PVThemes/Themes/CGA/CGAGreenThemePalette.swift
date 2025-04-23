@@ -21,7 +21,7 @@ import HexColors
 // #if !os(tvOS)
 //     public var statusBarColor: UIColor { .CGA.green }
 // #endif
-//     public var defaultTintColor: UIColor? { .CGA.green }
+//     public var defaultTintColor: UIColor { .CGA.green }
 
 // #if canImport(UIKit)
 //     public var keyboardAppearance: UIKeyboardAppearance { .dark }

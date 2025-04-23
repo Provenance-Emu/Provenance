@@ -290,15 +290,6 @@
         }
       },
       {
-        "package": "Reachability",
-        "repositoryURL": "https://github.com/ashleymills/Reachability.swift",
-        "state": {
-          "branch": "master",
-          "revision": "21d1dc412cfecbe6e34f1f4c4eb88d3f912654a6",
-          "version": null
-        }
-      },
-      {
         "package": "RealmDatabase",
         "repositoryURL": "https://github.com/realm/realm-core.git",
         "state": {

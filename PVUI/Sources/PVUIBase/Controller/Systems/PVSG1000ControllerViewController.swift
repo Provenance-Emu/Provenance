@@ -27,10 +27,15 @@ final class PVSG1000ControllerViewController: PVControllerViewController<PVSG100
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
-            if title == "B" || title == "1" {
+            switch title.lowercased() {
+            case "b", "1":
                 button.buttonTag = .b
-            } else if title == "C" || title == "2" {
+            case "c", "2":
                 button.buttonTag = .c
+            case "start", "select":
+                button.buttonTag = .start
+            default:
+                break
             }
         }
 

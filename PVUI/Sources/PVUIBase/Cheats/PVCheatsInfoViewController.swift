@@ -6,6 +6,7 @@
 import PVLibrary
 import PVSupport
 import RealmSwift
+import QuartzCore
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -49,6 +50,19 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
         #if os(tvOS)
         isEditingType=true
         #endif
+        
+        // Apply retrowave styling to the view
+        view.backgroundColor = .retroBlack
+        
+        // Apply retrowave styling to the navigation bar
+        navigationController?.navigationBar.applyRetroWaveStyle()
+        
+        // Add retrowave grid background
+        RetroWaveGridBackground.createGridBackground(for: view, gridColor: .retroPurple.withAlphaComponent(0.3))
+        
+        // Style the text fields
+        styleTextFields()
+        
         updateLabels()
         addCodeTypes()
     }
@@ -98,6 +112,48 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
         return tf
     }()
 
+    // Style the text fields with retrowave theme
+    private func styleTextFields() {
+        // Style the type text field
+        typeText?.backgroundColor = UIColor.retroBlack.withAlphaComponent(0.7)
+        typeText?.textColor = .retroYellow
+        typeText?.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+        typeText?.layer.borderColor = UIColor.retroPink.cgColor
+        typeText?.layer.borderWidth = 1.5
+        typeText?.layer.cornerRadius = 8
+        typeText?.tintColor = .retroBlue
+        
+        #if os(iOS)
+        // Style the code text view
+        codeText?.backgroundColor = UIColor.retroBlack.withAlphaComponent(0.7)
+        codeText?.textColor = .white
+        codeText?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        codeText?.layer.borderColor = UIColor.retroBlue.cgColor
+        codeText?.layer.borderWidth = 1.5
+        codeText?.layer.cornerRadius = 8
+        codeText?.tintColor = .retroPink
+        #endif
+        
+        #if os(tvOS)
+        // Style the code text field
+        codeTextField?.backgroundColor = UIColor.retroBlack.withAlphaComponent(0.7)
+        codeTextField?.textColor = .white
+        codeTextField?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        codeTextField?.layer.borderColor = UIColor.retroBlue.cgColor
+        codeTextField?.layer.borderWidth = 1.5
+        codeTextField?.layer.cornerRadius = 8
+        codeTextField?.tintColor = .retroPink
+        
+        // Style the save button
+        saveButton?.backgroundColor = .retroBlack
+        saveButton?.setTitleColor(.white, for: .normal)
+        saveButton?.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .bold)
+        saveButton?.layer.borderColor = UIColor.retroBlue.cgColor
+        saveButton?.layer.borderWidth = 2
+        saveButton?.layer.cornerRadius = 10
+        #endif
+    }
+    
     func updateLabels() {
         #if os(tvOS)
         codeTextField.delegate=self

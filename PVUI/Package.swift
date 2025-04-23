@@ -33,7 +33,9 @@ let package = Package(
         .package(path: "../PVSupport"),
         .package(path: "../PVThemes"),
         .package(path: "../PVWebServer"),
-        .package(url: "https://github.com/ashleymills/Reachability.swift.git", from: "5.2.4"),
+        .package(path: "../PVJIT"),
+        .package(path: "../External/Reachability.swift"),
+        //.package(url: "https://github.com/ashleymills/Reachability.swift.git", from: "5.2.4"),
         .package(url: "https://github.com/RxSwiftCommunity/RxDataSources.git", from: "5.0.2"),
         .package(url: "https://github.com/jdg/MBProgressHUD.git", from: "1.2.0"),
 //        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.4.0"),
@@ -50,7 +52,7 @@ let package = Package(
         /// SwiftUIX
         /// https://github.com/SwiftUIX/SwiftUIX/wiki
         .package(url: "https://github.com/SwiftUIX/SwiftUIX.git", from: "0.2.3"),
-
+        .package(url: "https://github.com/theappcapital/SiriusRating-iOS.git", from: "1.0.8"),
         /// https://github.com/exyte/ScalingHeaderScrollView
 //        .package(url:"https://github.com/exyte/ScalingHeaderScrollView.git", from: "1.1.5"),
 
@@ -88,21 +90,27 @@ let package = Package(
         .target(
             name: "PVUIBase",
             dependencies: [
-                "PVLogging",
+                "ActivityIndicatorView",
+                "AnimatedGradient",
+                "FloatingButton",
+                "FreemiumKit",
+                "MarkdownView",
                 "PVCoreBridge",
                 "PVEmulatorCore",
-                "PVSupport",
-                "PVLibrary",
-                "PVThemes",
-                "PVWebServer",
-                "PVUIObjC",
-                "FreemiumKit",
                 "PVFeatureFlags",
-                "MarkdownView",
+                "PVLibrary",
+                "PVLogging",
+                "PVSupport",
+                "PVThemes",
+                "PVUIObjC",
+                "PVWebServer",
+                .byNameItem(name: "PVJIT", condition: .when(platforms: [.iOS])),
+                .byNameItem(name: "DateRangePicker", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
                 .byNameItem(name: "MBProgressHUD", condition: .when(platforms: [.iOS, .macCatalyst, .tvOS, .watchOS])),
+                .byNameItem(name: "SwipeCellSUI", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
                 .byNameItem(name: "PVUI_AppKit", condition: .when(platforms: [.macOS])),
-                .byNameItem(name: "PVUI_TV", condition: .when(platforms: [.tvOS])),
                 .byNameItem(name: "PVUI_IOS", condition: .when(platforms: [.iOS, .macCatalyst, .visionOS])),
+                .byNameItem(name: "PVUI_TV", condition: .when(platforms: [.tvOS])),
 //                .product(name: "Dependencies", package: "swift-dependencies")
             ],
             resources: [
@@ -211,6 +219,7 @@ let package = Package(
                 "FloatingButton",
                 "ActivityIndicatorView",
                 "PVFeatureFlags",
+                .product(name: "SiriusRating", package: "siriusrating-ios", condition: .when(platforms: [.iOS])),
                 .byNameItem(name: "SwipeCellSUI", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
                 .byNameItem(name: "DateRangePicker", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
             ]

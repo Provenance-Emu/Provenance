@@ -35,8 +35,8 @@ public final class ButtonSoundGenerator {
             audioEngine.connect(player, to: audioEngine.mainMixerNode, format: file.processingFormat)
 
             // Create full buffer
-            guard let fullBuffer = try? AVAudioPCMBuffer(pcmFormat: file.processingFormat,
-                                                        frameCapacity: AVAudioFrameCount(file.length)) else {
+            guard let fullBuffer = AVAudioPCMBuffer(pcmFormat: file.processingFormat,
+                                                    frameCapacity: AVAudioFrameCount(file.length)) else {
                 ELOG("Failed to create buffer for sound: \(sound.filename)")
                 continue
             }

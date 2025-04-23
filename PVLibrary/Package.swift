@@ -81,7 +81,10 @@ let package = Package(
     targets: [
         // MARK: ------------ SwiftCloudDrive ------------
         .target(
-            name: "SwiftCloudDrive"
+            name: "SwiftCloudDrive",
+            dependencies: [
+                "PVLogging"
+            ]
         ),
         // MARK: ------------ PVLibrary ------------
         .target(

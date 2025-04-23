@@ -4,6 +4,42 @@ import ZIPFoundation
 
 /// Default screen configurations for different console types
 enum DeltaSkinDefaults {
+    
+//    /// Calculate a default screen frame based on game type and available buttons
+//    static func defaultScreenFrame(
+//        for gameType: DeltaSkinGameType,
+//        in mappingSize: CGSize,
+//        buttons: [DeltaSkinButton]?,
+//        isPreview: Bool
+//    ) -> CGRect {
+//        // Default to top half of the skin
+//        var defaultFrame = CGRect(
+//            x: 0,
+//            y: 0,
+//            width: mappingSize.width,
+//            height: mappingSize.height * 0.5
+//        )
+//        
+//        // If we have buttons, try to position above them
+//        if let buttons = buttons, !buttons.isEmpty {
+//            // Find the topmost button
+//            if let topButton = buttons.min(by: { $0.frame.minY < $1.frame.minY }) {
+//                // Position screen above the topmost button
+//                let buttonTopY = topButton.frame.minY
+//                
+//                // Use the space above the buttons for the screen
+//                defaultFrame = CGRect(
+//                    x: 0,
+//                    y: 0,
+//                    width: mappingSize.width,
+//                    height: buttonTopY * 0.95 // Leave a small gap
+//                )
+//            }
+//        }
+//        
+//        return defaultFrame
+//    }
+        
     /// Calculate default screen frame when not specified in skin
     static func defaultScreenFrame(
         for gameType: DeltaSkinGameType,
@@ -153,8 +189,9 @@ enum DeltaSkinDefaults {
             // In landscape, position screen closer to top
             yPosition = mappingSize.height * 0.05  // 5% from top instead of 10%
         } else {
-            // In portrait, keep existing centered position
-            yPosition = (controlsTopY - finalSize.height) / 2
+            // In portrait, position screen higher (25% of the way down from top to controls)
+            // This places the screen in the upper portion of the available space
+            yPosition = (controlsTopY - finalSize.height) * 0.25
         }
 
         return CGRect(
@@ -172,6 +209,8 @@ enum DeltaSkinDefaults {
             return CGSize(width: 390, height: 844)  // iPhone 14 dimensions
         case .ipad:
             return CGSize(width: 820, height: 1180)  // iPad Air dimensions
+        case .tv:
+            return CGSize(width: 1920, height: 1080)
         }
     }
 }

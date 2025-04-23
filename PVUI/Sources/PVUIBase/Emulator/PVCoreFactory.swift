@@ -23,8 +23,8 @@ import PVLogging
 //    }
 // }
 
-extension PVCore {
-    func createInstance(forSystem system: PVSystem) -> PVEmulatorCore? {
+public extension PVCore {
+    public func createInstance(forSystem system: PVSystem) -> PVEmulatorCore? {
         guard let coreClass = NSClassFromString(self.principleClass) as? PVEmulatorCore.Type else {
             ELOG("Couldn't get class for <\(principleClass)>")
             return nil
@@ -41,7 +41,7 @@ extension PVCore {
 }
 
 public final class PVCoreFactory: NSObject {
-    class func controllerViewController(forSystem system: PVSystem, core: ResponderClient) -> (UIViewController & StartSelectDelegate)? {
+    class func controllerViewController(forSystem system: PVSystem, core: ResponderClient) -> (any ControllerVC)? {
         guard let controllerLayout = system.controllerLayout else {
             fatalError("No controller layout config defined for system \(system.name)")
         }

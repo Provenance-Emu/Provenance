@@ -24,12 +24,30 @@ import PVPrimitives
 import PVRealm
 import Perception
 import SwiftUI
+import Combine
 
 #if canImport(UIKit)
 import UIKit
 #else
 import AppKit
 #endif
+
+public class SkinImporterInjector: SkinImporterServicing {
+    public static let shared = SkinImporterInjector()
+    private init() {}
+    
+    public var service: (any SkinImporterServicing)?
+    
+    public func importSkin(from url: URL) async throws {
+//        if url.startAccessingSecurityScopedResource() {
+        try await service?.importSkin(from: url)
+        if url.path(percentEncoded: false).contains("Imports") {
+            Task {
+                try await FileManager.default.removeItem(at: url)
+            }
+        }
+    }
+}
 
 /*
 
@@ -81,6 +99,147 @@ internal actor ImportCoordinator {
     }
 }
 
+/// Actor for managing the import queue with thread safety
+public actor ImportQueueActor {
+    /// Subject to publish queue changes
+    let queueSubject = CurrentValueSubject<[ImportQueueItem], Never>([])    
+    
+    /// The current queue of import items
+    private(set) var queue: [ImportQueueItem] = [] {
+        didSet {
+            // Schedule auto-start if there are queued items OR items with a user-chosen system
+            if queue.contains(where: {
+                $0.status == .queued || $0.userChosenSystem != nil
+            }) {
+                autoStartCallback()
+            }
+            
+            // Update the published queue on the main thread
+            Task { @MainActor in
+                // Send the updated queue to the subject
+                await queueSubject.send(queue)
+                
+                // Call the queue update handler to notify subscribers (for backward compatibility)
+                await queueUpdateHandler?(queue)
+            }
+        }
+    }
+    
+    // Callback that will be invoked when the queue changes
+    private var queueUpdateHandler: (([ImportQueueItem]) -> Void)?
+    
+    /// Sets the queue update handler from outside the actor
+    func setQueueUpdateHandler(_ handler: @escaping ([ImportQueueItem]) -> Void) {
+        self.queueUpdateHandler = handler
+    }
+    
+    private var autoStartCallback: () -> Void
+    
+    init(autoStartCallback: @escaping () -> Void) {
+        self.autoStartCallback = autoStartCallback
+    }
+    
+    /// Updates the auto-start callback function
+    /// This is used to avoid circular references during initialization
+    func setAutoStartCallback(_ callback: @escaping () -> Void) {
+        self.autoStartCallback = callback
+    }
+    
+    func getQueue() -> [ImportQueueItem] {
+        return queue
+    }
+    
+    func addImport(_ item: ImportQueueItem) {
+        queue.append(item)
+    }
+    
+    func addImports(_ items: [ImportQueueItem]) {
+        queue.append(contentsOf: items)
+    }
+    
+    func removeImports(at offsets: IndexSet) {
+        queue.remove(atOffsets: offsets)
+    }
+    
+    func clearCompleted() {
+        queue = queue.filter({
+            switch $0.status {
+            case .success: return false
+            default: return true
+            }
+        })
+    }
+    
+    func updateQueue(_ newQueue: [ImportQueueItem]) {
+        queue = newQueue
+    }
+    
+    func getItem(at index: Int) -> ImportQueueItem? {
+        guard index < queue.count else { return nil }
+        return queue[index]
+    }
+    
+    func containsDuplicate(ofItem queueItem: ImportQueueItem, comparator: (ImportQueueItem, ImportQueueItem) -> Bool) -> Bool {
+        return queue.contains(where: { comparator($0, queueItem) })
+    }
+    
+    func organizeCueAndBinFiles() {
+        var updatedQueue = queue
+        for cueIndex in updatedQueue.indices.reversed() where updatedQueue[cueIndex].url.pathExtension.lowercased() == "cue" {
+            let cueItem = updatedQueue[cueIndex]
+            let cueFilename = cueItem.url.lastPathComponent
+            
+            if let cueContents = try? String(contentsOf: cueItem.url) {
+                let cueLines = cueContents.components(separatedBy: .newlines)
+                
+                for line in cueLines where line.contains("FILE") && line.contains("BINARY") {
+                    if let binFilename = extractBinFilename(from: line) {
+                        if let binIndex = updatedQueue.firstIndex(where: { item in
+                            item.url.lastPathComponent.lowercased() == binFilename.lowercased()
+                        }) {
+                            let binItem = updatedQueue[binIndex]
+                            cueItem.childQueueItems.append(binItem)
+                            updatedQueue.remove(at: binIndex)
+                        }
+                    }
+                }
+            }
+        }
+        queue = updatedQueue
+    }
+    
+    func organizeM3UFiles() {
+        var updatedQueue = queue
+        for m3uIndex in updatedQueue.indices.reversed() where updatedQueue[m3uIndex].url.pathExtension.lowercased() == "m3u" {
+            let m3uItem = updatedQueue[m3uIndex]
+            let baseFileName = m3uItem.url.deletingPathExtension().lastPathComponent
+            
+            if let m3uContents = try? String(contentsOf: m3uItem.url) {
+                let m3uLines = m3uContents.components(separatedBy: .newlines)
+                
+                for line in m3uLines where !line.isEmpty && !line.hasPrefix("#") {
+                    let cueFilename = line.trimmingCharacters(in: .whitespacesAndNewlines)
+                    
+                    if let cueIndex = updatedQueue.firstIndex(where: { item in
+                        item.url.lastPathComponent.lowercased() == cueFilename.lowercased()
+                    }) {
+                        let cueItem = updatedQueue[cueIndex]
+                        m3uItem.childQueueItems.append(cueItem)
+                        updatedQueue.remove(at: cueIndex)
+                    }
+                }
+            }
+        }
+        queue = updatedQueue
+    }
+    
+    private func extractBinFilename(from line: String) -> String? {
+        let components = line.components(separatedBy: "\"")
+        guard components.count >= 3 else { return nil }
+        return components[1]
+    }
+}
+
 /// Merges two dictionaries
 public func + <K, V>(lhs: [K: V], rhs: [K: V]) -> [K: V] {
     var combined = lhs
@@ -115,15 +274,18 @@ public protocol GameImporting {
 
     var importStatus: String { get }
 
-    var importQueue: [ImportQueueItemType] { get }
+    var importQueue: [ImportQueueItemType] { get async }
+    
+    /// Publisher that emits the current import queue whenever it changes
+    var importQueuePublisher: AnyPublisher<[ImportQueueItemType], Never> { get }
 
     var processingState: ProcessingState { get }
 
-    func addImport(_ item: ImportQueueItem)
-    func addImports(forPaths paths: [URL])
-    func addImports(forPaths paths: [URL], targetSystem: SystemIdentifier)
+    func addImport(_ item: ImportQueueItem) async
+    func addImports(forPaths paths: [URL]) async
+    func addImports(forPaths paths: [URL], targetSystem: SystemIdentifier) async
 
-    func removeImports(at offsets: IndexSet)
+    func removeImports(at offsets: IndexSet)  async
     func startProcessing()
 
     /// Pauses the import processing
@@ -133,7 +295,7 @@ public protocol GameImporting {
     /// Resumes the import processing if it was paused
     func resume()
 
-    func clearCompleted()
+    func clearCompleted() async
 
     func sortImportQueueItems(_ importQueueItems: [ImportQueueItemType]) -> [ImportQueueItemType]
 
@@ -161,6 +323,16 @@ public protocol GameImporting {
 @Perceptible
 //#endif
 public final class GameImporter: GameImporting, ObservableObject {
+    
+    /// Publisher that emits the current import queue whenever it changes
+    public var importQueuePublisher: AnyPublisher<[ImportQueueItemType], Never> {
+        // Create a publisher that connects to the queue actor's subject
+        return importQueueSubject.eraseToAnyPublisher()
+    }
+    
+    /// Subject that publishes import queue updates
+    private let importQueueSubject = CurrentValueSubject<[ImportQueueItemType], Never>([]) 
+
     /// Closure called when import starts
     public var importStartedHandler: GameImporterImportStartedHandler?
     /// Closure called when import completes
@@ -184,7 +356,9 @@ public final class GameImporter: GameImporting, ObservableObject {
                                                           GameImporterDatabaseService(),
                                                           GameImporterSystemsService(),
                                                           ArtworkImporter(),
-                                                          DefaultCDFileHandler())
+                                                          DefaultCDFileHandler(),
+                                                          SkinImporterInjector.shared
+        )
 
     /// Queue for handling import work
     let workQueue: OperationQueue = {
@@ -209,18 +383,14 @@ public final class GameImporter: GameImporting, ObservableObject {
     public var importStatus: String = ""
 
     var importAutoStartDelayTask: Task<Void, Never>?
-    public var importQueue: [ImportQueueItem] = [] {
-        didSet {
-            // Schedule auto-start if there are queued items OR items with a user-chosen system
-            if importQueue.contains(where: {
-                $0.status == .queued || $0.userChosenSystem != nil
-            }) {
-                importAutoStartDelayTask?.cancel()
-                importAutoStartDelayTask = Task.detached {
-                    await try? Task.sleep(for: .seconds(1))
-                    self.startProcessing()
-                }
-            }
+    
+    // Actor to manage the import queue with thread safety
+    public let importQueueActor: ImportQueueActor
+    
+    // Public computed property to access the import queue
+    public var importQueue: [ImportQueueItem] {
+        get async {
+            await importQueueActor.getQueue()
         }
     }
 
@@ -231,6 +401,7 @@ public final class GameImporter: GameImporting, ObservableObject {
     internal var gameImporterSystemsService:any GameImporterSystemsServicing
     internal var gameImporterArtworkImporter:any ArtworkImporting
     internal var cdRomFileHandler:CDFileHandling
+    internal var skinImporterService: any SkinImporterServicing
 
     // MARK: - Paths
 
@@ -270,12 +441,34 @@ public final class GameImporter: GameImporting, ObservableObject {
                   _ databaseService:GameImporterDatabaseServicing,
                   _ systemsService:GameImporterSystemsServicing,
                   _ artworkImporter:ArtworkImporting,
-                  _ cdFileHandler:CDFileHandling) {
-        gameImporterFileService = fileService
-        gameImporterDatabaseService = databaseService
-        gameImporterSystemsService = systemsService
-        gameImporterArtworkImporter = artworkImporter
-        cdRomFileHandler = cdFileHandler
+                  _ cdFileHandler:CDFileHandling,
+                  _ skinImporterService: SkinImporterServicing) {
+        // Create a local function for the auto-start callback that doesn't capture self
+        // This avoids the circular reference issue
+        func autoStartCallback() {
+            // We'll set up the actual implementation after initialization
+        }
+        
+        // Initialize the import queue actor with the placeholder callback
+        self.importQueueActor = ImportQueueActor(autoStartCallback: autoStartCallback)
+        
+        self.skinImporterService = skinImporterService
+        self.gameImporterFileService = fileService
+        self.gameImporterDatabaseService = databaseService
+        self.gameImporterSystemsService = systemsService
+        self.gameImporterArtworkImporter = artworkImporter
+        self.cdRomFileHandler = cdFileHandler
+        
+        // Set up the queue update handler for logging purposes
+        Task {
+            // Use the proper method to set the queue update handler
+            await importQueueActor.setQueueUpdateHandler { queue in
+                Task { @MainActor in
+                    // Log queue updates
+                    VLOG("GameImporter: Import queue updated with \(queue.count) items")
+                }
+            }
+        }
 
         //create defaults
         createDefaultDirectories(fm: fm)
@@ -284,7 +477,20 @@ public final class GameImporter: GameImporting, ObservableObject {
         gameImporterDatabaseService.setRomsPath(url: romsPath)
 
         gameImporterArtworkImporter.setSystemsService(gameImporterSystemsService)
+        
+        // Now set up the actual auto-start callback implementation
+        Task {
+            await importQueueActor.setAutoStartCallback { [weak self] in
+                guard let self = self else { return }
+                self.importAutoStartDelayTask?.cancel()
+                self.importAutoStartDelayTask = Task.detached {
+                    await try? Task.sleep(for: .seconds(1))
+                    self.startProcessing()
+                }
+            }
+        }
     }
+
 
     /// Creates default directories
     private func createDefaultDirectories(fm: FileManager) {
@@ -347,6 +553,9 @@ public final class GameImporter: GameImporting, ObservableObject {
                         ILOG("RealmCollection changed state to .initial")
                         self.systemToPathMap = await updateSystemToPathMap()
                         self.initialized.leave()
+                        
+                        // Set up the queue subscription after all members are initialized
+                        self.setupQueueSubscription()
                     }
                 case .update:
                     Task.detached {
@@ -361,18 +570,33 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
 
+    /// Sets up the subscription to the import queue actor's queue subject
+    /// This must be called after all members are initialized
+    private func setupQueueSubscription() {
+        ILOG("GameImporter: Setting up queue subscription")
+        
+        // Set up a task to connect the ImportQueueActor's queueSubject to our importQueueSubject
+        Task {
+            do {
+                // Create a continuous stream from the actor's subject
+                for await queue in await self.importQueueActor.queueSubject.values {
+                    // Update our subject on the main thread
+                    await MainActor.run {
+                        self.importQueueSubject.send(queue)
+                    }
+                }
+            } catch {
+                ELOG("GameImporter: Error in queue subscription - \(error)")
+            }
+        }
+    }
+
     /// Initializes core plists
     fileprivate func initCorePlists() async {
         let bundle = ThisBundle
-
-//        await Task {
             await PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
-//        }
-//        await Task {
             let corePlists: [EmulatorCoreInfoPlist]  = CoreLoader.getCorePlists()
-
             await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
-//        }
     }
 
     public func getArtwork(forGame game: PVGame) async -> PVGame {
@@ -386,47 +610,36 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     //MARK: Public Queue Management
 
-    // Inside your GameImporter class
-    private let importQueueLock = NSLock()
-
     // Adds an ImportItem to the queue without starting processing
-    public func addImport(_ item: ImportQueueItem) {
-        importQueueLock.lock()
-        defer { importQueueLock.unlock() }
-
-        self.addImportItemToQueue(item)
+    public func addImport(_ item: ImportQueueItem) async {
+        await self.addImportItemToQueue(item)
     }
 
-    public func addImports(forPaths paths: [URL]) {
-        importQueueLock.lock()
-        defer { importQueueLock.unlock() }
-
-        Task.detached {
+    public func addImports(forPaths paths: [URL]) async {
             for path in paths {
-                self.addImportItemToQueue(ImportQueueItem(url: path, fileType: .unknown))
-            }
+            await self.addImportItemToQueue(ImportQueueItem(url: path, fileType: .unknown))
         }
     }
 
-    public func addImports(forPaths paths: [URL], targetSystem: SystemIdentifier) {
-        importQueueLock.lock()
-        defer { importQueueLock.unlock() }
-
+    public func addImports(forPaths paths: [URL], targetSystem: SystemIdentifier) async {
         for path in paths {
             var item = ImportQueueItem(url: path, fileType: .unknown)
             item.userChosenSystem = targetSystem
-            self.addImportItemToQueue(item)
+            await self.addImportItemToQueue(item)
         }
     }
 
-    public func removeImports(at offsets: IndexSet) {
-        importQueueLock.lock()
-        defer { importQueueLock.unlock() }
-
+    public func removeImports(at offsets: IndexSet) async {
+        // Get items to remove
+        var itemsToRemove: [ImportQueueItem] = []
         for index in offsets {
-            let item = importQueue[index]
+            if let item = await importQueueActor.getItem(at: index) {
+                itemsToRemove.append(item)
+            }
+        }
 
-            // Try to delete the associated file
+        // Remove files
+        for item in itemsToRemove {
             do {
                 try gameImporterFileService.removeImportItemFile(item)
             } catch {
@@ -434,7 +647,8 @@ public final class GameImporter: GameImporting, ObservableObject {
             }
         }
 
-        importQueue.remove(atOffsets: offsets)
+        // Remove from queue
+        await importQueueActor.removeImports(at: offsets)
     }
 
     // Public method to manually start processing if needed
@@ -458,39 +672,32 @@ public final class GameImporter: GameImporting, ObservableObject {
     // MARK: Processing functions
 //    @MainActor
     private func preProcessQueue() async {
-        Task {
-//            importQueueLock.lock()
-//            defer { importQueueLock.unlock() }
+        // Get the current queue
+        let currentQueue = await importQueueActor.getQueue()
 
-            //determine the type for all items in the queue
-            await self.importQueue.asyncForEach { importItem in
-                //ideally this wouldn't be needed here
+        // Process each item to determine its type
+        var processedQueue = currentQueue
+        for i in 0..<processedQueue.count {
                 do {
-                    importItem.fileType = try determineImportType(importItem)
+                processedQueue[i].fileType = try determineImportType(processedQueue[i])
                 } catch {
                     ELOG("Caught error trying to assign file type \(error.localizedDescription)")
-                    //caught an error trying to assign file type
-                }
             }
-
-            //sort the queue to make sure m3us go first
-            importQueue = sortImportQueueItems(importQueue)
-
-            //thirdly, we need to parse the queue and find any children for cue files
-            organizeCueAndBinFiles(in: &importQueue)
-
-            //lastly, move and cue (and child bin) files under the parent m3u (if they exist)
-            organizeM3UFiles(in: &importQueue)
         }
+        
+        // Sort the queue to make sure m3us go first
+        processedQueue = sortImportQueueItems(processedQueue)
+        
+        // Update the queue with processed items
+        await importQueueActor.updateQueue(processedQueue)
+        
+        // Organize cue/bin files and m3u files
+        await importQueueActor.organizeCueAndBinFiles()
+        await importQueueActor.organizeM3UFiles()
     }
 
-    public func clearCompleted() {
-        self.importQueue = self.importQueue.filter({
-            switch $0.status {
-            case .success: return false
-            default: return true
-            }
-        })
+    public func clearCompleted() async {
+        await importQueueActor.clearCompleted()
     }
 
     internal func organizeM3UFiles(in importQueue: inout [ImportQueueItem]) {
@@ -676,7 +883,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         return sorted
     }
 
-    // Processes each ImportItem in the queue sequentially
+    // Processes items in the queue in parallel with controlled concurrency
     private func processQueue() async {
         defer {
             DispatchQueue.main.async {
@@ -696,7 +903,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             return
         }
 
-        ILOG("GameImportQueue - processQueue beginning Import Processing")
+        ILOG("GameImportQueue - processQueue beginning Import Processing with \(itemsToProcess.count) items")
 
         // Only update to processing if we're not paused
         if processingState != .paused {
@@ -705,18 +912,47 @@ public final class GameImporter: GameImporting, ObservableObject {
             }
         }
 
-        for item in itemsToProcess {
-            // Check if we've been paused before processing each item
+        // Group related files that should be processed together
+        let groupedItems = groupRelatedFiles(itemsToProcess)
+        ILOG("Grouped \(itemsToProcess.count) items into \(groupedItems.count) processing groups")
+        
+        // Maximum number of concurrent imports
+        let maxConcurrentImports = 4
+        
+        // Process groups in parallel with controlled concurrency
+        await withTaskGroup(of: Void.self) { group in
+            var activeTaskCount = 0
+            
+            for fileGroup in groupedItems {
+                // Check if we've been paused before adding each group
             if await checkIfPaused() {
                 ILOG("GameImportQueue - processing paused, waiting for resume")
-                return
-            }
-
+                    break
+                }
+                
+                // Wait until we have capacity for more tasks
+                while activeTaskCount >= maxConcurrentImports {
+                    // Wait for a task to complete
+                    await group.next()
+                    activeTaskCount -= 1
+                }
+                
+                // Add a new task for this group
+                group.addTask {
+                    for item in fileGroup {
             // If there's a user-chosen system, ensure the item is queued
             if item.userChosenSystem != nil {
                 item.status = .queued
             }
-            await processItem(item)
+                        await self.processItem(item)
+                    }
+                }
+                
+                activeTaskCount += 1
+            }
+            
+            // Wait for all remaining tasks to complete
+            await group.waitForAll()
         }
 
         ILOG("GameImportQueue - processQueue complete Import Processing")
@@ -764,17 +1000,80 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
 
-    private func determineImportType(_ item: ImportQueueItem) throws -> ImportQueueItem.FileType {
+    private func determineImportType(_ item: ImportQueueItem) -> ImportQueueItem.FileType {
         //detect type for updating UI and later processing
-        if (try isBIOS(item)) { //this can throw
-            return .bios
-        } else if (isCDROM(item)) {
-            return .cdRom
-        } else if (isArtwork(item)) {
-            return .artwork
-        } else {
-            return .game
+        if (isSkin(item)) { return .skin }
+        else if (isArtwork(item)) { return .artwork }
+        else if (isBIOS(item)) { return .bios }
+        else if (isCDROM(item)) { return .cdRom }
+        else { return .game }
+    }
+    
+    /// Groups related files that should be processed together
+    /// - Parameter items: The items to group
+    /// - Returns: An array of item groups, where each group contains related files
+    private func groupRelatedFiles(_ items: [ImportQueueItem]) -> [[ImportQueueItem]] {
+        var result: [[ImportQueueItem]] = []
+        var processedItems = Set<String>()
+        
+        // First pass: group CD-ROM related files (cue/bin pairs)
+        for item in items {
+            let itemPath = item.url.path
+            
+            // Skip if already processed
+            if processedItems.contains(itemPath) {
+                continue
+            }
+            
+            // If it's a cue file, find related bin files
+            if item.url.pathExtension.lowercased() == "cue" {
+                var group = [item]
+                let baseName = item.url.deletingPathExtension().lastPathComponent
+                
+                // Find related bin files
+                for binItem in items where binItem.url.pathExtension.lowercased() == "bin" {
+                    let binBaseName = binItem.url.deletingPathExtension().lastPathComponent
+                    if binBaseName.contains(baseName) || baseName.contains(binBaseName) {
+                        group.append(binItem)
+                        processedItems.insert(binItem.url.path)
+                    }
+                }
+                
+                result.append(group)
+                processedItems.insert(itemPath)
+            }
+            // If it's an m3u file, find related files
+            else if item.url.pathExtension.lowercased() == "m3u" {
+                var group = [item]
+                
+                // Try to read the m3u file to find referenced files
+                if let content = try? String(contentsOf: item.url) {
+                    let lines = content.components(separatedBy: .newlines)
+                    for line in lines where !line.isEmpty && !line.hasPrefix("#") {
+                        // Find the referenced file in our items list
+                        for refItem in items {
+                            if refItem.url.lastPathComponent == line || refItem.url.path.hasSuffix("/\(line)") {
+                                group.append(refItem)
+                                processedItems.insert(refItem.url.path)
+                            }
+                        }
+                    }
+                }
+                
+                result.append(group)
+                processedItems.insert(itemPath)
+            }
         }
+        
+        // Second pass: add remaining items as individual groups
+        for item in items {
+            if !processedItems.contains(item.url.path) {
+                result.append([item])
+                processedItems.insert(item.url.path)
+            }
+        }
+        
+        return result
     }
 
 //    @MainActor
@@ -784,6 +1083,22 @@ public final class GameImporter: GameImporting, ObservableObject {
         //ideally this wouldn't be needed here because we'd have done it elsewhere
         item.fileType = try determineImportType(item)
         ILOG("Determined file type: \(item.fileType)")
+
+        if item.fileType == .skin {
+            ILOG("Processing as Skin file")
+            do {
+                try await skinImporterService.importSkin(from: item.url)
+                //try await gameImporterDatabaseService.importBIOSIntoDatabase(queueItem: item)
+                ILOG("Successfully imported BIOS file")
+                Task { @MainActor in
+                    item.status = .success
+                }
+                return
+            } catch {
+                ELOG("Failed to import BIOS file: \(error)")
+                throw error
+            }
+        }
 
         // Handle BIOS files first, before any system detection
         if item.fileType == .bios {
@@ -820,6 +1135,17 @@ public final class GameImporter: GameImporting, ObservableObject {
             //this is actually an import error
             item.status = .failure
             ELOG("No system matched for this Import Item: \(item.url.lastPathComponent)")
+            
+            // Delete the file if it exists and is in the imports directory
+            if item.url.path.contains("/Imports/") && FileManager.default.fileExists(atPath: item.url.path) {
+                do {
+                    try await FileManager.default.removeItem(at: item.url)
+                    ILOG("Deleted file with no matching system: \(item.url.path)")
+                } catch {
+                    ELOG("Failed to delete file with no matching system: \(error.localizedDescription)")
+                }
+            }
+            
             throw GameImporterError.noSystemMatched
         }
 
@@ -909,13 +1235,59 @@ public final class GameImporter: GameImporting, ObservableObject {
         return duplicate
     }
 
-    private func addImportItemToQueue(_ item: ImportQueueItem) {
-        guard !importQueueContainsDuplicate(self.importQueue, ofItem: item) else {
+    private func addImportItemToQueue(_ item: ImportQueueItem) async {
+        // First, check if this is a BIOS file
+        let fileType = try? determineImportType(item)
+        if fileType == .bios {
+            // For BIOS files, check if we already have a matching BIOS entry with a file
+            let biosExists = await BIOSWatcher.shared.checkBIOSFile(at: item.url)
+            if biosExists {
+                ILOG("GameImportQueue - Skipping BIOS file that already exists in database: \(item.url.lastPathComponent)")
+                return
+            }
+        } else if fileType == .game || fileType == .cdRom {
+            // For ROM files, check if we already have a matching game entry in the database
+            let isROMAlreadyImported = await isROMAlreadyInDatabase(item)
+            if isROMAlreadyImported {
+                ILOG("GameImportQueue - Skipping ROM file that already exists in database: \(item.url.lastPathComponent)")
+                return
+            }
+        }
+        
+        // Check for duplicates in the current queue
+        let isDuplicate = await importQueueActor.containsDuplicate(ofItem: item) { existing, newItem in
+            // Check if the URL is the same
+            if existing.url == newItem.url {
+                return true
+            }
+            
+            // Check if the filename is the same and in the same directory
+            if existing.url.lastPathComponent == newItem.url.lastPathComponent &&
+               existing.url.deletingLastPathComponent() == newItem.url.deletingLastPathComponent() {
+                return true
+            }
+            
+            // Check MD5 if available
+            if let existingMd5 = existing.md5?.uppercased(),
+               let newMd5 = newItem.md5?.uppercased(),
+               existingMd5 == newMd5 {
+                return true
+            }
+            
+            // Recursively check child items
+            if !existing.childQueueItems.isEmpty {
+                return self.importQueueContainsDuplicate(existing.childQueueItems, ofItem: newItem)
+            }
+            
+            return false
+        }
+        
+        guard !isDuplicate else {
             WLOG("GameImportQueue - Trying to add duplicate ImportItem to import queue with url: \(item.url) and id: \(item.id)")
-            return;
+            return
         }
 
-        importQueue.append(item)
+        await importQueueActor.addImport(item)
         ILOG("GameImportQueue - add ImportItem to import queue with url: \(item.url) and id: \(item.id)")
     }
 
@@ -955,5 +1327,58 @@ public final class GameImporter: GameImporting, ObservableObject {
             isPaused = self.processingState == .paused
         }
         return isPaused
+    }
+    
+    /// Checks if a ROM file already exists in the database with a valid file
+    /// - Parameter item: The ImportQueueItem to check
+    /// - Returns: True if the ROM already exists in the database with a valid file
+    private func isROMAlreadyInDatabase(_ item: ImportQueueItem) async -> Bool {
+        // First try to determine the system for this ROM
+        do {
+            let systems = try await gameImporterSystemsService.determineSystems(for: item)
+            guard !systems.isEmpty else {
+                // If we can't determine the system, we can't check the database
+                return false
+            }
+            
+            // For each potential system, check if the ROM already exists
+            for system in systems {
+                // Check by filename in the system's directory
+                let filename = item.url.lastPathComponent
+                let partialPath = (system.rawValue as NSString).appendingPathComponent(filename)
+                let similarName = RomDatabase.altName(item.url, systemIdentifier: system)
+                
+                // Check the games cache for this ROM
+                let gamesCache = RomDatabase.gamesCache
+                
+                if let existingGame = gamesCache[partialPath] ?? gamesCache[similarName],
+                   system.rawValue == existingGame.systemIdentifier,
+                   existingGame.file != nil {
+                    // The game exists in the database with a valid file
+                    ILOG("Found existing game in database: \(existingGame.title) with valid file")
+                    return true
+                }
+                
+                // If we have an MD5 hash, check for matches by MD5
+                if let md5 = item.md5?.uppercased() {
+                    let realm = RomDatabase.sharedInstance.realm
+                    let gamesWithSameMD5 = realm.objects(PVGame.self).filter("md5Hash == %@", md5)
+                    
+                    if let existingGameWithSameMD5 = gamesWithSameMD5.first,
+                       system.rawValue == existingGameWithSameMD5.systemIdentifier,
+                       existingGameWithSameMD5.file != nil {
+                        // The game exists in the database with a valid file and matching MD5
+                        ILOG("Found existing game with same MD5 hash: \(existingGameWithSameMD5.title) with valid file")
+                        return true
+                    }
+                }
+            }
+            
+            // If we get here, the ROM doesn't exist in the database with a valid file
+            return false
+        } catch {
+            ELOG("Error checking if ROM is already in database: \(error.localizedDescription)")
+            return false
+        }
     }
 }

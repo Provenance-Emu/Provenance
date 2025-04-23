@@ -35,7 +35,7 @@ public protocol Container {
 
 extension Container {
     public var containerURL: URL? { get { return URL.iCloudContainerDirectory }}
-    var documentsURL: URL? { get { return URL.iCloudDocumentsDirectory }}
+    public var documentsURL: URL? { get { return URL.iCloudDocumentsDirectory }}
 }
 
 public protocol iCloudTypeSyncer: Container {
@@ -51,7 +51,7 @@ public protocol iCloudTypeSyncer: Container {
     func setNewCloudFilesAvailable() async
 }
 
-enum iCloudSyncStatus {
+public enum iCloudSyncStatus {
     case initialUpload
     case filesAlreadyMoved
 }
@@ -64,36 +64,40 @@ enum iCloudHittingTool {
     case mallet
 }
 
-class iCloudContainerSyncer: iCloudTypeSyncer {
-    lazy var pendingFilesToDownload: ConcurrentSet<URL> = []
-    lazy var newFiles: ConcurrentSet<URL> = []
-    lazy var uploadedFiles: ConcurrentSet<URL> = []
-    let directories: Set<String>
-    let fileManager: FileManager = .default
-    let notificationCenter: NotificationCenter
-    var status: ConcurrentSingle<iCloudSyncStatus> = .init(.initialUpload)
-    let errorHandler: ErrorHandler
-    var initialSyncResult: SyncResult = .indeterminate
-    var fileImportQueueMaxCount = 1000
-    var purgeStatus: DatastorePurgeStatus = .incomplete
+public class iCloudContainerSyncer: iCloudTypeSyncer {
+    public lazy var pendingFilesToDownload: ConcurrentSet<URL> = []
+    public lazy var newFiles: ConcurrentSet<URL> = []
+    public lazy var uploadedFiles: ConcurrentSet<URL> = []
+    public let directories: Set<String>
+    public let fileManager: FileManager = .default
+    public let notificationCenter: NotificationCenter
+    public var status: ConcurrentSingle<iCloudSyncStatus> = .init(.initialUpload)
+    public let errorHandler: ErrorHandler
+    public var initialSyncResult: SyncResult = .indeterminate
+    public var fileImportQueueMaxCount = 1000
+    public var purgeStatus: DatastorePurgeStatus = .incomplete
     private var querySubscriber: AnyCancellable?
     //used for removing ROMs/Saves that were removed by the user when the application is closed. This is to ensure if this is called several times, only 1 block is used at a time
     let removeDeletionsCriticalSection: CriticalSectionActor = .init()
-    var downloadedCount: Int {
+    public var downloadedCount: Int {
         get async {
             await newFiles.count
         }
     }
     
-    init(directories: Set<String>,
+    public init(directories: Set<String>,
          notificationCenter: NotificationCenter,
          errorHandler: ErrorHandler) {
         self.notificationCenter = notificationCenter
         self.directories = directories
         self.errorHandler = errorHandler
+        // Register with the syncer store
+        iCloudSyncerStore.shared.register(syncer: self)
     }
     
     func stopObserving() {
+        // Unregister from the syncer store
+        iCloudSyncerStore.shared.unregister(syncer: self)
         metadataQuery.disableUpdates()
         if metadataQuery.isStarted {
             metadataQuery.stop()
@@ -133,9 +137,9 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         return alliCloudDirectories
     }
     
-    let metadataQuery: NSMetadataQuery = .init()
+    public let metadataQuery: NSMetadataQuery = .init()
     
-    func insertDownloadingFile(_ file: URL) async -> URL? {
+    public func insertDownloadingFile(_ file: URL) async -> URL? {
         guard await !uploadedFiles.contains(file)
         else {
             return nil
@@ -144,15 +148,15 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         return file
     }
     
-    func insertDownloadedFile(_ file: URL) async {
+    public func insertDownloadedFile(_ file: URL) async {
         await pendingFilesToDownload.remove(file)
     }
     
-    func insertUploadedFile(_ file: URL) async {
+    public func insertUploadedFile(_ file: URL) async {
         await uploadedFiles.insert(file)
     }
     
-    func setNewCloudFilesAvailable() async {
+    public func setNewCloudFilesAvailable() async {
         if await pendingFilesToDownload.isEmpty {
             await status.set(value: .filesAlreadyMoved)
             await uploadedFiles.removeAll()
@@ -162,7 +166,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         DLOG("\(directories): status: \(statusDescription), uploadedFiles: \(uploadedCount)")
     }
     
-    func deleteFromDatastore(_ file: URL) async {
+    public func deleteFromDatastore(_ file: URL) async {
         //no-op
     }
     
@@ -183,7 +187,7 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
         return nextFilesToProcess
     }
     
-    func loadAllFromICloud(iterationComplete: (() async -> Void)? = nil) async -> Completable {
+    public func loadAllFromICloud(iterationComplete: (() async -> Void)? = nil) async -> Completable {
         initialSyncResult = await syncToiCloud()
         return Completable.create { [weak self] completable in
             self?.setupObservers(completable: completable, iterationComplete: iterationComplete)
@@ -210,7 +214,6 @@ class iCloudContainerSyncer: iCloudTypeSyncer {
             predicateArgs.append(NSMetadataItemPathKey)
             predicateArgs.append("/Documents/\(directory)/")
         }
-        
         metadataQuery.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
         metadataQuery.predicate = NSPredicate(format: predicateFormat, argumentArray: predicateArgs)
         let names: [NSNotification.Name] = [.NSMetadataQueryDidFinishGathering, /*listen for deletions and new files.*/.NSMetadataQueryDidUpdate]
@@ -551,7 +554,7 @@ public enum iCloudSync {
         ILOG("Initial Download: moving all local files to cloud container: \(documentsDirectory)")
         await withTaskGroup(of: Void.self) { group in
             group.addTask {
-                await moveLocalFilesToCloudContainer(directories: ["BIOS", "Battery States", "Screenshots", "RetroArch"], parentContainer: documentsDirectory)
+                await moveLocalFilesToCloudContainer(directories: ["BIOS", "Battery States", "Screenshots", "RetroArch", "DeltaSkins"], parentContainer: documentsDirectory)
             }
             group.addTask {
                 await moveLocalFilesToCloudContainer(directories: ["Save States"], parentContainer: documentsDirectory)
@@ -688,7 +691,7 @@ public enum iCloudSync {
         }
         await initiateDownloadOfiCloudDocumentsContainer()
         disposeBag = DisposeBag()
-        var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots", "RetroArch"],
+        var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots", "RetroArch", "DeltaSkins"],
                                                                   notificationCenter: .default,
                                                                   errorHandler: iCloudErrorHandler.shared)
         await nonDatabaseFileSyncer.loadAllFromICloud()
@@ -1197,12 +1200,12 @@ class SaveStateSyncer: iCloudContainerSyncer {
 }
 
 /// used for only purging database entries that no longer exist (files deleted from icloud while the app was shut off)
-enum DatastorePurgeStatus {
+public enum DatastorePurgeStatus {
     case incomplete
     case complete
 }
 
-enum GameStatus {
+public enum GameStatus {
     case gameExists
     case gameDoesNotExist
 }
@@ -1235,7 +1238,7 @@ class RomsSyncer: iCloudContainerSyncer {
         romsDatabaseSubscriber?.cancel()
     }
     
-    override func loadAllFromICloud(iterationComplete: (() async -> Void)?) async -> Completable {
+    public override func loadAllFromICloud(iterationComplete: (() async -> Void)?) async -> Completable {
          //ensure that the games are cached so we do NOT hit the database so much when checking for existence of games
          RomDatabase.reloadGamesCache()
          return await super.loadAllFromICloud(iterationComplete: iterationComplete)
@@ -1272,7 +1275,7 @@ class RomsSyncer: iCloudContainerSyncer {
         }
     }
     
-    override func insertDownloadedFile(_ file: URL) async {
+    public override func insertDownloadedFile(_ file: URL) async {
         guard let _ = await pendingFilesToDownload.remove(file)
         else {
             return
@@ -1342,7 +1345,7 @@ class RomsSyncer: iCloudContainerSyncer {
         return (existingGame, system)
     }
     
-    override func deleteFromDatastore(_ file: URL) async {
+    public override func deleteFromDatastore(_ file: URL) async {
         guard let fileName = file.lastPathComponent.removingPercentEncoding,
               let parentDirectory = file.parentPathComponent.removingPercentEncoding
         else {
@@ -1414,7 +1417,7 @@ class RomsSyncer: iCloudContainerSyncer {
     }
 }
 
-struct iCloudSyncError {
+public struct iCloudSyncError {
     let file: String?
     var summary: String {
         error.localizedDescription
@@ -1433,23 +1436,23 @@ protocol Queue {
     var isEmpty: Bool { get async }
 }
 
-actor ConcurrentQueue<Element>: Queue, ExpressibleByArrayLiteral {
+public actor ConcurrentQueue<Element>: Queue, ExpressibleByArrayLiteral {
     private var collection = [Element]()
     
-    init(arrayLiteral elements: Element...) {
+    public init(arrayLiteral elements: Element...) {
         collection = Array(elements)
     }
     
-    var count: Int {
+    public var count: Int {
         collection.count
     }
     
-    func enqueue(entry: Element) {
+    public func enqueue(entry: Element) {
         collection.insert(entry, at: 0)
     }
     
     @discardableResult
-    func dequeue() -> Element? {
+    public func dequeue() -> Element? {
         guard !collection.isEmpty
         else {
             return nil
@@ -1457,32 +1460,32 @@ actor ConcurrentQueue<Element>: Queue, ExpressibleByArrayLiteral {
         return collection.removeFirst()
     }
     
-    func peek() -> Element? {
+    public func peek() -> Element? {
         collection.first
     }
     
-    func clear() {
+    public func clear() {
         collection.removeAll()
     }
     
-    public var description: String {
+    public public var description: String {
         collection.description
     }
     
-    func map<T>(_ transform: (Element) throws -> T) throws -> [T] {
+    public func map<T>(_ transform: (Element) throws -> T) throws -> [T] {
         try collection.map(transform)
     }
     
-    var allElements: [Element] {
+    public var allElements: [Element] {
         collection
     }
     
-    var isEmpty: Bool {
+    public var isEmpty: Bool {
         collection.isEmpty
     }
 }
 
-protocol ErrorHandler {
+public protocol ErrorHandler {
     var allErrorSummaries: [String] { get async throws }
     var allFullErrors: [String] { get async throws }
     var allErrors: [iCloudSyncError] { get async }
@@ -1566,16 +1569,16 @@ extension URL {
     }
 }
 
-actor ConcurrentDictionary<Key: Hashable, Value>: ExpressibleByDictionaryLiteral,
+public actor ConcurrentDictionary<Key: Hashable, Value>: ExpressibleByDictionaryLiteral,
                                                   @preconcurrency
                                                   CustomStringConvertible {
     private var dictionary: [Key: Value] = [:]
     
-    init(dictionaryLiteral elements: (Key, Value)...) {
+    public init(dictionaryLiteral elements: (Key, Value)...) {
         dictionary = Dictionary(uniqueKeysWithValues: elements)
     }
     
-    subscript(key: Key) -> Value? {
+    public subscript(key: Key) -> Value? {
         get {
             dictionary[key]
         }
@@ -1584,23 +1587,23 @@ actor ConcurrentDictionary<Key: Hashable, Value>: ExpressibleByDictionaryLiteral
         }
     }
     
-    func set(_ value: Value?, forKey key: Key) {
+    public func set(_ value: Value?, forKey key: Key) {
         dictionary[key] = value
     }
     
-    var first: (key: Key, value: Value)? {
+    public var first: (key: Key, value: Value)? {
         dictionary.first
     }
     
-    var isEmpty: Bool {
+    public var isEmpty: Bool {
         dictionary.isEmpty
     }
     
-    var count: Int {
+    public var count: Int {
         dictionary.count
     }
     
-    var description: String {
+    public var description: String {
         dictionary.description
     }
 }
@@ -1613,23 +1616,46 @@ enum ConcurrentCopyOptions {
 public actor ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral,
                                          @preconcurrency
                                          CustomStringConvertible {
+    // MARK: - Combine Support
+    
+    /// Subject for publishing set changes
+    private let changeSubject = PassthroughSubject<Set<T>, Never>()
+    
+    /// Subject for publishing count changes
+    private let countSubject = CurrentValueSubject<Int, Never>(0)
+    
+    /// Publisher for set changes
+    public var publisher: AnyPublisher<Set<T>, Never> {
+        changeSubject.eraseToAnyPublisher()
+    }
+    
+    /// Publisher for count changes
+    public var countPublisher: AnyPublisher<Int, Never> {
+        countSubject.eraseToAnyPublisher()
+    }
+
     private var set: Set<T>
     
     public init(arrayLiteral elements: T...) {
         set = Set(elements)
+        countSubject.send(set.count)
     }
     
-    convenience init(fromSet set: Set<T>) async {
+    public convenience init(fromSet set: Set<T>) async {
         self.init()
         await self.set.formUnion(set)
+        countSubject.send(set.count)
     }
     
     func insert(_ element: T) {
         set.insert(element)
+        notifyChanges()
     }
     
     func remove(_ element: T) -> T? {
-        set.remove(element)
+        let removed = set.remove(element)
+        notifyChanges()
+        return removed
     }
     
     func contains(_ element: T) -> Bool {
@@ -1638,6 +1664,7 @@ public actor ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral,
     
     func removeAll() {
         set.removeAll()
+        notifyChanges()
     }
     
     func forEach(_ body: (T) throws -> Void) rethrows {
@@ -1650,18 +1677,23 @@ public actor ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral,
     
     func subtract<S>(_ other: S) where T == S.Element, S : Sequence {
         set.subtract(other)
+        notifyChanges()
     }
     
     func copy(options: ConcurrentCopyOptions) -> Set<T> {
-        var copiedSet: Set<T> = .init(set)
-        if options == .removeCopiedItems {
-            set.removeAll()
+        guard options == .removeCopiedItems
+        else {
+            return set
         }
+        let copiedSet: Set<T> = .init(set)
+        set.removeAll()
+        notifyChanges()
         return copiedSet
     }
     
     func formUnion<S>(_ other: S) where T == S.Element, S : Sequence {
         set.formUnion(other)
+        notifyChanges()
     }
     
     var isEmpty: Bool {
@@ -1675,6 +1707,16 @@ public actor ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral,
     var count: Int {
         return set.count
     }
+    
+    /// Current elements in the set as a Set
+    var elements: Set<T> {
+        set
+    }
+    
+    /// Current elements in the set as an Array
+    var asArray: [T] {
+        Array(set)
+    }
                                              
     func enumerated() -> EnumeratedSequence<Set<T>> {
         set.enumerated()
@@ -1686,5 +1728,15 @@ public actor ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral,
     
     public var description: String {
         return set.description
+    }
+
+    /// Notify subscribers of changes to the set
+    private func notifyChanges() {
+        let currentSet = set
+        let currentCount = currentSet.count
+        DispatchQueue.main.async { [weak self] in
+            self?.changeSubject.send(currentSet)
+            self?.countSubject.send(currentCount)
+        }
     }
 }

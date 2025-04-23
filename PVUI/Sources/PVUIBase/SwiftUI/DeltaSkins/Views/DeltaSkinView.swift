@@ -1,18 +1,22 @@
 import SwiftUI
 import AudioToolbox
 import AVFoundation  // Add this for audio buffer types
+import PVLogging
+import PVEmulatorCore
 
 /// Core view for rendering a DeltaSkin with test patterns and interactive elements
 public struct DeltaSkinView: View {
-    let skin: DeltaSkinProtocol
+    let skin: any DeltaSkinProtocol
     let traits: DeltaSkinTraits
     let filters: Set<TestPatternEffect>
     let showDebugOverlay: Bool
     let showHitTestOverlay: Bool
     let screenAspectRatio: CGFloat?  // Optional aspect ratio
+    let isInEmulator: Bool
+    let inputHandler: DeltaSkinInputHandler
 
     /// State for touch and button interactions
-    @State private var touchLocation: CGPoint?
+    @State private var touchLocations: Set<CGPoint> = []
     @State private var activeButton: (frame: CGRect, mappingSize: CGSize, buttonId: String)?
     @State private var lastButtonPressed: String?
     @State private var isButtonHapticEnabled = true  // Add this state
@@ -37,8 +41,24 @@ public struct DeltaSkinView: View {
     // Track multiple active buttons
     @State private var activeButtons: [(frame: CGRect, mappingSize: CGSize, buttonId: String, timestamp: Date)] = []
 
-    // Track the currently pressed button
+    // Track the currently pressed button (legacy support)
     @State private var currentlyPressedButton: DeltaSkinButton?
+
+    // Track multiple touch points for multi-touch support
+    @State private var touchPoints: [ObjectIdentifier: CGPoint] = [:]
+
+    // Map touch IDs to button IDs for tracking which touch is pressing which button
+    @State private var touchToButtonMap: [ObjectIdentifier: String] = [:]
+
+    // Track the current preview size
+    @State private var previewSize: CGSize = .zero
+
+    /// State for the loaded skin image
+    @State private var loadingError: Error?
+    @State private var screenGroups: [DeltaSkinScreenGroup]?
+    @State private var buttonMappings: [DeltaSkinButtonMapping]?
+
+    @State private var pressedButtons: Set<String> = []
 
     private static func createButtonSounds() -> [String: PCMBuffer] {
         let soundConfigs = [
@@ -154,12 +174,14 @@ public struct DeltaSkinView: View {
     }
 
     public init(
-        skin: DeltaSkinProtocol,
+        skin: any DeltaSkinProtocol,
         traits: DeltaSkinTraits,
         filters: Set<TestPatternEffect> = [],
         showDebugOverlay: Bool = false,
         showHitTestOverlay: Bool = false,
-        screenAspectRatio: CGFloat? = nil
+        screenAspectRatio: CGFloat? = nil,
+        isInEmulator: Bool = false,
+        inputHandler: DeltaSkinInputHandler
     ) {
         self.skin = skin
         self.traits = traits
@@ -167,9 +189,11 @@ public struct DeltaSkinView: View {
         self.showDebugOverlay = showDebugOverlay
         self.showHitTestOverlay = showHitTestOverlay
         self.screenAspectRatio = screenAspectRatio
+        self.isInEmulator = isInEmulator
+        self.inputHandler = inputHandler
     }
 
-    internal struct SkinLayout {
+    internal struct SkinLayout: Equatable, Hashable {
         let scale: CGFloat
         let width: CGFloat
         let height: CGFloat
@@ -198,8 +222,10 @@ public struct DeltaSkinView: View {
     internal func calculateLayout(for geometry: GeometryProxy) -> SkinLayout? {
         guard let mappingSize = skin.mappingSize(for: traits) else { return nil }
 
-        // For portrait mode on iPhone, prioritize filling width while maintaining aspect ratio
+        // Calculate the scale to fit the skin in the available space
         var scale: CGFloat
+
+        // For portrait mode on iPhone, prioritize filling width while maintaining aspect ratio
         if traits.device == .iphone && traits.orientation == .portrait {
             // Start with width scale to fill screen
             scale = geometry.size.width / mappingSize.width
@@ -226,19 +252,15 @@ public struct DeltaSkinView: View {
         // Center horizontally
         let xOffset = (geometry.size.width - scaledWidth) / 2
 
-        // Calculate Y offset based on orientation and screen presence
+        // For portrait mode on iPhone, position at bottom of screen
+        // For landscape or iPad, center vertically
         let yOffset: CGFloat
-        if hasScreenPosition(for: traits) {
-            // If screen position is specified, center the skin
-            yOffset = (geometry.size.height - scaledHeight) / 2
+        if traits.device == .iphone && traits.orientation == .portrait {
+            // Position at bottom of screen
+            yOffset = geometry.size.height - scaledHeight
         } else {
-            // For portrait skins without screen position, position at bottom
-            if traits.orientation == .portrait {
-                yOffset = geometry.size.height - scaledHeight
-            } else {
-                // For landscape, center vertically
-                yOffset = (geometry.size.height - scaledHeight) / 2
-            }
+            // Center vertically
+            yOffset = (geometry.size.height - scaledHeight) / 2
         }
 
         return SkinLayout(
@@ -342,88 +364,143 @@ public struct DeltaSkinView: View {
 
     public var body: some View {
         GeometryReader { geometry in
+            // Store the geometry size for coordinate transformations
+            Color.clear.onAppear {
+                self.previewSize = geometry.size
+            }
+            .onChange(of: geometry.size) { newSize in
+                self.previewSize = newSize
+            }
             ZStack {
-                // Background
-                Color.black.ignoresSafeArea()
-
                 if let layout = calculateLayout(for: geometry) {
                     ZStack {
-                        // Screen layer (color bars) - should be behind everything
-                        DeltaSkinScreenLayer(
+                        // Always create a screen position wrapper, even when in emulator
+                        // This ensures we can get the correct position whether color bars are visible or not
+                        DeltaSkinScreenPositionWrapper(
                             skin: skin,
                             traits: traits,
                             filters: filters,
                             size: geometry.size,
-                            screenAspectRatio: screenAspectRatio
+                            screenAspectRatio: screenAspectRatio,
+                            isInEmulator: isInEmulator
                         )
                         .zIndex(0)
 
-                        // Skin and controls container
-                        ZStack {
-                            // Skin image layer
-                            if let skinImage {
-                                Image(uiImage: skinImage)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: layout.width, height: layout.height)
-                                    .clipped()
-                                    .zIndex(1)
-                            }
+                        // Base skin image
+                        if let skinImage = skinImage {
+                            Image(uiImage: skinImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: layout.width, height: layout.height)
+                        } else {
+                            // Loading placeholder
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.2))
+                                .frame(width: layout.width, height: layout.height)
+                        }
 
-                            // Debug/hit test overlays
-                            if showDebugOverlay {
-                                DeltaSkinDebugOverlay(
-                                    skin: skin,
-                                    traits: traits,
-                                    size: geometry.size
-                                )
-                                .zIndex(2)
-                            }
-                            if showHitTestOverlay {
-                                DeltaSkinHitTestOverlay(
-                                    skin: skin,
-                                    traits: traits,
-                                    size: geometry.size
-                                )
-                                .zIndex(2)
-                            }
-
-                            // Effects and thumbsticks inside the skin container
-                            ForEach(activeButtons, id: \.timestamp) { button in
-                                DeltaSkinButtonHighlight(
-                                    frame: button.frame,
-                                    mappingSize: button.mappingSize,
-                                    previewSize: geometry.size,
-                                    buttonId: button.buttonId
-                                )
-                                .zIndex(3)
-                            }
-
-                            // Thumbstick layer - should be on top
-                            ForEach(activeThumbsticks, id: \.frame) { thumbstick in
-                                DeltaSkinThumbstick(
-                                    frame: thumbstick.frame,
-                                    thumbstickImage: thumbstick.image,
-                                    thumbstickSize: thumbstick.size,
-                                    mappingSize: skin.mappingSize(for: traits) ?? .zero
-                                )
-                                .zIndex(4)
-                            }
-
-                            // Touch indicators - always on top
-                            if let location = touchLocation {
-                                DeltaSkinTouchIndicator(at: location)
-                                    .zIndex(5)
+                        // Screen groups
+                        if let groups = screenGroups {
+                            ForEach(groups, id: \.id) { group in
+                                screenGroup(group, in: geometry, layout: layout)
                             }
                         }
-                        .frame(width: layout.width, height: layout.height)
-                        .position(x: geometry.size.width / 2, y: geometry.size.height - layout.height / 2)
+
+                        // Button mappings
+                        if let mappings = buttonMappings {
+                            ForEach(mappings, id: \.id) { mapping in
+                                buttonMapping(mapping, in: geometry, layout: layout)
+                            }
+                        }
+
+                        // Debug/hit test overlays
+                        if showDebugOverlay {
+                            DeltaSkinDebugOverlay(
+                                skin: skin,
+                                traits: traits,
+                                size: geometry.size
+                            )
+                            .zIndex(2)
+                        }
+                        if showHitTestOverlay {
+                            DeltaSkinHitTestOverlay(
+                                skin: skin,
+                                traits: traits,
+                                size: geometry.size
+                            )
+                            .zIndex(2)
+                        }
+
+                        // Effects and thumbsticks inside the skin container
+                        ForEach(activeButtons, id: \.timestamp) { button in
+                            DeltaSkinButtonHighlight(
+                                frame: button.frame,
+                                mappingSize: button.mappingSize,
+                                previewSize: geometry.size,
+                                buttonId: button.buttonId
+                            )
+                            .zIndex(3)
+                        }
+
+                        // Thumbstick layer - should be on top
+                        ForEach(activeThumbsticks, id: \.frame) { thumbstick in
+                            DeltaSkinThumbstick(
+                                frame: thumbstick.frame,
+                                thumbstickImage: thumbstick.image,
+                                thumbstickSize: thumbstick.size,
+                                mappingSize: skin.mappingSize(for: traits) ?? .zero
+                            )
+                            .zIndex(4)
+                        }
+
+                        // Touch indicators - always on top
+                        ForEach(Array(touchLocations), id: \.self) { location in
+                            DeltaSkinTouchIndicator(at: location)
+                                .zIndex(5)
+                        }
                     }
+                    .frame(width: layout.width, height: layout.height)
+                    .position(x: geometry.size.width / 2, y: geometry.size.height - layout.height / 2)
                     .environment(\.skinLayout, layout)
                     .onAppear {
                         DLOG("DeltaSkinView appeared")
                         logLayoutInfo(geometry: geometry, layout: layout)
+                        loadSkinResources()
                     }
+                }
+
+                // Only show test patterns if not in emulator mode
+                if !isInEmulator, let layout = calculateLayout(for: geometry) {
+                    // Test pattern container
+                    ZStack {
+                        // Only show in preview mode, not in emulator
+                        if let screens = skin.screens(for: traits) {
+                            ForEach(screens, id: \.id) { screen in
+                                if let outputFrame = screen.outputFrame {
+                                    let scaledFrame = CGRect(
+                                        x: outputFrame.minX * layout.width,
+                                        y: outputFrame.minY * layout.height,
+                                        width: outputFrame.width * layout.width,
+                                        height: outputFrame.height * layout.height
+                                    )
+
+                                    DeltaSkinTestPatternView(
+                                        frame: CGRect(
+                                            x: 0,
+                                            y: 0,
+                                            width: scaledFrame.width,
+                                            height: scaledFrame.height
+                                        ),
+                                        filters: filters
+                                    )
+                                    .frame(width: scaledFrame.width, height: scaledFrame.height)
+                                    .position(x: scaledFrame.midX, y: scaledFrame.midY)
+                                }
+                            }
+                        }
+                    }
+                    .frame(width: layout.width, height: layout.height)
+                    .position(x: geometry.size.width / 2, y: geometry.size.height - layout.height / 2)
                 }
             }
             .onChange(of: geometry.size) { newSize in
@@ -439,47 +516,95 @@ public struct DeltaSkinView: View {
                 }
             }
             #if !os(tvOS)
-            .gesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged { value in
-                        handleTouch(at: value.location, in: geometry.size)
-                    }
-                    .onEnded { _ in
-                        // Play release sound if we had a pressed button
-                        if let button = currentlyPressedButton,
-                           let mappingSize = skin.mappingSize(for: traits) {
-                            // Use same position calculations for consistent audio
-                            let panPosition = Float((button.frame.midX / mappingSize.width) * 2 - 1)
-                            let area = button.frame.width * button.frame.height
-                            let maxArea = mappingSize.width * mappingSize.height
-                            let normalizedSize = Float((area / maxArea) * 0.5 + 0.5)
+            .overlay(
+                MultiTouchView { touchPhase, touches in
+                    DLOG("MultiTouchView callback: phase=\(touchPhase), touches=\(touches.count)")
 
-                            // Play release sound using current sound setting
-                            let soundType = Defaults[.buttonSound]
-                            ButtonSoundGenerator.shared.playButtonReleaseSound(
-                                sound: soundType,
-                                pan: panPosition,
-                                volume: normalizedSize
-                            )
+                    switch touchPhase {
+                    case .began, .moved:
+                        // Process each active touch
+                        for touch in touches {
+                            let location = touch.location
+                            DLOG("Processing touch: \(touch.id) at \(location)")
+
+                            // Store this touch point for visualization
+                            touchLocations.insert(location)
+
+                            // Store the mapping between touch ID and location
+                            touchToButtonMap[touch.id] = nil
+
+                            // Handle this touch location
+                            handleTouchAtLocation(location, in: geometry.size, touchId: touch.id)
+                        }
+                        DLOG("Current touch points: \(touchLocations.count)")
+
+                    case .ended, .cancelled:
+                        // Process ended touches
+                        for touch in touches {
+                            DLOG("Ending touch: \(touch.id)")
+
+                            // Remove this touch point from visualization
+                            touchLocations.remove(touch.location)
+
+                            // Release any button associated with this touch
+                            if let buttonId = touchToButtonMap[touch.id] {
+                                DLOG("Releasing button \(buttonId) for touch \(touch.id)")
+                                handleButtonRelease(buttonId)
+                                touchToButtonMap.removeValue(forKey: touch.id)
+                            }
                         }
 
-                        touchLocation = nil
-                        currentlyPressedButton = nil
+                        // If all touches are gone, ensure everything is reset
+                        if touchToButtonMap.isEmpty {
+                            DLOG("All touches ended, cleaning up")
+
+                            // Clear active buttons to ensure visual feedback is removed
+                            activeButtons.removeAll()
+
+                            // Reset state
+                            touchLocations.removeAll()
+                            currentlyPressedButton = nil
+
+                            // Double-check that all D-pad buttons are released
+                            for direction in ["up", "down", "left", "right"] {
+                                if pressedButtons.contains(direction) {
+                                    DLOG("Force releasing stuck D-pad button: \(direction)")
+                                    handleButtonRelease(direction)
+                                }
+                            }
+
+                            // Clear all pressed buttons as a final safety measure
+                            let allButtons = pressedButtons
+                            for buttonId in allButtons {
+                                handleButtonRelease(buttonId)
+                            }
+                        }
                     }
+                }
+                .frame(width: geometry.size.width, height: geometry.size.height)
             )
             #endif
         }
-        .task {
-            await loadSkin()
-            await loadThumbsticks()
-        }
     }
 
-    private func loadSkin() async {
-        do {
-            skinImage = try await skin.image(for: traits)
-        } catch {
-            ELOG("Failed to load skin image: \(error)")
+    private func loadSkinResources() {
+        Task {
+            // Load skin image
+            do {
+                skinImage = try await skin.image(for: traits)
+                DLOG("Loaded skin image: \(skinImage?.size ?? .zero)")
+            } catch {
+                loadingError = error
+                ELOG("Error loading skin image: \(error)")
+            }
+
+            // Load screen groups
+            screenGroups = skin.screenGroups(for: traits)
+            DLOG("Loaded screen groups: \(screenGroups?.count ?? 0)")
+
+            // Load button mappings
+            buttonMappings = skin.buttonMappings(for: traits)
+            DLOG("Loaded button mappings: \(buttonMappings?.count ?? 0)")
         }
     }
 
@@ -533,8 +658,11 @@ public struct DeltaSkinView: View {
         ButtonSoundGenerator.shared.playButtonPressSound(pan: panPosition, volume: normalizedSize)
     }
 
-    private func handleTouch(at location: CGPoint, in size: CGSize) {
-        touchLocation = location
+    /// Handle a touch at the given location
+    private func handleTouchAtLocation(_ location: CGPoint, in size: CGSize, touchId: ObjectIdentifier) {
+        DLOG("handleTouchAtLocation: location=\(location), touchId=\(touchId)")
+        // Store the touch location for visual feedback and direction detection
+        touchLocations.insert(location)
 
         guard let buttons = skin.buttons(for: traits),
               let mappingSize = skin.mappingSize(for: traits) else { return }
@@ -559,19 +687,47 @@ public struct DeltaSkinView: View {
 
         // Find the button being touched
         var touchedButton: DeltaSkinButton?
+        var isDPadButton = false
 
-        for button in buttons {
-            let hitFrame = button.frame.insetBy(dx: -20, dy: -20)
+        // First check if we're already pressing a D-pad button and still within its extended hit area
+        if let currentButton = currentlyPressedButton, case .directional = currentButton.input {
+            // For D-pad, use a larger hit area to allow sliding between directions
+            let extendedHitFrame = currentButton.frame.insetBy(dx: -40, dy: -40) // Larger hit area for D-pad
             let scaledFrame = CGRect(
-                x: hitFrame.minX * scale + xOffset,
-                y: yOffset + (hitFrame.minY * scale),
-                width: hitFrame.width * scale,
-                height: hitFrame.height * scale
+                x: extendedHitFrame.minX * scale + xOffset,
+                y: yOffset + (extendedHitFrame.minY * scale),
+                width: extendedHitFrame.width * scale,
+                height: extendedHitFrame.height * scale
             )
 
             if scaledFrame.contains(location) {
-                touchedButton = button
-                break
+                touchedButton = currentButton
+                isDPadButton = true
+                DLOG("Still within D-pad extended hit area")
+            } else {
+                // We've moved outside the D-pad hit area, release the current direction
+                let inputCommand = extractInputCommand(from: currentButton)
+                DLOG("Moved outside D-pad area - releasing direction: \(inputCommand)")
+                inputHandler.buttonReleased(inputCommand)
+                currentlyPressedButton = nil
+            }
+        }
+
+        // If we're not continuing with a D-pad press, check all buttons normally
+        if !isDPadButton {
+            for button in buttons {
+                let hitFrame = button.frame.insetBy(dx: -20, dy: -20)
+                let scaledFrame = CGRect(
+                    x: hitFrame.minX * scale + xOffset,
+                    y: yOffset + (hitFrame.minY * scale),
+                    width: hitFrame.width * scale,
+                    height: hitFrame.height * scale
+                )
+
+                if scaledFrame.contains(location) {
+                    touchedButton = button
+                    break
+                }
             }
         }
 
@@ -584,34 +740,60 @@ public struct DeltaSkinView: View {
                         activeThumbsticks.append((frame: button.frame, image: image, size: size))
                     }
                 }
-            } else if button != currentlyPressedButton {
-                // Only trigger effects for new button presses
+            } else if case .directional = button.input {
+                // Special handling for D-pad buttons to allow direction changes
+                handleDPadInput(button, scale: scale, xOffset: xOffset, yOffset: yOffset, mappingSize: mappingSize)
+            } else {
+                // For non-D-pad buttons, use our multi-button press system
+                // Extract the input command
+                let inputCommand = extractInputCommand(from: button)
+
+                // Use our enhanced button press handling that supports multiple buttons
+                if !pressedButtons.contains(inputCommand) {
+                    handleButtonPress(inputCommand)
+
+                    // Associate this touch with this button
+                    touchToButtonMap[touchId] = inputCommand
+                    DLOG("Associated touch \(touchId) with button \(inputCommand)")
+                }
+
+                // Set as current button for legacy support
                 currentlyPressedButton = button
 
                 // Add visual feedback
+                let highlightButtonId = button.id
+
                 let newButton = (
                     frame: button.frame,
                     mappingSize: mappingSize,
-                    buttonId: button.id,
+                    buttonId: highlightButtonId,
                     timestamp: Date()
                 )
                 activeButtons.append(newButton)
-                #if !os(tvOS)
-                buttonGenerator.impactOccurred(intensity: 0.8)
-                #endif
-                // Play sound with current position
-                playClickSound(for: button)
 
                 // Clean up old highlights after delay
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                     activeButtons.removeAll { $0.timestamp <= newButton.timestamp }
                 }
             }
+
+        } else if let previousButton = currentlyPressedButton {
+            // Touch is not on any button, but we had a pressed button
+            // Extract the input command using the proper method
+            let inputCommand = extractInputCommand(from: previousButton)
+
+            // Use our enhanced button release handling
+            handleButtonRelease(inputCommand)
+
+            // Clear the current button
+            currentlyPressedButton = nil
         } else {
-            // Touch is not on any button
+            // Touch is not on any button and no previous button was pressed
             currentlyPressedButton = nil
         }
     }
+
+    // We're now using a simplified approach with DragGesture instead of individual touch tracking
 
     #if !os(tvOS)
     private let buttonGenerator: UIImpactFeedbackGenerator = {
@@ -646,6 +828,142 @@ public struct DeltaSkinView: View {
             width: frame.width * scale,
             height: frame.height * scale
         )
+    }
+
+    /// Handle D-pad input with support for direction changes and diagonals
+    private func handleDPadInput(_ button: DeltaSkinButton, scale: CGFloat, xOffset: CGFloat, yOffset: CGFloat, mappingSize: CGSize) {
+        // Use the first touch location for D-pad input
+        guard let touchLocation = touchLocations.first else { return }
+
+        // Calculate the button center in view coordinates
+        let buttonCenterX = button.frame.midX * scale + xOffset
+        let buttonCenterY = button.frame.midY * scale + yOffset
+
+        // Calculate the touch position relative to the button center
+        let relativeX = touchLocation.x - buttonCenterX
+        let relativeY = touchLocation.y - buttonCenterY
+
+        // Define the center dead zone (15% of button size - smaller dead zone)
+        let buttonWidth = button.frame.width * scale
+        let buttonHeight = button.frame.height * scale
+        let deadZoneRadius = min(buttonWidth, buttonHeight) * 0.15
+
+        // Add debug logging to help diagnose direction issues
+        DLOG("D-pad highlight: relativeX=\(relativeX), relativeY=\(relativeY)")
+
+        // Track currently active directions for D-pad
+        var activeDirections: Set<String> = []
+
+        // Determine which directions to activate based on touch position
+        if sqrt(relativeX * relativeX + relativeY * relativeY) < deadZoneRadius {
+            // In dead zone, no directions are active
+            DLOG("D-pad highlight: In dead zone")
+        } else {
+            // Calculate angle to determine direction
+            let angle = atan2(relativeY, relativeX)
+            let degrees = angle * 180 / .pi
+
+            // Determine horizontal component
+            if degrees > -135 && degrees < -45 {
+                // Up
+                activeDirections.insert("up")
+            } else if degrees > 45 && degrees < 135 {
+                // Down
+                activeDirections.insert("down")
+            }
+
+            // Determine vertical component
+            if degrees > -45 && degrees < 45 {
+                // Right
+                activeDirections.insert("right")
+            } else if degrees > 135 || degrees < -135 {
+                // Left
+                activeDirections.insert("left")
+            }
+
+            // Handle diagonal directions - prevent opposing directions
+            if activeDirections.contains("up") && activeDirections.contains("down") {
+                // Can't press up and down simultaneously
+                if abs(relativeY) > abs(relativeX) {
+                    // Vertical movement is stronger
+                    if relativeY < 0 {
+                        activeDirections.remove("down")
+                    } else {
+                        activeDirections.remove("up")
+                    }
+                } else {
+                    // Default to removing both in case of ambiguity
+                    activeDirections.remove("up")
+                    activeDirections.remove("down")
+                }
+            }
+
+            if activeDirections.contains("left") && activeDirections.contains("right") {
+                // Can't press left and right simultaneously
+                if abs(relativeX) > abs(relativeY) {
+                    // Horizontal movement is stronger
+                    if relativeX < 0 {
+                        activeDirections.remove("right")
+                    } else {
+                        activeDirections.remove("left")
+                    }
+                } else {
+                    // Default to removing both in case of ambiguity
+                    activeDirections.remove("left")
+                    activeDirections.remove("right")
+                }
+            }
+        }
+
+        // Get currently pressed D-pad directions
+        let currentDirections: Set<String> = Set(["up", "down", "left", "right"].filter { pressedButtons.contains($0) })
+
+        // Release directions that are no longer active
+        for direction in currentDirections {
+            if !activeDirections.contains(direction) {
+                DLOG("Releasing D-pad direction: \(direction)")
+                handleButtonRelease(direction)
+            }
+        }
+
+        // Press new directions
+        for direction in activeDirections {
+            if !currentDirections.contains(direction) {
+                DLOG("Pressing D-pad direction: \(direction)")
+                handleButtonPress(direction)
+            }
+        }
+
+        // Update the current button for legacy support
+        currentlyPressedButton = button
+
+        // Add visual feedback for active directions
+        if !activeDirections.isEmpty {
+            for direction in activeDirections {
+                let newButton = (
+                    frame: button.frame,
+                    mappingSize: mappingSize,
+                    buttonId: direction,
+                    timestamp: Date()
+                )
+                activeButtons.append(newButton)
+            }
+
+            #if !os(tvOS)
+            buttonGenerator.impactOccurred(intensity: 0.6)
+            #endif
+
+            // Play sound with current position (only once)
+            playClickSound(for: button)
+
+            // Clean up old highlights after delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                self.activeButtons.removeAll { button in
+                    let now = Date()
+                    return now.timeIntervalSince(button.timestamp) > 0.2
+                }
+            }
+        }
     }
 
     // For hit testing
@@ -697,6 +1015,519 @@ public struct DeltaSkinView: View {
             }
         }
     }
+
+    // Add this helper function to format CGRect as a string
+    private func formatRect(_ rect: CGRect) -> String {
+        String(format: "(%.1f, %.1f, %.1f, %.1f)",
+               rect.origin.x, rect.origin.y,
+               rect.size.width, rect.size.height)
+    }
+
+    // Update the screenView method to use DeltaSkinTestPatternView instead of TestPatternView
+    @ViewBuilder
+    private func screenView(_ screen: DeltaSkinScreen, in geometry: GeometryProxy, layout: SkinLayout) -> some View {
+        guard let outputFrame = screen.outputFrame else {
+            return AnyView(EmptyView())
+        }
+
+        let scaledFrame = CGRect(
+            x: outputFrame.minX * layout.width,
+            y: outputFrame.minY * layout.height,
+            width: outputFrame.width * layout.width,
+            height: outputFrame.height * layout.height
+        )
+
+        return AnyView(
+            ZStack {
+                // Screen frame - make it completely transparent to show the game screen underneath
+                Rectangle()
+                    .fill(Color.clear)
+                    .frame(width: scaledFrame.width, height: scaledFrame.height)
+                    .blendMode(.normal) // Ensure normal blending
+                    .overlay(
+                        // Show a border for debugging
+                        showDebugOverlay ?
+                        Rectangle()
+                            .stroke(Color.purple, lineWidth: 3)
+                            .overlay(
+                                VStack(alignment: .leading) {
+                                    Text(screen.id)
+                                        .font(.caption)
+                                    if let inputFrame = screen.inputFrame {
+                                        Text("In: \(formatRect(inputFrame))")
+                                            .font(.caption2)
+                                    }
+                                    Text("Out: \(formatRect(outputFrame))")
+                                        .font(.caption2)
+                                    Text("Place: \(screen.placement.rawValue)")
+                                        .font(.caption2)
+                                }
+                                .foregroundColor(.blue)
+                                .padding(4)
+                                .background(Color.white.opacity(0.8))
+                                .cornerRadius(4)
+                            )
+                        : nil
+                    )
+                    // Only show test pattern if not in emulator
+                    .overlay(
+                        !isInEmulator ?
+                        DeltaSkinTestPatternView(
+                            frame: CGRect(
+                                x: 0,
+                                y: 0,
+                                width: scaledFrame.width,
+                                height: scaledFrame.height
+                            ),
+                            filters: filters
+                        )
+                        : nil
+                    )
+                    // Add a tag to help identify this view for debugging
+                    .accessibility(identifier: "ScreenView-\(screen.id)")
+            }
+            .position(
+                x: scaledFrame.midX,
+                y: scaledFrame.midY
+            )
+        )
+    }
+
+    @ViewBuilder
+    private func screenGroup(_ group: DeltaSkinScreenGroup, in geometry: GeometryProxy, layout: SkinLayout) -> some View {
+        ZStack {
+            // Translucent background if needed
+            if group.translucent ?? false {
+                Rectangle()
+                    .fill(.black.opacity(0.5))
+            }
+
+            // Screens in this group
+            ForEach(group.screens, id: \.id) { screen in
+                screenView(screen, in: geometry, layout: layout)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func buttonMapping(_ mapping: DeltaSkinButtonMapping, in geometry: GeometryProxy, layout: SkinLayout) -> some View {
+        if let frame = mapping.frame {
+            let scaledFrame = CGRect(
+                x: frame.minX * layout.width,
+                y: frame.minY * layout.height,
+                width: frame.width * layout.width,
+                height: frame.height * layout.height
+            )
+
+            // Calculate the absolute position in the parent view
+            let absoluteX = scaledFrame.midX + layout.xOffset
+            let absoluteY = scaledFrame.midY + layout.yOffset
+
+            if mapping.id.lowercased() == "dpad" {
+                // Special handling for D-pad
+                dpadMapping(frame: scaledFrame, absolutePosition: CGPoint(x: absoluteX, y: absoluteY))
+            } else if mapping.id.lowercased().contains("analog") || mapping.id.lowercased().contains("stick") {
+                // Analog stick
+                analogStickMapping(mapping: mapping, frame: scaledFrame, absolutePosition: CGPoint(x: absoluteX, y: absoluteY))
+            } else {
+                // Regular button
+                ZStack {
+                    // Visual feedback for pressed state
+                    let isPressed = pressedButtons.contains(mapping.id)
+
+                    if showDebugOverlay {
+                        // Show debug overlay for the button
+                        Rectangle()
+                            .stroke(Color.red, lineWidth: 2)
+                            .background(Color.red.opacity(isPressed ? 0.6 : 0.3))
+                            .overlay(
+                                Text(mapping.id)
+                                    .font(.caption)
+                                    .foregroundColor(.white)
+                                    .padding(4)
+                            )
+                    } else {
+                        // Invisible button area in normal mode with subtle visual feedback
+                        Rectangle()
+                            .fill(Color.clear)
+                            .background(isPressed ? Color.white.opacity(0.2) : Color.clear)
+                    }
+                }
+                .frame(width: scaledFrame.width, height: scaledFrame.height)
+                .position(x: absoluteX, y: absoluteY)
+                #if !os(tvOS)
+                .gesture(
+                    // Use a direct gesture without SimultaneousGesture since we removed the main gesture
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { _ in
+                            // Pass the button ID directly
+                            handleButtonPress(mapping.id)
+                        }
+                        .onEnded { _ in
+                            // Pass the button ID directly
+                            handleButtonRelease(mapping.id)
+                        }
+                )
+                #endif
+                // Make sure this view doesn't block other touch events
+                .allowsHitTesting(true)
+                .accessibility(identifier: "Button-\(mapping.id)")
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func dpadMapping(frame: CGRect, absolutePosition: CGPoint) -> some View {
+        // Create a view for the D-pad with regions for each direction
+        ZStack {
+            if showDebugOverlay {
+                // Debug overlay for the entire D-pad
+                Rectangle()
+                    .stroke(Color.red, lineWidth: 2)
+                    .background(Color.red.opacity(0.1))
+                    .overlay(
+                        Text("D-Pad")
+                            .font(.caption)
+                            .foregroundColor(.white)
+                    )
+            } else {
+                Color.clear
+            }
+
+            // Up region
+            Rectangle()
+                .fill(showDebugOverlay || pressedButtons.contains("up") ? Color.green.opacity(0.3) : Color.clear)
+                .frame(
+                    width: frame.width * 0.33,
+                    height: frame.height * 0.33
+                )
+                .position(
+                    x: frame.width / 2,
+                    y: frame.height * 0.16
+                )
+                .overlay(showDebugOverlay ? Text("Up").font(.caption2).foregroundColor(.white) : nil)
+#if !os(tvOS)
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { _ in
+                            handleButtonPress("up")
+                        }
+                        .onEnded { _ in
+                            handleButtonRelease("up")
+                        }
+                )
+            #endif
+            // Down region
+            Rectangle()
+                .fill(showDebugOverlay || pressedButtons.contains("down") ? Color.green.opacity(0.3) : Color.clear)
+                .frame(
+                    width: frame.width * 0.33,
+                    height: frame.height * 0.33
+                )
+                .position(
+                    x: frame.width / 2,
+                    y: frame.height * 0.84
+                )
+                .overlay(showDebugOverlay ? Text("Down").font(.caption2).foregroundColor(.white) : nil)
+#if !os(tvOS)
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { _ in
+                            handleButtonPress("down")
+                        }
+                        .onEnded { _ in
+                            handleButtonRelease("down")
+                        }
+                )
+            #endif
+
+            // Left region
+            Rectangle()
+                .fill(showDebugOverlay || pressedButtons.contains("left") ? Color.green.opacity(0.3) : Color.clear)
+                .frame(
+                    width: frame.width * 0.33,
+                    height: frame.height * 0.33
+                )
+                .position(
+                    x: frame.width * 0.16,
+                    y: frame.height / 2
+                )
+                .overlay(showDebugOverlay ? Text("Left").font(.caption2).foregroundColor(.white) : nil)
+#if !os(tvOS)
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { _ in
+                            handleButtonPress("left")
+                        }
+                        .onEnded { _ in
+                            handleButtonRelease("left")
+                        }
+                )
+            #endif
+
+            // Right region
+            Rectangle()
+                .fill(showDebugOverlay || pressedButtons.contains("right") ? Color.green.opacity(0.3) : Color.clear)
+                .frame(
+                    width: frame.width * 0.33,
+                    height: frame.height * 0.33
+                )
+                .position(
+                    x: frame.width * 0.84,
+                    y: frame.height / 2
+                )
+                .overlay(showDebugOverlay ? Text("Right").font(.caption2).foregroundColor(.white) : nil)
+#if !os(tvOS)
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { _ in
+                            handleButtonPress("right")
+                        }
+                        .onEnded { _ in
+                            handleButtonRelease("right")
+                        }
+                )
+            #endif
+        }
+        .frame(width: frame.width, height: frame.height)
+        .position(x: absolutePosition.x, y: absolutePosition.y)
+    }
+
+    @ViewBuilder
+    private func analogStickMapping(mapping: DeltaSkinButtonMapping, frame: CGRect, absolutePosition: CGPoint) -> some View {
+        // Determine if this is left or right analog stick
+        let isLeftStick = mapping.id.lowercased().contains("left")
+
+        // Create a draggable analog stick
+        ZStack {
+            if showDebugOverlay {
+                // Debug overlay
+                Circle()
+                    .stroke(Color.blue, lineWidth: 2)
+                    .background(Color.blue.opacity(0.1))
+            } else {
+                Color.clear
+            }
+
+            // Stick handle
+            Circle()
+                .fill(showDebugOverlay ? Color.white.opacity(0.5) : Color.clear)
+                .frame(
+                    width: frame.width * 0.5,
+                    height: frame.height * 0.5
+                )
+        }
+        .frame(width: frame.width, height: frame.height)
+        .position(x: absolutePosition.x, y: absolutePosition.y)
+        .overlay(
+            showDebugOverlay ?
+                Text(isLeftStick ? "Left Analog" : "Right Analog")
+                    .font(.caption2)
+                    .foregroundColor(.white)
+                : nil
+        )
+    }
+
+    private func handleButtonPress(_ buttonId: String) {
+        DLOG("🔴 handleButtonPress called with buttonId: \(buttonId)")
+        // Safety check for duplicate press events
+        if pressedButtons.contains(buttonId) {
+            DLOG("⚠️ Button \(buttonId) already pressed, skipping press event")
+            return
+        }
+
+        // Add to the set of currently pressed buttons
+        pressedButtons.insert(buttonId)
+        DLOG("✅ Button pressed: \(buttonId) - Total pressed buttons: \(pressedButtons.count)")
+        DLOG("Current pressed buttons: \(pressedButtons)")
+
+        // Play button sound
+        if let button = skin.buttons(for: traits)?.first(where: { $0.id == buttonId }),
+           let mappingSize = skin.mappingSize(for: traits) {
+            // Use position calculations for audio
+            let panPosition = Float((button.frame.midX / mappingSize.width) * 2 - 1)
+            let area = button.frame.width * button.frame.height
+            let maxArea = mappingSize.width * mappingSize.height
+            let normalizedSize = Float((area / maxArea) * 0.5 + 0.5)
+
+            // Play sound
+            ButtonSoundGenerator.shared.playButtonPressSound(
+                pan: panPosition,
+                volume: normalizedSize
+            )
+
+            // Haptic feedback
+            #if !os(tvOS) && os(iOS)
+            if !ProcessInfo.processInfo.isiOSAppOnMac {
+                impactGenerator.impactOccurred()
+            }
+            #endif
+        }
+
+        // Pass to the input handler
+        inputHandler.buttonPressed(buttonId)
+    }
+
+    private func handleButtonRelease(_ buttonId: String) {
+        DLOG("🔵 handleButtonRelease called with buttonId: \(buttonId)")
+        // Safety check to prevent releasing buttons that weren't pressed
+        if !pressedButtons.contains(buttonId) {
+            DLOG("⚠️ Button \(buttonId) not pressed, skipping release event")
+            return
+        }
+
+        // Remove from the set of currently pressed buttons
+        pressedButtons.remove(buttonId)
+        DLOG("✅ Button released: \(buttonId) - Remaining pressed buttons: \(pressedButtons.count)")
+        DLOG("Current pressed buttons after release: \(pressedButtons)")
+
+        // Pass to the input handler
+        DLOG("Forwarding button release to input handler: \(buttonId)")
+        inputHandler.buttonReleased(buttonId)
+    }
+
+    /// Extract the actual input command from a button
+    private func extractInputCommand(from button: DeltaSkinButton) -> String {
+        // First, try to get the command from the button's input property
+        switch button.input {
+        case .single(let command):
+            return command
+        case .directional(let commands):
+            // For directional inputs, we need to determine which direction is being pressed
+            // This requires checking the touch location relative to the button's center
+            if let touchLocation = touchLocations.first, let mappingSize = skin.mappingSize(for: traits) {
+                // We need to use the same coordinate transformation as in handleTouch
+                // to ensure consistent direction detection
+                let scale = min(
+                    previewSize.width / mappingSize.width,
+                    previewSize.height / mappingSize.height
+                )
+
+                let scaledSkinWidth = mappingSize.width * scale
+                let scaledSkinHeight = mappingSize.height * scale
+                let xOffset = (previewSize.width - scaledSkinWidth) / 2
+
+                // Check if skin has fixed screen position
+                let hasScreenPosition = skin.screens(for: traits) != nil
+
+                // Calculate Y offset based on skin type
+                let yOffset: CGFloat = hasScreenPosition ?
+                    ((previewSize.height - scaledSkinHeight) / 2) :
+                    (previewSize.height - scaledSkinHeight)
+
+                // Calculate the button center in view coordinates
+                let buttonCenterX = button.frame.midX * scale + xOffset
+                let buttonCenterY = button.frame.midY * scale + yOffset
+
+                // Calculate the touch position relative to the button center
+                let relativeX = touchLocation.x - buttonCenterX
+                let relativeY = touchLocation.y - buttonCenterY
+
+                // Add debug logging to help diagnose direction issues
+                DLOG("D-pad: relativeX=\(relativeX), relativeY=\(relativeY)")
+
+                // Define the center dead zone (15% of button size - smaller dead zone)
+                let buttonWidth = button.frame.width * scale
+                let buttonHeight = button.frame.height * scale
+                let deadZoneRadius = min(buttonWidth, buttonHeight) * 0.15
+
+                // Check if touch is in the dead zone
+                if sqrt(relativeX * relativeX + relativeY * relativeY) < deadZoneRadius {
+                    // In dead zone, return a special "center" command or nothing
+                    DLOG("D-pad: In dead zone")
+                    // Don't send any command when in the dead zone
+                    return "none"
+                }
+
+                // Determine which direction is being pressed based on the touch position
+                if abs(relativeX) > abs(relativeY) {
+                    // Horizontal movement is dominant
+                    if relativeX > 0 {
+                        DLOG("D-pad: RIGHT direction detected")
+                        return commands["right"] ?? "right"
+                    } else {
+                        DLOG("D-pad: LEFT direction detected")
+                        return commands["left"] ?? "left"
+                    }
+                } else {
+                    // Vertical movement is dominant
+                    if relativeY > 0 {
+                        DLOG("D-pad: DOWN direction detected")
+                        return commands["down"] ?? "down"
+                    } else {
+                        DLOG("D-pad: UP direction detected")
+                        return commands["up"] ?? "up"
+                    }
+                }
+            }
+
+            // Fallback if we can't determine the direction
+            if let firstCommand = commands.values.first {
+                return firstCommand
+            }
+        }
+
+        // If we couldn't get a command from the input, try to extract it from the button ID
+        // This is a fallback for compatibility with existing code
+        let buttonId = button.id.lowercased()
+
+        if buttonId.contains("up") {
+            return "up"
+        } else if buttonId.contains("down") {
+            return "down"
+        } else if buttonId.contains("left") {
+            return "left"
+        } else if buttonId.contains("right") {
+            return "right"
+        } else if buttonId.contains("a") {
+            return "a"
+        } else if buttonId.contains("b") {
+            return "b"
+        } else if buttonId.contains("x") {
+            return "x"
+        } else if buttonId.contains("y") {
+            return "y"
+        } else if buttonId.contains("l") && !buttonId.contains("select") {
+            return "l"
+        } else if buttonId.contains("r") && !buttonId.contains("start") {
+            return "r"
+        } else if buttonId.contains("start") {
+            return "start"
+        } else if buttonId.contains("select") {
+            return "select"
+        }
+
+        // If all else fails, just use the button ID
+        return button.id
+    }
+
+    /// Reset touch state completely
+    private func resetTouchState() {
+        DLOG("Resetting DeltaSkinView touch state")
+        touchLocations.removeAll()
+        touchToButtonMap.removeAll()
+        currentlyPressedButton = nil
+        activeButtons.removeAll()
+        activeThumbsticks.removeAll()
+    }
+
+    /// Release all pressed buttons
+    private func releaseAllButtons() {
+        DLOG("Releasing all pressed buttons in DeltaSkinView: \(pressedButtons)")
+
+        // Ensure all D-pad buttons are released
+        for direction in ["up", "down", "left", "right"] {
+            if pressedButtons.contains(direction) {
+                handleButtonRelease(direction)
+            }
+        }
+
+        // Release all other buttons
+        let allButtons = pressedButtons
+        for buttonId in allButtons {
+            handleButtonRelease(buttonId)
+        }
+    }
 }
 
 private struct SkinLayoutKey: EnvironmentKey {
@@ -712,7 +1543,7 @@ extension EnvironmentValues {
 
 /// Overlay showing hit test areas for buttons
 private struct DeltaSkinHitTestOverlay: View {
-    let skin: DeltaSkinProtocol
+    let skin: any DeltaSkinProtocol
     let traits: DeltaSkinTraits
     let size: CGSize
 
@@ -720,6 +1551,7 @@ private struct DeltaSkinHitTestOverlay: View {
         GeometryReader { geometry in
             if let buttons = skin.buttons(for: traits),
                let mappingSize = skin.mappingSize(for: traits) {
+                // Calculate the scale to fit the skin in the available space
                 let scale = min(
                     geometry.size.width / mappingSize.width,
                     geometry.size.height / mappingSize.height
@@ -727,33 +1559,34 @@ private struct DeltaSkinHitTestOverlay: View {
 
                 let scaledSkinWidth = mappingSize.width * scale
                 let scaledSkinHeight = mappingSize.height * scale
+
+                // Calculate the offset to center the skin
                 let xOffset = (geometry.size.width - scaledSkinWidth) / 2
+                let yOffset = (geometry.size.height - scaledSkinHeight) / 2
 
-                // Check if skin has fixed screen position
-                let hasScreenPosition = skin.screens(for: traits) != nil
-
-                // Calculate Y offset based on skin type
-                let yOffset: CGFloat = hasScreenPosition ?
-                    ((geometry.size.height - scaledSkinHeight) / 2) :
-                    (geometry.size.height - scaledSkinHeight)
-
+                // Draw hit boxes for each button
                 ForEach(buttons, id: \.id) { button in
-                    let hitFrame = button.frame.insetBy(dx: -20, dy: -20)
                     let scaledFrame = CGRect(
-                        x: hitFrame.minX * scale + xOffset,
-                        y: yOffset + (hitFrame.minY * scale),
-                        width: hitFrame.width * scale,
-                        height: hitFrame.height * scale
+                        x: button.frame.minX * scale + xOffset,
+                        y: button.frame.minY * scale + yOffset,
+                        width: button.frame.width * scale,
+                        height: button.frame.height * scale
                     )
 
                     Rectangle()
                         .stroke(.red.opacity(0.5), lineWidth: 1)
                         .frame(width: scaledFrame.width, height: scaledFrame.height)
                         .position(x: scaledFrame.midX, y: scaledFrame.midY)
+                        .overlay(
+                            Text(button.id)
+                                .font(.caption2)
+                                .foregroundColor(.white)
+                                .background(Color.black.opacity(0.5))
+                                .padding(2)
+                        )
                 }
             }
         }
-        .allowsHitTesting(false)
     }
 }
 

@@ -62,7 +62,10 @@ public class SwiftUIImportOptionsPresenter: PVImportOptionsPresenter {
                                 gameImporter: gameImporter,
                                 delegate: delegate,
                                 dismissAction: {
-                                    gameImporter.clearCompleted()
+                                    // Use Task to handle the async call
+                                    Task {
+                                        await gameImporter.clearCompleted()
+                                    }
                                 }
                             )
                             let hostingController = UIHostingController(rootView: settingsView)
@@ -90,7 +93,10 @@ public class SwiftUIImportOptionsPresenter: PVImportOptionsPresenter {
                     gameImporter: gameImporter,
                     delegate: delegate,
                     dismissAction: {
-                        gameImporter.clearCompleted()
+                        // Use Task to handle the async call
+                        Task {
+                            await gameImporter.clearCompleted()
+                        }
                     }
                 )
                 let hostingController = UIHostingController(rootView: importStatusView)

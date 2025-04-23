@@ -76,6 +76,9 @@ struct ConsolesWrapperView: SwiftUI.View {
     /// Track the previous tab for comparison
     @State private var previousTab: String = ""
 
+    /// State to control the presentation of ImportStatusView
+    @State private var showImportStatusView = false
+    
     /// State for game info presentation
     struct GameInfoState: Identifiable {
         let id: String
@@ -123,6 +126,13 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     var body: some View {
         Group {
+            // importStatusOverlayView
+            
+            // Add a glowing border line using glowColor
+            RetroDividerView()
+                .shadow(color: .retroPink, radius: 4, x: 0, y: 1)
+            
+            
             if consoles.isEmpty || (consoles.count == 1 && consoles.first!.identifier == SystemIdentifier.RetroArch.rawValue) {
                 noConsolesView
             } else {
@@ -151,6 +161,8 @@ struct ConsolesWrapperView: SwiftUI.View {
         .onDisappear {
             isVisible = false
         }
+        .ignoresSafeArea(edges: .all)
+        .padding(.top, 14)
     }
 
     // MARK: - Helper Methods
@@ -170,7 +182,7 @@ struct ConsolesWrapperView: SwiftUI.View {
         case is LightThemePalette:
             return .blue
         default:
-            return themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .purple
+            return themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .purple
         }
     }
 
@@ -217,6 +229,39 @@ struct ConsolesWrapperView: SwiftUI.View {
         }
     }
 
+    var importStatusOverlayView: some View {
+        // Import Progress View at the top
+        VStack {
+            ImportProgressView(
+                gameImporter: GameImporter.shared,
+                updatesController: AppState.shared.libraryUpdatesController!,
+                onTap: {
+                    showImportStatusView = true
+                }
+            )
+//            .padding(.horizontal)
+//            .padding(.top, 8)
+        }
+        .sheet(isPresented: $showImportStatusView) {
+            ImportStatusView(
+                updatesController: AppState.shared.libraryUpdatesController!,
+                gameImporter: GameImporter.shared,
+                dismissAction: {
+                    showImportStatusView = false
+                }
+            )
+        }
+        .onChange(of: delegate.selectedTab) { newValue in
+            DLOG("Tab changed in view: \(newValue)")
+        }
+        .tabViewStyle(.page)
+        .indexViewStyle(.page(backgroundDisplayMode: .interactive))
+        .id(consoles.count)
+        .tint(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+        .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+        .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+    }
+    
     @ViewBuilder
     var consolesTabView: some View {
         let binding = Binding(
@@ -267,7 +312,7 @@ struct ConsolesWrapperView: SwiftUI.View {
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .interactive))
         .id(consoles.count)
-        .tint(themeManager.currentPalette.defaultTintColor?.swiftUIColor)
+        .tint(themeManager.currentPalette.defaultTintColor.swiftUIColor)
         .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
         .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
     }

@@ -27,10 +27,15 @@ final class PVNeoGeoPocketControllerViewController: PVControllerViewController<P
             guard let button = $0 as? JSButton, let text = button.titleLabel?.text else {
                 return
             }
-            if text == "A" {
+            switch text.lowercased() {
+            case "a":
                 button.buttonTag = .a
-            } else if text == "B" {
+            case "b":
                 button.buttonTag = .b
+            case "option", "start":
+                button.buttonTag = .option
+            default:
+                break
             }
         }
 

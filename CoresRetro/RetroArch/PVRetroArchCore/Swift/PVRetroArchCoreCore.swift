@@ -27,7 +27,9 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
     
     public override var rendersToOpenGL: Bool { true }
     public override var isDoubleBuffered: Bool { true }
-    
+    public override var supportsSkins: Bool { false }
+    public override var supportsAudioVisualizer: Bool { false }
+
     // MARK: Lifecycle
     public lazy var _bridge: PVRetroArchCoreBridge = .init()
     

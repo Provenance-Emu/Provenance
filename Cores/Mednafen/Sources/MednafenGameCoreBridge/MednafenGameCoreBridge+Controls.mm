@@ -20,12 +20,16 @@
 //Controller Stacks start here:
 
 #pragma mark Atari Lynx
-- (void)didPushLynxButton:(PVLynxButton)button forPlayer:(NSInteger)player {
-    inputBuffer[player][0] |= 1 << [InputMaps.LynxMap[button] intValue];
+- (void)didPushLynxButton:(enum PVLynxButton)button forPlayer:(NSInteger)player {
+    int mappedButton = [InputMaps.LynxMap[button] intValue];
+    DLOG(@"%i, %i, %i", button, mappedButton, player);
+    inputBuffer[0][0] |= 1 << mappedButton;
 }
 
-- (void)didReleaseLynxButton:(PVLynxButton)button forPlayer:(NSInteger)player {
-    inputBuffer[player][0] &= ~(1 << [InputMaps.LynxMap[button] intValue]);
+-(void)didReleaseLynxButton:(enum PVLynxButton)button forPlayer:(NSInteger)player {
+    int mappedButton = [InputMaps.LynxMap[button] intValue];
+    DLOG(@"%i, %i, %i", button, mappedButton, player);
+    inputBuffer[0][0] &= ~(1 << mappedButton);
 }
 
 - (NSInteger)LynxControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
@@ -49,6 +53,9 @@
                 return [[gamepad leftShoulder] isPressed];
             case PVLynxButtonOption2:
                 return [[gamepad rightShoulder] isPressed];
+            case PVLynxButtonPause:
+                return [[gamepad leftShoulder] isPressed] && [[gamepad rightShoulder] isPressed] && ([[gamepad buttonX] isPressed] || [[gamepad buttonY] isPressed]);
+            
             default:
                 break;
         }
@@ -341,10 +348,12 @@
 
 #pragma mark Virtual Boy
 - (void)didPushVBButton:(PVVBButton)button forPlayer:(NSInteger)player {
+    DLOG(@"%i %i", button ,[InputMaps.VBMap[button] intValue]);
     inputBuffer[player][0] |= 1 << [InputMaps.VBMap[button] intValue];
 }
 
 - (void)didReleaseVBButton:(PVVBButton)button forPlayer:(NSInteger)player {
+    DLOG(@"%i %i", button ,[InputMaps.VBMap[button] intValue]);
     inputBuffer[player][0] &= ~(1 << [InputMaps.VBMap[button] intValue]);
 }
 

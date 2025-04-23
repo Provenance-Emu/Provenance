@@ -34,86 +34,166 @@ public extension PVGame {
         guard !isInvalidated else {
             return CSSearchableItemAttributeSet()
         }
-        
-            let systemName = self.systemName
 
-            var description = "\(systemName ?? "")"
+        /// Create a content set using a more specific UTType for better handling
+        let contentSet = CSSearchableItemAttributeSet(itemContentType: "org.provenance-emu.game")
 
-            // Determine if any of these have a value, and if so, seperate them by a space
-            let optionalEntries: [String?] = [isFavorite ? "⭐" : nil,
-                                              developer,
-                                              publishDate != nil ? "(\(publishDate!)" : nil,
-                                              regionName != nil ? "(\(regionName!))" : nil]
+        // Primary metadata
+        contentSet.title = title
+        contentSet.relatedUniqueIdentifier = md5Hash
 
-        let secondLine = optionalEntries.compactMap { (maybeString) -> String? in
-            maybeString
-        }.joined(separator: " ")
-            if !secondLine.isEmpty {
-                description += "\n\(secondLine)"
-            }
+        // System information
+        let systemName = self.systemName
 
-            if let g = genres, !g.isEmpty, !md5Hash.isEmpty {
-                let genresWithSpaces = g.components(separatedBy: ",").joined(separator: ", ")
-                description += "\n\(genresWithSpaces)"
-            }
+        // Create a rich, structured description
+        var descriptionComponents: [String] = []
 
-            // Maybe should use kUTTypeData?
-            let contentSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeImage as String)
-            contentSet.title = title
-            contentSet.relatedUniqueIdentifier = md5Hash
-            contentSet.contentDescription = description
-            contentSet.rating = NSNumber(value: isFavorite)
-            contentSet.thumbnailURL = pathOfCachedImage
-            var keywords = ["rom"]
-            if let systemName = systemName {
-                keywords.append(systemName)
-            }
-            if let genres = genres {
-                keywords.append(contentsOf: genres.components(separatedBy: ","))
-            }
-
-            contentSet.keywords = keywords
-
-            //            contentSet.authorNames             = [data.authorName]
-            // Could generate small thumbnail here
-            if let p = pathOfCachedImage?.path,
-               let t = UIImage(contentsOfFile: p),
-               let s = t.scaledImage(withMaxResolution: 270) {
-                contentSet.thumbnailData = s.jpegData(compressionQuality: 0.95)
-            }
-            return contentSet
+        // System name as first line
+        if let systemName = systemName {
+            descriptionComponents.append("\(systemName)")
         }
+
+        // Second line with optional metadata
+        var secondLineComponents: [String] = []
+        if isFavorite {
+            secondLineComponents.append("⭐ Favorite")
+        }
+        if let developer = developer, !developer.isEmpty {
+            secondLineComponents.append(developer)
+        }
+        if let publishDate = publishDate {
+            secondLineComponents.append("(\(publishDate))")
+        }
+        if let regionName = regionName, !regionName.isEmpty {
+            secondLineComponents.append("Region: \(regionName)")
+        }
+
+        if !secondLineComponents.isEmpty {
+            descriptionComponents.append(secondLineComponents.joined(separator: " | "))
+        }
+
+        // Genres as third line
+        if let g = genres, !g.isEmpty {
+            let genresWithSpaces = g.components(separatedBy: ",").joined(separator: ", ")
+            descriptionComponents.append("Genres: \(genresWithSpaces)")
+        }
+
+        // Combine all description components
+        contentSet.contentDescription = descriptionComponents.joined(separator: "\n")
+
+        // Rating (for favorited games)
+        contentSet.rating = NSNumber(value: isFavorite ? 5 : 0)
+
+        // Images
+        contentSet.thumbnailURL = pathOfCachedImage
+
+        // Add a high-quality thumbnail
+        if let imagePath = pathOfCachedImage?.path,
+           let image = UIImage(contentsOfFile: imagePath) {
+            // Try to get a high-quality thumbnail
+            let size = CGSize(width: 300, height: 300)
+            if let scaledImage = image.scaledImage(withMaxResolution: 300) {
+                contentSet.thumbnailData = scaledImage.jpegData(compressionQuality: 0.9)
+            } else {
+                // Fallback to original image data
+                contentSet.thumbnailData = image.jpegData(compressionQuality: 0.8)
+            }
+        }
+
+        // Comprehensive keywords for better search
+        var keywords: [String] = ["rom", "game", "emulator", "provenance"]
+
+        // Add system name and manufacturer
+        if let systemName = systemName {
+            keywords.append(systemName)
+            // Add variations of the system name for better matching
+            if systemName.contains(" ") {
+                keywords.append(contentsOf: systemName.components(separatedBy: " "))
+            }
+        }
+
+        if let manufacturer = system?.manufacturer {
+            keywords.append(manufacturer)
+        }
+
+        // Add all genres
+        if let genres = genres, !genres.isEmpty {
+            keywords.append(contentsOf: genres.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) })
+        }
+
+        // Add developer
+        if let developer = developer, !developer.isEmpty {
+            keywords.append(developer)
+        }
+
+        // Add region
+        if let regionName = regionName, !regionName.isEmpty {
+            keywords.append(regionName)
+        }
+
+        // Add variations of the title for better matching
+        keywords.append(title)
+        if title.contains(" ") {
+            let titleWords = title.components(separatedBy: " ")
+            keywords.append(contentsOf: titleWords.filter { $0.count > 2 }) // Only add words longer than 2 characters
+        }
+
+        // Convert to NSArray for CoreSpotlight
+        contentSet.keywords = keywords
+
+        // Additional metadata
+        contentSet.contentType = systemName
+        if let system = system {
+            // Convert publishDate (String) to NSDate if available
+            if let publishDate = publishDate {
+                // Use a date formatter to convert the string to a date
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy" // Assuming the publish date is just a year
+                if let date = dateFormatter.date(from: publishDate) {
+                    contentSet.contentCreationDate = date
+                }
+            }
+            contentSet.subject = "\(system.manufacturer) \(system.name)"
+        }
+
+        // Make the item displayable in Spotlight
+        contentSet.supportsNavigation = true
+
+        return contentSet
+    }
 
     var pathOfCachedImage: URL? {
-            let artworkKey = customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL
-            if !PVMediaCache.fileExists(forKey: artworkKey) {
-                return nil
-            }
-            let artworkURL = PVMediaCache.filePath(forKey: artworkKey)
-            return artworkURL
+        let artworkKey = customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL
+        if artworkKey.isEmpty || !PVMediaCache.fileExists(forKey: artworkKey) {
+            return nil
         }
+        let artworkURL = PVMediaCache.filePath(forKey: artworkKey)
+        return artworkURL
+    }
 
     var spotlightUniqueIdentifier: String {
-            guard !self.isInvalidated else { return "invalid" }
-            return "org.provenance-emu.game.\(md5Hash)"
-        }
-    #endif
+        guard !self.isInvalidated else { return "invalid" }
+        return "org.provenance-emu.game.\(md5Hash)"
+    }
+#endif
 
     var spotlightActivity: NSUserActivity {
         guard !self.isInvalidated else { return NSUserActivity() }
-        let activity = NSUserActivity(activityType: "org.provenance-emu.game.play")
+        let activity = NSUserActivity(activityType: "org.provenance-emu.game-search")
         activity.title = title
         activity.userInfo = ["md5": md5Hash]
 
         activity.requiredUserInfoKeys = ["md5"]
         activity.isEligibleForSearch = true
-        activity.isEligibleForHandoff = false
+        activity.isEligibleForHandoff = true
 
         #if os(iOS)
-            activity.contentAttributeSet = spotlightContentSet
+        activity.persistentIdentifier = spotlightUniqueIdentifier
+        activity.contentAttributeSet = spotlightContentSet
         #endif
-        activity.requiredUserInfoKeys = ["md5"]
-        //            activity.expirationDate       =
+
+        // Set a web URL for fallback
+        activity.webpageURL = URL(string: "provenance://game/\(md5Hash)")
 
         return activity
     }

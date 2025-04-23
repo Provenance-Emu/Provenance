@@ -55,20 +55,35 @@ struct BiosesView: View {
                 .frame(height: isExpanded ? calculateContentHeight() : 0)
                 .animation(.spring(response: 0.4, dampingFraction: 0.7), value: isExpanded)
             }
-            .background(Color.black.opacity(0.2))
-            // Replace rounded rectangle with top and bottom borders
-            .overlay(alignment: .top) {
-                Rectangle()
-                    .fill(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
-                    .frame(height: Constants.borderWidth)
-                    .edgesIgnoringSafeArea(.horizontal)
-            }
-            .overlay(alignment: .bottom) {
-                Rectangle()
-                    .fill(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
-                    .frame(height: Constants.borderWidth)
-                    .edgesIgnoringSafeArea(.horizontal)
-            }
+            .background(
+                // Retrowave-style background
+                ZStack {
+                    // Dark background
+                    Color.black.opacity(0.8)
+                    
+                    // Grid overlay for retrowave effect
+                    RetroTheme.RetroGridView()
+                        .opacity(0.15)
+                }
+            )
+            // Neon border with gradient
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
+                                RetroTheme.retroPurple,
+                                RetroTheme.retroBlue
+                            ]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ),
+                        lineWidth: Constants.borderWidth
+                    )
+            )
+            // Add subtle glow effect
+            .shadow(color: (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.6), radius: 5)
             .clipShape(Rectangle()) // Clip the entire container
             .offset(y: dragOffset)
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: dragOffset)
@@ -112,24 +127,56 @@ struct BiosesView: View {
         HStack {
             Spacer()
             VStack(spacing: 4) {
+                // Retrowave-styled icon
                 Image(systemName: "line.3.horizontal")
-                    .foregroundColor(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor)
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
+                                RetroTheme.retroPurple,
+                                RetroTheme.retroBlue
+                            ]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .shadow(color: (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.7), radius: 2)
+                
+                // Retrowave-styled text
                 Text("BIOSes (\(console.bioses.count))")
-                    .font(.caption)
-                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
+                                RetroTheme.retroPurple,
+                                RetroTheme.retroBlue
+                            ]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
             }
             .frame(height: Constants.tabHeight)
-            .padding(.vertical, 4)
+            .padding(.vertical, 6)
             Spacer()
         }
+        // Add subtle pulse animation
+        .modifier(PulseAnimation(isExpanded: isExpanded))
     }
 
     private var biosContent: some View {
         VStack(spacing: 0) {
-            GamesDividerView()
+            // Retrowave-styled divider
+            RetroDividerView()
+            
             ForEach(console.bioses, id: \.expectedFilename) { bios in
                 BiosRowView(biosFilename: bios.expectedFilename)
-                GamesDividerView()
+                    // Add hover effect for each row
+                    .modifier(HoverEffect())
+                
+                RetroDividerView()
             }
         }
         .padding(.vertical, 8)
