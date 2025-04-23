@@ -14,7 +14,7 @@ import UIKit
 
 /// Manager for CloudKit subscriptions
 /// Handles creating and managing subscriptions for real-time updates
-#if os(tvOS)
+
 public class CloudKitSubscriptionManager {
     // MARK: - Properties
     
@@ -584,4 +584,3 @@ extension Notification.Name {
     /// Notification sent when a save state is deleted in CloudKit
     public static let CloudKitSaveStateDeleted = Notification.Name("CloudKitSaveStateDeleted")
 }
-#endif

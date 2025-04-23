@@ -22,11 +22,11 @@ public class SyncProviderFactory {
         notificationCenter: NotificationCenter = .default,
         errorHandler: CloudSyncErrorHandler
     ) -> SyncProvider {
-        #if os(tvOS)
+//        #if os(tvOS)
         return CloudKitSyncer(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
-        #else
-        return iCloudContainerSyncer(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
-        #endif
+//        #else
+//        return iCloudContainerSyncer(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
+//        #endif
     }
     
     /// Create a ROM sync provider
@@ -38,15 +38,15 @@ public class SyncProviderFactory {
         notificationCenter: NotificationCenter = .default,
         errorHandler: CloudSyncErrorHandler
     ) -> RomsSyncing {
-        #if os(tvOS)
+//        #if os(tvOS)
         DLOG("Creating CloudKit ROM syncer for tvOS")
         let syncer: RomsSyncing = CloudKitRomsSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
         return syncer
-        #else
-        DLOG("Creating iCloud ROM syncer for iOS/macOS")
-        let syncer: RomsSyncing = RomsSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
-        return syncer
-        #endif
+//        #else
+//        DLOG("Creating iCloud ROM syncer for iOS/macOS")
+//        let syncer: RomsSyncing = RomsSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
+//        return syncer
+//        #endif
     }
     
     /// Create a save states sync provider
@@ -58,15 +58,15 @@ public class SyncProviderFactory {
         notificationCenter: NotificationCenter = .default,
         errorHandler: CloudSyncErrorHandler
     ) -> SaveStatesSyncing {
-        #if os(tvOS)
+//        #if os(tvOS)
         DLOG("Creating CloudKit save states syncer for tvOS")
         let syncer: SaveStatesSyncing = CloudKitSaveStatesSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
         return syncer
-        #else
-        DLOG("Creating iCloud save states syncer for iOS/macOS")
-        let syncer: SaveStatesSyncing = SaveStatesSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
-        return syncer
-        #endif
+//        #else
+//        DLOG("Creating iCloud save states syncer for iOS/macOS")
+//        let syncer: SaveStatesSyncing = SaveStatesSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
+//        return syncer
+//        #endif
     }
     
     /// Create a BIOS sync provider
@@ -78,14 +78,14 @@ public class SyncProviderFactory {
         notificationCenter: NotificationCenter = .default,
         errorHandler: CloudSyncErrorHandler
     ) -> BIOSSyncing {
-        #if os(tvOS)
-        DLOG("Creating CloudKit BIOS syncer for tvOS")
-        let syncer: BIOSSyncing = CloudKitBIOSSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
-        return syncer
-        #else
+//        #if os(tvOS)
+//        DLOG("Creating CloudKit BIOS syncer for tvOS")
+//        let syncer: BIOSSyncing = CloudKitBIOSSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
+//        return syncer
+//        #else
         DLOG("Creating iCloud BIOS syncer for iOS/macOS")
         let syncer: BIOSSyncing = BIOSSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
         return syncer
-        #endif
+//        #endif
     }
 }

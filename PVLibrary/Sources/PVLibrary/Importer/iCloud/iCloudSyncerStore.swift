@@ -10,7 +10,14 @@ import Foundation
 import PVLogging
 import Combine
 
+// For backward compatibility with existing code
 #if !os(tvOS)
+public typealias iCloudSyncerStore = SyncerStore
+#endif
+
+// Note: CloudKitSyncerStore is already defined in CloudKitSyncerStore.swift
+
+#if false
 /// Manages access to active iCloud syncers for observation
 public class iCloudSyncerStore {
     /// Shared instance

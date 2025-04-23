@@ -83,10 +83,3 @@ public class SyncerStore {
         _activeSyncers.filter { !$0.directories.isDisjoint(with: ["BIOS"]) }
     }
 }
-
-// For backward compatibility with existing code
-#if !os(tvOS)
-public typealias iCloudSyncerStore = SyncerStore
-#endif
-
-// Note: CloudKitSyncerStore is already defined in CloudKitSyncerStore.swift
