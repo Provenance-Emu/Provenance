@@ -447,12 +447,8 @@ public struct ImportProgressView: View {
             // Only setup if not already setup
             guard syncSubscriptions.isEmpty else { return }
             
-            // Subscribe to the appropriate syncer store for changes in active syncers
-            #if os(tvOS)
+            // Subscribe to the CloudKit syncer store for changes in active syncers
             let publisher = CloudKitSyncerStore.shared.syncersPublisher
-            #else
-            let publisher = SyncerStore.shared.syncersPublisher
-            #endif
             
             let subscription = publisher
                 .receive(on: RunLoop.main)
@@ -514,14 +510,10 @@ public struct ImportProgressView: View {
             syncSubscriptions.removeAll()
         }
         
-        /// Get active syncers from the appropriate sync store
+        /// Get active syncers from the CloudKit sync store
         private func getSyncers() -> [SyncProvider]? {
             // Get the actual syncer instances from the store
-            #if os(tvOS)
             return CloudKitSyncerStore.shared.activeSyncers
-            #else
-            return SyncerStore.shared.activeSyncers
-            #endif
         }
         
         /// Update the sync status based on current counts

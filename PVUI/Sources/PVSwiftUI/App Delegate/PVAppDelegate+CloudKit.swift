@@ -12,10 +12,9 @@ import CloudKit
 import PVLogging
 import PVLibrary
 
-#if os(tvOS)
 /// Extension to handle CloudKit remote notifications in the app delegate
 extension PVAppDelegate {
-    /// Initialize CloudKit for tvOS
+    /// Initialize CloudKit for all platforms
     func initializeCloudKit() {
         // Register for remote notifications if iCloud sync is enabled
         if Defaults[.iCloudSync] {
@@ -82,4 +81,3 @@ extension PVAppDelegate {
         ELOG("Failed to register for remote notifications: \(error.localizedDescription)")
     }
 }
-#endif

@@ -18,7 +18,6 @@ import PVPrimitives
 import PVFileSystem
 import PVRealm
 
-#if os(tvOS)
 /// CloudKit-based sync provider for tvOS
 /// Implements the SyncProvider protocol to provide a consistent interface
 /// with the iCloudContainerSyncer used on iOS/macOS
@@ -364,4 +363,3 @@ public class CloudKitSyncer: SyncProvider {
     
     // Implementation of SyncProvider methods is already provided above
 }
-#endif

@@ -387,12 +387,17 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 
     func _initICloud() {
         PVEmulatorConfiguration.initICloud()
+        
+        // Initialize CloudKit for all platforms
+        initializeCloudKit()
+        
+        // Keep the legacy iCloud document sync code in place but don't use it by default
+        // We can uncomment this if we need to revert back to the old sync method
+        /*
         #if !os(tvOS)
         iCloudSync.initICloudDocuments()
-        #else
-        // Initialize CloudKit for tvOS
-        initializeCloudKit()
         #endif
+        */
     }
 
     var currentThemeObservation: Any? // AnyCancellable?

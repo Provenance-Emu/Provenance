@@ -21,7 +21,6 @@ import CloudKit
 /// Note: This file doesn't actually create the schema, it just documents it.
 /// The schema must be created manually in the CloudKit Dashboard.
 
-#if os(tvOS)
 /// CloudKit schema definition for Provenance
 public enum CloudKitSchema {
     /// Record types used in CloudKit
@@ -162,4 +161,3 @@ public enum CloudKitSchema {
         }
     }
 }
-#endif

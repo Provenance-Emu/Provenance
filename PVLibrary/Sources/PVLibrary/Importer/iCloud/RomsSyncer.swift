@@ -169,7 +169,6 @@ public class RomsSyncer: iCloudContainerSyncer, RomsSyncing {
 
 // MARK: - tvOS Implementation
 
-#if os(tvOS)
 /// ROM syncer for tvOS using CloudKit
 public class CloudKitRomsSyncer: CloudKitSyncer, RomsSyncing {
     /// Initialize a new ROM syncer
@@ -332,4 +331,3 @@ public class CloudKitRomsSyncer: CloudKitSyncer, RomsSyncing {
         }
     }
 }
-#endif

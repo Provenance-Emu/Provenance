@@ -220,7 +220,6 @@ public class BIOSSyncer: iCloudContainerSyncer, BIOSSyncing {
 
 // MARK: - tvOS Implementation
 
-#if os(tvOS)
 /// BIOS syncer for tvOS using CloudKit
 public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     /// Initialize a new BIOS syncer
@@ -423,4 +422,3 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
         return false
     }
 }
-#endif

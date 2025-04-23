@@ -32,7 +32,7 @@ import PVLogging
 ///     handleCloudKitRegistrationFailure(error)
 /// }
 /// ```
-#if os(tvOS)
+
 public extension UIApplicationDelegate {
     /// Handle a CloudKit remote notification
     /// - Parameters:
@@ -85,4 +85,3 @@ public extension UIApplicationDelegate {
         ELOG("Failed to register for remote notifications: \(error.localizedDescription)")
     }
 }
-#endif

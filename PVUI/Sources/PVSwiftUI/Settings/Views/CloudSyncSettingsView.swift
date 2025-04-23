@@ -83,14 +83,14 @@ public struct CloudSyncSettingsView: View {
             }
             
             Section(header: Text("Sync Information"), footer: Text("Cloud sync allows you to keep your games and save states in sync across your devices.")) {
-                #if os(tvOS)
-                Text("Using CloudKit for tvOS")
+//                #if os(tvOS)
+                Text("Using CloudKit")
                     .font(.subheadline)
-                #else
-                Text("Using iCloud Documents")
-                    .font(.subheadline)
-                #endif
-                
+//                #else
+//                Text("Using iCloud Documents")
+//                    .font(.subheadline)
+//                #endif
+//                
                 if let lastSyncDate = viewModel.lastSyncDate {
                     Text("Last sync: \(lastSyncDate, formatter: dateFormatter)")
                         .font(.subheadline)
@@ -192,6 +192,7 @@ class CloudSyncSettingsViewModel: ObservableObject {
     
     /// Reset cloud sync
     func resetCloudSync() {
+        guard Defaults[.iCloudSync] else { return }
         guard !isSyncing else { return }
         
         isSyncing = true

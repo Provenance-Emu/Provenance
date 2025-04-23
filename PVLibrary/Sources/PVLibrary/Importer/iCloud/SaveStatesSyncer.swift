@@ -169,7 +169,6 @@ public class SaveStatesSyncer: iCloudContainerSyncer, SaveStatesSyncing {
 
 // MARK: - tvOS Implementation
 
-#if os(tvOS)
 /// Save states syncer for tvOS using CloudKit
 public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     /// Initialize a new save states syncer
@@ -384,4 +383,3 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         }
     }
 }
-#endif

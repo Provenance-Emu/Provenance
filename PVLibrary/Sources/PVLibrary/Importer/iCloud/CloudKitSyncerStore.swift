@@ -10,9 +10,8 @@ import Foundation
 import PVLogging
 import Combine
 
-#if os(tvOS)
 /// Manages access to active CloudKit syncers for observation
-/// This is the tvOS equivalent of iCloudSyncerStore
+/// Used on all platforms for CloudKit sync
 public class CloudKitSyncerStore {
     /// Shared instance
     public static let shared = CloudKitSyncerStore()
@@ -79,4 +78,3 @@ public class CloudKitSyncerStore {
         activeSyncers.compactMap { $0 as? BIOSSyncing }
     }
 }
-#endif
