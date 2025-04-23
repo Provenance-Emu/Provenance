@@ -387,7 +387,12 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 
     func _initICloud() {
         PVEmulatorConfiguration.initICloud()
+        #if !os(tvOS)
         iCloudSync.initICloudDocuments()
+        #else
+        // Initialize CloudKit for tvOS
+        initializeCloudKit()
+        #endif
     }
 
     var currentThemeObservation: Any? // AnyCancellable?

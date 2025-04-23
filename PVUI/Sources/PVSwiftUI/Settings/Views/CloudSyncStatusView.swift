@@ -13,6 +13,7 @@ import Combine
 import CloudKit
 import Defaults
 import PVSettings
+import PVFileSystem
 
 /// A view that displays the status of cloud sync
 /// Works on both iOS and tvOS, showing the appropriate sync status
@@ -126,7 +127,7 @@ public struct CloudSyncStatusView: View {
     #if os(tvOS)
     /// Check CloudKit availability on tvOS
     private func checkCloudKitAvailability() {
-        let container = CKContainer(identifier: Constants.iCloud.containerIdentifier)
+        let container = CKContainer(identifier: iCloudConstants.containerIdentifier)
         
         Task {
             do {

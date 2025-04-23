@@ -55,7 +55,7 @@ public class CloudKitSyncer: SyncProvider {
         self.errorHandler = errorHandler
         
         // Initialize CloudKit container
-        self.container = CKContainer(identifier: "iCloud.com.provenance-emu.provenance")
+        self.container = CKContainer(identifier: iCloudConstants.containerIdentifier)
         self.privateDatabase = container.privateCloudDatabase
         
         // Register with the syncer store

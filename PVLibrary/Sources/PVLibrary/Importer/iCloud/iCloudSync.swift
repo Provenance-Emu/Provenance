@@ -18,6 +18,12 @@ import PVPrimitives
 import PVFileSystem
 import PVRealm
 
+public enum iCloudConstants {
+    public static let defaultProvenanceContainerIdentifier = "iCloud.org.provenance-emu.provenance"
+    // Dynamic version based off of bundle Identifier
+    public static let containerIdentifier =  (Bundle.main.infoDictionary?["NSUbiquitousContainers"] as? [String: AnyObject])?.keys.first ?? defaultProvenanceContainerIdentifier
+}
+
 public enum SyncError: Error {
     case noUbiquityURL
 }
