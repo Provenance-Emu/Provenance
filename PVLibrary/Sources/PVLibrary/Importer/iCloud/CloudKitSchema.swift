@@ -8,34 +8,38 @@
 
 import Foundation
 import CloudKit
+import PVLogging
 
-/// This file defines the CloudKit schema used by Provenance for tvOS sync
-/// It serves as documentation for the record types and indexes that need to be created
-/// in the CloudKit Dashboard for the app's container
+/// This file defines the CloudKit schema used by Provenance for sync across all platforms
+/// It also provides functions to create the schema programmatically
 ///
 /// Record Types:
-/// 1. File - Represents a file in the cloud (ROM, save state, BIOS, etc.)
-/// 2. Game - Represents metadata about a game
-/// 3. SaveState - Represents metadata about a save state
-///
-/// Note: This file doesn't actually create the schema, it just documents it.
-/// The schema must be created manually in the CloudKit Dashboard.
+/// 1. ROM - Represents a ROM file in the cloud
+/// 2. SaveState - Represents a save state file in the cloud
+/// 3. BIOS - Represents a BIOS file in the cloud
+/// 4. File - Generic file type for other files
 
 /// CloudKit schema definition for Provenance
 public enum CloudKitSchema {
     /// Record types used in CloudKit
     public enum RecordType {
-        /// File record type - represents a file in the cloud
+        /// ROM record type - represents a ROM file in the cloud
+        public static let rom = "ROM"
+        
+        /// SaveState record type - represents a save state file in the cloud
+        public static let saveState = "SaveState"
+        
+        /// BIOS record type - represents a BIOS file in the cloud
+        public static let bios = "BIOS"
+        
+        /// File record type - generic file type for other files
         public static let file = "File"
         
-        /// Game record type - represents metadata about a game
-        public static let game = "Game"
-        
-        /// SaveState record type - represents metadata about a save state
-        public static let saveState = "SaveState"
+        /// All record types used in the app
+        public static let all = [rom, saveState, bios, file]
     }
     
-    /// File record attributes
+    /// Common file attributes for all record types
     public enum FileAttributes {
         /// Directory containing the file (e.g., "Roms", "Saves", "BIOS")
         public static let directory = "directory"
@@ -60,18 +64,18 @@ public enum CloudKitSchema {
         
         /// ID of the save state this file belongs to (for save states)
         public static let saveStateID = "saveStateID"
+        
+        /// All common attributes used in file records
+        public static let all = [directory, system, filename, fileData, lastModified, md5, gameID, saveStateID]
     }
     
-    /// Game record attributes
-    public enum GameAttributes {
+    /// ROM-specific attributes
+    public enum ROMAttributes {
         /// Game title
         public static let title = "title"
         
         /// System identifier
         public static let systemIdentifier = "systemIdentifier"
-        
-        /// ROM path
-        public static let romPath = "romPath"
         
         /// MD5 hash of the ROM
         public static let md5Hash = "md5Hash"
@@ -82,38 +86,38 @@ public enum CloudKitSchema {
         /// Game region
         public static let region = "region"
         
-        /// Game developer
-        public static let developer = "developer"
-        
-        /// Game publisher
-        public static let publisher = "publisher"
-        
-        /// Game genre
-        public static let genre = "genre"
-        
-        /// Game release date
-        public static let releaseDate = "releaseDate"
+        /// All ROM-specific attributes
+        public static let all = [title, systemIdentifier, md5Hash, description, region]
     }
     
-    /// SaveState record attributes
+    /// SaveState-specific attributes
     public enum SaveStateAttributes {
         /// Save state description
         public static let description = "description"
         
-        /// Save state timestamp
-        public static let timestamp = "timestamp"
-        
         /// Game ID this save state belongs to
         public static let gameID = "gameID"
         
-        /// Core identifier
-        public static let coreIdentifier = "coreIdentifier"
-        
-        /// Core version
-        public static let coreVersion = "coreVersion"
-        
-        /// Screenshot data as a CKAsset
+        /// Screenshot of the save state as a CKAsset
         public static let screenshot = "screenshot"
+        
+        /// All SaveState-specific attributes
+        public static let all = [description, gameID, screenshot]
+    }
+    
+    /// BIOS-specific attributes
+    public enum BIOSAttributes {
+        /// System identifier
+        public static let systemIdentifier = "systemIdentifier"
+        
+        /// MD5 hash of the BIOS
+        public static let md5Hash = "md5Hash"
+        
+        /// Description of the BIOS
+        public static let description = "description"
+        
+        /// All BIOS-specific attributes
+        public static let all = [systemIdentifier, md5Hash, description]
     }
     
     /// CloudKit indexes to create
@@ -138,26 +142,77 @@ public enum CloudKitSchema {
             /// MD5 hash index
             public static let md5 = "md5"
         }
+    }
+    
+    /// Initialize the CloudKit schema programmatically
+    /// This creates the necessary record types and indexes in CloudKit
+    /// - Parameter database: The CloudKit database to initialize (usually privateDatabase)
+    /// - Returns: A boolean indicating success or failure
+    @discardableResult
+    public static func initializeSchema(in database: CKDatabase) async -> Bool {
+        do {
+            DLOG("Initializing CloudKit schema...")
+            
+            // Create record types
+            try await createRecordTypes(in: database)
+            
+            DLOG("CloudKit schema initialized successfully")
+            return true
+        } catch {
+            ELOG("Failed to initialize CloudKit schema: \(error.localizedDescription)")
+            return false
+        }
+    }
+    
+    /// Create record types in CloudKit
+    /// - Parameter database: The CloudKit database to create record types in
+    private static func createRecordTypes(in database: CKDatabase) async throws {
+        // Create each record type
+        for recordType in RecordType.all {
+            try await createRecordType(recordType, in: database)
+        }
+    }
+    
+    /// Create a single record type in CloudKit
+    /// - Parameters:
+    ///   - recordType: The record type to create
+    ///   - database: The CloudKit database to create the record type in
+    private static func createRecordType(_ recordType: String, in database: CKDatabase) async throws {
+        // Check if record type exists by attempting to create a record
+        let record = CKRecord(recordType: recordType)
         
-        /// Game record indexes
-        public enum Game {
-            /// System identifier index
-            public static let systemIdentifier = "systemIdentifier"
-            
-            /// MD5 hash index
-            public static let md5Hash = "md5Hash"
-            
-            /// Title index
-            public static let title = "title"
+        // Add some common attributes based on the record type
+        switch recordType {
+        case RecordType.rom:
+            record[FileAttributes.directory] = "ROMs"
+            record[ROMAttributes.title] = "Test ROM"
+        case RecordType.saveState:
+            record[FileAttributes.directory] = "Save States"
+            record[SaveStateAttributes.description] = "Test Save State"
+        case RecordType.bios:
+            record[FileAttributes.directory] = "BIOS"
+            record[BIOSAttributes.description] = "Test BIOS"
+        case RecordType.file:
+            record[FileAttributes.directory] = "Files"
+            record[FileAttributes.filename] = "test.file"
+        default:
+            break
         }
         
-        /// SaveState record indexes
-        public enum SaveState {
-            /// Game ID index
-            public static let gameID = "gameID"
+        do {
+            // Try to save the record to create the record type
+            _ = try await database.save(record)
+            DLOG("Created record type: \(recordType)")
             
-            /// Timestamp index
-            public static let timestamp = "timestamp"
+            // Delete the test record
+            try await database.deleteRecord(withID: record.recordID)
+            DLOG("Deleted test record for: \(recordType)")
+        } catch let error as CKError {
+            // If the error is not that the record type already exists, rethrow
+            if error.code != .serverRecordChanged && error.code != .unknownItem {
+                throw error
+            }
+            DLOG("Record type already exists or couldn't be created: \(recordType)")
         }
     }
 }

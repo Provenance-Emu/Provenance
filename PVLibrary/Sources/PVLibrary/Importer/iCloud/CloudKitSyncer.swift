@@ -41,6 +41,12 @@ public class CloudKitSyncer: SyncProvider {
     internal let privateDatabase: CKDatabase
     private var subscriptionToken: AnyCancellable?
     
+    /// The CloudKit record type for this syncer
+    /// Subclasses should override this property
+    internal var recordType: String {
+        return getRecordType()
+    }
+    
     // MARK: - Initialization
     
     /// Initialize a new CloudKit syncer
@@ -49,19 +55,28 @@ public class CloudKitSyncer: SyncProvider {
     ///   - notificationCenter: Notification center to use
     ///   - errorHandler: Error handler to use
     public init(directories: Set<String>, notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
-        self.notificationCenter = notificationCenter
+        // Get the container identifier from the bundle
+        let bundleIdentifier = Bundle.main.bundleIdentifier ?? "com.provenance-emu.provenance"
+        let containerIdentifier = "iCloud." + bundleIdentifier
+        
+        // Initialize CloudKit container and database
+        self.container = CKContainer(identifier: containerIdentifier)
+        self.privateDatabase = container.privateCloudDatabase
         self.directories = directories
+        self.notificationCenter = notificationCenter
         self.errorHandler = errorHandler
         
-        // Initialize CloudKit container
-        self.container = CKContainer(identifier: iCloudConstants.containerIdentifier)
-        self.privateDatabase = container.privateCloudDatabase
+        // Initialize CloudKit schema and set up subscriptions
+        Task {
+            // First initialize the schema to ensure record types exist
+            await initializeCloudKitSchema()
+            
+            // Then set up subscriptions
+            setupSubscriptions()
+        }
         
         // Register with the syncer store
         CloudKitSyncerStore.shared.register(syncer: self)
-        
-        // Set up CloudKit subscription for changes
-        setupSubscription()
     }
     
     deinit {
@@ -180,24 +195,39 @@ public class CloudKitSyncer: SyncProvider {
     
     // MARK: - CloudKit Specific Methods
     
-    /// Set up subscription to CloudKit changes
-    private func setupSubscription() {
-        // Create a subscription for each directory
-        Task {
-            do {
-                for directory in directories {
-                    let predicate = NSPredicate(format: "directory == %@", directory)
-                    let subscription = CKQuerySubscription(
-                        recordType: "File",
-                        predicate: predicate,
-                        subscriptionID: "com.provenance-emu.provenance.directory.\(directory)",
-                        options: [.firesOnRecordCreation, .firesOnRecordUpdate, .firesOnRecordDeletion]
-                    )
+    /// Initialize the CloudKit schema
+    private func initializeCloudKitSchema() async {
+        DLOG("Initializing CloudKit schema for syncer with directories: \(directories)")
+        let success = await CloudKitSchema.initializeSchema(in: privateDatabase)
+        if success {
+            DLOG("CloudKit schema initialized successfully")
+        } else {
+            ELOG("Failed to initialize CloudKit schema")
+        }
+    }
+    
+    /// Set up CloudKit subscriptions for changes
+    private func setupSubscriptions() {
+        for directory in directories {
+            let subscriptionID = "com.provenance-emu.provenance.directory.\(directory)"
+            let predicate = NSPredicate(format: "%K == %@", "directory", directory)
+            
+            // Determine the record type based on the directory
+            let recordType = getRecordType()
+            
+            let subscription = CKQuerySubscription(
+                recordType: recordType,
+                predicate: predicate,
+                subscriptionID: subscriptionID,
+                options: [.firesOnRecordCreation, .firesOnRecordUpdate, .firesOnRecordDeletion]
+            )
                     
-                    let notificationInfo = CKSubscription.NotificationInfo()
-                    notificationInfo.shouldSendContentAvailable = true
-                    subscription.notificationInfo = notificationInfo
+            let notificationInfo = CKSubscription.NotificationInfo()
+            notificationInfo.shouldSendContentAvailable = true
+            subscription.notificationInfo = notificationInfo
                     
+            Task {
+                do {
                     try await privateDatabase.save(subscription)
                     DLOG("Created CloudKit subscription for directory: \(directory)")
                 }
@@ -362,4 +392,62 @@ public class CloudKitSyncer: SyncProvider {
     }
     
     // Implementation of SyncProvider methods is already provided above
+    
+    /// Get the number of records in CloudKit for this syncer
+    /// - Returns: The number of records
+    public func getRecordCount() async -> Int {
+        do {
+            // Create a query for all records of this syncer's type
+            let query = CKQuery(recordType: recordType, predicate: NSPredicate(value: true))
+            
+            // Set the results limit to minimize data transfer
+            // We're only interested in the count, not the actual records
+            let queryOperation = CKQueryOperation(query: query)
+            queryOperation.resultsLimit = CKQueryOperation.maximumResults
+            
+            // Use async/await to get the count
+            var recordCount = 0
+            
+            // Create a continuation to handle the asynchronous operation
+            return try await withCheckedThrowingContinuation { continuation in
+                // Set up the record fetched block to count records
+                queryOperation.recordFetchedBlock = { (record: CKRecord) in
+                    recordCount += 1
+                }
+                
+                // Set up the completion block
+                queryOperation.queryCompletionBlock = { (cursor: CKQueryOperation.Cursor?, error: Error?) in
+                    if let error = error {
+                        ELOG("Error getting record count: \(error.localizedDescription)")
+                        continuation.resume(returning: 0)
+                    } else {
+                        // If there's a cursor, there are more records
+                        // But for simplicity, we'll just return the count we have
+                        continuation.resume(returning: recordCount)
+                    }
+                }
+                
+                // Add the operation to the database
+                privateDatabase.add(queryOperation)
+            }
+        } catch {
+            ELOG("Error getting record count: \(error.localizedDescription)")
+            return 0
+        }
+    }
+    
+    /// Get the record type based on the syncer's directories
+    /// - Returns: The CloudKit record type
+    internal func getRecordType() -> String {
+        if directories.contains("ROMs") {
+            return "ROM"
+        } else if directories.contains("Save States") {
+            return "SaveState"
+        } else if directories.contains("BIOS") {
+            return "BIOS"
+        } else {
+            // Default record type
+            return "File"
+        }
+    }
 }

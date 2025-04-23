@@ -171,6 +171,10 @@ public class RomsSyncer: iCloudContainerSyncer, RomsSyncing {
 
 /// ROM syncer for tvOS using CloudKit
 public class CloudKitRomsSyncer: CloudKitSyncer, RomsSyncing {
+    /// The CloudKit record type for ROMs
+    override internal var recordType: String {
+        return "ROM"
+    }
     /// Initialize a new ROM syncer
     /// - Parameters:
     ///   - notificationCenter: Notification center to use

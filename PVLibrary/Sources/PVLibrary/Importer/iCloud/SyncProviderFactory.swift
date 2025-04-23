@@ -23,8 +23,10 @@ public class SyncProviderFactory {
         errorHandler: CloudSyncErrorHandler
     ) -> SyncProvider {
 //        #if os(tvOS)
+        DLOG("Creating CloudKit syncer for all OS's")
         return CloudKitSyncer(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
 //        #else
+//        DLOG("Creating iCloud Documents syncer for all ios/tvOS's")
 //        return iCloudContainerSyncer(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
 //        #endif
     }
@@ -39,7 +41,7 @@ public class SyncProviderFactory {
         errorHandler: CloudSyncErrorHandler
     ) -> RomsSyncing {
 //        #if os(tvOS)
-        DLOG("Creating CloudKit ROM syncer for tvOS")
+        DLOG("Creating CloudKit ROM syncer for all OS's")
         let syncer: RomsSyncing = CloudKitRomsSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
         return syncer
 //        #else
@@ -79,13 +81,13 @@ public class SyncProviderFactory {
         errorHandler: CloudSyncErrorHandler
     ) -> BIOSSyncing {
 //        #if os(tvOS)
-//        DLOG("Creating CloudKit BIOS syncer for tvOS")
-//        let syncer: BIOSSyncing = CloudKitBIOSSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
-//        return syncer
-//        #else
-        DLOG("Creating iCloud BIOS syncer for iOS/macOS")
-        let syncer: BIOSSyncing = BIOSSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
+        DLOG("Creating CloudKit BIOS syncer for all OS's")
+        let syncer: BIOSSyncing = CloudKitBIOSSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
         return syncer
+//        #else
+//        DLOG("Creating iCloud BIOS syncer for iOS/macOS")
+//        let syncer: BIOSSyncing = BIOSSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
+//        return syncer
 //        #endif
     }
 }

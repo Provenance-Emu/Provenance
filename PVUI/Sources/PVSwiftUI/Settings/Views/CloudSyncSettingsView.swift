@@ -12,6 +12,7 @@ import PVLogging
 import Combine
 import Defaults
 import PVSettings
+import CloudKit
 
 /// A view that displays cloud sync settings
 public struct CloudSyncSettingsView: View {
@@ -98,9 +99,25 @@ public struct CloudSyncSettingsView: View {
                 
                 if let syncStats = viewModel.syncStats {
                     VStack(alignment: .leading, spacing: 4) {
+                        Text("Local Data")
+                            .font(.subheadline.bold())
+                            .foregroundColor(.retroBlue)
+                        
                         Text("Games: \(syncStats.games)")
                         Text("Save States: \(syncStats.saveStates)")
                         Text("Total Size: \(fileSizeFormatter.string(fromByteCount: syncStats.totalSize))")
+                        
+                        Divider()
+                            .padding(.vertical, 4)
+                        
+                        Text("CloudKit Records")
+                            .font(.subheadline.bold())
+                            .foregroundColor(.retroPink)
+                        
+                        Text("ROMs: \(syncStats.cloudKitRecords.roms)")
+                        Text("Save States: \(syncStats.cloudKitRecords.saveStates)")
+                        Text("BIOS: \(syncStats.cloudKitRecords.bios)")
+                        Text("Total Records: \(syncStats.cloudKitRecords.total)")
                     }
                     .font(.subheadline)
                     .focusableIfAvailable()
@@ -271,10 +288,55 @@ class CloudSyncSettingsViewModel: ObservableObject {
             }
         }
         
+        // Get CloudKit record counts
+        let cloudKitCounts = try await getCloudKitRecordCounts()
+        
         return SyncStats(
             games: games.count,
             saveStates: saveStates.count,
-            totalSize: totalSize
+            totalSize: totalSize,
+            cloudKitRecords: cloudKitCounts
+        )
+    }
+    
+    /// Get CloudKit record counts
+    private func getCloudKitRecordCounts() async throws -> CloudKitRecordCounts {
+        // Get syncers from the CloudKitSyncerStore
+        let syncers = CloudKitSyncerStore.shared.activeSyncers
+        
+        // Initialize counts
+        var romCount = 0
+        var saveStateCount = 0
+        var biosCount = 0
+        
+        // Get ROM syncer record count
+        if let romSyncers = CloudKitSyncerStore.shared.romSyncers as? [CloudKitRomsSyncer] {
+            for syncer in romSyncers {
+                let count = await syncer.getRecordCount()
+                romCount += count
+            }
+        }
+        
+        // Get save state syncer record count
+        if let saveStateSyncers = CloudKitSyncerStore.shared.saveStateSyncers as? [CloudKitSaveStatesSyncer] {
+            for syncer in saveStateSyncers {
+                let count = await syncer.getRecordCount()
+                saveStateCount += count
+            }
+        }
+        
+        // Get BIOS syncer record count
+        if let biosSyncers = CloudKitSyncerStore.shared.biosSyncers as? [CloudKitBIOSSyncer] {
+            for syncer in biosSyncers {
+                let count = await syncer.getRecordCount()
+                biosCount += count
+            }
+        }
+        
+        return CloudKitRecordCounts(
+            roms: romCount,
+            saveStates: saveStateCount,
+            bios: biosCount
         )
     }
 }
@@ -289,7 +351,12 @@ struct SyncStats {
     
     /// Total size in bytes
     let totalSize: Int64
+    
+    /// CloudKit record counts
+    let cloudKitRecords: CloudKitRecordCounts
 }
+
+
 
 #if DEBUG
 struct CloudSyncSettingsView_Previews: PreviewProvider {
