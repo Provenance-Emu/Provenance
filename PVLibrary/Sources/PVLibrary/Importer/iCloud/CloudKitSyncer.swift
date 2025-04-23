@@ -159,6 +159,10 @@ public class CloudKitSyncer: SyncProvider {
             DLOG("Set status to \(status) and removing all uploaded files in \(directories)")
             uploadedFiles.removeAll()
         }
+        
+        // Post notification that new files are available
+        DLOG("New CloudKit files available")
+        notificationCenter.post(name: Notification.Name("NewCloudFilesAvailable"), object: self)
     }
     
     /// Prepare the next batch of files to process
@@ -358,19 +362,6 @@ public class CloudKitSyncer: SyncProvider {
         }
     }
     
-    /// Notify that new cloud files are available
-    public override func setNewCloudFilesAvailable() {
-        // Post notification that new files are available
-        DLOG("New CloudKit files available")
-        notificationCenter.post(name: Notification.Name("NewCloudFilesAvailable"), object: self)
-    }
-    
-    /// Prepare the next batch of files to process
-    /// - Returns: Collection of URLs to process
-    public override func prepareNextBatchToProcess() -> any Collection<URL> {
-        let batch = Array(pendingFilesToDownload.prefix(fileImportQueueMaxCount))
-        DLOG("Preparing batch of \(batch.count) CloudKit files to process")
-        return batch
-    }
+    // Implementation of SyncProvider methods is already provided above
 }
 #endif

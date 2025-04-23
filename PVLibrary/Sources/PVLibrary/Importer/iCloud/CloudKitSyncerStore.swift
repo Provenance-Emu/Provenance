@@ -17,62 +17,66 @@ public class CloudKitSyncerStore {
     /// Shared instance
     public static let shared = CloudKitSyncerStore()
     
-    /// Active container syncers
-    private var _activeSyncers: [CloudKitSyncer] = []
+    /// Internal SyncerStore instance
+    private let syncerStore = SyncerStore.shared
     
-    /// Publisher for syncer changes
-    private let syncersSubject = PassthroughSubject<[CloudKitSyncer], Never>()
+    /// Private initializer for singleton
+    private init() {
+        DLOG("CloudKitSyncerStore initialized")
+    }
     
     /// Publisher for active syncers
-    public var syncersPublisher: AnyPublisher<[CloudKitSyncer], Never> {
-        syncersSubject.eraseToAnyPublisher()
+    public var syncersPublisher: AnyPublisher<[SyncProvider], Never> {
+        syncerStore.syncersPublisher
     }
     
     /// Get all active syncers
-    public var activeSyncers: [CloudKitSyncer] {
-        _activeSyncers
+    public var activeSyncers: [SyncProvider] {
+        syncerStore.activeSyncers
     }
-    
-    /// Private initializer for singleton
-    private init() {}
     
     /// Register a syncer with the store
     /// - Parameter syncer: The syncer to register
-    public func register(syncer: CloudKitSyncer) {
-        // Only add if not already present
-        if !_activeSyncers.contains(where: { $0 === syncer }) {
-            _activeSyncers.append(syncer)
-            syncersSubject.send(_activeSyncers)
-            DLOG("Registered CloudKit syncer: \(syncer)")
-        }
+    public func register(syncer: SyncProvider) {
+        syncerStore.register(syncer: syncer)
     }
     
     /// Unregister a syncer from the store
     /// - Parameter syncer: The syncer to unregister
-    public func unregister(syncer: CloudKitSyncer) {
-        _activeSyncers.removeAll(where: { $0 === syncer })
-        syncersSubject.send(_activeSyncers)
-        DLOG("Unregistered CloudKit syncer")
+    public func unregister(syncer: SyncProvider) {
+        syncerStore.unregister(syncer: syncer)
     }
     
     /// Clear all registered syncers
     public func clear() {
-        _activeSyncers.removeAll()
-        syncersSubject.send(_activeSyncers)
-        DLOG("Cleared all CloudKit syncers")
+        syncerStore.clear()
     }
     
     /// Get syncers for specific directories
     /// - Parameter directories: The directories to filter by
     /// - Returns: Array of syncers that handle the specified directories
-    public func syncers(for directories: Set<String>) -> [CloudKitSyncer] {
-        _activeSyncers.filter { !$0.directories.isDisjoint(with: directories) }
+    public func syncers(for directories: Set<String>) -> [SyncProvider] {
+        syncerStore.syncers(for: directories)
+    }
+    
+    /// Get CloudKit-specific syncers
+    public var cloudKitSyncers: [CloudKitSyncer] {
+        activeSyncers.compactMap { $0 as? CloudKitSyncer }
     }
     
     /// Get all ROM syncers
-    /// - Returns: Array of ROM syncers
-    public func romSyncers() -> [RomsSyncing] {
-        _activeSyncers.compactMap { $0 as? RomsSyncing }
+    public var romSyncers: [RomsSyncing] {
+        activeSyncers.compactMap { $0 as? RomsSyncing }
+    }
+    
+    /// Get all save state syncers
+    public var saveStateSyncers: [SaveStatesSyncing] {
+        activeSyncers.compactMap { $0 as? SaveStatesSyncing }
+    }
+    
+    /// Get all BIOS syncers
+    public var biosSyncers: [BIOSSyncing] {
+        activeSyncers.compactMap { $0 as? BIOSSyncing }
     }
 }
 #endif

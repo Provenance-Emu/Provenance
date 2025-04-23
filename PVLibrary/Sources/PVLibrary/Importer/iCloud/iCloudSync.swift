@@ -48,6 +48,17 @@ public enum iCloudSyncStatus {
     case filesAlreadyMoved
 }
 
+/// used for only purging database entries that no longer exist (files deleted from icloud while the app was shut off)
+public enum DatastorePurgeStatus {
+    case incomplete
+    case complete
+}
+
+public enum GameStatus {
+    case gameExists
+    case gameDoesNotExist
+}
+
 #if !os(tvOS)
 public class iCloudContainerSyncer: iCloudTypeSyncer {
     public lazy var pendingFilesToDownload: ConcurrentSet<URL> = []
@@ -71,12 +82,12 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
         self.errorHandler = errorHandler
         
         // Register with the syncer store
-        iCloudSyncerStore.shared.register(syncer: self)
+        SyncerStore.shared.register(syncer: self)
     }
     
     deinit {
         // Unregister from the syncer store
-        iCloudSyncerStore.shared.unregister(syncer: self)
+        SyncerStore.shared.unregister(syncer: self)
         metadataQuery.disableUpdates()
         if metadataQuery.isStarted {
             metadataQuery.stop()
@@ -566,6 +577,7 @@ public enum iCloudSync {
         gameImporter.gameImporterDatabaseService.setRomsPath(url: gameImporter.romsPath)
     }
 }
+#endif
 
 //MARK: - iCloud syncers
 #if !os(tvOS)
@@ -781,17 +793,6 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
         ILOG("Added new save \(json)")
         DLOG("Added new save \(newSave.debugDescription)")
     }
-}
-
-/// used for only purging database entries that no longer exist (files deleted from icloud while the app was shut off)
-public enum DatastorePurgeStatus {
-    case incomplete
-    case complete
-}
-
-public enum GameStatus {
-    case gameExists
-    case gameDoesNotExist
 }
 
 public class iCloudRomsSyncer: iCloudContainerSyncer {
