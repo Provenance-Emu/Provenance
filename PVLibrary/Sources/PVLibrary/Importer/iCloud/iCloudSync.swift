@@ -448,6 +448,7 @@ enum iCloudError: Error {
     case dataReadFail
 }
 
+#if !os(tvOS)
 public enum iCloudSync {
     case initialAppLoad
     case appLoaded
@@ -567,7 +568,7 @@ public enum iCloudSync {
 }
 
 //MARK: - iCloud syncers
-
+#if !os(tvOS)
 class iCloudSaveStateSyncer: iCloudContainerSyncer {
     let jsonDecorder = JSONDecoder()
     let processed = ConcurrentQueue<Int>(arrayLiteral: 0)
@@ -997,6 +998,7 @@ public class iCloudRomsSyncer: iCloudContainerSyncer {
         }
     }
 }
+#endif // !os(tvOS)
 
 // iCloudSyncError moved to SyncErrorHandler.swift
 

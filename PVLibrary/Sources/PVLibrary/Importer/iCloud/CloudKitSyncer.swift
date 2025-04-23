@@ -38,8 +38,8 @@ public class CloudKitSyncer: SyncProvider {
     public var purgeStatus: DatastorePurgeStatus = .incomplete
     
     // CloudKit specific properties
-    private let container: CKContainer
-    private let privateDatabase: CKDatabase
+    internal let container: CKContainer
+    internal let privateDatabase: CKDatabase
     private var subscriptionToken: AnyCancellable?
     
     // MARK: - Initialization
@@ -55,7 +55,7 @@ public class CloudKitSyncer: SyncProvider {
         self.errorHandler = errorHandler
         
         // Initialize CloudKit container
-        self.container = CKContainer(identifier: Constants.iCloud.containerIdentifier)
+        self.container = CKContainer(identifier: "iCloud.com.provenance-emu.provenance")
         self.privateDatabase = container.privateCloudDatabase
         
         // Register with the syncer store
@@ -221,7 +221,8 @@ public class CloudKitSyncer: SyncProvider {
                 switch accountStatus {
                 case .available:
                     DLOG("CloudKit account is available, refreshing data")
-                    _ = await loadAllFromCloud(iterationComplete: nil).asObservable().toBlocking().materialize()
+                    // Load cloud data
+                    _ = try? await loadAllFromCloud(iterationComplete: nil).value
                 case .noAccount, .restricted, .couldNotDetermine:
                     ELOG("CloudKit account is not available: \(accountStatus)")
                     initialSyncResult = .denied
@@ -278,7 +279,7 @@ public class CloudKitSyncer: SyncProvider {
             
             // Copy file from asset to local storage
             if FileManager.default.fileExists(atPath: destinationURL.path) {
-                try FileManager.default.removeItem(at: destinationURL)
+                try await FileManager.default.removeItem(at: destinationURL)
             }
             
             try FileManager.default.copyItem(at: fileURL, to: destinationURL)
@@ -358,15 +359,15 @@ public class CloudKitSyncer: SyncProvider {
     }
     
     /// Notify that new cloud files are available
-    public func setNewCloudFilesAvailable() {
+    public override func setNewCloudFilesAvailable() {
         // Post notification that new files are available
         DLOG("New CloudKit files available")
-        notificationCenter.post(name: .NewCloudFilesAvailable, object: self)
+        notificationCenter.post(name: Notification.Name("NewCloudFilesAvailable"), object: self)
     }
     
     /// Prepare the next batch of files to process
     /// - Returns: Collection of URLs to process
-    public func prepareNextBatchToProcess() -> any Collection<URL> {
+    public override func prepareNextBatchToProcess() -> any Collection<URL> {
         let batch = Array(pendingFilesToDownload.prefix(fileImportQueueMaxCount))
         DLOG("Preparing batch of \(batch.count) CloudKit files to process")
         return batch

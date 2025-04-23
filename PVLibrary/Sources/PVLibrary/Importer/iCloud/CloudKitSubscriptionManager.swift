@@ -43,7 +43,7 @@ public class CloudKitSubscriptionManager {
     /// Private initializer for singleton
     private init() {
         // Get CloudKit container
-        container = CKContainer(identifier: Constants.iCloud.containerIdentifier)
+        container = CKContainer(identifier: "iCloud.com.provenance-emu.provenance")
         privateDatabase = container.privateCloudDatabase
         
         // Register for notifications
@@ -249,10 +249,14 @@ public class CloudKitSubscriptionManager {
     ///   - notification: The query notification
     ///   - recordID: The record ID
     private func handleQueryNotification(_ notification: CKQueryNotification, recordID: CKRecord.ID) {
-        // Get record type
-        guard let recordType = notification.recordType else {
+        // Extract record type from the record ID
+        let recordName = recordID.recordName
+        let components = recordName.split(separator: "_")
+        guard let recordTypeComponent = components.first else {
             return
         }
+        
+        let recordType = String(recordTypeComponent)
         
         // Handle based on record type
         switch recordType {
@@ -314,7 +318,7 @@ public class CloudKitSubscriptionManager {
                             // Handle ROM file
                             if let gameID = record["gameID"] as? String {
                                 // Find game and download
-                                if let game = PVGame.with(id: gameID) {
+                                if let game = PVGame.with(primaryKey: gameID) {
                                     _ = CloudSyncManager.shared.downloadROM(for: game)
                                 }
                             }
@@ -322,7 +326,7 @@ public class CloudKitSubscriptionManager {
                             // Handle save state file
                             if let saveStateID = record["saveStateID"] as? String {
                                 // Find save state and download
-                                if let saveState = PVSaveState.with(id: saveStateID) {
+                                if let saveState = PVSaveState.with(primaryKey: saveStateID) {
                                     _ = CloudSyncManager.shared.downloadSaveState(for: saveState)
                                 }
                             }
@@ -366,7 +370,7 @@ public class CloudKitSubscriptionManager {
                             // Handle ROM file
                             if let gameID = record["gameID"] as? String {
                                 // Find game and download
-                                if let game = PVGame.with(id: gameID) {
+                                if let game = PVGame.with(primaryKey: gameID) {
                                     _ = CloudSyncManager.shared.downloadROM(for: game)
                                 }
                             }
@@ -374,7 +378,7 @@ public class CloudKitSubscriptionManager {
                             // Handle save state file
                             if let saveStateID = record["saveStateID"] as? String {
                                 // Find save state and download
-                                if let saveState = PVSaveState.with(id: saveStateID) {
+                                if let saveState = PVSaveState.with(primaryKey: saveStateID) {
                                     _ = CloudSyncManager.shared.downloadSaveState(for: saveState)
                                 }
                             }

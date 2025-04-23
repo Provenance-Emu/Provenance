@@ -26,13 +26,13 @@ public class CloudSyncManager {
     public static let shared = CloudSyncManager()
     
     /// ROM syncer
-    private var romsSyncer: RomsSyncing?
+    internal var romsSyncer: RomsSyncing?
     
     /// Save states syncer
-    private var saveStatesSyncer: SaveStatesSyncing?
+    internal var saveStatesSyncer: SaveStatesSyncing?
     
     /// BIOS syncer
-    private var biosSyncer: BIOSSyncing?
+    internal var biosSyncer: BIOSSyncing?
     
     /// Error handler
     private let errorHandler = CloudSyncErrorHandler()

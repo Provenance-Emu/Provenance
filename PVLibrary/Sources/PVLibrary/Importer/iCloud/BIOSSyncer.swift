@@ -13,6 +13,7 @@ import PVPrimitives
 import PVFileSystem
 import PVRealm
 import CloudKit
+import CryptoKit
 
 /// Protocol for BIOS-specific sync operations
 public protocol BIOSSyncing: SyncProvider {
@@ -285,7 +286,8 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                     
                     // Calculate MD5 hash if possible
                     if let data = try? Data(contentsOf: localURL) {
-                        let md5 = data.md5String
+                        // Calculate MD5 hash using CryptoKit
+                        let md5 = Insecure.MD5.hash(data: data).map { String(format: "%02hhx", $0) }.joined()
                         record["md5"] = md5
                     }
                     
@@ -345,7 +347,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                         
                         // Copy file from asset to local storage
                         if FileManager.default.fileExists(atPath: destinationURL.path) {
-                            try FileManager.default.removeItem(at: destinationURL)
+                            try await FileManager.default.removeItem(at: destinationURL)
                         }
                         
                         try FileManager.default.copyItem(at: fileURL, to: destinationURL)
@@ -381,7 +383,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                         
                         // Copy file from asset to local storage
                         if FileManager.default.fileExists(atPath: destinationURL.path) {
-                            try FileManager.default.removeItem(at: destinationURL)
+                            try await FileManager.default.removeItem(at: destinationURL)
                         }
                         
                         try FileManager.default.copyItem(at: fileURL, to: destinationURL)

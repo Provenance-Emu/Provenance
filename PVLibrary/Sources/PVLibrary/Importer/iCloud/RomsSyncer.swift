@@ -13,6 +13,7 @@ import PVPrimitives
 import PVFileSystem
 import PVRealm
 import RealmSwift
+import CloudKit
 
 /// Protocol for ROM-specific sync operations
 public protocol RomsSyncing: SyncProvider {
@@ -301,7 +302,7 @@ public class CloudKitRomsSyncer: CloudKitSyncer, RomsSyncing {
                     
                     // Copy file from asset to local storage
                     if FileManager.default.fileExists(atPath: destinationURL.path) {
-                        try FileManager.default.removeItem(at: destinationURL)
+                        try await FileManager.default.removeItem(at: destinationURL)
                     }
                     
                     try FileManager.default.copyItem(at: fileURL, to: destinationURL)

@@ -13,6 +13,7 @@ import PVPrimitives
 import PVFileSystem
 import PVRealm
 import RealmSwift
+import CloudKit
 
 /// Protocol for save state-specific sync operations
 public protocol SaveStatesSyncing: SyncProvider {
@@ -241,7 +242,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                     record["gameID"] = saveState.game.id
                     record["saveStateID"] = saveState.id
                     record["description"] = saveState.userDescription
-                    record["timestamp"] = saveState.timestamp
+                    record["timestamp"] = saveState.date
                     
                     // Save the record to CloudKit
                     _ = try await self.uploadFile(localURL)
@@ -300,7 +301,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         
                         // Copy file from asset to local storage
                         if FileManager.default.fileExists(atPath: destinationURL.path) {
-                            try FileManager.default.removeItem(at: destinationURL)
+                            try await FileManager.default.removeItem(at: destinationURL)
                         }
                         
                         try FileManager.default.copyItem(at: fileURL, to: destinationURL)
@@ -352,7 +353,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         
                         // Copy file from asset to local storage
                         if FileManager.default.fileExists(atPath: destinationURL.path) {
-                            try FileManager.default.removeItem(at: destinationURL)
+                            try await FileManager.default.removeItem(at: destinationURL)
                         }
                         
                         try FileManager.default.copyItem(at: fileURL, to: destinationURL)
