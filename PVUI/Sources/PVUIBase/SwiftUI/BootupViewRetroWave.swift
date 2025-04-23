@@ -41,7 +41,9 @@ public struct BootupViewRetroWave: View {
     }
     
     public init() {
-        ILOG("ContentView: App is not initialized, showing BootupView")
+        ILOG("ContentView: App is not initialized, showing BootupView. iconName: \(iconName)")
+        defaultIcon = UIImage(named: "AppIcon-Blue-Preview", in: .main, with: nil)
+        ILOG("BootupViewRetroWave: defaultIcon: \(String(describing: defaultIcon))")
     }
     
     @ViewBuilder
@@ -104,7 +106,7 @@ public struct BootupViewRetroWave: View {
             VStack(spacing: 30) {
                 Spacer()
                 Group {
-                    if iconName == "AppIcon", let defaultIcon {
+                    if iconName == "AppIcon" || iconName == "" || iconName.lowercased() == "default", let defaultIcon {
                         /// Use the default icon from info.plist
                         iconWrapper(defaultIcon)
                     } else if let uiImage = UIImage(named: previewImageName, in: .main, with: nil) {
