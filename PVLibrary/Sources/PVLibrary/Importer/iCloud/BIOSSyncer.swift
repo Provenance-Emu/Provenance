@@ -76,7 +76,7 @@ public class BIOSSyncer: iCloudContainerSyncer, BIOSSyncing {
     /// - Parameter filename: The BIOS filename
     /// - Returns: The cloud URL for the BIOS file
     public func cloudURL(for filename: String) -> URL? {
-        guard let containerURL = containerURL?.appendDocumentsDirectory else {
+        guard let containerURL = documentsURL else {
             return nil
         }
         
@@ -298,7 +298,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                     observer(.completed)
                 } catch {
                     ELOG("Failed to upload BIOS to CloudKit: \(error.localizedDescription)")
-                    self.errorHandler.handle(error: error)
+                    await self.errorHandler.handle(error: error)
                     observer(.error(error))
                 }
             }
@@ -393,7 +393,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                     }
                 } catch {
                     ELOG("Failed to download BIOS from CloudKit: \(error.localizedDescription)")
-                    self.errorHandler.handle(error: error)
+                    await self.errorHandler.handle(error: error)
                     observer(.error(error))
                 }
             }

@@ -26,7 +26,7 @@ public protocol SyncProvider: AnyObject {
     var uploadedFiles: ConcurrentSet<URL> { get }
     
     /// Current sync status
-    var status: iCloudSyncStatus { get set }
+    var status: ConcurrentSingle<iCloudSyncStatus> { get }
     
     /// Result of initial sync
     var initialSyncResult: SyncResult { get set }
@@ -40,29 +40,29 @@ public protocol SyncProvider: AnyObject {
     /// Load all files from cloud storage
     /// - Parameter iterationComplete: Callback when iteration is complete
     /// - Returns: Completable that completes when all files are loaded
-    func loadAllFromCloud(iterationComplete: (() -> Void)?) -> Completable
+    func loadAllFromCloud(iterationComplete: (() async -> Void)?) async -> Completable
     
     /// Insert a file that is being downloaded
     /// - Parameter file: URL of the file
     /// - Returns: URL of the file or nil if already being uploaded
-    func insertDownloadingFile(_ file: URL) -> URL?
+    func insertDownloadingFile(_ file: URL) async -> URL?
     
     /// Insert a file that has been downloaded
     /// - Parameter file: URL of the file
-    func insertDownloadedFile(_ file: URL)
+    func insertDownloadedFile(_ file: URL) async
     
     /// Insert a file that has been uploaded
     /// - Parameter file: URL of the file
-    func insertUploadedFile(_ file: URL)
+    func insertUploadedFile(_ file: URL) async
     
     /// Delete a file from the datastore
     /// - Parameter file: URL of the file
-    func deleteFromDatastore(_ file: URL)
+    func deleteFromDatastore(_ file: URL) async
     
     /// Notify that new cloud files are available
-    func setNewCloudFilesAvailable()
+    func setNewCloudFilesAvailable() async
     
     /// Prepare the next batch of files to process
     /// - Returns: Collection of URLs to process
-    func prepareNextBatchToProcess() -> any Collection<URL>
+    func prepareNextBatchToProcess() async -> any Collection<URL>
 }

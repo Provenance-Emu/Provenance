@@ -448,10 +448,15 @@ public enum SyncStatus: Equatable {
 }
 
 /// Error handler for sync errors
-public class CloudSyncErrorHandler: SyncErrorHandler {
+public actor CloudSyncErrorHandler: SyncErrorHandler {
     /// Number of errors
-    public private(set) var numberOfErrors: Int = 0
-    private var errors: [iCloudSyncError] = []
+    public var numberOfErrors: Int {
+        get async {
+            await errors.count
+        }
+    }
+    static let shared = CloudSyncErrorHandler()
+    private let errors = ConcurrentQueue<iCloudSyncError>()
     
     /// Initialize a new error handler
     public init() {
@@ -460,45 +465,49 @@ public class CloudSyncErrorHandler: SyncErrorHandler {
     
     /// Handle an error
     /// - Parameter error: The error to handle
-    public func handle(error: Error) {
-        numberOfErrors += 1
-        ELOG("Cloud sync error: \(error.localizedDescription)")
-        errors.append(iCloudSyncError(file: nil, error: error))
+    public func handle(error: any Error) async {
+        await handleError(error, file: nil)
     }
     
     /// Handle an error with a file
     /// - Parameters:
     ///   - error: The error to handle
     ///   - file: The file associated with the error
-    public func handleError(_ error: Error, file: URL?) {
-        numberOfErrors += 1
+    public func handleError(_ error: any Error, file: URL?) async {
         ELOG("Cloud sync error: \(error.localizedDescription) for file: \(file?.lastPathComponent ?? "unknown")")
-        errors.append(iCloudSyncError(file: file?.path(percentEncoded: false), error: error))
+        await errors.enqueue(entry: iCloudSyncError(file: file?.pathDecoded, error: error))
     }
     
     /// Clear all errors
-    public func clear() {
-        numberOfErrors = 0
-        errors.removeAll()
+    public func clear() async {
+        await errors.clear()
     }
     
     /// Get all error summaries
     public var allErrorSummaries: [String] {
-        get throws {
-            return errors.map { $0.summary }
+        get async throws {
+            await try errors.map { $0.summary }
         }
     }
     
     /// Get all full errors
     public var allFullErrors: [String] {
-        get throws {
-            return errors.map { "\($0.error)" }
+        get async throws {
+            await try errors.map { "\($0.error)" }
         }
     }
     
     /// Get all errors
     public var allErrors: [iCloudSyncError] {
-        return errors
+        get async {
+            await errors.allElements
+        }
+    }
+    
+    public var isEmpty: Bool {
+        get async {
+            await errors.isEmpty
+        }
     }
 }
 

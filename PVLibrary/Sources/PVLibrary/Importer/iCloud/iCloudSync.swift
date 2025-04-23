@@ -90,7 +90,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
     public let fileManager: FileManager = .default
     public let notificationCenter: NotificationCenter
     public var status: ConcurrentSingle<iCloudSyncStatus> = .init(.initialUpload)
-    public let errorHandler: CloudSyncErrorHandler
+    public let errorHandler: SyncErrorHandler
     public var initialSyncResult: SyncResult = .indeterminate
     public var fileImportQueueMaxCount = 1000
     public var purgeStatus: DatastorePurgeStatus = .incomplete
@@ -105,7 +105,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
     
     public init(directories: Set<String>,
          notificationCenter: NotificationCenter,
-         errorHandler: CloudSyncErrorHandler) {
+         errorHandler: SyncErrorHandler) {
         self.notificationCenter = notificationCenter
         self.directories = directories
         self.errorHandler = errorHandler
@@ -456,7 +456,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
                           insertUploadedFileClosure: ((URL) async -> Void)? = nil) async -> SyncResult {
         //TODO: if there a lot of files, this will take some time. we could fire off 2 threads to at least make it execute in half the time at a minimum.
         let fileManager: FileManager = .default
-        let errorHandler: ErrorHandler = iCloudErrorHandler.shared
+        let errorHandler/*: ErrorHandler*/ = CloudSyncErrorHandler.shared
         ILOG("source: \(source), destination: \(containerDestination)")
         guard fileManager.fileExists(atPath: source.pathDecoded)
         else {
@@ -526,7 +526,7 @@ public enum iCloudSync {
     static var disposeBag: DisposeBag!
     static var gameImporter = GameImporter.shared
     static var state: iCloudSync = .initialAppLoad
-    static let errorHandler: CloudSyncErrorHandler = iCloudErrorHandler.shared
+    static let errorHandler: CloudSyncErrorHandler = CloudSyncErrorHandler.shared
     static var romDatabaseInitialized: AnyCancellable?
     
     public static func initICloudDocuments() {
@@ -718,7 +718,7 @@ public enum iCloudSync {
         disposeBag = DisposeBag()
         var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots", "RetroArch", "DeltaSkins"],
                                                                   notificationCenter: .default,
-                                                                  errorHandler: iCloudErrorHandler.shared)
+                                                                  errorHandler: CloudSyncErrorHandler.shared)
         await nonDatabaseFileSyncer.loadAllFromICloud() {
                 // Refresh BIOS cache after each iteration
                 DLOG("Refreshing BIOS cache after iCloud sync iteration")
@@ -749,8 +749,8 @@ public enum iCloudSync {
     }
     
     static func startSavesRomsSyncing() async {
-        var saveStateSyncer: iCloudSaveStateSyncer! = .init(notificationCenter: .default, errorHandler: iCloudErrorHandler.shared)
-        var romsSyncer: iCloudRomsSyncer! = .init(notificationCenter: .default, errorHandler: iCloudErrorHandler.shared)
+        var saveStateSyncer: iCloudSaveStateSyncer! = .init(notificationCenter: .default, errorHandler: CloudSyncErrorHandler.shared)
+        var romsSyncer: iCloudRomsSyncer! = .init(notificationCenter: .default, errorHandler: CloudSyncErrorHandler.shared)
         //ensure user hasn't turned off icloud
         guard disposeBag != nil
         else {//in the case that the user did turn it off, then we can go ahead and just do the normal flow of turning off icloud
@@ -798,7 +798,7 @@ public enum iCloudSync {
 #endif
 
 /// single value DS that is thread safe
-actor ConcurrentSingle<T> {
+public actor ConcurrentSingle<T> {
     private var _value: T
     
     /// initially set value
@@ -1040,7 +1040,7 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
     //initially when downloading, we need to keep a local cache of what has been processed. for large libraries we are pausing/stopping/starting query after an event processed. so when this happens, the saves are inserted several times and 2000 files, from the test where this happened, turned into 10k files and the app got a lot of app hangs.
     lazy var initiallyProcessedFiles: ConcurrentSet<URL> = []
     
-    convenience init(notificationCenter: NotificationCenter, errorHandler: CloudSyncErrorHandler) {
+    convenience init(notificationCenter: NotificationCenter, errorHandler: SyncErrorHandler) {
         self.init(directories: ["Save States"], notificationCenter: notificationCenter, errorHandler: errorHandler)
         fileImportQueueMaxCount = 1
         jsonDecorder.dataDecodingStrategy = .deferredToData
@@ -1261,7 +1261,7 @@ public class iCloudRomsSyncer: iCloudContainerSyncer {
     let multiFileRoms: ConcurrentDictionary<String, [URL]> = [:]
     var romsDatabaseSubscriber: AnyCancellable?
     
-    override var downloadedCount: Int {
+    public override var downloadedCount: Int {
         get async {
             let multiFileRomsCount = await multiFileRoms.count
             return await newFiles.count + multiFileRomsCount
@@ -1418,7 +1418,7 @@ public class iCloudRomsSyncer: iCloudContainerSyncer {
             return
         }
 #if DEBUG
-        gameImporter.clearCompleted()
+        await gameImporter.clearCompleted()
 #endif
         await removeGamesDeletedWhileApplicationClosed()
         let arePendingFilesToDownloadEmpty = await pendingFilesToDownload.isEmpty
@@ -1452,7 +1452,7 @@ public class iCloudRomsSyncer: iCloudContainerSyncer {
             await multiFileRoms.set(nil, forKey: nextMultiFile.key)
         }
         let importPaths = [URL](nextFilesToProcess)
-        gameImporter.addImports(forPaths: importPaths)
+        await gameImporter.addImports(forPaths: importPaths)
         let pendingProcessingCount = await downloadedCount
         let pendingFilesToDownloadCount = await pendingFilesToDownload.count
         ILOG("ROMs: downloading: \(pendingFilesToDownloadCount), pending to process: \(pendingProcessingCount), processing: \(importPaths.count)")
@@ -1509,7 +1509,7 @@ public actor ConcurrentQueue<Element>: Queue, ExpressibleByArrayLiteral {
         collection.removeAll()
     }
     
-    public public var description: String {
+    public var description: String {
         collection.description
     }
     
@@ -1536,57 +1536,6 @@ public protocol ErrorHandler {
     func clear() async
 }
 
-//TODO: CloudSyncErrorHandler can't be inherited from, perhaps we just need 1 actor for this?
-actor iCloudErrorHandler: CloudSyncErrorHandler {
-    static let shared = iCloudErrorHandler()
-    private let queue = ConcurrentQueue<iCloudSyncError>()
-    
-    var allErrorSummaries: [String] {
-        get async throws {
-            await try queue.map { $0.summary }
-        }
-    }
-    
-    var allFullErrors: [String] {
-        get async throws {
-            await try queue.map { "\($0.error)" }
-        }
-    }
-    
-    var allErrors: [iCloudSyncError] {
-        get async {
-            await queue.allElements
-        }
-    }
-    
-    var isEmpty: Bool {
-        get async {
-            await queue.isEmpty
-        }
-    }
-    
-    var numberOfErrors: Int {
-        get async {
-            await queue.count
-        }
-    }
-    
-    func handleError(_ error: any Error, file: URL?) async {
-        let syncError = iCloudSyncError(file: file?.path(percentEncoded: false), error: error)
-        await queue.enqueue(entry: syncError)
-    }
-    
-    override func clear() async {
-        await queue.clear()
-    }
-    
-    /// Handle an error with optional context
-    /// - Parameter error: The error to handle
-    override func handle(error: Error) {
-        handleError(error, file: nil)
-    }
-}
-
 extension URL {
     var system : SystemIdentifier? {
         return SystemIdentifier(rawValue: parentPathComponent)
@@ -1601,7 +1550,7 @@ extension URL {
     
     var multiFileNameKey: String? {
         guard "cue".caseInsensitiveCompare(pathExtension) == .orderedSame
-//                || "bin".caseInsensitiveCompare(pathExtension) == .orderedSame
+                || "bin".caseInsensitiveCompare(pathExtension) == .orderedSame
                 || "ccd".caseInsensitiveCompare(pathExtension) == .orderedSame
                 || "img".caseInsensitiveCompare(pathExtension) == .orderedSame
                 || "sub".caseInsensitiveCompare(pathExtension) == .orderedSame
@@ -1759,7 +1708,7 @@ public actor ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral,
     
     /// Current elements in the set as a Set
     var elements: Set<T> {
-        set
+        return set
     }
     
     /// Current elements in the set as an Array

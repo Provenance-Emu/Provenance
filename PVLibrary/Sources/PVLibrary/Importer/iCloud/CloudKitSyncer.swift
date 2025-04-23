@@ -100,7 +100,7 @@ public class CloudKitSyncer: SyncProvider {
                     iterationComplete?()
                 } catch {
                     ELOG("CloudKit sync error: \(error.localizedDescription)")
-                    self.errorHandler.handle(error: error)
+                    await self.errorHandler.handle(error: error)
                     self.initialSyncResult = .saveFailure
                     observer(.error(error))
                 }
