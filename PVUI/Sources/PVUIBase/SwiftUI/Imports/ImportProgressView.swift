@@ -447,10 +447,16 @@ public struct ImportProgressView: View {
             // Only setup if not already setup
             guard syncSubscriptions.isEmpty else { return }
             
-            // Subscribe to the syncer store for changes in active syncers
-            let subscription = iCloudSyncerStore.shared.syncersPublisher
+            // Subscribe to the appropriate syncer store for changes in active syncers
+            #if os(tvOS)
+            let publisher = CloudKitSyncerStore.shared.syncersPublisher
+            #else
+            let publisher = SyncerStore.shared.syncersPublisher
+            #endif
+            
+            let subscription = publisher
                 .receive(on: RunLoop.main)
-                .sink { [weak self] syncers in
+                .sink { [weak self] (syncers: [SyncProvider]) in
                     // Clear existing syncer-specific subscriptions
                     self?.clearSyncerSubscriptions()
                     
@@ -468,7 +474,7 @@ public struct ImportProgressView: View {
         }
         
         /// Track all syncers for activity
-        private func trackSyncers(_ syncers: [iCloudContainerSyncer]) {
+        private func trackSyncers(_ syncers: [SyncProvider]) {
             for syncer in syncers {
                 // Track pending downloads
                 let downloadSubscription = syncer.pendingFilesToDownload.countPublisher
@@ -508,10 +514,14 @@ public struct ImportProgressView: View {
             syncSubscriptions.removeAll()
         }
         
-        /// Get active syncers from iCloudSync
-        private func getSyncers() -> [iCloudContainerSyncer]? {
+        /// Get active syncers from the appropriate sync store
+        private func getSyncers() -> [SyncProvider]? {
             // Get the actual syncer instances from the store
-            return iCloudSyncerStore.shared.activeSyncers
+            #if os(tvOS)
+            return CloudKitSyncerStore.shared.activeSyncers
+            #else
+            return SyncerStore.shared.activeSyncers
+            #endif
         }
         
         /// Update the sync status based on current counts

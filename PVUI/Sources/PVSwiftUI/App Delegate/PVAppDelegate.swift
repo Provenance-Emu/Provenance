@@ -311,6 +311,11 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         _initICloud()
         _initUITheme()
         _initThemeListener()
+        
+        #if os(tvOS)
+        // Initialize CloudKit for tvOS
+        initializeCloudKit()
+        #endif
 
         // Register intent handler for Siri shortcuts
 #if false
@@ -382,7 +387,12 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 
     func _initICloud() {
         PVEmulatorConfiguration.initICloud()
+        #if !os(tvOS)
         iCloudSync.initICloudDocuments()
+        #else
+        // Initialize CloudKit for tvOS
+        initializeCloudKit()
+        #endif
     }
 
     var currentThemeObservation: Any? // AnyCancellable?

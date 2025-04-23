@@ -3,10 +3,12 @@
 //  PVLibrary
 //
 //  Created by Joseph Mattiello on 11/13/18.
-//  Copyright © 2018 Provenance Emu. All rights reserved.
+//  Copyright 2018 Provenance Emu. All rights reserved.
 //
 
 import Foundation
+import CloudKit
+import Combine
 import PVLogging
 import PVSupport
 import RealmSwift
@@ -15,7 +17,12 @@ import RxSwift
 import PVPrimitives
 import PVFileSystem
 import PVRealm
-import Combine
+
+public enum iCloudConstants {
+    public static let defaultProvenanceContainerIdentifier = "iCloud.org.provenance-emu.provenance"
+    // Dynamic version based off of bundle Identifier
+    public static let containerIdentifier =  (Bundle.main.infoDictionary?["NSUbiquitousContainers"] as? [String: AnyObject])?.keys.first ?? defaultProvenanceContainerIdentifier
+}
 
 public enum SyncError: Error {
     case noUbiquityURL
@@ -38,8 +45,7 @@ extension Container {
     public var documentsURL: URL? { get { return URL.iCloudDocumentsDirectory }}
 }
 
-public protocol iCloudTypeSyncer: Container {
-    var directories: Set<String> { get }
+public protocol iCloudTypeSyncer: Container, SyncProvider {
     var metadataQuery: NSMetadataQuery { get }
     var downloadedCount: Int { get async }
 
@@ -64,6 +70,18 @@ enum iCloudHittingTool {
     case mallet
 }
 
+/// used for only purging database entries that no longer exist (files deleted from icloud while the app was shut off)
+public enum DatastorePurgeStatus {
+    case incomplete
+    case complete
+}
+
+public enum GameStatus {
+    case gameExists
+    case gameDoesNotExist
+}
+
+#if !os(tvOS)
 public class iCloudContainerSyncer: iCloudTypeSyncer {
     public lazy var pendingFilesToDownload: ConcurrentSet<URL> = []
     public lazy var newFiles: ConcurrentSet<URL> = []
@@ -72,7 +90,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
     public let fileManager: FileManager = .default
     public let notificationCenter: NotificationCenter
     public var status: ConcurrentSingle<iCloudSyncStatus> = .init(.initialUpload)
-    public let errorHandler: ErrorHandler
+    public let errorHandler: CloudSyncErrorHandler
     public var initialSyncResult: SyncResult = .indeterminate
     public var fileImportQueueMaxCount = 1000
     public var purgeStatus: DatastorePurgeStatus = .incomplete
@@ -87,17 +105,17 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
     
     public init(directories: Set<String>,
          notificationCenter: NotificationCenter,
-         errorHandler: ErrorHandler) {
+         errorHandler: CloudSyncErrorHandler) {
         self.notificationCenter = notificationCenter
         self.directories = directories
         self.errorHandler = errorHandler
         // Register with the syncer store
-        iCloudSyncerStore.shared.register(syncer: self)
+        SyncerStore.shared.register(syncer: self)
     }
     
     func stopObserving() {
         // Unregister from the syncer store
-        iCloudSyncerStore.shared.unregister(syncer: self)
+        SyncerStore.shared.unregister(syncer: self)
         metadataQuery.disableUpdates()
         if metadataQuery.isStarted {
             metadataQuery.stop()
@@ -170,7 +188,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
         //no-op
     }
     
-    func prepareNextBatchToProcess() async -> any Collection<URL> {
+    public func prepareNextBatchToProcess() async -> any Collection<URL> {
         var newFilesCount = await newFiles.count
         DLOG("\(directories): newFiles: (\(newFilesCount)):")
         var newFilesDescription = await newFiles.description
@@ -185,6 +203,10 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
             await uploadedFiles.removeAll()
         }
         return nextFilesToProcess
+    }
+    
+    public func loadAllFromCloud(iterationComplete: (() async -> Void)?) async -> Completable {
+        await loadAllFromICloud(iterationComplete: iterationComplete)
     }
     
     public func loadAllFromICloud(iterationComplete: (() async -> Void)? = nil) async -> Completable {
@@ -490,10 +512,13 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
     }
 }
 
+#endif
+
 enum iCloudError: Error {
     case dataReadFail
 }
 
+#if !os(tvOS)
 public enum iCloudSync {
     case initialAppLoad
     case appLoaded
@@ -501,7 +526,7 @@ public enum iCloudSync {
     static var disposeBag: DisposeBag!
     static var gameImporter = GameImporter.shared
     static var state: iCloudSync = .initialAppLoad
-    static let errorHandler: ErrorHandler = iCloudErrorHandler.shared
+    static let errorHandler: CloudSyncErrorHandler = iCloudErrorHandler.shared
     static var romDatabaseInitialized: AnyCancellable?
     
     public static func initICloudDocuments() {
@@ -694,7 +719,11 @@ public enum iCloudSync {
         var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots", "RetroArch", "DeltaSkins"],
                                                                   notificationCenter: .default,
                                                                   errorHandler: iCloudErrorHandler.shared)
-        await nonDatabaseFileSyncer.loadAllFromICloud()
+        await nonDatabaseFileSyncer.loadAllFromICloud() {
+                // Refresh BIOS cache after each iteration
+                DLOG("Refreshing BIOS cache after iCloud sync iteration")
+                RomDatabase.reloadBIOSCache()
+            }
             .observe(on: MainScheduler.instance)
             .subscribe(onError: { error in
                 ELOG(error.localizedDescription)
@@ -720,8 +749,8 @@ public enum iCloudSync {
     }
     
     static func startSavesRomsSyncing() async {
-        var saveStateSyncer: SaveStateSyncer! = .init(notificationCenter: .default, errorHandler: iCloudErrorHandler.shared)
-        var romsSyncer: RomsSyncer! = .init(notificationCenter: .default, errorHandler: iCloudErrorHandler.shared)
+        var saveStateSyncer: iCloudSaveStateSyncer! = .init(notificationCenter: .default, errorHandler: iCloudErrorHandler.shared)
+        var romsSyncer: iCloudRomsSyncer! = .init(notificationCenter: .default, errorHandler: iCloudErrorHandler.shared)
         //ensure user hasn't turned off icloud
         guard disposeBag != nil
         else {//in the case that the user did turn it off, then we can go ahead and just do the normal flow of turning off icloud
@@ -766,6 +795,7 @@ public enum iCloudSync {
         gameImporter.gameImporterDatabaseService.setRomsPath(url: gameImporter.romsPath)
     }
 }
+#endif
 
 /// single value DS that is thread safe
 actor ConcurrentSingle<T> {
@@ -913,7 +943,6 @@ actor RomsDatastore {
     /// - Parameter romsPath: rull ROMs path
     @RealmActor
     func deleteGamesDeletedWhileApplicationClosed(romsPath: URL) async {
-        var shouldUpdateCache = false
         for (_, game) in RomDatabase.gamesCache {
             let gameUrl = romsPath.appendingPathComponent(game.romPath)
             DLOG("""
@@ -928,14 +957,10 @@ actor RomsDatastore {
                 if let gameToDelete = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) {
                     ILOG("\(gameUrl) does NOT exists, removing from datastore")
                     await try deleteGame(gameToDelete)
-                    shouldUpdateCache = true
                 }
             } catch {
                 ELOG("error deleting \(gameUrl), \(error)")
             }
-        }
-        if shouldUpdateCache {
-            RomDatabase.reloadGamesCache()
         }
     }
     
@@ -955,13 +980,44 @@ actor RomsDatastore {
     /// - Parameter game: game entity to delete related entities
     @RealmActor
     private func deleteGame(_ game: PVGame) async throws {
+        // Make a frozen copy of the game before deletion to use for cache removal
+        let frozenGame = game.freeze()
+        
         await try realm.asyncWrite {
-            //TODO: validate what needs to be deleted because currently it's crashing if it's already deleted so only deleting game works
-            /*game.saveStates.forEach { try? $0.delete() }
-            game.cheats.forEach { try? $0.delete() }
-            game.recentPlays.forEach { try? $0.delete() }
-            game.screenShots.forEach { try? $0.delete() }*/
+            guard !game.isInvalidated else { return }
+            // Delete related objects if they exist
+            if !game.saveStates.isInvalidated {
+                game.saveStates.forEach { save in
+                    if !save.isInvalidated {
+                        realm.delete(save)
+                    }
+                }
+            }
+            if !game.cheats.isInvalidated {
+                game.cheats.forEach { cheat in
+                    if !cheat.isInvalidated {
+                        realm.delete(cheat)
+                    }
+                }
+            }
+            if !game.recentPlays.isInvalidated {
+                game.recentPlays.forEach { play in
+                    if !play.isInvalidated {
+                        realm.delete(play)
+                    }
+                }
+            }
+            if !game.screenShots.isInvalidated {
+                game.screenShots.forEach { screenshot in
+                    if !screenshot.isInvalidated {
+                        realm.delete(screenshot)
+                    }
+                }
+            }
             realm.delete(game)
+            
+            // Use the more efficient cache removal instead of reloading the entire cache
+            RomDatabase.removeGameFromCache(frozenGame)
         }
     }
 }
@@ -975,7 +1031,8 @@ enum SaveStateUpdateError: Error {
 
 //MARK: - iCloud syncers
 
-class SaveStateSyncer: iCloudContainerSyncer {
+#if !os(tvOS)
+class iCloudSaveStateSyncer: iCloudContainerSyncer {
     let jsonDecorder = JSONDecoder()
     let processed = ConcurrentSingle<Int>(0)
     let processingState: ConcurrentSingle<ProcessingState> = .init(.idle)
@@ -983,7 +1040,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
     //initially when downloading, we need to keep a local cache of what has been processed. for large libraries we are pausing/stopping/starting query after an event processed. so when this happens, the saves are inserted several times and 2000 files, from the test where this happened, turned into 10k files and the app got a lot of app hangs.
     lazy var initiallyProcessedFiles: ConcurrentSet<URL> = []
     
-    convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
+    convenience init(notificationCenter: NotificationCenter, errorHandler: CloudSyncErrorHandler) {
         self.init(directories: ["Save States"], notificationCenter: notificationCenter, errorHandler: errorHandler)
         fileImportQueueMaxCount = 1
         jsonDecorder.dataDecodingStrategy = .deferredToData
@@ -1199,18 +1256,7 @@ class SaveStateSyncer: iCloudContainerSyncer {
     }
 }
 
-/// used for only purging database entries that no longer exist (files deleted from icloud while the app was shut off)
-public enum DatastorePurgeStatus {
-    case incomplete
-    case complete
-}
-
-public enum GameStatus {
-    case gameExists
-    case gameDoesNotExist
-}
-
-class RomsSyncer: iCloudContainerSyncer {
+public class iCloudRomsSyncer: iCloudContainerSyncer {
     let gameImporter = GameImporter.shared
     let multiFileRoms: ConcurrentDictionary<String, [URL]> = [:]
     var romsDatabaseSubscriber: AnyCancellable?
@@ -1222,7 +1268,7 @@ class RomsSyncer: iCloudContainerSyncer {
         }
     }
     
-    convenience init(notificationCenter: NotificationCenter, errorHandler: ErrorHandler) {
+    convenience init(notificationCenter: NotificationCenter, errorHandler: CloudSyncErrorHandler) {
         self.init(directories: ["ROMs"], notificationCenter: notificationCenter, errorHandler: errorHandler)
         fileImportQueueMaxCount = 1
         let publishers = [.RomsFinishedImporting, .RomDatabaseInitialized].map { notificationCenter.publisher(for: $0) }
@@ -1416,14 +1462,9 @@ class RomsSyncer: iCloudContainerSyncer {
         gameImporter.startProcessing()
     }
 }
+#endif // !os(tvOS)
 
-public struct iCloudSyncError {
-    let file: String?
-    var summary: String {
-        error.localizedDescription
-    }
-    let error: Error
-}
+// iCloudSyncError moved to SyncErrorHandler.swift
 
 protocol Queue {
     associatedtype Entry
@@ -1495,7 +1536,8 @@ public protocol ErrorHandler {
     func clear() async
 }
 
-actor iCloudErrorHandler: ErrorHandler {
+//TODO: CloudSyncErrorHandler can't be inherited from, perhaps we just need 1 actor for this?
+actor iCloudErrorHandler: CloudSyncErrorHandler {
     static let shared = iCloudErrorHandler()
     private let queue = ConcurrentQueue<iCloudSyncError>()
     
@@ -1534,8 +1576,14 @@ actor iCloudErrorHandler: ErrorHandler {
         await queue.enqueue(entry: syncError)
     }
     
-    func clear() async {
+    override func clear() async {
         await queue.clear()
+    }
+    
+    /// Handle an error with optional context
+    /// - Parameter error: The error to handle
+    override func handle(error: Error) {
+        handleError(error, file: nil)
     }
 }
 
@@ -1553,7 +1601,7 @@ extension URL {
     
     var multiFileNameKey: String? {
         guard "cue".caseInsensitiveCompare(pathExtension) == .orderedSame
-                || "bin".caseInsensitiveCompare(pathExtension) == .orderedSame
+//                || "bin".caseInsensitiveCompare(pathExtension) == .orderedSame
                 || "ccd".caseInsensitiveCompare(pathExtension) == .orderedSame
                 || "img".caseInsensitiveCompare(pathExtension) == .orderedSame
                 || "sub".caseInsensitiveCompare(pathExtension) == .orderedSame
@@ -1608,14 +1656,14 @@ public actor ConcurrentDictionary<Key: Hashable, Value>: ExpressibleByDictionary
     }
 }
 
-enum ConcurrentCopyOptions {
-    case removeCopiedItems
-    case retainCopiedItems
-}
-
 public actor ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral,
                                          @preconcurrency
-                                         CustomStringConvertible {
+                                         CustomStringConvertible,
+                                         ObservableObject {
+    public enum ConcurrentCopyOptions {
+        case removeCopiedItems
+        case retainCopiedItems
+    }
     // MARK: - Combine Support
     
     /// Subject for publishing set changes
@@ -1633,7 +1681,8 @@ public actor ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral,
     public var countPublisher: AnyPublisher<Int, Never> {
         countSubject.eraseToAnyPublisher()
     }
-
+    
+    // MARK: - Properties
     private var set: Set<T>
     
     public init(arrayLiteral elements: T...) {

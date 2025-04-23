@@ -910,18 +910,6 @@ private struct LibrarySection: View {
                             subtitle: "Visual options for Game Library",
                             icon: .sfSymbol("eye"))
             }
-            
-            NavigationLink(destination: BatchArtworkMatchingView()) {
-                SettingsRow(title: "Batch Artwork Matcher",
-                            subtitle: "Find and apply artwork for multiple games at once",
-                            icon: .sfSymbol("photo.on.rectangle.angled"))
-            }
-            
-            NavigationLink(destination: iCloudSyncStatusView()) {
-                SettingsRow(title: "iCloud Sync Status",
-                            subtitle: "Monitor sync status between local and iCloud files",
-                            icon: .sfSymbol("icloud"))
-            }
         }
     }
 }
@@ -931,6 +919,13 @@ private struct LibrarySection2: View {
 
     var body: some View {
         Section(header: Text("Library")) {
+            
+            NavigationLink(destination: BatchArtworkMatchingView()) {
+                SettingsRow(title: "Batch Artwork Matcher",
+                            subtitle: "Find and apply artwork for multiple games at once",
+                            icon: .sfSymbol("photo.on.rectangle.angled"))
+            }
+            
             Button(action: viewModel.reimportROMs) {
                 SettingsRow(title: "Re-import ROMs",
                             subtitle: "Scan ROM directories for new or updated files.",
@@ -967,20 +962,28 @@ private struct AdvancedSection: View {
                 SecretSettingsRow()
                 
                 // App Group File Browser for debugging
-                #if DEBUG
                 NavigationLink(destination: AppGroupFileBrowserView()) {
                     SettingsRow(title: "App Group File Browser",
                                 subtitle: "Browse files in the app group container for debugging.",
                                 icon: .sfSymbol("folder.badge.gear"))
                 }
-                #endif
                 
+                // iCloud Sync Status
+                NavigationLink(destination: iCloudSyncStatusView()) {
+                    SettingsRow(title: "iCloud Sync Status",
+                                subtitle: "Monitor sync status between local and iCloud files",
+                                icon: .sfSymbol("icloud"))
+                }
+                
+                #if os(tvOS)
                 // TopShelf Log Viewer
                 NavigationLink(destination: TopShelfLogView()) {
                     SettingsRow(title: "TopShelf Log",
                                 subtitle: "View logs from the TopShelf extension.",
+                            
                                 icon: .sfSymbol("doc.text.magnifyingglass"))
                 }
+                #endif
                 
                 #if !os(tvOS)
                 // Spotlight Debug View

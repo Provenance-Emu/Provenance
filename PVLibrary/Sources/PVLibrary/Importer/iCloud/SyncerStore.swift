@@ -1,8 +1,8 @@
 //
-//  iCloudSyncerStore.swift
+//  SyncerStore.swift
 //  PVLibrary
 //
-//  Created by Joseph Mattiello on 4/21/25.
+//  Created by Joseph Mattiello on 4/22/25.
 //  Copyright © 2025 Provenance Emu. All rights reserved.
 //
 
@@ -10,13 +10,13 @@ import Foundation
 import PVLogging
 import Combine
 
-#if !os(tvOS)
-/// Manages access to active iCloud syncers for observation
-public class iCloudSyncerStore {
+/// Manages access to active sync providers for observation
+/// Platform-agnostic store that works on both iOS and tvOS
+public class SyncerStore {
     /// Shared instance
-    public static let shared = iCloudSyncerStore()
+    public static let shared = SyncerStore()
     
-    /// Active container syncers
+    /// Active sync providers
     private var _activeSyncers: [SyncProvider] = []
     
     /// Publisher for syncer changes
@@ -42,7 +42,7 @@ public class iCloudSyncerStore {
         if !_activeSyncers.contains(where: { $0 === syncer }) {
             _activeSyncers.append(syncer)
             syncersSubject.send(_activeSyncers)
-            DLOG("Registered iCloud syncer: \(syncer)")
+            DLOG("Registered sync provider: \(syncer)")
         }
     }
     
@@ -51,14 +51,14 @@ public class iCloudSyncerStore {
     public func unregister(syncer: SyncProvider) {
         _activeSyncers.removeAll(where: { $0 === syncer })
         syncersSubject.send(_activeSyncers)
-        DLOG("Unregistered iCloud syncer")
+        DLOG("Unregistered sync provider")
     }
     
     /// Clear all registered syncers
     public func clear() {
         _activeSyncers.removeAll()
         syncersSubject.send(_activeSyncers)
-        DLOG("Cleared all iCloud syncers")
+        DLOG("Cleared all sync providers")
     }
     
     /// Get syncers for specific directories
@@ -69,9 +69,24 @@ public class iCloudSyncerStore {
     }
     
     /// Get all ROM syncers
-    /// - Returns: Array of ROM syncers
-    public func romSyncers() -> [RomsSyncing] {
-        _activeSyncers.compactMap { $0 as? RomsSyncing }
+    public var romSyncers: [SyncProvider] {
+        _activeSyncers.filter { !$0.directories.isDisjoint(with: ["ROMs"]) }
+    }
+    
+    /// Get all save state syncers
+    public var saveStateSyncers: [SyncProvider] {
+        _activeSyncers.filter { !$0.directories.isDisjoint(with: ["Save States"]) }
+    }
+    
+    /// Get all BIOS syncers
+    public var biosSyncers: [SyncProvider] {
+        _activeSyncers.filter { !$0.directories.isDisjoint(with: ["BIOS"]) }
     }
 }
+
+// For backward compatibility with existing code
+#if !os(tvOS)
+public typealias iCloudSyncerStore = SyncerStore
 #endif
+
+// Note: CloudKitSyncerStore is already defined in CloudKitSyncerStore.swift
