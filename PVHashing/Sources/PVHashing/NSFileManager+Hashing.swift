@@ -40,8 +40,10 @@ func calculateMD5(of fileURL: URL, startingAt offset: UInt64 = 0) -> AnyPublishe
 
                 var hasher = Insecure.MD5()
                 let bufferSize: Int = 1024 * 1024 // 1 MB
-                while autoreleasepool(invoking: {
-                    let data = fileHandle.readData(ofLength: bufferSize)
+                while try autoreleasepool(invoking: {
+                    guard let data = try fileHandle.read(upToCount: bufferSize) else {
+                        return false
+                    }
                     if data.count > 0 {
                         hasher.update(data: data)
                         return true // Continue
