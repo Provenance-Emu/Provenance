@@ -103,6 +103,7 @@ public struct CloudSyncSettingsView: View {
                         Text("Total Size: \(fileSizeFormatter.string(fromByteCount: syncStats.totalSize))")
                     }
                     .font(.subheadline)
+                    .focusableIfAvailable()
                 }
             }
         }
