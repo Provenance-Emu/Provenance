@@ -63,12 +63,6 @@ public class CloudKitSubscriptionManager {
     /// Set up subscriptions for CloudKit updates
     public func setupSubscriptions() async {
         do {
-            // Initialize CloudKit schema first
-            let bundleIdentifier = Bundle.main.bundleIdentifier ?? "com.provenance-emu.provenance"
-            let containerIdentifier = "iCloud." + bundleIdentifier
-            let container = CKContainer(identifier: containerIdentifier)
-            let privateDatabase = container.privateCloudDatabase
-            
             // Initialize CloudKit schema
             DLOG("Initializing CloudKit schema before setting up subscriptions...")
             let success = await CloudKitSchema.initializeSchema(in: privateDatabase)

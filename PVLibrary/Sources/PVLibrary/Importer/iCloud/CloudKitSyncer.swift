@@ -56,8 +56,7 @@ public class CloudKitSyncer: SyncProvider {
     ///   - errorHandler: Error handler to use
     public init(directories: Set<String>, notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
         // Get the container identifier from the bundle
-        let bundleIdentifier = Bundle.main.bundleIdentifier ?? "com.provenance-emu.provenance"
-        let containerIdentifier = "iCloud." + bundleIdentifier
+        let containerIdentifier = iCloudConstants.containerIdentifier
         
         // Initialize CloudKit container and database
         self.container = CKContainer(identifier: containerIdentifier)

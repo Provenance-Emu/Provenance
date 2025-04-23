@@ -22,9 +22,7 @@ extension PVAppDelegate {
             
             // Initialize CloudKit schema first
             Task {
-                // Get the container identifier from the bundle
-                let bundleIdentifier = Bundle.main.bundleIdentifier ?? "com.provenance-emu.provenance"
-                let containerIdentifier = "iCloud." + bundleIdentifier
+                let containerIdentifier = iCloudConstants.containerIdentifier
                 
                 // Initialize CloudKit container and database
                 let container = CKContainer(identifier: containerIdentifier)
