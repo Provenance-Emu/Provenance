@@ -255,12 +255,19 @@ public extension PVFile {
                 let isDocumentsDir = path.contains("Documents")
                 #endif
 
+                let useiCloudDocs = Defaults[.iCloudSync] && Defaults[.iCloudSyncMode] == .iCloudDrive
+                
                 if isDocumentsDir {
-                    let iCloudBase = URL.iCloudContainerDirectory
-                    returnUrl = (iCloudBase ?? RelativeRoot.documentsDirectory).appendingPathComponent(path)
-                    return returnUrl
+                    if useiCloudDocs {
+                        let iCloudBase = URL.iCloudContainerDirectory
+                        returnUrl = (iCloudBase ?? RelativeRoot.documentsDirectory).appendingPathComponent(path)
+                        return returnUrl
+                    } else {
+                        returnUrl = RelativeRoot.documentsDirectory.appendingPathComponent(path)
+                        return returnUrl
+                    }
                 } else {
-                    if let iCloudBase = URL.iCloudDocumentsDirectory {
+                    if useiCloudDocs, let iCloudBase = URL.iCloudDocumentsDirectory {
                         returnUrl = iCloudBase.appendingPathComponent(path)
                         return returnUrl
                     } else {
