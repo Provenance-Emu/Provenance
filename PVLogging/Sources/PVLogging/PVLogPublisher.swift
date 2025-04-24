@@ -31,7 +31,7 @@ public final class PVLogPublisher {
     private var recentLogs: [LogEntry] = []
     
     /// Maximum number of logs to keep in memory
-    private let maxLogCount = 1000
+    private let maxLogCount = 2000
     
     // MARK: - Initialization
     
@@ -119,7 +119,9 @@ public final class PVLogPublisher {
         
         // Trim if needed
         if recentLogs.count > maxLogCount {
-            recentLogs.removeFirst(recentLogs.count - maxLogCount)
+            // Keep only the most recent maxLogCount logs
+            // This is safer than calculating how many to remove
+            recentLogs = Array(recentLogs.suffix(maxLogCount))
         }
     }
     
