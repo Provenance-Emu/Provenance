@@ -29,28 +29,28 @@ public struct StatusMessageView: View {
                 }
                 
                 // ROM scanning progress
-                if let progress = messageManager.viewModel.romScanningProgress {
+                if let progress = messageManager.romScanningProgress {
                     progressView(title: "ROM Scanning", current: progress.current, total: progress.total, color: RetroTheme.retroPurple)
                 }
                 
                 // Temporary file cleanup progress
-                if let progress = messageManager.viewModel.temporaryFileCleanupProgress {
+                if let progress = messageManager.temporaryFileCleanupProgress {
                     progressView(title: "File Cleanup", current: progress.current, total: progress.total, color: RetroTheme.retroPink)
                 }
                 
                 // Cache management progress
-                if let progress = messageManager.viewModel.cacheManagementProgress {
+                if let progress = messageManager.cacheManagementProgress {
                     progressView(title: "Cache Optimization", current: progress.current, total: progress.total, color: RetroTheme.retroBlue)
                 }
                 
                 // Download progress
-                if let progress = messageManager.viewModel.downloadProgress {
+                if let progress = messageManager.downloadProgress {
                     progressView(title: "Download", current: progress.current, total: progress.total, color: RetroTheme.retroPurple)
                 }
                 
                 // CloudKit sync progress
-                if let progress = messageManager.viewModel.cloudKitSyncProgress {
-                    progressView(title: "CloudKit Sync", current: progress.current, total: progress.total, color: RetroTheme.retroPink)
+                if let progress = messageManager.cloudKitSyncProgress {
+                    progressView(title: "iCloud Sync", current: progress.current, total: progress.total, color: RetroTheme.retroBlue)
                 }
             }
             

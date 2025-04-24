@@ -10,6 +10,7 @@ import Foundation
 import Combine
 import PVLibrary
 import SwiftUI
+import PVPrimitives
 
 /// ViewModel to handle actor isolation for StatusMessageManager
 @MainActor
@@ -33,6 +34,12 @@ public class StatusMessageViewModel: ObservableObject {
     /// Sets up observers for various system notifications
     private func setupObservers() {
         setupFileRecoveryObservers()
+        setupROMScanningEnhancedObservers()
+        setupTempFileCleanupObservers()
+        setupCacheManagementObservers()
+        setupDownloadObservers()
+        setupCloudKitSyncObservers()
+        setupWebServerObservers()
         setupImportQueueObservers()
         setupFileSystemObservers()
         setupNetworkObservers()
@@ -58,6 +65,152 @@ public class StatusMessageViewModel: ObservableObject {
                             try? await Task.sleep(nanoseconds: 3_000_000_000) // 3 seconds
                             if self?.fileRecoveryProgress?.current == current {
                                 self?.fileRecoveryProgress = nil
+                            }
+                        }
+                    }
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
+    // MARK: - ROM Scanning Observers
+    
+    private func setupROMScanningObservers() {
+        // Subscribe to notifications for ROM scanning progress
+        NotificationCenter.default.publisher(for: .romScanningProgress)
+            .sink { [weak self] notification in
+                if let userInfo = notification.userInfo,
+                   let current = userInfo["current"] as? Int,
+                   let total = userInfo["total"] as? Int {
+                    self?.romScanningProgress = (current, total)
+                    
+                    // If progress is complete, clear it after a delay
+                    if current >= total {
+                        Task { @MainActor in
+                            try? await Task.sleep(nanoseconds: 3_000_000_000) // 3 seconds
+                            if self?.romScanningProgress?.current == current {
+                                self?.romScanningProgress = nil
+                            }
+                        }
+                    }
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
+    // MARK: - Temporary File Cleanup Observers
+    
+    private func setupTempFileCleanupObservers() {
+        // Subscribe to notifications for temporary file cleanup progress
+        NotificationCenter.default.publisher(for: .temporaryFileCleanupProgress)
+            .sink { [weak self] notification in
+                if let userInfo = notification.userInfo,
+                   let current = userInfo["current"] as? Int,
+                   let total = userInfo["total"] as? Int {
+                    self?.temporaryFileCleanupProgress = (current, total)
+                    
+                    // If progress is complete, clear it after a delay
+                    if current >= total {
+                        Task { @MainActor in
+                            try? await Task.sleep(nanoseconds: 3_000_000_000) // 3 seconds
+                            if self?.temporaryFileCleanupProgress?.current == current {
+                                self?.temporaryFileCleanupProgress = nil
+                            }
+                        }
+                    }
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
+    // MARK: - Cache Management Observers
+    
+    private func setupCacheManagementObservers() {
+        // Subscribe to notifications for cache management progress
+        NotificationCenter.default.publisher(for: .cacheManagementProgress)
+            .sink { [weak self] notification in
+                if let userInfo = notification.userInfo,
+                   let current = userInfo["current"] as? Int,
+                   let total = userInfo["total"] as? Int {
+                    self?.cacheManagementProgress = (current, total)
+                    
+                    // If progress is complete, clear it after a delay
+                    if current >= total {
+                        Task { @MainActor in
+                            try? await Task.sleep(nanoseconds: 3_000_000_000) // 3 seconds
+                            if self?.cacheManagementProgress?.current == current {
+                                self?.cacheManagementProgress = nil
+                            }
+                        }
+                    }
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
+    // MARK: - Download Observers
+    
+    private func setupDownloadObservers() {
+        // Subscribe to notifications for download progress
+        NotificationCenter.default.publisher(for: .downloadProgress)
+            .sink { [weak self] notification in
+                if let userInfo = notification.userInfo,
+                   let current = userInfo["bytesDownloaded"] as? Int,
+                   let total = userInfo["totalBytes"] as? Int {
+                    self?.downloadProgress = (current, total)
+                    
+                    // If progress is complete, clear it after a delay
+                    if current >= total {
+                        Task { @MainActor in
+                            try? await Task.sleep(nanoseconds: 3_000_000_000) // 3 seconds
+                            if self?.downloadProgress?.current == current {
+                                self?.downloadProgress = nil
+                            }
+                        }
+                    }
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
+    // MARK: - CloudKit Sync Observers
+    
+    private func setupCloudKitSyncObservers() {
+        // Subscribe to notifications for CloudKit sync progress
+        NotificationCenter.default.publisher(for: .cloudKitRecordTransferProgress)
+            .sink { [weak self] notification in
+                if let userInfo = notification.userInfo,
+                   let current = userInfo["current"] as? Int,
+                   let total = userInfo["total"] as? Int {
+                    self?.cloudKitSyncProgress = (current, total)
+                    
+                    // If progress is complete, clear it after a delay
+                    if current >= total {
+                        Task { @MainActor in
+                            try? await Task.sleep(nanoseconds: 3_000_000_000) // 3 seconds
+                            if self?.cloudKitSyncProgress?.current == current {
+                                self?.cloudKitSyncProgress = nil
+                            }
+                        }
+                    }
+                }
+            }
+            .store(in: &cancellables)
+        
+        // Also listen for initial sync progress
+        NotificationCenter.default.publisher(for: .cloudKitInitialSyncProgress)
+            .sink { [weak self] notification in
+                if let userInfo = notification.userInfo,
+                   let current = userInfo["current"] as? Int,
+                   let total = userInfo["total"] as? Int {
+                    self?.cloudKitSyncProgress = (current, total)
+                    
+                    // If progress is complete, clear it after a delay
+                    if current >= total {
+                        Task { @MainActor in
+                            try? await Task.sleep(nanoseconds: 3_000_000_000) // 3 seconds
+                            if self?.cloudKitSyncProgress?.current == current {
+                                self?.cloudKitSyncProgress = nil
                             }
                         }
                     }
@@ -184,14 +337,55 @@ public class StatusMessageViewModel: ObservableObject {
     // MARK: - Network Observers
     
     private func setupNetworkObservers() {
-        // Network connectivity
+        // Network connectivity changed
         NotificationCenter.default.publisher(for: .networkConnectivityChanged)
             .sink { [weak self] notification in
                 if let userInfo = notification.userInfo,
                    let isConnected = userInfo["isConnected"] as? Bool {
-                    let message = isConnected ? "Network connection established" : "Network connection lost"
+                    let message = isConnected ? "Network connection restored" : "Network connection lost"
                     let type: StatusMessage.MessageType = isConnected ? .success : .warning
-                    StatusMessageManager.shared.addMessage(StatusMessage(message: message, type: type, duration: 3.0))
+                    
+                    StatusMessageManager.shared.addMessage(StatusMessage(
+                        message: message,
+                        type: type,
+                        duration: 5.0
+                    ))
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
+    // MARK: - Web Server Observers
+    
+    private func setupWebServerObservers() {
+        // Web server status changed
+        NotificationCenter.default.publisher(for: .webServerStatusChanged)
+            .sink { [weak self] notification in
+                if let userInfo = notification.userInfo,
+                   let isRunning = userInfo["isRunning"] as? Bool,
+                   let port = userInfo["port"] as? UInt,
+                   let typeString = userInfo["type"] as? String {
+                    
+                    let serverType = typeString == "WebUploader" ? "Web Upload Server" : "WebDAV Server"
+                    
+                    if isRunning {
+                        if let url = userInfo["url"] as? URL {
+                            StatusMessageManager.shared.addSuccess(
+                                "\(serverType) started at \(url.absoluteString)",
+                                duration: 5.0
+                            )
+                        } else {
+                            StatusMessageManager.shared.addSuccess(
+                                "\(serverType) started on port \(port)",
+                                duration: 5.0
+                            )
+                        }
+                    } else {
+                        StatusMessageManager.shared.addInfo(
+                            "\(serverType) stopped",
+                            duration: 3.0
+                        )
+                    }
                 }
             }
             .store(in: &cancellables)
@@ -297,9 +491,9 @@ public class StatusMessageViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    // MARK: - ROM Scanning Observers
+    // MARK: - ROM Scanning Enhanced Observers
     
-    private func setupROMScanningObservers() {
+    private func setupROMScanningEnhancedObservers() {
         // ROM scanning started
         NotificationCenter.default.publisher(for: .romScanningStarted)
             .sink { [weak self] _ in
@@ -307,7 +501,7 @@ public class StatusMessageViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-        // ROM scanning progress
+        // ROM scanning progress with enhanced details
         NotificationCenter.default.publisher(for: .romScanningProgress)
             .sink { [weak self] notification in
                 if let userInfo = notification.userInfo,

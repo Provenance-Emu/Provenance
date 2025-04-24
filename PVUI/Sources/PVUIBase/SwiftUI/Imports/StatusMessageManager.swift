@@ -10,6 +10,7 @@ import Foundation
 import Combine
 import SwiftUI
 import PVLibrary
+import PVPrimitives
 // Import the StatusMessageViewModel
 import PVUIBase
 
@@ -58,6 +59,13 @@ public class StatusMessageManager: ObservableObject {
     @Published public private(set) var fileRecoveryProgress: (current: Int, total: Int)? = nil
     @Published public private(set) var isImportActive: Bool = false
     
+    // Additional progress tracking (forwarded from ViewModel)
+    @Published public private(set) var romScanningProgress: (current: Int, total: Int)? = nil
+    @Published public private(set) var temporaryFileCleanupProgress: (current: Int, total: Int)? = nil
+    @Published public private(set) var cacheManagementProgress: (current: Int, total: Int)? = nil
+    @Published public private(set) var downloadProgress: (current: Int, total: Int)? = nil
+    @Published public private(set) var cloudKitSyncProgress: (current: Int, total: Int)? = nil
+    
     private var cancellables = Set<AnyCancellable>()
     private var messageTimers: [UUID: Timer] = [:]
     
@@ -76,6 +84,27 @@ public class StatusMessageManager: ObservableObject {
             self?.viewModel.$isImportActive
                 .receive(on: RunLoop.main)
                 .assign(to: &$isImportActive)
+                
+            // Bind additional progress tracking from ViewModel
+            self?.viewModel.$romScanningProgress
+                .receive(on: RunLoop.main)
+                .assign(to: &$romScanningProgress)
+                
+            self?.viewModel.$temporaryFileCleanupProgress
+                .receive(on: RunLoop.main)
+                .assign(to: &$temporaryFileCleanupProgress)
+                
+            self?.viewModel.$cacheManagementProgress
+                .receive(on: RunLoop.main)
+                .assign(to: &$cacheManagementProgress)
+                
+            self?.viewModel.$downloadProgress
+                .receive(on: RunLoop.main)
+                .assign(to: &$downloadProgress)
+                
+            self?.viewModel.$cloudKitSyncProgress
+                .receive(on: RunLoop.main)
+                .assign(to: &$cloudKitSyncProgress)
         }
         
         // Subscribe to notifications for file recovery started
@@ -100,6 +129,177 @@ public class StatusMessageManager: ObservableObject {
                         type: .success,
                         duration: 5.0
                     ))
+                }
+            }
+            .store(in: &cancellables)
+            
+        // Subscribe to disk space warnings
+        NotificationCenter.default.publisher(for: .diskSpaceWarning)
+            .sink { [weak self] notification in
+                DispatchQueue.main.async {
+                    if let userInfo = notification.userInfo,
+                       let availableSpace = userInfo["availableSpace"] as? Int64 {
+                        let spaceInGB = Double(availableSpace) / 1_073_741_824.0 // Convert to GB
+                        self?.addMessage(StatusMessage(
+                            message: "Low disk space warning: \(String(format: "%.1f", spaceInGB))GB available",
+                            type: .warning,
+                            duration: 10.0
+                        ))
+                    } else {
+                        self?.addMessage(StatusMessage(
+                            message: "Low disk space warning",
+                            type: .warning,
+                            duration: 10.0
+                        ))
+                    }
+                }
+            }
+            .store(in: &cancellables)
+            
+        // Subscribe to CloudKit notifications
+        NotificationCenter.default.publisher(for: .cloudKitRecordTransferStarted)
+            .sink { [weak self] notification in
+                DispatchQueue.main.async {
+                    if let userInfo = notification.userInfo,
+                       let recordType = userInfo["recordType"] as? String,
+                       let isUpload = userInfo["isUpload"] as? Bool {
+                        let direction = isUpload ? "uploading to" : "downloading from"
+                        self?.addMessage(StatusMessage(
+                            message: "\(recordType) \(direction) iCloud...",
+                            type: .info,
+                            duration: 3.0
+                        ))
+                    }
+                }
+            }
+            .store(in: &cancellables)
+            
+        NotificationCenter.default.publisher(for: .cloudKitRecordTransferCompleted)
+            .sink { [weak self] notification in
+                DispatchQueue.main.async {
+                    if let userInfo = notification.userInfo,
+                       let recordType = userInfo["recordType"] as? String,
+                       let count = userInfo["count"] as? Int,
+                       let isUpload = userInfo["isUpload"] as? Bool {
+                        let direction = isUpload ? "uploaded to" : "downloaded from"
+                        self?.addMessage(StatusMessage(
+                            message: "\(count) \(recordType) records \(direction) iCloud",
+                            type: .success,
+                            duration: 5.0
+                        ))
+                    }
+                }
+            }
+            .store(in: &cancellables)
+            
+        // Subscribe to temporary file cleanup notifications
+        NotificationCenter.default.publisher(for: .temporaryFileCleanupStarted)
+            .sink { [weak self] _ in
+                DispatchQueue.main.async {
+                    self?.addMessage(StatusMessage(
+                        message: "Starting temporary file cleanup...",
+                        type: .info,
+                        duration: 3.0
+                    ))
+                }
+            }
+            .store(in: &cancellables)
+            
+        NotificationCenter.default.publisher(for: .temporaryFileCleanupCompleted)
+            .sink { [weak self] notification in
+                DispatchQueue.main.async {
+                    if let userInfo = notification.userInfo,
+                       let bytesFreed = userInfo["bytesFreed"] as? Int64 {
+                        let mbFreed = Double(bytesFreed) / 1_048_576.0 // Convert to MB
+                        self?.addMessage(StatusMessage(
+                            message: "Temporary file cleanup completed: \(String(format: "%.1f", mbFreed))MB freed",
+                            type: .success,
+                            duration: 5.0
+                        ))
+                    } else {
+                        self?.addMessage(StatusMessage(
+                            message: "Temporary file cleanup completed",
+                            type: .success,
+                            duration: 5.0
+                        ))
+                    }
+                }
+            }
+            .store(in: &cancellables)
+            
+        // Subscribe to ROM scanning notifications
+        NotificationCenter.default.publisher(for: .romScanningStarted)
+            .sink { [weak self] _ in
+                DispatchQueue.main.async {
+                    self?.addMessage(StatusMessage(
+                        message: "Starting ROM scanning...",
+                        type: .info,
+                        duration: 3.0
+                    ))
+                }
+            }
+            .store(in: &cancellables)
+            
+        NotificationCenter.default.publisher(for: .romScanningCompleted)
+            .sink { [weak self] notification in
+                DispatchQueue.main.async {
+                    if let userInfo = notification.userInfo,
+                       let count = userInfo["count"] as? Int {
+                        self?.addMessage(StatusMessage(
+                            message: "ROM scanning completed: \(count) ROMs processed",
+                            type: .success,
+                            duration: 5.0
+                        ))
+                    } else {
+                        self?.addMessage(StatusMessage(
+                            message: "ROM scanning completed",
+                            type: .success,
+                            duration: 5.0
+                        ))
+                    }
+                }
+            }
+            .store(in: &cancellables)
+            
+        // Subscribe to controller notifications
+        NotificationCenter.default.publisher(for: .controllerConnected)
+            .sink { [weak self] notification in
+                DispatchQueue.main.async {
+                    if let userInfo = notification.userInfo,
+                       let controllerName = userInfo["name"] as? String {
+                        self?.addMessage(StatusMessage(
+                            message: "Controller connected: \(controllerName)",
+                            type: .success,
+                            duration: 3.0
+                        ))
+                    } else {
+                        self?.addMessage(StatusMessage(
+                            message: "Controller connected",
+                            type: .success,
+                            duration: 3.0
+                        ))
+                    }
+                }
+            }
+            .store(in: &cancellables)
+            
+        NotificationCenter.default.publisher(for: .controllerDisconnected)
+            .sink { [weak self] notification in
+                DispatchQueue.main.async {
+                    if let userInfo = notification.userInfo,
+                       let controllerName = userInfo["name"] as? String {
+                        self?.addMessage(StatusMessage(
+                            message: "Controller disconnected: \(controllerName)",
+                            type: .warning,
+                            duration: 3.0
+                        ))
+                    } else {
+                        self?.addMessage(StatusMessage(
+                            message: "Controller disconnected",
+                            type: .warning,
+                            duration: 3.0
+                        ))
+                    }
                 }
             }
             .store(in: &cancellables)
