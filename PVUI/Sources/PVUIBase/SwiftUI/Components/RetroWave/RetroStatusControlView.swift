@@ -11,6 +11,10 @@ import PVThemes
 import PVLibrary
 import PVPrimitives
 import PVWebServer
+import PVSettings
+
+// Import WebServerType from StatusMessageViewModel
+import PVUIBase
 
 /// An enhanced status view with interactive controls styled with retrowave aesthetics
 public struct RetroStatusControlView: View {
@@ -26,6 +30,11 @@ public struct RetroStatusControlView: View {
     
     // Web server status
     @State private var webServerStatus: (isRunning: Bool, type: WebServerType, url: URL?)? = nil
+    
+    // Alert sound state
+    @State private var previousMessageCount: Int = 0
+    @State private var previousErrorCount: Int = 0
+    @State private var previousRecoveryCount: Int = 0
     
     // File recovery tracking
     @State private var fileRecoverySessionId: String? = nil
@@ -62,6 +71,8 @@ public struct RetroStatusControlView: View {
         setupNotificationObservers()
     }
     
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    
     public var body: some View {
         VStack(spacing: 4) {
             // Header with expand/collapse button
@@ -69,14 +80,67 @@ public struct RetroStatusControlView: View {
             
             // Progress views for various operations
             if !isExpanded {
-                compactStatusView
-                    .fixedSize(horizontal: true, vertical: false) // Fix the width to prevent layout shifts
+                if isWideLayout {
+                    // Two column layout for iPad landscape and tvOS
+                    VStack(spacing: 4) {
+                        // File recovery is always full width
+                        if let progress = messageManager.fileRecoveryProgress {
+                            progressView(title: "File Recovery", current: progress.current, total: progress.total, color: RetroTheme.retroBlue)
+                        }
+                        
+                        // ROM scanning is always full width
+                        if let progress = messageManager.romScanningProgress {
+                            progressView(title: "ROM Scanning", current: progress.current, total: progress.total, color: RetroTheme.retroPurple)
+                        }
+                        
+                        // Web server upload progress is always full width
+                        if let progress = messageManager.viewModel.webServerUploadProgress {
+                            let progressPercent = progress.progress * 100
+                            let current = Int(progress.bytesTransferred / 1024)
+                            let total = Int(progress.totalBytes / 1024)
+                            
+                            progressView(
+                                title: "Upload: \(progress.currentFile.split(separator: "/").last ?? "")",
+                                current: current,
+                                total: total,
+                                color: RetroTheme.retroPink,
+                                customText: "\(Int(progressPercent))% (\(progress.queueLength) in queue)"
+                            )
+                        }
+                        
+                        HStack(alignment: .top, spacing: 12) {
+                            // Left column - Alerts and operations (except file recovery)
+                            VStack(spacing: 8) {
+                                // File access errors and pending recovery files
+                                alertsView
+                                
+                                // Archive extraction and ROM scanning (not file recovery)
+                                archiveExtractionView
+                            }
+                            .frame(maxWidth: .infinity)
+                            
+                            // Right column - Web server and messages
+                            VStack(spacing: 8) {
+                                // Web server status and upload progress
+                                webServerView
+                                
+                                // Status messages
+                                messagesView
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                    }
+                    .padding(.horizontal, 10)
+                } else {
+                    // Single column layout for iPhone and iPad portrait
+                    compactStatusView
+                }
             } else {
                 expandedView
-                    .fixedSize(horizontal: true, vertical: false) // Fix the width to prevent layout shifts
             }
         }
         .frame(maxWidth: .infinity)
+        .padding(.bottom, 4)
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.black.opacity(0.7))
@@ -93,7 +157,6 @@ public struct RetroStatusControlView: View {
                 )
                 .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5, x: 0, y: 0)
         )
-        .padding(.horizontal)
         .animation(.easeInOut(duration: 0.3), value: isExpanded)
         .onAppear {
             onAppear()
@@ -111,6 +174,11 @@ public struct RetroStatusControlView: View {
         
         // Initial update of web server status
         updateWebServerStatus()
+        
+        // Initialize alert counts
+        previousMessageCount = messageManager.messages.count
+        previousErrorCount = fileAccessErrorCount
+        previousRecoveryCount = pendingRecoveryCount
         
         // Start retrowave animations
         withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
@@ -214,7 +282,7 @@ public struct RetroStatusControlView: View {
         
         // Observe file pending recovery notifications
         NotificationCenter.default.addObserver(
-            forName: .iCloudFilePendingRecovery,
+            forName: iCloudSync.iCloudFilePendingRecovery,
             object: nil,
             queue: .main
         ) { [self] notification in
@@ -526,89 +594,277 @@ public struct RetroStatusControlView: View {
         .padding(.horizontal, 12)
     }
     
-    /// Compact view showing only active progress indicators
-    private var compactStatusView: some View {
-        VStack(spacing: 4) {
-            // File recovery progress
-            if let progress = messageManager.fileRecoveryProgress {
+    /// Determines if we should use the wide layout (iPad landscape or tvOS)
+    private var isWideLayout: Bool {
+        #if os(tvOS)
+        return true
+        #else
+        return horizontalSizeClass == .regular
+        #endif
+    }
+    
+    /// View containing alerts (file access errors and pending recovery files)
+    private var alertsView: some View {
+        VStack(spacing: 8) {
+            // File access error summary if there are recent errors
+            if fileAccessErrorCount > 0, let lastErrorTime = lastFileAccessErrorTime, Date().timeIntervalSince(lastErrorTime) < 60 {
+                HStack(spacing: 4) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundColor(RetroTheme.retroPink)
+                        .font(.system(size: 12))
+                    
+                    Text("\(fileAccessErrorCount) file access \(fileAccessErrorCount == 1 ? "error" : "errors") in the last minute")
+                        .font(.system(size: 12))
+                        .foregroundColor(RetroTheme.retroPink)
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(RetroTheme.retroPink.opacity(0.1))
+                .cornerRadius(4)
+            }
+            
+            // Pending recovery files summary
+            if pendingRecoveryCount > 0 {
+                HStack(spacing: 4) {
+                    Image(systemName: "arrow.down.circle")
+                        .foregroundColor(RetroTheme.retroBlue)
+                        .font(.system(size: 12))
+                    
+                    Text("\(pendingRecoveryCount) \(pendingRecoveryCount == 1 ? "file" : "files") being recovered from iCloud")
+                        .font(.system(size: 12))
+                        .foregroundColor(RetroTheme.retroBlue)
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(RetroTheme.retroBlue.opacity(0.1))
+                .cornerRadius(4)
+            }
+        }
+    }
+    
+    /// View containing archive extraction progress
+    private var archiveExtractionView: some View {
+        VStack(spacing: 8) {
+            // Archive extraction progress
+            if archiveExtractionInProgress || archiveExtractionProgress > 0 {
                 VStack(alignment: .leading, spacing: 2) {
                     HStack {
-                        Text("File Recovery")
+                        Text("Extracting Archive")
                             .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(RetroTheme.retroBlue)
-                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 2, x: 0, y: 0)
+                            .foregroundColor(RetroTheme.retroPurple)
+                            .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 2, x: 0, y: 0)
                         
                         Spacer()
                         
-                        if let startTime = fileRecoveryStartTime {
+                        if let startTime = archiveExtractionStartTime {
                             Text("Started: \(formatTimeInterval(since: startTime))")
                                 .font(.system(size: 10))
-                                .foregroundColor(RetroTheme.retroBlue.opacity(0.8))
+                                .foregroundColor(RetroTheme.retroPurple.opacity(0.8))
                         }
                     }
+                    .padding(.horizontal, 4)
                     
-                    progressView(title: "", current: progress.current, total: progress.total, color: RetroTheme.retroBlue)
-                    
-                    HStack {
-                        if fileRecoveryBytesProcessed > 0 {
-                            Text("\(formatBytes(fileRecoveryBytesProcessed)) processed")
-                                .font(.system(size: 10))
-                                .foregroundColor(RetroTheme.retroBlue.opacity(0.8))
+                    // Progress bar
+                    GeometryReader { geometry in
+                        ZStack(alignment: .leading) {
+                            Rectangle()
+                                .fill(RetroTheme.retroPurple.opacity(0.2))
+                                .cornerRadius(2)
+                            
+                            Rectangle()
+                                .fill(RetroTheme.retroPurple)
+                                .cornerRadius(2)
+                                .frame(width: geometry.size.width * CGFloat(archiveExtractionProgress))
                         }
+                    }
+                    .frame(height: 4)
+                    
+                    // File info
+                    HStack {
+                        Text(currentArchiveFilename)
+                            .font(.system(size: 10))
+                            .foregroundColor(RetroTheme.retroPurple.opacity(0.8))
+                            .lineLimit(1)
                         
                         Spacer()
                         
-                        // Show retry information if any
-                        if retryQueueCount > 0 {
-                            Text("Retry queue: \(retryQueueCount) files (attempt \(retryAttempt))")
-                                .font(.system(size: 10))
-                                .foregroundColor(RetroTheme.retroPink.opacity(0.9))
-                                .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 1, x: 0, y: 0)
-                        }
+                        Text("\(Int(archiveExtractionProgress * 100))%")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(RetroTheme.retroPurple)
                     }
-                    .padding(.top, 2)
+                    .padding(.horizontal, 4)
                     
-                    // Show recent errors if any
-                    if (!fileRecoveryErrors.isEmpty || !fileAccessErrors.isEmpty) && isExpanded {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Recent Errors:")
-                                .font(.system(size: 10, weight: .medium))
-                                .foregroundColor(RetroTheme.retroPink)
-                                .padding(.top, 4)
-                            
-                            // File recovery errors
-                            ForEach(fileRecoveryErrors.suffix(3).indices, id: \.self) { index in
-                                let error = fileRecoveryErrors[index]
-                                Text(error.error)
-                                    .font(.system(size: 9))
-                                    .foregroundColor(RetroTheme.retroPink.opacity(0.8))
-                                    .lineLimit(1)
-                            }
-                            
-                            // File access errors
-                            ForEach(fileAccessErrors.suffix(3).indices, id: \.self) { index in
-                                let error = fileAccessErrors[index]
-                                Text(error.error)
-                                    .font(.system(size: 9))
-                                    .foregroundColor(RetroTheme.retroPink.opacity(0.8))
-                                    .lineLimit(1)
-                            }
-                            
-                            // Show error count if there are more errors
-                            if fileAccessErrorCount > 3 {
-                                Text("+ \(fileAccessErrorCount - min(3, fileAccessErrors.count)) more file access errors")
-                                    .font(.system(size: 9, weight: .medium))
-                                    .foregroundColor(RetroTheme.retroPink.opacity(0.7))
-                            }
-                        }
+                    // Show extracted files count if completed
+                    if extractedFilesCount > 0 && !archiveExtractionInProgress {
+                        Text("\(extractedFilesCount) files extracted")
+                            .font(.system(size: 10))
+                            .foregroundColor(RetroTheme.retroPurple.opacity(0.8))
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .padding(.top, 4)
+                            .padding(.horizontal, 4)
                     }
                 }
                 .padding(.horizontal, 8)
+                .padding(.vertical, 6)
+                .background(RetroTheme.retroPurple.opacity(0.1))
+                .cornerRadius(4)
+            }
+        }
+    }
+    
+    /// View containing web server status and upload progress
+    private var webServerView: some View {
+        VStack(spacing: 4) {
+            // Web server upload progress
+            if let progress = messageManager.viewModel.webServerUploadProgress {
+                let progressPercent = progress.progress * 100
+                let current = Int(progress.bytesTransferred / 1024)
+                let total = Int(progress.totalBytes / 1024)
+                
+                progressView(
+                    title: "Upload: \(progress.currentFile.split(separator: "/").last ?? "")",
+                    current: current,
+                    total: total,
+                    color: RetroTheme.retroPink,
+                    customText: "\(Int(progressPercent))% (\(progress.queueLength) in queue)"
+                )
             }
             
-            // ROM scanning progress
-            if let progress = messageManager.romScanningProgress {
-                progressView(title: "ROM Scanning", current: progress.current, total: progress.total, color: RetroTheme.retroPurple)
+            // Web server status
+            if let status = messageManager.viewModel.webServerStatus {
+                webServerStatusView(status: status)
+            }
+        }
+    }
+    
+    /// Web server status view
+    private func webServerStatusView(status: (isRunning: Bool, type: WebServerType, url: URL?)) -> some View {
+        HStack(spacing: 4) {
+            Image(systemName: status.isRunning ? "network" : "network.slash")
+                .foregroundColor(status.isRunning ? RetroTheme.retroBlue : RetroTheme.retroPink)
+                .font(.system(size: 12))
+            
+            if status.isRunning {
+                Text("Web Server: \(status.url?.absoluteString ?? "Unknown")")
+                    .font(.system(size: 12))
+                    .foregroundColor(RetroTheme.retroBlue)
+            } else {
+                Text("Web Server: Offline")
+                    .font(.system(size: 12))
+                    .foregroundColor(RetroTheme.retroPink)
+            }
+            
+            Spacer()
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(status.isRunning ? RetroTheme.retroBlue.opacity(0.1) : RetroTheme.retroPink.opacity(0.1))
+        .cornerRadius(4)
+    }
+    
+    /// Status messages list
+    private var messagesView: some View {
+        VStack(spacing: 4) {
+            ForEach(messageManager.messages) { message in
+                statusMessageView(message)
+            }
+        }
+        .padding(.bottom, 4)
+    }
+    
+    /// Creates a view for a status message
+    @ViewBuilder
+    private func statusMessageView(_ message: StatusMessage) -> some View {
+        HStack {
+            Circle()
+                .fill(messageTypeColor(message.type))
+                .frame(width: 10, height: 10)
+                .shadow(color: messageTypeColor(message.type).opacity(glowOpacity), radius: 3, x: 0, y: 0)
+            
+            Text(message.message)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.white)
+            
+            Spacer()
+            
+            Button(action: {
+                messageManager.removeMessage(withID: message.id)
+            }) {
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundColor(RetroTheme.retroPurple.opacity(0.8))
+                    .font(.system(size: 14))
+            }
+            .buttonStyle(PlainButtonStyle())
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.black.opacity(0.7))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder(
+                            LinearGradient(
+                                gradient: Gradient(colors: [messageTypeColor(message.type), RetroTheme.retroPurple]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                )
+        )
+        .shadow(color: messageTypeColor(message.type).opacity(0.5), radius: 3, x: 0, y: 0)
+        .padding(.horizontal, 12)
+    }
+    
+    /// Compact view showing all alerts and active progress indicators
+    private var compactStatusView: some View {
+        VStack(spacing: 8) {
+            // File access error summary if there are recent errors
+            if fileAccessErrorCount > 0, let lastErrorTime = lastFileAccessErrorTime, Date().timeIntervalSince(lastErrorTime) < 60 {
+                HStack(spacing: 4) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundColor(RetroTheme.retroPink)
+                        .font(.system(size: 12))
+                    
+                    Text("\(fileAccessErrorCount) file access \(fileAccessErrorCount == 1 ? "error" : "errors") in the last minute")
+                        .font(.system(size: 12))
+                        .foregroundColor(RetroTheme.retroPink)
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(RetroTheme.retroPink.opacity(0.1))
+                .cornerRadius(4)
+            }
+            
+            // Pending recovery files summary
+            if pendingRecoveryCount > 0 {
+                HStack(spacing: 4) {
+                    Image(systemName: "arrow.down.circle")
+                        .foregroundColor(RetroTheme.retroBlue)
+                        .font(.system(size: 12))
+                    
+                    Text("\(pendingRecoveryCount) \(pendingRecoveryCount == 1 ? "file" : "files") being recovered from iCloud")
+                        .font(.system(size: 12))
+                        .foregroundColor(RetroTheme.retroBlue)
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(RetroTheme.retroBlue.opacity(0.1))
+                .cornerRadius(4)
+            }
+            
+            // File recovery progress
+            if let progress = messageManager.fileRecoveryProgress {
+                progressView(title: "File Recovery", current: progress.current, total: progress.total, color: RetroTheme.retroBlue)
             }
             
             // Archive extraction progress
@@ -688,12 +944,8 @@ public struct RetroStatusControlView: View {
             if let status = messageManager.viewModel.webServerStatus {
                 webServerStatusView(status: status)
             }
-            
-            // Most recent message
-            if let message = messageManager.messages.first {
-                statusMessageView(message)
-            }
         }
+        .padding(.horizontal, 8)
     }
     
     /// Expanded view with all status information and controls
@@ -839,6 +1091,74 @@ public struct RetroStatusControlView: View {
             messagesView
         }
         .padding(.bottom, 8)
+    }
+    
+    /// Progress view with title, current/total, and color
+    private func progressView(title: String, current: Int, total: Int, color: Color, customText: String? = nil) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text(title)
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(color)
+                    .shadow(color: color.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                
+                Spacer()
+                
+                if let customText = customText {
+                    Text(customText)
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(RetroTheme.retroPink)
+                        .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                } else {
+                    Text("\(current)/\(total) (\(Int(Double(current) / Double(max(1, total)) * 100))%)")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(RetroTheme.retroPink)
+                        .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                }
+            }
+            
+            // Progress bar
+            GeometryReader { geometry in
+                ZStack(alignment: .leading) {
+                    // Background
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.black.opacity(0.5))
+                        .frame(height: 8)
+                    
+                    // Progress
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(
+                            LinearGradient(
+                                gradient: Gradient(colors: [color, RetroTheme.retroPurple]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .frame(width: max(0, min(CGFloat(current) / CGFloat(max(1, total)) * geometry.size.width, geometry.size.width)), height: 8)
+                        .animation(.easeInOut(duration: 0.3), value: current)
+                }
+            }
+            .frame(height: 8)
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.black.opacity(0.7))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder(
+                            LinearGradient(
+                                gradient: Gradient(colors: [color, RetroTheme.retroPurple]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                )
+        )
+        .shadow(color: color.opacity(0.5), radius: 3, x: 0, y: 0)
+        .padding(.horizontal, 12)
     }
     
     /// Control buttons for various actions
@@ -1082,176 +1402,6 @@ public struct RetroStatusControlView: View {
         .padding(.horizontal, 12)
     }
     
-    /// Status messages list
-    private var messagesView: some View {
-        VStack(spacing: 4) {
-            ForEach(messageManager.messages) { message in
-                statusMessageView(message)
-            }
-        }
-    }
-    
-    /// Web server status view
-    @ViewBuilder
-    private func webServerStatusView(status: (isRunning: Bool, type: WebServerType, url: URL?)) -> some View {
-        HStack {
-            // Status indicator
-            Circle()
-                .fill(status.isRunning ? RetroTheme.retroBlue : RetroTheme.retroPink)
-                .frame(width: 10, height: 10)
-                .shadow(color: (status.isRunning ? RetroTheme.retroBlue : RetroTheme.retroPink).opacity(glowOpacity), radius: 3, x: 0, y: 0)
-            
-            // Status text
-            Text("\(status.type == .webUploader ? "Web Upload" : "WebDAV") Server: \(status.isRunning ? "Running" : "Stopped")")
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(.white)
-            
-            Spacer()
-            
-            // URL if available
-            if status.isRunning, let url = status.url {
-                Text(url.absoluteString)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(RetroTheme.retroBlue)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-            }
-        }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color.black.opacity(0.7))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [status.isRunning ? RetroTheme.retroBlue : RetroTheme.retroPink, RetroTheme.retroPurple]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1.5
-                        )
-                )
-        )
-        .shadow(color: (status.isRunning ? RetroTheme.retroBlue : RetroTheme.retroPink).opacity(0.5), radius: 3, x: 0, y: 0)
-        .padding(.horizontal, 12)
-    }
-    
-    /// Creates a view for a status message
-    @ViewBuilder
-    private func statusMessageView(_ message: StatusMessage) -> some View {
-        HStack {
-            Circle()
-                .fill(messageTypeColor(message.type))
-                .frame(width: 10, height: 10)
-                .shadow(color: messageTypeColor(message.type).opacity(glowOpacity), radius: 3, x: 0, y: 0)
-            
-            Text(message.message)
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(.white)
-            
-            Spacer()
-            
-            Button(action: {
-                messageManager.removeMessage(withID: message.id)
-            }) {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(RetroTheme.retroPurple.opacity(0.8))
-                    .font(.system(size: 14))
-            }
-            .buttonStyle(PlainButtonStyle())
-        }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color.black.opacity(0.7))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [messageTypeColor(message.type), RetroTheme.retroPurple]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1.5
-                        )
-                )
-        )
-        .shadow(color: messageTypeColor(message.type).opacity(0.5), radius: 3, x: 0, y: 0)
-        .padding(.horizontal, 12)
-    }
-    
-    /// Creates a generic progress view for any operation
-    @ViewBuilder
-    private func progressView(title: String, current: Int, total: Int, color: Color, customText: String? = nil) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text(title)
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(color)
-                    .shadow(color: color.opacity(glowOpacity), radius: 3, x: 0, y: 0)
-                
-                Spacer()
-                
-                if let customText = customText {
-                    Text(customText)
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(RetroTheme.retroPink)
-                        .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
-                } else {
-                    Text("\(current)/\(total) (\(Int(Double(current) / Double(max(1, total)) * 100))%)")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(RetroTheme.retroPink)
-                        .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
-                }
-            }
-            
-            // Progress bar
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    // Background
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color.black.opacity(0.5))
-                        .frame(height: 8)
-                    
-                    // Progress
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(
-                            LinearGradient(
-                                gradient: Gradient(colors: [color, RetroTheme.retroPurple]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .frame(width: max(0, min(CGFloat(current) / CGFloat(max(1, total)) * geometry.size.width, geometry.size.width)), height: 8)
-                        .animation(.easeInOut(duration: 0.3), value: current)
-                }
-            }
-            .frame(height: 8)
-        }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color.black.opacity(0.7))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [color, RetroTheme.retroPurple]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1.5
-                        )
-                )
-        )
-        .shadow(color: color.opacity(0.5), radius: 3, x: 0, y: 0)
-        .padding(.horizontal, 12)
-    }
-    
     // MARK: - Helper Methods
     
     /// Format a time interval since the given date
@@ -1323,7 +1473,35 @@ public struct RetroStatusControlView: View {
         // Disk space (simulated for now)
         diskSpace = (Double.random(in: 10...50), 64) // GB
         
+        // Check for new alerts and play sounds if needed
+        checkForNewAlertsAndPlaySounds()
+        
         // In a real implementation, you would use Process.Info or other APIs to get actual stats
+    }
+    
+    /// Check for new alerts and play appropriate sounds
+    private func checkForNewAlertsAndPlaySounds() {
+        // Check for new status messages
+        let currentMessageCount = messageManager.messages.count
+        if currentMessageCount > previousMessageCount {
+            // Play a soft sound for new messages
+            ButtonSoundGenerator.shared.playSound(.tap, pan: 0, volume: 0.5)
+            previousMessageCount = currentMessageCount
+        }
+        
+        // Check for new file access errors
+        if fileAccessErrorCount > previousErrorCount {
+            // Play a more attention-grabbing sound for errors
+            ButtonSoundGenerator.shared.playSound(.pop, pan: 0, volume: 0.7)
+            previousErrorCount = fileAccessErrorCount
+        }
+        
+        // Check for new pending recovery files
+        if pendingRecoveryCount > previousRecoveryCount {
+            // Play a notification sound for recovery files
+            ButtonSoundGenerator.shared.playSound(.click, pan: 0, volume: 0.6)
+            previousRecoveryCount = pendingRecoveryCount
+        }
     }
     
     /// Update web server status

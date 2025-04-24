@@ -301,7 +301,13 @@ struct ConsolesWrapperView: SwiftUI.View {
                 .ignoresSafeArea(.all, edges: .bottom)
                 .navigationTitle(Text("Debug"))
             
-            FileRecoveryTestView()
+            VStack {
+                RetroStatusControlView()
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 6)
+
+                FileRecoveryTestView()
+            }
                 .tabItem {
                     Label("Test", systemImage: "test")
                 }

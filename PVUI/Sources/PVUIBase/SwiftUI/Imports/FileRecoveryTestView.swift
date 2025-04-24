@@ -36,6 +36,9 @@ public struct FileRecoveryTestView: View {
         VStack(spacing: 16) {
             titleView
             
+            // Button to trigger all test alerts at once
+            runAllTestsButton
+            
             categoryTabsView
             
             contentBasedOnTab
@@ -134,6 +137,39 @@ public struct FileRecoveryTestView: View {
         )
     }
             
+    // Button to run all test alerts at once
+    private var runAllTestsButton: some View {
+        Button(action: {
+            triggerAllTestAlerts()
+        }) {
+            HStack {
+                Image(systemName: "bell.fill")
+                Text("Run All Test Alerts")
+            }
+            .font(.system(size: 16, weight: .bold))
+            .foregroundColor(RetroTheme.retroPink)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.black.opacity(0.7))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 2
+                            )
+                    )
+            )
+            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+    
     // Clear button
     private var clearButton: some View {
         Button(action: {
@@ -519,6 +555,29 @@ public struct FileRecoveryTestView: View {
         }
     }
     
+    /// Simulates a complete ROM scanning process including start, progress, and completion
+    private func simulateROMScanning() {
+        DLOG("Simulating complete ROM scanning process")
+        
+        // First post the scanning started notification
+        NotificationCenter.default.post(
+            name: .romScanningStarted,
+            object: nil
+        )
+        
+        // Then simulate progress updates
+        simulateROMScanningProgress()
+        
+        // Finally post completion after a delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 12.0) {
+            NotificationCenter.default.post(
+                name: .romScanningCompleted,
+                object: nil,
+                userInfo: ["totalScanned": 40, "newROMs": 15]
+            )
+        }
+    }
+    
     private func simulateROMScanningProgress() {
         let total = 40
         let romNames = ["Super Mario World.sfc", "Sonic the Hedgehog.md", "Crash Bandicoot.bin", 
@@ -539,6 +598,78 @@ public struct FileRecoveryTestView: View {
                 
                 // Delay between updates
                 try? await Task.sleep(nanoseconds: 250_000_000) // 0.25 seconds
+            }
+        }
+    }
+    
+    /// Trigger all test alerts in sequence with slight delays
+    private func triggerAllTestAlerts() {
+        DLOG("Triggering all test alerts")
+        
+        // File System tests
+        simulateFileRecovery()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            NotificationCenter.default.post(
+                name: .diskSpaceWarning,
+                object: nil,
+                userInfo: ["availableMB": 500.0]
+            )
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.simulateTemporaryFileCleanup()
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            self.simulateCacheManagement()
+        }
+        
+        // Network tests
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            NotificationCenter.default.post(
+                name: .networkConnectivityChanged,
+                object: nil,
+                userInfo: ["isConnected": true]
+            )
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                NotificationCenter.default.post(
+                    name: .webServerStatusChanged,
+                    object: nil,
+                    userInfo: [
+                        "isRunning": true,
+                        "port": 80,
+                        "type": "WebUploader",
+                        "address": "http://192.168.1.100:80"
+                    ]
+                )
+            }
+        }
+        
+        // Controller tests
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            NotificationCenter.default.post(
+                name: .controllerConnected,
+                object: nil,
+                userInfo: ["name": "Xbox Controller", "playerIndex": 1]
+            )
+        }
+        
+        // ROM Scanning tests
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
+            self.simulateROMScanning()
+        }
+        
+        // CloudKit tests
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
+            NotificationCenter.default.post(
+                name: .cloudKitInitialSyncStarted,
+                object: nil
+            )
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.simulateCloudKitInitialSyncProgress()
             }
         }
     }

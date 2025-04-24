@@ -56,7 +56,7 @@ public enum ExtractionStatus: Equatable {
 
 /// Notification names for the directory watcher
 public extension NSNotification.Name {
-    static let PVArchiveInflationFailed = NSNotification.Name("PVArchiveInflationFailedNotification")
+    static let PVArchiveInflationFailed = Notification.Name("PVArchiveInflationFailedNotification")
     static let archiveExtractionStarted = Notification.Name("archiveExtractionStarted")
     static let archiveExtractionProgress = Notification.Name("archiveExtractionProgress")
     static let archiveExtractionCompleted = Notification.Name("archiveExtractionCompleted")

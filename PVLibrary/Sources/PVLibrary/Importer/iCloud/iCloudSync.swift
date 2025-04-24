@@ -565,13 +565,25 @@ public enum iCloudSync {
     static var isRecoverySessionActive: Bool = false
     
     // Set of files currently being recovered - used to prevent premature access
-    static var filesBeingRecovered = Set<String>()
+    /// Thread-safe set of files currently being recovered from iCloud
+    static var filesBeingRecovered = ConcurrentSet<String>()
     
     /// Check if a file is currently being recovered from iCloud
     /// - Parameter path: The file path to check
     /// - Returns: True if the file is currently being recovered
     public static func isFileBeingRecovered(_ path: String) -> Bool {
-        return filesBeingRecovered.contains(path)
+        // Create a synchronous wrapper for the async actor-isolated method
+        let semaphore = DispatchSemaphore(value: 0)
+        var result = false
+        
+        Task {
+            result = await filesBeingRecovered.contains(path)
+            semaphore.signal()
+        }
+        
+        // Wait with a short timeout to prevent deadlocks
+        _ = semaphore.wait(timeout: .now() + 0.1)
+        return result
     }
     
     /// Handle file recovery status check requests
@@ -582,10 +594,11 @@ public enum iCloudSync {
             return
         }
         
-        let isBeingRecovered = filesBeingRecovered.contains(path)
         
         // Respond with the recovery status
         Task { @MainActor in
+            let isBeingRecovered = await filesBeingRecovered.contains(path)
+
             NotificationCenter.default.post(
                 name: .fileRecoveryStatusResponse,
                 object: nil,
@@ -1286,6 +1299,21 @@ public enum iCloudSync {
         ILOG("Completed counting files. Total files to move: \(totalFilesToMove)")
     }
     
+    /// Move files from local Documents directory to iCloud Drive
+    /// Used when switching from CloudKit mode to iCloud Drive mode
+    static func moveFilesFromLocalDocumentsToiCloudDrive() async {
+        ILOG("Moving files from local Documents directory to iCloud Drive")
+        
+        guard let iCloudContainer = URL.iCloudContainerDirectory else {
+            ELOG("Cannot access iCloud container directory")
+            return
+        }
+        
+        await moveAllLocalFilesToCloudContainer(iCloudContainer)
+        
+        ILOG("Completed moving files from local Documents directory to iCloud Drive")
+    }
+    
     /// Move files from iCloud Drive to local Documents for a specific directory
     /// - Parameters:
     ///   - directory: Directory name to process
@@ -1613,8 +1641,10 @@ public enum iCloudSync {
             return false
         }
         
-        // Add file to the recovery tracking set
-        filesBeingRecovered.insert(sourceFile.path)
+        // Add file to the recovery tracking set (thread-safe)
+        Task.detached(priority: .high) {
+            await filesBeingRecovered.insert(sourceFile.path)
+        }
         
         // Post notification that file is being recovered
         Task { @MainActor in
@@ -1697,7 +1727,10 @@ public enum iCloudSync {
                     DLOG("✅ Successfully moved file from iCloud to local: \(sourceFile.lastPathComponent)")
                     
                     // Remove file from recovery tracking set
-                    filesBeingRecovered.remove(sourceFile.path)
+                    // Remove file from recovery tracking set (thread-safe)
+                    Task.detached(priority: .high) {
+                        await filesBeingRecovered.remove(sourceFile.path)
+                    }
                     
                     return true
                 } catch is TimeoutError {
@@ -1756,7 +1789,10 @@ public enum iCloudSync {
                     DLOG("✅ Successfully copied file from iCloud to local: \(sourceFile.lastPathComponent)")
                     
                     // Remove file from recovery tracking set
-                    filesBeingRecovered.remove(sourceFile.path)
+                    // Remove file from recovery tracking set (thread-safe)
+                    Task.detached(priority: .high) {
+                        await filesBeingRecovered.remove(sourceFile.path)
+                    }
                     
                     // Remove the iCloud file after successful copy
                     do {

@@ -622,6 +622,8 @@ extension PVGameLibraryUpdatesController {
             return .titleAndProgress(title: labelMaker(path), progress: 0.5)
         case .completed(_), .completedArchive(_):
             return .titleAndProgress(title: "Extraction Complete!", progress: 1)
+        case .failed(let error):
+            return .titleAndProgress(title: "Extraction Failed: \(error.localizedDescription)", progress: 1)
         case .idle:
             return .hidden
         }

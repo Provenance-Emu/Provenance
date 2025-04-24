@@ -168,15 +168,15 @@ struct ConsoleGamesView: SwiftUI.View {
                 RetroGrid(lineColor: themeManager.currentPalette.defaultTintColor.swiftUIColor)
                     .opacity(0.2)
                 
-                VStack(spacing: 0) {
+                VStack(spacing: 2) {
+                    // Status Message View
+                    RetroStatusControlView()
+                        .padding(.horizontal, 8)
+                        .padding(.top, 4)
+                    
                     displayOptionsView()
                         .allowsHitTesting(true)
-                
-                // Status Message View
-                RetroStatusControlView()
-                    .padding(.horizontal, 4)
-                    .padding(.top, 4)
-                
+                    
                 // Import Progress View (legacy - can be removed once RetroStatusControlView is fully tested)
                 // Commenting out as RetroStatusControlView now handles this functionality
                 /*ImportProgressView(
