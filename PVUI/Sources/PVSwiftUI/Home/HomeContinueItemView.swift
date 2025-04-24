@@ -166,6 +166,9 @@ private struct RetroEffects: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @State private var isAnimating = false
     
+    /// Environment value for reduce motion setting
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    
     var body: some View {
         ZStack {
             // Subtle color tint overlay for retrowave effect
@@ -208,14 +211,16 @@ private struct RetroEffects: View {
                 endRadius: 150
             )
             
-            // Subtle flicker animation for CRT effect
-            Color.white.opacity(isAnimating ? 0.03 : 0.0)
-                .blendMode(.overlay)
-                .onAppear {
-                    withAnimation(Animation.easeInOut(duration: 0.2).repeatForever(autoreverses: true)) {
-                        isAnimating = true
+            // Subtle flicker animation for CRT effect - only if reduce motion is not enabled
+            if !reduceMotion {
+                Color.white.opacity(isAnimating ? 0.03 : 0.0)
+                    .blendMode(.overlay)
+                    .onAppear {
+                        withAnimation(Animation.easeInOut(duration: 0.2).repeatForever(autoreverses: true)) {
+                            isAnimating = true
+                        }
                     }
-                }
+            }
         }
         .allowsHitTesting(false)
     }

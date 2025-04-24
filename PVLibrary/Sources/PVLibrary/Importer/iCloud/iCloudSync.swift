@@ -48,6 +48,96 @@ import PVPrimitives
 import PVFileSystem
 import PVRealm
 
+/// Errors specific to file operations
+public enum FileOperationError: Error {
+    case downloadFailed
+    case chunkTransferFailed
+    case sourceFileNotFound
+    case destinationDirectoryCreationFailed
+    case invalidFileHandle
+}
+
+/// An actor to manage concurrent file operations with a limited queue
+public actor FileOperationQueue {
+    private var operations: [FileOperation] = []
+    private var runningOperations: Int = 0
+    private let maxConcurrentOperations: Int
+    private var isProcessing = false
+    
+    struct FileOperation: Identifiable {
+        let id = UUID()
+        let sourceFile: URL
+        let destFile: URL
+        let priority: TaskPriority
+        let completion: (Bool) -> Void
+    }
+    
+    init(maxConcurrentOperations: Int = 3) {
+        self.maxConcurrentOperations = maxConcurrentOperations
+    }
+    
+    /// Add a file operation to the queue
+    func addOperation(sourceFile: URL, destFile: URL, priority: TaskPriority = .medium, completion: @escaping (Bool) -> Void) {
+        let operation = FileOperation(sourceFile: sourceFile, destFile: destFile, priority: priority, completion: completion)
+        operations.append(operation)
+        DLOG("Added file operation to queue: \(sourceFile.lastPathComponent) (Queue size: \(operations.count))")
+        
+        if !isProcessing {
+            processQueue()
+        }
+    }
+    
+    /// Process the queue of file operations
+    private func processQueue() {
+        guard !isProcessing else { return }
+        isProcessing = true
+        
+        Task {
+            while !operations.isEmpty && runningOperations < maxConcurrentOperations {
+                let operation = operations.removeFirst()
+                runningOperations += 1
+                
+                Task(priority: operation.priority) {
+                    let success = await iCloudSync.moveFile(from: operation.sourceFile, to: operation.destFile)
+                    await MainActor.run {
+                        operation.completion(success)
+                    }
+                    await decrementRunningOperations()
+                }
+            }
+            
+            isProcessing = operations.isEmpty && runningOperations == 0
+            
+            // If we still have operations but hit the concurrent limit, wait for some to complete
+            if !operations.isEmpty && runningOperations >= maxConcurrentOperations {
+                // Wait a bit and check again
+                try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+                processQueue()
+            }
+        }
+    }
+    
+    /// Decrement the running operations counter and process more if available
+    private func decrementRunningOperations() {
+        runningOperations -= 1
+        if !operations.isEmpty {
+            processQueue()
+        } else if runningOperations == 0 {
+            isProcessing = false
+        }
+    }
+    
+    /// Clear all pending operations
+    func clearQueue() {
+        operations.removeAll()
+    }
+    
+    /// Get the current queue status
+    func getQueueStatus() -> (pending: Int, running: Int) {
+        return (operations.count, runningOperations)
+    }
+}
+
 public enum iCloudConstants {
     public static let defaultProvenanceContainerIdentifier = "iCloud.org.provenance-emu.provenance"
     // Dynamic version based off of bundle Identifier
@@ -598,7 +688,7 @@ public enum iCloudSync {
         // Respond with the recovery status
         Task { @MainActor in
             let isBeingRecovered = await filesBeingRecovered.contains(path)
-
+            
             NotificationCenter.default.post(
                 name: .fileRecoveryStatusResponse,
                 object: nil,
@@ -972,8 +1062,11 @@ public enum iCloudSync {
     
     // Retry queue for files that fail with timeout errors
     private static var retryQueue: [(sourceFile: URL, destFile: URL)] = []
-    private static var maxRetryAttempts = 3
+    private static var maxRetryAttempts = 5 // Increased from 3 to 5
     private static var currentRetryAttempt = 0
+    
+    // File operation queue to limit concurrent operations
+    private static let fileOperationQueue = FileOperationQueue(maxConcurrentOperations: 3)
     
     /// Reset progress tracking
     private static func resetProgress() {
@@ -986,8 +1079,8 @@ public enum iCloudSync {
         currentRetryAttempt = 0
     }
     
-    /// Add a file to the retry queue for later processing
-    private static func addFileToRetryQueue(sourceFile: URL, destFile: URL) {
+    /// Add a file to the retry queue for later processing with exponential backoff
+    private static func addFileToRetryQueue(sourceFile: URL, destFile: URL, retryCount: Int = 0) {
         Task { @MainActor in
             // Only add if not already in the queue
             if !retryQueue.contains(where: { $0.sourceFile.path == sourceFile.path }) {
@@ -1008,8 +1101,204 @@ public enum iCloudSync {
                         ]
                     )
                 }
+                
+                // Schedule retry with exponential backoff if this is a specific file retry
+                if retryCount > 0 && retryCount < maxRetryAttempts {
+                    let delay = pow(2.0, Double(retryCount))
+                    DLOG("Scheduling retry for file: \(sourceFile.lastPathComponent) in \(delay) seconds (attempt \(retryCount) of \(maxRetryAttempts))")
+                    
+                    // Schedule the retry after the delay
+                    Task {
+                        try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+                        await retryFileOperation(sourceFile: sourceFile, destFile: destFile, retryCount: retryCount)
+                    }
+                }
             }
         }
+    }
+    
+    /// Retry a specific file operation with the current retry count
+    private static func retryFileOperation(sourceFile: URL, destFile: URL, retryCount: Int) async {
+        DLOG("Retrying file operation: \(sourceFile.lastPathComponent) (attempt \(retryCount) of \(maxRetryAttempts))")
+        
+        // Remove from the retry queue if it's there
+        Task { @MainActor in
+            retryQueue.removeAll(where: { $0.sourceFile.path == sourceFile.path })
+        }
+        
+        // Try the operation again with a higher priority
+        let success = await moveFileWithRetry(from: sourceFile, to: destFile, retryCount: retryCount)
+        
+        if !success && retryCount < maxRetryAttempts {
+            // Add back to retry queue with incremented count if failed
+            addFileToRetryQueue(sourceFile: sourceFile, destFile: destFile, retryCount: retryCount + 1)
+        }
+    }
+    
+    /// Move a file with retry logic using exponential backoff
+    @discardableResult
+    private static func moveFileWithRetry(from sourceFile: URL, to destFile: URL, retryCount: Int = 0) async -> Bool {
+        DLOG("Moving file with retry: \(sourceFile.lastPathComponent) (attempt \(retryCount + 1) of \(maxRetryAttempts + 1))")
+        
+        // Ensure the file is downloaded before attempting to move it
+        guard await ensureFileDownloaded(at: sourceFile) else {
+            ELOG("❌ Failed to download file from iCloud: \(sourceFile.lastPathComponent)")
+            return false
+        }
+        
+        // Try to move the file
+        return await moveFile(from: sourceFile, to: destFile)
+    }
+    
+    /// Ensure a file is fully downloaded from iCloud before attempting to move it
+    private static func ensureFileDownloaded(at url: URL) async -> Bool {
+        do {
+            let resourceValues = try url.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey])
+            
+            if let status = resourceValues.ubiquitousItemDownloadingStatus {
+                switch status {
+                case .current, .downloaded:
+                    return true
+                    
+                case .notDownloaded:
+                    DLOG("Starting download for file: \(url.lastPathComponent)")
+                    try FileManager.default.startDownloadingUbiquitousItem(at: url)
+                    
+                    // Wait for download to complete with timeout
+                    return await waitForDownload(url: url, timeout: 60) // 60 second timeout
+                    
+                default:
+                    return false
+                }
+            }
+        } catch {
+            ELOG("Error checking download status: \(error)")
+        }
+        
+        return false
+    }
+    
+    /// Wait for a file to be downloaded from iCloud
+    private static func waitForDownload(url: URL, timeout: TimeInterval) async -> Bool {
+        let startTime = Date()
+        
+        while Date().timeIntervalSince(startTime) < timeout {
+            do {
+                let resourceValues = try url.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey, .ubiquitousItemIsDownloadingKey])
+                
+                // If not downloading anymore or status is current/downloaded, we're done
+                if let isDownloading = resourceValues.ubiquitousItemIsDownloading, !isDownloading {
+                    return true
+                }
+                
+                if let status = resourceValues.ubiquitousItemDownloadingStatus,
+                   (status == .current || status == .downloaded) {
+                    return true
+                }
+            } catch {
+                // Continue waiting
+            }
+            
+            // Wait a bit before checking again
+            try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+        }
+        
+        ELOG("Timeout waiting for download: \(url.lastPathComponent)")
+        return false
+    }
+    
+    /// Copy a large file in chunks to avoid timeouts
+    private static func copyLargeFileInChunks(from sourceFile: URL, to destFile: URL) async throws -> Bool {
+        let fileManager = FileManager.default
+        let chunkSize = 1024 * 1024 // 1MB chunks
+        
+        // Get file size
+        guard let fileSize = try? fileManager.attributesOfItem(atPath: sourceFile.path)[.size] as? UInt64 else {
+            throw FileOperationError.sourceFileNotFound
+        }
+        
+        // Create destination directory if needed
+        let destDir = destFile.deletingLastPathComponent()
+        if !fileManager.fileExists(atPath: destDir.path) {
+            do {
+                try fileManager.createDirectory(at: destDir, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                throw FileOperationError.destinationDirectoryCreationFailed
+            }
+        }
+        
+        // Create empty destination file
+        if !fileManager.createFile(atPath: destFile.path, contents: nil) {
+            throw FileOperationError.invalidFileHandle
+        }
+        
+        // Open file handles
+        guard let inputStream = InputStream(url: sourceFile),
+              let outputStream = OutputStream(url: destFile, append: false) else {
+            throw FileOperationError.invalidFileHandle
+        }
+        
+        inputStream.open()
+        outputStream.open()
+        
+        defer {
+            inputStream.close()
+            outputStream.close()
+        }
+        
+        var buffer = [UInt8](repeating: 0, count: chunkSize)
+        var totalBytesRead: UInt64 = 0
+        var lastProgressUpdate = Date()
+        
+        while totalBytesRead < fileSize {
+            let bytesRead = inputStream.read(&buffer, maxLength: chunkSize)
+            
+            if bytesRead <= 0 {
+                if inputStream.streamError != nil {
+                    throw inputStream.streamError!
+                }
+                break
+            }
+            
+            let bytesWritten = outputStream.write(buffer, maxLength: bytesRead)
+            if bytesWritten <= 0 {
+                if outputStream.streamError != nil {
+                    throw outputStream.streamError!
+                }
+                throw FileOperationError.chunkTransferFailed
+            }
+            
+            totalBytesRead += UInt64(bytesRead)
+            
+            // Update progress every second
+            if Date().timeIntervalSince(lastProgressUpdate) >= 1.0 {
+                let progress = Double(totalBytesRead) / Double(fileSize)
+                DLOG("Chunked file transfer progress: \(Int(progress * 100))% (\(ByteCountFormatter.string(fromByteCount: Int64(totalBytesRead), countStyle: .file)) of \(ByteCountFormatter.string(fromByteCount: Int64(fileSize), countStyle: .file)))")
+                lastProgressUpdate = Date()
+                
+                // Post progress notification
+                Task { @MainActor in
+                    NotificationCenter.default.post(
+                        name: iCloudFileRecoveryProgress,
+                        object: nil,
+                        userInfo: [
+                            "current": filesProcessed,
+                            "total": totalFilesToMove,
+                            "message": "Copying \(sourceFile.lastPathComponent): \(Int(progress * 100))%",
+                            "timestamp": Date()
+                        ]
+                    )
+                }
+            }
+            
+            // Check for cancellation
+            if Task.isCancelled {
+                throw CancellationError()
+            }
+        }
+        
+        DLOG("✅ Successfully copied file in chunks: \(sourceFile.lastPathComponent)")
+        return true
     }
     
     /// Process the retry queue with files that failed due to timeout
@@ -1223,6 +1512,10 @@ public enum iCloudSync {
     private static func countAllFiles(in directories: [String], iCloudContainer: URL) async {
         ILOG("Starting to count files in \(directories.count) directories")
         
+        // Track files that need to be synced vs. total files
+        var totalFilesInCloud = 0
+        var filesToSync = 0
+        
         for directory in directories {
             let iCloudDirectory = iCloudContainer.appendingPathComponent(directory)
             DLOG("Checking directory: \(directory) at path: \(iCloudDirectory.path)")
@@ -1253,12 +1546,14 @@ public enum iCloudSync {
                 DLOG("Starting file enumeration in \(directory)")
                 if let enumerator = FileManager.default.enumerator(at: iCloudDirectory, includingPropertiesForKeys: [.isRegularFileKey], options: [.skipsHiddenFiles]) {
                     var count = 0
+                    var needsSync = 0
                     var processedItems = 0
                     
                     for case let fileURL as URL in enumerator {
                         processedItems += 1
+                        
                         if processedItems % 100 == 0 {
-                            DLOG("Processed \(processedItems) items in \(directory) so far, found \(count) files")
+                            DLOG("Processed \(processedItems) items in \(directory) so far, found \(count) files (\(needsSync) need sync)")
                         }
                         
                         do {
@@ -1266,9 +1561,42 @@ public enum iCloudSync {
                             if FileManager.default.fileExists(atPath: fileURL.path, isDirectory: &isDirectory), !isDirectory.boolValue {
                                 count += 1
                                 
+                                // Check if file already exists locally with same attributes
+                                let localPath = URL.documentsDirectory.appendingPathComponent(directory).appendingPathComponent(fileURL.lastPathComponent)
+                                var needsToSync = true
+                                
+                                if FileManager.default.fileExists(atPath: localPath.path) {
+                                    do {
+                                        // Compare file sizes and modification dates
+                                        let sourceAttrs = try FileManager.default.attributesOfItem(atPath: fileURL.path)
+                                        let destAttrs = try FileManager.default.attributesOfItem(atPath: localPath.path)
+                                        
+                                        let sourceSize = sourceAttrs[.size] as? Int64 ?? 0
+                                        
+                                        let destSize = destAttrs[.size] as? Int64 ?? 0
+                                        
+                                        let sourceModDate = sourceAttrs[.modificationDate] as? Date
+                                        let destModDate = destAttrs[.modificationDate] as? Date
+                                        
+                                        // If sizes match and source isn't newer, skip the file
+                                        if sourceSize == destSize &&
+                                            (sourceModDate == nil || destModDate == nil ||
+                                             !(sourceModDate!.timeIntervalSince(destModDate!) > 60)) { // Allow 1 minute difference
+                                            needsToSync = false
+                                        }
+                                    } catch {
+                                        // If we can't compare, assume we need to sync
+                                        needsToSync = true
+                                    }
+                                }
+                                
+                                if needsToSync {
+                                    needsSync += 1
+                                }
+                                
                                 // Log every 50th file for debugging
                                 if count % 50 == 0 {
-                                    DLOG("Found \(count) files so far in \(directory), latest: \(fileURL.lastPathComponent)")
+                                    DLOG("Found \(count) files so far in \(directory) (\(needsSync) need sync), latest: \(fileURL.lastPathComponent)")
                                 }
                             }
                         } catch {
@@ -1277,8 +1605,9 @@ public enum iCloudSync {
                     }
                     
                     if count > 0 {
-                        addToTotalFiles(count)
-                        ILOG("✅ Found \(count) files to move in directory: \(directory)")
+                        totalFilesInCloud += count
+                        addToTotalFiles(needsSync) // Only count files that need syncing
+                        ILOG("✅ Found \(count) files in directory: \(directory), \(needsSync) need to be synced")
                     } else {
                         DLOG("No files found in directory: \(directory)")
                     }
@@ -1296,7 +1625,7 @@ public enum iCloudSync {
             }
         }
         
-        ILOG("Completed counting files. Total files to move: \(totalFilesToMove)")
+        ILOG("Completed counting files. Total files in iCloud: \(totalFilesInCloud), files to sync: \(totalFilesToMove)")
     }
     
     /// Move files from local Documents directory to iCloud Drive
@@ -1323,6 +1652,9 @@ public enum iCloudSync {
         let iCloudDirectory = iCloudContainer.appendingPathComponent(directory)
         
         ILOG("Moving files from \(iCloudDirectory.path) to \(localDirectory.path)")
+        
+        // Reset the file operation queue for this directory
+        await fileOperationQueue.clearQueue()
         
         let fileManager = FileManager.default
         
@@ -1506,6 +1838,41 @@ public enum iCloudSync {
                                 allItemsProcessedSuccessfully = false
                             }
                         } else {
+                            // Check if file already exists locally with same attributes
+                            if fileManager.fileExists(atPath: destItem.path) {
+                                do {
+                                    // Compare file sizes and modification dates
+                                    let sourceAttrs = try fileManager.attributesOfItem(atPath: item.path)
+                                    let destAttrs = try fileManager.attributesOfItem(atPath: destItem.path)
+                                    
+                                    let sourceSize = sourceAttrs[.size] as? Int64 ?? 0
+                                    let destSize = destAttrs[.size] as? Int64 ?? 0
+                                    
+                                    let sourceModDate = sourceAttrs[.modificationDate] as? Date
+                                    let destModDate = destAttrs[.modificationDate] as? Date
+                                    
+                                    // If sizes match and source isn't newer, skip the file
+                                    if sourceSize == destSize &&
+                                        (sourceModDate == nil || destModDate == nil ||
+                                         !(sourceModDate!.timeIntervalSince(destModDate!) > 60)) { // Allow 1 minute difference
+                                        
+                                        DLOG("⏩ Skipping file that already exists with same attributes: \(item.lastPathComponent)")
+                                        incrementFilesProcessed() // Count as processed
+                                        continue
+                                    } else {
+                                        DLOG("📝 File exists but attributes differ, will replace: \(item.lastPathComponent)")
+                                        if sourceSize != destSize {
+                                            DLOG("   Size difference: iCloud=\(ByteCountFormatter.string(fromByteCount: sourceSize, countStyle: .file)), Local=\(ByteCountFormatter.string(fromByteCount: destSize, countStyle: .file))")
+                                        }
+                                        if let sDate = sourceModDate, let dDate = destModDate {
+                                            DLOG("   Date difference: iCloud=\(sDate), Local=\(dDate)")
+                                        }
+                                    }
+                                } catch {
+                                    DLOG("⚠️ Error comparing file attributes, will process anyway: \(error)")
+                                }
+                            }
+                            
                             // Handle file
                             let success = await moveFile(from: item, to: destItem)
                             if !success {
@@ -1544,7 +1911,7 @@ public enum iCloudSync {
     ///   - destFile: Destination file URL (local)
     ///   - Returns: Whether the move was successful
     @discardableResult
-    private static func moveFile(from sourceFile: URL, to destFile: URL) async -> Bool {
+    static func moveFile(from sourceFile: URL, to destFile: URL) async -> Bool {
         // Track progress
         defer { incrementFilesProcessed() }
         let fileManager = FileManager.default
@@ -1707,26 +2074,23 @@ public enum iCloudSync {
         
         // Move file from iCloud to local
         do {
-            // For large files (> 5MB), skip the setUbiquitous method and go straight to copy+delete
-            // This is more reliable for large files
-            if fileSize > 5_000_000 { // 5 MB
-                DLOG("Large file detected (\(ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file))), skipping setUbiquitous and using copy+delete instead")
-                // Skip to copy method below
-            } else {
+            // For very small files (< 1MB), use setUbiquitous method
+            // For medium files (1-10MB), use regular copy
+            // For large files (> 10MB), use chunked copy
+            if fileSize < 1_000_000 { // Less than 1 MB
                 // Use a timeout for the move operation (only for smaller files)
                 let moveTask = Task {
                     try fileManager.setUbiquitous(false, itemAt: sourceFile, destinationURL: destFile)
                 }
                 
                 // Wait for the move with a timeout
-                let timeout: UInt64 = 180_000_000_000 // 180 seconds (increased for large files)
+                let timeout: UInt64 = 60_000_000_000 // 60 seconds for small files
                 do {
                     try await withTimeout(timeout: timeout) {
                         try await moveTask.value
                     }
                     DLOG("✅ Successfully moved file from iCloud to local: \(sourceFile.lastPathComponent)")
                     
-                    // Remove file from recovery tracking set
                     // Remove file from recovery tracking set (thread-safe)
                     Task.detached(priority: .high) {
                         await filesBeingRecovered.remove(sourceFile.path)
@@ -1769,26 +2133,72 @@ public enum iCloudSync {
                     }
                     // Fall through to try copying instead
                 }
+            } else if fileSize > 10_000_000 { // Greater than 10 MB - use chunked copy
+                DLOG("Large file detected (\(ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file))), using chunked file transfer")
+                do {
+                    // Use chunked file transfer for large files
+                    let success = try await copyLargeFileInChunks(from: sourceFile, to: destFile)
+                    
+                    if success {
+                        DLOG("✅ Successfully copied large file in chunks: \(sourceFile.lastPathComponent)")
+                        
+                        // Remove the source file after successful copy
+                        do {
+                            try await fileManager.removeItem(at: sourceFile)
+                            DLOG("Removed source file after chunked copying: \(sourceFile.path)")
+                        } catch {
+                            ELOG("Error removing source file after chunked copying \(sourceFile.path): \(error)")
+                            // Still return true since the file was copied successfully
+                        }
+                        
+                        // Remove file from recovery tracking set (thread-safe)
+                        Task.detached(priority: .high) {
+                            await filesBeingRecovered.remove(sourceFile.path)
+                        }
+                        
+                        return true
+                    }
+                } catch {
+                    ELOG("❌ Error during chunked file transfer for \(sourceFile.lastPathComponent): \(error)")
+                    
+                    // Post notification with error
+                    Task { @MainActor in
+                        NotificationCenter.default.post(
+                            name: iCloudSync.iCloudFileRecoveryError,
+                            object: nil,
+                            userInfo: [
+                                "error": "Error during chunked file transfer: \(error.localizedDescription)",
+                                "path": sourceFile.path,
+                                "timestamp": Date()
+                            ]
+                        )
+                    }
+                    
+                    // Fall through to try regular copy as a last resort
+                }
+            } else {
+                // Medium-sized files (1-10MB) - use regular copy directly
+                DLOG("Medium-sized file detected (\(ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file))), using regular copy method")
+                // Fall through to regular copy method below
             }
             
-            // Try copying instead if moving fails or times out
+            // Try regular copying as fallback or for medium-sized files
             do {
-                DLOG("Attempting to copy file instead: \(sourceFile.lastPathComponent)")
+                DLOG("Attempting to copy file: \(sourceFile.lastPathComponent)")
                 
                 // Use a timeout for the copy operation
                 let copyTask = Task {
                     try fileManager.copyItem(at: sourceFile, to: destFile)
                 }
                 
-                // Wait for the copy with a timeout
-                let copyTimeout: UInt64 = 180_000_000_000 // 180 seconds for large files
+                // Wait for the copy with a timeout - adjust based on file size
+                let copyTimeout: UInt64 = min(UInt64(fileSize / 50000) + 30_000_000_000, 180_000_000_000) // 30-180 seconds based on file size
                 do {
                     try await withTimeout(timeout: copyTimeout) {
                         try await copyTask.value
                     }
                     DLOG("✅ Successfully copied file from iCloud to local: \(sourceFile.lastPathComponent)")
                     
-                    // Remove file from recovery tracking set
                     // Remove file from recovery tracking set (thread-safe)
                     Task.detached(priority: .high) {
                         await filesBeingRecovered.remove(sourceFile.path)
@@ -1822,69 +2232,78 @@ public enum iCloudSync {
                             ]
                         )
                     }
+                    
+                    // Add to retry queue with exponential backoff
+                    addFileToRetryQueue(sourceFile: sourceFile, destFile: destFile, retryCount: 1)
+                    return false
+                } catch {
+                    ELOG("❌ Error copying file from iCloud to local \(sourceFile.lastPathComponent): \(error)")
+                    
+                    // Check if the error is a directory not found error
+                    var nsError = error as NSError
+                    if nsError.domain == NSCocoaErrorDomain && nsError.code == 4 {
+                        // Try to create the directory and retry
+                        let destDir = destFile.deletingLastPathComponent()
+                        DLOG("Attempting to create missing directory: \(destDir.path)")
+                        
+                        do {
+                            try fileManager.createDirectory(at: destDir, withIntermediateDirectories: true, attributes: nil)
+                            DLOG("Created directory, retrying copy operation")
+                            
+                            // Retry the copy operation
+                            try fileManager.copyItem(at: sourceFile, to: destFile)
+                            DLOG("✅ Successfully copied file after creating directory: \(sourceFile.lastPathComponent)")
+                            return true
+                        } catch {
+                            ELOG("❌ Failed to create directory or retry copy: \(error)")
+                        }
+                    }
+                    
                     // Post notification with error
-                    NotificationCenter.default.post(
-                        name: iCloudSync.iCloudFileRecoveryError,
-                        object: nil,
-                        userInfo: ["error": "Timeout copying file: \(sourceFile.lastPathComponent)"]
-                    )
+                    Task { @MainActor in
+                        NotificationCenter.default.post(
+                            name: iCloudSync.iCloudFileRecoveryError,
+                            object: nil,
+                            userInfo: [
+                                "error": "Error copying file: \(error.localizedDescription)",
+                                "path": sourceFile.path,
+                                "filename": sourceFile.lastPathComponent,
+                                "timestamp": Date()
+                            ]
+                        )
+                    }
+                    
+                    // Add to retry queue with appropriate retry strategy based on error type
+                    let nsErrorForAnalysis = error as NSError
+                    
+                    // For timeout errors (POSIX error 60), add the file to a retry queue with exponential backoff
+                    if nsErrorForAnalysis.domain == NSPOSIXErrorDomain && nsErrorForAnalysis.code == 60 {
+                        DLOG("Adding file to retry queue due to timeout: \(sourceFile.lastPathComponent)")
+                        addFileToRetryQueue(sourceFile: sourceFile, destFile: destFile, retryCount: 1)
+                    }
+                    // For permission errors, try again with a delay
+                    else if nsErrorForAnalysis.domain == NSCocoaErrorDomain &&
+                                (nsErrorForAnalysis.code == 513 || nsErrorForAnalysis.code == 257) {
+                        DLOG("Adding file to retry queue due to permission error: \(sourceFile.lastPathComponent)")
+                        addFileToRetryQueue(sourceFile: sourceFile, destFile: destFile, retryCount: 1)
+                    }
+                    // For other errors, add to retry queue without specific retry count
+                    else {
+                        addFileToRetryQueue(sourceFile: sourceFile, destFile: destFile)
+                    }
+                    
                     return false
                 }
             } catch {
-                ELOG("❌ Error copying file from iCloud to local \(sourceFile.lastPathComponent): \(error)")
-                
-                // Check if the error is a directory not found error
-                var nsError = error as NSError
-                if nsError.domain == NSCocoaErrorDomain && nsError.code == 4 {
-                    // Try to create the directory and retry
-                    let destDir = destFile.deletingLastPathComponent()
-                    DLOG("Attempting to create missing directory: \(destDir.path)")
-                    
-                    do {
-                        try fileManager.createDirectory(at: destDir, withIntermediateDirectories: true, attributes: nil)
-                        DLOG("Created directory, retrying copy operation")
-                        
-                        // Retry the copy operation
-                        try fileManager.copyItem(at: sourceFile, to: destFile)
-                        DLOG("✅ Successfully copied file after creating directory: \(sourceFile.lastPathComponent)")
-                        return true
-                    } catch {
-                        ELOG("❌ Failed to create directory or retry copy: \(error)")
-                    }
-                }
-                
+                ELOG("❌ Unexpected error handling file \(sourceFile.lastPathComponent): \(error)")
                 // Post notification with error
-                Task { @MainActor in
-                    NotificationCenter.default.post(
-                        name: iCloudSync.iCloudFileRecoveryError,
-                        object: nil,
-                        userInfo: [
-                            "error": "Error copying file: \(error.localizedDescription)",
-                            "path": sourceFile.path,
-                            "filename": sourceFile.lastPathComponent,
-                            "timestamp": Date()
-                        ]
-                    )
-                }
-                
-                // For timeout errors (POSIX error 60), add the file to a retry queue
-                let nsErrorTimeout = error as NSError
-                if nsErrorTimeout.domain == NSPOSIXErrorDomain && nsErrorTimeout.code == 60 {
-                    DLOG("Adding file to retry queue due to timeout: \(sourceFile.lastPathComponent)")
-                    addFileToRetryQueue(sourceFile: sourceFile, destFile: destFile)
-                }
-                
+                NotificationCenter.default.post(
+                    name: iCloudSync.iCloudFileRecoveryError,
+                    object: nil,
+                    userInfo: ["error": "Unexpected error: \(error)"]
+                )
                 return false
             }
-        } catch {
-            ELOG("❌ Unexpected error handling file \(sourceFile.lastPathComponent): \(error)")
-            // Post notification with error
-            NotificationCenter.default.post(
-                name: iCloudSync.iCloudFileRecoveryError,
-                object: nil,
-                userInfo: ["error": "Unexpected error: \(error)"]
-            )
-            return false
         }
     }
     
@@ -2216,7 +2635,6 @@ actor RomsDatastore {
         }
     }
 }
-
 enum SaveStateUpdateError: Error {
     case failedToConvertToString
     case missingOpeningCurlyBrace

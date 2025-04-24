@@ -107,13 +107,20 @@ public struct MarqueeText: View {
         self.initialDelay = initialDelay
     }
 
+    /// Environment value for reduce motion setting
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    
     /// Check if the animation should be running based on all visibility factors
     private var shouldAnimationRun: Bool {
         /// Animation should run only if:
         /// 1. The view is in the view hierarchy
         /// 2. The text is wider than the container (or width hasn't been calculated yet)
         /// 3. The app is in the active scene phase
-        return isInViewHierarchy && (!hasCalculatedWidth || textWidth > containerWidth) && scenePhase == .active
+        /// 4. Reduce motion is not enabled
+        return isInViewHierarchy && 
+               (!hasCalculatedWidth || textWidth > containerWidth) && 
+               scenePhase == .active && 
+               !reduceMotion
     }
 
     public var body: some View {
@@ -123,6 +130,8 @@ public struct MarqueeText: View {
                     .font(font)
                     .lineLimit(1)
                     .fixedSize()
+                    // If reduce motion is enabled, show truncated text with ellipsis
+                    .truncationMode(reduceMotion ? .tail : .none)
                     .background(
                         GeometryReader { textGeometry in
                             Color.clear.onAppear {
@@ -145,6 +154,8 @@ public struct MarqueeText: View {
             }
             .frame(width: containerWidth, alignment: .leading)
             .clipped()
+            // If reduce motion is enabled, allow text to be selectable
+            .allowsHitTesting(reduceMotion)
             .contentShape(Rectangle())
         }
         .frame(height: 20)
@@ -248,6 +259,11 @@ public struct MarqueeText: View {
     }
 
     private func startAnimation() {
+        /// Don't start animation if reduce motion is enabled
+        if reduceMotion {
+            return
+        }
+        
         /// Ensure we have valid measurements before attempting animation
         if containerWidth <= 0 || !hasCalculatedWidth {
             /// Retry after a short delay if container width isn't ready or text width hasn't been calculated

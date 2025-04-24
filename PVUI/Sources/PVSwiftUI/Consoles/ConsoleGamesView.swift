@@ -168,11 +168,11 @@ struct ConsoleGamesView: SwiftUI.View {
                 RetroGrid(lineColor: themeManager.currentPalette.defaultTintColor.swiftUIColor)
                     .opacity(0.2)
                 
-                VStack(spacing: 2) {
+                VStack(spacing: 4) {
                     // Status Message View
                     RetroStatusControlView()
                         .padding(.horizontal, 8)
-                        .padding(.top, 4)
+//                        .padding(.top, 4)
                     
                     displayOptionsView()
                         .allowsHitTesting(true)
