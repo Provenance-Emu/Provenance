@@ -222,6 +222,43 @@ public enum ButtonSound: String, Codable, Equatable, UserDefaultsRepresentable, 
     }
 }
 
+/// iCloud sync mode for Provenance
+public enum iCloudSyncMode: String, Codable, Equatable, UserDefaultsRepresentable, Defaults.Serializable, CaseIterable {
+    /// Use iCloud Drive for syncing
+    case iCloudDrive = "iCloudDrive"
+    
+    /// Use CloudKit for syncing
+    case cloudKit = "cloudKit"
+    
+    public var description: String {
+        switch self {
+        case .iCloudDrive:
+            return "iCloud Drive"
+        case .cloudKit:
+            return "CloudKit"
+        }
+    }
+    
+    public var subtitle: String {
+        switch self {
+        case .iCloudDrive:
+            return "Use iCloud Drive for file syncing (legacy)"
+        case .cloudKit:
+            return "Use CloudKit for database and file syncing (recommended)"
+        }
+    }
+    
+    /// Check if CloudKit sync is enabled
+    public var isCloudKit: Bool {
+        return self == .cloudKit
+    }
+    
+    /// Check if iCloud Drive sync is enabled
+    public var isICloudDrive: Bool {
+        return self == .iCloudDrive
+    }
+}
+
 // MARK: File syste
 public extension Defaults.Keys {
     static let useAppGroups = Key<Bool>("useAppGroups", default: false)
@@ -339,8 +376,13 @@ public extension Defaults.Keys {
 #else
     static let mainUIMode = Key<MainUIMode>("mainUIMode", default: .paged)
 #endif
-    static let iCloudSync = Key<Bool>("iCloudSync", default: false)
+    static let iCloudSyncMode = Key<iCloudSyncMode>("iCloudSyncMode", default: .cloudKit)
     static let unsupportedCores = Key<Bool>("unsupportedCores", default: false)
+    
+    /// Legacy setting - kept for backward compatibility
+    /// Use iCloudSyncMode instead
+    @available(*, deprecated, message: "Use iCloudSyncMode instead")
+    static let iCloudSync = Key<Bool>("iCloudSync", default: false)
 #if os(tvOS)
     static let tvOSThemes = Key<Bool>("tvOSThemes", default: false)
 #endif

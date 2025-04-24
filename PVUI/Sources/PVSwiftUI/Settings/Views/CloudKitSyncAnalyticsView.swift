@@ -30,14 +30,18 @@ public struct CloudKitSyncAnalyticsView: View {
                 
                 Spacer()
                 
-                Button(action: {
-                    analytics.resetAnalytics()
-                }) {
-                    Label("Reset", systemImage: "arrow.counterclockwise")
-                        .font(.caption)
-                        .foregroundColor(.retroBlue)
+                if #available(tvOS 17.0, *) {
+                    Button(action: {
+                        analytics.resetAnalytics()
+                    }) {
+                        Label("Reset", systemImage: "arrow.counterclockwise")
+                            .font(.caption)
+                            .foregroundColor(.retroBlue)
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                } else {
+                    // Fallback on earlier versions
                 }
-                .buttonStyle(BorderlessButtonStyle())
             }
             
             // Main stats
@@ -171,22 +175,26 @@ public struct CloudKitSyncAnalyticsView: View {
             .cornerRadius(10)
             
             // Sync history toggle
-            Button(action: {
-                withAnimation {
-                    showHistory.toggle()
+            if #available(tvOS 17.0, *) {
+                Button(action: {
+                    withAnimation {
+                        showHistory.toggle()
+                    }
+                }) {
+                    HStack {
+                        Text(showHistory ? "Hide Sync History" : "Show Sync History")
+                            .font(.subheadline)
+                            .foregroundColor(.retroBlue)
+                        
+                        Image(systemName: showHistory ? "chevron.up" : "chevron.down")
+                            .foregroundColor(.retroBlue)
+                    }
                 }
-            }) {
-                HStack {
-                    Text(showHistory ? "Hide Sync History" : "Show Sync History")
-                        .font(.subheadline)
-                        .foregroundColor(.retroBlue)
-                    
-                    Image(systemName: showHistory ? "chevron.up" : "chevron.down")
-                        .foregroundColor(.retroBlue)
-                }
+                .buttonStyle(BorderlessButtonStyle())
+                .padding(.top, 4)
+            } else {
+                // Fallback on earlier versions
             }
-            .buttonStyle(BorderlessButtonStyle())
-            .padding(.top, 4)
             
             // Sync history
             if showHistory {

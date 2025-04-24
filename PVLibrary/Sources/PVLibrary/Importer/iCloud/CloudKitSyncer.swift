@@ -464,13 +464,44 @@ public class CloudKitSyncer: SyncProvider {
     private func downloadFile(from fileURL: URL, to directory: String, filename: String, record: CKRecord) async {
         // Create local file path
         let documentsURL = URL.documentsPath
-
         let directoryURL = documentsURL.appendingPathComponent(directory)
-        let destinationURL = directoryURL.appendingPathComponent(filename)
+        
+        // Check if we have a relative path in the record to preserve subdirectory structure
+        var destinationURL = directoryURL.appendingPathComponent(filename)
+        if let relativePath = record["relativePath"] as? String, !relativePath.isEmpty {
+            DLOG("Found relative path in record: \(relativePath)")
+            
+            // If relativePath contains the filename at the end, use the parent directory
+            let relativePathComponents = relativePath.components(separatedBy: "/")
+            if relativePathComponents.last == filename {
+                // Create the subdirectory path
+                let subdirectoryComponents = relativePathComponents.dropLast()
+                if !subdirectoryComponents.isEmpty {
+                    let subdirectoryPath = subdirectoryComponents.joined(separator: "/")
+                    let subdirectoryURL = directoryURL.appendingPathComponent(subdirectoryPath)
+                    
+                    // Create the subdirectory
+                    do {
+                        try FileManager.default.createDirectory(at: subdirectoryURL, withIntermediateDirectories: true)
+                        destinationURL = subdirectoryURL.appendingPathComponent(filename)
+                        DLOG("Created subdirectory: \(subdirectoryURL.path)")
+                    } catch {
+                        ELOG("Error creating subdirectory: \(error.localizedDescription)")
+                    }
+                }
+            } else {
+                // Just append the relative path to the directory URL
+                let subdirectoryURL = directoryURL.appendingPathComponent(relativePath)
+                try? FileManager.default.createDirectory(at: subdirectoryURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+                destinationURL = subdirectoryURL
+            }
+        }
+        
+        DLOG("Downloading file to: \(destinationURL.path)")
         
         do {
             // Create directory if needed
-            try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true)
+            try FileManager.default.createDirectory(at: destinationURL.deletingLastPathComponent(), withIntermediateDirectories: true)
             
             // Copy file from asset to local storage
             if FileManager.default.fileExists(atPath: destinationURL.path) {
@@ -481,7 +512,7 @@ public class CloudKitSyncer: SyncProvider {
             
             // Add to new files for processing
             await newFiles.insert(destinationURL)
-            DLOG("Downloaded file from CloudKit: \(filename) in directory: \(directory)")
+            DLOG("Downloaded file from CloudKit: \(filename) to: \(destinationURL.path)")
             
             // Update database entry to mark file as downloaded
             await createDatabaseEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: true)
@@ -889,14 +920,46 @@ public class CloudKitSyncer: SyncProvider {
                         // Create destination path
                         let documentsURL = URL.documentsPath
                         let directoryURL = documentsURL.appendingPathComponent(directory)
-                        let destinationURL = directoryURL.appendingPathComponent(filename)
+                        var destinationURL = directoryURL.appendingPathComponent(filename)
+                        
+                        // Check if we have a relative path in the record to preserve subdirectory structure
+                        if let relativePath = record["relativePath"] as? String, !relativePath.isEmpty {
+                            DLOG("Found relative path in record: \(relativePath)")
+                            
+                            // If relativePath contains the filename at the end, use the parent directory
+                            let relativePathComponents = relativePath.components(separatedBy: "/")
+                            if relativePathComponents.last == filename {
+                                // Create the subdirectory path
+                                let subdirectoryComponents = relativePathComponents.dropLast()
+                                if !subdirectoryComponents.isEmpty {
+                                    let subdirectoryPath = subdirectoryComponents.joined(separator: "/")
+                                    let subdirectoryURL = directoryURL.appendingPathComponent(subdirectoryPath)
+                                    
+                                    // Create the subdirectory
+                                    do {
+                                        try FileManager.default.createDirectory(at: subdirectoryURL, withIntermediateDirectories: true)
+                                        destinationURL = subdirectoryURL.appendingPathComponent(filename)
+                                        DLOG("Created subdirectory: \(subdirectoryURL.path)")
+                                    } catch {
+                                        ELOG("Error creating subdirectory: \(error.localizedDescription)")
+                                    }
+                                }
+                            } else {
+                                // Just append the relative path to the directory URL
+                                let fullPath = directoryURL.appendingPathComponent(relativePath)
+                                destinationURL = fullPath
+                                
+                                // Create parent directory if needed
+                                try FileManager.default.createDirectory(at: destinationURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+                            }
+                        }
                         
                         DLOG("Preparing to download file to: \(destinationURL.path)")
                         
                         // Create directory if needed
-                        if !FileManager.default.fileExists(atPath: directoryURL.path) {
-                            DLOG("Creating directory: \(directoryURL.path)")
-                            try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true)
+                        if !FileManager.default.fileExists(atPath: destinationURL.deletingLastPathComponent().path) {
+                            DLOG("Creating directory: \(destinationURL.deletingLastPathComponent().path)")
+                            try FileManager.default.createDirectory(at: destinationURL.deletingLastPathComponent(), withIntermediateDirectories: true)
                         }
                         
                         progressTracker.updateProgress(0.5)
@@ -958,11 +1021,30 @@ public class CloudKitSyncer: SyncProvider {
         }
         
         let directory = directoryComponents[directoryIndex]
-        let filename = file.lastPathComponent
+        
+        // Calculate the relative path for the file
+        // This will include any subdirectories between the main directory and the filename
+        var relativePath = ""
+        
+        // If there are subdirectories between the main directory and the filename
+        if directoryIndex < directoryComponents.count - 2 {
+            // Get all components after the main directory but before the filename
+            let subdirectoryComponents = directoryComponents[(directoryIndex + 1)..<(directoryComponents.count - 1)]
+            // Join them with path separators
+            let subdirectoryPath = subdirectoryComponents.joined(separator: "/")
+            // Combine with the filename
+            relativePath = "\(subdirectoryPath)/\(file.lastPathComponent)"
+        } else {
+            // No subdirectories, just use the filename
+            relativePath = file.lastPathComponent
+        }
+        
+        let filename = relativePath
         
         // Create query
         let predicate = NSPredicate(format: "directory == %@ AND filename == %@", directory, filename)
-        let query = CKQuery(recordType: "File", predicate: predicate)
+        let recordType = getRecordType()
+        let query = CKQuery(recordType: recordType, predicate: predicate)
         
         // Execute query
         let (results, _) = try await privateDatabase.records(matching: query)
@@ -1109,6 +1191,36 @@ public class CloudKitSyncer: SyncProvider {
     }
     }
     
+    /// Calculate the relative path for a file within a directory
+    /// - Parameters:
+    ///   - file: The file URL
+    ///   - directory: The base directory
+    /// - Returns: The relative path from the base directory to the file
+    private func getRelativePath(for file: URL, in directory: String) -> String {
+        // Get the documents directory
+        let documentsURL = URL.documentsPath
+        let directoryURL = documentsURL.appendingPathComponent(directory)
+        
+        // Get the path components for both URLs
+        let fileComponents = file.pathComponents
+        let directoryComponents = directoryURL.pathComponents
+        
+        // Find where they diverge
+        var relativePath = ""
+        var i = 0
+        while i < directoryComponents.count && i < fileComponents.count && directoryComponents[i] == fileComponents[i] {
+            i += 1
+        }
+        
+        // Build the relative path from the divergence point
+        if i < fileComponents.count {
+            relativePath = fileComponents[i...].joined(separator: "/")
+        }
+        
+        DLOG("Calculated relative path: \(relativePath) for file: \(file.path) in directory: \(directory)")
+        return relativePath
+    }
+    
     /// Add metadata to a record for on-demand downloads
     /// - Parameters:
     ///   - record: The CloudKit record to update
@@ -1118,9 +1230,15 @@ public class CloudKitSyncer: SyncProvider {
         // Extract filename from URL
         let filename = file.lastPathComponent
         
+        // Calculate relative path to preserve subdirectory structure
+        let relativePath = getRelativePath(for: file, in: directory)
+        
         // Add metadata fields
         record["filename"] = filename as CKRecordValue
         record["directory"] = directory as CKRecordValue
+        record["relativePath"] = relativePath as CKRecordValue
+        
+        DLOG("Adding metadata for file: \(filename), directory: \(directory), relativePath: \(relativePath)")
         
         // Add file size
         do {

@@ -27,6 +27,14 @@ public struct CloudSyncStatusView: View {
     @State private var syncingFiles: Int = 0
     @State private var totalFiles: Int = 0
     
+    // Detailed sync information by file type
+    @State private var romSyncCount: Int = 0
+    @State private var saveStateSyncCount: Int = 0
+    @State private var biosSyncCount: Int = 0
+    @State private var batteryStateSyncCount: Int = 0
+    @State private var screenshotSyncCount: Int = 0
+    @State private var deltaSkinSyncCount: Int = 0
+    
     private let timer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
     
     public init() {}
@@ -62,9 +70,48 @@ public struct CloudSyncStatusView: View {
                 Divider()
                     .background(Color.retroPurple)
                 
+                // Sync status
                 Text(syncStatus)
                     .font(.subheadline)
-                    .foregroundColor(.white)
+                    .foregroundColor(.secondary)
+                    .padding(.bottom, 4)
+                
+                // Detailed sync information
+                if syncingFiles > 0 {
+                    VStack(alignment: .leading, spacing: 4) {
+                        if romSyncCount > 0 {
+                            Text("ROMs: \(romSyncCount)")
+                                .font(.caption)
+                                .foregroundColor(.retroBlue)
+                        }
+                        if saveStateSyncCount > 0 {
+                            Text("Save States: \(saveStateSyncCount)")
+                                .font(.caption)
+                                .foregroundColor(.retroPurple)
+                        }
+                        if biosSyncCount > 0 {
+                            Text("BIOS: \(biosSyncCount)")
+                                .font(.caption)
+                                .foregroundColor(.retroPink)
+                        }
+                        if batteryStateSyncCount > 0 {
+                            Text("Battery States: \(batteryStateSyncCount)")
+                                .font(.caption)
+                                .foregroundColor(.retroBlue)
+                        }
+                        if screenshotSyncCount > 0 {
+                            Text("Screenshots: \(screenshotSyncCount)")
+                                .font(.caption)
+                                .foregroundColor(.retroPurple)
+                        }
+                        if deltaSkinSyncCount > 0 {
+                            Text("Delta Skins: \(deltaSkinSyncCount)")
+                                .font(.caption)
+                                .foregroundColor(.retroPink)
+                        }
+                    }
+                    .padding(.bottom, 4)
+                }
                 
                 if syncProgress > 0 && syncProgress < 1.0 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -259,9 +306,37 @@ public struct CloudSyncStatusView: View {
         var pendingFiles = 0
         var newFiles = 0
         
+        // Reset counts for each file type
+        romSyncCount = 0
+        saveStateSyncCount = 0
+        biosSyncCount = 0
+        batteryStateSyncCount = 0
+        screenshotSyncCount = 0
+        deltaSkinSyncCount = 0
+        
         for syncer in activeSyncers {
             pendingFiles += syncer.pendingFilesToDownload.count
             newFiles += syncer.newFiles.count
+            
+            // Update counts by file type
+            if let directories = (syncer as? CloudKitSyncer)?.directories {
+                let count = syncer.pendingFilesToDownload.count + syncer.newFiles.count
+                if count > 0 {
+                    if directories.contains("ROMs") {
+                        romSyncCount += count
+                    } else if directories.contains("Saves") || directories.contains("Save States") {
+                        saveStateSyncCount += count
+                    } else if directories.contains("BIOS") {
+                        biosSyncCount += count
+                    } else if directories.contains("Battery States") {
+                        batteryStateSyncCount += count
+                    } else if directories.contains("Screenshots") {
+                        screenshotSyncCount += count
+                    } else if directories.contains("DeltaSkins") {
+                        deltaSkinSyncCount += count
+                    }
+                }
+            }
         }
         
         let totalPending = pendingFiles + newFiles

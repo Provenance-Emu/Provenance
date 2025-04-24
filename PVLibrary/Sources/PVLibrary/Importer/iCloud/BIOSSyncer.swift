@@ -62,24 +62,60 @@ public class BIOSSyncer: iCloudContainerSyncer, BIOSSyncing {
     }
     
     /// Get the local URL for a BIOS file
-    /// - Parameter filename: The BIOS filename
+    /// - Parameter filename: The BIOS filename or relative path (systemID/filename)
     /// - Returns: The local URL for the BIOS file
     public func localURL(for filename: String) -> URL? {
         guard let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
             return nil
         }
         
+        // Check if the filename contains a path separator
+        if filename.contains("/") {
+            // Split the path into components
+            let components = filename.components(separatedBy: "/")
+            
+            // If we have a valid system ID and filename
+            if components.count >= 2 {
+                let systemID = components[0]
+                let actualFilename = components[1]
+                
+                // Return the URL with the system subdirectory
+                return documentsURL.appendingPathComponent("BIOS")
+                    .appendingPathComponent(systemID)
+                    .appendingPathComponent(actualFilename)
+            }
+        }
+        
+        // Fallback to the old behavior for backward compatibility
         return documentsURL.appendingPathComponent("BIOS").appendingPathComponent(filename)
     }
     
     /// Get the cloud URL for a BIOS file
-    /// - Parameter filename: The BIOS filename
+    /// - Parameter filename: The BIOS filename or relative path (systemID/filename)
     /// - Returns: The cloud URL for the BIOS file
     public func cloudURL(for filename: String) -> URL? {
         guard let containerURL = documentsURL else {
             return nil
         }
         
+        // Check if the filename contains a path separator
+        if filename.contains("/") {
+            // Split the path into components
+            let components = filename.components(separatedBy: "/")
+            
+            // If we have a valid system ID and filename
+            if components.count >= 2 {
+                let systemID = components[0]
+                let actualFilename = components[1]
+                
+                // Return the URL with the system subdirectory
+                return containerURL.appendingPathComponent("BIOS")
+                    .appendingPathComponent(systemID)
+                    .appendingPathComponent(actualFilename)
+            }
+        }
+        
+        // Fallback to the old behavior for backward compatibility
         return containerURL.appendingPathComponent("BIOS").appendingPathComponent(filename)
     }
     

@@ -80,17 +80,48 @@ public extension PVFile {
         }
     }
     
+    /// Get the real path for this file based on the current iCloud sync mode
+    /// This handles the differences between CloudKit and iCloud Drive paths
+    var realPath: URL {
+        let fixedPartialPath = actualPartialPath
+        let syncMode = Defaults[.iCloudSyncMode]
+        
+        // If we're using CloudKit, use the local documents directory
+        if syncMode.isCloudKit {
+            return RelativeRoot.documentsDirectory.appendingPathComponent(fixedPartialPath)
+        }
+        
+        // For iCloud Drive, use the iCloud container if available
+        if let iCloudContainer = URL.iCloudContainerDirectory {
+            return iCloudContainer.appendingPathComponent(fixedPartialPath)
+        }
+        
+        // Fallback to the local documents directory
+        return RelativeRoot.documentsDirectory.appendingPathComponent(fixedPartialPath)
+    }
+    
     /// attempts to fix `partialPath`
     var actualPartialPath: String {
         if let fixedPartialPath = _actualPartialPath {
             return fixedPartialPath
         }
         var mutatingPartialPath = partialPath
+        
+        // Fix common path issues
         fixPartialPath(substring: "file:///private/", &mutatingPartialPath)
         fixPartialPath(substring: "file:///", &mutatingPartialPath)
+        fixPartialPath(substring: "private/", &mutatingPartialPath)
+        
+        // Remove document directory paths
         fixPartialPath(remove: URL.documentsDirectory, &mutatingPartialPath)
         fixPartialPath(remove: URL.iCloudDocumentsDirectory, &mutatingPartialPath)
         fixPartialPath(remove: URL.iCloudContainerDirectory, &mutatingPartialPath)
+        
+        // Fix any remaining issues with the path
+        if mutatingPartialPath.hasPrefix("/") {
+            mutatingPartialPath = String(mutatingPartialPath.dropFirst())
+        }
+        
         _actualPartialPath = mutatingPartialPath
         return mutatingPartialPath
     }
@@ -156,7 +187,8 @@ public extension PVFile {
     var requiresSync: Bool {
         get {
             // Only check if iCloud sync is enabled
-            guard Defaults[.iCloudSync] else {
+            let syncMode = Defaults[.iCloudSyncMode]
+            guard syncMode.isEnabled else {
                 return false
             }
             
@@ -191,19 +223,12 @@ public extension PVFile {
     var url: URL? {
         get {
             let isPartialPathFixed = _actualPartialPath != nil
-            var ogPartialPath = partialPath
+            let ogPartialPath = partialPath
             let fixedPartialPath = actualPartialPath
             var returnUrl: URL
             var failedToFixPartialPath = false
+            
             defer {
-                /*if !isPartialPathFixed {
-                    DLOG("""
-                    original partialPath: \(ogPartialPath)
-                    fixed partialPath: \(fixedPartialPath)
-                    url: \(returnUrl)
-                    relativeRoot: \(relativeRoot)
-                    """)
-                }*/
                 if !isPartialPathFixed && failedToFixPartialPath {
                     ELOG("""
                     invalid partial path: \(fixedPartialPath)
@@ -213,11 +238,16 @@ public extension PVFile {
                     """)
                 }
             }
+            
+            // Check for problematic paths first
             if fixedPartialPath.contains("iCloud") || fixedPartialPath.contains("private") {
                 failedToFixPartialPath = true
                 var pathComponents = (fixedPartialPath as NSString).pathComponents
-                pathComponents.removeFirst()
+                if !pathComponents.isEmpty {
+                    pathComponents.removeFirst()
+                }
                 let path = pathComponents.joined(separator: "/")
+                
                 #if os(tvOS)
                 let isDocumentsDir = path.contains("Documents") || path.contains("Caches")
                 #else
@@ -238,7 +268,9 @@ public extension PVFile {
                     }
                 }
             }
-            returnUrl = relativeRoot.appendingPath(fixedPartialPath)
+            
+            // Use the realPath property which handles sync mode differences
+            returnUrl = realPath
             /*if !isPartialPathFixed {
                 DLOG("""
                 valid partial path: \(fixedPartialPath)

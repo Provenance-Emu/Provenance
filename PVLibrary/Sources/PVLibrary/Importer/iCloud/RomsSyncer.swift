@@ -267,6 +267,25 @@ public class CloudKitRomsSyncer: CloudKitSyncer, RomsSyncing {
                     record["filename"] = localURL.lastPathComponent
                     record["fileData"] = CKAsset(fileURL: localURL)
                     
+                    // Calculate and store relative path to preserve subdirectory structure
+                    // This should be the path relative to the ROMs directory, including the system subdirectory
+                    let documentsURL = URL.documentsPath
+                    let romsURL = documentsURL.appendingPathComponent("ROMs")
+                    
+                    // Calculate relative path
+                    var relativePath = ""
+                    if localURL.path.hasPrefix(romsURL.path) {
+                        // Remove the ROMs prefix to get the relative path
+                        relativePath = String(localURL.path.dropFirst(romsURL.path.count + 1)) // +1 for the trailing slash
+                        DLOG("Calculated relative path for ROM: \(relativePath)")
+                    } else {
+                        // If not under ROMs directory, use system/filename as fallback
+                        relativePath = "\(systemDir)/\(localURL.lastPathComponent)"
+                        DLOG("Using fallback relative path for ROM: \(relativePath)")
+                    }
+                    
+                    record["relativePath"] = relativePath
+                    
                     // Add metadata
                     record["title"] = game.title
                     record["md5"] = game.md5Hash

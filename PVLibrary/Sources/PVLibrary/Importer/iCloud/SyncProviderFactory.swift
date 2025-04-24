@@ -8,6 +8,8 @@
 
 import Foundation
 import PVLogging
+import PVSettings
+import Defaults
 
 /// Factory for creating sync providers
 public class SyncProviderFactory {
@@ -22,13 +24,21 @@ public class SyncProviderFactory {
         notificationCenter: NotificationCenter = .default,
         errorHandler: CloudSyncErrorHandler
     ) -> SyncProvider {
-//        #if os(tvOS)
-        DLOG("Creating CloudKit syncer for all OS's")
-        return CloudKitSyncer(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
-//        #else
-//        DLOG("Creating iCloud Documents syncer for all ios/tvOS's")
-//        return iCloudContainerSyncer(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
-//        #endif
+        // Get the current iCloud sync mode and check if sync is enabled
+        let syncMode = Defaults[.iCloudSyncMode]
+        let iCloudSyncEnabled = Defaults[.iCloudSync]
+        
+        // Log the current sync state
+        DLOG("iCloudSync=\(iCloudSyncEnabled), iCloudSyncMode=\(syncMode.description)")
+        
+        // Return the appropriate syncer based on the mode
+        if syncMode.isCloudKit {
+            DLOG("Creating CloudKit syncer based on iCloudSyncMode=\(syncMode.description)")
+            return CloudKitSyncer(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
+        } else {
+            DLOG("Creating iCloud Documents syncer based on iCloudSyncMode=\(syncMode.description)")
+            return iCloudContainerSyncer(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
+        }
     }
     
     /// Create a ROM sync provider
@@ -40,15 +50,21 @@ public class SyncProviderFactory {
         notificationCenter: NotificationCenter = .default,
         errorHandler: CloudSyncErrorHandler
     ) -> RomsSyncing {
-//        #if os(tvOS)
-        DLOG("Creating CloudKit ROM syncer for all OS's")
-        let syncer: RomsSyncing = CloudKitRomsSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
-        return syncer
-//        #else
-//        DLOG("Creating iCloud ROM syncer for iOS/macOS")
-//        let syncer: RomsSyncing = RomsSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
-//        return syncer
-//        #endif
+        // Get the current iCloud sync mode and check if sync is enabled
+        let syncMode = Defaults[.iCloudSyncMode]
+        let iCloudSyncEnabled = Defaults[.iCloudSync]
+        
+        // Log the current sync state
+        DLOG("iCloudSync=\(iCloudSyncEnabled), iCloudSyncMode=\(syncMode.description)")
+        
+        // Return the appropriate syncer based on the mode
+        if syncMode.isCloudKit {
+            DLOG("Creating CloudKit ROM syncer based on iCloudSyncMode=\(syncMode.description)")
+            return CloudKitRomsSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
+        } else {
+            DLOG("Creating iCloud ROM syncer based on iCloudSyncMode=\(syncMode.description)")
+            return RomsSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
+        }
     }
     
     /// Create a save states sync provider
@@ -60,15 +76,21 @@ public class SyncProviderFactory {
         notificationCenter: NotificationCenter = .default,
         errorHandler: CloudSyncErrorHandler
     ) -> SaveStatesSyncing {
-//        #if os(tvOS)
-        DLOG("Creating CloudKit save states syncer for tvOS")
-        let syncer: SaveStatesSyncing = CloudKitSaveStatesSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
-        return syncer
-//        #else
-//        DLOG("Creating iCloud save states syncer for iOS/macOS")
-//        let syncer: SaveStatesSyncing = SaveStatesSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
-//        return syncer
-//        #endif
+        // Get the current iCloud sync mode and check if sync is enabled
+        let syncMode = Defaults[.iCloudSyncMode]
+        let iCloudSyncEnabled = Defaults[.iCloudSync]
+        
+        // Log the current sync state
+        DLOG("iCloudSync=\(iCloudSyncEnabled), iCloudSyncMode=\(syncMode.description)")
+        
+        // Return the appropriate syncer based on the mode
+        if syncMode.isCloudKit {
+            DLOG("Creating CloudKit save states syncer based on iCloudSyncMode=\(syncMode.description)")
+            return CloudKitSaveStatesSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
+        } else {
+            DLOG("Creating iCloud save states syncer based on iCloudSyncMode=\(syncMode.description)")
+            return SaveStatesSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
+        }
     }
     
     /// Create a BIOS sync provider
@@ -80,14 +102,20 @@ public class SyncProviderFactory {
         notificationCenter: NotificationCenter = .default,
         errorHandler: CloudSyncErrorHandler
     ) -> BIOSSyncing {
-//        #if os(tvOS)
-        DLOG("Creating CloudKit BIOS syncer for all OS's")
-        let syncer: BIOSSyncing = CloudKitBIOSSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
-        return syncer
-//        #else
-//        DLOG("Creating iCloud BIOS syncer for iOS/macOS")
-//        let syncer: BIOSSyncing = BIOSSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
-//        return syncer
-//        #endif
+        // Get the current iCloud sync mode and check if sync is enabled
+        let syncMode = Defaults[.iCloudSyncMode]
+        let iCloudSyncEnabled = Defaults[.iCloudSync]
+        
+        // Log the current sync state
+        DLOG("iCloudSync=\(iCloudSyncEnabled), iCloudSyncMode=\(syncMode.description)")
+        
+        // Return the appropriate syncer based on the mode
+        if syncMode.isCloudKit {
+            DLOG("Creating CloudKit BIOS syncer based on iCloudSyncMode=\(syncMode.description)")
+            return CloudKitBIOSSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
+        } else {
+            DLOG("Creating iCloud BIOS syncer based on iCloudSyncMode=\(syncMode.description)")
+            return BIOSSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
+        }
     }
 }

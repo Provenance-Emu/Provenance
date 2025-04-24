@@ -134,10 +134,30 @@ public struct CloudSyncSettingsView: View {
                             .font(.subheadline.bold())
                             .foregroundColor(.retroPink)
                         
-                        Text("ROMs: \(syncStats.cloudKitRecords.roms)")
-                        Text("Save States: \(syncStats.cloudKitRecords.saveStates)")
-                        Text("BIOS: \(syncStats.cloudKitRecords.bios)")
+                        Group {
+                            Text("ROMs: \(syncStats.cloudKitRecords.roms)")
+                                .foregroundColor(.retroBlue)
+                            Text("Save States: \(syncStats.cloudKitRecords.saveStates)")
+                                .foregroundColor(.retroPurple)
+                            Text("BIOS: \(syncStats.cloudKitRecords.bios)")
+                                .foregroundColor(.retroPink)
+                        }
+                        
+                        Divider()
+                            .padding(.vertical, 2)
+                        
+                        Group {
+                            Text("Battery States: \(syncStats.cloudKitRecords.batteryStates)")
+                                .foregroundColor(.retroBlue)
+                            Text("Screenshots: \(syncStats.cloudKitRecords.screenshots)")
+                                .foregroundColor(.retroPurple)
+                            Text("Delta Skins: \(syncStats.cloudKitRecords.deltaSkins)")
+                                .foregroundColor(.retroPink)
+                        }
+                        
                         Text("Total Records: \(syncStats.cloudKitRecords.total)")
+                            .foregroundColor(.retroGreen)
+                            .fontWeight(.bold)
                     }
                     .font(.subheadline)
                     .focusableIfAvailable()
@@ -334,6 +354,9 @@ class CloudSyncSettingsViewModel: ObservableObject {
         var romCount = 0
         var saveStateCount = 0
         var biosCount = 0
+        var batteryStateCount = 0
+        var screenshotCount = 0
+        var deltaSkinCount = 0
         
         // Get ROM syncer record count
         if let romSyncers = CloudKitSyncerStore.shared.romSyncers as? [CloudKitRomsSyncer] {
@@ -359,10 +382,34 @@ class CloudSyncSettingsViewModel: ObservableObject {
             }
         }
         
+        // Get non-database file counts
+        if let nonDatabaseSyncer = syncers.first(where: { $0 is CloudKitNonDatabaseSyncer }) as? CloudKitNonDatabaseSyncer {
+            // Get all records
+            let allRecords = await nonDatabaseSyncer.getAllRecords()
+            
+            // Filter by directory
+            batteryStateCount = allRecords.filter { record in
+                (record["directory"] as? String) == "Battery States"
+            }.count
+            
+            screenshotCount = allRecords.filter { record in
+                (record["directory"] as? String) == "Screenshots"
+            }.count
+            
+            deltaSkinCount = allRecords.filter { record in
+                (record["directory"] as? String) == "DeltaSkins"
+            }.count
+            
+            DLOG("Found non-database records - Battery States: \(batteryStateCount), Screenshots: \(screenshotCount), Delta Skins: \(deltaSkinCount)")
+        }
+        
         return CloudKitRecordCounts(
             roms: romCount,
             saveStates: saveStateCount,
-            bios: biosCount
+            bios: biosCount,
+            batteryStates: batteryStateCount,
+            screenshots: screenshotCount,
+            deltaSkins: deltaSkinCount
         )
     }
 }
