@@ -60,7 +60,6 @@ public struct StatusMessageView: View {
             }
         }
         .frame(maxWidth: .infinity) // Make the view take up full width
-        .padding(10) // Match the search bar's internal padding
         .background(
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color.black.opacity(0.2))

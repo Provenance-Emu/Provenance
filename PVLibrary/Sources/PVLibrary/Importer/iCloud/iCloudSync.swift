@@ -52,6 +52,8 @@ public enum iCloudConstants {
     public static let containerIdentifier =  (Bundle.main.infoDictionary?["NSUbiquitousContainers"] as? [String: AnyObject])?.keys.first ?? defaultProvenanceContainerIdentifier
 }
 
+// Remove duplicate class declaration
+
 public enum SyncError: Error {
     case noUbiquityURL
 }
@@ -557,6 +559,9 @@ public enum iCloudSync {
     static let errorHandler: CloudSyncErrorHandler = CloudSyncErrorHandler.shared
     static var romDatabaseInitialized: AnyCancellable?
     
+    // Track whether a file recovery session is currently active
+    static var isRecoverySessionActive: Bool = false
+    
     public static func initICloudDocuments() {
         // Check for files stuck in iCloud Drive at startup
         Task {
@@ -960,8 +965,14 @@ public enum iCloudSync {
         // Reset progress tracking
         resetProgress()
         
-        // Post notification that file recovery has started
-        NotificationCenter.default.post(name: iCloudFileRecoveryStarted, object: nil)
+        // Only post notification if we're not already in an active recovery session
+        if !iCloudSync.isRecoverySessionActive {
+            iCloudSync.isRecoverySessionActive = true
+            DLOG("Starting new file recovery session")
+            NotificationCenter.default.post(name: iCloudSync.iCloudFileRecoveryStarted, object: nil)
+        } else {
+            DLOG("File recovery session already active, skipping duplicate notification")
+        }
         
         guard let iCloudContainer = URL.iCloudContainerDirectory else {
             ELOG("Cannot access iCloud container directory")
@@ -1631,14 +1642,15 @@ public enum iCloudSync {
         if hasStuckFiles {
             ILOG("Found \(stuckFilesCount) files stuck in iCloud Drive. Attempting recovery...")
             
-            // Notify the user that we're recovering files
-            NotificationCenter.default.post(name: iCloudSync.iCloudFileRecoveryStarted, object: nil)
-            
             // Move files from iCloud Drive to local Documents
+            // This will handle the start notification internally
             await moveFilesFromiCloudDriveToLocalDocuments()
             
             // Notify the user that recovery is complete
             NotificationCenter.default.post(name: iCloudSync.iCloudFileRecoveryCompleted, object: nil)
+            
+            // Reset the session flag
+            iCloudSync.isRecoverySessionActive = false
             
             ILOG("File recovery from iCloud Drive completed")
         } else {
