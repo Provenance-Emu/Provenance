@@ -97,7 +97,10 @@ public extension PVFile {
         
         // For iCloud Drive, use the iCloud container if available
         if let iCloudContainer = URL.iCloudContainerDirectory {
-            return iCloudContainer.appendingPathComponent(fixedPartialPath)
+            let possibleCloudPath =  iCloudContainer.appendingPathComponent(fixedPartialPath)
+            if FileManager.default.fileExists(atPath: possibleCloudPath.path) {
+                return possibleCloudPath
+            }
         }
         
         // Fallback to the local documents directory
