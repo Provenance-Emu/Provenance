@@ -569,6 +569,9 @@ public enum iCloudSync {
     /// iCloud file recovery started notification
     public static let iCloudFileRecoveryStarted = Notification.Name("iCloudFileRecoveryStarted")
     
+    /// iCloud file recovery progress notification
+    public static let iCloudFileRecoveryProgress = Notification.Name("iCloudFileRecoveryProgress")
+
     /// iCloud file recovery completed notification
     public static let iCloudFileRecoveryCompleted = Notification.Name("iCloudFileRecoveryCompleted")
     
@@ -865,8 +868,69 @@ public enum iCloudSync {
     
     /// Move files from iCloud Drive to local Documents directory
     /// Used when switching from iCloud Drive mode to CloudKit mode
+    // Progress tracking for file movement
+    private static var totalFilesToMove = 0
+    private static var filesProcessed = 0
+    private static let progressLock = NSLock()
+    
+    /// Reset progress tracking
+    private static func resetProgress() {
+        progressLock.lock()
+        defer { progressLock.unlock() }
+        totalFilesToMove = 0
+        filesProcessed = 0
+    }
+    
+    /// Increment the number of files processed
+    private static func incrementFilesProcessed() {
+        progressLock.lock()
+        defer { progressLock.unlock() }
+        filesProcessed += 1
+        
+        // Log progress every 10 files or when it's a multiple of 5%
+        if filesProcessed % 10 == 0 || (totalFilesToMove > 0 && filesProcessed * 20 % totalFilesToMove == 0) {
+            let percentage = totalFilesToMove > 0 ? Double(filesProcessed) / Double(totalFilesToMove) * 100.0 : 0
+            ILOG("File recovery progress: \(filesProcessed)/\(totalFilesToMove) (\(Int(percentage))%)")
+            
+            // Post notification for progress updates
+            NotificationCenter.default.post(
+                name: iCloudFileRecoveryProgress,
+                object: nil,
+                userInfo: ["current": filesProcessed, "total": totalFilesToMove]
+            )
+        }
+    }
+    
+    /// Add to the total number of files to move
+    private static func addToTotalFiles(_ count: Int) {
+        progressLock.lock()
+        defer { progressLock.unlock() }
+        totalFilesToMove += count
+        ILOG("Total files to move: \(totalFilesToMove)")
+        
+        // Post notification for initial progress
+        NotificationCenter.default.post(
+            name: iCloudFileRecoveryProgress,
+            object: nil,
+            userInfo: ["current": filesProcessed, "total": totalFilesToMove]
+        )
+    }
+        
+    /// Public method to manually trigger file recovery from iCloud Drive
+    /// This is useful for testing and for users who want to manually trigger recovery
+    public static func manuallyTriggerFileRecovery() async {
+        ILOG("Manually triggering file recovery from iCloud Drive")
+        await moveFilesFromiCloudDriveToLocalDocuments()
+    }
+    
     static func moveFilesFromiCloudDriveToLocalDocuments() async {
         ILOG("Moving files from iCloud Drive to local Documents directory")
+        
+        // Reset progress tracking
+        resetProgress()
+        
+        // Post notification that file recovery has started
+        NotificationCenter.default.post(name: iCloudFileRecoveryStarted, object: nil)
         
         guard let iCloudContainer = URL.iCloudContainerDirectory else {
             ELOG("Cannot access iCloud container directory")
@@ -886,6 +950,10 @@ public enum iCloudSync {
         
         let directories = ["BIOS", "Battery States", "Screenshots", "RetroArch", "DeltaSkins", "Save States", "ROMs"]
         
+        // First count all files to get a total
+        await countAllFiles(in: directories, iCloudContainer: iCloudDocuments)
+        
+        // Now move the files with progress tracking
         await withTaskGroup(of: Void.self) { group in
             for directory in directories {
                 group.addTask {
@@ -895,7 +963,48 @@ public enum iCloudSync {
             await group.waitForAll()
         }
         
-        ILOG("Completed moving files from iCloud Drive to local Documents directory")
+        ILOG("Completed moving files from iCloud Drive to local Documents directory (\(filesProcessed)/\(totalFilesToMove) files processed)")
+        
+        // Post final notification with complete progress
+        NotificationCenter.default.post(
+            name: .init("iCloudFileRecoveryProgress"),
+            object: nil,
+            userInfo: ["current": filesProcessed, "total": totalFilesToMove]
+        )
+        
+        // Post notification that file recovery has completed
+        NotificationCenter.default.post(name: iCloudFileRecoveryCompleted, object: nil)
+    }
+    
+    /// Count all files in the directories to get a total for progress tracking
+    private static func countAllFiles(in directories: [String], iCloudContainer: URL) async {
+        for directory in directories {
+            let iCloudDirectory = iCloudContainer.appendingPathComponent(directory)
+            
+            // Skip if directory doesn't exist
+            if !FileManager.default.fileExists(atPath: iCloudDirectory.path) {
+                continue
+            }
+            
+            // Count files recursively
+            do {
+                if let enumerator = FileManager.default.enumerator(at: iCloudDirectory, includingPropertiesForKeys: [.isRegularFileKey], options: [.skipsHiddenFiles]) {
+                    var count = 0
+                    for case let fileURL as URL in enumerator {
+                        var isDirectory: ObjCBool = false
+                        if FileManager.default.fileExists(atPath: fileURL.path, isDirectory: &isDirectory), !isDirectory.boolValue {
+                            count += 1
+                        }
+                    }
+                    if count > 0 {
+                        addToTotalFiles(count)
+                        DLOG("Found \(count) files to move in directory: \(directory)")
+                    }
+                }
+            } catch {
+                ELOG("Error counting files in directory \(directory): \(error)")
+            }
+        }
     }
     
     /// Move files from local Documents directory to iCloud Drive
@@ -1035,7 +1144,20 @@ public enum iCloudSync {
     ///   - Returns: Whether the move was successful
     @discardableResult
     private static func moveFile(from sourceFile: URL, to destFile: URL) async -> Bool {
+        // Track progress
+        defer { incrementFilesProcessed() }
         let fileManager = FileManager.default
+        
+        // Get file size for logging
+        let fileSize: Int64
+        do {
+            let attributes = try fileManager.attributesOfItem(atPath: sourceFile.path)
+            fileSize = attributes[.size] as? Int64 ?? 0
+            DLOG("Processing file: \(sourceFile.lastPathComponent) (\(ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file)))")
+        } catch {
+            ELOG("Error getting file size for \(sourceFile.path): \(error)")
+            fileSize = 0
+        }
         
         // Skip if source file doesn't exist
         guard fileManager.fileExists(atPath: sourceFile.path) else {
@@ -1066,18 +1188,26 @@ public enum iCloudSync {
             }
         }
         
+        DLOG("Starting move of file: \(sourceFile.lastPathComponent) to \(destFile.path)")
+        
         // Move file from iCloud to local
         do {
+            // For large files, log that this might take time
+            if fileSize > 10_000_000 { // 10 MB
+                DLOG("Moving large file (\(ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file))), this may take some time...")
+            }
+            
             try fileManager.setUbiquitous(false, itemAt: sourceFile, destinationURL: destFile)
-            DLOG("Moved file from iCloud to local: \(sourceFile.lastPathComponent)")
+            DLOG("✅ Successfully moved file from iCloud to local: \(sourceFile.lastPathComponent)")
             return true
         } catch {
-            ELOG("Error moving file from iCloud to local \(sourceFile.lastPathComponent): \(error)")
+            ELOG("❌ Error moving file from iCloud to local \(sourceFile.lastPathComponent): \(error)")
             
             // Try copying instead if moving fails
             do {
+                DLOG("Attempting to copy file instead: \(sourceFile.lastPathComponent)")
                 try fileManager.copyItem(at: sourceFile, to: destFile)
-                DLOG("Copied file from iCloud to local: \(sourceFile.lastPathComponent)")
+                DLOG("✅ Successfully copied file from iCloud to local: \(sourceFile.lastPathComponent)")
                 
                 // Remove the iCloud file after successful copy
                 do {
@@ -1090,7 +1220,7 @@ public enum iCloudSync {
                     return true
                 }
             } catch {
-                ELOG("Error copying file from iCloud to local \(sourceFile.lastPathComponent): \(error)")
+                ELOG("❌ Error copying file from iCloud to local \(sourceFile.lastPathComponent): \(error)")
                 return false
             }
         }

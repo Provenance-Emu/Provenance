@@ -14,6 +14,7 @@ import PVLibrary
 import PVThemes
 import Combine
 import PVUIBase
+import Perception
 
 @available(iOS 14, tvOS 14, *)
 struct HomeView: SwiftUI.View {
@@ -138,7 +139,12 @@ struct HomeView: SwiftUI.View {
                         .padding(.bottom, 8)
                 }
                 
-                // Import Progress View
+                // Status Message View
+                StatusMessageView()
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                
+                // Import Progress View (legacy - can be removed once StatusMessageView is fully tested)
                 ImportProgressView(
                     gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
                     updatesController: AppState.shared.libraryUpdatesController!,

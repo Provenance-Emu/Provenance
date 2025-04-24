@@ -171,7 +171,12 @@ struct ConsoleGamesView: SwiftUI.View {
                     displayOptionsView()
                         .allowsHitTesting(true)
                 
-                // Import Progress View
+                // Status Message View
+                StatusMessageView()
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                
+                // Import Progress View (legacy - can be removed once StatusMessageView is fully tested)
                 ImportProgressView(
                     gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
                     updatesController: AppState.shared.libraryUpdatesController!,

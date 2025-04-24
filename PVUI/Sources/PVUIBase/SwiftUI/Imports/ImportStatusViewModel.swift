@@ -1,0 +1,69 @@
+//
+//  ImportStatusViewModel.swift
+//  PVUI
+//
+//  Created by Joseph Mattiello on 4/24/25.
+//  Copyright © 2025 Provenance Emu. All rights reserved.
+//
+
+import Foundation
+import Combine
+import PVLibrary
+import SwiftUI
+
+/// ViewModel for ImportStatusView to handle state and actor isolation
+@MainActor
+public class ImportStatusViewModel: ObservableObject {
+    @Published public var queueItems: [ImportQueueItem] = []
+    @Published public var isVisible = false
+    
+    private var cancellables = Set<AnyCancellable>()
+    
+    public init() {
+        setupObservers()
+    }
+    
+    /// Sets up observers for queue changes and file recovery progress
+    private func setupObservers() {
+        // Define a notification name for import queue changes
+        let importQueueChangedNotification = Notification.Name("ImportQueueChanged")
+        
+        // Observe queue changes
+        NotificationCenter.default.publisher(for: importQueueChangedNotification)
+            .sink { [weak self] notification in
+                Task {
+                    await self?.refreshQueueItems()
+                }
+            }
+            .store(in: &cancellables)
+        
+        // Also observe changes directly from the GameImporter if available
+        Task {
+            if let gameImporter = await MainActor.run { AppState.shared.gameImporter } as? GameImporter {
+                gameImporter.importQueuePublisher
+                    .receive(on: RunLoop.main)
+                    .sink { [weak self] _ in
+                        Task {
+                            await self?.refreshQueueItems()
+                        }
+                    }
+                    .store(in: &cancellables)
+            }
+        }
+        
+        // Observe file recovery progress
+        NotificationCenter.default.publisher(for: iCloudSync.iCloudFileRecoveryProgress)
+            .sink { [weak self] _ in
+                self?.isVisible = true
+            }
+            .store(in: &cancellables)
+    }
+    
+    /// Refresh the queue items from the game importer
+    @MainActor
+    public func refreshQueueItems() async {
+        if let gameImporter = AppState.shared.gameImporter {
+            queueItems = await gameImporter.importQueue
+        }
+    }
+}

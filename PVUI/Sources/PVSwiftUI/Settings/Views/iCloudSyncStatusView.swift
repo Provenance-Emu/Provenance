@@ -52,7 +52,7 @@ struct iCloudSyncStatusView: View {
     @State private var syncDifferences: [SyncDifference] = []
 
     // Directories to monitor
-    private let monitoredDirectories = ["ROMs", "Save States", "BIOS", "DeltaSkins"]
+    private let monitoredDirectories = ["ROMs", "Save States", "BIOS", "DeltaSkins", "Battery States", "Screenshots", "RetroArch"]
 
     // Debug information
     @State private var showDebugInfo = false

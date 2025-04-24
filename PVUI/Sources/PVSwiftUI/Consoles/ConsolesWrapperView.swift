@@ -292,6 +292,21 @@ struct ConsolesWrapperView: SwiftUI.View {
         )
 
         return TabView(selection: binding) {
+            #if DEBUG
+            RetroDebugView()
+                .tabItem {
+                    Label("Debug", systemImage: "bug")
+                }
+                .tag("debug")
+                .ignoresSafeArea(.all, edges: .bottom)
+            
+            FileRecoveryTestView()
+                .tabItem {
+                    Label("Test", systemImage: "test")
+                }
+                .tag("test")
+                .ignoresSafeArea(.all, edges: .bottom)
+            #endif
             HomeView(
                 gameLibrary: rootDelegate.gameLibrary!,
                 delegate: rootDelegate,
