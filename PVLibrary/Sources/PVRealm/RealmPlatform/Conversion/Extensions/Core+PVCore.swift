@@ -39,26 +39,27 @@ extension Core: RealmRepresentable {
     }
 
     public func asRealm() -> PVCore {
-        let realm = try! Realm()
-        if let existing = realm.object(ofType: PVCore.self, forPrimaryKey: identifier) {
+        try! Realm().buildCore(from: self)
+    }
+}
+
+public extension Realm {
+    func buildCore(from core: Core) -> PVCore {
+        if let existing = object(ofType: PVCore.self, forPrimaryKey: core.identifier) {
             return existing
         }
 
         return PVCore.build({ object in
-            object.identifier = identifier
-            object.principleClass = principleClass
-            object.projectName = project.name
-            object.projectVersion = project.version
-            object.projectURL = project.url.absoluteString
-            object.disabled = disabled
-            object.contentless = contentless
-            let frozenObject = object.freeze()
-            Task {
-                guard let object = frozenObject.thaw() else { return }
-                guard let realm = try? await Realm() else { return }
-                let rmSystems = systems.compactMap { realm.object(ofType: PVSystem.self, forPrimaryKey: $0.identifier) }
-                object.supportedSystems.append(objectsIn: rmSystems)
-            }
+            object.identifier = core.identifier
+            object.principleClass = core.principleClass
+            object.projectName = core.project.name
+            object.projectVersion = core.project.version
+            object.projectURL = core.project.url.absoluteString
+            object.disabled = core.disabled
+            object.contentless = core.contentless
+
+            let rmSystems = core.systems.compactMap { self.object(ofType: PVSystem.self, forPrimaryKey: $0.identifier) }
+            object.supportedSystems.append(objectsIn: rmSystems)
         })
     }
 }

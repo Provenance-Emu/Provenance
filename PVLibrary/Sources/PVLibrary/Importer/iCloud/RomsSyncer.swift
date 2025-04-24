@@ -68,7 +68,7 @@ public class RomsSyncer: iCloudContainerSyncer, RomsSyncing {
     public func cloudURL(for game: PVGame) -> URL? {
         guard let file = game.file,
               let url = file.url,
-              let containerURL = containerURL?.appendDocumentsDirectory else {
+              let containerURL = documentsURL else {
             return nil
         }
         
@@ -82,33 +82,34 @@ public class RomsSyncer: iCloudContainerSyncer, RomsSyncing {
     /// - Returns: Completable that completes when the upload is done
     public func uploadROM(for game: PVGame) -> Completable {
         return Completable.create { [weak self] observer in
-            guard let self = self,
-                  let localURL = self.localURL(for: game),
-                  let cloudURL = self.cloudURL(for: game) else {
-                observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid ROM file or URLs"])))
-                return Disposables.create()
-            }
-            
-            // Create directory if needed
-            let cloudDir = cloudURL.deletingLastPathComponent()
-            do {
-                try FileManager.default.createDirectory(at: cloudDir, withIntermediateDirectories: true)
-                
-                // Copy file to iCloud
-                if FileManager.default.fileExists(atPath: cloudURL.path) {
-                    try FileManager.default.removeItem(at: cloudURL)
+            Task {
+                guard let self = self,
+                      let localURL = self.localURL(for: game),
+                      let cloudURL = self.cloudURL(for: game) else {
+                    observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid ROM file or URLs"])))
+                    return
                 }
                 
-                try FileManager.default.copyItem(at: localURL, to: cloudURL)
-                self.insertUploadedFile(cloudURL)
-                
-                DLOG("Uploaded ROM file to iCloud: \(cloudURL.lastPathComponent)")
-                observer(.completed)
-            } catch {
-                ELOG("Failed to upload ROM file: \(error.localizedDescription)")
-                observer(.error(error))
+                // Create directory if needed
+                let cloudDir = cloudURL.deletingLastPathComponent()
+                do {
+                    try FileManager.default.createDirectory(at: cloudDir, withIntermediateDirectories: true)
+                    
+                    // Copy file to iCloud
+                    if FileManager.default.fileExists(atPath: cloudURL.path) {
+                        await try FileManager.default.removeItem(at: cloudURL)
+                    }
+                    
+                    try FileManager.default.copyItem(at: localURL, to: cloudURL)
+                    await self.insertUploadedFile(cloudURL)
+                    
+                    DLOG("Uploaded ROM file to iCloud: \(cloudURL.lastPathComponent)")
+                    observer(.completed)
+                } catch {
+                    ELOG("Failed to upload ROM file: \(error.localizedDescription)")
+                    observer(.error(error))
+                }
             }
-            
             return Disposables.create()
         }
     }
@@ -118,49 +119,52 @@ public class RomsSyncer: iCloudContainerSyncer, RomsSyncing {
     /// - Returns: Completable that completes when the download is done
     public func downloadROM(for game: PVGame) -> Completable {
         return Completable.create { [weak self] observer in
-            guard let self = self,
-                  let cloudURL = self.cloudURL(for: game) else {
-                observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid ROM file or URLs"])))
-                return Disposables.create()
-            }
-            
-            // Check if file exists in iCloud
-            if !FileManager.default.fileExists(atPath: cloudURL.path) {
-                observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 2, userInfo: [NSLocalizedDescriptionKey: "ROM file not found in iCloud"])))
-                return Disposables.create()
-            }
-            
-            // Start downloading
-            do {
-                try FileManager.default.startDownloadingUbiquitousItem(at: cloudURL)
-                self.insertDownloadingFile(cloudURL)
+            Task {
+                guard let self = self,
+                      let cloudURL = self.cloudURL(for: game) else {
+                    observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid ROM file or URLs"])))
+                    return
+                }
                 
-                // Wait for download to complete
-                let checkDownload = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
-                    .take(60) // Timeout after 60 seconds
-                    .flatMap { _ -> Observable<Bool> in
-                        let downloadingStatus = try? cloudURL.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey])
-                        let isDownloaded = downloadingStatus?.ubiquitousItemDownloadingStatus == URLUbiquitousItemDownloadingStatus.current
-                        return Observable.just(isDownloaded)
-                    }
-                    .filter { $0 }
-                    .take(1)
-                    .timeout(.seconds(60), scheduler: MainScheduler.instance)
+                // Check if file exists in iCloud
+                if !FileManager.default.fileExists(atPath: cloudURL.path) {
+                    observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 2, userInfo: [NSLocalizedDescriptionKey: "ROM file not found in iCloud"])))
+                    return
+                }
                 
-                return checkDownload
-                    .subscribe(onNext: { _ in
-                        self.insertDownloadedFile(cloudURL)
-                        DLOG("Downloaded ROM file from iCloud: \(cloudURL.lastPathComponent)")
-                        observer(.completed)
-                    }, onError: { error in
-                        ELOG("Failed to download ROM file: \(error.localizedDescription)")
-                        observer(.error(error))
-                    })
-            } catch {
-                ELOG("Failed to start downloading ROM file: \(error.localizedDescription)")
-                observer(.error(error))
+                // Start downloading
+                do {
+                    try FileManager.default.startDownloadingUbiquitousItem(at: cloudURL)
+                    await self.insertDownloadingFile(cloudURL)
+                    
+                    // Wait for download to complete
+                    let checkDownload = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+                        .take(60) // Timeout after 60 seconds
+                        .flatMap { _ -> Observable<Bool> in
+                            let downloadingStatus = try? cloudURL.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey])
+                            let isDownloaded = downloadingStatus?.ubiquitousItemDownloadingStatus == URLUbiquitousItemDownloadingStatus.current
+                            return Observable.just(isDownloaded)
+                        }
+                        .filter { $0 }
+                        .take(1)
+                        .timeout(.seconds(60), scheduler: MainScheduler.instance)
+                    //TODO: this needs to be refactored, but can't think of a quick way right now to make the async functions to work
+                    checkDownload
+                        .subscribe(onNext: { _ in
+                            Task {
+                                await self.insertDownloadedFile(cloudURL)
+                                DLOG("Downloaded ROM file from iCloud: \(cloudURL.lastPathComponent)")
+                                observer(.completed)
+                            }
+                        }, onError: { error in
+                            ELOG("Failed to download ROM file: \(error.localizedDescription)")
+                            observer(.error(error))
+                        })
+                } catch {
+                    ELOG("Failed to start downloading ROM file: \(error.localizedDescription)")
+                    observer(.error(error))
+                }
             }
-            
             return Disposables.create()
         }
     }
@@ -246,13 +250,13 @@ public class CloudKitRomsSyncer: CloudKitSyncer, RomsSyncing {
                     
                     // Save the record to CloudKit
                     _ = try await self.uploadFile(localURL)
-                    self.insertUploadedFile(localURL)
+                    await self.insertUploadedFile(localURL)
                     
                     DLOG("Uploaded ROM file to CloudKit: \(localURL.lastPathComponent)")
                     observer(.completed)
                 } catch {
                     ELOG("Failed to upload ROM file to CloudKit: \(error.localizedDescription)")
-                    self.errorHandler.handle(error: error)
+                    await self.errorHandler.handle(error: error)
                     observer(.error(error))
                 }
             }
@@ -309,7 +313,7 @@ public class CloudKitRomsSyncer: CloudKitSyncer, RomsSyncing {
                     }
                     
                     try FileManager.default.copyItem(at: fileURL, to: destinationURL)
-                    self.insertDownloadedFile(destinationURL)
+                    await self.insertDownloadedFile(destinationURL)
                     
                     // Update game's file reference if needed
                     if game.file == nil {
@@ -326,7 +330,7 @@ public class CloudKitRomsSyncer: CloudKitSyncer, RomsSyncing {
                     observer(.completed)
                 } catch {
                     ELOG("Failed to download ROM file from CloudKit: \(error.localizedDescription)")
-                    self.errorHandler.handle(error: error)
+                    await self.errorHandler.handle(error: error)
                     observer(.error(error))
                 }
             }

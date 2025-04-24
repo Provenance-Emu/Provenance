@@ -34,6 +34,7 @@ extension os.Logger: Sendable {
     public static let general = Logger(subsystem: subsystem, category: "general")
 }
 
+/// current Date/Time stamp using the ISO-8601 format and the device's time zone
 public var currentDatTimeStamp: String {
     let formatter = ISO8601DateFormatter()
     formatter.timeZone = TimeZone.current

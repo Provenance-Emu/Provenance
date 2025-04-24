@@ -387,7 +387,9 @@ public struct ImportProgressView: View {
             
             // Setup iCloud sync tracking if enabled
             if iCloudEnabled {
-                setupSyncTracking()
+                Task {
+                    await setupSyncTracking()
+                }
             }
         }
         
@@ -457,7 +459,7 @@ public struct ImportProgressView: View {
         }
         
         /// Setup tracking for iCloud sync status
-        private func setupSyncTracking() {
+        private func setupSyncTracking() async {
             // Only setup if not already setup
             guard syncSubscriptions.isEmpty else { return }
             
@@ -467,11 +469,13 @@ public struct ImportProgressView: View {
             let subscription = publisher
                 .receive(on: RunLoop.main)
                 .sink { [weak self] (syncers: [SyncProvider]) in
-                    // Clear existing syncer-specific subscriptions
-                    self?.clearSyncerSubscriptions()
-                    
-                    // Set up tracking for each syncer
-                    self?.trackSyncers(syncers)
+                    Task {
+                        // Clear existing syncer-specific subscriptions
+                        self?.clearSyncerSubscriptions()
+                        
+                        // Set up tracking for each syncer
+                        await self?.trackSyncers(syncers)
+                    }
                 }
             
             syncSubscriptions.insert(subscription)
@@ -479,15 +483,15 @@ public struct ImportProgressView: View {
             // Initial setup with current syncers
             if let syncers = getSyncers() {
                 // Track the syncers
-                trackSyncers(syncers)
+                await trackSyncers(syncers)
             }
         }
         
         /// Track all syncers for activity
-        private func trackSyncers(_ syncers: [SyncProvider]) {
+        private func trackSyncers(_ syncers: [SyncProvider]) async {
             for syncer in syncers {
                 // Track pending downloads
-                let downloadSubscription = syncer.pendingFilesToDownload.countPublisher
+                let downloadSubscription = await syncer.pendingFilesToDownload.countPublisher
                     .receive(on: RunLoop.main)
                     .sink { [weak self] count in
                         self?.pendingDownloads = count
@@ -495,7 +499,7 @@ public struct ImportProgressView: View {
                     }
                 
                 // Track new files
-                let newFilesSubscription = syncer.newFiles.countPublisher
+                let newFilesSubscription = await syncer.newFiles.countPublisher
                     .receive(on: RunLoop.main)
                     .sink { [weak self] count in
                         self?.newFilesCount = count
@@ -503,7 +507,7 @@ public struct ImportProgressView: View {
                     }
                 
                 // Track uploaded files
-                let uploadSubscription = syncer.uploadedFiles.countPublisher
+                let uploadSubscription = await syncer.uploadedFiles.countPublisher
                     .receive(on: RunLoop.main)
                     .sink { [weak self] count in
                         self?.pendingUploads = count
