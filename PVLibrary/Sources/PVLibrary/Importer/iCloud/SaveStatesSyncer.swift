@@ -68,7 +68,7 @@ public class SaveStatesSyncer: iCloudContainerSyncer, SaveStatesSyncing {
     public func cloudURL(for saveState: PVSaveState) -> URL? {
         guard let file = saveState.file,
               let url = file.url,
-              let containerURL = containerURL?.appendDocumentsDirectory else {
+              let containerURL = documentsURL else {
             return nil
         }
         
@@ -82,33 +82,34 @@ public class SaveStatesSyncer: iCloudContainerSyncer, SaveStatesSyncing {
     /// - Returns: Completable that completes when the upload is done
     public func uploadSaveState(for saveState: PVSaveState) -> Completable {
         return Completable.create { [weak self] observer in
-            guard let self = self,
-                  let localURL = self.localURL(for: saveState),
-                  let cloudURL = self.cloudURL(for: saveState) else {
-                observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid save state file or URLs"])))
-                return Disposables.create()
-            }
-            
-            // Create directory if needed
-            let cloudDir = cloudURL.deletingLastPathComponent()
-            do {
-                try FileManager.default.createDirectory(at: cloudDir, withIntermediateDirectories: true)
-                
-                // Copy file to iCloud
-                if FileManager.default.fileExists(atPath: cloudURL.path) {
-                    try FileManager.default.removeItem(at: cloudURL)
+            Task {
+                guard let self = self,
+                      let localURL = self.localURL(for: saveState),
+                      let cloudURL = self.cloudURL(for: saveState) else {
+                    observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid save state file or URLs"])))
+                    return
                 }
                 
-                try FileManager.default.copyItem(at: localURL, to: cloudURL)
-                self.insertUploadedFile(cloudURL)
-                
-                DLOG("Uploaded save state to iCloud: \(cloudURL.lastPathComponent)")
-                observer(.completed)
-            } catch {
-                ELOG("Failed to upload save state: \(error.localizedDescription)")
-                observer(.error(error))
+                // Create directory if needed
+                let cloudDir = cloudURL.deletingLastPathComponent()
+                do {
+                    try FileManager.default.createDirectory(at: cloudDir, withIntermediateDirectories: true)
+                    
+                    // Copy file to iCloud
+                    if FileManager.default.fileExists(atPath: cloudURL.path) {
+                        await try FileManager.default.removeItem(at: cloudURL)
+                    }
+                    
+                    try FileManager.default.copyItem(at: localURL, to: cloudURL)
+                    await self.insertUploadedFile(cloudURL)
+                    
+                    DLOG("Uploaded save state to iCloud: \(cloudURL.lastPathComponent)")
+                    observer(.completed)
+                } catch {
+                    ELOG("Failed to upload save state: \(error.localizedDescription)")
+                    observer(.error(error))
+                }
             }
-            
             return Disposables.create()
         }
     }
@@ -118,49 +119,52 @@ public class SaveStatesSyncer: iCloudContainerSyncer, SaveStatesSyncing {
     /// - Returns: Completable that completes when the download is done
     public func downloadSaveState(for saveState: PVSaveState) -> Completable {
         return Completable.create { [weak self] observer in
-            guard let self = self,
-                  let cloudURL = self.cloudURL(for: saveState) else {
-                observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid save state file or URLs"])))
-                return Disposables.create()
-            }
-            
-            // Check if file exists in iCloud
-            if !FileManager.default.fileExists(atPath: cloudURL.path) {
-                observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 2, userInfo: [NSLocalizedDescriptionKey: "Save state not found in iCloud"])))
-                return Disposables.create()
-            }
-            
-            // Start downloading
-            do {
-                try FileManager.default.startDownloadingUbiquitousItem(at: cloudURL)
-                self.insertDownloadingFile(cloudURL)
+            Task {
+                guard let self = self,
+                      let cloudURL = self.cloudURL(for: saveState) else {
+                    observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid save state file or URLs"])))
+                    return
+                }
                 
-                // Wait for download to complete
-                let checkDownload = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
-                    .take(60) // Timeout after 60 seconds
-                    .flatMap { _ -> Observable<Bool> in
-                        let downloadingStatus = try? cloudURL.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey])
-                        let isDownloaded = downloadingStatus?.ubiquitousItemDownloadingStatus == URLUbiquitousItemDownloadingStatus.current
-                        return Observable.just(isDownloaded)
-                    }
-                    .filter { $0 }
-                    .take(1)
-                    .timeout(.seconds(60), scheduler: MainScheduler.instance)
+                // Check if file exists in iCloud
+                if !FileManager.default.fileExists(atPath: cloudURL.path) {
+                    observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 2, userInfo: [NSLocalizedDescriptionKey: "Save state not found in iCloud"])))
+                    return
+                }
                 
-                return checkDownload
-                    .subscribe(onNext: { _ in
-                        self.insertDownloadedFile(cloudURL)
-                        DLOG("Downloaded save state from iCloud: \(cloudURL.lastPathComponent)")
-                        observer(.completed)
-                    }, onError: { error in
-                        ELOG("Failed to download save state: \(error.localizedDescription)")
-                        observer(.error(error))
-                    })
-            } catch {
-                ELOG("Failed to start downloading save state: \(error.localizedDescription)")
-                observer(.error(error))
+                // Start downloading
+                do {
+                    await try FileManager.default.startDownloadingUbiquitousItem(at: cloudURL)
+                    await self.insertDownloadingFile(cloudURL)
+                    
+                    // Wait for download to complete
+                    let checkDownload = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+                        .take(60) // Timeout after 60 seconds
+                        .flatMap { _ -> Observable<Bool> in
+                            let downloadingStatus = try? cloudURL.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey])
+                            let isDownloaded = downloadingStatus?.ubiquitousItemDownloadingStatus == URLUbiquitousItemDownloadingStatus.current
+                            return Observable.just(isDownloaded)
+                        }
+                        .filter { $0 }
+                        .take(1)
+                        .timeout(.seconds(60), scheduler: MainScheduler.instance)
+                    //TODO: this needs to be refactored, but can't think of a quick way right now to make the async functions to work
+                    checkDownload
+                        .subscribe(onNext: { _ in
+                            Task {
+                                await self.insertDownloadedFile(cloudURL)
+                                DLOG("Downloaded save state from iCloud: \(cloudURL.lastPathComponent)")
+                                observer(.completed)
+                            }
+                        }, onError: { error in
+                            ELOG("Failed to download save state: \(error.localizedDescription)")
+                            observer(.error(error))
+                        })
+                } catch {
+                    ELOG("Failed to start downloading save state: \(error.localizedDescription)")
+                    observer(.error(error))
+                }
             }
-            
             return Disposables.create()
         }
     }
@@ -245,13 +249,13 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                     
                     // Save the record to CloudKit
                     _ = try await self.uploadFile(localURL)
-                    self.insertUploadedFile(localURL)
+                    await self.insertUploadedFile(localURL)
                     
                     DLOG("Uploaded save state to CloudKit: \(localURL.lastPathComponent)")
                     observer(.completed)
                 } catch {
                     ELOG("Failed to upload save state to CloudKit: \(error.localizedDescription)")
-                    self.errorHandler.handle(error: error)
+                    await self.errorHandler.handle(error: error)
                     observer(.error(error))
                 }
             }
@@ -304,7 +308,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         }
                         
                         try FileManager.default.copyItem(at: fileURL, to: destinationURL)
-                        self.insertDownloadedFile(destinationURL)
+                        await self.insertDownloadedFile(destinationURL)
                         
                         // Update save state's file reference if needed
                         if saveState.file == nil {
@@ -356,7 +360,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         }
                         
                         try FileManager.default.copyItem(at: fileURL, to: destinationURL)
-                        self.insertDownloadedFile(destinationURL)
+                        await self.insertDownloadedFile(destinationURL)
                         
                         // Update save state's file reference if needed
                         if saveState.file == nil {
@@ -374,7 +378,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                     }
                 } catch {
                     ELOG("Failed to download save state from CloudKit: \(error.localizedDescription)")
-                    self.errorHandler.handle(error: error)
+                    await self.errorHandler.handle(error: error)
                     observer(.error(error))
                 }
             }

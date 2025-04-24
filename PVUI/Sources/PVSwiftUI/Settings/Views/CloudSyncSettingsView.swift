@@ -145,49 +145,53 @@ class CloudSyncSettingsViewModel: ObservableObject {
     
     /// Initialize the view model
     init() {
-        // Subscribe to sync status changes
-        CloudSyncManager.shared.syncStatusPublisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] status in
-                switch status {
-                case .syncing, .uploading, .downloading:
-                    self?.isSyncing = true
-                case .idle, .disabled, .error:
-                    self?.isSyncing = false
-                    
-                    // If sync completed successfully, update last sync date
-                    if status == .idle {
-                        self?.lastSyncDate = Date()
-                        self?.loadSyncInfo()
+        Task {
+            // Subscribe to sync status changes
+            CloudSyncManager.shared.syncStatusPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] status in
+                    switch status {
+                    case .syncing, .uploading, .downloading:
+                        self?.isSyncing = true
+                    case .idle, .disabled, .error:
+                        self?.isSyncing = false
+                        
+                        // If sync completed successfully, update last sync date
+                        if status == .idle {
+                            self?.lastSyncDate = Date()
+                            self?.loadSyncInfo()
+                        }
                     }
                 }
-            }
-            .store(in: &cancellables)
+                .store(in: &cancellables)
+        }
     }
     
     /// Start a full sync
     func startFullSync() {
-        guard !isSyncing else { return }
-        
-        isSyncing = true
-        
-        // Start sync
-        _ = CloudSyncManager.shared.startSync()
-            .subscribe(
-                onCompleted: { [weak self] in
-                    DispatchQueue.main.async {
-                        self?.isSyncing = false
-                        self?.lastSyncDate = Date()
-                        self?.loadSyncInfo()
+        Task {
+            guard !isSyncing else { return }
+            
+            isSyncing = true
+            
+            // Start sync
+            await CloudSyncManager.shared.startSync()
+                .subscribe(
+                    onCompleted: { [weak self] in
+                        DispatchQueue.main.async {
+                            self?.isSyncing = false
+                            self?.lastSyncDate = Date()
+                            self?.loadSyncInfo()
+                        }
+                    },
+                    onError: { [weak self] error in
+                        DispatchQueue.main.async {
+                            self?.isSyncing = false
+                            ELOG("Sync error: \(error.localizedDescription)")
+                        }
                     }
-                },
-                onError: { [weak self] error in
-                    DispatchQueue.main.async {
-                        self?.isSyncing = false
-                        ELOG("Sync error: \(error.localizedDescription)")
-                    }
-                }
-            )
+                )
+        }
     }
     
     /// Reset cloud sync
@@ -206,24 +210,25 @@ class CloudSyncSettingsViewModel: ObservableObject {
             // Re-enable cloud sync
             Defaults[.iCloudSync] = true
             NotificationCenter.default.post(name: .iCloudSyncEnabled, object: nil)
-            
-            // Start sync
-            _ = CloudSyncManager.shared.startSync()
-                .subscribe(
-                    onCompleted: { [weak self] in
-                        DispatchQueue.main.async {
-                            self?.isSyncing = false
-                            self?.lastSyncDate = Date()
-                            self?.loadSyncInfo()
+            Task {
+                // Start sync
+                await CloudSyncManager.shared.startSync()
+                    .subscribe(
+                        onCompleted: { [weak self] in
+                            DispatchQueue.main.async {
+                                self?.isSyncing = false
+                                self?.lastSyncDate = Date()
+                                self?.loadSyncInfo()
+                            }
+                        },
+                        onError: { [weak self] error in
+                            DispatchQueue.main.async {
+                                self?.isSyncing = false
+                                ELOG("Sync reset error: \(error.localizedDescription)")
+                            }
                         }
-                    },
-                    onError: { [weak self] error in
-                        DispatchQueue.main.async {
-                            self?.isSyncing = false
-                            ELOG("Sync reset error: \(error.localizedDescription)")
-                        }
-                    }
-                )
+                    )
+            }
         }
     }
     

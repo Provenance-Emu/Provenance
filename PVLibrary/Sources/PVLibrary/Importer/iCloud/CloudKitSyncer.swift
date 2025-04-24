@@ -30,7 +30,7 @@ public class CloudKitSyncer: SyncProvider {
     public let directories: Set<String>
     public let fileManager: FileManager = .default
     public let notificationCenter: NotificationCenter
-    public var status: iCloudSyncStatus = .initialUpload
+    public var status: ConcurrentSingle<iCloudSyncStatus> = .init(.initialUpload)
     public let errorHandler: CloudSyncErrorHandler
     public var initialSyncResult: SyncResult = .indeterminate
     public var fileImportQueueMaxCount = 1000
@@ -60,8 +60,10 @@ public class CloudKitSyncer: SyncProvider {
         // Register with the syncer store
         CloudKitSyncerStore.shared.register(syncer: self)
         
-        // Set up CloudKit subscription for changes
-        setupSubscription()
+        Task {
+            // Set up CloudKit subscription for changes
+            await setupSubscription()
+        }
     }
     
     deinit {
@@ -75,7 +77,7 @@ public class CloudKitSyncer: SyncProvider {
     /// Load all files from CloudKit
     /// - Parameter iterationComplete: Callback when iteration is complete
     /// - Returns: Completable that completes when all files are loaded
-    public func loadAllFromCloud(iterationComplete: (() -> Void)?) -> Completable {
+    public func loadAllFromCloud(iterationComplete: (() async -> Void)?) async -> Completable {
         return Completable.create { [weak self] observer in
             guard let self = self else {
                 observer(.completed)
@@ -97,7 +99,7 @@ public class CloudKitSyncer: SyncProvider {
                     self.notificationCenter.post(name: .iCloudSyncCompleted, object: self)
                     
                     observer(.completed)
-                    iterationComplete?()
+                    await iterationComplete?()
                 } catch {
                     ELOG("CloudKit sync error: \(error.localizedDescription)")
                     await self.errorHandler.handle(error: error)
@@ -113,29 +115,29 @@ public class CloudKitSyncer: SyncProvider {
     /// Insert a file that is being downloaded
     /// - Parameter file: URL of the file
     /// - Returns: URL of the file or nil if already being uploaded
-    public func insertDownloadingFile(_ file: URL) -> URL? {
-        guard !uploadedFiles.contains(file) else {
+    public func insertDownloadingFile(_ file: URL) async -> URL? {
+        guard await !uploadedFiles.contains(file) else {
             return nil
         }
-        pendingFilesToDownload.insert(file)
+        await pendingFilesToDownload.insert(file)
         return file
     }
     
     /// Insert a file that has been downloaded
     /// - Parameter file: URL of the file
-    public func insertDownloadedFile(_ file: URL) {
-        pendingFilesToDownload.remove(file)
+    public func insertDownloadedFile(_ file: URL) async {
+        await pendingFilesToDownload.remove(file)
     }
     
     /// Insert a file that has been uploaded
     /// - Parameter file: URL of the file
-    public func insertUploadedFile(_ file: URL) {
-        uploadedFiles.insert(file)
+    public func insertUploadedFile(_ file: URL) async {
+        await uploadedFiles.insert(file)
     }
     
     /// Delete a file from the datastore
     /// - Parameter file: URL of the file
-    public func deleteFromDatastore(_ file: URL) {
+    public func deleteFromDatastore(_ file: URL) async {
         Task {
             do {
                 // Find and delete the record for this file
@@ -146,17 +148,17 @@ public class CloudKitSyncer: SyncProvider {
                 }
             } catch {
                 ELOG("Failed to delete CloudKit record: \(error.localizedDescription)")
-                errorHandler.handle(error: error)
+                await errorHandler.handle(error: error)
             }
         }
     }
     
     /// Notify that new cloud files are available
-    public func setNewCloudFilesAvailable() {
-        if pendingFilesToDownload.isEmpty {
-            status = .filesAlreadyMoved
+    public func setNewCloudFilesAvailable() async {
+        if await pendingFilesToDownload.isEmpty {
+            await status.set(value: .filesAlreadyMoved)
             DLOG("Set status to \(status) and removing all uploaded files in \(directories)")
-            uploadedFiles.removeAll()
+            await uploadedFiles.removeAll()
         }
         
         // Post notification that new files are available
@@ -166,13 +168,14 @@ public class CloudKitSyncer: SyncProvider {
     
     /// Prepare the next batch of files to process
     /// - Returns: Collection of URLs to process
-    public func prepareNextBatchToProcess() -> any Collection<URL> {
-        DLOG("\(directories): newFiles: (\(newFiles.count)):")
-        let nextFilesToProcess = newFiles.prefix(fileImportQueueMaxCount)
+    public func prepareNextBatchToProcess() async -> any Collection<URL> {
+        let newFilesCount = await newFiles.count
+        DLOG("\(directories): newFiles: (\(newFilesCount)):")
+        let nextFilesToProcess = await newFiles.prefix(fileImportQueueMaxCount)
         
         // Remove processed files from the new files set
         for file in nextFilesToProcess {
-            newFiles.remove(file)
+            await newFiles.remove(file)
         }
         
         return nextFilesToProcess
@@ -181,7 +184,7 @@ public class CloudKitSyncer: SyncProvider {
     // MARK: - CloudKit Specific Methods
     
     /// Set up subscription to CloudKit changes
-    private func setupSubscription() {
+    private func setupSubscription() async {
         // Create a subscription for each directory
         Task {
             do {
@@ -203,19 +206,21 @@ public class CloudKitSyncer: SyncProvider {
                 }
             } catch {
                 ELOG("Failed to create CloudKit subscription: \(error.localizedDescription)")
-                errorHandler.handle(error: error)
+                await errorHandler.handle(error: error)
             }
         }
         
         // Set up notification handler for remote notifications
         subscriptionToken = NotificationCenter.default.publisher(for: .CKAccountChanged)
             .sink { [weak self] _ in
-                self?.handleCloudKitAccountChanged()
+                Task {
+                    await self?.handleCloudKitAccountChanged()
+                }
             }
     }
     
     /// Handle CloudKit account changes
-    private func handleCloudKitAccountChanged() {
+    private func handleCloudKitAccountChanged() async {
         Task {
             do {
                 // Check account status
@@ -235,7 +240,7 @@ public class CloudKitSyncer: SyncProvider {
                 }
             } catch {
                 ELOG("Error checking CloudKit account status: \(error.localizedDescription)")
-                errorHandler.handle(error: error)
+                await errorHandler.handle(error: error)
             }
         }
     }
@@ -288,11 +293,11 @@ public class CloudKitSyncer: SyncProvider {
             try FileManager.default.copyItem(at: fileURL, to: destinationURL)
             
             // Add to new files for processing
-            newFiles.insert(destinationURL)
+            await newFiles.insert(destinationURL)
             DLOG("Processed CloudKit record for file: \(filename) in directory: \(directory)")
         } catch {
             ELOG("Error processing CloudKit record: \(error.localizedDescription)")
-            errorHandler.handle(error: error)
+            await errorHandler.handle(error: error)
         }
     }
     

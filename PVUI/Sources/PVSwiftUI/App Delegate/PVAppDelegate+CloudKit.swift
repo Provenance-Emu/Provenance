@@ -48,7 +48,7 @@ extension PVAppDelegate {
         Task {
             do {
                 // Start sync
-                _ = try await CloudSyncManager.shared.startSync().value
+                try await CloudSyncManager.shared.startSync().value
                 
                 // Complete with new data
                 completionHandler(.newData)

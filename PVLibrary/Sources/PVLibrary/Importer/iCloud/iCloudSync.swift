@@ -1645,40 +1645,40 @@ public actor ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral,
         countSubject.send(set.count)
     }
     
-    func insert(_ element: T) {
+    public func insert(_ element: T) {
         set.insert(element)
         notifyChanges()
     }
     
-    func remove(_ element: T) -> T? {
+    public func remove(_ element: T) -> T? {
         let removed = set.remove(element)
         notifyChanges()
         return removed
     }
     
-    func contains(_ element: T) -> Bool {
+    public func contains(_ element: T) -> Bool {
         set.contains(element)
     }
     
-    func removeAll() {
+    public func removeAll() {
         set.removeAll()
         notifyChanges()
     }
     
-    func forEach(_ body: (T) throws -> Void) rethrows {
+    public func forEach(_ body: (T) throws -> Void) rethrows {
         try set.forEach(body)
     }
     
-    func prefix(_ maxLength: Int) -> Slice<Set<T>> {
+    public func prefix(_ maxLength: Int) -> Slice<Set<T>> {
         set.prefix(maxLength)
     }
     
-    func subtract<S>(_ other: S) where T == S.Element, S : Sequence {
+    public func subtract<S>(_ other: S) where T == S.Element, S : Sequence {
         set.subtract(other)
         notifyChanges()
     }
     
-    func copy(options: ConcurrentCopyOptions) -> Set<T> {
+    public func copy(options: ConcurrentCopyOptions) -> Set<T> {
         guard options == .removeCopiedItems
         else {
             return set
@@ -1689,34 +1689,34 @@ public actor ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral,
         return copiedSet
     }
     
-    func formUnion<S>(_ other: S) where T == S.Element, S : Sequence {
+    public func formUnion<S>(_ other: S) where T == S.Element, S : Sequence {
         set.formUnion(other)
         notifyChanges()
     }
     
-    var isEmpty: Bool {
+    public var isEmpty: Bool {
         return set.isEmpty
     }
     
-    var first: T? {
+    public var first: T? {
         return set.first
     }
     
-    var count: Int {
+    public var count: Int {
         return set.count
     }
     
     /// Current elements in the set as a Set
-    var elements: Set<T> {
+    public var elements: Set<T> {
         return set
     }
     
     /// Current elements in the set as an Array
-    var asArray: [T] {
+    public var asArray: [T] {
         Array(set)
     }
                                              
-    func enumerated() -> EnumeratedSequence<Set<T>> {
+    public func enumerated() -> EnumeratedSequence<Set<T>> {
         set.enumerated()
     }
                                              

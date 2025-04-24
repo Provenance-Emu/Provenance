@@ -58,8 +58,10 @@ public class CloudSyncManager {
     
     /// Private initializer for singleton
     private init() {
-        // Register for notifications
-        registerForNotifications()
+        Task { [weak self] in
+            // Register for notifications
+            await self?.registerForNotifications()
+        }
         
         // Initialize sync providers if iCloud sync is enabled
         if Defaults[.iCloudSync] {
@@ -78,7 +80,8 @@ public class CloudSyncManager {
     
     /// Start syncing
     /// - Returns: Completable that completes when initial sync is done
-    public func startSync() -> Completable {
+    @discardableResult
+    public func startSync() async -> Completable {
         guard Defaults[.iCloudSync] else {
             return Completable.empty()
         }
@@ -93,9 +96,9 @@ public class CloudSyncManager {
         
         // Create completables for each sync provider
         let completables: [Completable] = [
-            romsSyncer?.loadAllFromCloud(iterationComplete: nil) ?? Completable.empty(),
-            saveStatesSyncer?.loadAllFromCloud(iterationComplete: nil) ?? Completable.empty(),
-            biosSyncer?.loadAllFromCloud(iterationComplete: nil) ?? Completable.empty()
+            await romsSyncer?.loadAllFromCloud(iterationComplete: nil) ?? Completable.empty(),
+            await saveStatesSyncer?.loadAllFromCloud(iterationComplete: nil) ?? Completable.empty(),
+            await biosSyncer?.loadAllFromCloud(iterationComplete: nil) ?? Completable.empty()
         ]
         
         // Merge completables
@@ -244,14 +247,16 @@ public class CloudSyncManager {
     }
     
     /// Register for notifications
-    private func registerForNotifications() {
+    private func registerForNotifications() async {
         // Register for iCloud sync enabled/disabled notifications
         let enabledToken = NotificationCenter.default.addObserver(
             forName: .iCloudSyncEnabled,
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            self?.handleSyncEnabled()
+            Task {
+                await self?.handleSyncEnabled()
+            }
         }
         
         let disabledToken = NotificationCenter.default.addObserver(
@@ -279,7 +284,9 @@ public class CloudSyncManager {
             queue: .main
         ) { [weak self] notification in
             if let game = notification.object as? PVGame {
-                self?.handleGameDeleted(game)
+                Task {
+                    await self?.handleGameDeleted(game)
+                }
             }
         }
         
@@ -300,7 +307,9 @@ public class CloudSyncManager {
             queue: .main
         ) { [weak self] notification in
             if let saveState = notification.object as? PVSaveState {
-                self?.handleSaveStateDeleted(saveState)
+                Task {
+                    await self?.handleSaveStateDeleted(saveState)
+                }
             }
         }
         
@@ -316,7 +325,7 @@ public class CloudSyncManager {
     }
     
     /// Handle iCloud sync enabled
-    private func handleSyncEnabled() {
+    private func handleSyncEnabled() async {
         DLOG("iCloud sync enabled")
         
         // Initialize sync providers if not already initialized
@@ -325,7 +334,7 @@ public class CloudSyncManager {
         }
         
         // Start initial sync
-        _ = startSync()
+        await startSync()
             .subscribe()
             .disposed(by: disposeBag)
     }
@@ -363,7 +372,7 @@ public class CloudSyncManager {
     }
     
     /// Handle game deleted
-    private func handleGameDeleted(_ game: PVGame) {
+    private func handleGameDeleted(_ game: PVGame) async {
         guard Defaults[.iCloudSync] else {
             return
         }
@@ -372,7 +381,7 @@ public class CloudSyncManager {
         
         // Delete ROM from cloud if needed
         if let cloudURL = cloudROMURL(for: game) {
-            romsSyncer?.deleteFromDatastore(cloudURL)
+            await romsSyncer?.deleteFromDatastore(cloudURL)
         }
     }
     
@@ -393,7 +402,7 @@ public class CloudSyncManager {
     }
     
     /// Handle save state deleted
-    private func handleSaveStateDeleted(_ saveState: PVSaveState) {
+    private func handleSaveStateDeleted(_ saveState: PVSaveState) async {
         guard Defaults[.iCloudSync] else {
             return
         }
@@ -402,7 +411,7 @@ public class CloudSyncManager {
         
         // Delete save state from cloud if needed
         if let cloudURL = cloudSaveStateURL(for: saveState) {
-            saveStatesSyncer?.deleteFromDatastore(cloudURL)
+            await saveStatesSyncer?.deleteFromDatastore(cloudURL)
         }
     }
     

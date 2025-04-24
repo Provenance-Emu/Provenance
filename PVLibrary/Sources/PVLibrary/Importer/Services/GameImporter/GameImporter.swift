@@ -895,7 +895,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             }
         }
         // Check for items that are either queued or have a user-chosen system
-        let itemsToProcess = importQueue.filter {
+        let itemsToProcess = await importQueue.filter {
             $0.status == .queued || $0.userChosenSystem != nil
         }
 
