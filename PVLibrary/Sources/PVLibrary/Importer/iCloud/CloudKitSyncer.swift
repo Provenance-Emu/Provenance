@@ -232,7 +232,7 @@ public class CloudKitSyncer: SyncProvider {
                     DLOG("Created CloudKit subscription for directory: \(directory)")
                 } catch {
                     ELOG("Failed to create CloudKit subscription: \(error.localizedDescription)")
-                    awaiterrorHandler.handle(error: error)
+                    await errorHandler.handle(error: error)
                 }
             }
             
