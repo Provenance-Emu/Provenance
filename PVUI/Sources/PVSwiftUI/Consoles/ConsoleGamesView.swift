@@ -173,8 +173,8 @@ struct ConsoleGamesView: SwiftUI.View {
                 
                 // Status Message View
                 StatusMessageView()
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, 8)
+                    .padding(.top, 4)
                 
                 // Import Progress View (legacy - can be removed once StatusMessageView is fully tested)
                 ImportProgressView(

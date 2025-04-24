@@ -299,6 +299,7 @@ struct ConsolesWrapperView: SwiftUI.View {
                 }
                 .tag("debug")
                 .ignoresSafeArea(.all, edges: .bottom)
+                .navigationTitle(Text("Debug"))
             
             FileRecoveryTestView()
                 .tabItem {
