@@ -16,6 +16,9 @@ public struct BootupViewRetroWave: View {
     @EnvironmentObject public var themeManager: ThemeManager
     
     @ObservedObject private var iconManager = IconManager.shared
+    
+    // Accessibility setting for reduce motion
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     // Animation properties
     @State private var glowOpacity: Double = 0.0
@@ -96,11 +99,11 @@ public struct BootupViewRetroWave: View {
             RetroPurpleSun(offset: sunOffset)
                 .edgesIgnoringSafeArea(.all)
             
-            // Scanlines effect
-            ScanlineEffect(offset: scanlineOffset)
+            // Scanlines effect - only show animation if reduce motion is disabled
+            ScanlineEffect(offset: reduceMotion ? 0 : scanlineOffset)
                 .edgesIgnoringSafeArea(.all)
                 .blendMode(.overlay)
-                .opacity(0.15)
+                .opacity(reduceMotion ? 0.05 : 0.15)
             
             // Main content
             VStack(spacing: 30) {
@@ -181,26 +184,41 @@ public struct BootupViewRetroWave: View {
         .onAppear {
             ILOG("BootupView: Appeared, current state: \(appState.bootupStateManager.currentState.localizedDescription)")
             
-            // Start animations
-            withAnimation(.easeOut(duration: 2.0)) {
+            if reduceMotion {
+                // If reduce motion is enabled, set final values without animations
                 gridOffset = 0
                 sunOffset = 0
                 titleScale = 1.0
-            }
-            
-            withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                glowOpacity = 0.7
-                logoGlow = 0.6
-            }
-            
-            // Start scanline animation
-            withAnimation(.linear(duration: 10).repeatForever(autoreverses: false)) {
-                scanlineOffset = 1000
+                glowOpacity = 0.5
+                logoGlow = 0.3
+                scanlineOffset = 0
+            } else {
+                // Start animations only if reduce motion is disabled
+                withAnimation(.easeOut(duration: 2.0)) {
+                    gridOffset = 0
+                    sunOffset = 0
+                    titleScale = 1.0
+                }
+                
+                withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+                    glowOpacity = 0.7
+                    logoGlow = 0.6
+                }
+                
+                // Start scanline animation
+                withAnimation(.linear(duration: 10).repeatForever(autoreverses: false)) {
+                    scanlineOffset = 1000
+                }
             }
         }
         .onReceive(timer) { _ in
-            withAnimation(.easeInOut(duration: 0.2)) {
-                showText.toggle()
+            // Only animate text blinking if reduce motion is disabled
+            if reduceMotion {
+                showText = true // Always show text when reduce motion is enabled
+            } else {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    showText.toggle()
+                }
             }
         }
     }

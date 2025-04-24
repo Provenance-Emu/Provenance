@@ -125,14 +125,21 @@ public struct MarqueeText: View {
 
     public var body: some View {
         GeometryReader { geometry in
-            ZStack(alignment: .leading) {
+            if reduceMotion {
+                // Static version with truncation when reduce motion is enabled
                 Text(text)
                     .font(font)
                     .lineLimit(1)
-                    .fixedSize()
-                    // If reduce motion is enabled, show truncated text with ellipsis
-                    .truncationMode(reduceMotion ? .tail : .none)
-                    .background(
+                    .truncationMode(.tail)
+                    .frame(width: containerWidth, alignment: .leading)
+            } else {
+                // Animated marquee when reduce motion is disabled
+                ZStack(alignment: .leading) {
+                    Text(text)
+                        .font(font)
+                        .lineLimit(1)
+                        .fixedSize()
+                        .background(
                         GeometryReader { textGeometry in
                             Color.clear.onAppear {
                                 // Store the container width for later use
@@ -151,12 +158,11 @@ public struct MarqueeText: View {
                         }
                     )
                     .offset(x: offset)
+                }
+                .frame(width: containerWidth, alignment: .leading)
+                .clipped()
+                .contentShape(Rectangle())
             }
-            .frame(width: containerWidth, alignment: .leading)
-            .clipped()
-            // If reduce motion is enabled, allow text to be selectable
-            .allowsHitTesting(reduceMotion)
-            .contentShape(Rectangle())
         }
         .frame(height: 20)
         .clipped()

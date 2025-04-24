@@ -3,7 +3,7 @@
 //  PVUI
 //
 //  Created by Joseph Mattiello on 4/24/25.
-//  Copyright © 2025 Provenance Emu. All rights reserved.
+//  Copyright 2025 Provenance Emu. All rights reserved.
 //
 
 import SwiftUI
@@ -183,31 +183,6 @@ public struct RetroStatusControlView: View {
                 }
             }
         }
-            .frame(maxWidth: .infinity)
-            .padding(.bottom, 4)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.black.opacity(0.7))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .strokeBorder(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroBlue]),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 1.5
-                            )
-                    )
-                    .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5, x: 0, y: 0)
-            )
-            .animation(.easeInOut(duration: 0.3), value: isExpanded)
-            .onAppear {
-                onAppear()
-            }
-            .onDisappear {
-                onDisappear()
-            }
     }
     
     // MARK: - Lifecycle Methods
@@ -1523,44 +1498,11 @@ public struct RetroStatusControlView: View {
     private var messagesView: some View {
         VStack(alignment: .leading, spacing: 4) {
             ForEach(messageManager.messages.suffix(3), id: \.id) { message in
-                HStack(spacing: 6) {
-                    Circle()
-                        .fill(messageTypeColor(message.type))
-                        .frame(width: 8, height: 8)
-                    
-                    Text(message.text)
-                        .font(.system(size: 12))
-                        .foregroundColor(Color.white.opacity(0.9))
-                        .lineLimit(1)
-                    
-                    Spacer()
-                    
-                    Text(formatTimeInterval(since: message.timestamp))
-                        .font(.system(size: 10))
-                        .foregroundColor(Color.white.opacity(0.6))
-                }
-                .padding(.vertical, 4)
-                .padding(.horizontal, 8)
+                MessageRowView(message: message, messageTypeColor: messageTypeColor, formatTimeInterval: formatTimeInterval)
             }
         }
         .padding(.vertical, 6)
         .padding(.horizontal, 4)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color.black.opacity(0.7))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroBlue]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1.5
-                        )
-                )
-        )
-        .shadow(color: RetroTheme.retroPurple.opacity(0.5), radius: 3, x: 0, y: 0)
     }
     
     /// Archive extraction progress view
@@ -1631,6 +1573,36 @@ public struct RetroStatusControlView: View {
                 )
         )
         .shadow(color: RetroTheme.retroPurple.opacity(0.5), radius: 3, x: 0, y: 0)
+    }
+}
+
+// MARK: - Helper Views
+
+/// Private view to display a single status message row.
+private struct MessageRowView: View {
+    let message: StatusMessage
+    let messageTypeColor: (StatusMessage.MessageType) -> Color
+    let formatTimeInterval: (Date) -> String
+    
+    var body: some View {
+        HStack(spacing: 6) {
+            Circle()
+                .fill(messageTypeColor(message.type))
+                .frame(width: 8, height: 8)
+            
+            Text(message.message)
+                .font(.system(size: 12))
+                .foregroundColor(Color.white.opacity(0.9))
+                .lineLimit(1)
+            
+            Spacer()
+            
+            Text(formatTimeInterval(message.timestamp))
+                .font(.system(size: 10))
+                .foregroundColor(Color.white.opacity(0.6))
+        }
+        .padding(.vertical, 4)
+        .padding(.horizontal, 8)
     }
 }
 

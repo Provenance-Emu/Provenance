@@ -11,6 +11,9 @@ import SwiftUI
 public struct RetroProgressBar: View {
     @State private var progress: CGFloat = 0
     
+    // Accessibility setting for reduce motion
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    
     public init() {}
     
     public var body: some View {
@@ -28,9 +31,15 @@ public struct RetroProgressBar: View {
             }
         }
         .onAppear {
-            // Animate progress
-            withAnimation(Animation.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
-                progress = 1.0
+            if reduceMotion {
+                // If reduce motion is enabled, set a static progress value
+                // Use a value between 0.5-0.7 to indicate progress without animation
+                progress = 0.6
+            } else {
+                // Animate progress only if reduce motion is disabled
+                withAnimation(Animation.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
+                    progress = 1.0
+                }
             }
         }
     }
