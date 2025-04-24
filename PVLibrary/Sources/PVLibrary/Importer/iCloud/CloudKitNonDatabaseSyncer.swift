@@ -100,6 +100,7 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
     /// - Parameter directory: The directory to get files from
     /// - Returns: Array of file URLs
     public func getAllFiles(in directory: String) async -> [URL] {
+        DLOG("Getting all files in directory: \(directory)")
         var allFiles: [URL] = []
         
         // Get the documents directory
@@ -223,7 +224,15 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
                 do {
                     // Get all files in the directory
                     let files = await self.getAllFiles(in: directory)
+                    DLOG("Found \(files.count) files in directory: \(directory)")
+                    
+                    // Log the files found
+                    for (index, file) in files.enumerated() {
+                        DLOG("File \(index+1): \(file.path)")
+                    }
+                    
                     let directoryURL = URL.documentsPath.appendingPathComponent(directory)
+                    DLOG("Directory URL: \(directoryURL.path)")
                     
                     var syncCount = 0
                     
@@ -233,7 +242,9 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
                             // Get the relative path for the file within its directory
                             let relativePath = self.getRelativePath(for: file, in: directoryURL)
                             
-                            DLOG("Uploading file with relative path: \(relativePath)")
+                            DLOG("Uploading file: \(file.path)")
+                            DLOG("Directory URL: \(directoryURL.path)")
+                            DLOG("Relative path: \(relativePath)")
                             
                             // Create a custom record with the relative path
                             let recordType = CloudKitSchema.RecordType.file

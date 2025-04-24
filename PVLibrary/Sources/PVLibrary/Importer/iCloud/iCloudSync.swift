@@ -747,7 +747,7 @@ public enum iCloudSync {
     }
     
     static func turnOn() async {
-        guard URL.supportsICloud else {
+        guard URL.supportsICloudDrive else {
             ELOG("attempted to turn on iCloud, but iCloud is NOT setup on the device")
             return
         }
@@ -873,12 +873,23 @@ public enum iCloudSync {
             return
         }
         
+        // Get the Documents directory within the iCloud container
+        let iCloudDocuments = iCloudContainer.appendingPathComponent("Documents")
+        
+        // Check if the Documents directory exists
+        if !FileManager.default.fileExists(atPath: iCloudDocuments.path) {
+            ELOG("iCloud Documents directory doesn't exist")
+            return
+        }
+        
+        ILOG("Using iCloud Documents path: \(iCloudDocuments.path)")
+        
         let directories = ["BIOS", "Battery States", "Screenshots", "RetroArch", "DeltaSkins", "Save States", "ROMs"]
         
         await withTaskGroup(of: Void.self) { group in
             for directory in directories {
                 group.addTask {
-                    await moveFilesFromiCloudToLocal(directory: directory, iCloudContainer: iCloudContainer)
+                    await moveFilesFromiCloudToLocal(directory: directory, iCloudContainer: iCloudDocuments)
                 }
             }
             await group.waitForAll()
@@ -910,65 +921,184 @@ public enum iCloudSync {
         let localDirectory = URL.documentsDirectory.appendingPathComponent(directory)
         let iCloudDirectory = iCloudContainer.appendingPathComponent(directory)
         
-        DLOG("Moving files from \(iCloudDirectory.path) to \(localDirectory.path)")
+        ILOG("Moving files from \(iCloudDirectory.path) to \(localDirectory.path)")
         
         let fileManager = FileManager.default
+        
+        // Skip if iCloud directory doesn't exist
+        if !fileManager.fileExists(atPath: iCloudDirectory.path) {
+            DLOG("iCloud directory doesn't exist: \(iCloudDirectory.path)")
+            return
+        }
         
         // Create local directory if it doesn't exist
         if !fileManager.fileExists(atPath: localDirectory.path) {
             do {
                 try fileManager.createDirectory(at: localDirectory, withIntermediateDirectories: true)
+                DLOG("Created local directory: \(localDirectory.path)")
             } catch {
                 ELOG("Error creating local directory \(localDirectory.path): \(error)")
                 return
             }
         }
         
-        // Get files from iCloud directory
-        guard let iCloudFiles = try? fileManager.contentsOfDirectory(at: iCloudDirectory, includingPropertiesForKeys: nil) else {
-            DLOG("No files found in iCloud directory \(iCloudDirectory.path) or directory doesn't exist")
+        // Process all directories recursively
+        await moveDirectoryContentsRecursively(from: iCloudDirectory, to: localDirectory)
+    }
+    
+
+    
+    /// Move directory contents recursively
+    /// - Parameters:
+    ///   - sourceDir: Source directory (iCloud)
+    ///   - destDir: Destination directory (local)
+    private static func moveDirectoryContentsRecursively(from sourceDir: URL, to destDir: URL) async {
+        let fileManager = FileManager.default
+        
+        // Skip if source directory doesn't exist
+        guard fileManager.fileExists(atPath: sourceDir.path) else {
+            DLOG("Source directory doesn't exist: \(sourceDir.path)")
             return
         }
         
-        for iCloudFile in iCloudFiles {
-            let fileName = iCloudFile.lastPathComponent
-            let localFile = localDirectory.appendingPathComponent(fileName)
+        // Create destination directory if needed
+        if !fileManager.fileExists(atPath: destDir.path) {
+            do {
+                try fileManager.createDirectory(at: destDir, withIntermediateDirectories: true)
+                DLOG("Created destination directory: \(destDir.path)")
+            } catch {
+                ELOG("Error creating destination directory \(destDir.path): \(error)")
+                return
+            }
+        }
+        
+        do {
+            // Get all items in the directory
+            let items = try fileManager.contentsOfDirectory(at: sourceDir, includingPropertiesForKeys: [.isDirectoryKey])
+            DLOG("Found \(items.count) items in directory: \(sourceDir.lastPathComponent)")
             
-            // Check if file already exists locally
-            if fileManager.fileExists(atPath: localFile.path) {
-                do {
-                    try await fileManager.removeItem(at: localFile)
-                    DLOG("Removed existing local file: \(localFile.path)")
-                } catch {
-                    ELOG("Error removing existing local file \(localFile.path): \(error)")
-                    continue
+            // Track successful moves to avoid removing source directory if any file fails
+            var allItemsProcessedSuccessfully = true
+            
+            for item in items {
+                var isDirectory: ObjCBool = false
+                if fileManager.fileExists(atPath: item.path, isDirectory: &isDirectory) {
+                    let itemName = item.lastPathComponent
+                    let destItem = destDir.appendingPathComponent(itemName)
+                    
+                    if isDirectory.boolValue {
+                        // Handle subdirectory
+                        DLOG("Processing subdirectory: \(itemName)")
+                        
+                        // Process subdirectory recursively
+                        await moveDirectoryContentsRecursively(from: item, to: destItem)
+                        
+                        // Check if directory is empty before removing
+                        do {
+                            let remainingItems = try fileManager.contentsOfDirectory(at: item, includingPropertiesForKeys: nil)
+                            if remainingItems.isEmpty {
+                                // Remove the source directory after all contents have been moved
+                                try await fileManager.removeItem(at: item)
+                                DLOG("Removed empty source subdirectory: \(item.path)")
+                            } else {
+                                DLOG("Source subdirectory not empty, skipping removal: \(item.path)")
+                                allItemsProcessedSuccessfully = false
+                            }
+                        } catch {
+                            ELOG("Error checking or removing source subdirectory \(item.path): \(error)")
+                            allItemsProcessedSuccessfully = false
+                        }
+                    } else {
+                        // Handle file
+                        let success = await moveFile(from: item, to: destItem)
+                        if !success {
+                            allItemsProcessedSuccessfully = false
+                        }
+                    }
                 }
             }
             
-            // Move file from iCloud to local
+            if allItemsProcessedSuccessfully {
+                DLOG("Successfully processed all items in directory: \(sourceDir.lastPathComponent)")
+            } else {
+                DLOG("Some items in directory \(sourceDir.lastPathComponent) could not be processed")
+            }
+        } catch {
+            ELOG("Error processing directory \(sourceDir.lastPathComponent): \(error)")
+        }
+    }
+    
+    /// Move a single file from iCloud to local
+    /// - Parameters:
+    ///   - sourceFile: Source file URL (iCloud)
+    ///   - destFile: Destination file URL (local)
+    ///   - Returns: Whether the move was successful
+    @discardableResult
+    private static func moveFile(from sourceFile: URL, to destFile: URL) async -> Bool {
+        let fileManager = FileManager.default
+        
+        // Skip if source file doesn't exist
+        guard fileManager.fileExists(atPath: sourceFile.path) else {
+            DLOG("Source file doesn't exist: \(sourceFile.path)")
+            return false
+        }
+        
+        // Create parent directory if needed
+        let destParentDir = destFile.deletingLastPathComponent()
+        if !fileManager.fileExists(atPath: destParentDir.path) {
             do {
-                try fileManager.setUbiquitous(false, itemAt: iCloudFile, destinationURL: localFile)
-                DLOG("Moved file from iCloud to local: \(fileName)")
+                try fileManager.createDirectory(at: destParentDir, withIntermediateDirectories: true)
+                DLOG("Created parent directory: \(destParentDir.path)")
             } catch {
-                ELOG("Error moving file from iCloud to local \(fileName): \(error)")
+                ELOG("Error creating parent directory \(destParentDir.path): \(error)")
+                return false
+            }
+        }
+        
+        // Check if destination file already exists
+        if fileManager.fileExists(atPath: destFile.path) {
+            do {
+                try await fileManager.removeItem(at: destFile)
+                DLOG("Removed existing local file: \(destFile.path)")
+            } catch {
+                ELOG("Error removing existing local file \(destFile.path): \(error)")
+                return false
+            }
+        }
+        
+        // Move file from iCloud to local
+        do {
+            try fileManager.setUbiquitous(false, itemAt: sourceFile, destinationURL: destFile)
+            DLOG("Moved file from iCloud to local: \(sourceFile.lastPathComponent)")
+            return true
+        } catch {
+            ELOG("Error moving file from iCloud to local \(sourceFile.lastPathComponent): \(error)")
+            
+            // Try copying instead if moving fails
+            do {
+                try fileManager.copyItem(at: sourceFile, to: destFile)
+                DLOG("Copied file from iCloud to local: \(sourceFile.lastPathComponent)")
                 
-                // Try copying instead if moving fails
+                // Remove the iCloud file after successful copy
                 do {
-                    try fileManager.copyItem(at: iCloudFile, to: localFile)
-                    DLOG("Copied file from iCloud to local: \(fileName)")
-                    
-                    // Remove the iCloud file after successful copy
-                    try await fileManager.removeItem(at: iCloudFile)
+                    try await fileManager.removeItem(at: sourceFile)
+                    DLOG("Removed source file after copying: \(sourceFile.path)")
+                    return true
                 } catch {
-                    ELOG("Error copying file from iCloud to local \(fileName): \(error)")
+                    ELOG("Error removing source file after copying \(sourceFile.path): \(error)")
+                    // Still return true since the file was copied successfully
+                    return true
                 }
+            } catch {
+                ELOG("Error copying file from iCloud to local \(sourceFile.lastPathComponent): \(error)")
+                return false
             }
         }
     }
     
     /// Check for files stuck in iCloud Drive and recover them if needed
     /// This helps users recover files even if sync is disabled
-    static func checkForStuckFilesInICloudDrive() async {
+    public static func checkForStuckFilesInICloudDrive() async {
         ILOG("Checking for files stuck in iCloud Drive that need recovery")
         
         // Only proceed if we're not using iCloud Drive mode
@@ -984,34 +1114,60 @@ public enum iCloudSync {
             return
         }
         
+        // Get the Documents directory within the iCloud container
+        let iCloudDocuments = iCloudContainer.appendingPathComponent("Documents")
+        
+        DLOG("Checking iCloud container path: \(iCloudContainer.path)")
+        DLOG("Checking iCloud Documents path: \(iCloudDocuments.path)")
+        
+        // Check if the Documents directory exists
+        if !FileManager.default.fileExists(atPath: iCloudDocuments.path) {
+            DLOG("iCloud Documents directory doesn't exist")
+            return
+        }
+        
         // Check if there are any files in the iCloud Drive directories
         let directories = ["BIOS", "Battery States", "Screenshots", "RetroArch", "DeltaSkins", "Save States", "ROMs"]
         var hasStuckFiles = false
+        var stuckFilesCount = 0
         
         for directory in directories {
-            let iCloudDirectory = iCloudContainer.appendingPathComponent(directory)
+            let iCloudDirectory = iCloudDocuments.appendingPathComponent(directory)
+            DLOG("Checking directory: \(iCloudDirectory.path)")
             
             // Skip if directory doesn't exist
             if !FileManager.default.fileExists(atPath: iCloudDirectory.path) {
+                DLOG("Directory doesn't exist: \(iCloudDirectory.path)")
                 continue
             }
             
-            // Check if directory has any files
+            // Check directory recursively for all directories
             do {
-                let files = try FileManager.default.contentsOfDirectory(at: iCloudDirectory, includingPropertiesForKeys: nil)
-                if !files.isEmpty {
-                    DLOG("Found \(files.count) potentially stuck files in iCloud Drive directory: \(directory)")
-                    hasStuckFiles = true
-                    break
+                // Use recursive enumeration to get all files
+                if let enumerator = FileManager.default.enumerator(at: iCloudDirectory, includingPropertiesForKeys: [.isRegularFileKey], options: [.skipsHiddenFiles]) {
+                    var filesInDir = 0
+                    for case let fileURL as URL in enumerator {
+                        var isDirectory: ObjCBool = false
+                        if FileManager.default.fileExists(atPath: fileURL.path, isDirectory: &isDirectory), !isDirectory.boolValue {
+                            // Log the file path for debugging
+                            DLOG("Found file in iCloud Drive: \(fileURL.path)")
+                            filesInDir += 1
+                            stuckFilesCount += 1
+                            hasStuckFiles = true
+                        }
+                    }
+                    if filesInDir > 0 {
+                        DLOG("Found \(filesInDir) files in directory: \(directory)")
+                    }
                 }
             } catch {
-                ELOG("Error checking iCloud Drive directory \(directory): \(error)")
+                ELOG("Error recursively checking directory \(directory): \(error)")
             }
         }
         
         // If we found stuck files, offer to recover them
         if hasStuckFiles {
-            ILOG("Found files stuck in iCloud Drive. Attempting recovery...")
+            ILOG("Found \(stuckFilesCount) files stuck in iCloud Drive. Attempting recovery...")
             
             // Notify the user that we're recovering files
             NotificationCenter.default.post(name: iCloudSync.iCloudFileRecoveryStarted, object: nil)

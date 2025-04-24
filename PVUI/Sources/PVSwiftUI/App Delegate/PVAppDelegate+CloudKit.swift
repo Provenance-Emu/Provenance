@@ -18,6 +18,12 @@ import BackgroundTasks
 extension PVAppDelegate {
     /// Initialize CloudKit for all platforms
     func initializeCloudKit() {
+        
+        // Check for files stuck in iCloud Drive at startup
+        Task {
+            await iCloudSync.checkForStuckFilesInICloudDrive()
+        }
+        
         // Register for remote notifications if iCloud sync is enabled
         if Defaults[.iCloudSync] {
             DLOG("Initializing CloudKit for all platforms")
@@ -174,6 +180,10 @@ extension PVAppDelegate {
     ///   - userInfo: User info from the notification
     ///   - fetchCompletionHandler: Completion handler to call when done
     public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        
+        if handleCloudKitNotification(userInfo, fetchCompletionHandler: completionHandler) {
+            return
+        }
         // Check if iCloud sync is enabled
         guard Defaults[.iCloudSync] else {
             DLOG("iCloud sync is disabled, ignoring notification")
@@ -281,6 +291,39 @@ extension PVAppDelegate {
         UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
         
         DLOG("Background fetch configured with minimum interval")
+    }
+    
+    /// Handle a CloudKit remote notification
+    /// - Parameters:
+    ///   - userInfo: User info from the notification
+    ///   - fetchCompletionHandler: Completion handler to call when done
+    /// - Returns: True if the notification was handled, false otherwise
+    func handleCloudKitNotification(_ userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) -> Bool {
+        // Check if this is a CloudKit notification
+        guard let notification = CKNotification(fromRemoteNotificationDictionary: userInfo) else {
+            return false
+        }
+        
+        DLOG("Received CloudKit notification: \(notification.notificationType.rawValue)")
+        
+        // Handle notification
+        CloudKitSubscriptionManager.shared.handleRemoteNotification(userInfo)
+        
+        // Start sync
+        Task {
+            do {
+                // Start sync
+                try await CloudSyncManager.shared.startSync().value
+                
+                // Complete with new data
+                completionHandler(.newData)
+            } catch {
+                ELOG("Error handling CloudKit notification: \(error.localizedDescription)")
+                completionHandler(.failed)
+            }
+        }
+        
+        return true
     }
     
 }
