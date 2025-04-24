@@ -530,6 +530,11 @@ public enum iCloudSync {
     static var romDatabaseInitialized: AnyCancellable?
     
     public static func initICloudDocuments() {
+        // Check for files stuck in iCloud Drive at startup
+        Task {
+            await checkForStuckFilesInICloudDrive()
+        }
+        
         // Monitor iCloudSync setting changes
         Task {
             for await value in Defaults.updates(.iCloudSync) {
@@ -555,14 +560,33 @@ public enum iCloudSync {
         await turnOn()
     }
     
+    /// iCloud sync disabled notification
+    public static let iCloudSyncDisabled = Notification.Name("iCloudSyncDisabled")
+    
+    /// iCloud sync completed notification
+    public static let iCloudSyncCompleted = Notification.Name("iCloudSyncCompleted")
+    
+    /// iCloud file recovery started notification
+    public static let iCloudFileRecoveryStarted = Notification.Name("iCloudFileRecoveryStarted")
+    
+    /// iCloud file recovery completed notification
+    public static let iCloudFileRecoveryCompleted = Notification.Name("iCloudFileRecoveryCompleted")
+    
     /// Handle changes to the iCloudSyncMode setting
     /// - Parameter newMode: The new iCloudSyncMode value
     static func iCloudSyncModeChanged(_ newMode: iCloudSyncMode) async {
         ILOG("new iCloudSyncMode value: \(newMode.description)")
         
-        // Only process mode changes if iCloud sync is enabled
+        // Always check for files in iCloud Drive that might need to be recovered
+        if newMode.isCloudKit {
+            // If switching to CloudKit, always try to recover files from iCloud Drive
+            // regardless of whether sync is enabled
+            await checkForStuckFilesInICloudDrive()
+        }
+        
+        // Only process full migration if iCloud sync is enabled
         guard Defaults[.iCloudSync] else {
-            DLOG("Ignoring iCloudSyncMode change because iCloud sync is disabled")
+            DLOG("Skipping full migration because iCloud sync is disabled")
             return
         }
         
@@ -939,6 +963,68 @@ public enum iCloudSync {
                     ELOG("Error copying file from iCloud to local \(fileName): \(error)")
                 }
             }
+        }
+    }
+    
+    /// Check for files stuck in iCloud Drive and recover them if needed
+    /// This helps users recover files even if sync is disabled
+    static func checkForStuckFilesInICloudDrive() async {
+        ILOG("Checking for files stuck in iCloud Drive that need recovery")
+        
+        // Only proceed if we're not using iCloud Drive mode
+        let syncMode = Defaults[.iCloudSyncMode]
+        guard syncMode.isCloudKit else {
+            DLOG("Not checking for stuck files because we're in iCloud Drive mode")
+            return
+        }
+        
+        // Check if iCloud Drive is accessible
+        guard let iCloudContainer = URL.iCloudContainerDirectory else {
+            ELOG("Cannot access iCloud container directory to check for stuck files")
+            return
+        }
+        
+        // Check if there are any files in the iCloud Drive directories
+        let directories = ["BIOS", "Battery States", "Screenshots", "RetroArch", "DeltaSkins", "Save States", "ROMs"]
+        var hasStuckFiles = false
+        
+        for directory in directories {
+            let iCloudDirectory = iCloudContainer.appendingPathComponent(directory)
+            
+            // Skip if directory doesn't exist
+            if !FileManager.default.fileExists(atPath: iCloudDirectory.path) {
+                continue
+            }
+            
+            // Check if directory has any files
+            do {
+                let files = try FileManager.default.contentsOfDirectory(at: iCloudDirectory, includingPropertiesForKeys: nil)
+                if !files.isEmpty {
+                    DLOG("Found \(files.count) potentially stuck files in iCloud Drive directory: \(directory)")
+                    hasStuckFiles = true
+                    break
+                }
+            } catch {
+                ELOG("Error checking iCloud Drive directory \(directory): \(error)")
+            }
+        }
+        
+        // If we found stuck files, offer to recover them
+        if hasStuckFiles {
+            ILOG("Found files stuck in iCloud Drive. Attempting recovery...")
+            
+            // Notify the user that we're recovering files
+            NotificationCenter.default.post(name: iCloudSync.iCloudFileRecoveryStarted, object: nil)
+            
+            // Move files from iCloud Drive to local Documents
+            await moveFilesFromiCloudDriveToLocalDocuments()
+            
+            // Notify the user that recovery is complete
+            NotificationCenter.default.post(name: iCloudSync.iCloudFileRecoveryCompleted, object: nil)
+            
+            ILOG("File recovery from iCloud Drive completed")
+        } else {
+            DLOG("No stuck files found in iCloud Drive")
         }
     }
 }
