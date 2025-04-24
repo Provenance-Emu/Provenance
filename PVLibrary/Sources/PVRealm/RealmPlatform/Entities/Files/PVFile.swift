@@ -88,7 +88,11 @@ public extension PVFile {
         
         // If we're using CloudKit, use the local documents directory
         if syncMode.isCloudKit {
+            #if os(tvOS)
+            return RelativeRoot.cachesDirectory.appendingPathComponent(fixedPartialPath)
+            #else
             return RelativeRoot.documentsDirectory.appendingPathComponent(fixedPartialPath)
+            #endif
         }
         
         // For iCloud Drive, use the iCloud container if available
@@ -97,7 +101,11 @@ public extension PVFile {
         }
         
         // Fallback to the local documents directory
+        #if os(tvOS)
+        return RelativeRoot.cachesDirectory.appendingPathComponent(fixedPartialPath)
+        #else
         return RelativeRoot.documentsDirectory.appendingPathComponent(fixedPartialPath)
+        #endif
     }
     
     /// attempts to fix `partialPath`
