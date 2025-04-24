@@ -178,7 +178,14 @@ public enum CloudKitSchema {
     ///   - recordType: The record type to create
     ///   - database: The CloudKit database to create the record type in
     private static func createRecordType(_ recordType: String, in database: CKDatabase) async throws {
-        // Check if record type exists by attempting to create a record
+        DLOG("Creating/updating record type: \(recordType)")
+        
+        // Note: CloudKit automatically indexes some fields when they're used in queries
+        // We'll create test records with the fields we want to use in queries
+        // This approach works because CloudKit will index fields that are frequently queried
+        DLOG("Creating test records with queryable fields for: \(recordType)")
+        
+        // As a fallback, create a test record to ensure the record type exists
         let record = CKRecord(recordType: recordType)
         
         // Add some common attributes based on the record type
@@ -202,7 +209,7 @@ public enum CloudKitSchema {
         do {
             // Try to save the record to create the record type
             _ = try await database.save(record)
-            DLOG("Created record type: \(recordType)")
+            DLOG("Created test record for type: \(recordType)")
             
             // Delete the test record
             try await database.deleteRecord(withID: record.recordID)

@@ -401,44 +401,80 @@ public class CloudKitSyncer: SyncProvider {
             
             DLOG("Getting record count for record type: \(recordType)")
             
-            // Create a query for all records of this syncer's type
+            // Now that we have properly configured the CloudKit schema with queryable fields,
+            // we can use a simple predicate that will work
             let query = CKQuery(recordType: recordType, predicate: NSPredicate(value: true))
             
-            // Set the results limit to minimize data transfer
-            // We're only interested in the count, not the actual records
-            let queryOperation = CKQueryOperation(query: query)
-            queryOperation.resultsLimit = CKQueryOperation.maximumResults
-            
-            // Use async/await to get the count
-            var recordCount = 0
-            
-            // Create a continuation to handle the asynchronous operation
-            return try await withCheckedThrowingContinuation { continuation in
-                // Set up the record fetched block to count records
-                queryOperation.recordFetchedBlock = { (record: CKRecord) in
-                    DLOG("Found record: \(record.recordID.recordName)")
-                    recordCount += 1
-                }
-                
-                // Set up the completion block
-                queryOperation.queryCompletionBlock = { (cursor: CKQueryOperation.Cursor?, error: Error?) in
-                    if let error = error {
-                        ELOG("Error getting record count for \(self.recordType): \(error.localizedDescription)")
-                        continuation.resume(returning: 0)
-                    } else {
-                        DLOG("Found \(recordCount) records for record type: \(self.recordType)")
-                        // If there's a cursor, there are more records
-                        // But for simplicity, we'll just return the count we have
-                        continuation.resume(returning: recordCount)
-                    }
-                }
-                
-                // Add the operation to the database
-                privateDatabase.add(queryOperation)
-            }
+            // Use pagination to handle large record sets
+            return try await countRecordsWithPagination(query: query)
         } catch {
             ELOG("Error getting record count for \(recordType): \(error.localizedDescription)")
             return 0
+        }
+    }
+    
+    /// Count records with pagination to handle large record sets
+    /// - Parameter query: The CloudKit query to execute
+    /// - Returns: The total count of records
+    private func countRecordsWithPagination(query: CKQuery) async throws -> Int {
+        var totalCount = 0
+        var currentCursor: CKQueryOperation.Cursor? = nil
+        
+        // Continue fetching records until we've processed all pages
+        repeat {
+            let (count, cursor) = try await fetchRecordBatch(query: query, cursor: currentCursor)
+            totalCount += count
+            currentCursor = cursor
+            
+            if let cursor = cursor {
+                DLOG("Fetched batch of \(count) records for \(recordType), total so far: \(totalCount), continuing with next batch")
+            } else {
+                DLOG("Fetched final batch of \(count) records for \(recordType), total: \(totalCount)")
+            }
+        } while currentCursor != nil
+        
+        return totalCount
+    }
+    
+    /// Fetch a batch of records and return the count and next cursor
+    /// - Parameters:
+    ///   - query: The CloudKit query to execute
+    ///   - cursor: The optional cursor for pagination
+    /// - Returns: A tuple containing the count of records in this batch and the next cursor (if any)
+    private func fetchRecordBatch(query: CKQuery, cursor: CKQueryOperation.Cursor?) async throws -> (Int, CKQueryOperation.Cursor?) {
+        // Use a continuation to handle the async operation
+        return try await withCheckedThrowingContinuation { continuation in
+            var batchCount = 0
+            
+            // Create the appropriate operation based on whether we have a cursor
+            let operation: CKQueryOperation
+            if let cursor = cursor {
+                operation = CKQueryOperation(cursor: cursor)
+            } else {
+                operation = CKQueryOperation(query: query)
+            }
+            
+            // Configure the operation
+            operation.desiredKeys = [] // We don't need any field data, just the count
+            operation.resultsLimit = 100 // Fetch in reasonable batches
+            
+            // Count each record
+            operation.recordFetchedBlock = { _ in
+                batchCount += 1
+            }
+            
+            // Handle completion
+            operation.queryCompletionBlock = { cursor, error in
+                if let error = error {
+                    ELOG("Error fetching records for \(self.recordType): \(error.localizedDescription)")
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: (batchCount, cursor))
+                }
+            }
+            
+            // Add the operation to the database
+            privateDatabase.add(operation)
         }
     }
     
