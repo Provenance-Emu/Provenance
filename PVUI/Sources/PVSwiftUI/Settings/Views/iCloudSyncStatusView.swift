@@ -145,7 +145,6 @@ struct iCloudSyncStatusView: View {
                 dismissButton: .default(Text("OK"))
             )
         }
-        .retrowaveBackground()
     }
 
     // MARK: - UI Components

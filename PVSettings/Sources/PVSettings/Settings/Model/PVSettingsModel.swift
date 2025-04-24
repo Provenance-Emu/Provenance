@@ -224,16 +224,19 @@ public enum ButtonSound: String, Codable, Equatable, UserDefaultsRepresentable, 
 
 /// iCloud sync mode for Provenance
 public enum iCloudSyncMode: String, Codable, Equatable, UserDefaultsRepresentable, Defaults.Serializable, CaseIterable {
+    #if !os(tvOS)
     /// Use iCloud Drive for syncing
     case iCloudDrive = "iCloudDrive"
-    
+    #endif
     /// Use CloudKit for syncing
     case cloudKit = "cloudKit"
     
     public var description: String {
         switch self {
+#if !os(tvOS)
         case .iCloudDrive:
             return "iCloud Drive"
+#endif
         case .cloudKit:
             return "CloudKit"
         }
@@ -241,10 +244,12 @@ public enum iCloudSyncMode: String, Codable, Equatable, UserDefaultsRepresentabl
     
     public var subtitle: String {
         switch self {
+#if !os(tvOS)
         case .iCloudDrive:
-            return "Use iCloud Drive for file syncing (legacy)"
+            return "Use iCloud Drive for file syncing (legacy) Not supported on tvOS."
+#endif
         case .cloudKit:
-            return "Use CloudKit for database and file syncing (recommended)"
+            return "Use CloudKit for database and file syncing (recommended). Supports all platforms."
         }
     }
     
@@ -252,11 +257,14 @@ public enum iCloudSyncMode: String, Codable, Equatable, UserDefaultsRepresentabl
     public var isCloudKit: Bool {
         return self == .cloudKit
     }
-    
+#if !os(tvOS)
     /// Check if iCloud Drive sync is enabled
     public var isICloudDrive: Bool {
         return self == .iCloudDrive
     }
+#else
+    public var isICloudDrive: Bool { false }
+#endif
 }
 
 // MARK: File syste

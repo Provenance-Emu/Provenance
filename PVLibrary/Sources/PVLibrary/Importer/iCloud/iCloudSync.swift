@@ -48,7 +48,7 @@ extension Container {
 public protocol iCloudTypeSyncer: Container, SyncProvider {
     var metadataQuery: NSMetadataQuery { get }
     var downloadedCount: Int { get async }
-
+    
     func loadAllFromICloud(iterationComplete: (() async -> Void)?) async -> Completable
     func insertDownloadingFile(_ file: URL) async -> URL?
     func insertDownloadedFile(_ file: URL) async
@@ -104,8 +104,8 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
     }
     
     public init(directories: Set<String>,
-         notificationCenter: NotificationCenter,
-         errorHandler: SyncErrorHandler) {
+                notificationCenter: NotificationCenter,
+                errorHandler: SyncErrorHandler) {
         self.notificationCenter = notificationCenter
         self.directories = directories
         self.errorHandler = errorHandler
@@ -129,12 +129,12 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
             let areNewFilesEmpty = await downloadedCount == 0
             let isNumberOfErrorEmpty = await errorHandler.isEmpty
             return purgeStatus == .incomplete
-                && initialSyncResult == .success
-                //if we have errors, it's better to just assume something happened while importing, so instead of creating a bigger mess, just NOT delete any files
-                && isNumberOfErrorEmpty
-                //we have to ensure that everything has been downloaded/imported before attempting to remove anything
-                && arePendingFilesToDownloadEmpty
-                && areNewFilesEmpty
+            && initialSyncResult == .success
+            //if we have errors, it's better to just assume something happened while importing, so instead of creating a bigger mess, just NOT delete any files
+            && isNumberOfErrorEmpty
+            //we have to ensure that everything has been downloaded/imported before attempting to remove anything
+            && arePendingFilesToDownloadEmpty
+            && areNewFilesEmpty
         }
     }
     
@@ -242,11 +242,11 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
         let publishers = names.map { notificationCenter.publisher(for: $0, object: metadataQuery) }
         querySubscriber = Publishers.MergeMany(publishers)
             .sink { [weak self] notification in
-            Task {
-                await self?.queryFinished(notification: notification)
-                await iterationComplete?()
+                Task {
+                    await self?.queryFinished(notification: notification)
+                    await iterationComplete?()
+                }
             }
-        }
         //has to be on the main thread, otherwise it won't work
         Task { @MainActor [weak self] in
             self?.metadataQuery.start()
@@ -290,11 +290,11 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
                 - does file exist: \(doesFileExist)
                 """)
                 switch downloadStatus {
-                    case  NSMetadataUbiquitousItemDownloadingStatusNotDownloaded:
-                        await handleFileToDownload(file, isDownloading: isDownloading, percentDownload: percentDownloaded)
-                    case NSMetadataUbiquitousItemDownloadingStatusCurrent:
-                        await handleDownloadedFile(file)
-                    default: ILOG("Other: \(file): download status: \(downloadStatus)")
+                case  NSMetadataUbiquitousItemDownloadingStatusNotDownloaded:
+                    await handleFileToDownload(file, isDownloading: isDownloading, percentDownload: percentDownloaded)
+                case NSMetadataUbiquitousItemDownloadingStatusCurrent:
+                    await handleDownloadedFile(file)
+                default: ILOG("Other: \(file): download status: \(downloadStatus)")
                 }
             }
         }
@@ -375,27 +375,27 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
         return .success
         //TODO: this has to be refactored so it happens initially, but this version we'll just call the move to icloud in the static function initiateDownloadOfiCloudDocumentsContainer
         /*var moveResult: SyncResult? = nil
-        for (localDirectory, iCloudDirectory) in allDirectories {
-            let moved = await iCloudContainerSyncer.moveFiles(at: localDirectory,
-                                                              containerDestination: iCloudDirectory,
-                                                              logPrefix: "\(directories)",
-                                                              existingClosure: { existing in
-                do {
-                    try fileManager.removeItem(atPath: existing.pathDecoded)
-                } catch {
-                    await errorHandler.handleError(error, file: existing)
-                    ELOG("error deleting existing file \(existing) that already exists in iCloud: \(error)")
-                }
-            }, moveClosure: { currentSource, currentDestination in
-                try fileManager.setUbiquitous(true, itemAt: currentSource, destinationURL: currentDestination)
-            }) { [weak self] destination in
-                await self?.insertUploadedFile(destination)
-            }
-            if moved == .saveFailure {
-                moveResult = .saveFailure
-            }
-        }
-        return moveResult ?? .success*/
+         for (localDirectory, iCloudDirectory) in allDirectories {
+         let moved = await iCloudContainerSyncer.moveFiles(at: localDirectory,
+         containerDestination: iCloudDirectory,
+         logPrefix: "\(directories)",
+         existingClosure: { existing in
+         do {
+         try fileManager.removeItem(atPath: existing.pathDecoded)
+         } catch {
+         await errorHandler.handleError(error, file: existing)
+         ELOG("error deleting existing file \(existing) that already exists in iCloud: \(error)")
+         }
+         }, moveClosure: { currentSource, currentDestination in
+         try fileManager.setUbiquitous(true, itemAt: currentSource, destinationURL: currentDestination)
+         }) { [weak self] destination in
+         await self?.insertUploadedFile(destination)
+         }
+         if moved == .saveFailure {
+         moveResult = .saveFailure
+         }
+         }
+         return moveResult ?? .success*/
     }
     
     @discardableResult
@@ -530,9 +530,17 @@ public enum iCloudSync {
     static var romDatabaseInitialized: AnyCancellable?
     
     public static func initICloudDocuments() {
+        // Monitor iCloudSync setting changes
         Task {
             for await value in Defaults.updates(.iCloudSync) {
                 await iCloudSyncChanged(value)
+            }
+        }
+        
+        // Monitor iCloudSyncMode setting changes
+        Task {
+            for await value in Defaults.updates(.iCloudSyncMode) {
+                await iCloudSyncModeChanged(value)
             }
         }
     }
@@ -545,6 +553,27 @@ public enum iCloudSync {
             return
         }
         await turnOn()
+    }
+    
+    /// Handle changes to the iCloudSyncMode setting
+    /// - Parameter newMode: The new iCloudSyncMode value
+    static func iCloudSyncModeChanged(_ newMode: iCloudSyncMode) async {
+        ILOG("new iCloudSyncMode value: \(newMode.description)")
+        
+        // Only process mode changes if iCloud sync is enabled
+        guard Defaults[.iCloudSync] else {
+            DLOG("Ignoring iCloudSyncMode change because iCloud sync is disabled")
+            return
+        }
+        
+        // Handle the mode change based on the new mode
+        if newMode.isCloudKit {
+            // Moving from iCloud Drive to CloudKit
+            await moveFilesFromiCloudDriveToLocalDocuments()
+        } else if newMode.isICloudDrive {
+            // Moving from CloudKit to iCloud Drive
+            await moveFilesFromLocalDocumentsToiCloudDrive()
+        }
     }
     
     /// Moves local app container files to the cloud container
@@ -714,12 +743,20 @@ public enum iCloudSync {
         } else {
             UserDefaults.standard.removeObject(forKey: UbiquityIdentityTokenKey)
         }
-        await initiateDownloadOfiCloudDocumentsContainer()
+        
+        // Handle file movement based on the current sync mode
+        let syncMode = Defaults[.iCloudSyncMode]
         disposeBag = DisposeBag()
-        var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots", "RetroArch", "DeltaSkins"],
-                                                                  notificationCenter: .default,
-                                                                  errorHandler: CloudSyncErrorHandler.shared)
-        await nonDatabaseFileSyncer.loadAllFromICloud() {
+        
+        if syncMode.isICloudDrive {
+            // For iCloud Drive mode, move files to iCloud container
+            await initiateDownloadOfiCloudDocumentsContainer()
+            
+            var nonDatabaseFileSyncer: iCloudContainerSyncer! = .init(directories: ["BIOS", "Battery States", "Screenshots", "RetroArch", "DeltaSkins"],
+                                                                      notificationCenter: .default,
+                                                                      errorHandler: CloudSyncErrorHandler.shared)
+            
+            await nonDatabaseFileSyncer.loadAllFromICloud() {
                 // Refresh BIOS cache after each iteration
                 DLOG("Refreshing BIOS cache after iCloud sync iteration")
                 RomDatabase.reloadBIOSCache()
@@ -734,20 +771,20 @@ public enum iCloudSync {
                     nonDatabaseFileSyncer = nil
                 }
             }.disposed(by: disposeBag)
-        //wait for the ROMs database to initialize
-        guard !RomDatabase.databaseInitialized
-        else {
-            await startSavesRomsSyncing()
-            return
-        }
-        romDatabaseInitialized = NotificationCenter.default.publisher(for: .RomDatabaseInitialized).sink { _ in
-            romDatabaseInitialized?.cancel()
+            //wait for the ROMs database to initialize
+            guard !RomDatabase.databaseInitialized
+            else {
+                await startSavesRomsSyncing()
+                return
+            }
+            romDatabaseInitialized = NotificationCenter.default.publisher(for: .RomDatabaseInitialized).sink { _ in
+                romDatabaseInitialized?.cancel()
                 Task {
                     await startSavesRomsSyncing()
                 }
             }
+        }
     }
-    
     static func startSavesRomsSyncing() async {
         var saveStateSyncer: iCloudSaveStateSyncer! = .init(notificationCenter: .default, errorHandler: CloudSyncErrorHandler.shared)
         var romsSyncer: iCloudRomsSyncer! = .init(notificationCenter: .default, errorHandler: CloudSyncErrorHandler.shared)
@@ -761,8 +798,8 @@ public enum iCloudSync {
             return
         }
         await saveStateSyncer.loadAllFromICloud() {
-                await saveStateSyncer.importNewSaves()
-            }.observe(on: MainScheduler.instance)
+            await saveStateSyncer.importNewSaves()
+        }.observe(on: MainScheduler.instance)
             .subscribe(onError: { error in
                 ELOG(error.localizedDescription)
             }) {
@@ -773,8 +810,8 @@ public enum iCloudSync {
                 }
             }.disposed(by: disposeBag)
         await romsSyncer.loadAllFromICloud() {
-                await romsSyncer.handleImportNewRomFiles()
-            }.observe(on: MainScheduler.instance)
+            await romsSyncer.handleImportNewRomFiles()
+        }.observe(on: MainScheduler.instance)
             .subscribe(onError: { error in
                 ELOG(error.localizedDescription)
             }) {
@@ -791,8 +828,118 @@ public enum iCloudSync {
         romDatabaseInitialized?.cancel()
         await errorHandler.clear()
         disposeBag = nil
+        
+        // If we were using iCloud Drive mode, move files back to local documents
+        let syncMode = Defaults[.iCloudSyncMode]
+        if syncMode.isICloudDrive {
+            await moveFilesFromiCloudDriveToLocalDocuments()
+        }
+        
         //reset ROMs path
         gameImporter.gameImporterDatabaseService.setRomsPath(url: gameImporter.romsPath)
+    }
+    
+    /// Move files from iCloud Drive to local Documents directory
+    /// Used when switching from iCloud Drive mode to CloudKit mode
+    static func moveFilesFromiCloudDriveToLocalDocuments() async {
+        ILOG("Moving files from iCloud Drive to local Documents directory")
+        
+        guard let iCloudContainer = URL.iCloudContainerDirectory else {
+            ELOG("Cannot access iCloud container directory")
+            return
+        }
+        
+        let directories = ["BIOS", "Battery States", "Screenshots", "RetroArch", "DeltaSkins", "Save States", "ROMs"]
+        
+        await withTaskGroup(of: Void.self) { group in
+            for directory in directories {
+                group.addTask {
+                    await moveFilesFromiCloudToLocal(directory: directory, iCloudContainer: iCloudContainer)
+                }
+            }
+            await group.waitForAll()
+        }
+        
+        ILOG("Completed moving files from iCloud Drive to local Documents directory")
+    }
+    
+    /// Move files from local Documents directory to iCloud Drive
+    /// Used when switching from CloudKit mode to iCloud Drive mode
+    static func moveFilesFromLocalDocumentsToiCloudDrive() async {
+        ILOG("Moving files from local Documents directory to iCloud Drive")
+        
+        guard let iCloudContainer = URL.iCloudContainerDirectory else {
+            ELOG("Cannot access iCloud container directory")
+            return
+        }
+        
+        await moveAllLocalFilesToCloudContainer(iCloudContainer)
+        
+        ILOG("Completed moving files from local Documents directory to iCloud Drive")
+    }
+    
+    /// Move files from iCloud Drive to local Documents for a specific directory
+    /// - Parameters:
+    ///   - directory: Directory name to process
+    ///   - iCloudContainer: iCloud container URL
+    static func moveFilesFromiCloudToLocal(directory: String, iCloudContainer: URL) async {
+        let localDirectory = URL.documentsDirectory.appendingPathComponent(directory)
+        let iCloudDirectory = iCloudContainer.appendingPathComponent(directory)
+        
+        DLOG("Moving files from \(iCloudDirectory.path) to \(localDirectory.path)")
+        
+        let fileManager = FileManager.default
+        
+        // Create local directory if it doesn't exist
+        if !fileManager.fileExists(atPath: localDirectory.path) {
+            do {
+                try fileManager.createDirectory(at: localDirectory, withIntermediateDirectories: true)
+            } catch {
+                ELOG("Error creating local directory \(localDirectory.path): \(error)")
+                return
+            }
+        }
+        
+        // Get files from iCloud directory
+        guard let iCloudFiles = try? fileManager.contentsOfDirectory(at: iCloudDirectory, includingPropertiesForKeys: nil) else {
+            DLOG("No files found in iCloud directory \(iCloudDirectory.path) or directory doesn't exist")
+            return
+        }
+        
+        for iCloudFile in iCloudFiles {
+            let fileName = iCloudFile.lastPathComponent
+            let localFile = localDirectory.appendingPathComponent(fileName)
+            
+            // Check if file already exists locally
+            if fileManager.fileExists(atPath: localFile.path) {
+                do {
+                    try await fileManager.removeItem(at: localFile)
+                    DLOG("Removed existing local file: \(localFile.path)")
+                } catch {
+                    ELOG("Error removing existing local file \(localFile.path): \(error)")
+                    continue
+                }
+            }
+            
+            // Move file from iCloud to local
+            do {
+                try fileManager.setUbiquitous(false, itemAt: iCloudFile, destinationURL: localFile)
+                DLOG("Moved file from iCloud to local: \(fileName)")
+            } catch {
+                ELOG("Error moving file from iCloud to local \(fileName): \(error)")
+                
+                // Try copying instead if moving fails
+                do {
+                    try fileManager.copyItem(at: iCloudFile, to: localFile)
+                    DLOG("Copied file from iCloud to local: \(fileName)")
+                    
+                    // Remove the iCloud file after successful copy
+                    try await fileManager.removeItem(at: iCloudFile)
+                } catch {
+                    ELOG("Error copying file from iCloud to local \(fileName): \(error)")
+                }
+            }
+        }
     }
 }
 #endif
@@ -1118,7 +1265,7 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
             return nil
         }
         let secureDoc = json.startAccessingSecurityScopedResource()
-
+        
         defer {
             if secureDoc {
                 json.stopAccessingSecurityScopedResource()
@@ -1132,7 +1279,7 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
         guard let data = dataMaybe else {
             throw iCloudError.dataReadFail
         }
-
+        
         DLOG("Data read \(String(describing: String(data: data, encoding: .utf8)))")
         let save: SaveState
         do {
@@ -1285,10 +1432,10 @@ public class iCloudRomsSyncer: iCloudContainerSyncer {
     }
     
     public override func loadAllFromICloud(iterationComplete: (() async -> Void)?) async -> Completable {
-         //ensure that the games are cached so we do NOT hit the database so much when checking for existence of games
-         RomDatabase.reloadGamesCache()
-         return await super.loadAllFromICloud(iterationComplete: iterationComplete)
-     }
+        //ensure that the games are cached so we do NOT hit the database so much when checking for existence of games
+        RomDatabase.reloadGamesCache()
+        return await super.loadAllFromICloud(iterationComplete: iterationComplete)
+    }
     
     /// The only time that we don't know if files have been deleted by the user is when it happens while the app is closed. so we have to query the db and check
     func removeGamesDeletedWhileApplicationClosed() async {
@@ -1343,18 +1490,18 @@ public class iCloudRomsSyncer: iCloudContainerSyncer {
         }
         ILOG("\(file) does NOT exist in database, adding to import set")
         switch file.system {
-            case .Atari2600, .Atari5200, .Atari7800, .Genesis:
+        case .Atari2600, .Atari5200, .Atari7800, .Genesis:
+            await newFiles.insert(file)
+        default:
+            if let multiKey = file.multiFileNameKey {
+                var files = await multiFileRoms[multiKey] ?? [URL]()
+                files.append(file)
+                await multiFileRoms.set(files, forKey: multiKey)
+                //for sega cd ROMs, ignore the .brm file that is used for saves
+            } else if file.system != .SegaCD || "brm".caseInsensitiveCompare(file.pathExtension) != .orderedSame {
                 await newFiles.insert(file)
-            default:
-                if let multiKey = file.multiFileNameKey {
-                    var files = await multiFileRoms[multiKey] ?? [URL]()
-                    files.append(file)
-                    await multiFileRoms.set(files, forKey: multiKey)
-                    //for sega cd ROMs, ignore the .brm file that is used for saves
-                } else if file.system != .SegaCD || "brm".caseInsensitiveCompare(file.pathExtension) != .orderedSame {
-                    await newFiles.insert(file)
-                }
             }
+        }
         await handleImportNewRomFiles()
     }
     
@@ -1363,7 +1510,7 @@ public class iCloudRomsSyncer: iCloudContainerSyncer {
     /// - Returns: whether or not game exists in game cache
     func getGameStatus(of file: URL) -> GameStatus {
         guard let (existingGame, system) = getGameFromCache(of: file),
-           system.rawValue == existingGame.systemIdentifier
+              system.rawValue == existingGame.systemIdentifier
         else {
             return .gameDoesNotExist
         }
@@ -1441,7 +1588,7 @@ public class iCloudRomsSyncer: iCloudContainerSyncer {
             return
         }
         await importNewRomFiles()
-    
+        
     }
     
     func importNewRomFiles() async {
@@ -1567,8 +1714,8 @@ extension URL {
 }
 
 public actor ConcurrentDictionary<Key: Hashable, Value>: ExpressibleByDictionaryLiteral,
-                                                  @preconcurrency
-                                                  CustomStringConvertible {
+                                                         @preconcurrency
+CustomStringConvertible {
     private var dictionary: [Key: Value] = [:]
     
     public init(dictionaryLiteral elements: (Key, Value)...) {
@@ -1607,8 +1754,8 @@ public actor ConcurrentDictionary<Key: Hashable, Value>: ExpressibleByDictionary
 
 public actor ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral,
                                          @preconcurrency
-                                         CustomStringConvertible,
-                                         ObservableObject {
+CustomStringConvertible,
+ObservableObject {
     public enum ConcurrentCopyOptions {
         case removeCopiedItems
         case retainCopiedItems
@@ -1715,11 +1862,11 @@ public actor ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral,
     public var asArray: [T] {
         Array(set)
     }
-                                             
+    
     public func enumerated() -> EnumeratedSequence<Set<T>> {
         set.enumerated()
     }
-                                             
+    
     public func makeIterator() async -> Set<T>.Iterator {
         set.makeIterator()
     }
@@ -1727,7 +1874,7 @@ public actor ConcurrentSet<T: Hashable>: ExpressibleByArrayLiteral,
     public var description: String {
         return set.description
     }
-
+    
     /// Notify subscribers of changes to the set
     private func notifyChanges() {
         let currentSet = set
