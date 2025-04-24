@@ -203,62 +203,96 @@ public struct ImportProgressView: View {
     /// iCloud sync status view - compact version
     private var iCloudSyncStatusView: some View {
         WithPerceptionTracking {
-            HStack(spacing: 8) {
-                Image(systemName: "icloud")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(.retroBlue)
-                
-                Text("iCLOUD")
-                    .font(.system(size: 10, weight: .bold))
-                    .foregroundColor(.retroBlue)
-                
-                // Show sync counts in a compact format
+            VStack(spacing: 4) {
                 HStack(spacing: 8) {
-                    if viewModel.pendingDownloads > 0 {
-                        HStack(spacing: 2) {
-                            Image(systemName: "arrow.down")
-                                .font(.system(size: 8))
-                            Text("\(viewModel.pendingDownloads)")
-                                .font(.system(size: 8, weight: .bold))
-                        }
+                    Image(systemName: "icloud")
+                        .font(.system(size: 12, weight: .bold))
                         .foregroundColor(.retroBlue)
+                    
+                    Text("iCLOUD")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(.retroBlue)
+                    
+                    // Show sync counts in a compact format
+                    HStack(spacing: 8) {
+                        if viewModel.pendingDownloads > 0 {
+                            HStack(spacing: 2) {
+                                Image(systemName: "arrow.down")
+                                    .font(.system(size: 8))
+                                Text("\(viewModel.pendingDownloads)")
+                                    .font(.system(size: 8, weight: .bold))
+                            }
+                            .foregroundColor(.retroBlue)
+                        }
+                        
+                        if viewModel.pendingUploads > 0 {
+                            HStack(spacing: 2) {
+                                Image(systemName: "arrow.up")
+                                    .font(.system(size: 8))
+                                Text("\(viewModel.pendingUploads)")
+                                    .font(.system(size: 8, weight: .bold))
+                            }
+                            .foregroundColor(.retroPink)
+                        }
+                        
+                        if viewModel.newFilesCount > 0 {
+                            HStack(spacing: 2) {
+                                Image(systemName: "plus")
+                                    .font(.system(size: 8))
+                                Text("\(viewModel.newFilesCount)")
+                                    .font(.system(size: 8, weight: .bold))
+                            }
+                            .foregroundColor(.retroPurple)
+                        }
                     }
                     
-                    if viewModel.pendingUploads > 0 {
-                        HStack(spacing: 2) {
-                            Image(systemName: "arrow.up")
-                                .font(.system(size: 8))
-                            Text("\(viewModel.pendingUploads)")
-                                .font(.system(size: 8, weight: .bold))
-                        }
-                        .foregroundColor(.retroPink)
-                    }
-                    
-                    if viewModel.newFilesCount > 0 {
-                        HStack(spacing: 2) {
-                            Image(systemName: "plus")
-                                .font(.system(size: 8))
-                            Text("\(viewModel.newFilesCount)")
-                                .font(.system(size: 8, weight: .bold))
-                        }
-                        .foregroundColor(.retroPurple)
+                    // Animated indicator when syncing
+                    if viewModel.isSyncing {
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                            .font(.system(size: 8))
+                            .foregroundColor(.retroPink)
+                            .rotationEffect(Angle(degrees: viewModel.animatedProgressOffset))
+                            .animation(
+                                Animation.linear(duration: 2.0)
+                                    .repeatForever(autoreverses: false),
+                                value: viewModel.animatedProgressOffset
+                            )
+                            .onAppear {
+                                viewModel.startAnimation()
+                            }
                     }
                 }
                 
-                // Animated indicator when syncing
-                if viewModel.isSyncing {
-                    Image(systemName: "arrow.triangle.2.circlepath")
-                        .font(.system(size: 8))
-                        .foregroundColor(.retroPink)
-                        .rotationEffect(Angle(degrees: viewModel.animatedProgressOffset))
-                        .animation(
-                            Animation.linear(duration: 2.0)
-                                .repeatForever(autoreverses: false),
-                            value: viewModel.animatedProgressOffset
-                        )
-                        .onAppear {
-                            viewModel.startAnimation()
+                // Show CloudKit operation progress if active
+                if viewModel.cloudKitIsActive {
+                    VStack(alignment: .leading, spacing: 2) {
+                        // Operation label
+                        Text(viewModel.currentCloudKitOperation)
+                            .font(.system(size: 8, weight: .bold))
+                            .foregroundColor(.retroBlue)
+                            .lineLimit(1)
+                        
+                        // Progress bar
+                        ZStack(alignment: .leading) {
+                            // Background track
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(Color.retroBlack.opacity(0.7))
+                                .frame(height: 6)
+                            
+                            // Progress fill
+                            GeometryReader { geometry in
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                                .frame(width: max(4, viewModel.cloudKitProgress * geometry.size.width), height: 4)
+                                .cornerRadius(2)
+                                .padding(1)
+                            }
+                            .frame(height: 6)
                         }
+                    }
                 }
             }
             .padding(.vertical, 2)
@@ -346,6 +380,11 @@ public struct ImportProgressView: View {
         @Published var pendingUploads = 0
         @Published var newFilesCount = 0
         @Published var isSyncing = false
+        
+        /// Track CloudKit sync progress
+        @Published var currentCloudKitOperation: String = ""
+        @Published var cloudKitProgress: Double = 0
+        @Published var cloudKitIsActive: Bool = false
         
         /// Subscriptions for iCloud sync tracking
         private var syncSubscriptions = Set<AnyCancellable>()
@@ -480,6 +519,24 @@ public struct ImportProgressView: View {
             
             syncSubscriptions.insert(subscription)
             
+            // Subscribe to the SyncProgressTracker for CloudKit operations
+            let progressSubscription = SyncProgressTracker.shared.$currentOperation
+                .receive(on: RunLoop.main)
+                .sink { [weak self] operation in
+                    self?.currentCloudKitOperation = operation
+                    self?.cloudKitIsActive = !operation.isEmpty
+                    self?.updateSyncStatus()
+                }
+            
+            let progressValueSubscription = SyncProgressTracker.shared.$progress
+                .receive(on: RunLoop.main)
+                .sink { [weak self] progress in
+                    self?.cloudKitProgress = progress
+                }
+            
+            syncSubscriptions.insert(progressSubscription)
+            syncSubscriptions.insert(progressValueSubscription)
+            
             // Initial setup with current syncers
             if let syncers = getSyncers() {
                 // Track the syncers
@@ -536,7 +593,7 @@ public struct ImportProgressView: View {
         
         /// Update the sync status based on current counts
         private func updateSyncStatus() {
-            isSyncing = pendingDownloads > 0 || pendingUploads > 0 || newFilesCount > 0
+            isSyncing = pendingDownloads > 0 || pendingUploads > 0 || newFilesCount > 0 || cloudKitIsActive
             
             // If sync status changed, update the view hiding logic
             checkHideTimer()

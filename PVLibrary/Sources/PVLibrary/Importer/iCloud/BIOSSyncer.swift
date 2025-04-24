@@ -226,6 +226,49 @@ public class BIOSSyncer: iCloudContainerSyncer, BIOSSyncing {
 
 /// BIOS syncer for tvOS using CloudKit
 public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
+    
+    /// Get all CloudKit records for BIOS files
+    /// - Returns: Array of CKRecord objects
+    public func getAllRecords() async -> [CKRecord] {
+        do {
+            // Create a query for all BIOS records
+            let query = CKQuery(recordType: CloudKitSchema.RecordType.bios, predicate: NSPredicate(value: true))
+            
+            // Execute the query
+            let (records, _) = try await privateDatabase.records(matching: query, resultsLimit: 100)
+            
+            // Convert to array of CKRecord
+            let recordsArray = records.compactMap { _, result -> CKRecord? in
+                switch result {
+                case .success(let record):
+                    return record
+                case .failure(let error):
+                    ELOG("Error fetching BIOS record: \(error.localizedDescription)")
+                    return nil
+                }
+            }
+            
+            DLOG("Fetched \(recordsArray.count) BIOS records from CloudKit")
+            return recordsArray
+        } catch {
+            ELOG("Failed to fetch BIOS records: \(error.localizedDescription)")
+            return []
+        }
+    }
+    
+    /// Check if a file is downloaded locally
+    /// - Parameters:
+    ///   - filename: The filename to check
+    /// - Returns: True if the file is downloaded locally
+    public func isFileDownloaded(filename: String) async -> Bool {
+        // Create local file path
+        let documentsURL = URL.documentsPath
+        let directoryURL = documentsURL.appendingPathComponent("BIOS")
+        let fileURL = directoryURL.appendingPathComponent(filename)
+        
+        // Check if file exists
+        return FileManager.default.fileExists(atPath: fileURL.path)
+    }
     /// The CloudKit record type for BIOS files
     override public var recordType: String {
         return "BIOS"
@@ -242,10 +285,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     /// - Parameter filename: The BIOS filename
     /// - Returns: The local URL for the BIOS file
     public func localURL(for filename: String) -> URL? {
-        guard let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            return nil
-        }
-        
+        let documentsURL = URL.documentsPath
         return documentsURL.appendingPathComponent("BIOS").appendingPathComponent(filename)
     }
     
@@ -345,7 +385,8 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                         }
                         
                         // Create local file path
-                        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+                        let documentsURL = URL.documentsPath
+
                         let directoryURL = documentsURL.appendingPathComponent("BIOS")
                         let destinationURL = directoryURL.appendingPathComponent(filename)
                         
@@ -381,7 +422,8 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                         }
                         
                         // Create local file path
-                        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+                        let documentsURL = URL.documentsPath
+
                         let directoryURL = documentsURL.appendingPathComponent("BIOS")
                         let destinationURL = directoryURL.appendingPathComponent(filename)
                         

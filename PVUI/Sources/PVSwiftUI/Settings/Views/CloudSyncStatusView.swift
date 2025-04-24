@@ -81,6 +81,10 @@ public struct CloudSyncStatusView: View {
             .background(Color.retroDarkBlue)
             .cornerRadius(12)
             
+            // CloudKit Sync Analytics
+            CloudKitSyncAnalyticsView()
+                .padding(.top, 16)
+            
             #if DEBUG
             // Debug information (only in debug builds)
             VStack(alignment: .leading, spacing: 8) {

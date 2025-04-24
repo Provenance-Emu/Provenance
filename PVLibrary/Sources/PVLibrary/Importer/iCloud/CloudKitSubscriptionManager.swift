@@ -363,7 +363,7 @@ public class CloudKitSubscriptionManager {
                         )
                         
                         // Trigger sync for this file
-                        if directory == "Roms" {
+                        if directory == "ROMs" {
                             // Handle ROM file
                             if let gameID = record["gameID"] as? String {
                                 // Find game and download
@@ -415,7 +415,7 @@ public class CloudKitSubscriptionManager {
                         )
                         
                         // Trigger sync for this file (same as created)
-                        if directory == "Roms" {
+                        if directory == "ROMs" {
                             // Handle ROM file
                             if let gameID = record["gameID"] as? String {
                                 // Find game and download

@@ -90,6 +90,10 @@ struct iCloudSyncStatusView: View {
                             debugInfoSection
                         }
                         
+                        // CloudKit Sync Analytics
+                        CloudKitSyncAnalyticsView()
+                            .padding(.horizontal)
+                        
                         // CloudKit record counts
                         cloudKitRecordsSection(records: cloudKitRecords, isLoading: isLoadingCloudKitRecords, onRefresh: fetchCloudKitRecordCounts)
                         

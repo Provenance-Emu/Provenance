@@ -205,6 +205,7 @@ class CloudSyncSettingsViewModel: ObservableObject {
     }
     
     /// Start a full sync
+    @MainActor
     func startFullSync() {
         Task {
             guard !isSyncing else { return }

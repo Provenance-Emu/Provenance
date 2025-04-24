@@ -11,6 +11,8 @@ import UIKit
 import CloudKit
 import PVLogging
 import PVLibrary
+import Defaults
+import BackgroundTasks
 
 /// Extension to handle CloudKit remote notifications in the app delegate
 extension PVAppDelegate {
@@ -41,14 +43,127 @@ extension PVAppDelegate {
                 _ = CloudSyncManager.shared
                 DLOG("CloudSyncManager initialized")
                 
-                // Register for remote notifications
-                CloudKitSubscriptionManager.shared.registerForRemoteNotifications()
-                
-                // Set up CloudKit subscriptions
-                await CloudKitSubscriptionManager.shared.setupSubscriptions()
+                // Register for remote notifications and setup background tasks
+                setupCloudKitBackgroundSync()
                 
                 // Start initial sync
                 _ = try? await CloudSyncManager.shared.startSync().value
+            }
+        }
+    }
+    
+    /// Setup CloudKit background sync and notifications
+    private func setupCloudKitBackgroundSync() {
+        // Register for remote notifications
+        CloudKitNotificationManager.shared.registerForRemoteNotifications()
+        
+        // Setup CloudKit subscriptions for push notifications
+        Task {
+            await CloudKitNotificationManager.shared.setupSubscriptions()
+        }
+        
+        // Register background tasks
+        registerBackgroundTasks()
+    }
+    
+    /// Register background tasks for CloudKit sync
+    private func registerBackgroundTasks() {
+        // Register background refresh task
+        BGTaskScheduler.shared.register(forTaskWithIdentifier: "com.provenance-emu.provenance.cloudkit-sync", using: nil) { task in
+            self.handleCloudKitSyncTask(task as! BGProcessingTask)
+        }
+        
+        // Schedule the first background task
+        scheduleCloudKitSyncTask()
+        
+        DLOG("Registered background tasks for CloudKit sync")
+    }
+    
+    /// Schedule a background task for CloudKit sync
+    private func scheduleCloudKitSyncTask() {
+        let request = BGProcessingTaskRequest(identifier: "com.provenance-emu.provenance.cloudkit-sync")
+        
+        // Only run when on Wi-Fi and charging
+        request.requiresNetworkConnectivity = true
+        request.requiresExternalPower = true
+        
+        // Set earliest begin date to 15 minutes from now
+        request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)
+        
+        do {
+            try BGTaskScheduler.shared.submit(request)
+            DLOG("Scheduled background CloudKit sync task")
+        } catch {
+            ELOG("Could not schedule background CloudKit sync: \(error.localizedDescription)")
+        }
+    }
+    
+    /// Handle a background CloudKit sync task
+    /// - Parameter task: The background processing task
+    private func handleCloudKitSyncTask(_ task: BGProcessingTask) {
+        DLOG("Starting background CloudKit sync task")
+        
+        // Schedule the next background task
+        scheduleCloudKitSyncTask()
+        
+        // Create a task assertion to track the background work
+        let taskAssertionID = UIApplication.shared.beginBackgroundTask {
+            // If the background task expires, complete the BGTask
+            task.setTaskCompleted(success: false)
+        }
+        
+        // Perform the sync in the background
+        Task {
+            do {
+                // Sync metadata only to avoid large downloads in the background
+                var didSync = false
+                
+                // Sync ROMs
+                if let syncer = CloudKitSyncerStore.shared.romSyncers.first as? CloudKitRomsSyncer {
+                    let count = await syncer.syncMetadataOnly()
+                    if count > 0 {
+                        didSync = true
+                        DLOG("Background sync: Synced \(count) ROM records")
+                    }
+                }
+                
+                // Sync save states
+                if let syncer = CloudKitSyncerStore.shared.saveStateSyncers.first as? CloudKitSaveStatesSyncer {
+                    let count = await syncer.syncMetadataOnly()
+                    if count > 0 {
+                        didSync = true
+                        DLOG("Background sync: Synced \(count) save state records")
+                    }
+                }
+                
+                // Sync BIOS files
+                if let syncer = CloudKitSyncerStore.shared.biosSyncers.first as? CloudKitBIOSSyncer {
+                    let count = await syncer.syncMetadataOnly()
+                    if count > 0 {
+                        didSync = true
+                        DLOG("Background sync: Synced \(count) BIOS records")
+                    }
+                }
+                
+                // Mark the task as completed
+                task.setTaskCompleted(success: true)
+                
+                // End the background task assertion
+                if taskAssertionID != .invalid {
+                    UIApplication.shared.endBackgroundTask(taskAssertionID)
+                }
+                
+                DLOG("Background CloudKit sync completed successfully")
+            } catch {
+                ELOG("Error during background CloudKit sync: \(error.localizedDescription)")
+                
+                // Mark the task as completed with failure
+                task.setTaskCompleted(success: false)
+                
+                // End the background task assertion
+                if taskAssertionID != .invalid {
+                    UIApplication.shared.endBackgroundTask(taskAssertionID)
+                }
             }
         }
     }
@@ -59,29 +174,17 @@ extension PVAppDelegate {
     ///   - userInfo: User info from the notification
     ///   - fetchCompletionHandler: Completion handler to call when done
     public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        // Check if this is a CloudKit notification
-        guard let notification = CKNotification(fromRemoteNotificationDictionary: userInfo) else {
+        // Check if iCloud sync is enabled
+        guard Defaults[.iCloudSync] else {
+            DLOG("iCloud sync is disabled, ignoring notification")
             completionHandler(.noData)
             return
         }
         
-        DLOG("Received CloudKit notification: \(notification.notificationType.rawValue)")
-        
-        // Handle notification
-        CloudKitSubscriptionManager.shared.handleRemoteNotification(userInfo)
-        
-        // Start sync
+        // Process the notification using our notification manager
         Task {
-            do {
-                // Start sync
-                try await CloudSyncManager.shared.startSync().value
-                
-                // Complete with new data
-                completionHandler(.newData)
-            } catch {
-                ELOG("Error handling CloudKit notification: \(error.localizedDescription)")
-                completionHandler(.failed)
-            }
+            let result = await CloudKitNotificationManager.shared.processNotification(userInfo)
+            completionHandler(result)
         }
     }
     
@@ -90,20 +193,70 @@ extension PVAppDelegate {
     ///   - application: The application
     ///   - deviceToken: Device token
     public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        let tokenString = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
-        DLOG("Registered for remote notifications with device token: \(tokenString)")
-        
-        // Set up CloudKit subscriptions
-        Task {
-            await CloudKitSubscriptionManager.shared.setupSubscriptions()
-        }
+        // Pass the device token to our notification manager
+        CloudKitNotificationManager.shared.didRegisterForRemoteNotifications(withDeviceToken: deviceToken)
     }
     
     /// Handle failure to register for remote notifications
     /// - Parameters:
     ///   - application: The application
-    ///   - error: Error
+    ///   - error: The error that occurred
     public func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        ELOG("Failed to register for remote notifications: \(error.localizedDescription)")
+        // Pass the error to our notification manager
+        CloudKitNotificationManager.shared.didFailToRegisterForRemoteNotifications(withError: error)
+    }
+    
+    /// Handle background fetch request
+    /// - Parameters:
+    ///   - application: The application
+    ///   - completionHandler: Completion handler to call when done
+    public func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        // Check if iCloud sync is enabled
+        guard Defaults[.iCloudSync] else {
+            DLOG("iCloud sync is disabled, skipping background fetch")
+            completionHandler(.noData)
+            return
+        }
+        
+        // Perform background sync
+        Task {
+            do {
+                // Sync metadata only to avoid large downloads in the background
+                var didSync = false
+                
+                // Sync ROMs
+                if let syncer = CloudKitSyncerStore.shared.romSyncers.first as? CloudKitRomsSyncer {
+                    let count = await syncer.syncMetadataOnly()
+                    if count > 0 {
+                        didSync = true
+                        DLOG("Background fetch: Synced \(count) ROM records")
+                    }
+                }
+                
+                // Sync save states
+                if let syncer = CloudKitSyncerStore.shared.saveStateSyncers.first as? CloudKitSaveStatesSyncer {
+                    let count = await syncer.syncMetadataOnly()
+                    if count > 0 {
+                        didSync = true
+                        DLOG("Background fetch: Synced \(count) save state records")
+                    }
+                }
+                
+                // Sync BIOS files
+                if let syncer = CloudKitSyncerStore.shared.biosSyncers.first as? CloudKitBIOSSyncer {
+                    let count = await syncer.syncMetadataOnly()
+                    if count > 0 {
+                        didSync = true
+                        DLOG("Background fetch: Synced \(count) BIOS records")
+                    }
+                }
+                
+                // Return the appropriate result
+                completionHandler(didSync ? .newData : .noData)
+            } catch {
+                ELOG("Error during background fetch: \(error.localizedDescription)")
+                completionHandler(.failed)
+            }
+        }
     }
 }

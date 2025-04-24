@@ -31,7 +31,7 @@ Provenance uses CloudKit for synchronizing game data between tvOS devices, while
 This record type represents a file in CloudKit (ROM, save state, BIOS, etc.)
 
 **Fields:**
-- `directory` (String) - Directory containing the file (e.g., "Roms", "Saves", "BIOS")
+- `directory` (String) - Directory containing the file (e.g., "ROMs", "Saves", "BIOS")
 - `system` (String) - System identifier or subdirectory (e.g., "SNES", "NES")
 - `filename` (String) - Filename of the file
 - `fileData` (Asset) - File data as a CKAsset

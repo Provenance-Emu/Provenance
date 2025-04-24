@@ -21,6 +21,9 @@ import PVLogging
 
 /// CloudKit schema definition for Provenance
 public enum CloudKitSchema {
+    /// Flag to track if schema has been initialized
+    private static var isSchemaInitialized = false
+    
     /// Record types used in CloudKit
     public enum RecordType {
         /// ROM record type - represents a ROM file in the cloud
@@ -41,7 +44,7 @@ public enum CloudKitSchema {
     
     /// Common file attributes for all record types
     public enum FileAttributes {
-        /// Directory containing the file (e.g., "Roms", "Saves", "BIOS")
+        /// Directory containing the file (e.g., "ROMs", "Saves", "BIOS")
         public static let directory = "directory"
         
         /// System identifier or subdirectory (e.g., "SNES", "NES")
@@ -150,11 +153,20 @@ public enum CloudKitSchema {
     /// - Returns: A boolean indicating success or failure
     @discardableResult
     public static func initializeSchema(in database: CKDatabase) async -> Bool {
+        // Check if schema has already been initialized to prevent repeated initialization
+        guard !isSchemaInitialized else {
+            DLOG("CloudKit schema already initialized, skipping")
+            return true
+        }
+        
         do {
             DLOG("Initializing CloudKit schema...")
             
             // Create record types
             try await createRecordTypes(in: database)
+            
+            // Mark as initialized
+            isSchemaInitialized = true
             
             DLOG("CloudKit schema initialized successfully")
             return true

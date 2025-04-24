@@ -175,10 +175,62 @@ public class SaveStatesSyncer: iCloudContainerSyncer, SaveStatesSyncing {
 
 /// Save states syncer for tvOS using CloudKit
 public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
+    
+    /// Get all CloudKit records for save states
+    /// - Returns: Array of CKRecord objects
+    public func getAllRecords() async -> [CKRecord] {
+        do {
+            // Create a query for all save state records
+            let query = CKQuery(recordType: CloudKitSchema.RecordType.saveState, predicate: NSPredicate(value: true))
+            
+            // Execute the query
+            let (records, _) = try await privateDatabase.records(matching: query, resultsLimit: 100)
+            
+            // Convert to array of CKRecord
+            let recordsArray = records.compactMap { _, result -> CKRecord? in
+                switch result {
+                case .success(let record):
+                    return record
+                case .failure(let error):
+                    ELOG("Error fetching save state record: \(error.localizedDescription)")
+                    return nil
+                }
+            }
+            
+            DLOG("Fetched \(recordsArray.count) save state records from CloudKit")
+            return recordsArray
+        } catch {
+            ELOG("Failed to fetch save state records: \(error.localizedDescription)")
+            return []
+        }
+    }
+    
+    /// Check if a file is downloaded locally
+    /// - Parameters:
+    ///   - filename: The filename to check
+    ///   - system: The system identifier
+    ///   - gameID: The game ID
+    /// - Returns: True if the file is downloaded locally
+    public func isFileDownloaded(filename: String, inSystem system: String, gameID: String? = nil) async -> Bool {
+        // Create local file path
+        let documentsURL = URL.documentsPath
+        var directoryURL = documentsURL.appendingPathComponent("Saves").appendingPathComponent(system)
+        
+        if let gameID = gameID {
+            directoryURL = directoryURL.appendingPathComponent(gameID)
+        }
+        
+        let fileURL = directoryURL.appendingPathComponent(filename)
+        
+        // Check if file exists
+        return FileManager.default.fileExists(atPath: fileURL.path)
+    }
+    
     /// The CloudKit record type for save states
     override public var recordType: String {
         return "SaveState"
     }
+    
     /// Initialize a new save states syncer
     /// - Parameters:
     ///   - notificationCenter: Notification center to use
@@ -299,7 +351,8 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         }
                         
                         // Create local file path
-                        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+                        let documentsURL = URL.documentsPath
+
                         let directoryURL = documentsURL.appendingPathComponent("Saves").appendingPathComponent(systemDir)
                         let destinationURL = directoryURL.appendingPathComponent(filename)
                         
@@ -351,7 +404,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         }
                         
                         // Create local file path
-                        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+                        let documentsURL = URL.documentsPath
                         let directoryURL = documentsURL.appendingPathComponent("Saves").appendingPathComponent(systemDir)
                         let destinationURL = directoryURL.appendingPathComponent(filename)
                         
