@@ -59,8 +59,12 @@ public struct StatusMessageView: View {
                 statusMessageView(message)
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity) // Make the view take up full width
+        .padding(10) // Match the search bar's internal padding
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.black.opacity(0.2))
+        )
         .onAppear {
             // Start retrowave animations
             withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
@@ -90,7 +94,7 @@ public struct StatusMessageView: View {
                 messageManager.removeMessage(withID: message.id)
             }) {
                 Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(.gray)
+                    .foregroundColor(RetroTheme.retroPurple.opacity(0.8))
                     .font(.system(size: 14))
             }
             .buttonStyle(PlainButtonStyle())
@@ -98,16 +102,21 @@ public struct StatusMessageView: View {
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
         .background(
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: 10)
                 .fill(Color.black.opacity(0.7))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: 10)
                         .strokeBorder(
-                            messageTypeColor(message.type),
+                            LinearGradient(
+                                gradient: Gradient(colors: [messageTypeColor(message.type), RetroTheme.retroPurple]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
                             lineWidth: 1.5
                         )
                 )
         )
+        .shadow(color: messageTypeColor(message.type).opacity(0.5), radius: 3, x: 0, y: 0)
         .transition(.asymmetric(
             insertion: .scale(scale: 0.9).combined(with: .opacity),
             removal: .scale(scale: 0.9).combined(with: .opacity)
@@ -165,20 +174,21 @@ public struct StatusMessageView: View {
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
         .background(
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: 10)
                 .fill(Color.black.opacity(0.7))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: 10)
                         .strokeBorder(
                             LinearGradient(
                                 gradient: Gradient(colors: [color, RetroTheme.retroPurple]),
-                                startPoint: .leading,
-                                endPoint: .trailing
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
                             ),
                             lineWidth: 1.5
                         )
                 )
         )
+        .shadow(color: color.opacity(0.5), radius: 3, x: 0, y: 0)
     }
     
     /// Get the color for a message type

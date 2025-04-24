@@ -12,6 +12,7 @@ import PVLogging
 import Combine
 import UIKit
 import PVLibrary
+import PVPrimitives
 
 /// Manager for CloudKit subscriptions
 /// Handles creating and managing subscriptions for real-time updates
@@ -315,6 +316,15 @@ public class CloudKitSubscriptionManager {
             handleGameNotification(notification, recordID: recordID)
         case "SaveState":
             handleSaveStateNotification(notification, recordID: recordID)
+        case "Battery States", "Screenshots", "RetroArch", "DeltaSkins", "BIOS":
+            // These are directory types that we sync but don't need special handling for
+            DLOG("Received notification for directory type: \(recordType)")
+            // Post a notification for UI updates
+            NotificationCenter.default.post(
+                name: .cloudKitRecordTransferCompleted,
+                object: nil,
+                userInfo: ["count": 1, "isUpload": false, "recordType": recordType]
+            )
         default:
             DLOG("Unknown record type: \(recordType)")
         }

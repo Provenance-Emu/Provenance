@@ -967,7 +967,7 @@ public enum iCloudSync {
         
         // Post final notification with complete progress
         NotificationCenter.default.post(
-            name: .init("iCloudFileRecoveryProgress"),
+            name: iCloudFileRecoveryProgress,
             object: nil,
             userInfo: ["current": filesProcessed, "total": totalFilesToMove]
         )

@@ -10,6 +10,7 @@ import SwiftUI
 import PVLibrary
 import PVThemes
 import Combine
+import PVPrimitives
 
 /// A view that provides buttons to test the file recovery status message system
 public struct FileRecoveryTestView: View {
