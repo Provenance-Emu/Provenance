@@ -94,6 +94,16 @@ public class CloudSyncManager {
         // Update sync status
         updateSyncStatus(.syncing)
         
+        // Check if initial sync is needed
+        if await CloudKitInitialSyncer.shared.isInitialSyncNeeded() {
+            DLOG("Initial CloudKit sync needed - performing full sync of local files")
+            updateSyncStatus(.initialSync)
+            
+            // Perform initial sync of all local files to CloudKit
+            let syncCount = await CloudKitInitialSyncer.shared.performInitialSync()
+            DLOG("Initial CloudKit sync completed - synced \(syncCount) records")
+        }
+        
         // Create completables for each sync provider
         let completables: [Completable] = [
             await romsSyncer?.loadAllFromCloud(iterationComplete: nil) ?? Completable.empty(),
@@ -101,13 +111,16 @@ public class CloudSyncManager {
             await biosSyncer?.loadAllFromCloud(iterationComplete: nil) ?? Completable.empty()
         ]
         
-        // Merge completables
-        return Completable.zip(completables)
+        // Combine completables
+        let combined = Completable.concat(completables)
+        
+        // Handle completion
+        return combined
             .do(onError: { [weak self] error in
-                // Update sync status on error
+                ELOG("Sync failed: \(error.localizedDescription)")
                 self?.updateSyncStatus(.error(error))
             }, onCompleted: { [weak self] in
-                // Update sync status when complete
+                DLOG("Sync completed successfully")
                 self?.updateSyncStatus(.idle)
             })
     }
@@ -432,6 +445,9 @@ public enum SyncStatus: Equatable {
     /// Syncing - sync in progress
     case syncing
     
+    /// Initial sync - first-time sync of all local files
+    case initialSync
+    
     /// Uploading - upload in progress
     case uploading
     
@@ -446,7 +462,7 @@ public enum SyncStatus: Equatable {
     
     public static func == (lhs: SyncStatus, rhs: SyncStatus) -> Bool {
         switch (lhs, rhs) {
-        case (.idle, .idle), (.syncing, .syncing), (.uploading, .uploading), (.downloading, .downloading), (.disabled, .disabled):
+        case (.idle, .idle), (.syncing, .syncing), (.initialSync, .initialSync), (.uploading, .uploading), (.downloading, .downloading), (.disabled, .disabled):
             return true
         case (.error, .error):
             return true

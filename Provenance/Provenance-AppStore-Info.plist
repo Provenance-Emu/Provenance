@@ -124,6 +124,16 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>CSSearchableItemIndexDidRegisterItemsNotification</key>
+	<true/>
+	<key>CSSearchableItemTypes</key>
+	<array>
+		<string>com.provenance-emu.game</string>
+		<string>com.provenance-emu.rom</string>
+		<string>com.provenance-emu.save-state</string>
+	</array>
+	<key>CoreSpotlightContinuation</key>
+	<true/>
 	<key>GCSupportedGameControllers</key>
 	<array>
 		<dict>
@@ -235,6 +245,8 @@
 	<string>Used for album artwork.</string>
 	<key>NSExtensionFileProviderSupportsEnumeration</key>
 	<true/>
+	<key>NSExtensionPointIdentifier</key>
+	<string>com.apple.tv-top-shelf</string>
 	<key>NSFileProviderDomainUsageDescription</key>
 	<string>Provenance uses file provider for loading ROMs.</string>
 	<key>NSLocalNetworkUsageDescription</key>
@@ -287,21 +299,8 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
+		<string>remote-notification</string>
 	</array>
-	<key>NSExtensionPointIdentifier</key>
-	<string>com.apple.tv-top-shelf</string>
-	
-	<!-- Spotlight Extensions Registration -->
-	<key>CSSearchableItemTypes</key>
-	<array>
-		<string>com.provenance-emu.game</string>
-		<string>com.provenance-emu.rom</string>
-		<string>com.provenance-emu.save-state</string>
-	</array>
-	<key>CoreSpotlightContinuation</key>
-	<true/>
-	<key>CSSearchableItemIndexDidRegisterItemsNotification</key>
-	<true/>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchScreen</key>

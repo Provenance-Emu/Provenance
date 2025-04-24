@@ -188,7 +188,7 @@ class CloudSyncSettingsViewModel: ObservableObject {
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] status in
                     switch status {
-                    case .syncing, .uploading, .downloading:
+                    case .initialSync, .syncing, .uploading, .downloading:
                         self?.isSyncing = true
                     case .idle, .disabled, .error:
                         self?.isSyncing = false

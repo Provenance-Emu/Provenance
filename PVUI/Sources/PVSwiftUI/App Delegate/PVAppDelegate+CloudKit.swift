@@ -259,4 +259,28 @@ extension PVAppDelegate {
             }
         }
     }
+    
+    /// Register for CloudKit push notifications
+    func setupCloudKitNotifications() {
+        // Only register if iCloud sync is enabled
+        guard Defaults[.iCloudSync] else {
+            DLOG("iCloud sync is disabled, skipping notification registration")
+            return
+        }
+        
+        // Register for remote notifications
+        CloudKitNotificationManager.shared.registerForRemoteNotifications()
+        
+        // Setup background fetch
+        setupBackgroundFetch()
+    }
+    
+    /// Setup background fetch for periodic syncing
+    private func setupBackgroundFetch() {
+        // Set minimum background fetch interval
+        UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
+        
+        DLOG("Background fetch configured with minimum interval")
+    }
+    
 }

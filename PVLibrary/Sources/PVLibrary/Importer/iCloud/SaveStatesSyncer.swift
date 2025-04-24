@@ -176,6 +176,15 @@ public class SaveStatesSyncer: iCloudContainerSyncer, SaveStatesSyncing {
 /// Save states syncer for tvOS using CloudKit
 public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     
+    /// Initialize a new save states syncer
+    /// - Parameters:
+    ///   - directories: Directories to manage (defaults to ["Saves"])
+    ///   - notificationCenter: Notification center to use
+    ///   - errorHandler: Error handler to use
+    public override init(directories: Set<String> = ["Saves"], notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
+        super.init(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
+    }
+    
     /// Get all CloudKit records for save states
     /// - Returns: Array of CKRecord objects
     public func getAllRecords() async -> [CKRecord] {

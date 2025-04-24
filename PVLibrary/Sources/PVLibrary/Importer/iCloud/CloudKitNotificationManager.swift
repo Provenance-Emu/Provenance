@@ -189,7 +189,9 @@ public class CloudKitNotificationManager {
         let notificationInfo = CKSubscription.NotificationInfo()
         notificationInfo.shouldSendContentAvailable = true // For silent notifications
         notificationInfo.shouldBadge = false
+        #if !os(tvOS)
         notificationInfo.alertBody = nil // No visible alert
+        #endif
         subscription.notificationInfo = notificationInfo
         
         // Save the subscription

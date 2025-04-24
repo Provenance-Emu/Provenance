@@ -227,6 +227,15 @@ public class BIOSSyncer: iCloudContainerSyncer, BIOSSyncing {
 /// BIOS syncer for tvOS using CloudKit
 public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     
+    /// Initialize a new BIOS syncer
+    /// - Parameters:
+    ///   - directories: Directories to manage (defaults to ["BIOS"])
+    ///   - notificationCenter: Notification center to use
+    ///   - errorHandler: Error handler to use
+    public override init(directories: Set<String> = ["BIOS"], notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
+        super.init(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
+    }
+    
     /// Get all CloudKit records for BIOS files
     /// - Returns: Array of CKRecord objects
     public func getAllRecords() async -> [CKRecord] {
