@@ -105,6 +105,20 @@ public struct ImportProgressView: View {
                                             .strokeBorder(Color.retroPink, lineWidth: 1)
                                     )
                             )
+                    } else {
+                        Text("WAITING")
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(.retroGreen)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 2)
+                            .background(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color.retroBlack.opacity(0.7))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .strokeBorder(Color.retroGreen, lineWidth: 1)
+                                    )
+                            )
                     }
                 }
             }

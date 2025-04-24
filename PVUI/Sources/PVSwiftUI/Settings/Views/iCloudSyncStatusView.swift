@@ -15,21 +15,22 @@ import PVSettings
 import Defaults
 import Combine
 import Foundation
+import CloudKit
 
 /// A view modifier that applies the appropriate toggle style based on OS version
 struct ToggleStyleModifier: ViewModifier {
     func body(content: Content) -> some View {
-        #if os(tvOS)
-            // On tvOS, use default toggle style as SwitchToggleStyle is not available
-            content.toggleStyle(DefaultToggleStyle())
-        #else
-            // On iOS, use SwitchToggleStyle with tint
-            if #available(iOS 15.0, *) {
-                content.toggleStyle(SwitchToggleStyle(tint: .retroPink))
-            } else {
-                content.toggleStyle(SwitchToggleStyle())
-            }
-        #endif
+#if os(tvOS)
+        // On tvOS, use default toggle style as SwitchToggleStyle is not available
+        content.toggleStyle(DefaultToggleStyle())
+#else
+        // On iOS, use SwitchToggleStyle with tint
+        if #available(iOS 15.0, *) {
+            content.toggleStyle(SwitchToggleStyle(tint: .retroPink))
+        } else {
+            content.toggleStyle(SwitchToggleStyle())
+        }
+#endif
     }
 }
 
@@ -58,6 +59,10 @@ struct iCloudSyncStatusView: View {
     @State private var infoPlistInfo = ""
     @State private var refreshInfo = ""
     
+    // CloudKit record counts
+    @State private var cloudKitRecords = CloudKitRecordCounts(roms: 0, saveStates: 0, bios: 0)
+    @State private var isLoadingCloudKitRecords = false
+    
     // Cancellables
     private var cancellables = Set<AnyCancellable>()
     
@@ -84,6 +89,9 @@ struct iCloudSyncStatusView: View {
                         if showDebugInfo {
                             debugInfoSection
                         }
+                        
+                        // CloudKit record counts
+                        cloudKitRecordsSection(records: cloudKitRecords, isLoading: isLoadingCloudKitRecords, onRefresh: fetchCloudKitRecordCounts)
                         
                         // Sync differences
                         if !isLoading {
@@ -147,9 +155,9 @@ struct iCloudSyncStatusView: View {
                         .font(.title2)
                         .foregroundColor(.retroBlue)
                 }
-                #if os(tvOS)
+#if os(tvOS)
                 .buttonStyle(CardButtonStyle())
-                #endif
+#endif
             }
             
             // iCloud Sync Toggle
@@ -339,10 +347,10 @@ struct iCloudSyncStatusView: View {
             
             // Check for iCloud entitlements
             let hasICloudEntitlement = dataAsString.contains("com.apple.developer.icloud-container-identifiers") ||
-                                      dataAsString.contains("com.apple.developer.ubiquity-container-identifiers")
+            dataAsString.contains("com.apple.developer.ubiquity-container-identifiers")
             
             let hasDocumentsEntitlement = dataAsString.contains("com.apple.developer.icloud-services") &&
-                                         dataAsString.contains("CloudDocuments")
+            dataAsString.contains("CloudDocuments")
             
             let hasKVSEntitlement = dataAsString.contains("com.apple.developer.ubiquity-kvstore-identifier")
             
@@ -352,7 +360,7 @@ struct iCloudSyncStatusView: View {
                 let startIndex = range.upperBound
                 if let endRange = dataAsString[startIndex...].range(of: "</array>") {
                     let identifierSection = dataAsString[startIndex..<endRange.lowerBound]
-                    if let stringRange = identifierSection.range(of: "<string>"), 
+                    if let stringRange = identifierSection.range(of: "<string>"),
                        let endStringRange = identifierSection[stringRange.upperBound...].range(of: "</string>") {
                         containerIdentifier = String(identifierSection[stringRange.upperBound..<endStringRange.lowerBound])
                     }
@@ -413,6 +421,12 @@ struct iCloudSyncStatusView: View {
         localFiles = [:]
         iCloudFiles = [:]
         syncDifferences = []
+        
+        // Fetch CloudKit record counts
+        fetchCloudKitRecordCounts()
+        
+        // Log refresh action
+        DLOG("Refreshing iCloud sync data and CloudKit record counts")
         
         // Build refresh info string for UI display
         refreshInfo = """
@@ -485,11 +499,11 @@ struct iCloudSyncStatusView: View {
     
     private func scanLocalDirectory(_ directory: String, completion: @escaping ([URL]) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async {
-            #if os(tvOS)
+#if os(tvOS)
             let documentsPath = URL.cachesDirectory
-            #else
+#else
             let documentsPath = URL.documentsDirectory
-            #endif
+#endif
             let directoryPath = documentsPath.appendingPathComponent(directory)
             
             DLOG("[iCloudSyncStatusView] Scanning local directory: \(directoryPath.path)")
@@ -669,7 +683,7 @@ struct iCloudSyncStatusView: View {
         }
         
         // Sort differences by directory then filename
-        syncDifferences = differences.sorted { 
+        syncDifferences = differences.sorted {
             if $0.directory == $1.directory {
                 return $0.filename < $1.filename
             }
@@ -785,8 +799,175 @@ struct iCloudSyncStatusView: View {
             ELOG("Error syncing file from iCloud: \(error)")
         }
     }
+    
+    // MARK: - CloudKit Records Section
+    
+    /// CloudKit record counts section
+    private func cloudKitRecordsSection(records: CloudKitRecordCounts, isLoading: Bool, onRefresh: @escaping () -> Void) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("CloudKit Records")
+                .font(.headline)
+                .foregroundColor(.retroPink)
+            
+            if isLoading {
+                HStack {
+                    Spacer()
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .retroBlue))
+                    Spacer()
+                }
+                .frame(height: 100)
+                .padding(10)
+                .background(Color.retroBlack.opacity(0.7))
+                .cornerRadius(8)
+            } else {
+                HStack(spacing: 16) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Image(systemName: "doc")
+                                .foregroundColor(.retroBlue)
+                            Text("ROMs:")
+                                .foregroundColor(.white)
+                            Text("\(records.roms)")
+                                .foregroundColor(.retroBlue)
+                                .bold()
+                        }
+                        
+                        HStack {
+                            Image(systemName: "archivebox")
+                                .foregroundColor(.retroPurple)
+                            Text("Save States:")
+                                .foregroundColor(.white)
+                            Text("\(records.saveStates)")
+                                .foregroundColor(.retroPurple)
+                                .bold()
+                        }
+                        
+                        HStack {
+                            Image(systemName: "cpu")
+                                .foregroundColor(.retroPink)
+                            Text("BIOS:")
+                                .foregroundColor(.white)
+                            Text("\(records.bios)")
+                                .foregroundColor(.retroPink)
+                                .bold()
+                        }
+                        
+                        HStack {
+                            Image(systemName: "number.circle")
+                                .foregroundColor(.retroGreen)
+                            Text("Total:")
+                                .foregroundColor(.white)
+                            Text("\(records.total)")
+                                .foregroundColor(.retroGreen)
+                                .bold()
+                        }
+                    }
+                    
+                    Spacer()
+                    
+                    Button(action: onRefresh) {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 20))
+                            .foregroundColor(.retroBlue)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+                .padding(10)
+                .background(Color.retroBlack.opacity(0.7))
+                .cornerRadius(8)
+            }
+        }
+        .padding(.horizontal)
+    }
+    
+    /// Fetch CloudKit record counts
+    private func fetchCloudKitRecordCounts() {
+        Task {
+            do {
+                DLOG("Starting CloudKit record count fetch")
+                
+                // Set loading state
+                await MainActor.run {
+                    isLoadingCloudKitRecords = true
+                }
+                
+                // Check if we have any active syncers
+                let activeSyncers = CloudKitSyncerStore.shared.activeSyncers
+                DLOG("Total active syncers: \(activeSyncers.count)")
+                
+                // Get ROM syncer record count
+                var romCount = 0
+                let romSyncers = CloudKitSyncerStore.shared.romSyncers
+                DLOG("Found \(romSyncers.count) ROM syncers")
+                
+                if let cloudKitRomSyncers = romSyncers as? [CloudKitRomsSyncer] {
+                    DLOG("Found \(cloudKitRomSyncers.count) CloudKit ROM syncers")
+                    for (index, syncer) in cloudKitRomSyncers.enumerated() {
+                        DLOG("Fetching record count for ROM syncer \(index + 1)")
+                        let count = await syncer.getRecordCount()
+                        DLOG("ROM syncer \(index + 1) has \(count) records")
+                        romCount += count
+                    }
+                } else {
+                    DLOG("No CloudKit ROM syncers found")
+                }
+                
+                // Get save state syncer record count
+                var saveStateCount = 0
+                let saveStateSyncers = CloudKitSyncerStore.shared.saveStateSyncers
+                DLOG("Found \(saveStateSyncers.count) save state syncers")
+                
+                if let cloudKitSaveStateSyncers = saveStateSyncers as? [CloudKitSaveStatesSyncer] {
+                    DLOG("Found \(cloudKitSaveStateSyncers.count) CloudKit save state syncers")
+                    for (index, syncer) in cloudKitSaveStateSyncers.enumerated() {
+                        DLOG("Fetching record count for save state syncer \(index + 1)")
+                        let count = await syncer.getRecordCount()
+                        DLOG("Save state syncer \(index + 1) has \(count) records")
+                        saveStateCount += count
+                    }
+                } else {
+                    DLOG("No CloudKit save state syncers found")
+                }
+                
+                // Get BIOS syncer record count
+                var biosCount = 0
+                let biosSyncers = CloudKitSyncerStore.shared.biosSyncers
+                DLOG("Found \(biosSyncers.count) BIOS syncers")
+                
+                if let cloudKitBiosSyncers = biosSyncers as? [CloudKitBIOSSyncer] {
+                    DLOG("Found \(cloudKitBiosSyncers.count) CloudKit BIOS syncers")
+                    for (index, syncer) in cloudKitBiosSyncers.enumerated() {
+                        DLOG("Fetching record count for BIOS syncer \(index + 1)")
+                        let count = await syncer.getRecordCount()
+                        DLOG("BIOS syncer \(index + 1) has \(count) records")
+                        biosCount += count
+                    }
+                } else {
+                    DLOG("No CloudKit BIOS syncers found")
+                }
+                
+                DLOG("CloudKit record counts - ROMs: \(romCount), Save States: \(saveStateCount), BIOS: \(biosCount)")
+                
+                // Update UI on main thread
+                await MainActor.run {
+                    cloudKitRecords = CloudKitRecordCounts(
+                        roms: romCount,
+                        saveStates: saveStateCount,
+                        bios: biosCount
+                    )
+                    isLoadingCloudKitRecords = false
+                    DLOG("Updated UI with CloudKit record counts")
+                }
+            } catch {
+                ELOG("Error fetching CloudKit record counts: \(error.localizedDescription)")
+                await MainActor.run {
+                    isLoadingCloudKitRecords = false
+                }
+            }
+        }
+    }
 }
-
 // MARK: - Supporting Types
 
 /// Represents a difference between local and iCloud files

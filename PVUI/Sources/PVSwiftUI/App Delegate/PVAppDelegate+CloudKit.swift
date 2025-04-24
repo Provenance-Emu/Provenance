@@ -18,11 +18,37 @@ extension PVAppDelegate {
     func initializeCloudKit() {
         // Register for remote notifications if iCloud sync is enabled
         if Defaults[.iCloudSync] {
-            CloudKitSubscriptionManager.shared.registerForRemoteNotifications()
+            DLOG("Initializing CloudKit for all platforms")
             
-            // Set up CloudKit subscriptions
+            // Initialize CloudKit schema first
             Task {
+                let containerIdentifier = iCloudConstants.containerIdentifier
+                
+                // Initialize CloudKit container and database
+                let container = CKContainer(identifier: containerIdentifier)
+                let privateDatabase = container.privateCloudDatabase
+                
+                // Initialize CloudKit schema
+                DLOG("Initializing CloudKit schema...")
+                let success = await CloudKitSchema.initializeSchema(in: privateDatabase)
+                if success {
+                    DLOG("CloudKit schema initialized successfully")
+                } else {
+                    ELOG("Failed to initialize CloudKit schema")
+                }
+                
+                // Initialize CloudSyncManager to create syncers
+                _ = CloudSyncManager.shared
+                DLOG("CloudSyncManager initialized")
+                
+                // Register for remote notifications
+                CloudKitSubscriptionManager.shared.registerForRemoteNotifications()
+                
+                // Set up CloudKit subscriptions
                 await CloudKitSubscriptionManager.shared.setupSubscriptions()
+                
+                // Start initial sync
+                _ = try? await CloudSyncManager.shared.startSync().value
             }
         }
     }

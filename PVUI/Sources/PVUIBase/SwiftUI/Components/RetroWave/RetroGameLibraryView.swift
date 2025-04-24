@@ -403,7 +403,7 @@ public struct RetroGameLibraryView: View {
                 .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.7))
             
             Spacer()
-            
+            #if !os(tvOS)
             // Import button
             Button(action: {
                 showImportOptions()
@@ -428,7 +428,7 @@ public struct RetroGameLibraryView: View {
                 .shadow(color: Color.retroPink.opacity(0.5), radius: 3, x: 0, y: 0)
             }
             .buttonStyle(PlainButtonStyle())
-            
+            #endif
             // Sort button
             if #available(tvOS 17.0, *) {
                 Menu {
