@@ -6,21 +6,19 @@
 //
 
 import SwiftUI
+import PVLibrary
 import PVThemes
-import PVLibrary
-import PVRealm
 import RealmSwift
-import PVMediaCache
-import UniformTypeIdentifiers
-import PVLogging
-import PVSystems
 import Combine
-import Dispatch
-import PVLibrary
-import Perception
+import PVSystems
+import PVPrimitives
+
 #if canImport(PVWebServer)
 import PVWebServer
 #endif
+
+// Import for StatusMessageView
+import PVUIBase
 #if canImport(SafariServices)
 import SafariServices
 #endif
@@ -140,6 +138,7 @@ public struct RetroGameLibraryView: View {
             }
 #if !os(tvOS)
             .toolbar {
+                // Add button
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
                         /// Show the document picker directly using local state
@@ -147,6 +146,17 @@ public struct RetroGameLibraryView: View {
                         isShowingDocumentPicker = true
                     }) {
                         Image(systemName: "plus")
+                    }
+                }
+                
+                // Notifications toggle button
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        viewModel.showStatusMessages.toggle()
+                    }) {
+                        Image(systemName: viewModel.showStatusMessages ? "bell.fill" : "bell.slash.fill")
+                            .foregroundColor(viewModel.showStatusMessages ? RetroTheme.retroPink : .gray)
+                            .animation(.easeInOut(duration: 0.2), value: viewModel.showStatusMessages)
                     }
                 }
             }
@@ -328,6 +338,17 @@ public struct RetroGameLibraryView: View {
                 emptyLibraryView()
             } else {
                 libraryContentView()
+            }
+            
+            // Status message overlay at the top of the screen
+            VStack {
+                if viewModel.showStatusMessages {
+                    StatusMessageView()
+                        .padding(.horizontal)
+                        .padding(.top, 8)
+                }
+                
+                Spacer()
             }
         }
     }

@@ -44,6 +44,9 @@ public class RetroGameLibraryViewModel: ObservableObject {
     /// Import status message
     @Published var importMessage: String? = nil
     @Published var showingImportMessage = false
+    
+    /// Control visibility of status messages
+    @Published var showStatusMessages = true
 
     /// GameContextMenuDelegate properties
     @Published var showImagePicker = false
@@ -232,6 +235,17 @@ public class RetroGameLibraryViewModel: ObservableObject {
     public init() {
         setupSearchDebounce()
         setupImportQueueTimer()
+        
+        // Load status message visibility from UserDefaults
+        showStatusMessages = UserDefaults.standard.bool(forKey: "ShowStatusMessages")
+        
+        // Save status message visibility when it changes
+        $showStatusMessages
+            .dropFirst() // Skip initial value
+            .sink { [weak self] value in
+                UserDefaults.standard.set(value, forKey: "ShowStatusMessages")
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Computed Properties

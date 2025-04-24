@@ -312,6 +312,11 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         _initUITheme()
         _initThemeListener()
         
+        #if canImport(PVWebServer)
+        // Initialize web server notifications
+        setupWebServerNotifications()
+        #endif
+        
         #if os(tvOS)
         // Initialize CloudKit for tvOS
         initializeCloudKit()
