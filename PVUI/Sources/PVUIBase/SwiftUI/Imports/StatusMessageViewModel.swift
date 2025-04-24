@@ -11,6 +11,13 @@ import Combine
 import PVLibrary
 import SwiftUI
 import PVPrimitives
+import PVWebServer
+
+/// Web server type enum
+public enum WebServerType {
+    case webUploader
+    case webDAV
+}
 
 /// ViewModel to handle actor isolation for StatusMessageManager
 @MainActor
@@ -24,6 +31,10 @@ public class StatusMessageViewModel: ObservableObject {
     @Published public var cacheManagementProgress: (current: Int, total: Int)? = nil
     @Published public var downloadProgress: (current: Int, total: Int)? = nil
     @Published public var cloudKitSyncProgress: (current: Int, total: Int)? = nil
+    
+    // Web server status and upload progress
+    @Published public var webServerStatus: (isRunning: Bool, type: WebServerType, url: URL?)? = nil
+    @Published public var webServerUploadProgress: (currentFile: String, bytesTransferred: Int64, totalBytes: Int64, progress: Double, queueLength: Int)? = nil
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -367,9 +378,20 @@ public class StatusMessageViewModel: ObservableObject {
                    let typeString = userInfo["type"] as? String {
 
                     let serverType = typeString == "WebUploader" ? "Web Upload Server" : "WebDAV Server"
+                    let type: WebServerType = typeString == "WebUploader" ? .webUploader : .webDAV
+                    var url: URL? = nil
+                    
+                    if isRunning, let urlString = userInfo["url"] as? String {
+                        url = URL(string: urlString)
+                    } else if isRunning, let urlObj = userInfo["url"] as? URL {
+                        url = urlObj
+                    }
+                    
+                    // Update the web server status
+                    self?.webServerStatus = (isRunning: isRunning, type: type, url: url)
 
                     if isRunning {
-                        if let url = userInfo["url"] as? URL {
+                        if let url = url {
                             StatusMessageManager.shared.addSuccess(
                                 "\(serverType) started at \(url.absoluteString)",
                                 duration: 5.0
@@ -417,17 +439,70 @@ public class StatusMessageViewModel: ObservableObject {
             }
             .store(in: &cancellables)
 
-        // Web server status
-        NotificationCenter.default.publisher(for: .webServerStatusChanged)
+        // Web server upload progress
+        NotificationCenter.default.publisher(for: Notification.Name("WebServerUploadProgress"))
             .sink { [weak self] notification in
                 if let userInfo = notification.userInfo,
-                   let isRunning = userInfo["isRunning"] as? Bool,
-                   let port = userInfo["port"] as? Int {
-                    let message = isRunning ?
-                        "Web server started on port \(port)" :
-                        "Web server stopped"
-                    let type: StatusMessage.MessageType = isRunning ? .success : .info
-                    StatusMessageManager.shared.addMessage(StatusMessage(message: message, type: type, duration: 5.0))
+                   let currentFile = userInfo["currentFile"] as? String,
+                   let bytesTransferred = userInfo["bytesTransferred"] as? Int64,
+                   let totalBytes = userInfo["totalBytes"] as? Int64,
+                   let progress = userInfo["progress"] as? Double,
+                   let queueLength = userInfo["queueLength"] as? Int {
+                    
+                    self?.webServerUploadProgress = (
+                        currentFile: currentFile,
+                        bytesTransferred: bytesTransferred,
+                        totalBytes: totalBytes,
+                        progress: progress,
+                        queueLength: queueLength
+                    )
+                    
+                    // If progress is complete, clear it after a delay
+                    if progress >= 1.0 && queueLength == 0 {
+                        Task { @MainActor in
+                            try? await Task.sleep(nanoseconds: 3_000_000_000) // 3 seconds
+                            self?.webServerUploadProgress = nil
+                        }
+                    }
+                    
+                    // Only show a message for significant progress changes to avoid spamming
+                    if progress == 0.0 || progress >= 1.0 || Int(progress * 10) % 2 == 0 {
+                        let progressPercent = Int(progress * 100)
+                        let mbTransferred = Double(bytesTransferred) / 1_048_576.0
+                        let mbTotal = Double(totalBytes) / 1_048_576.0
+                        
+                        let fileName = currentFile.split(separator: "/").last ?? ""
+                        let message = "Uploading \(fileName): \(progressPercent)% (\(String(format: "%.1f", mbTransferred))/\(String(format: "%.1f", mbTotal)) MB)"
+                        
+                        if progress >= 1.0 {
+                            StatusMessageManager.shared.addSuccess(message, duration: 3.0)
+                        } else {
+                            StatusMessageManager.shared.addInfo(message, duration: 2.0)
+                        }
+                    }
+                }
+            }
+            .store(in: &cancellables)
+            
+        // Web server upload completed
+        NotificationCenter.default.publisher(for: Notification.Name("WebServerUploadCompleted"))
+            .sink { [weak self] notification in
+                if let userInfo = notification.userInfo,
+                   let fileName = userInfo["fileName"] as? String,
+                   let fileSize = userInfo["fileSize"] as? Int64 {
+                    
+                    let mbSize = Double(fileSize) / 1_048_576.0
+                    let displayName = fileName.split(separator: "/").last ?? ""
+                    
+                    StatusMessageManager.shared.addSuccess(
+                        "Upload complete: \(displayName) (\(String(format: "%.1f", mbSize)) MB)",
+                        duration: 5.0
+                    )
+                    
+                    // If there are no more files in the queue, clear the progress
+                    if self?.webServerUploadProgress?.queueLength == 0 {
+                        self?.webServerUploadProgress = nil
+                    }
                 }
             }
             .store(in: &cancellables)
@@ -648,6 +723,11 @@ public class StatusMessageViewModel: ObservableObject {
     /// Clear the file recovery progress
     public func clearFileRecoveryProgress() {
         fileRecoveryProgress = nil
+    }
+    
+    /// Clear the web server upload progress
+    public func clearWebServerUploadProgress() {
+        webServerUploadProgress = nil
     }
 
     /// Set the import active state

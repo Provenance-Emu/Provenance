@@ -11,10 +11,15 @@
 @import PVLoggingObjC;
 
 // Define notification constants
-NSString* const PVWebServerFileUploadStartedNotification = @"PVWebServerFileUploadStarted";
-NSString* const PVWebServerFileUploadProgressNotification = @"PVWebServerFileUploadProgress";
-NSString* const PVWebServerFileUploadCompletedNotification = @"PVWebServerFileUploadCompleted";
-NSString* const PVWebServerFileUploadFailedNotification = @"PVWebServerFileUploadFailed";
+NSString* const PVWebServerFileUploadStartedNotification = @"PVWebServerFileUploadStartedNotification";
+NSString* const PVWebServerFileUploadProgressNotification = @"PVWebServerFileUploadProgressNotification";
+NSString* const PVWebServerFileUploadCompletedNotification = @"PVWebServerFileUploadCompletedNotification";
+NSString* const PVWebServerFileUploadFailedNotification = @"PVWebServerFileUploadFailedNotification";
+
+// Status message notification names
+NSString* const PVWebServerUploadProgressNotification = @"WebServerUploadProgress";
+NSString* const PVWebServerUploadCompletedNotification = @"WebServerUploadCompleted";
+NSString* const PVWebServerStatusChangedNotification = @"WebServerStatusChanged";
 
 // Web Server
 #import "GCDWebUploader.h"
@@ -42,19 +47,13 @@ NSUInteger webDavPort = 81;
 @property (nonatomic, strong) NSUserActivity *handoffActivity;
 @property (nonatomic, strong, readwrite) NSURL *bonjourSeverURL;
 
-// Upload tracking properties (readwrite)
-@property (nonatomic, strong, readwrite) NSMutableArray *uploadQueue;
-@property (nonatomic, assign, readwrite) NSUInteger uploadQueueLength;
-@property (nonatomic, strong, readwrite, nullable) NSString *currentUploadingFilePath;
-@property (nonatomic, assign, readwrite) float currentUploadProgress;
-@property (nonatomic, assign, readwrite) uint64_t currentUploadFileSize;
-@property (nonatomic, assign, readwrite) uint64_t currentUploadBytesTransferred;
-@end
+@property (nonatomic, strong) NSMutableArray *uploadQueue;
+@property (nonatomic, strong) NSString *currentUploadingFilePath;
+@property (nonatomic, assign) float currentUploadProgress;
+@property (nonatomic, assign) uint64_t currentUploadFileSize;
+@property (nonatomic, assign) uint64_t currentUploadBytesTransferred;
+@property (nonatomic, strong) NSTimer *uploadProgressTimer;
 
-@interface PVWebServer () <GCDWebUploaderDelegate>
-@end
-
-@interface PVWebServer () <GCDWebDAVServerDelegate>
 @end
 
 @implementation PVWebServer
@@ -80,7 +79,6 @@ NSUInteger webDavPort = 81;
     {
         // Initialize upload tracking properties
         _uploadQueue = [NSMutableArray array];
-        _uploadQueueLength = 0;
         _currentUploadProgress = 0.0f;
         _currentUploadFileSize = 0;
         _currentUploadBytesTransferred = 0;
@@ -221,76 +219,141 @@ NSUInteger webDavPort = 81;
     [[NSRunLoop mainRunLoop] addTimer:progressTimer forMode:NSRunLoopCommonModes];
 }
 
-- (void)updateUploadProgress:(NSTimer *)timer
-{
-    if (self.currentUploadingFilePath) {
-        // Post notification with detailed progress information
-        NSDictionary *userInfo = @{
-            @"progress": @(self.currentUploadProgress),
-            @"bytesTransferred": @(self.currentUploadBytesTransferred),
-            @"totalBytes": @(self.currentUploadFileSize),
-            @"currentFile": self.currentUploadingFilePath ?: @"Unknown file",
-            @"queueLength": @(self.uploadQueue.count)
-        };
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerFileUploadProgressNotification 
-                                                         object:self 
-                                                       userInfo:userInfo];
+- (void)updateUploadProgress:(uint64_t)bytesTransferred totalBytes:(uint64_t)totalBytes {
+    if (totalBytes > 0) {
+        self.currentUploadProgress = (float)bytesTransferred / (float)totalBytes;
+    } else {
+        self.currentUploadProgress = 0.0;
+    }
+    
+    self.currentUploadBytesTransferred = bytesTransferred;
+    
+    // Post notification about progress
+    NSDictionary *userInfo = @{
+        @"filePath": self.currentUploadingFilePath ?: @"",
+        @"bytesTransferred": @(bytesTransferred),
+        @"totalBytes": @(totalBytes),
+        @"progress": @(self.currentUploadProgress)
+    };
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerFileUploadProgressNotification
+                                                        object:self
+                                                      userInfo:userInfo];
+    
+    // Also post a notification for the status message view
+    [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerUploadProgressNotification
+                                                        object:self
+                                                      userInfo:@{
+                                                          @"currentFile": self.currentUploadingFilePath ?: @"",
+                                                          @"bytesTransferred": @(bytesTransferred),
+                                                          @"totalBytes": @(totalBytes),
+                                                          @"progress": @(self.currentUploadProgress),
+                                                          @"queueLength": @(self.uploadQueue.count)
+                                                      }];
+}
+
+- (void)addFileToUploadQueue:(NSString *)filePath {
+    if (!self.uploadQueue) {
+        self.uploadQueue = [NSMutableArray array];
+    }
+    
+    [self.uploadQueue addObject:filePath];
+    
+    // Post notification that a file has been added to the queue
+    NSDictionary *userInfo = @{
+        @"currentFile": filePath,
+        @"queueLength": @(self.uploadQueue.count)
+    };
+    [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerFileUploadStartedNotification
+                                                        object:self
+                                                      userInfo:userInfo];
+    
+    // Also post a notification for the status message view
+    [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerUploadProgressNotification
+                                                        object:self
+                                                      userInfo:@{
+                                                          @"currentFile": filePath,
+                                                          @"bytesTransferred": @(0),
+                                                          @"totalBytes": @(0),
+                                                          @"progress": @(0.0),
+                                                          @"queueLength": @(self.uploadQueue.count)
+                                                      }];
+    
+    // If this is the only file in the queue, start processing it
+    if (self.uploadQueue.count == 1) {
+        [self processNextFileInUploadQueue];
     }
 }
 
-- (void)addFileToUploadQueue:(NSString *)filePath
-{
-    if (filePath.length > 0) {
-        @synchronized(self.uploadQueue) {
-            // Add to queue if not already in it
-            if (![self.uploadQueue containsObject:filePath]) {
-                [self.uploadQueue addObject:filePath];
-            }
-            
-            // If this is the first file and no file is currently being uploaded, start processing it
-            if (self.uploadQueue.count == 1 && !self.currentUploadingFilePath) {
-                [self processNextFileInQueue];
-            } else {
-                // Update queue length
-                self.uploadQueueLength = self.uploadQueue.count;
-                
-                // Post notification that file was added to queue
-                [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerFileUploadStartedNotification 
-                                                                   object:self 
-                                                                 userInfo:@{@"path": filePath}];
-                
-                ILOG(@"File added to upload queue: %@. Queue length: %lu", filePath, (unsigned long)self.uploadQueueLength);
-            }
-        }
-    }
-}
-
-- (void)processNextFileInQueue
-{
-    @synchronized(self.uploadQueue) {
-        // Reset current upload progress
-        self.currentUploadProgress = 0.0f;
+- (void)processNextFileInUploadQueue {
+    if (self.uploadQueue.count == 0) {
+        self.currentUploadingFilePath = nil;
+        self.currentUploadProgress = 0.0;
         self.currentUploadFileSize = 0;
         self.currentUploadBytesTransferred = 0;
         
-        // Get next file from queue if available
-        if (self.uploadQueue.count > 0) {
-            NSString *nextFile = [self.uploadQueue firstObject];
-            [self.uploadQueue removeObjectAtIndex:0];
-            self.currentUploadingFilePath = nextFile;
-            self.uploadQueueLength = self.uploadQueue.count;
-            
-            // Post notification that upload has started
-            [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerFileUploadStartedNotification 
-                                                              object:self 
-                                                            userInfo:@{@"path": nextFile}];
-            
-            ILOG(@"Processing next file in upload queue: %@. Remaining: %lu", nextFile, (unsigned long)self.uploadQueueLength);
-        } else {
-            // No more files in queue
-            self.currentUploadingFilePath = nil;
-            ILOG(@"Upload queue is empty");
+        // Stop the progress timer if it's running
+        if (self.uploadProgressTimer) {
+            [self.uploadProgressTimer invalidate];
+            self.uploadProgressTimer = nil;
+        }
+        return;
+    }
+    
+    // Get the next file path from the queue
+    NSString *filePath = [self.uploadQueue firstObject];
+    self.currentUploadingFilePath = filePath;
+    
+    // Reset progress tracking
+    self.currentUploadProgress = 0.0;
+    self.currentUploadFileSize = 0;
+    self.currentUploadBytesTransferred = 0;
+    
+    // Get file attributes to determine size
+    NSError *error = nil;
+    NSDictionary *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:&error];
+    if (!error) {
+        self.currentUploadFileSize = [attributes fileSize];
+    }
+    
+    // Post notification that processing has started for this file
+    NSDictionary *userInfo = @{
+        @"filePath": filePath,
+        @"fileSize": @(self.currentUploadFileSize)
+    };
+    [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerFileUploadStartedNotification
+                                                        object:self
+                                                      userInfo:userInfo];
+    
+    // Also post a notification for the status message view
+    [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerUploadProgressNotification
+                                                        object:self
+                                                      userInfo:@{
+                                                          @"currentFile": filePath,
+                                                          @"bytesTransferred": @(0),
+                                                          @"totalBytes": @(self.currentUploadFileSize),
+                                                          @"progress": @(0.0),
+                                                          @"queueLength": @(self.uploadQueue.count)
+                                                      }];
+    
+    // Start a timer to update progress regularly
+    if (!self.uploadProgressTimer) {
+        self.uploadProgressTimer = [NSTimer scheduledTimerWithTimeInterval:0.5
+                                                                   target:self
+                                                                 selector:@selector(updateUploadProgressNotification)
+                                                                 userInfo:nil
+                                                                  repeats:YES];
+    }
+}
+
+- (void)updateUploadProgressNotification {
+    // Only post updates if there's an active upload
+    if (self.currentUploadingFilePath) {
+        [self updateUploadProgress:self.currentUploadBytesTransferred totalBytes:self.currentUploadFileSize];
+        
+        // If we've completed the upload but haven't processed it yet, trigger completion
+        if (self.currentUploadBytesTransferred >= self.currentUploadFileSize && self.currentUploadFileSize > 0) {
+            [self fileUploadCompleted:self.currentUploadingFilePath];
         }
     }
 }
@@ -351,6 +414,17 @@ NSUInteger webDavPort = 81;
         ELOG(@"Failed to start Web Server on %@, with error: %@", self.IPAddress, error.localizedDescription);
     }
     
+    // Post notification for status message view
+    [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerStatusChangedNotification
+                                                        object:self
+                                                      userInfo:@{
+                                                          @"isRunning": @(YES),
+                                                          @"type": @"WebUploader",
+                                                          @"port": @(webUploadPort),
+                                                          @"url": self.URL.absoluteString
+                                                      }];
+    
+    ILOG(@"Started web server at %@", self.URL);
     return success;
 }
 
@@ -376,6 +450,16 @@ NSUInteger webDavPort = 81;
         NSLog(@"Failed to start WebDAV Server with error: %@", error.localizedDescription);
     }
 
+    // Post notification for status message view
+    [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerStatusChangedNotification
+                                                        object:self
+                                                      userInfo:@{
+                                                          @"isRunning": @(YES),
+                                                          @"type": @"WebDAV",
+                                                          @"port": @(webDavPort),
+                                                          @"url": self.WebDavURLString
+                                                      }];
+
     return success;
 }
 
@@ -387,15 +471,52 @@ NSUInteger webDavPort = 81;
     [self stopWWWUploadServer];
     [self stopWebDavServer];
     
+    // Stop the upload progress timer if it's running
+    if (self.uploadProgressTimer) {
+        [self.uploadProgressTimer invalidate];
+        self.uploadProgressTimer = nil;
+    }
+    
     [self.handoffActivity resignCurrent];
 }
 
 -(void)stopWWWUploadServer {
-    [self.webServer stop];
+    if (_webServer.isRunning) {
+        [_webServer stop];
+        
+        // Post notification for status message view
+        [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerStatusChangedNotification
+                                                            object:self
+                                                          userInfo:@{
+                                                              @"isRunning": @(NO),
+                                                              @"type": @"WebUploader",
+                                                              @"port": @(webUploadPort)
+                                                          }];
+    }
 }
 
 -(void)stopWebDavServer {
-    [self.webDavServer stop];
+    if (_webDavServer.isRunning) {
+        [_webDavServer stop];
+        
+        // Post notification for status message view
+        [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerStatusChangedNotification
+                                                            object:self
+                                                          userInfo:@{
+                                                              @"isRunning": @(NO),
+                                                              @"type": @"WebDAV",
+                                                              @"port": @(webDavPort)
+                                                          }];
+    }
+}
+
+- (void)dealloc {
+    [self stopServers];
+    
+    if (self.uploadProgressTimer) {
+        [self.uploadProgressTimer invalidate];
+        self.uploadProgressTimer = nil;
+    }
 }
 
 - (NSString *)IPAddress {
@@ -466,26 +587,43 @@ NSUInteger webDavPort = 81;
 {
     ILOG(@"[UPLOAD] %@", path);
     
-    // Remove the file from the upload queue if it's not the current file
-    @synchronized(self.uploadQueue) {
-        [self.uploadQueue removeObject:path];
-        self.uploadQueueLength = self.uploadQueue.count;
+    // Get file size for the completed file
+    uint64_t fileSize = 0;
+    NSError *error = nil;
+    NSDictionary *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:path error:&error];
+    if (!error) {
+        fileSize = [attributes fileSize];
     }
     
-    // Reset current upload progress if this was the current file
+    // Post notification that file upload completed
+    NSDictionary *userInfo = @{
+        @"filePath": path,
+        @"fileSize": @(fileSize)
+    };
+    [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerFileUploadCompletedNotification
+                                                        object:self
+                                                      userInfo:userInfo];
+    
+    // Also post a notification for the status message view
+    [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerUploadCompletedNotification
+                                                        object:self
+                                                      userInfo:@{
+                                                          @"fileName": path,
+                                                          @"fileSize": @(fileSize)
+                                                      }];
+    
+    // Remove the file from the queue
     if ([path isEqualToString:self.currentUploadingFilePath]) {
-        // Post notification for upload completed
-        [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerFileUploadCompletedNotification 
-                                                           object:self 
-                                                         userInfo:@{@"path": path}];
+        // If this is the current file being processed, move to the next one
+        if (self.uploadQueue.count > 0) {
+            [self.uploadQueue removeObjectAtIndex:0];
+        }
         
         // Process the next file in the queue
-        [self processNextFileInQueue];
+        [self processNextFileInUploadQueue];
     } else {
-        // Post notification for upload completed
-        [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerFileUploadCompletedNotification 
-                                                           object:self 
-                                                         userInfo:@{@"path": path}];
+        // If it's not the current file, just remove it from the queue
+        [self.uploadQueue removeObject:path];
     }
 }
 
@@ -524,26 +662,43 @@ NSUInteger webDavPort = 81;
 - (void)davServer:(GCDWebDAVServer*)server didUploadFileAtPath:(NSString*)path {
     ILOG(@"[DAV UPLOAD] %@", path);
     
-    // Remove the file from the upload queue if it's not the current file
-    @synchronized(self.uploadQueue) {
-        [self.uploadQueue removeObject:path];
-        self.uploadQueueLength = self.uploadQueue.count;
+    // Get file size for the completed file
+    uint64_t fileSize = 0;
+    NSError *error = nil;
+    NSDictionary *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:path error:&error];
+    if (!error) {
+        fileSize = [attributes fileSize];
     }
     
-    // Reset current upload progress if this was the current file
+    // Post notification that file upload completed
+    NSDictionary *userInfo = @{
+        @"filePath": path,
+        @"fileSize": @(fileSize)
+    };
+    [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerFileUploadCompletedNotification
+                                                        object:self
+                                                      userInfo:userInfo];
+    
+    // Also post a notification for the status message view
+    [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerUploadCompletedNotification
+                                                        object:self
+                                                      userInfo:@{
+                                                          @"fileName": path,
+                                                          @"fileSize": @(fileSize)
+                                                      }];
+    
+    // Remove the file from the queue
     if ([path isEqualToString:self.currentUploadingFilePath]) {
-        // Post notification for upload completed
-        [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerFileUploadCompletedNotification 
-                                                           object:self 
-                                                         userInfo:@{@"path": path}];
+        // If this is the current file being processed, move to the next one
+        if (self.uploadQueue.count > 0) {
+            [self.uploadQueue removeObjectAtIndex:0];
+        }
         
         // Process the next file in the queue
-        [self processNextFileInQueue];
+        [self processNextFileInUploadQueue];
     } else {
-        // Post notification for upload completed
-        [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerFileUploadCompletedNotification 
-                                                           object:self 
-                                                         userInfo:@{@"path": path}];
+        // If it's not the current file, just remove it from the queue
+        [self.uploadQueue removeObject:path];
     }
 }
 

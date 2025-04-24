@@ -18,6 +18,7 @@ import PVRealm
 import PVSettings
 import Combine
 import RealmSwift
+import PVWebServer
 
 struct ConsoleGamesFilterModeFlags: OptionSet {
     let rawValue: Int
@@ -172,12 +173,13 @@ struct ConsoleGamesView: SwiftUI.View {
                         .allowsHitTesting(true)
                 
                 // Status Message View
-                StatusMessageView()
-                    .padding(.horizontal, 8)
+                RetroStatusControlView()
+                    .padding(.horizontal, 4)
                     .padding(.top, 4)
                 
-                // Import Progress View (legacy - can be removed once StatusMessageView is fully tested)
-                ImportProgressView(
+                // Import Progress View (legacy - can be removed once RetroStatusControlView is fully tested)
+                // Commenting out as RetroStatusControlView now handles this functionality
+                /*ImportProgressView(
                     gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
                     updatesController: AppState.shared.libraryUpdatesController!,
                     onTap: {
@@ -187,7 +189,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                 )
                 .padding(.horizontal, 8)
-                .padding(.top, 4)
+                .padding(.top, 4)*/
 
                 ScrollViewWithOffset(
                     offsetChanged: { offset in
@@ -451,6 +453,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                 }
             )
+            
             .uiKitAlert(
                 "Choose Artwork Source",
                 message: "Select artwork from your photo library or search online sources",

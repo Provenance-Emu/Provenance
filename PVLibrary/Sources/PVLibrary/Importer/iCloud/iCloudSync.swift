@@ -39,6 +39,8 @@ func withTimeout<T>(timeout: UInt64, operation: @escaping () async throws -> T) 
 }
 import PVLogging
 import PVSupport
+import UIKit
+import PVHashing
 import RealmSwift
 import RxRealm
 import RxSwift
@@ -562,7 +564,49 @@ public enum iCloudSync {
     // Track whether a file recovery session is currently active
     static var isRecoverySessionActive: Bool = false
     
+    // Set of files currently being recovered - used to prevent premature access
+    static var filesBeingRecovered = Set<String>()
+    
+    /// Check if a file is currently being recovered from iCloud
+    /// - Parameter path: The file path to check
+    /// - Returns: True if the file is currently being recovered
+    public static func isFileBeingRecovered(_ path: String) -> Bool {
+        return filesBeingRecovered.contains(path)
+    }
+    
+    /// Handle file recovery status check requests
+    /// - Parameter notification: The notification containing the file path to check
+    private static func handleFileRecoveryStatusCheck(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let path = userInfo["path"] as? String else {
+            return
+        }
+        
+        let isBeingRecovered = filesBeingRecovered.contains(path)
+        
+        // Respond with the recovery status
+        Task { @MainActor in
+            NotificationCenter.default.post(
+                name: .fileRecoveryStatusResponse,
+                object: nil,
+                userInfo: [
+                    "path": path,
+                    "isBeingRecovered": isBeingRecovered
+                ]
+            )
+        }
+    }
+    
     public static func initICloudDocuments() {
+        // Set up observer for file recovery status check requests
+        NotificationCenter.default.addObserver(
+            forName: .checkFileRecoveryStatus,
+            object: nil,
+            queue: .main
+        ) { notification in
+            handleFileRecoveryStatusCheck(notification)
+        }
+        
         // Check for files stuck in iCloud Drive at startup
         Task {
             await checkForStuckFilesInICloudDrive()
@@ -604,12 +648,15 @@ public enum iCloudSync {
     
     /// iCloud file recovery progress notification
     public static let iCloudFileRecoveryProgress = Notification.Name("iCloudFileRecoveryProgress")
-
+    
     /// iCloud file recovery completed notification
     public static let iCloudFileRecoveryCompleted = Notification.Name("iCloudFileRecoveryCompleted")
     
     /// iCloud file recovery error notification
     public static let iCloudFileRecoveryError = Notification.Name("iCloudFileRecoveryError")
+    
+    /// iCloud file pending recovery notification - used to track files that are still being synced
+    public static let iCloudFilePendingRecovery = Notification.Name("iCloudFilePendingRecovery")
     
     /// Handle changes to the iCloudSyncMode setting
     /// - Parameter newMode: The new iCloudSyncMode value
@@ -904,17 +951,97 @@ public enum iCloudSync {
     
     /// Move files from iCloud Drive to local Documents directory
     /// Used when switching from iCloud Drive mode to CloudKit mode
-    // Progress tracking for file movement
-    private static var totalFilesToMove = 0
+    // Progress tracking variables
     private static var filesProcessed = 0
-    private static let progressLock = NSLock()
+    private static var totalFilesToMove = 0
+    private static var totalBytesProcessed: UInt64 = 0
+    private static var progressLock = NSLock()
+    
+    // Retry queue for files that fail with timeout errors
+    private static var retryQueue: [(sourceFile: URL, destFile: URL)] = []
+    private static var maxRetryAttempts = 3
+    private static var currentRetryAttempt = 0
     
     /// Reset progress tracking
     private static func resetProgress() {
         progressLock.lock()
         defer { progressLock.unlock() }
-        totalFilesToMove = 0
         filesProcessed = 0
+        totalFilesToMove = 0
+        totalBytesProcessed = 0
+        retryQueue = []
+        currentRetryAttempt = 0
+    }
+    
+    /// Add a file to the retry queue for later processing
+    private static func addFileToRetryQueue(sourceFile: URL, destFile: URL) {
+        Task { @MainActor in
+            // Only add if not already in the queue
+            if !retryQueue.contains(where: { $0.sourceFile.path == sourceFile.path }) {
+                retryQueue.append((sourceFile: sourceFile, destFile: destFile))
+                
+                DLOG("Added file to retry queue: \(sourceFile.lastPathComponent) (Queue size: \(retryQueue.count))")
+                
+                // Post notification about the retry queue
+                Task { @MainActor in
+                    NotificationCenter.default.post(
+                        name: iCloudFileRecoveryProgress,
+                        object: nil,
+                        userInfo: [
+                            "current": filesProcessed,
+                            "total": totalFilesToMove,
+                            "message": "\(retryQueue.count) files in retry queue",
+                            "timestamp": Date()
+                        ]
+                    )
+                }
+            }
+        }
+    }
+    
+    /// Process the retry queue with files that failed due to timeout
+    private static func processRetryQueue() async {
+        guard !retryQueue.isEmpty else { return }
+        
+        ILOG("Processing retry queue: \(retryQueue.count) files, attempt \(currentRetryAttempt) of \(maxRetryAttempts)")
+        
+        // Create a local copy of the queue to process
+        let filesToRetry = retryQueue
+        retryQueue = []
+        
+        var successCount = 0
+        
+        // Process each file in the retry queue
+        for (sourceFile, destFile) in filesToRetry {
+            DLOG("Retrying file: \(sourceFile.lastPathComponent)")
+            
+            // Use a more aggressive approach for retries - direct copy with longer timeout
+            do {
+                // Use a longer timeout for retries
+                let copyTask = Task {
+                    try FileManager.default.copyItem(at: sourceFile, to: destFile)
+                }
+                
+                // Wait with an even longer timeout for retries
+                let retryTimeout: UInt64 = 300_000_000_000 // 5 minutes
+                try await withTimeout(timeout: retryTimeout) {
+                    try await copyTask.value
+                }
+                
+                DLOG("✅ Successfully copied file on retry: \(sourceFile.lastPathComponent)")
+                successCount += 1
+            } catch {
+                ELOG("❌ Failed to copy file on retry: \(sourceFile.lastPathComponent) - \(error)")
+                // Add back to retry queue if we haven't exceeded max attempts
+                Task { @MainActor in
+                    if currentRetryAttempt < maxRetryAttempts {
+                        retryQueue.append((sourceFile: sourceFile, destFile: destFile))
+                    }
+                }
+            }
+        }
+        
+        ILOG("Retry queue processing complete: \(successCount)/\(filesToRetry.count) files succeeded")
     }
     
     /// Increment the number of files processed
@@ -929,11 +1056,13 @@ public enum iCloudSync {
             ILOG("File recovery progress: \(filesProcessed)/\(totalFilesToMove) (\(Int(percentage))%)")
             
             // Post notification for progress updates
-            NotificationCenter.default.post(
-                name: iCloudFileRecoveryProgress,
-                object: nil,
-                userInfo: ["current": filesProcessed, "total": totalFilesToMove]
-            )
+            Task { @MainActor in
+                NotificationCenter.default.post(
+                    name: iCloudFileRecoveryProgress,
+                    object: nil,
+                    userInfo: ["current": filesProcessed, "total": totalFilesToMove]
+                )
+            }
         }
     }
     
@@ -945,17 +1074,21 @@ public enum iCloudSync {
         ILOG("Total files to move: \(totalFilesToMove)")
         
         // Post notification for initial progress
-        NotificationCenter.default.post(
-            name: iCloudFileRecoveryProgress,
-            object: nil,
-            userInfo: ["current": filesProcessed, "total": totalFilesToMove]
-        )
+        Task { @MainActor in
+            NotificationCenter.default.post(
+                name: iCloudFileRecoveryProgress,
+                object: nil,
+                userInfo: ["current": filesProcessed, "total": totalFilesToMove]
+            )
+        }
     }
-        
+    
     /// Public method to manually trigger file recovery from iCloud Drive
     /// This is useful for testing and for users who want to manually trigger recovery
     public static func manuallyTriggerFileRecovery() async {
         ILOG("Manually triggering file recovery from iCloud Drive")
+        // Reset the session flag first to ensure we can start a new session
+        isRecoverySessionActive = false
         await moveFilesFromiCloudDriveToLocalDocuments()
     }
     
@@ -964,12 +1097,26 @@ public enum iCloudSync {
         
         // Reset progress tracking
         resetProgress()
+        // Clear retry queue
+        retryQueue = []
+        currentRetryAttempt = 0
         
         // Only post notification if we're not already in an active recovery session
         if !iCloudSync.isRecoverySessionActive {
             iCloudSync.isRecoverySessionActive = true
             DLOG("Starting new file recovery session")
-            NotificationCenter.default.post(name: iCloudSync.iCloudFileRecoveryStarted, object: nil)
+            
+            Task { @MainActor in
+                // Post notification with additional information for RetroStatusControlView
+                NotificationCenter.default.post(
+                    name: iCloudSync.iCloudFileRecoveryStarted,
+                    object: nil,
+                    userInfo: [
+                        "timestamp": Date(),
+                        "sessionId": UUID().uuidString
+                    ]
+                )
+            }
         } else {
             DLOG("File recovery session already active, skipping duplicate notification")
         }
@@ -1014,8 +1161,49 @@ public enum iCloudSync {
             userInfo: ["current": filesProcessed, "total": totalFilesToMove]
         )
         
+        // Process retry queue if there are files to retry
+        if !retryQueue.isEmpty && currentRetryAttempt < maxRetryAttempts {
+            currentRetryAttempt += 1
+            
+            ILOG("Processing retry queue: \(retryQueue.count) files, attempt \(currentRetryAttempt) of \(maxRetryAttempts)")
+            
+            // Post notification about retry attempt
+            Task { @MainActor in
+                NotificationCenter.default.post(
+                    name: iCloudFileRecoveryProgress,
+                    object: nil,
+                    userInfo: [
+                        "current": filesProcessed,
+                        "total": totalFilesToMove,
+                        "message": "Retrying \(retryQueue.count) failed files (attempt \(currentRetryAttempt))",
+                        "timestamp": Date()
+                    ]
+                )
+            }
+            
+            // Process the retry queue
+            await processRetryQueue()
+        }
+        
         // Post notification that file recovery has completed
-        NotificationCenter.default.post(name: iCloudFileRecoveryCompleted, object: nil)
+        // Post completion notification with additional information for RetroStatusControlView
+        Task { @MainActor in
+            NotificationCenter.default.post(
+                name: iCloudFileRecoveryCompleted,
+                object: nil,
+                userInfo: [
+                    "timestamp": Date(),
+                    "filesProcessed": filesProcessed,
+                    "totalFiles": totalFilesToMove,
+                    "bytesProcessed": totalBytesProcessed,
+                    "failedFiles": retryQueue.count,
+                    "retryAttempts": currentRetryAttempt
+                ]
+            )
+        }
+        
+        // Reset the session flag to allow future recovery sessions
+        iCloudSync.isRecoverySessionActive = false
     }
     
     /// Count all files in the directories to get a total for progress tracking
@@ -1035,7 +1223,7 @@ public enum iCloudSync {
             // Check if directory is accessible
             do {
                 let dirAttributes = try FileManager.default.attributesOfItem(atPath: iCloudDirectory.path)
-                DLOG("Directory attributes for \(directory): \(dirAttributes[.type] ?? "unknown")")
+                DLOG("Directory attributes for \(directory): \(dirAttributes)")
             } catch {
                 ELOG("❌ Cannot access directory attributes for \(directory): \(error)")
                 // Post notification with error
@@ -1096,21 +1284,6 @@ public enum iCloudSync {
         }
         
         ILOG("Completed counting files. Total files to move: \(totalFilesToMove)")
-    }
-    
-    /// Move files from local Documents directory to iCloud Drive
-    /// Used when switching from CloudKit mode to iCloud Drive mode
-    static func moveFilesFromLocalDocumentsToiCloudDrive() async {
-        ILOG("Moving files from local Documents directory to iCloud Drive")
-        
-        guard let iCloudContainer = URL.iCloudContainerDirectory else {
-            ELOG("Cannot access iCloud container directory")
-            return
-        }
-        
-        await moveAllLocalFilesToCloudContainer(iCloudContainer)
-        
-        ILOG("Completed moving files from local Documents directory to iCloud Drive")
     }
     
     /// Move files from iCloud Drive to local Documents for a specific directory
@@ -1185,8 +1358,6 @@ public enum iCloudSync {
         await moveDirectoryContentsRecursively(from: iCloudDirectory, to: localDirectory)
     }
     
-
-    
     /// Move directory contents recursively
     /// - Parameters:
     ///   - sourceDir: Source directory (iCloud)
@@ -1231,12 +1402,19 @@ public enum iCloudSync {
                 DLOG("Created destination directory: \(destDir.path)")
             } catch {
                 ELOG("❌ Error creating destination directory \(destDir.path): \(error)")
+                
                 // Post notification with error
-                NotificationCenter.default.post(
-                    name: iCloudSync.iCloudFileRecoveryError,
-                    object: nil,
-                    userInfo: ["error": "Error creating destination directory: \(error)"]
-                )
+                Task { @MainActor in
+                    NotificationCenter.default.post(
+                        name: iCloudSync.iCloudFileRecoveryError,
+                        object: nil,
+                        userInfo: [
+                            "error": "Error creating directory: \(error.localizedDescription)",
+                            "path": destDir.path,
+                            "timestamp": Date()
+                        ]
+                    )
+                }
                 return
             }
         }
@@ -1435,6 +1613,22 @@ public enum iCloudSync {
             return false
         }
         
+        // Add file to the recovery tracking set
+        filesBeingRecovered.insert(sourceFile.path)
+        
+        // Post notification that file is being recovered
+        Task { @MainActor in
+            NotificationCenter.default.post(
+                name: iCloudFilePendingRecovery,
+                object: nil,
+                userInfo: [
+                    "path": sourceFile.path,
+                    "filename": sourceFile.lastPathComponent,
+                    "timestamp": Date()
+                ]
+            )
+        }
+        
         // Create parent directory if needed
         let destParentDir = destFile.deletingLastPathComponent()
         if !fileManager.fileExists(atPath: destParentDir.path) {
@@ -1443,12 +1637,19 @@ public enum iCloudSync {
                 DLOG("Created parent directory: \(destParentDir.path)")
             } catch {
                 ELOG("❌ Error creating parent directory \(destParentDir.path): \(error)")
+                
                 // Post notification with error
-                NotificationCenter.default.post(
-                    name: iCloudSync.iCloudFileRecoveryError,
-                    object: nil,
-                    userInfo: ["error": "Error creating parent directory: \(error)"]
-                )
+                Task { @MainActor in
+                    NotificationCenter.default.post(
+                        name: iCloudSync.iCloudFileRecoveryError,
+                        object: nil,
+                        userInfo: [
+                            "error": "Error creating directory: \(error.localizedDescription)",
+                            "path": destParentDir.path,
+                            "timestamp": Date()
+                        ]
+                    )
+                }
                 return false
             }
         }
@@ -1461,11 +1662,13 @@ public enum iCloudSync {
             } catch {
                 ELOG("❌ Error removing existing local file \(destFile.path): \(error)")
                 // Post notification with error
-                NotificationCenter.default.post(
-                    name: iCloudSync.iCloudFileRecoveryError,
-                    object: nil,
-                    userInfo: ["error": "Error removing existing local file: \(error)"]
-                )
+                Task { @MainActor in
+                    NotificationCenter.default.post(
+                        name: iCloudSync.iCloudFileRecoveryError,
+                        object: nil,
+                        userInfo: ["error": "Error removing existing local file: \(error)"]
+                    )
+                }
                 return false
             }
         }
@@ -1474,39 +1677,65 @@ public enum iCloudSync {
         
         // Move file from iCloud to local
         do {
-            // For large files, log that this might take time
-            if fileSize > 10_000_000 { // 10 MB
-                DLOG("Moving large file (\(ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file))), this may take some time...")
-                
-                // Post notification for large file
-                NotificationCenter.default.post(
-                    name: iCloudFileRecoveryProgress,
-                    object: nil,
-                    userInfo: ["current": filesProcessed, "total": totalFilesToMove, "message": "Moving large file: \(sourceFile.lastPathComponent)"]
-                )
-            }
-            
-            // Use a timeout for the move operation
-            let moveTask = Task {
-                try fileManager.setUbiquitous(false, itemAt: sourceFile, destinationURL: destFile)
-            }
-            
-            // Wait for the move with a timeout
-            let timeout: UInt64 = 60_000_000_000 // 60 seconds
-            do {
-                try await withTimeout(timeout: timeout) {
-                    try await moveTask.value
+            // For large files (> 5MB), skip the setUbiquitous method and go straight to copy+delete
+            // This is more reliable for large files
+            if fileSize > 5_000_000 { // 5 MB
+                DLOG("Large file detected (\(ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file))), skipping setUbiquitous and using copy+delete instead")
+                // Skip to copy method below
+            } else {
+                // Use a timeout for the move operation (only for smaller files)
+                let moveTask = Task {
+                    try fileManager.setUbiquitous(false, itemAt: sourceFile, destinationURL: destFile)
                 }
-                DLOG("✅ Successfully moved file from iCloud to local: \(sourceFile.lastPathComponent)")
-                return true
-            } catch is TimeoutError {
-                ELOG("⛔ Timeout moving file: \(sourceFile.lastPathComponent)")
-                // Cancel the task
-                moveTask.cancel()
-                // Fall through to try copying instead
-            } catch {
-                ELOG("❌ Error moving file from iCloud to local \(sourceFile.lastPathComponent): \(error)")
-                // Fall through to try copying instead
+                
+                // Wait for the move with a timeout
+                let timeout: UInt64 = 180_000_000_000 // 180 seconds (increased for large files)
+                do {
+                    try await withTimeout(timeout: timeout) {
+                        try await moveTask.value
+                    }
+                    DLOG("✅ Successfully moved file from iCloud to local: \(sourceFile.lastPathComponent)")
+                    
+                    // Remove file from recovery tracking set
+                    filesBeingRecovered.remove(sourceFile.path)
+                    
+                    return true
+                } catch is TimeoutError {
+                    ELOG("⛔ Timeout moving file: \(sourceFile.lastPathComponent)")
+                    // Cancel the task
+                    moveTask.cancel()
+                    
+                    // Post notification with timeout error
+                    Task { @MainActor in
+                        NotificationCenter.default.post(
+                            name: iCloudSync.iCloudFileRecoveryProgress,
+                            object: nil,
+                            userInfo: [
+                                "current": filesProcessed,
+                                "total": totalFilesToMove,
+                                "message": "Timeout moving file, trying copy method: \(sourceFile.lastPathComponent)",
+                                "timestamp": Date()
+                            ]
+                        )
+                    }
+                    // Fall through to try copying instead
+                } catch {
+                    ELOG("❌ Error moving file from iCloud to local \(sourceFile.lastPathComponent): \(error)")
+                    
+                    // Post notification with error
+                    Task { @MainActor in
+                        NotificationCenter.default.post(
+                            name: iCloudSync.iCloudFileRecoveryError,
+                            object: nil,
+                            userInfo: [
+                                "error": "Error moving file: \(error.localizedDescription)",
+                                "path": sourceFile.path,
+                                "timestamp": Date()
+                            ]
+                        )
+                    }
+                    // Fall through to try copying instead
+                }
             }
             
             // Try copying instead if moving fails or times out
@@ -1519,11 +1748,15 @@ public enum iCloudSync {
                 }
                 
                 // Wait for the copy with a timeout
+                let copyTimeout: UInt64 = 180_000_000_000 // 180 seconds for large files
                 do {
-                    try await withTimeout(timeout: timeout) {
+                    try await withTimeout(timeout: copyTimeout) {
                         try await copyTask.value
                     }
                     DLOG("✅ Successfully copied file from iCloud to local: \(sourceFile.lastPathComponent)")
+                    
+                    // Remove file from recovery tracking set
+                    filesBeingRecovered.remove(sourceFile.path)
                     
                     // Remove the iCloud file after successful copy
                     do {
@@ -1539,6 +1772,20 @@ public enum iCloudSync {
                     ELOG("⛔ Timeout copying file: \(sourceFile.lastPathComponent)")
                     // Cancel the task
                     copyTask.cancel()
+                    
+                    // Post notification with timeout error
+                    Task { @MainActor in
+                        NotificationCenter.default.post(
+                            name: iCloudSync.iCloudFileRecoveryError,
+                            object: nil,
+                            userInfo: [
+                                "error": "Timeout copying file",
+                                "path": sourceFile.path,
+                                "filename": sourceFile.lastPathComponent,
+                                "timestamp": Date()
+                            ]
+                        )
+                    }
                     // Post notification with error
                     NotificationCenter.default.post(
                         name: iCloudSync.iCloudFileRecoveryError,
@@ -1549,12 +1796,48 @@ public enum iCloudSync {
                 }
             } catch {
                 ELOG("❌ Error copying file from iCloud to local \(sourceFile.lastPathComponent): \(error)")
+                
+                // Check if the error is a directory not found error
+                var nsError = error as NSError
+                if nsError.domain == NSCocoaErrorDomain && nsError.code == 4 {
+                    // Try to create the directory and retry
+                    let destDir = destFile.deletingLastPathComponent()
+                    DLOG("Attempting to create missing directory: \(destDir.path)")
+                    
+                    do {
+                        try fileManager.createDirectory(at: destDir, withIntermediateDirectories: true, attributes: nil)
+                        DLOG("Created directory, retrying copy operation")
+                        
+                        // Retry the copy operation
+                        try fileManager.copyItem(at: sourceFile, to: destFile)
+                        DLOG("✅ Successfully copied file after creating directory: \(sourceFile.lastPathComponent)")
+                        return true
+                    } catch {
+                        ELOG("❌ Failed to create directory or retry copy: \(error)")
+                    }
+                }
+                
                 // Post notification with error
-                NotificationCenter.default.post(
-                    name: iCloudSync.iCloudFileRecoveryError,
-                    object: nil,
-                    userInfo: ["error": "Error copying file: \(error)"]
-                )
+                Task { @MainActor in
+                    NotificationCenter.default.post(
+                        name: iCloudSync.iCloudFileRecoveryError,
+                        object: nil,
+                        userInfo: [
+                            "error": "Error copying file: \(error.localizedDescription)",
+                            "path": sourceFile.path,
+                            "filename": sourceFile.lastPathComponent,
+                            "timestamp": Date()
+                        ]
+                    )
+                }
+                
+                // For timeout errors (POSIX error 60), add the file to a retry queue
+                let nsErrorTimeout = error as NSError
+                if nsErrorTimeout.domain == NSPOSIXErrorDomain && nsErrorTimeout.code == 60 {
+                    DLOG("Adding file to retry queue due to timeout: \(sourceFile.lastPathComponent)")
+                    addFileToRetryQueue(sourceFile: sourceFile, destFile: destFile)
+                }
+                
                 return false
             }
         } catch {
@@ -1647,7 +1930,20 @@ public enum iCloudSync {
             await moveFilesFromiCloudDriveToLocalDocuments()
             
             // Notify the user that recovery is complete
-            NotificationCenter.default.post(name: iCloudSync.iCloudFileRecoveryCompleted, object: nil)
+            // Post completion notification with additional information for RetroStatusControlView
+            NotificationCenter.default.post(
+                name: iCloudSync.iCloudFileRecoveryCompleted,
+                object: nil,
+                userInfo: [
+                    "timestamp": Date(),
+                    "filesProcessed": filesProcessed,
+                    "totalFiles": totalFilesToMove,
+                    "bytesProcessed": totalBytesProcessed
+                ]
+            )
+            
+            // Reset the session flag to allow future recovery sessions
+            iCloudSync.isRecoverySessionActive = false
             
             // Reset the session flag
             iCloudSync.isRecoverySessionActive = false

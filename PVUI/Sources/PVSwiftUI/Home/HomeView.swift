@@ -15,6 +15,7 @@ import PVThemes
 import Combine
 import PVUIBase
 import Perception
+import PVWebServer
 
 @available(iOS 14, tvOS 14, *)
 struct HomeView: SwiftUI.View {
@@ -140,12 +141,13 @@ struct HomeView: SwiftUI.View {
                 }
                 
                 // Status Message View
-                StatusMessageView()
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
+                RetroStatusControlView()
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 6)
                 
-                // Import Progress View (legacy - can be removed once StatusMessageView is fully tested)
-                ImportProgressView(
+                // Import Progress View (legacy - can be removed once RetroStatusControlView is fully tested)
+                // Commenting out as RetroStatusControlView now handles this functionality
+                /*ImportProgressView(
                     gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
                     updatesController: AppState.shared.libraryUpdatesController!,
                     onTap: {
@@ -153,7 +155,7 @@ struct HomeView: SwiftUI.View {
                             showImportStatusView = true
                         }
                     }
-                )
+                )*/
 //                .padding(.vertical, 6)
 //                .padding(.horizontal, 8)
 //                .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 3, x: 0, y: 0)
@@ -406,6 +408,7 @@ struct HomeView: SwiftUI.View {
                 Text("Error: Could not load save states")
             }
         }
+        
         .uiKitAlert(
             "Select Disc",
             message: "Choose which disc to load",

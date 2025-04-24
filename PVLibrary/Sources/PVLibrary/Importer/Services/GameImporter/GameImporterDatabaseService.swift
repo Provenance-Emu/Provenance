@@ -78,6 +78,22 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         }
 
         DLOG("Attempting to import game: \(destUrl.lastPathComponent) for system: \(targetSystem.libretroDatabaseName)")
+        
+        // Check if this file is currently being recovered from iCloud
+        if iCloudSync.isFileBeingRecovered(queueItem.url.path) {
+            ILOG("File \(queueItem.url.lastPathComponent) is currently being recovered from iCloud. Delaying import.")
+            
+            // Re-queue this item with a delay
+            Task {
+                try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 second delay
+                do {
+                    try await importGameIntoDatabase(queueItem: queueItem)
+                } catch {
+                    ELOG("Error re-importing game after delay: \(error)")
+                }
+            }
+            return
+        }
 
         let filename = queueItem.url.lastPathComponent
         let partialPath = (targetSystem.rawValue as NSString).appendingPathComponent(filename)

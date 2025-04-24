@@ -53,6 +53,13 @@ NS_ASSUME_NONNULL_BEGIN;
 - (BOOL)startWebDavServer;
 - (void)stopWebDavServer;
 
+// File upload handling methods
+- (void)addFileToUploadQueue:(NSString *)filePath;
+- (void)processNextFileInUploadQueue;
+- (void)updateUploadProgress:(uint64_t)bytesTransferred totalBytes:(uint64_t)totalBytes;
+- (void)fileUploadCompleted:(NSString *)filePath;
+- (void)fileUploadFailed:(NSString *)filePath error:(NSError *)error;
+
 NS_ASSUME_NONNULL_END;
 
 @end
