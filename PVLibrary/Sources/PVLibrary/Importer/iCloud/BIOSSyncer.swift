@@ -227,7 +227,7 @@ public class BIOSSyncer: iCloudContainerSyncer, BIOSSyncing {
 /// BIOS syncer for tvOS using CloudKit
 public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     /// The CloudKit record type for BIOS files
-    override internal var recordType: String {
+    override public var recordType: String {
         return "BIOS"
     }
     /// Initialize a new BIOS syncer

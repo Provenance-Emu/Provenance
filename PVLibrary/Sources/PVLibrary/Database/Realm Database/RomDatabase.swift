@@ -20,7 +20,7 @@ import AsyncAlgorithms
 import PVSystems
 import PVMediaCache
 
-public let schemaVersion: UInt64 = 16
+public let schemaVersion: UInt64 = 17
 
 public enum RomDeletionError: Error {
     case relatedFiledDeletionError
@@ -177,6 +177,34 @@ public final class RealmConfiguration {
                 migration.enumerateObjects(ofType: PVGame.className()) { oldObject, newObject in
                     newObject!["contentless"] = false
                 }
+            }
+            
+            if oldSchemaVersion < 17 {
+                ILOG("Migrating to version 17. Adding CloudKit sync properties")
+                
+                // Add CloudKit sync properties to PVGame
+                migration.enumerateObjects(ofType: PVGame.className()) { oldObject, newObject in
+                    newObject!["cloudRecordID"] = nil
+                    newObject!["isDownloaded"] = true
+                    newObject!["fileSize"] = 0
+                    // Note: md5Hash is already a primary key and can't be modified during migration
+                }
+                
+                // Add CloudKit sync properties to PVSaveState
+                migration.enumerateObjects(ofType: PVSaveState.className()) { oldObject, newObject in
+                    newObject!["cloudRecordID"] = nil
+                    newObject!["isDownloaded"] = true
+                    newObject!["fileSize"] = 0
+                }
+                
+                // Add CloudKit sync properties to PVBIOS
+                migration.enumerateObjects(ofType: PVBIOS.className()) { oldObject, newObject in
+                    newObject!["cloudRecordID"] = nil
+                    newObject!["isDownloaded"] = true
+                    newObject!["fileSize"] = 0
+                }
+                
+                ILOG("Migration to version 17 complete.")
             }
         }
         

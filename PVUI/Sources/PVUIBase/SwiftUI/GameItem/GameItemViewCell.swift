@@ -35,6 +35,7 @@ struct GameItemViewCell: View, Equatable {
     @State private var hoverScale: CGFloat = 1.0
     @State private var glowIntensity: CGFloat = 0.0
     @State private var needsSync: Bool = false
+    @State private var isDownloading: Bool = false
 
     /// Track if this cell is currently visible on screen
     @State private var isVisible: Bool = false
@@ -44,6 +45,16 @@ struct GameItemViewCell: View, Equatable {
     private var textColor: Color {
         let backgroundColor = themeManager.currentPalette.gameLibraryBackground.swiftUIColor
         return backgroundColor.isDarkColor() ? .white : .black
+    }
+
+    private var discCount: Int {
+        let allFiles = game.relatedFiles.toArray()
+        let uniqueFiles = Set(allFiles.compactMap { $0.url?.path })
+        return uniqueFiles.count
+    }
+    
+    private var shouldShowCloudIndicator: Bool {
+        iCloudSyncEnabled && game.cloudRecordID != nil
     }
 
     private var glowColor: Color {
@@ -64,6 +75,17 @@ struct GameItemViewCell: View, Equatable {
 
                 /// Use a ViewBuilder function to cache the artwork view
                 artworkView
+                    .overlay(alignment: .topTrailing) {
+                        if shouldShowCloudIndicator {
+                            CloudSyncIndicatorView(
+                                isDownloaded: game.isDownloaded,
+                                hasCloudRecord: game.cloudRecordID != nil,
+                                isDownloading: isDownloading,
+                                size: 24
+                            )
+                            .padding(6)
+                        }
+                    }
                     .padding(.bottom, 8) /// Add padding between artwork and text
 
                 if showGameTitles {

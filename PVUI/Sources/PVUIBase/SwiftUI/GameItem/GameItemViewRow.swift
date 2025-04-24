@@ -23,6 +23,7 @@ struct GameItemViewRow: SwiftUI.View, Equatable {
     
     @ObservedRealmObject var game: PVGame
     @Default(.showGameTitles) private var showGameTitles
+    @Default(.iCloudSync) private var iCloudSyncEnabled
     
     var artwork: SwiftImage?
     var constrainHeight: Bool = false
@@ -32,6 +33,7 @@ struct GameItemViewRow: SwiftUI.View, Equatable {
     @State private var hoverScale: CGFloat = 1.0
     @State private var glowIntensity: CGFloat = 0.0
     @State private var isVisible: Bool = false
+    @State private var isDownloading: Bool = false
     
     @ObservedObject private var themeManager = ThemeManager.shared
     
@@ -43,6 +45,10 @@ struct GameItemViewRow: SwiftUI.View, Equatable {
     
     private var shouldShowDiscIndicator: Bool {
         discCount > 1
+    }
+    
+    private var shouldShowCloudIndicator: Bool {
+        iCloudSyncEnabled && game.cloudRecordID != nil
     }
     
 //    private var textColor: Color {
@@ -80,6 +86,17 @@ struct GameItemViewRow: SwiftUI.View, Equatable {
                     GameItemThumbnail(artwork: artwork, gameTitle: game.title, boxartAspectRatio: game.boxartAspectRatio)
                         .frame(width: 60, height: 60)
                         .scaleEffect(hoverScale)
+                        .overlay(alignment: .topTrailing) {
+                            if shouldShowCloudIndicator {
+                                CloudSyncIndicatorView(
+                                    isDownloaded: game.isDownloaded,
+                                    hasCloudRecord: game.cloudRecordID != nil,
+                                    isDownloading: isDownloading,
+                                    size: 20
+                                )
+                                .padding(2)
+                            }
+                        }
                         .overlay(
                             RoundedRectangle(cornerRadius: 6)
                                 .stroke(

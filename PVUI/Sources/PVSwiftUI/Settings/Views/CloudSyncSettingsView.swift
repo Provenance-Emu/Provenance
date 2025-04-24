@@ -48,6 +48,26 @@ public struct CloudSyncSettingsView: View {
                     .disabled(!iCloudSyncEnabled)
             }
             
+            Section(header: Text("On-Demand Downloads")) {
+                NavigationLink(destination: CloudKitOnDemandView()) {
+                    HStack {
+                        Image(systemName: "icloud.and.arrow.down")
+                            .foregroundColor(.retroBlue)
+                            .frame(width: 24, height: 24)
+                        
+                        VStack(alignment: .leading) {
+                            Text("Available Cloud Files")
+                                .font(.body)
+                            
+                            Text("Browse and download files on demand")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                .disabled(!iCloudSyncEnabled)
+            }
+            
             Section(header: Text("Sync Actions")) {
                 Button(action: {
                     viewModel.startFullSync()

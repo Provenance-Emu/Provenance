@@ -51,6 +51,12 @@ public class CloudKitSyncerStore {
         syncerStore.clear()
     }
     
+    /// Get the first available CloudKit syncer
+    /// - Returns: The first CloudKit syncer, or nil if none are available
+    public func getSyncer() -> CloudKitSyncer? {
+        return activeSyncers.first as? CloudKitSyncer
+    }
+    
     /// Get syncers for specific directories
     /// - Parameter directories: The directories to filter by
     /// - Returns: Array of syncers that handle the specified directories

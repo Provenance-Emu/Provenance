@@ -39,6 +39,11 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
 
     @Persisted public var requiresSync: Bool = true
     @Persisted(indexed: true) public var isFavorite: Bool = false
+    
+    // CloudKit sync properties
+    @Persisted public var cloudRecordID: String? // CloudKit record ID for on-demand downloads
+    @Persisted public var isDownloaded: Bool = true // Whether the file is downloaded locally
+    @Persisted public var fileSize: Int = 0 // File size in bytes
 
     @Persisted public var romSerial: String?
     @Persisted public var romHeader: String?

@@ -176,7 +176,7 @@ public class SaveStatesSyncer: iCloudContainerSyncer, SaveStatesSyncing {
 /// Save states syncer for tvOS using CloudKit
 public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     /// The CloudKit record type for save states
-    override internal var recordType: String {
+    override public var recordType: String {
         return "SaveState"
     }
     /// Initialize a new save states syncer

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import RealmSwift
 import protocol PVUIBase.GameContextMenuDelegate
 import struct PVUIBase.GameContextMenu
 
@@ -28,6 +29,58 @@ internal struct ContinuesManagementState: Identifiable {
 }
 
 extension ConsoleGamesView: GameContextMenuDelegate {
+    
+    // MARK: - CloudKit Download Methods
+    
+    func gameContextMenu(_ menu: GameContextMenu, didRequestDownloadFromCloudFor game: PVGame) {
+        guard !game.isInvalidated, let recordID = game.cloudRecordID else { return }
+        
+        DLOG("Downloading game from CloudKit: \(game.title) (\(recordID))")
+        
+        // Show loading indicator
+        rootDelegate?.showMessage("Downloading \(game.title)...", title: "Downloading")
+        
+        Task {
+            do {
+                // Find the appropriate syncer
+                guard let syncer = CloudKitSyncerStore.shared.getSyncer() else {
+                    ELOG("No CloudKit syncer available")
+                    await MainActor.run {
+                        rootDelegate?.showMessage("Failed to download: No CloudKit syncer available", title: "Error")
+                    }
+                    return
+                }
+                
+                // Download the file
+                let fileURL = try await syncer.downloadFileOnDemand(recordName: recordID)
+                DLOG("Downloaded file to: \(fileURL.path)")
+                
+                // Update the game's download status in the database
+                try await updateGameDownloadStatus(recordID: recordID, isDownloaded: true)
+                
+                await MainActor.run {
+                    rootDelegate?.showMessage("\(game.title) has been downloaded successfully", title: "Download Complete")
+                }
+            } catch {
+                ELOG("Error downloading file: \(error.localizedDescription)")
+                await MainActor.run {
+                    rootDelegate?.showMessage("Failed to download: \(error.localizedDescription)", title: "Error")
+                }
+            }
+        }
+    }
+    
+    /// Update the download status of a game in the database
+    private func updateGameDownloadStatus(recordID: String, isDownloaded: Bool) async throws {
+        let realm = try await Realm()
+        
+        try await realm.asyncWrite {
+            if let game = realm.objects(PVGame.self).filter("cloudRecordID == %@", recordID).first {
+                game.isDownloaded = isDownloaded
+                DLOG("Updated download status for game: \(game.title)")
+            }
+        }
+    }
 
 #if !os(tvOS)
     @ViewBuilder
