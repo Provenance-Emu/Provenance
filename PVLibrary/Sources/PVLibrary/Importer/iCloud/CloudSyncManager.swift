@@ -34,6 +34,9 @@ public class CloudSyncManager {
     /// BIOS syncer
     internal var biosSyncer: BIOSSyncing?
     
+    /// Non-database syncer for files like Battery States, Screenshots, and DeltaSkins
+    internal var nonDatabaseSyncer: CloudKitNonDatabaseSyncer?
+    
     /// Error handler
     private let errorHandler = CloudSyncErrorHandler()
     
@@ -252,6 +255,14 @@ public class CloudSyncManager {
         
         // Create BIOS syncer using factory
         biosSyncer = SyncProviderFactory.createBIOSSyncProvider(
+            notificationCenter: NotificationCenter.default,
+            errorHandler: syncErrorHandler
+        )
+        
+        // Create non-database syncer for Battery States, Screenshots, and DeltaSkins
+        let nonDatabaseDirectories: Set<String> = ["Battery States", "Screenshots", "DeltaSkins"]
+        nonDatabaseSyncer = SyncProviderFactory.createNonDatabaseSyncProvider(
+            for: nonDatabaseDirectories,
             notificationCenter: NotificationCenter.default,
             errorHandler: syncErrorHandler
         )

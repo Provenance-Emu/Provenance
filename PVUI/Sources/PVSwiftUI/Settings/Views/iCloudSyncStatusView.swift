@@ -39,7 +39,9 @@ struct iCloudSyncStatusView: View {
     // MARK: - Properties
 
     // iCloud sync status
-    @Default(.iCloudSyncMode) private var iCloudSyncMode
+    @Default(.iCloudSyncMode) private var currentiCloudSyncMode
+    @Default(.iCloudSync) private var enablediCloudSync
+
     @State private var iCloudAvailable = false
     @State private var showSyncToggleAlert = false
 
@@ -50,7 +52,7 @@ struct iCloudSyncStatusView: View {
     @State private var syncDifferences: [SyncDifference] = []
 
     // Directories to monitor
-    private let monitoredDirectories = ["ROMs", "Save States", "BIOS", "DeltaSkins"].map{"Documents/"+$0}
+    private let monitoredDirectories = ["ROMs", "Save States", "BIOS", "DeltaSkins"]
 
     // Debug information
     @State private var showDebugInfo = false
@@ -139,10 +141,11 @@ struct iCloudSyncStatusView: View {
         .alert(isPresented: $showSyncToggleAlert) {
             Alert(
                 title: Text("iCloud Sync Changed"),
-                message: Text("iCloud sync mode has been changed to \(iCloudSyncMode.description). This may require restarting the app for all changes to take effect."),
+                message: Text("iCloud sync mode has been changed to \(currentiCloudSyncMode.description). This may require restarting the app for all changes to take effect."),
                 dismissButton: .default(Text("OK"))
             )
         }
+        .retrowaveBackground()
     }
 
     // MARK: - UI Components
@@ -167,24 +170,57 @@ struct iCloudSyncStatusView: View {
 #endif
             }
 
-            // iCloud Sync Toggle
-            HStack {
-                Picker("iCloud Sync Mode", selection: $iCloudSyncMode) {
-                    ForEach(iCloudSyncMode.allCases, id: \.self) { mode in
-                        Text(mode.description)
-                            .tag(mode)
-                    }
-                }
+            // iCloud Sync Settings
+            VStack(alignment: .leading, spacing: 12) {
+                // iCloud Sync Toggle
+                HStack {
+                    Text("iCloud Sync")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                    
+                    Spacer()
+                    
+                    Toggle("", isOn: Binding<Bool>(
+                        get: { Defaults[.iCloudSync] },
+                        set: { handleSyncToggleChange($0) }
+                    ))
                     .modifier(ToggleStyleModifier())
-                    .foregroundColor(.white)
-                    .onChange(of: iCloudSyncMode) { newValue in
-                        handleSyncToggleChange(newValue)
+                }
+                
+                // Only show sync mode picker if sync is enabled
+                if Defaults[.iCloudSync] {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Sync Mode")
+                            .font(.subheadline)
+                            .foregroundColor(.white.opacity(0.8))
+                        
+                        Picker("Sync Mode", selection: $currentiCloudSyncMode) {
+                            ForEach(iCloudSyncMode.allCases, id: \.self) { mode in
+                                HStack {
+                                    Text(mode.description)
+                                        .foregroundColor(.white)
+                                    
+                                    Spacer()
+                                    
+                                    Text(mode.subtitle)
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
+                                        .lineLimit(1)
+                                }
+                                .tag(mode)
+                            }
+                        }
+                        .pickerStyle(MenuPickerStyle())
+                        .onChange(of: currentiCloudSyncMode) { newMode in
+                            handleSyncModeChange(newMode)
+                        }
+                        .foregroundColor(.white)
+                        .accentColor(.retroPink)
                     }
+                    .padding(.top, 4)
+                }
             }
-            .padding(.vertical, 4)
-            .padding(.horizontal, 8)
-            .background(Color.black.opacity(0.3))
-            .cornerRadius(8)
+            .padding(.horizontal)
 
             // Status indicators
             HStack {
@@ -293,12 +329,32 @@ struct iCloudSyncStatusView: View {
 
     // MARK: - Methods
 
+    /// Handle changes to the sync mode
+    private func handleSyncModeChange(_ newMode: iCloudSyncMode) {
+        DLOG("iCloud sync mode changed to: \(newMode.description)")
+        
+        // Refresh data to reflect the new sync mode
+        refreshData()
+        
+        // Show a message about the change
+        let message = "Sync mode changed to \(newMode.description). \(newMode.subtitle)"
+        ILOG("\(message)")
+        
+        // Show the alert with the change message
+        showSyncToggleAlert = true
+    }
+
     /// Handle changes to the iCloud sync toggle
     private func handleSyncToggleChange(_ newValue: Bool) {
         DLOG("iCloud sync setting changed to: \(newValue)")
 
         // Show alert about the change
         showSyncToggleAlert = true
+        
+        // If turning off sync, refresh the UI
+        if !newValue {
+            refreshData()
+        }
 
         // Refresh data to update UI
         refreshData()
@@ -448,7 +504,7 @@ struct iCloudSyncStatusView: View {
         Device: \(UIDevice.current.model)
         Monitored Directories: \(monitoredDirectories)
         iCloud Available: \(iCloudAvailable)
-        iCloud Sync Mode: \(iCloudSyncMode.description)
+        iCloud Sync Mode: \(currentiCloudSyncMode.description)
         -------------------------------------
         """
 
@@ -470,9 +526,9 @@ struct iCloudSyncStatusView: View {
 
     private func scanICloudDirectories() {
         // Only scan iCloud if enabled and available
-        if !iCloudSyncMode.isEnabled || !iCloudAvailable {
+        if !enablediCloudSync || !iCloudAvailable {
             DLOG("[iCloudSyncStatusView] Skipping iCloud scan - iCloud sync is disabled or unavailable")
-            DLOG("[iCloudSyncStatusView] iCloudSyncMode=\(iCloudSyncMode.description), iCloudAvailable=\(iCloudAvailable)")
+            DLOG("[iCloudSyncStatusView] iCloudSyncMode=\(currentiCloudSyncMode.description), iCloudAvailable=\(iCloudAvailable)")
 
             // Set empty arrays for iCloud files
             for directory in monitoredDirectories {

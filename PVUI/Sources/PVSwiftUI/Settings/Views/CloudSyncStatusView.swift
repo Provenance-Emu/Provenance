@@ -21,6 +21,7 @@ public struct CloudSyncStatusView: View {
     @State private var syncStatus: String = "Checking sync status..."
     @State private var isEnabled: Bool = Defaults[.iCloudSync]
     @State private var isAvailable: Bool = false
+    @Default(.iCloudSyncMode) private var currentiCloudSyncMode
     @State private var infoPlistInfo: String = ""
     @State private var containerInfo: String = ""
     @State private var syncProgress: Double = 0.0
@@ -49,22 +50,47 @@ public struct CloudSyncStatusView: View {
             
             // Status card
             VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Image(systemName: isAvailable ? "cloud.fill" : "cloud.slash.fill")
-                        .foregroundColor(isAvailable ? .retroBlue : .retroPink)
+                VStack(spacing: 12) {
+                    HStack {
+                        Image(systemName: isAvailable ? "cloud.fill" : "cloud.slash.fill")
+                            .foregroundColor(isAvailable ? .retroBlue : .retroPink)
+                        
+                        Text(isAvailable ? "Cloud Sync Available" : "Cloud Sync Unavailable")
+                            .font(.headline)
+                            .foregroundColor(isAvailable ? .retroBlue : .retroPink)
+                        
+                        Spacer()
+                        
+                        Toggle("", isOn: $isEnabled)
+                            .labelsHidden()
+                            .disabled(!isAvailable)
+                            .onChange(of: isEnabled) { newValue in
+                                toggleCloudSync(enabled: newValue)
+                            }
+                    }
                     
-                    Text(isAvailable ? "Cloud Sync Available" : "Cloud Sync Unavailable")
-                        .font(.headline)
-                        .foregroundColor(isAvailable ? .retroBlue : .retroPink)
-                    
-                    Spacer()
-                    
-                    Toggle("", isOn: $isEnabled)
-                        .labelsHidden()
-                        .disabled(!isAvailable)
-                        .onChange(of: isEnabled) { newValue in
-                            toggleCloudSync(enabled: newValue)
+                    // Only show sync mode picker if sync is enabled
+                    if isEnabled && isAvailable {
+                        HStack {
+                            Text("Sync Mode:")
+                                .font(.subheadline)
+                                .foregroundColor(.white.opacity(0.8))
+                            
+                            Spacer()
+                            
+                            Picker("Sync Mode", selection: $currentiCloudSyncMode) {
+                                ForEach(iCloudSyncMode.allCases, id: \.self) { mode in
+                                    Text(mode.description)
+                                        .tag(mode)
+                                }
+                            }
+                            .pickerStyle(MenuPickerStyle())
+                            .onChange(of: currentiCloudSyncMode) { newMode in
+                                handleSyncModeChange(newMode)
+                            }
+                            .frame(width: 120)
                         }
+                    }
                 }
                 
                 Divider()
@@ -132,7 +158,7 @@ public struct CloudSyncStatusView: View {
             CloudKitSyncAnalyticsView()
                 .padding(.top, 16)
             
-            #if DEBUG
+#if DEBUG
             // Debug information (only in debug builds)
             VStack(alignment: .leading, spacing: 8) {
                 Text("Debug Information")
@@ -150,7 +176,7 @@ public struct CloudSyncStatusView: View {
             .padding()
             .background(Color.retroBlack)
             .cornerRadius(12)
-            #endif
+#endif
         }
         .padding()
         .onAppear {
@@ -163,19 +189,19 @@ public struct CloudSyncStatusView: View {
     
     /// Check if cloud sync is available
     private func checkCloudAvailability() {
-        #if os(tvOS)
+#if os(tvOS)
         // Check CloudKit availability on tvOS
         checkCloudKitAvailability()
-        #else
+#else
         // Check iCloud Documents availability on iOS/macOS
         checkICloudAvailability()
-        #endif
+#endif
         
         // Check Info.plist for both platforms
         checkInfoPlistForICloudKeys()
     }
     
-    #if os(tvOS)
+#if os(tvOS)
     /// Check CloudKit availability on tvOS
     private func checkCloudKitAvailability() {
         let container = CKContainer(identifier: iCloudConstants.containerIdentifier)
@@ -212,7 +238,7 @@ public struct CloudSyncStatusView: View {
             }
         }
     }
-    #else
+#else
     /// Check iCloud Documents availability on iOS/macOS
     private func checkICloudAvailability() {
         Task {
@@ -231,7 +257,7 @@ public struct CloudSyncStatusView: View {
             }
         }
     }
-    #endif
+#endif
     
     /// Check Info.plist for iCloud keys
     private func checkInfoPlistForICloudKeys() {
@@ -262,16 +288,16 @@ public struct CloudSyncStatusView: View {
             return
         }
         
-        #if os(tvOS)
+#if os(tvOS)
         // Get CloudKit sync status on tvOS
         updateCloudKitSyncStatus()
-        #else
+#else
         // Get iCloud Documents sync status on iOS/macOS
         updateICloudSyncStatus()
-        #endif
+#endif
     }
     
-    #if os(tvOS)
+#if os(tvOS)
     /// Update CloudKit sync status on tvOS
     private func updateCloudKitSyncStatus() {
         // Get active syncers from CloudKitSyncerStore
@@ -297,7 +323,7 @@ public struct CloudSyncStatusView: View {
             syncStatus = "All files synced"
         }
     }
-    #else
+#else
     /// Update iCloud Documents sync status on iOS/macOS
     private func updateICloudSyncStatus() {
         // Get active syncers from iCloudSyncerStore
@@ -351,24 +377,45 @@ public struct CloudSyncStatusView: View {
             syncStatus = "All files synced"
         }
     }
-    #endif
+#endif
     
-    /// Toggle cloud sync on/off
+    /// Toggle cloud sync on or off
     private func toggleCloudSync(enabled: Bool) {
         Defaults[.iCloudSync] = enabled
         
+        // Update UI immediately
+        isEnabled = enabled
+        
+        // Update sync status
         if enabled {
-            syncStatus = "Enabling cloud sync..."
-            // Notify that cloud sync was enabled
-            NotificationCenter.default.post(name: .iCloudSyncEnabled, object: nil)
+            syncStatus = "Initializing cloud sync..."
+            checkCloudAvailability()
         } else {
-            syncStatus = "Disabling cloud sync..."
-            // Notify that cloud sync was disabled
-            NotificationCenter.default.post(name: .iCloudSyncDisabled, object: nil)
+            syncStatus = "Cloud sync is disabled"
+            syncingFiles = 0
+            totalFiles = 0
+            syncProgress = 0.0
+        }
+    }
+    
+    /// Handle changes to the sync mode
+    private func handleSyncModeChange(_ newMode: iCloudSyncMode) {
+        DLOG("iCloud sync mode changed to: \(newMode.description)")
+        
+        // Update sync status
+        syncStatus = "Switching to \(newMode.description) mode..."
+        
+        // Reset counters and refresh
+        syncingFiles = 0
+        totalFiles = 0
+        syncProgress = 0.0
+        
+        // Refresh cloud status after a short delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.checkCloudAvailability()
         }
     }
 }
-
 #if DEBUG
 struct CloudSyncStatusView_Previews: PreviewProvider {
     static var previews: some View {

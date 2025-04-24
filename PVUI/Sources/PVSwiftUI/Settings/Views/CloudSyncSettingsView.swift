@@ -167,6 +167,7 @@ public struct CloudSyncSettingsView: View {
         .onAppear {
             viewModel.loadSyncInfo()
         }
+        .retrowaveBackground()
     }
     
     // Date formatter for last sync date

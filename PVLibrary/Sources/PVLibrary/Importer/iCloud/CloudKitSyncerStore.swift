@@ -83,4 +83,9 @@ public class CloudKitSyncerStore {
     public var biosSyncers: [BIOSSyncing] {
         activeSyncers.compactMap { $0 as? BIOSSyncing }
     }
+    
+    /// Get all non-database syncers for files like Battery States, Screenshots, and DeltaSkins
+    public var nonDatabaseSyncers: [CloudKitNonDatabaseSyncer] {
+        activeSyncers.compactMap { $0 as? CloudKitNonDatabaseSyncer }
+    }
 }

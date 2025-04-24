@@ -118,4 +118,27 @@ public class SyncProviderFactory {
             return BIOSSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
         }
     }
+    
+    /// Create a non-database sync provider for files like Battery States, Screenshots, and DeltaSkins
+    /// - Parameters:
+    ///   - directories: Directories to sync
+    ///   - notificationCenter: Notification center to use
+    ///   - errorHandler: Error handler to use
+    /// - Returns: A non-database sync provider
+    public static func createNonDatabaseSyncProvider(
+        for directories: Set<String>,
+        notificationCenter: NotificationCenter = .default,
+        errorHandler: CloudSyncErrorHandler
+    ) -> CloudKitNonDatabaseSyncer {
+        // Get the current iCloud sync mode and check if sync is enabled
+        let syncMode = Defaults[.iCloudSyncMode]
+        let iCloudSyncEnabled = Defaults[.iCloudSync]
+        
+        // Log the current sync state
+        DLOG("iCloudSync=\(iCloudSyncEnabled), iCloudSyncMode=\(syncMode.description)")
+        
+        // For non-database files, we always use CloudKit
+        DLOG("Creating CloudKit non-database syncer for directories: \(directories)")
+        return CloudKitNonDatabaseSyncer(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
+    }
 }

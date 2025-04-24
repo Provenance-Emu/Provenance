@@ -188,7 +188,8 @@ public extension PVFile {
         get {
             // Only check if iCloud sync is enabled
             let syncMode = Defaults[.iCloudSyncMode]
-            guard syncMode.isEnabled else {
+            let iCloudSync = Defaults[.iCloudSync]
+            guard iCloudSync else {
                 return false
             }
             
