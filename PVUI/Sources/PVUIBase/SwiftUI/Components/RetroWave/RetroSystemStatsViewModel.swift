@@ -253,15 +253,50 @@ public final class RetroSystemStatsViewModel: ObservableObject {
         }
     }
     
-    /// Format playtime in seconds to a human-readable format
+    /// Format playtime in seconds to a human-readable format with appropriate detail level
+    /// based on the duration
     public func formatPlaytime(_ seconds: Int) -> String {
-        let hours = seconds / 3600
+        if seconds == 0 {
+            return "No playtime recorded"
+        }
+        
+        let days = seconds / 86400
+        let hours = (seconds % 86400) / 3600
         let minutes = (seconds % 3600) / 60
         
-        if hours > 0 {
-            return String(format: "%dh %02dm", hours, minutes)
+        // Format based on the duration to show appropriate level of detail
+        if days > 0 {
+            if days > 365 {
+                let years = days / 365
+                let remainingDays = days % 365
+                if remainingDays > 0 {
+                    return String(format: "%dy %dd", years, remainingDays)
+                } else {
+                    return String(format: "%d years", years)
+                }
+            } else if days > 30 {
+                let months = days / 30
+                let remainingDays = days % 30
+                if remainingDays > 0 {
+                    return String(format: "%dm %dd", months, remainingDays)
+                } else {
+                    return String(format: "%d months", months)
+                }
+            } else {
+                if hours > 0 {
+                    return String(format: "%dd %dh", days, hours)
+                } else {
+                    return String(format: "%d days", days)
+                }
+            }
+        } else if hours > 0 {
+            if minutes > 0 {
+                return String(format: "%dh %02dm", hours, minutes)
+            } else {
+                return String(format: "%d hours", hours)
+            }
         } else {
-            return String(format: "%dm", minutes)
+            return String(format: "%d minutes", minutes)
         }
     }
 }

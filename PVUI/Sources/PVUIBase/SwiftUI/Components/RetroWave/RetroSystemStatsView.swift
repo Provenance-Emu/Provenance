@@ -61,30 +61,64 @@ public struct RetroSystemStatsView: View {
             // Library stats section
             libraryStatsSection
         }
-        .padding(12)
+        .padding(14)
         .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.black.opacity(0.8))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroBlue]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1.5
-                        )
-                )
-                .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5, x: 0, y: 0)
+            ZStack {
+                // Dark background with grid overlay
+                Color.black.opacity(0.8)
+                
+                // Grid pattern overlay
+                GeometryReader { geometry in
+                    Path { path in
+                        let width = geometry.size.width
+                        let height = geometry.size.height
+                        let gridSize: CGFloat = 20
+                        
+                        // Horizontal lines
+                        for i in stride(from: 0, through: height, by: gridSize) {
+                            path.move(to: CGPoint(x: 0, y: i))
+                            path.addLine(to: CGPoint(x: width, y: i))
+                        }
+                        
+                        // Vertical lines
+                        for i in stride(from: 0, through: width, by: gridSize) {
+                            path.move(to: CGPoint(x: i, y: 0))
+                            path.addLine(to: CGPoint(x: i, y: height))
+                        }
+                    }
+                    .stroke(RetroTheme.retroBlue.opacity(0.1), lineWidth: 0.5)
+                }
+            }
         )
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .strokeBorder(
+                    LinearGradient(
+                        gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroBlue]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.5
+                )
+        )
+        .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5, x: 0, y: 0)
+        .onAppear {
+            viewModel.refreshAllStats()
+        }
     }
     
     // MARK: - Subviews
     
     /// System stats section (CPU, Memory)
     private var systemStatsSection: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 10) {
+            // Section header with glowing effect
+            Text("SYSTEM STATS")
+                .font(.system(size: 12, weight: .bold, design: .monospaced))
+                .foregroundColor(RetroTheme.retroPink)
+                .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2, x: 0, y: 0)
+                .frame(maxWidth: .infinity, alignment: .leading)
             // CPU usage
             HStack {
                 Label {
@@ -149,10 +183,24 @@ public struct RetroSystemStatsView: View {
     
     /// Library stats section (Games, Save States, BIOSes)
     private var libraryStatsSection: some View {
-        VStack(spacing: 8) {
-            Divider()
-                .background(RetroTheme.retroBlue.opacity(0.3))
-                .padding(.vertical, 4)
+        VStack(spacing: 10) {
+            // Section header with glowing effect
+            Text("LIBRARY STATS")
+                .font(.system(size: 12, weight: .bold, design: .monospaced))
+                .foregroundColor(RetroTheme.retroPink)
+                .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2, x: 0, y: 0)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 4)
+            
+            // Divider with gradient
+            Rectangle()
+                .fill(LinearGradient(
+                    gradient: Gradient(colors: [RetroTheme.retroPurple.opacity(0.7), RetroTheme.retroBlue.opacity(0.3)]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                ))
+                .frame(height: 1)
+                .padding(.vertical, 2)
             
             // Games count
             HStack {

@@ -87,8 +87,9 @@ public struct RetroLogView: View {
         VStack(spacing: 8) {
             HStack {
                 Text("LOGS")
-                    .font(.system(size: 14, weight: .bold))
+                    .font(.system(size: 14, weight: .bold, design: .monospaced))
                     .foregroundColor(RetroTheme.retroPink)
+                    .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2, x: 0, y: 0)
                 
                 Spacer()
                 
@@ -201,45 +202,71 @@ public struct RetroLogView: View {
     
     /// Single log entry row
     private func logEntryRow(_ log: LogEntry) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            HStack(spacing: 6) {
-                // Log level indicator
-                Circle()
-                    .fill(viewModel.logLevelColor(log.level))
-                    .frame(width: 8, height: 8)
-                
-                // Timestamp
+        VStack(alignment: .leading, spacing: 4) {
+            // Header with timestamp and level
+            HStack {
                 Text(log.formattedTimestamp)
-                    .font(.system(size: 10, weight: .medium, design: .monospaced))
-                    .foregroundColor(.gray)
-                
-                // Message
-                Text(log.message)
-                    .font(.system(size: 11))
-                    .foregroundColor(.white)
-                    .lineLimit(viewModel.showFullDetails ? nil : 1)
+                    .font(.system(size: 10, design: .monospaced))
+                    .foregroundColor(viewModel.logLevelColor(log.level).opacity(0.8))
                 
                 Spacer()
+                
+                Text(log.level.name.uppercased())
+                    .font(.system(size: 10, weight: .bold, design: .monospaced))
+                    .foregroundColor(viewModel.logLevelColor(log.level))
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(Color.black.opacity(0.7))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 4)
+                            .strokeBorder(
+                                viewModel.logLevelColor(log.level).opacity(0.7),
+                                lineWidth: 1
+                            )
+                    )
+                    .shadow(color: viewModel.logLevelColor(log.level).opacity(0.5), radius: 2, x: 0, y: 0)
             }
             
-            // Additional details if expanded
+            // Message with glow effect based on log level
+            Text(log.message)
+                .font(.system(size: 12, weight: .medium, design: .monospaced))
+                .foregroundColor(.white)
+                .shadow(color: viewModel.logLevelColor(log.level).opacity(0.3), radius: 1, x: 0, y: 0)
+                .lineLimit(viewModel.showFullDetails ? nil : 3)
+            
+            // File and line if showing full details
             if viewModel.showFullDetails {
-                Text("\(log.file):\(log.function):\(log.line)")
-                    .font(.system(size: 9, design: .monospaced))
-                    .foregroundColor(.gray.opacity(0.7))
-                    .padding(.leading, 14)
+                let file = log.file
+                let line = log.line
+                HStack(spacing: 4) {
+                    Image(systemName: "doc.text")
+                        .font(.system(size: 8))
+                        .foregroundColor(RetroTheme.retroBlue.opacity(0.7))
+                    
+                    Text("\(file):\(line)")
+                        .font(.system(size: 10, design: .monospaced))
+                        .foregroundColor(RetroTheme.retroBlue.opacity(0.7))
+                }
             }
         }
-        .padding(.vertical, 4)
-        .padding(.horizontal, 6)
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
         .background(
-            RoundedRectangle(cornerRadius: 4)
-                .fill(Color.black.opacity(0.3))
+            RoundedRectangle(cornerRadius: 6)
+                .fill(Color.black.opacity(0.4))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 4)
-                        .strokeBorder(viewModel.logLevelColor(log.level).opacity(0.3), lineWidth: 0.5)
+                    RoundedRectangle(cornerRadius: 6)
+                        .strokeBorder(
+                            LinearGradient(
+                                gradient: Gradient(colors: [viewModel.logLevelColor(log.level).opacity(0.3), RetroTheme.retroDarkBlue.opacity(0.1)]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1
+                        )
                 )
         )
+        .padding(.horizontal, 4)
         .padding(.vertical, 2)
     }
     

@@ -12,29 +12,64 @@ import PVUIBase
 
 /// A row displaying a status message with retrowave styling
 public struct RetroMessageRow: View {
+    // MARK: - Properties
+    
+    /// The message to display
     let message: StatusMessage
+    
+    /// Function to format time intervals
     let formatTimeInterval: (Date) -> String
+    
+    /// Function to determine message type color
     let messageTypeColor: (StatusMessage.MessageType) -> Color
     
+    /// Animation state for hover effect
+    @State private var isHovering = false
+    
+    // MARK: - Body
+    
     public var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 8) {
+            // Status indicator with glow effect
             Circle()
                 .fill(messageTypeColor(message.type))
-                .frame(width: 8, height: 8)
+                .frame(width: 10, height: 10)
+                .shadow(color: messageTypeColor(message.type).opacity(0.7), radius: 3, x: 0, y: 0)
             
+            // Message text with retrowave styling
             Text(message.message)
-                .font(.system(size: 12))
+                .font(.system(size: 12, weight: .medium, design: .monospaced))
                 .foregroundColor(Color.white.opacity(0.9))
+                .shadow(color: messageTypeColor(message.type).opacity(0.5), radius: 1, x: 0, y: 0)
                 .lineLimit(1)
             
             Spacer()
             
+            // Timestamp with retrowave styling
             Text(formatTimeInterval(message.timestamp))
-                .font(.system(size: 10))
-                .foregroundColor(Color.white.opacity(0.6))
+                .font(.system(size: 10, design: .monospaced))
+                .foregroundColor(messageTypeColor(message.type).opacity(0.8))
         }
-        .padding(.vertical, 4)
-        .padding(.horizontal, 8)
+        .padding(.vertical, 6)
+        .padding(.horizontal, 10)
+        .background(
+            RoundedRectangle(cornerRadius: 4)
+                .fill(Color.black.opacity(0.4))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 4)
+                .strokeBorder(
+                    messageTypeColor(message.type).opacity(isHovering ? 0.8 : 0.3),
+                    lineWidth: 1
+                )
+        )
+        .onHover { hovering in
+            withAnimation(.easeInOut(duration: 0.2)) {
+                isHovering = hovering
+            }
+        }
+        .padding(.horizontal, 4)
+        .padding(.vertical, 2)
     }
 }
 

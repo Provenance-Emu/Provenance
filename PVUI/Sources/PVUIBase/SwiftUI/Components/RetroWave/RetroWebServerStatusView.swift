@@ -35,22 +35,25 @@ public struct RetroWebServerStatusView: View {
     // MARK: - Body
     
     public var body: some View {
-        HStack(spacing: 8) {
-            // Status indicator
+        HStack(spacing: 10) {
+            // Status indicator with glow effect
             Circle()
                 .fill(status.isRunning ? RetroTheme.retroBlue : RetroTheme.retroPink)
-                .frame(width: 8, height: 8)
+                .frame(width: 10, height: 10)
+                .shadow(color: (status.isRunning ? RetroTheme.retroBlue : RetroTheme.retroPink).opacity(0.7), radius: 3, x: 0, y: 0)
             
-            // Status text
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Web Server: \(status.isRunning ? "Running" : "Stopped")")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.white)
+            // Status text with retrowave styling
+            VStack(alignment: .leading, spacing: 4) {
+                Text("WEB SERVER: \(status.isRunning ? "ONLINE" : "OFFLINE")")
+                    .font(.system(size: 12, weight: .bold, design: .monospaced))
+                    .foregroundColor(status.isRunning ? RetroTheme.retroBlue : RetroTheme.retroPink)
+                    .shadow(color: (status.isRunning ? RetroTheme.retroBlue : RetroTheme.retroPink).opacity(0.7), radius: 1, x: 0, y: 0)
                 
                 if status.isRunning, let address = status.serverAddress {
                     Text(address)
-                        .font(.system(size: 10))
-                        .foregroundColor(.white.opacity(0.7))
+                        .font(.system(size: 10, design: .monospaced))
+                        .foregroundColor(RetroTheme.retroBlue.opacity(0.8))
+                        .shadow(color: RetroTheme.retroBlue.opacity(0.5), radius: 1, x: 0, y: 0)
                 }
             }
             
@@ -59,20 +62,28 @@ public struct RetroWebServerStatusView: View {
             // Start button if server is not running
             if !status.isRunning {
                 Button(action: startServer) {
-                    Text("Start")
-                        .font(.system(size: 12, weight: .medium))
+                    Text("START")
+                        .font(.system(size: 12, weight: .bold, design: .monospaced))
                         .foregroundColor(RetroTheme.retroBlue)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 4)
-                        .background(
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(Color.black.opacity(0.7))
+                        .overlay(
                             RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
+                                .strokeBorder(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroBlue]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    ),
+                                    lineWidth: 1.5
+                                )
                         )
+                        .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 2, x: 0, y: 0)
                 }
             }
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 10)
+        .padding(12)
         .background(
             RoundedRectangle(cornerRadius: 8)
                 .fill(Color.black.opacity(0.5))

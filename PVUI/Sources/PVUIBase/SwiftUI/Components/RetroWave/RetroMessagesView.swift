@@ -43,7 +43,25 @@ public struct RetroMessagesView: View {
     // MARK: - Body
     
     public var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 2) {
+            // Title for messages section
+            HStack {
+                Text("RECENT MESSAGES")
+                    .font(.system(size: 12, weight: .bold, design: .monospaced))
+                    .foregroundColor(RetroTheme.retroPink)
+                    .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2, x: 0, y: 0)
+                
+                Spacer()
+                
+                Text("\(messages.count) total")
+                    .font(.system(size: 10, design: .monospaced))
+                    .foregroundColor(RetroTheme.retroBlue.opacity(0.8))
+            }
+            .padding(.horizontal, 10)
+            .padding(.top, 8)
+            .padding(.bottom, 4)
+            
+            // Message rows
             ForEach(messages.indices, id: \.self) { index in
                 RetroMessageRow(
                     message: messages[index],

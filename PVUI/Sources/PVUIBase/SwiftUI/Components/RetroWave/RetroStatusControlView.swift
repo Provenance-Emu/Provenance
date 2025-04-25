@@ -8,9 +8,10 @@
 
 import SwiftUI
 import PVThemes
+import Combine
 import PVLibrary
-import PVPrimitives
 import PVWebServer
+import PVLogging
 import PVSettings
 
 // Import WebServerType from StatusMessageViewModel
@@ -957,6 +958,33 @@ public struct RetroStatusControlView: View {
             if let status = messageManager.viewModel.webServerStatus {
                 webServerStatusView(status: status)
             }
+            
+            // Recent messages
+            messagesView
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.black.opacity(0.7))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroBlue]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    lineWidth: 1.5
+                                )
+                        )
+                )
+                .shadow(color: RetroTheme.retroPurple.opacity(0.5), radius: 3, x: 0, y: 0)
+            
+            // Control buttons
+            controlButtonsView
+            
+            // System stats if enabled
+            if showSystemStats {
+                systemStatsView
+            }
         }
         .padding(.horizontal, 8)
     }
@@ -1441,66 +1469,24 @@ public struct RetroStatusControlView: View {
     
     /// Web server status view
     private func webServerStatusView(status: (isRunning: Bool, type: WebServerType, url: URL?)) -> some View {
-        HStack(spacing: 6) {
-            Image(systemName: status.isRunning ? "network" : "network.slash")
-                .foregroundColor(status.isRunning ? RetroTheme.retroBlue : RetroTheme.retroPink)
-                .font(.system(size: 14))
-                .shadow(color: (status.isRunning ? RetroTheme.retroBlue : RetroTheme.retroPink).opacity(glowOpacity), radius: 3, x: 0, y: 0)
-            
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Web Server: \(status.isRunning ? "Running" : "Stopped")")
-                    .font(.system(size: 14))
-                    .foregroundColor(status.isRunning ? RetroTheme.retroBlue : RetroTheme.retroPink)
-                
-                if status.isRunning, let url = status.url {
-                    Text(url.absoluteString)
-                        .font(.system(size: 12))
-                        .foregroundColor(RetroTheme.retroBlue.opacity(0.8))
-                }
-            }
-            
-            Spacer()
-            
-            if status.isRunning {
-                Button(action: {
-                    if let url = status.url, UIApplication.shared.canOpenURL(url) {
-                        UIApplication.shared.open(url)
-                    }
-                }) {
-                    Image(systemName: "arrow.up.forward.square")
-                        .font(.system(size: 14))
-                        .foregroundColor(RetroTheme.retroBlue)
-                }
-                .buttonStyle(PlainButtonStyle())
-            }
-        }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color.black.opacity(0.7))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [status.isRunning ? RetroTheme.retroBlue : RetroTheme.retroPink, RetroTheme.retroPurple]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1.5
-                        )
-                )
+        let webServerStatus = PVWebServerStatus(
+            isRunning: status.isRunning,
+            serverAddress: status.url?.absoluteString
         )
-        .shadow(color: (status.isRunning ? RetroTheme.retroBlue : RetroTheme.retroPink).opacity(0.5), radius: 3, x: 0, y: 0)
+        
+        return RetroWebServerStatusView(
+            status: webServerStatus,
+            startServer: { toggleWebServer(isRunning: status.isRunning) }
+        )
     }
     
     /// Messages view
     private var messagesView: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            ForEach(messageManager.messages.suffix(3), id: \.id) { message in
-                MessageRowView(message: message, messageTypeColor: messageTypeColor, formatTimeInterval: formatTimeInterval)
-            }
-        }
+        RetroMessagesView(
+            messages: Array(messageManager.messages.suffix(3)),
+            formatTimeInterval: formatTimeInterval,
+            messageTypeColor: messageTypeColor
+        )
         .padding(.vertical, 6)
         .padding(.horizontal, 4)
     }
@@ -1576,35 +1562,7 @@ public struct RetroStatusControlView: View {
     }
 }
 
-// MARK: - Helper Views
-
-/// Private view to display a single status message row.
-private struct MessageRowView: View {
-    let message: StatusMessage
-    let messageTypeColor: (StatusMessage.MessageType) -> Color
-    let formatTimeInterval: (Date) -> String
-    
-    var body: some View {
-        HStack(spacing: 6) {
-            Circle()
-                .fill(messageTypeColor(message.type))
-                .frame(width: 8, height: 8)
-            
-            Text(message.message)
-                .font(.system(size: 12))
-                .foregroundColor(Color.white.opacity(0.9))
-                .lineLimit(1)
-            
-            Spacer()
-            
-            Text(formatTimeInterval(message.timestamp))
-                .font(.system(size: 10))
-                .foregroundColor(Color.white.opacity(0.6))
-        }
-        .padding(.vertical, 4)
-        .padding(.horizontal, 8)
-    }
-}
+// MARK: - Preview
 
 // MARK: - Preview
 #if DEBUG
