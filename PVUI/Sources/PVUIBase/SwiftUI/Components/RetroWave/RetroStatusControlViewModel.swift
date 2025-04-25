@@ -566,7 +566,17 @@ final class RetroStatusControlViewModel: ObservableObject {
     @objc private func handleFileImportProgress(_ notification: Notification) {
         DLOG("Received file import progress")
         if let progress: ProgressInfo = parseProgressInfo(from: notification) {
-            Task { @MainActor in self.fileImportProgress = progress } // Assign ProgressInfo
+            Task { @MainActor in 
+                self.fileImportProgress = progress
+                
+                // Update temporary status message with import details
+                if let detail = progress.detail {
+                    self.temporaryStatusMessage = "Importing: \(detail) (\(progress.current)/\(progress.total))"
+                    DLOG("File import progress: \(progress.current)/\(progress.total) - \(detail)")
+                } else {
+                    self.temporaryStatusMessage = "Importing files (\(progress.current)/\(progress.total))"
+                }
+            }
         } else {
             WLOG("Could not parse file import progress userInfo")
         }
@@ -575,7 +585,17 @@ final class RetroStatusControlViewModel: ObservableObject {
     @objc private func handleTempCleanupProgress(_ notification: Notification) {
         DLOG("Received temp cleanup progress")
         if let progress: ProgressInfo = parseProgressInfo(from: notification) {
-            Task { @MainActor in self.temporaryFileCleanupProgress = progress } // Assign ProgressInfo
+            Task { @MainActor in 
+                self.temporaryFileCleanupProgress = progress
+                
+                // Update temporary status message with cleanup details
+                if let detail = progress.detail {
+                    self.temporaryStatusMessage = "Cleaning up: \(detail) (\(progress.current)/\(progress.total))"
+                    DLOG("Temp cleanup progress: \(progress.current)/\(progress.total) - \(detail)")
+                } else {
+                    self.temporaryStatusMessage = "Cleaning up temporary files (\(progress.current)/\(progress.total))"
+                }
+            }
         } else {
             WLOG("Could not parse temp cleanup progress userInfo")
         }
@@ -584,7 +604,17 @@ final class RetroStatusControlViewModel: ObservableObject {
     @objc private func handleCacheMgmtProgress(_ notification: Notification) {
         DLOG("Received cache mgmt progress")
         if let progress: ProgressInfo = parseProgressInfo(from: notification) {
-            Task { @MainActor in self.cacheManagementProgress = progress } // Assign ProgressInfo
+            Task { @MainActor in 
+                self.cacheManagementProgress = progress
+                
+                // Update temporary status message with cache management details
+                if let detail = progress.detail {
+                    self.temporaryStatusMessage = "Managing cache: \(detail) (\(progress.current)/\(progress.total))"
+                    DLOG("Cache management progress: \(progress.current)/\(progress.total) - \(detail)")
+                } else {
+                    self.temporaryStatusMessage = "Managing cache (\(progress.current)/\(progress.total))"
+                }
+            }
         } else {
             WLOG("Could not parse cache mgmt progress userInfo")
         }
@@ -593,7 +623,19 @@ final class RetroStatusControlViewModel: ObservableObject {
     @objc private func handleDownloadProgress(_ notification: Notification) {
         DLOG("Received download progress")
         if let progress: ProgressInfo = parseProgressInfo(from: notification) {
-            Task { @MainActor in self.downloadProgress = progress } // Assign ProgressInfo
+            Task { @MainActor in 
+                self.downloadProgress = progress
+                
+                // Update temporary status message with download details
+                if let detail = progress.detail {
+                    self.temporaryStatusMessage = "Downloading: \(detail) (\(progress.current)/\(progress.total))"
+                    DLOG("Download progress: \(progress.current)/\(progress.total) - \(detail)")
+                } else {
+                    self.temporaryStatusMessage = "Downloading files (\(progress.current)/\(progress.total))"
+                }
+            }
+        } else {
+            WLOG("Could not parse download progress userInfo")
         }
     }
     
