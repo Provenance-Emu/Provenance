@@ -3,7 +3,7 @@
 //  PVUI
 //
 //  Created by Joseph Mattiello on 4/24/25.
-//  Copyright © 2025 Provenance Emu. All rights reserved.
+//  Copyright 2025 Provenance Emu. All rights reserved.
 //
 
 import Foundation
@@ -46,6 +46,9 @@ public extension Notification.Name {
     
     /// Notification posted when web server status changes
     static let webServerStatusChanged = Notification.Name("WebServerStatusChangedNotification")
+    
+    /// Notification posted with progress during web server uploads
+    static let webServerUploadProgress = Notification.Name("WebServerUploadProgressNotification")
     
     // MARK: - Controller Management
     

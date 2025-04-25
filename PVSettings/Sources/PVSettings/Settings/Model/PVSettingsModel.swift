@@ -387,9 +387,6 @@ public extension Defaults.Keys {
     static let iCloudSyncMode = Key<iCloudSyncMode>("iCloudSyncMode", default: .cloudKit)
     static let unsupportedCores = Key<Bool>("unsupportedCores", default: false)
     
-    /// Legacy setting - kept for backward compatibility
-    /// Use iCloudSyncMode instead
-    @available(*, deprecated, message: "Use iCloudSyncMode instead")
     static let iCloudSync = Key<Bool>("iCloudSync", default: false)
 #if os(tvOS)
     static let tvOSThemes = Key<Bool>("tvOSThemes", default: false)
