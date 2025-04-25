@@ -280,6 +280,55 @@ public struct RetroStatusControlView: View {
                         .padding(.horizontal)
                 }
                 
+                // iCloud Sync Status Indicator
+                HStack(spacing: 10) {
+                    // Status indicator with glow effect
+                    Circle()
+                        .fill(viewModel.isICloudSyncEnabled ? RetroTheme.retroBlue : RetroTheme.retroPink)
+                        .frame(width: 10, height: 10)
+                        .shadow(color: (viewModel.isICloudSyncEnabled ? RetroTheme.retroBlue : RetroTheme.retroPink).opacity(0.7), radius: 3, x: 0, y: 0)
+                    
+                    // Status text with retrowave styling
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("iCLOUD SYNC: \(viewModel.isICloudSyncEnabled ? "ENABLED" : "DISABLED")")
+                            .font(.system(size: 12, weight: .bold, design: .monospaced))
+                            .foregroundColor(viewModel.isICloudSyncEnabled ? RetroTheme.retroBlue : RetroTheme.retroPink)
+                            .shadow(color: (viewModel.isICloudSyncEnabled ? RetroTheme.retroBlue : RetroTheme.retroPink).opacity(0.7), radius: 1, x: 0, y: 0)
+                        
+                        if viewModel.isICloudSyncEnabled, let progress = viewModel.cloudKitSyncProgress {
+                            Text("\(progress.current)/\(progress.total) \(progress.detail ?? "")")
+                                .font(.system(size: 10, weight: .medium, design: .monospaced))
+                                .foregroundColor(.gray)
+                        } else if viewModel.isICloudSyncEnabled {
+                            Text("Ready to sync")
+                                .font(.system(size: 10, weight: .medium, design: .monospaced))
+                                .foregroundColor(.gray)
+                        }
+                    }
+                    
+                    Spacer()
+                    
+                    // Manual sync button
+                    if viewModel.isICloudSyncEnabled {
+                        Button(action: {
+                            // Use action closure instead of trailing closure syntax
+                            viewModel.triggerManualSync()
+                        }) {
+                            // Use content closure
+                            Image(systemName: "arrow.clockwise.icloud")
+                                .foregroundColor(RetroTheme.retroBlue)
+                                .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 2, x: 0, y: 0)
+                        }
+                        .buttonStyle(RetroTheme.RetroButtonStyle())
+                    }
+                }
+                .padding(.vertical, 8)
+                .padding(.horizontal, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.black.opacity(0.3))
+                )
+                
                 RetroSystemStatsView() // Assumes this view manages its own state or uses env objects/notifications
             }
             .padding(.horizontal)
