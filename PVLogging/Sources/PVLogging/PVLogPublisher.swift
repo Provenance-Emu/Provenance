@@ -14,8 +14,20 @@ import OSLog
 public final class PVLogPublisher {
     // MARK: - Singleton
     
+    // MARK: - Private Properties
+    
+    /// Serial queue for thread-safe access to logs
+    private let logsQueue = DispatchQueue(label: "com.provenance.logging.storage", qos: .utility)
+    
+    /// In-memory cache of recent logs
+    private var recentLogs: [LogEntry] = []
+    
+    /// Maximum number of logs to keep in memory
+    private let maxLogCount = 2000
+    
     /// Shared instance
-    nonisolated(unsafe) public static let shared = PVLogPublisher()
+    nonisolated(unsafe)
+    public static let shared = PVLogPublisher()
     
     // MARK: - Properties
     
@@ -27,11 +39,7 @@ public final class PVLogPublisher {
         logSubject.eraseToAnyPublisher()
     }
     
-    /// In-memory cache of recent logs
-    private var recentLogs: [LogEntry] = []
-    
-    /// Maximum number of logs to keep in memory
-    private let maxLogCount = 2000
+    // No storage property needed with this approach
     
     // MARK: - Initialization
     
@@ -62,6 +70,7 @@ public final class PVLogPublisher {
         // Extract category name from the Logger
         let categoryName = getCategoryName(from: category)
         
+        // Create the log entry
         let entry = LogEntry(
             message: message,
             level: level,
@@ -72,11 +81,21 @@ public final class PVLogPublisher {
             line: line
         )
         
-        // Add to recent logs
-        addToRecentLogs(entry)
-        
-        // Publish the log entry
+        // Publish the log entry immediately
         logSubject.send(entry)
+        
+        // Store the log entry asynchronously on a serial queue
+        logsQueue.async { [weak self, entry] in
+            guard let self = self else { return }
+            
+            // Add to recent logs
+            self.recentLogs.append(entry)
+            
+            // Trim if needed
+            if self.recentLogs.count > self.maxLogCount {
+                self.recentLogs = Array(self.recentLogs.suffix(self.maxLogCount))
+            }
+        }
         
         // Also log to system console
         let osLogType: OSLogType
@@ -100,28 +119,20 @@ public final class PVLogPublisher {
     /// - Parameter level: Optional minimum log level to filter by
     /// - Returns: Array of log entries
     public func getRecentLogs(minLevel: LogLevel? = nil) -> [LogEntry] {
-        if let minLevel = minLevel {
-            return recentLogs.filter { $0.level.rawValue >= minLevel.rawValue }
-        } else {
-            return recentLogs
+        // Use the serial queue to safely access logs
+        return logsQueue.sync { [self] in
+            if let minLevel = minLevel {
+                return recentLogs.filter { $0.level.rawValue >= minLevel.rawValue }
+            } else {
+                return recentLogs
+            }
         }
     }
     
     /// Clear all cached logs
     public func clearLogs() {
-        recentLogs.removeAll()
-    }
-    
-    // MARK: - Private Methods
-    
-    private func addToRecentLogs(_ entry: LogEntry) {
-        recentLogs.append(entry)
-        
-        // Trim if needed
-        if recentLogs.count > maxLogCount {
-            // Keep only the most recent maxLogCount logs
-            // This is safer than calculating how many to remove
-            recentLogs = Array(recentLogs.suffix(maxLogCount))
+        logsQueue.async { [weak self] in
+            self?.recentLogs.removeAll()
         }
     }
     
@@ -144,7 +155,7 @@ public final class PVLogPublisher {
 // MARK: - Log Entry
 
 /// Represents a single log entry
-public struct LogEntry: Identifiable, Equatable {
+public struct LogEntry: Identifiable, Equatable, Sendable {
     /// Unique identifier
     public let id = UUID()
     
@@ -194,7 +205,7 @@ public struct LogEntry: Identifiable, Equatable {
 // MARK: - Log Level
 
 /// Log level enum
-public enum LogLevel: Int, Comparable {
+public enum LogLevel: Int, Comparable, Sendable {
     case verbose = 0
     case debug = 1
     case info = 2

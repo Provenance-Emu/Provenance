@@ -118,7 +118,7 @@ public struct RetroSystemStatsView: View {
                 
                 Spacer()
                 
-                Text("\(viewModel.formatMemory(bytes: viewModel.memoryUsed))/\(viewModel.formatMemory(bytes: viewModel.memoryTotal)) MB")
+                Text("\(viewModel.formatBytes(viewModel.memoryUsed))/\(viewModel.formatBytes(viewModel.memoryTotal))")
                     .font(.system(size: 12, weight: .medium, design: .monospaced))
                     .foregroundColor(.white)
             }
@@ -225,7 +225,26 @@ public struct RetroSystemStatsView: View {
                 
                 Spacer()
                 
-                Text(viewModel.formatBytes(viewModel.storageUsed))
+                Text(viewModel.formatBytes(UInt64(viewModel.storageUsed)))
+                    .font(.system(size: 12, weight: .medium, design: .monospaced))
+                    .foregroundColor(.white)
+            }
+            
+            // Total playtime
+            HStack {
+                Label {
+                    Text("PLAYTIME")
+                        .font(.system(size: 12, weight: .medium, design: .monospaced))
+                        .foregroundColor(RetroTheme.retroBlue)
+                } icon: {
+                    Image(systemName: "clock")
+                        .font(.system(size: 10))
+                        .foregroundColor(RetroTheme.retroPink)
+                }
+                
+                Spacer()
+                
+                Text(viewModel.formatPlaytime(viewModel.totalPlaytime))
                     .font(.system(size: 12, weight: .medium, design: .monospaced))
                     .foregroundColor(.white)
             }

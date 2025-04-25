@@ -27,6 +27,7 @@ public final class RetroSystemStatsViewModel: ObservableObject {
     @Published public var saveStateCount: Int = 0
     @Published public var biosCount: Int = 0
     @Published public var storageUsed: Int64 = 0
+    @Published public var totalPlaytime: Int = 0 // Total playtime in seconds
     
     /// Loading state
     @Published public var isLoading: Bool = false
@@ -86,17 +87,19 @@ public final class RetroSystemStatsViewModel: ObservableObject {
                 self.saveStateCount = stats.saveStateCount
                 self.biosCount = stats.biosCount
                 self.storageUsed = stats.totalSize
+                self.totalPlaytime = stats.totalPlaytime
                 self.isLoading = false
             }
         }
     }
     
     // Helper function to perform the potentially long-running calculations
-    private func calculateStatsInBackground() async -> (gameCount: Int, saveStateCount: Int, biosCount: Int, totalSize: Int64) {
+    private func calculateStatsInBackground() async -> (gameCount: Int, saveStateCount: Int, biosCount: Int, totalSize: Int64, totalPlaytime: Int) {
         var gameCount = 0
         var saveStateCount = 0
         var biosCount = 0
         var totalSize: Int64 = 0
+        var totalPlaytime: Int = 0
 
         do {
             let realm = try await Realm()
@@ -106,9 +109,11 @@ public final class RetroSystemStatsViewModel: ObservableObject {
 
             // Calculate storage usage (expensive operation)
             
-            // Get ROM sizes
+            // Get ROM sizes and total playtime
             let games = realm.objects(PVGame.self)
             for game in games {
+                // Sum up playtime for all games
+                totalPlaytime += game.timeSpentInGame
                 let romPath = game.romPath
                 let url = URL(fileURLWithPath: romPath)
                 do {
@@ -164,10 +169,10 @@ public final class RetroSystemStatsViewModel: ObservableObject {
 
         } catch {
             ELOG("Failed to initialize Realm or calculate library stats: \(error.localizedDescription)")
-            return (0, 0, 0, 0)
+            return (0, 0, 0, 0, 0)
         }
 
-        return (gameCount, saveStateCount, biosCount, totalSize)
+        return (gameCount, saveStateCount, biosCount, totalSize, totalPlaytime)
     }
     
     // MARK: - Static Helper Methods
@@ -233,16 +238,30 @@ public final class RetroSystemStatsViewModel: ObservableObject {
     
     // MARK: - Formatters
     
-    /// Format bytes to human-readable size
-    public func formatBytes(_ bytes: Int64) -> String {
-        let formatter = ByteCountFormatter()
-        formatter.allowedUnits = [.useAll]
-        formatter.countStyle = .file
-        return formatter.string(fromByteCount: bytes)
+    /// Format bytes to human-readable format
+    public func formatBytes(_ bytes: UInt64) -> String {
+        let kb = Double(bytes) / 1024.0
+        let mb = kb / 1024.0
+        let gb = mb / 1024.0
+        
+        if gb >= 1.0 {
+            return String(format: "%.2f GB", gb)
+        } else if mb >= 1.0 {
+            return String(format: "%.2f MB", mb)
+        } else {
+            return String(format: "%.0f KB", kb)
+        }
     }
     
-    /// Format memory in MB
-    public func formatMemory(bytes: UInt64) -> String {
-        return "\(bytes / 1024 / 1024)"
+    /// Format playtime in seconds to a human-readable format
+    public func formatPlaytime(_ seconds: Int) -> String {
+        let hours = seconds / 3600
+        let minutes = (seconds % 3600) / 60
+        
+        if hours > 0 {
+            return String(format: "%dh %02dm", hours, minutes)
+        } else {
+            return String(format: "%dm", minutes)
+        }
     }
 }
