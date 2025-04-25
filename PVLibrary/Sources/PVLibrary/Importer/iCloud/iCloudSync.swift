@@ -214,7 +214,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
     public var status: ConcurrentSingle<iCloudSyncStatus> = .init(.initialUpload)
     public let errorHandler: SyncErrorHandler
     public var initialSyncResult: SyncResult = .indeterminate
-    public var fileImportQueueMaxCount = 1000
+    public var fileImportQueueMaxCount = 5000
     public var purgeStatus: DatastorePurgeStatus = .incomplete
     private var querySubscriber: AnyCancellable?
     //used for removing ROMs/Saves that were removed by the user when the application is closed. This is to ensure if this is called several times, only 1 block is used at a time
