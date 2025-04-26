@@ -14,72 +14,7 @@ import SwiftUI // For Color, etc.
 #if canImport(PVSupport)
 import PVSupport
 #endif
-import PVPrimitives // For Notification names
-
-// MARK: - Helper Types (Moved from View)
-
-/// Represents an alert message to be displayed
-public struct AlertMessage: Identifiable, Equatable {
-    public let id = UUID()
-    public let title: String
-    public let message: String
-    public let type: AlertType
-    public var sound: ButtonSound? = .click // Default sound
-    
-    /// Defines the type of alert for styling and sound effects
-    public enum AlertType: String, CaseIterable, Equatable {
-        case info
-        case warning
-        case error
-        case success
-        
-        var iconName: String {
-            switch self {
-            case .info: return "info.circle.fill"
-            case .warning: return "exclamationmark.triangle.fill"
-            case .error: return "xmark.octagon.fill"
-            case .success: return "checkmark.circle.fill"
-            }
-        }
-        
-        var color: Color {
-            switch self {
-            case .info: return RetroTheme.retroBlue
-            case .warning: return .orange
-            case .error: return RetroTheme.retroPink
-            case .success: return .green
-            }
-        }
-    }
-    
-    // Equatable conformance
-    public static func == (lhs: AlertMessage, rhs: AlertMessage) -> Bool { lhs.id == rhs.id }
-}
-
-/// Represents the state of the file recovery process
-public enum FileRecoveryState: Equatable {
-    case idle
-    case inProgress
-    case complete
-    case error
-}
-
-// Detailed error/info structs
-public struct FileErrorInfo: Identifiable, Hashable {
-    public let id = UUID() // Make sure id is public for Identifiable
-    let error: String
-    let path: String
-    let filename: String
-    let timestamp: Date
-    let errorType: String? // Specific type like 'timeout', 'access_denied' etc.
-}
-
-public struct PendingRecoveryInfo: Identifiable, Hashable {
-    public let id = UUID() // Make sure id is public for Identifiable
-    let filename: String
-    let path: String
-    let timestamp: Date
-}
+import PVPrimitives // For Notification names and data models
 
 // MARK: - RetroStatusControlViewModel Definition
 
@@ -975,30 +910,4 @@ final class RetroStatusControlViewModel: ObservableObject {
     public var isWebServerActive: Bool {
         self.isWebServerRunning
     }
-}
-
-// MARK: - FileRecoveryState Extension (Example if needed)
-extension FileRecoveryState {
-    var isRecovering: Bool { self == .inProgress }
-    var isFailed: Bool { self == .error }
-    var isIdle: Bool { self == .idle }
-}
-
-// MARK: - Helper Structs for Parsing
-
-public struct ProgressInfo: Identifiable, Equatable {
-    public let id = UUID() // Make sure id is public for Identifiable
-    let current: Int
-    let total: Int
-    var detail: String? // Changed to var
-}
-
-public struct WebServerUploadInfo: Identifiable, Equatable {
-    public let id = UUID() // Make sure id is public for Identifiable
-    let progress: Double
-    let totalBytes: Int
-    let transferredBytes: Int
-    let currentFile: String
-    let queueLength: Int
-    let bytesTransferred: Int
 }
