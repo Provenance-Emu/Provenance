@@ -27,6 +27,9 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
     @State var sortAscending = true
     @State var isGrid = true
+    
+    // Binding to control the import status view visibility
+    @Binding var showImportStatusView: Bool
 
     var toggleFilterAction: () -> Void
     var toggleSortAction: () -> Void
@@ -192,8 +195,23 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 // Log button for viewing detailed logs
                 RetroLogButton(size: 12, color: .retroBlue)
                     .padding(.trailing, padding)
+                
+                // Import status button
+                Button(action: {
+                    #if !os(tvOS)
+                    Haptics.impact(style: .light)
+                    #endif
+                    showImportStatusView = true
+                }) {
+                    Image(systemName: "square.and.arrow.down")
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .font(font)
+                }
+                .padding(.trailing, padding)
             }
             .allowsHitTesting(true)
+            
+            Spacer()
         }
         .onAppear {
             gameLibraryScale = Defaults[.gameLibraryScale]

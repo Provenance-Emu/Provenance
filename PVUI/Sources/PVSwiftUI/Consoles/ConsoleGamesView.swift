@@ -850,6 +850,10 @@ extension ConsoleGamesView {
         GamesDisplayOptionsView(
             sortAscending: viewModel.sortGamesAscending,
             isGrid: viewModel.viewGamesAsGrid,
+            showImportStatusView: Binding(
+                get: { gamesViewModel.showImportStatusView },
+                set: { gamesViewModel.showImportStatusView = $0 }
+            ),
             toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },
             toggleSortAction: { viewModel.sortGamesAscending.toggle() },
             toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }
