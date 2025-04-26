@@ -14,6 +14,10 @@ public struct ProgressInfo: Identifiable, Equatable {
     public let total: Int
     public var detail: String?
     
+    public var progress: Double {
+        total > 0 ? Double(current) / Double(total) : 0
+    }
+    
     public init(current: Int, total: Int, detail: String? = nil) {
         self.current = current
         self.total = total
