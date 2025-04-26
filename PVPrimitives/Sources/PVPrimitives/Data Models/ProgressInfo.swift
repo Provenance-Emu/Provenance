@@ -9,7 +9,7 @@ import Foundation
 
 /// Progress information for various operations
 public struct ProgressInfo: Identifiable, Equatable {
-    public let id = UUID()
+    public let id: String
     public let current: Int
     public let total: Int
     public var detail: String?
@@ -18,7 +18,8 @@ public struct ProgressInfo: Identifiable, Equatable {
         total > 0 ? Double(current) / Double(total) : 0
     }
     
-    public init(current: Int, total: Int, detail: String? = nil) {
+    public init(id: String = UUID().uuidString, current: Int, total: Int, detail: String? = nil) {
+        self.id = id
         self.current = current
         self.total = total
         self.detail = detail

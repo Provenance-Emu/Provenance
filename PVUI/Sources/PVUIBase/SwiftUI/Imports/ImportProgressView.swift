@@ -445,7 +445,7 @@ public struct ImportProgressView: View {
     /// Start animation for progress bar
     func startAnimation() {
         // Delegate to view model
-        viewModel.startAnimation()
+        viewModel.startAnimations()
     }
 
     /// Add a log message

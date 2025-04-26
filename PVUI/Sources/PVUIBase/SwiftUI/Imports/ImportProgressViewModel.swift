@@ -94,7 +94,6 @@ public class ImportProgressViewModel: ObservableObject {
         
         // Start animations
         startAnimations()
-        startAnimation()  // For progress bars
     }
     
     // MARK: - Public Methods
@@ -112,8 +111,8 @@ public class ImportProgressViewModel: ObservableObject {
         }
     }
     
-    /// Start animations for progress bars
-    public func startAnimation() {
+    /// Start animations for progress bars and glow effects
+    public func startAnimations() {
         // Create a repeating animation for the progress bars
         Timer.publish(every: 0.05, on: .main, in: .common)
             .autoconnect()
@@ -124,10 +123,7 @@ public class ImportProgressViewModel: ObservableObject {
                 }
             }
             .store(in: &cancellables)
-    }
-    
-    /// Start animations for glow effects
-    public func startAnimations() {
+            
         // Create a repeating animation for the glow effect
         Timer.publish(every: 1.0, on: .main, in: .common)
             .autoconnect()
@@ -174,20 +170,27 @@ public class ImportProgressViewModel: ObservableObject {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             
-            // Remove any existing progress bars with the same detail text
-            self.activeProgressBars.removeAll(where: { $0.detail == detail })
+            // Create a new progress info with the updated values and use the id parameter
+            // This prevents flickering by maintaining the same ID across updates
+            let progressInfo = ProgressInfo(id: id, current: current, total: total, detail: detail ?? id)
             
-            // Create a new progress info with the updated values
-            let progressInfo = ProgressInfo(current: current, total: total, detail: detail)
-            
-            // Add the new progress bar
-            self.activeProgressBars.append(progressInfo)
+            // Find if we already have a progress bar with this ID
+            if let index = self.activeProgressBars.firstIndex(where: { $0.id == id }) {
+                // Replace the existing progress bar
+                self.activeProgressBars[index] = progressInfo
+            } else {
+                // Add a new progress bar
+                self.activeProgressBars.append(progressInfo)
+            }
             
             // Show the view when there are active progress bars
             self.shouldShow = true
             
             // Debounce updates to prevent flickering
-            self.debounceUpdate()
+            self.debounceTimer?.invalidate()
+            self.debounceTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false) { [weak self] _ in
+                self?.objectWillChange.send()
+            }
         }
     }
     
@@ -196,8 +199,8 @@ public class ImportProgressViewModel: ObservableObject {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             
-            // Remove progress bars with matching detail
-            self.activeProgressBars.removeAll(where: { $0.detail == id })
+            // Remove progress bars with matching ID
+            self.activeProgressBars.removeAll(where: { $0.id == id })
             
             // Schedule hiding the view if there are no more progress bars
             if self.activeProgressBars.isEmpty && self.logMessages.isEmpty {
@@ -315,17 +318,13 @@ public class ImportProgressViewModel: ObservableObject {
                 self.fileRecoveryState = .inProgress
                 self.addLogMessage("iCloud file recovery started", type: .info)
                 
-                // Create a new progress info for file recovery
-                let fileRecoveryInfo = ProgressInfo(current: 0, total: 100, detail: "File Recovery")
+                // Create a new progress info for file recovery with a consistent ID
+                self.updateProgress(id: "fileRecovery", detail: "File Recovery", current: 0, total: 100)
                 
-                // Update our stored progress info
-                self.fileRecoveryProgress = fileRecoveryInfo
-                
-                // Remove any existing file recovery progress bars
-                self.activeProgressBars.removeAll(where: { $0.detail == "File Recovery" })
-                
-                // Add the new progress bar
-                self.activeProgressBars.append(fileRecoveryInfo)
+                // Store a reference to the progress info
+                if let index = self.activeProgressBars.firstIndex(where: { $0.id == "fileRecovery" }) {
+                    self.fileRecoveryProgress = self.activeProgressBars[index]
+                }
             }
             .store(in: &cancellables)
             
@@ -340,17 +339,13 @@ public class ImportProgressViewModel: ObservableObject {
                     return
                 }
                 
-                // Create a new progress info
-                let newProgressInfo = ProgressInfo(current: current, total: total, detail: "File Recovery")
+                // Update our stored progress info and the UI with a consistent ID
+                self.updateProgress(id: "fileRecovery", detail: "File Recovery", current: current, total: total)
                 
-                // Update our stored progress info
-                self.fileRecoveryProgress = newProgressInfo
-                
-                // Remove any existing file recovery progress bars
-                self.activeProgressBars.removeAll(where: { $0.detail == "File Recovery" })
-                
-                // Add the new progress bar
-                self.activeProgressBars.append(newProgressInfo)
+                // Store a reference to the latest progress info
+                if let index = self.activeProgressBars.firstIndex(where: { $0.id == "fileRecovery" }) {
+                    self.fileRecoveryProgress = self.activeProgressBars[index]
+                }
                 
                 // Add a log message for significant progress
                 if current % 10 == 0 || current == total {
@@ -370,7 +365,7 @@ public class ImportProgressViewModel: ObservableObject {
                 
                 // Update state and remove progress bar
                 self.fileRecoveryState = .complete
-                self.removeProgress(id: "File Recovery")
+                self.removeProgress(id: "fileRecovery")
                 self.fileRecoveryProgress = nil
                 
                 // Add a completion log message
@@ -389,7 +384,7 @@ public class ImportProgressViewModel: ObservableObject {
                 
                 // Update state and remove progress bar
                 self.fileRecoveryState = .error
-                self.removeProgress(id: "File Recovery")
+                self.removeProgress(id: "fileRecovery")
                 self.fileRecoveryProgress = nil
                 
                 // Add an error log message
