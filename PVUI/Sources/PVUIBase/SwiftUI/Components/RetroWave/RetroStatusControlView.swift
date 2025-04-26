@@ -94,13 +94,15 @@ public struct RetroStatusControlView: View {
     private var controlButtonsSection: some View {
         HStack(spacing: 15) {
             // Example: Clear Messages Button (if desired in header)
-             Button {
-                 viewModel.clearMessages()
-             } label: {
-                 Image(systemName: "trash")
-             }
-             .buttonStyle(RetroTheme.RetroButtonStyle())
-
+//             Button {
+//                 viewModel.clearMessages()
+//             } label: {
+//                 Image(systemName: "trash")
+//             }
+//             .buttonStyle(RetroTheme.RetroButtonStyle())
+//             .frame(width: 24, height: 24)
+//             .padding(.horizontal, 4)
+            
             // Expand/Collapse Button
             Button {
                 withAnimation { // Use default animation if custom one is missing
