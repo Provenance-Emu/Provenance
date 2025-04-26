@@ -10,32 +10,76 @@ import SwiftUI
 import PVThemes
 import PVLogging
 import Combine
+import PVPrimitives
+import Defaults
+import Perception
 
 /// A retrowave-styled log viewer component
 public struct RetroLogView: View {
     // MARK: - Properties
-    
+
     /// View model for handling log data and logic
     @StateObject private var viewModel = RetroLogViewModel()
-    
+
     /// Scroll view reader for auto-scrolling
     @Namespace private var scrollSpace
     
+    /// Controls whether the view is presented in fullscreen mode
+    @Binding private var isFullscreen: Bool
+
     // MARK: - Initialization
-    
-    public init() {}
-    
-    public init(viewModel: RetroLogViewModel) {
-        _viewModel = StateObject(wrappedValue: viewModel)
+
+    public init() {
+        self._isFullscreen = .constant(false)
     }
     
+    public init(isFullscreen: Binding<Bool> = .constant(false)) {
+        self._isFullscreen = isFullscreen
+    }
+
+    public init(viewModel: RetroLogViewModel, isFullscreen: Binding<Bool> = .constant(false)) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+        self._isFullscreen = isFullscreen
+    }
+
     // MARK: - Body
-    
+
     public var body: some View {
         VStack(spacing: 0) {
             // Header with controls
             headerView
-            
+                .overlay(alignment: .trailing) {
+                    if isFullscreen {
+                        // Close fullscreen button
+                        Button {
+                            isFullscreen = false
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.system(size: 16))
+                                .foregroundColor(RetroTheme.retroPink)
+                                .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2, x: 0, y: 0)
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.trailing, 8)
+                    } else {
+                        // Expand to fullscreen button
+                        Button {
+                            isFullscreen = true
+                        } label: {
+                            Image(systemName: "arrow.up.left.and.arrow.down.right")
+                                .font(.system(size: 12))
+                                .foregroundColor(RetroTheme.retroBlue)
+                                .padding(6)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
+                                )
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.trailing, 8)
+                    }
+                }
+
             // Log list
             ScrollViewReader { scrollView in
                 ScrollView {
@@ -44,7 +88,7 @@ public struct RetroLogView: View {
                             logEntryRow(log)
                                 .id(log.id)
                         }
-                        
+
                         // Invisible view at the bottom for auto-scrolling
                         Color.clear
                             .frame(height: 1)
@@ -76,12 +120,13 @@ public struct RetroLogView: View {
                         )
                 )
         )
+        .frame(maxWidth: isFullscreen ? .infinity : nil, maxHeight: isFullscreen ? .infinity : nil)
     }
-    
+
     // MARK: - Subviews
-    
+
     // MARK: - Subviews
-    
+
     /// Header view with controls
     private var headerView: some View {
         VStack(spacing: 8) {
@@ -90,9 +135,9 @@ public struct RetroLogView: View {
                     .font(.system(size: 14, weight: .bold, design: .monospaced))
                     .foregroundColor(RetroTheme.retroPink)
                     .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2, x: 0, y: 0)
-                
+
                 Spacer()
-                
+
                 // Log level picker
                 Menu {
                     Picker("Log Level", selection: $viewModel.minLogLevel) {
@@ -107,7 +152,7 @@ public struct RetroLogView: View {
                         Text("Level: \(viewModel.minLogLevel.name)")
                             .font(.system(size: 12))
                             .foregroundColor(RetroTheme.retroBlue)
-                        
+
                         Image(systemName: "chevron.down")
                             .font(.system(size: 10))
                             .foregroundColor(RetroTheme.retroBlue)
@@ -119,7 +164,7 @@ public struct RetroLogView: View {
                             .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
                     )
                 }
-                
+
                 // Auto-scroll toggle
                 Button(action: {
                     viewModel.autoScroll.toggle()
@@ -133,7 +178,7 @@ public struct RetroLogView: View {
                                 .strokeBorder(viewModel.autoScroll ? RetroTheme.retroBlue : RetroTheme.retroPink.opacity(0.7), lineWidth: 1)
                         )
                 }
-                
+
                 // Detail toggle
                 Button(action: {
                     viewModel.showFullDetails.toggle()
@@ -147,7 +192,7 @@ public struct RetroLogView: View {
                                 .strokeBorder(viewModel.showFullDetails ? RetroTheme.retroBlue : RetroTheme.retroPink.opacity(0.7), lineWidth: 1)
                         )
                 }
-                
+
                 // Clear logs button
                 Button(action: {
                     viewModel.clearLogs()
@@ -162,19 +207,19 @@ public struct RetroLogView: View {
                         )
                 }
             }
-            
+
             // Search field
             HStack {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 12))
                     .foregroundColor(RetroTheme.retroBlue.opacity(0.7))
-                
+
                 TextField("Search logs...", text: $viewModel.searchText)
                     .font(.system(size: 12))
                     .foregroundColor(.white)
                     .autocorrectionDisabled(true)
                     .textInputAutocapitalization(.never)
-                
+
                 if !viewModel.searchText.isEmpty {
                     Button(action: {
                         viewModel.searchText = ""
@@ -199,7 +244,7 @@ public struct RetroLogView: View {
         .padding(.vertical, 8)
         .background(Color.black.opacity(0.5))
     }
-    
+
     /// Single log entry row
     private func logEntryRow(_ log: LogEntry) -> some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -208,9 +253,9 @@ public struct RetroLogView: View {
                 Text(log.formattedTimestamp)
                     .font(.system(size: 10, design: .monospaced))
                     .foregroundColor(viewModel.logLevelColor(log.level).opacity(0.8))
-                
+
                 Spacer()
-                
+
                 Text(log.level.name.uppercased())
                     .font(.system(size: 10, weight: .bold, design: .monospaced))
                     .foregroundColor(viewModel.logLevelColor(log.level))
@@ -226,14 +271,14 @@ public struct RetroLogView: View {
                     )
                     .shadow(color: viewModel.logLevelColor(log.level).opacity(0.5), radius: 2, x: 0, y: 0)
             }
-            
+
             // Message with glow effect based on log level
             Text(log.message)
                 .font(.system(size: 12, weight: .medium, design: .monospaced))
                 .foregroundColor(.white)
                 .shadow(color: viewModel.logLevelColor(log.level).opacity(0.3), radius: 1, x: 0, y: 0)
                 .lineLimit(viewModel.showFullDetails ? nil : 3)
-            
+
             // File and line if showing full details
             if viewModel.showFullDetails {
                 let file = log.file
@@ -242,7 +287,7 @@ public struct RetroLogView: View {
                     Image(systemName: "doc.text")
                         .font(.system(size: 8))
                         .foregroundColor(RetroTheme.retroBlue.opacity(0.7))
-                    
+
                     Text("\(file):\(line)")
                         .font(.system(size: 10, design: .monospaced))
                         .foregroundColor(RetroTheme.retroBlue.opacity(0.7))
@@ -269,7 +314,7 @@ public struct RetroLogView: View {
         .padding(.horizontal, 4)
         .padding(.vertical, 2)
     }
-    
+
 
 }
 
@@ -280,7 +325,7 @@ struct RetroLogView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
             RetroTheme.retroDarkBlue.edgesIgnoringSafeArea(.all)
-            
+
             RetroLogView()
                 .frame(width: 500, height: 400)
                 .padding()
