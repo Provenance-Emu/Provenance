@@ -23,7 +23,7 @@ public struct RetroLogView: View {
 
     /// Scroll view reader for auto-scrolling
     @Namespace private var scrollSpace
-    
+
     /// Controls whether the view is presented in fullscreen mode
     @Binding private var isFullscreen: Bool
 
@@ -32,7 +32,7 @@ public struct RetroLogView: View {
     public init() {
         self._isFullscreen = .constant(false)
     }
-    
+
     public init(isFullscreen: Binding<Bool> = .constant(false)) {
         self._isFullscreen = isFullscreen
     }
@@ -48,37 +48,6 @@ public struct RetroLogView: View {
         VStack(spacing: 0) {
             // Header with controls
             headerView
-                .overlay(alignment: .trailing) {
-                    if isFullscreen {
-                        // Close fullscreen button
-                        Button {
-                            isFullscreen = false
-                        } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: 16))
-                                .foregroundColor(RetroTheme.retroPink)
-                                .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2, x: 0, y: 0)
-                        }
-                        .buttonStyle(.plain)
-                        .padding(.trailing, 8)
-                    } else {
-                        // Expand to fullscreen button
-                        Button {
-                            isFullscreen = true
-                        } label: {
-                            Image(systemName: "arrow.up.left.and.arrow.down.right")
-                                .font(.system(size: 12))
-                                .foregroundColor(RetroTheme.retroBlue)
-                                .padding(6)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
-                                )
-                        }
-                        .buttonStyle(.plain)
-                        .padding(.trailing, 8)
-                    }
-                }
 
             // Log list
             ScrollViewReader { scrollView in
@@ -122,8 +91,6 @@ public struct RetroLogView: View {
         )
         .frame(maxWidth: isFullscreen ? .infinity : nil, maxHeight: isFullscreen ? .infinity : nil)
     }
-
-    // MARK: - Subviews
 
     // MARK: - Subviews
 
@@ -199,12 +166,45 @@ public struct RetroLogView: View {
                 }) {
                     Image(systemName: "trash")
                         .font(.system(size: 12))
-                        .foregroundColor(RetroTheme.retroPink)
+                        .foregroundColor(RetroTheme.retroPink.opacity(0.7))
                         .padding(6)
                         .background(
                             RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(RetroTheme.retroPink, lineWidth: 1)
+                                .strokeBorder(RetroTheme.retroPink.opacity(0.7), lineWidth: 1)
                         )
+                }
+
+                Spacer()
+
+                // Fullscreen toggle button
+                if isFullscreen {
+                    // Close fullscreen button
+                    Button {
+                        isFullscreen = false
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 12))
+                            .foregroundColor(RetroTheme.retroPink)
+                            .padding(6)
+                            .background(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .strokeBorder(RetroTheme.retroPink, lineWidth: 1)
+                            )
+                    }
+                } else {
+                    // Expand to fullscreen button
+                    Button {
+                        isFullscreen = true
+                    } label: {
+                        Image(systemName: "arrow.up.left.and.arrow.down.right")
+                            .font(.system(size: 12))
+                            .foregroundColor(RetroTheme.retroBlue)
+                            .padding(6)
+                            .background(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
+                            )
+                    }
                 }
             }
 
