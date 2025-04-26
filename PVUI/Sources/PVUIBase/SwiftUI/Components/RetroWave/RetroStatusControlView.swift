@@ -12,7 +12,7 @@ import PVLogging
 import PVLibrary
 import PVWebServer
 import PVSupport
-import PVUIBase // For RetroTheme etc.
+import PVUIBase
 
 public struct RetroStatusControlView: View {
 
@@ -104,21 +104,21 @@ public struct RetroStatusControlView: View {
 //             .padding(.horizontal, 4)
             
             // Expand/Collapse Button
-            Button {
-                withAnimation { // Use default animation if custom one is missing
-                    isExpanded.toggle()
-                }
-                ButtonSoundGenerator.shared.playSound(.switch) // Was .expand / .collapse
-            } label: {
-                Image(systemName: isExpanded ? "chevron.down.circle.fill" : "chevron.right.circle.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 24, height: 24)
-                    .foregroundColor(RetroTheme.retroBlue)
-                    .shadow(color: RetroTheme.retroBlue.opacity(0.8), radius: 3, x: 0, y: 0)
-                    .foregroundColor(RetroTheme.retroBlue)
-            }
-            .buttonStyle(.plain) // Remove default button styling
+//            Button {
+//                withAnimation { // Use default animation if custom one is missing
+//                    isExpanded.toggle()
+//                }
+//                ButtonSoundGenerator.shared.playSound(.switch) // Was .expand / .collapse
+//            } label: {
+//                Image(systemName: isExpanded ? "chevron.down.circle.fill" : "chevron.right.circle.fill")
+//                    .resizable()
+//                    .aspectRatio(contentMode: .fit)
+//                    .frame(width: 24, height: 24)
+//                    .foregroundColor(RetroTheme.retroBlue)
+//                    .shadow(color: RetroTheme.retroBlue.opacity(0.8), radius: 3, x: 0, y: 0)
+//                    .foregroundColor(RetroTheme.retroBlue)
+//            }
+//            .buttonStyle(.plain) // Remove default button styling
         }
     }
 

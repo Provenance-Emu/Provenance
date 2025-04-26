@@ -140,14 +140,9 @@ struct HomeView: SwiftUI.View {
                         .padding(.bottom, 8)
                 }
                 
-                // Status Message View
-                RetroStatusControlView()
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 6)
-                
                 // Import Progress View (legacy - can be removed once RetroStatusControlView is fully tested)
                 // Commenting out as RetroStatusControlView now handles this functionality
-                /*ImportProgressView(
+                ImportProgressView(
                     gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
                     updatesController: AppState.shared.libraryUpdatesController!,
                     onTap: {
@@ -155,7 +150,7 @@ struct HomeView: SwiftUI.View {
                             showImportStatusView = true
                         }
                     }
-                )*/
+                )
 //                .padding(.vertical, 6)
 //                .padding(.horizontal, 8)
 //                .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 3, x: 0, y: 0)
