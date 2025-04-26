@@ -12,6 +12,7 @@ import RealmSwift
 import PVLibrary
 import PVThemes
 import Defaults
+import PVUIBase
 
 @available(iOS 14, tvOS 14, *)
 struct GamesDisplayOptionsView: SwiftUI.View {
@@ -185,6 +186,12 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 }
                 .disabled(!canZoomIn)
                 .padding(.trailing, padding)
+                
+                Spacer()
+
+                // Log button for viewing detailed logs
+                RetroLogButton(size: 12, color: .retroBlue)
+                    .padding(.trailing, padding)
             }
             .allowsHitTesting(true)
         }
