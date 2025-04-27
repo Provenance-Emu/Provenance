@@ -30,6 +30,9 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
     // Binding to control the import status view visibility
     @Binding var showImportStatusView: Bool
+    
+    // Optional action for the import status button
+    var importStatusAction: (() -> Void)?
 
     var toggleFilterAction: () -> Void
     var toggleSortAction: () -> Void
@@ -204,18 +207,24 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 StatusControlButton()
                     .padding(.trailing, padding)
 
-                // Import status button
-                Button(action: {
-                    #if !os(tvOS)
-                    Haptics.impact(style: .light)
-                    #endif
-                    showImportStatusView = true
-                }) {
-                    Image(systemName: "square.and.arrow.down")
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                        .font(font)
+                // Import status button - only show if we have an action or binding
+                if importStatusAction != nil || showImportStatusView != nil {
+                    Button(action: {
+                        #if !os(tvOS)
+                        Haptics.impact(style: .light)
+                        #endif
+                        if let action = importStatusAction {
+                            action()
+                        } else {
+                            showImportStatusView = true
+                        }
+                    }) {
+                        Image(systemName: "square.and.arrow.down")
+                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                            .font(font)
+                    }
+                    .padding(.trailing, padding)
                 }
-                .padding(.trailing, padding)
             }
             .allowsHitTesting(true)
         }

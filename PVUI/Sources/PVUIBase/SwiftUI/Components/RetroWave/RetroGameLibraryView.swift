@@ -929,7 +929,10 @@ extension RetroGameLibraryView {
     private func importProgressView() -> some View {
         ImportProgressView(
             gameImporter: viewModel.gameImporter,
-            updatesController: AppState.shared.libraryUpdatesController!
+            updatesController: AppState.shared.libraryUpdatesController!,
+            onTap: {
+                viewModel.showImportStatusView = true
+            }
         )
         .sheet(isPresented: $viewModel.showImportStatusView) {
             ImportStatusView(

@@ -3,6 +3,7 @@ import Combine
 import PVLibrary
 import PVSettings
 import Perception
+import PVThemes
 
 /// A view that displays the progress of imports and CloudKit syncing
 public struct ImportProgressView: View {
@@ -50,11 +51,19 @@ public struct ImportProgressView: View {
         VStack {
             WithPerceptionTracking {
                 if !viewModel.importQueueItems.isEmpty || (iCloudSyncEnabled && viewModel.isSyncing) {
-                    contentView
-                        .onTapGesture {
-                            onTap?()
+                    Button(action: {
+                        if let onTapAction = onTap {
+                            // Use MainActor to ensure UI updates happen on the main thread
+                            Task { @MainActor in
+                                onTapAction()
+                            }
                         }
-                        .fixedSize(horizontal: false, vertical: true) // Fix the height to prevent layout shifts
+                    }) {
+                        contentView
+                            .contentShape(Rectangle()) // Make entire view tappable
+                    }
+                    .buttonStyle(PlainButtonStyle()) // Use PlainButtonStyle to avoid button styling
+                    .fixedSize(horizontal: false, vertical: true) // Fix the height to prevent layout shifts
                 } else {
                     EmptyView()
                 }
@@ -81,19 +90,30 @@ public struct ImportProgressView: View {
                 importQueueView
             }
         }
-        .padding(12)
+        .padding(10)
         .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.retroDarkBlue.opacity(0.85))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(LinearGradient(
-                            gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ), lineWidth: 1.5)
+            ZStack {
+                // Dark background
+                Color.retroBlack.opacity(0.85)
+                
+                // Grid overlay for retrowave effect
+                RetroTheme.RetroGridView()
+                    .opacity(0.15)
+            }
+        )
+        .cornerRadius(8)
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .strokeBorder(
+                    LinearGradient(
+                        gradient: Gradient(colors: [.retroPurple, .retroPink]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.5
                 )
         )
+        .shadow(color: Color.retroPink.opacity(0.3), radius: 4, x: 0, y: 0)
         .padding(.horizontal, 16)
         .padding(.bottom, 8)
     }
@@ -214,25 +234,40 @@ public struct ImportProgressView: View {
             .frame(height: 6)
             
             // Queue status
-            HStack(spacing: 12) {
+            HStack(spacing: 8) {
                 statusItem(count: viewModel.queuedCount, label: "Queued", color: .gray)
                 statusItem(count: viewModel.processingCount, label: "Processing", color: .retroBlue)
-                statusItem(count: viewModel.completedCount, label: "Completed", color: .green)
-                statusItem(count: viewModel.failedCount, label: "Failed", color: .red)
+                statusItem(count: viewModel.completedCount, label: "Completed", color: .retroGreen)
+                statusItem(count: viewModel.failedCount, label: "Failed", color: .retroPink)
             }
-            .font(.caption2)
-            .padding(.top, 2)
+            .padding(.top, 4)
         }
     }
     
     private func statusItem(count: Int, label: String, color: Color) -> some View {
-        HStack(spacing: 2) {
+        VStack(spacing: 2) {
             Text("\(count)")
+                .font(.system(.caption, design: .monospaced))
+                .fontWeight(.bold)
                 .foregroundColor(color)
-                .fontWeight(.semibold)
+                .shadow(color: color.opacity(0.7), radius: 2, x: 0, y: 0)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.black.opacity(0.5))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 4)
+                                .strokeBorder(
+                                    color.opacity(0.7),
+                                    lineWidth: 1
+                                )
+                        )
+                )
             
             Text(label)
-                .foregroundColor(.gray)
+                .font(.system(.caption2, design: .monospaced))
+                .foregroundColor(Color.gray.opacity(0.8))
         }
     }
 }

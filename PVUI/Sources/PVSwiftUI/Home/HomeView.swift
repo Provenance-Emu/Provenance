@@ -143,7 +143,12 @@ struct HomeView: SwiftUI.View {
                 // Import Progress View
                 ImportProgressView(
                     gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
-                    updatesController: AppState.shared.libraryUpdatesController!
+                    updatesController: AppState.shared.libraryUpdatesController!,
+                    onTap: {
+                        withAnimation {
+                            showImportStatusView = true
+                        }
+                    }
                 )
 
                 ScrollViewWithOffset(
@@ -521,6 +526,11 @@ struct HomeView: SwiftUI.View {
             sortAscending: viewModel.sortGamesAscending,
             isGrid: viewModel.viewGamesAsGrid,
             showImportStatusView: $showImportStatusView,
+            importStatusAction: {
+                withAnimation {
+                    showImportStatusView = true
+                }
+            },
             toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },
             toggleSortAction: { viewModel.sortGamesAscending.toggle() },
             toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }
