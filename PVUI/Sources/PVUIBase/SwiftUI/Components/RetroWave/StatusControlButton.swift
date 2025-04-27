@@ -41,7 +41,8 @@ public struct StatusControlButton: View {
             DLOG("Status control button tapped")
             showStatusControl = true
         }) {
-            Image(systemName: "gauge.with.dots.needle.bottom")
+            // Display different gauge icons based on the cumulative progress
+            Image(systemName: viewModel.gaugeIconName)
                 .font(.system(size: size))
                 .foregroundColor(color)
         }
