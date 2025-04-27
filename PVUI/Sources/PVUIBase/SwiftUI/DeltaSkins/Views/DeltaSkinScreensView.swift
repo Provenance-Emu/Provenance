@@ -355,8 +355,8 @@ public struct DeltaSkinScreensView: View {
                 Rectangle()
                     .fill(Color.clear)
                     .frame(
-                        width: outputFrame.width * geometry.size.width,
-                        height: outputFrame.height * geometry.size.height
+                        width: (outputFrame.width ?? 1.0) * geometry.size.width,
+                        height: (outputFrame.height ?? 1.0) * geometry.size.height
                     )
                     .overlay(
                         // Always show a border for debugging
@@ -387,8 +387,8 @@ public struct DeltaSkinScreensView: View {
                     .accessibility(identifier: "ScreenView-\(screen.id)")
             }
             .position(
-                x: outputFrame.midX * geometry.size.width,
-                y: outputFrame.midY * geometry.size.height
+                x: (outputFrame.midX ?? 0.5) * geometry.size.width,
+                y: (outputFrame.midY ?? 0.5) * geometry.size.height
             )
         )
     }

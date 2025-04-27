@@ -1026,15 +1026,18 @@ public struct DeltaSkinView: View {
     // Update the screenView method to use DeltaSkinTestPatternView instead of TestPatternView
     @ViewBuilder
     private func screenView(_ screen: DeltaSkinScreen, in geometry: GeometryProxy, layout: SkinLayout) -> some View {
-        guard let outputFrame = screen.outputFrame else {
-            return AnyView(EmptyView())
-        }
-
-        let scaledFrame = CGRect(
-            x: outputFrame.minX * layout.width,
-            y: outputFrame.minY * layout.height,
-            width: outputFrame.width * layout.width,
-            height: outputFrame.height * layout.height
+        let scaledFrame = screen.outputFrame.map { frame in
+            CGRect(
+                x: frame.minX * layout.width,
+                y: frame.minY * layout.height,
+                width: frame.width * layout.width,
+                height: frame.height * layout.height
+            )
+        } ?? CGRect(
+            x: 0,
+            y: 0,
+            width: layout.width,
+            height: layout.height
         )
 
         return AnyView(
@@ -1057,7 +1060,7 @@ public struct DeltaSkinView: View {
                                         Text("In: \(formatRect(inputFrame))")
                                             .font(.caption2)
                                     }
-                                    Text("Out: \(formatRect(outputFrame))")
+                                    Text("Out: \(formatRect(scaledFrame))")
                                         .font(.caption2)
                                     Text("Place: \(screen.placement.rawValue)")
                                         .font(.caption2)
