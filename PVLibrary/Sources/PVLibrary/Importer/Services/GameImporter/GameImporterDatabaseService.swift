@@ -79,6 +79,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
         DLOG("Attempting to import game: \(destUrl.lastPathComponent) for system: \(targetSystem.libretroDatabaseName)")
         
+        #if !os(tvOS)
         // Check if this file is currently being recovered from iCloud
         if iCloudSync.isFileBeingRecovered(queueItem.url.path) {
             ILOG("File \(queueItem.url.lastPathComponent) is currently being recovered from iCloud. Delaying import.")
@@ -94,6 +95,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             }
             return
         }
+        #endif
 
         let filename = queueItem.url.lastPathComponent
         let partialPath = (targetSystem.rawValue as NSString).appendingPathComponent(filename)

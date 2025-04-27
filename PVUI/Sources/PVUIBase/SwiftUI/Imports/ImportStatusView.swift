@@ -98,10 +98,12 @@ public struct ImportStatusView: View {
                 await viewModel.refreshQueueItems()
             }
         }
+        #if !os(tvOS)
         // Observe file recovery progress
         .onReceive(NotificationCenter.default.publisher(for: iCloudSync.iCloudFileRecoveryProgress)) { _ in
             viewModel.isVisible = true
         }
+        #endif // !tvOS
     }
     
     // Background layers for the retrowave effect

@@ -31,6 +31,9 @@ public class SyncProviderFactory {
         // Log the current sync state
         DLOG("iCloudSync=\(iCloudSyncEnabled), iCloudSyncMode=\(syncMode.description)")
         
+#if os(tvOS)
+        return CloudKitSyncer(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
+#else
         // Return the appropriate syncer based on the mode
         if syncMode.isCloudKit {
             DLOG("Creating CloudKit syncer based on iCloudSyncMode=\(syncMode.description)")
@@ -39,6 +42,7 @@ public class SyncProviderFactory {
             DLOG("Creating iCloud Documents syncer based on iCloudSyncMode=\(syncMode.description)")
             return iCloudContainerSyncer(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
         }
+#endif
     }
     
     /// Create a ROM sync provider
@@ -56,7 +60,9 @@ public class SyncProviderFactory {
         
         // Log the current sync state
         DLOG("iCloudSync=\(iCloudSyncEnabled), iCloudSyncMode=\(syncMode.description)")
-        
+#if os(tvOS)
+        return CloudKitRomsSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
+#else
         // Return the appropriate syncer based on the mode
         if syncMode.isCloudKit {
             DLOG("Creating CloudKit ROM syncer based on iCloudSyncMode=\(syncMode.description)")
@@ -65,6 +71,7 @@ public class SyncProviderFactory {
             DLOG("Creating iCloud ROM syncer based on iCloudSyncMode=\(syncMode.description)")
             return RomsSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
         }
+#endif
     }
     
     /// Create a save states sync provider
@@ -82,7 +89,9 @@ public class SyncProviderFactory {
         
         // Log the current sync state
         DLOG("iCloudSync=\(iCloudSyncEnabled), iCloudSyncMode=\(syncMode.description)")
-        
+#if os(tvOS)
+        return CloudKitSaveStatesSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
+#else
         // Return the appropriate syncer based on the mode
         if syncMode.isCloudKit {
             DLOG("Creating CloudKit save states syncer based on iCloudSyncMode=\(syncMode.description)")
@@ -91,6 +100,7 @@ public class SyncProviderFactory {
             DLOG("Creating iCloud save states syncer based on iCloudSyncMode=\(syncMode.description)")
             return SaveStatesSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
         }
+#endif
     }
     
     /// Create a BIOS sync provider
@@ -108,7 +118,9 @@ public class SyncProviderFactory {
         
         // Log the current sync state
         DLOG("iCloudSync=\(iCloudSyncEnabled), iCloudSyncMode=\(syncMode.description)")
-        
+#if os(tvOS)
+        return CloudKitBIOSSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
+#else
         // Return the appropriate syncer based on the mode
         if syncMode.isCloudKit {
             DLOG("Creating CloudKit BIOS syncer based on iCloudSyncMode=\(syncMode.description)")
@@ -117,6 +129,7 @@ public class SyncProviderFactory {
             DLOG("Creating iCloud BIOS syncer based on iCloudSyncMode=\(syncMode.description)")
             return BIOSSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
         }
+#endif
     }
     
     /// Create a non-database sync provider for files like Battery States, Screenshots, and DeltaSkins

@@ -413,6 +413,7 @@ public struct RetroStatusControlView: View {
                         .overlay(RetroTheme.retroGradient)
                         .shadow(color: RetroTheme.retroPurple.opacity(0.5), radius: 2, x: 0, y: 0)
                     SwiftUI.Section {
+                        #if !os(tvOS)
                         DisclosureGroup("File Access Errors (\(viewModel.fileAccessErrors.count))") {
                             ScrollView(.vertical) { // Make it scrollable if list gets long
                                 VStack(alignment: .leading) {
@@ -433,6 +434,24 @@ public struct RetroStatusControlView: View {
                         }
                         .font(.system(size: 14, weight: .medium, design: .rounded))
                         .foregroundColor(RetroTheme.retroBlue)
+                        #else
+                        ScrollView(.vertical) { // Make it scrollable if list gets long
+                            VStack(alignment: .leading) {
+                                ForEach(viewModel.fileAccessErrors.prefix(5)) { errorInfo in // Show latest 5
+                                    VStack(alignment: .leading) {
+                                        Text("\(errorInfo.filename): \(errorInfo.error)")
+                                            .font(.caption)
+                                            .foregroundColor(RetroTheme.retroPink)
+                                        Text("(\(errorInfo.timestamp, style: .time))")
+                                            .font(.caption2)
+                                            .foregroundColor(.gray)
+                                    }
+                                    .padding(.bottom, 2)
+                                }
+                            }
+                        }
+                        .frame(maxHeight: 100) // Limit height
+                        #endif
                     }
                     .padding(.horizontal)
                 }

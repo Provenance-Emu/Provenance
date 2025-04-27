@@ -106,30 +106,34 @@ public struct RetroLogView: View {
                 Spacer()
                 
                 // Log level picker
-                Menu {
-                    Picker("Log Level", selection: $viewModel.minLogLevel) {
-                        Text("Verbose").tag(LogLevel.verbose)
-                        Text("Debug").tag(LogLevel.debug)
-                        Text("Info").tag(LogLevel.info)
-                        Text("Warning").tag(LogLevel.warning)
-                        Text("Error").tag(LogLevel.error)
+                if #available(tvOS 17.0, *) {
+                    Menu {
+                        Picker("Log Level", selection: $viewModel.minLogLevel) {
+                            Text("Verbose").tag(LogLevel.verbose)
+                            Text("Debug").tag(LogLevel.debug)
+                            Text("Info").tag(LogLevel.info)
+                            Text("Warning").tag(LogLevel.warning)
+                            Text("Error").tag(LogLevel.error)
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text("Level: \(viewModel.minLogLevel.name)")
+                                .font(.system(size: 12))
+                                .foregroundColor(RetroTheme.retroBlue)
+                            
+                            Image(systemName: "chevron.down")
+                                .font(.system(size: 10))
+                                .foregroundColor(RetroTheme.retroBlue)
+                        }
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 4)
+                                .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
+                        )
                     }
-                } label: {
-                    HStack(spacing: 4) {
-                        Text("Level: \(viewModel.minLogLevel.name)")
-                            .font(.system(size: 12))
-                            .foregroundColor(RetroTheme.retroBlue)
-                        
-                        Image(systemName: "chevron.down")
-                            .font(.system(size: 10))
-                            .foregroundColor(RetroTheme.retroBlue)
-                    }
-                    .padding(.vertical, 4)
-                    .padding(.horizontal, 8)
-                    .background(
-                        RoundedRectangle(cornerRadius: 4)
-                            .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
-                    )
+                } else {
+                    // TODO: tvOS menu
                 }
                 
                 // Auto-scroll toggle
@@ -344,7 +348,9 @@ public struct RetroLogView: View {
                 }
                 
                 // Copy to clipboard
+                #if !os(tvOS)
                 UIPasteboard.general.string = logText
+                #endif
                 
                 // Show visual feedback
                 withAnimation(.easeInOut(duration: 0.3)) {
@@ -358,9 +364,11 @@ public struct RetroLogView: View {
                     }
                 }
                 
+                #if !os(tvOS)
                 // Provide haptic feedback
                 let generator = UIImpactFeedbackGenerator(style: .medium)
                 generator.impactOccurred()
+                #endif
                 
                 // Log the action
                 DLOG("Copied log entry to clipboard: \(log.id)")

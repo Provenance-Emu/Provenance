@@ -262,12 +262,13 @@ public extension PVFile {
                 
                 #if os(tvOS)
                 let isDocumentsDir = path.contains("Documents") || path.contains("Caches")
+                let useiCloudDocs = false
                 #else
                 let isDocumentsDir = path.contains("Documents")
-                #endif
-
                 let useiCloudDocs = Defaults[.iCloudSync] && Defaults[.iCloudSyncMode] == .iCloudDrive
+                #endif
                 
+                // If we're using CloudKit, use the local documents directory
                 if isDocumentsDir {
                     if useiCloudDocs {
                         let iCloudBase = URL.iCloudContainerDirectory

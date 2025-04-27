@@ -104,11 +104,13 @@ public struct RetroMessageRow: View {
                 }
             }
         )
+        #if !os(tvOS)
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.2)) {
                 isHovering = hovering
             }
         }
+        #endif
         .padding(.horizontal, 4)
         .padding(.vertical, 2)
     }

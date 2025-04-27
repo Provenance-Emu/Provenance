@@ -9,6 +9,16 @@
 import Foundation
 import CloudKit
 import Combine
+import PVLogging
+import PVSupport
+import UIKit
+import PVHashing
+import RealmSwift
+import RxRealm
+import RxSwift
+import PVPrimitives
+import PVFileSystem
+import PVRealm
 
 /// Error thrown when an operation times out
 struct TimeoutError: Error {}
@@ -37,17 +47,8 @@ func withTimeout<T>(timeout: UInt64, operation: @escaping () async throws -> T) 
         return result
     }
 }
-import PVLogging
-import PVSupport
-import UIKit
-import PVHashing
-import RealmSwift
-import RxRealm
-import RxSwift
-import PVPrimitives
-import PVFileSystem
-import PVRealm
 
+#if !os(tvOS) // No Cloud Drive on tvOS
 /// Errors specific to file operations
 public enum FileOperationError: Error {
     case downloadFailed
@@ -137,6 +138,7 @@ public actor FileOperationQueue {
         return (operations.count, runningOperations)
     }
 }
+#endif // !tvOS
 
 public enum iCloudConstants {
     public static let defaultProvenanceContainerIdentifier = "iCloud.org.provenance-emu.provenance"
@@ -144,7 +146,6 @@ public enum iCloudConstants {
     public static let containerIdentifier =  (Bundle.main.infoDictionary?["NSUbiquitousContainers"] as? [String: AnyObject])?.keys.first ?? defaultProvenanceContainerIdentifier
 }
 
-// Remove duplicate class declaration
 
 public enum SyncError: Error {
     case noUbiquityURL

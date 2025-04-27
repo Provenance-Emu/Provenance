@@ -376,6 +376,7 @@ public class ImportProgressViewModel: ObservableObject {
     }
 
     /// Sets up subscriptions specifically for iCloud file recovery notifications.
+#if !os(tvOS)
     private func setupFileRecoverySubscriptions() {
         let nc = NotificationCenter.default
         let recoveryID = self.fileRecoveryProgressID
@@ -452,6 +453,11 @@ public class ImportProgressViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
+    #else // tvOS
+    private func setupFileRecoverySubscriptions() {
+        // No-op for tvOS
+    }
+    #endif
 
     /// Updates the `shouldShow` property based on current activity.
     private func updateShowState() {

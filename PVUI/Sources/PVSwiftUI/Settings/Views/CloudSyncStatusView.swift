@@ -84,7 +84,9 @@ public struct CloudSyncStatusView: View {
                                         .tag(mode)
                                 }
                             }
+                            #if !os(tvOS)
                             .pickerStyle(MenuPickerStyle())
+                            #endif
                             .onChange(of: currentiCloudSyncMode) { newMode in
                                 handleSyncModeChange(newMode)
                             }

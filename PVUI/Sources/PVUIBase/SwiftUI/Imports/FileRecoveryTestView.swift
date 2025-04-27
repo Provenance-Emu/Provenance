@@ -192,11 +192,13 @@ public struct FileRecoveryTestView: View {
     
     private var fileSystemTestButtons: some View {
         VStack(spacing: 12) {
+            #if !os(tvOS)
             testButton(title: "Trigger Real File Recovery", color: RetroTheme.retroBlue) {
                 Task {
                     await iCloudSync.manuallyTriggerFileRecovery()
                 }
             }
+            #endif
             
             testButton(title: "Simulate File Recovery", color: RetroTheme.retroPurple) {
                 simulateFileRecovery()
@@ -435,6 +437,7 @@ public struct FileRecoveryTestView: View {
     
     // MARK: - Simulation Methods
     
+    #if !os(tvOS)
     private func simulateFileRecovery() {
         let total = 50
         
@@ -459,6 +462,9 @@ public struct FileRecoveryTestView: View {
             NotificationCenter.default.post(name: iCloudSync.iCloudFileRecoveryCompleted, object: nil)
         }
     }
+    #else
+    private func simulateFileRecovery() { /* NO-OP */ }
+    #endif
     
     private func simulateTemporaryFileCleanup() {
         let total = 30

@@ -40,32 +40,36 @@ public struct CloudKitDiagnosticView: View {
                 
                 Spacer()
                 
-                Menu {
-                    Button(action: {
-                        Task {
-                            await viewModel.refreshAllRecords()
+                if #available(tvOS 17.0, *) {
+                    Menu {
+                        Button(action: {
+                            Task {
+                                await viewModel.refreshAllRecords()
+                            }
+                        }) {
+                            Label("Refresh All Records", systemImage: "arrow.clockwise")
                         }
-                    }) {
-                        Label("Refresh All Records", systemImage: "arrow.clockwise")
-                    }
-                    
-                    Button(action: {
-                        Task {
-                            await viewModel.checkSchemaStatus()
+                        
+                        Button(action: {
+                            Task {
+                                await viewModel.checkSchemaStatus()
+                            }
+                        }) {
+                            Label("Check Schema Status", systemImage: "checklist")
                         }
-                    }) {
-                        Label("Check Schema Status", systemImage: "checklist")
+                        
+                        Button(action: {
+                            showingActionSheet = true
+                        }) {
+                            Label("Delete All Records", systemImage: "trash")
+                                .foregroundColor(.red)
+                        }
+                    } label: {
+                        Label("Actions", systemImage: "ellipsis.circle")
+                            .foregroundColor(.retroBlue)
                     }
-                    
-                    Button(action: {
-                        showingActionSheet = true
-                    }) {
-                        Label("Delete All Records", systemImage: "trash")
-                            .foregroundColor(.red)
-                    }
-                } label: {
-                    Label("Actions", systemImage: "ellipsis.circle")
-                        .foregroundColor(.retroBlue)
+                } else {
+                    // Fallback on earlier versions
                 }
             }
             .padding()

@@ -428,9 +428,11 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         PVEmulatorConfiguration.initICloud()
         
         // Check for files stuck in iCloud Drive at startup
+        #if !os(tvOS)
         Task {
             await iCloudSync.checkForStuckFilesInICloudDrive()
         }
+        #endif
         
         // Initialize CloudKit for all platforms
         initializeCloudKit()

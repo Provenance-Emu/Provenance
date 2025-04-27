@@ -69,6 +69,7 @@ public struct RetroStatusViewModifier: ViewModifier {
         .onReceive(NotificationCenter.default.publisher(for: Notification.Name("WebServerStatusChanged"))) { _ in
             showStatusView()
         }
+        #if !os(tvOS)
         .onReceive(NotificationCenter.default.publisher(for: iCloudSync.iCloudFileRecoveryStarted)) { _ in
             showStatusView()
         }
@@ -78,6 +79,7 @@ public struct RetroStatusViewModifier: ViewModifier {
         .onReceive(NotificationCenter.default.publisher(for: iCloudSync.iCloudFileRecoveryCompleted)) { _ in
             showStatusView()
         }
+        #endif
     }
     
     /// Show the status view and start the auto-hide timer if configured

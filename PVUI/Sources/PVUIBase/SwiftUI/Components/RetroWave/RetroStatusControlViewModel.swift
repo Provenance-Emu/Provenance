@@ -267,9 +267,11 @@ final class RetroStatusControlViewModel: ObservableObject {
     public func recoverFiles() {
         ILOG("Manual file recovery requested from ViewModel.")
         ButtonSoundGenerator.shared.playSound(.click2) // Use a valid sound like .click2
+        #if !os(tvOS)
         Task {
             await iCloudSync.checkForStuckFilesInICloudDrive()
         }
+        #endif
         Task { @MainActor in
             self.temporaryStatusMessage = "Manual recovery started..."
             self.fileRecoveryState = .inProgress // Set state immediately
@@ -297,8 +299,6 @@ final class RetroStatusControlViewModel: ObservableObject {
         // --- Web Server Upload Progress ---
         nc.addObserver(self, selector: #selector(handleWebServerUploadProgress), name: Notification.Name("PVWebServerUploadProgressNotification"), object: nil)
         
-        // --- File Pending Recovery --- (iCloudSync)
-        nc.addObserver(self, selector: #selector(handleFilePendingRecovery(_:)), name: iCloudSync.iCloudFilePendingRecovery, object: nil)
         
         // --- Archive Extraction --- (PVSupport standard notifications)
         nc.addObserver(self, selector: #selector(handleArchiveExtractionStarted(_:)), name: .archiveExtractionStarted, object: nil)
@@ -306,11 +306,16 @@ final class RetroStatusControlViewModel: ObservableObject {
         nc.addObserver(self, selector: #selector(handleArchiveExtractionCompleted(_:)), name: .archiveExtractionCompleted, object: nil)
         nc.addObserver(self, selector: #selector(handleArchiveExtractionFailed(_:)), name: .archiveExtractionFailed, object: nil)
         
+        #if !os(tvOS)
+        // --- File Pending Recovery --- (iCloudSync)
+        nc.addObserver(self, selector: #selector(handleFilePendingRecovery(_:)), name: iCloudSync.iCloudFilePendingRecovery, object: nil)
+
         // --- iCloud File Recovery Notifications ---
         nc.addObserver(self, selector: #selector(handleFileRecoveryStarted(_:)), name: iCloudSync.iCloudFileRecoveryStarted, object: nil)
         nc.addObserver(self, selector: #selector(handleFileRecoveryProgress(_:)), name: iCloudSync.iCloudFileRecoveryProgress, object: nil)
         nc.addObserver(self, selector: #selector(handleFileRecoveryCompleted(_:)), name: iCloudSync.iCloudFileRecoveryCompleted, object: nil)
         nc.addObserver(self, selector: #selector(handleFileRecoveryError(_:)), name: iCloudSync.iCloudFileRecoveryError, object: nil)
+        #endif
     }
     
     /// Updates the view model's web server state properties from the PVWebServer shared instance.

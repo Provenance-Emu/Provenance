@@ -57,11 +57,13 @@ public class ImportStatusViewModel: ObservableObject {
         }
         
         // Observe file recovery progress
+        #if !os(tvOS)
         NotificationCenter.default.publisher(for: iCloudSync.iCloudFileRecoveryProgress)
             .sink { [weak self] _ in
                 self?.isVisible = true
             }
             .store(in: &cancellables)
+        #endif
     }
     
     /// Refresh the queue items from the game importer

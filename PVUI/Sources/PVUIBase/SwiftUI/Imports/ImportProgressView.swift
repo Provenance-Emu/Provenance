@@ -151,8 +151,9 @@ public struct ImportProgressView: View {
             }
             
             // Progress bar
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
+            WithPerceptionTracking {
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
                     // Background track
                     Rectangle()
                         .fill(Color.black.opacity(0.3))
@@ -168,9 +169,10 @@ public struct ImportProgressView: View {
                         ))
                         .frame(width: max(geometry.size.width * CGFloat(viewModel.syncProgress ?? 0), 0), height: 6)
                         .cornerRadius(3)
+                    }
                 }
+                .frame(height: 6)
             }
-            .frame(height: 6)
             
             // Additional sync info
             if let totalFiles = viewModel.totalSyncFiles, totalFiles > 0 {
@@ -212,8 +214,9 @@ public struct ImportProgressView: View {
             }
             
             // Progress bar
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
+            WithPerceptionTracking {
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
                     // Background track
                     Rectangle()
                         .fill(Color.black.opacity(0.3))
@@ -229,9 +232,10 @@ public struct ImportProgressView: View {
                         ))
                         .frame(width: max(geometry.size.width * CGFloat(viewModel.currentImportProgress), 0), height: 6)
                         .cornerRadius(3)
+                    }
                 }
+                .frame(height: 6)
             }
-            .frame(height: 6)
             
             // Queue status
             HStack(spacing: 8) {

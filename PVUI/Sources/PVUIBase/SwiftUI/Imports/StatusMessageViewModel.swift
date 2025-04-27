@@ -61,6 +61,7 @@ public class StatusMessageViewModel: ObservableObject {
 
     // MARK: - File Recovery Observers
 
+    #if !os(tvOS)
     private func setupFileRecoveryObservers() {
         // Subscribe to notifications for file recovery progress
         NotificationCenter.default.publisher(for: iCloudSync.iCloudFileRecoveryProgress)
@@ -83,6 +84,9 @@ public class StatusMessageViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
+    #else
+    private func setupFileRecoveryObservers() { }
+    #endif
 
     // MARK: - ROM Scanning Observers
 

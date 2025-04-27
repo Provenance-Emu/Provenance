@@ -108,6 +108,7 @@ public class StatusMessageManager: ObservableObject {
         }
         
         // Subscribe to notifications for file recovery started
+        #if !os(tvOS)
         NotificationCenter.default.publisher(for: iCloudSync.iCloudFileRecoveryStarted)
             .sink { [weak self] _ in
                 DispatchQueue.main.async {
@@ -132,7 +133,8 @@ public class StatusMessageManager: ObservableObject {
                 }
             }
             .store(in: &cancellables)
-            
+        #endif // !os(tvOS)
+        
         // Subscribe to disk space warnings
         NotificationCenter.default.publisher(for: .diskSpaceWarning)
             .sink { [weak self] notification in
