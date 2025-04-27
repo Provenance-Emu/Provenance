@@ -27,6 +27,7 @@ import Perception
 import SwiftUI
 import Defaults
 import PVFeatureFlags
+import BackgroundTasks
 
 #if canImport(FirebaseCore)
 import FirebaseCore
@@ -329,10 +330,6 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
     private var autoLockTask: Task<Void, Never>?
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        // Register BGTaskScheduler handlers at the very beginning of app launch
-        // This MUST happen before any other initialization
-        registerBGTaskSchedulerHandlers()
-
         #if canImport(FirebaseCore)
         FirebaseApp.configure()
         #endif
@@ -341,6 +338,11 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 
         initializeAppComponents()
         configureApplication(application)
+        
+        // Register BGTaskScheduler handlers at app launch
+        // This must be after DB registration
+        registerBGTaskSchedulerHandlers()
+        
         return true
     }
 
@@ -451,7 +453,7 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 
         // Check for files stuck in iCloud Drive at startup
         #if !os(tvOS)
-        Task {
+        Task.detached {
             await iCloudSync.checkForStuckFilesInICloudDrive()
         }
         #endif
