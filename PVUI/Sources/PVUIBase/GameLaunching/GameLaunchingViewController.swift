@@ -278,7 +278,10 @@ extension GameLaunchingViewController where Self: UIViewController {
         let activity = NSUserActivity(activityType: "com.provenance-emu.provenance.openMD5")
         activity.title = "Open \(game.title) in Provenance"
         activity.userInfo = ["url": "provenance://open?md5=\(game.md5)"]
-        activity.isEligibleForSearch = true
+        activity.isEligibleForSearch = false
+        activity.isEligibleForPublicIndexing = true
+        activity.isEligibleForHandoff = true
+        
         #if !os(tvOS)
         activity.isEligibleForPrediction = true
         activity.persistentIdentifier = NSUserActivityPersistentIdentifier("com.provenance-emu.provenance.openMD5")
