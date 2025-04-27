@@ -21,6 +21,7 @@
 
 ## Other
 
+- [ ] Hookup PVMediaCache trimDiskCache, fix it, and make it work with the status info thing (maybe add a force button too)
 - [ ] retroarch audio visualizer
 - [ ] test v-sync
 - [ ] RETRO_ENVIRONMENT_SET_PROC_ADDRESS_CALLBACK for Melon DS specific screen layout, reference JesseTG message in Discord for details, https://github.com/libretro/RetroArch/blob/master/libretro-common/include/libretro.h#L1366-L1387
