@@ -140,44 +140,83 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         
         /// Refresh the library
         NotificationCenter.default.publisher(for: .PVRefreshLibrary)
-            .flatMap { _ in
+            .receive(on: DispatchQueue.global(qos: .userInitiated)) // Move off main thread for potentially long refresh
+            .flatMap { _ -> Future<Void, Error> in // Explicit return type
                 Future<Void, Error> { promise in
-                    Task {
-                        do {
-                            //                            try RomDatabase.sharedInstance.deleteAllGames()
-                            Task { @MainActor in
-                                if let _ = self.gameLibraryViewController {
-                                    self.gameLibraryViewController?.checkROMs(false)
-                                } else {
-                                    if let updates = self.appState?.libraryUpdatesController {
-                                        await updates.importROMDirectories()
-                                    }
-                                }
-                            }
-                            Task.detached {
-                                RomDatabase.sharedInstance.recoverAllSaveStates()
-                            }
-                            if PVFeatureFlagsManager.shared.romPathMigrator {
-                                Task.detached {
-                                    do {
-                                        try await self.appState?.gameLibrary?.romMigrator.fixOrphanedFiles()
-                                        try await self.appState?.gameLibrary?.romMigrator.fixPartialPaths()
-                                    } catch {
-                                        ELOG("Error: \(error.localizedDescription)")
-                                    }
-                                }
-                            }
-                            promise(.success(()))
-                        } catch {
-                            ELOG("Failed to refresh all objects. \(error.localizedDescription)")
-                            promise(.failure(error))
+                    Task.detached(priority: .userInitiated) { [weak self] in // Detached task for the whole refresh operation
+                        guard let self = self else {
+                            promise(.failure(NSError(domain: "PVAppDelegate", code: 0, userInfo: [NSLocalizedDescriptionKey: "AppDelegate deallocated"])))
+                            return
                         }
-                    }
+                        
+                        ILOG("Starting library refresh process...")
+                        var checkRomTask: Task<Void, Never>?
+                        var recoverSavesTask: Task<Void, Never>?
+                        var fixFilesTask: Task<Void, Error>? // Can throw
+                        
+                        do {
+                            // Launch tasks concurrently using Task handles
+                            checkRomTask = Task { @MainActor [weak self] in // Needs main actor potentially
+                                guard let self = self else { return }
+                                if let libraryVC = self.gameLibraryViewController {
+                                     libraryVC.checkROMs(false) // Assuming this triggers necessary background work
+                                     DLOG("checkROMs called.")
+                                } else if let updates = self.appState?.libraryUpdatesController {
+                                     await updates.importROMDirectories()
+                                     DLOG("importROMDirectories called.")
+                                } else {
+                                     WLOG("Neither gameLibraryViewController nor libraryUpdatesController available for ROM check.")
+                                }
+                            }
+                            
+                            recoverSavesTask = Task.detached { // Can run detached
+                                DLOG("Starting save state recovery...")
+                                RomDatabase.sharedInstance.recoverAllSaveStates()
+                                DLOG("Finished save state recovery.")
+                            }
+                            
+                            if await PVFeatureFlagsManager.shared.romPathMigrator {
+                                fixFilesTask = Task.detached { @MainActor in
+                                    DLOG("Starting ROM path migration fixes...")
+                                    try await AppState.shared.gameLibrary?.romMigrator.fixOrphanedFiles()
+                                    try await AppState.shared.gameLibrary?.romMigrator.fixPartialPaths()
+                                    DLOG("Finished ROM path migration fixes.")
+                                }
+                            }
+                            
+                            // Await all necessary tasks
+                            await checkRomTask?.value // Wait for check/import to finish
+                            await recoverSavesTask?.value // Wait for save recovery
+                            
+                            if let fixTask = fixFilesTask {
+                                try await fixTask.value // Wait for migration and propagate error if any
+                            }
+                            
+                            ILOG("Library refresh process completed successfully.")
+                            // Post completion notification *before* resolving the promise
+                            NotificationCenter.default.post(name: .PVRefreshLibraryFinished, object: nil)
+                            promise(.success(())) // Signal Future success AFTER all tasks are done
+                            
+                        } catch {
+                            ELOG("Library refresh process failed: \(error.localizedDescription)")
+                            promise(.failure(error)) // Signal Future failure
+                        }
+                     }
+                 }
+             }
+            .receive(on: DispatchQueue.main) // Switch back to main thread for sink
+            .sink(receiveCompletion: { completion in
+                switch completion {
+                case .finished:
+                    ILOG("Library refresh Future completed. Posting PVRefreshLibraryFinished notification.")
+                    NotificationCenter.default.post(name: .PVRefreshLibraryFinished, object: nil)
+                case .failure(let error):
+                    ELOG("Library refresh Future failed: \(error.localizedDescription). Not posting finished notification.")
+                    // Optionally post an error notification here if needed
                 }
-            }
-            .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+            }, receiveValue: { _ in /* No value emitted by Future<Void, Error> */ })
             .store(in: &cancellables)
-
+        
         /// Reset the library
         NotificationCenter.default.publisher(for: .PVResetLibrary)
             .flatMap { _ in
