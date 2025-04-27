@@ -137,7 +137,7 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
             NotificationCenter.default.post(name: NSNotification.Name.PVReimportLibrary, object: nil)
         }
-        
+
         /// Refresh the library
         NotificationCenter.default.publisher(for: .PVRefreshLibrary)
             .receive(on: DispatchQueue.global(qos: .userInitiated)) // Move off main thread for potentially long refresh
@@ -148,12 +148,12 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
                             promise(.failure(NSError(domain: "PVAppDelegate", code: 0, userInfo: [NSLocalizedDescriptionKey: "AppDelegate deallocated"])))
                             return
                         }
-                        
+
                         ILOG("Starting library refresh process...")
                         var checkRomTask: Task<Void, Never>?
                         var recoverSavesTask: Task<Void, Never>?
                         var fixFilesTask: Task<Void, Error>? // Can throw
-                        
+
                         do {
                             // Launch tasks concurrently using Task handles
                             checkRomTask = Task { @MainActor [weak self] in // Needs main actor potentially
@@ -168,13 +168,13 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
                                      WLOG("Neither gameLibraryViewController nor libraryUpdatesController available for ROM check.")
                                 }
                             }
-                            
+
                             recoverSavesTask = Task.detached { // Can run detached
                                 DLOG("Starting save state recovery...")
                                 RomDatabase.sharedInstance.recoverAllSaveStates()
                                 DLOG("Finished save state recovery.")
                             }
-                            
+
                             if await PVFeatureFlagsManager.shared.romPathMigrator {
                                 fixFilesTask = Task.detached { @MainActor in
                                     DLOG("Starting ROM path migration fixes...")
@@ -183,20 +183,20 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
                                     DLOG("Finished ROM path migration fixes.")
                                 }
                             }
-                            
+
                             // Await all necessary tasks
                             await checkRomTask?.value // Wait for check/import to finish
                             await recoverSavesTask?.value // Wait for save recovery
-                            
+
                             if let fixTask = fixFilesTask {
                                 try await fixTask.value // Wait for migration and propagate error if any
                             }
-                            
+
                             ILOG("Library refresh process completed successfully.")
                             // Post completion notification *before* resolving the promise
                             NotificationCenter.default.post(name: .PVRefreshLibraryFinished, object: nil)
                             promise(.success(())) // Signal Future success AFTER all tasks are done
-                            
+
                         } catch {
                             ELOG("Library refresh process failed: \(error.localizedDescription)")
                             promise(.failure(error)) // Signal Future failure
@@ -216,7 +216,7 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
                 }
             }, receiveValue: { _ in /* No value emitted by Future<Void, Error> */ })
             .store(in: &cancellables)
-        
+
         /// Reset the library
         NotificationCenter.default.publisher(for: .PVResetLibrary)
             .flatMap { _ in
@@ -329,6 +329,10 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
     private var autoLockTask: Task<Void, Never>?
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        // Register BGTaskScheduler handlers at the very beginning of app launch
+        // This MUST happen before any other initialization
+        registerBGTaskSchedulerHandlers()
+
         #if canImport(FirebaseCore)
         FirebaseApp.configure()
         #endif
@@ -338,6 +342,24 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         initializeAppComponents()
         configureApplication(application)
         return true
+    }
+
+    /// Register BGTaskScheduler handlers at the earliest possible point in the app lifecycle
+    private func registerBGTaskSchedulerHandlers() {
+        DLOG("Registering BGTaskScheduler handlers at app launch")
+
+        // Register background refresh task for CloudKit sync
+        BGTaskScheduler.shared.register(forTaskWithIdentifier: "com.provenance-emu.provenance.cloudkit-sync", using: nil) { [weak self] task in
+            guard let self = self else {
+                ELOG("AppDelegate deallocated when handling background task")
+                task.setTaskCompleted(success: false)
+                return
+            }
+
+            self.handleCloudKitSyncTask(task as! BGProcessingTask)
+        }
+
+        DLOG("BGTaskScheduler handlers registered successfully")
     }
 
     // TODO: Move to ProvenanceApp
@@ -350,12 +372,12 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         _initICloud()
         _initUITheme()
         _initThemeListener()
-        
+
         #if canImport(PVWebServer)
         // Initialize web server notifications
         setupWebServerNotifications()
         #endif
-        
+
         // Register intent handler for Siri shortcuts
 #if false
         #if os(iOS)
@@ -426,17 +448,17 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 
     func _initICloud() {
         PVEmulatorConfiguration.initICloud()
-        
+
         // Check for files stuck in iCloud Drive at startup
         #if !os(tvOS)
         Task {
             await iCloudSync.checkForStuckFilesInICloudDrive()
         }
         #endif
-        
+
         // Initialize CloudKit for all platforms
         initializeCloudKit()
-        
+
         // Keep the legacy iCloud document sync code in place but don't use it by default
         // We can uncomment this if we need to revert back to the old sync method
         #if !os(tvOS)

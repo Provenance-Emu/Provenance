@@ -66,32 +66,14 @@ extension PVAppDelegate {
         registerBackgroundTasks()
     }
     
-    /// Register background tasks for CloudKit sync
+    /// Schedule background tasks for CloudKit sync
+    /// Registration is done in the main AppDelegate at app launch
     private func registerBackgroundTasks() {
-        // Only schedule the task - registration is done in the static initializer
+        // Only schedule the task - registration is done in the AppDelegate at launch
         scheduleCloudKitSyncTask()
         
         DLOG("Scheduled background tasks for CloudKit sync")
     }
-    
-    // Static initializer to register BGTaskScheduler early in the app lifecycle
-    static let bgTaskRegistration: Void = {
-        DLOG("Registering background task identifiers early in app lifecycle")
-        
-        // Register background refresh task
-        BGTaskScheduler.shared.register(forTaskWithIdentifier: "com.provenance-emu.provenance.cloudkit-sync", using: nil) { task in
-            // We'll need to handle this differently since we can't reference self in a static context
-            // Get the shared app delegate and forward the task
-            if let appDelegate = UIApplication.shared.delegate as? PVAppDelegate {
-                appDelegate.handleCloudKitSyncTask(task as! BGProcessingTask)
-            } else {
-                ELOG("Could not get app delegate to handle background task")
-                task.setTaskCompleted(success: false)
-            }
-        }
-        
-        DLOG("Background task identifiers registered")
-    }()
     
     /// Schedule a background task for CloudKit sync
     private func scheduleCloudKitSyncTask() {
