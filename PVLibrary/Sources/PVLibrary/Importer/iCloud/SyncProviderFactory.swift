@@ -10,9 +10,7 @@ import Foundation
 import PVLogging
 import PVSettings
 import Defaults
-#if !os(tvOS)
 import CloudKit
-#endif
 
 /// Factory for creating sync providers
 public class SyncProviderFactory {
