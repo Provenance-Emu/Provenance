@@ -167,7 +167,7 @@ public struct RetroStatusControlView: View {
                         .frame(height: 2)
                         .overlay(RetroTheme.retroGradient)
                         .shadow(color: RetroTheme.retroPurple.opacity(0.5), radius: 2, x: 0, y: 0)
-                    
+
                     // --- File Recovery Progress ---
                     if viewModel.fileRecoveryState == .inProgress, let progressInfo = viewModel.fileRecoveryProgressInfo {
                         VStack(alignment: .leading, spacing: 4) {
@@ -235,7 +235,7 @@ public struct RetroStatusControlView: View {
 
                     // --- Manual Recovery Button ---
                     if viewModel.fileRecoveryState == .error || (viewModel.fileRecoveryState == .idle && !viewModel.pendingRecoveryFiles.isEmpty) {
-                        
+
                         // --- Pending iCloud Files (New) ---
                         if let pendingCount = viewModel.pendingRecoveryFileCount, pendingCount > 0 { // Check count > 0
                             Text("Files Pending iCloud Recovery: \(pendingCount)")
@@ -464,171 +464,6 @@ public struct RetroStatusControlView: View {
                 }
                 .padding(.horizontal)
             }
-
-            // MARK: Web Server & System Stats Section
-            VStack(alignment: .leading, spacing: 12) {
-                // Create a PVWebServerStatus object from our view model properties
-                let serverAddress = viewModel.webServerIPAddress.flatMap { ip in
-                    viewModel.webServerPort.map { port in
-                        "http://\(ip):\(port)"
-                    }
-                }
-
-                // Pass the status object and toggle function
-                RetroWebServerStatusView(
-                    status: PVWebServerStatus(isRunning: viewModel.isWebServerRunning, serverAddress: serverAddress),
-                    startServer: viewModel.toggleWebServer
-                )
-
-                // Display error if present
-                if let error = viewModel.webServerError {
-                    Text("Error: \(error)")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(RetroTheme.retroPink)
-                        .padding(.horizontal)
-                }
-
-                // iCloud Sync Status Indicator - Always visible section
-                HStack(spacing: 10) {
-                    // Status indicator with glow effect
-                    Circle()
-                        .fill(viewModel.isICloudSyncEnabled ? RetroTheme.retroBlue : RetroTheme.retroPink)
-                        .frame(width: 10, height: 10)
-                        .shadow(color: (viewModel.isICloudSyncEnabled ? RetroTheme.retroBlue : RetroTheme.retroPink).opacity(0.7), radius: 3, x: 0, y: 0)
-
-                    // Status text with retrowave styling
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("iCLOUD SYNC: \(viewModel.isICloudSyncEnabled ? "ENABLED" : "DISABLED")")
-                            .font(.system(size: 12, weight: .bold, design: .monospaced))
-                            .foregroundColor(viewModel.isICloudSyncEnabled ? RetroTheme.retroBlue : RetroTheme.retroPink)
-                            .shadow(color: (viewModel.isICloudSyncEnabled ? RetroTheme.retroBlue : RetroTheme.retroPink).opacity(0.7), radius: 1, x: 0, y: 0)
-
-                        if !viewModel.isICloudSyncEnabled {
-                            // Disabled state
-                            Text("Enable in Settings to sync your files")
-                                .font(.system(size: 10, weight: .medium, design: .monospaced))
-                                .foregroundColor(.gray)
-                                .frame(height: 14) // Fixed height
-                        } else if let progress = viewModel.cloudKitSyncProgress {
-                            // Active sync with progress
-                            Text("\(progress.current)/\(progress.total) \(progress.detail ?? "")")
-                                .font(.system(size: 10, weight: .medium, design: .monospaced))
-                                .foregroundColor(.gray)
-                                .frame(height: 14) // Fixed height
-                        } else {
-                            // Idle state with pending files info if available
-                            HStack(spacing: 4) {
-                                Text("Idle")
-                                    .font(.system(size: 10, weight: .medium, design: .monospaced))
-                                    .foregroundColor(.gray)
-
-                                if let pendingCount = viewModel.pendingRecoveryFileCount, pendingCount > 0 {
-                                    Text("(\(pendingCount) files pending)")
-                                        .font(.system(size: 10, weight: .medium, design: .monospaced))
-                                        .foregroundColor(RetroTheme.retroPink.opacity(0.8))
-                                }
-                            }
-                            .frame(height: 14) // Fixed height
-                        }
-                    }
-                    .frame(height: 36) // Fixed height container to prevent layout shifts
-
-                    Spacer()
-
-                    // Manual sync button - always visible when enabled
-                    if viewModel.isICloudSyncEnabled {
-                        Button(action: {
-                            DLOG("Manual sync triggered")
-                            viewModel.triggerManualSync()
-                        }) {
-                            Image(systemName: "arrow.clockwise.icloud")
-                                .foregroundColor(RetroTheme.retroBlue)
-                                .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 2, x: 0, y: 0)
-                        }
-                        .buttonStyle(RetroTheme.RetroButtonStyle())
-                    }
-                }
-                .padding(.vertical, 8)
-                .padding(.horizontal, 10)
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.black.opacity(0.3))
-                )
-
-                RetroSystemStatsView() // Assumes this view manages its own state or uses env objects/notifications
-            }
-            .padding(.horizontal)
-
-
-            // MARK: File Access Errors
-            if !viewModel.fileAccessErrors.isEmpty {
-                Divider()
-                    .frame(height: 2)
-                    .overlay(RetroTheme.retroGradient)
-                    .shadow(color: RetroTheme.retroPurple.opacity(0.5), radius: 2, x: 0, y: 0)
-                SwiftUI.Section {
-                    DisclosureGroup("File Access Errors (\(viewModel.fileAccessErrors.count))") {
-                        ScrollView(.vertical) { // Make it scrollable if list gets long
-                            VStack(alignment: .leading) {
-                                ForEach(viewModel.fileAccessErrors.prefix(5)) { errorInfo in // Show latest 5
-                                    VStack(alignment: .leading) {
-                                        Text("\(errorInfo.filename): \(errorInfo.error)")
-                                            .font(.caption)
-                                            .foregroundColor(RetroTheme.retroPink)
-                                        Text("(\(errorInfo.timestamp, style: .time))")
-                                            .font(.caption2)
-                                            .foregroundColor(.gray)
-                                    }
-                                    .padding(.bottom, 2)
-                                }
-                            }
-                        }
-                        .frame(maxHeight: 100) // Limit height
-                    }
-                    .font(.system(size: 14, weight: .medium, design: .rounded))
-                    .foregroundColor(RetroTheme.retroBlue)
-                }
-                .padding(.horizontal)
-            }
-
-            // MARK: Messages
-            Divider()
-                .frame(height: 2)
-                .overlay(RetroTheme.retroGradient)
-                .shadow(color: RetroTheme.retroPurple.opacity(0.5), radius: 2, x: 0, y: 0)
-
-            RetroMessagesView(
-                messages: viewModel.messages,
-                formatTimeInterval: { date in
-                    let formatter = RelativeDateTimeFormatter()
-                    formatter.unitsStyle = .abbreviated
-                    return formatter.localizedString(for: date, relativeTo: Date())
-                },
-                messageTypeColor: { messageType in
-                    switch messageType {
-                    case .error: return RetroTheme.retroPink
-                    case .warning: return .orange
-                    case .info: return RetroTheme.retroBlue
-                    case .success: return .green
-                    case .progress: return RetroTheme.retroPurple
-                    @unknown default: return .gray
-                    }
-                }
-            )
-            .padding(.horizontal)
-
-
-            // MARK: Footer Buttons (e.g., Clear Messages)
-            HStack {
-                Spacer()
-                Button {
-                    viewModel.clearMessages()
-                } label: {
-                    Label("Clear Messages", systemImage: "trash")
-                }
-                .buttonStyle(RetroTheme.RetroButtonStyle())
-            }
-            .padding(.horizontal)
         }
         .padding(.vertical) // Add padding to the main content area
         .frame(maxWidth: .infinity, alignment: .leading)
