@@ -580,12 +580,7 @@ extension PVRootViewController {
             hud.setProgress(0, animated: false)
             
             // Show the HUD
-            if hud.alpha == 0 {
-                hud.alpha = 1
-                UIView.animate(withDuration: 0.3) {
-                    hud.alpha = 1
-                }
-            }
+            hud.show(animated: true)
         case .titleAndProgress(let title, let subtitle, let progress):
             // Set the text with subtitle if available (don't include percentage in text)
             let displayText = subtitle != nil ? "\(title)\n\(subtitle!)" : title
@@ -595,12 +590,7 @@ extension PVRootViewController {
             hud.setProgress(progress, animated: true)
             
             // Show the HUD
-            if hud.alpha == 0 {
-                hud.alpha = 1
-                UIView.animate(withDuration: 0.3) {
-                    hud.alpha = 1
-                }
-            }
+            hud.show(animated: true)
         }
     }
 }

@@ -213,9 +213,28 @@ public class RetroProgressHUD: UIView {
                 hud.containerView.transform = .identity
                 hud.alpha = 1
             }
+        } else {
+            hud.alpha = 1
         }
         
         return hud
+    }
+    
+    /// Show the HUD if it's currently hidden
+    public func show(animated: Bool = true) {
+        if self.alpha == 0 {
+            if animated {
+                self.containerView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+                
+                UIView.animate(withDuration: 0.3) {
+                    self.containerView.transform = .identity
+                    self.alpha = 1
+                }
+            } else {
+                self.alpha = 1
+                self.containerView.transform = .identity
+            }
+        }
     }
     
     /// Hide the HUD
