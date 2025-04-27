@@ -18,12 +18,6 @@ import BackgroundTasks
 extension PVAppDelegate {
     /// Initialize CloudKit for all platforms
     func initializeCloudKit() {
-        
-        // Check for files stuck in iCloud Drive at startup
-        Task {
-            await iCloudSync.checkForStuckFilesInICloudDrive()
-        }
-        
         // Register for remote notifications if iCloud sync is enabled
         if Defaults[.iCloudSync] {
             DLOG("Initializing CloudKit for all platforms")

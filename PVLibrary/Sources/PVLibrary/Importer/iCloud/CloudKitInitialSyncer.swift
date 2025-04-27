@@ -58,25 +58,100 @@ public actor CloudKitInitialSyncer {
     /// - Returns: True if initial sync is needed, false otherwise
     public func isInitialSyncNeeded() async -> Bool {
         do {
-            // Check if we have any records in CloudKit
-            let query = CKQuery(recordType: CloudKitSchema.RecordType.rom, predicate: NSPredicate(value: true))
-            let (results, _) = try await privateDatabase.records(matching: query, resultsLimit: 1)
+            // Check multiple record types, not just ROMs
+            for recordType in [CloudKitSchema.RecordType.rom, 
+                              CloudKitSchema.RecordType.saveState, 
+                              CloudKitSchema.RecordType.file] {
+                
+                DLOG("Checking for existing records of type: \(recordType)")
+                let query = CKQuery(recordType: recordType, predicate: NSPredicate(value: true))
+                
+                // Use a task with timeout to prevent hanging if CloudKit is slow to respond
+                let checkTask = Task {
+                    try await privateDatabase.records(matching: query, resultsLimit: 1)
+                }
+                
+                do {
+                    // Set a 10-second timeout for the query
+                    let (results, _) = try await withTimeout(seconds: 10) { 
+                        try await checkTask.value 
+                    }
+                    
+                    // If we find records of any type, we don't need initial sync
+                    if !results.isEmpty {
+                        DLOG("Found existing \(recordType) records, initial sync not needed")
+                        return false
+                    }
+                } catch is TimeoutError {
+                    ELOG("Timeout checking for \(recordType) records, continuing with other types")
+                    // Cancel the task to clean up resources
+                    checkTask.cancel()
+                    continue
+                } catch {
+                    ELOG("Error checking for \(recordType) records: \(error.localizedDescription)")
+                    // Continue checking other record types
+                    continue
+                }
+            }
             
-            // If we have no records, we need an initial sync
-            return results.isEmpty
+            // If we get here, we found no records of any type
+            DLOG("No existing records found in CloudKit, initial sync needed")
+            return true
         } catch {
             ELOG("Error checking if initial sync is needed: \(error.localizedDescription)")
             return true // Assume we need initial sync if we can't check
         }
     }
     
+    /// Helper function to add timeout to async operations
+    /// - Parameters:
+    ///   - seconds: Timeout in seconds
+    ///   - operation: The async operation to perform
+    /// - Returns: The result of the operation
+    /// - Throws: TimeoutError if the operation times out
+    private func withTimeout<T>(seconds: TimeInterval, operation: @escaping () async throws -> T) async throws -> T {
+        try await withThrowingTaskGroup(of: T.self) { group in
+            // Add the actual operation
+            group.addTask {
+                try await operation()
+            }
+            
+            // Add a timeout task
+            group.addTask {
+                try await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+                throw TimeoutError()
+            }
+            
+            // Return the first result or throw the first error
+            let result = try await group.next()
+            // Cancel the remaining task
+            group.cancelAll()
+            
+            // Unwrap the result (should never be nil since we added at least one task)
+            return result!
+        }
+    }
+    
     /// Perform initial sync of all local files to CloudKit
     /// - Returns: Number of records synced
+    /// Perform initial sync of all local files to CloudKit
+    /// - Parameter forceSync: If true, will perform sync even if it's not needed
+    /// - Returns: Number of records synced
     @discardableResult
-    public func performInitialSync() async -> Int {
+    public func performInitialSync(forceSync: Bool = false) async -> Int {
+        // Check if sync is already in progress
         guard !isInitialSyncInProgress else {
             DLOG("Initial sync already in progress")
             return 0
+        }
+        
+        // Check if sync is needed (unless forced)
+        if !forceSync {
+            let syncNeeded = await isInitialSyncNeeded()
+            if !syncNeeded {
+                DLOG("Initial sync not needed, skipping")
+                return 0
+            }
         }
         
         // Set sync in progress
@@ -96,53 +171,140 @@ public actor CloudKitInitialSyncer {
         // Start analytics tracking
         await CloudKitSyncAnalytics.shared.startSync(operation: "Initial CloudKit Sync")
         
+        // Track overall success
+        var overallSuccess = true
+        var totalCount = 0
+        
+        // Sync ROMs with timeout protection
+        var romCount = 0
         do {
-            // Sync ROMs
-            let romCount = await syncAllROMs()
+            let romSyncTask = Task {
+                await syncAllROMs()
+            }
+            
+            romCount = try await withTimeout(seconds: 300) { // 5-minute timeout
+                try await romSyncTask.value
+            }
+            
             progress.romsTotal = romCount
             progress.romsCompleted = romCount
             await MainActor.run {
                 syncProgressSubject.send(progress)
             }
             
-            // Sync save states
-            let saveStateCount = await syncAllSaveStates()
+            DLOG("Successfully synced \(romCount) ROMs")
+            totalCount += romCount
+        } catch is TimeoutError {
+            ELOG("ROM sync timed out after 5 minutes")
+            overallSuccess = false
+            // Continue with other sync operations
+        } catch {
+            ELOG("Error syncing ROMs: \(error.localizedDescription)")
+            overallSuccess = false
+            // Continue with other sync operations
+        }
+        
+        // Sync save states with timeout protection
+        var saveStateCount = 0
+        do {
+            let saveStateSyncTask = Task {
+                await syncAllSaveStates()
+            }
+            
+            saveStateCount = try await withTimeout(seconds: 300) { // 5-minute timeout
+                try await saveStateSyncTask.value
+            }
+            
             progress.saveStatesTotal = saveStateCount
             progress.saveStatesCompleted = saveStateCount
             await MainActor.run {
                 syncProgressSubject.send(progress)
             }
             
-            // Sync BIOS files
-            let biosCount = await syncAllBIOSFiles()
+            DLOG("Successfully synced \(saveStateCount) save states")
+            totalCount += saveStateCount
+        } catch is TimeoutError {
+            ELOG("Save state sync timed out after 5 minutes")
+            overallSuccess = false
+            // Continue with other sync operations
+        } catch {
+            ELOG("Error syncing save states: \(error.localizedDescription)")
+            overallSuccess = false
+            // Continue with other sync operations
+        }
+        
+        // Sync BIOS files with timeout protection
+        var biosCount = 0
+        do {
+            let biosSyncTask = Task {
+                await syncAllBIOSFiles()
+            }
+            
+            biosCount = try await withTimeout(seconds: 180) { // 3-minute timeout
+                try await biosSyncTask.value
+            }
+            
             progress.biosTotal = biosCount
             progress.biosCompleted = biosCount
             await MainActor.run {
                 syncProgressSubject.send(progress)
             }
             
-            // Sync all non-database files (Battery States, Screenshots, DeltaSkins)
-            let nonDatabaseFileCounts = await syncAllNonDatabaseFiles()
+            DLOG("Successfully synced \(biosCount) BIOS files")
+            totalCount += biosCount
+        } catch is TimeoutError {
+            ELOG("BIOS sync timed out after 3 minutes")
+            overallSuccess = false
+            // Continue with other sync operations
+        } catch {
+            ELOG("Error syncing BIOS files: \(error.localizedDescription)")
+            overallSuccess = false
+            // Continue with other sync operations
+        }
+        
+        // Sync all non-database files with timeout protection
+        var nonDatabaseFileCounts: [String: Int] = [:]
+        do {
+            let nonDbSyncTask = Task {
+                await syncAllNonDatabaseFiles()
+            }
+            
+            nonDatabaseFileCounts = try await withTimeout(seconds: 300) { // 5-minute timeout
+                try await nonDbSyncTask.value
+            }
             
             // Extract individual counts for logging
             let batteryStateCount = nonDatabaseFileCounts["Battery States"] ?? 0
             let screenshotCount = nonDatabaseFileCounts["Screenshots"] ?? 0
             let deltaSkinCount = nonDatabaseFileCounts["DeltaSkins"] ?? 0
             
-            // Calculate total
-            let totalCount = romCount + saveStateCount + biosCount + batteryStateCount + screenshotCount + deltaSkinCount
-            
-            // Complete progress
-            progress.isComplete = true
-            await MainActor.run {
-                syncProgressSubject.send(progress)
-            }
-            
-            // Set sync complete
-            isInitialSyncInProgress = false
-            
-            // Record successful sync
+            DLOG("Successfully synced \(batteryStateCount) battery states, \(screenshotCount) screenshots, and \(deltaSkinCount) Delta skins")
+            totalCount += batteryStateCount + screenshotCount + deltaSkinCount
+        } catch is TimeoutError {
+            ELOG("Non-database file sync timed out after 5 minutes")
+            overallSuccess = false
+        } catch {
+            ELOG("Error syncing non-database files: \(error.localizedDescription)")
+            overallSuccess = false
+        }
+        
+        // Complete progress
+        progress.isComplete = true
+        await MainActor.run {
+            syncProgressSubject.send(progress)
+        }
+        
+        // Set sync complete
+        isInitialSyncInProgress = false
+        
+        // Record sync result
+        if overallSuccess {
             await CloudKitSyncAnalytics.shared.recordSuccessfulSync()
+            
+            // Extract individual counts for logging
+            let batteryStateCount = nonDatabaseFileCounts["Battery States"] ?? 0
+            let screenshotCount = nonDatabaseFileCounts["Screenshots"] ?? 0
+            let deltaSkinCount = nonDatabaseFileCounts["DeltaSkins"] ?? 0
             
             DLOG("""
                  Initial CloudKit sync completed successfully.
@@ -154,18 +316,19 @@ public actor CloudKitInitialSyncer {
                  - \(screenshotCount) screenshot files
                  - \(deltaSkinCount) Delta skin files
                  """)
+        } else {
+            // Record partial success
+            let error = NSError(domain: "com.provenance.cloudkit", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Partial sync failure"])
+            await CloudKitSyncAnalytics.shared.recordFailedSync(error: error)
             
-            return totalCount
-        } catch {
-            // Set sync complete
-            isInitialSyncInProgress = false
-            
-            // Record failed sync
-            CloudKitSyncAnalytics.shared.recordFailedSync(error: error)
-            
-            ELOG("Error performing initial CloudKit sync: \(error.localizedDescription)")
-            return 0
+            ELOG("""
+                 Initial CloudKit sync completed with some errors.
+                 Synced \(totalCount) records successfully, but some operations failed.
+                 See previous log messages for specific errors.
+                 """)
         }
+        
+        return totalCount
     }
     
     // MARK: - Private Methods

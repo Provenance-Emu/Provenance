@@ -66,6 +66,24 @@ public struct CloudSyncSettingsView: View {
                     }
                 }
                 .disabled(!iCloudSyncEnabled)
+                
+                NavigationLink(destination: CloudKitDiagnosticView()) {
+                    HStack {
+                        Image(systemName: "icloud.bolt.fill")
+                            .foregroundColor(.retroPink)
+                            .frame(width: 24, height: 24)
+                        
+                        VStack(alignment: .leading) {
+                            Text("CloudKit Diagnostic")
+                                .font(.body)
+                            
+                            Text("Debug CloudKit sync issues and view raw records")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                .disabled(!iCloudSyncEnabled)
             }
             
             Section(header: Text("Sync Actions")) {

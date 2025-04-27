@@ -218,7 +218,6 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 .padding(.trailing, padding)
             }
             .allowsHitTesting(true)
-            .padding(.trailing, padding)
         }
         .onAppear {
             gameLibraryScale = Defaults[.gameLibraryScale]

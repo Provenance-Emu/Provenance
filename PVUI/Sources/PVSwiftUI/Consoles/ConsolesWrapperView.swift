@@ -65,6 +65,8 @@ struct ConsolesWrapperView: SwiftUI.View {
     @ObservedObject var viewModel: PVRootViewModel
     weak var rootDelegate: (PVRootDelegate & PVMenuDelegate)!
 
+    @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = false
+
     @State private var showEmptySystems: Bool
     @State private var gameInfoState: GameInfoState?
     @ObservedResults(PVSystem.self) private var consoles: Results<PVSystem>
@@ -287,28 +289,30 @@ struct ConsolesWrapperView: SwiftUI.View {
         )
 
         return TabView(selection: binding) {
-            #if DEBUG
-            RetroDebugView()
-                .tabItem {
-                    Label("Debug", systemImage: "bug")
+            if showFeatureFlagsDebug {
+                RetroDebugView()
+                    .tabItem {
+                        Label("Debug", systemImage: "bug")
+                    }
+                    .tag("debug")
+                    .ignoresSafeArea(.all, edges: .bottom)
+                    .navigationTitle(Text("Debug"))
+                
+                ScrollView {
+                    VStack {
+                        RetroStatusControlView()
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 6)
+                        
+                        FileRecoveryTestView()
+                    }
                 }
-                .tag("debug")
-                .ignoresSafeArea(.all, edges: .bottom)
-                .navigationTitle(Text("Debug"))
-            
-            VStack {
-                RetroStatusControlView()
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 6)
-
-                FileRecoveryTestView()
-            }
                 .tabItem {
                     Label("Test", systemImage: "test")
                 }
                 .tag("test")
                 .ignoresSafeArea(.all, edges: .bottom)
-            #endif
+            }
             HomeView(
                 gameLibrary: rootDelegate.gameLibrary!,
                 delegate: rootDelegate,

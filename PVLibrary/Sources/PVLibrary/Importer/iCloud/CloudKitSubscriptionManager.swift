@@ -303,6 +303,7 @@ public class CloudKitSubscriptionManager {
         let recordName = recordID.recordName
         let components = recordName.split(separator: "_")
         guard let recordTypeComponent = components.first else {
+            ELOG("Invalid record name format (no underscore): \(recordName)")
             return
         }
         
@@ -312,7 +313,7 @@ public class CloudKitSubscriptionManager {
         switch recordType {
         case "File":
             handleFileNotification(notification, recordID: recordID)
-        case "Game":
+        case "Game", "ROM": // Handle both Game and ROM (from schema)
             handleGameNotification(notification, recordID: recordID)
         case "SaveState":
             handleSaveStateNotification(notification, recordID: recordID)
@@ -326,7 +327,29 @@ public class CloudKitSubscriptionManager {
                 userInfo: ["count": 1, "isUpload": false, "recordType": recordType]
             )
         default:
-            DLOG("Unknown record type: \(recordType)")
+            ELOG("""
+                 Unknown record type encountered: \(recordType)
+                 Full record name: \(recordID.recordName)
+                 This may indicate a mismatch between CloudKit schema and notification handling.
+                 Attempting to delete the record to prevent sync issues.
+                 """)
+            
+            // Delete the unknown record to prevent ongoing sync issues
+            Task {
+                do {
+                    try await privateDatabase.deleteRecord(withID: recordID)
+                    DLOG("Successfully deleted unknown record: \(recordID.recordName)")
+                    
+                    // Post a notification so the UI can update
+                    NotificationCenter.default.post(
+                        name: .cloudKitRecordTransferCompleted,
+                        object: nil,
+                        userInfo: ["count": 1, "isUpload": false, "recordType": "unknown"]
+                    )
+                } catch {
+                    ELOG("Failed to delete unknown record \(recordID.recordName): \(error.localizedDescription)")
+                }
+            }
         }
     }
     

@@ -369,17 +369,28 @@ public struct RetroStatusControlView: View {
 
                         Spacer()
 
-                        // Manual sync button - always visible when enabled
+                        // Action buttons - always visible when enabled
                         if viewModel.isICloudSyncEnabled {
-                            Button(action: {
-                                DLOG("Manual sync triggered")
-                                viewModel.triggerManualSync()
-                            }) {
-                                Image(systemName: "arrow.clockwise.icloud")
-                                    .foregroundColor(RetroTheme.retroBlue)
-                                    .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 2, x: 0, y: 0)
+                            HStack(spacing: 12) {
+                                // CloudKit diagnostic button
+                                NavigationLink(destination: CloudKitDiagnosticView()) {
+                                    Image(systemName: "icloud.bolt.fill")
+                                        .foregroundColor(RetroTheme.retroPink)
+                                        .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2, x: 0, y: 0)
+                                }
+                                .buttonStyle(RetroTheme.RetroButtonStyle())
+                                
+                                // Manual sync button
+                                Button(action: {
+                                    DLOG("Manual sync triggered")
+                                    viewModel.triggerManualSync()
+                                }) {
+                                    Image(systemName: "arrow.clockwise.icloud")
+                                        .foregroundColor(RetroTheme.retroBlue)
+                                        .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 2, x: 0, y: 0)
+                                }
+                                .buttonStyle(RetroTheme.RetroButtonStyle())
                             }
-                            .buttonStyle(RetroTheme.RetroButtonStyle())
                         }
                     }
                     .padding(.vertical, 8)

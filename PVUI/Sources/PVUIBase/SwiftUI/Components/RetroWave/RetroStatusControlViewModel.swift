@@ -306,8 +306,11 @@ final class RetroStatusControlViewModel: ObservableObject {
         nc.addObserver(self, selector: #selector(handleArchiveExtractionCompleted(_:)), name: .archiveExtractionCompleted, object: nil)
         nc.addObserver(self, selector: #selector(handleArchiveExtractionFailed(_:)), name: .archiveExtractionFailed, object: nil)
         
-        // --- iCloud File Recovery Notifications --- (Keep existing)
+        // --- iCloud File Recovery Notifications ---
         nc.addObserver(self, selector: #selector(handleFileRecoveryStarted(_:)), name: iCloudSync.iCloudFileRecoveryStarted, object: nil)
+        nc.addObserver(self, selector: #selector(handleFileRecoveryProgress(_:)), name: iCloudSync.iCloudFileRecoveryProgress, object: nil)
+        nc.addObserver(self, selector: #selector(handleFileRecoveryCompleted(_:)), name: iCloudSync.iCloudFileRecoveryCompleted, object: nil)
+        nc.addObserver(self, selector: #selector(handleFileRecoveryError(_:)), name: iCloudSync.iCloudFileRecoveryError, object: nil)
     }
     
     /// Updates the view model's web server state properties from the PVWebServer shared instance.

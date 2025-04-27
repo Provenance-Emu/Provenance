@@ -356,11 +356,6 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         setupWebServerNotifications()
         #endif
         
-        #if os(tvOS)
-        // Initialize CloudKit for tvOS
-        initializeCloudKit()
-        #endif
-
         // Register intent handler for Siri shortcuts
 #if false
         #if os(iOS)
@@ -432,16 +427,19 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
     func _initICloud() {
         PVEmulatorConfiguration.initICloud()
         
+        // Check for files stuck in iCloud Drive at startup
+        Task {
+            await iCloudSync.checkForStuckFilesInICloudDrive()
+        }
+        
         // Initialize CloudKit for all platforms
         initializeCloudKit()
         
         // Keep the legacy iCloud document sync code in place but don't use it by default
         // We can uncomment this if we need to revert back to the old sync method
-        /*
         #if !os(tvOS)
         iCloudSync.initICloudDocuments()
         #endif
-        */
     }
 
     var currentThemeObservation: Any? // AnyCancellable?

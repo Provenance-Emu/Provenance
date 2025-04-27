@@ -534,21 +534,35 @@ public class CloudKitSyncer: SyncProvider {
         // Log record information
         VLOG("Processing CloudKit record: \(record.recordID.recordName) of type: \(record.recordType)")
         
-        // Extract the filename from the record
-        guard let filename = record[CloudKitSchema.FileAttributes.filename] as? String else {
-            // If we're dealing with test records or old records, they might not have a filename
-            // Log the issue and skip this record
-            WLOG("Record missing filename: \(record.recordID.recordName ?? "unknown") - skipping")
+        // Log all available fields for debugging
+        let availableFields = record.allKeys().joined(separator: ", ")
+        VLOG("Available fields in record: \(availableFields)")
+        
+        // Extract the filename from the record - try multiple possible field names
+        var filename: String?
+        if let filenameValue = record[CloudKitSchema.FileAttributes.filename] as? String {
+            filename = filenameValue
+        } else if let filenameValue = record["filename"] as? String {
+            filename = filenameValue
+        } else {
+            let recordName = record.recordID.recordName
+            // Use record name as fallback if it doesn't look like a UUID
+            if !isUUID(recordName) {
+                filename = recordName
+                WLOG("Using record name as filename: \(recordName)")
+            }
+        }
+        
+        // If we still don't have a filename, log and handle the record
+        if filename == nil {
+            WLOG("Record missing filename: \(record.recordID.recordName ?? "unknown")")
             
-            // Log available fields for debugging
-            let availableFields = record.allKeys().joined(separator: ", ")
-            VLOG("Available fields in record: \(availableFields)")
-            
-            // Delete the invalid record if it's a test record (has a UUID-like name)
-            if isUUID(record.recordID.recordName) {
+            // If it's a test record (UUID-like name), delete it to prevent future sync issues
+            let recordName = record.recordID.recordName
+            if isUUID(recordName) {
                 Task {
                     do {
-                        DLOG("Deleting invalid test record: \(record.recordID.recordName)")
+                        DLOG("Deleting invalid test record: \(recordName)")
                         try await privateDatabase.deleteRecord(withID: record.recordID)
                     } catch {
                         ELOG("Failed to delete invalid test record: \(error.localizedDescription)")
@@ -556,10 +570,16 @@ public class CloudKitSyncer: SyncProvider {
                 }
             }
             
-            return
+            // Try to process the record anyway if it's a BIOS record
+            if record.recordType == CloudKitSchema.RecordType.bios {
+                DLOG("Attempting to process BIOS record despite missing filename")
+                filename = "unknown_bios_\(record.recordID.recordName ?? UUID().uuidString)"
+            } else {
+                return
+            }
         }
         
-        VLOG("Processing record for file: \(filename)")
+        VLOG("Processing record for file: \(filename!)")
         
         // Determine the directory based on record type
         let directory: String
@@ -570,31 +590,59 @@ public class CloudKitSyncer: SyncProvider {
             directory = "saves"
         case CloudKitSchema.RecordType.bios:
             directory = "bios"
+        case "Game": // Handle legacy record type
+            directory = "roms"
+            DLOG("Converting legacy 'Game' record type to 'ROM'")
         default:
-            ELOG("Unknown record type: \(record.recordType)")
-            return
+            WLOG("Unknown record type: \(record.recordType) - attempting to process anyway")
+            // Try to determine directory from record fields
+            if let dirFromRecord = record["directory"] as? String {
+                directory = dirFromRecord.lowercased()
+            } else {
+                directory = "unknown"
+            }
         }
         
         // Create database entry (metadata only, not downloading the file yet)
-        await createDatabaseEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: false)
+        await createDatabaseEntryFromRecord(record, directory: directory, filename: filename!, isDownloaded: false)
     }
     
     private func createDatabaseEntryFromRecord(_ record: CKRecord, directory: String, filename: String, isDownloaded: Bool = false) async {
         // This method will create or update a Realm entry based on the CloudKit record
         // The implementation will depend on your Realm model structure
         
+        // Log record details for debugging
+        VLOG("Creating database entry for record: \(record.recordID.recordName) of type: \(record.recordType) in directory: \(directory)")
+        
         switch record.recordType {
-        case CloudKitSchema.RecordType.rom:
+        case CloudKitSchema.RecordType.rom, "Game": // Handle both current and legacy record types
+            DLOG("Processing as ROM record")
             await createROMEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: isDownloaded)
             
         case CloudKitSchema.RecordType.saveState:
+            DLOG("Processing as SaveState record")
             await createSaveStateEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: isDownloaded)
             
         case CloudKitSchema.RecordType.bios:
+            DLOG("Processing as BIOS record")
             await createBIOSEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: isDownloaded)
             
         default:
-            DLOG("Skipping database entry creation for unsupported record type: \(record.recordType)")
+            WLOG("Encountered unknown record type: \(record.recordType)")
+            
+            // Try to determine the appropriate handler based on directory
+            if directory.lowercased().contains("rom") {
+                DLOG("Processing unknown record type as ROM based on directory")
+                await createROMEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: isDownloaded)
+            } else if directory.lowercased().contains("save") || directory.lowercased().contains("state") {
+                DLOG("Processing unknown record type as SaveState based on directory")
+                await createSaveStateEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: isDownloaded)
+            } else if directory.lowercased().contains("bios") {
+                DLOG("Processing unknown record type as BIOS based on directory")
+                await createBIOSEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: isDownloaded)
+            } else {
+                DLOG("Unable to determine record type from directory, skipping database entry creation")
+            }
         }
     }
     
@@ -621,7 +669,7 @@ public class CloudKitSyncer: SyncProvider {
         
         do {
             // Get the Realm instance
-            let realm: Realm = try! await Realm()
+            let realm: Realm = RomDatabase.sharedInstance.realm
             
             // Create or update the ROM entry
             try await realm.write { [self] in
@@ -638,9 +686,10 @@ public class CloudKitSyncer: SyncProvider {
                 }
                 
                 // If still not found, try to find by filename
-                if game == nil {
-                    game = realm.objects(PVGame.self).filter("romPath CONTAINS %@", filename).first
-                }
+                // (don't do this as we may have duplicate filenames for different systems
+//                if game == nil {
+//                    game = realm.objects(PVGame.self).filter("romPath CONTAINS %@", filename).first
+//                }
                 
                 // If no existing game found, create a new one
                 if game == nil {
@@ -716,7 +765,7 @@ public class CloudKitSyncer: SyncProvider {
         
         do {
             // Get the Realm instance
-            let realm = try! await Realm()
+            let realm = RomDatabase.sharedInstance.realm
             
             // Create or update the SaveState entry
             try await realm.write { [self] in
@@ -789,17 +838,32 @@ public class CloudKitSyncer: SyncProvider {
         // Extract metadata from the record
         let description = record["description"] as? String ?? filename
         let recordID = record.recordID.recordName
-
-        guard let systemIdentifier = record[CloudKitSchema.ROMAttributes.systemIdentifier] as? String,
-                let fileSize = record["fileSize"] as? Int64,
-              let md5 = record[CloudKitSchema.FileAttributes.md5] as? String else {
-            ELOG("Missing metadata for BIOS record: \(record.recordID.recordName ?? "unknown")")
-            return
+        
+        // Extract system identifier - use a default if missing
+        let systemIdentifier = record[CloudKitSchema.ROMAttributes.systemIdentifier] as? String ?? "Unknown"
+        
+        // Extract file size - use a default if missing
+        let fileSize: Int64
+        if let size = record["fileSize"] as? Int64 {
+            fileSize = size
+        } else {
+            // Try to get size from the file asset
+            if let asset = record[CloudKitSchema.FileAttributes.fileData] as? CKAsset,
+               let fileURL = asset.fileURL,
+               let attributes = try? FileManager.default.attributesOfItem(atPath: fileURL.path),
+               let size = attributes[.size] as? NSNumber {
+                fileSize = size.int64Value
+            } else {
+                fileSize = 0
+            }
         }
+        
+        // Extract MD5 - this is optional
+        let md5 = record[CloudKitSchema.FileAttributes.md5] as? String ?? ""
         
         do {
             // Get the Realm instance
-            let realm = try! await Realm()
+            let realm = RomDatabase.sharedInstance.realm
             
             // Create or update the BIOS entry
             try await realm.write { [self] in

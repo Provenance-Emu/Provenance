@@ -19,15 +19,15 @@ import PVRealm
 /// A view that displays CloudKit records available for on-demand download
 public struct CloudKitOnDemandView: View {
     // MARK: - Properties
-    
+
     @StateObject private var viewModel = CloudKitOnDemandViewModel()
     @State private var showingFilterOptions = false
     @State private var selectedFilter: RecordTypeFilter = .all
-    
+
     // MARK: - Body
-    
+
     public init() {}
-    
+
     public var body: some View {
         VStack(spacing: 0) {
             // Header with filter options
@@ -41,9 +41,9 @@ public struct CloudKitOnDemandView: View {
                             endPoint: .trailing
                         )
                     )
-                
+
                 Spacer()
-                
+
                 Button(action: {
                     showingFilterOptions = true
                 }) {
@@ -63,7 +63,7 @@ public struct CloudKitOnDemandView: View {
                         ]
                     )
                 }
-                
+
                 Button(action: {
                     Task {
                         await viewModel.refreshMetadata()
@@ -75,7 +75,7 @@ public struct CloudKitOnDemandView: View {
             }
             .padding()
             .background(Color.retroDarkBlue.opacity(0.3))
-            
+
             // Record list
             if viewModel.isLoading {
                 VStack {
@@ -92,16 +92,16 @@ public struct CloudKitOnDemandView: View {
                         .font(.system(size: 50))
                         .foregroundColor(.retroPurple.opacity(0.5))
                         .padding()
-                    
+
                     Text("No records found")
                         .font(.headline)
                         .foregroundColor(.secondary)
-                    
+
                     Text("Sync your devices to see available files")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .padding(.top, 4)
-                    
+
                     Button("Sync Metadata") {
                         Task {
                             await viewModel.refreshMetadata()
@@ -112,7 +112,7 @@ public struct CloudKitOnDemandView: View {
                     .foregroundColor(.white)
                     .cornerRadius(8)
                     .padding(.top, 16)
-                    
+
                     if let errorMessage = viewModel.errorMessage {
                         Text(errorMessage)
                             .foregroundColor(.red)
@@ -121,7 +121,7 @@ public struct CloudKitOnDemandView: View {
                             .cornerRadius(8)
                             .padding()
                     }
-                    
+
                     if let successMessage = viewModel.successMessage {
                         Text(successMessage)
                             .foregroundColor(.green)
@@ -160,7 +160,7 @@ public struct CloudKitOnDemandView: View {
 struct CloudKitRecordRow: View {
     let record: CloudKitRecordViewModel
     let onDownload: (String) -> Void
-    
+
     var body: some View {
         HStack {
             // Record icon
@@ -170,17 +170,17 @@ struct CloudKitRecordRow: View {
                 .frame(width: 40, height: 40)
                 .background(record.iconColor.opacity(0.1))
                 .cornerRadius(8)
-            
+
             // Record details
             VStack(alignment: .leading, spacing: 4) {
                 Text(record.title)
                     .font(.headline)
-                
+
                 HStack {
                     Text(record.subtitle)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
-                    
+
                     if record.isDownloaded {
                         Text("Downloaded")
                             .font(.caption)
@@ -192,9 +192,9 @@ struct CloudKitRecordRow: View {
                     }
                 }
             }
-            
+
             Spacer()
-            
+
             // Download button
             if !record.isDownloaded {
                 Button(action: {
@@ -237,7 +237,7 @@ struct CloudKitRecordViewModel: Identifiable {
     let subtitle: String
     var isDownloaded: Bool
     var isDownloading: Bool = false
-    
+
     var iconName: String {
         switch recordType {
         case "ROM":
@@ -247,18 +247,20 @@ struct CloudKitRecordViewModel: Identifiable {
         case "BIOS":
             return "cpu"
         default:
-            return "doc"
+            return "doc.fill"
         }
     }
-    
+
     var iconColor: Color {
         switch recordType {
-        case "ROM":
+        case "ROM", "GAME":
             return .retroPink
         case "SaveState":
             return .retroBlue
         case "BIOS":
             return .retroPurple
+        case "File":
+            return .retroGreen
         default:
             return .gray
         }
@@ -268,70 +270,241 @@ struct CloudKitRecordViewModel: Identifiable {
 /// View model for CloudKit on-demand downloads
 class CloudKitOnDemandViewModel: ObservableObject {
     // MARK: - Properties
-    
+
     @Published var records: [CloudKitRecordViewModel] = []
-    @State internal var isLoading = true
-    @State internal var errorMessage: String? = nil
-    @State internal var successMessage: String? = nil
-    @State internal var searchText = ""
-    private var syncers: [CloudKitSyncer] = []
-    
+    @Published var isLoading = true
+    @Published var errorMessage: String? = nil
+    @Published var successMessage: String? = nil
+    @Published var searchText = ""
+
+    // CloudKit container and database
+    private let container = CKContainer(identifier: iCloudConstants.containerIdentifier)
+    private let privateDatabase: CKDatabase
+
     // MARK: - Initialization
-    
+
     init() {
-        setupSyncers()
+        privateDatabase = container.privateCloudDatabase
     }
-    
+
     // MARK: - Methods
-    
-    /// Set up CloudKit syncers for different record types
-    private func setupSyncers() {
-        // Get the main CloudKit syncer
-        if let syncer = CloudKitSyncerStore.shared.getSyncer() {
-            syncers.append(syncer)
-        }
-    }
-    
-    /// Refresh metadata from CloudKit
+
+    /// Refresh metadata directly from CloudKit
     func refreshMetadata() async {
-        guard !syncers.isEmpty else {
-            ELOG("No CloudKit syncers available")
-            return
-        }
-        
         await MainActor.run {
             isLoading = true
             errorMessage = nil
+            successMessage = nil
         }
-        
-        var allRecords: [CloudKitRecordViewModel] = []
-        
-        // Sync metadata for each syncer
-        for syncer in syncers {
-            do {
-                // Sync metadata only (no file downloads)
-                let count = await syncer.syncMetadataOnly()
-                DLOG("Synced \(count) metadata records for \(syncer.recordType)")
-                
-                // Fetch records from database
-                let records = await fetchRecordsFromDatabase(forType: syncer.recordType)
-                allRecords.append(contentsOf: records)
-            } catch {
-                ELOG("Error syncing metadata: \(error.localizedDescription)")
-                await MainActor.run {
-                    errorMessage = "Failed to sync metadata: \(error.localizedDescription)"
+
+        do {
+            var allRecords: [CloudKitRecordViewModel] = []
+
+            // Query each record type directly from CloudKit
+            for recordType in CloudKitSchema.RecordType.all {
+                DLOG("Querying CloudKit for record type: \(recordType)")
+
+                // Create a query for this record type
+                let query = CKQuery(recordType: recordType, predicate: NSPredicate(value: true))
+                let queryOperation = CKQueryOperation(query: query)
+                queryOperation.resultsLimit = 100 // Adjust as needed
+
+                var recordsForType: [CKRecord] = []
+
+                // Set up the record matched handler
+                queryOperation.recordMatchedBlock = { recordID, result in
+                    switch result {
+                    case .success(let record):
+                        recordsForType.append(record)
+                    case .failure(let error):
+                        ELOG("Error fetching record \(recordID.recordName): \(error.localizedDescription)")
+                    }
+                }
+
+                // Set up the query completion handler
+                queryOperation.queryResultBlock = { result in
+                    switch result {
+                    case .success(let cursor):
+                        DLOG("Query completed for \(recordType), found \(recordsForType.count) records")
+                        if let cursor = cursor {
+                            DLOG("More records available with cursor: \(cursor)")
+                        }
+                    case .failure(let error):
+                        ELOG("Query failed for \(recordType): \(error.localizedDescription)")
+                    }
+                }
+
+                // Execute the query operation
+                try await privateDatabase.add(queryOperation)
+
+                // Process the records for this type
+                let viewModels = await self.processRecords(recordsForType, recordType: recordType)
+                allRecords.append(contentsOf: viewModels)
+            }
+
+            // Update UI on main thread
+            await MainActor.run {
+                self.records = allRecords
+                self.isLoading = false
+
+                if allRecords.isEmpty {
+                    self.successMessage = "No records found in CloudKit"
+                } else {
+                    self.successMessage = "Found \(allRecords.count) records in CloudKit"
                 }
             }
-        }
-        
-        await MainActor.run {
-            self.records = allRecords
-            isLoading = false
+        } catch {
+            ELOG("Error querying CloudKit: \(error.localizedDescription)")
+            await MainActor.run {
+                self.errorMessage = "Error querying CloudKit: \(error.localizedDescription)"
+                self.isLoading = false
+            }
         }
     }
-    
+
+    /// Process CloudKit records into view models
+    private func processRecords(_ records: [CKRecord], recordType: String) async -> [CloudKitRecordViewModel] {
+        var viewModels: [CloudKitRecordViewModel] = []
+
+        for record in records {
+            // Extract common fields
+            let recordID = record.recordID.recordName
+            let filename = record[CloudKitSchema.FileAttributes.filename] as? String ?? "Unknown"
+
+            // Check if this file is already downloaded locally
+            let isDownloaded = await checkIfFileIsDownloaded(record: record, recordType: recordType)
+
+            // Create view model based on record type
+            var viewModel: CloudKitRecordViewModel
+
+            switch recordType {
+            case CloudKitSchema.RecordType.rom:
+                let title = record[CloudKitSchema.ROMAttributes.title] as? String ?? filename
+                let system = record[CloudKitSchema.ROMAttributes.systemIdentifier] as? String ?? "Unknown"
+
+                // Get file size
+                let fileSize = getFileSizeFromAsset(record[CloudKitSchema.FileAttributes.fileData] as? CKAsset)
+                let fileSizeString = ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file)
+
+                viewModel = CloudKitRecordViewModel(
+                    recordID: recordID,
+                    recordType: recordType, title: title,
+                    subtitle: "\(system) • \(fileSizeString)",
+                    isDownloaded: isDownloaded,
+                    isDownloading: false
+                )
+
+            case CloudKitSchema.RecordType.saveState:
+                let description = record[CloudKitSchema.SaveStateAttributes.description] as? String ?? "Save State"
+                let gameID = record[CloudKitSchema.SaveStateAttributes.gameID] as? String ?? "Unknown"
+
+                // Get file size
+                let fileSize = getFileSizeFromAsset(record[CloudKitSchema.FileAttributes.fileData] as? CKAsset)
+                let fileSizeString = ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file)
+
+                viewModel = CloudKitRecordViewModel(
+                    recordID: recordID,
+                    recordType: recordType, title: description,
+                    subtitle: "Save State • \(fileSizeString)",
+                    isDownloaded: isDownloaded,
+                    isDownloading: false
+                )
+
+            case CloudKitSchema.RecordType.bios:
+                let description = record[CloudKitSchema.BIOSAttributes.description] as? String ?? filename
+                let system = record[CloudKitSchema.BIOSAttributes.systemIdentifier] as? String ?? "Unknown"
+
+                // Get file size
+                let fileSize = getFileSizeFromAsset(record[CloudKitSchema.FileAttributes.fileData] as? CKAsset)
+                let fileSizeString = ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file)
+
+                viewModel = CloudKitRecordViewModel(
+                    recordID: recordID,
+                    recordType: recordType, title: description,
+                    subtitle: "\(system) BIOS • \(fileSizeString)",
+                    isDownloaded: isDownloaded,
+                    isDownloading: false
+                )
+
+            default: // Generic file
+                let directory = record[CloudKitSchema.FileAttributes.directory] as? String ?? "Unknown"
+
+                // Get file size
+                let fileSize = getFileSizeFromAsset(record[CloudKitSchema.FileAttributes.fileData] as? CKAsset)
+                let fileSizeString = ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file)
+
+                viewModel = CloudKitRecordViewModel(
+                    recordID: recordID,
+                    recordType: recordType, title: filename,
+                    subtitle: "\(directory) • \(fileSizeString)",
+                    isDownloaded: isDownloaded,
+                    isDownloading: false
+                )
+            }
+
+            viewModels.append(viewModel)
+        }
+
+        return viewModels
+    }
+
+    /// Get file size from a CKAsset
+    private func getFileSizeFromAsset(_ asset: CKAsset?) -> Int64 {
+        guard let asset = asset, let fileURL = asset.fileURL else { return 0 }
+
+        do {
+            let attributes = try FileManager.default.attributesOfItem(atPath: fileURL.path)
+            if let size = attributes[.size] as? NSNumber {
+                return size.int64Value
+            }
+        } catch {
+            ELOG("Error getting file size: \(error.localizedDescription)")
+        }
+
+        return 0
+    }
+
+    /// Check if a file is already downloaded locally
+    private func checkIfFileIsDownloaded(record: CKRecord, recordType: String) async -> Bool {
+        do {
+            let realm = try await Realm()
+
+            switch recordType {
+            case CloudKitSchema.RecordType.rom:
+                if let gameID = record[CloudKitSchema.FileAttributes.gameID] as? String,
+                   let game = realm.objects(PVGame.self).filter("gameID == %@", gameID).first {
+                    return game.isDownloaded
+                }
+
+            case CloudKitSchema.RecordType.saveState:
+                if let saveStateID = record[CloudKitSchema.FileAttributes.saveStateID] as? String,
+                   let saveState = realm.objects(PVSaveState.self).filter("saveStateID == %@", saveStateID).first {
+                    return saveState.isDownloaded
+                }
+
+            case CloudKitSchema.RecordType.bios:
+                if let md5 = record[CloudKitSchema.BIOSAttributes.md5Hash] as? String,
+                   let bios = realm.objects(PVBIOS.self).filter("md5 == %@", md5).first {
+                    return bios.isDownloaded
+                }
+
+            default:
+                // For other file types, check if the file exists locally
+                if let directory = record[CloudKitSchema.FileAttributes.directory] as? String,
+                   let filename = record[CloudKitSchema.FileAttributes.filename] as? String {
+                    let documentsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+                    let filePath = documentsDir.appendingPathComponent(directory).appendingPathComponent(filename)
+                    return FileManager.default.fileExists(atPath: filePath.path)
+                }
+            }
+        } catch {
+            ELOG("Error checking if file is downloaded: \(error.localizedDescription)")
+        }
+
+        return false
+    }
+
     /// Download a record by its ID
-    /// Download a record from CloudKit
     /// - Parameter recordID: The record ID to download
     func downloadRecord(recordID: String) async {
         // Find the record in our list
@@ -339,41 +512,68 @@ class CloudKitOnDemandViewModel: ObservableObject {
             ELOG("Record not found: \(recordID)")
             return
         }
-        
+
         // Update UI to show download in progress
         await MainActor.run {
             records[index].isDownloading = true
             errorMessage = nil // Clear any previous error
         }
-        
-        // Find the appropriate syncer
+
         let recordType = records[index].recordType
-        guard let syncer = syncers.first(where: { $0.recordType == recordType }) else {
-            ELOG("No syncer found for record type: \(recordType)")
-            await MainActor.run {
-                records[index].isDownloading = false
-                errorMessage = "No syncer found for \(recordType)"
-            }
-            return
-        }
-        
+
         do {
-            // Download the file
-            let fileURL = try await syncer.downloadFileOnDemand(recordName: recordID)
-            DLOG("Downloaded file to: \(fileURL.path)")
-            
+            // Fetch the record from CloudKit
+            let recordID = CKRecord.ID(recordName: recordID)
+            let record = try await privateDatabase.record(for: recordID)
+
+            // Extract file asset and download it
+            guard let fileAsset = record[CloudKitSchema.FileAttributes.fileData] as? CKAsset,
+                  let fileURL = fileAsset.fileURL else {
+                throw NSError(domain: "com.provenance.cloudkit", code: 1001,
+                              userInfo: [NSLocalizedDescriptionKey: "No file data found in record"])
+            }
+
+            // Get destination directory and filename
+            let directory = record[CloudKitSchema.FileAttributes.directory] as? String ?? "Unknown"
+            let filename = record[CloudKitSchema.FileAttributes.filename] as? String ?? "file.dat"
+
+            // Create destination directory
+            let documentsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+            let destinationDir = documentsDir.appendingPathComponent(directory)
+
+            do {
+                try FileManager.default.createDirectory(at: destinationDir,
+                                                      withIntermediateDirectories: true)
+            } catch {
+                ELOG("Error creating directory \(destinationDir.path): \(error.localizedDescription)")
+                throw error
+            }
+
+            // Create destination file URL
+            let destinationURL = destinationDir.appendingPathComponent(filename)
+
+            // Remove existing file if it exists
+            if FileManager.default.fileExists(atPath: destinationURL.path) {
+                try FileManager.default.removeItem(at: destinationURL)
+            }
+
+            // Copy file to destination
+            try FileManager.default.copyItem(at: fileURL, to: destinationURL)
+
+            DLOG("Downloaded file to: \(destinationURL.path)")
+
             // Update the record status in the database
-            await updateRecordDownloadStatus(recordID: recordID, recordType: recordType, isDownloaded: true)
-            
+            await updateRecordDownloadStatus(recordID: recordID.recordName, recordType: recordType, isDownloaded: true)
+
             // Update the UI
             await MainActor.run {
                 records[index].isDownloading = false
                 records[index].isDownloaded = true
-                
+
                 // Show success message
                 let title = records[index].title
                 successMessage = "Downloaded \(title) successfully"
-                
+
                 // Clear success message after a delay
                 Task {
                     try? await Task.sleep(nanoseconds: 3_000_000_000) // 3 seconds
@@ -389,7 +589,7 @@ class CloudKitOnDemandViewModel: ObservableObject {
             await MainActor.run {
                 records[index].isDownloading = false
                 errorMessage = "Error downloading file: \(error.localizedDescription)"
-                
+
                 // Clear error message after a delay
                 Task {
                     try? await Task.sleep(nanoseconds: 5_000_000_000) // 5 seconds
@@ -402,7 +602,7 @@ class CloudKitOnDemandViewModel: ObservableObject {
             }
         }
     }
-    
+
     /// Update the download status of a record in the database
     private func updateRecordDownloadStatus(recordID: String, recordType: String, isDownloaded: Bool) async {
         do {
@@ -436,24 +636,24 @@ class CloudKitOnDemandViewModel: ObservableObject {
             ELOG("Error updating record download status: \(error.localizedDescription)")
         }
     }
-    
+
     /// Fetch records from the database
     @MainActor
     private func fetchRecordsFromDatabase(forType recordType: String) async -> [CloudKitRecordViewModel] {
         do {
             var viewModels: [CloudKitRecordViewModel] = []
-            
+
             switch recordType {
             case CloudKitSchema.RecordType.rom:
                 // First, try to get records directly from the CloudKit syncer
                 if let romSyncer = CloudKitSyncerStore.shared.romSyncers.first as? CloudKitRomsSyncer {
                     DLOG("Fetching ROM records from CloudKit syncer")
                     let records = await romSyncer.getAllRecords()
-                    
+
                     for record in records {
                         guard let filename = record[CloudKitSchema.FileAttributes.filename] as? String else { continue }
                         guard let system = record[CloudKitSchema.ROMAttributes.systemIdentifier] as? String else { continue }
-                        
+
                         let title = record[CloudKitSchema.ROMAttributes.title] as? String ?? filename
                         // Get file size from the fileData asset if available
                         let fileSize: Int64
@@ -466,10 +666,10 @@ class CloudKitOnDemandViewModel: ObservableObject {
                             fileSize = 0
                         }
                         let fileSizeString = ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file)
-                        
+
                         // Check if this ROM is downloaded locally
                         let isDownloaded = await romSyncer.isFileDownloaded(filename: filename, inSystem: system)
-                        
+
                         viewModels.append(CloudKitRecordViewModel(
                             recordID: record.recordID.recordName,
                             recordType: CloudKitSchema.RecordType.rom,
@@ -478,27 +678,27 @@ class CloudKitOnDemandViewModel: ObservableObject {
                             isDownloaded: isDownloaded
                         ))
                     }
-                    
+
                     DLOG("Found \(viewModels.count) ROM records from CloudKit")
-                    
+
                     // If we got records from CloudKit, return them
                     if !viewModels.isEmpty {
                         return viewModels
                     }
                 }
-                
+
                 // Fallback: Query PVGame objects with cloudRecordID
                 DLOG("Falling back to Realm database for ROM records")
                 // Get the Realm instance
                 let realm = try! await Realm()
                 let games = realm.objects(PVGame.self).filter("cloudRecordID != nil")
-                
+
                 for game in games {
                     guard let recordID = game.cloudRecordID else { continue }
-                    
+
                     let systemName = game.system?.name ?? "Unknown System"
                     let fileSize = ByteCountFormatter.string(fromByteCount: Int64(game.fileSize), countStyle: .file)
-                    
+
                     viewModels.append(CloudKitRecordViewModel(
                         recordID: recordID,
                         recordType: CloudKitSchema.RecordType.rom,
@@ -507,18 +707,18 @@ class CloudKitOnDemandViewModel: ObservableObject {
                         isDownloaded: game.isDownloaded
                     ))
                 }
-                
+
             case CloudKitSchema.RecordType.saveState:
                 // First, try to get records directly from the CloudKit syncer
                 if let saveStateSyncer = CloudKitSyncerStore.shared.saveStateSyncers.first as? CloudKitSaveStatesSyncer {
                     DLOG("Fetching SaveState records from CloudKit syncer")
                     let records = await saveStateSyncer.getAllRecords()
-                    
+
                     for record in records {
                         guard let filename = record[CloudKitSchema.FileAttributes.filename] as? String else { continue }
                         // Get system from the FileAttributes.system field
                         guard let system = record[CloudKitSchema.FileAttributes.system] as? String else { continue }
-                        
+
                         let gameID = record[CloudKitSchema.FileAttributes.gameID] as? String
                         let description = record[CloudKitSchema.SaveStateAttributes.description] as? String ?? filename
                         // Get file size from the fileData asset if available
@@ -532,10 +732,10 @@ class CloudKitOnDemandViewModel: ObservableObject {
                             fileSize = 0
                         }
                         let fileSizeString = ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file)
-                        
+
                         // Check if this save state is downloaded locally
                         let isDownloaded = await saveStateSyncer.isFileDownloaded(filename: filename, inSystem: system, gameID: gameID)
-                        
+
                         viewModels.append(CloudKitRecordViewModel(
                             recordID: record.recordID.recordName,
                             recordType: CloudKitSchema.RecordType.saveState,
@@ -544,27 +744,27 @@ class CloudKitOnDemandViewModel: ObservableObject {
                             isDownloaded: isDownloaded
                         ))
                     }
-                    
+
                     DLOG("Found \(viewModels.count) SaveState records from CloudKit")
-                    
+
                     // If we got records from CloudKit, return them
                     if !viewModels.isEmpty {
                         return viewModels
                     }
                 }
-                
+
                 // Fallback: Query PVSaveState objects with cloudRecordID
                 DLOG("Falling back to Realm database for SaveState records")
                 let realm = try! await Realm()
                 let saveStates = realm.objects(PVSaveState.self).filter("cloudRecordID != nil")
-                
+
                 for saveState in saveStates {
                     guard let recordID = saveState.cloudRecordID else { continue }
-                    
+
                     let game = saveState.game
                     let systemName = game?.system?.name ?? "Unknown System"
                     let fileSize = ByteCountFormatter.string(fromByteCount: Int64(saveState.fileSize), countStyle: .file)
-                    
+
                     viewModels.append(CloudKitRecordViewModel(
                         recordID: recordID,
                         recordType: CloudKitSchema.RecordType.saveState,
@@ -573,16 +773,16 @@ class CloudKitOnDemandViewModel: ObservableObject {
                         isDownloaded: saveState.isDownloaded
                     ))
                 }
-                
+
             case CloudKitSchema.RecordType.bios:
                 // First, try to get records directly from the CloudKit syncer
                 if let biosSyncer = CloudKitSyncerStore.shared.biosSyncers.first as? CloudKitBIOSSyncer {
                     DLOG("Fetching BIOS records from CloudKit syncer")
                     let records = await biosSyncer.getAllRecords()
-                    
+
                     for record in records {
                         guard let filename = record[CloudKitSchema.FileAttributes.filename] as? String else { continue }
-                        
+
                         let systemId = record[CloudKitSchema.ROMAttributes.systemIdentifier] as? String ?? "Unknown"
                         let description = record[CloudKitSchema.BIOSAttributes.description] as? String ?? filename
                         // Get file size from the fileData asset if available
@@ -596,10 +796,10 @@ class CloudKitOnDemandViewModel: ObservableObject {
                             fileSize = 0
                         }
                         let fileSizeString = ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file)
-                        
+
                         // Check if this BIOS file is downloaded locally
                         let isDownloaded = await biosSyncer.isFileDownloaded(filename: filename)
-                        
+
                         viewModels.append(CloudKitRecordViewModel(
                             recordID: record.recordID.recordName,
                             recordType: CloudKitSchema.RecordType.bios,
@@ -608,26 +808,26 @@ class CloudKitOnDemandViewModel: ObservableObject {
                             isDownloaded: isDownloaded
                         ))
                     }
-                    
+
                     DLOG("Found \(viewModels.count) BIOS records from CloudKit")
-                    
+
                     // If we got records from CloudKit, return them
                     if !viewModels.isEmpty {
                         return viewModels
                     }
                 }
-                
+
                 // Fallback: Query PVBIOS objects with cloudRecordID
                 DLOG("Falling back to Realm database for BIOS records")
                 let realm = try! await Realm()
                 let biosFiles = realm.objects(PVBIOS.self).filter("cloudRecordID != nil")
-                
+
                 for bios in biosFiles {
                     guard let recordID = bios.cloudRecordID else { continue }
-                    
+
                     let systemName = bios.system?.name ?? "Unknown System"
                     let fileSize = ByteCountFormatter.string(fromByteCount: Int64(bios.fileSize), countStyle: .file)
-                    
+
                     viewModels.append(CloudKitRecordViewModel(
                         recordID: recordID,
                         recordType: CloudKitSchema.RecordType.bios,
@@ -636,20 +836,20 @@ class CloudKitOnDemandViewModel: ObservableObject {
                         isDownloaded: bios.isDownloaded
                     ))
                 }
-                
+
             default:
                 ELOG("Unknown record type: \(recordType)")
             }
-            
+
             DLOG("Found \(viewModels.count) records for type \(recordType)")
             return viewModels
-            
+
         } catch {
             ELOG("Error fetching records from database: \(error.localizedDescription)")
             return []
         }
     }
-    
+
     /// Filter records based on the selected filter
     func filteredRecords(filter: RecordTypeFilter) -> [CloudKitRecordViewModel] {
         switch filter {
