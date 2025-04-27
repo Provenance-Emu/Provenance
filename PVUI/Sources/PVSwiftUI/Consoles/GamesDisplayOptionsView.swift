@@ -139,8 +139,6 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
             Spacer()
             Group {
-                Spacer()
-
                 OptionsIndicator(pointDown: sortAscending, action: {
                     #if !os(tvOS)
                     Haptics.impact(style: .light)
@@ -192,8 +190,8 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 .disabled(!canZoomIn)
                 .padding(.trailing, padding)
                 
-                Spacer()
-
+                Divider()
+                
                 // Log button for viewing detailed logs
                 RetroLogButton(size: 12, color: .retroBlue)
                     .padding(.trailing, padding)
