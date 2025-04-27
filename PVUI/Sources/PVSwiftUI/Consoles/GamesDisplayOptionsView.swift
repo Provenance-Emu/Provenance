@@ -196,6 +196,10 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 RetroLogButton(size: 12, color: .retroBlue)
                     .padding(.trailing, padding)
                 
+                // Status control button for viewing system status
+                StatusControlButton()
+                    .padding(.trailing, padding)
+                
                 // Import status button
                 Button(action: {
                     #if !os(tvOS)
