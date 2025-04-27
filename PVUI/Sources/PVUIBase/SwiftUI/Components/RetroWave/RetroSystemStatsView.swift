@@ -49,7 +49,7 @@ public struct RetroSystemStatsView: View {
                         Image(systemName: "arrow.clockwise")
                             .font(.system(size: 12))
                             .foregroundColor(RetroTheme.retroBlue)
-                            .rotationEffect(.degrees(viewModel.isLoading ? 360 : 0))
+                            .rotationEffect(.degrees(viewModel.isLoading ? 0 : 360))
                             .animation(reduceMotion ? nil : .linear(duration: 1).repeatForever(autoreverses: false), value: viewModel.isLoading)
                     }
                 }
