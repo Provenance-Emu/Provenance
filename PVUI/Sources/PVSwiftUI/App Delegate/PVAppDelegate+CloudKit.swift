@@ -23,7 +23,7 @@ extension PVAppDelegate {
             DLOG("Initializing CloudKit for all platforms")
             
             // Initialize CloudKit schema first
-            Task {
+            Task.detached {
                 let containerIdentifier = iCloudConstants.containerIdentifier
                 
                 // Initialize CloudKit container and database
@@ -44,7 +44,7 @@ extension PVAppDelegate {
                 DLOG("CloudSyncManager initialized")
                 
                 // Register for remote notifications and setup background tasks
-                setupCloudKitBackgroundSync()
+                self.setupCloudKitBackgroundSync()
                 
                 // Start initial sync
                 _ = try? await CloudSyncManager.shared.startSync().value
@@ -96,7 +96,9 @@ extension PVAppDelegate {
     
     /// Handle a background CloudKit sync task
     /// - Parameter task: The background processing task
-    private func handleCloudKitSyncTask(_ task: BGProcessingTask) {
+    /// Handle a background processing task for CloudKit sync
+    /// This is called by the BGTaskScheduler when a background task is launched
+    public func handleCloudKitSyncTask(_ task: BGProcessingTask) {
         DLOG("Starting background CloudKit sync task")
         
         // Schedule the next background task
@@ -121,6 +123,8 @@ extension PVAppDelegate {
                         didSync = true
                         DLOG("Background sync: Synced \(count) ROM records")
                     }
+                } else {
+                    ELOG("No ROM syncer found")
                 }
                 
                 // Sync save states
@@ -130,6 +134,8 @@ extension PVAppDelegate {
                         didSync = true
                         DLOG("Background sync: Synced \(count) save state records")
                     }
+                } else {
+                    ELOG("No save state syncer found")
                 }
                 
                 // Sync BIOS files
@@ -139,6 +145,12 @@ extension PVAppDelegate {
                         didSync = true
                         DLOG("Background sync: Synced \(count) BIOS records")
                     }
+                } else {
+                    ELOG("No BIOS syncer found")
+                }
+                
+                if !didSync {
+                    ILOG("Background sync: No data to sync or syncers not found")
                 }
                 
                 // Mark the task as completed
@@ -146,6 +158,7 @@ extension PVAppDelegate {
                 
                 // End the background task assertion
                 if taskAssertionID != .invalid {
+                    ILOG("Ending background task assertion: \(taskAssertionID)")
                     UIApplication.shared.endBackgroundTask(taskAssertionID)
                 }
                 
@@ -158,6 +171,7 @@ extension PVAppDelegate {
                 
                 // End the background task assertion
                 if taskAssertionID != .invalid {
+                    ILOG("Ending background task assertion: \(taskAssertionID)")
                     UIApplication.shared.endBackgroundTask(taskAssertionID)
                 }
             }
