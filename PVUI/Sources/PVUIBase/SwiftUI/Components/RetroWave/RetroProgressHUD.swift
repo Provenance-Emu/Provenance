@@ -48,9 +48,6 @@ public class RetroProgressHUD: UIView {
         containerView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerView)
         
-        // Ensure the container view is centered in the HUD
-        containerView.center = self.center
-        
         // Add grid pattern to container
         let gridPattern = createGridPattern()
         gridPattern.alpha = 0.3
@@ -78,10 +75,16 @@ public class RetroProgressHUD: UIView {
         // Add glow effect to container
         addGlowEffect(to: containerView)
         
-        // Set up constraints - ensure proper centering
+        // Set up constraints with higher priority to ensure proper centering
+        let centerXConstraint = containerView.centerXAnchor.constraint(equalTo: centerXAnchor)
+        centerXConstraint.priority = .required
+        
+        let centerYConstraint = containerView.centerYAnchor.constraint(equalTo: centerYAnchor)
+        centerYConstraint.priority = .required
+        
         NSLayoutConstraint.activate([
-            containerView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            containerView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            centerXConstraint,
+            centerYConstraint,
             containerView.widthAnchor.constraint(equalToConstant: 240), // Slightly wider
             containerView.heightAnchor.constraint(equalToConstant: 200), // Slightly taller
             
@@ -209,7 +212,15 @@ public class RetroProgressHUD: UIView {
         // Ensure the HUD is centered in the view
         hud.frame = view.bounds
         
-        view.addSubview(hud)
+        // Add to the main window if possible to ensure it appears on top
+        if let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
+            window.addSubview(hud)
+        } else {
+            view.addSubview(hud)
+        }
+        
+        // Force layout to ensure constraints are applied
+        hud.layoutIfNeeded()
         
         if animated {
             hud.containerView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
@@ -228,6 +239,14 @@ public class RetroProgressHUD: UIView {
     
     /// Show the HUD if it's currently hidden
     public func show(animated: Bool = true) {
+        // Update frame and center to ensure proper positioning
+        if let superview = self.superview {
+            self.frame = superview.bounds
+            
+            // Force layout to ensure constraints are applied
+            self.layoutIfNeeded()
+        }
+        
         if self.alpha == 0 {
             if animated {
                 self.containerView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
