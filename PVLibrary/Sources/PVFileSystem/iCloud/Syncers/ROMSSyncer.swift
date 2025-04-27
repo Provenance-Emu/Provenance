@@ -1,12 +1,4 @@
 //
-//  BIOSSyncer 2.swift
-//  PVLibrary
-//
-//  Created by Joseph Mattiello on 10/13/24.
-//
-
-
-//
 //  ROMSyncer.swift
 //  PVLibrary
 //
