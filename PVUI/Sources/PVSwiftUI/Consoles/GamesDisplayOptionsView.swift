@@ -27,7 +27,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
     @State var sortAscending = true
     @State var isGrid = true
-    
+
     // Binding to control the import status view visibility
     @Binding var showImportStatusView: Bool
 
@@ -139,15 +139,18 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
             Spacer()
             Group {
+                Divider()
+                    .frame(width: 1, height: 12)
+
                 OptionsIndicator(pointDown: sortAscending, action: {
                     #if !os(tvOS)
                     Haptics.impact(style: .light)
                     #endif
                     toggleSortAction()
                 }) {
-                    Text("Sort")
+                    Image(systemName: sortAscending ? "chevron.down.dotted.2" :"chevron.up.dotted.2")
                         .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                        .font(font)
+                        .font(font.weight(.light))
                 }
                 .contentShape(Rectangle())
 
@@ -189,17 +192,18 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 }
                 .disabled(!canZoomIn)
                 .padding(.trailing, padding)
-                
+
                 Divider()
-                
+                    .frame(width: 1, height: 12)
+
                 // Log button for viewing detailed logs
                 RetroLogButton(size: 12, color: .retroBlue)
                     .padding(.trailing, padding)
-                
+
                 // Status control button for viewing system status
                 StatusControlButton()
                     .padding(.trailing, padding)
-                
+
                 // Import status button
                 Button(action: {
                     #if !os(tvOS)
@@ -214,8 +218,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 .padding(.trailing, padding)
             }
             .allowsHitTesting(true)
-            
-            Spacer()
+            .padding(.trailing, padding)
         }
         .onAppear {
             gameLibraryScale = Defaults[.gameLibraryScale]

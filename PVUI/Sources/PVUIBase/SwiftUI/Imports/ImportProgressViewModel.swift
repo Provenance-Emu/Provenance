@@ -7,6 +7,7 @@
 
 import Combine
 import Defaults
+import Foundation
 import PVLibrary
 import PVLogging
 import PVPrimitives
@@ -68,9 +69,10 @@ public class ImportProgressViewModel: ObservableObject {
     /// File recovery state
     @Published var fileRecoveryState: FileRecoveryState = .idle
     @Published var fileRecoveryProgress: ProgressInfo?
+    private let fileRecoveryProgressID = "icloud-file-recovery"
     
     /// CloudKit activity flag
-    private var cloudKitIsActive: Bool = false
+    @Published private(set) var cloudKitIsActive: Bool = false
     
     /// Subscriptions for sync tracking
     private var syncSubscriptions = Set<AnyCancellable>()
@@ -78,22 +80,30 @@ public class ImportProgressViewModel: ObservableObject {
     // MARK: - Initialization
     
     /// Initialize the view model with a game importer
-    public init(gameImporter: any GameImporting) {
+    public init(gameImporter: GameImporting = GameImporter.shared) {
         self.gameImporter = gameImporter
-        
-        // Set up queue subscription
-        setupQueueSubscription(gameImporter: gameImporter)
-        
-        // Set up CloudKit subscriptions if iCloud sync is enabled
-        if Defaults[.iCloudSync] {
-            setupCloudKitSubscriptions()
-        }
-        
-        // Set up notification observers
+        setupCloudKitSubscriptions()
         setupNotificationObservers()
+        
+        // Initial check for recovery state - Removed direct access
+        // self.fileRecoveryState = iCloudSync.shared.fileRecoveryState
+        if self.fileRecoveryState == .inProgress {
+            // This block likely won't execute now unless the default state changes
+            // or is updated *before* this check by one of the setup methods.
+            // Consider if this logic needs adjustment based on subscription timing.
+            // Corrected argument labels: id, current, total, detail
+            self.fileRecoveryProgress = ProgressInfo(id: fileRecoveryProgressID, current: 0, total: 0, detail: "Recovering Files...")
+            self.addLogMessage("File recovery started.")
+        }
         
         // Start animations
         startAnimations()
+        
+        // Ensure the view is visible when there are active operations
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            // Check if we have any active operations from other view models
+            self.checkForExistingOperations()
+        }
     }
     
     // MARK: - Public Methods
@@ -123,7 +133,7 @@ public class ImportProgressViewModel: ObservableObject {
                 }
             }
             .store(in: &cancellables)
-            
+        
         // Create a repeating animation for the glow effect
         Timer.publish(every: 1.0, on: .main, in: .common)
             .autoconnect()
@@ -169,28 +179,27 @@ public class ImportProgressViewModel: ObservableObject {
     public func updateProgress(id: String, detail: String?, current: Int, total: Int) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            
-            // Create a new progress info with the updated values and use the id parameter
-            // This prevents flickering by maintaining the same ID across updates
             let progressInfo = ProgressInfo(id: id, current: current, total: total, detail: detail ?? id)
             
-            // Find if we already have a progress bar with this ID
+            // Update progress tracking
             if let index = self.activeProgressBars.firstIndex(where: { $0.id == id }) {
-                // Replace the existing progress bar
-                self.activeProgressBars[index] = progressInfo
+                // Update existing progress bar only if values changed
+                if self.activeProgressBars[index].current != current || self.activeProgressBars[index].total != total || self.activeProgressBars[index].detail != detail {
+                    self.activeProgressBars[index] = progressInfo
+                    DLOG("Updated existing progress bar: \(id) - \(current)/\(total)")
+                    self.objectWillChange.send() // Send update only if changed
+                    self.debounceUpdate() // Debounce if changes occur
+                }
             } else {
                 // Add a new progress bar
                 self.activeProgressBars.append(progressInfo)
+                DLOG("Added new progress bar: \(id) - \(current)/\(total)")
+                self.objectWillChange.send()
+                self.debounceUpdate()
             }
             
-            // Show the view when there are active progress bars
-            self.shouldShow = true
-            
-            // Debounce updates to prevent flickering
-            self.debounceTimer?.invalidate()
-            self.debounceTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false) { [weak self] _ in
-                self?.objectWillChange.send()
-            }
+            // Ensure the view is shown when there's activity
+            self.updateShowState()
         }
     }
     
@@ -198,13 +207,12 @@ public class ImportProgressViewModel: ObservableObject {
     public func removeProgress(id: String) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            
-            // Remove progress bars with matching ID
-            self.activeProgressBars.removeAll(where: { $0.id == id })
-            
-            // Schedule hiding the view if there are no more progress bars
-            if self.activeProgressBars.isEmpty && self.logMessages.isEmpty {
-                self.scheduleHideAfterDelay()
+            let initialCount = self.activeProgressBars.count
+            self.activeProgressBars.removeAll { $0.id == id }
+            if self.activeProgressBars.count < initialCount {
+                DLOG("Removed progress bar with ID: \(id)")
+                self.objectWillChange.send()
+                self.updateShowState() // Update visibility after removal
             }
         }
     }
@@ -216,228 +224,322 @@ public class ImportProgressViewModel: ObservableObject {
         // Cancel any existing hide timer
         hideTimer?.cancel()
         
-        // Create a new timer to hide the view after 5 seconds
-        hideTimer = Timer.publish(every: 5.0, on: .main, in: .common)
-            .autoconnect()
-            .sink { [weak self] _ in
-                guard let self = self else { return }
-                
-                // Only hide if there are no active progress bars or sync activities
-                if self.activeProgressBars.isEmpty && !self.isSyncing && self.importQueueItems.isEmpty {
-                    self.shouldShow = false
+        // Only hide if there are no active items
+        if self.activeProgressBars.isEmpty && self.logMessages.isEmpty {
+            DLOG("Scheduling hide timer for ImportProgressView")
+            
+            // Schedule a new hide timer
+            hideTimer = Timer.publish(every: 3.0, on: .main, in: .common)
+                .autoconnect()
+                .sink { [weak self] _ in
+                    guard let self = self else { return }
+                    
+                    // Double-check that we still have no active items before hiding
+                    if self.activeProgressBars.isEmpty && self.logMessages.isEmpty {
+                        DLOG("Hiding ImportProgressView")
+                        self.shouldShow = false
+                        self.objectWillChange.send()
+                    } else {
+                        DLOG("Canceling hide - new items appeared")
+                    }
+                    
+                    self.hideTimer?.cancel()
+                    self.hideTimer = nil
                 }
-                
-                // Cancel the timer after it fires once
-                self.hideTimer?.cancel()
-            }
+        }
     }
     
     /// Handle debouncing of updates to prevent flickering
     private func debounceUpdate() {
-        // Cancel any existing debounce timer
         debounceTimer?.invalidate()
-        
-        // Create a new timer to update the UI after a short delay
         debounceTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false) { [weak self] _ in
             guard let self = self else { return }
-            
-            // Force a UI update by triggering objectWillChange
-            DispatchQueue.main.async {
-                self.objectWillChange.send()
-            }
+            DLOG("Debounced update for ImportProgressViewModel")
+            self.objectWillChange.send()
+        }
+    }
+    
+    /// Check for existing operations from other view models
+    private func checkForExistingOperations() {
+        DLOG("Checking for existing operations from other view models")
+        
+        // Post a request for status updates
+        NotificationCenter.default.post(name: Notification.Name("RequestProgressUpdates"), object: nil)
+        
+        // Check if we have any active progress bars
+        if !activeProgressBars.isEmpty {
+            DLOG("Found \(activeProgressBars.count) active progress bars")
+            shouldShow = true
+            objectWillChange.send()
         }
     }
     
     /// Set up CloudKit subscriptions
     private func setupCloudKitSubscriptions() {
-        // Get the syncers from the store
-        guard let syncers = getSyncers() else {
-            ELOG("ImportProgressViewModel: No syncers available")
+        ILOG("Setting up CloudKit subscriptions for ImportProgressViewModel")
+        // Check if iCloud sync is enabled
+        guard Defaults[.iCloudSync] else {
+            WLOG("iCloud Sync not enabled, skipping CloudKit subscriptions.")
             return
         }
         
-        // Track sync status for each syncer
-        for syncer in syncers {
-            // Since SyncProvider doesn't have the required publishers yet,
-            // we'll set up a basic implementation that doesn't rely on those properties
-            
-            // Set default status values on the main thread
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                // Set default status
-                self.syncStatus = .idle
-                self.isSyncing = false
-                self.pendingUploads = 0
-                self.pendingDownloads = 0
-                self.newFilesCount = 0
-            }
-            
-            // Subscribe to relevant notifications instead
-            setupSyncNotificationObservers()
-        }
-    }
-    
-    /// Set up notification observers for sync status updates
-    private func setupSyncNotificationObservers() {
-        let nc = NotificationCenter.default
+        // Clear existing sync subscriptions to avoid duplicates
+        syncSubscriptions.removeAll()
+        cloudKitIsActive = false // Reset active state
         
-        // CloudKit sync status notifications
-        nc.publisher(for: .cloudKitInitialSyncStarted)
+        // Setup CloudKit subscriptions
+        CloudSyncManager.shared.$syncStatus
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                guard let self = self else { return }
-                self.syncStatus = .syncing
-                self.isSyncing = true
-                self.shouldShow = true
-            }
-            .store(in: &syncSubscriptions)
-        
-        nc.publisher(for: .cloudKitInitialSyncCompleted)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                guard let self = self else { return }
-                self.syncStatus = .idle
-                self.isSyncing = false
+            .sink { [weak self] status in
+                guard let self else { return }
                 
-                if self.activeProgressBars.isEmpty && self.importQueueItems.isEmpty {
-                    self.scheduleHideAfterDelay()
+                // Update activity flag based on overall status
+                let isActive: Bool
+                var statusText: String = ""
+                
+                switch status {
+                case .idle:
+                    isActive = false
+                case .syncing:
+                    isActive = true
+                    statusText = "Syncing..."
+                case .initialSync:
+                    isActive = true
+                    statusText = "Performing Initial Sync..."
+                case .uploading:
+                    isActive = true
+                    statusText = "Uploading..."
+                case .downloading:
+                    isActive = true
+                    statusText = "Downloading..."
+                case .error(let error):
+                    isActive = false // Or true if you want to show error state
+                    ELOG("CloudSyncManager reported error: \(error.localizedDescription)")
+                case .disabled:
+                    isActive = false
+                    statusText = "CloudKit Disabled"
                 }
+                
+                self.cloudKitIsActive = isActive
+                
+                // Optionally, update a specific progress bar or show general status text
+                // Example: Create/update a general 'cloud-status' progress item
+                if isActive {
+                    self.updateProgress(id: "cloud-status", detail: statusText, current: 1, total: 1)
+                } else {
+                    self.removeProgress(id: "cloud-status")
+                }
+                
+                self.updateShowState()
             }
             .store(in: &syncSubscriptions)
+        
+        ILOG("CloudKit subscriptions set up.")
     }
     
-    /// Set up notification observers
+    /// Set up notification observers for progress updates
     private func setupNotificationObservers() {
         let nc = NotificationCenter.default
         
-        // File recovery notifications
-        nc.publisher(for: Notification.Name("iCloudFileRecoveryStarted"))
+        // Listen for progress updates (e.g., cache management, downloads)
+        nc.publisher(for: .cacheManagementProgress)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] notification in
-                guard let self = self else { return }
-                self.fileRecoveryState = .inProgress
-                self.addLogMessage("iCloud file recovery started", type: .info)
-                
-                // Create a new progress info for file recovery with a consistent ID
-                self.updateProgress(id: "fileRecovery", detail: "File Recovery", current: 0, total: 100)
-                
-                // Store a reference to the progress info
-                if let index = self.activeProgressBars.firstIndex(where: { $0.id == "fileRecovery" }) {
-                    self.fileRecoveryProgress = self.activeProgressBars[index]
+                self?.handleProgressUpdate(notification: notification, identifier: "cache-management", defaultDetail: "Cache Management")
+            }
+            .store(in: &cancellables)
+            
+        nc.publisher(for: .downloadProgress)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                self?.handleProgressUpdate(notification: notification, identifier: "download", defaultDetail: "Downloading")
+            }
+            .store(in: &cancellables)
+
+        // Listen for iCloud File Recovery progress
+        setupFileRecoverySubscriptions()
+        
+        // Listen for ROM scanning progress
+        NotificationCenter.default.publisher(for: .romScanningProgress)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                self?.handleProgressUpdate(notification: notification, identifier: "rom-scan", defaultDetail: "Scanning ROMs")
+            }
+            .store(in: &cancellables)
+        
+        NotificationCenter.default.publisher(for: .romScanningCompleted)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                self?.handleProgressCompletion(notification: notification, identifier: "rom-scan", completionDetail: "ROM Scan Finished")
+            }
+            .store(in: &cancellables)
+    }
+    
+    /// Sets up subscriptions specifically for iCloud file recovery notifications.
+    private func setupFileRecoverySubscriptions() {
+        let nc = NotificationCenter.default
+        let recoveryID = self.fileRecoveryProgressID
+        
+        // Observe file recovery started
+        nc.publisher(for: iCloudSync.iCloudFileRecoveryStarted)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                Task { @MainActor [weak self] in
+                    guard let self else { return }
+                    self.fileRecoveryState = .inProgress
+                    self.updateProgress(id: recoveryID, detail: "Recovering Files...", current: 0, total: 0) // Start progress at 0
+                    self.addLogMessage("File recovery started.")
                 }
             }
             .store(in: &cancellables)
             
-        nc.publisher(for: Notification.Name("iCloudFileRecoveryProgress"))
+        // Observe file recovery progress
+        nc.publisher(for: iCloudSync.iCloudFileRecoveryProgress)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] notification in
-                guard let self = self else { return }
-                guard let userInfo = notification.userInfo,
-                       let progress = userInfo["progress"] as? Double,
-                       let current = userInfo["current"] as? Int,
-                       let total = userInfo["total"] as? Int else {
+                guard let self else { return }
+                // Only update if recovery is actually in progress
+                guard self.fileRecoveryState == .inProgress else { 
+                    VLOG("Received recovery progress notification but state is not .inProgress (\(self.fileRecoveryState)), ignoring.")
                     return
                 }
                 
-                // Update our stored progress info and the UI with a consistent ID
-                self.updateProgress(id: "fileRecovery", detail: "File Recovery", current: current, total: total)
-                
-                // Store a reference to the latest progress info
-                if let index = self.activeProgressBars.firstIndex(where: { $0.id == "fileRecovery" }) {
-                    self.fileRecoveryProgress = self.activeProgressBars[index]
-                }
-                
-                // Add a log message for significant progress
-                if current % 10 == 0 || current == total {
-                    self.addLogMessage("Recovered \(current) of \(total) files", type: .info)
+                if let progressInfo = self.parseProgressInfo(from: notification, identifier: recoveryID, defaultDetail: "File Recovery") {
+                    Task { @MainActor in
+                        self.fileRecoveryProgress = progressInfo
+                        self.updateProgress(id: progressInfo.id, detail: progressInfo.detail, current: progressInfo.current, total: progressInfo.total)
+                    }
                 }
             }
             .store(in: &cancellables)
         
-        nc.publisher(for: Notification.Name("iCloudFileRecoveryCompleted"))
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] notification in
-                guard let self = self else { return }
-                guard let userInfo = notification.userInfo,
-                      let count = userInfo["count"] as? Int else {
-                    return
-                }
-                
-                // Update state and remove progress bar
-                self.fileRecoveryState = .complete
-                self.removeProgress(id: "fileRecovery")
-                self.fileRecoveryProgress = nil
-                
-                // Add a completion log message
-                self.addLogMessage("File recovery completed: \(count) files recovered", type: .success)
-            }
-            .store(in: &cancellables)
-        
-        nc.publisher(for: Notification.Name("iCloudFileRecoveryFailed"))
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] notification in
-                guard let self = self else { return }
-                guard let userInfo = notification.userInfo,
-                      let error = userInfo["error"] as? Error else {
-                    return
-                }
-                
-                // Update state and remove progress bar
-                self.fileRecoveryState = .error
-                self.removeProgress(id: "fileRecovery")
-                self.fileRecoveryProgress = nil
-                
-                // Add an error log message
-                self.addLogMessage("File recovery failed: \(error.localizedDescription)", type: .error)
-            }
-            .store(in: &cancellables)
-        
-        // Temporary file cleanup notifications
-        nc.publisher(for: Notification.Name("TemporaryFileCleanupStarted"))
+        // Observe file recovery completion
+        nc.publisher(for: iCloudSync.iCloudFileRecoveryCompleted)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
-                guard let self = self else { return }
-                self.addLogMessage("Temporary file cleanup started", type: .info)
+                Task { @MainActor [weak self] in
+                    guard let self else { return }
+                    self.fileRecoveryState = .complete
+                    self.removeProgress(id: recoveryID)
+                    self.addLogMessage("File recovery completed.")
+                }
             }
             .store(in: &cancellables)
         
-        nc.publisher(for: Notification.Name("TemporaryFileCleanupCompleted"))
+        // Observe file recovery errors
+        nc.publisher(for: iCloudSync.iCloudFileRecoveryError)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] notification in
-                guard let self = self else { return }
-                guard let userInfo = notification.userInfo,
-                      let count = userInfo["count"] as? Int else {
-                    return
+                Task { @MainActor [weak self] in
+                    guard let self else { return }
+                    self.fileRecoveryState = .error
+                    self.removeProgress(id: recoveryID)
+                    let errorDetail = notification.userInfo?["error"] as? String ?? "Unknown file recovery error"
+                    self.addLogMessage("File recovery error: \(errorDetail)")
                 }
-                
-                // Add a completion log message
-                self.addLogMessage("Temporary file cleanup completed: \(count) files removed", type: .success)
             }
             .store(in: &cancellables)
-    }
-    
-    /// Set up subscription to the game importer's queue
-    private func setupQueueSubscription(gameImporter: any GameImporting) {
-        // Subscribe to the game importer's queue
-        gameImporter.importQueuePublisher
+        
+        // Observe individual files pending recovery (adds to a list, maybe)
+        nc.publisher(for: iCloudSync.iCloudFilePendingRecovery)
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] items in
-                guard let self = self else { return }
-                self.importQueueItems = items
-                
-                // Show the view when there are items in the queue
-                if !items.isEmpty {
-                    self.shouldShow = true
-                } else if self.activeProgressBars.isEmpty && !self.isSyncing {
-                    self.scheduleHideAfterDelay()
+            .sink { [weak self] notification in
+                if let filename = notification.userInfo?["filename"] as? String {
+                    // Optionally update UI or track pending files
+                    self?.addLogMessage("File pending recovery: \(filename)")
+                    VLOG("File pending recovery: \(filename)")
                 }
             }
             .store(in: &cancellables)
     }
     
-    /// Get the syncers from the store
-    private func getSyncers() -> [any SyncProvider]? {
-        // Get the actual syncer instances from the store
-        return CloudKitSyncerStore.shared.activeSyncers
+    /// Updates the `shouldShow` property based on current activity.
+    private func updateShowState() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            // View should show if there are active progress bars or recent log messages
+            let shouldBeVisible = !self.activeProgressBars.isEmpty || self.cloudKitIsActive
+            
+            if self.shouldShow != shouldBeVisible {
+                DLOG("Updating shouldShow from \(self.shouldShow) to \(shouldBeVisible). Active Bars: \(self.activeProgressBars.count), CloudKit Active: \(self.cloudKitIsActive)")
+                self.shouldShow = shouldBeVisible
+                self.objectWillChange.send()
+            }
+            
+            // Schedule hiding only if it should be hidden and no operations are active
+            if !self.shouldShow && self.activeProgressBars.isEmpty && !self.cloudKitIsActive {
+                self.scheduleHideAfterDelay() // Hide after 3 seconds if truly idle
+            } else {
+                // If it should be showing, cancel any pending hide timer
+                self.hideTimer?.cancel()
+                self.hideTimer = nil
+            }
+        }
+    }
+    
+    /// Handles updates from ProgressInfo notifications.
+    private func handleProgressUpdate(progressInfo: ProgressInfo) {
+        updateProgress(id: progressInfo.id, detail: progressInfo.detail, current: progressInfo.current, total: progressInfo.total)
+        self.updateShowState()
+    }
+    
+    /// Handles completion from ProgressInfo notifications.
+    private func handleProgressCompletion(progressInfo: ProgressInfo) {
+        removeProgress(id: progressInfo.id)
+        self.updateShowState()
+    }
+    
+    /// Handles generic progress update notifications.
+    /// - Parameters:
+    ///   - notification: The notification containing progress info.
+    ///   - identifier: The unique ID for this progress item.
+    ///   - defaultDetail: A default description if the notification doesn't provide one.
+    private func handleProgressUpdate(notification: Notification, identifier: String, defaultDetail: String) {
+        if let progressInfo = parseProgressInfo(from: notification, identifier: identifier, defaultDetail: defaultDetail) {
+            Task { @MainActor [weak self] in
+                self?.updateProgress(id: progressInfo.id, detail: progressInfo.detail, current: progressInfo.current, total: progressInfo.total)
+            }
+        }
+    }
+    
+    /// Handles generic progress completion notifications.
+    /// - Parameters:
+    ///   - notification: The notification indicating completion.
+    ///   - identifier: The unique ID of the progress item to remove.
+    ///   - completionDetail: A message to log upon completion.
+    private func handleProgressCompletion(notification: Notification, identifier: String, completionDetail: String) {
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            self.removeProgress(id: identifier)
+            self.addLogMessage("\(completionDetail).") // Ensure this matches signature
+            VLOG("Progress completed for \(identifier). Notification: \(notification.name.rawValue)")
+        }
+    }
+    
+    /// Parses `ProgressInfo` from a notification's `userInfo` dictionary.
+    /// - Returns: A `ProgressInfo` object if parsing is successful, otherwise `nil`.
+    private func parseProgressInfo(from notification: Notification, identifier: String, defaultDetail: String) -> ProgressInfo? {
+        // Attempt to extract ProgressInfo directly if it's the object
+        if let progressInfo = notification.object as? ProgressInfo {
+            return progressInfo
+        }
+
+        // Fallback: Extract from userInfo dictionary using standard keys
+        guard let userInfo = notification.userInfo,
+              // Use standard string keys
+              let current = userInfo["current"] as? Int,
+              let total = userInfo["total"] as? Int else {
+            WLOG("Could not parse ProgressInfo from notification userInfo: \(notification.userInfo ?? [:])")
+            return nil // Missing essential info
+        }
+
+        // Get ID, defaulting to the passed identifier if missing
+        let id = userInfo["id"] as? String ?? identifier
+        
+        // Detail is optional
+        let detail = userInfo["detail"] as? String ?? defaultDetail
+
+        // Use the correct initializer, casting Double to Int as confirmed by definition
+        return ProgressInfo(id: id, current: current, total: total, detail: detail)
     }
 }

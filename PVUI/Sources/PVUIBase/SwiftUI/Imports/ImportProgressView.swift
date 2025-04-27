@@ -36,19 +36,17 @@ public struct ImportProgressView: View {
     /// Maximum number of log messages to display
     private let maxLogMessages = 10
 
-    /// Callback when the view is tapped
-    public var onTap: (() -> Void)?
+    /// State to control the presentation of the status control view
+    @State private var showStatusControl: Bool = false
 
     // MARK: - Initialization
 
     public init(
         gameImporter: any GameImporting,
-        updatesController: PVGameLibraryUpdatesController,
-        onTap: (() -> Void)? = nil
+        updatesController: PVGameLibraryUpdatesController
     ) {
         self.gameImporter = gameImporter
         self.updatesController = updatesController
-        self.onTap = onTap
         self._viewModel = StateObject(wrappedValue: ImportProgressViewModel(gameImporter: gameImporter))
     }
 
@@ -56,16 +54,19 @@ public struct ImportProgressView: View {
 
     public var body: some View {
         WithPerceptionTracking {
-            if viewModel.shouldShow || !viewModel.importQueueItems.isEmpty
-                || (iCloudSyncEnabled && viewModel.isSyncing) || !viewModel.logMessages.isEmpty
-            {
-                contentView
-                    .onTapGesture {
-                        onTap?()  // Call the tap callback if provided
-                    }
-            } else {
-                // Empty spacer with a fixed height when no items to prevent layout shifts
-                Color.clear.frame(height: 10)
+            ZStack {
+                if !viewModel.activeProgressBars.isEmpty {
+                    contentView
+                        .onTapGesture {
+                            showStatusControl = true  // Show the status control view
+                        }
+                        .onAppear {
+                            DLOG("ImportProgressView appeared with \(viewModel.activeProgressBars.count) progress bars and \(viewModel.logMessages.count) messages")
+                        }
+                        .fullScreenCover(isPresented: $showStatusControl) {
+                            RetroStatusFullscreenView(isPresented: $showStatusControl)
+                        }
+                }
             }
         }
         // Disable animations on this section to prevent flickering
@@ -87,12 +88,53 @@ public struct ImportProgressView: View {
 
     private var contentView: some View {
         VStack(alignment: .leading, spacing: 0) {
+            // Header with title and sync status
+            HStack {
+                // Title with glow effect
+                Text("SYSTEM STATUS")
+                    .font(.system(size: 14, weight: .bold, design: .monospaced))
+                    .foregroundColor(RetroTheme.retroPink)
+                    .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2, x: 0, y: 0)
+                
+                Spacer()
+                
+                // Sync status indicators
+                if iCloudSyncEnabled && (viewModel.pendingUploads > 0 || viewModel.pendingDownloads > 0) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "icloud")
+                            .font(.system(size: 12))
+                            .foregroundColor(RetroTheme.retroBlue)
+                        
+                        Text("\(viewModel.pendingUploads + viewModel.pendingDownloads) pending")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(RetroTheme.retroBlue.opacity(0.8))
+                    }
+                    .padding(.vertical, 2)
+                    .padding(.horizontal, 6)
+                    .background(Color.black.opacity(0.3))
+                    .cornerRadius(4)
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.top, 12)
+            .padding(.bottom, 8)
+            
+            // Divider with gradient
+            Rectangle()
+                .frame(height: 1)
+                .foregroundStyle(RetroTheme.retroGradient)
+                .padding(.horizontal, 8)
+                .padding(.bottom, 8)
+            
             // Progress bars section
             VStack(alignment: .leading, spacing: 8) {
-                // Active progress bars
-                ForEach(viewModel.activeProgressBars) { progressInfo in
-                    progressBar(for: progressInfo)
+                if !viewModel.activeProgressBars.isEmpty {
+                    // Active progress bars
+                    ForEach(viewModel.activeProgressBars) { progressInfo in
+                        progressBar(for: progressInfo)
+                    }
                 }
+                // No else clause - don't show anything when there are no operations
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 10)
@@ -111,84 +153,147 @@ public struct ImportProgressView: View {
                     )
             )
 
-            // Log messages section
-            if !viewModel.logMessages.isEmpty {
-                ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 2) {
-                        ForEach(viewModel.logMessages.prefix(maxLogMessages)) { message in
-                            HStack(spacing: 8) {
-                                // Icon
-                                Image(systemName: iconForMessageType(message.type))
-                                    .font(.system(size: 12))
-                                    .foregroundColor(colorForMessageType(message.type))
-
-                                // Message text
-                                Text(message.message)
-                                    .font(.system(size: 12))
-                                    .foregroundColor(.white.opacity(0.9))
-                                    .lineLimit(1)
-
-                                Spacer()
-
-                                // Timestamp
-                                Text(timeString(from: message.timestamp))
-                                    .font(.system(size: 10))
-                                    .foregroundColor(.gray)
-                            }
-                            .padding(.vertical, 4)
-                            .padding(.horizontal, 8)
-                            .background(Color.black.opacity(0.3))
-                            .cornerRadius(4)
-                        }
-                    }
-                }
-                .frame(maxHeight: 300)
-                .padding(.top, 8)
+            // Tap to view more indicator with pulsing animation
+            HStack(spacing: 8) {
+                Spacer()
+                
+                Text("Tap for detailed logs and controls")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(Color.white.opacity(0.8))
+                
+                Image(systemName: "arrow.up.forward.circle.fill")
+                    .font(.system(size: 14))
+                    .foregroundColor(RetroTheme.retroBlue)
+                    .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 2, x: 0, y: 0)
+                    .modifier(PulseEffect(animatableParameter: viewModel.glowOpacity))
+                
+                Spacer()
             }
+            .padding(.vertical, 8)
+            .padding(.horizontal, 4)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.black.opacity(0.3))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(LinearGradient(
+                                gradient: Gradient(colors: [RetroTheme.retroPink.opacity(0.3), RetroTheme.retroBlue.opacity(0.3)]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ), lineWidth: 1)
+                    )
+            )
+            .padding(.horizontal, 12)
+            .padding(.top, 8)
         }
         .padding(.vertical, 8)
-        .background(Color.black.opacity(0.85))
+        .background(
+            ZStack {
+                // Dark background
+                Color.black.opacity(0.9)
+                
+                // Subtle grid pattern
+                RetroTheme.RetroGridView()
+                    .opacity(0.05)
+            }
+        )
         .cornerRadius(12)
-        .shadow(color: Color.retroPink.opacity(0.3), radius: 5, x: 0, y: 0)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .strokeBorder(LinearGradient(
+                    gradient: Gradient(colors: [RetroTheme.retroPink.opacity(0.5), RetroTheme.retroBlue.opacity(0.5)]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ), lineWidth: 1.5)
+        )
+        .shadow(color: RetroTheme.retroPink.opacity(0.4), radius: 8, x: 0, y: 2)
     }
 
     // Progress bar component
-    private func progressBar(for progress: ProgressInfo) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            // Title and progress count
+    private func progressBar(for progressInfo: ProgressInfo) -> some View {
+        let progress = min(1.0, max(0.0, Double(progressInfo.current) / Double(progressInfo.total)))
+        let percent = Int(progress * 100)
+        let color = progressColor(for: progressInfo.detail)
+        
+        return VStack(alignment: .leading, spacing: 4) {
+            // Operation label and progress percentage
             HStack {
-                Text(progress.detail ?? "Progress")
+                // Icon based on operation type
+                Image(systemName: iconForOperation(progressInfo.detail ?? ""))
+                    .font(.system(size: 14))
+                    .foregroundColor(color)
+                    .shadow(color: color.opacity(0.7), radius: 2, x: 0, y: 0)
+                
+                // Operation label
+                Text(progressInfo.detail ?? "Operation")
                     .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(progressColor(for: progress.detail))
-
+                    .foregroundColor(color)
+                    .lineLimit(1)
+                
                 Spacer()
-
-                Text("\(progress.current)/\(progress.total) (\(Int(progress.progress * 100))%)")
+                
+                // Progress fraction and percentage
+                Text("\(progressInfo.current)/\(progressInfo.total) (\(percent)%)")
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(progressColor(for: progress.detail).opacity(0.9))
+                    .foregroundColor(color.opacity(0.8))
             }
-
+            
             // Progress bar
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    // Background track
+            ZStack(alignment: .leading) {
+                // Background track
+                Rectangle()
+                    .fill(Color.black.opacity(0.3))
+                    .frame(height: 12)
+                    .cornerRadius(6)
+                
+                // Progress fill
+                Rectangle()
+                    .fill(LinearGradient(
+                        gradient: Gradient(colors: [color, color.opacity(0.7)]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    ))
+                    .frame(width: max(12, progress * UIScreen.main.bounds.width * 0.7), height: 12)
+                    .cornerRadius(6)
+                
+                // Animated glow effect for active progress
+                if progress < 1.0 && progress > 0.0 {
                     Rectangle()
-                        .fill(Color.black.opacity(0.5))
-                        .frame(height: 8)
-                        .cornerRadius(4)
-
-                    // Progress fill
-                    Rectangle()
-                        .fill(progressColor(for: progress.detail))
-                        .frame(width: max(4, CGFloat(progress.progress) * geometry.size.width), height: 8)
-                        .cornerRadius(4)
+                        .fill(color.opacity(0.4))
+                        .frame(width: 20, height: 12)
+                        .cornerRadius(6)
+                        .offset(x: viewModel.animatedProgressOffset)
+                        .mask(
+                            Rectangle()
+                                .frame(width: progress * UIScreen.main.bounds.width * 0.7, height: 12)
+                                .cornerRadius(6)
+                        )
                 }
+                
+                // Small circle indicator
+                Circle()
+                    .fill(color)
+                    .frame(width: 6, height: 6)
+                    .padding(.leading, 3)
             }
-            .frame(height: 8)
+            .frame(height: 12)
         }
+        .padding(.vertical, 6)
+        .padding(.horizontal, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.black.opacity(0.2))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .strokeBorder(LinearGradient(
+                    gradient: Gradient(colors: [color.opacity(0.5), color.opacity(0.2)]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ), lineWidth: 1)
+        )
+        .shadow(color: color.opacity(0.3), radius: 3, x: 0, y: 0)
     }
-
-    // MARK: - Helper Methods
 
     /// Get the color for a progress bar based on its detail
     private func progressColor(for detail: String?) -> Color {
@@ -197,20 +302,26 @@ public struct ImportProgressView: View {
         let lowercaseDetail = detail.lowercased()
         if lowercaseDetail.contains("recovery") { return .retroBlue }
         if lowercaseDetail.contains("cleanup") { return .retroPink }
-        if lowercaseDetail.contains("cache") { return .retroPurple }
-        if lowercaseDetail.contains("cloudkit") || lowercaseDetail.contains("icloud") {
-            return .retroBlue
-        }
+        if lowercaseDetail.contains("cache") || lowercaseDetail.contains("optimization") { return .retroPurple }
+        if lowercaseDetail.contains("extract") { return .retroPink }
+        if lowercaseDetail.contains("scan") { return .retroPurple }
+        if lowercaseDetail.contains("import") { return .retroPink }
+        if lowercaseDetail.contains("download") { return .retroBlue }
+        if lowercaseDetail.contains("upload") { return .retroPink }
+        if lowercaseDetail.contains("sync") { return .retroBlue }
+        if lowercaseDetail.contains("cloud") { return .retroBlue }
+        if lowercaseDetail.contains("warning") { return .orange }
+        
         return .retroBlue
     }
 
     /// Get the icon for a message type
     private func iconForMessageType(_ type: StatusMessage.MessageType) -> String {
         switch type {
-        case .info: return "info.circle"
-        case .success: return "checkmark.circle"
-        case .warning: return "exclamationmark.triangle"
-        case .error: return "xmark.circle"
+        case .info: return "info.circle.fill"
+        case .success: return "checkmark.circle.fill"
+        case .warning: return "exclamationmark.triangle.fill"
+        case .error: return "xmark.circle.fill"
         case .progress: return "arrow.clockwise.circle"
         }
     }
@@ -221,16 +332,109 @@ public struct ImportProgressView: View {
         case .info: return .retroBlue
         case .success: return .green
         case .warning: return .orange
-        case .error: return .retroPink
+        case .error: return .red
         case .progress: return .retroPurple
         }
     }
 
-    /// Format a timestamp as a string
-    private func timeString(from date: Date) -> String {
+    /// Format a timestamp as a time string
+    private func timeString(from date: Date?) -> String {
+        guard let date = date else { return "" }
         let formatter = DateFormatter()
         formatter.timeStyle = .short
         return formatter.string(from: date)
+    }
+    
+    // Helper function to get icon for operation type
+    private func iconForOperation(_ detail: String) -> String {
+        let lowercaseDetail = detail.lowercased()
+        
+        if lowercaseDetail.contains("recovery") { return "arrow.clockwise.icloud" }
+        if lowercaseDetail.contains("cleanup") { return "trash" }
+        if lowercaseDetail.contains("cache") || lowercaseDetail.contains("optimization") { return "gear" }
+        if lowercaseDetail.contains("extract") { return "doc.zipper" }
+        if lowercaseDetail.contains("scan") { return "magnifyingglass" }
+        if lowercaseDetail.contains("import") { return "square.and.arrow.down" }
+        if lowercaseDetail.contains("download") { return "arrow.down.circle" }
+        if lowercaseDetail.contains("upload") { return "arrow.up.circle" }
+        if lowercaseDetail.contains("sync") { return "arrow.triangle.2.circlepath" }
+        if lowercaseDetail.contains("cloud") { return "icloud" }
+        if lowercaseDetail.contains("warning") { return "exclamationmark.triangle" }
+        
+        return "circle"
+    }
+    
+    // Pulse animation effect
+    struct PulseEffect: AnimatableModifier {
+        var animatableParameter: Double
+        
+        func body(content: Content) -> some View {
+            content
+                .scaleEffect(1.0 + 0.1 * animatableParameter)
+                .opacity(0.5 + 0.5 * animatableParameter)
+        }
+    }
+    
+    /// A fullscreen view that displays the RetroStatusControlView
+    struct RetroStatusFullscreenView: View {
+        // MARK: - Properties
+        
+        /// Binding to control the presentation of the view
+        @Binding var isPresented: Bool
+        
+        // MARK: - Body
+        
+        var body: some View {
+            ZStack {
+                // Background with grid pattern for retrowave aesthetic
+                RetroTheme.retroBlack
+                    .edgesIgnoringSafeArea(.all)
+                    .overlay(
+                        RetroTheme.RetroGridView()
+                            .opacity(0.2)
+                    )
+                
+                // Fixed header and scrollable content container
+                VStack(alignment: .leading, spacing: 0) {
+                    // Fixed header with close button
+                    HStack {
+                        Text("System Status")
+                            .font(.system(size: 28, weight: .bold, design: .rounded))
+                            .foregroundColor(RetroTheme.retroPink)
+                            .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 3, x: 0, y: 0)
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            isPresented = false
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.title)
+                                .foregroundColor(RetroTheme.retroBlue)
+                                .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 3, x: 0, y: 0)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                    .padding()
+                    .background(RetroTheme.retroDarkBlue.opacity(0.7))
+                    .overlay(
+                        Rectangle()
+                            .frame(height: 2)
+                            .foregroundStyle(RetroTheme.retroGradient)
+                            .offset(y: 1),
+                        alignment: .bottom
+                    )
+                    
+                    // Scrollable content area
+                    ScrollView {
+                        // Status control view with fixed height to prevent jumping
+                        RetroStatusControlView()
+                            .padding()
+                            .frame(minHeight: 400, alignment: .top) // Fixed minimum height to prevent jumping
+                    }
+                }
+            }
+        }
     }
 
     /// Comprehensive sync status view - compact version
@@ -446,6 +650,9 @@ public struct ImportProgressView: View {
     func startAnimation() {
         // Delegate to view model
         viewModel.startAnimations()
+        
+        // Force an update
+        viewModel.objectWillChange.send()
     }
 
     /// Add a log message
@@ -458,6 +665,12 @@ public struct ImportProgressView: View {
     func updateProgress(id: String, detail: String?, current: Int, total: Int) {
         // Delegate to view model
         viewModel.updateProgress(id: id, detail: detail, current: current, total: total)
+        
+        // Force the view to show
+        DispatchQueue.main.async {
+            self.viewModel.shouldShow = true
+            self.viewModel.objectWillChange.send()
+        }
     }
 
     /// Remove a progress bar

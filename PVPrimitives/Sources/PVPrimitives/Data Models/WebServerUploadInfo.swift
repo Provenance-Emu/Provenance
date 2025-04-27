@@ -8,7 +8,7 @@
 import Foundation
 
 public struct WebServerUploadInfo: Identifiable, Equatable {
-    public let id = UUID()
+    public let filename: String
     public let progress: Double
     public let totalBytes: Int
     public let transferredBytes: Int
@@ -16,7 +16,10 @@ public struct WebServerUploadInfo: Identifiable, Equatable {
     public let queueLength: Int
     public let bytesTransferred: Int
     
-    public init(progress: Double, totalBytes: Int, transferredBytes: Int, currentFile: String, queueLength: Int, bytesTransferred: Int) {
+    public var id: String { filename }
+    
+    public init(filename: String, progress: Double, totalBytes: Int, transferredBytes: Int, currentFile: String, queueLength: Int, bytesTransferred: Int) {
+        self.filename = filename
         self.progress = progress
         self.totalBytes = totalBytes
         self.transferredBytes = transferredBytes

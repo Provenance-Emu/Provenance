@@ -212,15 +212,15 @@ private struct RetroEffects: View {
             )
             
             // Subtle flicker animation for CRT effect - only if reduce motion is not enabled
-            if !reduceMotion {
-                Color.white.opacity(isAnimating ? 0.03 : 0.0)
-                    .blendMode(.overlay)
-                    .onAppear {
-                        withAnimation(Animation.easeInOut(duration: 0.2).repeatForever(autoreverses: true)) {
-                            isAnimating = true
-                        }
-                    }
-            }
+//            if !reduceMotion {
+//                Color.white.opacity(isAnimating ? 0.03 : 0.0)
+//                    .blendMode(.overlay)
+//                    .onAppear {
+//                        withAnimation(Animation.easeInOut(duration: 0.2).repeatForever(autoreverses: true)) {
+//                            isAnimating = true
+//                        }
+//                    }
+//            }
         }
         .allowsHitTesting(false)
     }

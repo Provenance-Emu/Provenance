@@ -234,13 +234,8 @@ struct ConsolesWrapperView: SwiftUI.View {
         VStack {
             ImportProgressView(
                 gameImporter: GameImporter.shared,
-                updatesController: AppState.shared.libraryUpdatesController!,
-                onTap: {
-                    showImportStatusView = true
-                }
+                updatesController: AppState.shared.libraryUpdatesController!
             )
-//            .padding(.horizontal)
-//            .padding(.top, 8)
         }
         .sheet(isPresented: $showImportStatusView) {
             ImportStatusView(

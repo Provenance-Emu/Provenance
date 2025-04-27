@@ -161,6 +161,9 @@ final class RetroStatusControlViewModel: ObservableObject {
     
     /// Set up subscriptions to CloudKit sync status publishers
     private func setupCloudKitSubscriptions() {
+        // Setup CloudKit subscriptions if needed
+        DLOG("Setting up CloudKit subscriptions")
+        
         // Subscribe to sync status changes
         CloudSyncManager.shared.syncStatusPublisher
             .receive(on: DispatchQueue.main)
@@ -285,133 +288,172 @@ final class RetroStatusControlViewModel: ObservableObject {
     private func setupNotificationObservers() {
         let nc = NotificationCenter.default
         
+        // Request for progress updates
+        nc.addObserver(self, selector: #selector(handleRequestProgressUpdates), name: Notification.Name("RequestProgressUpdates"), object: nil)
+        
         // --- Web Server Status --- (Using PVWebServer's notification)
         nc.addObserver(self, selector: #selector(handleWebServerStatusChanged(_:)), name: .webServerStatusChanged, object: nil)
         
         // --- Web Server Upload Progress ---
         nc.addObserver(self, selector: #selector(handleWebServerUploadProgress), name: Notification.Name("PVWebServerUploadProgressNotification"), object: nil)
         
-        // --- iCloud File Recovery Notifications --- (Keep existing)
-        nc.addObserver(self, selector: #selector(handleFileRecoveryStarted(_:)), name: iCloudSync.iCloudFileRecoveryStarted, object: nil)
-        nc.addObserver(self, selector: #selector(handleFileRecoveryProgress(_:)), name: iCloudSync.iCloudFileRecoveryProgress, object: nil)
-        nc.addObserver(self, selector: #selector(handleFileRecoveryCompleted(_:)), name: iCloudSync.iCloudFileRecoveryCompleted, object: nil)
-        nc.addObserver(self, selector: #selector(handleFileRecoveryError(_:)), name: iCloudSync.iCloudFileRecoveryError, object: nil)
-        
         // --- File Pending Recovery --- (iCloudSync)
-        nc.addObserver(self, selector: #selector(handleFilePendingRecovery), name: iCloudSync.iCloudFilePendingRecovery, object: nil)
+        nc.addObserver(self, selector: #selector(handleFilePendingRecovery(_:)), name: iCloudSync.iCloudFilePendingRecovery, object: nil)
         
         // --- Archive Extraction --- (PVSupport standard notifications)
-        nc.addObserver(self, selector: #selector(handleArchiveExtractionStarted), name: .archiveExtractionStarted, object: nil)
-        nc.addObserver(self, selector: #selector(handleArchiveExtractionProgress), name: .archiveExtractionProgress, object: nil)
-        nc.addObserver(self, selector: #selector(handleArchiveExtractionCompleted), name: .archiveExtractionCompleted, object: nil)
-        nc.addObserver(self, selector: #selector(handleArchiveExtractionFailed), name: .archiveExtractionFailed, object: nil)
+        nc.addObserver(self, selector: #selector(handleArchiveExtractionStarted(_:)), name: .archiveExtractionStarted, object: nil)
+        nc.addObserver(self, selector: #selector(handleArchiveExtractionProgress(_:)), name: .archiveExtractionProgress, object: nil)
+        nc.addObserver(self, selector: #selector(handleArchiveExtractionCompleted(_:)), name: .archiveExtractionCompleted, object: nil)
+        nc.addObserver(self, selector: #selector(handleArchiveExtractionFailed(_:)), name: .archiveExtractionFailed, object: nil)
         
-        // --- File Access Error --- (PVSupport standard notification)
-        nc.addObserver(self, selector: #selector(handleFileAccessError), name: .fileAccessError, object: nil)
+        // --- iCloud File Recovery Notifications --- (Keep existing)
+        nc.addObserver(self, selector: #selector(handleFileRecoveryStarted(_:)), name: iCloudSync.iCloudFileRecoveryStarted, object: nil)
+    }
+    
+    /// Updates the view model's web server state properties from the PVWebServer shared instance.
+    private func updateWebServerStatus() {
+        let webServer = PVWebServer.shared
+        self.isWebServerRunning = webServer.isWWWUploadServerRunning
+        self.webServerIPAddress = webServer.ipAddress
+        self.webServerPort = webServer.bonjourSeverURL?.port
+        self.webServerError = nil // Reset error on status change
+        VLOG("ViewModel: Web server running status updated: \(self.isWebServerRunning)")
+    }
+    
+    /// Helper to parse common file error info
+    private func parseFileErrorInfo(from notification: Notification, defaultErrorType: String? = nil) -> FileErrorInfo? {
+        guard let path: String = extract(from: notification, key: "path") else { return nil }
         
-        // --- Specific Progress Notifications --- (Use actual Names from PVPrimitives or elsewhere)
-        // nc.addObserver(self, selector: #selector(handleFileImportProgress(_:)), name: .PVFileImporterProgress, object: nil) // NOTE: PVFileImporterProgress seems undefined
-        nc.addObserver(self, selector: #selector(handleRomScanningStarted(_:)), name: .romScanningStarted, object: nil)
-        nc.addObserver(self, selector: #selector(handleRomScanningProgress(_:)), name: .romScanningProgress, object: nil)
-        nc.addObserver(self, selector: #selector(handleRomScanningFinished(_:)), name: .romScanningCompleted, object: nil)
-        nc.addObserver(self, selector: #selector(handleTempCleanupProgress(_:)), name: .temporaryFileCleanupProgress, object: nil)
-        nc.addObserver(self, selector: #selector(handleCacheMgmtProgress(_:)), name: .cacheManagementProgress, object: nil)
-        nc.addObserver(self, selector: #selector(handleDownloadProgress(_:)), name: .downloadProgress, object: nil)
-        // CloudKit sync notifications
-        nc.addObserver(self, selector: #selector(handleCloudKitInitialSyncStarted(_:)), name: .cloudKitInitialSyncStarted, object: nil)
-        nc.addObserver(self, selector: #selector(handleCloudKitInitialSyncCompleted(_:)), name: .cloudKitInitialSyncCompleted, object: nil)
-        nc.addObserver(self, selector: #selector(handleCloudKitInitialSyncProgress(_:)), name: .cloudKitInitialSyncProgress, object: nil)
-        nc.addObserver(self, selector: #selector(handleCloudKitZoneChangesStarted(_:)), name: .cloudKitZoneChangesStarted, object: nil)
-        nc.addObserver(self, selector: #selector(handleCloudKitZoneChangesCompleted(_:)), name: .cloudKitZoneChangesCompleted, object: nil)
-        nc.addObserver(self, selector: #selector(handleCloudKitRecordTransferStarted(_:)), name: .cloudKitRecordTransferStarted, object: nil)
-        nc.addObserver(self, selector: #selector(handleCloudKitRecordTransferCompleted(_:)), name: .cloudKitRecordTransferCompleted, object: nil)
-        nc.addObserver(self, selector: #selector(handleCloudKitRecordTransferProgress(_:)), name: .cloudKitRecordTransferProgress, object: nil)
-        nc.addObserver(self, selector: #selector(handleCloudKitConflictsDetected(_:)), name: .cloudKitConflictsDetected, object: nil)
-        nc.addObserver(self, selector: #selector(handleCloudKitConflictsResolved(_:)), name: .cloudKitConflictsResolved, object: nil)
-        currentAlert = nil
-        ILOG("Notification observers set up in ViewModel")
+        let error: Error? = extract(from: notification, key: "error")
+        let errorDescription: String? = error?.localizedDescription
+        let errorString: String? = extract(from: notification, key: "error")
+        let errorDesc: String = errorDescription ?? errorString ?? "Unknown Error"
+        let filename: String = extract(from: notification, key: "filename") ?? URL(fileURLWithPath: path).lastPathComponent
+        let timestamp: Date = extract(from: notification, key: "timestamp") ?? Date()
+        let errorType: String? = extract(from: notification, key: "errorType") ?? defaultErrorType
+        return FileErrorInfo(error: errorDesc, path: path, filename: filename, timestamp: timestamp, errorType: errorType)
     }
     
-    private func handleLatestStatusMessage(_ message: StatusMessage?) {
-        guard let message = message else {
-            currentAlert = nil
-            return
-        }
-
-        // Convert StatusMessage.MessageType to AlertMessage.AlertType
-        let alertType: AlertMessage.AlertType?
-        switch message.type { // Use the correct property 'type'
-        case .error: alertType = .error
-        case .warning: alertType = .warning
-        case .success: alertType = .success
-        case .info: alertType = .info
-        case .progress: alertType = nil // Progress messages shouldn't be alerts
-        }
-
-        // Only create an alert if the type maps to one
-        if let validAlertType = alertType {
-            // StatusMessage doesn't have a title, use a generic one or the type itself
-            let title = String(describing: message.type).capitalized
-            currentAlert = AlertMessage(title: title, message: message.message, type: validAlertType)
-            // triggerAlertSound(type: alertType) // Sound function needs verification/reinstatement
-        } else {
-            // Don't show an alert for progress messages, etc.
-            // Optionally clear the alert if the latest message isn't alert-worthy
-            currentAlert = nil
-        }
+    /// Extract a value from a notification's userInfo
+    private func extract<T>(from notification: Notification, key: String) -> T? {
+        return notification.userInfo?[key] as? T
     }
     
-    // MARK: - Alert Handling
-    
-    /// Triggers an alert with the specified title, message, and type
-    /// - Parameters:
-    ///   - title: The title of the alert
-    ///   - message: The message body of the alert
-    ///   - type: The type of alert (.info, .success, .warning, .error, .progress)
-    private func triggerAlert(title: String, message: String, type: AlertMessage.AlertType) {
-        Task { @MainActor in
-            self.currentAlert = AlertMessage(title: title, message: message, type: type)
-            // Could add sound here if needed
-            // ButtonSoundGenerator.shared.playSound(.alert)
-        }
-    }
-    
-    // MARK: - File Recovery Handlers
-    @objc private func handleFileRecoveryStarted() {
-        VLOG("ViewModel: iCloud File Recovery Started")
-        self.fileRecoveryState = .inProgress
-        self.fileRecoveryProgressInfo = nil // Reset progress at start
-    }
-    
-    @objc private func handleFileRecoveryProgress(notification: Notification) {
-        VLOG("ViewModel: iCloud File Recovery Progress Received")
-        guard let userInfo = notification.userInfo,
-              let currentNum = userInfo["current"] as? NSNumber,
-              let totalNum = userInfo["total"] as? NSNumber,
-              let message = userInfo["message"] as? String else
-        {
-            WLOG("""
-                 Could not parse iCloud file recovery progress userInfo.
-                 Received: \(notification.userInfo ?? [:])
-                 """)
-            return
+    /// Helper to parse progress info from a notification
+    private func parseProgressInfo(from notification: Notification) -> ProgressInfo? {
+        guard let userInfo = notification.userInfo else { return nil }
+        
+        // Try to extract current and total values
+        guard let currentNum = userInfo["current"] as? NSNumber,
+              let totalNum = userInfo["total"] as? NSNumber else {
+            return nil
         }
         
         let current = currentNum.intValue
         let total = totalNum.intValue
+        let detail = userInfo["detail"] as? String
+        let id = userInfo["id"] as? String ?? UUID().uuidString
         
+        return ProgressInfo(id: id, current: current, total: total, detail: detail)
+    }
+    
+    /// Triggers an alert with the specified title, message, and type
+    private func triggerAlert(title: String, message: String, type: AlertMessage.AlertType) {
         Task { @MainActor in
-            self.fileRecoveryProgressInfo = ProgressInfo(current: current, total: total, detail: message)
-            // Ensure the overall state reflects progress
-            if self.fileRecoveryState != .inProgress { // Check against the main state enum
-                self.fileRecoveryState = .inProgress
-            }
-            // Log the message for debugging
-            DLOG("iCloud Recovery Progress: \(current)/\(total) - \(message)")
+            self.currentAlert = AlertMessage(title: title, message: message, type: type)
         }
     }
     
-    @objc private func handleFileRecoveryCompleted() {
+    // MARK: - Notification Handlers
+    
+    /// Handle requests for progress updates
+    @objc private func handleRequestProgressUpdates() {
+        DLOG("RetroStatusControlViewModel received request for progress updates")
+        
+        // Re-post all active progress information
+        Task { @MainActor in
+            // Check each progress type and post if active
+            if let progress = fileImportProgress {
+                NotificationCenter.default.post(name: Notification.Name("ProgressUpdate"), object: ProgressInfo(id: "fileImport", current: progress.current, total: progress.total, detail: progress.detail))
+            }
+            
+            if let progress = fileRecoveryProgressInfo {
+                NotificationCenter.default.post(name: Notification.Name("ProgressUpdate"), object: ProgressInfo(id: "fileRecovery", current: progress.current, total: progress.total, detail: progress.detail))
+            }
+            
+            if let progress = romScanningProgress {
+                NotificationCenter.default.post(name: Notification.Name("ProgressUpdate"), object: ProgressInfo(id: "romScanning", current: progress.current, total: progress.total, detail: progress.detail))
+            }
+            
+            if let progress = temporaryFileCleanupProgress {
+                NotificationCenter.default.post(name: Notification.Name("ProgressUpdate"), object: ProgressInfo(id: "tempCleanup", current: progress.current, total: progress.total, detail: progress.detail))
+            }
+            
+            if let progress = cacheManagementProgress {
+                NotificationCenter.default.post(name: Notification.Name("ProgressUpdate"), object: ProgressInfo(id: "cacheMgmt", current: progress.current, total: progress.total, detail: progress.detail))
+            }
+            
+            if let progress = downloadProgress {
+                NotificationCenter.default.post(name: Notification.Name("ProgressUpdate"), object: ProgressInfo(id: "download", current: progress.current, total: progress.total, detail: progress.detail))
+            }
+            
+            if let progress = cloudKitSyncProgress {
+                NotificationCenter.default.post(name: Notification.Name("ProgressUpdate"), object: ProgressInfo(id: "cloudKitSync", current: progress.current, total: progress.total, detail: progress.detail))
+            }
+        }
+    }
+    
+    // --- Web Server Handlers ---
+    @objc private func handleWebServerStatusChanged(_ notification: Notification) {
+        DLOG("Received web server status change notification")
+        Task { @MainActor in
+            updateWebServerStatus()
+        }
+    }
+    
+    // --- Web Server Upload Progress Handler ---
+    @objc private func handleWebServerUploadProgress(_ notification: Notification) { // Add @objc
+        DLOG("Received web server upload progress notification")
+        
+        // Extract progress information from the notification
+        guard let userInfo = notification.userInfo,
+              let filename = userInfo["filename"] as? String,
+              let progressNumber = userInfo["progress"] as? NSNumber else {
+            WLOG("Could not parse web server upload progress userInfo")
+            return
+        }
+        
+        let progress = progressNumber.doubleValue
+        
+        // Extract additional info or provide defaults
+        let totalBytes = userInfo["totalBytes"] as? Int ?? 0
+        let transferredBytes = userInfo["transferredBytes"] as? Int ?? 0
+        let currentFile = userInfo["currentFile"] as? String ?? filename
+        let queueLength = userInfo["queueLength"] as? Int ?? 0
+        let bytesTransferred = userInfo["bytesTransferred"] as? Int ?? transferredBytes
+        
+        Task { @MainActor in
+            // Update the web server upload progress with all required parameters
+            self.webServerUploadProgress = WebServerUploadInfo(
+                filename: filename,
+                progress: progress,
+                totalBytes: totalBytes,
+                transferredBytes: transferredBytes,
+                currentFile: currentFile,
+                queueLength: queueLength,
+                bytesTransferred: bytesTransferred
+            )
+            
+            // Update temporary status message
+            let percent = Int(progress * 100)
+            self.temporaryStatusMessage = "Uploading \(filename) (\(percent)%)"
+            
+            // Post notification for the StatusControlButton
+            NotificationCenter.default.post(name: Notification.Name("ProgressUpdate"), object: ProgressInfo(id: "webServerUpload", current: percent, total: 100, detail: "Uploading \(filename)"))
+        }
+    }
+    
+    @objc private func handleFileRecoveryCompleted(_ notification: Notification) {
         VLOG("ViewModel: iCloud File Recovery Completed")
         Task { @MainActor in
             self.fileRecoveryState = .complete // Set main state to complete
@@ -422,30 +464,117 @@ final class RetroStatusControlViewModel: ObservableObject {
             } else {
                 self.fileRecoveryProgressInfo = ProgressInfo(current: 0, total: 0, detail: "Recovery complete.") // Provide default completion info
             }
+            
+            // Delay dismissal of the status message
+            delayStatusDismissal(statusId: "fileRecovery", message: "File recovery completed", delay: 5.0)
         }
     }
     
-    @objc private func handleFileRecoveryError(notification: Notification) {
-        VLOG("ViewModel: iCloud File Recovery Error")
-        // Extract error message if available
-        let errorMessage = (notification.userInfo?["error"] as? Error)?.localizedDescription ?? "An unknown error occurred."
-        let fileName = notification.userInfo?["fileName"] as? String ?? "unknown file"
+    // MARK: - Archive Extraction Handlers
+    
+    @objc private func handleArchiveExtractionStarted(_ notification: Notification) {
+        VLOG("ViewModel: Archive Extraction Started")
+        guard let userInfo = notification.userInfo,
+              let filename = userInfo["filename"] as? String else {
+            WLOG("Could not parse archive extraction started userInfo")
+            return
+        }
         
         Task { @MainActor in
-            self.fileRecoveryState = .error // Set main state to error
-            // Update progress info with error message
-            if var progressInfo = self.fileRecoveryProgressInfo {
-                progressInfo.detail = "Error recovering \(fileName): \(errorMessage)"
-                self.fileRecoveryProgressInfo = progressInfo
-            } else {
-                self.fileRecoveryProgressInfo = ProgressInfo(current: 0, total: 0, detail: "Error recovering \(fileName): \(errorMessage)")
-            }
-            // Log the error
-            ELOG("iCloud Recovery Error: \(errorMessage) for file \(fileName)")
+            self.archiveExtractionInProgress = true
+            self.archiveExtractionProgress = 0.0
+            self.archiveExtractionFilename = filename
+            self.archiveExtractionStartTime = Date()
+            self.archiveExtractionExtractedCount = 0
+            self.archiveExtractionError = nil
+            self.temporaryStatusMessage = "Extracting \(filename)..."
         }
     }
     
-    // MARK: - ROM Scanning Handlers (Now Functional)
+    @objc private func handleArchiveExtractionProgress(_ notification: Notification) {
+        VLOG("ViewModel: Archive Extraction Progress")
+        guard let userInfo = notification.userInfo,
+              let progressVal: Double = userInfo["progress"] as? Double else {
+            WLOG("Could not parse archive extraction progress userInfo")
+            return
+        }
+        Task { @MainActor in
+            // Ensure progress is clamped between 0.0 and 1.0
+            self.archiveExtractionProgress = max(0.0, min(1.0, progressVal))
+            // Update temporary message with percentage?
+            let percent = Int(progressVal * 100)
+            if let filename = self.archiveExtractionFilename {
+                self.temporaryStatusMessage = "Extracting \(filename) (\(percent)%)"
+                // Post notification for the StatusControlButton
+                NotificationCenter.default.post(name: Notification.Name("ProgressUpdate"), object: ProgressInfo(id: "archiveExtraction", current: Int(progressVal * 100), total: 100, detail: "Extracting \(filename) (\(percent)%)"))
+            }
+        }
+    }
+    
+    @objc private func handleArchiveExtractionCompleted(_ notification: Notification) {
+        VLOG("ViewModel: Archive Extraction Completed")
+        guard let userInfo = notification.userInfo,
+              let filename = userInfo["filename"] as? String,
+              let extractedCountNum = userInfo["extractedCount"] as? NSNumber else {
+            WLOG("Could not parse archive extraction completed userInfo")
+            return
+        }
+        
+        let extractedCount = extractedCountNum.intValue
+        
+        Task { @MainActor in
+            self.archiveExtractionInProgress = false
+            self.archiveExtractionProgress = 1.0
+            self.archiveExtractionExtractedCount = extractedCount
+            self.temporaryStatusMessage = "Extracted \(extractedCount) files from \(filename)"
+            
+            // Post notification for the StatusControlButton
+            NotificationCenter.default.post(name: Notification.Name("ProgressRemoved"), object: "archiveExtraction")
+        }
+    }
+    
+    @objc private func handleArchiveExtractionFailed(_ notification: Notification) {
+        VLOG("ViewModel: Archive Extraction Failed")
+        let fileError = parseFileErrorInfo(from: notification, defaultErrorType: "archiveExtraction")
+        
+        Task { @MainActor in
+            self.archiveExtractionInProgress = false
+            self.archiveExtractionError = fileError
+            self.temporaryStatusMessage = "Failed to extract \(fileError?.filename ?? "archive"): \(fileError?.error ?? "Unknown error")"
+            
+            // Post notification for the StatusControlButton
+            NotificationCenter.default.post(name: Notification.Name("ProgressRemoved"), object: "archiveExtraction")
+        }
+    }
+    
+    // MARK: - File Access Error Handler
+    
+    @objc private func handleFileAccessError(_ notification: Notification) {
+        WLOG("ViewModel: File Access Error")
+        let fileError = parseFileErrorInfo(from: notification, defaultErrorType: "fileAccess")
+        
+        Task { @MainActor in
+            if let error = fileError {
+                // Add to the list of errors
+                self.fileAccessErrors.append(error)
+                self.lastFileAccessErrorTime = Date()
+                
+                // Limit the number of errors stored
+                if self.fileAccessErrors.count > 10 {
+                    self.fileAccessErrors.removeFirst()
+                }
+                
+                // Show a temporary message
+                self.temporaryStatusMessage = "File access error: \(error.filename)"
+                
+                // Trigger an alert
+                self.triggerAlert(title: "File Access Error", message: "\(error.filename): \(error.error)", type: .error)
+            }
+        }
+    }
+    
+    // MARK: - ROM Scanning Handlers
+    
     @objc private func handleRomScanningStarted(_ notification: Notification) {
         VLOG("ViewModel: ROM Scan Started")
         // Extract total count if available in start notification? (Optional)
@@ -453,6 +582,9 @@ final class RetroStatusControlViewModel: ObservableObject {
         Task { @MainActor in
             self.romScanningProgress = ProgressInfo(current: 0, total: total, detail: nil) // Provide nil for detail
             self.temporaryStatusMessage = "ROM scan started..."
+            
+            // Post notification for the StatusControlButton
+            NotificationCenter.default.post(name: Notification.Name("ProgressUpdate"), object: ProgressInfo(id: "romScanning", current: 0, total: total, detail: nil))
         }
     }
     
@@ -462,6 +594,9 @@ final class RetroStatusControlViewModel: ObservableObject {
             Task { @MainActor in
                 self.romScanningProgress = progress // Assign ProgressInfo
                 DLOG("ROM Scan Progress: \(progress.current)/\(progress.total)")
+                
+                // Post notification for the StatusControlButton
+                NotificationCenter.default.post(name: Notification.Name("ProgressUpdate"), object: ProgressInfo(id: "romScanning", current: progress.current, total: progress.total, detail: progress.detail))
             }
         } else {
             WLOG("Could not parse ROM scanning progress userInfo")
@@ -476,51 +611,18 @@ final class RetroStatusControlViewModel: ObservableObject {
             // Extract results if needed (e.g., count of new ROMs)
             let newROMs = (notification.userInfo?["newROMs"] as? Int) ?? 0
             self.triggerAlert(title: "Scan Complete", message: "Found \(newROMs) new ROMs.", type: .success)
+            
+            // Post notification for the StatusControlButton
+            NotificationCenter.default.post(name: Notification.Name("ProgressRemoved"), object: "romScanning")
         }
     }
     
-    // MARK: - Other Progress Handlers (Placeholders)
-    @objc private func handleArchiveExtractionProgress(_ notification: Notification) {
-        VLOG("ViewModel: Archive Extraction Progress")
-        guard let userInfo = notification.userInfo,
-              let progressVal: Double = userInfo["progress"] as? Double else {
-            WLOG("Could not parse archive extraction progress userInfo")
-            return
-        }
-        Task { @MainActor in
-            // Ensure progress is clamped between 0.0 and 1.0
-            self.archiveExtractionProgress = max(0.0, min(1.0, progressVal))
-            // Update temporary message with percentage?
-            let percent = Int(progressVal * 100)
-            if let filename = self.archiveExtractionFilename {
-                self.temporaryStatusMessage = "Extracting \(filename) (\(percent)%)" // Use self.
-            }
-        }
-    }
-    
-    @objc private func handleFileImportProgress(_ notification: Notification) {
-        DLOG("Received file import progress")
-        if let progress: ProgressInfo = parseProgressInfo(from: notification) {
-            Task { @MainActor in 
-                self.fileImportProgress = progress
-                
-                // Update temporary status message with import details
-                if let detail = progress.detail {
-                    self.temporaryStatusMessage = "Importing: \(detail) (\(progress.current)/\(progress.total))"
-                    DLOG("File import progress: \(progress.current)/\(progress.total) - \(detail)")
-                } else {
-                    self.temporaryStatusMessage = "Importing files (\(progress.current)/\(progress.total))"
-                }
-            }
-        } else {
-            WLOG("Could not parse file import progress userInfo")
-        }
-    }
+    // MARK: - Other Progress Handlers
     
     @objc private func handleTempCleanupProgress(_ notification: Notification) {
         DLOG("Received temp cleanup progress")
         if let progress: ProgressInfo = parseProgressInfo(from: notification) {
-            Task { @MainActor in 
+            Task { @MainActor in
                 self.temporaryFileCleanupProgress = progress
                 
                 // Update temporary status message with cleanup details
@@ -530,6 +632,9 @@ final class RetroStatusControlViewModel: ObservableObject {
                 } else {
                     self.temporaryStatusMessage = "Cleaning up temporary files (\(progress.current)/\(progress.total))"
                 }
+                
+                // Post notification for the StatusControlButton
+                NotificationCenter.default.post(name: Notification.Name("ProgressUpdate"), object: ProgressInfo(id: "tempCleanup", current: progress.current, total: progress.total, detail: progress.detail))
             }
         } else {
             WLOG("Could not parse temp cleanup progress userInfo")
@@ -539,7 +644,7 @@ final class RetroStatusControlViewModel: ObservableObject {
     @objc private func handleCacheMgmtProgress(_ notification: Notification) {
         DLOG("Received cache mgmt progress")
         if let progress: ProgressInfo = parseProgressInfo(from: notification) {
-            Task { @MainActor in 
+            Task { @MainActor in
                 self.cacheManagementProgress = progress
                 
                 // Update temporary status message with cache management details
@@ -549,6 +654,9 @@ final class RetroStatusControlViewModel: ObservableObject {
                 } else {
                     self.temporaryStatusMessage = "Managing cache (\(progress.current)/\(progress.total))"
                 }
+                
+                // Post notification for the StatusControlButton
+                NotificationCenter.default.post(name: Notification.Name("ProgressUpdate"), object: ProgressInfo(id: "cacheMgmt", current: progress.current, total: progress.total, detail: progress.detail))
             }
         } else {
             WLOG("Could not parse cache mgmt progress userInfo")
@@ -558,7 +666,7 @@ final class RetroStatusControlViewModel: ObservableObject {
     @objc private func handleDownloadProgress(_ notification: Notification) {
         DLOG("Received download progress")
         if let progress: ProgressInfo = parseProgressInfo(from: notification) {
-            Task { @MainActor in 
+            Task { @MainActor in
                 self.downloadProgress = progress
                 
                 // Update temporary status message with download details
@@ -568,6 +676,9 @@ final class RetroStatusControlViewModel: ObservableObject {
                 } else {
                     self.temporaryStatusMessage = "Downloading files (\(progress.current)/\(progress.total))"
                 }
+                
+                // Post notification for the StatusControlButton
+                NotificationCenter.default.post(name: Notification.Name("ProgressUpdate"), object: ProgressInfo(id: "download", current: progress.current, total: progress.total, detail: progress.detail))
             }
         } else {
             WLOG("Could not parse download progress userInfo")
@@ -581,6 +692,36 @@ final class RetroStatusControlViewModel: ObservableObject {
         Task { @MainActor in
             self.cloudKitSyncProgress = ProgressInfo(current: 0, total: 1, detail: "Starting initial CloudKit sync...")
             self.temporaryStatusMessage = "Starting CloudKit sync..."
+            
+            // Post notification for the StatusControlButton
+            NotificationCenter.default.post(name: Notification.Name("ProgressUpdate"), object: ProgressInfo(id: "cloudKitSync", current: 0, total: 1, detail: "Starting initial CloudKit sync..."))
+        }
+    }
+    
+    // Timer for delayed status dismissal
+    private var statusDismissalTimer: Timer?
+    
+    /// Delay dismissal of a status message
+    private func delayStatusDismissal(statusId: String, message: String, delay: TimeInterval = 3.0) {
+        // Cancel any existing timer
+        statusDismissalTimer?.invalidate()
+        
+        // Set the temporary status message
+        self.temporaryStatusMessage = message
+        
+        // Create a new timer to dismiss the status after the delay
+        statusDismissalTimer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] _ in
+            guard let self = self else { return }
+            
+            Task { @MainActor in
+                // Only clear if the message hasn't changed
+                if self.temporaryStatusMessage == message {
+                    self.temporaryStatusMessage = nil
+                }
+                
+                // Post notification for the StatusControlButton
+                NotificationCenter.default.post(name: Notification.Name("ProgressRemoved"), object: statusId)
+            }
         }
     }
     
@@ -588,7 +729,9 @@ final class RetroStatusControlViewModel: ObservableObject {
         VLOG("CloudKit initial sync completed")
         Task { @MainActor in
             self.cloudKitSyncProgress = nil
-            self.temporaryStatusMessage = "Initial CloudKit sync completed"
+            
+            // Delay dismissal of the status message
+            delayStatusDismissal(statusId: "cloudKitSync", message: "Initial CloudKit sync completed")
         }
     }
     
@@ -600,6 +743,9 @@ final class RetroStatusControlViewModel: ObservableObject {
                 if let detail = progress.detail {
                     DLOG("CloudKit initial sync: \(progress.current)/\(progress.total) - \(detail)")
                 }
+                
+                // Post notification for the StatusControlButton
+                NotificationCenter.default.post(name: Notification.Name("ProgressUpdate"), object: ProgressInfo(id: "cloudKitSync", current: progress.current, total: progress.total, detail: progress.detail))
             }
         } else {
             WLOG("Could not parse CloudKit initial sync progress userInfo")
@@ -610,6 +756,9 @@ final class RetroStatusControlViewModel: ObservableObject {
         VLOG("CloudKit zone changes started")
         Task { @MainActor in
             self.cloudKitSyncProgress = ProgressInfo(current: 0, total: 1, detail: "Checking for CloudKit zone changes...")
+            
+            // Post notification for the StatusControlButton
+            NotificationCenter.default.post(name: Notification.Name("ProgressUpdate"), object: ProgressInfo(id: "cloudKitSync", current: 0, total: 1, detail: "Checking for CloudKit zone changes..."))
         }
     }
     
@@ -617,6 +766,9 @@ final class RetroStatusControlViewModel: ObservableObject {
         VLOG("CloudKit zone changes completed")
         Task { @MainActor in
             self.cloudKitSyncProgress = nil
+            
+            // Delay dismissal of the status message
+            delayStatusDismissal(statusId: "cloudKitSync", message: "CloudKit zone changes completed")
         }
     }
     
@@ -624,14 +776,18 @@ final class RetroStatusControlViewModel: ObservableObject {
         VLOG("CloudKit record transfer started")
         Task { @MainActor in
             self.cloudKitSyncProgress = ProgressInfo(current: 0, total: 1, detail: "Starting CloudKit record transfer...")
+            
+            // Post notification for the StatusControlButton
+            NotificationCenter.default.post(name: Notification.Name("ProgressUpdate"), object: ProgressInfo(id: "cloudKitSync", current: 0, total: 1, detail: "Starting CloudKit record transfer..."))
         }
     }
     
     @objc private func handleCloudKitRecordTransferCompleted(_ notification: Notification) {
-        VLOG("CloudKit record transfer completed")
         Task { @MainActor in
             self.cloudKitSyncProgress = nil
-            self.temporaryStatusMessage = "CloudKit sync completed"
+            
+            // Delay dismissal of the status message
+            delayStatusDismissal(statusId: "cloudKitSync", message: "CloudKit sync completed", delay: 2.0) // Add a 2-second delay
         }
     }
     
@@ -643,6 +799,9 @@ final class RetroStatusControlViewModel: ObservableObject {
                 if let detail = progress.detail {
                     DLOG("CloudKit record transfer: \(progress.current)/\(progress.total) - \(detail)")
                 }
+                
+                // Post notification for the StatusControlButton
+                NotificationCenter.default.post(name: Notification.Name("ProgressUpdate"), object: ProgressInfo(id: "cloudKitSync", current: progress.current, total: progress.total, detail: progress.detail))
             }
         } else {
             WLOG("Could not parse CloudKit record transfer progress userInfo")
@@ -666,109 +825,6 @@ final class RetroStatusControlViewModel: ObservableObject {
         }
     }
     
-    // MARK: - iCloud Sync General Handlers (Existing)
-    @objc private func handleICloudSyncDisabled(_ notification: Notification) {
-        VLOG("ViewModel: iCloud Sync Disabled")
-        Task { @MainActor [weak self] in
-            self?.isICloudSyncEnabled = false
-            // Maybe post an alert or message?
-            // self.triggerAlert(title: "iCloud Sync Disabled", message: "iCloud syncing has been turned off.", type: .warning)
-        }
-    }
-    
-    @objc private func handleICloudSyncCompleted(_ notification: Notification) {
-        VLOG("ViewModel: iCloud Sync Completed")
-        Task { @MainActor [weak self] in
-            self?.isICloudSyncEnabled = true // Sync might complete even if disabled later, ensure state reflects reality
-            // Optionally show a temporary success message?
-            if self?.fileRecoveryState != .inProgress { // Avoid overlapping messages
-                self?.temporaryStatusMessage = "iCloud sync completed."
-            }
-        }
-    }
-    
-    @objc private func handleICloudFilePendingRecovery(_ notification: Notification) {
-        VLOG("ViewModel: iCloud Files Pending Recovery Update")
-        guard let userInfo = notification.userInfo,
-              let countNum = userInfo["count"] as? NSNumber else
-        {
-            WLOG("Could not parse pending file recovery count. UserInfo: \(notification.userInfo ?? [:])")
-            Task { @MainActor in self.pendingRecoveryFileCount = nil } // Clear if invalid
-            return
-        }
-        let count = countNum.intValue
-        Task { @MainActor in
-            self.pendingRecoveryFileCount = count > 0 ? count : nil // Set to nil if count is 0
-            DLOG("Pending iCloud recovery files: \(count)")
-        }
-    }
-    
-    // MARK: - Private Helper Methods
-    
-    /// Updates the view model's web server state properties from the PVWebServer shared instance.
-    private func updateWebServerStatus() {
-        let webServer = PVWebServer.shared
-        self.isWebServerRunning = webServer.isWWWUploadServerRunning
-        self.webServerIPAddress = webServer.ipAddress                  // Use self.
-        self.webServerPort = webServer.bonjourSeverURL?.port           // Use self.
-        self.webServerError = nil // Reset error on status change? How to get errors? - Use self.
-        VLOG("ViewModel: Web server running status updated: \(self.isWebServerRunning)")
-    }
-    
-    /// Helper to parse common file error info
-    private func parseFileErrorInfo(from notification: Notification, defaultErrorType: String? = nil) -> FileErrorInfo? {
-        guard let path: String = extract(from: notification, key: "path") else { return nil }
-        
-        let error: Error? = extract(from: notification, key: "error")
-        let errorDescription: String? = error?.localizedDescription
-        let errorString: String? = extract(from: notification, key: "error")
-        let errorDesc: String = errorDescription ?? errorString ?? "Unknown Error"
-        let filename: String = extract(from: notification, key: "filename") ?? URL(fileURLWithPath: path).lastPathComponent
-        let timestamp: Date = extract(from: notification, key: "timestamp") ?? Date()
-        let errorType: String? = extract(from: notification, key: "errorType") ?? defaultErrorType
-        return FileErrorInfo(error: errorDesc, path: path, filename: filename, timestamp: timestamp, errorType: errorType)
-    }
-    
-    // MARK: - Notification Handlers
-    
-    // --- Web Server Handlers ---
-    @objc private func handleWebServerStatusChanged(_ notification: Notification) { // Add @objc
-        DLOG("Received web server status change notification")
-        Task { @MainActor in
-            updateWebServerStatus()
-        }
-    }
-    
-    // --- Web Server Upload Progress Handler ---
-    @objc private func handleWebServerUploadProgress(_ notification: Notification) { // Add @objc
-        DLOG("Received web server upload progress notification")
-        
-        // Extract values using the keys from PVWebServer.m
-        guard let userInfo = notification.userInfo,
-              let progressVal: Double = userInfo["progress"] as? Double,
-              let totalBytes: Int = userInfo["totalBytes"] as? Int,
-              let transferredBytes: Int = userInfo["transferredBytes"] as? Int else {
-            WLOG("Could not parse web server upload progress userInfo")
-            return
-        }
-        
-        // Extract additional info or provide defaults
-        let currentFile = userInfo["currentFile"] as? String ?? "Unknown file"
-        let queueLength = userInfo["queueLength"] as? Int ?? 0
-        let bytesTransferred = transferredBytes // Use the same value if not separately provided
-        
-        Task { @MainActor in
-            self.webServerUploadProgress = WebServerUploadInfo(
-                progress: progressVal,
-                totalBytes: totalBytes,
-                transferredBytes: transferredBytes,
-                currentFile: currentFile,
-                queueLength: queueLength,
-                bytesTransferred: bytesTransferred
-            )
-        }
-    }
-    
     // --- iCloud File Recovery Handlers --- (Add @objc)
     @objc private func handleFileRecoveryStarted(_ notification: Notification) {
         VLOG("ViewModel: iCloud File Recovery Started")
@@ -779,6 +835,9 @@ final class RetroStatusControlViewModel: ObservableObject {
             self.fileRecoveryErrors = []
             self.fileRecoveryRetryQueueCount = 0
             self.fileRecoveryRetryAttempt = 0
+            
+            // Post notification for the StatusControlButton
+            NotificationCenter.default.post(name: Notification.Name("ProgressUpdate"), object: ProgressInfo(id: "fileRecovery", current: 0, total: 0, detail: "File Recovery Started"))
         }
     }
     
@@ -793,20 +852,11 @@ final class RetroStatusControlViewModel: ObservableObject {
             if let bytesProcessed: UInt64 = extract(from: notification, key: "bytesProcessed") {
                 self.fileRecoveryBytesProcessed = bytesProcessed
             }
-        }
-    }
-    
-    @objc private func handleFileRecoveryCompleted(_ notification: Notification) {
-        ILOG("File Recovery Completed")
-        Task { @MainActor in
-            let hadErrors = !self.fileRecoveryErrors.isEmpty
-            self.fileRecoveryState = hadErrors ? .error : .complete
-            self.fileRecoveryProgressInfo = nil
-            self.fileRecoverySessionId = nil
-            self.fileRecoveryStartTime = nil
-            self.fileRecoveryBytesProcessed = 0
-            self.fileRecoveryRetryQueueCount = 0
-            self.fileRecoveryRetryAttempt = 0
+            
+            // Post notification for the StatusControlButton
+            if let progressInfo = self.fileRecoveryProgressInfo {
+                NotificationCenter.default.post(name: Notification.Name("ProgressUpdate"), object: ProgressInfo(id: "fileRecovery", current: progressInfo.current, total: progressInfo.total, detail: progressInfo.detail))
+            }
         }
     }
     
@@ -833,81 +883,5 @@ final class RetroStatusControlViewModel: ObservableObject {
         Task { @MainActor in
             self.pendingRecoveryFiles.append(PendingRecoveryInfo(filename: filename, path: path, timestamp: timestamp))
         }
-    }
-    
-    // --- Archive Extraction Handlers --- (Add @objc)
-    @objc private func handleArchiveExtractionStarted(_ notification: Notification) {
-        VLOG("ViewModel: Archive Extraction Started")
-        guard let filename: String = extract(from: notification, key: "filename") else {
-            WLOG("Could not parse archive extraction started userInfo")
-            return
-        }
-        Task { @MainActor in
-            self.archiveExtractionInProgress = true
-            self.archiveExtractionFilename = filename
-            self.archiveExtractionStartTime = Date()
-            self.archiveExtractionExtractedCount = 0
-            self.archiveExtractionError = nil
-        }
-    }
-    
-    @objc private func handleArchiveExtractionCompleted(_ notification: Notification) {
-        VLOG("ViewModel: Archive Extraction Completed")
-        let count: Int = extract(from: notification, key: "count") ?? self.archiveExtractionExtractedCount // Keep old count if not provided
-        Task { @MainActor in
-            self.archiveExtractionInProgress = false
-            self.archiveExtractionExtractedCount = count
-            self.archiveExtractionError = nil
-        }
-    }
-    
-    @objc private func handleArchiveExtractionFailed(_ notification: Notification) {
-        VLOG("ViewModel: Archive Extraction Failed")
-        guard let errorInfo = parseFileErrorInfo(from: notification, defaultErrorType: "extraction_failed") else {
-            WLOG("Could not parse archive extraction failed userInfo")
-            return
-        }
-        Task { @MainActor in
-            self.archiveExtractionInProgress = false
-            self.archiveExtractionError = errorInfo
-        }
-    }
-    
-    // --- File Access Error Handler --- (Add @objc)
-    @objc private func handleFileAccessError(_ notification: Notification) {
-        VLOG("ViewModel: File Access Error")
-        guard let errorInfo = parseFileErrorInfo(from: notification, defaultErrorType: "access_error") else {
-            WLOG("Could not parse file access error userInfo")
-            return
-        }
-        Task { @MainActor in
-            self.fileAccessErrors.append(errorInfo)
-            self.lastFileAccessErrorTime = errorInfo.timestamp
-        }
-    }
-    
-    // MARK: - Private Helpers
-    
-    /// Parses common progress info (current, total, message) from notification userInfo.
-    private func parseProgressInfo(from notification: Notification) -> ProgressInfo? {
-        guard let userInfo = notification.userInfo,
-              let currentNum = userInfo["current"] as? NSNumber,
-              let totalNum = userInfo["total"] as? NSNumber,
-              let message = userInfo["message"] as? String else {
-            return nil
-        }
-        let current = currentNum.intValue
-        let total = totalNum.intValue
-        return ProgressInfo(current: current, total: total, detail: message)
-    }
-    
-    /// Generic helper to extract values from notification userInfo
-    private func extract<T>(from notification: Notification, key: String) -> T? {
-        return notification.userInfo?[key] as? T
-    }
-    
-    // MARK: - Computed Property
-    public var isWebServerActive: Bool {
-        self.isWebServerRunning
     }
 }
