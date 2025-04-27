@@ -2,6 +2,7 @@ import SwiftUI
 import Combine
 import PVLibrary
 import PVSettings
+import Perception
 
 /// A view that displays the progress of imports and CloudKit syncing
 public struct ImportProgressView: View {
@@ -172,7 +173,7 @@ public struct ImportProgressView: View {
             // Current import info
             if let currentImport = viewModel.importQueueItems.first {
                 HStack {
-                    Text("Importing: \(currentImport.filename)")
+                    Text("Importing: \(currentImport.url.lastPathComponent)")
                         .font(.caption)
                         .foregroundColor(.white)
                         .lineLimit(1)
@@ -180,8 +181,10 @@ public struct ImportProgressView: View {
                     
                     Spacer()
                     
-                    if let progress = currentImport.progress, progress > 0 {
-                        Text("\(Int(progress * 100))%")
+                    // Progress is not directly available on ImportQueueItem
+                    // We'll show a simple indicator instead
+                    if currentImport.status == .processing {
+                        Text("Processing...")
                             .font(.caption)
                             .foregroundColor(.white)
                     }
@@ -253,10 +256,16 @@ extension ImportProgressView {
         // MARK: - Computed Properties
         
         var currentImportProgress: Float {
-            guard let firstItem = importQueueItems.first, let progress = firstItem.progress else {
+            // Since progress isn't directly available on ImportQueueItem,
+            // we'll use a simple calculation based on completed items
+            if importQueueItems.isEmpty {
                 return 0
             }
-            return progress
+            
+            let totalItems = importQueueItems.count
+            let completedItems = importQueueItems.filter { $0.status == .success }.count
+            
+            return Float(completedItems) / Float(totalItems)
         }
         
         var queuedCount: Int {
@@ -268,11 +277,11 @@ extension ImportProgressView {
         }
         
         var completedCount: Int {
-            importQueueItems.filter { $0.status == .completed }.count
+            importQueueItems.filter { $0.status == .success }.count
         }
         
         var failedCount: Int {
-            importQueueItems.filter { $0.status == .failed }.count
+            importQueueItems.filter { $0.status == .failure }.count
         }
         
         // MARK: - Initialization
@@ -295,14 +304,14 @@ extension ImportProgressView {
                 .store(in: &cancellables)
             
             // Observe CloudKit sync status
-            NotificationCenter.default.publisher(for: .CloudKitSyncStarted)
+            NotificationCenter.default.publisher(for: Notification.Name("CloudKitSyncStarted"))
                 .receive(on: RunLoop.main)
                 .sink { [weak self] _ in
                     self?.isSyncing = true
                 }
                 .store(in: &cancellables)
             
-            NotificationCenter.default.publisher(for: .CloudKitSyncCompleted)
+            NotificationCenter.default.publisher(for: Notification.Name("iCloudSyncCompleted"))
                 .receive(on: RunLoop.main)
                 .sink { [weak self] _ in
                     self?.isSyncing = false
@@ -313,7 +322,7 @@ extension ImportProgressView {
                 }
                 .store(in: &cancellables)
             
-            NotificationCenter.default.publisher(for: .CloudKitSyncProgress)
+            NotificationCenter.default.publisher(for: Notification.Name("CloudKitSyncProgress"))
                 .receive(on: RunLoop.main)
                 .sink { [weak self] notification in
                     guard let userInfo = notification.userInfo else { return }
