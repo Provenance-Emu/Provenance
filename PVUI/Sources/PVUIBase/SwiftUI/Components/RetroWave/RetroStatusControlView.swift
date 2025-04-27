@@ -374,7 +374,7 @@ public struct RetroStatusControlView: View {
                             HStack(spacing: 12) {
                                 // CloudKit diagnostic button
                                 NavigationLink(destination: CloudKitDiagnosticView()) {
-                                    Image(systemName: "icloud.bolt.fill")
+                                    Image(systemName: "bolt.horizontal.icloud.fill")
                                         .foregroundColor(RetroTheme.retroPink)
                                         .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2, x: 0, y: 0)
                                 }
