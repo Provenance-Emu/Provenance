@@ -26,6 +26,7 @@ public struct RetroStatusControlView: View {
 
     // MARK: - Computed Properties (Derived from ViewModel)
     private var shouldShowProgress: Bool {
+        isExpanded ||
         viewModel.fileImportProgress != nil ||
         viewModel.archiveExtractionProgress > 0 || // Check if progress > 0
         viewModel.fileRecoveryState == .inProgress ||
