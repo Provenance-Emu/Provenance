@@ -139,6 +139,8 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
             Spacer()
             Group {
+                Spacer()
+
                 OptionsIndicator(pointDown: sortAscending, action: {
                     #if !os(tvOS)
                     Haptics.impact(style: .light)
