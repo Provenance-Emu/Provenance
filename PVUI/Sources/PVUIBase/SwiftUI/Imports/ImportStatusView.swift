@@ -62,28 +62,6 @@ public struct ImportStatusView: View {
         delegate?.didSelectSystem(system, for: item)
     }
     
-    /// Calculate the overall progress of all import operations
-    private func calculateOverallProgress() -> Double {
-        guard !viewModel.queueItems.isEmpty else { return 0.0 }
-        
-        // If we have active imports with progress, use that
-        if messageManager.viewModel.isImportActive, let progress = messageManager.viewModel.downloadProgress {
-            return Double(progress.current) / Double(max(1, progress.total))
-        }
-        
-        // If we have CloudKit sync progress, use that
-        if let progress = messageManager.viewModel.cloudKitSyncProgress {
-            return Double(progress.current) / Double(max(1, progress.total))
-        }
-        
-        // Default to indeterminate progress based on queue position
-        let totalItems = Double(viewModel.queueItems.count)
-        let processedItems = Double(max(0, Int(totalItems) - viewModel.queueItems.count))
-        
-        // If we're just starting, show a small amount of progress
-        return max(0.05, processedItems / totalItems)
-    }
-    
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
     @State private var scanlineOffset: CGFloat = 0
@@ -126,199 +104,237 @@ public struct ImportStatusView: View {
         }
     }
     
-    // Compact import view with progress bar instead of detailed list
-    private var fullImportView: some View {
-        VStack(spacing: 8) {
-            // Compact header
-            HStack {
-                // Title with glow effect
-                Text("IMPORT STATUS")
-                    .font(.system(size: 12, weight: .bold, design: .monospaced))
-                    .foregroundColor(RetroTheme.retroPink)
-                    .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2, x: 0, y: 0)
-                
-                Spacer()
-                
-                // Queue count indicator
-                Text("\(viewModel.queueItems.count) ITEMS")
-                    .font(.system(size: 10, weight: .medium, design: .monospaced))
-                    .foregroundColor(RetroTheme.retroBlue)
-                    .padding(.vertical, 2)
-                    .padding(.horizontal, 4)
-                    .background(Color.black.opacity(0.3))
-                    .cornerRadius(4)
-            }
-            .padding(.horizontal, 8)
-            .padding(.top, 6)
-            .padding(.bottom, 4)
+    // Background layers for the retrowave effect
+    private var backgroundLayers: some View {
+        ZStack {
+            // RetroWave background
+            RetroTheme.retroBackground
             
-            // Divider with gradient
-            Rectangle()
-                .frame(height: 1)
-                .foregroundStyle(RetroTheme.retroGradient)
-                .padding(.horizontal, 6)
-                .padding(.bottom, 4)
-            
-            // Progress section
-            VStack(alignment: .leading, spacing: 4) {
-                // Overall progress bar
-                let progress = calculateOverallProgress()
-                let percent = Int(progress * 100)
-                
-                // Operation label and progress percentage
-                HStack(spacing: 4) {
-                    // Icon
-                    Image(systemName: "square.and.arrow.down.fill")
-                        .font(.system(size: 10))
-                        .foregroundColor(RetroTheme.retroBlue)
-                        .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 1, x: 0, y: 0)
-                    
-                    // Label
-                    Text("Importing")
-                        .font(.system(size: 11, weight: .bold))
-                        .foregroundColor(RetroTheme.retroBlue)
-                        .lineLimit(1)
-                    
-                    Spacer()
-                    
-                    // Progress percentage
-                    Text("\(percent)%")
-                        .font(.system(size: 10, weight: .medium))
-                        .foregroundColor(RetroTheme.retroBlue.opacity(0.8))
-                }
-                
-                // Progress bar
-                ZStack(alignment: .leading) {
-                    // Track
-                    Rectangle()
-                        .fill(Color.black.opacity(0.5))
-                        .frame(height: 6)
-                        .cornerRadius(3)
-                    
-                    // Progress fill
-                    Rectangle()
-                        .fill(
-                            LinearGradient(
-                                gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroBlue]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .frame(width: max(4, CGFloat(progress) * UIScreen.main.bounds.width * 0.8), height: 6)
-                        .cornerRadius(3)
-                }
-                .overlay(
-                    RoundedRectangle(cornerRadius: 3)
-                        .strokeBorder(RetroTheme.retroBlue.opacity(0.5), lineWidth: 1)
-                )
-                
-                // Current item text (if any)
-                if let currentItem = viewModel.queueItems.first {
-                    Text(currentItem.url.lastPathComponent)
-                        .font(.system(size: 9))
-                        .foregroundColor(RetroTheme.retroPink.opacity(0.8))
-                        .lineLimit(1)
-                        .truncationMode(.middle)
-                        .padding(.top, 2)
-                }
-            }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 6)
-            .background(Color.black.opacity(0.7))
-            .overlay(
-                RoundedRectangle(cornerRadius: 6)
-                    .strokeBorder(
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                RetroTheme.retroPink.opacity(0.7), RetroTheme.retroBlue.opacity(0.7),
-                            ]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1
-                    )
-            )
-            .padding(.horizontal, 8)
-            
-            // Action buttons
-            HStack(spacing: 8) {
-                Button(action: {
-                    delegate?.dismissAction()
-                }) {
-                    Text("DISMISS")
-                        .font(.system(size: 10, weight: .bold, design: .monospaced))
-                        .foregroundColor(RetroTheme.retroPink)
-                        .padding(.vertical, 4)
-                        .padding(.horizontal, 8)
-                        .background(Color.black.opacity(0.5))
-                        .cornerRadius(4)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(RetroTheme.retroPink.opacity(0.7), lineWidth: 1)
-                        )
-                }
-                
-                Spacer()
-                
-                Button(action: {
-                    delegate?.addImportsAction()
-                }) {
-                    Text("ADD")
-                        .font(.system(size: 10, weight: .bold, design: .monospaced))
-                        .foregroundColor(RetroTheme.retroBlue)
-                        .padding(.vertical, 4)
-                        .padding(.horizontal, 8)
-                        .background(Color.black.opacity(0.5))
-                        .cornerRadius(4)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(RetroTheme.retroBlue.opacity(0.7), lineWidth: 1)
-                        )
-                }
-                
-                Button(action: {
-                    delegate?.forceImportsAction()
-                }) {
-                    Text("BEGIN")
-                        .font(.system(size: 10, weight: .bold, design: .monospaced))
-                        .foregroundColor(RetroTheme.retroPurple)
-                        .padding(.vertical, 4)
-                        .padding(.horizontal, 8)
-                        .background(Color.black.opacity(0.5))
-                        .cornerRadius(4)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(RetroTheme.retroPurple.opacity(0.7), lineWidth: 1)
-                        )
-                }
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 4)
+            // Grid overlay
+            RetroGrid()
+                .opacity(0.3)
         }
-        .padding(.vertical, 8)
-        .background(
+    }
+    
+    // Full import view when there are items to show
+    private var fullImportView: some View {
+        NavigationView {
             ZStack {
-                // Dark background
-                Color.black.opacity(0.9)
+                // Background layers
+                backgroundLayers
                 
-                // Subtle grid pattern
-                RetroTheme.RetroGridView()
-                    .opacity(0.05)
-            }
-        )
-        .cornerRadius(8)
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .strokeBorder(LinearGradient(
-                    gradient: Gradient(colors: [RetroTheme.retroPink.opacity(0.5), RetroTheme.retroBlue.opacity(0.5)]),
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ), lineWidth: 1)
-        )
-        .shadow(color: RetroTheme.retroPink.opacity(0.3), radius: 4, x: 0, y: 2)
+                // Main content
+                VStack {
+                                // Retrowave header
+                                Text("IMPORT QUEUE")
+                                    .font(.system(size: 28, weight: .bold))
+                                    .foregroundColor(RetroTheme.retroPink)
+                                    .padding(.top, 20)
+                                    .padding(.bottom, 10)
+                                    .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
+                                
+                                // Main content
+                                if viewModel.queueItems.isEmpty {
+                                    VStack {
+                                        Spacer()
+                                        Text("NO ITEMS IN QUEUE")
+                                            .font(.system(size: 20, weight: .bold))
+                                            .foregroundColor(RetroTheme.retroBlue)
+                                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                                            .padding()
+                                        Spacer()
+                                    }
+                                } else {
+                                    List {
+                                        ForEach(viewModel.queueItems) { item in
+                                            ZStack {
+                                                // Custom background to maintain retrowave styling
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .fill(Color.black.opacity(0.7))
+                                                    .overlay(
+                                                        RoundedRectangle(cornerRadius: 12)
+                                                            .strokeBorder(
+                                                                LinearGradient(
+                                                                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                                                    startPoint: .topLeading,
+                                                                    endPoint: .bottomTrailing
+                                                                ),
+                                                                lineWidth: 1.5
+                                                            )
+                                                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                                                    )
+                                                
+                                                // Pass callback to ImportTaskRowView
+                                                ImportTaskRowView(
+                                                    item: item,
+                                                    onSystemSelected: handleSystemSelection
+                                                )
+                                                .id(item.id)
+                                                .padding(.vertical, 4) // Add padding to ensure the content doesn't touch the edges
+                                            }
+                                            .listRowInsets(EdgeInsets()) // Remove default list row insets
+                                            .listRowBackground(Color.clear) // Make the list row background transparent
 #if os(tvOS)
-        .focusSection()
-        .focusScope(namespace)
+                                            .focusable()
+                                            .prefersDefaultFocus(in: namespace)
 #endif
+                                        }
+                                        .onDelete(perform: deleteItems) // Add swipe-to-delete functionality
+#if !os(tvOS)
+                                        .listRowSeparator(.hidden) // Hide default separators
+#endif
+                                    }
+                                    .listStyle(PlainListStyle()) // Use plain style to minimize default styling
+                                    .padding(.horizontal)
+                                    .background(Color.clear) // Make list background transparent
+#if !os(tvOS)
+                                    .scrollContentBackground(.hidden) // Hide the scroll content background on iOS 16+
+#endif
+                                }
+                            }
+                        }
+#if os(tvOS)
+                        .focusSection()
+                        .focusScope(namespace)
+#endif
+#if !os(tvOS)
+                        .navigationBarTitleDisplayMode(.inline)
+#endif
+                        .toolbar {
+                            ToolbarItemGroup(placement: .topBarLeading,
+                                             content: {
+                                // TODO: Removing from tvOS as a hack @JoeMatt
+#if !os(tvOS)
+                                if dismissAction != nil {
+                                    Button(action: {
+                                        dismissAction?()
+                                        delegate?.dismissAction()
+                                    }) {
+                                        Text("CLOSE")
+                                            .font(.system(size: 14, weight: .bold))
+                                            .foregroundColor(RetroTheme.retroPurple)
+                                            .padding(.horizontal, 16)
+                                            .padding(.vertical, 8)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .stroke(LinearGradient(
+                                                        gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroPink]),
+                                                        startPoint: .leading,
+                                                        endPoint: .trailing
+                                                    ), lineWidth: 1.5)
+                                            )
+                                            .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                                    }
+#if os(tvOS)
+                                    .focusable(true)
+#endif
+                                }
+#endif
+                            })
+                            ToolbarItemGroup(placement: .topBarTrailing,
+                                             content: {
+#if !os(tvOS)
+                                Button(action: {
+                                    delegate?.addImportsAction()
+                                }) {
+                                    Text("ADD FILES")
+                                        .font(.system(size: 14, weight: .bold))
+                                        .foregroundColor(RetroTheme.retroPink)
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 8)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .stroke(LinearGradient(
+                                                    gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple]),
+                                                    startPoint: .leading,
+                                                    endPoint: .trailing
+                                                ), lineWidth: 1.5)
+                                        )
+                                        .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                                }
+#endif
+                                
+                                Button(action: {
+                                    delegate?.forceImportsAction()
+                                }) {
+                                    Text("BEGIN")
+                                        .font(.system(size: 14, weight: .bold))
+                                        .foregroundColor(RetroTheme.retroBlue)
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 8)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .stroke(LinearGradient(
+                                                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                                    startPoint: .leading,
+                                                    endPoint: .trailing
+                                                ), lineWidth: 1.5)
+                                        )
+                                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                                }
+#if os(tvOS)
+                                .focusable(true)
+#endif
+                            })
+                        }
+                    }
+                    .preferredColorScheme(.dark)
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+                    .onAppear {
+                        // Start retrowave animations for NavigationView content
+                        withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
+                            glowOpacity = 1.0
+                        }
+                    }
+    }
+    
+    /// Refresh the queue items from the game importer
+    @MainActor
+    func refreshQueueItems() async {
+        if let gameImporter = AppState.shared.gameImporter {
+            viewModel.queueItems = await gameImporter.importQueue
+        }
     }
 }
+
+#if DEBUG
+#Preview {
+    @ObservedObject var themeManager = ThemeManager.shared
+    var currentPalette: any UXThemePalette { themeManager.currentPalette }
+    
+    let mockImportStatusDriverData = MockImportStatusDriverData()
+    
+    ImportStatusView(
+        updatesController: mockImportStatusDriverData.pvgamelibraryUpdatesController,
+        gameImporter: mockImportStatusDriverData.gameImporter,
+        delegate: mockImportStatusDriverData) {
+            print("Import Status View Closed")
+        }
+        .onAppear {
+            themeManager.setCurrentPalette(CGAThemes.green.palette)
+        }
+}
+#endif
+
+#if os(tvOS)
+private extension ButtonStyle where Self == TVCardButtonStyle {
+    static var card: TVCardButtonStyle { TVCardButtonStyle() }
+}
+
+private struct TVCardButtonStyle: ButtonStyle {
+    @ObservedObject private var themeManager = ThemeManager.shared
+    
+    @ViewBuilder
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(themeManager.currentPalette.menuBackground.swiftUIColor)
+                    .opacity(configuration.isPressed ? 0.7 : 0)
+            )
+            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
+            .animation(.easeOut(duration: 0.2), value: configuration.isPressed)
+    }
+}
+#endif
