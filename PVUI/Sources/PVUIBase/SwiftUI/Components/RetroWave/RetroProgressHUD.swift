@@ -48,6 +48,9 @@ public class RetroProgressHUD: UIView {
         containerView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerView)
         
+        // Ensure the container view is centered in the HUD
+        containerView.center = self.center
+        
         // Add grid pattern to container
         let gridPattern = createGridPattern()
         gridPattern.alpha = 0.3
@@ -75,7 +78,7 @@ public class RetroProgressHUD: UIView {
         // Add glow effect to container
         addGlowEffect(to: containerView)
         
-        // Set up constraints
+        // Set up constraints - ensure proper centering
         NSLayoutConstraint.activate([
             containerView.centerXAnchor.constraint(equalTo: centerXAnchor),
             containerView.centerYAnchor.constraint(equalTo: centerYAnchor),
@@ -202,6 +205,9 @@ public class RetroProgressHUD: UIView {
     public static func show(in view: UIView, animated: Bool = true) -> RetroProgressHUD {
         let hud = RetroProgressHUD(frame: view.bounds)
         hud.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        
+        // Ensure the HUD is centered in the view
+        hud.frame = view.bounds
         
         view.addSubview(hud)
         
