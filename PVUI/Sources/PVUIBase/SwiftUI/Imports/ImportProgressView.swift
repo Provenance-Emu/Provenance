@@ -88,46 +88,46 @@ public struct ImportProgressView: View {
 
     private var contentView: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Header with title and sync status
+            // Compact header with title and sync status
             HStack {
-                // Title with glow effect
+                // Title with glow effect - smaller font
                 Text("SYSTEM STATUS")
-                    .font(.system(size: 14, weight: .bold, design: .monospaced))
+                    .font(.system(size: 12, weight: .bold, design: .monospaced))
                     .foregroundColor(RetroTheme.retroPink)
                     .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2, x: 0, y: 0)
                 
                 Spacer()
                 
-                // Sync status indicators
+                // Sync status indicators - more compact
                 if iCloudSyncEnabled && (viewModel.pendingUploads > 0 || viewModel.pendingDownloads > 0) {
-                    HStack(spacing: 6) {
+                    HStack(spacing: 4) {
                         Image(systemName: "icloud")
-                            .font(.system(size: 12))
+                            .font(.system(size: 10))
                             .foregroundColor(RetroTheme.retroBlue)
                         
-                        Text("\(viewModel.pendingUploads + viewModel.pendingDownloads) pending")
+                        Text("\(viewModel.pendingUploads + viewModel.pendingDownloads)")
                             .font(.system(size: 10, weight: .medium))
                             .foregroundColor(RetroTheme.retroBlue.opacity(0.8))
                     }
                     .padding(.vertical, 2)
-                    .padding(.horizontal, 6)
+                    .padding(.horizontal, 4)
                     .background(Color.black.opacity(0.3))
                     .cornerRadius(4)
                 }
             }
-            .padding(.horizontal, 12)
-            .padding(.top, 12)
-            .padding(.bottom, 8)
+            .padding(.horizontal, 8)
+            .padding(.top, 6)
+            .padding(.bottom, 4)
             
-            // Divider with gradient
+            // Thinner divider with gradient
             Rectangle()
                 .frame(height: 1)
                 .foregroundStyle(RetroTheme.retroGradient)
-                .padding(.horizontal, 8)
-                .padding(.bottom, 8)
+                .padding(.horizontal, 6)
+                .padding(.bottom, 4)
             
-            // Progress bars section
-            VStack(alignment: .leading, spacing: 8) {
+            // Progress bars section - more compact
+            VStack(alignment: .leading, spacing: 4) {
                 if !viewModel.activeProgressBars.isEmpty {
                     // Active progress bars
                     ForEach(viewModel.activeProgressBars) { progressInfo in
@@ -136,11 +136,11 @@ public struct ImportProgressView: View {
                 }
                 // No else clause - don't show anything when there are no operations
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 10)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
             .background(Color.black.opacity(0.7))
             .overlay(
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: 6)
                     .strokeBorder(
                         LinearGradient(
                             gradient: Gradient(colors: [
