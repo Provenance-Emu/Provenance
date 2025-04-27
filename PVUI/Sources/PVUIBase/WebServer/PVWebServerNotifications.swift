@@ -14,6 +14,8 @@ import PVWebServer
 import PVWebServer
 import ObjectiveC
 
+// TODO: The swizzles are probably not really needed
+
 /// Extension to PVWebServer to post notifications when server status changes
 public extension PVWebServer {
   
