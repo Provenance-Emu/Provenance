@@ -350,7 +350,7 @@ extension ImportProgressView {
                 }
                 .store(in: &cancellables)
             
-            NotificationCenter.default.publisher(for: Notification.Name("iCloudSyncCompleted"))
+            NotificationCenter.default.publisher(for: iCloudSync.iCloudSyncCompleted)
                 .receive(on: RunLoop.main)
                 .sink { [weak self] _ in
                     self?.isSyncing = false
