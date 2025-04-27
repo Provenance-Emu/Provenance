@@ -623,7 +623,15 @@ extension PVGameLibraryUpdatesController {
         case .completed(_), .completedArchive(_):
             return .titleAndProgress(title: "Extraction Complete!", progress: 1)
         case .failed(let error):
-            return .titleAndProgress(title: "Extraction Failed: \(error.localizedDescription)", progress: 1)
+            // For error states, we want to auto-dismiss after a delay
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(3))
+                if !Task.isCancelled {
+                    await AppState.shared.hudCoordinator.updateHUD(.hidden)
+                }
+            }
+            // Return a title-only state for errors to make it more visible
+            return .title("Extraction Failed: \(error.localizedDescription)", subtitle: "Tap to dismiss")
         case .idle:
             return .hidden
         }
