@@ -172,6 +172,12 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
+		<string>processing</string>
+		<string>fetch</string>
+	</array>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.provenance-emu.provenance.cloudkit-sync</string>
 	</array>
 	<key>aps-environment</key>
 	<string>production</string>
