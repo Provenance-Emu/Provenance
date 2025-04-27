@@ -1,6 +1,8 @@
 import Checksum
 import Foundation
 import PVLogging
+import CryptoKit
+import Combine
 
 /// Notification names for file access errors and coordination
 public extension Notification.Name {
@@ -98,49 +100,79 @@ extension FileManager: MD5Provider {
     }
 }
 
-import CryptoKit
-import Combine
-
 /// Asynchronously reads a local file and calculates the MD5 checksum.
 /// - Parameters:
 ///   - fileURL: The URL of the file.
 ///   - offset: An optional byte offset to start reading the file. Default is 0.
 /// - Returns: A publisher emitting a single String of the computed MD5 hash.
 func calculateMD5(of fileURL: URL, startingAt offset: UInt64 = 0) -> AnyPublisher<String, Error> {
-    Deferred {
+    Deferred { // Use Deferred to ensure the Future is created only upon subscription
         Future<String, Error> { promise in
-            do {
-                let fileHandle = try FileHandle(forReadingFrom: fileURL)
-                if offset > 0, #available(iOS 13.4, *) {
+            calculateMD5Attempt(fileURL: fileURL, offset: offset, promise: promise)
+        }
+    }
+    .catch { error -> AnyPublisher<String, Error> in
+        // Check if the error is retryable
+        if isRetryableError(error as NSError) {
+            // If retryable, introduce a delay before retrying
+            return Fail(error: error) // Emit the error to trigger retry
+                .delay(for: .seconds(1), scheduler: DispatchQueue.global()) // Wait 1 second
+                .eraseToAnyPublisher() 
+        } else {
+            // If not retryable, fail immediately
+            return Fail(error: error).eraseToAnyPublisher()
+        }
+    }
+    .retry(2) // Retry 2 times after the initial attempt (total 3 attempts) for upstream failures
+    .eraseToAnyPublisher()
+}
+
+/// Helper function to perform a single MD5 calculation attempt.
+private func calculateMD5Attempt(fileURL: URL, offset: UInt64, promise: @escaping (Result<String, Error>) -> Void) {
+    DispatchQueue.global(qos: .utility).async { // Perform file IO on a background thread
+        do {
+            let fileHandle = try FileHandle(forReadingFrom: fileURL)
+            defer { fileHandle.closeFile() }
+            
+            if offset > 0 {
+                // Recommended way for macOS 10.15.4+ and iOS 13.4+
+                if #available(macOS 10.15.4, iOS 13.4, tvOS 13.4, *) {
                     try fileHandle.seek(toOffset: offset)
-                } else if offset > 0 {
+                } else {
+                    // Fallback for older OS versions
                     fileHandle.seek(toFileOffset: offset)
                 }
-
-                var hasher = Insecure.MD5()
-                let bufferSize: Int = 1024 * 1024 // 1 MB
-                while try autoreleasepool(invoking: {
-                    guard let data = try fileHandle.read(upToCount: bufferSize) else {
-                        return false
-                    }
-                    if data.count > 0 {
-                        hasher.update(data: data)
-                        return true // Continue
-                    }
-                    return false // End of file reached
-                }) {}
-
-                fileHandle.closeFile()
-
-                let result = hasher.finalize()
-                let hashString = result.map { String(format: "%02x", $0) }.joined()
-
-                promise(.success(hashString))
-            } catch {
-                promise(.failure(error))
             }
+            
+            var hasher = Insecure.MD5()
+            let bufferSize: Int = 1024 * 1024 // 1 MB
+            
+            while true {
+                // Autorelease pool for efficient memory management during read loop
+                let data = try autoreleasepool { () -> Data? in
+                    if #available(macOS 10.15.4, iOS 13.4, tvOS 13.4, *) {
+                        return try fileHandle.read(upToCount: bufferSize)
+                    } else {
+                        // Fallback for older OS versions
+                        return fileHandle.readData(ofLength: bufferSize)
+                    }
+                }
+                
+                guard let chunk = data, !chunk.isEmpty else {
+                    break // End of file
+                }
+                hasher.update(data: chunk)
+            }
+            
+            let result = hasher.finalize()
+            let hashString = result.map { String(format: "%02x", $0) }.joined()
+            
+            promise(.success(hashString))
+        } catch {
+            VLOG("calculateMD5Attempt failed for \(fileURL.lastPathComponent): \(error.localizedDescription)")
+            promise(.failure(error))
         }
-    }.eraseToAnyPublisher()
+    }
 }
 
 func calculateMD5Synchronously(of fileURL: URL, startingAt offset: UInt64 = 0) throws -> String {
@@ -148,51 +180,37 @@ func calculateMD5Synchronously(of fileURL: URL, startingAt offset: UInt64 = 0) t
     var md5Hash: String = ""
     var returnedError: Error?
 
+    // The publisher now handles retries internally
     let subscription = calculateMD5(of: fileURL, startingAt: offset)
+        .receive(on: DispatchQueue.global(qos: .userInitiated)) // Ensure completion/value are handled off the main thread if caller is main
         .sink(receiveCompletion: { completion in
             switch completion {
             case .finished:
-                semaphore.signal()
+                break // Success handled in receiveValue
             case .failure(let error):
                 returnedError = error
-                semaphore.signal()
             }
+            semaphore.signal()
         }, receiveValue: { hash in
             md5Hash = hash
         })
 
     semaphore.wait()
-    subscription.cancel()
+    subscription.cancel() // Clean up subscription
 
     if let error = returnedError {
-        // Handle the error appropriately in your application context.
-        ELOG("Error occurred: \(error)")
-        
-        // For specific errors like timeouts or file access issues, add retry logic
-        let nsError = error as NSError
-        if isRetryableError(nsError) {
-            ILOG("Encountered retryable error, attempting retry: \(error.localizedDescription)")
-            
-            // Add a small delay before retry
-            Thread.sleep(forTimeInterval: 0.5)
-            
-            do {
-                // Try one more time with a direct file read approach
-                let data = try Data(contentsOf: fileURL, options: .alwaysMapped)
-                var hasher = Insecure.MD5()
-                hasher.update(data: data)
-                let result = hasher.finalize()
-                let hashString = result.map { String(format: "%02x", $0) }.joined()
-                return hashString
-            } catch {
-                ELOG("Retry also failed: \(error.localizedDescription)")
-                throw error
-            }
-        }
-        
+        // Log the final error after retries (if any) have failed
+        ELOG("MD5 calculation failed after retries for \(fileURL.lastPathComponent): \(error.localizedDescription)")
         throw error
     }
 
+    // Check if hash is empty, which might indicate an issue not caught as an error
+    guard !md5Hash.isEmpty else {
+        ELOG("MD5 calculation for \(fileURL.lastPathComponent) resulted in an empty hash string.")
+        // Throw a generic error or a more specific one if possible
+        throw NSError(domain: "PVHashingErrorDomain", code: 1, userInfo: [NSLocalizedDescriptionKey: "MD5 calculation produced an empty hash."])
+    }
+    
     return md5Hash
 }
 
@@ -248,15 +266,3 @@ func isRetryableError(_ error: NSError) -> Bool {
     
     return false
 }
-
-//// Example usage:
-//let fileURL = URL(fileURLWithPath: "/path/to/your/file")
-//calculateMD5(of: fileURL, startingAt: 1024)
-//    .sink(receiveCompletion: { completion in
-//        if case .failure(let error) = completion {
-//            print("Failed with error: \(error)")
-//        }
-//    }, receiveValue: { md5Hash in
-//        print("MD5 Hash: \(md5Hash)")
-//    })
-//    .cancel() // Be sure to store the Cancellable in a property if you want the operation to complete.
