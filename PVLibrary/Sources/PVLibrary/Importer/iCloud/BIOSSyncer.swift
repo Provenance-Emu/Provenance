@@ -258,9 +258,9 @@ public class BIOSSyncer: iCloudContainerSyncer, BIOSSyncing {
 }
 #endif
 
-// MARK: - tvOS Implementation
+// MARK: - CloudKit Implementation
 
-/// BIOS syncer for tvOS using CloudKit
+/// BIOS syncer for all OSs  using CloudKit
 public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     
     /// Initialize a new BIOS syncer
@@ -310,9 +310,16 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
         let documentsURL = URL.documentsPath
         let directoryURL = documentsURL.appendingPathComponent("BIOS")
         let fileURL = directoryURL.appendingPathComponent(filename)
-        
+        DLOG("Checking file: \(fileURL.path) for filename \(filename)")
+
         // Check if file exists
-        return FileManager.default.fileExists(atPath: fileURL.path)
+        let exists = FileManager.default.fileExists(atPath: fileURL.path)
+        
+        if !exists {
+            DLOG("File does not exist: \(fileURL.path)")
+        }
+        
+        return exists
     }
     /// The CloudKit record type for BIOS files
     override public var recordType: String {
