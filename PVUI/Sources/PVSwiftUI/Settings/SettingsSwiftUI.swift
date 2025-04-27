@@ -116,7 +116,11 @@ public struct PVSettingsView: View {
                             CollapsibleSection(title: "Controller") {
                                 ControllerSection()
                             }
-            
+                            
+                            CollapsibleSection(title: "Delta Skins") {
+                                DeltaSkinsSection()
+                            }
+                            
                             CollapsibleSection(title: "Library") {
                                 LibrarySection(viewModel: viewModel)
                                     .environmentObject(viewModel)
@@ -127,10 +131,6 @@ public struct PVSettingsView: View {
                                     .environmentObject(viewModel)
                             }
             
-                            CollapsibleSection(title: "Delta Skins") {
-                                DeltaSkinsSection()
-                            }
-                            
                             CollapsibleSection(title: "Advanced") {
                                 AdvancedSection()
                             }
@@ -959,7 +959,6 @@ private struct AdvancedSection: View {
                     .listRowBackground(Color.accentColor)
                 #endif
                 AdvancedTogglesView()
-                SecretSettingsRow()
                 
                 // App Group File Browser for debugging
                 NavigationLink(destination: AppGroupFileBrowserView()) {
@@ -993,6 +992,8 @@ private struct AdvancedSection: View {
                                 icon: .sfSymbol("magnifyingglass.circle"))
                 }
                 #endif
+                
+                SecretSettingsRow()
             }
         }
     }
