@@ -37,18 +37,23 @@ public class ImportStatusViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-        // Also observe changes directly from the GameImporter if available
+        // Connect to GameImporter.shared directly
         Task {
-            if let gameImporter = await MainActor.run { AppState.shared.gameImporter } as? GameImporter {
-                gameImporter.importQueuePublisher
-                    .receive(on: RunLoop.main)
-                    .sink { [weak self] _ in
-                        Task {
-                            await self?.refreshQueueItems()
-                        }
+            // Get the shared GameImporter instance
+            let gameImporter = GameImporter.shared
+            
+            // Subscribe to its queue publisher
+            gameImporter.importQueuePublisher
+                .receive(on: RunLoop.main)
+                .sink { [weak self] _ in
+                    Task {
+                        await self?.refreshQueueItems()
                     }
-                    .store(in: &cancellables)
-            }
+                }
+                .store(in: &cancellables)
+            
+            // Initial refresh
+            await refreshQueueItems()
         }
         
         // Observe file recovery progress
@@ -62,8 +67,11 @@ public class ImportStatusViewModel: ObservableObject {
     /// Refresh the queue items from the game importer
     @MainActor
     public func refreshQueueItems() async {
-        if let gameImporter = AppState.shared.gameImporter {
-            queueItems = await gameImporter.importQueue
-        }
+        // Use GameImporter.shared directly
+        let gameImporter = GameImporter.shared
+        queueItems = await gameImporter.importQueue
+        
+        // Update visibility based on queue status
+        isVisible = !queueItems.isEmpty
     }
 }

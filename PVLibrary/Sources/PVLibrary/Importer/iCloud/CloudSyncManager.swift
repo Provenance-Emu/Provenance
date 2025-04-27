@@ -54,6 +54,9 @@ public class CloudSyncManager {
     /// Current sync status
     @Published public private(set) var syncStatus: SyncStatus = .idle
     
+    /// Current sync info - used to provide additional context about the current operation
+    @Published public var currentSyncInfo: [String: Any]? = nil
+    
     /// Notification tokens
     private var notificationTokens: [NSObjectProtocol] = []
     
@@ -570,6 +573,9 @@ extension Notification.Name {
     
     /// Notification sent when a save state is deleted
     public static let SaveStateDeleted = Notification.Name("SaveStateDeleted")
+    
+    /// Notification sent when a ROM download is completed
+    public static let romDownloadCompleted = Notification.Name("romDownloadCompleted")
 }
 
 // MARK: - Default Extensions

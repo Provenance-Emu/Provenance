@@ -209,32 +209,32 @@ public struct ImportProgressView: View {
         .shadow(color: RetroTheme.retroPink.opacity(0.4), radius: 8, x: 0, y: 2)
     }
 
-    // Progress bar component
+    // Progress bar component - more compact
     private func progressBar(for progressInfo: ProgressInfo) -> some View {
         let progress = min(1.0, max(0.0, Double(progressInfo.current) / Double(progressInfo.total)))
         let percent = Int(progress * 100)
         let color = progressColor(for: progressInfo.detail)
         
-        return VStack(alignment: .leading, spacing: 4) {
-            // Operation label and progress percentage
-            HStack {
-                // Icon based on operation type
+        return VStack(alignment: .leading, spacing: 2) {
+            // Operation label and progress percentage - more compact
+            HStack(spacing: 4) {
+                // Icon based on operation type - smaller
                 Image(systemName: iconForOperation(progressInfo.detail ?? ""))
-                    .font(.system(size: 14))
+                    .font(.system(size: 10))
                     .foregroundColor(color)
-                    .shadow(color: color.opacity(0.7), radius: 2, x: 0, y: 0)
+                    .shadow(color: color.opacity(0.7), radius: 1, x: 0, y: 0)
                 
-                // Operation label
+                // Operation label - smaller font
                 Text(progressInfo.detail ?? "Operation")
-                    .font(.system(size: 14, weight: .bold))
+                    .font(.system(size: 11, weight: .bold))
                     .foregroundColor(color)
                     .lineLimit(1)
                 
                 Spacer()
                 
-                // Progress fraction and percentage
-                Text("\(progressInfo.current)/\(progressInfo.total) (\(percent)%)")
-                    .font(.system(size: 12, weight: .medium))
+                // Progress percentage only - more compact
+                Text("\(percent)%")
+                    .font(.system(size: 10, weight: .medium))
                     .foregroundColor(color.opacity(0.8))
             }
             

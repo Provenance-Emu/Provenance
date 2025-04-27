@@ -49,6 +49,21 @@ public class CloudKitSyncer: SyncProvider {
     
     /// The CloudKit record type for this syncer
     /// Subclasses should override this property
+    
+    /// Batch processing configuration
+    public struct BatchConfig {
+        /// Maximum number of files to process in a single batch
+        public var maxBatchSize: Int = 20
+        
+        /// Minimum number of files to process in a single batch
+        public var minBatchSize: Int = 5
+        
+        /// Whether to use parallel processing within batches
+        public var useParallelProcessing: Bool = true
+    }
+    
+    /// Default batch configuration
+    public var batchConfig = BatchConfig()
     public var recordType: String {
         return getRecordType()
     }
@@ -92,42 +107,168 @@ public class CloudKitSyncer: SyncProvider {
     
     // MARK: - SyncProvider Protocol Implementation
     
-    /// Load all files from CloudKit
+    /// Load all files from cloud storage
     /// - Parameter iterationComplete: Callback when iteration is complete
     /// - Returns: Completable that completes when all files are loaded
     public func loadAllFromCloud(iterationComplete: (() async -> Void)?) async -> Completable {
-        return Completable.create { [weak self] observer in
+        DLOG("Loading all records from CloudKit for \(recordType)")
+        
+        return Completable.create { [weak self] completable in
             guard let self = self else {
-                observer(.completed)
+                completable(.completed)
                 return Disposables.create()
             }
             
             Task {
                 do {
-                    // Fetch all records for the directories we're responsible for
-                    let records = try await self.fetchRecordsForDirectories()
+                    // Fetch all records from CloudKit
+                    let records = try await self.fetchAllRecords()
+                    DLOG("Fetched \(records.count) records from CloudKit")
                     
-                    // Process records
-                    for record in records {
-                        await self.processCloudKitRecord(record)
+                    // For ROM records, prioritize creating database entries first
+                    if self.recordType == CloudKitSchema.RecordType.rom || self.recordType == "Game" {
+                        DLOG("Creating database entries for \(records.count) ROM records")
+                        // Create database entries for all ROMs first to ensure they appear in the UI
+                        for record in records {
+                            // Extract directory and filename with fallbacks
+                            if let directory = record["directory"] as? String,
+                               let filename = record["filename"] as? String {
+                                await self.createDatabaseEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: false)
+                            }
+                        }
+                        DLOG("Completed creating database entries for ROMs")
                     }
+                    
+                    // Process records in batches
+                    await self.processRecordsInBatches(records)
+                    
+                    // Call iteration complete callback
+                    await iterationComplete?()
                     
                     // Set initial sync result and notify
                     self.initialSyncResult = .success
                     self.notificationCenter.post(name: .iCloudSyncCompleted, object: self)
                     
-                    observer(.completed)
-                    await iterationComplete?()
+                    DLOG("Completed loading all records from CloudKit")
+                    completable(.completed)
                 } catch {
-                    ELOG("CloudKit sync error: \(error.localizedDescription)")
+                    ELOG("Error loading records from CloudKit: \(error.localizedDescription)")
                     await self.errorHandler.handle(error: error)
                     self.initialSyncResult = .saveFailure
-                    observer(.error(error))
+                    completable(.error(error))
                 }
             }
             
             return Disposables.create()
         }
+    }
+    
+    /// Process records in batches to improve efficiency and reduce notifications
+    /// - Parameter records: Array of CloudKit records to process
+    private func processRecordsInBatches(_ records: [CKRecord]) async {
+        let totalRecords = records.count
+        if totalRecords == 0 {
+            DLOG("No records to process")
+            return
+        }
+        
+        // Calculate batch size based on total records
+        let adaptiveBatchSize = min(batchConfig.maxBatchSize, max(batchConfig.minBatchSize, totalRecords / 10))
+        DLOG("Processing \(totalRecords) records in batches of size \(adaptiveBatchSize)")
+        
+        // Group records by directory for more efficient processing
+        let recordsByDirectory = Dictionary(grouping: records) { record -> String in
+            return record["directory"] as? String ?? "unknown"
+        }
+        
+        var processedCount = 0
+        
+        // Process each directory group separately
+        for (directory, directoryRecords) in recordsByDirectory {
+            DLOG("Processing \(directoryRecords.count) records for directory: \(directory)")
+            
+            // Update sync info for UI
+            let syncInfo: [String: Any] = [
+                "fileType": directory,
+                "total": directoryRecords.count,
+                "completed": 0,
+                "batchProcessing": true
+            ]
+            
+            await MainActor.run {
+                CloudSyncManager.shared.currentSyncInfo = syncInfo
+            }
+            
+            // Process in batches
+            for batchStart in stride(from: 0, to: directoryRecords.count, by: adaptiveBatchSize) {
+                let batchEnd = min(batchStart + adaptiveBatchSize, directoryRecords.count)
+                let batch = Array(directoryRecords[batchStart..<batchEnd])
+                let batchRange = "\(batchStart + 1)-\(batchEnd)/\(directoryRecords.count)"
+                
+                DLOG("Processing batch \(batchRange) for \(directory)")
+                
+                // Process batch
+                if batchConfig.useParallelProcessing {
+                    // Process in parallel with task group
+                    await processRecordBatchInParallel(batch, directory: directory)
+                } else {
+                    // Process sequentially
+                    for record in batch {
+                        await processRecord(record)
+                    }
+                }
+                
+                // Update processed count
+                processedCount += batch.count
+                
+                // Update sync info for UI
+                let updatedSyncInfo: [String: Any] = [
+                    "fileType": directory,
+                    "total": directoryRecords.count,
+                    "completed": batchEnd,
+                    "batchProcessing": true
+                ]
+                
+                await MainActor.run {
+                    CloudSyncManager.shared.currentSyncInfo = updatedSyncInfo
+                }
+                
+                // Short delay between batches to allow UI to update
+                try? await Task.sleep(nanoseconds: 100_000_000) // 100ms
+            }
+        }
+        
+        // Clear sync info when done
+        await MainActor.run {
+            CloudSyncManager.shared.currentSyncInfo = nil
+        }
+    }
+    
+    /// Process a batch of records in parallel using a task group
+    /// - Parameters:
+    ///   - records: The batch of records to process
+    ///   - directory: The directory these records belong to
+    private func processRecordBatchInParallel(_ records: [CKRecord], directory: String) async {
+        // Create a task group for parallel processing
+        await withTaskGroup(of: Void.self) { group in
+            for record in records {
+                group.addTask {
+                    await self.processRecord(record)
+                }
+            }
+            
+            // Wait for all tasks to complete
+            for await _ in group {
+                // Do nothing, just wait for completion
+            }
+        }
+    }
+    
+    /// Fetch all records from CloudKit
+    /// - Returns: Array of CloudKit records
+    private func fetchAllRecords() async throws -> [CKRecord] {
+        // Fetch all records for the directories we're responsible for
+        return try await fetchRecordsForDirectories()
     }
     
     /// Insert a file that is being downloaded
@@ -438,12 +579,36 @@ public class CloudKitSyncer: SyncProvider {
     /// Process a CloudKit record
     /// - Parameter record: The CloudKit record to process
     private func processRecord(_ record: CKRecord) async {
-        // Extract directory and filename
-        guard let directory = record["directory"] as? String,
-              let filename = record["filename"] as? String else {
-            ELOG("Invalid CloudKit record: missing required fields")
+        // Extract directory and filename with fallbacks
+        let directory: String
+        if let directoryValue = record["directory"] as? String {
+            directory = directoryValue
+        } else if record.recordType == CloudKitSchema.RecordType.rom || record.recordType == "Game" {
+            // For ROMs, use a default directory if missing
+            let system = record[CloudKitSchema.FileAttributes.system] as? String ?? "Unknown"
+            directory = "roms/\(system)"
+            WLOG("Missing directory for ROM record, using: \(directory)")
+        } else {
+            ELOG("Invalid CloudKit record: missing directory field")
             return
         }
+        
+        // Extract filename with fallbacks
+        let filename: String
+        if let filenameValue = record["filename"] as? String {
+            filename = filenameValue
+        } else if let titleValue = record[CloudKitSchema.ROMAttributes.title] as? String {
+            // Use title as filename if available
+            let fileExt = record.recordType == CloudKitSchema.RecordType.rom ? ".rom" : ".dat"
+            filename = titleValue.replacingOccurrences(of: " ", with: "_") + fileExt
+            WLOG("Missing filename for record, using title: \(filename)")
+        } else {
+            // Last resort: use record ID as filename
+            filename = record.recordID.recordName + ".dat"
+            WLOG("Missing both filename and title, using record ID: \(filename)")
+        }
+        
+        DLOG("Processing record: \(record.recordID.recordName) - Directory: \(directory), Filename: \(filename)")
         
         // Check if this is a metadata-only sync or a full file sync
         if let fileAsset = record["fileData"] as? CKAsset, let fileURL = fileAsset.fileURL {
@@ -451,7 +616,12 @@ public class CloudKitSyncer: SyncProvider {
             await downloadFile(from: fileURL, to: directory, filename: filename, record: record)
         } else {
             // This is a metadata-only sync - just create the database entry
+            // For ROMs, we always want to create database entries even without file data
             await createDatabaseEntryFromRecord(record, directory: directory, filename: filename)
+            
+            if record.recordType == CloudKitSchema.RecordType.rom || record.recordType == "Game" {
+                DLOG("Created database entry for ROM: \(filename) (metadata only)")
+            }
         }
     }
     
@@ -462,6 +632,15 @@ public class CloudKitSyncer: SyncProvider {
     ///   - filename: The filename
     ///   - record: The CloudKit record
     private func downloadFile(from fileURL: URL, to directory: String, filename: String, record: CKRecord) async {
+        // Determine if this is a ROM file based on record type or directory
+        let isROM = record.recordType == CloudKitSchema.RecordType.rom ||
+        record.recordType == "Game" ||
+        directory.lowercased().contains("rom")
+        
+        if isROM {
+            DLOG("Downloading ROM file: \(filename) from CloudKit")
+        }
+        
         // Create local file path
         let documentsURL = URL.documentsPath
         let directoryURL = documentsURL.appendingPathComponent(directory)
@@ -495,6 +674,21 @@ public class CloudKitSyncer: SyncProvider {
                 try? FileManager.default.createDirectory(at: subdirectoryURL.deletingLastPathComponent(), withIntermediateDirectories: true)
                 destinationURL = subdirectoryURL
             }
+        } else {
+            // For ROMs, ensure the directory structure matches the expected format
+            if isROM {
+                // Get system identifier
+                let system = record[CloudKitSchema.FileAttributes.system] as? String ??
+                record["system"] as? String ??
+                record["systemIdentifier"] as? String ??
+                directory.components(separatedBy: "/").last ?? "Unknown"
+                
+                // Create proper ROM directory
+                let romDirectory = documentsURL.appendingPathComponent("roms/\(system)")
+                try? FileManager.default.createDirectory(at: romDirectory, withIntermediateDirectories: true)
+                destinationURL = romDirectory.appendingPathComponent(filename)
+                DLOG("Using ROM-specific path: \(destinationURL.path)")
+            }
         }
         
         DLOG("Downloading file to: \(destinationURL.path)")
@@ -516,18 +710,27 @@ public class CloudKitSyncer: SyncProvider {
             
             // Update database entry to mark file as downloaded
             await createDatabaseEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: true)
+            
+            // For ROMs, log additional information
+            if isROM {
+                DLOG("ROM download complete: \(filename)")
+                // Post notification for ROM download completion
+                await MainActor.run {
+                    NotificationCenter.default.post(name: .romDownloadCompleted, object: nil, userInfo: ["path": destinationURL.path])
+                }
+            }
         } catch {
             ELOG("Error downloading file from CloudKit: \(error.localizedDescription)")
             await errorHandler.handle(error: error)
+            
+            // Still create database entry even if download fails
+            if isROM {
+                WLOG("ROM download failed, but creating database entry anyway")
+                await createDatabaseEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: false)
+            }
         }
     }
     
-    /// Create a database entry from a CloudKit record
-    /// - Parameters:
-    ///   - record: The CloudKit record
-    ///   - directory: The directory
-    ///   - filename: The filename
-    ///   - isDownloaded: Whether the file is downloaded locally
     /// Process a CloudKit record and create the appropriate database entry
     /// - Parameter record: The CloudKit record to process
     private func processCloudKitRecord(_ record: CKRecord) async {
@@ -607,6 +810,12 @@ public class CloudKitSyncer: SyncProvider {
         await createDatabaseEntryFromRecord(record, directory: directory, filename: filename!, isDownloaded: false)
     }
     
+    /// Create a database entry from a CloudKit record
+    /// - Parameters:
+    ///   - record: The CloudKit record
+    ///   - directory: The directory
+    ///   - filename: The filename
+    ///   - isDownloaded: Whether the file is downloaded locally
     private func createDatabaseEntryFromRecord(_ record: CKRecord, directory: String, filename: String, isDownloaded: Bool = false) async {
         // This method will create or update a Realm entry based on the CloudKit record
         // The implementation will depend on your Realm model structure
@@ -653,15 +862,62 @@ public class CloudKitSyncer: SyncProvider {
     ///   - filename: The filename
     ///   - isDownloaded: Whether the file is downloaded locally
     private func createROMEntryFromRecord(_ record: CKRecord, directory: String, filename: String, isDownloaded: Bool) async {
-        // Extract metadata from the record
-        guard
-            let title: String  = record[CloudKitSchema.ROMAttributes.title] as? String,
-                let md5: String = record[CloudKitSchema.FileAttributes.md5] as? String,
-                let system: String = record[CloudKitSchema.FileAttributes.system] as? String,
-                let fileSize: Int64 = record["fileSize"] as? Int64 else {
-            ELOG("Invalid CloudKit record: missing required fields")
-            return
+        // Extract metadata from the record with fallbacks for different field names
+        // This handles potential schema differences between devices
+        
+        // Get title with fallbacks
+        let title: String
+        if let titleValue = record[CloudKitSchema.ROMAttributes.title] as? String {
+            title = titleValue
+        } else if let titleValue = record["title"] as? String {
+            title = titleValue
+        } else {
+            title = filename.components(separatedBy: ".").first ?? filename
         }
+        
+        // Get MD5 with fallbacks
+        let md5: String
+        if let md5Value = record[CloudKitSchema.FileAttributes.md5] as? String {
+            md5 = md5Value
+        } else if let md5Value = record["md5"] as? String {
+            md5 = md5Value
+        } else if let md5Value = record["md5Hash"] as? String {
+            md5 = md5Value
+        } else {
+            // Generate a unique identifier if MD5 is missing
+            md5 = UUID().uuidString
+            WLOG("Missing MD5 for ROM record, generated UUID: \(md5)")
+        }
+        
+        // Get system with fallbacks
+        let system: String
+        if let systemValue = record[CloudKitSchema.FileAttributes.system] as? String {
+            system = systemValue
+        } else if let systemValue = record["system"] as? String {
+            system = systemValue
+        } else if let systemValue = record["systemIdentifier"] as? String {
+            system = systemValue
+        } else {
+            // Try to determine system from directory
+            system = directory.components(separatedBy: "/").last ?? "Unknown"
+            WLOG("Missing system for ROM record, using directory: \(system)")
+        }
+        
+        // Get file size with fallbacks
+        let fileSize: Int64
+        if let sizeValue = record["fileSize"] as? Int64 {
+            fileSize = sizeValue
+        } else if let sizeValue = record["size"] as? Int64 {
+            fileSize = sizeValue
+        } else {
+            fileSize = 0
+            WLOG("Missing file size for ROM record")
+        }
+        
+        DLOG("Processing ROM record - Title: \(title), System: \(system), MD5: \(md5), Size: \(fileSize)")
+        
+        // Log the record ID for debugging
+        DLOG("Record ID: \(record.recordID.recordName)")
         
         // Get the system identifier from the system name
         let systemId = systemIdentifier(fromDirectory: system) ?? .Unknown
@@ -687,16 +943,27 @@ public class CloudKitSyncer: SyncProvider {
                 
                 // If still not found, try to find by filename
                 // (don't do this as we may have duplicate filenames for different systems
-//                if game == nil {
-//                    game = realm.objects(PVGame.self).filter("romPath CONTAINS %@", filename).first
-//                }
+                //                if game == nil {
+                //                    game = realm.objects(PVGame.self).filter("romPath CONTAINS %@", filename).first
+                //                }
                 
                 // If no existing game found, create a new one
                 if game == nil {
                     let newGame = PVGame()
                     // Set a valid md5Hash (required as primary key)
-                    newGame.md5Hash = md5 ?? UUID().uuidString
-                    newGame.romPath = "\(systemIdentifier)/\(filename)"
+                    newGame.md5Hash = md5
+                    
+                    // Construct a proper ROM path
+                    let documentsURL = URL.documentsPath
+                    let systemDir = systemIdentifier.isEmpty ? system : systemIdentifier
+                    let romPath = "\(systemDir)/\(filename)"
+                    newGame.romPath = romPath
+                    
+                    // Set the cloud record ID to ensure we can match this record later
+                    newGame.cloudRecordID = record.recordID.recordName
+                    
+                    // Set download status
+                    newGame.isDownloaded = isDownloaded
                     
                     // Set the system if we can find it
                     if let systemObj = realm.objects(PVSystem.self).filter("identifier == %@", systemIdentifier).first {
@@ -707,8 +974,6 @@ public class CloudKitSyncer: SyncProvider {
                     // Set other properties
                     newGame.title = title
                     newGame.fileSize = Int(fileSize)
-                    newGame.cloudRecordID = recordID
-                    newGame.isDownloaded = isDownloaded
                     
                     // Add to Realm
                     realm.add(newGame)
@@ -719,6 +984,15 @@ public class CloudKitSyncer: SyncProvider {
                     existingGame.fileSize = Int(fileSize)
                     existingGame.cloudRecordID = recordID
                     existingGame.isDownloaded = isDownloaded
+                    
+                    // Update ROM path if it's missing or invalid
+                    if existingGame.romPath.isEmpty || !existingGame.romPath.contains(systemIdentifier) {
+                        let systemDir = systemIdentifier.isEmpty ? system : systemIdentifier
+                        let romPath = "\(systemDir)/\(filename)"
+                        existingGame.romPath = romPath
+                        DLOG("Updated ROM path: \(romPath)")
+                    }
+                    
                     DLOG("Updated ROM entry for \(title)")
                 }
             }
@@ -737,8 +1011,8 @@ public class CloudKitSyncer: SyncProvider {
         }
         
         // Then try to match by the last component of the raw value (e.g., "snes" from "com.provenance.snes")
-        if let system = SystemIdentifier.allCases.first(where: { 
-            $0.rawValue.components(separatedBy: ".").last?.lowercased() == directoryName.lowercased() 
+        if let system = SystemIdentifier.allCases.first(where: {
+            $0.rawValue.components(separatedBy: ".").last?.lowercased() == directoryName.lowercased()
         }) {
             return system
         }
@@ -758,7 +1032,7 @@ public class CloudKitSyncer: SyncProvider {
         let recordID = record.recordID.recordName
         guard let gameID = record[CloudKitSchema.FileAttributes.gameID] as? String,
               let fileSize = record["fileSize"] as? Int64
-              else {
+        else {
             ELOG("Missing metadata for save state record: \(record.recordID.recordName ?? "unknown")")
             return
         }
@@ -1157,102 +1431,102 @@ public class CloudKitSyncer: SyncProvider {
                         
                         progressTracker.updateProgress(0.2)
                         progressTracker.currentOperation = "Checking for existing record..."
-                    
-                    // Check if record already exists
-                    if let existingRecord = try await self.findRecordForFile(file) {
-                        // Update existing record
-                        progressTracker.currentOperation = "Updating existing record..."
-                        existingRecord["fileData"] = CKAsset(fileURL: file)
-                        existingRecord["lastModified"] = Date()
-            
-                        progressTracker.updateProgress(0.4)
-                        // Add metadata for on-demand downloads
-                        self.addMetadataToRecord(existingRecord, forFile: file, inDirectory: directory)
                         
-                        progressTracker.updateProgress(0.6)
-                        progressTracker.currentOperation = "Saving to CloudKit..."
-                        
-                        // Save the updated record with conflict resolution
-                        let updatedRecord: CKRecord
-                        do {
-                            updatedRecord = try await self.privateDatabase.save(existingRecord)
-                        } catch let error as CKError where error.code == .serverRecordChanged {
-                            progressTracker.currentOperation = "Resolving conflict..."
-                            // Handle conflict using our conflict resolver
-                            if let resolvedRecord = try await CloudKitConflictResolver.shared.handleConflictError(error, database: self.privateDatabase) {
-                                updatedRecord = resolvedRecord
-                            } else {
-                                throw error
+                        // Check if record already exists
+                        if let existingRecord = try await self.findRecordForFile(file) {
+                            // Update existing record
+                            progressTracker.currentOperation = "Updating existing record..."
+                            existingRecord["fileData"] = CKAsset(fileURL: file)
+                            existingRecord["lastModified"] = Date()
+                            
+                            progressTracker.updateProgress(0.4)
+                            // Add metadata for on-demand downloads
+                            self.addMetadataToRecord(existingRecord, forFile: file, inDirectory: directory)
+                            
+                            progressTracker.updateProgress(0.6)
+                            progressTracker.currentOperation = "Saving to CloudKit..."
+                            
+                            // Save the updated record with conflict resolution
+                            let updatedRecord: CKRecord
+                            do {
+                                updatedRecord = try await self.privateDatabase.save(existingRecord)
+                            } catch let error as CKError where error.code == .serverRecordChanged {
+                                progressTracker.currentOperation = "Resolving conflict..."
+                                // Handle conflict using our conflict resolver
+                                if let resolvedRecord = try await CloudKitConflictResolver.shared.handleConflictError(error, database: self.privateDatabase) {
+                                    updatedRecord = resolvedRecord
+                                } else {
+                                    throw error
+                                }
                             }
-                        }
-                        
-                        progressTracker.updateProgress(0.9)
-                        DLOG("Updated CloudKit record for file: \(filename) in directory: \(directory)")
-                        
-                        // Mark this file as uploaded
-                        await self.insertUploadedFile(file)
-                        
-                        progressTracker.updateProgress(1.0)
-                        return updatedRecord
-                    } else {
-                        // Create new record with the appropriate record type
-                        progressTracker.updateProgress(0.3)
-                        progressTracker.currentOperation = "Creating new record..."
-                        
-                        let recordType = self.getRecordType()
-                        let recordID = CKRecord.ID(recordName: "\(directory)_\(filename)")
-                        let record = CKRecord(recordType: recordType, recordID: recordID)
-                        record["directory"] = directory
-                        record["filename"] = filename
-                        record["fileData"] = CKAsset(fileURL: file)
-                        record["lastModified"] = Date()
-                        
-                        progressTracker.updateProgress(0.5)
-                        progressTracker.currentOperation = "Adding metadata..."
-                        
-                        // Add metadata for on-demand downloads
-                        self.addMetadataToRecord(record, forFile: file, inDirectory: directory)
-                        
-                        progressTracker.updateProgress(0.7)
-                        progressTracker.currentOperation = "Uploading to CloudKit..."
-                        
-                        // Save the record to CloudKit with conflict handling
-                        let savedRecord: CKRecord
-                        do {
-                            savedRecord = try await self.privateDatabase.save(record)
-                        } catch let error as CKError where error.code == .serverRecordChanged {
-                            progressTracker.currentOperation = "Resolving conflict..."
-                            // Handle conflict using our conflict resolver
-                            if let resolvedRecord = try await CloudKitConflictResolver.shared.handleConflictError(error, database: self.privateDatabase) {
-                                savedRecord = resolvedRecord
-                            } else {
-                                throw error
+                            
+                            progressTracker.updateProgress(0.9)
+                            DLOG("Updated CloudKit record for file: \(filename) in directory: \(directory)")
+                            
+                            // Mark this file as uploaded
+                            await self.insertUploadedFile(file)
+                            
+                            progressTracker.updateProgress(1.0)
+                            return updatedRecord
+                        } else {
+                            // Create new record with the appropriate record type
+                            progressTracker.updateProgress(0.3)
+                            progressTracker.currentOperation = "Creating new record..."
+                            
+                            let recordType = self.getRecordType()
+                            let recordID = CKRecord.ID(recordName: "\(directory)_\(filename)")
+                            let record = CKRecord(recordType: recordType, recordID: recordID)
+                            record["directory"] = directory
+                            record["filename"] = filename
+                            record["fileData"] = CKAsset(fileURL: file)
+                            record["lastModified"] = Date()
+                            
+                            progressTracker.updateProgress(0.5)
+                            progressTracker.currentOperation = "Adding metadata..."
+                            
+                            // Add metadata for on-demand downloads
+                            self.addMetadataToRecord(record, forFile: file, inDirectory: directory)
+                            
+                            progressTracker.updateProgress(0.7)
+                            progressTracker.currentOperation = "Uploading to CloudKit..."
+                            
+                            // Save the record to CloudKit with conflict handling
+                            let savedRecord: CKRecord
+                            do {
+                                savedRecord = try await self.privateDatabase.save(record)
+                            } catch let error as CKError where error.code == .serverRecordChanged {
+                                progressTracker.currentOperation = "Resolving conflict..."
+                                // Handle conflict using our conflict resolver
+                                if let resolvedRecord = try await CloudKitConflictResolver.shared.handleConflictError(error, database: self.privateDatabase) {
+                                    savedRecord = resolvedRecord
+                                } else {
+                                    throw error
+                                }
                             }
+                            progressTracker.updateProgress(0.9)
+                            DLOG("Created CloudKit record for file: \(filename) in directory: \(directory)")
+                            
+                            // Mark this file as uploaded
+                            await self.insertUploadedFile(file)
+                            
+                            progressTracker.updateProgress(1.0)
+                            
+                            // Record analytics
+                            await CloudKitSyncAnalytics.shared.recordSuccessfulSync(bytesUploaded: fileSize)
+                            
+                            return savedRecord
                         }
-                        progressTracker.updateProgress(0.9)
-                        DLOG("Created CloudKit record for file: \(filename) in directory: \(directory)")
-                        
-                        // Mark this file as uploaded
-                        await self.insertUploadedFile(file)
-                        
-                        progressTracker.updateProgress(1.0)
-                        
-                        // Record analytics
-                        await CloudKitSyncAnalytics.shared.recordSuccessfulSync(bytesUploaded: fileSize)
-                        
-                        return savedRecord
-                    }
-                },
-                progressTracker: progressTracker
-            )
-            
-            return result
-        } catch {
-            // Record analytics for failed operation
-            CloudKitSyncAnalytics.shared.recordFailedSync(error: error)
-            throw error
+                    },
+                    progressTracker: progressTracker
+                )
+                
+                return result
+            } catch {
+                // Record analytics for failed operation
+                CloudKitSyncAnalytics.shared.recordFailedSync(error: error)
+                throw error
+            }
         }
-    }
     }
     
     /// Calculate the relative path for a file within a directory

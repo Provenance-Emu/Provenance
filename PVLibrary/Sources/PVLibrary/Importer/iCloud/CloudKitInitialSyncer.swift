@@ -672,7 +672,7 @@ public actor CloudKitInitialSyncer {
         }
     }
     
-    /// Helper method to sync a list of files and update progress
+    /// Helper method to sync a list of files and update progress using batch processing
     /// - Parameters:
     ///   - files: Array of file URLs to sync
     ///   - syncer: The syncer to use for uploading
@@ -680,32 +680,72 @@ public actor CloudKitInitialSyncer {
     /// - Returns: Number of files successfully synced
     private func syncFiles(_ files: [URL], using syncer: CloudKitSyncer, progressUpdater: @escaping (Int) -> InitialSyncProgress) async -> Int {
         var syncedCount = 0
+        let totalFiles = files.count
         
-        for (index, fileURL) in files.enumerated() {
-            do {
-                // Upload file to CloudKit
-                DLOG("Uploading file \(index + 1)/\(files.count): \(fileURL.lastPathComponent)")
-                
-                // Check if file exists
-                guard FileManager.default.fileExists(atPath: fileURL.path) else {
-                    WLOG("File does not exist: \(fileURL.path)")
-                    continue
+        // Define batch size based on file count
+        let batchSize = min(20, max(5, totalFiles / 10)) // Adaptive batch size
+        DLOG("Using batch size of \(batchSize) for \(totalFiles) files")
+        
+        // Process files in batches
+        for batchStart in stride(from: 0, to: files.count, by: batchSize) {
+            let batchEnd = min(batchStart + batchSize, files.count)
+            let batch = Array(files[batchStart..<batchEnd])
+            let batchRange = "\(batchStart + 1)-\(batchEnd)/\(totalFiles)"
+            
+            DLOG("Processing batch \(batchRange) with \(batch.count) files")
+            
+            // Create a task group for parallel processing within the batch
+            var batchSuccessCount = 0
+            var batchErrors: [String: Error] = [:]
+            
+            await withTaskGroup(of: (URL, Bool, Error?).self) { group in
+                // Add tasks for each file in the batch
+                for fileURL in batch {
+                    group.addTask {
+                        // Check if file exists
+                        guard FileManager.default.fileExists(atPath: fileURL.path) else {
+                            WLOG("File does not exist: \(fileURL.path)")
+                            return (fileURL, false, NSError(domain: "FileSystem", code: 404, userInfo: [NSLocalizedDescriptionKey: "File not found"]))
+                        }
+                        
+                        do {
+                            // Upload file
+                            _ = try await syncer.uploadFile(fileURL)
+                            return (fileURL, true, nil)
+                        } catch {
+                            return (fileURL, false, error)
+                        }
+                    }
                 }
                 
-                // Upload file
-                _ = try await syncer.uploadFile(fileURL)
-                
-                syncedCount += 1
-                
-                // Update progress
-                let updatedProgress = progressUpdater(syncedCount)
-                await MainActor.run {
-                    syncProgressSubject.send(updatedProgress)
+                // Process results as they complete
+                for await (fileURL, success, error) in group {
+                    if success {
+                        batchSuccessCount += 1
+                        VLOG("Successfully uploaded file: \(fileURL.lastPathComponent)")
+                    } else if let error = error {
+                        batchErrors[fileURL.lastPathComponent] = error
+                        ELOG("Error uploading file \(fileURL.lastPathComponent): \(error.localizedDescription)")
+                    }
                 }
-                
-                DLOG("Successfully uploaded file: \(fileURL.lastPathComponent)")
-            } catch {
-                ELOG("Error uploading file \(fileURL.lastPathComponent): \(error.localizedDescription)")
+            }
+            
+            // Update total synced count
+            syncedCount += batchSuccessCount
+            
+            // Log batch results
+            DLOG("Batch \(batchRange) completed: \(batchSuccessCount)/\(batch.count) files successful, \(batchErrors.count) errors")
+            
+            // Update progress after each batch
+            let updatedProgress = progressUpdater(syncedCount)
+            await MainActor.run {
+                syncProgressSubject.send(updatedProgress)
+            }
+            
+            // Provide a summary of errors if any
+            if !batchErrors.isEmpty {
+                let errorSummary = batchErrors.keys.prefix(5).joined(separator: ", ")
+                ELOG("Batch had \(batchErrors.count) errors. First few: \(errorSummary)\(batchErrors.count > 5 ? "..." : "")")
             }
         }
         
