@@ -11,29 +11,33 @@ import SwiftUI
 public struct RetroGrid: View {
     public let lineSpacing: CGFloat
     public let lineColor: Color
+    public let lines: Int
+    public let lineWidth: CGFloat
     
-    public init(lineSpacing: CGFloat = 15, lineColor: Color = .white.opacity(0.07)) {
+    public init(lineSpacing: CGFloat = 15, lineColor: Color = .white.opacity(0.07), lines: Int = 20, lineWidth: CGFloat = 1) {
         self.lineSpacing = lineSpacing
         self.lineColor = lineColor
+        self.lines = lines
+        self.lineWidth = lineWidth
     }
     
     public var body: some View {
         ZStack {
             // Horizontal lines
             VStack(spacing: lineSpacing) {
-                ForEach(0..<20) { _ in
+                ForEach(0..<lines) { _ in
                     Rectangle()
                         .fill(lineColor)
-                        .frame(height: 1)
+                        .frame(height: lineWidth)
                 }
             }
             
             // Vertical lines
             HStack(spacing: lineSpacing) {
-                ForEach(0..<20) { _ in
+                ForEach(0..<lines) { _ in
                     Rectangle()
                         .fill(lineColor)
-                        .frame(width: 1)
+                        .frame(width: lineWidth)
                 }
             }
         }
@@ -43,7 +47,13 @@ public struct RetroGrid: View {
 // RetroGrid creates a grid background for retrowave aesthetic
 public struct RetroGridForSettings: View {
     
-    public init() {}
+    public let lines: Int
+    public let lineWidth: CGFloat
+
+    public init(lines: Int = 20, lineWidth: CGFloat = 1) {
+        self.lines = lines
+        self.lineWidth = lineWidth
+    }
     
     public var body: some View {
         GeometryReader { geometry in
@@ -60,7 +70,7 @@ public struct RetroGridForSettings: View {
                 )
                 
                 // Horizontal grid lines
-                VStack(spacing: 20) {
+                VStack(spacing: CGFloat(lines)) {
                     ForEach(0..<Int(geometry.size.height / 20) + 1, id: \.self) { _ in
                         Rectangle()
                             .fill(LinearGradient(
@@ -68,12 +78,12 @@ public struct RetroGridForSettings: View {
                                 startPoint: .leading,
                                 endPoint: .trailing
                             ))
-                            .frame(height: 1)
+                            .frame(height: lineWidth)
                     }
                 }
                 
                 // Vertical grid lines
-                HStack(spacing: 20) {
+                HStack(spacing: CGFloat(lines)) {
                     ForEach(0..<Int(geometry.size.width / 20) + 1, id: \.self) { _ in
                         Rectangle()
                             .fill(LinearGradient(
@@ -81,7 +91,7 @@ public struct RetroGridForSettings: View {
                                 startPoint: .top,
                                 endPoint: .bottom
                             ))
-                            .frame(width: 1)
+                            .frame(width: lineWidth)
                     }
                 }
             }
