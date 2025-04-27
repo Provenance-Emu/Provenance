@@ -16,6 +16,7 @@ import RealmSwift
 import RxSwift
 import Defaults
 import PVSettings
+import CloudKit
 
 /// Manager for cloud sync operations
 /// Handles initialization and coordination of sync providers
@@ -23,7 +24,7 @@ public class CloudSyncManager {
     // MARK: - Properties
     
     /// Shared instance
-    public static let shared = CloudSyncManager()
+    public static let shared = CloudSyncManager(container: iCloudConstants.container)
     
     /// ROM syncer
     internal var romsSyncer: RomsSyncing?
@@ -60,10 +61,15 @@ public class CloudSyncManager {
     /// Notification tokens
     private var notificationTokens: [NSObjectProtocol] = []
     
+    /// CloudKit Container
+    private let container: CKContainer
+    
     // MARK: - Initialization
     
     /// Private initializer for singleton
-    private init() {
+    private init(container: CKContainer) {
+        self.container = container
+        
         Task { [weak self] in
             // Register for notifications
             await self?.registerForNotifications()
@@ -100,15 +106,13 @@ public class CloudSyncManager {
         // Update sync status
         updateSyncStatus(.syncing)
         
-        // Check if initial sync is needed
-        if await CloudKitInitialSyncer.shared.isInitialSyncNeeded() {
-            DLOG("Initial CloudKit sync needed - performing full sync of local files")
-            updateSyncStatus(.initialSync)
-            
-            // Perform initial sync of all local files to CloudKit
-            let syncCount = await CloudKitInitialSyncer.shared.performInitialSync()
-            DLOG("Initial CloudKit sync completed - synced \(syncCount) records")
-        }
+        // Always perform an initial sync to ensure all local files are in CloudKit
+        DLOG("Performing full sync of local files to CloudKit")
+        updateSyncStatus(.initialSync)
+        
+        // Force a sync of all local files to CloudKit
+        let syncCount = await CloudKitInitialSyncer.shared.performInitialSync(forceSync: true)
+        DLOG("CloudKit sync completed - synced \(syncCount) records")
         
         // Create completables for each sync provider
         let completables: [Completable] = [
@@ -246,6 +250,7 @@ public class CloudSyncManager {
         
         // Create ROM syncer using factory
         romsSyncer = SyncProviderFactory.createROMSyncProvider(
+            container: container,
             notificationCenter: NotificationCenter.default,
             errorHandler: syncErrorHandler
         )
@@ -263,8 +268,9 @@ public class CloudSyncManager {
         )
         
         // Create non-database syncer for Battery States, Screenshots, and DeltaSkins
-        let nonDatabaseDirectories: Set<String> = ["Battery States", "Screenshots", "DeltaSkins"]
+        let nonDatabaseDirectories: Set<String> = ["Battery States", "Screenshots", "RetroArch", "DeltaSkins"]
         nonDatabaseSyncer = SyncProviderFactory.createNonDatabaseSyncProvider(
+            container: container,
             for: nonDatabaseDirectories,
             notificationCenter: NotificationCenter.default,
             errorHandler: syncErrorHandler

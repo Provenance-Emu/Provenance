@@ -10,6 +10,9 @@ import Foundation
 import PVLogging
 import PVSettings
 import Defaults
+#if !os(tvOS)
+import CloudKit
+#endif
 
 /// Factory for creating sync providers
 public class SyncProviderFactory {
@@ -32,12 +35,18 @@ public class SyncProviderFactory {
         DLOG("iCloudSync=\(iCloudSyncEnabled), iCloudSyncMode=\(syncMode.description)")
         
 #if os(tvOS)
-        return CloudKitSyncer(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
+        // Get the container identifier from the bundle
+        let containerIdentifier = iCloudConstants.containerIdentifier
+        let container = CKContainer(identifier: containerIdentifier)
+        return CloudKitSyncer(container: container, directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
 #else
         // Return the appropriate syncer based on the mode
         if syncMode.isCloudKit {
+            // Get the container identifier from the bundle
+            let containerIdentifier = iCloudConstants.containerIdentifier
+            let container = CKContainer(identifier: containerIdentifier)
             DLOG("Creating CloudKit syncer based on iCloudSyncMode=\(syncMode.description)")
-            return CloudKitSyncer(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
+            return CloudKitSyncer(container: container, directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
         } else {
             DLOG("Creating iCloud Documents syncer based on iCloudSyncMode=\(syncMode.description)")
             return iCloudContainerSyncer(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
@@ -51,6 +60,7 @@ public class SyncProviderFactory {
     ///   - errorHandler: Error handler to use
     /// - Returns: A ROM sync provider
     public static func createROMSyncProvider(
+        container: CKContainer,
         notificationCenter: NotificationCenter = .default,
         errorHandler: CloudSyncErrorHandler
     ) -> RomsSyncing {
@@ -58,15 +68,14 @@ public class SyncProviderFactory {
         let syncMode = Defaults[.iCloudSyncMode]
         let iCloudSyncEnabled = Defaults[.iCloudSync]
         
-        // Log the current sync state
-        DLOG("iCloudSync=\(iCloudSyncEnabled), iCloudSyncMode=\(syncMode.description)")
+        DLOG("iCloudSync=\(iCloudSyncEnabled), iCloudSyncMode=\(syncMode.description), container=\(container)")
 #if os(tvOS)
-        return CloudKitRomsSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
+        return CloudKitRomsSyncer(container: container, notificationCenter: notificationCenter, errorHandler: errorHandler)
 #else
         // Return the appropriate syncer based on the mode
         if syncMode.isCloudKit {
             DLOG("Creating CloudKit ROM syncer based on iCloudSyncMode=\(syncMode.description)")
-            return CloudKitRomsSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
+            return CloudKitRomsSyncer(container: container, notificationCenter: notificationCenter, errorHandler: errorHandler)
         } else {
             DLOG("Creating iCloud ROM syncer based on iCloudSyncMode=\(syncMode.description)")
             return RomsSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
@@ -90,12 +99,12 @@ public class SyncProviderFactory {
         // Log the current sync state
         DLOG("iCloudSync=\(iCloudSyncEnabled), iCloudSyncMode=\(syncMode.description)")
 #if os(tvOS)
-        return CloudKitSaveStatesSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
+        return CloudKitSaveStatesSyncer(container: iCloudConstants.container, notificationCenter: notificationCenter, errorHandler: errorHandler)
 #else
         // Return the appropriate syncer based on the mode
         if syncMode.isCloudKit {
             DLOG("Creating CloudKit save states syncer based on iCloudSyncMode=\(syncMode.description)")
-            return CloudKitSaveStatesSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
+            return CloudKitSaveStatesSyncer(container: iCloudConstants.container, notificationCenter: notificationCenter, errorHandler: errorHandler)
         } else {
             DLOG("Creating iCloud save states syncer based on iCloudSyncMode=\(syncMode.description)")
             return SaveStatesSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
@@ -119,12 +128,12 @@ public class SyncProviderFactory {
         // Log the current sync state
         DLOG("iCloudSync=\(iCloudSyncEnabled), iCloudSyncMode=\(syncMode.description)")
 #if os(tvOS)
-        return CloudKitBIOSSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
+        return CloudKitBIOSSyncer(container: iCloudConstants.container, notificationCenter: notificationCenter, errorHandler: errorHandler)
 #else
         // Return the appropriate syncer based on the mode
         if syncMode.isCloudKit {
             DLOG("Creating CloudKit BIOS syncer based on iCloudSyncMode=\(syncMode.description)")
-            return CloudKitBIOSSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
+            return CloudKitBIOSSyncer(container: iCloudConstants.container, notificationCenter: notificationCenter, errorHandler: errorHandler)
         } else {
             DLOG("Creating iCloud BIOS syncer based on iCloudSyncMode=\(syncMode.description)")
             return BIOSSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
@@ -139,6 +148,7 @@ public class SyncProviderFactory {
     ///   - errorHandler: Error handler to use
     /// - Returns: A non-database sync provider
     public static func createNonDatabaseSyncProvider(
+        container: CKContainer,
         for directories: Set<String>,
         notificationCenter: NotificationCenter = .default,
         errorHandler: CloudSyncErrorHandler
@@ -152,6 +162,6 @@ public class SyncProviderFactory {
         
         // For non-database files, we always use CloudKit
         DLOG("Creating CloudKit non-database syncer for directories: \(directories)")
-        return CloudKitNonDatabaseSyncer(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
+        return CloudKitNonDatabaseSyncer(container: container, directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
     }
 }

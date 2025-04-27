@@ -351,8 +351,8 @@ public class CloudKitRomsSyncer: CloudKitSyncer, RomsSyncing {
     /// - Parameters:
     ///   - notificationCenter: Notification center to use
     ///   - errorHandler: Error handler to use
-    public init(notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
-        super.init(directories: ["ROMs"], notificationCenter: notificationCenter, errorHandler: errorHandler)
+    public init(container: CKContainer, notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
+        super.init(container: container, directories: ["ROMs"], notificationCenter: notificationCenter, errorHandler: errorHandler)
     }
     
     /// Get the local URL for a ROM file

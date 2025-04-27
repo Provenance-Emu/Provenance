@@ -33,8 +33,8 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
     ///   - directories: Directories to manage
     ///   - notificationCenter: Notification center to use
     ///   - errorHandler: Error handler to use
-    public override init(directories: Set<String> = ["Battery States", "Screenshots", "RetroArch", "DeltaSkins"], notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
-        super.init(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
+    public override init(container: CKContainer, directories: Set<String> = ["Battery States", "Screenshots", "RetroArch", "DeltaSkins"], notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
+        super.init(container: container, directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
     }
     
     /// Get all CloudKit records for files

@@ -192,46 +192,14 @@ public enum CloudKitSchema {
     private static func createRecordType(_ recordType: String, in database: CKDatabase) async throws {
         DLOG("Creating/updating record type: \(recordType)")
         
-        // Note: CloudKit automatically indexes some fields when they're used in queries
-        // We'll create test records with the fields we want to use in queries
-        // This approach works because CloudKit will index fields that are frequently queried
-        DLOG("Creating test records with queryable fields for: \(recordType)")
+        // Note: CloudKit schema is automatically created when records are saved
+        // We don't need to explicitly create test records anymore
+        // The schema will be properly initialized when real records are saved
         
-        // As a fallback, create a test record to ensure the record type exists
-        let record = CKRecord(recordType: recordType)
+        // Just log that we're initializing this record type
+        DLOG("Initialized record type: \(recordType)")
         
-        // Add some common attributes based on the record type
-        switch recordType {
-        case RecordType.rom:
-            record[FileAttributes.directory] = "ROMs"
-            record[ROMAttributes.title] = "Test ROM"
-        case RecordType.saveState:
-            record[FileAttributes.directory] = "Save States"
-            record[SaveStateAttributes.description] = "Test Save State"
-        case RecordType.bios:
-            record[FileAttributes.directory] = "BIOS"
-            record[BIOSAttributes.description] = "Test BIOS"
-        case RecordType.file:
-            record[FileAttributes.directory] = "Files"
-            record[FileAttributes.filename] = "test.file"
-        default:
-            break
-        }
-        
-        do {
-            // Try to save the record to create the record type
-            _ = try await database.save(record)
-            DLOG("Created test record for type: \(recordType)")
-            
-            // Delete the test record
-            try await database.deleteRecord(withID: record.recordID)
-            DLOG("Deleted test record for: \(recordType)")
-        } catch let error as CKError {
-            // If the error is not that the record type already exists, rethrow
-            if error.code != .serverRecordChanged && error.code != .unknownItem {
-                throw error
-            }
-            DLOG("Record type already exists or couldn't be created: \(recordType)")
-        }
+        // No need to create and delete test records, which can cause clutter
+        // CloudKit will create the schema when actual records are saved
     }
 }

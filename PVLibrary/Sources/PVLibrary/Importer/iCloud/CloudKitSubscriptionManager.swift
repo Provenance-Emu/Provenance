@@ -45,7 +45,7 @@ public class CloudKitSubscriptionManager {
     /// Private initializer for singleton
     private init() {
         // Get CloudKit container
-        container = CKContainer(identifier: iCloudConstants.containerIdentifier)
+        container = iCloudConstants.container
         privateDatabase = container.privateCloudDatabase
         
         // Register for notifications

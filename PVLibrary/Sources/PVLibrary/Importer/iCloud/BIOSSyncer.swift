@@ -268,8 +268,8 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     ///   - directories: Directories to manage (defaults to ["BIOS"])
     ///   - notificationCenter: Notification center to use
     ///   - errorHandler: Error handler to use
-    public override init(directories: Set<String> = ["BIOS"], notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
-        super.init(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
+    public override init(container: CKContainer, directories: Set<String> = ["BIOS"], notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
+        super.init(container: container, directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
     }
     
     /// Get all CloudKit records for BIOS files
@@ -322,8 +322,8 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     /// - Parameters:
     ///   - notificationCenter: Notification center to use
     ///   - errorHandler: Error handler to use
-    public init(notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
-        super.init(directories: ["BIOS"], notificationCenter: notificationCenter, errorHandler: errorHandler)
+    public init(container: CKContainer, notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
+        super.init(container: container, directories: ["BIOS"], notificationCenter: notificationCenter, errorHandler: errorHandler)
     }
     
     /// Get the local URL for a BIOS file

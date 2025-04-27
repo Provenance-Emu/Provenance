@@ -181,8 +181,8 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     ///   - directories: Directories to manage (defaults to ["Saves"])
     ///   - notificationCenter: Notification center to use
     ///   - errorHandler: Error handler to use
-    public override init(directories: Set<String> = ["Saves"], notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
-        super.init(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
+    public override init(container: CKContainer,directories: Set<String> = ["Saves"], notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
+        super.init(container: container, directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
     }
     
     /// Get all CloudKit records for save states
@@ -244,8 +244,8 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     /// - Parameters:
     ///   - notificationCenter: Notification center to use
     ///   - errorHandler: Error handler to use
-    public init(notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
-        super.init(directories: ["Saves"], notificationCenter: notificationCenter, errorHandler: errorHandler)
+    public init(container: CKContainer, notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
+        super.init(container: container, directories: ["Saves"], notificationCenter: notificationCenter, errorHandler: errorHandler)
     }
     
     /// Get the local URL for a save state

@@ -31,8 +31,8 @@ public class CloudKitSyncer: SyncProvider {
     
     // File type extensions
     private let saveStateExtensions = ["sav", "state", "srm", "ss", "st"]
-    // TODO: Get this extension list from somewhere
-    private let biosExtensions = ["bin", "bios", "rom", "zip"]
+    
+    // Use the existing biosCache from RomDatabase
     public let directories: Set<String>
     public let fileManager: FileManager = .default
     public let notificationCenter: NotificationCenter
@@ -72,27 +72,20 @@ public class CloudKitSyncer: SyncProvider {
     
     /// Initialize a new CloudKit syncer
     /// - Parameters:
+    ///   - container: CloudKit container
     ///   - directories: Set of directories to sync
     ///   - notificationCenter: Notification center to use
     ///   - errorHandler: Error handler to use
-    public init(directories: Set<String>, notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
-        // Get the container identifier from the bundle
-        let containerIdentifier = iCloudConstants.containerIdentifier
-        
-        // Initialize CloudKit container and database
-        self.container = CKContainer(identifier: containerIdentifier)
+    public init(container: CKContainer, directories: Set<String>, notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler = CloudSyncErrorHandler()) {
+        self.container = container
         self.privateDatabase = container.privateCloudDatabase
         self.directories = directories
         self.notificationCenter = notificationCenter
         self.errorHandler = errorHandler
         
-        // Initialize CloudKit schema and set up subscriptions
+        // Initialize CloudKit schema
         Task {
-            // First initialize the schema to ensure record types exist
-            await initializeCloudKitSchema()
-            
-            // Then set up subscriptions
-            await setupSubscriptions()
+            _ = await CloudKitSchema.initializeSchema(in: privateDatabase)
         }
         
         // Register with the syncer store
@@ -1605,7 +1598,7 @@ public class CloudKitSyncer: SyncProvider {
                 record[CloudKitSchema.FileAttributes.gameID] = possibleGameID as CKRecordValue
                 DLOG("Added game ID reference: \(possibleGameID) for save state: \(filename)")
             }
-        } else if biosExtensions.contains(fileExtension) {
+        } else if isBIOSFile(file) {
             // BIOS metadata
             record["description"] = filename as CKRecordValue
             
@@ -1644,6 +1637,31 @@ public class CloudKitSyncer: SyncProvider {
     /// Calculate MD5 hash for a file
     /// - Parameter file: The file URL
     /// - Returns: MD5 hash string or nil if calculation failed
+
+    
+    /// Check if a file is a BIOS file by comparing against known BIOS filenames
+    /// - Parameter file: The file URL to check
+    /// - Returns: True if the file is a BIOS file, false otherwise
+    private func isBIOSFile(_ file: URL) -> Bool {
+        let filename = file.lastPathComponent
+        
+        // First check if the file is in a BIOS directory
+        let pathComponents = file.pathComponents
+        if pathComponents.contains("BIOS") {
+            return true
+        }
+        
+        // Check all systems' BIOS files using the existing biosCache
+        let biosCache = RomDatabase.biosCache
+        for (_, biosFilenames) in biosCache {
+            if biosFilenames.contains(filename) {
+                return true
+            }
+        }
+        
+        return false
+    }
+    
     private func calculateMD5(forFile file: URL) -> String? {
         do {
             // Check if file exists
