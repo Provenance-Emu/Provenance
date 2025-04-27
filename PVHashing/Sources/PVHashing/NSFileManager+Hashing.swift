@@ -13,59 +13,6 @@ public extension Notification.Name {
 
 extension FileManager: MD5Provider {
     public func md5ForFile(at url: URL, fromOffset offset: UInt = 0) -> String? {
-        // Check if the file is currently being recovered from iCloud using a notification-based approach
-        let semaphore = DispatchSemaphore(value: 0)
-        var isBeingRecovered = false
-        
-        // Set up observer for the response
-        let observer = NotificationCenter.default.addObserver(
-            forName: .fileRecoveryStatusResponse,
-            object: nil,
-            queue: .main
-        ) { notification in
-            if let userInfo = notification.userInfo,
-               let path = userInfo["path"] as? String,
-               path == url.path,
-               let status = userInfo["isBeingRecovered"] as? Bool {
-                isBeingRecovered = status
-            }
-            semaphore.signal()
-        }
-        
-        // Post notification to check if file is being recovered
-        NotificationCenter.default.post(
-            name: .checkFileRecoveryStatus,
-            object: nil,
-            userInfo: ["path": url.path]
-        )
-        
-        // Wait for response with a timeout
-        _ = semaphore.wait(timeout: .now() + 0.1)
-        
-        // Remove observer
-        NotificationCenter.default.removeObserver(observer)
-        
-        if isBeingRecovered {
-            ILOG("Skipping MD5 calculation for file being recovered: \(url.lastPathComponent)")
-            
-            // Post notification about pending file
-            Task { @MainActor in
-                NotificationCenter.default.post(
-                    name: .fileAccessError,
-                    object: nil,
-                    userInfo: [
-                        "error": "File is currently being recovered from iCloud",
-                        "errorType": "file_recovering",
-                        "path": url.path,
-                        "filename": url.lastPathComponent,
-                        "timestamp": Date()
-                    ]
-                )
-            }
-            
-            return nil
-        }
-        
         #if LEGACY_MD5
         return url.checksum(algorithm: .md5, fromOffset: offset)
         #else
