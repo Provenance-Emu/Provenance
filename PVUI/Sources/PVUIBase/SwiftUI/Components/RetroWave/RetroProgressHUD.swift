@@ -1,5 +1,6 @@
 import UIKit
 import SwiftUI
+import PVThemes
 
 /// A retrowave-themed progress HUD to replace MBProgressHUD
 public class RetroProgressHUD: UIView {
@@ -9,13 +10,17 @@ public class RetroProgressHUD: UIView {
     private let containerView = UIView()
     private let titleLabel = UILabel()
     private let loadingIndicator = RetroLoadingIndicator()
+    private var progressView: CustomRetroProgressBar?
+    
+    // Progress tracking
+    private var currentProgress: Float = 0
     
     // Colors from RetroTheme
-    private let retroPink = UIColor(red: 0.99, green: 0.11, blue: 0.55, alpha: 1.0)
-    private let retroPurple = UIColor(red: 0.53, green: 0.11, blue: 0.91, alpha: 1.0)
-    private let retroBlue = UIColor(red: 0.0, green: 0.75, blue: 0.95, alpha: 1.0)
-    private let retroDarkBlue = UIColor(red: 0.05, green: 0.05, blue: 0.2, alpha: 1.0)
-    private let retroBlack = UIColor(red: 0.05, green: 0.0, blue: 0.1, alpha: 1.0)
+    private var retroPink: UIColor { UIColor(RetroTheme.retroPink) }
+    private var retroPurple: UIColor { UIColor(RetroTheme.retroPurple) }
+    private var retroBlue: UIColor { UIColor(RetroTheme.retroBlue) }
+    private var retroDarkBlue: UIColor { UIColor(RetroTheme.retroDarkBlue) }
+    private var retroBlack: UIColor { UIColor(RetroTheme.retroBlack) }
     
     // MARK: - Initialization
     
@@ -52,6 +57,13 @@ public class RetroProgressHUD: UIView {
         loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(loadingIndicator)
         
+        // Create and configure progress bar
+        let progressBar = CustomRetroProgressBar(frame: CGRect(x: 0, y: 0, width: 200, height: 10))
+        progressBar.translatesAutoresizingMaskIntoConstraints = false
+        progressBar.isHidden = true // Hide initially
+        containerView.addSubview(progressBar)
+        self.progressView = progressBar
+        
         // Configure title label
         titleLabel.textColor = .white
         titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
@@ -67,8 +79,8 @@ public class RetroProgressHUD: UIView {
         NSLayoutConstraint.activate([
             containerView.centerXAnchor.constraint(equalTo: centerXAnchor),
             containerView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            containerView.widthAnchor.constraint(equalToConstant: 200),
-            containerView.heightAnchor.constraint(equalToConstant: 160),
+            containerView.widthAnchor.constraint(equalToConstant: 240), // Slightly wider
+            containerView.heightAnchor.constraint(equalToConstant: 200), // Slightly taller
             
             gridPattern.topAnchor.constraint(equalTo: containerView.topAnchor),
             gridPattern.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
@@ -76,15 +88,33 @@ public class RetroProgressHUD: UIView {
             gridPattern.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
             
             loadingIndicator.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-            loadingIndicator.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: -15),
-            loadingIndicator.widthAnchor.constraint(equalToConstant: 80),
-            loadingIndicator.heightAnchor.constraint(equalToConstant: 80),
-            
-            titleLabel.topAnchor.constraint(equalTo: loadingIndicator.bottomAnchor, constant: 15),
-            titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 10),
-            titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
-            titleLabel.bottomAnchor.constraint(lessThanOrEqualTo: containerView.bottomAnchor, constant: -15)
+            loadingIndicator.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 25),
+            loadingIndicator.widthAnchor.constraint(equalToConstant: 60),
+            loadingIndicator.heightAnchor.constraint(equalToConstant: 60),
         ])
+        
+        // Set up progress bar constraints separately
+        if let progressView = self.progressView {
+            NSLayoutConstraint.activate([
+                progressView.topAnchor.constraint(equalTo: loadingIndicator.bottomAnchor, constant: 10),
+                progressView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 20),
+                progressView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -20),
+                progressView.heightAnchor.constraint(equalToConstant: 10),
+                
+                titleLabel.topAnchor.constraint(equalTo: progressView.bottomAnchor, constant: 15),
+                titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 10),
+                titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
+                titleLabel.bottomAnchor.constraint(lessThanOrEqualTo: containerView.bottomAnchor, constant: -15)
+            ])
+        } else {
+            // If progress view isn't available, connect title label directly to loading indicator
+            NSLayoutConstraint.activate([
+                titleLabel.topAnchor.constraint(equalTo: loadingIndicator.bottomAnchor, constant: 15),
+                titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 10),
+                titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
+                titleLabel.bottomAnchor.constraint(lessThanOrEqualTo: containerView.bottomAnchor, constant: -15)
+            ])
+        }
     }
     
     private func createGridPattern() -> UIView {
@@ -137,6 +167,35 @@ public class RetroProgressHUD: UIView {
     /// Set the text to display in the HUD
     public func setText(_ text: String) {
         titleLabel.text = text
+    }
+    
+    /// Set the progress value (0.0 to 1.0)
+    public func setProgress(_ progress: Float, animated: Bool = true) {
+        currentProgress = progress
+        
+        guard let progressView = self.progressView else { return }
+        
+        // Show progress bar and hide loading indicator when in progress mode
+        if progress > 0 && progress < 1 {
+            progressView.isHidden = false
+            loadingIndicator.isHidden = true
+        } else if progress >= 1 {
+            // At 100%, show a brief completion animation
+            progressView.isHidden = false
+            loadingIndicator.isHidden = true
+            
+            // Auto-hide after a delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+                self?.hide(animated: true)
+            }
+        } else {
+            // At 0%, show the loading indicator
+            progressView.isHidden = true
+            loadingIndicator.isHidden = false
+        }
+        
+        // Update the progress bar
+        progressView.setProgress(progress, animated: animated)
     }
     
     /// Show the HUD in the specified view
@@ -263,5 +322,125 @@ class RetroLoadingIndicator: UIView {
         pulseAnimation.repeatCount = .infinity
         pulseAnimation.autoreverses = true
         glowLayer.add(pulseAnimation, forKey: "pulseAnimation")
+    }
+}
+
+// MARK: - CustomRetroProgressBar
+
+/// A retrowave-styled progress bar
+class CustomRetroProgressBar: UIView {
+    // MARK: - Properties
+    
+    private let trackLayer = CAShapeLayer()
+    private let progressLayer = CAShapeLayer()
+    private let glowLayer = CAShapeLayer()
+    
+    private var progress: Float = 0
+    
+    // Colors from RetroTheme
+    private var retroPink: UIColor { UIColor(RetroTheme.retroPink) }
+    private var retroBlue: UIColor { UIColor(RetroTheme.retroBlue) }
+    private var retroPurple: UIColor { UIColor(RetroTheme.retroPurple) }
+    
+    // MARK: - Initialization
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupLayers()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupLayers()
+    }
+    
+    // MARK: - Setup
+    
+    private func setupLayers() {
+        // Track layer (background)
+        trackLayer.fillColor = UIColor.clear.cgColor
+        trackLayer.strokeColor = UIColor.darkGray.cgColor
+        trackLayer.lineWidth = 6
+        trackLayer.lineCap = .round
+        layer.addSublayer(trackLayer)
+        
+        // Glow layer (for the neon effect)
+        glowLayer.fillColor = UIColor.clear.cgColor
+        glowLayer.strokeColor = retroBlue.cgColor
+        glowLayer.lineWidth = 6
+        glowLayer.lineCap = .round
+        glowLayer.shadowColor = retroBlue.cgColor
+        glowLayer.shadowOffset = CGSize(width: 0, height: 0)
+        glowLayer.shadowOpacity = 0.8
+        glowLayer.shadowRadius = 5
+        layer.addSublayer(glowLayer)
+        
+        // Progress layer (foreground)
+        progressLayer.fillColor = UIColor.clear.cgColor
+        progressLayer.strokeColor = retroPink.cgColor
+        progressLayer.lineWidth = 6
+        progressLayer.lineCap = .round
+        progressLayer.strokeEnd = 0 // Start with no progress
+        layer.addSublayer(progressLayer)
+        
+        // Add pulsing animation to the glow
+        addPulsingAnimation()
+    }
+    
+    private func addPulsingAnimation() {
+        let pulseAnimation = CABasicAnimation(keyPath: "opacity")
+        pulseAnimation.fromValue = 0.4
+        pulseAnimation.toValue = 0.8
+        pulseAnimation.duration = 1.0
+        pulseAnimation.repeatCount = .infinity
+        pulseAnimation.autoreverses = true
+        glowLayer.add(pulseAnimation, forKey: "pulseAnimation")
+    }
+    
+    // MARK: - Layout
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updateLayerFrames()
+    }
+    
+    private func updateLayerFrames() {
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: 3, y: bounds.midY))
+        path.addLine(to: CGPoint(x: bounds.width - 3, y: bounds.midY))
+        
+        trackLayer.path = path.cgPath
+        progressLayer.path = path.cgPath
+        glowLayer.path = path.cgPath
+        
+        // Update progress
+        progressLayer.strokeEnd = CGFloat(progress)
+        glowLayer.strokeEnd = CGFloat(progress)
+    }
+    
+    // MARK: - Public Methods
+    
+    /// Set the progress value (0.0 to 1.0)
+    func setProgress(_ progress: Float, animated: Bool) {
+        let clampedProgress = min(max(progress, 0), 1)
+        self.progress = clampedProgress
+        
+        if animated {
+            let animation = CABasicAnimation(keyPath: "strokeEnd")
+            animation.fromValue = progressLayer.strokeEnd
+            animation.toValue = CGFloat(clampedProgress)
+            animation.duration = 0.3
+            animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+            
+            progressLayer.strokeEnd = CGFloat(clampedProgress)
+            progressLayer.add(animation, forKey: "progressAnimation")
+            
+            glowLayer.strokeEnd = CGFloat(clampedProgress)
+            glowLayer.add(animation, forKey: "glowProgressAnimation")
+        } else {
+            progressLayer.strokeEnd = CGFloat(clampedProgress)
+            glowLayer.strokeEnd = CGFloat(clampedProgress)
+            setNeedsLayout()
+        }
     }
 }

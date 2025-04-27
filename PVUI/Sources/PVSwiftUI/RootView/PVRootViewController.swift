@@ -27,10 +27,6 @@ import PVThemes
 
 @_exported import PVUIBase
 
-#if canImport(MBProgressHUD)
-import MBProgressHUD
-#endif
-
 // PVRootViewController serves as a UIKit parent for child SwiftUI menu views.
 // The goal one day may be to move entirely to a SwiftUI app life cycle, but under
 // current circumstances (iOS 11 deployment target, some critical logic being coupled
@@ -89,10 +85,15 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 
         self.determineInitialView()
 
-        let hud = MBProgressHUD(view: view)
-        hud.isUserInteractionEnabled = false
-        hud.contentColor = ThemeManager.shared.currentPalette.settingsCellText
+        // Create RetroProgressHUD but don't show it yet
+        let hud = RetroProgressHUD()
+        hud.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        hud.alpha = 0 // Start hidden
         view.addSubview(hud)
+        
+        // Add tap gesture recognizer to dismiss HUD when tapped
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hudTapped(_:)))
+        hud.addGestureRecognizer(tapGesture)
 
         setupHUDObserver(hud: hud)
 
@@ -552,30 +553,54 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 // MARK: - HUD State
 /// HUD State for the view controller
 extension PVRootViewController {
-    private func setupHUDObserver(hud: MBProgressHUD) {
+    /// Handle tap on the HUD to dismiss it
+    @objc private func hudTapped(_ gesture: UITapGestureRecognizer) {
+        DLOG("HUD tapped, dismissing")
+        Task { @MainActor in
+            await AppState.shared.hudCoordinator.updateHUD(.hidden)
+        }
+    }
+    private func setupHUDObserver(hud: RetroProgressHUD) {
         Task { @MainActor in
             for try await state in await AppState.shared.hudCoordinator.$hudState.values {
                 updateHUD(hud: hud, state: state)
             }
         }
     }
-    private func updateHUD(hud: MBProgressHUD, state: HudState) {
+    private func updateHUD(hud: RetroProgressHUD, state: HudState) {
         switch state {
         case .hidden:
             hud.hide(animated: true)
         case .title(let title, let subtitle):
-            hud.show(animated: true)
-            hud.mode = .indeterminate
-            hud.label.text = title
-            hud.label.numberOfLines = 2
-            hud.detailsLabel.text = subtitle
+            // Set the text with subtitle if available
+            let displayText = subtitle != nil ? "\(title)\n\(subtitle!)" : title
+            hud.setText(displayText)
+            
+            // Reset progress to show indeterminate spinner
+            hud.setProgress(0, animated: false)
+            
+            // Show the HUD
+            if hud.alpha == 0 {
+                hud.alpha = 1
+                UIView.animate(withDuration: 0.3) {
+                    hud.alpha = 1
+                }
+            }
         case .titleAndProgress(let title, let subtitle, let progress):
-            hud.show(animated: true)
-            hud.mode = .annularDeterminate
-            hud.progress = progress
-            hud.label.text = title
-            hud.label.numberOfLines = 2
-            hud.detailsLabel.text = subtitle
+            // Set the text with subtitle if available (don't include percentage in text)
+            let displayText = subtitle != nil ? "\(title)\n\(subtitle!)" : title
+            hud.setText(displayText)
+            
+            // Set the progress value to show the progress bar
+            hud.setProgress(progress, animated: true)
+            
+            // Show the HUD
+            if hud.alpha == 0 {
+                hud.alpha = 1
+                UIView.animate(withDuration: 0.3) {
+                    hud.alpha = 1
+                }
+            }
         }
     }
 }
