@@ -357,6 +357,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 ImportStatusView(
                     updatesController: AppState.shared.libraryUpdatesController!,
                     gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
+                    delegate: rootDelegate as? ImportStatusDelegate,
                     dismissAction: {
                         withAnimation {
                             gamesViewModel.showImportStatusView = false
