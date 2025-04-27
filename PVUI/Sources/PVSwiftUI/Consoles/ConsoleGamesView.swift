@@ -178,7 +178,12 @@ struct ConsoleGamesView: SwiftUI.View {
                     // Commenting out as RetroStatusControlView now handles this functionality
                     ImportProgressView(
                         gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
-                        updatesController: AppState.shared.libraryUpdatesController!
+                        updatesController: AppState.shared.libraryUpdatesController!,
+                        onTap: {
+                            withAnimation {
+                                gamesViewModel.showImportStatusView = true
+                            }
+                        }
                     )
                     .padding(.horizontal, 8)
                     .padding(.top, 4)

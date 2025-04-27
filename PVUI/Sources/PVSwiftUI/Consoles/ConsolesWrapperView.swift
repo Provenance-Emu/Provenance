@@ -221,6 +221,7 @@ struct ConsolesWrapperView: SwiftUI.View {
                 if #available(iOS 17.0, tvOS 17.0, *) {
                     // Simplified tab item to reduce rendering overhead
                     Label(console.name, image: ImageResource(name: console.iconName, bundle: PVUIBase.BundleLoader.myBundle))
+                        .frame(width: 12, height: 12)
                 } else {
                     // Fallback for older iOS versions
                     Label(console.name, systemImage: "gamecontroller")
@@ -236,7 +237,12 @@ struct ConsolesWrapperView: SwiftUI.View {
         VStack {
             ImportProgressView(
                 gameImporter: GameImporter.shared,
-                updatesController: AppState.shared.libraryUpdatesController!
+                updatesController: AppState.shared.libraryUpdatesController!,
+                onTap: {
+                    withAnimation {
+                        showImportStatusView = true
+                    }
+                }
             )
         }
         .sheet(isPresented: $showImportStatusView) {
