@@ -566,11 +566,17 @@ public actor CloudKitInitialSyncer {
                 }
 
                 // Get BIOS file path
-                let biosDirectory = PVEmulatorConfiguration.biosPath(forSystemIdentifier: bios.system.identifier)
                 guard let fileName = bios.file?.fileName else {
                     WLOG("BIOS file has no filename")
                     continue
                 }
+
+                guard let system = bios.system else {
+                    ELOG("BIOS file has no system")
+                    continue
+                }
+                let biosDirectory = PVEmulatorConfiguration.biosPath(forSystemIdentifier: system.identifier)
+
                 let fileURL = biosDirectory.appendingPathComponent(fileName)
 
                 // Check if file exists
