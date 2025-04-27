@@ -45,8 +45,10 @@ public struct RetroStatusControlView: View {
         VStack(alignment: .leading, spacing: 0) {
             header
             if isExpanded {
-                mainContent
-                    .transition(.opacity.combined(with: .slide)) // Optional animation
+                NavigationView {
+                    mainContent
+                        .transition(.opacity.combined(with: .slide)) // Optional animation
+                }
             }
         }
         .background(RetroTheme.retroDarkBlue.opacity(0.8).cornerRadius(8))
