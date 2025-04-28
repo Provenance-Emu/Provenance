@@ -198,17 +198,16 @@ struct ProvenanceApp: App {
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
-                #if os(tvOS)
+                
+                // Start bootup sequence
+                appState.startBootupSequence()
+                
                 // Initialize CloudKit subscription manager when app becomes active
                 if Defaults[.iCloudSync] {
                     Task {
                         await CloudKitSubscriptionManager.shared.setupSubscriptions()
                     }
                 }
-                #endif
-                
-                // Start bootup sequence
-                appState.startBootupSequence()
 
                 /// Swizzle sendEvent(UIEvent)
                 if !appState.sendEventWasSwizzled {
