@@ -114,8 +114,14 @@ public final class RetroSystemStatsViewModel: ObservableObject {
             for game in games {
                 // Sum up playtime for all games
                 totalPlaytime += game.timeSpentInGame
-                let romPath = game.romPath
-                let url = URL(fileURLWithPath: romPath)
+                // Get the correct file URL using the game's file property
+                guard let file = game.file, let fileURL = file.url else {
+                    WLOG("ROM has no valid file: \(game.title ?? "Unknown") (\(game.md5 ?? "No MD5"))")
+                    continue
+                }
+                
+                // Use the file's URL which should have the correct path including the ROMs subfolder
+                let url = fileURL
                 do {
                     let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
                     if let size = attributes[.size] as? Int64 {

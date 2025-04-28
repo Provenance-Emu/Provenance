@@ -23,6 +23,8 @@ public protocol NonDatabaseFileSyncing: SyncProvider {
     /// - Parameter filename: The filename to check
     /// - Returns: True if the file is downloaded locally
     func isFileDownloaded(filename: String, in directory: String) async -> Bool
+    
+
 }
 
 /// Non-database file syncer for CloudKit
@@ -133,6 +135,22 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
         }
         
         return allFiles
+    }
+    
+    /// Get the proper record type prefix for a directory
+    /// - Parameter directory: The directory name
+    /// - Returns: The record type prefix to use in record names
+    private func getRecordTypePrefix(for directory: String) -> String {
+        switch directory {
+        case "ROMs":
+            return CloudKitSchema.RecordType.rom.lowercased() // Use "rom" instead of "ROMs"
+        case "Save States":
+            return CloudKitSchema.RecordType.saveState.lowercased() // Use "savestate" instead of "Save States"
+        case "BIOS":
+            return CloudKitSchema.RecordType.bios.lowercased() // Use "bios" instead of "BIOS"
+        default:
+            return CloudKitSchema.RecordType.file.lowercased() // Default to "file"
+        }
     }
     
     /// Get the relative path of a file within its parent directory
@@ -248,7 +266,9 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
                             
                             // Create a custom record with the relative path
                             let recordType = CloudKitSchema.RecordType.file
-                            let recordID = CKRecord.ID(recordName: "\(directory)_\(relativePath)")
+                            // Use proper record type prefix based on directory
+                            let recordTypePrefix = self.getRecordTypePrefix(for: directory)
+                            let recordID = CKRecord.ID(recordName: "\(recordTypePrefix)_\(relativePath)")
                             let record = CKRecord(recordType: recordType, recordID: recordID)
                             record["directory"] = directory
                             record["filename"] = relativePath
