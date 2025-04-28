@@ -573,8 +573,6 @@
 		B386DE862C8974DA0021A7BA /* PVFreeDO-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B386DD672C8939C60021A7BA /* PVFreeDO-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B38A68C02CCF031C001C57D0 /* PVVisualBoyAdvance-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B38A68BF2CCF031C001C57D0 /* PVVisualBoyAdvance-Dynamic */; };
 		B38A68C12CCF031C001C57D0 /* PVVisualBoyAdvance-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B38A68BF2CCF031C001C57D0 /* PVVisualBoyAdvance-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		B38AF2A12DA9F24D008469C7 /* Spotlight.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		B38AF2A42DA9F24D008469C7 /* SpotlightImportExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B38FB4A12CBEF57B006786C6 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38FB4A02CBEF57B006786C6 /* PVCoreBridgeRetro.framework */; };
 		B38FB4A22CBEF57C006786C6 /* PVCoreBridgeRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B38FB4A02CBEF57B006786C6 /* PVCoreBridgeRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B38FB4B22CBEF961006786C6 /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; };
@@ -626,7 +624,6 @@
 		B39B10C22DAF400D004EEF79 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B39B10C12DAF400D004EEF79 /* PVLogging */; };
 		B39B10C42DAF4015004EEF79 /* PVAudio in Frameworks */ = {isa = PBXBuildFile; productRef = B39B10C32DAF4015004EEF79 /* PVAudio */; };
 		B39B10C62DAF402B004EEF79 /* PVFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = B39B10C52DAF402B004EEF79 /* PVFeatureFlags */; };
-		B39B21CD2DAF4A7A004EEF79 /* TopShelfv2.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B39B10AB2DAF3D16004EEF79 /* TopShelfv2.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B39B53882C66E7A900C220C6 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B39B53872C66E7A900C220C6 /* PVSettings */; };
 		B39B538A2C66E7BA00C220C6 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B39B53892C66E7BA00C220C6 /* PVSettings */; };
 		B39B54E42DAF722B004EEF79 /* SpotlightMockDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39B54E32DAF722B004EEF79 /* SpotlightMockDriver.swift */; };
@@ -1144,33 +1141,12 @@
 			remoteGlobalIDString = B383225D26ED9C530029D12F;
 			remoteInfo = "Check Git Submodules";
 		};
-		B38AF2A22DA9F24D008469C7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3E21D6A203211BE009939D3;
-			remoteInfo = Spotlight;
-		};
-		B38AF2A52DA9F24D008469C7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B355E0102920AA9700E4C858;
-			remoteInfo = SpotlightImportExtension;
-		};
 		B394CC582BDEE53A006B63E8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = B383225D26ED9C530029D12F;
 			remoteInfo = "Check Git Submodules";
-		};
-		B39B21CE2DAF4A7A004EEF79 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B39B10AA2DAF3D16004EEF79;
-			remoteInfo = TopShelfv2;
 		};
 		B3A186692CBCA4DE00BB1FFE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1538,9 +1514,6 @@
 			dstSubfolderSpec = 13;
 			files = (
 				B3BD3A1C2D729007000FBB11 /* Provenance Stickers.appex in Embed Foundation Extensions */,
-				B39B21CD2DAF4A7A004EEF79 /* TopShelfv2.appex in Embed Foundation Extensions */,
-				B38AF2A12DA9F24D008469C7 /* Spotlight.appex in Embed Foundation Extensions */,
-				B38AF2A42DA9F24D008469C7 /* SpotlightImportExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7634,9 +7607,6 @@
 			dependencies = (
 				B394CC572BDEE53A006B63E8 /* PBXTargetDependency */,
 				B3BD3A1E2D729008000FBB11 /* PBXTargetDependency */,
-				B38AF2A32DA9F24D008469C7 /* PBXTargetDependency */,
-				B38AF2A62DA9F24D008469C7 /* PBXTargetDependency */,
-				B39B21CF2DAF4A7A004EEF79 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				B39436502CCDEC9D004D5DFB /* Main UI */,
@@ -10630,36 +10600,10 @@
 			target = B383225D26ED9C530029D12F /* Check Git Submodules */;
 			targetProxy = B383226326ED9F080029D12F /* PBXContainerItemProxy */;
 		};
-		B38AF2A32DA9F24D008469C7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-				maccatalyst,
-			);
-			target = B3E21D6A203211BE009939D3 /* Spotlight */;
-			targetProxy = B38AF2A22DA9F24D008469C7 /* PBXContainerItemProxy */;
-		};
-		B38AF2A62DA9F24D008469C7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-				maccatalyst,
-			);
-			target = B355E0102920AA9700E4C858 /* SpotlightImportExtension */;
-			targetProxy = B38AF2A52DA9F24D008469C7 /* PBXContainerItemProxy */;
-		};
 		B394CC572BDEE53A006B63E8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B383225D26ED9C530029D12F /* Check Git Submodules */;
 			targetProxy = B394CC582BDEE53A006B63E8 /* PBXContainerItemProxy */;
-		};
-		B39B21CF2DAF4A7A004EEF79 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilters = (
-				tvos,
-			);
-			target = B39B10AA2DAF3D16004EEF79 /* TopShelfv2 */;
-			targetProxy = B39B21CE2DAF4A7A004EEF79 /* PBXContainerItemProxy */;
 		};
 		B3A1866A2CBCA4DE00BB1FFE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
