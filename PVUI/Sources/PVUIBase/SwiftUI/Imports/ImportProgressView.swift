@@ -361,7 +361,7 @@ extension ImportProgressView {
                 }
                 .store(in: &cancellables)
             
-            NotificationCenter.default.publisher(for: Notification.Name("CloudKitSyncProgress"))
+            NotificationCenter.default.publisher(for: iCloudSync.iCloudFileRecoveryProgress))
                 .receive(on: RunLoop.main)
                 .sink { [weak self] notification in
                     guard let userInfo = notification.userInfo else { return }
