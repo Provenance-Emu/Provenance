@@ -81,7 +81,6 @@ public struct ImportStatusView: View {
                 } else {
                     // Compact status view when no imports are active
                     StatusMessageView()
-                        .padding(.horizontal, 16)
                         .padding(.vertical, 8)
                 }
             }
