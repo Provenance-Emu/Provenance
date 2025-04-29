@@ -3,7 +3,7 @@
 //  PVLibrary
 //
 //  Created by Joseph Mattiello on 4/24/25.
-//  Copyright © 2025 Provenance Emu. All rights reserved.
+//  Copyright 2025 Provenance Emu. All rights reserved.
 //
 
 import Foundation
@@ -316,6 +316,7 @@ public actor CloudKitInitialSyncer {
                  - \(screenshotCount) screenshot files
                  - \(deltaSkinCount) Delta skin files
                  """)
+            await CloudKitSyncAnalytics.shared.recordSuccessfulSync()
         } else {
             // Record partial success
             let error = NSError(domain: "com.provenance.cloudkit", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Partial sync failure"])
@@ -326,6 +327,7 @@ public actor CloudKitInitialSyncer {
                  Synced \(totalCount) records successfully, but some operations failed.
                  See previous log messages for specific errors.
                  """)
+            await CloudKitSyncAnalytics.shared.recordFailedSync(error: error)
         }
 
         return totalCount
@@ -342,7 +344,7 @@ public actor CloudKitInitialSyncer {
 
         do {
             // Get all ROMs from Realm
-            let realm = RomDatabase.sharedInstance.realm
+            let realm = try! await Realm()
             let games = realm.objects(PVGame.self)
 
             DLOG("Found \(games.count) ROMs in Realm")
@@ -430,7 +432,7 @@ public actor CloudKitInitialSyncer {
 
         do {
             // Get all save states from Realm
-            let realm = RomDatabase.sharedInstance.realm
+            let realm = try! await Realm()
             let saveStates = realm.objects(PVSaveState.self)
 
             DLOG("Found \(saveStates.count) save states in Realm")
@@ -531,7 +533,7 @@ public actor CloudKitInitialSyncer {
 
         do {
             // Get all BIOS files from Realm
-            let realm = RomDatabase.sharedInstance.realm
+            let realm = try! await Realm()
             let biosFiles = realm.objects(PVBIOS.self)
 
             DLOG("Found \(biosFiles.count) BIOS files in Realm")

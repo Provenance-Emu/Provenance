@@ -45,14 +45,6 @@ internal struct AdvancedTogglesView: View {
             
             // Options with retrowave styling
             VStack(spacing: 12) {
-                // Cloud Sync Settings
-                NavigationLink(destination: CloudSyncSettingsView()) {
-                    SettingsRow(title: "Cloud Sync Settings",
-                                subtitle: "Configure iCloud sync for games and save states",
-                                icon: .sfSymbol("cloud"))
-                }
-                .buttonStyle(PlainButtonStyle())
-                
                 if !isAppStore {
                     PremiumThemedToggle(isOn: $autoJIT) {
                         SettingsRow(title: "Auto JIT",

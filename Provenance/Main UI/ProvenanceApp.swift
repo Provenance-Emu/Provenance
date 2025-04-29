@@ -187,6 +187,7 @@ struct ProvenanceApp: App {
                 // Add listener for bootup state changes to trigger Spotlight reindexing
                 .onReceive(appState.bootupStateManager.$currentState) { state in
                     if case .completed = state {
+                        _initICloud()
                         // When bootup is completed, trigger Spotlight reindexing
                         // This is a good time to do it as the database is fully loaded
                         ILOG("Bootup completed, triggering Spotlight reindexing")
@@ -441,6 +442,26 @@ extension ProvenanceApp {
     /// - Returns: The system if found, nil otherwise
     private func fetchSystem(byIdentifier identifier: String) -> PVSystem? {
         return RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: identifier)
+    }
+}
+
+extension ProvenanceApp {
+    func _initICloud() {
+        // Check for files stuck in iCloud Drive at startup
+        #if !os(tvOS)
+        Task.detached {
+            await iCloudSync.checkForStuckFilesInICloudDrive()
+        }
+        #endif
+
+        // Initialize CloudKit for all platforms
+        appDelegate.initializeCloudKit()
+
+        // Keep the legacy iCloud document sync code in place but don't use it by default
+        // We can uncomment this if we need to revert back to the old sync method
+        #if !os(tvOS)
+        iCloudSync.initICloudDocuments()
+        #endif
     }
 }
 

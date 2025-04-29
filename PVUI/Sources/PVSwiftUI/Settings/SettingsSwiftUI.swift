@@ -920,6 +920,19 @@ private struct LibrarySection2: View {
     var body: some View {
         Section(header: Text("Library")) {
             
+            PaidFeatureView {
+                // Cloud Sync Settings
+                NavigationLink(destination: CloudSyncSettingsView()) {
+                    SettingsRow(title: "Cloud Sync Settings",
+                                 subtitle: "Manage CloudKit and iCloud Drive sync settings",
+                                 icon: .sfSymbol("icloud"))
+                }
+            }  lockedView: {
+                SettingsRow(title: "Cloud Sync Settings",
+                          subtitle: "Unlock to access CloudKit and iCloud Drive sync settings.",
+                          icon: .sfSymbol("lock.fill"))
+            }
+            
             NavigationLink(destination: BatchArtworkMatchingView()) {
                 SettingsRow(title: "Batch Artwork Matcher",
                             subtitle: "Find and apply artwork for multiple games at once",
@@ -967,13 +980,6 @@ private struct AdvancedSection: View {
                                 icon: .sfSymbol("folder.badge.gear"))
                 }
                 
-                // iCloud Sync Status
-                NavigationLink(destination: iCloudSyncStatusView()) {
-                    SettingsRow(title: "iCloud Sync Status",
-                                subtitle: "Monitor sync status between local and iCloud files",
-                                icon: .sfSymbol("icloud"))
-                }
-                
                 #if os(tvOS)
                 // TopShelf Log Viewer
                 NavigationLink(destination: TopShelfLogView()) {
@@ -992,6 +998,13 @@ private struct AdvancedSection: View {
                                 icon: .sfSymbol("magnifyingglass.circle"))
                 }
                 #endif
+                
+                // Log view
+                NavigationLink(destination: RetroLogView()) {
+                    SettingsRow(title: "Logs",
+                                subtitle: "View logs for debugging.",
+                                icon: .sfSymbol("doc.text.magnifyingglass"))
+                }
                 
                 SecretSettingsRow()
             }

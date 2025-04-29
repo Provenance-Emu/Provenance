@@ -3,7 +3,7 @@
 //  PVLibrary
 //
 //  Created by Joseph Mattiello on 4/22/25.
-//  Copyright © 2025 Provenance Emu. All rights reserved.
+//  Copyright 2025 Provenance Emu. All rights reserved.
 //
 
 import Foundation
@@ -65,11 +65,14 @@ public enum CloudKitSchema {
         /// ID of the game this file belongs to (for save states)
         public static let gameID = "gameID"
         
+        /// System ID
+        public static let systemID = "systemID"
+        
         /// ID of the save state this file belongs to (for save states)
         public static let saveStateID = "saveStateID"
         
         /// All common attributes used in file records
-        public static let all = [directory, system, filename, fileData, lastModified, md5, gameID, saveStateID]
+        public static let all = [directory, system, filename, fileData, lastModified, md5, gameID, systemID, saveStateID]
     }
     
     /// ROM-specific attributes

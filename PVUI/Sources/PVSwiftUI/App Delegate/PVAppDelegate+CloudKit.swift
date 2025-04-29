@@ -15,9 +15,9 @@ import Defaults
 import BackgroundTasks
 
 /// Extension to handle CloudKit remote notifications in the app delegate
-extension PVAppDelegate {
+public extension PVAppDelegate {
     /// Initialize CloudKit for all platforms
-    func initializeCloudKit() {
+    public func initializeCloudKit() {
         // Register for remote notifications if iCloud sync is enabled
         if Defaults[.iCloudSync] {
             DLOG("Initializing CloudKit for all platforms")

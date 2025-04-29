@@ -371,7 +371,7 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         _initLogging()
         _initAppCenter()
         setDefaultsFromSettingsBundle()
-        _initICloud()
+        PVEmulatorConfiguration.initICloud()
         _initUITheme()
         _initThemeListener()
 
@@ -446,26 +446,6 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         // SteamController is built with STEAMCONTROLLER_NO_PRIVATE_API, so we don't call this
         // SteamControllerManager.listenForConnections()
 #endif
-    }
-
-    func _initICloud() {
-        PVEmulatorConfiguration.initICloud()
-
-        // Check for files stuck in iCloud Drive at startup
-        #if !os(tvOS)
-        Task.detached {
-            await iCloudSync.checkForStuckFilesInICloudDrive()
-        }
-        #endif
-
-        // Initialize CloudKit for all platforms
-        initializeCloudKit()
-
-        // Keep the legacy iCloud document sync code in place but don't use it by default
-        // We can uncomment this if we need to revert back to the old sync method
-        #if !os(tvOS)
-        iCloudSync.initICloudDocuments()
-        #endif
     }
 
     var currentThemeObservation: Any? // AnyCancellable?

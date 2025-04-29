@@ -21,7 +21,7 @@ extension FileManager: MD5Provider {
             VLOG("MD5 Hash: \(md5Hash)")
             return md5Hash
         } catch {
-            ELOG("An error occurred: \(error)")
+            ELOG("An error occurred: \(error)\nFile: \(url)")
             
             // Post notification for file access error
             let nsError = error as NSError

@@ -745,8 +745,23 @@ public enum iCloudSync {
     /// iCloud sync disabled notification
     public static let iCloudSyncDisabled = Notification.Name("iCloudSyncDisabled")
     
-    /// iCloud sync completed notification
+    /// Notification posted when CloudKit sync starts
+    public static let iCloudSyncStarted = Notification.Name("iCloudSyncStarted")
+    
+    /// Notification posted when CloudKit sync completes
     public static let iCloudSyncCompleted = Notification.Name("iCloudSyncCompleted")
+    
+    /// Notification posted when CloudKit sync fails
+    public static let iCloudSyncFailed = Notification.Name("iCloudSyncFailed")
+    
+    /// Notification posted when a file is downloaded from iCloud
+    public static let iCloudFileDownloaded = Notification.Name("iCloudFileDownloaded")
+    
+    /// Notification posted when a file is uploaded to iCloud
+    public static let iCloudFileUploaded = Notification.Name("iCloudFileUploaded")
+    
+    /// Notification posted when a file is deleted from iCloud
+    public static let iCloudFileDeleted = Notification.Name("iCloudFileDeleted")
     
     /// iCloud file recovery started notification
     public static let iCloudFileRecoveryStarted = Notification.Name("iCloudFileRecoveryStarted")
@@ -940,6 +955,14 @@ public enum iCloudSync {
     static func turnOn() async {
         guard URL.supportsICloudDrive else {
             ELOG("attempted to turn on iCloud, but iCloud is NOT setup on the device")
+            
+            // Log the error to CloudSyncLogManager
+            CloudSyncLogManager.shared.logSyncOperation(
+                "Failed to enable iCloud sync: iCloud Drive not available on device",
+                level: .error,
+                operation: .initialization,
+                provider: .iCloudDrive
+            )
             return
         }
         ILOG("turning on iCloud")
@@ -1040,6 +1063,15 @@ public enum iCloudSync {
     
     static func turnOff() async {
         ILOG("turning off iCloud")
+        
+        // Log to CloudSyncLogManager
+        CloudSyncLogManager.shared.logSyncOperation(
+            "Turning off iCloud sync",
+            level: .info,
+            operation: .initialization,
+            provider: .iCloudDrive
+        )
+        
         romDatabaseInitialized?.cancel()
         await errorHandler.clear()
         disposeBag = nil
@@ -1911,7 +1943,8 @@ public enum iCloudSync {
     /// - Parameters:
     ///   - sourceFile: Source file URL (iCloud)
     ///   - destFile: Destination file URL (local)
-    ///   - Returns: Whether the move was successful
+    /// - Returns: Whether the move was successful
+    /// This method logs all file operations to CloudSyncLogManager
     @discardableResult
     static func moveFile(from sourceFile: URL, to destFile: URL) async -> Bool {
         // Track progress
@@ -1919,6 +1952,13 @@ public enum iCloudSync {
         let fileManager = FileManager.default
         
         // Log the file we're processing
+        CloudSyncLogManager.shared.logSyncOperation(
+            "Moving file from iCloud: \(sourceFile.lastPathComponent)",
+            level: .info,
+            operation: .download,
+            filePath: sourceFile.path,
+            provider: .iCloudDrive
+        )
         DLOG("📄 Processing file: \(sourceFile.lastPathComponent)")
         
         // Check if file is in iCloud and needs to be downloaded
@@ -2098,6 +2138,15 @@ public enum iCloudSync {
                         await filesBeingRecovered.remove(sourceFile.path)
                     }
                     
+                    // Log success to CloudSyncLogManager
+                    CloudSyncLogManager.shared.logSyncOperation(
+                        "Successfully moved file from iCloud: \(sourceFile.lastPathComponent)",
+                        level: .info,
+                        operation: .download,
+                        filePath: destFile.path,
+                        provider: .iCloudDrive
+                    )
+                    
                     return true
                 } catch is TimeoutError {
                     ELOG("⛔ Timeout moving file: \(sourceFile.lastPathComponent)")
@@ -2158,6 +2207,15 @@ public enum iCloudSync {
                             await filesBeingRecovered.remove(sourceFile.path)
                         }
                         
+                        // Log success to CloudSyncLogManager
+                        CloudSyncLogManager.shared.logSyncOperation(
+                            "Successfully copied large file from iCloud: \(sourceFile.lastPathComponent)",
+                            level: .info,
+                            operation: .download,
+                            filePath: destFile.path,
+                            provider: .iCloudDrive
+                        )
+                        
                         return true
                     }
                 } catch {
@@ -2206,6 +2264,22 @@ public enum iCloudSync {
                         await filesBeingRecovered.remove(sourceFile.path)
                     }
                     
+                    // Log success to CloudSyncLogManager
+                    CloudSyncLogManager.shared.logSyncOperation(
+                        "Successfully copied file from iCloud: \(sourceFile.lastPathComponent)",
+                        level: .info,
+                        operation: .download,
+                        filePath: destFile.path,
+                        provider: .iCloudDrive
+                    )
+                    
+                    // Post notification that file was recovered
+                    NotificationCenter.default.post(
+                        name: iCloudSync.iCloudFileDownloaded,
+                        object: nil,
+                        userInfo: ["fileURL": destFile]
+                    )
+                    
                     // Remove the iCloud file after successful copy
                     do {
                         try await fileManager.removeItem(at: sourceFile)
@@ -2240,6 +2314,15 @@ public enum iCloudSync {
                     return false
                 } catch {
                     ELOG("❌ Error copying file from iCloud to local \(sourceFile.lastPathComponent): \(error)")
+                    
+                    // Log the error to CloudSyncLogManager
+                    CloudSyncLogManager.shared.logSyncOperation(
+                        "Failed to copy file from iCloud: \(sourceFile.lastPathComponent) - Error: \(error.localizedDescription)",
+                        level: .error,
+                        operation: .error,
+                        filePath: sourceFile.path,
+                        provider: .iCloudDrive
+                    )
                     
                     // Check if the error is a directory not found error
                     var nsError = error as NSError

@@ -109,4 +109,13 @@ public extension Notification.Name {
     
     /// Notification posted when CloudKit sync conflicts are resolved
     static let cloudKitConflictsResolved = Notification.Name("CloudKitConflictsResolvedNotification")
+    
+    static let startFullSync = Notification.Name("startFullSync")
+    static let resetCloudSync = Notification.Name("resetCloudSync")
+    static let iCloudSyncStarted = Notification.Name("CloudKitSyncStarted")
+    static let iCloudSyncCompleted = Notification.Name("CloudKitSyncCompleted")
+    static let iCloudSyncFailed = Notification.Name("CloudKitSyncFailed")
+    static let iCloudFileRecoveryProgress = Notification.Name("iCloudFileRecoveryProgress")
+    static let iCloudSyncEnabled = Notification.Name("iCloudSyncEnabled")
+    static let iCloudSyncDisabled = Notification.Name("iCloudSyncDisabled")
 }

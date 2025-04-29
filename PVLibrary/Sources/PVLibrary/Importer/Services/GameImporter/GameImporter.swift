@@ -425,6 +425,11 @@ public final class GameImporter: GameImporting, ObservableObject {
     public func path(forSystemID systemID: String) -> URL? {
         return systemToPathMap[systemID]
     }
+    
+    /// Returns the path for a given SystemIdentifier
+    public func path(forSystemID systemID: SystemIdentifier) -> URL? {
+        return systemToPathMap[systemID.rawValue]
+    }
 
     /// Bundle for this module
     fileprivate let ThisBundle: Bundle = Bundle.module

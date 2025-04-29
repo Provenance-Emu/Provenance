@@ -3,8 +3,19 @@
 //  PVSwiftUI
 //
 //  Created by Joseph Mattiello on 4/22/25.
-//  Copyright © 2025 Provenance Emu. All rights reserved.
+//  Copyright 2025 Provenance Emu. All rights reserved.
 //
+
+/// CloudSyncSettingsView provides a unified interface for managing both CloudKit and iCloud Drive sync
+/// settings and monitoring sync status. The view is organized into three main tabs:
+///
+/// 1. CloudKit Tab: Displays CloudKit sync analytics, record counts, and sync progress
+/// 2. iCloud Drive Tab: Shows file comparison between local and iCloud storage
+/// 3. Settings Tab: Contains sync options, on-demand downloads, and diagnostics
+///
+/// This view consolidates functionality that was previously split between separate views
+/// to provide a more cohesive user experience while maintaining clear separation between
+/// different sync technologies.
 
 import SwiftUI
 import PVLibrary
@@ -13,101 +24,829 @@ import Combine
 import Defaults
 import PVSettings
 import CloudKit
+import PVUIBase
+import PVFileSystem
+import Foundation
+import Perception
 
-/// A view that displays cloud sync settings
+/// A view that displays unified cloud sync settings with tabs for CloudKit and iCloud Drive.
+/// This view combines functionality from both CloudKit and iCloud Drive sync views into a single
+/// tabbed interface for better user experience and code organization.
 public struct CloudSyncSettingsView: View {
-    @Default(.iCloudSync) private var iCloudSyncEnabled
+    @Default(.iCloudSync) internal var iCloudSyncEnabled
     @Default(.autoSyncNewContent) private var autoSyncNewContent
+    @Default(.iCloudSyncMode) private var currentiCloudSyncMode
     
-    @State private var showingResetConfirmation = false
+    @State internal var showingResetConfirmation = false
     @State private var isResetting = false
+    @State private var selectedTab = 0
+    @State private var showDiagnostics = false
     
-    @StateObject private var viewModel = CloudSyncSettingsViewModel()
+    @StateObject internal var viewModel = UnifiedCloudSyncViewModel()
     
     public init() {}
     
     public var body: some View {
-        Form {
-            Section(header: Text("Cloud Sync Status")) {
-                CloudSyncStatusView()
-                    .listRowInsets(EdgeInsets())
-                    .listRowBackground(Color.clear)
-            }
+        ZStack {
+            // Background
+            Color.retroDarkBlue.edgesIgnoringSafeArea(.all)
             
-            Section(header: Text("Sync Options")) {
-                Toggle("Enable Cloud Sync", isOn: $iCloudSyncEnabled)
-                    .onChange(of: iCloudSyncEnabled) { newValue in
-                        if newValue {
-                            NotificationCenter.default.post(name: .iCloudSyncEnabled, object: nil)
-                        } else {
-                            NotificationCenter.default.post(name: .iCloudSyncDisabled, object: nil)
-                        }
-                    }
+            VStack(spacing: 0) {
+                // Header with status
+                statusHeader
                 
-                Toggle("Auto-Sync New Content", isOn: $autoSyncNewContent)
-                    .disabled(!iCloudSyncEnabled)
-            }
-            
-            Section(header: Text("On-Demand Downloads")) {
-                NavigationLink(destination: CloudKitOnDemandView()) {
-                    HStack {
-                        Image(systemName: "icloud.and.arrow.down")
-                            .foregroundColor(.retroBlue)
-                            .frame(width: 24, height: 24)
-                        
-                        VStack(alignment: .leading) {
-                            Text("Available Cloud Files")
-                                .font(.body)
-                            
-                            Text("Browse and download files on demand")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                    }
+                // Tab selector
+                tabSelector
+                
+                // Tab content
+                TabView(selection: $selectedTab) {
+                    cloudKitTab.tag(0)
+                    iCloudDriveTab.tag(1)
+                    settingsTab.tag(2)
                 }
-                .disabled(!iCloudSyncEnabled)
+                .tabViewStyle(.page(indexDisplayMode: .never))
+                .background(Color.retroBlack.opacity(0.3))
+                .cornerRadius(10)
+                .padding(.horizontal)
+                .padding(.bottom)
+            }
+        }
+        .onAppear {
+            viewModel.loadSyncInfo()
+        }
+    }
+    
+    // MARK: - Status Header
+    /// The status header displays the overall sync status, including availability and sync progress.
+    /// It appears at the top of the view and provides immediate feedback about the sync state.
+    
+    private var statusHeader: some View {
+        VStack(spacing: 8) {
+            Text("Cloud Sync")
+                .font(.title)
+                .foregroundColor(.retroPink)
+                .padding(.top)
+            
+            HStack(spacing: 12) {
+                // Status indicator
+                Circle()
+                    .fill(viewModel.iCloudAvailable ? Color.green : Color.red)
+                    .frame(width: 12, height: 12)
                 
-                NavigationLink(destination: CloudKitDiagnosticView()) {
-                    HStack {
-                        Image(systemName: "icloud.bolt.fill")
+                // Status text
+                Text(viewModel.syncStatus)
+                    .font(.subheadline)
+                    .foregroundColor(.white)
+                
+                Spacer()
+                
+                // Sync indicator
+                if viewModel.isSyncing {
+                    HStack(spacing: 6) {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .retroPink))
+                        
+                        Text("Syncing...")
+                            .font(.caption)
                             .foregroundColor(.retroPink)
-                            .frame(width: 24, height: 24)
-                        
-                        VStack(alignment: .leading) {
-                            Text("CloudKit Diagnostic")
-                                .font(.body)
-                            
-                            Text("Debug CloudKit sync issues and view raw records")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
                     }
                 }
-                .disabled(!iCloudSyncEnabled)
+            }
+            .padding(.horizontal)
+            .padding(.bottom, 8)
+        }
+        .padding(.horizontal)
+    }
+    
+    // MARK: - Tab Selector
+    /// The tab selector allows users to switch between CloudKit, iCloud Drive, and Settings tabs.
+    /// It uses custom buttons with RetroWave styling for a consistent look and feel.
+    
+    private var tabSelector: some View {
+        HStack(spacing: 0) {
+            tabButton(title: "CloudKit", systemImage: "icloud.fill", tag: 0)
+            tabButton(title: "iCloud Drive", systemImage: "folder.fill.badge.person.crop", tag: 1)
+            tabButton(title: "Settings", systemImage: "gear", tag: 2)
+        }
+        .padding(.horizontal)
+        .padding(.bottom, 8)
+    }
+    
+    private func tabButton(title: String, systemImage: String, tag: Int) -> some View {
+        Button(action: {
+            withAnimation {
+                selectedTab = tag
+            }
+        }) {
+            VStack(spacing: 4) {
+                Image(systemName: systemImage)
+                    .font(.system(size: 16))
+                Text(title)
+                    .font(.caption)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+            .background(
+                selectedTab == tag ?
+                AnyView(LinearGradient(
+                    gradient: Gradient(colors: [Color.retroPink, Color.retroPurple]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )) : AnyView(Color.clear)
+            )
+            .cornerRadius(8)
+            .foregroundColor(selectedTab == tag ? .white : .gray)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+    
+    // MARK: - CloudKit Tab
+    /// The CloudKit tab displays CloudKit-specific information including analytics, record counts,
+    /// sync progress, and sync actions. This tab focuses on the CloudKit backend sync functionality.
+    
+    private var cloudKitTab: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 16) {
+                // CloudKit Analytics
+                CloudKitSyncAnalyticsView()
+                    .padding(.horizontal)
+                    .transitionWithReducedMotion(.opacity)
+                
+                // Record counts with chart visualization
+                recordCountsWithChartView
+                    .padding(.horizontal)
+                    .transitionWithReducedMotion(.opacity)
+                
+                // Sync progress if syncing
+                if viewModel.isSyncing {
+                    enhancedSyncProgressView
+                        .padding(.horizontal)
+                        .transitionWithReducedMotion(
+                            .scale.combined(with: .opacity),
+                            fallbackTransition: .opacity
+                        )
+                }
+                
+                // Sync activity chart
+                syncActivityChartView
+                    .padding(.horizontal)
+                    .transitionWithReducedMotion(.opacity)
+                
+                // Sync log viewer (expandable)
+                syncLogSection
+                    .padding(.horizontal)
+                    .transitionWithReducedMotion(.opacity)
+                
+                // Sync actions
+                syncActionsView
+                    .padding(.horizontal)
+                    .transitionWithReducedMotion(.opacity)
+            }
+            .padding(.vertical)
+            .animateWithReducedMotion(.easeInOut(duration: 0.3), value: viewModel.isSyncing)
+        }
+        .onAppear {
+#if !os(tvOS)
+            HapticFeedbackService.shared.playSelection(style: .light)
+#endif
+        }
+    }
+    
+    /// Sync log section with expandable detailed log viewer
+    private var syncLogSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Button(action: {
+                withAnimation {
+                    viewModel.showSyncLog.toggle()
+                }
+#if !os(tvOS)
+                HapticFeedbackService.shared.playSelection()
+#endif
+            }) {
+                HStack {
+                    Text("Sync Logs")
+                        .retroSectionHeader()
+                    
+                    Spacer()
+                    
+                    Image(systemName: viewModel.showSyncLog ? "chevron.down" : "chevron.right")
+                        .foregroundColor(.retroPink)
+                }
+            }
+            .buttonStyle(PlainButtonStyle())
+            
+            if viewModel.showSyncLog {
+                SyncLogViewer()
+                    .frame(height: 400)
+                    .transitionWithReducedMotion(
+                        .move(edge: .top).combined(with: .opacity),
+                        fallbackTransition: .opacity
+                    )
+            }
+        }
+        .padding()
+        .background(Color.retroBlack.opacity(0.3))
+        .cornerRadius(10)
+    }
+    
+    // MARK: - Chart Data Helpers
+    
+    /// Filters and sorts the chart data for the last 7 days with activity.
+    private var last7DaysChartData: [(Date, [CloudSyncLogEntry.SyncProviderType : DailyProviderSyncStats])] {
+        viewModel.syncChartData
+            .sorted { $0.key > $1.key } // Sort descending by date
+            .prefix(7) // Take the latest 7 days
+            .sorted { $0.key < $1.key } // Sort ascending for chart order
+    }
+    
+    /// Formats the dates for the X-axis labels.
+    private var dailyUploadXLabels: [String] {
+        last7DaysChartData.map { (date, _) in
+            let formatter = DateFormatter()
+            formatter.dateFormat = "MMM d" // e.g., "Apr 28"
+            return formatter.string(from: date)
+        }
+    }
+    
+    /// Calculates the total daily uploads across all providers.
+    private var dailyUploadDataPoints: [Double] {
+        last7DaysChartData.map { (_, providerStats) in
+            // Sum uploads across all providers for the day
+            let totalUploads = providerStats.values.reduce(0) { $0 + $1.uploads }
+            return Double(totalUploads)
+        }
+    }
+    
+    // MARK: - Sync Activity Chart
+    
+    /// Shows sync activity over time with a line chart
+    private var syncActivityChartView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Sync Activity (Uploads - Last 7 Days)")
+                .font(.headline)
+                .foregroundColor(.retroPink)
+            
+            // Line chart visualization
+            // This uses mock data - in a real implementation, this would use historical sync data
+            if dailyUploadDataPoints.isEmpty {
+                Text("No recent sync activity found.")
+                    .foregroundColor(.gray)
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .center)
+            } else {
+                RetroCharts.LineChart(
+                    dataPoints: dailyUploadDataPoints,
+                    xLabels: dailyUploadXLabels,
+                    title: nil
+                )
+                .frame(height: 150) // Give the chart a reasonable height
+            }
+        }
+    }
+    
+    // MARK: - iCloud Drive Tab
+    /// The iCloud Drive tab shows file comparison between local storage and iCloud Drive.
+    /// It displays file counts by directory and highlights sync differences between local and cloud files.
+    
+    /// A view showing the sync status between local and iCloud storage
+    private var syncStatusView: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("Sync Status")
+                    .font(.headline)
+                    .foregroundColor(Color.retroPink)
+                Spacer()
+                Button(action: {
+                    Task {
+                        await viewModel.compareFiles()
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.clockwise")
+                        Text("Refresh")
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color.retroPurple.opacity(0.5))
+                    .cornerRadius(8)
+                }
             }
             
-            Section(header: Text("Sync Actions")) {
+            HStack(spacing: 16) {
+                VStack(alignment: .leading) {
+                    Text("Local Files")
+                        .font(.subheadline)
+                    Text("\(viewModel.localFileCount)")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(Color.retroBlue)
+                }
+                
+                VStack(alignment: .leading) {
+                    Text("iCloud Files")
+                        .font(.subheadline)
+                    Text("\(viewModel.iCloudFileCount)")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(Color.retroPink)
+                }
+                
+                Spacer()
+                
+                VStack(alignment: .leading) {
+                    Text("Differences")
+                        .font(.subheadline)
+                    Text("\(viewModel.syncDifferences.count)")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(Color.retroPurple)
+                }
+            }
+            .padding()
+            .background(Color.retroBlack.opacity(0.3))
+            .cornerRadius(10)
+        }
+    }
+    
+    private var iCloudDriveTab: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 16) {
+                // File comparison section
+                syncStatusView
+                    .padding(.horizontal)
+                
+                // Sync differences with pagination if any
+                if !viewModel.syncDifferences.isEmpty {
+                    PaginatedSyncDifferencesView(viewModel: viewModel)
+                        .padding(.horizontal)
+                        .transitionWithReducedMotion(
+                            .move(edge: .bottom).combined(with: .opacity),
+                            fallbackTransition: .opacity
+                        )
+                }
+                
+                // Diagnostics button (lazy loaded)
+                if !viewModel.showDiagnostics {
+                    Button(action: {
+                        withAnimation(.easeInOut) {
+                            viewModel.showDiagnostics = true
+                        }
+#if !os(tvOS)
+                        HapticFeedbackService.shared.playSelection()
+#endif
+                    }) {
+                        HStack {
+                            Image(systemName: "info.circle")
+                            Text("Load Diagnostics")
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                        }
+                        .padding()
+                        .retroCard()
+                        .retroGlowingBorder(color: .retroBlue)
+                    }
+                    .padding(.horizontal)
+                    .transitionWithReducedMotion(.opacity)
+                } else {
+                    // Diagnostics view (lazy loaded)
+                    LazyDiagnosticsView(viewModel: viewModel)
+                        .padding(.horizontal)
+                        .transitionWithReducedMotion(.opacity)
+                }
+            }
+            .padding(.vertical)
+            .animateWithReducedMotion(.easeInOut(duration: 0.3), value: viewModel.syncDifferences.isEmpty)
+            .animateWithReducedMotion(.easeInOut(duration: 0.3), value: viewModel.showDiagnostics)
+        }
+        .onAppear {
+#if !os(tvOS)
+            HapticFeedbackService.shared.playSelection(style: .light)
+#endif
+        }
+        //        .padding(.horizontal)
+        //        .padding(.vertical)
+    }
+    
+    // MARK: - Component Views
+    /// The following views are reusable components used across different tabs.
+    /// They are organized by functionality and designed to be modular and maintainable.
+    
+    /// Displays record counts with a RetroWave bar chart visualization
+    private var recordCountsWithChartView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("CloudKit Records")
+                .font(.headline)
+                .foregroundColor(.retroPink)
+            
+            if viewModel.isLoadingCloudKitRecords {
+                HStack {
+                    Spacer()
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .retroBlue))
+                    Spacer()
+                }
+                .padding()
+                .background(Color.retroBlack.opacity(0.3))
+                .cornerRadius(10)
+            } else {
+                // Bar chart visualization
+                RetroCharts.BarChart(
+                    values: [
+                        Double(viewModel.cloudKitRecords.roms),
+                        Double(viewModel.cloudKitRecords.saveStates),
+                        Double(viewModel.cloudKitRecords.bios),
+                        Double(viewModel.cloudKitRecords.batteryStates),
+                        Double(viewModel.cloudKitRecords.screenshots),
+                        Double(viewModel.cloudKitRecords.deltaSkins)
+                    ],
+                    labels: ["ROMs", "Saves", "BIOS", "Battery", "Screenshots", "Skins"],
+                    title: nil
+                )
+                
+                // Text summary
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Total Records:")
+                            .foregroundColor(.white)
+                            .fontWeight(.bold)
+                        Spacer()
+                        Text("\(viewModel.cloudKitRecords.total)")
+                            .foregroundColor(.green)
+                            .fontWeight(.bold)
+                    }
+                }
+                .padding()
+                .background(Color.retroBlack.opacity(0.3))
+                .cornerRadius(10)
+            }
+        }
+    }
+    
+    /// Shows a pie chart of storage distribution by file type
+    private var storageDistributionView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Storage Distribution")
+                .font(.headline)
+                .foregroundColor(.retroPink)
+            
+            // Pie chart visualization
+            RetroCharts.PieChart(
+                values: [
+                    Double(viewModel.cloudKitRecords.roms * 10), // Multiplied for visualization
+                    Double(viewModel.cloudKitRecords.saveStates * 2),
+                    Double(viewModel.cloudKitRecords.bios * 5),
+                    Double(viewModel.cloudKitRecords.batteryStates),
+                    Double(viewModel.cloudKitRecords.screenshots * 8),
+                    Double(viewModel.cloudKitRecords.deltaSkins * 3)
+                ],
+                labels: ["ROMs", "Saves", "BIOS", "Battery", "Screenshots", "Skins"]
+            )
+        }
+    }
+    
+    /// Shows enhanced sync progress with visual feedback
+    private var enhancedSyncProgressView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Sync Progress")
+                .font(.headline)
+                .foregroundColor(.retroPink)
+            
+            VStack(alignment: .leading, spacing: 16) {
+                if let currentFile = viewModel.currentSyncFile {
+                    // Current file being synced
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Current File:")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                        
+                        Text(currentFile)
+                            .font(.subheadline)
+                            .foregroundColor(.white)
+                            .lineLimit(1)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(8)
+                            .background(Color.retroBlack.opacity(0.5))
+                            .cornerRadius(4)
+                    }
+                    
+                    // Animated progress bar
+                    VStack(alignment: .leading, spacing: 4) {
+                        // Progress percentage
+                        HStack {
+                            Text("Progress:")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                            
+                            Spacer()
+                            
+                            Text("\(Int(viewModel.syncProgress * 100))%")
+                                .font(.subheadline)
+                                .foregroundColor(.retroBlue)
+                                .fontWeight(.bold)
+                        }
+                        
+                        // Custom animated progress bar
+                        GeometryReader { geometry in
+                            ZStack(alignment: .leading) {
+                                // Background track
+                                Rectangle()
+                                    .fill(Color.retroBlack.opacity(0.5))
+                                    .frame(height: 12)
+                                    .cornerRadius(6)
+                                
+                                // Progress fill
+                                Rectangle()
+                                    .fill(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [.retroBlue, .retroPurple, .retroPink]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+                                    .frame(width: max(0, CGFloat(viewModel.syncProgress) * geometry.size.width), height: 12)
+                                    .cornerRadius(6)
+                                
+                                // Glow effect
+                                Rectangle()
+                                    .fill(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [.clear, .retroPink.opacity(0.5), .clear]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+                                    .frame(width: 20, height: 12)
+                                    .cornerRadius(6)
+                                    .offset(x: max(0, CGFloat(viewModel.syncProgress) * geometry.size.width - 20))
+                                    .opacity(viewModel.syncProgress > 0.02 ? 1 : 0)
+                                    .animation(
+                                        Animation.easeInOut(duration: 1.5)
+                                            .repeatForever(autoreverses: true),
+                                        value: viewModel.syncProgress
+                                    )
+                            }
+                        }
+                        .frame(height: 12)
+                    }
+                    
+                    // File counts
+                    HStack(spacing: 20) {
+                        VStack {
+                            Text("\(viewModel.syncingFiles)")
+                                .font(.title3)
+                                .foregroundColor(.retroBlue)
+                                .fontWeight(.bold)
+                            
+                            Text("Completed")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                        .background(Color.retroBlack.opacity(0.3))
+                        .cornerRadius(8)
+                        
+                        VStack {
+                            Text("\(viewModel.totalFiles ?? 0)")
+                                .font(.title3)
+                                .foregroundColor(.retroPink)
+                                .fontWeight(.bold)
+                            
+                            Text("Total")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                        .background(Color.retroBlack.opacity(0.3))
+                        .cornerRadius(8)
+                        
+                        // Estimated time
+                        VStack {
+                            if let total = viewModel.totalFiles, total > 0 {
+                                let remainingFiles = total - viewModel.syncingFiles
+                                let estimatedSeconds = remainingFiles * 3 // Rough estimate
+                                
+                                Text(formatTimeRemaining(seconds: estimatedSeconds))
+                                    .font(.title3)
+                                    .foregroundColor(.retroPurple)
+                                    .fontWeight(.bold)
+                                
+                                Text("Remaining")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                            } else {
+                                Text("--")
+                                    .font(.title3)
+                                    .foregroundColor(.retroPurple)
+                                    .fontWeight(.bold)
+                                
+                                Text("Remaining")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                        .background(Color.retroBlack.opacity(0.3))
+                        .cornerRadius(8)
+                    }
+                }
+            }
+            .padding()
+            .background(Color.retroBlack.opacity(0.3))
+            .cornerRadius(10)
+        }
+    }
+    
+    /// Format time remaining in a human-readable format
+    private func formatTimeRemaining(seconds: Int) -> String {
+        if seconds < 60 {
+            return "\(seconds)s"
+        } else if seconds < 3600 {
+            let minutes = seconds / 60
+            let remainingSeconds = seconds % 60
+            return "\(minutes)m \(remainingSeconds)s"
+        } else {
+            let hours = seconds / 3600
+            let remainingMinutes = (seconds % 3600) / 60
+            return "\(hours)h \(remainingMinutes)m"
+        }
+    }
+    
+    /// Displays counts of different record types in CloudKit, organized by category.
+    /// Shows ROMs, save states, BIOS files, battery states, screenshots, and Delta skins.
+    private var recordCountsView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("CloudKit Records")
+                .font(.headline)
+                .foregroundColor(.retroPink)
+            
+            if viewModel.isLoadingCloudKitRecords {
+                HStack {
+                    Spacer()
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .retroBlue))
+                    Spacer()
+                }
+                .padding()
+            } else {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("ROMs:")
+                            .foregroundColor(.gray)
+                        Spacer()
+                        Text("\(viewModel.cloudKitRecords.roms)")
+                            .foregroundColor(.retroBlue)
+                    }
+                    
+                    HStack {
+                        Text("Save States:")
+                            .foregroundColor(.gray)
+                        Spacer()
+                        Text("\(viewModel.cloudKitRecords.saveStates)")
+                            .foregroundColor(.retroPurple)
+                    }
+                    
+                    HStack {
+                        Text("BIOS:")
+                            .foregroundColor(.gray)
+                        Spacer()
+                        Text("\(viewModel.cloudKitRecords.bios)")
+                            .foregroundColor(.retroPink)
+                    }
+                    
+                    Divider()
+                        .background(Color.retroPurple.opacity(0.5))
+                    
+                    HStack {
+                        Text("Battery States:")
+                            .foregroundColor(.gray)
+                        Spacer()
+                        Text("\(viewModel.cloudKitRecords.batteryStates)")
+                            .foregroundColor(.retroBlue)
+                    }
+                    
+                    HStack {
+                        Text("Screenshots:")
+                            .foregroundColor(.gray)
+                        Spacer()
+                        Text("\(viewModel.cloudKitRecords.screenshots)")
+                            .foregroundColor(.retroPurple)
+                    }
+                    
+                    HStack {
+                        Text("Delta Skins:")
+                            .foregroundColor(.gray)
+                        Spacer()
+                        Text("\(viewModel.cloudKitRecords.deltaSkins)")
+                            .foregroundColor(.retroPink)
+                    }
+                    
+                    Divider()
+                        .background(Color.retroPurple.opacity(0.5))
+                    
+                    HStack {
+                        Text("Total Records:")
+                            .foregroundColor(.white)
+                            .fontWeight(.bold)
+                        Spacer()
+                        Text("\(viewModel.cloudKitRecords.total)")
+                            .foregroundColor(.green)
+                            .fontWeight(.bold)
+                    }
+                }
+                .padding()
+                .background(Color.retroBlack.opacity(0.3))
+                .cornerRadius(10)
+            }
+        }
+    }
+    
+    /// Shows detailed sync progress when a sync operation is in progress.
+    /// Displays the current file being synced, overall progress, and file counts.
+    private var syncProgressView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Sync Progress")
+                .font(.headline)
+                .foregroundColor(.retroPink)
+            
+            VStack(alignment: .leading, spacing: 8) {
+                if let currentFile = viewModel.currentSyncFile {
+                    Text("Current File: \(currentFile)")
+                        .font(.caption)
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                }
+                
+                ProgressView(value: viewModel.syncProgress)
+                    .progressViewStyle(LinearProgressViewStyle(tint: .retroBlue))
+                
+                HStack {
+                    Text("\(viewModel.syncingFiles) of \(viewModel.totalFiles ?? 0) files")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    
+                    Spacer()
+                    
+                    Text("\(Int(viewModel.syncProgress * 100))%")
+                        .font(.caption)
+                        .foregroundColor(.retroBlue)
+                }
+            }
+            .padding()
+            .background(Color.retroBlack.opacity(0.3))
+            .cornerRadius(10)
+        }
+    }
+    
+    /// Provides buttons for initiating sync actions like full sync and reset.
+    /// The reset option is only available in DEBUG builds for safety.
+    private var syncActionsView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Sync Actions")
+                .font(.headline)
+                .foregroundColor(.retroPink)
+            
+            VStack(spacing: 10) {
                 Button(action: {
                     viewModel.startFullSync()
                 }) {
                     HStack {
+                        Image(systemName: "arrow.triangle.2.circlepath")
                         Text("Sync All Content")
                         Spacer()
-                        if viewModel.isSyncing {
-                            ProgressView()
-                        }
                     }
+                    .padding()
+                    .background(LinearGradient(
+                        gradient: Gradient(colors: [.retroBlue.opacity(0.7), .retroPurple.opacity(0.7)]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    ))
+                    .cornerRadius(8)
+                    .foregroundColor(.white)
                 }
-                .disabled(!iCloudSyncEnabled || viewModel.isSyncing)
+                .disabled(!viewModel.iCloudAvailable || viewModel.isSyncing)
                 
-                #if DEBUG
+#if DEBUG
                 Button(action: {
                     showingResetConfirmation = true
                 }) {
-                    Text("Reset Cloud Sync")
-                        .foregroundColor(.retroPink)
+                    HStack {
+                        Image(systemName: "exclamationmark.triangle")
+                        Text("Reset Cloud Sync")
+                        Spacer()
+                    }
+                    .padding()
+                    .background(LinearGradient(
+                        gradient: Gradient(colors: [.retroPink.opacity(0.7), .red.opacity(0.7)]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    ))
+                    .cornerRadius(8)
+                    .foregroundColor(.white)
                 }
-                .disabled(!iCloudSyncEnabled || viewModel.isSyncing)
+                .disabled(!viewModel.iCloudAvailable || viewModel.isSyncing)
                 .alert(isPresented: $showingResetConfirmation) {
                     Alert(
                         title: Text("Reset Cloud Sync"),
@@ -118,336 +857,233 @@ public struct CloudSyncSettingsView: View {
                         secondaryButton: .cancel()
                     )
                 }
-                #endif
-            }
-            
-            Section(header: Text("Sync Information"), footer: Text("Cloud sync allows you to keep your games and save states in sync across your devices.")) {
-//                #if os(tvOS)
-                Text("Using CloudKit")
-                    .font(.subheadline)
-//                #else
-//                Text("Using iCloud Documents")
-//                    .font(.subheadline)
-//                #endif
-//                
-                if let lastSyncDate = viewModel.lastSyncDate {
-                    Text("Last sync: \(lastSyncDate, formatter: dateFormatter)")
-                        .font(.subheadline)
-                }
-                
-                if let syncStats = viewModel.syncStats {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Local Data")
-                            .font(.subheadline.bold())
+#endif
+                HStack {
+                    Button(action: {
+                        withAnimation {
+                            viewModel.previousPage()
+                        }
+                        HapticFeedbackService.shared.playSelection()
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .foregroundColor(viewModel.currentPage > 0 ? .white : .gray)
+                    }
+                    .disabled(viewModel.currentPage <= 0)
+                    
+                    Spacer()
+                    
+                    // Items per page selector
+                    Menu {
+                        Button("10 per page") {
+                            viewModel.itemsPerPage = 10
+                            HapticFeedbackService.shared.playSelection()
+                        }
+                        Button("20 per page") {
+                            viewModel.itemsPerPage = 20
+                            HapticFeedbackService.shared.playSelection()
+                        }
+                        Button("50 per page") {
+                            viewModel.itemsPerPage = 50
+                            HapticFeedbackService.shared.playSelection()
+                        }
+                    } label: {
+                        HStack {
+                            Text("\(viewModel.itemsPerPage) per page")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                            Text("Directory")
+                                .foregroundColor(.white)
+                            
+                            Spacer()
+                            
+                            Text("Local: 0")
+                                .foregroundColor(Color.retroBlue)
+                            
+                            Text("iCloud: 0")
+                                .foregroundColor(.retroPink)
+                        }
+                        
+                        Divider()
+                            .background(Color.retroPurple.opacity(0.3))
+                    }
+                    
+                    // Total counts
+                    HStack {
+                        Text("Total Files")
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                        
+                        Spacer()
+                        
+                        let totalLocal = viewModel.localFiles.values.reduce(0) { $0 + $1.count }
+                        let totalICloud = viewModel.iCloudFiles.values.reduce(0) { $0 + $1.count }
+                        
+                        Text("Local: \(totalLocal)")
+                            .fontWeight(.bold)
                             .foregroundColor(.retroBlue)
                         
-                        Text("Games: \(syncStats.games)")
-                        Text("Save States: \(syncStats.saveStates)")
-                        Text("Total Size: \(fileSizeFormatter.string(fromByteCount: syncStats.totalSize))")
-                        
-                        Divider()
-                            .padding(.vertical, 4)
-                        
-                        Text("CloudKit Records")
-                            .font(.subheadline.bold())
-                            .foregroundColor(.retroPink)
-                        
-                        Group {
-                            Text("ROMs: \(syncStats.cloudKitRecords.roms)")
-                                .foregroundColor(.retroBlue)
-                            Text("Save States: \(syncStats.cloudKitRecords.saveStates)")
-                                .foregroundColor(.retroPurple)
-                            Text("BIOS: \(syncStats.cloudKitRecords.bios)")
-                                .foregroundColor(.retroPink)
-                        }
-                        
-                        Divider()
-                            .padding(.vertical, 2)
-                        
-                        Group {
-                            Text("Battery States: \(syncStats.cloudKitRecords.batteryStates)")
-                                .foregroundColor(.retroBlue)
-                            Text("Screenshots: \(syncStats.cloudKitRecords.screenshots)")
-                                .foregroundColor(.retroPurple)
-                            Text("Delta Skins: \(syncStats.cloudKitRecords.deltaSkins)")
-                                .foregroundColor(.retroPink)
-                        }
-                        
-                        Text("Total Records: \(syncStats.cloudKitRecords.total)")
-                            .foregroundColor(.retroGreen)
+                        Text("iCloud: \(totalICloud)")
                             .fontWeight(.bold)
+                            .foregroundColor(.retroPink)
                     }
-                    .font(.subheadline)
-                    .focusableIfAvailable()
                 }
+                .background(Color.retroPurple.opacity(0.5))
+                .cornerRadius(8)
+                .foregroundColor(.white)
+            }
+            .disabled(viewModel.isLoading || viewModel.isSyncing)
+        }
+    }
+    
+    /// Displays detailed information about files that differ between local storage and iCloud.
+    /// Shows filename, directory, file sizes, and sync status with color-coded badges.
+    private var syncDifferencesView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Sync Differences (\(viewModel.syncDifferences.count))")
+                .font(.headline)
+                .foregroundColor(Color.retroPink)
+            
+            ScrollView {
+                VStack(alignment: .leading, spacing: 12) {
+                    if viewModel.syncDifferences.isEmpty {
+                        Text("No differences found")
+                            .foregroundColor(Color.gray)
+                            .padding()
+                    } else {
+                        ForEach(0..<viewModel.syncDifferences.count, id: \.self) { index in
+                            let difference = viewModel.syncDifferences[index]
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack {
+                                    Text(difference)
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.white)
+                                    
+                                    Spacer()
+                                    
+                                    // Default status badge
+                                    Text("Unknown")
+                                        .font(.caption)
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 4)
+                                        .background(Color.retroPurple)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(12)
+                                }
+                                
+                                Text("Directory: Unknown")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                            }
+                            .padding()
+                            .background(Color.retroBlack.opacity(0.3))
+                            .cornerRadius(8)
+                        }
+                    }
+                }
+                .frame(maxHeight: 300)
             }
         }
-        .onAppear {
-            viewModel.loadSyncInfo()
+    }
+    
+    /// Creates a color-coded badge for different sync statuses.
+    /// - Parameter status: The sync status to display (localOnly, iCloudOnly, different, synced)
+    /// - Returns: A styled badge view with appropriate color and text
+    private func statusBadge(for status: SyncDifference.SyncStatus) -> some View {
+        Group {
+            switch status {
+            case .localOnly:
+                Text("Local Only")
+                    .font(.caption)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .background(Color.retroBlue.opacity(0.7))
+                    .cornerRadius(4)
+                    .foregroundColor(.white)
+            case .iCloudOnly:
+                Text("iCloud Only")
+                    .font(.caption)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .background(Color.retroPink.opacity(0.7))
+                    .cornerRadius(4)
+                    .foregroundColor(.white)
+            case .different:
+                Text("Different")
+                    .font(.caption)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .background(Color.orange.opacity(0.7))
+                    .cornerRadius(4)
+                    .foregroundColor(.white)
+            case .synced:
+                Text("Synced")
+                    .font(.caption)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .background(Color.green.opacity(0.7))
+                    .cornerRadius(4)
+                    .foregroundColor(.white)
+            }
         }
     }
     
-    // Date formatter for last sync date
-    private var dateFormatter: DateFormatter {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        return formatter
+    /// Displays detailed diagnostic information for troubleshooting cloud sync issues.
+    /// Shows iCloud container info, entitlements, Info.plist configuration, and container info.
+    private var diagnosticsView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Diagnostics")
+                .font(.headline)
+                .foregroundColor(.retroPink)
+            
+            VStack(alignment: .leading, spacing: 16) {
+                diagnosticSection(title: "iCloud Container", content: viewModel.iCloudDiagnostics)
+                diagnosticSection(title: "Entitlements", content: viewModel.entitlementInfo)
+                diagnosticSection(title: "Info.plist", content: viewModel.infoPlistInfo)
+                diagnosticSection(title: "Container Info", content: viewModel.containerInfo)
+            }
+        }
     }
     
-    // File size formatter
-    private var fileSizeFormatter: ByteCountFormatter {
+    /// Creates a collapsible section for displaying diagnostic information.
+    /// - Parameters:
+    ///   - title: The section title
+    ///   - content: The diagnostic content to display
+    /// - Returns: A styled view with scrollable content
+    private func diagnosticSection(title: String, content: String) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.subheadline)
+                .foregroundColor(.retroBlue)
+            
+            ScrollView {
+                Text(content)
+                    .font(.system(.caption, design: .monospaced))
+                    .foregroundColor(.white)
+                    .padding(8)
+            }
+            .frame(maxHeight: 150)
+            .background(Color.retroBlack.opacity(0.5))
+            .cornerRadius(6)
+        }
+    }
+    
+    // MARK: - Helper Functions
+    /// Utility functions used throughout the view for common operations
+    /// such as formatting and data conversion.
+    
+    /// Formats a byte count into a human-readable string.
+    /// - Parameters:
+    ///   - byteCount: The number of bytes to format
+    ///   - countStyle: The style to use for formatting (defaults to .file)
+    /// - Returns: A formatted string representation of the byte count
+    private func formatByteCount(_ byteCount: Int64, countStyle: ByteCountFormatter.CountStyle = .file) -> String {
         let formatter = ByteCountFormatter()
         formatter.allowedUnits = [.useAll]
-        formatter.countStyle = .file
-        return formatter
+        formatter.countStyle = countStyle
+        return formatter.string(fromByteCount: byteCount)
     }
 }
-
-/// View model for cloud sync settings
-class CloudSyncSettingsViewModel: ObservableObject {
-    /// Whether a sync is in progress
-    @Published var isSyncing = false
-    
-    /// Last sync date
-    @Published var lastSyncDate: Date?
-    
-    /// Sync statistics
-    @Published var syncStats: SyncStats?
-    
-    /// Cancellables
-    private var cancellables = Set<AnyCancellable>()
-    
-    /// Initialize the view model
-    init() {
-        Task {
-            // Subscribe to sync status changes
-            CloudSyncManager.shared.syncStatusPublisher
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] status in
-                    switch status {
-                    case .initialSync, .syncing, .uploading, .downloading:
-                        self?.isSyncing = true
-                    case .idle, .disabled, .error:
-                        self?.isSyncing = false
-                        
-                        // If sync completed successfully, update last sync date
-                        if status == .idle {
-                            self?.lastSyncDate = Date()
-                            self?.loadSyncInfo()
-                        }
-                    }
-                }
-                .store(in: &cancellables)
-        }
-    }
-    
-    /// Start a full sync
-    @MainActor
-    func startFullSync() {
-        Task {
-            guard !isSyncing else { return }
-            
-            isSyncing = true
-            
-            // Start sync
-            await CloudSyncManager.shared.startSync()
-                .subscribe(
-                    onCompleted: { [weak self] in
-                        DispatchQueue.main.async {
-                            self?.isSyncing = false
-                            self?.lastSyncDate = Date()
-                            self?.loadSyncInfo()
-                        }
-                    },
-                    onError: { [weak self] error in
-                        DispatchQueue.main.async {
-                            self?.isSyncing = false
-                            ELOG("Sync error: \(error.localizedDescription)")
-                        }
-                    }
-                )
-        }
-    }
-    
-    /// Reset cloud sync
-    func resetCloudSync() {
-        guard Defaults[.iCloudSync] else { return }
-        guard !isSyncing else { return }
-        
-        isSyncing = true
-        
-        // Disable cloud sync
-        Defaults[.iCloudSync] = false
-        NotificationCenter.default.post(name: .iCloudSyncDisabled, object: nil)
-        
-        // Wait a bit for cleanup
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-            // Re-enable cloud sync
-            Defaults[.iCloudSync] = true
-            NotificationCenter.default.post(name: .iCloudSyncEnabled, object: nil)
-            Task {
-                // Start sync
-                await CloudSyncManager.shared.startSync()
-                    .subscribe(
-                        onCompleted: { [weak self] in
-                            DispatchQueue.main.async {
-                                self?.isSyncing = false
-                                self?.lastSyncDate = Date()
-                                self?.loadSyncInfo()
-                            }
-                        },
-                        onError: { [weak self] error in
-                            DispatchQueue.main.async {
-                                self?.isSyncing = false
-                                ELOG("Sync reset error: \(error.localizedDescription)")
-                            }
-                        }
-                    )
-            }
-        }
-    }
-    
-    /// Load sync information
-    func loadSyncInfo() {
-        Task {
-            do {
-                // Get sync statistics
-                let stats = try await getSyncStats()
-                
-                // Update UI on main thread
-                await MainActor.run {
-                    self.syncStats = stats
-                }
-            } catch {
-                ELOG("Error loading sync info: \(error.localizedDescription)")
-            }
-        }
-    }
-    
-    /// Get sync statistics
-    private func getSyncStats() async throws -> SyncStats {
-        // Get games and save states from database
-        let games = PVGame.all.toArray()
-        let saveStates = PVSaveState.all.toArray()
-        
-        // Calculate total size
-        var totalSize: Int64 = 0
-        
-        for game in games {
-            if let file = game.file, let url = file.url {
-                let attributes = try? FileManager.default.attributesOfItem(atPath: url.path)
-                if let size = attributes?[.size] as? Int64 {
-                    totalSize += size
-                }
-            }
-        }
-        
-        for saveState in saveStates {
-            if let file = saveState.file, let url = file.url {
-                let attributes = try? FileManager.default.attributesOfItem(atPath: url.path)
-                if let size = attributes?[.size] as? Int64 {
-                    totalSize += size
-                }
-            }
-        }
-        
-        // Get CloudKit record counts
-        let cloudKitCounts = try await getCloudKitRecordCounts()
-        
-        return SyncStats(
-            games: games.count,
-            saveStates: saveStates.count,
-            totalSize: totalSize,
-            cloudKitRecords: cloudKitCounts
-        )
-    }
-    
-    /// Get CloudKit record counts
-    private func getCloudKitRecordCounts() async throws -> CloudKitRecordCounts {
-        // Get syncers from the CloudKitSyncerStore
-        let syncers = CloudKitSyncerStore.shared.activeSyncers
-        
-        // Initialize counts
-        var romCount = 0
-        var saveStateCount = 0
-        var biosCount = 0
-        var batteryStateCount = 0
-        var screenshotCount = 0
-        var deltaSkinCount = 0
-        
-        // Get ROM syncer record count
-        if let romSyncers = CloudKitSyncerStore.shared.romSyncers as? [CloudKitRomsSyncer] {
-            for syncer in romSyncers {
-                let count = await syncer.getRecordCount()
-                romCount += count
-            }
-        }
-        
-        // Get save state syncer record count
-        if let saveStateSyncers = CloudKitSyncerStore.shared.saveStateSyncers as? [CloudKitSaveStatesSyncer] {
-            for syncer in saveStateSyncers {
-                let count = await syncer.getRecordCount()
-                saveStateCount += count
-            }
-        }
-        
-        // Get BIOS syncer record count
-        if let biosSyncers = CloudKitSyncerStore.shared.biosSyncers as? [CloudKitBIOSSyncer] {
-            for syncer in biosSyncers {
-                let count = await syncer.getRecordCount()
-                biosCount += count
-            }
-        }
-        
-        // Get non-database file counts
-        if let nonDatabaseSyncer = syncers.first(where: { $0 is CloudKitNonDatabaseSyncer }) as? CloudKitNonDatabaseSyncer {
-            // Get all records
-            let allRecords = await nonDatabaseSyncer.getAllRecords()
-            
-            // Filter by directory
-            batteryStateCount = allRecords.filter { record in
-                (record["directory"] as? String) == "Battery States"
-            }.count
-            
-            screenshotCount = allRecords.filter { record in
-                (record["directory"] as? String) == "Screenshots"
-            }.count
-            
-            deltaSkinCount = allRecords.filter { record in
-                (record["directory"] as? String) == "DeltaSkins"
-            }.count
-            
-            DLOG("Found non-database records - Battery States: \(batteryStateCount), Screenshots: \(screenshotCount), Delta Skins: \(deltaSkinCount)")
-        }
-        
-        return CloudKitRecordCounts(
-            roms: romCount,
-            saveStates: saveStateCount,
-            bios: biosCount,
-            batteryStates: batteryStateCount,
-            screenshots: screenshotCount,
-            deltaSkins: deltaSkinCount
-        )
-    }
-}
-
-/// Sync statistics
-struct SyncStats {
-    /// Number of games
-    let games: Int
-    
-    /// Number of save states
-    let saveStates: Int
-    
-    /// Total size in bytes
-    let totalSize: Int64
-    
-    /// CloudKit record counts
-    let cloudKitRecords: CloudKitRecordCounts
-}
-
-
 
 #if DEBUG
 struct CloudSyncSettingsView_Previews: PreviewProvider {
