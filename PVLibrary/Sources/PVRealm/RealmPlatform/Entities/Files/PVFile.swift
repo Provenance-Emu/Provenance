@@ -415,8 +415,7 @@ public extension PVFile {
         guard let url = url else { return true }
 
         let exists = FileManager.default.fileExists(atPath: url.path)
-        let needsDownload = isICloudFile(url) && needsDownload(url)
-        return exists && !needsDownload
+        return exists
     }}
 
     var pathExtension: String {get {

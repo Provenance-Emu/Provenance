@@ -58,7 +58,7 @@ public class ImportStatusViewModel: ObservableObject {
         
         // Observe file recovery progress
         #if !os(tvOS)
-        NotificationCenter.default.publisher(for: iCloudSync.iCloudFileRecoveryProgress)
+        NotificationCenter.default.publisher(for: iCloudDriveSync.iCloudFileRecoveryProgress)
             .sink { [weak self] _ in
                 self?.isVisible = true
             }

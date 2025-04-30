@@ -99,7 +99,7 @@ public struct ImportStatusView: View {
         }
         #if !os(tvOS)
         // Observe file recovery progress
-        .onReceive(NotificationCenter.default.publisher(for: iCloudSync.iCloudFileRecoveryProgress)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: iCloudDriveSync.iCloudFileRecoveryProgress)) { _ in
             viewModel.isVisible = true
         }
         #endif // !tvOS

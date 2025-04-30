@@ -36,21 +36,6 @@ public extension URL {
 
     /// This should be called on a background thread
     static var iCloudDocumentsDirectory: URL? { get {
-//        let iCloudSync = Defaults[.iCloudSync]
-//        
-//        guard iCloudSync else {
-//            VLOG("Not in with iCloud on, skipping iCloudDocumentsDirectory")
-//            return nil
-//        }
-//        
-//        #if !os(tvOS)
-//        let mode = Defaults[.iCloudSyncMode]
-//        guard mode.isICloudDrive else {
-//            VLOG("Not in iCloud Drive mode, skipping iCloudDocumentsDirectory")
-//            return nil
-//        }
-//        #endif
-
         let documentsURL = iCloudContainerDirectory?.appendingPathComponent("Documents")
         if let documentsURL = documentsURL {
             if !FileManager.default.fileExists(atPath: documentsURL.path, isDirectory: nil) {

@@ -1168,7 +1168,7 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
         Task {
             // Access the shared log manager instance
             let logManager = CloudSyncLogManager.shared
-            let entries = await logManager.recentLogEntriesSync()
+            let entries = logManager.getRecentLogEntriesSync()
 
             await MainActor.run {
                 self.cloudSyncLogEntries = entries
@@ -1184,10 +1184,9 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
         let calendar = Calendar.current
 
         for entry in cloudSyncLogEntries {
-            // Ensure we have provider and operation type
-            guard let provider = entry.provider, let operation = entry.operation else {
-                continue // Skip logs without provider or operation
-            }
+            // Provider and operation are non-optional, so direct access is safe.
+            let provider = entry.provider
+            let operation = entry.operation
 
             // Get the start of the day for the entry's timestamp
             let day = calendar.startOfDay(for: entry.timestamp)

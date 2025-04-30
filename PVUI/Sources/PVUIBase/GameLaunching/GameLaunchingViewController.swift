@@ -146,6 +146,7 @@ public extension GameLaunchingViewController {
                     biosPathContentsMD5Cache = biosPathContents.reduce([String: String](), { (hashDictionary, filename) -> [String: String] in
                         let fullBIOSFileURL = system.biosDirectory.appendingPathComponent(filename, isDirectory: false)
                         Task {
+                            // TODO: Not sure this works
                             try await downloadFileIfNeeded(fullBIOSFileURL)
                         }
                         if let hash = FileManager.default.md5ForFile(at: fullBIOSFileURL, fromOffset: 0), !hash.isEmpty {
@@ -324,6 +325,7 @@ extension GameLaunchingViewController where Self: UIViewController {
             let path = saveState!.file!.url!.path
             ILOG("Opening with save state at path: \(path)")
             do {
+                // TODO: Not sure this works
                 try await downloadFileIfNeeded(saveState!.file!.url!)
             } catch {
                 ELOG("Save state was not downloaded")
@@ -336,6 +338,7 @@ extension GameLaunchingViewController where Self: UIViewController {
         let offline: Bool = !(game.file?.online ?? true)
         if  offline {
             do {
+                // TODO: Not sure this works
                 try await downloadFileIfNeeded(game.file?.url)
             } catch {
                 displayAndLogError(withTitle: "Cannot open game",
@@ -353,6 +356,7 @@ extension GameLaunchingViewController where Self: UIViewController {
         do {
             ///
             if let url = game.file?.url {
+                // TODO: Not sure this works
                 try await downloadFileIfNeeded(url)
             }
 

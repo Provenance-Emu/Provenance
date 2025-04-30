@@ -43,7 +43,7 @@ public class ImportProgressViewModel: ObservableObject {
     @Published var syncStatus: SyncStatus = .idle
 
     /// Initial sync progress
-    @Published var initialSyncProgress: InitialSyncProgress? = nil
+    @Published var initialSyncProgress: CloudKitInitialSyncProgress? = nil
 
     /// Animation properties
     @Published var glowOpacity: Double = 0.7
@@ -382,7 +382,7 @@ public class ImportProgressViewModel: ObservableObject {
         let recoveryID = self.fileRecoveryProgressID
 
         // Observe file recovery started
-        nc.publisher(for: iCloudSync.iCloudFileRecoveryStarted)
+        nc.publisher(for: iCloudDriveSync.iCloudFileRecoveryStarted)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 Task { @MainActor [weak self] in
@@ -395,7 +395,7 @@ public class ImportProgressViewModel: ObservableObject {
             .store(in: &cancellables)
 
         // Observe file recovery progress
-        nc.publisher(for: iCloudSync.iCloudFileRecoveryProgress)
+        nc.publisher(for: iCloudDriveSync.iCloudFileRecoveryProgress)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] notification in
                 guard let self else { return }
@@ -415,7 +415,7 @@ public class ImportProgressViewModel: ObservableObject {
             .store(in: &cancellables)
 
         // Observe file recovery completion
-        nc.publisher(for: iCloudSync.iCloudFileRecoveryCompleted)
+        nc.publisher(for: iCloudDriveSync.iCloudFileRecoveryCompleted)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 Task { @MainActor [weak self] in
@@ -428,7 +428,7 @@ public class ImportProgressViewModel: ObservableObject {
             .store(in: &cancellables)
 
         // Observe file recovery errors
-        nc.publisher(for: iCloudSync.iCloudFileRecoveryError)
+        nc.publisher(for: iCloudDriveSync.iCloudFileRecoveryError)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] notification in
                 Task { @MainActor [weak self] in
@@ -442,7 +442,7 @@ public class ImportProgressViewModel: ObservableObject {
             .store(in: &cancellables)
 
         // Observe individual files pending recovery (adds to a list, maybe)
-        nc.publisher(for: iCloudSync.iCloudFilePendingRecovery)
+        nc.publisher(for: iCloudDriveSync.iCloudFilePendingRecovery)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] notification in
                 if let filename = notification.userInfo?["filename"] as? String {

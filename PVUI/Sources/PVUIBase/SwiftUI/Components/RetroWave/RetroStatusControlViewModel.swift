@@ -204,7 +204,7 @@ final class RetroStatusControlViewModel: ObservableObject {
         // Subscribe to initial sync progress updates if available
         Task {
             do {
-                for await progress in try await CloudKitInitialSyncer.shared.syncProgressPublisher.values {
+                for await progress in await CloudKitInitialSyncer.shared.syncProgressPublisher.values {
                     await MainActor.run {
                         // Convert the initial sync progress to our ProgressInfo format
                         let total = progress.romsTotal + progress.saveStatesTotal + progress.biosTotal
@@ -232,7 +232,7 @@ final class RetroStatusControlViewModel: ObservableObject {
                 server.stopServers()
             } else {
                 do {
-                    let started = try await server.startServers()
+                    let started = try server.startServers()
                     if !started {
                         ELOG("Failed to start web server from ViewModel")
                         // Update state to show error?
@@ -269,7 +269,7 @@ final class RetroStatusControlViewModel: ObservableObject {
         ButtonSoundGenerator.shared.playSound(.click2) // Use a valid sound like .click2
         #if !os(tvOS)
         Task {
-            await iCloudSync.checkForStuckFilesInICloudDrive()
+            await iCloudDriveSync.checkForStuckFilesInICloudDrive()
         }
         #endif
         Task { @MainActor in
@@ -308,13 +308,13 @@ final class RetroStatusControlViewModel: ObservableObject {
         
         #if !os(tvOS)
         // --- File Pending Recovery --- (iCloudSync)
-        nc.addObserver(self, selector: #selector(handleFilePendingRecovery(_:)), name: iCloudSync.iCloudFilePendingRecovery, object: nil)
+        nc.addObserver(self, selector: #selector(handleFilePendingRecovery(_:)), name: iCloudDriveSync.iCloudFilePendingRecovery, object: nil)
 
         // --- iCloud File Recovery Notifications ---
-        nc.addObserver(self, selector: #selector(handleFileRecoveryStarted(_:)), name: iCloudSync.iCloudFileRecoveryStarted, object: nil)
-        nc.addObserver(self, selector: #selector(handleFileRecoveryProgress(_:)), name: iCloudSync.iCloudFileRecoveryProgress, object: nil)
-        nc.addObserver(self, selector: #selector(handleFileRecoveryCompleted(_:)), name: iCloudSync.iCloudFileRecoveryCompleted, object: nil)
-        nc.addObserver(self, selector: #selector(handleFileRecoveryError(_:)), name: iCloudSync.iCloudFileRecoveryError, object: nil)
+        nc.addObserver(self, selector: #selector(handleFileRecoveryStarted(_:)), name: iCloudDriveSync.iCloudFileRecoveryStarted, object: nil)
+        nc.addObserver(self, selector: #selector(handleFileRecoveryProgress(_:)), name: iCloudDriveSync.iCloudFileRecoveryProgress, object: nil)
+        nc.addObserver(self, selector: #selector(handleFileRecoveryCompleted(_:)), name: iCloudDriveSync.iCloudFileRecoveryCompleted, object: nil)
+        nc.addObserver(self, selector: #selector(handleFileRecoveryError(_:)), name: iCloudDriveSync.iCloudFileRecoveryError, object: nil)
         #endif
     }
     

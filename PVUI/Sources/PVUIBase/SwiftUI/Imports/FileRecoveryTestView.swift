@@ -195,7 +195,7 @@ public struct FileRecoveryTestView: View {
             #if !os(tvOS)
             testButton(title: "Trigger Real File Recovery", color: RetroTheme.retroBlue) {
                 Task {
-                    await iCloudSync.manuallyTriggerFileRecovery()
+                    await iCloudDriveSync.manuallyTriggerFileRecovery()
                 }
             }
             #endif
@@ -442,14 +442,14 @@ public struct FileRecoveryTestView: View {
         let total = 50
         
         // Post start notification
-        NotificationCenter.default.post(name: iCloudSync.iCloudFileRecoveryStarted, object: nil)
+        NotificationCenter.default.post(name: iCloudDriveSync.iCloudFileRecoveryStarted, object: nil)
         
         // Simulate progress updates
         Task {
             for i in 1...total {
                 // Post progress notification
                 NotificationCenter.default.post(
-                    name: iCloudSync.iCloudFileRecoveryProgress,
+                    name: iCloudDriveSync.iCloudFileRecoveryProgress,
                     object: nil,
                     userInfo: ["current": i, "total": total]
                 )
@@ -459,7 +459,7 @@ public struct FileRecoveryTestView: View {
             }
             
             // Post completion notification
-            NotificationCenter.default.post(name: iCloudSync.iCloudFileRecoveryCompleted, object: nil)
+            NotificationCenter.default.post(name: iCloudDriveSync.iCloudFileRecoveryCompleted, object: nil)
         }
     }
     #else

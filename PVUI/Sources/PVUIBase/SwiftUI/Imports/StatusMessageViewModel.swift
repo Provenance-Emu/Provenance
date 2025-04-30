@@ -64,7 +64,7 @@ public class StatusMessageViewModel: ObservableObject {
     #if !os(tvOS)
     private func setupFileRecoveryObservers() {
         // Subscribe to notifications for file recovery progress
-        NotificationCenter.default.publisher(for: iCloudSync.iCloudFileRecoveryProgress)
+        NotificationCenter.default.publisher(for: iCloudDriveSync.iCloudFileRecoveryProgress)
             .sink { [weak self] notification in
                 if let userInfo = notification.userInfo,
                    let current = userInfo["current"] as? Int,

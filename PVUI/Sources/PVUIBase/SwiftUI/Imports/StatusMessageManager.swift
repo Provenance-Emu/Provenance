@@ -11,8 +11,6 @@ import Combine
 import SwiftUI
 import PVLibrary
 import PVPrimitives
-// Import the StatusMessageViewModel
-import PVUIBase
 
 /// A message to be displayed in the status view
 public struct StatusMessage: Identifiable, Equatable {
@@ -109,7 +107,7 @@ public class StatusMessageManager: ObservableObject {
         
         // Subscribe to notifications for file recovery started
         #if !os(tvOS)
-        NotificationCenter.default.publisher(for: iCloudSync.iCloudFileRecoveryStarted)
+        NotificationCenter.default.publisher(for: iCloudDriveSync.iCloudFileRecoveryStarted)
             .sink { [weak self] _ in
                 DispatchQueue.main.async {
                     self?.addMessage(StatusMessage(
@@ -122,7 +120,7 @@ public class StatusMessageManager: ObservableObject {
             .store(in: &cancellables)
         
         // Subscribe to notifications for file recovery completed
-        NotificationCenter.default.publisher(for: iCloudSync.iCloudFileRecoveryCompleted)
+        NotificationCenter.default.publisher(for: iCloudDriveSync.iCloudFileRecoveryCompleted)
             .sink { [weak self] _ in
                 DispatchQueue.main.async {
                     self?.addMessage(StatusMessage(

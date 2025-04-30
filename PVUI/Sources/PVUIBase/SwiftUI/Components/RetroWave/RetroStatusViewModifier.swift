@@ -70,13 +70,13 @@ public struct RetroStatusViewModifier: ViewModifier {
             showStatusView()
         }
         #if !os(tvOS)
-        .onReceive(NotificationCenter.default.publisher(for: iCloudSync.iCloudFileRecoveryStarted)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: iCloudDriveSync.iCloudFileRecoveryStarted)) { _ in
             showStatusView()
         }
-        .onReceive(NotificationCenter.default.publisher(for: iCloudSync.iCloudFileRecoveryProgress)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: iCloudDriveSync.iCloudFileRecoveryProgress)) { _ in
             showStatusView()
         }
-        .onReceive(NotificationCenter.default.publisher(for: iCloudSync.iCloudFileRecoveryCompleted)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: iCloudDriveSync.iCloudFileRecoveryCompleted)) { _ in
             showStatusView()
         }
         #endif

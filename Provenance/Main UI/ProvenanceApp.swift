@@ -450,7 +450,7 @@ extension ProvenanceApp {
         // Check for files stuck in iCloud Drive at startup
         #if !os(tvOS)
         Task.detached {
-            await iCloudSync.checkForStuckFilesInICloudDrive()
+            await iCloudDriveSync.checkForStuckFilesInICloudDrive()
         }
         #endif
 
@@ -460,7 +460,7 @@ extension ProvenanceApp {
         // Keep the legacy iCloud document sync code in place but don't use it by default
         // We can uncomment this if we need to revert back to the old sync method
         #if !os(tvOS)
-        iCloudSync.initICloudDocuments()
+        iCloudDriveSync.initICloudDocuments()
         #endif
     }
 }

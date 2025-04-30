@@ -328,8 +328,8 @@ public struct CloudSyncStatusView: View {
 #else
     /// Update iCloud Documents sync status on iOS/macOS
     private func updateICloudSyncStatus() {
-        // Get active syncers from iCloudSyncerStore
-        let activeSyncers = iCloudSyncerStore.shared.activeSyncers
+        // Get active syncers from SyncerStore
+        let activeSyncers = SyncerStore.shared.activeSyncers
         
         var pendingFiles = 0
         var newFiles = 0

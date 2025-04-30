@@ -81,7 +81,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         
         #if !os(tvOS)
         // Check if this file is currently being recovered from iCloud
-        if iCloudSync.isFileBeingRecovered(queueItem.url.path) {
+        if iCloudDriveSync.isFileBeingRecovered(queueItem.url.path) {
             ILOG("File \(queueItem.url.lastPathComponent) is currently being recovered from iCloud. Delaying import.")
             
             // Re-queue this item with a delay
