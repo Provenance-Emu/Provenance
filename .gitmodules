@@ -175,6 +175,9 @@
 [submodule "Cores/emuThree/cmake/zstd"]
 	path = Cores/emuThree/cmake/zstd
 	url = https://github.com/facebook/zstd.git
+[submodule "Cores/Citra/cmake/zstd"]
+	path = Cores/Citra/cmake/zstd
+	url = https://github.com/facebook/zstd.git
 [submodule "Cores/JollyGoodEmulation"]
 	path = Cores/JollyGoodEmulation
 	url = https://JoeMatt@github.com/Provenance-Emu/JollyGoodEmulation.git
