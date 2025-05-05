@@ -175,7 +175,7 @@ public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing {
                                     
                                     // Copy file to local storage
                                     if FileManager.default.fileExists(atPath: localURL.path) {
-                                        await try FileManager.default.removeItem(at: localURL)
+                                        try await FileManager.default.removeItem(at: localURL)
                                     }
                                     
                                     try FileManager.default.copyItem(at: cloudURL, to: localURL)
@@ -244,7 +244,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     public func getAllRecords() async -> [CKRecord] {
         do {
             // Create a query for all BIOS records
-            let query = CKQuery(recordType: CloudKitSchema.RecordType.bios, predicate: NSPredicate(value: true))
+            let query = CKQuery(recordType: CloudKitSchema.RecordType.bios.rawValue, predicate: NSPredicate(value: true))
             
             // Execute the query
             let (records, _) = try await privateDatabase.records(matching: query, resultsLimit: 100)

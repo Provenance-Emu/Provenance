@@ -3,7 +3,7 @@
 //  PVUI
 //
 //  Created by Joseph Mattiello on 4/22/25.
-//  Copyright © 2025 Provenance Emu. All rights reserved.
+//  Copyright 2025 Provenance Emu. All rights reserved.
 //
 
 import Foundation
@@ -23,7 +23,7 @@ public extension PVAppDelegate {
             DLOG("Initializing CloudKit for all platforms")
             
             // Initialize CloudKit schema first
-            Task.detached {
+            Task<Void, Never>.detached {
                 let containerIdentifier = iCloudConstants.containerIdentifier
                 
                 // Initialize CloudKit container and database
@@ -47,7 +47,7 @@ public extension PVAppDelegate {
                 self.setupCloudKitBackgroundSync()
                 
                 // Start initial sync
-                _ = try? await CloudSyncManager.shared.startSync().value
+                try? await CloudSyncManager.shared.startSync()
             }
         }
     }
@@ -114,47 +114,24 @@ public extension PVAppDelegate {
         Task {
             do {
                 // Sync metadata only to avoid large downloads in the background
-                var didSync = false
+                var totalSynced = 0
                 
-                // Sync ROMs
-                if let syncer = CloudKitSyncerStore.shared.romSyncers.first as? CloudKitRomsSyncer {
+                // Iterate over all CloudKitSyncers and sync metadata
+                for syncer in CloudKitSyncerStore.shared.cloudKitSyncers {
                     let count = await syncer.syncMetadataOnly()
                     if count > 0 {
-                        didSync = true
-                        DLOG("Background sync: Synced \(count) ROM records")
+                        totalSynced += count
+                        DLOG("Background sync: Synced \(count) records for type: \(syncer.recordType)")
                     }
-                } else {
-                    ELOG("No ROM syncer found")
                 }
                 
-                // Sync save states
-                if let syncer = CloudKitSyncerStore.shared.saveStateSyncers.first as? CloudKitSaveStatesSyncer {
-                    let count = await syncer.syncMetadataOnly()
-                    if count > 0 {
-                        didSync = true
-                        DLOG("Background sync: Synced \(count) save state records")
-                    }
+                if totalSynced > 0 {
+                    DLOG("Background sync: Total records synced: \(totalSynced)")
+                    task.setTaskCompleted(success: true)
                 } else {
-                    ELOG("No save state syncer found")
-                }
-                
-                // Sync BIOS files
-                if let syncer = CloudKitSyncerStore.shared.biosSyncers.first as? CloudKitBIOSSyncer {
-                    let count = await syncer.syncMetadataOnly()
-                    if count > 0 {
-                        didSync = true
-                        DLOG("Background sync: Synced \(count) BIOS records")
-                    }
-                } else {
-                    ELOG("No BIOS syncer found")
-                }
-                
-                if !didSync {
                     ILOG("Background sync: No data to sync or syncers not found")
+                    task.setTaskCompleted(success: false)
                 }
-                
-                // Mark the task as completed
-                task.setTaskCompleted(success: true)
                 
                 // End the background task assertion
                 if taskAssertionID != .invalid {
@@ -236,37 +213,24 @@ public extension PVAppDelegate {
         Task {
             do {
                 // Sync metadata only to avoid large downloads in the background
-                var didSync = false
+                var totalSynced = 0
                 
-                // Sync ROMs
-                if let syncer = CloudKitSyncerStore.shared.romSyncers.first as? CloudKitRomsSyncer {
+                // Iterate over all CloudKitSyncers and sync metadata
+                for syncer in CloudKitSyncerStore.shared.cloudKitSyncers {
                     let count = await syncer.syncMetadataOnly()
                     if count > 0 {
-                        didSync = true
-                        DLOG("Background fetch: Synced \(count) ROM records")
+                        totalSynced += count
+                        DLOG("Background fetch: Synced \(count) records for type: \(syncer.recordType)")
                     }
                 }
                 
-                // Sync save states
-                if let syncer = CloudKitSyncerStore.shared.saveStateSyncers.first as? CloudKitSaveStatesSyncer {
-                    let count = await syncer.syncMetadataOnly()
-                    if count > 0 {
-                        didSync = true
-                        DLOG("Background fetch: Synced \(count) save state records")
-                    }
+                if totalSynced > 0 {
+                    DLOG("Background fetch: Total records synced: \(totalSynced)")
+                    completionHandler(.newData)
+                } else {
+                    ILOG("Background fetch: No data to sync or syncers not found")
+                    completionHandler(.noData)
                 }
-                
-                // Sync BIOS files
-                if let syncer = CloudKitSyncerStore.shared.biosSyncers.first as? CloudKitBIOSSyncer {
-                    let count = await syncer.syncMetadataOnly()
-                    if count > 0 {
-                        didSync = true
-                        DLOG("Background fetch: Synced \(count) BIOS records")
-                    }
-                }
-                
-                // Return the appropriate result
-                completionHandler(didSync ? .newData : .noData)
             } catch {
                 ELOG("Error during background fetch: \(error.localizedDescription)")
                 completionHandler(.failed)
@@ -317,7 +281,7 @@ public extension PVAppDelegate {
         Task {
             do {
                 // Start sync
-                try await CloudSyncManager.shared.startSync().value
+                try await CloudSyncManager.shared.startSync()
                 
                 // Complete with new data
                 completionHandler(.newData)

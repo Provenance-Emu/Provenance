@@ -26,7 +26,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     public func getAllRecords() async -> [CKRecord] {
         do {
             // Create a query for all save state records
-            let query = CKQuery(recordType: CloudKitSchema.RecordType.saveState, predicate: NSPredicate(value: true))
+            let query = CKQuery(recordType: CloudKitSchema.RecordType.saveState.rawValue, predicate: NSPredicate(value: true))
             
             // Execute the query
             let (records, _) = try await privateDatabase.records(matching: query, resultsLimit: 100)

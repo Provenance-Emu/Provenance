@@ -896,7 +896,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                 if self.processingState != .paused {
                     self.processingState = .idle
                 }
-                NotificationCenter.default.post(name: .RomsFinishedImporting, object: nil)
+                NotificationCenter.default.post(name: .GameImporterDidFinish, object: nil)
             }
         }
         // Check for items that are either queued or have a user-chosen system
@@ -1242,7 +1242,7 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     private func addImportItemToQueue(_ item: ImportQueueItem) async {
         // First, check if this is a BIOS file
-        let fileType = try? determineImportType(item)
+        let fileType = determineImportType(item)
         if fileType == .bios {
             // For BIOS files, check if we already have a matching BIOS entry with a file
             let biosExists = await BIOSWatcher.shared.checkBIOSFile(at: item.url)
@@ -1327,10 +1327,7 @@ public final class GameImporter: GameImporting, ObservableObject {
     // Add a helper method to check if processing is paused
     private func checkIfPaused() async -> Bool {
         // Check if we're paused
-        var isPaused = false
-        await MainActor.run {
-            isPaused = self.processingState == .paused
-        }
+        let isPaused = self.processingState == .paused
         return isPaused
     }
     

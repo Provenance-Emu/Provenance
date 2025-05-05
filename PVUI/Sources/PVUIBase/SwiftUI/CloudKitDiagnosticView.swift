@@ -3,7 +3,7 @@
 //  PVSwiftUI
 //
 //  Created by Joseph Mattiello on 4/27/25.
-//  Copyright © 2025 Provenance Emu. All rights reserved.
+//  Copyright 2025 Provenance Emu. All rights reserved.
 //
 
 import SwiftUI
@@ -396,50 +396,41 @@ class CloudKitDiagnosticViewModel: ObservableObject {
             var counts: [String: Int] = [:]
             
             // Query each record type
-            for recordType in CloudKitSchema.RecordType.all {
-                let query = CKQuery(recordType: recordType, predicate: NSPredicate(value: true))
-                let queryOperation = CKQueryOperation(query: query)
-                queryOperation.resultsLimit = 100 // Increase if needed
+            for recordTypeRawValue in CloudKitSchema.RecordType.allCases.map({ $0.rawValue }) {
+                let query = CKQuery(recordType: recordTypeRawValue, predicate: NSPredicate(value: true))
+                let (matchResults, _) = try await privateDatabase.records(matching: query)
                 
                 var recordsForType: [CKRecord] = []
                 
-                queryOperation.recordMatchedBlock = { recordID, result in
+                // Iterate through the results (recordID, result)
+                for (_, result) in matchResults {
                     switch result {
                     case .success(let record):
                         recordsForType.append(record)
                     case .failure(let error):
-                        ELOG("Error fetching record \(recordID.recordName): \(error.localizedDescription)")
+                        // Log the specific error associated with this record fetch
+                        ELOG("Error fetching a specific record: \(error.localizedDescription)")
                     }
                 }
-                
-                queryOperation.queryResultBlock = { result in
-                    switch result {
-                    case .success(let cursor):
-                        DLOG("Query completed for \(recordType), found \(recordsForType.count) records")
-                        if let cursor = cursor {
-                            DLOG("More records available with cursor: \(cursor)")
-                        }
-                    case .failure(let error):
-                        ELOG("Query failed for \(recordType): \(error.localizedDescription)")
-                    }
-                }
-                
-                // Execute the query operation
-                try await privateDatabase.add(queryOperation)
                 
                 // Process the records
                 for record in recordsForType {
+                    // Attempt to get a meaningful name, falling back to recordID
+                    let displayName = record[CloudKitSchema.ROMFields.originalFilename] as? String ?? 
+                                      record[CloudKitSchema.SaveStateFields.filename] as? String ??
+                                      record.recordID.recordName
+                    
                     let recordDetail = CloudKitRecordDetail(
                         recordID: record.recordID.recordName,
-                        recordName: record[CloudKitSchema.FileAttributes.filename] as? String ?? record.recordID.recordName,
-                        recordType: recordType,
+                        recordName: displayName, 
+                        recordType: recordTypeRawValue,
                         fields: recordFieldsToStringDictionary(record: record)
                     )
                     allRecords.append(recordDetail)
                 }
                 
                 // Update counts
-                counts[recordType] = recordsForType.count
+                counts[recordTypeRawValue] = recordsForType.count
             }
             
             // Update UI on main thread
@@ -474,16 +465,23 @@ class CloudKitDiagnosticViewModel: ObservableObject {
             var totalDeleted = 0
             
             // Delete records for each record type
-            for recordType in CloudKitSchema.RecordType.all {
-                let query = CKQuery(recordType: recordType, predicate: NSPredicate(value: true))
-                let (results, _) = try await privateDatabase.records(matching: query, resultsLimit: 100)
+            for recordTypeRawValue in CloudKitSchema.RecordType.allCases.map({ $0.rawValue }) {
+                let query = CKQuery(recordType: recordTypeRawValue, predicate: NSPredicate(value: true))
+                let (results, _) = try await privateDatabase.records(matching: query)
                 
-                for result in results {
-                    do {
-                        _ = try await privateDatabase.deleteRecord(withID: result.0)
-                        totalDeleted += 1
-                    } catch {
-                        ELOG("Error deleting record \(result.0.recordName): \(error.localizedDescription)")
+                // Iterate through the results (recordID, result)
+                for (recordID, result) in results {
+                    switch result {
+                    case .success(let record):
+                        do {
+                            _ = try await privateDatabase.deleteRecord(withID: record.recordID)
+                            totalDeleted += 1
+                        } catch {
+                            ELOG("Error deleting record \(record.recordID.recordName): \(error.localizedDescription)")
+                        }
+                    case .failure(let error):
+                        // Log the error encountered while fetching the record intended for deletion
+                        ELOG("Error fetching record (ID: \(recordID.recordName)) intended for deletion: \(error.localizedDescription)")
                     }
                 }
             }

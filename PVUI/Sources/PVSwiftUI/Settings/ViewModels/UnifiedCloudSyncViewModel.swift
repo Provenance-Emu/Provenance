@@ -584,10 +584,10 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
             let privateDB = container.privateCloudDatabase
 
             // Get ROM records
-            let romQuery = CKQuery(recordType: CloudKitSchema.RecordType.rom, predicate: NSPredicate(value: true))
-            let saveStateQuery = CKQuery(recordType: CloudKitSchema.RecordType.saveState, predicate: NSPredicate(value: true))
-            let biosQuery = CKQuery(recordType: CloudKitSchema.RecordType.bios, predicate: NSPredicate(value: true))
-            let fileQuery = CKQuery(recordType: CloudKitSchema.RecordType.file, predicate: NSPredicate(value: true))
+            let romQuery = CKQuery(recordType: CloudKitSchema.RecordType.rom.rawValue, predicate: NSPredicate(value: true))
+            let saveStateQuery = CKQuery(recordType: CloudKitSchema.RecordType.saveState.rawValue, predicate: NSPredicate(value: true))
+            let biosQuery = CKQuery(recordType: CloudKitSchema.RecordType.bios.rawValue, predicate: NSPredicate(value: true))
+            let fileQuery = CKQuery(recordType: CloudKitSchema.RecordType.file.rawValue, predicate: NSPredicate(value: true))
 
             do {
                 // Get ROM records

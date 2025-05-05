@@ -68,14 +68,20 @@ public class SyncProviderFactory {
         
         DLOG("iCloudSync=\(iCloudSyncEnabled), iCloudSyncMode=\(syncMode.description), container=\(container)")
 #if os(tvOS)
-        return CloudKitRomsSyncer(container: container, notificationCenter: notificationCenter, errorHandler: errorHandler)
+        // tvOS likely always uses CloudKit if enabled
+        // Get the shared CloudSyncManager and return its RomsSyncing instance
+        // Force unwrap: Assumes romsSyncer is initialized if iCloud sync is enabled.
+        return CloudSyncManager.shared.romsSyncer!
 #else
         // Return the appropriate syncer based on the mode
         if syncMode.isCloudKit {
-            DLOG("Creating CloudKit ROM syncer based on iCloudSyncMode=\(syncMode.description)")
-            return CloudKitRomsSyncer(container: container, notificationCenter: notificationCenter, errorHandler: errorHandler)
+            DLOG("Returning CloudSyncManager.shared.romsSyncer based on iCloudSyncMode=\(syncMode.description)")
+            // Get the shared CloudSyncManager and return its RomsSyncing instance
+            // Force unwrap: Assumes romsSyncer is initialized if iCloud sync is enabled and mode is CloudKit.
+            return CloudSyncManager.shared.romsSyncer!
         } else {
-            DLOG("Creating iCloud ROM syncer based on iCloudSyncMode=\(syncMode.description)")
+            DLOG("Creating iCloudDriveRomsSyncer based on iCloudSyncMode=\(syncMode.description)")
+            // Assuming iCloudDriveRomsSyncer initialization is still correct
             return iCloudDriveRomsSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
         }
 #endif

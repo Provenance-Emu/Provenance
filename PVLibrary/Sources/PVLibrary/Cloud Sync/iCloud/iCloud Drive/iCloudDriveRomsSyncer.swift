@@ -1,14 +1,13 @@
 //
-//  RomsSyncer.swift
+//  iCloudDriveRomsSyncer.swift
 //  PVLibrary
 //
 //  Created by Joseph Mattiello on 4/22/25.
-//  Copyright © 2025 Provenance Emu. All rights reserved.
+//  Copyright 2025 Provenance Emu. All rights reserved.
 //
 
 import Foundation
 import PVLogging
-import RxSwift
 import PVPrimitives
 import PVFileSystem
 import PVRealm
@@ -54,315 +53,166 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
         return containerURL.appendingPathComponent("ROMs").appendingPathComponent(systemDir).appendingPathComponent(url.lastPathComponent)
     }
     
-    /// Upload a ROM file to the cloud
+    /// Upload a ROM file to the cloud (Async Version)
     /// - Parameter game: The game to upload
-    /// - Returns: Completable that completes when the upload is done
-    public func uploadROM(for game: PVGame) -> Completable {
-        return Completable.create { [weak self] observer in
-            Task {
-                guard let self = self,
-                      let localURL = self.localURL(for: game),
-                      let cloudURL = self.cloudURL(for: game) else {
-                    observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid ROM file or URLs"])))
-                    return
-                }
-                
-                // Create directory if needed
-                let cloudDir = cloudURL.deletingLastPathComponent()
-                do {
-                    try FileManager.default.createDirectory(at: cloudDir, withIntermediateDirectories: true)
-                    
-                    // Copy file to iCloud
-                    if FileManager.default.fileExists(atPath: cloudURL.path) {
-                        await try FileManager.default.removeItem(at: cloudURL)
-                    }
-                    
-                    try FileManager.default.copyItem(at: localURL, to: cloudURL)
-                    await self.insertUploadedFile(cloudURL)
-                    
-                    DLOG("Uploaded ROM file to iCloud: \(cloudURL.lastPathComponent)")
-                    observer(.completed)
-                } catch {
-                    ELOG("Failed to upload ROM file: \(error.localizedDescription)")
-                    observer(.error(error))
-                }
+    /// - Throws: CloudSyncError on failure
+    public func uploadGame(_ game: PVGame) async throws {
+        guard let localURL = self.localURL(for: game),
+              let cloudURL = self.cloudURL(for: game) else {
+            ELOG("Invalid ROM file or URLs for game: \(game.title)")
+            throw CloudSyncError.invalidData
+        }
+        
+        // Create directory if needed
+        let cloudDir = cloudURL.deletingLastPathComponent()
+        do {
+            try FileManager.default.createDirectory(at: cloudDir, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            ELOG("Failed to create iCloud directory \(cloudDir.path): \(error.localizedDescription)")
+            throw CloudSyncError.fileSystemError(error)
+        }
+        
+        // Copy file
+        do {
+            // Remove existing item at cloudURL if it exists before copying
+            if FileManager.default.fileExists(atPath: cloudURL.path) {
+                VLOG("Removing existing file at cloud destination: \(cloudURL.path)")
+                try await FileManager.default.removeItem(at: cloudURL)
             }
-            return Disposables.create()
+            VLOG("Copying ROM from \(localURL.path) to \(cloudURL.path)")
+            try FileManager.default.copyItem(at: localURL, to: cloudURL)
+            ILOG("Successfully uploaded ROM \(localURL.lastPathComponent) to iCloud Drive.")
+            // Update local game sync status? (Maybe CloudSyncManager responsibility?)
+            // await RomDatabase.shared.updateGame(md5: game.md5 ?? "") { $0?.cloudStatus = .synced } // Example
+        } catch {
+            ELOG("Failed to copy ROM to iCloud Drive at \(cloudURL.path): \(error.localizedDescription)")
+            throw CloudSyncError.fileSystemError(error)
         }
     }
     
-    /// Download a ROM file from the cloud
-    /// - Parameter game: The game to download
-    /// - Returns: Completable that completes when the download is done
-    public func downloadROM(for game: PVGame) -> Completable {
-        return Completable.create { [weak self] observer in
-            Task {
-                guard let self = self,
-                      let cloudURL = self.cloudURL(for: game) else {
-                    observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid ROM file or URLs"])))
-                    return
-                }
-                
-                // Check if file exists in iCloud
-                if !FileManager.default.fileExists(atPath: cloudURL.path) {
-                    observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 2, userInfo: [NSLocalizedDescriptionKey: "ROM file not found in iCloud"])))
-                    return
-                }
-                
-                // Start downloading
-                do {
-                    try FileManager.default.startDownloadingUbiquitousItem(at: cloudURL)
-                    await self.insertDownloadingFile(cloudURL)
-                    
-                    // Wait for download to complete
-                    let checkDownload = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
-                        .take(60) // Timeout after 60 seconds
-                        .flatMap { _ -> Observable<Bool> in
-                            let downloadingStatus = try? cloudURL.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey])
-                            let isDownloaded = downloadingStatus?.ubiquitousItemDownloadingStatus == URLUbiquitousItemDownloadingStatus.current
-                            return Observable.just(isDownloaded)
-                        }
-                        .filter { $0 }
-                        .take(1)
-                        .timeout(.seconds(60), scheduler: MainScheduler.instance)
-                    //TODO: this needs to be refactored, but can't think of a quick way right now to make the async functions to work
-                    checkDownload
-                        .subscribe(onNext: { _ in
-                            Task {
-                                await self.insertDownloadedFile(cloudURL)
-                                DLOG("Downloaded ROM file from iCloud: \(cloudURL.lastPathComponent)")
-                                observer(.completed)
-                            }
-                        }, onError: { error in
-                            ELOG("Failed to download ROM file: \(error.localizedDescription)")
-                            observer(.error(error))
-                        })
-                } catch {
-                    ELOG("Failed to start downloading ROM file: \(error.localizedDescription)")
-                    observer(.error(error))
+    /// Download a ROM file from the cloud (Async Version)
+    /// - Parameter md5: MD5 hash of the game to download
+    /// - Throws: CloudSyncError on failure
+    public func downloadGame(md5: String) async throws {
+        // 1. Get the PVGame object from the datastore
+        guard let game = RomDatabase.sharedInstance.object(ofType: PVGame.self, wherePrimaryKeyEquals: md5) else {
+            ELOG("Cannot download game: PVGame with MD5 \(md5) not found in local database.")
+            // Use .invalidData as the game mapping failed
+            throw CloudSyncError.invalidData
+        }
+        
+        guard let cloudURL = self.cloudURL(for: game),
+              let localURL = self.localURL(for: game) else {
+             ELOG("Could not determine cloud or local URL for game MD5: \(md5)")
+             throw CloudSyncError.invalidData
+        }
+        
+        // 2. Check if file exists in the cloud
+        guard FileManager.default.fileExists(atPath: cloudURL.path) else {
+            ELOG("ROM file not found in iCloud Drive at \(cloudURL.path) for MD5: \(md5)")
+            // Use .invalidData as the expected cloud file is missing
+            throw CloudSyncError.invalidData
+        }
+        
+        // 3. Create local directory if needed
+        let localDir = localURL.deletingLastPathComponent()
+        do {
+            try FileManager.default.createDirectory(at: localDir, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            ELOG("Failed to create local directory \(localDir.path): \(error.localizedDescription)")
+            throw CloudSyncError.fileSystemError(error)
+        }
+        
+        // 4. Copy file from cloud to local
+        do {
+            // Remove existing local file first to ensure clean copy
+            if FileManager.default.fileExists(atPath: localURL.path) {
+                VLOG("Removing existing local file before download: \(localURL.path)")
+                try await FileManager.default.removeItem(at: localURL)
+            }
+            VLOG("Downloading ROM from \(cloudURL.path) to \(localURL.path)")
+            try FileManager.default.copyItem(at: cloudURL, to: localURL)
+            ILOG("Successfully downloaded ROM \(localURL.lastPathComponent) from iCloud Drive.")
+            
+            // Use a Realm write transaction to update the game properties
+            try RomDatabase.sharedInstance.writeTransaction {
+                // Re-fetch game within the transaction's Realm instance
+                if let gameToUpdate = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: md5) {
+                    gameToUpdate.isDownloaded = true
+                    gameToUpdate.lastCloudSyncDate = Date()
+                } else {
+                    WLOG("Game with MD5 \(md5) not found during sync status update (success).")
                 }
             }
-            return Disposables.create()
+            NotificationCenter.default.post(name: .romDownloadCompleted, object: game)
+        } catch {
+            ELOG("Failed to copy ROM from iCloud Drive at \(cloudURL.path): \(error.localizedDescription)")
+            // If download failed, ensure local file doesn't exist in partial state
+            if FileManager.default.fileExists(atPath: localURL.path) {
+                try? await FileManager.default.removeItem(at: localURL)
+            }
+            // Use a Realm write transaction to update the game properties
+            try? RomDatabase.sharedInstance.writeTransaction {
+                // Re-fetch game within the transaction's Realm instance
+                if let gameToUpdate = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: md5) {
+                    gameToUpdate.isDownloaded = false
+                    // We don't have an error state, just mark as not downloaded
+                } else {
+                    WLOG("Game with MD5 \(md5) not found during sync status update (error).")
+                }
+            }
+            throw CloudSyncError.fileSystemError(error)
+        }
+    }
+    
+    /// Marks a game as deleted by removing its file from iCloud Drive.
+    /// - Parameter md5: The MD5 hash of the game to delete.
+    /// - Throws: CloudSyncError if the game or file cannot be found or deletion fails.
+    public func markGameAsDeleted(md5: String) async throws {
+        VLOG("Attempting to mark game as deleted (delete file) in iCloud Drive for MD5: \(md5)")
+        
+        // 1. Get the PVGame object from the datastore
+        guard let game = RomDatabase.sharedInstance.object(ofType: PVGame.self, wherePrimaryKeyEquals: md5) else {
+            // If the game isn't local, we can't determine the cloud path to delete.
+            // We could potentially query CloudKit metadata if it existed, but for iCloud Drive, we rely on the local entry.
+            WLOG("Cannot mark game as deleted: PVGame with MD5 \(md5) not found locally.")
+            // Consider if this should be an error or just a warning.
+            // If called during a sync reconcile, maybe it's okay if local is gone?
+            // For now, let's treat not finding the local game as ignorable.
+            return
+        }
+        
+        // 2. Determine the Cloud URL
+        guard let cloudURL = self.cloudURL(for: game) else {
+             ELOG("Could not determine cloud URL for game MD5: \(md5). Cannot delete.")
+             throw CloudSyncError.invalidData
+        }
+        
+        // 3. Check if the file exists in iCloud Drive
+        guard FileManager.default.fileExists(atPath: cloudURL.path) else {
+            WLOG("Cloud file for game MD5 \(md5) at \(cloudURL.path) does not exist. Assuming already deleted.")
+            // File is already gone, so consider the deletion successful/unnecessary.
+            return
+        }
+        
+        // 4. Attempt to delete the file
+        do {
+            VLOG("Deleting ROM file from iCloud Drive: \(cloudURL.path)")
+            try await FileManager.default.removeItem(at: cloudURL)
+            ILOG("Successfully deleted ROM file \(cloudURL.lastPathComponent) from iCloud Drive for MD5: \(md5).")
+            
+            // TODO: Update local game sync status if necessary?
+            // Perhaps set cloudStatus = .deleted ? Needs a new status.
+            // Or maybe CloudSyncManager handles local deletion after this completes.
+            
+        } catch let error as NSError where error.domain == NSCocoaErrorDomain && error.code == NSFileNoSuchFileError {
+            // If we checked existence and it's gone now, treat as success (race condition?)
+            WLOG("File \(cloudURL.path) was not found during deletion attempt (maybe already deleted): \(error.localizedDescription)")
+            // Consider this case as successfully deleted.
+        } catch {
+            ELOG("Failed to delete ROM file from iCloud Drive at \(cloudURL.path): \(error.localizedDescription)")
+            throw CloudSyncError.fileSystemError(error)
         }
     }
 }
 #endif
-
-// MARK: - tvOS Implementation
-
-/// ROM syncer for tvOS using CloudKit
-public class CloudKitRomsSyncer: CloudKitSyncer, RomsSyncing {
-    
-    /// Get all CloudKit records for ROMs
-    /// - Returns: Array of CKRecord objects
-    public func getAllRecords() async -> [CKRecord] {
-        do {
-            // Create a query for all ROM records
-            let query = CKQuery(recordType: CloudKitSchema.RecordType.rom, predicate: NSPredicate(value: true))
-            
-            // Execute the query
-            let (records, _) = try await privateDatabase.records(matching: query, resultsLimit: 100)
-            
-            // Convert to array of CKRecord
-            let recordsArray = records.compactMap { _, result -> CKRecord? in
-                switch result {
-                case .success(let record):
-                    return record
-                case .failure(let error):
-                    ELOG("Error fetching ROM record: \(error.localizedDescription)")
-                    return nil
-                }
-            }
-            
-            DLOG("Fetched \(recordsArray.count) ROM records from CloudKit")
-            return recordsArray
-        } catch {
-            ELOG("Failed to fetch ROM records: \(error.localizedDescription)")
-            return []
-        }
-    }
-    
-    /// Check if a file is downloaded locally
-    /// - Parameters:
-    ///   - filename: The filename to check
-    ///   - system: The system identifier
-    /// - Returns: True if the file is downloaded locally
-    public func isFileDownloaded(filename: String, inSystem system: String) async -> Bool {
-        // Create local file path
-        let documentsURL = URL.documentsPath
-        let directoryURL = documentsURL.appendingPathComponent("ROMs").appendingPathComponent(system)
-        let fileURL = directoryURL.appendingPathComponent(filename)
-        
-        // Check if file exists
-        return FileManager.default.fileExists(atPath: fileURL.path)
-    }
-    
-    /// Update a game with its CloudKit record ID
-    /// - Parameters:
-    ///   - game: The game to update
-    ///   - recordID: The CloudKit record ID
-    /// - Throws: Error if the update fails
-    private func updateGameWithCloudRecordID(_ game: PVGame, recordID: String) async throws {
-        // Using MainActor to ensure we're on the main thread for Realm operations
-        try await MainActor.run {
-            let realm = try Realm()
-            try realm.write {
-                game.cloudRecordID = recordID
-                game.isDownloaded = true
-            }
-        }
-        
-        DLOG("Updated game \(game.title) with CloudKit record ID: \(recordID)")
-    }
-    
-    /// Upload a ROM file to the cloud
-    /// - Parameter game: The game to upload
-    /// - Returns: Completable that completes when the upload is done
-    public func uploadROM(for game: PVGame) -> Completable {
-        return Completable.create { [weak self] observer in
-            guard let self = self else {
-                observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "ROM syncer deallocated"])))
-                return Disposables.create()
-            }
-            
-            guard let localURL = self.localURL(for: game) else {
-                observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 2, userInfo: [NSLocalizedDescriptionKey: "ROM file not found"])))
-                return Disposables.create()
-            }
-            
-            Task {
-                do {
-                    // Get system directory
-                    let systemPath = (game.systemIdentifier as NSString)
-                    let systemDir = systemPath.components(separatedBy: "/").last ?? systemPath as String
-                    
-                    // Create a record for the ROM file
-                    let recordID = CKRecord.ID(recordName: "rom_\(systemDir)_\(localURL.lastPathComponent)")
-                    let record = CKRecord(recordType: "File", recordID: recordID)
-                    record["directory"] = "ROMs"
-                    record["system"] = systemDir
-                    record["filename"] = localURL.lastPathComponent
-                    record["fileData"] = CKAsset(fileURL: localURL)
-                    
-                    // Calculate and store relative path to preserve subdirectory structure
-                    // This should be the path relative to the ROMs directory, including the system subdirectory
-                    let documentsURL = URL.documentsPath
-                    let romsURL = documentsURL.appendingPathComponent("ROMs")
-                    
-                    // Calculate relative path
-                    var relativePath = ""
-                    if localURL.path.hasPrefix(romsURL.path) {
-                        // Remove the ROMs prefix to get the relative path
-                        relativePath = String(localURL.path.dropFirst(romsURL.path.count + 1)) // +1 for the trailing slash
-                        DLOG("Calculated relative path for ROM: \(relativePath)")
-                    } else {
-                        // If not under ROMs directory, use system/filename as fallback
-                        relativePath = "\(systemDir)/\(localURL.lastPathComponent)"
-                        DLOG("Using fallback relative path for ROM: \(relativePath)")
-                    }
-                    
-                    record["relativePath"] = relativePath
-                    
-                    // Add metadata
-                    record["title"] = game.title
-                    record["md5"] = game.md5Hash
-                    
-                    // Save the record
-                    try await self.privateDatabase.save(record)
-                    
-                    // Update game with cloud record ID
-                    try await self.updateGameWithCloudRecordID(game, recordID: recordID.recordName)
-                    
-                    observer(.completed)
-                } catch {
-                    ELOG("Failed to upload ROM file: \(error.localizedDescription)")
-                    observer(.error(error))
-                }
-            }
-            
-            return Disposables.create()
-        }
-    }
-    
-    /// Download a ROM file from the cloud
-    /// - Parameter game: The game to download
-    /// - Returns: Completable that completes when the download is done
-    public func downloadROM(for game: PVGame) -> Completable {
-        return Completable.create { [weak self] observer in
-            guard let self = self,
-                  let recordID = game.cloudRecordID else {
-                observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 3, userInfo: [NSLocalizedDescriptionKey: "Invalid parameters or missing cloud record ID"])))
-                return Disposables.create()
-            }
-            
-            Task {
-                do {
-                    // Download the file using the existing method
-                    let fileURL = try await self.downloadFileOnDemand(recordName: recordID)
-                    
-                    // Update game with downloaded status
-                    // Using MainActor to ensure we're on the main thread for Realm operations
-                    try await MainActor.run {
-                        let realm = try Realm()
-                        try realm.write {
-                            game.isDownloaded = true
-                        }
-                    }
-                    
-                    DLOG("Downloaded ROM file: \(fileURL.lastPathComponent)")
-                    observer(.completed)
-                } catch {
-                    ELOG("Failed to download ROM file: \(error.localizedDescription)")
-                    observer(.error(error))
-                }
-            }
-            
-            return Disposables.create()
-        }
-    }
-    /// The CloudKit record type for ROMs
-    override public var recordType: String {
-        return "ROM"
-    }
-    /// Initialize a new ROM syncer
-    /// - Parameters:
-    ///   - notificationCenter: Notification center to use
-    ///   - errorHandler: Error handler to use
-    public init(container: CKContainer, notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
-        super.init(container: container, directories: ["ROMs"], notificationCenter: notificationCenter, errorHandler: errorHandler)
-    }
-    
-    /// Get the local URL for a ROM file
-    /// - Parameter game: The game to get the URL for
-    /// - Returns: The local URL for the ROM file
-    public func localURL(for game: PVGame) -> URL? {
-        guard let file = game.file else {
-            return nil
-        }
-        
-        return file.url
-    }
-    
-    /// Get the cloud URL for a ROM file
-    /// - Parameter game: The game to get the URL for
-    /// - Returns: The cloud URL for the ROM file (this is a virtual path for CloudKit)
-    public func cloudURL(for game: PVGame) -> URL? {
-        guard let file = game.file,
-              let url = file.url else {
-            return nil
-        }
-        
-        // For CloudKit, we create a virtual path that represents the record
-        let systemPath = (game.systemIdentifier as NSString)
-        let systemDir = systemPath.components(separatedBy: "/").last ?? systemPath as String
-        
-        // Create a URL with a custom scheme to represent CloudKit records
-        // This is just for internal tracking, not an actual file URL
-        var components = URLComponents()
-        components.scheme = "cloudkit"
-        components.host = "roms"
-        components.path = "/\(systemDir)/\(url.lastPathComponent)"
-        
-        return components.url
-    }
-}

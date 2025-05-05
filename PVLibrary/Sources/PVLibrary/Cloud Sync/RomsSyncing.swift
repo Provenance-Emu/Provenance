@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RxSwift
 
 /// Protocol for ROM-specific sync operations
 public protocol RomsSyncing: SyncProvider {
@@ -22,11 +21,16 @@ public protocol RomsSyncing: SyncProvider {
     
     /// Upload a ROM file to the cloud
     /// - Parameter game: The game to upload
-    /// - Returns: Completable that completes when the upload is done
-    func uploadROM(for game: PVGame) -> Completable
+    /// - Throws: CloudSyncError on failure
+    func uploadGame(_ game: PVGame) async throws
     
     /// Download a ROM file from the cloud
     /// - Parameter game: The game to download
-    /// - Returns: Completable that completes when the download is done
-    func downloadROM(for game: PVGame) -> Completable
+    /// - Throws: CloudSyncError on failure
+    func downloadGame(md5: String) async throws
+    
+    /// Mark a game as deleted in the cloud storage.
+    /// - Parameter md5: The MD5 hash of the game to mark as deleted.
+    /// - Throws: CloudSyncError on failure
+    func markGameAsDeleted(md5: String) async throws
 }

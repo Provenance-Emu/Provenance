@@ -161,7 +161,7 @@ public class CloudKitSubscriptionManager {
         
         // Create subscription
         let subscription = CKQuerySubscription(
-            recordType: CloudKitSchema.RecordType.file,
+            recordType: CloudKitSchema.RecordType.file.rawValue,
             predicate: predicate,
             subscriptionID: subscriptionID,
             options: [.firesOnRecordCreation, .firesOnRecordUpdate, .firesOnRecordDeletion]
@@ -199,7 +199,7 @@ public class CloudKitSubscriptionManager {
         
         // Create subscription
         let subscription = CKQuerySubscription(
-            recordType: CloudKitSchema.RecordType.rom,
+            recordType: CloudKitSchema.RecordType.rom.rawValue,
             predicate: predicate,
             subscriptionID: subscriptionID,
             options: [.firesOnRecordCreation, .firesOnRecordUpdate, .firesOnRecordDeletion]
@@ -237,7 +237,7 @@ public class CloudKitSubscriptionManager {
         
         // Create subscription
         let subscription = CKQuerySubscription(
-            recordType: CloudKitSchema.RecordType.saveState,
+            recordType: CloudKitSchema.RecordType.saveState.rawValue,
             predicate: predicate,
             subscriptionID: subscriptionID,
             options: [.firesOnRecordCreation, .firesOnRecordUpdate, .firesOnRecordDeletion]
@@ -275,7 +275,7 @@ public class CloudKitSubscriptionManager {
         
         // Create subscription
         let subscription = CKQuerySubscription(
-            recordType: CloudKitSchema.RecordType.bios,
+            recordType: CloudKitSchema.RecordType.bios.rawValue,
             predicate: predicate,
             subscriptionID: subscriptionID,
             options: [.firesOnRecordCreation, .firesOnRecordUpdate, .firesOnRecordDeletion]
@@ -296,59 +296,65 @@ public class CloudKitSubscriptionManager {
     
     /// Handle a query notification
     /// - Parameters:
-    ///   - notification: The query notification
-    ///   - recordID: The record ID
-    private func handleQueryNotification(_ notification: CKQueryNotification, recordID: CKRecord.ID) {
-        // Extract record type from the record ID
-        let recordName = recordID.recordName
-        let components = recordName.split(separator: "_")
-        guard let recordTypeComponent = components.first else {
-            ELOG("Invalid record name format (no underscore): \(recordName)")
-            return
-        }
+    ///   - queryNotification: The notification object
+    ///   - recordID: The ID of the affected record
+    private func handleQueryNotification(_ queryNotification: CKQueryNotification, recordID: CKRecord.ID) {
+        DLOG("Handling query notification for Record ID: \(recordID.recordName), Reason: \(queryNotification.queryNotificationReason.rawValue)")
         
-        let recordType = String(recordTypeComponent)
+        // Get the subscription ID to determine the record type context
+        let subscriptionID = queryNotification.subscriptionID ?? "unknown"
+        let reason = queryNotification.queryNotificationReason // Pass the reason along
         
-        // Handle based on record type
-        switch recordType {
-        case "File":
-            handleFileNotification(notification, recordID: recordID)
-        case "Game", "ROM": // Handle both Game and ROM (from schema)
-            handleGameNotification(notification, recordID: recordID)
-        case "SaveState":
-            handleSaveStateNotification(notification, recordID: recordID)
-        case "Battery States", "Screenshots", "RetroArch", "DeltaSkins", "BIOS":
-            // These are directory types that we sync but don't need special handling for
-            DLOG("Received notification for directory type: \(recordType)")
-            // Post a notification for UI updates
-            NotificationCenter.default.post(
-                name: .cloudKitRecordTransferCompleted,
-                object: nil,
-                userInfo: ["count": 1, "isUpload": false, "recordType": recordType]
-            )
-        default:
-            ELOG("""
-                 Unknown record type encountered: \(recordType)
-                 Full record name: \(recordID.recordName)
-                 This may indicate a mismatch between CloudKit schema and notification handling.
-                 Attempting to delete the record to prevent sync issues.
-                 """)
-            
-            // Delete the unknown record to prevent ongoing sync issues
-            Task {
-                do {
-                    try await privateDatabase.deleteRecord(withID: recordID)
-                    DLOG("Successfully deleted unknown record: \(recordID.recordName)")
-                    
-                    // Post a notification so the UI can update
-                    NotificationCenter.default.post(
-                        name: .cloudKitRecordTransferCompleted,
-                        object: nil,
-                        userInfo: ["count": 1, "isUpload": false, "recordType": "unknown"]
-                    )
-                } catch {
-                    ELOG("Failed to delete unknown record \(recordID.recordName): \(error.localizedDescription)")
+        Task { // Perform async operations in a Task
+            switch subscriptionID {
+            case "rom-changes":
+                // Handle ROM changes (using romsSyncer)
+                // Ensure the syncer is the CloudKit specific one before calling its method
+                if let cloudKitSyncer = CloudSyncManager.shared.romsSyncer as? CloudKitRomsSyncer {
+                    do {
+                        try await cloudKitSyncer.handleRemoteGameChange(recordID: recordID)
+                        DLOG("Processed ROM notification via CloudKitRomsSyncer for \(recordID.recordName)")
+                    } catch {
+                        ELOG("Error processing ROM notification for \(recordID.recordName): \(error)")
+                    }
+                } else {
+                    WLOG("Roms Syncer is not CloudKitRomsSyncer or is nil. Cannot handle CloudKit notification for \(recordID.recordName).")
                 }
+                
+            case "save-state-changes":
+                // Handle Save State changes
+                // Ensure the syncer is the CloudKit specific one (or its base class) before calling its method
+                if let cloudKitSyncer = CloudSyncManager.shared.saveStatesSyncer as? CloudKitSyncer {
+                    do {
+                        // Fetch the record using the ID provided by the notification
+                        let record = try await cloudKitSyncer.privateDatabase.record(for: recordID)
+                        DLOG("Fetched SaveState record for notification: \(record.recordID.recordName)")
+                        // Process the fetched record
+                        await cloudKitSyncer.processCloudKitRecord(record)
+                        DLOG("Processed SaveState notification via CloudKitSyncer for \(recordID.recordName)")
+                    } catch {
+                        ELOG("Error fetching or processing SaveState notification for \(recordID.recordName): \(error)")
+                        // Optionally, inform the syncer's error handler
+                        // await cloudKitSyncer.errorHandler.handle(error: error)
+                    }
+                } else {
+                    WLOG("SaveStates Syncer is not CloudKitSyncer or is nil. Cannot handle CloudKit notification for \(recordID.recordName).")
+                }
+                
+            case "file-changes", "bios-changes":
+                // Handle File/BIOS changes (using nonDatabaseSyncer)
+                if let nonDatabaseSyncer = CloudSyncManager.shared.nonDatabaseSyncer {
+                    // Call the method we added earlier in CloudKitNonDatabaseSyncer.swift
+                    // This method currently handles deletion implicitly by catching CKError.unknownItem
+                    await nonDatabaseSyncer.processRemoteRecordUpdate(recordID: recordID)
+                    DLOG("Processed File/BIOS notification via nonDatabaseSyncer for \(recordID.recordName)")
+                } else {
+                    WLOG("NonDatabase Syncer not available to handle notification for \(recordID.recordName)")
+                }
+                
+            default:
+                WLOG("Unhandled subscription ID: \(subscriptionID) for record \(recordID.recordName)")
+                // Optional: Add logic to fetch the record to determine its type if needed.
             }
         }
     }
@@ -401,7 +407,7 @@ public class CloudKitSubscriptionManager {
                             if let gameID = record["gameID"] as? String {
                                 // Find game and download
                                 if let game = PVGame.with(primaryKey: gameID) {
-                                    _ = CloudSyncManager.shared.downloadROM(for: game)
+                                    _ = try await CloudSyncManager.shared.downloadROM(for: game)
                                 }
                             }
                         } else if directory == "Saves" {
@@ -409,13 +415,13 @@ public class CloudKitSubscriptionManager {
                             if let saveStateID = record["saveStateID"] as? String {
                                 // Find save state and download
                                 if let saveState = PVSaveState.with(primaryKey: saveStateID) {
-                                    _ = CloudSyncManager.shared.downloadSaveState(for: saveState)
+                                    _ = try await CloudSyncManager.shared.downloadSaveState(for: saveState)
                                 }
                             }
-                        } else if directory == "BIOS" {
-                            // Handle BIOS file
-                            if let biosSyncer = CloudSyncManager.shared.biosSyncer as? BIOSSyncing {
-                                _ = biosSyncer.downloadBIOS(filename: filename)
+                        } else {
+                            // Handle any file
+                            if let biosSyncer = CloudSyncManager.shared.nonDatabaseSyncer  {
+                                _ = try await biosSyncer.downloadFileOnDemand(recordName: filename)
                             }
                         }
                     }
@@ -453,7 +459,7 @@ public class CloudKitSubscriptionManager {
                             if let gameID = record["gameID"] as? String {
                                 // Find game and download
                                 if let game = PVGame.with(primaryKey: gameID) {
-                                    _ = CloudSyncManager.shared.downloadROM(for: game)
+                                    _ = try await CloudSyncManager.shared.downloadROM(for: game)
                                 }
                             }
                         } else if directory == "Saves" {
@@ -461,13 +467,13 @@ public class CloudKitSubscriptionManager {
                             if let saveStateID = record["saveStateID"] as? String {
                                 // Find save state and download
                                 if let saveState = PVSaveState.with(primaryKey: saveStateID) {
-                                    _ = CloudSyncManager.shared.downloadSaveState(for: saveState)
+                                    _ = try await CloudSyncManager.shared.downloadSaveState(for: saveState)
                                 }
                             }
-                        } else if directory == "BIOS" {
+                        } else {
                             // Handle BIOS file
-                            if let biosSyncer = CloudSyncManager.shared.biosSyncer as? BIOSSyncing {
-                                _ = biosSyncer.downloadBIOS(filename: filename)
+                            if let biosSyncer = CloudSyncManager.shared.nonDatabaseSyncer {
+                                _ = try await biosSyncer.downloadFileOnDemand(recordName: filename)
                             }
                         }
                     }
@@ -665,4 +671,7 @@ extension Notification.Name {
     
     /// Notification sent when a save state is deleted in CloudKit
     public static let CloudKitSaveStateDeleted = Notification.Name("CloudKitSaveStateDeleted")
+    
+    /// Notification sent when a file is downloaded from CloudKit
+    public static let PVCloudSyncDidDownloadFile = Notification.Name("PVCloudSyncDidDownloadFile")
 }

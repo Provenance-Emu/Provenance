@@ -9,6 +9,8 @@ import Foundation
 import PVPlists
 import PVLogging
 import PVSettings
+import PVSystems
+import PVPrimitives
 
 public let UbiquityIdentityTokenKey = (Bundle.main.bundleIdentifier ?? "org.provenance-emu.provenance")  + ".UbiquityIdentityToken"
 public let PVAppGroupId = Bundle.main.infoDictionary?["APP_GROUP_IDENTIFIER"] as? String ?? "group.org.provenance-emu.provenance"
@@ -171,6 +173,13 @@ public extension Paths {
         return saveSavesPath
     }
     
+    static func romsPath(forSystemIdentifier systemIdentifier: String) -> URL {
+        return Paths.romsPath.appendingPathComponent(systemIdentifier, isDirectory: true)
+    }
+    
+    static func romsPath(forSystemIdentifier systemIdentifier: SystemIdentifier) -> URL {
+        return Paths.romsPath.appendingPathComponent(systemIdentifier.rawValue, isDirectory: true)
+    }
 }
 
 public extension URL {

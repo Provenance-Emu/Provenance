@@ -32,7 +32,7 @@ public class iCloudRomsSyncer: iCloudContainerSyncer {
                   notificationCenter: notificationCenter,
                   errorHandler: errorHandler)
         fileImportQueueMaxCount = 1
-        let publishers = [.RomsFinishedImporting, .RomDatabaseInitialized].map { notificationCenter.publisher(for: $0) }
+        let publishers = [.GameImporterDidFinish, .RomDatabaseInitialized].map { notificationCenter.publisher(for: $0) }
         romsDatabaseSubscriber = Publishers.MergeMany(publishers).sink { [weak self] _ in
             Task {
                 await self?.handleImportNewRomFiles()

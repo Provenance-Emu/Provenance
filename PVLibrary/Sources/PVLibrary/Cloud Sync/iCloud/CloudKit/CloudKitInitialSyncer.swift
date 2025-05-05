@@ -59,12 +59,13 @@ public actor CloudKitInitialSyncer {
     public func isInitialSyncNeeded() async -> Bool {
         do {
             // Check multiple record types, not just ROMs
-            for recordType in [CloudKitSchema.RecordType.rom,
-                              CloudKitSchema.RecordType.saveState,
-                              CloudKitSchema.RecordType.file] {
+            for recordTypeRaw in [CloudKitSchema.RecordType.rom.rawValue,
+                               CloudKitSchema.RecordType.saveState.rawValue,
+                               CloudKitSchema.RecordType.bios.rawValue,
+                               CloudKitSchema.RecordType.file.rawValue] {
 
-                DLOG("Checking for existing records of type: \(recordType)")
-                let query = CKQuery(recordType: recordType, predicate: NSPredicate(value: true))
+                DLOG("Checking for existing records of type: \(recordTypeRaw)")
+                let query = CKQuery(recordType: recordTypeRaw, predicate: NSPredicate(value: true))
 
                 // Use a task with timeout to prevent hanging if CloudKit is slow to respond
                 let checkTask = Task {
@@ -79,16 +80,16 @@ public actor CloudKitInitialSyncer {
 
                     // If we find records of any type, we don't need initial sync
                     if !results.isEmpty {
-                        DLOG("Found existing \(recordType) records, initial sync not needed")
+                        DLOG("Found existing \(recordTypeRaw) records, initial sync not needed")
                         return false
                     }
                 } catch is TimeoutError {
-                    ELOG("Timeout checking for \(recordType) records, continuing with other types")
+                    ELOG("Timeout checking for \(recordTypeRaw) records, continuing with other types")
                     // Cancel the task to clean up resources
                     checkTask.cancel()
                     continue
                 } catch {
-                    ELOG("Error checking for \(recordType) records: \(error.localizedDescription)")
+                    ELOG("Error checking for \(recordTypeRaw) records: \(error.localizedDescription)")
                     // Continue checking other record types
                     continue
                 }
@@ -327,7 +328,7 @@ public actor CloudKitInitialSyncer {
                  Synced \(totalCount) records successfully, but some operations failed.
                  See previous log messages for specific errors.
                  """)
-            
+
             CloudKitSyncAnalytics.shared.recordFailedSync(error: error)
         }
 
@@ -357,9 +358,11 @@ public actor CloudKitInitialSyncer {
                 syncProgressSubject.send(progress)
             }
 
-            // Create CloudKit syncer
-            let errorHandler = CloudSyncErrorHandler()
-            let syncer = CloudKitRomsSyncer(container: container, errorHandler: errorHandler)
+            // Create CloudKit syncer from the shared manager
+            guard let syncer = CloudSyncManager.shared.romsSyncer else {
+                ELOG("RomsSyncer not available from CloudSyncManager.shared. Aborting ROM initial sync.")
+                return 0 // Or throw an error?
+            }
 
             // Sync each ROM
             var syncedCount = 0
@@ -378,45 +381,33 @@ public actor CloudKitInitialSyncer {
                     continue
                 }
 
-                // Get ROM file from the game's file property
-                guard let file = game.file, let fileURL = file.url else {
-                    WLOG("ROM has no valid file: \(game.title) (\(game.md5))")
-                    continue
-                }
-                
-                // Check if file exists
-                guard FileManager.default.fileExists(atPath: fileURL.path) else {
-                    WLOG("ROM file does not exist: \(fileURL.path)")
-                    continue
-                }
-                
-                DLOG("Found ROM file at: \(fileURL.path)")
-
                 do {
-                    // Upload ROM to CloudKit
-                    DLOG("Uploading ROM \(index + 1)/\(games.count): \(game.title)")
-                    guard let systemIdentifier = game.system?.systemIdentifier else {
-                        ELOG("ROM has no valid system: \(game.title) (\(game.md5)). Continue to next ROM.")
-                        continue
-                    }
-                    let record = try await syncer.uploadFile(fileURL, gameID: game.id, systemID: systemIdentifier)
-
-                    // Update Realm object with CloudKit record ID
-                    try await realm.asyncWrite {
-                        game.cloudRecordID = record.recordID.recordName
-                    }
+                    try await syncer.uploadGame(game)
 
                     syncedCount += 1
+                    DLOG("Successfully initiated upload for ROM: \(game.title) (\(game.md5))")
 
-                    // Update progress
-                    progress.romsCompleted += 1
-                    await MainActor.run {
-                        syncProgressSubject.send(progress)
+                } catch let error as CloudSyncError {
+                    if case .alreadyExists = error {
+                         // If the record already exists (e.g., from a previous partial sync),
+                         // we can count it as 'synced' for the initial sync purpose.
+                         // We might want to verify the asset exists too, but for initial sync,
+                         // assuming the record existing is enough.
+                         WLOG("ROM \(game.title) (\(game.md5)) record already exists in CloudKit. Skipping initial upload.")
+                         syncedCount += 1 // Count it as done for initial sync progress
+                    } else {
+                        ELOG("Error uploading ROM \(game.title) (\(game.md5)): \(error.localizedDescription)")
+                        // Error is logged within uploadGame, but we log here too for context
                     }
 
-                    DLOG("Successfully uploaded ROM: \(game.title) (\(game.md5))")
                 } catch {
-                    ELOG("Error uploading ROM \(game.title): \(error.localizedDescription)")
+                    ELOG("Error uploading ROM \(game.title) (\(game.md5)): \(error.localizedDescription)")
+                }
+
+                // Update progress (moved outside the try-catch for simplicity, updates regardless of success/failure/skip)
+                progress.romsCompleted += 1
+                await MainActor.run {
+                    syncProgressSubject.send(progress)
                 }
             }
 

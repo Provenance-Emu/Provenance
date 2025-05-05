@@ -23,6 +23,55 @@ import PVRealm
 /// Implements the SyncProvider protocol to provide a consistent interface
 /// with the `iCloudContainerSyncer` used on iOS/macOS
 public class CloudKitSyncer: SyncProvider {
+    // MARK: - Local Schema Definitions (Replacing CloudKitSchema)
+    
+    // Record Types
+    enum RecordType {
+        static let rom = "ROM"
+        static let saveState = "SaveState"
+        static let bios = "BIOS"
+        static let file = "File" // Used by NonDatabaseSyncer, potentially relevant here indirectly?
+        // Add others if needed by CloudKitSyncer subclasses
+    }
+    
+    // Common File Attributes (Potentially used by multiple record types)
+    enum FileAttributes {
+        static let fileData = "fileData"      // CKAsset containing the file data
+        static let lastModified = "lastModified"    // Date last modified
+        static let fileSize = "fileSize"              // File size in bytes
+        static let md5 = "md5"                // MD5 hash of the file
+        static let system = "system" // String identifier for the related PVSystem
+        static let gameID = "gameID" // String identifier for the related PVGame
+        static let directory = "directory"        // Original directory (less likely used for synced records?)
+        static let filename = "filename"        // Original filename (less likely used for synced records?)
+        // Attributes below might be less common across all types
+    }
+    
+    // ROM Specific Attributes (Extends common attributes)
+    enum ROMAttributes {
+        // Uses FileAttributes: fileData, lastModified, fileSize, md5, system, gameID
+        static let title = "title"              // String title
+        static let systemIdentifier = "systemIdentifier" // String identifier for the related PVSystem
+        // Add other PVGame fields synced: isFavorite, importDate?, etc.
+    }
+    
+    // SaveState Specific Attributes (Extends common attributes)
+    enum SaveStateAttributes {
+        // Uses FileAttributes: fileData, lastModified, fileSize, gameID
+        static let description = "description"      // String description
+        // Add other PVSaveState fields synced: date?, lastOpened?
+    }
+    
+    // BIOS Specific Attributes (Extends common attributes)
+    enum BIOSAttributes {
+        // Uses FileAttributes: fileData, lastModified, fileSize, md5, system
+        static let expectedFilename = "expectedFilename" // String expected filename
+        static let descriptionText = "descriptionText" // String description
+        static let expectedSize = "expectedSize"    // Int expected size
+        static let optional = "optional"          // Bool if BIOS is optional
+        // Add other PVBIOS fields synced
+    }
+
     // MARK: - Properties
     
     public lazy var pendingFilesToDownload: ConcurrentSet<URL> = []
@@ -122,7 +171,7 @@ public class CloudKitSyncer: SyncProvider {
                     DLOG("Fetched \(records.count) records from CloudKit")
                     
                     // For ROM records, prioritize creating database entries first
-                    if self.recordType == CloudKitSchema.RecordType.rom || self.recordType == "Game" {
+                    if self.recordType == CloudKitSyncer.RecordType.rom || self.recordType == "Game" {
                         DLOG("Creating database entries for \(records.count) ROM records")
                         // Create database entries for all ROMs first to ensure they appear in the UI
                         for record in records {
@@ -276,7 +325,7 @@ public class CloudKitSyncer: SyncProvider {
     /// - Parameter directory: The directory name to filter records by.
     /// - Returns: An array of CKRecord objects matching the directory.
     internal func fetchAllRecords(for directory: String) async throws -> [CKRecord] {
-        try await fetchAllRecords(recordType: CloudKitSchema.RecordType.file, directory: directory)
+        try await fetchAllRecords(recordType: CloudKitSyncer.RecordType.file, directory: directory)
     }
     
     /// Fetches all records of a specific type, optionally filtered by directory, from the private database.
@@ -573,9 +622,9 @@ public class CloudKitSyncer: SyncProvider {
         
         do {
             // Fetch all records with only the required metadata fields
-            let desiredKeys = [CloudKitSchema.FileAttributes.filename,
-                               CloudKitSchema.FileAttributes.directory,
-                               CloudKitSchema.FileAttributes.lastModified]
+            let desiredKeys = [CloudKitSyncer.FileAttributes.filename,
+                               CloudKitSyncer.FileAttributes.directory,
+                               CloudKitSyncer.FileAttributes.lastModified]
             
             let records = try await fetchAllRecords(recordType: typeToSync)
             
@@ -682,9 +731,9 @@ public class CloudKitSyncer: SyncProvider {
         let directory: String
         if let directoryValue = record["directory"] as? String {
             directory = directoryValue
-        } else if record.recordType == CloudKitSchema.RecordType.rom || record.recordType == "Game" {
+        } else if record.recordType == CloudKitSyncer.RecordType.rom || record.recordType == "Game" {
             // For ROMs, use a default directory if missing
-            let system = record[CloudKitSchema.FileAttributes.system] as? String ?? "Unknown"
+            let system = record["system"] as? String ?? "Unknown"
             directory = "roms/\(system)"
             WLOG("Missing directory for ROM record, using: \(directory)")
         } else {
@@ -696,9 +745,9 @@ public class CloudKitSyncer: SyncProvider {
         let filename: String
         if let filenameValue = record["filename"] as? String {
             filename = filenameValue
-        } else if let titleValue = record[CloudKitSchema.ROMAttributes.title] as? String {
+        } else if let titleValue = record["title"] as? String {
             // Use title as filename if available
-            let fileExt = record.recordType == CloudKitSchema.RecordType.rom ? ".rom" : ".dat"
+            let fileExt = record.recordType == CloudKitSyncer.RecordType.rom ? ".rom" : ".dat"
             filename = titleValue.replacingOccurrences(of: " ", with: "_") + fileExt
             WLOG("Missing filename for record, using title: \(filename)")
         } else {
@@ -718,7 +767,7 @@ public class CloudKitSyncer: SyncProvider {
             // For ROMs, we always want to create database entries even without file data
             await createDatabaseEntryFromRecord(record, directory: directory, filename: filename)
             
-            if record.recordType == CloudKitSchema.RecordType.rom || record.recordType == "Game" {
+            if record.recordType == CloudKitSyncer.RecordType.rom || record.recordType == "Game" {
                 DLOG("Created database entry for ROM: \(filename) (metadata only)")
             }
         }
@@ -811,7 +860,7 @@ public class CloudKitSyncer: SyncProvider {
     
     /// Process a CloudKit record and create the appropriate database entry
     /// - Parameter record: The CloudKit record to process
-    private func processCloudKitRecord(_ record: CKRecord) async {
+    internal func processCloudKitRecord(_ record: CKRecord) async {
         // Log record information
         VLOG("Processing CloudKit record: \(record.recordID.recordName) of type: \(record.recordType)")
         
@@ -821,7 +870,7 @@ public class CloudKitSyncer: SyncProvider {
         
         // Extract the filename from the record - try multiple possible field names
         var filename: String?
-        if let filenameValue = record[CloudKitSchema.FileAttributes.filename] as? String {
+        if let filenameValue = record["filename"] as? String {
             filename = filenameValue
         } else if let filenameValue = record["filename"] as? String {
             filename = filenameValue
@@ -836,7 +885,7 @@ public class CloudKitSyncer: SyncProvider {
         
         // If we still don't have a filename, log and handle the record
         if filename == nil {
-            WLOG("Record missing filename: \(record.recordID.recordName ?? "unknown")")
+            WLOG("Record missing filename: \(record.recordID.recordName)")
             
             // If it's a test record (UUID-like name), delete it to prevent future sync issues
             let recordName = record.recordID.recordName
@@ -852,7 +901,7 @@ public class CloudKitSyncer: SyncProvider {
             }
             
             // Try to process the record anyway if it's a BIOS record
-            if record.recordType == CloudKitSchema.RecordType.bios {
+            if record.recordType == CloudKitSyncer.RecordType.bios {
                 DLOG("Attempting to process BIOS record despite missing filename")
                 filename = "unknown_bios_\(record.recordID.recordName ?? UUID().uuidString)"
             } else {
@@ -865,11 +914,11 @@ public class CloudKitSyncer: SyncProvider {
         // Determine the directory based on record type
         let directory: String
         switch record.recordType {
-        case CloudKitSchema.RecordType.rom:
+        case CloudKitSyncer.RecordType.rom:
             directory = "roms"
-        case CloudKitSchema.RecordType.saveState:
+        case CloudKitSyncer.RecordType.saveState:
             directory = "saves"
-        case CloudKitSchema.RecordType.bios:
+        case CloudKitSyncer.RecordType.bios:
             directory = "bios"
         case "Game": // Handle legacy record type
             directory = "roms"
@@ -902,15 +951,15 @@ public class CloudKitSyncer: SyncProvider {
         VLOG("Creating database entry for record: \(record.recordID.recordName) of type: \(record.recordType) in directory: \(directory)")
         
         switch record.recordType {
-        case CloudKitSchema.RecordType.rom, "Game": // Handle both current and legacy record types
+        case CloudKitSyncer.RecordType.rom, "Game": // Handle both current and legacy record types
             DLOG("Processing as ROM record")
             await createROMEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: isDownloaded)
             
-        case CloudKitSchema.RecordType.saveState:
+        case CloudKitSyncer.RecordType.saveState:
             DLOG("Processing as SaveState record")
             await createSaveStateEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: isDownloaded)
             
-        case CloudKitSchema.RecordType.bios:
+        case CloudKitSyncer.RecordType.bios:
             DLOG("Processing as BIOS record")
             await createBIOSEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: isDownloaded)
             
@@ -945,9 +994,7 @@ public class CloudKitSyncer: SyncProvider {
         
         // Get title with fallbacks
         let title: String
-        if let titleValue = record[CloudKitSchema.ROMAttributes.title] as? String {
-            title = titleValue
-        } else if let titleValue = record["title"] as? String {
+        if let titleValue = record["title"] as? String {
             title = titleValue
         } else {
             title = filename.components(separatedBy: ".").first ?? filename
@@ -955,9 +1002,7 @@ public class CloudKitSyncer: SyncProvider {
         
         // Get MD5 with fallbacks
         let md5: String
-        if let md5Value = record[CloudKitSchema.FileAttributes.md5] as? String {
-            md5 = md5Value
-        } else if let md5Value = record["md5"] as? String {
+        if let md5Value = record["md5"] as? String {
             md5 = md5Value
         } else if let md5Value = record["md5Hash"] as? String {
             md5 = md5Value
@@ -969,9 +1014,7 @@ public class CloudKitSyncer: SyncProvider {
         
         // Get system with fallbacks
         let system: String
-        if let systemValue = record[CloudKitSchema.FileAttributes.system] as? String {
-            system = systemValue
-        } else if let systemValue = record["system"] as? String {
+        if let systemValue = record["system"] as? String {
             system = systemValue
         } else if let systemValue = record["systemIdentifier"] as? String {
             system = systemValue
@@ -1108,10 +1151,10 @@ public class CloudKitSyncer: SyncProvider {
         // Extract metadata from the record
         let description: String = record["description"] as? String ?? filename
         let recordID = record.recordID.recordName
-        guard let gameID = record[CloudKitSchema.FileAttributes.gameID] as? String,
+        guard let gameID = record["gameID"] as? String,
               let fileSize = record["fileSize"] as? Int64
         else {
-            ELOG("Missing metadata for save state record: \(record.recordID.recordName ?? "unknown")")
+            ELOG("Missing metadata for save state record: \(record.recordID.recordName)")
             return
         }
         
@@ -1192,7 +1235,7 @@ public class CloudKitSyncer: SyncProvider {
         let recordID = record.recordID.recordName
         
         // Extract system identifier - use a default if missing
-        let systemIdentifier = record[CloudKitSchema.ROMAttributes.systemIdentifier] as? String ?? "Unknown"
+        let systemIdentifier = record["system"] as? String ?? "Unknown"
         
         // Extract file size - use a default if missing
         let fileSize: Int64
@@ -1200,7 +1243,7 @@ public class CloudKitSyncer: SyncProvider {
             fileSize = size
         } else {
             // Try to get size from the file asset
-            if let asset = record[CloudKitSchema.FileAttributes.fileData] as? CKAsset,
+            if let asset = record["fileData"] as? CKAsset,
                let fileURL = asset.fileURL,
                let attributes = try? FileManager.default.attributesOfItem(atPath: fileURL.path),
                let size = attributes[.size] as? NSNumber {
@@ -1211,7 +1254,7 @@ public class CloudKitSyncer: SyncProvider {
         }
         
         // Extract MD5 - this is optional
-        let md5 = record[CloudKitSchema.FileAttributes.md5] as? String ?? ""
+        let md5 = record["md5"] as? String ?? ""
         
         do {
             // Get the Realm instance
@@ -1310,13 +1353,12 @@ public class CloudKitSyncer: SyncProvider {
                         progressTracker.updateProgress(0.3)
                         
                         // Extract required fields from the record
-                        guard let directory = record[CloudKitSchema.FileAttributes.directory] as? String,
-                              let filename = record[CloudKitSchema.FileAttributes.filename] as? String,
-                              let fileAsset = record[CloudKitSchema.FileAttributes.fileData] as? CKAsset,
+                        guard let directory = record["directory"] as? String,
+                              let filename = record["filename"] as? String,
+                              let fileAsset = record["fileData"] as? CKAsset,
                               let fileURL = fileAsset.fileURL else {
-                            ELOG("Record missing required fields - directory: \(record[CloudKitSchema.FileAttributes.directory] != nil), filename: \(record[CloudKitSchema.FileAttributes.filename] != nil), fileData: \(record[CloudKitSchema.FileAttributes.fileData] != nil)")
-                            throw NSError(domain: "com.provenance-emu.provenance", code: 2,
-                                          userInfo: [NSLocalizedDescriptionKey: "Record does not contain required file data"])
+                            ELOG("Record missing required fields - directory: \(record["directory"] != nil), filename: \(record["filename"] != nil), fileData: \(record["fileData"] != nil)")
+                            throw NSError(domain: "com.provenance-emu.provenance", code: 2, userInfo: [NSLocalizedDescriptionKey: "Record does not contain required file data"])
                         }
                         
                         // Get file size for progress reporting
@@ -1474,7 +1516,7 @@ public class CloudKitSyncer: SyncProvider {
                             record = existingRecord
                             
                             // Check if local file is newer than cloud record's modification date
-                            if let cloudModifiedDate = record[CloudKitSchema.FileAttributes.lastModified] as? Date,
+                            if let cloudModifiedDate = record["lastModified"] as? Date,
                                modifiedDate <= cloudModifiedDate {
                                 DLOG("Local file \(filename) is not newer than cloud version. Skipping upload.")
                                 return record // No need to upload
@@ -1490,18 +1532,18 @@ public class CloudKitSyncer: SyncProvider {
                         }
                         
                         // Populate record fields
-                        record[CloudKitSchema.FileAttributes.filename] = filename as CKRecordValue
-                        record[CloudKitSchema.FileAttributes.directory] = directory as CKRecordValue
-                        record[CloudKitSchema.FileAttributes.fileSize] = size as CKRecordValue
-                        record[CloudKitSchema.FileAttributes.lastModified] = modifiedDate as CKRecordValue
+                        record["filename"] = filename as CKRecordValue
+                        record["directory"] = directory as CKRecordValue
+                        record["fileSize"] = size as CKRecordValue
+                        record["lastModified"] = modifiedDate as CKRecordValue
                         
                         // --- START: Use parameters directly --- 
-                        record[CloudKitSchema.FileAttributes.gameID] = gameID as CKRecordValue?
-                        record[CloudKitSchema.FileAttributes.systemID] = systemID?.rawValue as CKRecordValue?
+                        record["gameID"] = gameID as CKRecordValue?
+                        record["system"] = systemID?.rawValue as CKRecordValue?
                         
                         // Optional: Set description based on available info
                         var descriptionParts: [String] = []
-                        if let filename = record[CloudKitSchema.FileAttributes.filename] as? String { descriptionParts.append(filename) }
+                        if let filename = record["filename"] as? String { descriptionParts.append(filename) }
                         if let systemID = systemID { descriptionParts.append("for \(systemID.rawValue)") }
                         if !descriptionParts.isEmpty {
                             record["description"] = descriptionParts.joined(separator: " ") as CKRecordValue
@@ -1510,7 +1552,7 @@ public class CloudKitSyncer: SyncProvider {
                         
                         // Associate the file asset
                         let asset = CKAsset(fileURL: file)
-                        record[CloudKitSchema.FileAttributes.fileData] = asset
+                        record["fileData"] = asset
                         
                         // Save the record
                         progressTracker.updateProgress(0.4)

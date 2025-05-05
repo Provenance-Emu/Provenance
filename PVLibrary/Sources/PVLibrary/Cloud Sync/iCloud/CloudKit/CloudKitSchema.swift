@@ -24,107 +24,89 @@ public enum CloudKitSchema {
     /// Flag to track if schema has been initialized
     private static var isSchemaInitialized = false
     
-    /// Record types used in CloudKit
-    public enum RecordType {
-        /// ROM record type - represents a ROM file in the cloud
-        public static let rom = "ROM"
-        
-        /// SaveState record type - represents a save state file in the cloud
-        public static let saveState = "SaveState"
-        
-        /// BIOS record type - represents a BIOS file in the cloud
-        public static let bios = "BIOS"
-        
-        /// File record type - generic file type for other files
-        public static let file = "File"
-        
-        /// All record types used in the app
-        public static let all = [rom, saveState, bios, file]
+    /// Record types used in the public CloudKit database.
+    public enum RecordType: String, CaseIterable {
+        case rom = "ROM" // Changed from Game to ROM for clarity, or keep Game if preferred?
+        case saveState = "SaveState"
+        case bios = "BIOS"
+        case screenshot = "Screenshot"
+        case artwork = "Artwork"
+        case file = "File" // Generic file type, maybe used by non-DB syncer?
+        case metadata = "Metadata" // For general sync metadata, like last sync tokens
     }
     
-    /// Common file attributes for all record types
-    public enum FileAttributes {
-        /// Directory containing the file (e.g., "ROMs", "Saves", "BIOS")
-        public static let directory = "directory"
+    /// Field keys for the ROM record type.
+    public struct ROMFields {
+        public static let recordType = RecordType.rom.rawValue
         
-        /// System identifier or subdirectory (e.g., "SNES", "NES")
-        public static let system = "system"
-        
-        /// Filename of the file
-        public static let filename = "filename"
-        
-        /// File data as a CKAsset
-        public static let fileData = "fileData"
-        
-        /// Last modified date
-        public static let lastModified = "lastModified"
-        
-        /// MD5 hash of the file (if available)
-        public static let md5 = "md5"
-        
-        /// ID of the game this file belongs to (for save states)
-        public static let gameID = "gameID"
-        
-        /// System ID
-        public static let systemID = "systemID"
-        
-        /// ID of the save state this file belongs to (for save states)
-        public static let saveStateID = "saveStateID"
-        
-        /// File size
-        public static let fileSize = "fileSize"
-        
-        /// All common attributes used in file records
-        public static let all = [directory, system, filename, fileData, lastModified, md5, gameID, systemID, saveStateID, fileSize]
+        // Core Identifiers & File Info
+        public static let md5 = "md5" // String, Indexed
+        public static let systemIdentifier = "systemIdentifier" // String
+        public static let romFile = "romFile" // CKAsset
+        public static let isArchive = "isArchive" // Bool (True if romFile is a zip)
+        public static let fileSize = "fileSize" // Int64
+        public static let originalFilename = "originalFilename" // String
+        public static let relatedFilenames = "relatedFilenames" // [String]?
+
+        // OpenVGDB Metadata (Optional Strings)
+        public static let title = "title" // String (Maybe redundant if derived from originalFilename, but good for display)
+        public static let gameDescription = "gameDescription"
+        public static let boxBackArtworkURL = "boxBackArtworkURL"
+        public static let developer = "developer"
+        public static let publisher = "publisher"
+        public static let publishDate = "publishDate"
+        public static let genres = "genres" // Comma-separated String?
+        public static let referenceURL = "referenceURL"
+        public static let releaseID = "releaseID"
+        public static let regionName = "regionName"
+        public static let regionID = "regionID" // Int64?
+        public static let systemShortName = "systemShortName"
+        public static let language = "language"
+
+        // User Stats & Info
+        public static let lastPlayed = "lastPlayed" // Date?
+        public static let playCount = "playCount" // Int64
+        public static let timeSpentInGame = "timeSpentInGame" // Int64 (seconds)
+        public static let rating = "rating" // Int64 (-1 to 5)
+        public static let isFavorite = "isFavorite" // Bool
+        public static let isDeleted = "isDeleted" // Boolean flag for soft delete
+        public static let importDate = "importDate" // Date?
+
+        // Sync Metadata
+        public static let lastModifiedDevice = "lastModifiedDevice" // String? (Identifier for device)
+        // CloudKit system fields like creationDate, modificationDate are implicit
     }
     
-    /// ROM-specific attributes
-    public enum ROMAttributes {
-        /// Game title
-        public static let title = "title"
+    /// Field keys for the SaveState record type.
+    public struct SaveStateFields {
+        public static let recordType = RecordType.saveState.rawValue
         
+        public static let filename = "filename" // String
+        public static let directory = "directory" // String (e.g., "BIOS", "Saves", "Cheats")
+        public static let systemIdentifier = "systemIdentifier" // String? (Optional, e.g., for BIOS)
+        public static let gameID = "gameID" // String? (Optional, e.g., for Saves)
+        public static let fileData = "fileData" // CKAsset
+        public static let fileSize = "fileSize" // Int64
+        public static let lastModified = "lastModified" // Date
+        public static let md5 = "md5" // String? (Optional, e.g., for BIOS verification)
+        // Add other relevant fields specific to generic files if needed
+    }
+    
+    /// Field keys for the Metadata record type (e.g., for sync tokens).
+    public struct MetadataFields {
+        public static let recordType = RecordType.metadata.rawValue
+        
+        // Add relevant fields for metadata if needed
+    }
+    
+    /// Field keys for the BIOS record type.
+    public struct BIOSAttributes {
         /// System identifier
-        public static let systemIdentifier = "systemIdentifier"
-        
-        /// MD5 hash of the ROM
-        public static let md5Hash = "md5Hash"
-        
-        /// Game description
-        public static let description = "description"
-        
-        /// Game region
-        public static let region = "region"
-        
-        /// All ROM-specific attributes
-        public static let all = [title, systemIdentifier, md5Hash, description, region]
-    }
-    
-    /// SaveState-specific attributes
-    public enum SaveStateAttributes {
-        /// Save state description
-        public static let description = "description"
-        
-        /// Game ID this save state belongs to
-        public static let gameID = "gameID"
-        
-        /// Screenshot of the save state as a CKAsset
-        public static let screenshot = "screenshot"
-        
-        /// All SaveState-specific attributes
-        public static let all = [description, gameID, screenshot]
-    }
-    
-    /// BIOS-specific attributes
-    public enum BIOSAttributes {
-        /// System identifier
-        public static let systemIdentifier = "systemIdentifier"
-        
+        public static let systemIdentifier = "systemIdentifier" // String
         /// MD5 hash of the BIOS
-        public static let md5Hash = "md5Hash"
-        
+        public static let md5Hash = "md5Hash" // String
         /// Description of the BIOS
-        public static let description = "description"
-        
+        public static let description = "description" // String
         /// All BIOS-specific attributes
         public static let all = [systemIdentifier, md5Hash, description]
     }
@@ -186,8 +168,8 @@ public enum CloudKitSchema {
     /// - Parameter database: The CloudKit database to create record types in
     private static func createRecordTypes(in database: CKDatabase) async throws {
         // Create each record type
-        for recordType in RecordType.all {
-            try await createRecordType(recordType, in: database)
+        for recordType in RecordType.allCases {
+            try await createRecordType(recordType.rawValue, in: database)
         }
     }
     

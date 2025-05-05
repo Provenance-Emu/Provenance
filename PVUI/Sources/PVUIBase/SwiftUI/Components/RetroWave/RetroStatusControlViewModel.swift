@@ -142,7 +142,7 @@ final class RetroStatusControlViewModel: ObservableObject {
         Task {
             do {
                 // Trigger CloudKit sync via CloudSyncManager
-                try await CloudSyncManager.shared.startSync().value
+                try await CloudSyncManager.shared.startSync()
                 DLOG("Manual iCloud sync triggered successfully")
                 
                 // The actual progress and completion will be handled by notification observers
@@ -164,14 +164,17 @@ final class RetroStatusControlViewModel: ObservableObject {
         // Setup CloudKit subscriptions if needed
         DLOG("Setting up CloudKit subscriptions")
         
-        // Subscribe to sync status changes
-        CloudSyncManager.shared.syncStatusPublisher
+        // Subscribe directly to the @Published syncStatus property's projected value ($syncStatus)
+        CloudSyncManager.shared.$syncStatus
             .receive(on: DispatchQueue.main)
             .sink { [weak self] status in
                 guard let self = self else { return }
                 
                 Task { @MainActor in
                     switch status {
+                    case .initializing:
+                        self.cloudKitSyncProgress = ProgressInfo(current: 0, total: 1, detail: "Initializing iCloud sync...")
+                        self.temporaryStatusMessage = "Initializing iCloud sync"
                     case .idle:
                         self.cloudKitSyncProgress = nil
                         self.temporaryStatusMessage = "iCloud sync idle"

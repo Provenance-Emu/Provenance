@@ -298,6 +298,9 @@ public class ImportProgressViewModel: ObservableObject {
                 var statusText: String = ""
 
                 switch status {
+                case .initializing:
+                    isActive = true
+                    statusText = "Initializing..."
                 case .idle:
                     isActive = false
                 case .syncing:
@@ -313,7 +316,8 @@ public class ImportProgressViewModel: ObservableObject {
                     isActive = true
                     statusText = "Downloading..."
                 case .error(let error):
-                    isActive = false // Or true if you want to show error state
+                    isActive = true // Or true if you want to show error state
+                    statusText = "Sync Error: \(error.localizedDescription)"
                     ELOG("CloudSyncManager reported error: \(error.localizedDescription)")
                 case .disabled:
                     isActive = false
