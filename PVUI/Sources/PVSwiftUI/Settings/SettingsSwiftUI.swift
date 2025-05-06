@@ -920,17 +920,19 @@ private struct LibrarySection2: View {
     var body: some View {
         Section(header: Text("Library")) {
             
-            PaidFeatureView {
-                // Cloud Sync Settings
-                NavigationLink(destination: CloudSyncSettingsView()) {
+            if viewModel.showFeatureFlagsDebug {
+                PaidFeatureView {
+                    // Cloud Sync Settings
+                    NavigationLink(destination: CloudSyncSettingsView()) {
+                        SettingsRow(title: "Cloud Sync Settings",
+                                     subtitle: "Manage CloudKit and iCloud Drive sync settings",
+                                     icon: .sfSymbol("icloud"))
+                    }
+                }  lockedView: {
                     SettingsRow(title: "Cloud Sync Settings",
-                                 subtitle: "Manage CloudKit and iCloud Drive sync settings",
-                                 icon: .sfSymbol("icloud"))
+                              subtitle: "Unlock to access CloudKit and iCloud Drive sync settings.",
+                              icon: .sfSymbol("lock.fill"))
                 }
-            }  lockedView: {
-                SettingsRow(title: "Cloud Sync Settings",
-                          subtitle: "Unlock to access CloudKit and iCloud Drive sync settings.",
-                          icon: .sfSymbol("lock.fill"))
             }
             
             NavigationLink(destination: BatchArtworkMatchingView()) {
