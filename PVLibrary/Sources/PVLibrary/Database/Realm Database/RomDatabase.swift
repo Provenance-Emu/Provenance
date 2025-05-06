@@ -189,6 +189,7 @@ public final class RealmConfiguration {
 
                 // Add CloudKit sync properties to PVGame
                 migration.enumerateObjects(ofType: PVGame.className()) { oldObject, newObject in
+                    newObject!["lastCloudSyncDate"] = nil
                     newObject!["cloudRecordID"] = nil
                     newObject!["isDownloaded"] = true
                     newObject!["fileSize"] = 0
