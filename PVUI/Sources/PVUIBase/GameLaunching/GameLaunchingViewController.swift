@@ -288,8 +288,10 @@ extension GameLaunchingViewController where Self: UIViewController {
         activity.persistentIdentifier = NSUserActivityPersistentIdentifier("com.provenance-emu.provenance.openMD5")
         #endif
         
-        self.userActivity = activity
-        self.userActivity?.becomeCurrent()
+        Task { @MainActor in
+            self.userActivity = activity
+            self.userActivity?.becomeCurrent()
+        }
     }
     
     @MainActor
@@ -297,6 +299,8 @@ extension GameLaunchingViewController where Self: UIViewController {
         guard game.realm != nil else {
             return
         }
+        
+        ILOG("Loading game: \(game.title) at romPath: \(game.romPath), url: \(game.url?.absoluteString ?? "nil"), partialPath: \(game.file?.partialPath ?? "nil")")
 
         // Show retrowave-themed loading HUD
         let hud = RetroProgressHUD.show(in: self.view, animated: true)
@@ -313,7 +317,9 @@ extension GameLaunchingViewController where Self: UIViewController {
         @ThreadSafe var core = core
         @ThreadSafe var saveState = saveState
         
-        donateShortcut(forGame: game)
+        Task.detached { [weak self] in
+            self?.donateShortcut(forGame: game)
+        }
 
         guard !(presentedViewController is PVEmualatorControllerProtocol) else {
             let currentGameVC = presentedViewController as! PVEmualatorControllerProtocol
