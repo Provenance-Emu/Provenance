@@ -178,7 +178,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             throw GameImporterError.noSystemMatched
         }
 
-        let file = PVFile(withURL: destinationUrl, relativeRoot: .iCloud)
+        let file = PVFile(withURL: destinationUrl) //, relativeRoot: .iCloud)
         let game = PVGame(withFile: file, system: system)
         game.romPath = partialPath
         game.title = title
@@ -194,7 +194,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             DLOG("Checking file \(url.lastPathComponent) with relative name: \(relativeName)")
             if relativeName == name {
                 DLOG("Found matching related file: \(url.lastPathComponent)")
-                relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent), relativeRoot: .iCloud))
+                relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent))) //, relativeRoot: .iCloud))
             }
         }
 
@@ -202,7 +202,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             DLOG("Processing \(relatedFiles.count) additional related files")
             for url in relatedFiles {
                 DLOG("Adding related file: \(url.lastPathComponent)")
-                relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent), relativeRoot: .iCloud))
+                relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent))) //, relativeRoot: .iCloud))
             }
         }
 
