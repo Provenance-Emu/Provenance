@@ -14,6 +14,7 @@ import PVSettings
 import GameController
 import PVSupport
 import PVLibrary
+import PVFeatureFlags
 
 // MARK: - SwiftUI Menu Views
 
@@ -21,6 +22,7 @@ import PVLibrary
 struct RetroMenuView: View {
     let emulatorVC: PVEmulatorViewController
     let dismissAction: () -> Void
+    @StateObject private var advancedSkinFeaturesFlag = PVFeatureFlagsManager.shared.flag(.advancedSkinFeatures)
 
     @State private var selectedCategory: MenuCategory = .main
 
@@ -187,8 +189,8 @@ struct RetroMenuView: View {
                     categoryButton(title: "MAIN", isSelected: selectedCategory == .main, action: { selectedCategory = .main })
                     categoryButton(title: "STATES", isSelected: selectedCategory == .states, action: { selectedCategory = .states })
                     categoryButton(title: "OPTIONS", isSelected: selectedCategory == .options, action: { selectedCategory = .options })
-                    // Only show skins category if core supports skins
-                    if emulatorVC.core.supportsSkins {
+                    // Only show skins category if core supports skins and the feature flag is enabled
+                    if emulatorVC.core.supportsSkins && advancedSkinFeaturesFlag.value {
                         categoryButton(title: "SKINS", isSelected: selectedCategory == .skins, action: { selectedCategory = .skins })
                     }
                 }
@@ -905,7 +907,7 @@ struct RetroMenuView: View {
         var body: some View {
             GeometryReader { geometry in
                 Button(action: onSelect) {
-                    HStack(spacing: geometry.size.width < 350 ? 8 : 16) {
+                    HStack {
                         // Preview image or placeholder
                         ZStack {
                             if let preview = previewImage {

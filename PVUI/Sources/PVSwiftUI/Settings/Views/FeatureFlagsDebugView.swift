@@ -33,6 +33,10 @@ struct FeatureFlagsDebugView: View {
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
     @State private var scanlineOffset: CGFloat = 0
+    
+    private func refreshFlagsList() {
+        flags = featureFlags.getAllFeatureFlags() // Ensure this is called after overrides
+    }
 
     var body: some View {
         ZStack {
@@ -55,7 +59,7 @@ struct FeatureFlagsDebugView: View {
                         .modifier(RetroTheme.RetroSectionStyle())
                         .padding(.horizontal)
                     
-                    FeatureFlagsSection(flags: flags, featureFlags: featureFlags)
+                    FeatureFlagsSection(flags: flags, featureFlags: featureFlags, refreshAction: refreshFlagsList) // Pass refresh action
                         .modifier(RetroTheme.RetroSectionStyle())
                         .padding(.horizontal)
                     
@@ -106,14 +110,14 @@ struct FeatureFlagsDebugView: View {
         do {
             // First try to refresh from remote
             try await loadDefaultConfiguration()
-            flags = featureFlags.getAllFeatureFlags()
+            flags = featureFlags.getAllFeatureFlags() // Correct: is a method call
             print("Initial flags loaded: \(flags)")
         } catch {
             errorMessage = "Failed to load remote configuration: \(error.localizedDescription)"
             print("Error loading remote configuration: \(error)")
 
             // If remote fails, try to refresh from current state
-            flags = featureFlags.getAllFeatureFlags()
+            flags = featureFlags.getAllFeatureFlags() // Correct: is a method call
         }
 
         isLoading = false
@@ -153,6 +157,7 @@ private struct LoadingSection: View {
 private struct FeatureFlagsSection: View {
     let flags: [(key: String, flag: FeatureFlag, enabled: Bool)]
     @ObservedObject var featureFlags: PVFeatureFlagsManager
+    let refreshAction: () -> Void // Add refresh action closure
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -173,7 +178,7 @@ private struct FeatureFlagsSection: View {
             } else {
                 VStack(spacing: 8) {
                     ForEach(flags, id: \.key) { flag in
-                        FeatureFlagRow(flag: flag, featureFlags: featureFlags)
+                        FeatureFlagRow(flag: flag, featureFlags: featureFlags, refreshAction: refreshAction) // Pass refresh action
                             .padding(.vertical, 4)
                             .padding(.horizontal, 8)
                             .background(
@@ -203,85 +208,72 @@ private struct FeatureFlagsSection: View {
 private struct FeatureFlagRow: View {
     let flag: (key: String, flag: FeatureFlag, enabled: Bool)
     @ObservedObject var featureFlags: PVFeatureFlagsManager
+    let refreshAction: () -> Void
     @State private var isEnabled: Bool
-    @State private var glowOpacity: Double = 0.6
+    // Store the specific PVFeature enum case for convenience
+    private var featureEnum: PVFeature? { PVFeature(rawValue: flag.key) }
 
-    init(flag: (key: String, flag: FeatureFlag, enabled: Bool), featureFlags: PVFeatureFlagsManager) {
+    init(flag: (key: String, flag: FeatureFlag, enabled: Bool), featureFlags: PVFeatureFlagsManager, refreshAction: @escaping () -> Void) {
         self.flag = flag
         self.featureFlags = featureFlags
-        // Initialize state with current value
-        if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
-            _isEnabled = State(initialValue: featureFlags.debugOverrides[feature] ?? flag.enabled)
-        } else {
-            _isEnabled = State(initialValue: flag.enabled)
+        self.refreshAction = refreshAction
+        self._isEnabled = State(initialValue: flag.enabled) // Initialize from effective state
+    }
+
+    private var overrideStatusText: String {
+        guard let feature = featureEnum else { return "Invalid Feature" }
+        let currentOverrides = featureFlags.getCurrentDebugOverrides()
+        if let overrideValue = currentOverrides[feature] {
+            return overrideValue == true ? "Override: ON" : "Override: OFF"
         }
+        return "Override: Default"
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                FeatureFlagInfo(flag: flag)
-                Spacer()
-                FeatureFlagStatus(flag: flag, featureFlags: featureFlags, isEnabled: isEnabled)
-                #if os(tvOS)
-                Button(action: {
-                    if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
-                        isEnabled.toggle()
-                        featureFlags.setDebugOverride(feature: feature, enabled: isEnabled)
-                    }
-                }) {
-                    Text(isEnabled ? "ON" : "OFF")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(isEnabled ? RetroTheme.retroBlue : RetroTheme.retroPink)
-                        .shadow(color: isEnabled ? RetroTheme.retroBlue.opacity(glowOpacity) : RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(flag.key)
+                    .font(.headline)
+                    .foregroundColor(RetroTheme.retroPink)
+                Text(flag.flag.description ?? "Feature not defined in configuration")
+                    .font(.caption)
+                    .foregroundColor(RetroTheme.retroBlue.opacity(0.8))
+                Text("Effective: \(flag.enabled ? "ON" : "OFF")")
+                    .font(.caption)
+                    .foregroundColor(flag.enabled ? .green : .red)
+                Text(overrideStatusText)
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                let restrictions = featureFlags.getFeatureRestrictions(flag.key)
+                if !restrictions.isEmpty {
+                    Text("Restrictions: \(restrictions.joined(separator: ", "))")
+                        .font(.caption)
+                        .foregroundColor(.orange)
                 }
-                #else
-                // Custom toggle with retrowave styling
-                Toggle("", isOn: Binding(
-                    get: { isEnabled },
-                    set: { newValue in
-                        if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
-                            isEnabled = newValue
-                            featureFlags.setDebugOverride(feature: feature, enabled: newValue)
-                        }
-                    }
-                ))
-                .toggleStyle(RetroTheme.RetroToggleStyle())
-                #endif
             }
-            FeatureFlagDetails(flag: flag.flag)
+            Spacer()
+            Toggle("", isOn: $isEnabled)
+                .labelsHidden()
+                .tint(RetroTheme.retroPurple)
         }
-        .padding(.vertical, 4)
-        .onChange(of: featureFlags.debugOverrides) { _ in
-            // Update state when debug overrides change
-            if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key) {
-                isEnabled = featureFlags.debugOverrides[feature] ?? flag.enabled
-            }
+        .onChange(of: isEnabled) { newValue in // React to local toggle changes
+            guard let feature = featureEnum else { return }
+            // The toggle directly reflects the desired state, so if it's true, we want to enable (or set override to true).
+            // If the current effective state (flag.enabled) is already what newValue is, and there's no specific override, 
+            // setting an override to nil might be desired if the UI implies 'remove override'. 
+            // For simplicity here, we assume the toggle sets an explicit override true/false.
+            // If you want a three-state (On/Off/Default), the UI needs a different control.
+            featureFlags.setDebugOverride(for: feature, enabled: newValue)
+            refreshAction() // Refresh the main list to reflect changes
         }
+        // Ensure flag.enabled (effective state) is used to initialize `isEnabled`
+        // and refresh if the parent data changes
         .onAppear {
-            // Start animation for glow effect
-            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                glowOpacity = 0.8
-            }
-        }
-    }
-}
-
-private struct FeatureFlagInfo: View {
-    let flag: (key: String, flag: FeatureFlag, enabled: Bool)
-
-    var body: some View {
-        VStack(alignment: .leading) {
-            Text(flag.key)
-                .font(.system(size: 16, weight: .bold))
-                .foregroundColor(RetroTheme.retroPurple)
-                .shadow(color: RetroTheme.retroPurple.opacity(0.5), radius: 2, x: 0, y: 0)
-            if let description = flag.flag.description {
-                Text(description)
-                    .font(.system(size: 12))
-                    .foregroundColor(.white.opacity(0.8))
-                    .lineLimit(2)
-            }
+             // This ensures that if the flag data from parent changes, isEnabled reflects it.
+             // However, direct changes from parent might fight with user interaction if not careful.
+             // The current init() and onChange should handle most cases.
+             // If issues arise, might need to use .onChange(of: flag.enabled) { self.isEnabled = $0 }
+             // but be cautious of feedback loops.
         }
     }
 }
@@ -289,107 +281,29 @@ private struct FeatureFlagInfo: View {
 private struct FeatureFlagStatus: View {
     let flag: (key: String, flag: FeatureFlag, enabled: Bool)
     @ObservedObject var featureFlags: PVFeatureFlagsManager
-    let isEnabled: Bool
+    // This isEnabled is the effective enabled state passed in.
+    // If this view needs to show override state, it should use getCurrentDebugOverrides as well.
 
-    var body: some View {
-        VStack(alignment: .trailing, spacing: 4) {
-            // Show base configuration state
-            HStack(spacing: 4) {
-                Text("BASE:")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.white.opacity(0.7))
-                
-                Text(flag.flag.enabled ? "ON" : "OFF")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(flag.flag.enabled ? RetroTheme.retroBlue : RetroTheme.retroPink)
-                    .shadow(color: flag.flag.enabled ? RetroTheme.retroBlue.opacity(0.6) : RetroTheme.retroPink.opacity(0.6), radius: 2, x: 0, y: 0)
-            }
+    private var featureEnum: PVFeature? { PVFeature(rawValue: flag.key) }
 
-            // Show effective state
-            HStack(spacing: 4) {
-                Text("ACTIVE:")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.white.opacity(0.7))
-                
-                Text(isEnabled ? "ON" : "OFF")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(isEnabled ? RetroTheme.retroBlue : RetroTheme.retroPink)
-                    .shadow(color: isEnabled ? RetroTheme.retroBlue.opacity(0.6) : RetroTheme.retroPink.opacity(0.6), radius: 2, x: 0, y: 0)
-            }
-
-            // Show debug override if present
-            if let feature = PVFeatureFlags.PVFeature(rawValue: flag.key),
-               let override = featureFlags.debugOverrides[feature] {
-                HStack(spacing: 4) {
-                    Text("OVERRIDE:")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(.white.opacity(0.7))
-                    
-                    Text(override ? "ON" : "OFF")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(override ? RetroTheme.retroPurple : RetroTheme.retroPink)
-                        .shadow(color: override ? RetroTheme.retroPurple.opacity(0.6) : RetroTheme.retroPink.opacity(0.6), radius: 2, x: 0, y: 0)
-                }
-            }
-
-            // Show restrictions if any
-            let restrictions = featureFlags.getFeatureRestrictions(flag.key)
-            if !restrictions.isEmpty {
-                VStack(alignment: .trailing, spacing: 2) {
-                    ForEach(restrictions, id: \.self) { restriction in
-                        Text(restriction)
-                            .font(.system(size: 10, weight: .medium))
-                            .foregroundColor(RetroTheme.retroPink)
-                            .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 1, x: 0, y: 0)
-                    }
-                }
-            }
+    private var overrideDetailText: String {
+        guard let feature = featureEnum else { return "Invalid Feature Key" }
+        let currentOverrides = featureFlags.getCurrentDebugOverrides() // Corrected access
+        if let specificOverride = currentOverrides[feature] {
+            return specificOverride == true ? "Forced ON" : "Forced OFF"
         }
+        return "Following Configuration"
     }
-}
-
-private struct FeatureFlagDetails: View {
-    let flag: FeatureFlag
 
     var body: some View {
-        HStack(spacing: 8) {
-            if let minVersion = flag.minVersion {
-                HStack(spacing: 4) {
-                    Image(systemName: "arrow.up")
-                        .font(.system(size: 10))
-                        .foregroundColor(RetroTheme.retroBlue.opacity(0.7))
-                    
-                    Text("v\(minVersion)+")
-                        .font(.system(size: 10, weight: .medium))
-                        .foregroundColor(.white.opacity(0.6))
-                }
-            }
-            
-            if let minBuild = flag.minBuildNumber {
-                HStack(spacing: 4) {
-                    Image(systemName: "number")
-                        .font(.system(size: 10))
-                        .foregroundColor(RetroTheme.retroPurple.opacity(0.7))
-                    
-                    Text("#\(minBuild)+")
-                        .font(.system(size: 10, weight: .medium))
-                        .foregroundColor(.white.opacity(0.6))
-                }
-            }
-            
-            if let allowedTypes = flag.allowedAppTypes {
-                HStack(spacing: 4) {
-                    Image(systemName: "app.badge")
-                        .font(.system(size: 10))
-                        .foregroundColor(RetroTheme.retroPink.opacity(0.7))
-                    
-                    Text(allowedTypes.joined(separator: ", "))
-                        .font(.system(size: 10, weight: .medium))
-                        .foregroundColor(.white.opacity(0.6))
-                        .lineLimit(1)
-                }
-            }
+        VStack(alignment: .leading) {
+            Text("Config Value: \(flag.flag.enabled ? "ON" : "OFF")")
+            Text("Override: \(overrideDetailText)")
+            Text("Effective Status: \(flag.enabled ? "ENABLED" : "DISABLED")")
+                .foregroundColor(flag.enabled ? .green : .red)
         }
+        .font(.footnote)
+        .padding(.leading, 20)
     }
 }
 
@@ -501,10 +415,10 @@ private struct DebugControlsSection: View {
                 // Clear All Overrides button
                 Button(action: {
                     featureFlags.clearDebugOverrides()
-                    flags = featureFlags.getAllFeatureFlags()
+                    flags = featureFlags.getAllFeatureFlags() // Correct: is a method call
                 }) {
                     HStack {
-                        Image(systemName: "xmark.circle")
+                        Image(systemName: "xmark.circle.fill")
                             .font(.system(size: 16))
                         Text("CLEAR ALL OVERRIDES")
                             .font(.system(size: 16, weight: .bold))
@@ -576,7 +490,7 @@ private struct DebugControlsSection: View {
                 
                 // Refresh Flags button
                 Button(action: {
-                    flags = featureFlags.getAllFeatureFlags()
+                    flags = featureFlags.getAllFeatureFlags() // Correct: is a method call
                 }) {
                     HStack {
                         Image(systemName: "arrow.clockwise")
@@ -609,10 +523,10 @@ private struct DebugControlsSection: View {
                 // Load Test Configuration button
                 Button(action: {
                     loadTestConfiguration()
-                    flags = featureFlags.getAllFeatureFlags()
+                    flags = featureFlags.getAllFeatureFlags() // Correct: is a method call
                 }) {
                     HStack {
-                        Image(systemName: "hammer.fill")
+                        Image(systemName: "testtube.2")
                             .font(.system(size: 16))
                         Text("LOAD TEST CONFIG")
                             .font(.system(size: 16, weight: .bold))
@@ -645,7 +559,7 @@ private struct DebugControlsSection: View {
                         do {
                             // Reset feature flags to default
                             try await loadDefaultConfiguration()
-                            flags = featureFlags.getAllFeatureFlags()
+                            flags = featureFlags.getAllFeatureFlags() // Correct: is a method call
 
                             // Reset unlock status
                             showFeatureFlagsDebug = false
@@ -716,7 +630,10 @@ private struct DebugControlsSection: View {
             )
         ]
 
-        featureFlags.setDebugConfiguration(features: testFeatures)
+        featureFlags.setDebugConfiguration(features: testFeatures) // Correct: is a method call
+        // The flags binding should update automatically if FeatureFlagsManager correctly publishes changes
+        // or call refreshFlagsList() from parent if direct update is needed.
+        // For now, assuming the call to getAllFeatureFlags in the Button action is sufficient for this debug view.
     }
 
     @MainActor

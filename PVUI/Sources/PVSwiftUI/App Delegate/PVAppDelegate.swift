@@ -116,7 +116,7 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
                             }
                         }
                         RomDatabase.sharedInstance.recoverAllSaveStates()
-                        if PVFeatureFlagsManager.shared.romPathMigrator {
+                        if PVFeatureFlagsManager.shared.featureStates[.romPathMigrator] ?? false {
                             Task {
                                 do {
                                     try await self.appState?.gameLibrary?.romMigrator.fixOrphanedFiles()
@@ -176,7 +176,7 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
                                 DLOG("Finished save state recovery.")
                             }
 
-                            if await PVFeatureFlagsManager.shared.romPathMigrator {
+                            if await PVFeatureFlagsManager.shared.featureStates[.romPathMigrator] ?? false {
                                 fixFilesTask = Task.detached { @MainActor in
                                     DLOG("Starting ROM path migration fixes...")
                                     try await AppState.shared.gameLibrary?.romMigrator.fixOrphanedFiles()

@@ -3,7 +3,7 @@
 //  Provenance
 //
 //  Created by Joseph Mattiello on 10/26/24.
-//  Copyright © 2024 Provenance Emu. All rights reserved.
+//  Copyright 2024 Provenance Emu. All rights reserved.
 //
 
 import SwiftUI
@@ -407,7 +407,7 @@ public class AppState: ObservableObject {
         }
         #endif
 
-        if PVFeatureFlagsManager.shared.isEnabled(.contentlessCores) {
+        if PVFeatureFlagsManager.shared.featureStates[.contentlessCores] ?? false {
             ILOG("AppState: RomDatabase Loading dummy cores...")
             try? await RomDatabase.addContentlessCores(overwrite: true)
             ILOG("AppState: RomDatabase dummy cores loaded.")

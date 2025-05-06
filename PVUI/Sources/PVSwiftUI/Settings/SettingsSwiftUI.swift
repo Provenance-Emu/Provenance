@@ -47,6 +47,7 @@ public struct PVSettingsView: View {
 
     @StateObject private var viewModel: PVSettingsViewModel
     @ObservedObject private var themeManager = ThemeManager.shared
+    @StateObject private var advancedSkinFeaturesFlag = PVFeatureFlagsManager.shared.flag(.advancedSkinFeatures)
     var dismissAction: () -> Void
     weak var menuDelegate: PVMenuDelegate!
 
@@ -117,8 +118,10 @@ public struct PVSettingsView: View {
                                 ControllerSection()
                             }
                             
-                            CollapsibleSection(title: "Delta Skins") {
-                                DeltaSkinsSection()
+                            if advancedSkinFeaturesFlag.value {
+                                CollapsibleSection(title: "Delta Skins") {
+                                    DeltaSkinsSection()
+                                }
                             }
                             
                             CollapsibleSection(title: "Library") {
@@ -413,7 +416,7 @@ private struct CoreOptionsSection: View {
                             icon: .sfSymbol("gearshape.2"))
             }
 
-            if PVFeatureFlagsManager.shared.retroarchBuiltinEditor {
+            if PVFeatureFlagsManager.shared.featureStates[.retroarchBuiltinEditor] ?? false {
                 NavigationLink(destination: RetroArchConfigEditorWrapper()) {
                     SettingsRow(
                         title: "Edit RetroArch Config",

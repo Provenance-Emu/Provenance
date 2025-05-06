@@ -3,7 +3,7 @@
 //  PVLibrary
 //
 //  Created by Dan Berglund on 2020-05-27.
-//  Copyright © 2020 Provenance Emu. All rights reserved.
+//  Copyright 2020 Provenance Emu. All rights reserved.
 //
 
 import Foundation
@@ -38,7 +38,7 @@ public class PVGameLibrary<T> where T: DatabaseDriver {
         
         // Kick off ROM migration
         Task {
-            if await PVFeatureFlagsManager.shared.romPathMigrator {
+            if await PVFeatureFlagsManager.shared.featureStates[.romPathMigrator] ?? false {
                 do {
                     try await self.romMigrator.migrateIfNeeded()
                     try await self.romMigrator.fixOrphanedFiles()

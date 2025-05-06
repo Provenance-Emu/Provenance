@@ -43,7 +43,7 @@ public class SwiftUIImportOptionsPresenter: PVImportOptionsPresenter {
         }))
         #endif
 
-        if PVFeatureFlagsManager.shared.inAppFreeROMs {
+        if PVFeatureFlagsManager.shared.featureStates[.inAppFreeROMs] ?? false {
             actionSheet.addAction(UIAlertAction(title: "Free ROMs", style: .default, handler: { _ in
                 viewController.dismiss(animated: true) {
                     let freeROMsView = FreeROMsView(

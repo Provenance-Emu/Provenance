@@ -127,7 +127,7 @@ extension PVRootViewController: PVMenuDelegate {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
 
-            let isEnabled = PVFeatureFlagsManager.shared.inAppFreeROMs
+            let isEnabled = PVFeatureFlagsManager.shared.featureStates[.inAppFreeROMs] ?? false
             print("Checking inAppFreeROMs in showImportOptionsAlert: \(isEnabled)")
 
             if isEnabled {
