@@ -55,7 +55,7 @@ mation and links to the latest version of the source code, and Chapters
 13-15 of the book for detailed discussion of the three programs.
 
 Greg Roelofs
-http://pobox.com/~newt/greg_contact.html
+https://pobox.com/~newt/greg_contact.html
 16 March 2008
 
 
@@ -63,7 +63,7 @@ BUILD INSTRUCTIONS
 
  - Prerequisites (in order of compilation):
 
-      - zlib            http://zlib.net/
+      - zlib            https://zlib.net/
       - libpng          http://www.libpng.org/pub/png/libpng.html
       - pngbook         http://www.libpng.org/pub/png/book/sources.html
 

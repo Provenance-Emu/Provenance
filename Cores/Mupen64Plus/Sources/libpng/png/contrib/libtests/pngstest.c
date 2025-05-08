@@ -1,9 +1,7 @@
-/*-
- * pngstest.c
+/* pngstest.c
  *
- * Copyright (c) 2013-2016 John Cunningham Bowler
- *
- * Last changed in libpng 1.6.24 [August 4, 2016]
+ * Copyright (c) 2021 Cosmin Truta
+ * Copyright (c) 2013-2017 John Cunningham Bowler
  *
  * This code is released under the libpng license.
  * For conditions of distribution and use, see the disclaimer
@@ -11,8 +9,9 @@
  *
  * Test for the PNG 'simplified' APIs.
  */
+
 #define _ISOC90_SOURCE 1
-#define MALLOC_CHECK_ 2/*glibc facility: turn on debugging*/
+#define MALLOC_CHECK_ 2 /*glibc facility: turn on debugging*/
 
 #include <stddef.h>
 #include <stdlib.h>
@@ -373,7 +372,7 @@ print_opts(png_uint_32 opts)
  */
 #define FORMAT_COUNT 64
 #define FORMAT_MASK 0x3f
-static PNG_CONST char * PNG_CONST format_names[FORMAT_COUNT] =
+static const char * const format_names[FORMAT_COUNT] =
 {
    "sRGB-gray",
    "sRGB-gray+alpha",
@@ -579,11 +578,11 @@ typedef struct
    int         stride_extra;
    FILE       *input_file;
    png_voidp   input_memory;
-   png_size_t  input_memory_size;
+   size_t      input_memory_size;
    png_bytep   buffer;
    ptrdiff_t   stride;
-   png_size_t  bufsize;
-   png_size_t  allocsize;
+   size_t      bufsize;
+   size_t      allocsize;
    char        tmpfile_name[32];
    png_uint_16 colormap[256*4];
 }
@@ -596,7 +595,8 @@ newimage(Image *image)
    memset(image, 0, sizeof *image);
 }
 
-/* Reset the image to be read again - only needs to rewind the FILE* at present.
+/* Reset the image to be read again - only needs to rewind the FILE object at
+ * present.
  */
 static void
 resetimage(Image *image)
@@ -666,7 +666,7 @@ static void initimage(Image *image, png_uint_32 opts, const char *file_name,
 static void
 allocbuffer(Image *image)
 {
-   png_size_t size = PNG_IMAGE_BUFFER_SIZE(image->image, image->stride);
+   size_t size = PNG_IMAGE_BUFFER_SIZE(image->image, image->stride);
 
    if (size+32 > image->bufsize)
    {
@@ -1143,7 +1143,7 @@ get_pixel(png_uint_32 format))(Pixel *p, png_const_voidp pb)
    }
 }
 
-/* Convertion between pixel formats.  The code above effectively eliminates the
+/* Conversion between pixel formats.  The code above effectively eliminates the
  * component ordering changes leaving three basic changes:
  *
  * 1) Remove an alpha channel by pre-multiplication or compositing on a
@@ -1151,7 +1151,7 @@ get_pixel(png_uint_32 format))(Pixel *p, png_const_voidp pb)
  *
  * 2) Remove color by mapping to grayscale.  (Grayscale to color is a no-op.)
  *
- * 3) Convert between 8-bit and 16-bit components.  (Both directtions are
+ * 3) Convert between 8-bit and 16-bit components.  (Both directions are
  *    relevant.)
  *
  * This gives the following base format conversion matrix:
@@ -2037,7 +2037,7 @@ typedef struct
    /* Precalculated values: */
    int          in_opaque;   /* Value of input alpha that is opaque */
    int          is_palette;  /* Sample values come from the palette */
-   int          accumulate;  /* Accumlate component errors (don't log) */
+   int          accumulate;  /* Accumulate component errors (don't log) */
    int          output_8bit; /* Output is 8-bit (else 16-bit) */
 
    void (*in_gp)(Pixel*, png_const_voidp);
@@ -2347,8 +2347,8 @@ static int
 logpixel(const Transform *transform, png_uint_32 x, png_uint_32 y,
    const Pixel *in, const Pixel *calc, const Pixel *out, const char *reason)
 {
-   const png_uint_32 in_format = transform->in_image->image.format;
-   const png_uint_32 out_format = transform->out_image->image.format;
+   png_uint_32 in_format = transform->in_image->image.format;
+   png_uint_32 out_format = transform->out_image->image.format;
 
    png_uint_32 back_format = out_format & ~PNG_FORMAT_FLAG_ALPHA;
    const char *via_linear = "";
@@ -2603,17 +2603,17 @@ compare_two_images(Image *a, Image *b, int via_linear,
    ptrdiff_t strideb = b->stride;
    png_const_bytep rowa = a->buffer+16;
    png_const_bytep rowb = b->buffer+16;
-   const png_uint_32 width = a->image.width;
-   const png_uint_32 height = a->image.height;
-   const png_uint_32 formata = a->image.format;
-   const png_uint_32 formatb = b->image.format;
-   const unsigned int a_sample = PNG_IMAGE_SAMPLE_SIZE(formata);
-   const unsigned int b_sample = PNG_IMAGE_SAMPLE_SIZE(formatb);
+   png_uint_32 width = a->image.width;
+   png_uint_32 height = a->image.height;
+   png_uint_32 formata = a->image.format;
+   png_uint_32 formatb = b->image.format;
+   unsigned int a_sample = PNG_IMAGE_SAMPLE_SIZE(formata);
+   unsigned int b_sample = PNG_IMAGE_SAMPLE_SIZE(formatb);
    int alpha_added, alpha_removed;
    int bchannels;
-   int btoa[4];
    png_uint_32 y;
    Transform tr;
+   int btoa[4]={0,0,0,0};
 
    /* This should never happen: */
    if (width != b->image.width || height != b->image.height)
@@ -2702,7 +2702,7 @@ compare_two_images(Image *a, Image *b, int via_linear,
             {
                if ((a->opts & ACCUMULATE) == 0)
                {
-                  char pindex[9];
+                  char pindex[16];
                   sprintf(pindex, "%lu[%lu]", (unsigned long)y,
                      (unsigned long)a->image.colormap_entries);
                   logerror(a, a->file_name, ": bad pixel index: ", pindex);
@@ -2713,12 +2713,12 @@ compare_two_images(Image *a, Image *b, int via_linear,
             else if (y >= b->image.colormap_entries)
             {
                if ((b->opts & ACCUMULATE) == 0)
-                  {
-                  char pindex[9];
+               {
+                  char pindex[16];
                   sprintf(pindex, "%lu[%lu]", (unsigned long)y,
                      (unsigned long)b->image.colormap_entries);
                   logerror(b, b->file_name, ": bad pixel index: ", pindex);
-                  }
+               }
                result = 0;
             }
 
@@ -2727,7 +2727,7 @@ compare_two_images(Image *a, Image *b, int via_linear,
                result = 0;
          }
 
-         /* If reqested copy the error values back from the Transform. */
+         /* If requested, copy the error values back from the Transform. */
          if (a->opts & ACCUMULATE)
          {
             tr.error_ptr[0] = tr.error[0];
@@ -2746,22 +2746,27 @@ compare_two_images(Image *a, Image *b, int via_linear,
        */
       else if ((a->opts & ACCUMULATE) == 0)
       {
+#        ifdef __GNUC__
+#           define BYTE_CHARS 20 /* 2^32: GCC sprintf warning */
+#        else
+#           define BYTE_CHARS 3 /* 2^8: real maximum value */
+#        endif
          /* Check the original image first,
           * TODO: deal with input images with bad pixel values?
           */
          if (amax >= a->image.colormap_entries)
          {
-            char pindex[9];
-            sprintf(pindex, "%d[%lu]", amax,
-               (unsigned long)a->image.colormap_entries);
+            char pindex[3+2*BYTE_CHARS];
+            sprintf(pindex, "%d[%u]", amax,
+               (png_byte)/*SAFE*/a->image.colormap_entries);
             return logerror(a, a->file_name, ": bad pixel index: ", pindex);
          }
 
          else if (bmax >= b->image.colormap_entries)
          {
-            char pindex[9];
-            sprintf(pindex, "%d[%lu]", bmax,
-               (unsigned long)b->image.colormap_entries);
+            char pindex[3+2*BYTE_CHARS];
+            sprintf(pindex, "%d[%u]", bmax,
+               (png_byte)/*SAFE*/b->image.colormap_entries);
             return logerror(b, b->file_name, ": bad pixel index: ", pindex);
          }
       }
@@ -2786,8 +2791,7 @@ compare_two_images(Image *a, Image *b, int via_linear,
       (formata & (formatb ^ PNG_FORMAT_FLAG_COLOR) & PNG_FORMAT_FLAG_COLOR)))
    {
       /* Was an alpha channel changed? */
-      const png_uint_32 alpha_changed = (formata ^ formatb) &
-         PNG_FORMAT_FLAG_ALPHA;
+      png_uint_32 alpha_changed = (formata ^ formatb) & PNG_FORMAT_FLAG_ALPHA;
 
       /* Was an alpha channel removed?  (The third test.)  If so the direct
        * comparison is only possible if the input alpha is opaque.
@@ -2817,8 +2821,11 @@ compare_two_images(Image *a, Image *b, int via_linear,
          bchannels = component_loc(bloc, formatb);
 
          /* Hence the btoa array. */
-         for (i=0; i<4; ++i) if (bloc[i] < 4)
-            btoa[bloc[i]] = aloc[i]; /* may be '4' for alpha */
+         for (i=0; i<4; ++i)
+         {
+            if (bloc[i] < 4)
+               btoa[bloc[i]] = aloc[i]; /* may be '4' for alpha */
+         }
 
          if (alpha_added)
             alpha_added = bloc[0]; /* location of alpha channel in image b */
@@ -2881,10 +2888,13 @@ compare_two_images(Image *a, Image *b, int via_linear,
                {
                   case 4:
                      if (pua[btoa[3]] != pub[3]) break;
+                     /* FALLTHROUGH */
                   case 3:
                      if (pua[btoa[2]] != pub[2]) break;
+                     /* FALLTHROUGH */
                   case 2:
                      if (pua[btoa[1]] != pub[1]) break;
+                     /* FALLTHROUGH */
                   case 1:
                      if (pua[btoa[0]] != pub[0]) break;
                      if (alpha_added != 4 && pub[alpha_added] != 65535) break;
@@ -2900,10 +2910,13 @@ compare_two_images(Image *a, Image *b, int via_linear,
                {
                   case 4:
                      if (psa[btoa[3]] != psb[3]) break;
+                     /* FALLTHROUGH */
                   case 3:
                      if (psa[btoa[2]] != psb[2]) break;
+                     /* FALLTHROUGH */
                   case 2:
                      if (psa[btoa[1]] != psb[1]) break;
+                     /* FALLTHROUGH */
                   case 1:
                      if (psa[btoa[0]] != psb[0]) break;
                      if (alpha_added != 4 && psb[alpha_added] != 255) break;
@@ -2922,7 +2935,7 @@ compare_two_images(Image *a, Image *b, int via_linear,
       }
    }
 
-   /* If reqested copy the error values back from the Transform. */
+   /* If requested, copy the error values back from the Transform. */
    if (a->opts & ACCUMULATE)
    {
       tr.error_ptr[0] = tr.error[0];
@@ -3200,10 +3213,10 @@ write_one_file(Image *output, Image *image, int convert_to_8bit)
    else if (image->opts & USE_FILE)
    {
 #ifdef PNG_SIMPLIFIED_WRITE_STDIO_SUPPORTED
-      static int counter = 0;
+      static unsigned int counter = 0;
       char name[32];
 
-      sprintf(name, "%s%d.png", tmpf, ++counter);
+      sprintf(name, "%s%u.png", tmpf, ++counter);
 
       if (png_image_write_to_file(&image->image, name, convert_to_8bit,
          image->buffer+16, (png_int_32)image->stride, image->colormap))
@@ -3487,7 +3500,7 @@ main(int argc, char **argv)
    int retval = 0;
    int c;
 
-#if PNG_LIBPNG_VER >= 10700
+#if PNG_LIBPNG_VER == 10700
       /* This error should not exist in 1.7 or later: */
       opts |= GBG_ERROR;
 #endif
@@ -3617,7 +3630,7 @@ main(int argc, char **argv)
 
          if (arg[0] == '-')
          {
-            const int term = (arg[1] == '0' ? 0 : '\n');
+            int term = (arg[1] == '0' ? 0 : '\n');
             unsigned int ich = 0;
 
             /* Loop reading files, use a static buffer to simplify this and just

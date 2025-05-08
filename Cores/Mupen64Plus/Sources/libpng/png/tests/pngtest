@@ -1,4 +1,0 @@
-#!/bin/sh
-./pngtest --relaxed ${srcdir}/tests/badcrc.png
-./pngtest --relaxed ${srcdir}/tests/badadler.png
-exec ./pngtest --strict ${srcdir}/pngtest.png
