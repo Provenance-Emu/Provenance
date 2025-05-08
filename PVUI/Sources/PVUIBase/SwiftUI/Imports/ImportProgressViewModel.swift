@@ -79,82 +79,107 @@ public class ImportProgressViewModel: ObservableObject {
     @Published public var isImporting: Bool = false // Ensure this is defined
     @Published public var importProgress: ProgressInfo? // Ensure this is defined
 
+    @Published public var iCloudStatusMessage: String = "Initializing..." // Added property
+
+    @Published public var lastErrorMessage: String? // For displaying a persistent error briefly
+
+    // Counts for statusDetailsView
+    @Published public var totalImportFileCount: Int = 0
+    @Published public var processedFilesCount: Int = 0
+    @Published public var newFilesCount: Int = 0
+    @Published public var updatedFilesCount: Int = 0
+    @Published public var errorFilesCount: Int = 0
+
     // MARK: - Private Properties
 
-    private let gameImporter: any GameImporting
+    private var messageExpiryTimers: [UUID: Timer] = [:] // Timers for individual log message expiry
+    private var processedSharedMessageIDs = Set<UUID>() // Tracks messages processed from StatusMessageManager
+    private var hideViewTimer: Timer? // Timer for delayed hiding of the whole view
     private var cancellables = Set<AnyCancellable>()
-    private var cloudKitCancellables = Set<AnyCancellable>()
-    private var hideTimer: AnyCancellable?
+    private let gameImporter: any GameImporting
+    private let updatesController: PVGameLibraryUpdatesController // Store updatesController
 
-    /// User's preference for enabling iCloud Sync, passed from the View
-    private var iCloudSyncEnabledSetting: Bool = Defaults[.iCloudSync]
+    /// User's preference for enabling iCloud Sync, observed directly via @Default.
+    @Default(.iCloudSync) private var iCloudSyncEnabledSetting: Bool
 
     private let maxStoredMessages = 50
     private let fileRecoveryProgressID = "icloud-file-recovery"
 
     // MARK: - Initialization
 
-    public init(gameImporter: any GameImporting = GameImporter.shared) {
+    public init(gameImporter: any GameImporting = GameImporter.shared, updatesController: PVGameLibraryUpdatesController) {
         self.gameImporter = gameImporter
-        ILOG("ImportProgressViewModel initialized with GameImporter and iCloud Sync setting: \(iCloudSyncEnabledSetting)")
+        self.updatesController = updatesController // Store it
+        // iCloudSyncEnabledSetting is now managed by @Default
+        ILOG("ImportProgressViewModel initialized. iCloud Sync initially: \(self.iCloudSyncEnabledSetting)")
 
         // Consolidated setup call
         setupPrimarySubscriptions()
 
-        // REMOVE THIS BLOCK - Replaced by notification listeners and initial state in setupFileRecoveryNotificationListeners
-        // if iCloudSync.shared.fileRecoveryState == .inProgress {
-        //     self.fileRecoveryState = .inProgress
-        //     // If we know total files, we can set up progress here, or wait for notification
-        // }
+        // Observe changes to iCloudSyncEnabledSetting to re-setup CloudKit subscriptions if necessary
+        Defaults.publisher(.iCloudSync)
+            .removeDuplicates()
+            .sink { [weak self] change in
+                guard let self = self else { return }
+                ILOG("iCloudSyncEnabledSetting changed to: \(change.newValue)")
+                self.reactToiCloudSettingChange(isEnabled: change.newValue)
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Public Methods for View Interaction
 
     /// Called by the View (e.g., onAppear) to pass the current iCloud sync setting.
-    public func setupTracking(iCloudEnabled: Bool) {
-        ILOG("ImportProgressViewModel: setupTracking with iCloudEnabled: \(iCloudEnabled)")
-        let oldSetting = self.iCloudSyncEnabledSetting
-        self.iCloudSyncEnabledSetting = iCloudEnabled
-
-        if oldSetting != iCloudEnabled {
-            // iCloud setting changed, re-evaluate CloudKit subscriptions and status
-            cloudKitCancellables.forEach { $0.cancel() } // Assuming a marker interface or specific check
-
-            if iCloudEnabled {
-                setupCloudKitSubscriptions()
-                Task {
-                    // Potentially trigger a re-check of sync status if needed
-                    // For example, if CloudSyncManager has a method to refresh its status
-                    refreshInitialSyncStatus()
-                }
-            } else {
-                // If iCloud is now disabled by user preference, clear related states
-                self.isSyncing = false
-                self.syncStatus = .disabled
-                self.initialSyncProgress = nil
-                // Consider canceling any active CloudKit operations if possible and appropriate
-            }
-        }
-        checkHideCondition()
-    }
+    // setupTracking(iCloudEnabled:) is no longer needed as @Default handles the state.
 
     public func cleanup() {
         ILOG("ImportProgressViewModel: Cleaning up.")
         cancellables.removeAll()
-        cloudKitCancellables.removeAll()
-        hideTimer?.cancel()
+        messageExpiryTimers.values.forEach { $0.invalidate() } // Invalidate individual message timers
+        messageExpiryTimers.removeAll()
+        processedSharedMessageIDs.removeAll()
+        hideViewTimer?.invalidate() // Ensure timer is cleaned up
     }
 
     /// Add a log message (newer feature)
     public func addLogMessage(_ message: String, type: StatusMessageManager.StatusMessage.MessageType = .info) {
         let statusMessage = StatusMessageManager.StatusMessage(message: message, type: type)
+        
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
+            
+            // Prevent duplicate messages if message content and type are identical to the last one, and very recent.
+            // This is a simple heuristic.
+            if let lastLog = self.logMessages.first, lastLog.message == statusMessage.message, lastLog.type == statusMessage.type {
+                if abs(lastLog.timestamp.timeIntervalSinceNow) < 1.0 { // If last identical message was within 1 second
+                    ILOG("Skipping duplicate log message: \(message)")
+                    return
+                }
+            }
+
             self.logMessages.insert(statusMessage, at: 0)
             if self.logMessages.count > self.maxStoredMessages {
-                self.logMessages = Array(self.logMessages.prefix(self.maxStoredMessages))
+                let oldestMessage = self.logMessages.removeLast()
+                self.messageExpiryTimers[oldestMessage.id]?.invalidate()
+                self.messageExpiryTimers.removeValue(forKey: oldestMessage.id)
+                self.processedSharedMessageIDs.remove(oldestMessage.id) // Also clear from processed IDs
             }
-            self.updateShouldShow()
+
+            // Cancel any existing timer for this specific message ID (e.g., if it's an update to an existing message concept)
+            self.messageExpiryTimers[statusMessage.id]?.invalidate()
+
+            // Start 8-second timer for this new message
+            let timer = Timer.scheduledTimer(withTimeInterval: 8.0, repeats: false) { [weak self] _ in
+                guard let self = self else { return }
+                self.logMessages.removeAll { $0.id == statusMessage.id }
+                self.messageExpiryTimers.removeValue(forKey: statusMessage.id)
+                self.processedSharedMessageIDs.remove(statusMessage.id) // Also clear from processed IDs when expired
+                self.updateShouldShow() // Re-evaluate overall view visibility
+                ILOG("Log message expired and removed: \(statusMessage.message)")
+            }
+            self.messageExpiryTimers[statusMessage.id] = timer
+
+            self.updateShouldShow() // Update overall view visibility status
         }
     }
 
@@ -211,10 +236,12 @@ public class ImportProgressViewModel: ObservableObject {
     // MARK: - Private Subscription Setup Methods
 
     private func setupPrimarySubscriptions() {
+        ILOG("ImportProgressViewModel: Setting up primary subscriptions.")
         setupGameImporterSubscription()
         setupCloudKitSubscriptions()
         setupFileRecoveryNotificationListeners() // Sets initial state from iCloudDriveSync notifications
-        setupTracking(iCloudEnabled: iCloudSyncEnabledSetting) // Pass the iCloud setting
+        // Initial call to reflect current setting state
+        reactToiCloudSettingChange(isEnabled: self.iCloudSyncEnabledSetting)
         ILOG("Primary subscriptions and trackers set up.")
     }
 
@@ -329,7 +356,7 @@ public class ImportProgressViewModel: ObservableObject {
                 }
                 self.updateShouldShow()
             }
-            .store(in: &cloudKitCancellables)
+            .store(in: &cancellables)
 
         // Setup File Recovery Listeners
         setupFileRecoveryNotificationListeners()
@@ -440,85 +467,171 @@ public class ImportProgressViewModel: ObservableObject {
         }
     }
 
-    /// Sets up a timer to hide the view if conditions are met.
-    private func setupHideTimer() {
-        hideTimer?.cancel() // Cancel any existing timer
-        hideTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect().sink { [weak self] _ in
-            self?.checkHideCondition(triggeredByTimer: true)
-        } // Removed .store(in: &cancellables) as hideTimer is already AnyCancellable?
+    // MARK: - Public Computed Properties for View Logic
+
+    /// Determines if importer-specific UI (progress bars, queues) should be shown.
+    public var shouldShowImporterSpecificUI: Bool {
+        return isImporting ||
+               isSyncing ||
+               (fileRecoveryState != .idle && fileRecoveryState != .complete) ||
+               importProgress != nil ||
+               initialSyncProgress != nil ||
+               (fileRecoveryProgress != nil && (fileRecoveryProgress?.current ?? 0) < (fileRecoveryProgress?.total ?? 0))
     }
 
-    /// Stop the hide timer.
-    private func stopHideTimer() {
-        hideTimer?.cancel()
+    /// Provides a display string for the current file recovery state.
+    public var fileRecoveryStateDisplayString: String {
+        switch fileRecoveryState {
+        case .idle:
+            return "Idle"
+        case .inProgress:
+            return "In Progress"
+        case .complete:
+            return "Complete"
+        case .error:
+            return "Error"
+        // Add other cases if they exist in PVPrimitives.FileRecoveryState
+        default:
+            // Attempt to get a capitalized string from the enum case name if possible,
+            // otherwise, a generic description.
+            // This requires FileRecoveryState to be CustomStringConvertible or have a way to get its name.
+            // For simplicity now, let's assume we'll add specific cases or use a generic one.
+            return String(describing: fileRecoveryState).capitalized // Fallback, might need refinement based on actual enum
+        }
     }
 
-    // MARK: - Visibility Logic (shouldShow)
+    // MARK: - Private Helper Methods
 
-    private func checkHideCondition(triggeredByTimer: Bool = false) {
-        // Condition 1: Active import items (not all success or failure)
-        let activeImports = !importQueueItems.isEmpty && !importQueueItems.allSatisfy { $0.status == .success || $0.status == .failure }
+    private func updateImportCounts() {
+        var total = 0
+        var processed = 0
+        var new = 0
+        var updated = 0 // No direct 'updated' status, will set to 0 for now
+        var errors = 0
 
-        // Condition 2: iCloud Syncing (if user has it enabled in settings)
-        let activeCloudSync = iCloudSyncEnabledSetting && self.isSyncing
+        total = importQueueItems.count
 
-        // Condition 3: New features - active progress bars (non-import related)
-        let activeMiscProgress = !activeProgressBars.isEmpty
+        for item in importQueueItems {
+            switch item.status {
+            case .processing:
+                processed += 1
+            case .success:
+                processed += 1
+                new += 1 // Assuming success means a new import for now
+            case .failure:
+                processed += 1
+                errors += 1
+            case .conflict:
+                processed += 1 // Conflict means it was processed but needs user action
+            case .queued, .partial:
+                break // Not yet fully processed or waiting for more info
+            @unknown default:
+                break // Handle any future cases
+            }
+        }
 
-        // Condition 4: New features - log messages present
-        let hasLogMessages = !logMessages.isEmpty
+        self.totalImportFileCount = total
+        self.processedFilesCount = processed
+        self.newFilesCount = new
+        self.updatedFilesCount = updated // Stays 0 for now
+        self.errorFilesCount = errors
+    }
 
-        // Condition 5: New features - file recovery active
-        let activeFileRecovery = fileRecoveryState != .idle
-
-        // Condition 6: Initial Sync progress is ongoing
-        let initialSyncOngoing = iCloudSyncEnabledSetting && (initialSyncProgress != nil && (initialSyncProgress?.overallProgress ?? 1.0) < 1.0)
-
-
-        let shouldBeVisible = activeImports || activeCloudSync || activeMiscProgress || hasLogMessages || activeFileRecovery || initialSyncOngoing
-
-        DLOG("CheckHideCondition: activeImports=\(activeImports), activeCloudSync=\(activeCloudSync) (enabled=\(iCloudSyncEnabledSetting), isSyncing=\(isSyncing)), activeMiscProgress=\(activeMiscProgress), hasLogMessages=\(hasLogMessages), activeFileRecovery=\(activeFileRecovery), initialSyncOngoing=\(initialSyncOngoing). ==> shouldBeVisible=\(shouldBeVisible)")
-
-
-        if shouldBeVisible {
-            if !self.shouldShow { self.shouldShow = true }
-            hideTimer?.cancel() // Activity detected, cancel any pending hide
+    private func reactToiCloudSettingChange(isEnabled: Bool) {
+        if isEnabled {
+            // Setting became enabled, ensure CloudKit subscriptions are active
+            ILOG("iCloud Sync Setting Enabled: Ensuring CloudKit subscriptions are active.")
+            setupCloudKitSubscriptions() // This method should be idempotent or handle re-subscription correctly
         } else {
-            // No direct activity, schedule hide if not already hidden
-            if self.shouldShow { // Only schedule hide if currently shown
-                 if triggeredByTimer { // Timer fired, and still no activity
-                    self.shouldShow = false
-                } else {
-                    setupHideTimer()
+            // Setting became disabled, clear related states and potentially cancel CloudKit activity
+            ILOG("iCloud Sync Setting Disabled: Clearing iCloud related states.")
+            self.isSyncing = false
+            self.syncStatus = .disabled
+            self.initialSyncProgress = nil
+            // TODO: Consider explicitly canceling active CloudKit operations or subscriptions if CloudSyncManager supports it
+            // For now, we'll rely on CloudKitSyncMonitor reacting to the disabled state if it observes it too.
+        }
+        updateShouldShow() // Re-evaluate visibility based on potential state changes
+    }
+
+    // MARK: - Helper to calculate visibility conditions
+    private func _recalculateShouldShowConditions() -> Bool {
+        // View should show if there's importer-specific activity OR if there are log messages.
+        // lastErrorMessage is handled separately if it's meant to be a sticky, non-expiring error.
+        return shouldShowImporterSpecificUI || !logMessages.isEmpty
+    }
+
+    // MARK: - Helper to update visibility
+    private func updateShouldShow() {
+        DispatchQueue.main.async { [weak self] in // Ensure UI updates are on main thread
+            guard let self = self else { return }
+
+            let conditionsMet = self._recalculateShouldShowConditions()
+
+            if conditionsMet {
+                // Conditions to show are met, so make sure view is visible and cancel any hide timer.
+                self.hideViewTimer?.invalidate()
+                self.hideViewTimer = nil
+                if !self.shouldShow {
+                    self.shouldShow = true
+                    ILOG("ImportProgressViewModel: Conditions met, showing view.")
+                }
+            } else {
+                // Conditions to show are NOT met.
+                // If view is currently shown and no hide timer is active, start one.
+                if self.shouldShow && self.hideViewTimer == nil {
+                    ILOG("ImportProgressViewModel: Conditions NOT met, starting 8s hide timer.")
+                    self.hideViewTimer = Timer.scheduledTimer(withTimeInterval: 8.0, repeats: false) { [weak self] _ in
+                        guard let self = self else { return }
+                        // Re-check conditions one last time before hiding.
+                        if !self._recalculateShouldShowConditions() {
+                            self.shouldShow = false
+                            ILOG("ImportProgressViewModel: Hide timer fired, hiding view.")
+                        } else {
+                            ILOG("ImportProgressViewModel: Hide timer fired, but conditions re-met. View stays visible.")
+                        }
+                        self.hideViewTimer = nil // Timer has fired, clear it.
+                    }
+                } else if !self.shouldShow {
+                    // View is already hidden, do nothing.
+                } else if self.hideViewTimer != nil {
+                    // Timer is already running, do nothing, let it fire.
+                    ILOG("ImportProgressViewModel: Conditions NOT met, hide timer already active.")
                 }
             }
         }
     }
 
-    public func refreshInitialSyncStatus() {
-        ILOG("refreshInitialSyncStatus called")
-        // CloudSyncManager.shared.forceRefreshState() // Removed: forceRefreshState does not exist
-        // Instead, rely on existing publishers or re-evaluate how to trigger a state update if necessary.
-        // For now, this function might not do anything if CloudSyncManager handles its state internally.
-    }
-
-    private func updateShouldShow() {
-        let newShouldShow = isImporting || 
-                            isSyncing || 
-                            (fileRecoveryState != .idle && fileRecoveryState != .complete) || // Adapted: no .notStarted, use .complete
-                            !logMessages.isEmpty || 
-                            importProgress != nil || 
-                            initialSyncProgress != nil || 
-                            (fileRecoveryProgress != nil && (fileRecoveryProgress?.current ?? 0) < (fileRecoveryProgress?.total ?? 0))
-
-        if self.shouldShow != newShouldShow {
-            self.shouldShow = newShouldShow
-            ILOG("ImportProgressView shouldShow toggled to: \(self.shouldShow) based on: isImporting=\(isImporting), isSyncing=\(isSyncing), fileRecoveryState=\(fileRecoveryState), logMessages.isEmpty=\(logMessages.isEmpty), importProgress=\(String(describing: importProgress)), initialSyncProgress=\(String(describing: initialSyncProgress)), fileRecoveryProgress=\(String(describing: fileRecoveryProgress))")
+    /// Toggles the display of the import progress view, primarily for manual intervention or debugging.
+    @available(*, deprecated, message: "Manual toggling is generally not recommended. Use conditions like log messages or activity.")
+    public func toggleDisplay() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            let newShouldShow = !self.shouldShow
+            if newShouldShow {
+                self.shouldShow = true
+                ILOG("ImportProgressView toggled ON manually.")
+            } else {
+                // If toggling off manually, and there are no conditions to keep it open,
+                // respect the manual toggle. Otherwise, if conditions *would* keep it open,
+                // this manual toggle might be immediately overridden unless we add special logic.
+                // For now, simply set shouldShow, but rely on updateShouldShow for proper state.
+                self.shouldShow = false
+                ILOG("ImportProgressView toggled OFF manually - will re-evaluate on next update.")
+            }
+            // After manual toggle, it's good to let conditions re-evaluate if it was turned off.
+            if !newShouldShow {
+                self.updateShouldShow() // This will likely keep it on if conditions are met.
+            }
         }
+        // Note: The old direct toggle of shouldShow and its log message are replaced by the above logic.
     }
 
     deinit {
-        ILOG("ImportProgressViewModel deinitialized.")
-        cleanup()
+        NotificationCenter.default.removeObserver(self)
+        cancellables.forEach { $0.cancel() }
+        messageExpiryTimers.values.forEach { $0.invalidate() } // Invalidate individual message timers
+        hideViewTimer?.invalidate() // Ensure overall view hide timer is cleaned up
+        ILOG("ImportProgressViewModel deinitialized")
     }
 }

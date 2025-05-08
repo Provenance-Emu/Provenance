@@ -3,6 +3,12 @@ import PVLibrary
 import PVSettings
 import PVThemes
 import Defaults
+import PVSupport
+import PVLogging
+#if DEBUG
+import PVLibrary // For CoreDataStack, CloudSyncManager
+import PVPrimitives // For ProgressInfo, FileRecoveryState
+#endif
 
 /// A view that displays the progress of importing games and iCloud sync status.
 /// Reflects an older UI style with an external ViewModel.
@@ -18,9 +24,6 @@ public struct ImportProgressView: View {
     /// The updates controller (passed from parent, ViewModel might observe its effects via gameImporter or notifications).
     @ObservedObject public var updatesController: PVGameLibraryUpdatesController
 
-    /// iCloud sync preference from user settings.
-    @Default(.iCloudSync) private var iCloudSyncEnabled
-
     /// Callback when the view is tapped.
     public var onTap: (() -> Void)?
 
@@ -34,8 +37,8 @@ public struct ImportProgressView: View {
         self.gameImporter = gameImporter
         self.updatesController = updatesController
         self.onTap = onTap
-        // Initialize the external ViewModel
-        self._viewModel = StateObject(wrappedValue: ImportProgressViewModel(gameImporter: gameImporter))
+        // Initialize the external ViewModel. iCloudSyncEnabled is now handled internally by the ViewModel.
+        self._viewModel = StateObject(wrappedValue: ImportProgressViewModel(gameImporter: gameImporter, updatesController: updatesController))
     }
 
     // Convenience initializer (if still needed, ensure it aligns with the primary one)
@@ -73,17 +76,15 @@ public struct ImportProgressView: View {
                     .frame(height: 10) // Match old behavior of occupying minimal space
             }
         }
-        // Call setupTracking in onAppear and when iCloudSyncEnabled changes.
-        // The ViewModel's init handles initial subscriptions.
-        // onAppear ensures the ViewModel has the latest iCloudSyncEnabled state from this View instance.
-        .onAppear {
-            ILOG("ImportProgressView: Appeared. Setting up tracking.")
-            viewModel.setupTracking(iCloudEnabled: iCloudSyncEnabled)
-        }
-        .onChange(of: iCloudSyncEnabled) { newValue in
-            ILOG("ImportProgressView: iCloudSyncEnabled changed to \(newValue). Updating tracking.")
-            viewModel.setupTracking(iCloudEnabled: newValue)
-        }
+        // .onAppear and .onChange for setupTracking are no longer needed as ViewModel handles iCloudSyncEnabled internally.
+        // .onAppear {
+        //     ILOG("ImportProgressView: Appeared. Setting up tracking.")
+        //     viewModel.setupTracking(iCloudEnabled: iCloudSyncEnabled)
+        // }
+        // .onChange(of: iCloudSyncEnabled) { newValue in
+        //     ILOG("ImportProgressView: iCloudSyncEnabled changed to \(newValue). Updating tracking.")
+        //     viewModel.setupTracking(iCloudEnabled: newValue)
+        // }
         .onDisappear {
             ILOG("ImportProgressView: Disappeared. Cleaning up.")
             // ViewModel's deinit should handle major cleanup if it's an @StateObject.
@@ -173,14 +174,39 @@ public struct ImportProgressView: View {
         }
     }
     
+    @ViewBuilder
     private var statusDetailsView: some View {
-        // Status details for import queue
-        HStack(spacing: 12) {
-            statusCountView(count: viewModel.importQueueItems.filter { $0.status == .queued }.count, label: "QUEUED", color: .gray)
-            statusCountView(count: viewModel.importQueueItems.filter { $0.status == .processing }.count, label: "PROCESSING", color: .retroBlue)
-            statusCountView(count: viewModel.importQueueItems.filter { $0.status == .success }.count, label: "COMPLETED", color: .green)
-            statusCountView(count: viewModel.importQueueItems.filter { $0.status == .failure }.count, label: "FAILED", color: .retroPink)
-            Spacer()
+        // Group was here, let ViewBuilder handle the conditional content directly
+        if viewModel.showOldProgressSystem {
+            // Existing logic for game importer based status - NOW USES VIEWMODEL
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 10) {
+                    statusCountView(title: "Total", count: viewModel.totalImportFileCount, color: .gray) // Use viewModel and title:
+                    statusCountView(title: "Processed", count: viewModel.processedFilesCount, color: .blue) // Use viewModel and title:
+                    statusCountView(title: "New", count: viewModel.newFilesCount, color: .green) // Use viewModel and title:
+                }
+                HStack(spacing: 10) {
+                    statusCountView(title: "Updated", count: viewModel.updatedFilesCount, color: .orange) // Use viewModel and title:
+                    statusCountView(title: "Errors", count: viewModel.errorFilesCount, color: .red) // Use viewModel and title:
+                    Spacer() // Ensure it takes available space if needed
+                }
+                if let currentImport = viewModel.importProgress?.detail, !currentImport.isEmpty {
+                    Text(currentImport)
+                        .font(.caption2)
+                        .lineLimit(1)
+                        .foregroundColor(.gray)
+                }
+            }
+        } else {
+            // Newer logic using viewModel counts directly
+            HStack(spacing: 20) {
+                statusCountView(title: "Total", count: viewModel.totalImportFileCount, color: .gray)
+                statusCountView(title: "Processed", count: viewModel.processedFilesCount, color: .blue)
+                statusCountView(title: "New", count: viewModel.newFilesCount, color: .green)
+                statusCountView(title: "Updated", count: viewModel.updatedFilesCount, color: .orange)
+                statusCountView(title: "Errors", count: viewModel.errorFilesCount, color: .red)
+            }
+            .padding(.vertical, 4)
         }
     }
     
@@ -203,109 +229,97 @@ public struct ImportProgressView: View {
     // MARK: - Content Views
 
     private var contentView: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 0) { // Use spacing 0 and manage with paddings
+            if viewModel.shouldShowImporterSpecificUI {
+                VStack(alignment: .leading, spacing: 6) {
+                    headerView
+                    progressBarsView
+                    statusDetailsView
 
-            headerView
-            
-            // iCloud sync status (only show if iCloud sync is enabled by user AND active in ViewModel)
-            if iCloudSyncEnabled && viewModel.isSyncing {
-                iCloudSyncStatusView
+                    // iCloud Sync Status - part of importer specific UI context
+                    if viewModel.isSyncing {
+                        iCloudSyncStatusView
+                            .padding(.top, 4) // Add some space if other details are above
+                    }
+
+                    // File Recovery Status - part of importer specific UI context
+                    if viewModel.fileRecoveryState != .idle {
+                        fileRecoveryStatusView
+                            .padding(.top, viewModel.isSyncing ? 2 : 4) // Adjust based on iCloud view
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.top, 8)
+                // Add padding at the bottom only if no log messages follow this section
+                .padding(.bottom, viewModel.logMessages.isEmpty ? 8 : 6) // 6 if messages follow, to separate from divider
+
+                // Divider if importer UI is shown AND there are log messages below
+                if !viewModel.logMessages.isEmpty {
+                    Divider().background(Color.retroBlue.opacity(0.5))
+                        .padding(.horizontal)
+                        .padding(.bottom, 6) // Space after divider before messages
+                }
             }
 
-            progressBarsView
-
-            statusDetailsView
-
-            // Log display (new section)
             if !viewModel.logMessages.isEmpty {
                 logDisplayView
+                    .padding(.horizontal)
+                    // Add top padding if importer UI is NOT shown, otherwise it's handled by divider spacing or section bottom padding
+                    .padding(.top, viewModel.shouldShowImporterSpecificUI ? 0 : 8)
+                    .padding(.bottom, 8)
             }
         }
-        .padding(12)
-        .background(
-            backgroundView
-        )
-        .shadow(color: Color.retroPink.opacity(0.3), radius: 5, x: 0, y: 0)
+        .padding(.vertical, 4)
+        .background(backgroundView)
     }
 
     /// iCloud sync status view - compact version (from old UI structure)
     private var iCloudSyncStatusView: some View {
-        // Sourcing data from the external viewModel (viewModel.syncStatus, viewModel.initialSyncProgress)
-        Group {
-            switch viewModel.syncStatus {
-            case .idle:
-                Text("iCloud Sync: Idle")
-                    .foregroundColor(.white)
-            case .syncing:
-                HStack {
-                    Text("iCloud Sync: Syncing")
-                        .foregroundColor(.retroBlue)
-                    ProgressView().progressViewStyle(CircularProgressViewStyle(tint: .retroBlue)).scaleEffect(0.7)
-                }
-            case .initialSync:
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        Text("Initial iCloud Sync")
-                            .foregroundColor(.retroPink)
-                        ProgressView().progressViewStyle(CircularProgressViewStyle(tint: .retroPink)).scaleEffect(0.7)
-                    }
-                    if let progress = viewModel.initialSyncProgress { // This is CloudKitInitialSyncProgress from ViewModel
-                        VStack(alignment: .leading, spacing: 2) {
-                            if progress.romsTotal > 0 { Text("ROMs: \(progress.romsCompleted)/\(progress.romsTotal)").font(.caption).foregroundColor(.retroBlue) }
-                            if progress.saveStatesTotal > 0 { Text("Save States: \(progress.saveStatesCompleted)/\(progress.saveStatesTotal)").font(.caption).foregroundColor(.retroPurple) }
-                            if progress.biosTotal > 0 { Text("BIOS: \(progress.biosCompleted)/\(progress.biosTotal)").font(.caption).foregroundColor(.retroPink) }
-                            if progress.batteryStatesTotal > 0 { Text("Battery States: \(progress.batteryStatesCompleted)/\(progress.batteryStatesTotal)").font(.caption).foregroundColor(.retroBlue) }
-                            if progress.screenshotsTotal > 0 { Text("Screenshots: \(progress.screenshotsCompleted)/\(progress.screenshotsTotal)").font(.caption).foregroundColor(.retroPurple) }
-                            if progress.deltaSkinsTotal > 0 { Text("Delta Skins: \(progress.deltaSkinsCompleted)/\(progress.deltaSkinsTotal)").font(.caption).foregroundColor(.retroPink) }
-                            ProgressView(value: progress.overallProgress).progressViewStyle(LinearProgressViewStyle(tint: .retroPink))
-                        }
-                    }
-                }
-            case .uploading:
-                HStack {
-                    Text("iCloud Sync: Uploading")
-                        .foregroundColor(.retroPink)
-                    ProgressView().progressViewStyle(CircularProgressViewStyle(tint: .retroPink)).scaleEffect(0.7)
-                }
-            case .downloading:
-                HStack {
-                    Text("iCloud Sync: Downloading")
-                        .foregroundColor(.retroPurple)
-                    ProgressView().progressViewStyle(CircularProgressViewStyle(tint: .retroPurple)).scaleEffect(0.7)
-                }
-            case .error(let error):
-                Text("iCloud Sync Error: \(error.localizedDescription)")
-                    .foregroundColor(.red)
-                    .lineLimit(1)
-            case .disabled:
-                Text("iCloud Sync: Disabled by User Setting or Error")
-                    .foregroundColor(.gray)
-            case .initializing:
-                HStack {
-                    Text("iCloud Sync: Initializing")
-                        .foregroundColor(.retroOrange)
-                    ProgressView().progressViewStyle(CircularProgressViewStyle(tint: .retroBlue)).scaleEffect(0.7)
-                }
+        HStack {
+            Image(systemName: "icloud")
+                .foregroundColor(.retroBlue)
+            Text(viewModel.iCloudStatusMessage) // Use property directly, not a binding for Text
+                .font(.system(size: 10))
+                .foregroundColor(.gray)
+            Spacer()
+            if viewModel.isSyncing { // Already using isSyncing here which is correct
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle())
+                    .scaleEffect(0.7)
             }
         }
-        .font(.system(size: 8))
     }
 
-    /// Helper view for status counts (from old UI structure)
-    @ViewBuilder
-    private func statusCountView(count: Int, label: String, color: Color) -> some View {
+    /// File Recovery Status View (Placeholder)
+    private var fileRecoveryStatusView: some View {
+        HStack {
+            Image(systemName: "bandage") // Example icon
+                .foregroundColor(.orange)
+            Text("File Recovery: \(viewModel.fileRecoveryStateDisplayString)") // Use display string
+                .font(.system(size: 10))
+                .foregroundColor(.gray)
+            Spacer()
+            if viewModel.fileRecoveryProgress != nil {
+                ProgressView(value: Double(viewModel.fileRecoveryProgress?.current ?? 0), total: Double(viewModel.fileRecoveryProgress?.total ?? 1))
+                    .progressViewStyle(LinearProgressViewStyle())
+                    .frame(width: 50)
+            }
+        }
+    }
+
+    // MARK: - Status Count View (Helper from old structure)
+    private func statusCountView(title: String, count: Int, color: Color) -> some View {
         HStack(spacing: 4) {
             Text("\(count)")
                 .font(.system(size: 10, weight: .bold))
                 .foregroundColor(color)
-            Text(label)
+            Text(title)
                 .font(.system(size: 8, weight: .bold))
                 .foregroundColor(color.opacity(0.7))
         }
     }
 
-    /// Log display view (newly added)
-    @ViewBuilder
+    // MARK: - Log Display View (from old structure)
     private var logDisplayView: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text("LOGS")
@@ -356,53 +370,3 @@ public struct ImportProgressView: View {
         }
     }
 }
-
-// PreviewProvider if needed for iterative UI development
-#if DEBUG
-struct ImportProgressView_Previews: PreviewProvider {
-    static let mockImporter = MockGameImporter() // Requires a mock GameImporter
-    static let mockUpdatesController = PVGameLibraryUpdatesController(gameImporter: mockImporter)
-    static let mockViewModel = ImportProgressViewModel(gameImporter: mockImporter)
-
-    static var previews: some View {
-        // Setup mockViewModel with some data for preview
-        let _ = { // IIFE for setup
-            mockViewModel.importQueueItems = [
-                ImportQueueItem(url: URL(string: "file:///game1.zip")!, fileType: .zip),
-                ImportQueueItem(url: URL(string: "file:///game2.nes")!, fileType: .game),
-                ImportQueueItem(url: URL(string: "file:///game3.gb")!, fileType: .game)
-            ]
-            mockViewModel.logMessages = [
-                StatusMessageManager.StatusMessage(message: "This is an informational message.", type: .info),
-                StatusMessageManager.StatusMessage(message: "Warning: Something might be wrong.", type: .warning),
-                StatusMessageManager.StatusMessage(message: "Error: Something went wrong! Attempting to fix this very long error message that should wrap around correctly and display fully.", type: .error),
-                StatusMessageManager.StatusMessage(message: "Successfully completed an operation.", type: .success)
-            ]
-            mockViewModel.syncStatus = .initialSync
-            mockViewModel.initialSyncProgress = .DUMMY_FOR_PREVIEW // Using the static dummy data
-            mockViewModel.isSyncing = true
-            mockViewModel.shouldShow = true // Make sure it's visible for preview
-        }()
-
-        return VStack(spacing: 20) {
-            Text("Import Progress View Preview")
-                .font(.title)
-
-            ImportProgressView(
-                gameImporter: mockImporter,
-                updatesController: mockUpdatesController
-            )
-            // You can also inject the pre-configured mockViewModel directly if the View supports it for previews
-            // Or, ensure the View's own @StateObject uses the mockImporter that populates the ViewModel correctly.
-            
-            Spacer()
-        }
-        .padding()
-        .background(Color.gray.opacity(0.1))
-        .onAppear {
-             // This ensures the preview displays the view as it would with live data
-             // The viewModel inside the previewed ImportProgressView will call setupTracking
-        }
-    }
-}
-#endif
