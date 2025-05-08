@@ -3,7 +3,7 @@
 //  PVUI
 //
 //  Created by Joseph Mattiello on 4/24/25.
-//  Copyright © 2025 Provenance Emu. All rights reserved.
+//  Copyright 2025 Provenance Emu. All rights reserved.
 //
 
 import Foundation
@@ -74,6 +74,7 @@ public class StatusMessageManager: ObservableObject {
     public let viewModel = StatusMessageViewModel()
 
     private init() {
+        setupNotificationObservers()
 
         Task { @MainActor [weak self] in
             // Set up bindings to the ViewModel
@@ -106,205 +107,215 @@ public class StatusMessageManager: ObservableObject {
                 .receive(on: RunLoop.main)
                 .assign(to: &$cloudKitSyncProgress)
         }
+    }
 
-        // Subscribe to notifications for file recovery started
-        #if !os(tvOS)
-        NotificationCenter.default.publisher(for: iCloudDriveSync.iCloudFileRecoveryStarted)
-            .sink { [weak self] _ in
-                DispatchQueue.main.async {
-                    self?.addMessage(StatusMessage(
-                        message: "Starting file recovery from iCloud Drive...",
-                        type: .info,
-                        duration: 3.0
-                    ))
-                }
-            }
-            .store(in: &cancellables)
+    private func setupNotificationObservers() {
+        // Clear existing observers to prevent duplicates if called multiple times
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
 
-        // Subscribe to notifications for file recovery completed
-        NotificationCenter.default.publisher(for: iCloudDriveSync.iCloudFileRecoveryCompleted)
-            .sink { [weak self] _ in
-                DispatchQueue.main.async {
-                    self?.addMessage(StatusMessage(
-                        message: "File recovery from iCloud Drive completed",
-                        type: .success,
-                        duration: 5.0
-                    ))
-                }
-            }
-            .store(in: &cancellables)
-        #endif // !os(tvOS)
-
-        // Subscribe to disk space warnings
+        // MARK: - File System Operations
         NotificationCenter.default.publisher(for: .diskSpaceWarning)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] notification in
-                DispatchQueue.main.async {
-                    if let userInfo = notification.userInfo,
-                       let availableSpace = userInfo["availableSpace"] as? Int64 {
-                        let spaceInGB = Double(availableSpace) / 1_073_741_824.0 // Convert to GB
-                        self?.addMessage(StatusMessage(
-                            message: "Low disk space warning: \(String(format: "%.1f", spaceInGB))GB available",
-                            type: .warning,
-                            duration: 10.0
-                        ))
-                    } else {
-                        self?.addMessage(StatusMessage(
-                            message: "Low disk space warning",
-                            type: .warning,
-                            duration: 10.0
-                        ))
-                    }
+                let message = notification.userInfo?["message"] as? String ?? "Disk space is running low."
+                self?.addMessage(StatusMessage(message: message, type: .warning, duration: 10.0))
+            }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: .temporaryFileCleanupStarted)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.addMessage(StatusMessage(message: "Starting temporary file cleanup...", type: .info)) }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: .temporaryFileCleanupCompleted)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.addMessage(StatusMessage(message: "Temporary file cleanup completed.", type: .success)) }
+            .store(in: &cancellables)
+
+        // MARK: - Network Operations
+        NotificationCenter.default.publisher(for: .networkConnectivityChanged)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                if let userInfo = notification.userInfo, let isConnected = userInfo["isConnected"] as? Bool {
+                    let msg = isConnected ? "Network connection restored." : "Network connection lost."
+                    let type: StatusMessage.MessageType = isConnected ? .success : .warning
+                    self?.addMessage(StatusMessage(message: msg, type: type, duration: 5.0))
+                }
+            }
+            .store(in: &cancellables)
+        
+        NotificationCenter.default.publisher(for: .webServerStatusChanged)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                if let userInfo = notification.userInfo, 
+                   let isRunning = userInfo["isRunning"] as? Bool, 
+                   let type = userInfo["type"] as? String, 
+                   let urlString = userInfo["url"] as? String {
+                    let status = isRunning ? "started" : "stopped"
+                    let message = "Web server (\(type)) \(status) at \(urlString)"
+                    self?.addMessage(StatusMessage(message: message, type: isRunning ? .success : .info, duration: 7.0))
+                } else if let userInfo = notification.userInfo, let isRunning = userInfo["isRunning"] as? Bool, let type = userInfo["type"] as? String {
+                     let status = isRunning ? "started" : "stopped"
+                     let message = "Web server (\(type)) \(status)."
+                     self?.addMessage(StatusMessage(message: message, type: isRunning ? .success : .info, duration: 7.0))
                 }
             }
             .store(in: &cancellables)
 
-        // Subscribe to CloudKit notifications
-        NotificationCenter.default.publisher(for: .cloudKitRecordTransferStarted)
+        NotificationCenter.default.publisher(for: .webServerUploadProgress)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] notification in
-                DispatchQueue.main.async {
-                    if let userInfo = notification.userInfo,
-                       let recordType = userInfo["recordType"] as? String,
-                       let isUpload = userInfo["isUpload"] as? Bool {
-                        let direction = isUpload ? "uploading to" : "downloading from"
-                        self?.addMessage(StatusMessage(
-                            message: "\(recordType) \(direction) iCloud...",
-                            type: .info,
-                            duration: 3.0
-                        ))
+                if let userInfo = notification.userInfo,
+                   let currentFile = userInfo["currentFile"] as? String,
+                   let bytesTransferred = userInfo["bytesTransferred"] as? Int64,
+                   let totalBytes = userInfo["totalBytes"] as? Int64,
+                   let progress = userInfo["progress"] as? Double,
+                   let queueLength = userInfo["queueLength"] as? Int {
+                    let fileName = URL(fileURLWithPath: currentFile).lastPathComponent
+                    let progressPercent = Int(progress * 100)
+                    let mbTransferred = String(format: "%.1f", Double(bytesTransferred) / (1024 * 1024))
+                    let mbTotal = String(format: "%.1f", Double(totalBytes) / (1024 * 1024))
+                    
+                    var message = "Uploading \(fileName): \(progressPercent)% ([\(mbTransferred)/\(mbTotal) MB])"
+                    if queueLength > 0 {
+                        message += " - \(queueLength) in queue"
                     }
+                    self?.addMessage(StatusMessage(message: message, type: .progress, duration: 3.0))
+                }
+            }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: .webServerUploadCompleted)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                if let userInfo = notification.userInfo,
+                   let fileName = userInfo["fileName"] as? String {
+                    let displayName = URL(fileURLWithPath: fileName).lastPathComponent
+                    var message = "Upload complete: \(displayName)"
+                    if let fileSize = userInfo["fileSize"] as? Int64 {
+                        let mbSize = String(format: "%.1f", Double(fileSize) / (1024 * 1024))
+                        message += " (\(mbSize) MB)"
+                    }
+                    self?.addMessage(StatusMessage(message: message, type: .success, duration: 7.0))
+                }
+            }
+            .store(in: &cancellables)
+
+        // MARK: - Controller Management
+        NotificationCenter.default.publisher(for: .controllerConnected)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                let name = notification.userInfo?["name"] as? String ?? "Controller"
+                self?.addMessage(StatusMessage(message: "\(name) connected.", type: .success, duration: 4.0))
+            }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: .controllerDisconnected)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                let name = notification.userInfo?["name"] as? String ?? "Controller"
+                self?.addMessage(StatusMessage(message: "\(name) disconnected.", type: .warning, duration: 4.0))
+            }
+            .store(in: &cancellables)
+
+        // MARK: - ROM Scanning
+        NotificationCenter.default.publisher(for: .romScanningStarted)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.addMessage(StatusMessage(message: "Starting ROM scan...", type: .info)) }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: .romScanningCompleted)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                let count = notification.userInfo?["count"] as? Int
+                let message = count != nil ? "ROM scan completed. Found \(count!) new items." : "ROM scan completed."
+                self?.addMessage(StatusMessage(message: message, type: .success))
+            }
+            .store(in: &cancellables)
+
+        // MARK: - CloudKit Sync Operations (Ensure these are robust and cover existing logic if any)
+        NotificationCenter.default.publisher(for: .cloudKitInitialSyncStarted)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.addMessage(StatusMessage(message: "Starting initial CloudKit sync...", type: .info, duration: 5.0)) }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: .cloudKitInitialSyncCompleted)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                let success = notification.userInfo?["success"] as? Bool ?? true // Assume success if not specified
+                let message = success ? "Initial CloudKit sync completed successfully." : "Initial CloudKit sync finished with issues."
+                self?.addMessage(StatusMessage(message: message, type: success ? .success : .warning, duration: 7.0))
+            }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: .cloudKitRecordTransferProgress)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                if let userInfo = notification.userInfo,
+                   let recordType = userInfo["recordType"] as? String,
+                   let isUpload = userInfo["isUpload"] as? Bool,
+                   let current = userInfo["current"] as? Int,
+                   let total = userInfo["total"] as? Int {
+                    let direction = isUpload ? "Uploading" : "Downloading"
+                    let message = "\(direction) \(recordType) to/from iCloud... (\(current)/\(total))"
+                    // This message might be too frequent. Consider if a dedicated progress bar is better handled by StatusMessageViewModel directly.
+                    // For now, keeping it simple. A more sophisticated approach might use the message ID to update, not just add.
+                    self?.addMessage(StatusMessage(message: message, type: .info, duration: 3.0))
+                } else if let userInfo = notification.userInfo, // Simpler version if no progress numbers
+                          let recordType = userInfo["recordType"] as? String,
+                          let isUpload = userInfo["isUpload"] as? Bool {
+                    let direction = isUpload ? "Uploading" : "Downloading"
+                    self?.addMessage(StatusMessage(message: "\(direction) \(recordType) to/from iCloud...", type: .info, duration: 3.0))
                 }
             }
             .store(in: &cancellables)
 
         NotificationCenter.default.publisher(for: .cloudKitRecordTransferCompleted)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] notification in
-                DispatchQueue.main.async {
-                    if let userInfo = notification.userInfo,
-                       let recordType = userInfo["recordType"] as? String,
-                       let count = userInfo["count"] as? Int,
-                       let isUpload = userInfo["isUpload"] as? Bool {
-                        let direction = isUpload ? "uploaded to" : "downloaded from"
-                        self?.addMessage(StatusMessage(
-                            message: "\(count) \(recordType) records \(direction) iCloud",
-                            type: .success,
-                            duration: 5.0
-                        ))
-                    }
+                if let userInfo = notification.userInfo,
+                   let recordType = userInfo["recordType"] as? String,
+                   let count = userInfo["count"] as? Int,
+                   let isUpload = userInfo["isUpload"] as? Bool {
+                    let direction = isUpload ? "Uploaded" : "Downloaded"
+                    let plural = count == 1 ? "" : "s"
+                    self?.addMessage(StatusMessage(message: "\(direction) \(count) \(recordType)\(plural) \(isUpload ? "to" : "from") iCloud.", type: .success, duration: 5.0))
+                } else if let userInfo = notification.userInfo, // Simpler version
+                          let recordType = userInfo["recordType"] as? String,
+                          let isUpload = userInfo["isUpload"] as? Bool {
+                    let direction = isUpload ? "Uploaded" : "Downloaded"
+                    self?.addMessage(StatusMessage(message: "\(direction) \(recordType)\(isUpload ? " to" : " from") iCloud.", type: .success, duration: 5.0))
                 }
             }
             .store(in: &cancellables)
 
-        // Subscribe to temporary file cleanup notifications
-        NotificationCenter.default.publisher(for: .temporaryFileCleanupStarted)
-            .sink { [weak self] _ in
-                DispatchQueue.main.async {
-                    self?.addMessage(StatusMessage(
-                        message: "Starting temporary file cleanup...",
-                        type: .info,
-                        duration: 3.0
-                    ))
-                }
-            }
-            .store(in: &cancellables)
-
-        NotificationCenter.default.publisher(for: .temporaryFileCleanupCompleted)
+        NotificationCenter.default.publisher(for: .cloudKitConflictsDetected)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] notification in
-                DispatchQueue.main.async {
-                    if let userInfo = notification.userInfo,
-                       let bytesFreed = userInfo["bytesFreed"] as? Int64 {
-                        let mbFreed = Double(bytesFreed) / 1_048_576.0 // Convert to MB
-                        self?.addMessage(StatusMessage(
-                            message: "Temporary file cleanup completed: \(String(format: "%.1f", mbFreed))MB freed",
-                            type: .success,
-                            duration: 5.0
-                        ))
-                    } else {
-                        self?.addMessage(StatusMessage(
-                            message: "Temporary file cleanup completed",
-                            type: .success,
-                            duration: 5.0
-                        ))
-                    }
+                let count = notification.userInfo?["count"] as? Int ?? 0
+                let recordType = notification.userInfo?["recordType"] as? String ?? "items"
+                if count > 0 {
+                    self?.addMessage(StatusMessage(message: "\(count) CloudKit sync conflict\(count == 1 ? "" : "s") detected for \(recordType). Please resolve.", type: .warning, duration: 10.0))
                 }
             }
             .store(in: &cancellables)
 
-        // Subscribe to ROM scanning notifications
-        NotificationCenter.default.publisher(for: .romScanningStarted)
-            .sink { [weak self] _ in
-                DispatchQueue.main.async {
-                    self?.addMessage(StatusMessage(
-                        message: "Starting ROM scanning...",
-                        type: .info,
-                        duration: 3.0
-                    ))
-                }
-            }
-            .store(in: &cancellables)
-
-        NotificationCenter.default.publisher(for: .romScanningCompleted)
+        // TODO: Add observers for cache management, other downloads, MFi controller changes etc. as needed.
+        // Example for one more:
+        NotificationCenter.default.publisher(for: .romScanningProgress)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] notification in
-                DispatchQueue.main.async {
-                    if let userInfo = notification.userInfo,
-                       let count = userInfo["count"] as? Int {
-                        self?.addMessage(StatusMessage(
-                            message: "ROM scanning completed: \(count) ROMs processed",
-                            type: .success,
-                            duration: 5.0
-                        ))
-                    } else {
-                        self?.addMessage(StatusMessage(
-                            message: "ROM scanning completed",
-                            type: .success,
-                            duration: 5.0
-                        ))
-                    }
+                if let userInfo = notification.userInfo, let current = userInfo["current"] as? Int, let total = userInfo["total"] as? Int, total > 0 {
+                    let percent = Int((Double(current) / Double(total)) * 100)
+                    // This message might be too frequent. Consider if a dedicated progress bar is better handled by StatusMessageViewModel directly.
+                    // For now, adding a textual update.
+                    self?.addMessage(StatusMessage(message: "ROM Scan: \(percent)% (\(current)/\(total))", type: .info, duration: 2.0))
                 }
             }
             .store(in: &cancellables)
 
-        // Subscribe to controller notifications
-        NotificationCenter.default.publisher(for: .controllerConnected)
-            .sink { [weak self] notification in
-                DispatchQueue.main.async {
-                    if let userInfo = notification.userInfo,
-                       let controllerName = userInfo["name"] as? String {
-                        self?.addMessage(StatusMessage(
-                            message: "Controller connected: \(controllerName)",
-                            type: .success,
-                            duration: 3.0
-                        ))
-                    } else {
-                        self?.addMessage(StatusMessage(
-                            message: "Controller connected",
-                            type: .success,
-                            duration: 3.0
-                        ))
-                    }
-                }
-            }
-            .store(in: &cancellables)
-
-        NotificationCenter.default.publisher(for: .controllerDisconnected)
-            .sink { [weak self] notification in
-                DispatchQueue.main.async {
-                    if let userInfo = notification.userInfo,
-                       let controllerName = userInfo["name"] as? String {
-                        self?.addMessage(StatusMessage(
-                            message: "Controller disconnected: \(controllerName)",
-                            type: .warning,
-                            duration: 3.0
-                        ))
-                    } else {
-                        self?.addMessage(StatusMessage(
-                            message: "Controller disconnected",
-                            type: .warning,
-                            duration: 3.0
-                        ))
-                    }
-                }
-            }
-            .store(in: &cancellables)
+        ILOG("StatusMessageManager: All notification observers set up.")
     }
 
     /// Add a new status message

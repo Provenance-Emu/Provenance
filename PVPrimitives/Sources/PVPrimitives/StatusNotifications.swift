@@ -45,10 +45,13 @@ public extension Notification.Name {
     static let downloadProgress = Notification.Name("DownloadProgressNotification")
     
     /// Notification posted when web server status changes
-    static let webServerStatusChanged = Notification.Name("WebServerStatusChangedNotification")
+    static let webServerStatusChanged = Notification.Name("WebServerStatusChanged")
     
     /// Notification posted with progress during web server uploads
-    static let webServerUploadProgress = Notification.Name("WebServerUploadProgressNotification")
+    static let webServerUploadProgress = Notification.Name("WebServerUploadProgress")
+    
+    /// Notification posted when a web server upload is completed
+    static let webServerUploadCompleted = Notification.Name("WebServerUploadCompleted")
     
     // MARK: - Controller Management
     

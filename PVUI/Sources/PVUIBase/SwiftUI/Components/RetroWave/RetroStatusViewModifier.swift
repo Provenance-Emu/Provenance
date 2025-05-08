@@ -60,13 +60,13 @@ public struct RetroStatusViewModifier: ViewModifier {
                 .animation(.easeInOut(duration: 0.3), value: isVisible)
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("WebServerUploadProgress"))) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .webServerUploadProgress)) { _ in
             showStatusView()
         }
-        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("WebServerUploadCompleted"))) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .webServerUploadCompleted)) { _ in
             showStatusView()
         }
-        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("WebServerStatusChanged"))) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .webServerStatusChanged)) { _ in
             showStatusView()
         }
         #if !os(tvOS)

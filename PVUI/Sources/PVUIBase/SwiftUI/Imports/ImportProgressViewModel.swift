@@ -383,7 +383,7 @@ public class ImportProgressViewModel: ObservableObject {
             // Initialize progress. If totalFiles is 0, this indicates it's indeterminate or starting.
             let totalFiles = notification.userInfo?["totalFilesToRecover"] as? Int ?? 0
             self.fileRecoveryProgress = ProgressInfo(id: "fileRecovery", current: 0, total: totalFiles, detail: "Preparing recovery...")
-            self.addLogMessage("iCloud file recovery started.", type: .info)
+            // Redundant: self.addLogMessage("iCloud file recovery started.", type: .info)
             self.updateShouldShow()
         }
     }
@@ -397,7 +397,7 @@ public class ImportProgressViewModel: ObservableObject {
                 self.fileRecoveryProgress = ProgressInfo(id: "fileRecovery", current: filesProcessed, total: totalFiles, detail: "Recovering: \(filesProcessed)/\(totalFiles)")
                 // Optionally, update log messages less frequently to avoid flooding
             } else if let message = notification.userInfo?["message"] as? String {
-                 self.addLogMessage("Recovery: \(message)", type: .progress) // Use .progress type if available
+                 // Redundant: self.addLogMessage("Recovery: \(message)", type: .progress) // Use .progress type if available
             }
             self.updateShouldShow()
         }
@@ -407,7 +407,7 @@ public class ImportProgressViewModel: ObservableObject {
         DispatchQueue.main.async { [weak self] in
             self?.fileRecoveryState = .complete // Use PVPrimitives.FileRecoveryState.complete
             self?.fileRecoveryProgress = nil
-            self?.addLogMessage("iCloud file recovery completed successfully.", type: .success)
+            // Redundant: self.addLogMessage("iCloud file recovery completed successfully.", type: .success)
             self?.updateShouldShow()
         }
     }
@@ -422,7 +422,8 @@ public class ImportProgressViewModel: ObservableObject {
             }
             self?.fileRecoveryState = .error // Use PVPrimitives.FileRecoveryState.error (no associated value)
             self?.fileRecoveryProgress = nil // Or keep progress to show where it failed?
-            self?.addLogMessage(errorMessage, type: .error) // Log the constructed error message
+            // Specific error logging here is good.
+            self?.addLogMessage("iCloud file recovery error: \(errorMessage)", type: .error)
             self?.updateShouldShow()
         }
     }
