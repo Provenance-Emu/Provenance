@@ -176,17 +176,19 @@ struct ConsoleGamesView: SwiftUI.View {
                     
                     // Import Progress View (legacy - can be removed once RetroStatusControlView is fully tested)
                     // Commenting out as RetroStatusControlView now handles this functionality
-                    ImportProgressView(
-                        gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
-                        updatesController: AppState.shared.libraryUpdatesController!,
-                        onTap: {
-                            withAnimation {
-                                gamesViewModel.showImportStatusView = true
+                    if let libraryUpdatesController = AppState.shared.libraryUpdatesController {
+                        ImportProgressView(
+                            gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
+                            updatesController: libraryUpdatesController,
+                            onTap: {
+                                withAnimation {
+                                    gamesViewModel.showImportStatusView = true
+                                }
                             }
-                        }
-                    )
-                    .padding(.horizontal, 8)
-                    .padding(.top, 4)
+                        )
+                        .padding(.horizontal, 8)
+                        .padding(.top, 4)
+                    }
                     
                     ScrollViewWithOffset(
                         offsetChanged: { offset in
