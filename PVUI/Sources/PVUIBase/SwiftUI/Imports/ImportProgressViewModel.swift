@@ -221,23 +221,55 @@ public class ImportProgressViewModel: ObservableObject {
     private func setupGameImporterSubscription() {
         guard let concreteImporter = gameImporter as? GameImporter else {
             ELOG("GameImporter instance not available for direct queue subscription. Import queue will not be shown.")
+            // Optionally, set isImporting to false or handle appropriately
+            self.isImporting = false
+            self.updateShouldShow()
             return
         }
 
-        concreteImporter.importQueuePublisher
+        // Publisher for the import queue
+        gameImporter.importQueuePublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] queue in
                 guard let self = self else { return }
-                DLOG("Import queue updated with \(queue.count) items.")
-                self.importQueueItems = queue
+
+                // Detailed logging of import queue statuses
+                var statusCounts: [ImportQueueItem.ImportStatus: Int] = [:]
+                for item in queue {
+                    statusCounts[item.status, default: 0] += 1
+                }
+                ILOG("Import queue received via Publisher. Count: \(queue.count). Statuses: \(statusCounts.map { "\($0.key): \($0.value)" }.joined(separator: ", "))")
+
+                self.importQueueItems = queue // Update the @Published property
+
+                // Calculate if any imports are active (not all are success or failure)
+                let activeImports = !queue.isEmpty && !queue.allSatisfy { $0.status == .success || $0.status == .failure }
+                if self.isImporting != activeImports {
+                    self.isImporting = activeImports
+                    ILOG("isImporting toggled to: \(self.isImporting) (from Publisher)")
+                }
                 self.updateShouldShow()
             }
             .store(in: &cancellables)
 
-        Task {
+        // Also fetch initial queue state if needed, or rely purely on publisher
+        Task { [weak self, weak concreteImporter] in
+            guard let self = self, let concreteImporter = concreteImporter else { return }
             let queue = await concreteImporter.importQueue
             await MainActor.run {
+                // Detailed logging for initial fetch if different
+                var statusCounts: [ImportQueueItem.ImportStatus: Int] = [:]
+                for item in queue {
+                    statusCounts[item.status, default: 0] += 1
+                }
+                ILOG("Import queue received via Task. Count: \(queue.count). Statuses: \(statusCounts.map { "\($0.key): \($0.value)" }.joined(separator: ", "))")
+                
                 self.importQueueItems = queue
+                let activeImports = !queue.isEmpty && !queue.allSatisfy { $0.status == .success || $0.status == .failure }
+                if self.isImporting != activeImports {
+                    self.isImporting = activeImports
+                    ILOG("isImporting toggled to: \(self.isImporting) (from Task)")
+                }
                 self.updateShouldShow()
             }
         }
