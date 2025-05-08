@@ -75,15 +75,15 @@ public struct ImportStatusView: View {
     
     public var body: some View {
         WithPerceptionTracking {
-            Group {
-                if shouldShowFullView {
+//            Group {
+//                if shouldShowFullView {
                     fullImportView
-                } else {
-                    // Compact status view when no imports are active
-                    StatusMessageView()
-                        .padding(.vertical, 8)
-                }
-            }
+//                } else {
+//                    // Compact status view when no imports are active
+//                    StatusMessageView()
+//                        .padding(.vertical, 8)
+//                }
+//            }
         }
         .onAppear {
             // Start retrowave animations
