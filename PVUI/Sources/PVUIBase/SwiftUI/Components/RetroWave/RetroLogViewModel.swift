@@ -3,7 +3,7 @@
 //  PVUI
 //
 //  Created by Joseph Mattiello on 4/24/25.
-//  Copyright © 2025 Provenance Emu. All rights reserved.
+//  Copyright 2025 Provenance Emu. All rights reserved.
 //
 
 import Foundation
@@ -13,9 +13,15 @@ import PVLogging
 
 /// ViewModel for RetroLogView
 public final class RetroLogViewModel: ObservableObject {
+    // MARK: - Sort Order Enum
+    public enum SortOrder {
+        case newestFirst
+        case oldestFirst
+    }
+    
     // MARK: - Published Properties
     
-    /// The logs to display
+    /// The raw logs, typically appended chronologically
     @Published public var logs: [LogEntry] = []
     
     /// The minimum log level to display
@@ -29,6 +35,9 @@ public final class RetroLogViewModel: ObservableObject {
     
     /// Search text
     @Published public var searchText = ""
+
+    /// Current sort order for logs
+    @Published public var sortOrder: SortOrder = .newestFirst // Default to newest first
     
     // MARK: - Private Properties
     
@@ -57,6 +66,13 @@ public final class RetroLogViewModel: ObservableObject {
         logs.removeAll()
         PVLogPublisher.shared.clearLogs()
     }
+
+    /// Toggle the sort order of logs.
+    public func toggleSortOrder() {
+        sortOrder = (sortOrder == .newestFirst) ? .oldestFirst : .newestFirst
+        // Note: Auto-scroll behavior might need adjustment in the View
+        // depending on the sort order, especially if autoScroll means "scroll to newest".
+    }
     
     /// Get color for log level
     public func logLevelColor(_ level: LogLevel) -> Color {
@@ -74,11 +90,19 @@ public final class RetroLogViewModel: ObservableObject {
         }
     }
     
-    /// Get filtered logs based on search text and minimum log level
-    public var filteredLogs: [LogEntry] {
-        logs.filter { log in
+    /// Get filtered and sorted logs based on search text, minimum log level, and sort order.
+    public var displayedLogs: [LogEntry] { // Renamed from filteredLogs
+        let filtered = logs.filter { log in
             (searchText.isEmpty || log.message.localizedCaseInsensitiveContains(searchText)) &&
             log.level.rawValue >= minLogLevel.rawValue
+        }
+        
+        switch sortOrder {
+        case .newestFirst:
+            // Assumes 'logs' are [oldest, ..., newest], so reverse for newest first display.
+            return filtered.reversed()
+        case .oldestFirst:
+            return filtered
         }
     }
 }

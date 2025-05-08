@@ -3,7 +3,7 @@
 //  PVUI
 //
 //  Created by Joseph Mattiello on 4/24/25.
-//  Copyright © 2025 Provenance Emu. All rights reserved.
+//  Copyright 2025 Provenance Emu. All rights reserved.
 //
 
 import SwiftUI
@@ -53,7 +53,7 @@ public struct RetroLogView: View {
             ScrollViewReader { scrollView in
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 0) {
-                        ForEach(viewModel.filteredLogs) { log in
+                        ForEach(viewModel.displayedLogs) { log in
                             logEntryRow(log)
                                 .id(log.id)
                         }
@@ -65,13 +65,9 @@ public struct RetroLogView: View {
                     }
                     .padding(.horizontal, 8)
                 }
-                .onChange(of: viewModel.logs) { _ in
-                    if viewModel.autoScroll {
-                        withAnimation {
-                            scrollView.scrollTo(scrollSpace, anchor: .bottom)
-                        }
-                    }
-                }
+                .onChange(of: viewModel.displayedLogs.count) { _ in handleAutoScroll(scrollView: scrollView) }
+                .onChange(of: viewModel.autoScroll) { _ in handleAutoScroll(scrollView: scrollView) }
+                .onChange(of: viewModel.sortOrder) { _ in handleAutoScroll(scrollView: scrollView) }
             }
         }
         .background(
@@ -147,6 +143,20 @@ public struct RetroLogView: View {
                         .background(
                             RoundedRectangle(cornerRadius: 4)
                                 .strokeBorder(viewModel.autoScroll ? RetroTheme.retroBlue : RetroTheme.retroPink.opacity(0.7), lineWidth: 1)
+                        )
+                }
+
+                // Sort order toggle button
+                Button(action: {
+                    viewModel.toggleSortOrder()
+                }) {
+                    Image(systemName: viewModel.sortOrder == .newestFirst ? "arrow.down" : "arrow.up")
+                        .font(.system(size: 12))
+                        .foregroundColor(RetroTheme.retroBlue)
+                        .padding(6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 4)
+                                .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
                         )
                 }
                 
@@ -254,7 +264,26 @@ public struct RetroLogView: View {
         LogEntryRowContent(log: log, viewModel: viewModel)
     }
     
-    /// Content view for a log entry row with copy functionality
+    // Helper function to manage auto-scrolling behavior
+    private func handleAutoScroll(scrollView: ScrollViewProxy) {
+        if viewModel.autoScroll {
+            if viewModel.sortOrder == .newestFirst {
+                // Scroll to the top-most item (newest)
+                if let firstLogId = viewModel.displayedLogs.first?.id {
+                    withAnimation {
+                        scrollView.scrollTo(firstLogId, anchor: .top)
+                    }
+                }
+            } else { // .oldestFirst
+                // Scroll to the bottom-most item (newest) which is at scrollSpace
+                withAnimation {
+                    scrollView.scrollTo(scrollSpace, anchor: .bottom)
+                }
+            }
+        }
+    }
+
+    // MARK: - Log Entry Subview
     private struct LogEntryRowContent: View {
         let log: LogEntry
         let viewModel: RetroLogViewModel
@@ -374,10 +403,9 @@ public struct RetroLogView: View {
                 DLOG("Copied log entry to clipboard: \(log.id)")
             }
         }
-        
-        
     }
 }
+
 // MARK: - Preview
 
 #if DEBUG
