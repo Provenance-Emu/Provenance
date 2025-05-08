@@ -15,13 +15,13 @@ public struct RetroMessageRow: View {
     // MARK: - Properties
     
     /// The message to display
-    let message: StatusMessage
+    let message: StatusMessageManager.StatusMessage
     
     /// Function to format time intervals
     let formatTimeInterval: (Date) -> String
     
     /// Function to determine message type color
-    let messageTypeColor: (StatusMessage.MessageType) -> Color
+    let messageTypeColor: (StatusMessageManager.StatusMessage.MessageType) -> Color
     
     /// Animation state for hover effect
     @State private var isHovering = false
@@ -123,7 +123,7 @@ struct RetroMessageRow_Previews: PreviewProvider {
             RetroTheme.retroDarkBlue.edgesIgnoringSafeArea(.all)
             
             RetroMessageRow(
-                message: StatusMessage(message: "Test message", type: .info),
+                message: StatusMessageManager.StatusMessage(message: "Test message", type: .info),
                 formatTimeInterval: { _ in "2m ago" },
                 messageTypeColor: { type in
                     switch type {

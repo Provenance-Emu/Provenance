@@ -358,9 +358,9 @@ public class StatusMessageViewModel: ObservableObject {
                 if let userInfo = notification.userInfo,
                    let isConnected = userInfo["isConnected"] as? Bool {
                     let message = isConnected ? "Network connection restored" : "Network connection lost"
-                    let type: StatusMessage.MessageType = isConnected ? .success : .warning
+                    let type: StatusMessageManager.StatusMessage.MessageType = isConnected ? .success : .warning
 
-                    StatusMessageManager.shared.addMessage(StatusMessage(
+                    StatusMessageManager.shared.addMessage(StatusMessageManager.StatusMessage(
                         message: message,
                         type: type,
                         duration: 5.0
@@ -556,8 +556,8 @@ public class StatusMessageViewModel: ObservableObject {
                     let message = success ?
                         "Controller mapped successfully: \(controllerName)" :
                         "Controller mapping failed: \(controllerName)"
-                    let type: StatusMessage.MessageType = success ? .success : .error
-                    StatusMessageManager.shared.addMessage(StatusMessage(message: message, type: type, duration: 5.0))
+                    let type: StatusMessageManager.StatusMessage.MessageType = success ? .success : .error
+                    StatusMessageManager.shared.addMessage(StatusMessageManager.StatusMessage(message: message, type: type, duration: 5.0))
                 }
             }
             .store(in: &cancellables)

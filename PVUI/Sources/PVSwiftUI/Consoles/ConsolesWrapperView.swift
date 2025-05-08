@@ -128,12 +128,9 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     var body: some View {
         Group {
-            // importStatusOverlayView
-            
             // Add a glowing border line using glowColor
             RetroDividerView()
                 .shadow(color: .retroPink, radius: 4, x: 0, y: 1)
-            
             
             if consoles.isEmpty || (consoles.count == 1 && consoles.first!.identifier == SystemIdentifier.RetroArch.rawValue) {
                 noConsolesView
@@ -230,39 +227,6 @@ struct ConsolesWrapperView: SwiftUI.View {
             .tag(console.identifier)
             .ignoresSafeArea(.all, edges: .bottom)
         }
-    }
-
-    var importStatusOverlayView: some View {
-        // Import Progress View at the top
-        VStack {
-            ImportProgressView(
-                gameImporter: GameImporter.shared,
-                updatesController: AppState.shared.libraryUpdatesController!,
-                onTap: {
-                    withAnimation {
-                        showImportStatusView = true
-                    }
-                }
-            )
-        }
-        .sheet(isPresented: $showImportStatusView) {
-            ImportStatusView(
-                updatesController: AppState.shared.libraryUpdatesController!,
-                gameImporter: GameImporter.shared,
-                dismissAction: {
-                    showImportStatusView = false
-                }
-            )
-        }
-        .onChange(of: delegate.selectedTab) { newValue in
-            DLOG("Tab changed in view: \(newValue)")
-        }
-        .tabViewStyle(.page)
-        .indexViewStyle(.page(backgroundDisplayMode: .interactive))
-        .id(consoles.count)
-        .tint(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-        .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-        .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
     }
     
     @ViewBuilder

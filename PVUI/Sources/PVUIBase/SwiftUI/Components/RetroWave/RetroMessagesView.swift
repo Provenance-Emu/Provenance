@@ -15,13 +15,13 @@ public struct RetroMessagesView: View {
     // MARK: - Properties
     
     /// The messages to display
-    let messages: [StatusMessage]
+    let messages: [StatusMessageManager.StatusMessage]
     
     /// Function to format time intervals
     let formatTimeInterval: (Date) -> String
     
     /// Function to determine message type color
-    let messageTypeColor: (StatusMessage.MessageType) -> Color
+    let messageTypeColor: (StatusMessageManager.StatusMessage.MessageType) -> Color
     
     // MARK: - Initialization
     
@@ -31,9 +31,9 @@ public struct RetroMessagesView: View {
     ///   - formatTimeInterval: Function to format time intervals
     ///   - messageTypeColor: Function to determine message type color
     public init(
-        messages: [StatusMessage],
+        messages: [StatusMessageManager.StatusMessage],
         formatTimeInterval: @escaping (Date) -> String,
-        messageTypeColor: @escaping (StatusMessage.MessageType) -> Color
+        messageTypeColor: @escaping (StatusMessageManager.StatusMessage.MessageType) -> Color
     ) {
         self.messages = messages
         self.formatTimeInterval = formatTimeInterval
@@ -98,9 +98,9 @@ struct RetroMessagesView_Previews: PreviewProvider {
             
             RetroMessagesView(
                 messages: [
-                    StatusMessage(message: "ROM scanning completed", type: .success),
-                    StatusMessage(message: "File access error: Permission denied", type: .error),
-                    StatusMessage(message: "Web server started on port 8080", type: .info)
+                    StatusMessageManager.StatusMessage(message: "ROM scanning completed", type: .success),
+                    StatusMessageManager.StatusMessage(message: "File access error: Permission denied", type: .error),
+                    StatusMessageManager.StatusMessage(message: "Web server started on port 8080", type: .info)
                 ],
                 formatTimeInterval: { _ in "2m ago" },
                 messageTypeColor: { type in

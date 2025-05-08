@@ -170,7 +170,6 @@ struct ConsoleGamesView: SwiftUI.View {
                 
                 VStack(spacing: 4) {
                     
-                    
                     displayOptionsView()
                         .allowsHitTesting(true)
                     

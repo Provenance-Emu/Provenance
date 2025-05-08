@@ -19,47 +19,49 @@ import CloudKit
 import RxSwift
 
 /// Represents the current state of the Cloud Sync process.
-public enum SyncStatus: Equatable {
-    /// Idle - no sync in progress
-    case idle
-
-    /// Syncing - general sync in progress (use more specific states if possible)
-    case syncing
-
-    /// Initial sync - first-time sync or checking all records
-    case initialSync
-
-    /// Uploading - upload in progress
-    case uploading
-
-    /// Downloading - download in progress
-    case downloading
-
-    /// Initializing - sync providers are being set up
-    case initializing
-
-    /// Error - sync encountered an error
-    case error(Error)
-
-    /// Disabled - sync is turned off in settings
-    case disabled
-
-    public static func == (lhs: SyncStatus, rhs: SyncStatus) -> Bool {
-        switch (lhs, rhs) {
-        case (.idle, .idle),
-             (.syncing, .syncing),
-             (.initialSync, .initialSync),
-             (.uploading, .uploading),
-             (.downloading, .downloading),
-             (.initializing, .initializing),
-             (.disabled, .disabled):
-            return true
-        case let (.error(lhsError), .error(rhsError)):
-            // Optionally compare errors more specifically if needed
-            return (lhsError as NSError).domain == (rhsError as NSError).domain &&
-                   (lhsError as NSError).code == (rhsError as NSError).code
-        default:
-            return false
+extension CloudSyncManager {
+    public enum SyncStatus: Equatable {
+        /// Idle - no sync in progress
+        case idle
+        
+        /// Syncing - general sync in progress (use more specific states if possible)
+        case syncing
+        
+        /// Initial sync - first-time sync or checking all records
+        case initialSync
+        
+        /// Uploading - upload in progress
+        case uploading
+        
+        /// Downloading - download in progress
+        case downloading
+        
+        /// Initializing - sync providers are being set up
+        case initializing
+        
+        /// Error - sync encountered an error
+        case error(Error)
+        
+        /// Disabled - sync is turned off in settings
+        case disabled
+        
+        public static func == (lhs: SyncStatus, rhs: SyncStatus) -> Bool {
+            switch (lhs, rhs) {
+            case (.idle, .idle),
+                (.syncing, .syncing),
+                (.initialSync, .initialSync),
+                (.uploading, .uploading),
+                (.downloading, .downloading),
+                (.initializing, .initializing),
+                (.disabled, .disabled):
+                return true
+            case let (.error(lhsError), .error(rhsError)):
+                // Optionally compare errors more specifically if needed
+                return (lhsError as NSError).domain == (rhsError as NSError).domain &&
+                (lhsError as NSError).code == (rhsError as NSError).code
+            default:
+                return false
+            }
         }
     }
 }

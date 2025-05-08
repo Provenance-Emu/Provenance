@@ -76,7 +76,7 @@ public struct StatusMessageView: View {
     /// - Parameter message: The message to display
     /// - Returns: A view for the message
     @ViewBuilder
-    private func statusMessageView(_ message: StatusMessage) -> some View {
+    private func statusMessageView(_ message: StatusMessageManager.StatusMessage) -> some View {
         HStack {
             Circle()
                 .fill(messageTypeColor(message.type))
@@ -193,7 +193,7 @@ public struct StatusMessageView: View {
     /// Get the color for a message type
     /// - Parameter type: The message type
     /// - Returns: The appropriate color
-    private func messageTypeColor(_ type: StatusMessage.MessageType) -> Color {
+    private func messageTypeColor(_ type: StatusMessageManager.StatusMessage.MessageType) -> Color {
         switch type {
         case .info:
             return RetroTheme.retroBlue

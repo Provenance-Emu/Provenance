@@ -35,7 +35,7 @@ class GameImporterFileService : GameImporterFileServicing {
         case .artwork:
             //TODO: implement me
             return
-        case .game,.cdRom:
+        case .game,.cdRom, .zip: // TODO: Something different for zips?
             _ = try await processQueueItem(queueItem)
         case .unknown:
             throw GameImporterError.unsupportedFile

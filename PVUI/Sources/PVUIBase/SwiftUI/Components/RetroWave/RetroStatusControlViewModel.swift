@@ -77,7 +77,7 @@ final class RetroStatusControlViewModel: ObservableObject {
     @Published var temporaryStatusMessage: String? = nil
     
     // --- Status Messages ---
-    @Published var messages: [StatusMessage] = []
+    @Published var messages: [StatusMessageManager.StatusMessage] = []
     
     // MARK: - Private Properties
     private var cancellables = Set<AnyCancellable>()
@@ -107,7 +107,7 @@ final class RetroStatusControlViewModel: ObservableObject {
                 if let latestMessage = messages.last(where: { $0.type != .progress }) {
                     self?.temporaryStatusMessage = latestMessage.message
                     
-                    // Convert StatusMessage.MessageType to AlertMessage.AlertType for alerts
+                    // Convert StatusMessageManager.StatusMessage.MessageType to AlertMessage.AlertType for alerts
                     switch latestMessage.type {
                     case .error:
                         self?.currentAlert = AlertMessage(title: "Error", message: latestMessage.message, type: .error)
