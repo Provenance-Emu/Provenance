@@ -276,6 +276,15 @@ public class ImportProgressViewModel: ObservableObject {
                     ILOG("isImporting toggled to: \(self.isImporting) (from Publisher)")
                 }
                 self.updateShouldShow()
+
+                // Derive counts from the queue
+                self.totalImportFileCount = queue.count
+                self.processedFilesCount = queue.filter { $0.status != .queued }.count
+                self.errorFilesCount = queue.filter { $0.status == .failure }.count
+                // Simplification: assume all successful imports are 'new' for now.
+                // A more accurate 'new' vs 'updated' would require more info from ImportQueueItem or GameImporter.
+                self.newFilesCount = queue.filter { $0.status == .success }.count
+                self.updatedFilesCount = 0 // Placeholder - difficult to determine from status alone
             }
             .store(in: &cancellables)
 
