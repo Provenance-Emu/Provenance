@@ -224,15 +224,89 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         self.configuration = FeatureFlagsConfiguration(features: features)
     }
 
+    // Reverted to manual UserDefaults access for _debugOverridesStorage
+    /// Internal storage for debug overrides, persisted in UserDefaults. Keys are feature raw strings.
+    private var _debugOverridesStorage: [String: Bool?] {
+        get {
+            // UserDefaults can't directly store Bool? values, so we need to convert
+            // We'll use a dictionary where:
+            // - Key exists with value true = Bool?(true)
+            // - Key exists with value false = Bool?(false)
+            // - Key doesn't exist = nil (no override)
+            let defaults = UserDefaults.standard
+            guard let rawDict = defaults.dictionary(forKey: "PVFeatureFlagsDebugOverrides") as? [String: Any] else {
+                return [:]
+            }
+            
+            var result: [String: Bool?] = [:]
+            for (key, value) in rawDict {
+                if let boolValue = value as? Bool {
+                    result[key] = boolValue
+                } else if let stringValue = value as? String, stringValue == "nil" {
+                    // This represents an explicit nil override
+                    result[key] = nil
+                }
+            }
+            
+            print("Debug overrides loaded from UserDefaults: \(result)")
+            return result
+        }
+        set {
+            // Convert Bool? to a format UserDefaults can store
+            var storableDict: [String: Any] = [:]
+            for (key, optionalValue) in newValue {
+                if let boolValue = optionalValue {
+                    // Store true/false directly
+                    storableDict[key] = boolValue
+                } else {
+                    // Store nil as a special string marker
+                    storableDict[key] = "nil"
+                }
+            }
+            
+            print("Saving debug overrides to UserDefaults: \(storableDict)")
+            UserDefaults.standard.set(storableDict, forKey: "PVFeatureFlagsDebugOverrides")
+        }
+    }
+
+    // Stored as [String: Bool?] in UserDefaults
+    /// Computed property to access and manage debug overrides with `PVFeature` keys, backed by `_debugOverridesStorage`.
+    internal var debugOverrides: [PVFeature: Bool?] { // Changed to internal
+        get {
+            let stringKeyedOverrides = _debugOverridesStorage
+            var featureKeyedOverrides: [PVFeature: Bool?] = [:]
+            for (key, value) in stringKeyedOverrides {
+                if let featureKey = PVFeature(rawValue: key) {
+                    featureKeyedOverrides[featureKey] = value
+                }
+            }
+            return featureKeyedOverrides
+        }
+        set {
+            var stringKeyedOverrides: [String: Bool?] = [:]
+            for (featureKey, value) in newValue {
+                stringKeyedOverrides[featureKey.rawValue] = value
+            }
+            _debugOverridesStorage = stringKeyedOverrides
+            // No call to updateFeatureStates here; manager handles its own updates.
+        }
+    }
+
     /// Checks if a specific feature is currently enabled based on its configuration, app criteria (version, build, type), and any debug overrides.
     /// - Parameter feature: The `PVFeature` to check.
     /// - Returns: `true` if the feature is enabled, `false` otherwise.
     public func isEnabled(_ feature: PVFeature) -> Bool {
         // Check for a debug override first
-        if let overrideEnabled = self.debugOverrides[feature] {
-            return overrideEnabled ?? false
+        if let overrideValue = self.debugOverrides[feature] {
+            // If we have an explicit override value (true or false), return it
+            if let boolValue = overrideValue {
+                print("Feature \(feature.rawValue) using override value: \(boolValue)")
+                return boolValue
+            }
+            // If we have a nil value in the dictionary, it means the override was cleared
+            // Fall through to normal logic
         }
-
+        
         guard let featureConfig = configuration?.features[feature.rawValue] else {
             print("Error: Feature \(feature) not found")
             return false
@@ -262,54 +336,31 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         print("Feature: \(feature) is enabled")
         return featureConfig.enabled
     }
-
-    // Reverted to manual UserDefaults access for _debugOverridesStorage
-    /// Internal storage for debug overrides, persisted in UserDefaults. Keys are feature raw strings.
-    private var _debugOverridesStorage: [String: Bool?] {
-        get {
-            return UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides") as? [String: Bool?] ?? [:]
-        }
-        set {
-            UserDefaults.standard.set(newValue, forKey: "PVFeatureFlagsDebugOverrides")
-        }
-    }
-
-    // Stored as [String: Bool?] in UserDefaults
-    /// Computed property to access and manage debug overrides with `PVFeature` keys, backed by `_debugOverridesStorage`.
-    internal var debugOverrides: [PVFeature: Bool?] { // Changed to internal
-        get {
-            let stringKeyedOverrides = _debugOverridesStorage
-            var featureKeyedOverrides: [PVFeature: Bool?] = [:]
-            for (key, value) in stringKeyedOverrides {
-                if let featureKey = PVFeature(rawValue: key) {
-                    featureKeyedOverrides[featureKey] = value
-                }
-            }
-            return featureKeyedOverrides
-        }
-        set {
-            var stringKeyedOverrides: [String: Bool?] = [:]
-            for (featureKey, value) in newValue {
-                stringKeyedOverrides[featureKey.rawValue] = value
-            }
-            _debugOverridesStorage = stringKeyedOverrides
-            // No call to updateFeatureStates here; manager handles its own updates.
-        }
-    }
-
+    
     /// Set a debug override for a specific feature flag.
     /// This will override any configuration from the JSON file or default settings.
     /// - Parameters:
     ///   - feature: The `PVFeature` to override.
     ///   - enabled: `true` to force enable, `false` to force disable, `nil` to clear the override.
     public func setDebugOverride(for feature: PVFeature, enabled: Bool?) {
+        print("Setting debug override for feature \(feature.rawValue) to \(String(describing: enabled))")
+        
         var currentOverrides = self.debugOverrides
         currentOverrides[feature] = enabled
         self.debugOverrides = currentOverrides
+        
+        // Verify the override was set correctly
+        let verifyOverrides = self.debugOverrides
+        if let verifyValue = verifyOverrides[feature] {
+            print("Verified override for \(feature.rawValue) is now set to \(String(describing: verifyValue))")
+        } else {
+            print("Warning: Failed to set override for \(feature.rawValue)")
+        }
     }
-
+    
     /// Clears all currently set debug overrides, reverting features to their configured states based on JSON/defaults.
     public func clearDebugOverrides() {
+        print("Clearing all debug overrides")
         self.debugOverrides = [:]
     }
 
