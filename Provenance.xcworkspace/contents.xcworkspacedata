@@ -38,9 +38,6 @@
          location = "group:Cores/DuckStation/PVDuckStation.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/Play/PVPlayCore.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Cores/Reicast/PVReicast.xcodeproj">
       </FileRef>
    </Group>
