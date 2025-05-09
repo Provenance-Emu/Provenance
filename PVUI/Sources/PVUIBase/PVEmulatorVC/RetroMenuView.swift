@@ -25,6 +25,7 @@ struct RetroMenuView: View {
     @StateObject private var advancedSkinFeaturesFlag = PVFeatureFlagsManager.shared.flag(.advancedSkinFeatures)
 
     @State private var selectedCategory: MenuCategory = .main
+    @State private var showSkinsCategoryButton: Bool = false // Add new @State variable
 
     /// Environment value to detect screen size
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -190,7 +191,7 @@ struct RetroMenuView: View {
                     categoryButton(title: "STATES", isSelected: selectedCategory == .states, action: { selectedCategory = .states })
                     categoryButton(title: "OPTIONS", isSelected: selectedCategory == .options, action: { selectedCategory = .options })
                     // Only show skins category if core supports skins and the feature flag is enabled
-                    if emulatorVC.core.supportsSkins && advancedSkinFeaturesFlag.value {
+                    if emulatorVC.core.supportsSkins && showSkinsCategoryButton { // Use the new @State variable
                         categoryButton(title: "SKINS", isSelected: selectedCategory == .skins, action: { selectedCategory = .skins })
                     }
                 }
@@ -199,6 +200,12 @@ struct RetroMenuView: View {
         }
         .frame(height: 50)
         .padding(.bottom, 16)
+        .onAppear { // Update the @State var on appear
+            self.showSkinsCategoryButton = advancedSkinFeaturesFlag.value
+        }
+        .onChange(of: advancedSkinFeaturesFlag.value) { newValue in // And on change
+            self.showSkinsCategoryButton = newValue
+        }
     }
 
     var body: some View {

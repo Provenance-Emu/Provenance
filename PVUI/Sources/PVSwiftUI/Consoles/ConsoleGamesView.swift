@@ -22,7 +22,7 @@ import PVWebServer
 
 struct ConsoleGamesFilterModeFlags: OptionSet {
     let rawValue: Int
-    
+
     static let played = ConsoleGamesFilterModeFlags(rawValue: 1 << 0)
     static let neverPlayed = ConsoleGamesFilterModeFlags(rawValue: 1 << 1)
     static let recentlyImported = ConsoleGamesFilterModeFlags(rawValue: 1 << 2)
@@ -30,20 +30,20 @@ struct ConsoleGamesFilterModeFlags: OptionSet {
 }
 
 struct ConsoleGamesView: SwiftUI.View {
-    
+
     @StateObject internal var gamesViewModel: ConsoleGamesViewModel
     @ObservedObject var viewModel: PVRootViewModel
     @ObservedRealmObject var console: PVSystem
     weak var rootDelegate: PVRootDelegate?
     var showGameInfo: (String) -> Void
-    
+
     let gamesForSystemPredicate: NSPredicate
-    
+
     @ObservedObject private var themeManager = ThemeManager.shared
-    
+
     @State internal var gameLibraryItemsPerRow: Int = 4
     @Default(.gameLibraryScale) internal var gameLibraryScale
-    
+
     /// GameContextMenuDelegate
     @State internal var showImagePicker = false
     @State internal var selectedImage: UIImage?
@@ -54,72 +54,72 @@ struct ConsoleGamesView: SwiftUI.View {
     @FocusState internal var renameTitleFieldIsFocused: Bool
     @State internal var systemMoveState: SystemMoveState?
     @State internal var continuesManagementState: ContinuesManagementState?
-    
+
     @Default(.showRecentSaveStates) internal var showRecentSaveStates
     @Default(.showFavorites) internal var showFavorites
     @Default(.showRecentGames) internal var showRecentGames
     @Default(.showSearchbar) internal var showSearchbar
-    
+
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
-    
+
     @State private var gamepadHandler: Any?
     @State private var lastFocusedSection: HomeSectionType?
-    
+
     @State private var gamepadCancellable: AnyCancellable?
-    
+
     @State private var navigationTimer: Timer?
     @State private var initialDelay: TimeInterval = 0.5
     @State private var repeatDelay: TimeInterval = 0.15
-    
+
     /// Note: these CANNOT be in a @StateObject
     @ObservedResults(
         PVGame.self,
         filter: NSPredicate(format: "systemIdentifier == %@"),
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
     ) var games
-    
+
     @ObservedResults(
         PVSaveState.self,
         filter: NSPredicate(format: "game.systemIdentifier == %@"),
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
     ) var recentSaveStates
-    
+
     @ObservedResults(
         PVRecentGame.self,
         filter: NSPredicate(format: "game.systemIdentifier == %@")
     ) var recentlyPlayedGames
-    
+
     @ObservedResults(
         PVGame.self,
         filter: NSPredicate(format: "isFavorite == true AND systemIdentifier == %@")
     ) var favorites
-    
+
     @ObservedResults(
         PVGame.self,
         filter: NSPredicate(format: "systemIdentifier == %@ AND playCount > 0"),
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
     ) var mostPlayed
-    
+
     @State var isShowingSaveStates = false
     @State internal var showArtworkSearch = false
-    
+
     @State internal var showArtworkSourceAlert = false
-    
+
     @State private var searchText = ""
-    
+
     @State private var isSearching = false
-    
+
     @State private var scrollOffset: CGFloat = 0
     @State private var previousScrollOffset: CGFloat = 0
     @State private var isSearchBarVisible: Bool = true
-    
+
     private var sectionHeight: CGFloat {
         // Use compact size class to determine if we're in portrait on iPhone
         let baseHeight: CGFloat = horizontalSizeClass == .compact ? 150 : 75
         return verticalSizeClass == .compact ? baseHeight / 2 : baseHeight
     }
-    
+
     init(
         console: PVSystem,
         viewModel: PVRootViewModel,
@@ -132,7 +132,7 @@ struct ConsoleGamesView: SwiftUI.View {
         self.rootDelegate = rootDelegate
         self.showGameInfo = showGameInfo
         self.gamesForSystemPredicate = NSPredicate(format: "systemIdentifier == %@", argumentArray: [console.identifier])
-        
+
         _games = ObservedResults(
             PVGame.self,
             filter: NSPredicate(format: "systemIdentifier == %@", console.identifier),
@@ -157,160 +157,190 @@ struct ConsoleGamesView: SwiftUI.View {
             sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: viewModel.sortGamesAscending)
         )
     }
-    
+
+    @ViewBuilder
+    var importProgressView: some View {
+        if let libraryUpdatesController = AppState.shared.libraryUpdatesController {
+            ImportProgressView(
+                gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
+                updatesController: libraryUpdatesController,
+                onTap: {
+                    withAnimation {
+                        gamesViewModel.showImportStatusView = true
+                    }
+                }
+            )
+            .padding(.horizontal, 8)
+            .padding(.top, 4)
+        }
+    }
+
+    @ViewBuilder
+    var gamesScrollView: some View {
+        ScrollViewWithOffset(
+            offsetChanged: { offset in
+                // Detect scroll direction and distance
+                let scrollingDown = offset < previousScrollOffset
+                let scrollDistance = abs(offset - previousScrollOffset)
+
+                // Only respond to significant scroll movements
+                if scrollDistance > 5 {
+                    // Hide search bar when scrolling down, show when scrolling up
+                    if scrollingDown && offset < -10 {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            isSearchBarVisible = false
+                        }
+                    } else if !scrollingDown {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            isSearchBarVisible = true
+                        }
+                    }
+                }
+
+                scrollOffset = offset
+                previousScrollOffset = offset
+            }
+        ) {
+            ScrollViewReader { proxy in
+                LazyVStack(spacing: 0) {
+                    // Add search bar with visibility control
+                    if games.count > 8 && showSearchbar {
+                        PVSearchBar(text: $searchText)
+                            .opacity(isSearchBarVisible ? 1 : 0)
+                            .frame(height: isSearchBarVisible ? nil : 0)
+                            .animation(.easeInOut(duration: 0.3), value: isSearchBarVisible)
+                            .padding(.horizontal, 8)
+                            .padding(.bottom, 8)
+                    }
+
+                    continueSection()
+                        .id("section_continues")
+                        .padding(.horizontal, 10)
+                    favoritesSection()
+                        .id("section_favorites")
+                        .padding(.horizontal, 10)
+                    recentlyPlayedSection()
+                        .id("section_recent")
+                        .padding(.horizontal, 10)
+                    gamesSection()
+                        .id("section_allgames")
+                        .padding(.horizontal, 10)
+                }
+                /// Add padding at bottom to account for BiosesView if needed
+                .padding(.bottom, !console.bioses.isEmpty ? 120 : 44)
+                .onChange(of: gamesViewModel.focusedSection) { newSection in
+                    if let section = newSection {
+                        withAnimation {
+                            let sectionId = sectionToId(section)
+                            proxy.scrollTo(sectionId, anchor: .top)
+                        }
+                    }
+                }
+            }
+        }
+        .overlay(
+            Group {
+                if !searchText.isEmpty {
+                    VStack {
+                        searchResultsView()
+                    }
+                    .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+                }
+            }
+        )
+        .padding(.bottom, 4)
+    }
+
+    @ViewBuilder
+    var biosesView: some View {
+        if !console.bioses.isEmpty {
+            BiosesView(console: console)
+                .padding(.horizontal, 8)
+                .padding(.bottom, 66) // Account for tab bar height
+        } else {
+            emptyView
+        }
+    }
+
+    @ViewBuilder
+    var emptyView: some View {
+        HStack {
+            Text("")
+        }
+        .padding(.horizontal)
+        .padding(.bottom, 44) // Account for tab bar height
+    }
+
+    /// Image Picker Sheet modifier
+#if !os(tvOS)
+    @ViewBuilder
+    var imagePickerSheet: some View {
+        ImagePicker(sourceType: .photoLibrary) { image in
+            if let game = gameToUpdateCover {
+                saveArtwork(image: image, forGame: game)
+            }
+            showImagePicker = false
+            gameToUpdateCover = nil
+        }
+    }
+#endif
+
+    /// Artwork Search View sheet
+    @ViewBuilder
+    var artworkSearchSheet: some View {
+        ArtworkSearchView(
+            initialSearch: gameToUpdateCover?.title ?? "",
+            initialSystem: console.enumValue
+        ) { selection in
+            if let game = gameToUpdateCover {
+                Task {
+                    do {
+                        // Load image data from URL
+                        let (data, _) = try await URLSession.shared.data(from: selection.metadata.url)
+                        if let uiImage = UIImage(data: data) {
+                            await MainActor.run {
+                                saveArtwork(image: uiImage, forGame: game)
+                                showArtworkSearch = false
+                                gameToUpdateCover = nil
+                            }
+                        }
+                    } catch {
+                        DLOG("Failed to load artwork image: \(error)")
+                    }
+                }
+            }
+        }
+    }
+
     var body: some SwiftUI.View {
         GeometryReader { geometry in
             ZStack {
                 // RetroWave background
                 RetroTheme.retroBackground
-                
+
                 // Grid overlay
                 RetroGrid(lineColor: themeManager.currentPalette.defaultTintColor.swiftUIColor)
                     .opacity(0.2)
-                
+
                 VStack(spacing: 4) {
-                    
+
                     displayOptionsView()
                         .allowsHitTesting(true)
-                    
-                    // Import Progress View (legacy - can be removed once RetroStatusControlView is fully tested)
-                    // Commenting out as RetroStatusControlView now handles this functionality
-                    if let libraryUpdatesController = AppState.shared.libraryUpdatesController {
-                        ImportProgressView(
-                            gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
-                            updatesController: libraryUpdatesController,
-                            onTap: {
-                                withAnimation {
-                                    gamesViewModel.showImportStatusView = true
-                                }
-                            }
-                        )
-                        .padding(.horizontal, 8)
-                        .padding(.top, 4)
-                    }
-                    
-                    ScrollViewWithOffset(
-                        offsetChanged: { offset in
-                            // Detect scroll direction and distance
-                            let scrollingDown = offset < previousScrollOffset
-                            let scrollDistance = abs(offset - previousScrollOffset)
-                            
-                            // Only respond to significant scroll movements
-                            if scrollDistance > 5 {
-                                // Hide search bar when scrolling down, show when scrolling up
-                                if scrollingDown && offset < -10 {
-                                    withAnimation(.easeInOut(duration: 0.3)) {
-                                        isSearchBarVisible = false
-                                    }
-                                } else if !scrollingDown {
-                                    withAnimation(.easeInOut(duration: 0.3)) {
-                                        isSearchBarVisible = true
-                                    }
-                                }
-                            }
-                            
-                            scrollOffset = offset
-                            previousScrollOffset = offset
-                        }
-                    ) {
-                        ScrollViewReader { proxy in
-                            LazyVStack(spacing: 0) {
-                                // Add search bar with visibility control
-                                if games.count > 8 && showSearchbar {
-                                    PVSearchBar(text: $searchText)
-                                        .opacity(isSearchBarVisible ? 1 : 0)
-                                        .frame(height: isSearchBarVisible ? nil : 0)
-                                        .animation(.easeInOut(duration: 0.3), value: isSearchBarVisible)
-                                        .padding(.horizontal, 8)
-                                        .padding(.bottom, 8)
-                                }
-                                
-                                continueSection()
-                                    .id("section_continues")
-                                    .padding(.horizontal, 10)
-                                favoritesSection()
-                                    .id("section_favorites")
-                                    .padding(.horizontal, 10)
-                                recentlyPlayedSection()
-                                    .id("section_recent")
-                                    .padding(.horizontal, 10)
-                                gamesSection()
-                                    .id("section_allgames")
-                                    .padding(.horizontal, 10)
-                            }
-                            /// Add padding at bottom to account for BiosesView if needed
-                            .padding(.bottom, !console.bioses.isEmpty ? 120 : 44)
-                            .onChange(of: gamesViewModel.focusedSection) { newSection in
-                                if let section = newSection {
-                                    withAnimation {
-                                        let sectionId = sectionToId(section)
-                                        proxy.scrollTo(sectionId, anchor: .top)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    .overlay(
-                        Group {
-                            if !searchText.isEmpty {
-                                VStack {
-                                    searchResultsView()
-                                }
-                                .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
-                            }
-                        }
-                    )
-                    .padding(.bottom, 4)
-                    
-                    /// Position BiosesView above the tab bar
-                    if !console.bioses.isEmpty {
-                        BiosesView(console: console)
-                            .padding(.horizontal, 8)
-                            .padding(.bottom, 66) // Account for tab bar height
-                    } else {
-                        // Empty paddview view
-                        HStack {
-                            Text("")
-                        }
-                        .padding(.horizontal)
-                        .padding(.bottom, 44) // Account for tab bar height
-                    }
+
+                    importProgressView
+
+                    gamesScrollView
+
+                    biosesView
                 }
                 .sheet(isPresented: $showImagePicker) {
 #if !os(tvOS)
-                    ImagePicker(sourceType: .photoLibrary) { image in
-                        if let game = gameToUpdateCover {
-                            saveArtwork(image: image, forGame: game)
-                        }
-                        showImagePicker = false
-                        gameToUpdateCover = nil
-                    }
+                    imagePickerSheet
 #endif
                 }
             }
             .sheet(isPresented: $showArtworkSearch) {
-                ArtworkSearchView(
-                    initialSearch: gameToUpdateCover?.title ?? "",
-                    initialSystem: console.enumValue
-                ) { selection in
-                    if let game = gameToUpdateCover {
-                        Task {
-                            do {
-                                // Load image data from URL
-                                let (data, _) = try await URLSession.shared.data(from: selection.metadata.url)
-                                if let uiImage = UIImage(data: data) {
-                                    await MainActor.run {
-                                        saveArtwork(image: uiImage, forGame: game)
-                                        showArtworkSearch = false
-                                        gameToUpdateCover = nil
-                                    }
-                                }
-                            } catch {
-                                DLOG("Failed to load artwork image: \(error)")
-                            }
-                        }
-                    }
-                }
+                artworkSearchSheet
             }
             .uiKitAlert(
                 "Rename Game",
@@ -329,9 +359,6 @@ struct ConsoleGamesView: SwiftUI.View {
                         if let game = gameToRename, !newGameTitle.isEmpty {
                             Task {
                                 await renameGame(game, to: newGameTitle)
-                                gameToRename = nil
-                                newGameTitle = ""
-                                showingRenameAlert = false
                             }
                         }
                     },
@@ -376,7 +403,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 let realm = game.realm?.thaw() ?? RomDatabase.sharedInstance.realm.thaw()
                 /// Create the Realm driver
                 if let driver = try? RealmSaveStateDriver(realm: realm) {
-                    
+
                     /// Create view model
                     let viewModel = ContinuesMagementViewModel(
                         driver: driver,
@@ -391,14 +418,14 @@ struct ConsoleGamesView: SwiftUI.View {
                                 }
                             }
                         })
-                    
+
                     /// Create and configure the view
                     if #available(iOS 16.4, tvOS 16.4, *) {
                         ContinuesManagementView(viewModel: viewModel)
                             .onAppear {
                                 /// Set the game ID filter
                                 driver.gameId = game.id
-                                
+
                                 let game = game.freeze()
                                 Task { @MainActor in
                                     let image: UIImage? = await game.fetchArtworkFromCache()
@@ -411,7 +438,7 @@ struct ConsoleGamesView: SwiftUI.View {
                             .onAppear {
                                 /// Set the game ID filter
                                 driver.gameId = game.id
-                                
+
                                 let game = game.freeze()
                                 Task { @MainActor in
                                     let image: UIImage? = await game.fetchArtworkFromCache()
@@ -441,7 +468,7 @@ struct ConsoleGamesView: SwiftUI.View {
                                 }
                             }
                         }
-                        
+
                         actions + [UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
                             gamesViewModel.discSelectionAlert = nil
                         }]
@@ -452,7 +479,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                 }
             )
-            
+
             .uiKitAlert(
                 "Choose Artwork Source",
                 message: "Select artwork from your photo library or search online sources",
@@ -483,26 +510,40 @@ struct ConsoleGamesView: SwiftUI.View {
             searchText: $searchText
         ))
         .ignoresSafeArea(.all)
+        .onChange(of: showingRenameAlert) { newValue in
+            print("ConsoleGamesView: showingRenameAlert changed to \(newValue)")
+            if newValue == false {
+                print("ConsoleGamesView: showingRenameAlert became false. Call stack:\n\(Thread.callStackSymbols.joined(separator: "\n"))")
+                // --- SET YOUR BREAKPOINT HERE ---
+            }
+        }
+        .onChange(of: showArtworkSourceAlert) { newValue in
+            print("ConsoleGamesView: showArtworkSourceAlert changed to \(newValue)")
+            if newValue == false {
+                print("ConsoleGamesView: showArtworkSourceAlert became false. Call stack:\n\(Thread.callStackSymbols.joined(separator: "\n"))")
+                // --- SET YOUR BREAKPOINT HERE ---
+            }
+        }
     }
-    
+
     private var hasRecentSaveStates: Bool {
         !recentSaveStates.filter("game.systemIdentifier == %@", console.identifier).isEmpty
     }
-    
+
     private var hasFavorites: Bool {
         !favorites.filter("systemIdentifier == %@", console.identifier).isEmpty
     }
-    
+
     private var hasRecentlyPlayedGames: Bool {
         !recentlyPlayedGames.isEmpty
     }
-    
+
     private func loadGame(_ game: PVGame) {
         Task.detached { @MainActor in
             await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
         }
     }
-    
+
     var itemsPerRow: Int {
         let roundedScale = Int(gameLibraryScale.rounded())
         // If games is less than count, just use the games to fill the row.
@@ -521,7 +562,7 @@ struct ConsoleGamesView: SwiftUI.View {
         }
         return count
     }
-    
+
     @ViewBuilder
     private func showGamesGrid(_ games: [PVGame]) -> some View {
         let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: itemsPerRow)
@@ -548,7 +589,7 @@ struct ConsoleGamesView: SwiftUI.View {
         }
         .padding(.horizontal, 10)
     }
-    
+
     @ViewBuilder
     private func showGamesGrid(_ games: Results<PVGame>) -> some View {
         let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: itemsPerRow)
@@ -592,7 +633,7 @@ struct ConsoleGamesView: SwiftUI.View {
             }
         }
     }
-    
+
     @ViewBuilder
     private func showGamesList(_ games: [PVGame]) -> some View {
         LazyVStack(spacing: 0) {
@@ -608,7 +649,12 @@ struct ConsoleGamesView: SwiftUI.View {
                             gamesViewModel.focusedSection == .allGames &&
                             gamesViewModel.focusedItemInSection == game.id
                         },
-                        set: { if $0 && !game.isInvalidated { gamesViewModel.focusedItemInSection = game.id} }
+                        set: {
+                            if $0 && !game.isInvalidated {
+                                gamesViewModel.focusedSection = .allGames
+                                gamesViewModel.focusedItemInSection = game.id
+                            }
+                        }
                     )
                 ) {
                     Task.detached { @MainActor in
@@ -621,7 +667,7 @@ struct ConsoleGamesView: SwiftUI.View {
             }
         }
     }
-    
+
     @ViewBuilder
     private func showGamesList(_ games: Results<PVGame>) -> some View {
         LazyVStack(spacing: 8) {
@@ -646,32 +692,32 @@ struct ConsoleGamesView: SwiftUI.View {
             }
         }
     }
-    
+
     private func adjustZoomLevel(for magnification: Float) {
         gameLibraryItemsPerRow = calculatedZoomLevel(for: magnification)
     }
-    
+
     private func calculatedZoomLevel(for magnification: Float) -> Int {
         let isIPad = UIDevice.current.userInterfaceIdiom == .pad
         let defaultZoomLevel = isIPad ? 8 : 4
-        
+
         // Handle invalid magnification values
         guard !magnification.isNaN && !magnification.isInfinite else {
             return defaultZoomLevel
         }
-        
+
         // Calculate the target zoom level based on magnification
         let targetZoomLevel = Float(defaultZoomLevel) / magnification
-        
+
         // Round to the nearest even number
         let roundedZoomLevel = round(targetZoomLevel / 2) * 2
-        
+
         // Clamp the value between 2 and 16
         let clampedZoomLevel = max(2, min(16, roundedZoomLevel))
-        
+
         return Int(clampedZoomLevel)
     }
-    
+
 #if !os(tvOS)
     private func magnificationGesture() -> some Gesture {
         MagnificationGesture()
@@ -683,12 +729,12 @@ struct ConsoleGamesView: SwiftUI.View {
             }
     }
 #endif
-    
-    
+
+
     private func setupGamepadHandling() {
         // Cancel existing handler if it exists
         gamepadCancellable?.cancel()
-        
+
         gamepadCancellable = GamepadManager.shared.eventPublisher
             .receive(on: DispatchQueue.main)
             .sink { event in
@@ -696,11 +742,11 @@ struct ConsoleGamesView: SwiftUI.View {
                 guard !viewModel.isMenuVisible,
                       viewModel.selectedConsole?.identifier == console.identifier
                 else { return }
-                
+
                 DLOG("Gamepad event: \(event)")
                 // DLOG("Selected console: \(String(describing: viewModel.selectedConsole))")
                 DLOG("Current console: \(console.identifier)")
-                
+
                 switch event {
                 case .buttonPress(let isPressed):
                     if isPressed {
@@ -719,7 +765,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 }
             }
     }
-    
+
     private func showOptionsMenu(for gameId: String) {
         let realm = try! Realm()
         // Implement context menu showing logic here
@@ -732,7 +778,7 @@ struct ConsoleGamesView: SwiftUI.View {
             )
         }
     }
-    
+
     @ViewBuilder
     private func makeGameMoreInfoView(for game: PVGame) -> some View {
         do {
@@ -749,24 +795,24 @@ struct ConsoleGamesView: SwiftUI.View {
             return AnyView(Text("Failed to initialize game info view: \(error.localizedDescription)"))
         }
     }
-    
+
     private func renameGame(_ game: PVGame, to newName: String) async {
         guard !newName.isEmpty else { return }
-        
+
         // Get a reference to the Realm
         let realm = try? await Realm()
-        
+
         // Update the game title
         try? realm?.write {
             game.thaw()?.title = newName
         }
-        
+
         // Reset state
         gameToRename = nil
         newGameTitle = ""
         showingRenameAlert = false
     }
-    
+
     // Create a computed binding that wraps the String as String?
     private var newGameTitleBinding: Binding<String?> {
         Binding<String?>(
@@ -774,18 +820,18 @@ struct ConsoleGamesView: SwiftUI.View {
             set: { self.newGameTitle = $0 ?? "" }
         )
     }
-    
+
     /// Function to filter games based on search text
     private func filteredSearchResults() -> [PVGame] {
         guard !searchText.isEmpty else { return [] }
-        
+
         let searchTextLowercased = searchText.lowercased()
         /// Only search games for this console
         return Array(games.filter { game in
             game.title.lowercased().contains(searchTextLowercased)
         })
     }
-    
+
     @ViewBuilder
     private func searchResultsView() -> some View {
         VStack(alignment: .leading) {
@@ -793,7 +839,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 .font(.title2)
                 .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                 .padding(.horizontal)
-            
+
             LazyVStack(spacing: 0) {
                 let results = filteredSearchResults()
                 if results.isEmpty {
@@ -846,7 +892,7 @@ struct ConsoleGamesView: SwiftUI.View {
 
 // MARK: - View Components
 extension ConsoleGamesView {
-    
+
     @ViewBuilder
     private func displayOptionsView() -> some View {
         GamesDisplayOptionsView(
@@ -886,7 +932,7 @@ extension ConsoleGamesView {
         .padding(.horizontal, 8)
         .allowsHitTesting(true)
     }
-    
+
     @ViewBuilder
     private func continueSection() -> some View {
         Group {
@@ -908,7 +954,7 @@ extension ConsoleGamesView {
             }
         }
     }
-    
+
     @ViewBuilder
     private func favoritesSection() -> some View {
         Group {
@@ -923,7 +969,7 @@ extension ConsoleGamesView {
             }
         }
     }
-    
+
     @ViewBuilder
     private func recentlyPlayedSection() -> some View {
         Group {
@@ -940,7 +986,7 @@ extension ConsoleGamesView {
             }
         }
     }
-    
+
     @ViewBuilder
     private func gamesSection() -> some View {
         Group {
@@ -953,9 +999,9 @@ extension ConsoleGamesView {
                 }
             } else {
                 VStack(alignment: .leading) {
-                    
+
                     titleBar()
-                    
+
                     if viewModel.viewGamesAsGrid {
                         showGamesGrid(games)
                     } else {
@@ -965,7 +1011,7 @@ extension ConsoleGamesView {
             }
         }
     }
-    
+
     @ViewBuilder
     private func titleBar() -> some View {
         HStack {
@@ -979,7 +1025,7 @@ extension ConsoleGamesView {
                         .font(.system(.subheadline, design: .monospaced))
                         .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                         .shadow(color: Color.retroPink.opacity(0.5), radius: 1, x: 1, y: 1)
-                    
+
                     if console.releaseYear > 1970 {
                         Text("\(console.releaseYear)")
                             .font(.system(.subheadline, design: .monospaced))
@@ -988,9 +1034,9 @@ extension ConsoleGamesView {
                     }
                 }
             }
-            
+
             Spacer()
-            
+
             Text("\(console.games.count)")
                 .font(.caption)
                 .fontWeight(.medium)
@@ -1025,11 +1071,11 @@ extension ConsoleGamesView {
         )
         .contentShape(Rectangle())
     }
-    
+
     @ViewBuilder
     private func gameItem(_ game: PVGame, section: HomeSectionType) -> some View {
         if !game.isInvalidated {
-            
+
             GameItemView(
                 game: game,
                 constrainHeight: true,
@@ -1064,7 +1110,7 @@ extension ConsoleGamesView {
             }
         }
     }
-    
+
     @ViewBuilder
     private func saveStateItem(_ saveState: PVSaveState) -> some View {
         if !saveState.isInvalidated && !saveState.game.isInvalidated {
@@ -1102,7 +1148,7 @@ extension ConsoleGamesView {
 struct ConsoleGamesView_Previews: PreviewProvider {
     static let console: PVSystem = ._rlmDefaultValue()
     static let viewModel: PVRootViewModel = .init()
-    
+
     static var previews: some SwiftUI.View {
         ConsoleGamesView(console: console,
                          viewModel: viewModel,
@@ -1114,7 +1160,7 @@ struct ConsoleGamesView_Previews: PreviewProvider {
 private struct ConditionalSearchModifier: ViewModifier {
     let isEnabled: Bool
     @Binding var searchText: String
-    
+
     func body(content: Content) -> some View {
         if isEnabled {
 #if !os(tvOS)

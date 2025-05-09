@@ -86,11 +86,13 @@ public class ImportProgressViewModel: ObservableObject {
     @Published public var isImporting: Bool = false // Ensure this is defined
     @Published public var importProgress: ProgressInfo? // Ensure this is defined
 
-    @Published public var iCloudStatusMessage: String = "Initializing..." // Added property
+    /// Detailed iCloud sync status
+    @Published public var iCloudStatusMessage: String = ""
 
+    /// Detailed iCloud sync status
     @Published public var lastErrorMessage: String? // For displaying a persistent error briefly
 
-    // Counts for statusDetailsView
+    /// Counts for statusDetailsView
     @Published public var totalImportFileCount: Int = 0
     @Published public var processedFilesCount: Int = 0
     @Published public var newFilesCount: Int = 0

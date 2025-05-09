@@ -44,9 +44,10 @@ public struct RetroDebugView: View {
     @State private var showMockImportQueue = false
     @State private var showConfirmResetAlert = false
     
-    // Mock importer for testing
+    // Realm importer
     @StateObject private var importStatusDriverData = AppState.shared.gameImporter ?? GameImporter.shared
-    
+
+    // Mock importer for testing
     @StateObject private var mockImportStatusDriverData = MockImportStatusDriverData()
     
     // Add these state variables at the top of the RetroDebugView struct

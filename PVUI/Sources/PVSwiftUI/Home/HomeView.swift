@@ -3,7 +3,7 @@
 //  Provenance
 //
 //  Created by Ian Clawson on 1/22/22.
-//  Copyright © 2022 Provenance Emu. All rights reserved.
+//  Copyright 2022 Provenance Emu. All rights reserved.
 //
 
 #if canImport(SwiftUI)
@@ -334,6 +334,12 @@ struct HomeView: SwiftUI.View {
                 }
             ]
         }
+        .onChange(of: showingRenameAlert) { newValue in
+            print("HomeView: showingRenameAlert changed to \(newValue)")
+            if newValue == false {
+                print("HomeView: showingRenameAlert became false. Call stack:\n\(Thread.callStackSymbols.joined(separator: "\n"))")
+            }
+        }
         .sheet(item: $systemMoveState) { state in
             SystemPickerView(
                 game: state.game,
@@ -442,6 +448,12 @@ struct HomeView: SwiftUI.View {
                 }
             }
         )
+        .onChange(of: showArtworkSourceAlert) { newValue in
+            print("HomeView: showArtworkSourceAlert changed to \(newValue)")
+            if newValue == false {
+                print("HomeView: showArtworkSourceAlert became false. Call stack:\n\(Thread.callStackSymbols.joined(separator: "\n"))")
+            }
+        }
         /// END: GameContextMenuDelegate
     }
 

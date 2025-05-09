@@ -459,6 +459,12 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         
         // Only update and send notification if there were actual changes
         if hasChanges || self.featureStates.count != newStates.count { // also check count in case a flag was removed/added (though enum prevents this)
+            let changedStates = newStates.filter { key, value in
+                self.featureStates[key] != value || self.featureStates.keys.contains(key) == false
+            }
+            if !changedStates.isEmpty {
+                print("PVFeatureFlagsManager: Broadcasting feature state changes. Changed: \(changedStates.mapValues { String(describing: $0) })")
+            }
             self.featureStates = newStates
             // objectWillChange.send() is automatically called by @Published when featureStates is set.
         }
@@ -518,7 +524,14 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
 /// to react to changes in a specific feature's enabled status.
 @MainActor public final class FeatureFlagObservable: ObservableObject {
     /// Published property indicating whether the observed feature flag is currently enabled. Changes to this property will trigger UI updates.
-    @Published public var value: Bool
+    @Published public var value: Bool {
+        didSet {
+            if oldValue != value { // Only log if the value actually changed
+                print("FeatureFlagObservable: \(self.feature.rawValue) changed from \(oldValue) to \(self.value)")
+            }
+        }
+    }
+    private let feature: PVFeature // Added to store the feature for logging
     /// Cancellable for the subscription to the manager's `featureStates`.
     private var cancellable: AnyCancellable?
 
@@ -527,6 +540,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     ///   - manager: The `PVFeatureFlagsManager` instance that manages the state of all feature flags.
     ///   - feature: The specific `PVFeature` this observable should track.
     init(manager: PVFeatureFlagsManager, feature: PVFeature) {
+        self.feature = feature // Store the feature
         // Initialize value correctly from the manager's current state
         self.value = manager.featureStates[feature] ?? false
 

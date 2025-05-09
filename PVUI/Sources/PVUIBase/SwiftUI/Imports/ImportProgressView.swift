@@ -289,12 +289,14 @@ public struct ImportProgressView: View {
     /// iCloud sync status view - compact version (from old UI structure)
     private var iCloudSyncStatusView: some View {
         HStack {
-            Image(systemName: "icloud")
-                .foregroundColor(.retroBlue)
-            Text(viewModel.iCloudStatusMessage) // Use property directly, not a binding for Text
-                .font(.system(size: 10))
-                .foregroundColor(.gray)
-            Spacer()
+            if !viewModel.iCloudStatusMessage.isEmpty {
+                Image(systemName: "icloud")
+                    .foregroundColor(.retroBlue)
+                Text(viewModel.iCloudStatusMessage) // Use property directly, not a binding for Text
+                    .font(.system(size: 10))
+                    .foregroundColor(.gray)
+                Spacer()
+            }
             if viewModel.isSyncing { // Already using isSyncing here which is correct
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle())

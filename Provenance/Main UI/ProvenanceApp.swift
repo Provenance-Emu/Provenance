@@ -26,7 +26,6 @@ struct ProvenanceApp: App {
     @StateObject private var appState = AppState.shared
     @UIApplicationDelegateAdaptor(PVAppDelegate.self) var appDelegate
     @Environment(\.scenePhase) private var scenePhase
-    @StateObject private var featureFlags = PVFeatureFlagsManager.shared
     @StateObject private var sceneCoordinator = SceneCoordinator.shared
 
     /// Handles the spotlight indexing background task identifier
@@ -79,12 +78,12 @@ struct ProvenanceApp: App {
         WindowGroup(id: "main") {
             ContentView()
                 .environmentObject(appState)
-                .environmentObject(featureFlags)
+                .environmentObject(PVFeatureFlagsManager.shared)
                 .environmentObject(appDelegate)
                 .environmentObject(appState.bootupStateManager)
                 .environmentObject(ThemeManager.shared)
                 .task {
-                    try? await featureFlags.loadConfiguration(
+                    try? await PVFeatureFlagsManager.shared.loadConfiguration(
                         from: URL(string: "https://data.provenance-emu.com/features/features.json")!
                     )
                 }

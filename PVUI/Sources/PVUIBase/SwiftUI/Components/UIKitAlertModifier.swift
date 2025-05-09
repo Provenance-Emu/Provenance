@@ -180,8 +180,9 @@ struct UIKitAlertWrapper: UIViewControllerRepresentable {
         } else if !isPresented && alertAlreadyPresented {
             // Only dismiss if our alert is being presented and isPresented is false
             // and the alert was previously presented by user interaction
+            DLOG("UIKitAlertModifier: Entered dismissal check. isPresented: \(isPresented), alertAlreadyPresented: \(alertAlreadyPresented), presentedAlert: \(String(describing: presentedAlert)), presentedAlert.presentingViewController: \(String(describing: presentedAlert?.presentingViewController))")
             if let presentedAlert = presentedAlert, presentedAlert.presentingViewController != nil {
-                DLOG("UIKitAlertModifier: Dismissing alert programmatically")
+                DLOG("UIKitAlertModifier: Dismissing alert programmatically. Call stack:\n\(Thread.callStackSymbols.joined(separator: "\n"))")
                 uiViewController.dismiss(animated: true)
             }
         }
