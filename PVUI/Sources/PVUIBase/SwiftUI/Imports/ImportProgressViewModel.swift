@@ -47,6 +47,13 @@ public class ImportProgressViewModel: ObservableObject {
     /// Import queue items from GameImporter
     @Published public var importQueueItems: [ImportQueueItem] = []
 
+    /// Messages to display in the log view of ImportProgressView
+    @Published public var statusLogMessages: [StatusMessageManager.StatusMessage] = [] {
+        didSet {
+            ILOG("ImportProgressViewModel: statusLogMessages updated. Count: \(statusLogMessages.count). Last message: \(statusLogMessages.last?.message ?? "N/A")")
+        }
+    }
+
     /// Overall iCloud syncing state (derived)
     @Published public var isSyncing: Bool = false
 
@@ -87,7 +94,6 @@ public class ImportProgressViewModel: ObservableObject {
     @Published public var totalImportFileCount: Int = 0
     @Published public var processedFilesCount: Int = 0
     @Published public var newFilesCount: Int = 0
-    @Published public var updatedFilesCount: Int = 0
     @Published public var errorFilesCount: Int = 0
 
     // MARK: - Private Properties
@@ -100,7 +106,7 @@ public class ImportProgressViewModel: ObservableObject {
     private let updatesController: PVGameLibraryUpdatesController // Store updatesController
 
     /// User's preference for enabling iCloud Sync, observed directly via @Default.
-    @Default(.iCloudSync) private var iCloudSyncEnabledSetting: Bool
+    @Default(.iCloudSync) internal var iCloudSyncEnabledSetting: Bool
 
     private let maxStoredMessages = 50
     private let fileRecoveryProgressID = "icloud-file-recovery"
@@ -240,6 +246,7 @@ public class ImportProgressViewModel: ObservableObject {
         setupGameImporterSubscription()
         setupCloudKitSubscriptions()
         setupFileRecoveryNotificationListeners() // Sets initial state from iCloudDriveSync notifications
+        setupStatusMessageManagerSubscription() // New subscription for general status messages
         // Initial call to reflect current setting state
         reactToiCloudSettingChange(isEnabled: self.iCloudSyncEnabledSetting)
         ILOG("Primary subscriptions and trackers set up.")
@@ -261,16 +268,16 @@ public class ImportProgressViewModel: ObservableObject {
                 guard let self = self else { return }
 
                 // Detailed logging of import queue statuses
-                var statusCounts: [ImportQueueItem.ImportStatus: Int] = [:]
+                var statusCounts: [String: Int] = [:] // Changed key type to String
                 for item in queue {
-                    statusCounts[item.status, default: 0] += 1
+                    statusCounts[item.status.description, default: 0] += 1 // Use description as key
                 }
                 ILOG("Import queue received via Publisher. Count: \(queue.count). Statuses: \(statusCounts.map { "\($0.key): \($0.value)" }.joined(separator: ", "))")
 
                 self.importQueueItems = queue // Update the @Published property
 
                 // Calculate if any imports are active (not all are success or failure)
-                let activeImports = !queue.isEmpty && !queue.allSatisfy { $0.status == .success || $0.status == .failure }
+                let activeImports = !queue.isEmpty && !queue.allSatisfy { $0.status == .success || $0.status.isFailure } // Use .isFailure
                 if self.isImporting != activeImports {
                     self.isImporting = activeImports
                     ILOG("isImporting toggled to: \(self.isImporting) (from Publisher)")
@@ -280,11 +287,10 @@ public class ImportProgressViewModel: ObservableObject {
                 // Derive counts from the queue
                 self.totalImportFileCount = queue.count
                 self.processedFilesCount = queue.filter { $0.status != .queued }.count
-                self.errorFilesCount = queue.filter { $0.status == .failure }.count
+                self.errorFilesCount = queue.filter { $0.status.isFailure }.count // Use .isFailure
                 // Simplification: assume all successful imports are 'new' for now.
                 // A more accurate 'new' vs 'updated' would require more info from ImportQueueItem or GameImporter.
                 self.newFilesCount = queue.filter { $0.status == .success }.count
-                self.updatedFilesCount = 0 // Placeholder - difficult to determine from status alone
             }
             .store(in: &cancellables)
 
@@ -294,14 +300,14 @@ public class ImportProgressViewModel: ObservableObject {
             let queue = await concreteImporter.importQueue
             await MainActor.run {
                 // Detailed logging for initial fetch if different
-                var statusCounts: [ImportQueueItem.ImportStatus: Int] = [:]
+                var statusCounts: [String: Int] = [:] // Changed key type to String
                 for item in queue {
-                    statusCounts[item.status, default: 0] += 1
+                    statusCounts[item.status.description, default: 0] += 1 // Use description as key
                 }
                 ILOG("Import queue received via Task. Count: \(queue.count). Statuses: \(statusCounts.map { "\($0.key): \($0.value)" }.joined(separator: ", "))")
                 
                 self.importQueueItems = queue
-                let activeImports = !queue.isEmpty && !queue.allSatisfy { $0.status == .success || $0.status == .failure }
+                let activeImports = !queue.isEmpty && !queue.allSatisfy { $0.status == .success || $0.status.isFailure } // Use .isFailure
                 if self.isImporting != activeImports {
                     self.isImporting = activeImports
                     ILOG("isImporting toggled to: \(self.isImporting) (from Task)")
@@ -383,6 +389,13 @@ public class ImportProgressViewModel: ObservableObject {
         NotificationCenter.default.addObserver(self, selector: #selector(handleFileRecoveryProgress(_:)), name: iCloudDriveSync.iCloudFileRecoveryProgress, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleFileRecoveryCompleted(_:)), name: iCloudDriveSync.iCloudFileRecoveryCompleted, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleFileRecoveryError(_:)), name: iCloudDriveSync.iCloudFileRecoveryError, object: nil)
+    }
+
+    private func setupStatusMessageManagerSubscription() {
+        ILOG("ImportProgressViewModel: Setting up StatusMessageManager subscription.")
+        StatusMessageManager.shared.$messages
+            .receive(on: DispatchQueue.main)
+            .assign(to: &$statusLogMessages)
     }
 
     @objc private func handleFileRecoveryStarted(_ notification: Notification) {
@@ -516,7 +529,6 @@ public class ImportProgressViewModel: ObservableObject {
         var total = 0
         var processed = 0
         var new = 0
-        var updated = 0 // No direct 'updated' status, will set to 0 for now
         var errors = 0
 
         total = importQueueItems.count
@@ -543,7 +555,6 @@ public class ImportProgressViewModel: ObservableObject {
         self.totalImportFileCount = total
         self.processedFilesCount = processed
         self.newFilesCount = new
-        self.updatedFilesCount = updated // Stays 0 for now
         self.errorFilesCount = errors
     }
 

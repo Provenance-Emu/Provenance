@@ -157,7 +157,7 @@ public struct ImportProgressView: View {
                 .frame(height: 12)
 
             // Progress fill - count both completed and failed items for progress
-            let processedCount = viewModel.importQueueItems.filter { $0.status == .success || $0.status == .failure }.count
+            let processedCount = viewModel.importQueueItems.filter { $0.status == .success || $0.status.isFailure }.count
             let progress = viewModel.importQueueItems.isEmpty ? 0.0 : Double(processedCount) / Double(viewModel.importQueueItems.count)
 
             GeometryReader { geometry in
@@ -186,7 +186,6 @@ public struct ImportProgressView: View {
                     statusCountView(title: "New", count: viewModel.newFilesCount, color: .green) // Use viewModel and title:
                 }
                 HStack(spacing: 10) {
-                    statusCountView(title: "Updated", count: viewModel.updatedFilesCount, color: .orange) // Use viewModel and title:
                     statusCountView(title: "Errors", count: viewModel.errorFilesCount, color: .red) // Use viewModel and title:
                     Spacer() // Ensure it takes available space if needed
                 }
@@ -203,7 +202,6 @@ public struct ImportProgressView: View {
                 statusCountView(title: "Total", count: viewModel.totalImportFileCount, color: .gray)
                 statusCountView(title: "Processed", count: viewModel.processedFilesCount, color: .blue)
                 statusCountView(title: "New", count: viewModel.newFilesCount, color: .green)
-                statusCountView(title: "Updated", count: viewModel.updatedFilesCount, color: .orange)
                 statusCountView(title: "Errors", count: viewModel.errorFilesCount, color: .red)
             }
             .padding(.vertical, 4)
@@ -229,48 +227,63 @@ public struct ImportProgressView: View {
     // MARK: - Content Views
 
     private var contentView: some View {
-        VStack(alignment: .leading, spacing: 0) { // Use spacing 0 and manage with paddings
-            if viewModel.shouldShowImporterSpecificUI {
-                VStack(alignment: .leading, spacing: 6) {
-                    headerView
-                    progressBarsView
-                    statusDetailsView
-
-                    // iCloud Sync Status - part of importer specific UI context
-                    if viewModel.isSyncing {
-                        iCloudSyncStatusView
-                            .padding(.top, 4) // Add some space if other details are above
+        VStack(alignment: .leading, spacing: 8) {
+            headerView
+            progressBarsView
+            statusDetailsView // Existing view for counts
+            
+            // New section for scrollable log messages
+            if !viewModel.statusLogMessages.isEmpty {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 2) {
+                        ForEach(viewModel.statusLogMessages) { message in
+                            Text(message.message)
+                                .font(.caption2)
+                                .foregroundColor(messageColor(for: message.type))
+                                .lineLimit(2) // Optionally limit lines per message
+                        }
                     }
-
-                    // File Recovery Status - part of importer specific UI context
-                    if viewModel.fileRecoveryState != .idle {
-                        fileRecoveryStatusView
-                            .padding(.top, viewModel.isSyncing ? 2 : 4) // Adjust based on iCloud view
-                    }
+                    .padding(.horizontal, 4) // Padding inside the scroll content
                 }
-                .padding(.horizontal)
-                .padding(.top, 8)
-                // Add padding at the bottom only if no log messages follow this section
-                .padding(.bottom, viewModel.logMessages.isEmpty ? 8 : 6) // 6 if messages follow, to separate from divider
-
-                // Divider if importer UI is shown AND there are log messages below
-                if !viewModel.logMessages.isEmpty {
-                    Divider().background(Color.retroBlue.opacity(0.5))
-                        .padding(.horizontal)
-                        .padding(.bottom, 6) // Space after divider before messages
-                }
+                .frame(maxHeight: 80) // Limit the height of the log area
+                .background(Color.black.opacity(0.1)) // Optional background for distinction
+                .cornerRadius(4)
             }
 
-            if !viewModel.logMessages.isEmpty {
-                logDisplayView
-                    .padding(.horizontal)
-                    // Add top padding if importer UI is NOT shown, otherwise it's handled by divider spacing or section bottom padding
-                    .padding(.top, viewModel.shouldShowImporterSpecificUI ? 0 : 8)
-                    .padding(.bottom, 8)
+            // Conditionally show iCloud sync status
+            if viewModel.iCloudSyncEnabledSetting {
+                iCloudSyncStatusView
             }
         }
-        .padding(.vertical, 4)
-        .background(backgroundView)
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(RetroTheme.retroBlackClear)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 2
+                        )
+                )
+        )
+        .compositingGroup() // Ensures proper rendering of the transparency and overlay
+        .shadow(color: .retroPink.opacity(0.5), radius: 5, x: 0, y: 3)
+    }
+    
+    // Helper function to determine message color based on type
+    private func messageColor(for type: StatusMessageManager.StatusMessage.MessageType) -> Color {
+        switch type {
+        case .info: return .gray
+        case .success: return .retroGreen
+        case .warning: return .retroOrange
+        case .error: return .red
+        case .progress: return .retroPurple
+        }
     }
 
     /// iCloud sync status view - compact version (from old UI structure)

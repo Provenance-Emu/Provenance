@@ -20,7 +20,8 @@ public extension Color {
     public static let retroOrange = Color(red: 0.98, green: 0.5, blue: 0.2)
     public static let retroBlack = Color(red: 0.05, green: 0.05, blue: 0.1)
     public static let retroCyan = Color(red: 0.0, green: 0.95, blue: 0.95)
-    
+    public static let retroBlackClear = Color.black.opacity(0.001)
+
     // Gradient helpers
     public static let retroSunset = LinearGradient(
         gradient: Gradient(colors: [.retroYellow, .retroPink, .retroPurple]),

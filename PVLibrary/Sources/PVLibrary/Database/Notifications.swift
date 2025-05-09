@@ -27,6 +27,7 @@ public extension Notification.Name {
     static let GameImporterDidStart = Notification.Name("GameImporterDidStart")
     static let GameImporterDidUpdate = Notification.Name("GameImporterDidUpdate")
     static let GameImporterDidFinish = Notification.Name("GameImporterDidFinish")
+    static let GameImporterFileDidFail = Notification.Name("GameImporterFileDidFail")
     static let PVGameImported = Notification.Name("PVGameImportedNotification") // Added
     static let saveStatesImported = Notification.Name("SaveStatesImportFinished")
     static let SavesFinishedImporting = Notification.Name("SavesFinishedImporting")

@@ -202,6 +202,35 @@ public class StatusMessageManager: ObservableObject {
             }
             .store(in: &cancellables)
 
+        // MARK: - Game Importer Notifications
+        NotificationCenter.default.publisher(for: .GameImporterDidStart)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.handleGameImporterDidStart()
+            }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: .PVGameImported) // Changed from .gameImportFileImported
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                self?.handleGameImportFileImported(notification)
+            }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: .GameImporterFileDidFail)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                self?.handleGameImporterFileDidFail(notification)
+            }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: .GameImporterDidFinish)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.handleGameImporterDidFinish()
+            }
+            .store(in: &cancellables)
+
         // MARK: - Controller Management
         NotificationCenter.default.publisher(for: .controllerConnected)
             .receive(on: DispatchQueue.main)
@@ -316,6 +345,49 @@ public class StatusMessageManager: ObservableObject {
             .store(in: &cancellables)
 
         ILOG("StatusMessageManager: All notification observers set up.")
+    }
+
+    // MARK: - Private Notification Handlers
+
+    private func handleGameImporterDidStart() {
+        let message = "Import process started."
+        addMessage(StatusMessage(message: message, type: .info, duration: 3.0))
+        ILOG("Game importer did start message added: \(message)")
+    }
+
+    private func handleGameImportFileImported(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let fileName = userInfo[PVNotificationUserInfoKeys.fileNameKey] as? String else {
+            WLOG("Game import file imported notification received without valid filename.")
+            return
+        }
+        
+        let displayName = URL(fileURLWithPath: fileName).lastPathComponent
+        let successMessage = "Successfully imported \(displayName)."
+        addMessage(StatusMessage(message: successMessage, type: .success, duration: 5.0))
+        ILOG("Game import success message added: \(successMessage)")
+    }
+
+    private func handleGameImporterFileDidFail(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let fileName = userInfo[PVNotificationUserInfoKeys.fileNameKey] as? String else {
+            WLOG("GameImporterFileDidFail notification received without filename.")
+            // Optionally, add a generic failure message if filename is missing
+            // addMessage(StatusMessage(message: "An import operation failed.", type: .error, duration: 5.0))
+            return
+        }
+
+        let errorDescription = userInfo[PVNotificationUserInfoKeys.errorKey] as? String ?? "Unknown error"
+        let displayName = URL(fileURLWithPath: fileName).lastPathComponent
+        let errorMessage = "Failed to import \(displayName): \(errorDescription)"
+        addMessage(StatusMessage(message: errorMessage, type: .error, duration: 7.0)) // Longer duration for errors
+        ELOG("Game import failure message added: \(errorMessage)")
+    }
+
+    private func handleGameImporterDidFinish() {
+        let message = "Import process finished."
+        addMessage(StatusMessage(message: message, type: .success, duration: 5.0))
+        ILOG("Game importer did finish message added: \(message)")
     }
 
     /// Add a new status message

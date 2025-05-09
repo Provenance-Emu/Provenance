@@ -431,7 +431,7 @@ public class RetroGameLibraryViewModel: ObservableObject {
                 if queue.isEmpty {
                     VLOG("RetroGameLibraryViewModel: Import queue is empty")
                 } else {
-                    let activeItems = queue.filter { $0.status != .failure }
+                    let activeItems = queue.filter { !$0.status.isFailure } // Changed to use isFailure
                     ILOG("""
                          RetroGameLibraryViewModel: Import queue has \(queue.count) items
                          Active items: \(activeItems.count)

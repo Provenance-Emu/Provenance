@@ -42,7 +42,7 @@ class DefaultImportStatusDelegate: ImportStatusDelegate {
             
             // Update the status of items
             for item in importQueue {
-                if (item.status == .failure || item.status == .conflict || item.status == .partial) {
+                if (item.status.isFailure || item.status == .conflict || item.status == .partial) {
                     item.status = .queued
                 }
             }

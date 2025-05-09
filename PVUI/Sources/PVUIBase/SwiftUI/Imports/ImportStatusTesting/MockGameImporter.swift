@@ -10,6 +10,11 @@ import Combine
 import PVPrimitives
 import PVSystems
 
+// Define a simple mock error for the .failure case
+struct MockImportError: Error, LocalizedError {
+    var errorDescription: String? = "Mock import error"
+}
+
 public
 class MockGameImporter: GameImporting, ObservableObject {
     @Published private(set) public var importStatus: String = "Ready"
@@ -20,6 +25,16 @@ class MockGameImporter: GameImporting, ObservableObject {
     public var importQueuePublisher: AnyPublisher<[ImportQueueItem], Never> {
         $importQueue.eraseToAnyPublisher()
     }
+
+    // Static array of mock statuses to cycle through
+    static let mockStatuses: [ImportQueueItem.ImportStatus] = [
+        .queued,
+        .processing,
+        .success,
+        .failure(error: MockImportError()),
+        .conflict,
+        .partial
+    ]
 
     @MainActor
     public init(importStatus: String = "", importQueue: [ImportQueueItem] = [], processingState: ProcessingState = .idle, importStartedHandler: GameImporterImportStartedHandler? = nil, completionHandler: GameImporterCompletionHandler? = nil, finishedImportHandler: GameImporterFinishedImportingGameHandler? = nil, finishedArtworkHandler: GameImporterFinishedGettingArtworkHandler? = nil, spotlightCompletionHandler: GameImporterCompletionHandler? = nil, spotlightFinishedImportHandler: GameImporterFinishedImportingGameHandler? = nil) {
@@ -109,7 +124,7 @@ class MockGameImporter: GameImporting, ObservableObject {
             // Only continue if we're not paused
             if self.processingState != .paused {
                 for index in importQueue.indices {
-                    importQueue[index].status = ImportQueueItem.ImportStatus(rawValue: index % ImportQueueItem.ImportStatus.allCases.count)!
+                    importQueue[index].status = Self.mockStatuses[index % Self.mockStatuses.count]
                 }
 
                 processingState = .idle
