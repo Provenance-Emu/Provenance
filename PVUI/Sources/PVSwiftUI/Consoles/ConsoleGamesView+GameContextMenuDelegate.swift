@@ -97,28 +97,31 @@ extension ConsoleGamesView: GameContextMenuDelegate {
 
     // MARK: - Rename Methods
     func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame) {
-        gameToRename = game.freeze()
-        newGameTitle = game.title
-        showingRenameAlert = true
+        let frozenGame = game.freeze()
+        Task {
+            await gamesViewModel.prepareRenameAlert(for: frozenGame)
+        }
     }
 
-    private func submitRename() {
-        if !newGameTitle.isEmpty, let frozenGame = gameToRename, newGameTitle != frozenGame.title {
+    internal func submitRename() {
+        if !gamesViewModel.newGameTitle.isEmpty, let frozenGame = gamesViewModel.gameToRename, gamesViewModel.newGameTitle != frozenGame.title {
             do {
                 guard let thawedGame = frozenGame.thaw() else {
                     throw NSError(domain: "ConsoleGamesView", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to thaw game object"])
                 }
-                RomDatabase.sharedInstance.renameGame(thawedGame, toTitle: newGameTitle)
+                RomDatabase.sharedInstance.renameGame(thawedGame, toTitle: gamesViewModel.newGameTitle)
                 rootDelegate?.showMessage("Game renamed successfully.", title: "Success")
             } catch {
                 DLOG("Failed to rename game: \(error.localizedDescription)")
                 rootDelegate?.showMessage("Failed to rename game: \(error.localizedDescription)", title: "Error")
             }
-        } else if newGameTitle.isEmpty {
+        } else if gamesViewModel.newGameTitle.isEmpty {
             rootDelegate?.showMessage("Cannot set a blank title.", title: "Error")
         }
-        showingRenameAlert = false
-        gameToRename = nil
+        // Call the ViewModel's method to reset state
+        Task {
+            await gamesViewModel.completeRenameAction()
+        }
     }
 
     // MARK: - Image Picker Methods
@@ -199,6 +202,9 @@ extension ConsoleGamesView: GameContextMenuDelegate {
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
-        gamesViewModel.presentDiscSelectionAlert(for: game, rootDelegate: rootDelegate)
+        let frozenGame = game.freeze()
+        Task {
+            await gamesViewModel.presentDiscSelectionAlert(for: frozenGame, rootDelegate: rootDelegate)
+        }
     }
 }

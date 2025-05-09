@@ -68,10 +68,12 @@ extension ConsoleGamesView {
     internal func handleVerticalNavigation(_ yValue: Float) {
         guard let currentSection = gamesViewModel.focusedSection else {
             // No section focused, select first section and item
-            gamesViewModel.updateFocus(
-                section: availableSections.first,
-                item: getFirstItemInSection(availableSections.first!)
-            )
+            Task {
+                await gamesViewModel.updateFocus(
+                    section: availableSections.first,
+                    item: getFirstItemInSection(availableSections.first!)
+                )
+            }
             return
         }
 
@@ -82,16 +84,20 @@ extension ConsoleGamesView {
 
                 if yValue > 0 && nextSection == .recentSaveStates {
                     // Moving up to continues section - select last item
-                    gamesViewModel.updateFocus(
-                        section: nextSection,
-                        item: recentSaveStates.last?.id
-                    )
+                    Task {
+                        await gamesViewModel.updateFocus(
+                            section: nextSection,
+                            item: recentSaveStates.last?.id
+                        )
+                    }
                 } else {
                     // Any other section transition - select first item
-                    gamesViewModel.updateFocus(
-                        section: nextSection,
-                        item: getFirstItemInSection(nextSection)
-                    )
+                    Task {
+                        await gamesViewModel.updateFocus(
+                            section: nextSection,
+                            item: getFirstItemInSection(nextSection)
+                        )
+                    }
                 }
             }
         } else {
@@ -198,7 +204,9 @@ extension ConsoleGamesView {
                     // Moving up
                     let newIndex = currentIndex - Int(gameLibraryScale)
                     if newIndex >= 0 {
-                        gamesViewModel.updateFocus(section: section, item: games[newIndex].id)
+                        Task {
+                            await gamesViewModel.updateFocus(section: section, item: games[newIndex].id)
+                        }
                     } else {
                         // We're at the first row
                         if let nextSection = getNextSection(from: section, direction: direction) {
@@ -207,13 +215,17 @@ extension ConsoleGamesView {
                                 let totalRows = (games.count + Int(gameLibraryScale) - 1) / Int(gameLibraryScale)
                                 let currentColumn = currentIndex % Int(gameLibraryScale)
                                 let lastRowIndex = min(games.count - 1, ((totalRows - 1) * Int(gameLibraryScale)) + currentColumn)
-                                gamesViewModel.updateFocus(section: section, item: games[lastRowIndex].id)
+                                Task {
+                                    await gamesViewModel.updateFocus(section: section, item: games[lastRowIndex].id)
+                                }
                             } else {
                                 // Move to next section
-                                gamesViewModel.updateFocus(
-                                    section: nextSection,
-                                    item: getFirstItemInSection(nextSection)
-                                )
+                                Task {
+                                    await gamesViewModel.updateFocus(
+                                        section: nextSection,
+                                        item: getFirstItemInSection(nextSection)
+                                    )
+                                }
                             }
                         }
                     }
@@ -221,22 +233,28 @@ extension ConsoleGamesView {
                     // Moving down
                     let newIndex = currentIndex + Int(gameLibraryScale)
                     if newIndex < games.count {
-                        gamesViewModel.updateFocus(section: section, item: games[newIndex].id)
+                        Task {
+                            await gamesViewModel.updateFocus(section: section, item: games[newIndex].id)
+                        }
                     } else {
                         // We're at the last row
                         if let nextSection = getNextSection(from: section, direction: direction) {
                             if nextSection == .allGames {
                                 // If next section is the same section, wrap to top
-                                gamesViewModel.updateFocus(
-                                    section: section,
-                                    item: games[currentIndex % Int(gameLibraryScale)].id
-                                )
+                                Task {
+                                    await gamesViewModel.updateFocus(
+                                        section: section,
+                                        item: games[currentIndex % Int(gameLibraryScale)].id
+                                    )
+                                }
                             } else {
                                 // Move to next section
-                                gamesViewModel.updateFocus(
-                                    section: nextSection,
-                                    item: getFirstItemInSection(nextSection)
-                                )
+                                Task {
+                                    await gamesViewModel.updateFocus(
+                                        section: nextSection,
+                                        item: getFirstItemInSection(nextSection)
+                                    )
+                                }
                             }
                         }
                     }
@@ -257,7 +275,9 @@ extension ConsoleGamesView {
             max(0, currentIndex - 1) :
             min(items.count - 1, currentIndex + 1)
 
-        gamesViewModel.updateFocus(section: section, item: items[newIndex])
+        Task {
+            await gamesViewModel.updateFocus(section: section, item: items[newIndex])
+        }
         DLOG("Moving within section \(section) to item \(items[newIndex])")
         return true
     }
@@ -270,7 +290,9 @@ extension ConsoleGamesView {
                 getLastItemInSection(nextSection)
 
             DLOG("ConsoleGamesView: Current focus - Section: \(String(describing: gamesViewModel.focusedSection)), Item: \(String(describing: gamesViewModel.focusedItemInSection))")
-            gamesViewModel.updateFocus(section: nextSection, item: newItem)
+            Task {
+                await gamesViewModel.updateFocus(section: nextSection, item: newItem)
+            }
             DLOG("ConsoleGamesView: New focus - Section: \(nextSection), Item: \(String(describing: newItem))")
             return true
         }

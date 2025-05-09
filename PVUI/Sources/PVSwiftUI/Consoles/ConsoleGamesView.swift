@@ -3,7 +3,7 @@
 //  Provenance
 //
 //  Created by Ian Clawson on 1/22/22.
-//  Copyright © 2022 Provenance Emu. All rights reserved.
+//  Copyright 2022 Provenance Emu. All rights reserved.
 //
 
 import Foundation
@@ -48,9 +48,6 @@ struct ConsoleGamesView: SwiftUI.View {
     @State internal var showImagePicker = false
     @State internal var selectedImage: UIImage?
     @State internal var gameToUpdateCover: PVGame?
-    @State internal var showingRenameAlert = false
-    @State internal var gameToRename: PVGame?
-    @State internal var newGameTitle = ""
     @FocusState internal var renameTitleFieldIsFocused: Bool
     @State internal var systemMoveState: SystemMoveState?
     @State internal var continuesManagementState: ContinuesManagementState?
@@ -344,9 +341,9 @@ struct ConsoleGamesView: SwiftUI.View {
             }
             .uiKitAlert(
                 "Rename Game",
-                message: "Enter a new name for \(gameToRename?.title ?? "")",
-                isPresented: $showingRenameAlert,
-                textValue: newGameTitleBinding,
+                message: "Enter a new name for \(gamesViewModel.gameToRename?.title ?? "")",
+                isPresented: $gamesViewModel.showingRenameAlert,
+                textValue: newGameTitleBindingForAlert,
                 preferredContentSize: CGSize(width: 300, height: 200),
                 textField: { textField in
                     textField.placeholder = "Game name"
@@ -356,16 +353,14 @@ struct ConsoleGamesView: SwiftUI.View {
             ) {
                 [
                     UIAlertAction(title: "Save", style: .default) { _ in
-                        if let game = gameToRename, !newGameTitle.isEmpty {
-                            Task {
-                                await renameGame(game, to: newGameTitle)
-                            }
-                        }
+                        // The submitRename() method in ConsoleGamesView+GameContextMenuDelegate.swift
+                        // has already been updated to use gamesViewModel and handle dismissal.
+                        submitRename()
                     },
                     UIAlertAction(title: "Cancel", style: .cancel) { _ in
-                        gameToRename = nil
-                        newGameTitle = ""
-                        showingRenameAlert = false
+                        Task {
+                            await gamesViewModel.cancelRenameAction()
+                        }
                     }
                 ]
             }
@@ -510,13 +505,6 @@ struct ConsoleGamesView: SwiftUI.View {
             searchText: $searchText
         ))
         .ignoresSafeArea(.all)
-        .onChange(of: showingRenameAlert) { newValue in
-            print("ConsoleGamesView: showingRenameAlert changed to \(newValue)")
-            if newValue == false {
-                print("ConsoleGamesView: showingRenameAlert became false. Call stack:\n\(Thread.callStackSymbols.joined(separator: "\n"))")
-                // --- SET YOUR BREAKPOINT HERE ---
-            }
-        }
         .onChange(of: showArtworkSourceAlert) { newValue in
             print("ConsoleGamesView: showArtworkSourceAlert changed to \(newValue)")
             if newValue == false {
@@ -808,18 +796,18 @@ struct ConsoleGamesView: SwiftUI.View {
         }
 
         // Reset state
-        gameToRename = nil
-        newGameTitle = ""
-        showingRenameAlert = false
+        //gameToRename = nil
+        //newGameTitle = ""
+        //showingRenameAlert = false
     }
 
     // Create a computed binding that wraps the String as String?
-    private var newGameTitleBinding: Binding<String?> {
-        Binding<String?>(
-            get: { self.newGameTitle },
-            set: { self.newGameTitle = $0 ?? "" }
-        )
-    }
+    //private var newGameTitleBinding: Binding<String?> {
+    //    Binding<String?>(
+    //        get: { self.newGameTitle },
+    //        set: { self.newGameTitle = $0 ?? "" }
+    //    )
+    //}
 
     /// Function to filter games based on search text
     private func filteredSearchResults() -> [PVGame] {
@@ -887,6 +875,13 @@ struct ConsoleGamesView: SwiftUI.View {
                 }
             }
         }
+    }
+
+    private var newGameTitleBindingForAlert: Binding<String?> {
+        Binding<String?>(
+            get: { gamesViewModel.newGameTitle },
+            set: { gamesViewModel.newGameTitle = $0 ?? "" }
+        )
     }
 }
 
