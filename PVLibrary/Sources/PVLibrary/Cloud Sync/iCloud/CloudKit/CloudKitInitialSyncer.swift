@@ -382,10 +382,11 @@ public actor CloudKitInitialSyncer {
                 }
 
                 do {
-                    try await syncer.uploadGame(game)
+                    let frozenGame = game.freeze()
+                    try await syncer.uploadGame(frozenGame)
 
                     syncedCount += 1
-                    DLOG("Successfully initiated upload for ROM: \(game.title) (\(game.md5))")
+                    DLOG("Successfully initiated upload for ROM: \(frozenGame.title) (\(frozenGame.md5))")
 
                 } catch let error as CloudSyncError {
                     if case .alreadyExists = error {
