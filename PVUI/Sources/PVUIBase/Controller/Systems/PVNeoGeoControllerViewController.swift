@@ -28,14 +28,33 @@ final class PVNeoGeoControllerViewController: PVControllerViewController<PVNeoGe
             guard let button = $0 as? JSButton, let text = button.titleLabel.text else {
                 return
             }
-            if text == "✖" || text == "✕" {
+            switch text.lowercased() {
+            case "✖","✕":
                 button.buttonTag = .cross
-            } else if text == "●" || text == "○" {
+            case "●","○":
                 button.buttonTag = .circle
-            } else if text == "◼" || text == "□" {
+            case "◼","□":
                 button.buttonTag = .square
-            } else if text == "▲" || text == "▵" {
+            case "▲","▵":
                 button.buttonTag = .triangle
+            case "start":
+                button.buttonTag = .start
+            case "select":
+                button.buttonTag = .select
+            case "l", "l1":
+                button.buttonTag = .l1
+            case "r", "r1":
+                button.buttonTag = .r1
+            case "l2":
+                button.buttonTag = .l2
+            case "r2":
+                button.buttonTag = .r2
+            case "l3":
+                button.buttonTag = .l3
+            case "r3":
+                button.buttonTag = .r3
+            default:
+                break
             }
         }
 
@@ -43,10 +62,12 @@ final class PVNeoGeoControllerViewController: PVControllerViewController<PVNeoGe
         rightShoulderButton?.buttonTag = .r1
         leftShoulderButton2?.buttonTag = .l2
         rightShoulderButton2?.buttonTag = .r2
+        leftAnalogButton?.buttonTag = .l3
+        rightAnalogButton?.buttonTag = .r3
         selectButton?.buttonTag = .select
         startButton?.buttonTag = .start
     }
-    
+
     override func prelayoutSettings() {
         //alwaysRightAlign = true
         alwaysJoypadOverDpad = false

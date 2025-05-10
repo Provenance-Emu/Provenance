@@ -13,6 +13,8 @@ import CoreAudio
 import PVAudio
 import PVLogging
 import PVSettings
+import Accelerate
+import QuartzCore
 
 #if SWIFT_PACKAGE
 import PVCoreBridge
@@ -169,6 +171,11 @@ func RenderCallback(inRefCon: UnsafeMutableRawPointer,
     if bytesToRead > 0 {
         /// Read data
         let bytesRead = buffer.read(outputData, preferredSize: bytesToRead)
+        
+        // Capture audio data for visualization if we have an audio engine reference
+        if let audioEngine = context.audioEngine {
+            audioEngine.captureAudioDataForVisualization(outputData, bytesRead, context.channelCount)
+        }
 
         /// Update buffer size
         ioData?.pointee.mBuffers.mDataByteSize = UInt32(bytesRead)
@@ -234,6 +241,10 @@ public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
     @objc public var running: Bool = false
     internal var auMetaData: AUMetaData
     private let muteSwitchMonitor = PVMuteSwitchMonitor()
+    
+    /// Audio buffer for waveform visualization
+    private var audioBufferForVisualization = [Float](repeating: 0, count: 4096)
+    private let audioBufferLock = NSLock()
 
     /// Volume control
     @objc public var volume: Float = 1.0 {
@@ -316,6 +327,71 @@ public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
             AUGraphUninitialize(mGraph)
         }
         running = false
+    }
+    
+    /// Captures audio data for visualization
+    internal func captureAudioDataForVisualization(_ buffer: UnsafeMutableRawPointer, _ byteCount: Int, _ channels: Int32) {
+        // Only process if we have enough data
+        guard byteCount > 0 else { return }
+        
+        // Lock to prevent concurrent access
+        audioBufferLock.lock()
+        defer { audioBufferLock.unlock() }
+        
+        // Process 16-bit PCM audio data
+        let samples = buffer.bindMemory(to: Int16.self, capacity: byteCount / 2)
+        let sampleCount = min(byteCount / 2, audioBufferForVisualization.count)
+        
+        // For stereo, average the channels
+        if channels == 2 {
+            for i in 0..<(sampleCount / 2) {
+                let leftSample = Float(samples[i * 2]) / Float(Int16.max)
+                let rightSample = Float(samples[i * 2 + 1]) / Float(Int16.max)
+                audioBufferForVisualization[i] = (leftSample + rightSample) / 2.0
+            }
+        } else {
+            // For mono, just convert to float
+            for i in 0..<sampleCount {
+                audioBufferForVisualization[i] = Float(samples[i]) / Float(Int16.max)
+            }
+        }
+    }
+    
+    /// Get waveform data for visualization
+    public func getWaveformData(numberOfPoints: Int) -> WaveformData {
+        audioBufferLock.lock()
+        defer { audioBufferLock.unlock() }
+        
+        // Create a result array of the requested size
+        var result = [Float](repeating: 0, count: numberOfPoints)
+        
+        // If we don't have enough data or engine isn't running, return zeros
+        guard running, !audioBufferForVisualization.isEmpty else {
+            return WaveformData(amplitudes: result)
+        }
+        
+        // Use Accelerate framework to downsample the audio buffer to the requested number of points
+        let inputLength = vDSP_Length(audioBufferForVisualization.count)
+        let stride = max(1, Int(inputLength) / numberOfPoints)
+        
+        for i in 0..<numberOfPoints {
+            let startIdx = i * stride
+            let endIdx = min(startIdx + stride, audioBufferForVisualization.count)
+            
+            if startIdx < endIdx {
+                // Take absolute values for visualization
+                var absValues = [Float](repeating: 0, count: endIdx - startIdx)
+                vDSP_vabs(Array(audioBufferForVisualization[startIdx..<endIdx]), 1, &absValues, 1, vDSP_Length(endIdx - startIdx))
+                
+                // Find the maximum value in this segment
+                var maxValue: Float = 0
+                vDSP_maxv(absValues, 1, &maxValue, vDSP_Length(absValues.count))
+                
+                result[i] = maxValue
+            }
+        }
+        
+        return WaveformData(amplitudes: result)
     }
 
     /// iOS audio session setup

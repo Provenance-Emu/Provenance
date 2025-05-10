@@ -22,7 +22,7 @@ public actor HUDCoordinator {
     private var hideTask: Task<Void, Never>?
 
     /// Updates the HUD state and manages visibility
-    func updateHUD(_ newState: HudState, autoHide: Bool = false) async {
+    public func updateHUD(_ newState: HudState, autoHide: Bool = false) async {
         DLOG("Updating HUD state to: \(newState)")
 
         if isHidingHUD {

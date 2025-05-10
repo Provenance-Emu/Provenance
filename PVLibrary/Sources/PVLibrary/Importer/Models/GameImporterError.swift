@@ -20,6 +20,7 @@ public enum GameImporterError: Error, Sendable, CustomNSError, LocalizedError {
     case conflictDetected
     case missingRequiredProperty(String)
     case systemNotFound
+    case artworkImportFailed
 
     /// The domain of the error.
     public static var errorDomain: String {
@@ -43,6 +44,7 @@ public enum GameImporterError: Error, Sendable, CustomNSError, LocalizedError {
         case .conflictDetected:             return 1012
         case .missingRequiredProperty:      return 1013
         case .systemNotFound:               return 1014
+        case .artworkImportFailed:          return 1015
         }
     }
 
@@ -101,6 +103,8 @@ public enum GameImporterError: Error, Sendable, CustomNSError, LocalizedError {
             return "Missing required property: \(property)"
         case .systemNotFound:
             return "System not found in database"
+        case .artworkImportFailed:
+            return "Artwork import failed"
         }
     }
 }

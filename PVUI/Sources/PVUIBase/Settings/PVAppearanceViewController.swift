@@ -15,6 +15,7 @@ import PVSettings
 
 public final class PVAppearanceViewController: UITableViewController {
     #if os(iOS)
+        var showSearchbarSwitch: UISwitch?
         var hideTitlesSwitch: UISwitch?
         var recentlyPlayedSwitch: UISwitch?
         var saveStatesSwitch: UISwitch?
@@ -28,8 +29,12 @@ public final class PVAppearanceViewController: UITableViewController {
             hideTitlesSwitch?.isOn = Defaults[.showGameTitles]
             hideTitlesSwitch?.addTarget(self, action: #selector(PVAppearanceViewController.switchChangedValue(_:)), for: .valueChanged)
 
+            showSearchbarSwitch = UISwitch()
+            showSearchbarSwitch?.isOn = Defaults[.showSearchbar]
+            showSearchbarSwitch?.addTarget(self, action: #selector(PVAppearanceViewController.switchChangedValue(_:)), for: .valueChanged)
+        
             recentlyPlayedSwitch = UISwitch()
-        recentlyPlayedSwitch?.isOn = Defaults[.showRecentGames]
+            recentlyPlayedSwitch?.isOn = Defaults[.showRecentGames]
             recentlyPlayedSwitch?.addTarget(self, action: #selector(PVAppearanceViewController.switchChangedValue(_:)), for: .valueChanged)
 
             saveStatesSwitch = UISwitch()
@@ -51,8 +56,9 @@ public final class PVAppearanceViewController: UITableViewController {
                 Defaults[.showRecentGames] = switchItem.isOn
             } else if switchItem == saveStatesSwitch {
                 Defaults[.showRecentSaveStates] = switchItem.isOn
+            } else if switchItem == showSearchbarSwitch {
+                Defaults[.showSearchbar] = switchItem.isOn
             }
-
             NotificationCenter.default.post(name: NSNotification.Name("kInterfaceDidChangeNotification"), object: nil)
         }
 
@@ -101,12 +107,19 @@ public final class PVAppearanceViewController: UITableViewController {
                 #endif
             } else if indexPath.row == 2 {
                 cell?.textLabel?.text = "Show Recent Save States"
-                #if os(tvOS)
-                    cell?.detailTextLabel?.text = Defaults[.showRecentSaveStates] ? "On" : "Off"
-                #else
-                    cell?.accessoryView = saveStatesSwitch
-                #endif
-            }
+#if os(tvOS)
+                cell?.detailTextLabel?.text = Defaults[.showRecentSaveStates] ? "On" : "Off"
+#else
+                cell?.accessoryView = saveStatesSwitch
+#endif
+            } else if indexPath.row == 4 {
+            cell?.textLabel?.text = "Show Search Bar"
+            #if os(tvOS)
+                cell?.detailTextLabel?.text = Defaults[.showSearchbar] ? "On" : "Off"
+            #else
+                cell?.accessoryView = showSearchbarSwitch
+            #endif
+        }
         }
         cell?.selectionStyle = .none
         return cell ?? UITableViewCell()
@@ -126,6 +139,9 @@ public final class PVAppearanceViewController: UITableViewController {
                 } else if indexPath.row == 2 {
                     Defaults[.showRecentSaveStates] = !Defaults[.showRecentSaveStates]
                     cell?.detailTextLabel?.text = Defaults[.showRecentGames] ? "On" : "Off"
+                } else if indexPath.row == 3 {
+                    Defaults[.showSearchbar] = !Defaults[.showSearchbar]
+                    cell?.detailTextLabel?.text = Defaults[.showSearchbar] ? "On" : "Off"
                 }
             }
         #endif

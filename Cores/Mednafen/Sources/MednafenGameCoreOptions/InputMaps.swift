@@ -17,7 +17,7 @@ public class InputMaps: NSObject {
     @objc public static let GBMap: [Int32] = [6, 7, 5, 4, 0, 1, 3, 2]
     @objc public static let GBAMap: [Int32] = [6, 7, 5, 4, 0, 1, 9, 8, 3, 2]
     @objc public static let NESMap: [Int32] = [4, 5, 6, 7, 0, 1, 3, 2]
-    @objc public static let LynxMap: [Int32] = [6, 7, 4, 5, 0, 1, 3, 2]
+    @objc public static let LynxMap: [Int32] = [6, 7, 4, 5, 0, 1, 3, 2, 8]
     @objc public static let PSXMap: [Int32] = [4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16, 24, 23, 22, 21, 20, 19, 18, 17]
     @objc public static let VBMap: [Int32] = [9, 8, 7, 6, 4, 13, 12, 5, 3, 2, 0, 1, 10, 11]
     @objc public static let WSMap: [Int32] = [0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11]

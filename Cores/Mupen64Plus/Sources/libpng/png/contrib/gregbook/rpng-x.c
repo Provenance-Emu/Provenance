@@ -21,17 +21,18 @@
     - 1.10:  added support for non-default visuals; fixed X pixel-conversion
     - 1.11:  added extra set of parentheses to png_jmpbuf() macro; fixed
               command-line parsing bug
-    - 1.12:  fixed some small X memory leaks (thanks to François Petitjean)
+    - 1.12:  fixed some small X memory leaks (thanks to FranÃ§ois Petitjean)
     - 1.13:  fixed XFreeGC() crash bug (thanks to Patrick Welche)
     - 1.14:  added support for X resources (thanks to Gerhard Niklasch)
     - 2.00:  dual-licensed (added GNU GPL)
     - 2.01:  fixed improper display of usage screen on PNG error(s)
     - 2.02:  Added "void(argc);" statement to quiet pedantic compiler warnings
              about unused variable (GR-P)
+    - 2.03:  check for integer overflow (Glenn R-P)
 
   ---------------------------------------------------------------------------
 
-      Copyright (c) 1998-2008 Greg Roelofs.  All rights reserved.
+      Copyright (c) 1998-2008, 2017 Greg Roelofs.  All rights reserved.
 
       This software is provided "as is," without warranty of any kind,
       express or implied.  In no event shall the author or contributors

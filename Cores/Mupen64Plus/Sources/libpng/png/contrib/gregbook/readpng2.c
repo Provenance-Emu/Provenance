@@ -55,6 +55,7 @@
 
    Changelog:
      2015-11-12 - Check return value of png_get_bKGD() (Glenn R-P)
+     2017-04-22 - Guard against integer overflow (Glenn R-P)
 
   ---------------------------------------------------------------------------*/
 
@@ -145,7 +146,7 @@ int readpng2_init(mainprog_info *mainprog_ptr)
         /* These byte strings were copied from png.h.  If a future version
          * of readpng2.c recognizes more chunks, add them to this list.
          */
-        static PNG_CONST png_byte chunks_to_process[] = {
+        static const png_byte chunks_to_process[] = {
             98,  75,  71,  68, '\0',  /* bKGD */
            103,  65,  77,  65, '\0',  /* gAMA */
            115,  82,  71,  66, '\0',  /* sRGB */
