@@ -29,17 +29,17 @@ internal struct ContinuesManagementState: Identifiable {
 }
 
 extension ConsoleGamesView: GameContextMenuDelegate {
-    
+
     // MARK: - CloudKit Download Methods
-    
+
     func gameContextMenu(_ menu: GameContextMenu, didRequestDownloadFromCloudFor game: PVGame) {
         guard !game.isInvalidated, let recordID = game.cloudRecordID else { return }
-        
+
         DLOG("Downloading game from CloudKit: \(game.title) (\(recordID))")
-        
+
         // Show loading indicator
         rootDelegate?.showMessage("Downloading \(game.title)...", title: "Downloading")
-        
+
         Task {
             do {
                 // Find the appropriate syncer
@@ -50,14 +50,14 @@ extension ConsoleGamesView: GameContextMenuDelegate {
                     }
                     return
                 }
-                
+
                 // Download the file
                 let fileURL = try await syncer.downloadFileOnDemand(recordName: recordID)
                 DLOG("Downloaded file to: \(fileURL.path)")
-                
+
                 // Update the game's download status in the database
                 try await updateGameDownloadStatus(recordID: recordID, isDownloaded: true)
-                
+
                 await MainActor.run {
                     rootDelegate?.showMessage("\(game.title) has been downloaded successfully", title: "Download Complete")
                 }
@@ -69,11 +69,11 @@ extension ConsoleGamesView: GameContextMenuDelegate {
             }
         }
     }
-    
+
     /// Update the download status of a game in the database
     private func updateGameDownloadStatus(recordID: String, isDownloaded: Bool) async throws {
         let realm = try await Realm()
-        
+
         try await realm.asyncWrite {
             if let game = realm.objects(PVGame.self).filter("cloudRecordID == %@", recordID).first {
                 game.isDownloaded = isDownloaded
@@ -86,11 +86,11 @@ extension ConsoleGamesView: GameContextMenuDelegate {
     @ViewBuilder
     internal func imagePickerView() -> some View {
         ImagePicker(sourceType: .photoLibrary) { image in
-            if let game = gameToUpdateCover {
+            if let game = gamesViewModel.gameToUpdateCover {
                 saveArtwork(image: image, forGame: game)
             }
-            gameToUpdateCover = nil
-            showImagePicker = false
+            gamesViewModel.gameToUpdateCover = nil
+            gamesViewModel.showImagePicker = false
         }
     }
 #endif
@@ -127,8 +127,10 @@ extension ConsoleGamesView: GameContextMenuDelegate {
     // MARK: - Image Picker Methods
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestChooseCoverFor game: PVGame) {
-        gameToUpdateCover = game
-        showImagePicker = true
+        let frozenGame = game.freeze()
+        Task {
+            await gamesViewModel.prepareArtworkSourceAlert(for: frozenGame)
+        }
     }
 
     internal func saveArtwork(image: UIImage, forGame game: PVGame) {
@@ -173,32 +175,40 @@ extension ConsoleGamesView: GameContextMenuDelegate {
     func gameContextMenu(_ menu: GameContextMenu, didRequestMoveToSystemFor game: PVGame) {
         DLOG("ConsoleGamesView: Received request to move game to system")
         let frozenGame = game.isFrozen ? game : game.freeze()
-        systemMoveState = SystemMoveState(game: frozenGame)
+        gamesViewModel.systemMoveState = SystemMoveState(game: frozenGame)
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
         DLOG("ConsoleGamesView: Received request to show save states for game")
-        continuesManagementState = ContinuesManagementState(game: game)
+        gamesViewModel.continuesManagementState = ContinuesManagementState(game: game)
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor gameId: String) {
-        showGameInfo(gameId)
+        DLOG("ConsoleGamesView: Received request to show game info")
+        // Handle showing game info, possibly by setting a @State or @Published var
+        // that triggers a sheet or navigation.
+        // For example: gamesViewModel.selectedGameForInfo = gameId
+        // Or if it's a root delegate action: rootDelegate?.showInfo(forGameID: gameId)
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame) {
-        gameToUpdateCover = game
-        showImagePicker = true
+        gamesViewModel.gameToUpdateCover = game
+        gamesViewModel.showImagePicker = true
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame) {
-        gameToUpdateCover = game
-        showArtworkSearch = true
+        gamesViewModel.gameToUpdateCover = game
+        gamesViewModel.showArtworkSearch = true
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
-        DLOG("Setting gameToUpdateCover with game: \(game.title)")
-        gameToUpdateCover = game
-        showArtworkSourceAlert = true
+        DLOG("ConsoleGamesView: Received request to choose artwork source")
+        gamesViewModel.gameToUpdateCover = game
+        // The following now calls the async function on the ViewModel
+        Task {
+            await gamesViewModel.prepareArtworkSourceAlert(for: game)
+        }
+        // gamesViewModel.showArtworkSourceAlert = true // This line is now handled by prepareArtworkSourceAlert
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
