@@ -119,7 +119,6 @@ public class ImportProgressViewModel: ObservableObject {
         self.gameImporter = gameImporter
         self.updatesController = updatesController // Store it
         // iCloudSyncEnabledSetting is now managed by @Default
-        ILOG("ImportProgressViewModel initialized. iCloud Sync initially: \(self.iCloudSyncEnabledSetting)")
 
         // Consolidated setup call
         setupPrimarySubscriptions()
