@@ -98,6 +98,9 @@ public class ImportProgressViewModel: ObservableObject {
     @Published public var newFilesCount: Int = 0
     @Published public var errorFilesCount: Int = 0
 
+    // MARK: - Published Properties (Refactored iCloud Sync Setting)
+    @Published public var iCloudSyncEnabledSetting: Bool = Defaults[.iCloudSync] // Initialize with current value
+
     // MARK: - Private Properties
 
     private var messageExpiryTimers: [UUID: Timer] = [:] // Timers for individual log message expiry
@@ -106,9 +109,7 @@ public class ImportProgressViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private let gameImporter: any GameImporting
     private let updatesController: PVGameLibraryUpdatesController // Store updatesController
-
-    /// User's preference for enabling iCloud Sync, observed directly via @Default.
-    @Default(.iCloudSync) internal var iCloudSyncEnabledSetting: Bool
+    private var settingsCancellable: AnyCancellable? // Store the settings observation
 
     private let maxStoredMessages = 50
     private let fileRecoveryProgressID = "icloud-file-recovery"
@@ -118,20 +119,14 @@ public class ImportProgressViewModel: ObservableObject {
     public init(gameImporter: any GameImporting = GameImporter.shared, updatesController: PVGameLibraryUpdatesController) {
         self.gameImporter = gameImporter
         self.updatesController = updatesController // Store it
-        // iCloudSyncEnabledSetting is now managed by @Default
 
         // Consolidated setup call
         setupPrimarySubscriptions()
 
         // Observe changes to iCloudSyncEnabledSetting to re-setup CloudKit subscriptions if necessary
-        Defaults.publisher(.iCloudSync)
-            .removeDuplicates()
-            .sink { [weak self] change in
-                guard let self = self else { return }
-                ILOG("iCloudSyncEnabledSetting changed to: \(change.newValue)")
-                self.reactToiCloudSettingChange(isEnabled: change.newValue)
-            }
-            .store(in: &cancellables)
+        settingsCancellable = Defaults.publisher(.iCloudSync) // Publishes KeyChange<Bool>
+            .map(\.newValue) // Extract the new Bool value
+            .assign(to: \.iCloudSyncEnabledSetting, on: self) // Assign to our Bool property
     }
 
     // MARK: - Public Methods for View Interaction
@@ -146,6 +141,7 @@ public class ImportProgressViewModel: ObservableObject {
         messageExpiryTimers.removeAll()
         processedSharedMessageIDs.removeAll()
         hideViewTimer?.invalidate() // Ensure timer is cleaned up
+        settingsCancellable?.cancel() // Cancel the settings observation on deinit
     }
 
     /// Add a log message (newer feature)
@@ -654,6 +650,7 @@ public class ImportProgressViewModel: ObservableObject {
         cancellables.forEach { $0.cancel() }
         messageExpiryTimers.values.forEach { $0.invalidate() } // Invalidate individual message timers
         hideViewTimer?.invalidate() // Ensure overall view hide timer is cleaned up
+        settingsCancellable?.cancel() // Cancel the settings observation on deinit
         ILOG("ImportProgressViewModel deinitialized")
     }
 }

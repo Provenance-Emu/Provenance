@@ -36,6 +36,13 @@ struct ConsoleGamesView: SwiftUI.View {
     @ObservedRealmObject var console: PVSystem
     @EnvironmentObject var themeManager: ThemeManager
 
+    // Properties that were @Default in the View, now @Default in ViewModel
+    @Default(.gameLibraryScale) var gameLibraryScale: Float
+    @Default(.showRecentSaveStates) var showRecentSaveStates: Bool
+    @Default(.showFavorites) var showFavorites: Bool
+    @Default(.showRecentGames) var showRecentGames: Bool
+    @Default(.showSearchbar) var showSearchbar: Bool
+    
     // New state variable for HomeContinueSection binding
     @State private var recentGamesForBinding: [PVRecentGame] = []
 
@@ -160,7 +167,7 @@ struct ConsoleGamesView: SwiftUI.View {
             ScrollViewReader { proxy in
                 LazyVStack(spacing: 0) {
                     // Add search bar with visibility control
-                    if games.count > 8 && gamesViewModel.showSearchbar {
+                    if games.count > 8 && showSearchbar {
                         PVSearchBar(text: $gamesViewModel.searchText)
                             .opacity(gamesViewModel.isSearchBarVisible ? 1 : 0)
                             .frame(height: gamesViewModel.isSearchBarVisible ? nil : 0)
@@ -510,7 +517,7 @@ struct ConsoleGamesView: SwiftUI.View {
     }
 
     var itemsPerRow: Int {
-        let roundedScale = Int(gamesViewModel.gameLibraryScale.rounded())
+        let roundedScale = Int(gameLibraryScale.rounded())
         // If games is less than count, just use the games to fill the row.
         // also don't go below 0
         let count: Int
@@ -838,7 +845,7 @@ extension ConsoleGamesView {
     @ViewBuilder
     private func continueSection() -> some View {
         Group {
-            if gamesViewModel.showRecentSaveStates && !recentGamesForBinding.isEmpty { // Check recentGamesForBinding here as well
+            if showRecentSaveStates && !recentGamesForBinding.isEmpty { // Check recentGamesForBinding here as well
                 HomeContinueSection(
                     rootDelegate: rootDelegate,
                     consoleIdentifier: console.identifier,
@@ -853,7 +860,7 @@ extension ConsoleGamesView {
     @ViewBuilder
     private func favoritesSection() -> some View {
         Group {
-            if gamesViewModel.showFavorites && !favorites.isEmpty {
+            if showFavorites && !favorites.isEmpty {
                 HomeSection(title: "Favorites") {
                     ForEach(favorites, id: \.self) { game in
                         gameItem(game, section: .favorites)
@@ -868,7 +875,7 @@ extension ConsoleGamesView {
     @ViewBuilder
     private func recentlyPlayedSection() -> some View {
         Group {
-            if gamesViewModel.showRecentGames && !recentlyPlayedGames.isEmpty {
+            if showRecentGames && !recentlyPlayedGames.isEmpty {
                 HomeSection(title: "Recently Played") {
                     ForEach(recentGamesForBinding, id: \.self) { recentGame in
                         if let game = recentGame.game {

@@ -29,37 +29,14 @@ class ConsoleGamesViewModel: ObservableObject {
     @Published var discSelectionAlert: DiscSelectionAlert?
 
     /// Rename Game Alert State
-    @Published var showingRenameAlert = false {
-        didSet {
-            if oldValue == true && showingRenameAlert == false {
-                print("⚠️ ConsoleGamesViewModel.showingRenameAlert changed from TRUE to FALSE.")
-                #if DEBUG
-                print("Call stack for showingRenameAlert change to false:\n\(Thread.callStackSymbols.joined(separator: "\n"))")
-                #endif
-                // --- SET A BREAKPOINT ON THE LINE ABOVE IN YOUR DEBUGGER ---
-            } else if oldValue == false && showingRenameAlert == true {
-                print("ℹ️ ConsoleGamesViewModel.showingRenameAlert changed from FALSE to TRUE.")
-            }
-        }
-    }
+    @Published var showingRenameAlert = false
     /// Game to rename
     @Published var gameToRename: PVGame? = nil
     /// New game title for rename alert
     @Published var newGameTitle = "" // For the TextField binding
 
     /// Artwork Source Alert State
-    @Published var showArtworkSourceAlert = false {
-        didSet {
-            if oldValue == true && showArtworkSourceAlert == false {
-                print("⚠️ ConsoleGamesViewModel.showingArtworkSourceAlert changed from TRUE to FALSE.")
-                #if DEBUG
-                print("Call stack for showingArtworkSourceAlert change to false:\n\(Thread.callStackSymbols.joined(separator: "\n"))")
-                #endif
-            } else if oldValue == false && showArtworkSourceAlert == true {
-                print("ℹ️ ConsoleGamesViewModel.showingArtworkSourceAlert changed from FALSE to TRUE.")
-            }
-        }
-    }
+    @Published var showArtworkSourceAlert = false
     @Published var gameForArtworkUpdate: PVGame? = nil
 
     /// Import status view properties
@@ -74,13 +51,6 @@ class ConsoleGamesViewModel: ObservableObject {
     @Published var renameTitleFieldIsFocused: Bool = false // For FocusState
     @Published var systemMoveState: SystemMoveState? = nil
     @Published var continuesManagementState: ContinuesManagementState? = nil
-
-    // Properties that were @Default in the View, now @Default in ViewModel
-    @Default(.gameLibraryScale) var gameLibraryScale: Float
-    @Default(.showRecentSaveStates) var showRecentSaveStates: Bool
-    @Default(.showFavorites) var showFavorites: Bool
-    @Default(.showRecentGames) var showRecentGames: Bool
-    @Default(.showSearchbar) var showSearchbar: Bool
     
     // Properties that were @State in the View, now @Published in ViewModel
     @Published var searchText: String = ""
@@ -116,12 +86,12 @@ class ConsoleGamesViewModel: ObservableObject {
 
     /// Present disc selection alert for a game
     func presentDiscSelectionAlert(for game: PVGame, rootDelegate: PVRootDelegate?) async {
+        let discs = game.relatedFiles.toArray()
+        let alertDiscs = discs.compactMap { disc -> DiscSelectionAlert.Disc? in
+            return DiscSelectionAlert.Disc(fileName: disc.fileName, path: disc.url!.path)
+        }
+        
         await MainActor.run {
-            let discs = game.relatedFiles.toArray()
-            let alertDiscs = discs.compactMap { disc -> DiscSelectionAlert.Disc? in
-                return DiscSelectionAlert.Disc(fileName: disc.fileName, path: disc.url!.path)
-            }
-
             self.discSelectionAlert = DiscSelectionAlert(
                 game: game,
                 discs: alertDiscs

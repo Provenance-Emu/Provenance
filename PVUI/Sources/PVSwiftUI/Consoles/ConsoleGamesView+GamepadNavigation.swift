@@ -10,9 +10,9 @@ extension ConsoleGamesView {
 
     internal var availableSections: [HomeSectionType] {
         [
-            (gamesViewModel.showRecentSaveStates && !recentSaveStates.isEmpty) ? .recentSaveStates : nil,
-            (gamesViewModel.showFavorites && !favorites.isEmpty) ? .favorites : nil,
-            (gamesViewModel.showRecentGames && !recentlyPlayedGames.isEmpty) ? .recentlyPlayedGames : nil,
+            (showRecentSaveStates && !recentSaveStates.isEmpty) ? .recentSaveStates : nil,
+            (showFavorites && !favorites.isEmpty) ? .favorites : nil,
+            (showRecentGames && !recentlyPlayedGames.isEmpty) ? .recentlyPlayedGames : nil,
             !games.isEmpty ? .allGames : nil
         ].compactMap { $0 }
     }
@@ -202,7 +202,7 @@ extension ConsoleGamesView {
             if let currentIndex = games.firstIndex(where: { $0.id == gamesViewModel.focusedItemInSection }) {
                 if direction > 0 {
                     // Moving up
-                    let newIndex = currentIndex - Int(gamesViewModel.gameLibraryScale)
+                    let newIndex = currentIndex - Int(gameLibraryScale)
                     if newIndex >= 0 {
                         Task {
                             await gamesViewModel.updateFocus(section: section, item: games[newIndex].id)
@@ -212,9 +212,9 @@ extension ConsoleGamesView {
                         if let nextSection = getNextSection(from: section, direction: direction) {
                             if nextSection == .allGames {
                                 // If next section is the same section, wrap to bottom
-                                let totalRows = (games.count + Int(gamesViewModel.gameLibraryScale) - 1) / Int(gamesViewModel.gameLibraryScale)
-                                let currentColumn = currentIndex % Int(gamesViewModel.gameLibraryScale)
-                                let lastRowIndex = min(games.count - 1, ((totalRows - 1) * Int(gamesViewModel.gameLibraryScale)) + currentColumn)
+                                let totalRows = (games.count + Int(gameLibraryScale) - 1) / Int(gameLibraryScale)
+                                let currentColumn = currentIndex % Int(gameLibraryScale)
+                                let lastRowIndex = min(games.count - 1, ((totalRows - 1) * Int(gameLibraryScale)) + currentColumn)
                                 Task {
                                     await gamesViewModel.updateFocus(section: section, item: games[lastRowIndex].id)
                                 }
@@ -231,7 +231,7 @@ extension ConsoleGamesView {
                     }
                 } else {
                     // Moving down
-                    let newIndex = currentIndex + Int(gamesViewModel.gameLibraryScale)
+                    let newIndex = currentIndex + Int(gameLibraryScale)
                     if newIndex < games.count {
                         Task {
                             await gamesViewModel.updateFocus(section: section, item: games[newIndex].id)
@@ -244,7 +244,7 @@ extension ConsoleGamesView {
                                 Task {
                                     await gamesViewModel.updateFocus(
                                         section: section,
-                                        item: games[currentIndex % Int(gamesViewModel.gameLibraryScale)].id
+                                        item: games[currentIndex % Int(gameLibraryScale)].id
                                     )
                                 }
                             } else {
