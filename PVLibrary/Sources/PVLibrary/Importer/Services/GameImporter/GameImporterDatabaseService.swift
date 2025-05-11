@@ -142,18 +142,13 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     func importBIOSIntoDatabase(queueItem: ImportQueueItem) async throws {
         ILOG("Starting BIOS database import for: \(queueItem.url.lastPathComponent)")
 
-        // First move the file to the correct location
+        // FileService will move/copy the file and post notifications for each new file location.
         try await gameImporterFileService.moveImportItem(toAppropriateSubfolder: queueItem)
-        ILOG("Moved BIOS file to destination: \(queueItem.destinationUrl?.path ?? "unknown")")
+        // ILOG("Moved BIOS file to destination: \(queueItem.destinationUrl?.path ?? "unknown")")
 
-        // Now let BIOSWatcher handle the database update
-        if let destinationUrl = queueItem.destinationUrl {
-            await BIOSWatcher.shared.processBIOSFiles([destinationUrl])
-            ILOG("BIOS file processed by BIOSWatcher")
-        } else {
-            ELOG("No destination URL for BIOS file")
-            throw GameImporterError.incorrectDestinationURL
-        }
+        // BIOSWatcher is now notified by GameImporterFileService directly after each successful copy.
+        // No longer need to call processBIOSFiles from here.
+        ILOG("BIOS file handling delegated to GameImporterFileService for \(queueItem.url.lastPathComponent). Notifications are handled therein.")
     }
 
     /// Imports a ROM to the database
@@ -309,9 +304,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         return game
     }
 
-    //MARK: Utility
-
-
+    /// Updates game fields with metadata
     private func updateGameFields(_ game: PVGame, metadata: ROMMetadata, forceRefresh: Bool) -> PVGame {
         // Update title, removing (Disc 1) from the title. Discs with other numbers will retain their names
         if !metadata.gameTitle.isEmpty, forceRefresh || game.title.isEmpty {

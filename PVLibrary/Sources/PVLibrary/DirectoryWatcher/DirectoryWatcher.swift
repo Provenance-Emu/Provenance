@@ -413,15 +413,6 @@ public final class DirectoryWatcher: ObservableObject {
     private func processFile(at url: URL) {
         ILOG("Processing file: \(url.path)")
 
-        // Check if this is a BIOS file first
-        if isBIOSFile(url) {
-            ILOG("Found BIOS file: \(url.lastPathComponent)")
-            // Don't decompress, just notify the BIOS watcher
-            NotificationCenter.default.post(name: .BIOSFileFound, object: url)
-            completedFilesContinuation?.yield([url])
-            return
-        }
-
         // Handle archives and other files
         if isArchive(url) {
             processArchive(at: url)

@@ -1264,6 +1264,8 @@ public final class GameImporter: GameImporting, ObservableObject {
     private func addImportItemToQueue(_ item: ImportQueueItem) async {
         // First, check if this is a BIOS file
         let fileType = determineImportType(item)
+        item.fileType = fileType // <--- SET THE FILE TYPE HERE
+
         if fileType == .bios {
             // For BIOS files, check if we already have a matching BIOS entry with a file
             let biosExists = await BIOSWatcher.shared.checkBIOSFile(at: item.url)

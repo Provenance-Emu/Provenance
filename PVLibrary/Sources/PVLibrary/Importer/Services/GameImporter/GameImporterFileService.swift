@@ -44,189 +44,162 @@ class GameImporterFileService : GameImporterFileServicing {
     
     // MARK: - BIOS
     
-    /// Ensures a BIOS file is copied to appropriate file destinations
-    ///  Returns the array of PVSystems that this BIOS file applies to
+    /// Ensures a BIOS file is copied to appropriate file destinations and notifies BIOSWatcher.
+    /// Sets queueItem.destinationUrl to the first successful new path for logging/legacy purposes.
     private func handleBIOSItem(_ queueItem: ImportQueueItem) async throws {
-        let filename = queueItem.url.lastPathComponent.lowercased()
-        ILOG("Handling BIOS file: \(filename)")
-        
-        // Get all BIOS entries
-        let biosEntries = PVEmulatorConfiguration.biosEntries
-        var successfullyProcessedAny = false
-        
-        // Check if the file is already in a BIOS directory
-        let isInBiosDirectory = queueItem.url.path.contains("/BIOS/")
-        
-        // Check if any BIOS entry already has this file
-        let existingEntries = biosEntries.filter { bios in
-            if let file = bios.file {
-                return file.fileName.lowercased() == filename
-            }
-            return false
-        }
-        
-        if !existingEntries.isEmpty {
-            ILOG("BIOS file \(filename) already has \(existingEntries.count) PVBIOS entries with matching files")
-            
-            // If the file is already in the BIOS directory and has entries, we're done
-            if isInBiosDirectory {
-                ILOG("BIOS file is already in the correct location and has entries, no need to move")
-                queueItem.destinationUrl = queueItem.url
-                return
-            }
-            
-            // If it's not in the BIOS directory but has entries, we should move it to the correct location
-            ILOG("BIOS file has entries but is not in the correct location, moving it")
-        }
-        
-        // First try to match by filename
-        let filenameMatches = biosEntries.filter { bios in
-            // Split expected filename by | to handle path specifications
+        let originalURL = queueItem.url
+        let filename = originalURL.lastPathComponent
+        let filenameLowercased = filename.lowercased()
+        ILOG("Handling BIOS file: \(filename) from URL: \(originalURL.path)")
+
+        // Standardize URLs for robust path comparison
+        let standardizedOriginalURL = originalURL.standardizedFileURL
+        let standardizedRomsImportPathURL = Paths.romsImportPath.standardizedFileURL
+        let standardizedBiosesPathURL = Paths.biosesPath.standardizedFileURL
+
+        // Consolidate all potential PVBIOS matches (by filename and MD5)
+        var potentialBiosMatches = Set<PVBIOS>()
+        let allBiosEntries = PVEmulatorConfiguration.biosEntries
+
+        // 1. Match by filename
+        allBiosEntries.filter { bios in
             let expectedParts = bios.expectedFilename.components(separatedBy: "|")
-            let expectedFilename = expectedParts[0].lowercased()
-            return expectedFilename == filename
+            return expectedParts.first?.lowercased() == filenameLowercased
+        }.forEach { potentialBiosMatches.insert($0) }
+
+        // 2. Match by MD5 (if available and different from filename matches)
+        if let md5 = queueItem.md5?.uppercased() {
+            allBiosEntries.filter { $0.expectedMD5.uppercased() == md5 }
+                .forEach { potentialBiosMatches.insert($0) }
+        }
+
+        if potentialBiosMatches.isEmpty {
+            ILOG("No PVBIOS definitions found for \(filename) (MD5: \(queueItem.md5 ?? "N/A")). Cannot process as BIOS.")
+            // This might be an error or simply a file that looked like a BIOS but isn't defined.
+            // Depending on desired behavior, could throw or just return.
+            // For now, let's assume it might be handled as a generic game if no BIOS def exists.
+            // throw GameImporterError.noBIOSMatch
+            // Let's re-evaluate if this should throw. If determineImportType said .bios, a definition should exist.
+            // For now, if no match, we can't proceed with BIOS-specific logic.
+            return
+        }
+
+        ILOG("Found \(potentialBiosMatches.count) potential PVBIOS definitions for \(filename).")
+
+        // Use standardized paths for comparison
+        let isFromImportsFolder = standardizedOriginalURL.deletingLastPathComponent().resolvingSymlinksInPath() == standardizedRomsImportPathURL.resolvingSymlinksInPath()
+        let isInBiosDir = standardizedOriginalURL.resolvingSymlinksInPath().path.hasPrefix(standardizedBiosesPathURL.resolvingSymlinksInPath().path) && standardizedOriginalURL.resolvingSymlinksInPath() != standardizedBiosesPathURL.resolvingSymlinksInPath()
+
+        var successfullyProcessed = false
+        var successfulNewURLs = [URL]()
+
+        if isFromImportsFolder {
+            ILOG("BIOS \(filename) is from Imports folder. Processing copy to system BIOS folders.")
+            var allCopiesSucceeded = true // Assume success until a failure
+            var attemptedAnyCopy = false
+
+            for biosEntry in potentialBiosMatches {
+                guard let system = biosEntry.system else {
+                    WLOG("PVBIOS entry \(biosEntry.expectedFilename) has no associated system. Skipping.")
+                    continue
+                }
+
+                let expectedFilenameForSystem = biosEntry.expectedFilename.components(separatedBy: "|").first ?? filename
+                let systemBiosPath = PVEmulatorConfiguration.biosPath(forSystemIdentifier: system.identifier)
+                let destinationURL = systemBiosPath.appendingPathComponent(expectedFilenameForSystem)
+
+                do {
+                    attemptedAnyCopy = true
+                    try FileManager.default.createDirectory(at: systemBiosPath, withIntermediateDirectories: true)
+                    
+                    // Check if file already exists at destination, potentially from a previous partial import or manual copy
+                    if FileManager.default.fileExists(atPath: destinationURL.path) {
+                        // If it's the same file (e.g. by comparing MD5 if available, or just assume if name matches here),
+                        // still post notification to ensure DB is correct.
+                        ILOG("BIOS file \(destinationURL.lastPathComponent) already exists at \(destinationURL.path) for system \(system.identifier). Notifying BIOSWatcher.")
+                        NotificationCenter.default.post(name: .BIOSFileFound, object: destinationURL)
+                        successfulNewURLs.append(destinationURL)
+                        // No need to copy again if it's already there.
+                    } else {
+                        try FileManager.default.copyItem(at: originalURL, to: destinationURL)
+                        ILOG("Successfully copied \(filename) to \(destinationURL.path) for system \(system.identifier).")
+                        NotificationCenter.default.post(name: .BIOSFileFound, object: destinationURL)
+                        successfulNewURLs.append(destinationURL)
+                    }
+                    successfullyProcessed = true // Mark as processed if at least one copy/notification happens
+                } catch {
+                    ELOG("Failed to copy \(filename) to \(destinationURL.path) for system \(system.identifier): \(error).")
+                    allCopiesSucceeded = false
+                }
+            }
+
+            if successfullyProcessed && allCopiesSucceeded && attemptedAnyCopy {
+                ILOG("All copies of \(filename) from Imports succeeded. Deleting original from \(originalURL.path).")
+                do {
+                    try await FileManager.default.removeItem(at: originalURL)
+                } catch {
+                    ELOG("Failed to delete original BIOS file \(originalURL.path) from Imports: \(error).")
+                }
+            } else if attemptedAnyCopy && !allCopiesSucceeded {
+                WLOG("Not all copies of \(filename) from Imports succeeded. Original file at \(originalURL.path) will NOT be deleted.")
+            } else if !attemptedAnyCopy {
+                ILOG("No valid systems found to copy BIOS \(filename) to.")
+            }
+
+        } else if isInBiosDir { // Already in some BIOS folder (e.g. root or system subfolder)
+            ILOG("BIOS \(filename) is already in a BIOS directory: \(originalURL.path). Checking if it needs linking.")
+            // File is already in a BIOS directory. We just need to ensure it's known to BIOSWatcher for linking.
+            // The PVBIOS entries matched earlier are the candidates.
+            // BIOSWatcher.checkBIOSFile (which is called by GameImporter before queuing)
+            // should handle linking for files correctly placed but not yet in DB.
+            // However, a direct notification here can also ensure it's processed if checkBIOSFile missed it or for robustness.
+            var notifiedForThisPath = false
+            for biosEntry in potentialBiosMatches {
+                 // Only notify if the current file URL could satisfy this biosEntry for its system.
+                 // This is a bit redundant if checkBIOSFile is perfect, but safe.
+                 if let system = biosEntry.system {
+                    let expectedFilenameForSystem = biosEntry.expectedFilename.components(separatedBy: "|").first ?? filename
+                    let systemBiosPath = PVEmulatorConfiguration.biosPath(forSystemIdentifier: system.identifier)
+                    let expectedDestinationURL = systemBiosPath.appendingPathComponent(expectedFilenameForSystem)
+                    
+                    // If the originalURL is indeed the expected final resting place for this BIOS entry for this system
+                    if originalURL.standardizedFileURL == expectedDestinationURL.standardizedFileURL {
+                        if !notifiedForThisPath { // Post notification only once for the given originalURL
+                            ILOG("Notifying BIOSFileFound for already placed BIOS: \(originalURL.path) for potential linking with \(biosEntry.expectedFilename).")
+                            NotificationCenter.default.post(name: .BIOSFileFound, object: originalURL)
+                            successfulNewURLs.append(originalURL) // It's a 'new' URL in terms of DB state
+                            notifiedForThisPath = true
+                        }
+                        successfullyProcessed = true
+                    }
+                 }
+            }
+            if !successfullyProcessed {
+                 ILOG("BIOS \(filename) at \(originalURL.path) did not match an expected system path for any defined BIOS. No specific linking action taken here.")
+            }
+        } else {
+            WLOG("BIOS file \(filename) at \(originalURL.path) did not fall into expected categories. isFromImportsFolder: \(isFromImportsFolder), isInBiosDir: \(isInBiosDir). No action taken.")
+            // This case should ideally not happen if type is .bios and it's not in Imports.
+            // Could throw an error if strictness is required.
+            // throw GameImporterError.invalidBIOSLocation(path: originalURL.path)
+        }
+
+        if !successfulNewURLs.isEmpty {
+            queueItem.destinationUrl = successfulNewURLs.first // Set for logging or legacy use
+            // queueItem.status should be set to .success by the caller if successfullyProcessed is true
+        } else if !isFromImportsFolder && !originalURL.path.contains(Paths.biosesPath.path) {
+             // If it wasn't from imports and not in a BIOS path, but was type .bios, it's an issue.
         }
         
-        if !filenameMatches.isEmpty {
-            ILOG("Found \(filenameMatches.count) BIOS matches by filename")
-            
-            // If the file is already in the BIOS directory, we should update any matching entries
-            // that don't have a file, even if they already have other entries with files
-            if isInBiosDirectory {
-                // Process all entries that match the filename but don't have a file
-                let missingBIOSMatches = filenameMatches.filter { $0.file == nil }
-                ILOG("Of which \(missingBIOSMatches.count) are missing their BIOS file")
-                
-                // If we have matches but they all have files, we're done
-                if missingBIOSMatches.isEmpty && !filenameMatches.isEmpty {
-                    ILOG("All matching BIOS entries already have files, no need to update")
-                    queueItem.destinationUrl = queueItem.url
-                    return
-                }
-            } else {
-                // If not in BIOS directory, only process entries that don't have a file
-                let missingBIOSMatches = filenameMatches.filter { $0.file == nil }
-                ILOG("Of which \(missingBIOSMatches.count) are missing their BIOS file")
-                
-                for bios in missingBIOSMatches {
-                    if let system = bios.system {
-                        ILOG("Processing BIOS for system: \(system.name)")
-                        let biosPath = PVEmulatorConfiguration.biosPath(forSystemIdentifier: system.identifier)
-                        
-                        // Use the exact case from the expected filename
-                        let expectedParts = bios.expectedFilename.components(separatedBy: "|")
-                        let destinationPath = biosPath.appendingPathComponent(expectedParts[0])
-                        
-                        ILOG("Moving BIOS file to: \(destinationPath.path)")
-                        
-                        // Ensure the directory exists
-                        try FileManager.default.createDirectory(at: biosPath, withIntermediateDirectories: true)
-                        
-                        do {
-                            // For multiple matches, we need to copy instead of move for all but the last one
-                            if bios == missingBIOSMatches.last {
-                                queueItem.destinationUrl = try await moveFile(queueItem.url, toExplicitDestination: destinationPath)
-                            } else {
-                                try FileManager.default.copyItem(at: queueItem.url, to: destinationPath)
-                                // For copies, set the destination to the last copy we'll make
-                                queueItem.destinationUrl = destinationPath
-                            }
-                            ILOG("Successfully copied/moved BIOS file to: \(destinationPath.path)")
-                            successfullyProcessedAny = true
-                        } catch {
-                            ELOG("Failed to copy/move BIOS file to \(destinationPath.path): \(error)")
-                            // Continue trying other matches even if one fails
-                            continue
-                        }
-                    } else {
-                        ELOG("BIOS entry has no associated system")
-                    }
-                }
-                
-                if successfullyProcessedAny {
-                    return
-                }
-            }
-            
-            // If we've already successfully processed the file, we're done
-            if successfullyProcessedAny {
-                return
-            }
-            
-            // If we haven't found matches by filename, try MD5
-            if let md5 = queueItem.md5?.uppercased() {
-                ILOG("Checking MD5: \(md5)")
-                let md5Matches = biosEntries.filter("expectedMD5 == %@", md5).map({ $0 })
-                
-                if !md5Matches.isEmpty {
-                    ILOG("Found \(md5Matches.count) matching BIOS entries by MD5")
-                    
-                    // If the file is already in the BIOS directory, we should update any matching entries
-                    // that don't have a file, even if they already have other entries with files
-                    if isInBiosDirectory {
-                        // Process all entries that match the MD5 but don't have a file
-                        let missingMD5Matches = md5Matches.filter { $0.file == nil }
-                        ILOG("Of which \(missingMD5Matches.count) are missing their BIOS file")
-                        
-                        // If we have matches but they all have files, we're done
-                        if missingMD5Matches.isEmpty && !md5Matches.isEmpty {
-                            ILOG("All matching BIOS entries by MD5 already have files, no need to update")
-                            queueItem.destinationUrl = queueItem.url
-                            return
-                        }
-                    } else {
-                        // If not in BIOS directory, only process entries that don't have a file
-                        let missingMD5Matches = md5Matches.filter { $0.file == nil }
-                        ILOG("Of which \(missingMD5Matches.count) are missing their BIOS file")
-                        
-                        for bios in missingMD5Matches {
-                            if let system = bios.system {
-                                ILOG("Processing BIOS for system: \(system.name)")
-                                let biosPath = PVEmulatorConfiguration.biosPath(forSystemIdentifier: system.identifier)
-                                let destinationPath = biosPath.appendingPathComponent(bios.expectedFilename)
-                                
-                                ILOG("Moving BIOS file to: \(destinationPath.path)")
-                                
-                                // Ensure the directory exists
-                                try FileManager.default.createDirectory(at: biosPath, withIntermediateDirectories: true)
-                                
-                                do {
-                                    // For multiple matches, we need to copy instead of move for all but the last one
-                                    if bios == missingMD5Matches.last {
-                                        queueItem.destinationUrl = try await moveFile(queueItem.url, toExplicitDestination: destinationPath)
-                                    } else {
-                                        try FileManager.default.copyItem(at: queueItem.url, to: destinationPath)
-                                        // For copies, set the destination to the last copy we'll make
-                                        queueItem.destinationUrl = destinationPath
-                                    }
-                                    ILOG("Successfully copied/moved BIOS file to: \(destinationPath.path)")
-                                    successfullyProcessedAny = true
-                                } catch {
-                                    ELOG("Failed to copy/move BIOS file to \(destinationPath.path): \(error)")
-                                    // Continue trying other matches even if one fails
-                                    continue
-                                }
-                            } else {
-                                ELOG("BIOS entry has no associated system")
-                            }
-                        }
-                        
-                        if successfullyProcessedAny {
-                            return
-                        }
-                    }
-                }
-            }
-            
-            // Special case: If the file is already in a BIOS directory, we should keep it even if we don't have a match
-            if isInBiosDirectory {
-                ILOG("File is in BIOS directory but no matching PVBIOS entries found. Keeping it in place.")
-                queueItem.destinationUrl = queueItem.url
-                return
-            }
-            
-            ELOG("No BIOS matches found by filename or MD5, or all matching BIOS entries already have files")
-            throw GameImporterError.noBIOSMatchForBIOSFileType
+        // The caller (GameImporterDatabaseService) will set the final item status.
+        // This function primarily handles file operations and notifications.
+        // If successfullyProcessed is true, it implies the operation specific to this function was done.
+        if !successfullyProcessed {
+            // If determined .bios but no PVBIOS entry matches or no valid system, what to do?
+            // This could be a new/unexpected BIOS file. For now, let's assume this means it can't be handled as a defined BIOS.
+            // If we want to be strict, and it was type .bios, throw an error.
+            // throw GameImporterError.biosProcessingFailed(filename: filename)
+            ILOG("BIOS file \(filename) could not be successfully processed according to PVBIOS definitions or placed correctly.")
         }
     }
     
