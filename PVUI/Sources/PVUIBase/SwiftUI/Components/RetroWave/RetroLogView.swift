@@ -174,6 +174,23 @@ public struct RetroLogView: View {
                         )
                 }
                 
+                #if !os(tvOS)
+                // Copy Filtered logs button
+                Button(action: {
+                    viewModel.copyFilteredLogsToClipboard()
+                }) {
+                    Image(systemName: "doc.on.doc")
+                        .font(.system(size: 12))
+                        .foregroundColor((viewModel.searchText.isEmpty || viewModel.displayedLogs.isEmpty) ? RetroTheme.retroPink.opacity(0.3) : RetroTheme.retroBlue)
+                        .padding(6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 4)
+                                .strokeBorder((viewModel.searchText.isEmpty || viewModel.displayedLogs.isEmpty) ? RetroTheme.retroPink.opacity(0.3) : RetroTheme.retroBlue, lineWidth: 1)
+                        )
+                }
+                .disabled(viewModel.searchText.isEmpty || viewModel.displayedLogs.isEmpty)
+                #endif
+                
                 // Clear logs button
                 Button(action: {
                     viewModel.clearLogs()
@@ -360,7 +377,7 @@ public struct RetroLogView: View {
             )
             .padding(.horizontal, 4)
             .padding(.vertical, 2)
-            // Add long press gesture to copy log entry
+            #if !os(tvOS)
             .onLongPressGesture(minimumDuration: 0.5) {
                 // Create a full log string with all details
                 var logText = ""
@@ -368,40 +385,29 @@ public struct RetroLogView: View {
                 // Include timestamp and level
                 logText += "[\(log.formattedTimestamp)] [\(log.level.name.uppercased())] "
                 
-                // Add message
+                // Include category if available
+                if !log.category.isEmpty {
+                    logText += "(\(log.category)) "
+                }
+
+                // Include file and line if full details are shown
+                if viewModel.showFullDetails {
+                    let fileName = (log.file as NSString).lastPathComponent
+                    logText += "[\(fileName):\(log.line)] "
+                }
+
+                // Add the main message
                 logText += log.message
                 
-                // Add file and line if available
-                if viewModel.showFullDetails {
-                    logText += "\n\(log.file):\(log.line)"
-                }
-                
-                // Copy to clipboard
-                #if !os(tvOS)
                 UIPasteboard.general.string = logText
-                #endif
                 
-                // Show visual feedback
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    isCopying = true
+                // Visual feedback
+                isCopying = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    isCopying = false
                 }
-                
-                // Reset after delay
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    withAnimation {
-                        isCopying = false
-                    }
-                }
-                
-                #if !os(tvOS)
-                // Provide haptic feedback
-                let generator = UIImpactFeedbackGenerator(style: .medium)
-                generator.impactOccurred()
-                #endif
-                
-                // Log the action
-                DLOG("Copied log entry to clipboard: \(log.id)")
             }
+            #endif // !os(tvOS)
         }
     }
 }

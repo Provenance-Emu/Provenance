@@ -67,6 +67,28 @@ public final class RetroLogViewModel: ObservableObject {
         PVLogPublisher.shared.clearLogs()
     }
 
+#if !os(tvOS)
+    /// Copies the currently filtered and sorted logs to the clipboard.
+    public func copyFilteredLogsToClipboard() {
+        guard !displayedLogs.isEmpty else { return }
+
+        let logTexts = displayedLogs.map { log -> String in
+            var entryText = "[\(log.formattedTimestamp)] [\(log.level.name.uppercased())] "
+            if !log.category.isEmpty {
+                entryText += "(\(log.category)) "
+            }
+            if self.showFullDetails {
+                let fileName = (log.file as NSString).lastPathComponent
+                entryText += "[\(fileName):\(log.line)] "
+            }
+            entryText += log.message
+            return entryText
+        }
+        
+        UIPasteboard.general.string = logTexts.joined(separator: "\n\n") // Add an extra newline for readability between entries
+    }
+#endif
+
     /// Toggle the sort order of logs.
     public func toggleSortOrder() {
         sortOrder = (sortOrder == .newestFirst) ? .oldestFirst : .newestFirst
