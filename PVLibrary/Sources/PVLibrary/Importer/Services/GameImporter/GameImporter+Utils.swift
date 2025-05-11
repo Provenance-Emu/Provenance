@@ -71,7 +71,7 @@ extension GameImporter {
         // Check by filename against our known BIOS filenames
         let filename = queueItem.url.lastPathComponent.lowercased()
         if RomDatabase.biosFilenamesCache.contains(filename) {
-            DLOG("Found BIOS match by filename: \(filename)")
+            DLOG("Found BIOS match by filename: \(queueItem.url.path(percentEncoded: false))")
             return true
         }
 

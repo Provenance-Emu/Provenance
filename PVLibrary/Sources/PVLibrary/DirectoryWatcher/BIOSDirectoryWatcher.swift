@@ -394,6 +394,7 @@ public final class BIOSWatcher: ObservableObject {
     }
 
     public func checkBIOSFile(at path: URL) async -> Bool {
+        ILOG("Checking BIOS file: \(path.path(percentEncoded: false))")
         // Perform file checking off the main thread
         let result = await Task.detached(priority: .utility) {
             let fileName = path.lastPathComponent.lowercased()
@@ -418,8 +419,8 @@ public final class BIOSWatcher: ObservableObject {
             }
 
             // Check if already attached
-            if bios.file != nil {
-                ILOG("BIOS file already attached for \(fileName)")
+            if bios.file != nil, let url = bios.file!.url, FileManager.default.fileExists(atPath: url.path) {
+                ILOG("BIOS file already attached for \(fileName) at path: \(url.path)")
                 return true
             }
 
