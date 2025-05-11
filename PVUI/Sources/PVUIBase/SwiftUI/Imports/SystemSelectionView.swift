@@ -43,66 +43,68 @@ struct SystemSelectionView: View {
                     .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
                 
                 // System selection list
-                ScrollView {
-                    VStack(spacing: 12) {
-                        ForEach(item.systems.sorted(), id: \.self) { system in
-                            Button(action: {
-                                // Set the chosen system with animation
-                                withAnimation(.easeInOut(duration: 0.2)) {
-                                    selectedSystem = system
+                WithPerceptionTracking {
+                    ScrollView {
+                        VStack(spacing: 12) {
+                            ForEach(item.systems.sorted(), id: \.self) { system in
+                                Button(action: {
+                                    // Set the chosen system with animation
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        selectedSystem = system
+                                    }
+                                    
+                                    // Delay to show selection animation
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                        // Set the chosen system
+                                        item.userChosenSystem = system
+                                        
+                                        // Call the callback
+                                        onSystemSelected?(system, item)
+                                        
+                                        // Dismiss the view
+                                        presentationMode.wrappedValue.dismiss()
+                                    }
+                                }) {
+                                    HStack {
+                                        Text(system.fullName)
+                                            .font(.system(size: 16, weight: .bold))
+                                            .foregroundColor(.white)
+                                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.8), radius: 2, x: 0, y: 0)
+                                        
+                                        Spacer()
+                                        
+                                        Image(systemName: "chevron.right")
+                                            .font(.system(size: 14))
+                                            .foregroundColor(RetroTheme.retroPurple)
+                                            .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 2, x: 0, y: 0)
+                                    } // HStack
+                                    .padding(.vertical, 12)
+                                    .padding(.horizontal, 16)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .fill(Color.black.opacity(0.7))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .strokeBorder(
+                                                        LinearGradient(
+                                                            gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                                            startPoint: .leading,
+                                                            endPoint: .trailing
+                                                        ),
+                                                        lineWidth: selectedSystem == system ? 2.0 : 1.0
+                                                    )
+                                                    .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity),
+                                                            radius: selectedSystem == system ? 5 : 2,
+                                                            x: 0,
+                                                            y: 0)
+                                            )
+                                    )
                                 }
-                                
-                                // Delay to show selection animation
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                    // Set the chosen system
-                                    item.userChosenSystem = system
-                                    
-                                    // Call the callback
-                                    onSystemSelected?(system, item)
-                                    
-                                    // Dismiss the view
-                                    presentationMode.wrappedValue.dismiss()
-                                }
-                            }) {
-                                HStack {
-                                    Text(system.fullName)
-                                        .font(.system(size: 16, weight: .bold))
-                                        .foregroundColor(.white)
-                                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.8), radius: 2, x: 0, y: 0)
-                                    
-                                    Spacer()
-                                    
-                                    Image(systemName: "chevron.right")
-                                        .font(.system(size: 14))
-                                        .foregroundColor(RetroTheme.retroPurple)
-                                        .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 2, x: 0, y: 0)
-                                }
-                                .padding(.vertical, 12)
-                                .padding(.horizontal, 16)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(Color.black.opacity(0.7))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 10)
-                                                .strokeBorder(
-                                                    LinearGradient(
-                                                        gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
-                                                        startPoint: .leading,
-                                                        endPoint: .trailing
-                                                    ),
-                                                    lineWidth: selectedSystem == system ? 2.0 : 1.0
-                                                )
-                                                .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), 
-                                                        radius: selectedSystem == system ? 5 : 2, 
-                                                        x: 0, 
-                                                        y: 0)
-                                        )
-                                )
-                            }
-                        }
-                    }
-                    .padding(.horizontal)
-                }
+                            } // ForEach
+                        } // VStack
+                        .padding(.horizontal)
+                    } // ScrollView
+                } // WithPerceptionTracking
             }
         }
 #if !os(tvOS)
