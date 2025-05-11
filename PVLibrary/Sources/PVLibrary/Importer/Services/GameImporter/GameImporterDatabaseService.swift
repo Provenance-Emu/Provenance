@@ -210,6 +210,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         game.relatedFiles.append(objectsIn: relatedPVFiles)
         game.md5Hash = md5
         try await finishUpdateOrImport(ofGame: game)
+        queueItem.gameDatabaseID = game.id
     }
 
     /// Saves the relative path for a given game
@@ -457,20 +458,8 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         case invalidSystemID
     }
 
-//    func searchDatabase(usingKey key: String, value: String, systemID: String) async throws -> [ROMMetadata]? {
-//        guard let system = SystemIdentifier(rawValue: systemID) else {
-//            throw DatabaseQueryError.invalidSystemID
-//        }
-//
-//        return try await lookup.searchDatabase(usingKey: key, value: value, systemID: system)
-//    }
-
-    func searchDatabase(usingFilename filename: String, systemID: String) async throws -> [ROMMetadata]? {
-        guard let system = SystemIdentifier(rawValue: systemID) else {
-            throw DatabaseQueryError.invalidSystemID
-        }
-
-        return try await lookup.searchDatabase(usingFilename: filename, systemID: system)
+    func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
+        return try await lookup.searchDatabase(usingFilename: filename, systemID: systemID)
     }
 
     private func searchDatabase(usingFilename filename: String, systemIDs: [SystemIdentifier]) async throws -> [ROMMetadata]? {
@@ -539,10 +528,6 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         }
 
         return nil
-    }
-
-    func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
-        return try await lookup.searchDatabase(usingFilename: filename, systemID: systemID)
     }
 
     func getArtworkMappings() async throws -> ArtworkMapping {

@@ -95,6 +95,14 @@ public class ImportQueueItem: Identifiable, ObservableObject {
     public var destinationUrl: URL?
     public var errorValue: String?
 
+    /// Filenames (e.g., "Track02.wav") expected to be associated with this import item, often parsed from a manifest like a .cue sheet.
+    public var expectedAssociatedFileNames: [String]? = nil
+    /// URLs of associated files that have been successfully located and confirmed for this import item.
+    public var resolvedAssociatedFileURLs: [URL] = []
+
+    /// The database ID (e.g., PVGame.id) of the game once it has been successfully imported and created.
+    public var gameDatabaseID: String? = nil
+
     //this is used when a single import has child items - e.g., m3u, cue, directory
     public var childQueueItems: [ImportQueueItem]
 
@@ -120,6 +128,9 @@ public class ImportQueueItem: Identifiable, ObservableObject {
         self.fileType = fileType
         self.childQueueItems = []
         self.md5Provider = md5Provider
+        self.expectedAssociatedFileNames = nil // Explicitly set, though default would work
+        self.resolvedAssociatedFileURLs = []   // Explicitly set, though default would work
+        self.gameDatabaseID = nil            // Explicitly set
     }
 
     public var md5: String? {
