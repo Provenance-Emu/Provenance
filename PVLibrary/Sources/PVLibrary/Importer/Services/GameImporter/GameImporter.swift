@@ -1313,42 +1313,69 @@ public final class GameImporter: GameImporting, ObservableObject {
     /// Find files with similar names to handle different naming patterns in multi-disc games
     private func findSimilarFiles(for fileName: String, in directory: URL) -> [URL] {
         var similarFiles: [URL] = []
-
+        
         do {
-            let fileManager = FileManager.default
-            let directoryContents = try fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
-
-            // Extract the base name without extension and disc number
-            let fileBaseName = fileName.deletingPathExtension
-            var baseNameWithoutDisc = fileBaseName
-
-            // Remove disc/CD indicators for matching
-            let discIndicators = ["disc", "disk", "cd"]
-            for indicator in discIndicators {
-                if let range = baseNameWithoutDisc.lowercased().range(of: indicator, options: .caseInsensitive) {
-                    let index = baseNameWithoutDisc.distance(from: baseNameWithoutDisc.startIndex, to: range.lowerBound)
-                    if index > 3 { // Ensure we don't cut off too much of the name
-                        baseNameWithoutDisc = String(baseNameWithoutDisc.prefix(index - 1))
-                    }
-                }
-            }
-
-            // Look for files with similar base names
-            for fileURL in directoryContents {
-                let currentFileName = fileURL.lastPathComponent
-                let currentBaseName = currentFileName.deletingPathExtension
-
-                // Check if the current file has a similar base name
-                if currentBaseName.lowercased().contains(baseNameWithoutDisc.lowercased()) ||
-                    baseNameWithoutDisc.lowercased().contains(currentBaseName.lowercased()) {
-                    similarFiles.append(fileURL)
-                }
-            }
+            // Get all files in the directory
+            let directoryContents = try getDirectoryContents(directory)
+            
+            // Extract the base name without disc indicators
+            let baseNameWithoutDisc = extractBaseNameWithoutDiscIndicators(from: fileName)
+            
+            // Find files with similar base names
+            similarFiles = findFilesWithSimilarNames(in: directoryContents, baseNameToMatch: baseNameWithoutDisc)
         } catch {
             ELOG("Error finding similar files: \(error)")
         }
-
+        
         return similarFiles
+    }
+    
+    /// Get all files in a directory
+    private func getDirectoryContents(_ directory: URL) throws -> [URL] {
+        let fileManager = FileManager.default
+        return try fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
+    }
+    
+    /// Extract the base name without disc indicators from a filename
+    private func extractBaseNameWithoutDiscIndicators(from fileName: String) -> String {
+        let fileBaseName = fileName.deletingPathExtension
+        var baseNameWithoutDisc = fileBaseName
+        
+        // Remove disc/CD indicators for matching
+        let discIndicators = ["disc", "disk", "cd"]
+        for indicator in discIndicators {
+            if let range = baseNameWithoutDisc.lowercased().range(of: indicator, options: .caseInsensitive) {
+                let index = baseNameWithoutDisc.distance(from: baseNameWithoutDisc.startIndex, to: range.lowerBound)
+                if index > 3 { // Ensure we don't cut off too much of the name
+                    baseNameWithoutDisc = String(baseNameWithoutDisc.prefix(index - 1))
+                }
+            }
+        }
+        
+        return baseNameWithoutDisc
+    }
+    
+    /// Find files with similar base names in a list of files
+    private func findFilesWithSimilarNames(in files: [URL], baseNameToMatch: String) -> [URL] {
+        var similarFiles: [URL] = []
+        
+        for fileURL in files {
+            if isFileSimilar(fileURL: fileURL, baseNameToMatch: baseNameToMatch) {
+                similarFiles.append(fileURL)
+            }
+        }
+        
+        return similarFiles
+    }
+    
+    /// Check if a file has a similar name to the base name
+    private func isFileSimilar(fileURL: URL, baseNameToMatch: String) -> Bool {
+        let currentFileName = fileURL.lastPathComponent
+        let currentBaseName = currentFileName.deletingPathExtension
+        
+        // Check if either name contains the other (case insensitive)
+        return currentBaseName.lowercased().contains(baseNameToMatch.lowercased()) ||
+               baseNameToMatch.lowercased().contains(currentBaseName.lowercased())
     }
 
     /// Add a file to the expected files list of the primary game item
