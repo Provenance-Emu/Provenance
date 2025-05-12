@@ -1175,94 +1175,136 @@ public final class GameImporter: GameImporting, ObservableObject {
     private func processFilesListedInM3U(_ fileNames: [String], primaryGameItem: ImportQueueItem, m3uURL: URL,
                                          importQueue: inout [ImportQueueItem], indicesToRemove: inout [Int]) {
         // First, add all the filenames to the expected files list
+        addFilesToExpectedList(fileNames, primaryGameItem: primaryGameItem)
+        
+        // Process each file in the M3U
+        for fileName in fileNames {
+            let foundMatch = findAndProcessFileInQueue(fileName: fileName, primaryGameItem: primaryGameItem,
+                                                     importQueue: &importQueue, indicesToRemove: &indicesToRemove)
+            
+            // If we didn't find a match in the queue, check if the file exists on disk
+            if !foundMatch {
+                processFileOnDisk(fileName: fileName, primaryGameItem: primaryGameItem, m3uURL: m3uURL)
+            }
+        }
+    }
+    
+    /// Add all filenames to the expected files list
+    private func addFilesToExpectedList(_ fileNames: [String], primaryGameItem: ImportQueueItem) {
         for fileName in fileNames {
             addToExpectedFilesList(fileName, primaryGameItem: primaryGameItem)
         }
-
-        // Process each file in the M3U
-        for fileName in fileNames {
-            // First try to find an exact match in the queue
-            var foundMatch = false
-
-            // Look for the file in the queue - check both exact match and case-insensitive match
-            for (index, item) in importQueue.enumerated() {
-                if item.id == primaryGameItem.id {
-                    continue // Skip the M3U file itself
+    }
+    
+    /// Find and process a file in the import queue
+    /// Returns true if a match was found, false otherwise
+    private func findAndProcessFileInQueue(fileName: String, primaryGameItem: ImportQueueItem,
+                                         importQueue: inout [ImportQueueItem], indicesToRemove: inout [Int]) -> Bool {
+        // Look for the file in the queue - check both exact match and case-insensitive match
+        for (index, item) in importQueue.enumerated() {
+            if item.id == primaryGameItem.id {
+                continue // Skip the M3U file itself
+            }
+            
+            let itemFileName = item.url.lastPathComponent
+            
+            // Check if this queue item matches the M3U entry (case insensitive)
+            if itemFileName.lowercased() == fileName.lowercased() {
+                associateFileWithPrimaryItem(item, primaryGameItem: primaryGameItem)
+                importQueue[index].status = .partial
+                indicesToRemove.append(index)
+                
+                // If this is a CUE file, process its BIN files
+                if item.url.pathExtension.lowercased() == "cue" {
+                    processCUEFileInQueue(item, primaryGameItem: primaryGameItem,
+                                          importQueue: &importQueue, indicesToRemove: &indicesToRemove)
                 }
-
-                let itemFileName = item.url.lastPathComponent
-
-                // Check if this queue item matches the M3U entry (case insensitive)
-                if itemFileName.lowercased() == fileName.lowercased() {
-                    associateFileWithPrimaryItem(item, primaryGameItem: primaryGameItem)
-                    importQueue[index].status = .partial
-                    indicesToRemove.append(index)
-                    foundMatch = true
-
-                    // If this is a CUE file, process its BIN files
-                    if item.url.pathExtension.lowercased() == "cue" {
-                        processCUEFileInQueue(item, primaryGameItem: primaryGameItem,
-                                              importQueue: &importQueue, indicesToRemove: &indicesToRemove)
-                    }
-
-                    break
+                
+                return true
+            }
+        }
+        
+        return false
+    }
+    
+    /// Process a file that exists on disk
+    private func processFileOnDisk(fileName: String, primaryGameItem: ImportQueueItem, m3uURL: URL) {
+        let fileURL = m3uURL.deletingLastPathComponent().appendingPathComponent(fileName)
+        
+        if cdRomFileHandler.fileExistsAtPath(fileURL) {
+            processExistingFileOnDisk(fileURL: fileURL, primaryGameItem: primaryGameItem)
+        } else {
+            // Look for similar filenames (for multi-disc games with different naming patterns)
+            processSimilarFiles(fileName: fileName, primaryGameItem: primaryGameItem, m3uURL: m3uURL)
+        }
+    }
+    
+    /// Process a file that exists on disk
+    private func processExistingFileOnDisk(fileURL: URL, primaryGameItem: ImportQueueItem) {
+        // Only add if it's not already in the list
+        if !primaryGameItem.resolvedAssociatedFileURLs.contains(fileURL) {
+            ILOG("Found file on disk for M3U: \(fileURL.lastPathComponent)")
+            primaryGameItem.resolvedAssociatedFileURLs.append(fileURL)
+            
+            // If this is a CUE file, try to process its BIN files
+            if fileURL.pathExtension.lowercased() == "cue" {
+                processBINFilesFromCUEOnDisk(cueURL: fileURL, primaryGameItem: primaryGameItem)
+            }
+        }
+    }
+    
+    /// Process BIN files from a CUE file on disk
+    private func processBINFilesFromCUEOnDisk(cueURL: URL, primaryGameItem: ImportQueueItem) {
+        if let binFiles = try? cdRomFileHandler.parseCueSheet(cueFileURL: cueURL) {
+            for binFile in binFiles {
+                let binURL = cueURL.deletingLastPathComponent().appendingPathComponent(binFile)
+                if cdRomFileHandler.fileExistsAtPath(binURL) &&
+                    !primaryGameItem.resolvedAssociatedFileURLs.contains(binURL) {
+                    primaryGameItem.resolvedAssociatedFileURLs.append(binURL)
+                    ILOG("Found BIN file on disk for CUE: \(binFile)")
+                    addToExpectedFilesList(binFile, primaryGameItem: primaryGameItem)
                 }
             }
-
-            // If we didn't find a match in the queue, check if the file exists on disk
-            if !foundMatch {
-                let fileURL = m3uURL.deletingLastPathComponent().appendingPathComponent(fileName)
-                if cdRomFileHandler.fileExistsAtPath(fileURL) {
-                    // Only add if it's not already in the list
-                    if !primaryGameItem.resolvedAssociatedFileURLs.contains(fileURL) {
-                        ILOG("Found file on disk for M3U: \(fileName)")
-                        primaryGameItem.resolvedAssociatedFileURLs.append(fileURL)
-
-                        // If this is a CUE file, try to process its BIN files
-                        if fileURL.pathExtension.lowercased() == "cue" {
-                            if let binFiles = try? cdRomFileHandler.parseCueSheet(cueFileURL: fileURL) {
-                                for binFile in binFiles {
-                                    let binURL = fileURL.deletingLastPathComponent().appendingPathComponent(binFile)
-                                    if cdRomFileHandler.fileExistsAtPath(binURL) &&
-                                        !primaryGameItem.resolvedAssociatedFileURLs.contains(binURL) {
-                                        primaryGameItem.resolvedAssociatedFileURLs.append(binURL)
-                                        ILOG("Found BIN file on disk for CUE: \(binFile)")
-                                        addToExpectedFilesList(binFile, primaryGameItem: primaryGameItem)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    // Look for similar filenames (for multi-disc games with different naming patterns)
-                    let directory = m3uURL.deletingLastPathComponent()
-                    let similarFiles = findSimilarFiles(for: fileName, in: directory)
-
-                    if !similarFiles.isEmpty {
-                        for similarFile in similarFiles {
-                            if !primaryGameItem.resolvedAssociatedFileURLs.contains(similarFile) {
-                                primaryGameItem.resolvedAssociatedFileURLs.append(similarFile)
-                                ILOG("Found similar file for M3U entry \(fileName): \(similarFile.lastPathComponent)")
-
-                                // If this is a CUE file, process its BIN files
-                                if similarFile.pathExtension.lowercased() == "cue" {
-                                    if let binFiles = try? cdRomFileHandler.parseCueSheet(cueFileURL: similarFile) {
-                                        for binFile in binFiles {
-                                            let binURL = similarFile.deletingLastPathComponent().appendingPathComponent(binFile)
-                                            if cdRomFileHandler.fileExistsAtPath(binURL) &&
-                                                !primaryGameItem.resolvedAssociatedFileURLs.contains(binURL) {
-                                                primaryGameItem.resolvedAssociatedFileURLs.append(binURL)
-                                                ILOG("Found BIN file for similar CUE: \(binFile)")
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        // File not in queue yet and not on disk
-                        ILOG("File \(fileName) from M3U not in queue yet, will be handled when it arrives")
-                    }
+        }
+    }
+    
+    /// Process similar files for a given filename
+    private func processSimilarFiles(fileName: String, primaryGameItem: ImportQueueItem, m3uURL: URL) {
+        let directory = m3uURL.deletingLastPathComponent()
+        let similarFiles = findSimilarFiles(for: fileName, in: directory)
+        
+        if !similarFiles.isEmpty {
+            processSimilarFilesFound(similarFiles: similarFiles, fileName: fileName, primaryGameItem: primaryGameItem)
+        } else {
+            // File not in queue yet and not on disk
+            ILOG("File \(fileName) from M3U not in queue yet, will be handled when it arrives")
+        }
+    }
+    
+    /// Process similar files that were found
+    private func processSimilarFilesFound(similarFiles: [URL], fileName: String, primaryGameItem: ImportQueueItem) {
+        for similarFile in similarFiles {
+            if !primaryGameItem.resolvedAssociatedFileURLs.contains(similarFile) {
+                primaryGameItem.resolvedAssociatedFileURLs.append(similarFile)
+                ILOG("Found similar file for M3U entry \(fileName): \(similarFile.lastPathComponent)")
+                
+                // If this is a CUE file, process its BIN files
+                if similarFile.pathExtension.lowercased() == "cue" {
+                    processBINFilesFromSimilarCUE(cueURL: similarFile, primaryGameItem: primaryGameItem)
+                }
+            }
+        }
+    }
+    
+    /// Process BIN files from a similar CUE file
+    private func processBINFilesFromSimilarCUE(cueURL: URL, primaryGameItem: ImportQueueItem) {
+        if let binFiles = try? cdRomFileHandler.parseCueSheet(cueFileURL: cueURL) {
+            for binFile in binFiles {
+                let binURL = cueURL.deletingLastPathComponent().appendingPathComponent(binFile)
+                if cdRomFileHandler.fileExistsAtPath(binURL) &&
+                    !primaryGameItem.resolvedAssociatedFileURLs.contains(binURL) {
+                    primaryGameItem.resolvedAssociatedFileURLs.append(binURL)
+                    ILOG("Found BIN file for similar CUE: \(binFile)")
                 }
             }
         }
