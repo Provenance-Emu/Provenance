@@ -11,7 +11,7 @@ import PVPrimitives
 protocol CDFileHandling {
     func parseCueSheet(cueFileURL: URL) throws -> [String]
     func candidateBinUrls(for binFileNames:[String], in directories: [URL]) -> [URL]
-    func readM3UFileContents(from url: URL) throws -> [String]
+    func parseM3U(from url: URL) throws -> [String]
     func fileExistsAtPath(_ path: URL) -> Bool
 }
 
@@ -61,13 +61,33 @@ class DefaultCDFileHandler: CDFileHandling {
     }
 
     
-    func readM3UFileContents(from url: URL) throws -> [String] {
+    func parseM3U(from url: URL) throws -> [String] {
+        // Read the M3U file content
         let contents = try String(contentsOf: url, encoding: .utf8)
-        let files = contents.components(separatedBy: .newlines)
+        
+        // Handle different line endings (CR, LF, CRLF) by normalizing to newlines
+        let normalizedContents = contents.replacingOccurrences(of: "\r\n", with: "\n")
+                                         .replacingOccurrences(of: "\r", with: "\n")
+        
+        // Extract file paths, ignoring comments and empty lines
+        let files = normalizedContents.components(separatedBy: "\n")
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty && !$0.hasPrefix("#") }
+            .map { self.normalizeFilePath($0) }
         
         return files
+    }
+    
+    /// Normalize a file path from an M3U file to handle relative paths and ensure consistent format
+    private func normalizeFilePath(_ path: String) -> String {
+        // Extract just the filename if it contains path separators
+        if path.contains("/") || path.contains("\\") {
+            let components = path.components(separatedBy: CharacterSet(charactersIn: "/\\"))
+            if let fileName = components.last, !fileName.isEmpty {
+                return fileName
+            }
+        }
+        return path
     }
     
     func fileExistsAtPath(_ path: URL) -> Bool {
