@@ -1176,26 +1176,26 @@ public final class GameImporter: GameImporting, ObservableObject {
                                          importQueue: inout [ImportQueueItem], indicesToRemove: inout [Int]) {
         // First, add all the filenames to the expected files list
         addFilesToExpectedList(fileNames, primaryGameItem: primaryGameItem)
-        
+
         // Process each file in the M3U
         for fileName in fileNames {
             let foundMatch = findAndProcessFileInQueue(fileName: fileName, primaryGameItem: primaryGameItem,
                                                      importQueue: &importQueue, indicesToRemove: &indicesToRemove)
-            
+
             // If we didn't find a match in the queue, check if the file exists on disk
             if !foundMatch {
                 processFileOnDisk(fileName: fileName, primaryGameItem: primaryGameItem, m3uURL: m3uURL)
             }
         }
     }
-    
+
     /// Add all filenames to the expected files list
     private func addFilesToExpectedList(_ fileNames: [String], primaryGameItem: ImportQueueItem) {
         for fileName in fileNames {
             addToExpectedFilesList(fileName, primaryGameItem: primaryGameItem)
         }
     }
-    
+
     /// Find and process a file in the import queue
     /// Returns true if a match was found, false otherwise
     private func findAndProcessFileInQueue(fileName: String, primaryGameItem: ImportQueueItem,
@@ -1205,32 +1205,32 @@ public final class GameImporter: GameImporting, ObservableObject {
             if item.id == primaryGameItem.id {
                 continue // Skip the M3U file itself
             }
-            
+
             let itemFileName = item.url.lastPathComponent
-            
+
             // Check if this queue item matches the M3U entry (case insensitive)
             if itemFileName.lowercased() == fileName.lowercased() {
                 associateFileWithPrimaryItem(item, primaryGameItem: primaryGameItem)
-                importQueue[index].status = .partial
+                importQueue[index].status = .partial(expectedFiles: [item.url.path(percentEncoded: false)])
                 indicesToRemove.append(index)
-                
+
                 // If this is a CUE file, process its BIN files
                 if item.url.pathExtension.lowercased() == "cue" {
                     processCUEFileInQueue(item, primaryGameItem: primaryGameItem,
                                           importQueue: &importQueue, indicesToRemove: &indicesToRemove)
                 }
-                
+
                 return true
             }
         }
-        
+
         return false
     }
-    
+
     /// Process a file that exists on disk
     private func processFileOnDisk(fileName: String, primaryGameItem: ImportQueueItem, m3uURL: URL) {
         let fileURL = m3uURL.deletingLastPathComponent().appendingPathComponent(fileName)
-        
+
         if cdRomFileHandler.fileExistsAtPath(fileURL) {
             processExistingFileOnDisk(fileURL: fileURL, primaryGameItem: primaryGameItem)
         } else {
@@ -1238,41 +1238,42 @@ public final class GameImporter: GameImporting, ObservableObject {
             processSimilarFiles(fileName: fileName, primaryGameItem: primaryGameItem, m3uURL: m3uURL)
         }
     }
-    
+
     /// Process a file that exists on disk
     private func processExistingFileOnDisk(fileURL: URL, primaryGameItem: ImportQueueItem) {
         // Only add if it's not already in the list
         if !primaryGameItem.resolvedAssociatedFileURLs.contains(fileURL) {
             ILOG("Found file on disk for M3U: \(fileURL.lastPathComponent)")
             primaryGameItem.resolvedAssociatedFileURLs.append(fileURL)
-            
-            // If this is a CUE file, try to process its BIN files
+
+            // If this is a CUE file, try to find its BIN files
             if fileURL.pathExtension.lowercased() == "cue" {
                 processBINFilesFromCUEOnDisk(cueURL: fileURL, primaryGameItem: primaryGameItem)
             }
         }
     }
-    
+
     /// Process BIN files from a CUE file on disk
     private func processBINFilesFromCUEOnDisk(cueURL: URL, primaryGameItem: ImportQueueItem) {
         if let binFiles = try? cdRomFileHandler.parseCueSheet(cueFileURL: cueURL) {
             for binFile in binFiles {
                 let binURL = cueURL.deletingLastPathComponent().appendingPathComponent(binFile)
-                if cdRomFileHandler.fileExistsAtPath(binURL) &&
-                    !primaryGameItem.resolvedAssociatedFileURLs.contains(binURL) {
+                if cdRomFileHandler.fileExistsAtPath(binURL) && !primaryGameItem.resolvedAssociatedFileURLs.contains(binURL) {
                     primaryGameItem.resolvedAssociatedFileURLs.append(binURL)
                     ILOG("Found BIN file on disk for CUE: \(binFile)")
-                    addToExpectedFilesList(binFile, primaryGameItem: primaryGameItem)
+                } else if !primaryGameItem.expectedAssociatedFileNames!.contains(binFile) {
+                    primaryGameItem.expectedAssociatedFileNames!.append(binFile)
+                    ILOG("Added expected BIN file from CUE: \(binFile)")
                 }
             }
         }
     }
-    
+
     /// Process similar files for a given filename
     private func processSimilarFiles(fileName: String, primaryGameItem: ImportQueueItem, m3uURL: URL) {
         let directory = m3uURL.deletingLastPathComponent()
         let similarFiles = findSimilarFiles(for: fileName, in: directory)
-        
+
         if !similarFiles.isEmpty {
             processSimilarFilesFound(similarFiles: similarFiles, fileName: fileName, primaryGameItem: primaryGameItem)
         } else {
@@ -1280,31 +1281,17 @@ public final class GameImporter: GameImporting, ObservableObject {
             ILOG("File \(fileName) from M3U not in queue yet, will be handled when it arrives")
         }
     }
-    
+
     /// Process similar files that were found
     private func processSimilarFilesFound(similarFiles: [URL], fileName: String, primaryGameItem: ImportQueueItem) {
         for similarFile in similarFiles {
             if !primaryGameItem.resolvedAssociatedFileURLs.contains(similarFile) {
                 primaryGameItem.resolvedAssociatedFileURLs.append(similarFile)
                 ILOG("Found similar file for M3U entry \(fileName): \(similarFile.lastPathComponent)")
-                
+
                 // If this is a CUE file, process its BIN files
                 if similarFile.pathExtension.lowercased() == "cue" {
                     processBINFilesFromSimilarCUE(cueURL: similarFile, primaryGameItem: primaryGameItem)
-                }
-            }
-        }
-    }
-    
-    /// Process BIN files from a similar CUE file
-    private func processBINFilesFromSimilarCUE(cueURL: URL, primaryGameItem: ImportQueueItem) {
-        if let binFiles = try? cdRomFileHandler.parseCueSheet(cueFileURL: cueURL) {
-            for binFile in binFiles {
-                let binURL = cueURL.deletingLastPathComponent().appendingPathComponent(binFile)
-                if cdRomFileHandler.fileExistsAtPath(binURL) &&
-                    !primaryGameItem.resolvedAssociatedFileURLs.contains(binURL) {
-                    primaryGameItem.resolvedAssociatedFileURLs.append(binURL)
-                    ILOG("Found BIN file for similar CUE: \(binFile)")
                 }
             }
         }
@@ -1313,34 +1300,34 @@ public final class GameImporter: GameImporting, ObservableObject {
     /// Find files with similar names to handle different naming patterns in multi-disc games
     private func findSimilarFiles(for fileName: String, in directory: URL) -> [URL] {
         var similarFiles: [URL] = []
-        
+
         do {
             // Get all files in the directory
             let directoryContents = try getDirectoryContents(directory)
-            
+
             // Extract the base name without disc indicators
             let baseNameWithoutDisc = extractBaseNameWithoutDiscIndicators(from: fileName)
-            
+
             // Find files with similar base names
             similarFiles = findFilesWithSimilarNames(in: directoryContents, baseNameToMatch: baseNameWithoutDisc)
         } catch {
             ELOG("Error finding similar files: \(error)")
         }
-        
+
         return similarFiles
     }
-    
+
     /// Get all files in a directory
     private func getDirectoryContents(_ directory: URL) throws -> [URL] {
         let fileManager = FileManager.default
         return try fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
     }
-    
+
     /// Extract the base name without disc indicators from a filename
     private func extractBaseNameWithoutDiscIndicators(from fileName: String) -> String {
         let fileBaseName = fileName.deletingPathExtension
         var baseNameWithoutDisc = fileBaseName
-        
+
         // Remove disc/CD indicators for matching
         let discIndicators = ["disc", "disk", "cd"]
         for indicator in discIndicators {
@@ -1351,28 +1338,28 @@ public final class GameImporter: GameImporting, ObservableObject {
                 }
             }
         }
-        
+
         return baseNameWithoutDisc
     }
-    
+
     /// Find files with similar base names in a list of files
     private func findFilesWithSimilarNames(in files: [URL], baseNameToMatch: String) -> [URL] {
         var similarFiles: [URL] = []
-        
+
         for fileURL in files {
             if isFileSimilar(fileURL: fileURL, baseNameToMatch: baseNameToMatch) {
                 similarFiles.append(fileURL)
             }
         }
-        
+
         return similarFiles
     }
-    
+
     /// Check if a file has a similar name to the base name
     private func isFileSimilar(fileURL: URL, baseNameToMatch: String) -> Bool {
         let currentFileName = fileURL.lastPathComponent
         let currentBaseName = currentFileName.deletingPathExtension
-        
+
         // Check if either name contains the other (case insensitive)
         return currentBaseName.lowercased().contains(baseNameToMatch.lowercased()) ||
                baseNameToMatch.lowercased().contains(currentBaseName.lowercased())
@@ -1419,7 +1406,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                 let binItem = importQueue[binIndex]
                 ILOG("Found BIN file for CUE: \(binItem.url.lastPathComponent)")
                 primaryGameItem.resolvedAssociatedFileURLs.append(binItem.url)
-                importQueue[binIndex].status = .partial
+                importQueue[binIndex].status = .partial(expectedFiles: [binItem.url.path(percentEncoded: false)])
                 indicesToRemove.append(binIndex)
             }
         }
@@ -1440,7 +1427,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             let binItem = importQueue[binIndex]
             ILOG("Found BIN file for CUE (guessed): \(binItem.url.lastPathComponent)")
             primaryGameItem.resolvedAssociatedFileURLs.append(binItem.url)
-            importQueue[binIndex].status = .partial
+            importQueue[binIndex].status = .partial(expectedFiles: [potentialBinName])
             indicesToRemove.append(binIndex)
         }
     }
@@ -1471,6 +1458,9 @@ public final class GameImporter: GameImporting, ObservableObject {
                                     if cdRomFileHandler.fileExistsAtPath(binURL) && !primaryGameItem.resolvedAssociatedFileURLs.contains(binURL) {
                                         primaryGameItem.resolvedAssociatedFileURLs.append(binURL)
                                         ILOG("Found BIN file on disk for CUE: \(binFile)")
+                                    } else if !primaryGameItem.expectedAssociatedFileNames!.contains(binFile) {
+                                        primaryGameItem.expectedAssociatedFileNames!.append(binFile)
+                                        ILOG("Added expected BIN file from CUE: \(binFile)")
                                     }
                                 }
                             }
@@ -1511,6 +1501,9 @@ public final class GameImporter: GameImporting, ObservableObject {
                                     if cdRomFileHandler.fileExistsAtPath(binURL) && !primaryGameItem.resolvedAssociatedFileURLs.contains(binURL) {
                                         primaryGameItem.resolvedAssociatedFileURLs.append(binURL)
                                         ILOG("Found BIN file on disk for related CUE: \(binFile)")
+                                    } else if !primaryGameItem.expectedAssociatedFileNames!.contains(binFile) {
+                                        primaryGameItem.expectedAssociatedFileNames!.append(binFile)
+                                        ILOG("Added expected BIN file from CUE: \(binFile)")
                                     }
                                 }
                             }
@@ -1583,6 +1576,8 @@ public final class GameImporter: GameImporting, ObservableObject {
         var i = importQueue.count - 1
         while i >= 0 {
             let currentItem = importQueue[i]
+
+            // Skip non-CUE files
             guard currentItem.url.pathExtension.lowercased() == "cue" else {
                 i -= 1
                 continue
@@ -1688,7 +1683,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                 cueItem.expectedAssociatedFileNames = currentExpected.isEmpty ? nil : currentExpected
             }
             cueItem.fileType = .cdRom // CUE always implies CD-ROM
-            cueItem.status = (cueItem.expectedAssociatedFileNames?.isEmpty ?? true) && allFilesFound ? .queued : .partial // Or some other status based on completeness
+            cueItem.status = (cueItem.expectedAssociatedFileNames?.isEmpty ?? true) && allFilesFound ? .queued : .partial(expectedFiles: cueItem.expectedAssociatedFileNames ?? []) // Or some other status based on completeness
 
             indicesToRemove.sorted(by: >).forEach { indexToRemove in
                 if indexToRemove < importQueue.count { // Safety check
@@ -1897,6 +1892,12 @@ public final class GameImporter: GameImporting, ObservableObject {
                     PVNotificationUserInfoKeys.errorKey: error.localizedDescription
                 ]
                 NotificationCenter.default.post(name: .GameImporterFileDidFail, object: nil, userInfo: userInfo)
+            case .waitingForAssociatedFiles(let expectedFiles):
+                Task { @MainActor in
+                    item.status = .partial(expectedFiles: expectedFiles)
+                }
+                updateImporterStatus("Waiting for files for \(item.url.lastPathComponent)")
+                ILOG("GameImportQueue - item \(item.url.lastPathComponent) is waiting for associated files: \(expectedFiles.joined(separator: ", ")).")
             default:
                 Task { @MainActor in
                     item.status = .failure(error: error)
@@ -1924,74 +1925,205 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
 
-    /// Groups related files that should be processed together
-    /// - Parameter items: The items to group
-    /// - Returns: An array of item groups, where each group contains related files
-    private func groupRelatedFiles(_ items: [ImportQueueItem]) -> [[ImportQueueItem]] {
-        var result: [[ImportQueueItem]] = []
-        var processedItems = Set<String>()
+    // MARK: - Cue Sheet and Associated File Handling
+    private func handleLateAssociatedFile(fileURL: URL, forCompletedItem item: ImportQueueItem) async {
+        ILOG("Handling late-arriving file: \(fileURL.lastPathComponent) for item: \(item.url.lastPathComponent)")
 
-        // First pass: group CD-ROM related files (cue/bin pairs)
-        for item in items {
-            let itemPath = item.url.path
+        // Check if this is a CUE file and if we need to look for BIN files
+        let isCueFile = fileURL.pathExtension.lowercased() == "cue"
+        var binFilesToCheck: [String] = []
 
-            // Skip if already processed
-            if processedItems.contains(itemPath) {
-                continue
+        if isCueFile {
+            // Try to parse the CUE file to find referenced BIN files
+            if let binFiles = try? cdRomFileHandler.parseCueSheet(cueFileURL: fileURL) {
+                binFilesToCheck = binFiles
+                ILOG("CUE file \(fileURL.lastPathComponent) references BIN files: \(binFiles)")
+            } else {
+                // If we can't parse the CUE, make a guess based on filename
+                let cueBaseName = fileURL.deletingPathExtension().lastPathComponent
+                let potentialBinName = cueBaseName + ".bin"
+                binFilesToCheck = [potentialBinName]
+                ILOG("Could not parse CUE file, guessing BIN file: \(potentialBinName)")
+            }
+        }
+
+        // If the item doesn't have a gameDatabaseID yet, it might be that the game hasn't been fully imported
+        // In this case, we should update the item's resolvedAssociatedFileURLs and let it be processed normally
+        if item.gameDatabaseID == nil {
+            ILOG("Primary item \(item.url.lastPathComponent) doesn't have a gameDatabaseID yet. Adding file to its resolvedAssociatedFileURLs.")
+            if !item.resolvedAssociatedFileURLs.contains(fileURL) {
+                item.resolvedAssociatedFileURLs.append(fileURL)
             }
 
-            // If it's a cue file, find related bin files
-            if item.url.pathExtension.lowercased() == "cue" {
-                var group = [item]
-                let baseName = item.url.deletingPathExtension().lastPathComponent
+            // Remove the file from expectedAssociatedFileNames if it's there
+            if var expectedFiles = item.expectedAssociatedFileNames {
+                expectedFiles.removeAll { $0.lowercased() == fileURL.lastPathComponent.lowercased() }
+                item.expectedAssociatedFileNames = expectedFiles.isEmpty ? nil : expectedFiles
+            }
 
-                // Find related bin files
-                for binItem in items where binItem.url.pathExtension.lowercased() == "bin" {
-                    let binBaseName = binItem.url.deletingPathExtension().lastPathComponent
-                    if binBaseName.contains(baseName) || baseName.contains(binBaseName) {
-                        group.append(binItem)
-                        processedItems.insert(binItem.url.path)
+            // If this is a CUE file, add its BIN files to expected files if not already there
+            if isCueFile && !binFilesToCheck.isEmpty {
+                // Check if any of the BIN files already exist in the destination directory
+                for binFileName in binFilesToCheck {
+                    let binFileInImports = self.importsPath.appendingPathComponent(binFileName)
+
+                    // If the BIN file exists in the imports directory, process it now
+                    if FileManager.default.fileExists(atPath: binFileInImports.path) {
+                        ILOG("Found BIN file \(binFileName) in imports directory for late-arriving CUE \(fileURL.lastPathComponent)")
+                        // Process it as a late-arriving file
+                        await handleLateAssociatedFile(fileURL: binFileInImports, forCompletedItem: item)
+                    } else {
+                        // Add to expected files if it doesn't exist yet
+                        if item.expectedAssociatedFileNames == nil {
+                            item.expectedAssociatedFileNames = [binFileName]
+                            ILOG("Created expected files list with BIN file \(binFileName) for late-arriving CUE \(fileURL.lastPathComponent)")
+                        } else if !item.expectedAssociatedFileNames!.contains(binFileName) {
+                            item.expectedAssociatedFileNames!.append(binFileName)
+                            ILOG("Added expected BIN file \(binFileName) for late-arriving CUE \(fileURL.lastPathComponent)")
+                        }
                     }
                 }
-
-                result.append(group)
-                processedItems.insert(itemPath)
             }
-            // If it's an m3u file, find related files
-            else if item.url.pathExtension.lowercased() == "m3u" {
-                var group = [item]
 
-                // Try to read the m3u file to find referenced files
-                if let content = try? String(contentsOf: item.url) {
-                    let lines = content.components(separatedBy: .newlines)
-                    for line in lines where !line.isEmpty && !line.hasPrefix("#") {
-                        // Find the referenced file in our items list
-                        for refItem in items {
-                            if refItem.url.lastPathComponent == line || refItem.url.path.hasSuffix("/\(line)") {
-                                group.append(refItem)
-                                processedItems.insert(refItem.url.path)
+        } else {
+            // If we have a gameDatabaseID, proceed with adding the file to the database
+            guard let gameID = item.gameDatabaseID else {
+                ELOG("Cannot handle late associated file \(fileURL.lastPathComponent): gameDatabaseID is nil.")
+                return
+            }
+
+            let realm = RomDatabase.sharedInstance.realm
+
+            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameID) else {
+                ELOG("Cannot handle late associated file \(fileURL.lastPathComponent): PVGame with ID \(gameID) not found.")
+                return
+            }
+
+            // Determine the destination directory for the game's files.
+            var destinationDirectory: URL? = nil
+            if let primaryFileURL = game.file?.url, !primaryFileURL.path.isEmpty {
+                destinationDirectory = primaryFileURL.deletingLastPathComponent()
+            } else if let firstRelatedFileURL = game.relatedFiles.first(where: { $0.url?.path.isEmpty == false })?.url {
+                destinationDirectory = firstRelatedFileURL.deletingLastPathComponent()
+            }
+
+            guard let validDestinationDirectory = destinationDirectory else {
+                ELOG("Cannot determine destination directory for late associated file \(fileURL.lastPathComponent) for game \(game.title ?? "Unknown"): No existing file paths found for the game.")
+                return
+            }
+
+            let destinationFileURL = validDestinationDirectory.appendingPathComponent(fileURL.lastPathComponent)
+
+            do {
+                // Move the file
+                let destPathString = destinationFileURL.path
+                DLOG("Moving late-arriving file from \(fileURL.path) to \(destPathString)")
+                try FileManager.default.moveItem(at: fileURL, to: destinationFileURL)
+
+                // Create PVFile and add to game
+                let newPVFile = PVFile(withURL: destinationFileURL, relativeRoot: .platformDefault)
+
+                try realm.write {
+                    realm.add(newPVFile, update: Realm.UpdatePolicy.modified)
+                    if !game.relatedFiles.contains(where: { $0.url == newPVFile.url }) {
+                        game.relatedFiles.append(newPVFile)
+                    }
+                }
+                ILOG("Successfully processed late-arriving file \(destinationFileURL.lastPathComponent) for game \(game.title ?? "Unknown").")
+
+                // Update the ImportQueueItem's resolvedAssociatedFileURLs
+                if !item.resolvedAssociatedFileURLs.contains(destinationFileURL) {
+                    item.resolvedAssociatedFileURLs.append(destinationFileURL)
+                }
+
+                // Remove the file from expectedAssociatedFileNames if it's there
+                if var expectedFiles = item.expectedAssociatedFileNames {
+                    expectedFiles.removeAll { $0.lowercased() == fileURL.lastPathComponent.lowercased() }
+                    item.expectedAssociatedFileNames = expectedFiles.isEmpty ? nil : expectedFiles
+                }
+
+                // If this is a CUE file, check for BIN files and add them to expected files
+                if isCueFile && !binFilesToCheck.isEmpty {
+                    // Check if any of the BIN files already exist in the destination directory
+                    for binFileName in binFilesToCheck {
+                        let binFileInImports = self.importsPath.appendingPathComponent(binFileName)
+
+                        // If the BIN file exists in the imports directory, process it now
+                        if FileManager.default.fileExists(atPath: binFileInImports.path) {
+                            ILOG("Found BIN file \(binFileName) in imports directory for late-arriving CUE \(fileURL.lastPathComponent)")
+                            // Process it as a late-arriving file
+                            await handleLateAssociatedFile(fileURL: binFileInImports, forCompletedItem: item)
+                        } else {
+                            // Add to expected files if it doesn't exist yet
+                            if item.expectedAssociatedFileNames == nil {
+                                item.expectedAssociatedFileNames = [binFileName]
+                                ILOG("Created expected files list with BIN file \(binFileName) for late-arriving CUE \(fileURL.lastPathComponent)")
+                            } else if !item.expectedAssociatedFileNames!.contains(binFileName) {
+                                item.expectedAssociatedFileNames!.append(binFileName)
+                                ILOG("Added expected BIN file \(binFileName) for late-arriving CUE \(fileURL.lastPathComponent)")
                             }
                         }
                     }
                 }
 
-                result.append(group)
-                processedItems.insert(itemPath)
+            } catch {
+                ELOG("Error processing late-arriving file \(fileURL.lastPathComponent) for game \(game.title ?? "Unknown"): \(error.localizedDescription)")
+                // Consider adding the file back to the import queue if the move fails
+                await addImportItemToQueue(ImportQueueItem(url: fileURL, fileType: .unknown))
             }
         }
-
-        // Second pass: add remaining items as individual groups
-        for item in items {
-            if !processedItems.contains(item.url.path) {
-                result.append([item])
-                processedItems.insert(item.url.path)
-            }
-        }
-
-        return result
     }
 
-    //    @MainActor
+    /// Process BIN files from a similar CUE file
+    private func processBINFilesFromSimilarCUE(cueURL: URL, primaryGameItem: ImportQueueItem) {
+        if let binFiles = try? cdRomFileHandler.parseCueSheet(cueFileURL: cueURL) {
+            for binFile in binFiles { // binFile is a String, e.g., "Track 01.bin"
+                let binURL = cueURL.deletingLastPathComponent().appendingPathComponent(binFile)
+
+                // Check if the BIN file actually exists on disk
+                if cdRomFileHandler.fileExistsAtPath(binURL) {
+                    // If it exists, check if we haven't already added its URL to resolved files
+                    if !primaryGameItem.resolvedAssociatedFileURLs.contains(binURL) {
+                        primaryGameItem.resolvedAssociatedFileURLs.append(binURL)
+                        ILOG("Found BIN file for similar CUE: \(binFile), added to resolvedAssociatedFileURLs for \(primaryGameItem.url.lastPathComponent)")
+
+                        // Now, also add its name (String) to expectedAssociatedFileNames
+                        // Ensure the array is initialized if it's currently nil
+                        if primaryGameItem.expectedAssociatedFileNames == nil {
+                            primaryGameItem.expectedAssociatedFileNames = []
+                        }
+
+                        // Add the filename if it's not already in the list
+                        // It's safe to force-unwrap expectedAssociatedFileNames here because we just initialized it if it was nil.
+                        if !primaryGameItem.expectedAssociatedFileNames!.contains(binFile) {
+                            primaryGameItem.expectedAssociatedFileNames!.append(binFile)
+                            ILOG("Added expected BIN file name from similar CUE: \(binFile) to \(primaryGameItem.url.lastPathComponent)")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - ImportItemDisplayable Conformance
+
+    // This is the version of determineImportType called internally for quick checks, non-throwing.
+    // Relies on the simpler helpers above.
+    private func determineImportType(_ item: ImportQueueItem) -> ImportQueueItem.FileType {
+        if isBIOS(item) { return .bios }
+        if isSkin(item) { return .skin }
+        if isArtwork(item) { return .artwork }
+        if isCDROM(item) { return .cdRom } // Covers .cue, .m3u, .iso, .chd etc.
+
+        // Must check for archives AFTER CDROM, as some CD images can be archives (e.g. .zip containing .iso)
+        // However, our current definition of cdRom covers extensions like .iso, .chd directly.
+        // If an archive contains a game, it's still initially an archive until extraction.
+        if Extensions.archiveExtensions.contains(item.url.pathExtension.lowercased()) { return .zip }
+
+        if !item.url.pathExtension.isEmpty { return .game } // Default to .game if has an extension and not other types
+        return .unknown
+    }
+
     private func performImport(for item: ImportQueueItem) async throws {
         ILOG("Starting import for file: \(item.url.lastPathComponent)")
 
@@ -2077,6 +2209,17 @@ public final class GameImporter: GameImporting, ObservableObject {
             throw GameImporterError.conflictDetected
         }
 
+        // Check for expected files before importing game/cdRom types
+        if item.fileType == .game || item.fileType == .cdRom {
+            // Ensure expectedAssociatedFileNames is not nil before checking count.
+            // An empty list means no files are expected.
+            if let expectedFiles = item.expectedAssociatedFileNames, !expectedFiles.isEmpty {
+                ILOG("Item \(item.url.lastPathComponent) still has \(expectedFiles.count) expected files. Deferring database import. Expected: \(expectedFiles)")
+                throw GameImporterError.waitingForAssociatedFiles(expected: expectedFiles)
+            }
+            ILOG("Item \(item.url.lastPathComponent) has no pending expected files. Proceeding with database import.")
+        }
+
         //move ImportQueueItem to appropriate file location
         try await gameImporterFileService.moveImportItem(toAppropriateSubfolder: item)
 
@@ -2113,13 +2256,6 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         //external callers - might not be needed in the end
         //        self.completionHandler?(self.encounteredConflicts)
-    }
-
-    // General status update for GameImporter
-    internal func updateImporterStatus(_ message: String) {
-        DispatchQueue.main.async {
-            self.importStatus = message
-        }
     }
 
     /// Checks the queue and all child elements in the queue to see if this file exists.  if it does, return true, else return false.
@@ -2230,43 +2366,43 @@ public final class GameImporter: GameImporting, ObservableObject {
                     }
                 }
             }
+
+            // Check for duplicates in the current queue
+            let isDuplicate = await importQueueActor.containsDuplicate(ofItem: item) { existing, newItem in
+                // Check if the URL is the same
+                if existing.url == newItem.url {
+                    return true
+                }
+
+                // Check if the filename is the same and in the same directory
+                if existing.url.lastPathComponent == newItem.url.lastPathComponent &&
+                    existing.url.deletingLastPathComponent() == newItem.url.deletingLastPathComponent() {
+                    return true
+                }
+
+                // Check MD5 if available
+                if let existingMd5 = existing.md5?.uppercased(),
+                   let newMd5 = newItem.md5?.uppercased(),
+                   existingMd5 == newMd5 {
+                    return true
+                }
+
+                // Recursively check child items
+                if !existing.childQueueItems.isEmpty {
+                    return self.importQueueContainsDuplicate(existing.childQueueItems, ofItem: newItem)
+                }
+
+                return false
+            }
+
+            guard !isDuplicate else {
+                WLOG("GameImportQueue - Trying to add duplicate ImportItem to import queue with url: \(item.url) and id: \(item.id)")
+                return
+            }
+
+            await importQueueActor.addImport(item)
+            ILOG("GameImportQueue - add ImportItem to import queue with url: \(item.url) and id: \(item.id)")
         }
-
-        // Check for duplicates in the current queue
-        let isDuplicate = await importQueueActor.containsDuplicate(ofItem: item) { existing, newItem in
-            // Check if the URL is the same
-            if existing.url == newItem.url {
-                return true
-            }
-
-            // Check if the filename is the same and in the same directory
-            if existing.url.lastPathComponent == newItem.url.lastPathComponent &&
-                existing.url.deletingLastPathComponent() == newItem.url.deletingLastPathComponent() {
-                return true
-            }
-
-            // Check MD5 if available
-            if let existingMd5 = existing.md5?.uppercased(),
-               let newMd5 = newItem.md5?.uppercased(),
-               existingMd5 == newMd5 {
-                return true
-            }
-
-            // Recursively check child items
-            if !existing.childQueueItems.isEmpty {
-                return self.importQueueContainsDuplicate(existing.childQueueItems, ofItem: newItem)
-            }
-
-            return false
-        }
-
-        guard !isDuplicate else {
-            WLOG("GameImportQueue - Trying to add duplicate ImportItem to import queue with url: \(item.url) and id: \(item.id)")
-            return
-        }
-
-        await importQueueActor.addImport(item)
-        ILOG("GameImportQueue - add ImportItem to import queue with url: \(item.url) and id: \(item.id)")
     }
 
     /// Pauses the import processing
@@ -2295,6 +2431,73 @@ public final class GameImporter: GameImporting, ObservableObject {
         Task.detached { [self] in
             await processQueue()
         }
+    }
+
+    /// Groups related files that should be processed together
+    /// - Parameter items: The items to group
+    /// - Returns: An array of item groups, where each group contains related files
+    private func groupRelatedFiles(_ items: [ImportQueueItem]) -> [[ImportQueueItem]] {
+        var result: [[ImportQueueItem]] = []
+        var processedItems = Set<String>()
+
+        // First pass: group CD-ROM related files (cue/bin pairs)
+        for item in items {
+            let itemPath = item.url.path
+
+            // Skip if already processed
+            if processedItems.contains(itemPath) {
+                continue
+            }
+
+            // If it's a cue file, find related bin files
+            if item.url.pathExtension.lowercased() == "cue" {
+                var group = [item]
+                let baseName = item.url.deletingPathExtension().lastPathComponent
+
+                // Find related bin files
+                for binItem in items where binItem.url.pathExtension.lowercased() == "bin" {
+                    let binBaseName = binItem.url.deletingPathExtension().lastPathComponent
+                    if binBaseName.contains(baseName) || baseName.contains(binBaseName) {
+                        group.append(binItem)
+                        processedItems.insert(binItem.url.path)
+                    }
+                }
+
+                result.append(group)
+                processedItems.insert(itemPath)
+            }
+            // If it's an m3u file, find related files
+            else if item.url.pathExtension.lowercased() == "m3u" {
+                var group = [item]
+
+                // Try to read the m3u file to find referenced files
+                if let content = try? String(contentsOf: item.url) {
+                    let lines = content.components(separatedBy: .newlines)
+                    for line in lines where !line.isEmpty && !line.hasPrefix("#") {
+                        // Find the referenced file in our items list
+                        for refItem in items {
+                            if refItem.url.lastPathComponent == line || refItem.url.path.hasSuffix("/\(line)") {
+                                group.append(refItem)
+                                processedItems.insert(refItem.url.path)
+                            }
+                        }
+                    }
+                }
+
+                result.append(group)
+                processedItems.insert(itemPath)
+            }
+        }
+
+        // Second pass: add remaining items as individual groups
+        for item in items {
+            if !processedItems.contains(item.url.path) {
+                result.append([item])
+                processedItems.insert(item.url.path)
+            }
+        }
+
+        return result
     }
 
     // Add a helper method to check if processing is paused
@@ -2357,222 +2560,10 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
 
-    // MARK: - Cue Sheet and Associated File Handling
-    private func handleLateAssociatedFile(fileURL: URL, forCompletedItem item: ImportQueueItem) async {
-        ILOG("Handling late-arriving file: \(fileURL.lastPathComponent) for item: \(item.url.lastPathComponent)")
-
-        // Check if this is a CUE file and if we need to look for BIN files
-        let isCueFile = fileURL.pathExtension.lowercased() == "cue"
-        var binFilesToCheck: [String] = []
-
-        if isCueFile {
-            // Try to parse the CUE file to find referenced BIN files
-            if let binFiles = try? cdRomFileHandler.parseCueSheet(cueFileURL: fileURL) {
-                binFilesToCheck = binFiles
-                ILOG("CUE file \(fileURL.lastPathComponent) references BIN files: \(binFiles)")
-            } else {
-                // If we can't parse the CUE, make a guess based on filename
-                let cueBaseName = fileURL.deletingPathExtension().lastPathComponent
-                let potentialBinName = cueBaseName + ".bin"
-                binFilesToCheck = [potentialBinName]
-                ILOG("Could not parse CUE file, guessing BIN file: \(potentialBinName)")
-            }
-        }
-
-        // If the item doesn't have a gameDatabaseID yet, it might be that the game hasn't been fully imported
-        // In this case, we should update the item's resolvedAssociatedFileURLs and let it be processed normally
-        if item.gameDatabaseID == nil {
-            ILOG("Primary item \(item.url.lastPathComponent) doesn't have a gameDatabaseID yet. Adding file to its resolvedAssociatedFileURLs.")
-            if !item.resolvedAssociatedFileURLs.contains(fileURL) {
-                item.resolvedAssociatedFileURLs.append(fileURL)
-            }
-
-            // Remove the file from expectedAssociatedFileNames if it's there
-            if var expectedFiles = item.expectedAssociatedFileNames {
-                expectedFiles.removeAll { $0.lowercased() == fileURL.lastPathComponent.lowercased() }
-                item.expectedAssociatedFileNames = expectedFiles.isEmpty ? nil : expectedFiles
-            }
-
-            // If this is a CUE file, add its BIN files to expected files if not already there
-            if isCueFile && !binFilesToCheck.isEmpty {
-                if item.expectedAssociatedFileNames == nil {
-                    item.expectedAssociatedFileNames = []
-                }
-
-                for binFile in binFilesToCheck {
-                    if !item.expectedAssociatedFileNames!.contains(binFile) {
-                        item.expectedAssociatedFileNames!.append(binFile)
-                        ILOG("Added expected BIN file from late-arriving CUE: \(binFile)")
-                    }
-                }
-            }
-
-            return
-        }
-
-        // If we have a gameDatabaseID, proceed with adding the file to the database
-        guard let gameID = item.gameDatabaseID else {
-            ELOG("Cannot handle late associated file \(fileURL.lastPathComponent) for item \(item.url.lastPathComponent): gameDatabaseID is nil.")
-            return
-        }
-
-        let realm = RomDatabase.sharedInstance.realm
-
-        guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameID) else {
-            ELOG("Cannot handle late associated file \(fileURL.lastPathComponent): PVGame with ID \(gameID) not found.")
-            return
-        }
-
-        // Determine the destination directory for the game's files.
-        var destinationDirectory: URL? = nil
-        if let primaryFileURL = game.file?.url, !primaryFileURL.path.isEmpty {
-            destinationDirectory = primaryFileURL.deletingLastPathComponent()
-        } else if let firstRelatedFileURL = game.relatedFiles.first(where: { $0.url?.path.isEmpty == false })?.url {
-            destinationDirectory = firstRelatedFileURL.deletingLastPathComponent()
-        }
-
-        guard let validDestinationDirectory = destinationDirectory else {
-            ELOG("Cannot determine destination directory for late associated file \(fileURL.lastPathComponent) for game \(game.title ?? "Unknown"): No existing file paths found for the game.")
-            return
-        }
-
-        let destinationFileURL = validDestinationDirectory.appendingPathComponent(fileURL.lastPathComponent)
-
-        do {
-            // Move the file
-            let destPathString = destinationFileURL.path
-            DLOG("Moving late-arriving file from \(fileURL.path) to \(destPathString)")
-            try FileManager.default.moveItem(at: fileURL, to: destinationFileURL)
-
-            // Create PVFile and add to game
-            let newPVFile = PVFile(withURL: destinationFileURL, relativeRoot: .platformDefault)
-
-            try realm.write {
-                realm.add(newPVFile, update: Realm.UpdatePolicy.modified)
-                if !game.relatedFiles.contains(where: { $0.url == newPVFile.url }) {
-                    game.relatedFiles.append(newPVFile)
-                }
-            }
-            ILOG("Successfully processed late-arriving file \(destinationFileURL.lastPathComponent) for game \(game.title ?? "Unknown").")
-
-            // Update the ImportQueueItem's resolvedAssociatedFileURLs
-            if !item.resolvedAssociatedFileURLs.contains(destinationFileURL) {
-                item.resolvedAssociatedFileURLs.append(destinationFileURL)
-            }
-
-            // Remove the file from expectedAssociatedFileNames if it's there
-            if var expectedFiles = item.expectedAssociatedFileNames {
-                expectedFiles.removeAll { $0.lowercased() == fileURL.lastPathComponent.lowercased() }
-                item.expectedAssociatedFileNames = expectedFiles.isEmpty ? nil : expectedFiles
-            }
-
-            // If this is a CUE file, check for BIN files and add them to expected files
-            if isCueFile && !binFilesToCheck.isEmpty {
-                // Check if any of the BIN files already exist in the destination directory
-                for binFileName in binFilesToCheck {
-                    let binFileURL = validDestinationDirectory.appendingPathComponent(binFileName)
-
-                    // If the BIN file exists in the imports directory, process it now
-                    // Use the imports directory from the GameImporter
-                    let binFileInImports = self.importsPath.appendingPathComponent(binFileName)
-                    if FileManager.default.fileExists(atPath: binFileInImports.path) {
-                        ILOG("Found BIN file \(binFileName) in imports directory for late-arriving CUE \(fileURL.lastPathComponent)")
-                        // Process it as a late-arriving file
-                        await handleLateAssociatedFile(fileURL: binFileInImports, forCompletedItem: item)
-                    } else {
-                        // Add to expected files if it doesn't exist yet
-                        if item.expectedAssociatedFileNames == nil {
-                            item.expectedAssociatedFileNames = [binFileName]
-                            ILOG("Created expected files list with BIN file \(binFileName) for late-arriving CUE \(fileURL.lastPathComponent)")
-                        } else if !item.expectedAssociatedFileNames!.contains(binFileName) {
-                            item.expectedAssociatedFileNames!.append(binFileName)
-                            ILOG("Added expected BIN file \(binFileName) for late-arriving CUE \(fileURL.lastPathComponent)")
-                        }
-                    }
-                }
-            }
-
-        } catch {
-            ELOG("Error processing late-arriving file \(fileURL.lastPathComponent) for game \(game.title ?? "Unknown"): \(error.localizedDescription)")
-            // Consider adding the file back to the import queue if the move fails
-            await addImportItemToQueue(ImportQueueItem(url: fileURL, fileType: .unknown))
-        }
-    }
-
-    // MARK: - ImportItemDisplayable Conformance
-
-    // This is the version of determineImportType called internally for quick checks, non-throwing.
-    // Relies on the simpler helpers above.
-    private func determineImportType(_ item: ImportQueueItem) -> ImportQueueItem.FileType {
-        if isBIOS(item) { return .bios }
-        if isSkin(item) { return .skin }
-        if isArtwork(item) { return .artwork }
-        if isCDROM(item) { return .cdRom } // Covers .cue, .m3u, .iso, .chd etc.
-
-        // Must check for archives AFTER CDROM, as some CD images can be archives (e.g. .zip containing .iso)
-        // However, our current definition of cdRom covers extensions like .iso, .chd directly.
-        // If an archive contains a game, it's still initially an archive until extraction.
-        if Extensions.archiveExtensions.contains(item.url.pathExtension.lowercased()) { return .zip }
-
-        if !item.url.pathExtension.isEmpty { return .game } // Default to .game if has an extension and not other types
-        return .unknown
-    }
-
-    // Helper to determine if a file type can be a primary game file
-    internal func isPrimaryGameFileType(for fileType: ImportQueueItem.FileType?) -> Bool {
-        guard let fileType = fileType else { return false }
-        switch fileType {
-        case .cdRom, .game, .zip: // .zip can contain primary game files that need extraction
-            return true
-        case .bios, .artwork, .skin, .unknown:
-            return false
-        }
-    }
-
-    // This is the version of determineImportType called by GameImporterViewController or where system context is important.
-    // It can throw if system lookups fail or other issues arise, though currently it doesn't explicitly throw.
-    // It should be marked internal, not private.
-    internal func determineImportType(_ item: ImportQueueItem, system: PVSystem? = nil) -> ImportQueueItem.FileType {
-        let pathExtension = item.url.pathExtension.lowercased()
-        let resolvedSystem = system ?? (item.userChosenSystem ?? item.systems.first).flatMap { PVEmulatorConfiguration.system(forIdentifier: $0) }
-
-        // 1. BIOS Check (Highest Priority - System Agnostic)
-        if isBIOS(item) {
-            // If a specific system context is given, and it's a BIOS for *that* system, great.
-            // If no system context, it's a general BIOS.
-            return .bios
-        }
-
-        // 2. Skin Check (System Agnostic)
-        if isSkin(item) { return .skin }
-
-        // 3. Artwork Check (System Agnostic)
-        if isArtwork(item) { return .artwork }
-
-        // 4. System-Specific Game File Check (if system context is available)
-        if let currentSystem = resolvedSystem {
-            if currentSystem.supportedExtensions.contains(where: { $0.caseInsensitiveCompare(pathExtension) == .orderedSame }) {
-                // The system recognizes this extension as one it supports.
-                // Now, further classify if it's a CD-like format for this system or a general game file.
-                let cdRelatedExtensions = Extensions.discImageExtensions.union(Extensions.playlistExtensions)
-                if cdRelatedExtensions.contains(pathExtension) { return .cdRom } // .cue, .m3u, .iso, .chd etc.
-
-                // If it's an archive extension supported by the system (e.g. some systems might directly load from .zip)
-                // This might need more granular logic if a system supports archives directly without them being .cdRom type
-                if Extensions.archiveExtensions.contains(pathExtension) { return .zip }
-
-                return .game // General game file for this system
-            }
-        }
-
-        // 5. General CD-ROM Check (Fallback if no specific system match or system doesn't claim it as primary game file)
-        if isCDROM(item) { return .cdRom } // Covers .cue, .m3u, .iso, .chd, .ccd, .img, .bin, .sub
-
-        // 6. General Archive Check (Fallback)
-        if Extensions.archiveExtensions.contains(pathExtension) { return .zip }
-
-        // 7. Default to .game if it has an extension and isn't classified otherwise; .unknown if no extension
-        return pathExtension.isEmpty ? .unknown : .game
+    /// Updates the importer status message
+    private func updateImporterStatus(_ message: String) {
+        importStatus = message
+        ILOG("Importer status: \(message)")
     }
 }
 

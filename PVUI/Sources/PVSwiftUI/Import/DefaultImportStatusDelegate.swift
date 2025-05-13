@@ -41,10 +41,8 @@ class DefaultImportStatusDelegate: ImportStatusDelegate {
             let importQueue = await GameImporter.shared.importQueue
             
             // Update the status of items
-            for item in importQueue {
-                if (item.status.isFailure || item.status == .conflict || item.status == .partial) {
-                    item.status = .queued
-                }
+            importQueue.filter({$0.status.canBeRequeued}).forEach { item in
+                item.requeue()
             }
             
             // Start processing

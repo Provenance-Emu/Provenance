@@ -33,7 +33,7 @@ class MockGameImporter: GameImporting, ObservableObject {
         .success,
         .failure(error: MockImportError()),
         .conflict,
-        .partial
+        .partial(expectedFiles: ["file1.mp3", "file2.bin"])
     ]
 
     @MainActor

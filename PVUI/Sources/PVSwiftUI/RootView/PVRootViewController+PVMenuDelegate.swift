@@ -243,12 +243,7 @@ extension PVRootViewController: ImportStatusDelegate {
         Task {
             //reset the status of each item that conflict or failed so we can try again.
             let importQueue = await GameImporter.shared.importQueue
-            for item in importQueue {
-                if (item.status.isFailure || item.status == .conflict || item.status == .partial) {
-                    item.status = .queued
-                }
-            }
-
+            importQueue.filter { $0.status != .queued }.forEach({ $0.requeue()})
             GameImporter.shared.startProcessing()
         }
     }

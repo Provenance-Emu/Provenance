@@ -30,7 +30,7 @@ public class ImportQueueItem: Identifiable, ObservableObject {
     public enum ImportStatus: CustomStringConvertible {
         case conflict  // Indicates additional action needed by user after successful import
 
-        case partial //indicates the item is waiting for associated files before it could be processed
+        case partial(expectedFiles: [String]) //indicates the item is waiting for associated files before it could be processed
         case processing
 
         case queued
@@ -66,6 +66,34 @@ public class ImportQueueItem: Identifiable, ObservableObject {
                 return true
             }
             return false
+        }
+        
+        public var isSuccess: Bool {
+            if case .success = self {
+                return true
+            }
+            return false
+        }
+        
+        public var isPartial: Bool {
+            if case .partial = self {
+                return true
+            }
+            return false
+        }
+        
+        public var isIdle: Bool {
+            switch self {
+            case .queued, .processing, .success, .conflict, .partial: return true
+            default: return false
+            }
+        }
+        
+        public var canBeRequeued: Bool {
+            switch self {
+            case .failure, .conflict, .partial: return true
+            default: return false
+            }
         }
     }
 
@@ -113,6 +141,11 @@ public class ImportQueueItem: Identifiable, ObservableObject {
                 updateSystems()
             }
         }
+    }
+    
+    public func requeue() -> ImportQueueItem {
+        self.status = .queued
+        return self
     }
 
     private func updateSystems() {
