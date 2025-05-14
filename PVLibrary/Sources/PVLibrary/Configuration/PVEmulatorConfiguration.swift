@@ -421,7 +421,7 @@ public extension PVEmulatorConfiguration {
             throw BIOSError.unknownBIOSFile
         }
 
-        guard biosEntry.expectedMD5 == md5Hash else {
+        guard biosEntry.expectedMD5 == md5Hash.uppercased() else {
             throw BIOSError.invalidMD5Hash
         }
 

@@ -78,6 +78,24 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         }
 
         DLOG("Attempting to import game: \(destUrl.lastPathComponent) for system: \(targetSystem.libretroDatabaseName)")
+        
+        #if !os(tvOS)
+        // Check if this file is currently being recovered from iCloud
+        if iCloudDriveSync.isFileBeingRecovered(queueItem.url.path) {
+            ILOG("File \(queueItem.url.lastPathComponent) is currently being recovered from iCloud. Delaying import.")
+            
+            // Re-queue this item with a delay
+            Task {
+                try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 second delay
+                do {
+                    try await importGameIntoDatabase(queueItem: queueItem)
+                } catch {
+                    ELOG("Error re-importing game after delay: \(error)")
+                }
+            }
+            return
+        }
+        #endif
 
         let filename = queueItem.url.lastPathComponent
         let partialPath = (targetSystem.rawValue as NSString).appendingPathComponent(filename)
@@ -85,12 +103,36 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
         DLOG("Checking game cache for partialPath: \(partialPath) or similarName: \(similarName)")
         let gamesCache = RomDatabase.gamesCache
-
+        
+        // Check if the file is already in the correct location and has a database entry
+        let isInCorrectLocation = destUrl.path == queueItem.url.path
+        
         if let existingGame = gamesCache[partialPath] ?? gamesCache[similarName],
            targetSystem.rawValue == existingGame.systemIdentifier {
-            DLOG("Found existing game in cache, saving relative path")
+            DLOG("Found existing game in cache: \(existingGame.title)")
+            
+            // If the game already has a valid file and is in the correct location, we can skip further processing
+            if isInCorrectLocation && existingGame.file != nil {
+                ILOG("Game \(existingGame.title) already has a database entry with a valid file and is in the correct location, skipping import")
+                return
+            }
+            
+            // Otherwise, just update the relative path
+            DLOG("Updating relative path for existing game")
             await saveRelativePath(existingGame, partialPath: partialPath, file: queueItem.url)
         } else {
+            // Check if this is a duplicate by MD5 hash
+            if let md5 = queueItem.md5?.uppercased() {
+                let realm = RomDatabase.sharedInstance.realm
+                let gamesWithSameMD5 = realm.objects(PVGame.self).filter("md5Hash == %@", md5)
+                
+                if let existingGameWithSameMD5 = gamesWithSameMD5.first, targetSystem.rawValue == existingGameWithSameMD5.systemIdentifier {
+                    ILOG("Found existing game with same MD5 hash: \(existingGameWithSameMD5.title), updating relative path")
+                    await saveRelativePath(existingGameWithSameMD5, partialPath: partialPath, file: queueItem.url)
+                    return
+                }
+            }
+            
             DLOG("No existing game found, starting import to database")
             try await self.importToDatabaseROM(forItem: queueItem, system: targetSystem, relatedFiles: nil)
         }
@@ -100,18 +142,13 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     func importBIOSIntoDatabase(queueItem: ImportQueueItem) async throws {
         ILOG("Starting BIOS database import for: \(queueItem.url.lastPathComponent)")
 
-        // First move the file to the correct location
+        // FileService will move/copy the file and post notifications for each new file location.
         try await gameImporterFileService.moveImportItem(toAppropriateSubfolder: queueItem)
-        ILOG("Moved BIOS file to destination: \(queueItem.destinationUrl?.path ?? "unknown")")
+        // ILOG("Moved BIOS file to destination: \(queueItem.destinationUrl?.path ?? "unknown")")
 
-        // Now let BIOSWatcher handle the database update
-        if let destinationUrl = queueItem.destinationUrl {
-            await BIOSWatcher.shared.processBIOSFiles([destinationUrl])
-            ILOG("BIOS file processed by BIOSWatcher")
-        } else {
-            ELOG("No destination URL for BIOS file")
-            throw GameImporterError.incorrectDestinationURL
-        }
+        // BIOSWatcher is now notified by GameImporterFileService directly after each successful copy.
+        // No longer need to call processBIOSFiles from here.
+        ILOG("BIOS file handling delegated to GameImporterFileService for \(queueItem.url.lastPathComponent). Notifications are handled therein.")
     }
 
     /// Imports a ROM to the database
@@ -136,7 +173,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             throw GameImporterError.noSystemMatched
         }
 
-        let file = PVFile(withURL: destinationUrl, relativeRoot: .iCloud)
+        let file = PVFile(withURL: destinationUrl) //, relativeRoot: .iCloud)
         let game = PVGame(withFile: file, system: system)
         game.romPath = partialPath
         game.title = title
@@ -152,7 +189,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             DLOG("Checking file \(url.lastPathComponent) with relative name: \(relativeName)")
             if relativeName == name {
                 DLOG("Found matching related file: \(url.lastPathComponent)")
-                relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent)))
+                relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent))) //, relativeRoot: .iCloud))
             }
         }
 
@@ -160,7 +197,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             DLOG("Processing \(relatedFiles.count) additional related files")
             for url in relatedFiles {
                 DLOG("Adding related file: \(url.lastPathComponent)")
-                relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent)))
+                relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent))) //, relativeRoot: .iCloud))
             }
         }
 
@@ -173,6 +210,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         game.relatedFiles.append(objectsIn: relatedPVFiles)
         game.md5Hash = md5
         try await finishUpdateOrImport(ofGame: game)
+        queueItem.gameDatabaseID = game.id
     }
 
     /// Saves the relative path for a given game
@@ -200,6 +238,26 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
     @discardableResult
     func getArtwork(forGame game: PVGame) async -> PVGame {
+        // Check for existing custom artwork first
+        let md5 = game.md5Hash
+        if !md5.isEmpty {
+            DLOG("Checking for existing custom artwork for game with MD5: \(md5)")
+            
+            // Try to find existing custom artwork with this MD5
+            if let customArtworkKey = PVMediaCache.findExistingCustomArtwork(forMD5: md5) {
+                DLOG("Found existing custom artwork with key: \(customArtworkKey)")
+                
+                // If we found a custom artwork key, set it as the customArtworkURL
+                if let localURL = PVMediaCache.filePath(forKey: customArtworkKey) {
+                    DLOG("Setting custom artwork URL: \(localURL.path)")
+                    game.customArtworkURL = customArtworkKey
+                }
+            } else {
+                DLOG("No existing custom artwork found for game with MD5: \(md5)")
+            }
+        }
+        
+        // Continue with original artwork handling
         var url = game.originalArtworkURL
         if url.isEmpty {
             return game
@@ -247,9 +305,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         return game
     }
 
-    //MARK: Utility
-
-
+    /// Updates game fields with metadata
     private func updateGameFields(_ game: PVGame, metadata: ROMMetadata, forceRefresh: Bool) -> PVGame {
         // Update title, removing (Disc 1) from the title. Discs with other numbers will retain their names
         if !metadata.gameTitle.isEmpty, forceRefresh || game.title.isEmpty {
@@ -402,20 +458,8 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         case invalidSystemID
     }
 
-//    func searchDatabase(usingKey key: String, value: String, systemID: String) async throws -> [ROMMetadata]? {
-//        guard let system = SystemIdentifier(rawValue: systemID) else {
-//            throw DatabaseQueryError.invalidSystemID
-//        }
-//
-//        return try await lookup.searchDatabase(usingKey: key, value: value, systemID: system)
-//    }
-
-    func searchDatabase(usingFilename filename: String, systemID: String) async throws -> [ROMMetadata]? {
-        guard let system = SystemIdentifier(rawValue: systemID) else {
-            throw DatabaseQueryError.invalidSystemID
-        }
-
-        return try await lookup.searchDatabase(usingFilename: filename, systemID: system)
+    func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
+        return try await lookup.searchDatabase(usingFilename: filename, systemID: systemID)
     }
 
     private func searchDatabase(usingFilename filename: String, systemIDs: [SystemIdentifier]) async throws -> [ROMMetadata]? {
@@ -484,10 +528,6 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         }
 
         return nil
-    }
-
-    func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
-        return try await lookup.searchDatabase(usingFilename: filename, systemID: systemID)
     }
 
     func getArtworkMappings() async throws -> ArtworkMapping {

@@ -117,7 +117,7 @@ public struct CGAGreenThemePalette: UXThemePalette, Codable, Sendable, Hashable 
 #if !os(tvOS)
     public var statusBarColor: UIColor { .CGA.green }
 #endif
-    public var defaultTintColor: UIColor? { .CGA.green }
+    public var defaultTintColor: UIColor { .CGA.green }
 
 #if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { .dark }
@@ -191,7 +191,7 @@ public struct CGABlueThemePalette: UXThemePalette, Codable, Sendable, Hashable {
 #if !os(tvOS)
     public var statusBarColor: UIColor { .CGA.blue }
 #endif
-    public var defaultTintColor: UIColor? { .CGA.blue.addSaturation(1.0).brightness(1.0) }
+    public var defaultTintColor: UIColor { .CGA.blue.addSaturation(1.0).brightness(1.0) }
 
 #if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { .dark }
@@ -264,7 +264,7 @@ public struct CGACyanThemePalette: UXThemePalette, Codable, Sendable, Hashable {
 #if !os(tvOS)
     public var statusBarColor: UIColor { .CGA.cyan }
 #endif
-    public var defaultTintColor: UIColor? { .CGA.cyan }
+    public var defaultTintColor: UIColor { .CGA.cyan }
 
 #if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { .light }
@@ -341,7 +341,7 @@ public struct CGAPurpleThemePalette: UXThemePalette, Codable, Sendable, Hashable
 #if !os(tvOS)
     public var statusBarColor: UIColor { .CGA.purple }
 #endif
-    public var defaultTintColor: UIColor? { .CGA.purple }
+    public var defaultTintColor: UIColor { .CGA.purple }
 
 #if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { .dark }
@@ -410,7 +410,7 @@ public struct CGAMagentaThemePalette: UXThemePalette, Codable, Sendable, Hashabl
 #if !os(tvOS)
     public var statusBarColor: UIColor { .CGA.magenta }
 #endif
-    public var defaultTintColor: UIColor? { .CGA.magenta }
+    public var defaultTintColor: UIColor { .CGA.magenta }
 
 #if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { .dark }
@@ -477,7 +477,7 @@ public struct CGARedThemePalette: UXThemePalette, Codable, Sendable, Hashable {
 #if !os(tvOS)
     public var statusBarColor: UIColor { .CGA.red }
 #endif
-    public var defaultTintColor: UIColor? { .CGA.red }
+    public var defaultTintColor: UIColor { .CGA.red }
 
 #if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { .light }
@@ -551,7 +551,7 @@ public struct CGAYellowThemePalette: UXThemePalette, Codable, Sendable, Hashable
 #if !os(tvOS)
     public var statusBarColor: UIColor { .CGA.yellow }
 #endif
-    public var defaultTintColor: UIColor? { .CGA.yellow }
+    public var defaultTintColor: UIColor { .CGA.yellow }
 
 #if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { .light }
@@ -629,7 +629,7 @@ public struct CGARainbowThemePalette: UXThemePalette, Codable, Sendable, Hashabl
 #if !os(tvOS)
     public var statusBarColor: UIColor { .CGA.blue }
 #endif
-    public var defaultTintColor: UIColor? { .CGA.cyan }
+    public var defaultTintColor: UIColor { .CGA.cyan }
 
 #if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { .dark }
@@ -702,7 +702,7 @@ public struct CGARandomThemePalette: UXThemePalette, Codable, Sendable, Hashable
 
     private let _dark: Bool
     private let _statusBarColor: Int
-    private let _defaultTintColor: Int?
+    private let _defaultTintColor: Int
     private let _switchThumb: Int?
     private let _switchON: Int?
     private let _gameLibraryBackground: Int
@@ -730,7 +730,7 @@ public struct CGARandomThemePalette: UXThemePalette, Codable, Sendable, Hashable
 #if !os(tvOS)
     public var statusBarColor: UIColor { UIColor(rgb: _statusBarColor) }
 #endif
-    public var defaultTintColor: UIColor? { _defaultTintColor.map { UIColor(rgb: $0) } }
+    public var defaultTintColor: UIColor { UIColor(rgb: _defaultTintColor) }
 
 #if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { dark ? .dark : .light }

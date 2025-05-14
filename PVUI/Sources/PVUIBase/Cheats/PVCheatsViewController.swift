@@ -11,6 +11,7 @@ import RxRealm
 import RxSwift
 import PVRealm
 import PVLogging
+import QuartzCore
 
 #if canImport(UIKit)
 import UIKit
@@ -31,7 +32,19 @@ final class PVCheatsViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Cheat Codes"
+        title = "CHEAT CODES"
+        
+        // Apply retrowave styling to the view
+        view.backgroundColor = .retroBlack
+        
+        // Apply retrowave styling to the navigation bar
+        navigationController?.navigationBar.applyRetroWaveStyle()
+        
+        // Apply retrowave styling to the table view
+        tableView.applyRetroWaveStyle()
+        
+        // Add retrowave grid background
+        RetroWaveGridBackground.createGridBackground(for: view, gridColor: .retroPurple.withAlphaComponent(0.3))
         var isFirstLoad: Bool=true
         if let emulatorViewController = presentingViewController as? PVEmulatorViewController {
             isFirstLoad=emulatorViewController.getIsFirstLoad()
@@ -110,7 +123,11 @@ final class PVCheatsViewController: UITableViewController {
                 return
             }
 
-            let alert = UIAlertController(title: "Delete this Cheat Code?", message: nil, preferredStyle: .alert)
+            // Create a retrowave-styled alert
+    let alert = UIAlertController(title: "DELETE THIS CHEAT CODE?", message: nil, preferredStyle: .alert)
+    
+    // Customize the alert appearance when presented
+    alert.view.tintColor = .retroPink
             alert.preferredContentSize = CGSize(width: 300, height: 150)
             alert.popoverPresentationController?.sourceView = tableView?.cellForRow(at: indexPath)?.contentView
             alert.popoverPresentationController?.sourceRect = tableView?.cellForRow(at: indexPath)?.contentView.bounds ?? UIScreen.main.bounds
@@ -177,6 +194,15 @@ final class PVCheatsViewController: UITableViewController {
             ELOG("Nil allCheats")
             return cell
         }
+        
+        // Apply retrowave styling to the cell
+        cell.backgroundColor = .retroBlack
+        cell.contentView.backgroundColor = .retroBlack
+        cell.applyRetroWaveBorder(color: cheat.enabled ? .retroBlue : .retroPink, width: 1.5)
+        cell.applyRetroWaveShadow(color: cheat.enabled ? .retroBlue : .retroPink, opacity: 0.6)
+        
+        // Set selection style
+        cell.selectionStyle = .none
         var cheatType = cheat.type ?? ""
         if cheatType.contains("-~-") {
             let types = cheatType.components(separatedBy: "-~-")
@@ -184,11 +210,20 @@ final class PVCheatsViewController: UITableViewController {
         }
         cell.codeText.text=cheat.code
         cell.typeText.text=cheatType
+        
+        // Apply retrowave styling to the text labels
+        cell.codeText.applyRetroWaveTextStyle(color: .white, fontSize: 16, weight: .regular)
+        cell.typeText.applyRetroWaveTextStyle(color: .retroYellow, fontSize: 14, weight: .semibold)
 #if os(iOS)
         cell.enableSwitch.isOn=cheat.enabled
+        
+        // Style the switch with retrowave colors
+        cell.enableSwitch.onTintColor = .retroBlue
+        cell.enableSwitch.tintColor = .retroPink.withAlphaComponent(0.5)
 #endif
 #if os(tvOS)
-        cell.enabledText.text=cheat.enabled ? "Enabled" : "Disabled"
+        cell.enabledText.text=cheat.enabled ? "ENABLED" : "DISABLED"
+        cell.enabledText.applyRetroWaveTextStyle(color: cheat.enabled ? .retroBlue : .retroPink, fontSize: 14, weight: .bold)
 #endif
         cell.cheat=cheat
         return cell

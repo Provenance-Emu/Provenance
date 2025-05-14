@@ -15,6 +15,7 @@ import UIKit
 #endif
 import PVPrimitives
 import PVFileSystem
+import PVSettings
 
 @objcMembers
 public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
@@ -37,6 +38,8 @@ public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
     /// Last time size was checked
     nonisolated(unsafe)
     internal dynamic var lastSizeCheck: Date?
+    nonisolated(unsafe)
+    internal var _actualPartialPath: String?
 
     public convenience init(withPartialPath partialPath: String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault, size: Int = 0, md5: String? = nil) {
         self.init()
@@ -52,6 +55,7 @@ public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
     public convenience init(withURL url: URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault, size: Int = 0, md5: String? = nil) {
         self.init()
         self.relativeRoot = relativeRoot
+        //TODO: this isn't working to get the partial path in all cases
         partialPath = relativeRoot.createRelativePath(fromURL: url)
         self.md5Cache = md5
         if size > 0 {
@@ -61,7 +65,7 @@ public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
     }
 
     public override static func ignoredProperties() -> [String] {
-        return ["sizeCache", "lastSizeCheck"]
+        return ["sizeCache", "lastSizeCheck", "_actualPartialPath"]
     }
 }
 
@@ -75,30 +79,226 @@ public extension PVFile {
             _relativeRoot = newValue.rawValue
         }
     }
+    
+    /// Get the real path for this file based on the current iCloud sync mode
+    /// This handles the differences between CloudKit and iCloud Drive paths
+    var realPath: URL {
+        let fixedPartialPath = actualPartialPath
+        let syncMode = Defaults[.iCloudSyncMode]
+        
+        // If we're using CloudKit, use the local documents directory
+        if syncMode.isCloudKit {
+            #if os(tvOS)
+            return RelativeRoot.cachesDirectory.appendingPathComponent(fixedPartialPath)
+            #else
+            return RelativeRoot.documentsDirectory.appendingPathComponent(fixedPartialPath)
+            #endif
+        }
+        
+        // For iCloud Drive, use the iCloud container if available
+        if let iCloudContainer = URL.iCloudContainerDirectory {
+            let possibleCloudPath =  iCloudContainer.appendingPathComponent(fixedPartialPath)
+            if FileManager.default.fileExists(atPath: possibleCloudPath.path) {
+                return possibleCloudPath
+            }
+        }
+        
+        // Fallback to the local documents directory
+        #if os(tvOS)
+        return RelativeRoot.cachesDirectory.appendingPathComponent(fixedPartialPath)
+        #else
+        return RelativeRoot.documentsDirectory.appendingPathComponent(fixedPartialPath)
+        #endif
+    }
+    
+    /// attempts to fix `partialPath`
+    var actualPartialPath: String {
+        if let fixedPartialPath = _actualPartialPath {
+            return fixedPartialPath
+        }
+        var mutatingPartialPath = partialPath
+        
+        // Fix common path issues
+        fixPartialPath(substring: "file:///private/", &mutatingPartialPath)
+        fixPartialPath(substring: "file:///", &mutatingPartialPath)
+        fixPartialPath(substring: "private/", &mutatingPartialPath)
+        
+        // Remove document directory paths
+        fixPartialPath(remove: URL.documentsDirectory, &mutatingPartialPath)
+        fixPartialPath(remove: URL.iCloudDocumentsDirectory, &mutatingPartialPath)
+        fixPartialPath(remove: URL.iCloudContainerDirectory, &mutatingPartialPath)
+        
+        // Fix any remaining issues with the path
+        if mutatingPartialPath.hasPrefix("/") {
+            mutatingPartialPath = String(mutatingPartialPath.dropFirst())
+        }
+        
+        _actualPartialPath = mutatingPartialPath
+        return mutatingPartialPath
+    }
+    
+    /// tries to remove url from `partialPath`
+    /// - Parameter optionalUrl: if nil, then does nothing
+    internal func fixPartialPath(remove optionalUrl: URL?, _ mutatingPartialPath: inout String) {
+        guard let url = optionalUrl
+        else {
+            return
+        }
+        let privatePrefix = "private/"
+        fixPartialPath(remove: url, withPercentEncoded: true, &mutatingPartialPath)
+        fixPartialPath(remove: url, withPercentEncoded: true, &mutatingPartialPath, prefix: privatePrefix)
+        fixPartialPath(remove: url, withPercentEncoded: false, &mutatingPartialPath)
+        fixPartialPath(remove: url, withPercentEncoded: false, &mutatingPartialPath, prefix: privatePrefix)
+    }
+    
+    /// if `partialPath` contains `url.path` with the given percent encoding, then it replaces it with an empty string
+    /// - Parameters:
+    ///   - url: url to find within `partialPath`
+    ///   - percentEncoded: whether or not to add percent encoding
+    ///   - prefix: optional prefix to do a search on
+    internal func fixPartialPath(remove url: URL, withPercentEncoded percentEncoded: Bool, _ mutatingPartialPath: inout String, prefix: String = "") {
+        var suffix = url.path(percentEncoded: percentEncoded)
+        if suffix.hasPrefix("/") {
+            //remove the first character
+            suffix = String(suffix.suffix(from: suffix.index(after: suffix.startIndex)))
+        }
+        //ensure the prefix isn't already contained
+        let actualPrefix = suffix.starts(with: prefix) ? "" : prefix
+        let substring = "\(actualPrefix)\(suffix)"
+        fixPartialPath(substring: substring, &mutatingPartialPath)
+        /*DLOG("""
+        prefix: \(prefix)
+        actualPrefix: \(actualPrefix)
+        suffix: \(suffix)
+        partialPath: \(mutatingPartialPath)
+        """)*/
+        guard prefix.isEmpty || !actualPrefix.isEmpty
+        else {
+            return
+        }
+        //remove the prefix if it exists already, so if suffix starts with "private/" and the prefix passed in is "private/", then we want to remove "private/" from the beginning of "suffix" and attempt to remove the new substring from mutatingPartialPath
+        let newSubstring = String(suffix.suffix(from: suffix.index(suffix.startIndex, offsetBy: prefix.count)))
+        fixPartialPath(substring: newSubstring, &mutatingPartialPath)
+    }
+    
+    /// if `substring` exists in `partialPath`, then it removes it
+    /// - Parameter substring: substring to test/remove
+    internal func fixPartialPath(substring: String, _ mutatingPartialPath: inout String) {
+        //DLOG("attempting to remove \(substring) from partialPath \(mutatingPartialPath)")
+        if mutatingPartialPath.localizedCaseInsensitiveContains(substring) {
+            mutatingPartialPath = mutatingPartialPath.replacingOccurrences(of: substring, with: "", options: .caseInsensitive)
+            //DLOG("removed \(substring) and now partialPath is \(mutatingPartialPath)")
+        }
+    }
 
+    /// Determines if this file requires syncing to iCloud
+    /// Returns true if:
+    /// 1. iCloud sync is enabled in settings
+    /// 2. The file exists locally but not in iCloud
+    var requiresSync: Bool {
+        get {
+            // Only check if iCloud sync is enabled
+            let syncMode = Defaults[.iCloudSyncMode]
+            let iCloudSync = Defaults[.iCloudSync]
+            guard iCloudSync else {
+                return false
+            }
+            
+            // Check if the file exists locally
+            guard let localURL = self.url, FileManager.default.fileExists(atPath: localURL.path) else {
+                return false
+            }
+            
+            // Check if the file exists in iCloud
+            guard let iCloudURL = self.iCloudURL else {
+                // If we can't determine the iCloud URL, assume sync is required
+                return true
+            }
+            
+            // If the file doesn't exist in iCloud, it requires sync
+            return !FileManager.default.fileExists(atPath: iCloudURL.path)
+        }
+    }
+    
+    /// Returns the iCloud URL for this file if available
+    var iCloudURL: URL? {
+        get {
+            guard let iCloudContainerURL = URL.iCloudContainerDirectory else {
+                return nil
+            }
+            
+            // Create the path relative to the iCloud container
+            let relativePath = self.partialPath
+            return iCloudContainerURL.appendingPathComponent(relativePath)
+        }
+    }
     var url: URL? {
         get {
-            if partialPath.contains("iCloud") || partialPath.contains("private") {
-                var pathComponents = (partialPath as NSString).pathComponents
-                pathComponents.removeFirst()
+            let isPartialPathFixed = _actualPartialPath != nil
+            let ogPartialPath = partialPath
+            let fixedPartialPath = actualPartialPath
+            var returnUrl: URL
+            var failedToFixPartialPath = false
+            
+            defer {
+                if !isPartialPathFixed && failedToFixPartialPath {
+                    ELOG("""
+                    invalid partial path: \(fixedPartialPath)
+                    original partialPath: \(ogPartialPath)
+                    url generated: \(returnUrl)
+                    relativeRoot: \(relativeRoot)   
+                    """)
+                }
+            }
+            
+            // Check for problematic paths first
+            if fixedPartialPath.contains("iCloud") || fixedPartialPath.contains("private") {
+                failedToFixPartialPath = true
+                var pathComponents = (fixedPartialPath as NSString).pathComponents
+                if !pathComponents.isEmpty {
+                    pathComponents.removeFirst()
+                }
                 let path = pathComponents.joined(separator: "/")
+                
+                #if os(tvOS)
+                let isDocumentsDir = path.contains("Documents") || path.contains("Caches")
+                let useiCloudDocs = false
+                #else
                 let isDocumentsDir = path.contains("Documents")
-
+                let useiCloudDocs = Defaults[.iCloudSync] && Defaults[.iCloudSyncMode] == .iCloudDrive
+                #endif
+                
+                // If we're using CloudKit, use the local documents directory
                 if isDocumentsDir {
-                    let iCloudBase = URL.iCloudContainerDirectory
-                    let url = (iCloudBase ?? RelativeRoot.documentsDirectory).appendingPathComponent(path)
-                    return url
-                } else {
-                    if let iCloudBase = URL.iCloudDocumentsDirectory {
-                        return iCloudBase.appendingPathComponent(path)
+                    if useiCloudDocs {
+                        let iCloudBase = URL.iCloudContainerDirectory
+                        returnUrl = (iCloudBase ?? RelativeRoot.documentsDirectory).appendingPathComponent(path)
+                        return returnUrl
                     } else {
-                        return RelativeRoot.documentsDirectory.appendingPathComponent(path)
+                        returnUrl = RelativeRoot.documentsDirectory.appendingPathComponent(path)
+                        return returnUrl
+                    }
+                } else {
+                    if useiCloudDocs, let iCloudBase = URL.iCloudDocumentsDirectory {
+                        returnUrl = iCloudBase.appendingPathComponent(path)
+                        return returnUrl
+                    } else {
+                        returnUrl = RelativeRoot.documentsDirectory.appendingPathComponent(path)
+                        return returnUrl
                     }
                 }
             }
-            let root = relativeRoot
-            let resolvedURL = root.appendingPath(partialPath)
-            return resolvedURL
+            
+            // Use the realPath property which handles sync mode differences
+            returnUrl = realPath
+            /*if !isPartialPathFixed {
+                DLOG("""
+                valid partial path: \(fixedPartialPath)
+                url: \(returnUrl)
+                relativeRoot: \(relativeRoot)
+                """)
+            }*/
+            return returnUrl
         }
     }
 
@@ -215,8 +415,7 @@ public extension PVFile {
         guard let url = url else { return true }
 
         let exists = FileManager.default.fileExists(atPath: url.path)
-        let needsDownload = isICloudFile(url) && needsDownload(url)
-        return exists && !needsDownload
+        return exists
     }}
 
     var pathExtension: String {get {

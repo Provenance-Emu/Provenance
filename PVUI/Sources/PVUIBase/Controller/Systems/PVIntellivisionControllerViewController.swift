@@ -26,33 +26,36 @@ final class PVIntellivisionControllerViewController: PVControllerViewController<
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
-            
-            if button.titleLabel?.text == "L" {
+
+            switch button.titleLabel?.text?.lowercased() ?? "" {
+            case "l", "l1":
                 button.buttonTag = .bottomLeftAction
-            } else if (button.titleLabel?.text == "R") {
+            case "r", "r1":
                 button.buttonTag = .bottomRightAction
-            } else if (button.titleLabel?.text == "T") {
+            case "t", "t1":
                 button.buttonTag = .topAction
-            } else if button.titleLabel?.text == "1" {
+            case "1", "button1":
                 button.buttonTag = .button1
-            } else if (button.titleLabel?.text == "2") {
+            case "2", "button2":
                 button.buttonTag = .button2
-            } else if (button.titleLabel?.text == "3") {
+            case "3", "button3":
                 button.buttonTag = .button3
-            } else if button.titleLabel?.text == "4" {
+            case "4", "button4":
                 button.buttonTag = .button4
-            } else if (button.titleLabel?.text == "5") {
+            case "5", "button5":
                 button.buttonTag = .button5
-            } else if (button.titleLabel?.text == "6") {
+            case "6", "button6":
                 button.buttonTag = .button6
-            } else if button.titleLabel?.text == "7" {
+            case "7", "button7":
                 button.buttonTag = .button7
-            } else if (button.titleLabel?.text == "8") {
+            case "8", "button8":
                 button.buttonTag = .button8
-            } else if (button.titleLabel?.text == "9") {
+            case "9", "button9":
                 button.buttonTag = .button9
-            } else if (button.titleLabel?.text == "0") {
+            case "0", "button0":
                 button.buttonTag = .button0
+            default:
+                break
             }
         }
 

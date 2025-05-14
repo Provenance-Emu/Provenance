@@ -28,7 +28,7 @@ final class PVMAMEControllerViewController: PVControllerViewController<PVMAMESys
             guard let button = $0 as? JSButton, let text = button.titleLabel.text else {
                 return
             }
-            if text == "✖" || text == "✕" {
+            if text == "✖" || text.lowercased() == "✕" {
                 button.buttonTag = .cross
             } else if text == "●" || text == "○" {
                 button.buttonTag = .circle
@@ -36,6 +36,18 @@ final class PVMAMEControllerViewController: PVControllerViewController<PVMAMESys
                 button.buttonTag = .square
             } else if text == "▲" || text == "▵" {
                 button.buttonTag = .triangle
+            } else if text.lowercased() == "start" {
+                button.buttonTag = .start
+            } else if text.lowercased() == "select" {
+                button.buttonTag = .select
+            } else if text.lowercased() == "l" || text.lowercased() == "l1" {
+                button.buttonTag = .l1
+            } else if text.lowercased() == "r" || text.lowercased() == "r1" {
+                button.buttonTag = .r1
+            } else if text.lowercased() == "l2" {
+                button.buttonTag = .l2
+            } else if text.lowercased() == "r2" {
+                button.buttonTag = .r2
             }
         }
 
@@ -46,7 +58,7 @@ final class PVMAMEControllerViewController: PVControllerViewController<PVMAMESys
         selectButton?.buttonTag = .select
         startButton?.buttonTag = .start
     }
-    
+
     override func prelayoutSettings() {
         //alwaysRightAlign = true
         alwaysJoypadOverDpad = false

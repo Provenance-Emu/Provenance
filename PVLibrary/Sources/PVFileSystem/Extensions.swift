@@ -32,6 +32,9 @@ public enum Extensions: String, CaseIterable {
     case iso = "iso"
     case chd = "chd"
     
+    // Skins
+    case deltaSkin = "deltaskin"
+    
     // Other
     case mcr = "mcr"
     case plist = "plist"
@@ -43,12 +46,14 @@ public enum Extensions: String, CaseIterable {
     private static let _discImageExtensions: Set<Extensions> = [.ccd, .img, .iso, .chd]
     private static let _playlistExtensions: Set<Extensions> = [.m3u, .cue]
     private static let _specialExtensions: Set<Extensions> = [.svs, .mcr, .plist, .ccd, .sub, .bin]
-    
+    private static let _skinExtensions: Set<Extensions> = [.deltaSkin]
+
     public static let archiveExtensions: Set<String> = Set(_archiveExtensions.map { $0.rawValue })
     public static let artworkExtensions: Set<String> = Set(_artworkExtensions.map { $0.rawValue })
     public static let discImageExtensions: Set<String> = Set(_discImageExtensions.map { $0.rawValue })
     public static let playlistExtensions: Set<String> = Set(_playlistExtensions.map { $0.rawValue })
     public static let specialExtensions: Set<String> = Set(_specialExtensions.map { $0.rawValue })
-    
-    public static let allKnownExtensions: Set<String> = archiveExtensions.union(artworkExtensions).union(discImageExtensions).union(playlistExtensions).union(specialExtensions)
+    public static let skinExtensions: Set<String> = Set(_skinExtensions.map { $0.rawValue })
+
+    public static let allKnownExtensions: Set<String> = archiveExtensions.union(artworkExtensions).union(discImageExtensions).union(playlistExtensions).union(specialExtensions).union(skinExtensions)
 }

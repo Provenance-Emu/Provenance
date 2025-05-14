@@ -12,6 +12,7 @@ import RealmSwift
 import PVLibrary
 import PVThemes
 import Defaults
+import PVUIBase
 
 @available(iOS 14, tvOS 14, *)
 struct GamesDisplayOptionsView: SwiftUI.View {
@@ -19,12 +20,19 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     @Default(.gameLibraryScale) private var gameLibraryScale
     @Default(.showGameTitles) private var showGameTitles
     @Default(.showRecentGames) private var showRecentGames
+    @Default(.showSearchbar) private var showSearchbar
     @Default(.showRecentSaveStates) private var showRecentSaveStates
     @Default(.showFavorites) private var showFavorites
     @Default(.showGameBadges) private var showGameBadges
 
-    var sortAscending = true
-    var isGrid = true
+    @State var sortAscending = true
+    @State var isGrid = true
+
+    // Binding to control the import status view visibility
+    @Binding var showImportStatusView: Bool
+    
+    // Optional action for the import status button
+    var importStatusAction: (() -> Void)?
 
     var toggleFilterAction: () -> Void
     var toggleSortAction: () -> Void
@@ -48,6 +56,12 @@ struct GamesDisplayOptionsView: SwiftUI.View {
             Menu {
                 Toggle(isOn: $showGameTitles) {
                     Label("Show Game Titles", systemImage: "textformat")
+                }
+                .onChange(of: showGameTitles) { _ in
+                    Haptics.impact(style: .light)
+                }
+                Toggle(isOn: $showSearchbar) {
+                    Label("Show Search Bar", systemImage: "magnifyingglass")
                 }
                 .onChange(of: showGameTitles) { _ in
                     Haptics.impact(style: .light)
@@ -91,6 +105,11 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                     }
                     .onChange(of: showGameTitles) { _ in
                     }
+                    Toggle(isOn: $showSearchbar) {
+                        Label("Show Search Bar", systemImage: "magnifyingglass")
+                    }
+                    .onChange(of: showRecentGames) { _ in
+                    }
                     Toggle(isOn: $showRecentGames) {
                         Label("Show Recent Games", systemImage: "clock")
                     }
@@ -123,20 +142,23 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
             Spacer()
             Group {
+                Divider()
+                    .frame(width: 1, height: 12)
+
                 OptionsIndicator(pointDown: sortAscending, action: {
                     #if !os(tvOS)
                     Haptics.impact(style: .light)
                     #endif
                     toggleSortAction()
                 }) {
-                    Text("Sort")
+                    Image(systemName: sortAscending ? "chevron.down.dotted.2" :"chevron.up.dotted.2")
                         .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                        .font(font)
+                        .font(font.weight(.light))
                 }
                 .contentShape(Rectangle())
 
                 OptionsIndicator(pointDown: true, action: {
-#if !os(tvOS)
+                    #if !os(tvOS)
                     Haptics.impact(style: .light)
                     #endif
                     toggleViewTypeAction()
@@ -148,7 +170,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 .contentShape(Rectangle())
 
                 Button(action: {
-#if !os(tvOS)
+                    #if !os(tvOS)
                     Haptics.impact(style: .light)
                     #endif
                     zoomOut()
@@ -162,7 +184,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 .padding(.leading, padding)
 
                 Button(action: {
-#if !os(tvOS)
+                    #if !os(tvOS)
                     Haptics.impact(style: .light)
                     #endif
                     zoomIn()
@@ -173,6 +195,36 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 }
                 .disabled(!canZoomIn)
                 .padding(.trailing, padding)
+
+                Divider()
+                    .frame(width: 1, height: 12)
+
+                // Log button for viewing detailed logs
+                RetroLogButton(size: 12, color: .retroBlue)
+                    .padding(.trailing, padding)
+
+                // Status control button for viewing system status
+                StatusControlButton()
+                    .padding(.trailing, padding)
+
+                // Import status button - only show if we have an action or binding
+                if importStatusAction != nil || showImportStatusView != nil {
+                    Button(action: {
+                        #if !os(tvOS)
+                        Haptics.impact(style: .light)
+                        #endif
+                        if let action = importStatusAction {
+                            action()
+                        } else {
+                            showImportStatusView = true
+                        }
+                    }) {
+                        Image(systemName: "square.and.arrow.down")
+                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                            .font(font)
+                    }
+                    .padding(.trailing, padding)
+                }
             }
             .allowsHitTesting(true)
         }
@@ -186,7 +238,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
     private func zoomIn() {
         if canZoomIn {
-#if !os(tvOS)
+            #if !os(tvOS)
             Haptics.impact(style: .light)
             #endif
             Defaults[.gameLibraryScale] -= 1
@@ -195,7 +247,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
     private func zoomOut() {
         if canZoomOut {
-#if !os(tvOS)
+            #if !os(tvOS)
             Haptics.impact(style: .light)
             #endif
             Defaults[.gameLibraryScale] += 1

@@ -48,7 +48,7 @@ struct ButtonPosition: Codable {
     }
 }
 
-class MovableButtonView: UIView, Moveable {
+public class MovableButtonView: UIView, Moveable {
     public var isCustomMoved: Bool = false {
         didSet {
             ILOG("isCustomMoved changed to: \(isCustomMoved)")
@@ -68,7 +68,7 @@ class MovableButtonView: UIView, Moveable {
         }
     }
 
-    override var isUserInteractionEnabled: Bool {
+    public override var isUserInteractionEnabled: Bool {
         didSet {
             DLOG("User interaction enabled changed: \(oldValue) -> \(isUserInteractionEnabled)")
             panGestureRecognizer?.isEnabled = isUserInteractionEnabled
@@ -232,7 +232,7 @@ class MovableButtonView: UIView, Moveable {
             }
         } else if let button = self as? JSButton {
             // Use the button's tag and type to create a unique identifier
-            let buttonType = String(describing: type(of: self))
+            let buttonType = String(describing: type(of: button))
             let buttonTag = tag
             return "\(buttonType)_\(buttonTag)"
         }
@@ -255,7 +255,7 @@ class MovableButtonView: UIView, Moveable {
 
             // Cache the successful key
             cachedPositionKey = key
-            ILOG("Generated and cached position key: \(key)")
+//            VLOG("Generated and cached position key: \(key)")
             return key
         }
 
@@ -275,7 +275,7 @@ class MovableButtonView: UIView, Moveable {
         }
     }
 
-    override func didMoveToSuperview() {
+    public override func didMoveToSuperview() {
         super.didMoveToSuperview()
         // Try to generate key when added to view hierarchy
         attemptToGenerateKey()
@@ -283,7 +283,7 @@ class MovableButtonView: UIView, Moveable {
         loadSavedPosition()
     }
 
-    override func didMoveToWindow() {
+    public override func didMoveToWindow() {
         super.didMoveToWindow()
 
         // Only try to load position if we're actually in a window
@@ -347,7 +347,7 @@ class MovableButtonView: UIView, Moveable {
     }
 
     // MARK: - NSCoding
-    override func encode(with coder: NSCoder) {
+    public override func encode(with coder: NSCoder) {
         super.encode(with: coder)
         coder.encode(frame, forKey: "frame")
         coder.encode(currentScale, forKey: "currentScale")
@@ -368,7 +368,7 @@ class MovableButtonView: UIView, Moveable {
 
 // MARK: - UIGestureRecognizerDelegate
 extension MovableButtonView: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         DLOG("Checking simultaneous recognition between \(gestureRecognizer) and \(otherGestureRecognizer)")
         // Only allow pan gesture to work exclusively
         return !(gestureRecognizer is UIPanGestureRecognizer || otherGestureRecognizer is UIPanGestureRecognizer)

@@ -27,7 +27,7 @@
     - 1.11:  added -usleep option for demos; fixed command-line parsing bug
     - 1.12:  added -pause option for demos and testing
     - 1.20:  added runtime MMX-enabling/disabling and new -mmx* options
-    - 1.21:  fixed some small X memory leaks (thanks to François Petitjean)
+    - 1.21:  fixed some small X memory leaks (thanks to FranÃ§ois Petitjean)
     - 1.22:  fixed XFreeGC() crash bug (thanks to Patrick Welche)
     - 1.23:  added -bgpat 0 mode (std white/gray checkerboard, 8x8 squares)
     - 1.30:  added -loop option for -bgpat (ifdef FEATURE_LOOP); fixed bpp =
@@ -44,9 +44,11 @@
     - 2.04:  Added "void(foo);" statements to quiet pedantic compiler warnings
              about unused variables (GR-P)
     - 2.05:  Use nanosleep() instead of usleep(), which is deprecated (GR-P).
+    - 2.06:  check for integer overflow (Glenn R-P)
   ---------------------------------------------------------------------------
 
-      Copyright (c) 1998-2010, 2014-2015 Greg Roelofs.  All rights reserved.
+      Copyright (c) 1998-2010, 2014-2015, 2017 Greg Roelofs.  All rights
+      reserved.
 
       This software is provided "as is," without warranty of any kind,
       express or implied.  In no event shall the author or contributors
@@ -779,6 +781,13 @@ static void rpng2_x_init(void)
     Trace((stderr, "  rowbytes = %d\n", rpng2_info.rowbytes))
     Trace((stderr, "  width  = %ld\n", rpng2_info.width))
     Trace((stderr, "  height = %ld\n", rpng2_info.height))
+
+    /* Guard against integer overflow */
+    if (rpng2_info.height > ((size_t)(-1))/rpng2_info.rowbytes) {
+        fprintf(stderr, PROGNAME ":  image_data buffer would be too large\n");
+        readpng2_cleanup(&rpng2_info);
+        return;
+    }
 
     rpng2_info.image_data = (uch *)malloc(rowbytes * rpng2_info.height);
     if (!rpng2_info.image_data) {

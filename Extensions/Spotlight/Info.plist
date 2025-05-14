@@ -4,6 +4,8 @@
 <dict>
 	<key>ALTDeviceID</key>
 	<string>dummy</string>
+	<key>APP_GROUP_IDENTIFIER</key>
+	<string>$(APP_GROUP_IDENTIFIER)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -35,6 +37,13 @@
 		<key>NSExtensionPrincipalClass</key>
 		<string>$(PRODUCT_MODULE_NAME).IndexRequestHandler</string>
 	</dict>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>org.provenance-emu.game-search</string>
+		<string>org.provenance-emu.game-launch</string>
+	</array>
+	<key>CSSearchableItemsProtocol</key>
+	<string>com.apple.coreservices.spotlight.search</string>
 	<key>NSUbiquitousContainers</key>
 	<dict>
 		<key>iCloud.org.provenance-emu.provenance</key>

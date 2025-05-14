@@ -65,7 +65,7 @@ public protocol UXThemePalette: Codable, Equatable, Hashable, Sendable, CustomSt
     var barButtonItemTint: UIColor? { get }
     ///     Tint
     ///         Optional - Defaults to nil (OS chooses)
-    var defaultTintColor: UIColor? { get }
+    var defaultTintColor: UIColor { get }
 
 #if canImport(UIKit)
     var keyboardAppearance: UIKeyboardAppearance { get }
@@ -178,7 +178,7 @@ public extension UXThemePalette {
 
 public extension UXThemePalette {
     /// Defaults to NIL will use iOS defaults
-    var defaultTintColor: UIColor? { nil }
+    var defaultTintColor: UIColor { .Provenance.blue }
     var switchThumb: UIColor? { nil }
     var uiviewBackground: UIColor? { nil }
 }

@@ -16,18 +16,28 @@ import PVUIBase
 
 public struct SystemPickerView: View {
     let game: PVGame
+    let availableSystems: [PVSystem]
     @Binding var isPresented: Bool
     
-    public init(game: PVGame, isPresented: Binding<Bool>) {
-        _isPresented = isPresented
+    /// Initialize with game and isPresented binding
+    /// - Parameters:
+    ///   - game: The game to move
+    ///   - availableSystems: Available systems to move the game to
+    ///   - isPresented: Binding to control sheet presentation
+    public init(game: PVGame, availableSystems: [PVSystem], isPresented: Binding<Bool>) {
         self.game = game
+        self.availableSystems = availableSystems
+        _isPresented = isPresented
     }
-
-    private var availableSystems: [PVSystem] {
-        PVEmulatorConfiguration.systems.filter {
+    
+    /// Backward compatibility initializer
+    public init(game: PVGame, isPresented: Binding<Bool>) {
+        self.game = game
+        self.availableSystems = PVEmulatorConfiguration.systems.filter {
             $0.identifier != game.systemIdentifier &&
             !(AppState.shared.isAppStore && $0.appStoreDisabled && !Defaults[.unsupportedCores])
         }
+        _isPresented = isPresented
     }
 
     public var body: some View {

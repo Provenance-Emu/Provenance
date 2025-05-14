@@ -66,6 +66,10 @@ public final class TVAlertController: UIViewController, UIAlertControllerProtoco
     public var textFields:[UITextField]?
     public var preferredAction: UIAlertAction?
     public var cancelAction: UIAlertAction?
+    
+    /// Callback that will be invoked when the alert is dismissed
+    /// This helps coordinate state with SwiftUI view modifiers
+    public var didDismiss: (() -> Void)?
 
     public var autoDismiss = true          // a UIAlertController is always autoDismiss
 
@@ -424,6 +428,8 @@ public final class TVAlertController: UIViewController, UIAlertControllerProtoco
 #if !os(iOS)
         cancelAction?.callActionHandler()
 #endif
+        // Call the dismissal callback to update SwiftUI state
+        didDismiss?()
     }
     public override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)

@@ -27,18 +27,21 @@ final class PVGenesisControllerViewController: PVControllerViewController<PVGene
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
-            if title == "A" {
+            switch title.lowercased() {
+            case "a":
                 button.buttonTag = .a
-            } else if title == "B" || title == "1" {
+            case "b", "1":
                 button.buttonTag = .b
-            } else if title == "C" || title == "2" {
+            case "c", "2":
                 button.buttonTag = .c
-            } else if title == "X" {
+            case "x":
                 button.buttonTag = .x
-            } else if title == "Y" {
+            case "y":
                 button.buttonTag = .y
-            } else if title == "Z" {
+            case "z":
                 button.buttonTag = .z
+            default:
+                break
             }
         }
 
