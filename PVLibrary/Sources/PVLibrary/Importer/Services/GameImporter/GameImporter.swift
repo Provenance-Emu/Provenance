@@ -9,22 +9,22 @@
 #if canImport(CoreSpotlight)
 import CoreSpotlight
 #endif
-import Foundation
-import PVSupport
-import PVPrimitives
-import RealmSwift
-import PVCoreLoader
 import AsyncAlgorithms
-import PVPlists
-import PVLookup
-import PVSystems
-import PVMediaCache
+import Combine
+import Foundation
+import Perception
+import PVCoreLoader
 import PVFileSystem
 import PVLogging
+import PVLookup
+import PVMediaCache
+import PVPlists
+import PVPrimitives
 import PVRealm
-import Perception
+import PVSupport
+import PVSystems
+import RealmSwift
 import SwiftUI
-import Combine
 
 #if canImport(UIKit)
 import UIKit
@@ -693,7 +693,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             let currentItem = importQueue[i]
 
             // Skip non-M3U files
-            guard currentItem.url.pathExtension.lowercased() == "m3u" else {
+            guard currentItem.url.pathExtension.lowercased() == Extensions.m3u.rawValue else {
                 i -= 1
                 continue
             }
@@ -2229,33 +2229,6 @@ public final class GameImporter: GameImporting, ObservableObject {
             //import the copied file into our database
             try await gameImporterDatabaseService.importGameIntoDatabase(queueItem: item)
         }
-
-        //if everything went well and no exceptions, we're clear to indicate a successful import
-
-        //        do {
-        //            //try moving it to the correct location - we may clean this up later.
-        //            if let importedFile = try await importSingleFile(at: item.url) {
-        //                importedFiles.append(importedFile)
-        //            }
-        //
-        //            //try importing the moved file[s] into the Roms DB
-        //
-        //        } catch {
-        //            //TODO: what do i do here?
-        //            ELOG("Failed to import file at \(item.url): \(error.localizedDescription)")
-        //        }
-
-        //        await importedFiles.asyncForEach { path in
-        //            do {
-        //                try await self._handlePath(path: path, userChosenSystem: nil)
-        //            } catch {
-        //                //TODO: what do i do here?  I could just let this throw or try and process what happened...
-        //                ELOG("\(error)")
-        //            }
-        //        } // for each
-
-        //external callers - might not be needed in the end
-        //        self.completionHandler?(self.encounteredConflicts)
     }
 
     /// Checks the queue and all child elements in the queue to see if this file exists.  if it does, return true, else return false.
@@ -2324,7 +2297,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                 }
 
                 // Check if this is a CUE file mentioned in an M3U
-                if completedItem.url.pathExtension.lowercased() == "m3u",
+                if completedItem.url.pathExtension.lowercased() == Extensions.m3u.rawValue,
                    let m3uContents = try? cdRomFileHandler.parseM3U(from: completedItem.url),
                    m3uContents.contains(where: { $0.lowercased() == item.url.lastPathComponent.lowercased() }) {
                     ILOG("Found late-arriving CUE file \(item.url.lastPathComponent) that belongs to M3U \(completedItem.url.lastPathComponent)")
@@ -2336,9 +2309,9 @@ public final class GameImporter: GameImporting, ObservableObject {
 
                 // Check if this is a BIN file that might be referenced by a CUE file
                 // This is especially important for BIN files that arrive after their CUE
-                if item.url.pathExtension.lowercased() == "bin" {
+                if item.url.pathExtension.lowercased() == Extensions.bin.rawValue {
                     // Check all resolved CUE files associated with this completed item
-                    for resolvedURL in completedItem.resolvedAssociatedFileURLs where resolvedURL.pathExtension.lowercased() == "cue" {
+                    for resolvedURL in completedItem.resolvedAssociatedFileURLs where resolvedURL.pathExtension.lowercased() == Extensions.cue.rawValue {
                         // Try to parse the CUE file to find referenced BIN files
                         if let binFiles = try? cdRomFileHandler.parseCueSheet(cueFileURL: resolvedURL),
                            binFiles.contains(where: { $0.lowercased() == item.url.lastPathComponent.lowercased() }) {
@@ -2353,7 +2326,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                     // If we didn't find a match in the CUE files, check if the BIN file matches the base name of any CUE
                     let binBaseName = item.url.deletingPathExtension().lastPathComponent.lowercased()
 
-                    for resolvedURL in completedItem.resolvedAssociatedFileURLs where resolvedURL.pathExtension.lowercased() == "cue" {
+                    for resolvedURL in completedItem.resolvedAssociatedFileURLs where resolvedURL.pathExtension.lowercased() == Extensions.cue.rawValue {
                         let cueBaseName = resolvedURL.deletingPathExtension().lastPathComponent.lowercased()
 
                         if binBaseName == cueBaseName {
@@ -2455,7 +2428,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                 let baseName = item.url.deletingPathExtension().lastPathComponent
 
                 // Find related bin files
-                for binItem in items where binItem.url.pathExtension.lowercased() == "bin" {
+                for binItem in items where binItem.url.pathExtension.lowercased() == Extensions.bin.rawValue {
                     let binBaseName = binItem.url.deletingPathExtension().lastPathComponent
                     if binBaseName.contains(baseName) || baseName.contains(binBaseName) {
                         group.append(binItem)
@@ -2467,7 +2440,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                 processedItems.insert(itemPath)
             }
             // If it's an m3u file, find related files
-            else if item.url.pathExtension.lowercased() == "m3u" {
+            else if item.url.pathExtension.lowercased() == Extensions.m3u.rawValue {
                 var group = [item]
 
                 // Try to read the m3u file to find referenced files
