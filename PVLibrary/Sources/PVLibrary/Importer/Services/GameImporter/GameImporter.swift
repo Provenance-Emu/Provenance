@@ -368,9 +368,6 @@ public final class GameImporter: GameImporting, ObservableObject {
         return gameImporterDatabaseService
     }
 
-    /// Path to the conflicts directory
-    public let conflictPath: URL = URL.documentsPath.appendingPathComponent("Conflicts/", isDirectory: true)
-
     /// Returns the path for a given system identifier
     public func path(forSystemID systemID: String) -> URL? {
         return systemToPathMap[systemID]
@@ -452,7 +449,6 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     /// Creates default directories
     private func createDefaultDirectories(fm: FileManager) {
-        createDefaultDirectory(fm, url: conflictPath)
         createDefaultDirectory(fm, url: romsPath)
         createDefaultDirectory(fm, url: romsImportPath)
         createDefaultDirectory(fm, url: biosPath)
@@ -1122,7 +1118,7 @@ public final class GameImporter: GameImporting, ObservableObject {
 
                 // Only process files with relevant extensions
                 if relevantExtensions.contains(fileExtension) {
-                    let fileName = fileURL.lastPathComponent
+                    let fileName = fileURL.lastPathComponent.lowercased()
 
                     // Check if this file might be part of the same multi-disc game
                     // Look for disc indicators in the filename
@@ -1137,7 +1133,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                         ILOG("Found potentially related file for multi-disc game: \(fileName)")
 
                         // If this is a CUE file, try to find its BIN files
-                        if fileExtension == "cue" {
+                        if fileExtension == Extensions.cue.rawValue {
                             if let binFiles = try? cdRomFileHandler.parseCueSheet(cueFileURL: fileURL) {
                                 for binFile in binFiles {
                                     let binURL = directory.appendingPathComponent(binFile)
@@ -1357,12 +1353,12 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     /// Check if a file has a similar name to the base name
     private func isFileSimilar(fileURL: URL, baseNameToMatch: String) -> Bool {
-        let currentFileName = fileURL.lastPathComponent
-        let currentBaseName = currentFileName.deletingPathExtension
+        let currentFileName = fileURL.lastPathComponent.lowercased()
+        let currentBaseName = currentFileName.deletingPathExtension.lowercased()
 
         // Check if either name contains the other (case insensitive)
-        return currentBaseName.lowercased().contains(baseNameToMatch.lowercased()) ||
-               baseNameToMatch.lowercased().contains(currentBaseName.lowercased())
+        return currentBaseName.contains(baseNameToMatch) ||
+               baseNameToMatch.contains(currentBaseName)
     }
 
     /// Add a file to the expected files list of the primary game item
@@ -1416,7 +1412,7 @@ public final class GameImporter: GameImporting, ObservableObject {
     private func processBINFilesByFilename(_ cueItem: ImportQueueItem, primaryGameItem: ImportQueueItem,
                                            importQueue: inout [ImportQueueItem], indicesToRemove: inout [Int]) {
         let cueBaseName = cueItem.url.deletingPathExtension().lastPathComponent
-        let potentialBinName = cueBaseName + ".bin"
+        let potentialBinName = cueBaseName + "." + Extensions.bin.rawValue
 
         // Add to expected files
         addToExpectedFilesList(potentialBinName, primaryGameItem: primaryGameItem)
@@ -1451,7 +1447,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                         ILOG("Found file on disk for M3U: \(potentialPathNearM3U.lastPathComponent)")
 
                         // If this is a CUE file, try to find its BIN files
-                        if potentialPathNearM3U.pathExtension.lowercased() == "cue" {
+                        if potentialPathNearM3U.pathExtension.lowercased() == Extensions.cue.rawValue {
                             if let binFiles = try? cdRomFileHandler.parseCueSheet(cueFileURL: potentialPathNearM3U) {
                                 for binFile in binFiles {
                                     let binURL = m3uDirectory.appendingPathComponent(binFile)
@@ -1482,10 +1478,10 @@ public final class GameImporter: GameImporting, ObservableObject {
             // This helps with multi-disc games where the M3U might not list all files
             for fileURL in directoryContents {
                 let fileExtension = fileURL.pathExtension.lowercased()
-                if (fileExtension == "cue" || fileExtension == "bin") && !primaryGameItem.resolvedAssociatedFileURLs.contains(fileURL) {
+                if (fileExtension == Extensions.cue.rawValue || fileExtension == Extensions.bin.rawValue) && !primaryGameItem.resolvedAssociatedFileURLs.contains(fileURL) {
                     // Check if this file might be part of the same game (similar filename pattern)
-                    let fileName = fileURL.lastPathComponent
-                    let m3uBaseName = m3uURL.deletingPathExtension().lastPathComponent
+                    let fileName = fileURL.lastPathComponent.lowercased()
+                    let m3uBaseName = m3uURL.deletingPathExtension().lastPathComponent.lowercased()
 
                     // If the filename contains the M3U base name or looks like a disc in a series
                     if fileName.contains(m3uBaseName) ||
@@ -1494,7 +1490,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                         ILOG("Found potentially related file for M3U: \(fileName)")
 
                         // If this is a CUE file, try to find its BIN files
-                        if fileExtension == "cue" {
+                        if fileExtension == Extensions.cue.rawValue {
                             if let binFiles = try? cdRomFileHandler.parseCueSheet(cueFileURL: fileURL) {
                                 for binFile in binFiles {
                                     let binURL = m3uDirectory.appendingPathComponent(binFile)
@@ -1518,7 +1514,7 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     /// Process CUE files to find their associated BIN files on disk
     private func processCUEFilesForBINs(primaryGameItem: ImportQueueItem) {
-        for resolvedURL in primaryGameItem.resolvedAssociatedFileURLs where resolvedURL.pathExtension.lowercased() == "cue" {
+        for resolvedURL in primaryGameItem.resolvedAssociatedFileURLs where resolvedURL.pathExtension.lowercased() == Extensions.cue.rawValue {
             // Try to parse the CUE to find BIN files
             if let binFiles = try? cdRomFileHandler.parseCueSheet(cueFileURL: resolvedURL) {
                 for binFile in binFiles {
@@ -1578,7 +1574,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             let currentItem = importQueue[i]
 
             // Skip non-CUE files
-            guard currentItem.url.pathExtension.lowercased() == "cue" else {
+            guard currentItem.url.pathExtension.lowercased() == Extensions.cue.rawValue else {
                 i -= 1
                 continue
             }
@@ -1597,7 +1593,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                 if let dirContents = try? fileManager.contentsOfDirectory(at: cueDir, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) {
                     for fileInDir in dirContents {
                         let ext = fileInDir.pathExtension.lowercased()
-                        if Extensions.discImageExtensions.contains(ext) || ext == "bin" { // Common track types
+                        if Extensions.discImageExtensions.contains(ext) || ext == Extensions.bin.rawValue { // Common track types
                             if !expected.contains(fileInDir.lastPathComponent) { expected.append(fileInDir.lastPathComponent) }
                         }
                     }
@@ -1642,21 +1638,11 @@ public final class GameImporter: GameImporting, ObservableObject {
                 } else {
                     // File not in queue, check on disk relative to CUE or in conflicts
                     let potentialPathNearCue = cueURL.deletingLastPathComponent().appendingPathComponent(referencedFileName)
-                    let potentialPathInConflicts = conflictPath.appendingPathComponent(referencedFileName)
 
                     if cdRomFileHandler.fileExistsAtPath(potentialPathNearCue) {
                         if !cueItem.resolvedAssociatedFileURLs.contains(potentialPathNearCue) {
                             cueItem.resolvedAssociatedFileURLs.append(potentialPathNearCue)
                             VLOG("Resolved \(referencedFileName) near CUE for \(cueURL.lastPathComponent)")
-                        }
-                        if var cueExpected = cueItem.expectedAssociatedFileNames {
-                            cueExpected.removeAll { $0.lowercased() == referencedFileName.lowercased() }
-                            cueItem.expectedAssociatedFileNames = cueExpected.isEmpty ? nil : cueExpected
-                        }
-                    } else if cdRomFileHandler.fileExistsAtPath(potentialPathInConflicts) {
-                        if !cueItem.resolvedAssociatedFileURLs.contains(potentialPathInConflicts) {
-                            cueItem.resolvedAssociatedFileURLs.append(potentialPathInConflicts)
-                            VLOG("Resolved \(referencedFileName) from conflicts for \(cueURL.lastPathComponent)")
                         }
                         if var cueExpected = cueItem.expectedAssociatedFileNames {
                             cueExpected.removeAll { $0.lowercased() == referencedFileName.lowercased() }
@@ -1930,7 +1916,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         ILOG("Handling late-arriving file: \(fileURL.lastPathComponent) for item: \(item.url.lastPathComponent)")
 
         // Check if this is a CUE file and if we need to look for BIN files
-        let isCueFile = fileURL.pathExtension.lowercased() == "cue"
+        let isCueFile = fileURL.pathExtension.lowercased() == Extensions.cue.rawValue
         var binFilesToCheck: [String] = []
 
         if isCueFile {
@@ -2204,8 +2190,6 @@ public final class GameImporter: GameImporting, ObservableObject {
         if item.fileType != .bios && item.targetSystem() == nil {
             //conflict
             item.status = .conflict
-            //start figuring out what to do, because this item is a conflict
-            //            try await gameImporterFileService.moveToConflictsFolder(item, conflictsPath: conflictPath)
             throw GameImporterError.conflictDetected
         }
 
@@ -2423,7 +2407,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             }
 
             // If it's a cue file, find related bin files
-            if item.url.pathExtension.lowercased() == "cue" {
+            if item.url.pathExtension.lowercased() == Extensions.cue.rawValue {
                 var group = [item]
                 let baseName = item.url.deletingPathExtension().lastPathComponent
 
