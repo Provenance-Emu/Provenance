@@ -59,12 +59,14 @@ public struct PaginatedSyncDifferencesView: View {
                             Spacer()
                             
                             Button(action: {
+#if !os(tvOS)
                                 // Copy to clipboard
                                 UIPasteboard.general.string = difference
                                 copiedItem = difference
                                 showCopiedToast = true
+
                                 HapticFeedbackService.shared.playSuccess()
-                                
+                                #endif
                                 // Hide toast after delay
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                                     withAnimation {
@@ -97,7 +99,9 @@ public struct PaginatedSyncDifferencesView: View {
                             withAnimation {
                                 viewModel.previousPage()
                             }
+#if !os(tvOS)
                             HapticFeedbackService.shared.playSelection()
+                            #endif
                         }) {
                             Image(systemName: "chevron.left")
                                 .foregroundColor(viewModel.currentPage > 0 ? .white : .gray)
@@ -107,29 +111,39 @@ public struct PaginatedSyncDifferencesView: View {
                         Spacer()
                         
                         // Items per page selector
-                        Menu {
-                            Button("10 per page") { 
-                                viewModel.itemsPerPage = 10
-                                HapticFeedbackService.shared.playSelection()
+                        if #available(tvOS 17.0, *) {
+                            Menu {
+                                Button("10 per page") { 
+                                    viewModel.itemsPerPage = 10
+#if !os(tvOS)
+                                    HapticFeedbackService.shared.playSelection()
+#endif
+                                }
+                                Button("20 per page") { 
+                                    viewModel.itemsPerPage = 20
+#if !os(tvOS)
+                                    HapticFeedbackService.shared.playSelection()
+#endif
+                                }
+                                Button("50 per page") { 
+                                    viewModel.itemsPerPage = 50
+#if !os(tvOS)
+                                    HapticFeedbackService.shared.playSelection()
+#endif
+                                }
+                            } label: {
+                                HStack {
+                                    Text("\(viewModel.itemsPerPage) per page")
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
+                                    
+                                    Image(systemName: "chevron.down")
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
+                                }
                             }
-                            Button("20 per page") { 
-                                viewModel.itemsPerPage = 20
-                                HapticFeedbackService.shared.playSelection()
-                            }
-                            Button("50 per page") { 
-                                viewModel.itemsPerPage = 50
-                                HapticFeedbackService.shared.playSelection()
-                            }
-                        } label: {
-                            HStack {
-                                Text("\(viewModel.itemsPerPage) per page")
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
-                                
-                                Image(systemName: "chevron.down")
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
-                            }
+                        } else {
+                            // Fallback on earlier versions
                         }
                         
                         Spacer()
@@ -138,7 +152,9 @@ public struct PaginatedSyncDifferencesView: View {
                             withAnimation {
                                 viewModel.nextPage()
                             }
+#if !os(tvOS)
                             HapticFeedbackService.shared.playSelection()
+                            #endif
                         }) {
                             Image(systemName: "chevron.right")
                                 .foregroundColor(viewModel.currentPage < viewModel.totalPages - 1 ? .white : .gray)

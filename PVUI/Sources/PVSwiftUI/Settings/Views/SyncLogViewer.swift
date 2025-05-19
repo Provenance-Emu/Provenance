@@ -481,7 +481,9 @@ public struct SyncLogViewer: View {
                 withAnimation(.spring()) {
                     isFilterExpanded.toggle()
                 }
+#if !os(tvOS)
                 HapticFeedbackService.shared.playSelection()
+#endif
             }) {
                 Label("Filter", systemImage: "line.3.horizontal.decrease.circle\(isFilterExpanded ? ".fill" : "")")
             }
@@ -490,7 +492,9 @@ public struct SyncLogViewer: View {
             // Clear logs
             Button(action: {
                 viewModel.clearLogs()
+#if !os(tvOS)
                 HapticFeedbackService.shared.playWarning()
+#endif
             }) {
                 Label("Clear", systemImage: "trash")
             }
@@ -518,7 +522,9 @@ public struct SyncLogViewer: View {
                                 } else {
                                     viewModel.selectedLogTypes.insert(logType)
                                 }
+#if !os(tvOS)
                                 HapticFeedbackService.shared.playSelection()
+#endif
                             }) {
                                 Text(logType.rawValue.capitalized)
                                     .padding(.horizontal, 12)
@@ -551,7 +557,9 @@ public struct SyncLogViewer: View {
                                 } else {
                                     viewModel.selectedOperations.insert(operation)
                                 }
+#if !os(tvOS)
                                 HapticFeedbackService.shared.playSelection()
+#endif
                             }) {
                                 HStack(spacing: 4) {
                                     Image(systemName: operation.icon)
@@ -581,7 +589,9 @@ public struct SyncLogViewer: View {
                         withAnimation {
                             showDateRangePicker.toggle()
                         }
+#if !os(tvOS)
                         HapticFeedbackService.shared.playSelection()
+#endif
                     }) {
                         HStack {
                             Image(systemName: "calendar")
@@ -602,7 +612,9 @@ public struct SyncLogViewer: View {
                         endDate = Date()
                         viewModel.customStartDate = startDate
                         viewModel.customEndDate = endDate
+#if !os(tvOS)
                         HapticFeedbackService.shared.playSelection()
+#endif
                     }) {
                         Text("Reset")
                             .padding(.horizontal, 12)
@@ -612,7 +624,7 @@ public struct SyncLogViewer: View {
                             .foregroundColor(.white)
                     }
                 }
-                
+#if !os(tvOS)
                 if showDateRangePicker {
                     VStack {
                         DatePicker("Start Date", selection: $startDate, displayedComponents: [.date])
@@ -632,6 +644,7 @@ public struct SyncLogViewer: View {
                     .cornerRadius(8)
                     .transition(.move(edge: .top).combined(with: .opacity))
                 }
+#endif
             }
         }
         .padding()
@@ -727,7 +740,9 @@ public struct SyncLogViewer: View {
                 withAnimation {
                     currentPage = max(0, currentPage - 1)
                 }
+#if !os(tvOS)
                 HapticFeedbackService.shared.playSelection()
+#endif
             }) {
                 Image(systemName: "chevron.left")
                     .foregroundColor(currentPage > 0 ? .white : .gray)
@@ -744,21 +759,25 @@ public struct SyncLogViewer: View {
             Spacer()
             
             // Items per page selector
-            Menu {
-                Button("10 per page") { itemsPerPage = 10 }
-                Button("20 per page") { itemsPerPage = 20 }
-                Button("50 per page") { itemsPerPage = 50 }
-                Button("100 per page") { itemsPerPage = 100 }
-            } label: {
-                HStack {
-                    Text("\(itemsPerPage) per page")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    
-                    Image(systemName: "chevron.down")
-                        .font(.caption)
-                        .foregroundColor(.gray)
+            if #available(tvOS 17.0, *) {
+                Menu {
+                    Button("10 per page") { itemsPerPage = 10 }
+                    Button("20 per page") { itemsPerPage = 20 }
+                    Button("50 per page") { itemsPerPage = 50 }
+                    Button("100 per page") { itemsPerPage = 100 }
+                } label: {
+                    HStack {
+                        Text("\(itemsPerPage) per page")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                        
+                        Image(systemName: "chevron.down")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
                 }
+            } else {
+                // Fallback on earlier versions
             }
             
             Spacer()
@@ -769,7 +788,9 @@ public struct SyncLogViewer: View {
                     let maxPage = max(0, (viewModel.filteredEntries.count - 1) / itemsPerPage)
                     currentPage = min(maxPage, currentPage + 1)
                 }
+#if !os(tvOS)
                 HapticFeedbackService.shared.playSelection()
+#endif
             }) {
                 Image(systemName: "chevron.right")
                     .foregroundColor(currentPage < (viewModel.filteredEntries.count - 1) / itemsPerPage ? .white : .gray)

@@ -863,7 +863,9 @@ public struct CloudSyncSettingsView: View {
                         withAnimation {
                             viewModel.previousPage()
                         }
+                        #if !os(tvOS)
                         HapticFeedbackService.shared.playSelection()
+#endif
                     }) {
                         Image(systemName: "chevron.left")
                             .foregroundColor(viewModel.currentPage > 0 ? .white : .gray)
@@ -873,38 +875,48 @@ public struct CloudSyncSettingsView: View {
                     Spacer()
                     
                     // Items per page selector
-                    Menu {
-                        Button("10 per page") {
-                            viewModel.itemsPerPage = 10
-                            HapticFeedbackService.shared.playSelection()
-                        }
-                        Button("20 per page") {
-                            viewModel.itemsPerPage = 20
-                            HapticFeedbackService.shared.playSelection()
-                        }
-                        Button("50 per page") {
-                            viewModel.itemsPerPage = 50
-                            HapticFeedbackService.shared.playSelection()
-                        }
-                    } label: {
-                        HStack {
-                            Text("\(viewModel.itemsPerPage) per page")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                            Text("Directory")
-                                .foregroundColor(.white)
+                    if #available(tvOS 17.0, *) {
+                        Menu {
+                            Button("10 per page") {
+                                viewModel.itemsPerPage = 10
+#if !os(tvOS)
+                                HapticFeedbackService.shared.playSelection()
+#endif
+                            }
+                            Button("20 per page") {
+                                viewModel.itemsPerPage = 20
+#if !os(tvOS)
+                                HapticFeedbackService.shared.playSelection()
+#endif
+                            }
+                            Button("50 per page") {
+                                viewModel.itemsPerPage = 50
+#if !os(tvOS)
+                                HapticFeedbackService.shared.playSelection()
+#endif
+                            }
+                        } label: {
+                            HStack {
+                                Text("\(viewModel.itemsPerPage) per page")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                                Text("Directory")
+                                    .foregroundColor(.white)
+                                
+                                Spacer()
+                                
+                                Text("Local: 0")
+                                    .foregroundColor(Color.retroBlue)
+                                
+                                Text("iCloud: 0")
+                                    .foregroundColor(.retroPink)
+                            }
                             
-                            Spacer()
-                            
-                            Text("Local: 0")
-                                .foregroundColor(Color.retroBlue)
-                            
-                            Text("iCloud: 0")
-                                .foregroundColor(.retroPink)
+                            Divider()
+                                .background(Color.retroPurple.opacity(0.3))
                         }
-                        
-                        Divider()
-                            .background(Color.retroPurple.opacity(0.3))
+                    } else {
+                        // Fallback on earlier versions
                     }
                     
                     // Total counts

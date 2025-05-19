@@ -651,7 +651,9 @@ final class CloudKitOnDemandViewModel: ObservableObject {
                     .disabled(viewModel.isLoading)
                 }
             }
+            #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             // Initial data load
             .task(id: viewModel.selectedScope) { // Re-run task when scope changes
                 await viewModel.refreshMetadata()
@@ -713,7 +715,9 @@ final class CloudKitOnDemandViewModel: ObservableObject {
                     } label: {
                         Image(systemName: "icloud.and.arrow.down")
                     }
+                    #if !os(tvOS)
                     .buttonStyle(.borderless)
+                    #endif
                     .disabled(viewModel.activeOperations[record.recordID.recordName] == true)
                 } else {
                     // Optionally show a different icon or nothing for non-downloadable types

@@ -28,7 +28,9 @@ public struct LazyDiagnosticsView: View {
                 withAnimation {
                     isExpanded.toggle()
                 }
+#if !os(tvOS)
                 HapticFeedbackService.shared.playSelection()
+                #endif
             }) {
                 HStack {
                     Text("Diagnostics")
@@ -73,8 +75,10 @@ public struct LazyDiagnosticsView: View {
                         \(viewModel.refreshInfo)
                         """
                         
+#if !os(tvOS)
                         UIPasteboard.general.string = allDiagnostics
                         HapticFeedbackService.shared.playSuccess()
+                        #endif
                     }) {
                         Label("Copy All", systemImage: "doc.on.doc")
                     }
@@ -84,7 +88,9 @@ public struct LazyDiagnosticsView: View {
                     
                     Button(action: {
                         viewModel.loadDiagnosticInfo()
+#if !os(tvOS)
                         HapticFeedbackService.shared.playSelection()
+                        #endif
                     }) {
                         Label("Refresh", systemImage: "arrow.clockwise")
                     }

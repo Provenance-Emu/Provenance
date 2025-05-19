@@ -1463,15 +1463,6 @@ public final class GameImporter: GameImporting, ObservableObject {
                         }
                     }
                 }
-
-                // Check in conflicts folder
-                let potentialPathInConflicts = conflictPath.appendingPathComponent(fileName)
-                if cdRomFileHandler.fileExistsAtPath(potentialPathInConflicts) {
-                    if !primaryGameItem.resolvedAssociatedFileURLs.contains(potentialPathInConflicts) {
-                        primaryGameItem.resolvedAssociatedFileURLs.append(potentialPathInConflicts)
-                        ILOG("Found file in conflicts for M3U: \(potentialPathInConflicts.lastPathComponent)")
-                    }
-                }
             }
 
             // Then look for any CUE or BIN files in the same directory that might be related
@@ -1636,7 +1627,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                         cueItem.expectedAssociatedFileNames = cueExpected.isEmpty ? nil : cueExpected
                     }
                 } else {
-                    // File not in queue, check on disk relative to CUE or in conflicts
+                    // File not in queue, check on disk relative to CUE.
                     let potentialPathNearCue = cueURL.deletingLastPathComponent().appendingPathComponent(referencedFileName)
 
                     if cdRomFileHandler.fileExistsAtPath(potentialPathNearCue) {
