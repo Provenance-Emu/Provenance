@@ -134,6 +134,7 @@ int argc =  1;
 - (void)setupEmulation {
     self.alwaysUseMetal = true;
     self.skipLayout = true;
+    self.skipEmulationLoop = true;
     [self parseOptions];
     settings_t *settings = config_get_ptr();
     if (!settings) {

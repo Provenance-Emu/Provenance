@@ -7,9 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B300D3982DA096CA003A9ED4 /* PVVirtualJaguar in Frameworks */ = {isa = PBXBuildFile; productRef = B300D3972DA096CA003A9ED4 /* PVVirtualJaguar */; };
+		B300D6392DA0A95E003A9ED4 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B300D6382DA0A95E003A9ED4 /* PVSettings */; };
 		B36DFC3E2CF1975B00BAE9BE /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B36DFC3D2CF1975B00BAE9BE /* PVUI */; };
 		B37444812D444B09002306B0 /* GBC-Sunrise.deltaskin in Resources */ = {isa = PBXBuildFile; fileRef = B374447F2D444B09002306B0 /* GBC-Sunrise.deltaskin */; };
 		B37444842D444B81002306B0 /* GBA-SharpX1.deltaskin in Resources */ = {isa = PBXBuildFile; fileRef = B37444822D444B81002306B0 /* GBA-SharpX1.deltaskin */; };
+		B3A8C35F2D9B6187005A032F /* PVCrabEmu in Frameworks */ = {isa = PBXBuildFile; productRef = B3A8C35E2D9B6187005A032F /* PVCrabEmu */; };
+		B3A8C3C12D9B6385005A032F /* PVCoremGBA in Frameworks */ = {isa = PBXBuildFile; productRef = B3A8C3C02D9B6385005A032F /* PVCoremGBA */; };
+		B3C427D72D9392F000E367CF /* PVCoreLoader in Frameworks */ = {isa = PBXBuildFile; productRef = B3C427D62D9392F000E367CF /* PVCoreLoader */; };
+		B3C42D562D9398A200E367CF /* PVCoreMednafen in Frameworks */ = {isa = PBXBuildFile; productRef = B3C42D552D9398A200E367CF /* PVCoreMednafen */; };
+		B3C42D592D93999900E367CF /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B3C42D582D93999900E367CF /* PVSupport */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,6 +37,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B31531BB2D99C94E0022158D /* TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TODO.md; sourceTree = "<group>"; };
 		B36DFC0F2CF196D700BAE9BE /* UITesting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UITesting.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36DFC1F2CF196D800BAE9BE /* UITestingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UITestingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36DFC292CF196D800BAE9BE /* UITestingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UITestingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -86,6 +94,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3A8C35F2D9B6187005A032F /* PVCrabEmu in Frameworks */,
+				B3C42D592D93999900E367CF /* PVSupport in Frameworks */,
+				B3A8C3C12D9B6385005A032F /* PVCoremGBA in Frameworks */,
+				B3C427D72D9392F000E367CF /* PVCoreLoader in Frameworks */,
+				B300D6392DA0A95E003A9ED4 /* PVSettings in Frameworks */,
+				B3C42D562D9398A200E367CF /* PVCoreMednafen in Frameworks */,
+				B300D3982DA096CA003A9ED4 /* PVVirtualJaguar in Frameworks */,
 				B36DFC3E2CF1975B00BAE9BE /* PVUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -110,11 +125,13 @@
 		B36DFC062CF196D700BAE9BE = {
 			isa = PBXGroup;
 			children = (
+				B31531BB2D99C94E0022158D /* TODO.md */,
 				B37444822D444B81002306B0 /* GBA-SharpX1.deltaskin */,
 				B374447F2D444B09002306B0 /* GBC-Sunrise.deltaskin */,
 				B36DFC112CF196D700BAE9BE /* UITesting */,
 				B36DFC222CF196D800BAE9BE /* UITestingTests */,
 				B36DFC2C2CF196D800BAE9BE /* UITestingUITests */,
+				B3C42D542D9398A200E367CF /* Frameworks */,
 				B36DFC102CF196D700BAE9BE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -127,6 +144,13 @@
 				B36DFC292CF196D800BAE9BE /* UITestingUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B3C42D542D9398A200E367CF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -150,6 +174,13 @@
 			name = UITesting;
 			packageProductDependencies = (
 				B36DFC3D2CF1975B00BAE9BE /* PVUI */,
+				B3C427D62D9392F000E367CF /* PVCoreLoader */,
+				B3C42D552D9398A200E367CF /* PVCoreMednafen */,
+				B3C42D582D93999900E367CF /* PVSupport */,
+				B3A8C35E2D9B6187005A032F /* PVCrabEmu */,
+				B3A8C3C02D9B6385005A032F /* PVCoremGBA */,
+				B300D3972DA096CA003A9ED4 /* PVVirtualJaguar */,
+				B300D6382DA0A95E003A9ED4 /* PVSettings */,
 			);
 			productName = UITesting;
 			productReference = B36DFC0F2CF196D700BAE9BE /* UITesting.app */;
@@ -235,6 +266,14 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				B36DFC3C2CF1975B00BAE9BE /* XCLocalSwiftPackageReference "../PVUI" */,
+				B3A213472D938DD70097C7E1 /* XCLocalSwiftPackageReference "../Cores/Mednafen" */,
+				B3C427D52D9392F000E367CF /* XCLocalSwiftPackageReference "../PVCoreLoader" */,
+				B3C42D572D93999900E367CF /* XCLocalSwiftPackageReference "../PVSupport" */,
+				B3A8C35D2D9B6110005A032F /* XCLocalSwiftPackageReference "../Cores/CrabEMU" */,
+				B3A8C3BF2D9B6385005A032F /* XCLocalSwiftPackageReference "../Cores/mGBA" */,
+				B300D3932DA0966A003A9ED4 /* XCLocalSwiftPackageReference "../Cores/Stella" */,
+				B300D3962DA096CA003A9ED4 /* XCLocalSwiftPackageReference "../Cores/VirtualJaguar" */,
+				B300D6372DA0A95E003A9ED4 /* XCLocalSwiftPackageReference "../PVSettings" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B36DFC102CF196D700BAE9BE /* Products */;
@@ -434,7 +473,7 @@
 		B36DFC342CF196D800BAE9BE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "\"AppIcon-8bit1 AppIcon-8bit2 AppIcon-8bit3 AppIcon-8bit4 AppIcon-8bit5 AppIcon-Blue-Negative AppIcon-Blue AppIcon-Cyan AppIcon-Gem AppIcon-Gold AppIcon-Paint1 AppIcon-Paint2 AppIcon-Purple AppIcon-Seafoam AppIcon-Yellow\"";
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIcon-8bit1 AppIcon-8bit2 AppIcon-8bit3 AppIcon-8bit4 AppIcon-8bit5 AppIcon-Seafoam AppIcon-Purple AppIcon-Paint2 AppIcon-Paint1 AppIcon-Gold AppIcon-Gem AppIcon-Cyan AppIcon-Blue-Negative AppIcon-Blue AppIcon-Yellow";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
@@ -443,8 +482,10 @@
 				DEVELOPMENT_ASSET_PATHS = "\"UITesting/Preview Content\"";
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = UITesting/Info.plist;
+				INFOPLIST_KEY_NSDocumentsFolderUsageDescription = "To store game files";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -468,7 +509,7 @@
 		B36DFC352CF196D800BAE9BE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "\"AppIcon-8bit1 AppIcon-8bit2 AppIcon-8bit3 AppIcon-8bit4 AppIcon-8bit5 AppIcon-Blue-Negative AppIcon-Blue AppIcon-Cyan AppIcon-Gem AppIcon-Gold AppIcon-Paint1 AppIcon-Paint2 AppIcon-Purple AppIcon-Seafoam AppIcon-Yellow\"";
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIcon-8bit1 AppIcon-8bit2 AppIcon-8bit3 AppIcon-8bit4 AppIcon-8bit5 AppIcon-Seafoam AppIcon-Purple AppIcon-Paint2 AppIcon-Paint1 AppIcon-Gold AppIcon-Gem AppIcon-Cyan AppIcon-Blue-Negative AppIcon-Blue AppIcon-Yellow";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
@@ -477,8 +518,10 @@
 				DEVELOPMENT_ASSET_PATHS = "\"UITesting/Preview Content\"";
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = UITesting/Info.plist;
+				INFOPLIST_KEY_NSDocumentsFolderUsageDescription = "To store game files";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -613,16 +656,78 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		B300D3932DA0966A003A9ED4 /* XCLocalSwiftPackageReference "../Cores/Stella" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Cores/Stella;
+		};
+		B300D3962DA096CA003A9ED4 /* XCLocalSwiftPackageReference "../Cores/VirtualJaguar" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Cores/VirtualJaguar;
+		};
+		B300D6372DA0A95E003A9ED4 /* XCLocalSwiftPackageReference "../PVSettings" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../PVSettings;
+		};
 		B36DFC3C2CF1975B00BAE9BE /* XCLocalSwiftPackageReference "../PVUI" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../PVUI;
 		};
+		B3A213472D938DD70097C7E1 /* XCLocalSwiftPackageReference "../Cores/Mednafen" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Cores/Mednafen;
+		};
+		B3A8C35D2D9B6110005A032F /* XCLocalSwiftPackageReference "../Cores/CrabEMU" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Cores/CrabEMU;
+		};
+		B3A8C3BF2D9B6385005A032F /* XCLocalSwiftPackageReference "../Cores/mGBA" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Cores/mGBA;
+		};
+		B3C427D52D9392F000E367CF /* XCLocalSwiftPackageReference "../PVCoreLoader" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../PVCoreLoader;
+		};
+		B3C42D572D93999900E367CF /* XCLocalSwiftPackageReference "../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../PVSupport;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		B300D3972DA096CA003A9ED4 /* PVVirtualJaguar */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVVirtualJaguar;
+		};
+		B300D6382DA0A95E003A9ED4 /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSettings;
+		};
 		B36DFC3D2CF1975B00BAE9BE /* PVUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVUI;
+		};
+		B3A8C35E2D9B6187005A032F /* PVCrabEmu */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3A8C35D2D9B6110005A032F /* XCLocalSwiftPackageReference "../Cores/CrabEMU" */;
+			productName = PVCrabEmu;
+		};
+		B3A8C3C02D9B6385005A032F /* PVCoremGBA */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoremGBA;
+		};
+		B3C427D62D9392F000E367CF /* PVCoreLoader */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreLoader;
+		};
+		B3C42D552D9398A200E367CF /* PVCoreMednafen */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3A213472D938DD70097C7E1 /* XCLocalSwiftPackageReference "../Cores/Mednafen" */;
+			productName = PVCoreMednafen;
+		};
+		B3C42D582D93999900E367CF /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

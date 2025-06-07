@@ -185,15 +185,15 @@ public:
         CMDeviceMotion *motion = [motionManager deviceMotion];
         
         acceleration = {
-            (motion.gravity.x + motion.userAcceleration.x),
-            (motion.gravity.y + motion.userAcceleration.y),
-            (motion.gravity.z + motion.userAcceleration.z)
+            (float)(motion.gravity.x + motion.userAcceleration.x),
+            (float)(motion.gravity.y + motion.userAcceleration.y),
+            (float)(motion.gravity.z + motion.userAcceleration.z)
         };
         
         rotation = {
-            motion.rotationRate.x,
-            motion.rotationRate.y,
-            motion.rotationRate.z
+            (float)motion.rotationRate.x,
+            (float)motion.rotationRate.y,
+            (float)motion.rotationRate.z
         };
     }
     

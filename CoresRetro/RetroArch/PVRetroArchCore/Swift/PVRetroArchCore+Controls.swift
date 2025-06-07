@@ -45,7 +45,10 @@ extension CocoaView: HelperBarActionDelegate {
 	func mouseButtonTapped() {
 #if !os(tvOS)
 		mouseHandler.enabled.toggle()
-		//runloop_msg_queue_push( mouseHandler.enabled ? "Touch Mouse Enabled" : "Touch Mouse Disabled", 1, 100, true, "", 0, 0)
+        let message = mouseHandler.enabled ? "Touch Mouse Enabled" : "Touch Mouse Disabled"
+        runloop_msg_queue_push(message.cString(using: .utf8)!,
+                               message.lengthOfBytes(using: .utf8),
+                               1, 100, true, nil, MESSAGE_QUEUE_ICON_DEFAULT, MESSAGE_QUEUE_CATEGORY_SUCCESS)
 #endif
 	}
 

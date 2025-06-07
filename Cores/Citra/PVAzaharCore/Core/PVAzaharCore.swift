@@ -19,6 +19,8 @@ import GameController
 @objcMembers
 public final class PVAzaharCore: PVEmulatorCore {
 
+    public override var supportsSkins: Bool { false }
+
     let _bridge: PVAzaharCoreBridge = .init()
     
     // MARK: Audio

@@ -27,12 +27,15 @@ final class PV3DOControllerViewController: PVControllerViewController<PV3DOSyste
             guard let button = $0 as? JSButton else {
                 return
             }
-            if button.titleLabel?.text == "A" {
+            switch button.titleLabel?.text?.lowercased() {
+            case "a", "1":
                 button.buttonTag = .a
-            } else if (button.titleLabel?.text == "B") || (button.titleLabel?.text == "1") {
+            case "b", "2":
                 button.buttonTag = .b
-            } else if (button.titleLabel?.text == "C") || (button.titleLabel?.text == "2") {
+            case "c", "3":
                 button.buttonTag = .c
+            default:
+                break
             }
         }
 

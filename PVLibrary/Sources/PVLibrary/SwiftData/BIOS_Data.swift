@@ -40,7 +40,7 @@ public class BIOS_Data {
     
     init(expectedFilename: String, expectedMD5: String, expectedSize: Int, optional: Bool, descriptionText: String, regions: RegionOptions, version: String, file: File_Data? = nil, system: System_Data!) {
         self.expectedFilename = expectedFilename
-        self.expectedMD5 = expectedMD5
+        self.expectedMD5 = expectedMD5.uppercased()
         self.expectedSize = expectedSize
         self.optional = optional
         self.descriptionText = descriptionText

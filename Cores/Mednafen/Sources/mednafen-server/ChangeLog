@@ -1,0 +1,157 @@
+0.5.2:
+	Added support for new netplay media set internal command added in Mednafen 0.9.37.
+
+0.5.1:
+	Compare each controller's type(for Mednafen 0.9.34+) and data size between the client and the game session, and
+	issue an error message and disconnect the client if they differ.
+
+0.5.0:
+	Use separate sockets for accept()'ing IPv4 and IPv6 connections, and disable IPv4 to IPv6 mapping on the created IPv6 socket(resolves
+	issues on the *BSDs).
+
+	Don't bother checking for the new IPv6-supporting BSD/POSIX sockets API anymore, and use it unconditionally, since all major modern OSes
+	should support it now, and machines without the newer API support are in the decline.
+
+	Treat the number of local players requested from the connecting client as advisory only, and don't error out and disconnect the client
+	if it's "invalid" given the current game configuration.
+
+	Changed connection timeout code to use a monotonic(hopefully) clock source with sub-second precision for connection timeouts, instead of
+	time() as before.
+
+	Implemented software send queue corking, to (potentially) reduce the number of packets sent when sending out commands and command data.
+
+	Removed variable-length-array usage.
+
+	Replaced usage of "m" specifiers in printf() format strings with more portable alternatives.
+
+	Fixed a bug that was causing non-7-bit-ASCII characters to be stripped from nicknames.
+
+	Generate a nickname with pseudorandom characters if the nickname specified by the client is already in use,
+	or contains no (valid) characters, rather than trying to generate a nickname based on what controllers the client controls.
+
+	Rather than using MSG_NOSIGNAL, which has portability issues, just set SIGPIPE handling to SIG_IGN.
+
+	Treat a send() or recv() that fails with errno "EINTR" as not being a fatal error for the client.
+
+	Revamped error handling to be less intrusive and insane.
+
+	Fixed a problem that could cause half-disconnected clients to linger around(due to not treating a recv() return value of 0 properly).
+
+	Added a sanity check to the FPS value provided by the client.
+
+	Be more stringent about which client->server commands are propagated to all players in a game.
+
+	Clients with multiple local players no longer take up multiple client slots in a game.
+
+	Removed support for "netmerge" functionality, since the newly-added commands offer similar functionality.  (Though this may be
+	considered a minor feature loss if older clients that do not support the new commands connect)
+
+	Added player /swap, /take, /dupe, and /drop command functionality.
+
+        Fixed memory leak bug on realloc() failure.
+
+0.4.2:
+	Fixed IPv4-fallthrough on IPv6 socket creation failure to not be hardcoded to fail(I must have been reaaaaally sleepy when I wrote that
+	code).
+
+	Fixed a race-condition style bug that was causing a null pointer dereference to occur if a player joined while another player
+	left in the same time window.
+
+	Prevent the rare possibility of text messages and commands from a client being sent after
+	the notification that the client left.
+
+	Added "NOP" client->server command.
+
+	Added idle timeout functionality.
+
+	Updated netplay protocol to increase the maximum number of allowed controllers per game from 8 to 16.
+
+	Call mlockall(MCL_CURRENT) before the primary runtime loop is entered(and only print a warning if it fails, which is likely to occur).
+
+	Print out server configuration on startup.
+
+	Added setting "maxcmdpayload" to the configuration file.
+
+	Increased the default value for MaxCommandPayloadSize from 4MiB to 5MiB.
+
+	MaxSendQSize and MinSendQSize constants are now controllable via configuration file.
+
+	Increased the default value for MaxSendQSize from 6MiB to 8MiB.
+
+        IPv6 is now enabled on platforms where the API is present.
+
+        Fixed a few small memory leaks(and removed some dynamic allocations).
+
+        Clients that specify they have more than one local controller(IE they control 2, or 3 emulated inputs instead of just 1) will no longer take
+        up extraneous lurker slots when connecting.
+
+	Bumped version number printed on startup(it was forgotten in 0.4.1).
+
+0.4.1:
+	Fixed a bug that was causing wonkiness(including memory corruption) if more than 8 clients(who would be lurkers, of course :b) connected to a single game
+	instance.
+
+	Fixed a crash if >= 2 players disconnected from the same game at almost the exact same time(within the same
+	~16ms window, typically).
+
+	Fixed a nasty design flaw in the software send queue code that effectively made it useless and broken(which could break netplay for connected clients
+	when a largeish save state is transferred, and/or on operating systems with very small send queues in their TCP/IP stacks).
+
+	IPv6 is now available by uncommenting "#define MDFNSERVER_IPV6" in mednafen-server.cpp.  In the future, the IPv6 sockets API will be used automatically
+	if it's available and networking stack/kernel support for IPv6 is detected.  
+	Of course, Mednafen itself doesn't support IPv6 through SDL_net or otherwise yet. ;)
+
+0.4.0-2010-02-01:
+	Added -Wall to CPPFLAGS, and fixed various code issues causing warnings.
+
+        Fixed the detection code for an incomplete configuration file.
+
+	Fixed a few argument size issues for informational printf() statements on 64-bit platforms.
+
+	Moved Time64() to time64.c, and added code to use clock_gettime() with a monotonic clock source
+	if available, instead of gettimeofday().
+
+	autotoolized the build process.
+
+	Changed the default maximum number of clients in standard.conf to 50.
+
+	Reduced the maximum nickname length in bytes to 150, from 300.
+
+	Fixed a nasty old bug that would cause the server to use an uninitialized game entry
+	if the connecting client's game ID(MD5 hash) were all zeroes.
+
+	The version is now printed on startup.
+
+0.3.0:  Removed support for the old protocol revision(FCE Ultra and Mednafen < 0.5.0).
+
+        Protocol revision for Mednafen 0.7.0:
+                Added support for emulator-selectable input device types.
+                Implemented nickname changing.
+
+        Fixed a few memory leaks.
+
+        if SOL_TCP isn't defined, it will be defined to IPPROTO_TCP
+
+0.2.2:  sin_family is now set properly in the sockaddr_in structure passed to bind(), fixing
+        a startup error under Cygwin, and probably most UN*Xes.
+
+0.2.1:  Fixed a flaw in the implementation of joystick merging in 0.2.0 that led to race conditions.
+
+0.2.0:  Updated to support the protocol used by Mednafen 0.5.0, which primarily moves text formatting
+        for player text messages to the client side, and adds support for more than 4 players
+        per game(5 player PC Engine Bomberman, woohoo) on systems that support it.
+
+0.1.0:
+        Added an internal send queue, specifically to work with games
+        that have very large save states.
+
+        The game's FPS can now be specified by the client.
+
+0.0.2:  Switched to using fcntl() to set the socket to nonblocking, so I
+        don't need to use MSG_NOWAIT in send() anymore, which is undefined
+        under Cygwin.
+
+        Added a "clean" Makefile target.
+
+0.0.1:  First Release
+

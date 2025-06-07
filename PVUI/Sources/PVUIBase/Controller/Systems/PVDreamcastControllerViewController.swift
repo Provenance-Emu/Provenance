@@ -26,14 +26,17 @@ class PVDreamcastControllerViewController: PVControllerViewController<PVDreamcas
             guard let button = $0 as? JSButton else {
                 return
             }
-            if button.titleLabel?.text == "A" {
+            switch button.titleLabel?.text?.lowercased() {
+            case "a":
                 button.buttonTag = .a
-            } else if button.titleLabel?.text == "B" {
+            case "b":
                 button.buttonTag = .b
-            } else if button.titleLabel?.text == "X" {
+            case "x":
                 button.buttonTag = .x
-            } else if button.titleLabel?.text == "Y" {
+            case "y":
                 button.buttonTag = .y
+            default:
+                break
             }
         }
 
@@ -76,7 +79,7 @@ class PVDreamcastControllerViewController: PVControllerViewController<PVDreamcas
         }
         super.dPad(dPad, didPress: direction)
     }
-    
+
     override func dPad(_ dPad: JSDPad, joystick value: JoystickValue) {
         var y:CGFloat = -CGFloat(value.y - 0.5) * 5
         var x:CGFloat = CGFloat(value.x - 0.5) * 5

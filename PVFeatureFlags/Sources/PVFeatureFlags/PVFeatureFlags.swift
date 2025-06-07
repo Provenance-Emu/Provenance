@@ -1,7 +1,23 @@
-// The Swift Programming Language
-// https://docs.swift.org/swift-book
+//
+//  PVFeatureFlags.swift
+//  Provenance
+//
+//  Created by Joseph Mattiello on 5/6/25.
+//  Copyright 2025 Joseph Mattiello. All rights reserved.
+//
 
 import Foundation
+import Combine
+
+/// Enum representing all available feature flags
+public enum PVFeature: String, CaseIterable {
+    case inAppFreeROMs = "inAppFreeROMs"
+    case romPathMigrator = "romPathMigrator"
+    case cheatsUseSwiftUI = "cheatsUseSwiftUI"
+    case retroarchBuiltinEditor = "retroarchBuiltinEditor"
+    case advancedSkinFeatures = "advancedSkinFeatures"
+    case contentlessCores = "contentlessCores"
+}
 
 /// Represents the type of app installation
 public enum PVAppType: String, CaseIterable {
@@ -61,7 +77,7 @@ public struct FeatureFlag: Codable, Sendable {
 
     /// Enables advanced skin features like filters and debug mode
     public static let advancedSkinFeatures = FeatureFlag(
-        enabled: true,
+        enabled: false,
         description: "Enables advanced skin features like filters and debug mode"
     )
 
@@ -88,12 +104,12 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     public let features: [String: FeatureFlag]
 }
 
-/// Main class for managing feature flags
+/// Main class for managing feature flags, handling configuration loading, and evaluating flag states against app criteria.
 @MainActor public final class PVFeatureFlags: @unchecked Sendable {
     /// Shared instance for accessing feature flags
     public static let shared = PVFeatureFlags()
 
-    private var configuration: FeatureFlagsConfiguration?
+    internal private(set) var configuration: FeatureFlagsConfiguration?
     private let appType: PVAppType
     private let buildNumber: String?
     private let appVersion: String
@@ -152,16 +168,6 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
     }
 
-    /// Enum representing all available feature flags
-    public enum PVFeature: String, CaseIterable {
-        case inAppFreeROMs = "inAppFreeROMs"
-        case romPathMigrator = "romPathMigrator"
-        case cheatsUseSwiftUI = "cheatsUseSwiftUI"
-        case retroarchBuiltinEditor = "retroarchBuiltinEditor"
-        case advancedSkinFeatures = "advancedSkinFeatures"
-        case contentlessCores = "contentlessCores"
-    }
-
     /// Helper function to compare version strings
     private func compareVersions(_ version1: String, _ version2: String) -> Int {
         let components1 = version1.split(separator: ".")
@@ -182,54 +188,10 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         return 0
     }
 
-    /// Get all available feature flags and their current state (debug only)
-    @MainActor public func getAllFeatureFlags() -> [(key: String, flag: FeatureFlag, enabled: Bool)] {
-        guard let configuration = configuration else {
-            print("No configuration available")
-            return []
-        }
-
-        // Get all features from the enum
-        let allFlags = PVFeature.allCases.map { feature in
-            let key = feature.rawValue
-
-            // Get the flag from JSON or use the default
-            let flag = configuration.features[key] ?? {
-                switch feature {
-                case .advancedSkinFeatures:
-                    return FeatureFlag.advancedSkinFeatures
-                case .retroarchBuiltinEditor:
-                    return FeatureFlag.retroarchBuiltinEditor
-                case .contentlessCores:
-                    return FeatureFlag.contentlessCores
-                default:
-                    return FeatureFlag(enabled: false)
-                }
-            }()
-
-            // Get the base enabled state from the flag
-            let baseEnabled = flag.enabled
-
-            // Get any debug override
-            let debugEnabled = PVFeatureFlagsManager.shared.debugOverrides[feature]
-
-            // Get restrictions
-            let restrictions = getFeatureRestrictions(key)
-
-            // Calculate effective enabled state
-            let effectiveEnabled = debugEnabled ?? (baseEnabled && restrictions.isEmpty)
-
-            print("Flag \(key): baseEnabled=\(baseEnabled), debugEnabled=\(String(describing: debugEnabled)), restrictions=\(restrictions), effectiveEnabled=\(effectiveEnabled)")
-
-            return (key: key, flag: flag, enabled: effectiveEnabled)
-        }
-
-        print("All flags: \(allFlags)")
-        return allFlags
-    }
-
-    /// Get feature restrictions for debugging
-    @MainActor public func getFeatureRestrictions(_ featureKey: String) -> [String] {
+    /// Retrieves a list of restriction reasons for a specific feature flag.
+    /// - Parameter featureKey: The raw string value of the `PVFeature`.
+    /// - Returns: An array of strings, each describing a reason the feature might be restricted (e.g., version, app type). Empty if no restrictions or feature not found.
+    public func getFeatureRestrictions(_ featureKey: String) -> [String] {
         guard let feature = configuration?.features[featureKey] else { return ["Feature not found"] }
 
         var restrictions: [String] = []
@@ -256,13 +218,95 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         return restrictions
     }
 
-    /// Set configuration directly (for testing and debug purposes)
-    @MainActor public func setDebugConfiguration(features: [String: FeatureFlag]) {
+    /// Allows setting a debug/test configuration directly, bypassing JSON loading.
+    /// - Parameter features: A dictionary where keys are feature raw string values and values are `FeatureFlag` configurations.
+    public func setDebugConfiguration(features: [String: FeatureFlag]) {
         self.configuration = FeatureFlagsConfiguration(features: features)
     }
 
-    /// Check if a feature is enabled
+    // Reverted to manual UserDefaults access for _debugOverridesStorage
+    /// Internal storage for debug overrides, persisted in UserDefaults. Keys are feature raw strings.
+    private var _debugOverridesStorage: [String: Bool?] {
+        get {
+            // UserDefaults can't directly store Bool? values, so we need to convert
+            // We'll use a dictionary where:
+            // - Key exists with value true = Bool?(true)
+            // - Key exists with value false = Bool?(false)
+            // - Key doesn't exist = nil (no override)
+            let defaults = UserDefaults.standard
+            guard let rawDict = defaults.dictionary(forKey: "PVFeatureFlagsDebugOverrides") as? [String: Any] else {
+                return [:]
+            }
+            
+            var result: [String: Bool?] = [:]
+            for (key, value) in rawDict {
+                if let boolValue = value as? Bool {
+                    result[key] = boolValue
+                } else if let stringValue = value as? String, stringValue == "nil" {
+                    // This represents an explicit nil override
+                    result[key] = nil
+                }
+            }
+            
+            print("Debug overrides loaded from UserDefaults: \(result)")
+            return result
+        }
+        set {
+            // Convert Bool? to a format UserDefaults can store
+            var storableDict: [String: Any] = [:]
+            for (key, optionalValue) in newValue {
+                if let boolValue = optionalValue {
+                    // Store true/false directly
+                    storableDict[key] = boolValue
+                } else {
+                    // Store nil as a special string marker
+                    storableDict[key] = "nil"
+                }
+            }
+            
+            print("Saving debug overrides to UserDefaults: \(storableDict)")
+            UserDefaults.standard.set(storableDict, forKey: "PVFeatureFlagsDebugOverrides")
+        }
+    }
+
+    // Stored as [String: Bool?] in UserDefaults
+    /// Computed property to access and manage debug overrides with `PVFeature` keys, backed by `_debugOverridesStorage`.
+    internal var debugOverrides: [PVFeature: Bool?] { // Changed to internal
+        get {
+            let stringKeyedOverrides = _debugOverridesStorage
+            var featureKeyedOverrides: [PVFeature: Bool?] = [:]
+            for (key, value) in stringKeyedOverrides {
+                if let featureKey = PVFeature(rawValue: key) {
+                    featureKeyedOverrides[featureKey] = value
+                }
+            }
+            return featureKeyedOverrides
+        }
+        set {
+            var stringKeyedOverrides: [String: Bool?] = [:]
+            for (featureKey, value) in newValue {
+                stringKeyedOverrides[featureKey.rawValue] = value
+            }
+            _debugOverridesStorage = stringKeyedOverrides
+            // No call to updateFeatureStates here; manager handles its own updates.
+        }
+    }
+
+    /// Checks if a specific feature is currently enabled based on its configuration, app criteria (version, build, type), and any debug overrides.
+    /// - Parameter feature: The `PVFeature` to check.
+    /// - Returns: `true` if the feature is enabled, `false` otherwise.
     public func isEnabled(_ feature: PVFeature) -> Bool {
+        // Check for a debug override first
+        if let overrideValue = self.debugOverrides[feature] {
+            // If we have an explicit override value (true or false), return it
+            if let boolValue = overrideValue {
+                print("Feature \(feature.rawValue) using override value: \(boolValue)")
+                return boolValue
+            }
+            // If we have a nil value in the dictionary, it means the override was cleared
+            // Fall through to normal logic
+        }
+        
         guard let featureConfig = configuration?.features[feature.rawValue] else {
             print("Error: Feature \(feature) not found")
             return false
@@ -292,69 +336,85 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         print("Feature: \(feature) is enabled")
         return featureConfig.enabled
     }
+    
+    /// Set a debug override for a specific feature flag.
+    /// This will override any configuration from the JSON file or default settings.
+    /// - Parameters:
+    ///   - feature: The `PVFeature` to override.
+    ///   - enabled: `true` to force enable, `false` to force disable, `nil` to clear the override.
+    public func setDebugOverride(for feature: PVFeature, enabled: Bool?) {
+        print("Setting debug override for feature \(feature.rawValue) to \(String(describing: enabled))")
+        
+        var currentOverrides = self.debugOverrides
+        currentOverrides[feature] = enabled
+        self.debugOverrides = currentOverrides
+        
+        // Verify the override was set correctly
+        let verifyOverrides = self.debugOverrides
+        if let verifyValue = verifyOverrides[feature] {
+            print("Verified override for \(feature.rawValue) is now set to \(String(describing: verifyValue))")
+        } else {
+            print("Warning: Failed to set override for \(feature.rawValue)")
+        }
+    }
+    
+    /// Clears all currently set debug overrides, reverting features to their configured states based on JSON/defaults.
+    public func clearDebugOverrides() {
+        print("Clearing all debug overrides")
+        self.debugOverrides = [:]
+    }
+
+    /// Retrieves all feature flags along with their configuration details and current enabled status.
+    /// Primarily intended for debugging and displaying feature flag information.
+    /// - Returns: An array of tuples, each containing the feature key (String), its `FeatureFlag` configuration, and its current enabled state (Bool).
+    public func getAllFeatureFlags() -> [(key: String, flag: FeatureFlag, enabled: Bool)] {
+        PVFeature.allCases.map { featureCase in
+            let key = featureCase.rawValue
+            let featureConfig = self.configuration?.features[key] ?? FeatureFlag(enabled: false, description: "Feature not defined in configuration")
+            let isEnabled = self.isEnabled(featureCase) // This now correctly checks overrides first
+            return (key: key, flag: featureConfig, enabled: isEnabled)
+        }
+    }
 }
 
-/// Observable class for managing feature flags in SwiftUI
+/// Observable class for managing feature flags in SwiftUI, providing reactive updates to the UI.
+/// This class acts as a wrapper around `PVFeatureFlags`, exposing feature states through Combine publishers
+/// and providing an interface for observing individual flags.
 @MainActor public final class PVFeatureFlagsManager: ObservableObject, @unchecked Sendable {
-    /// Shared instance for accessing feature flags
+    /// Shared singleton instance of the feature flags manager.
     public static let shared = PVFeatureFlagsManager()
 
-    /// The underlying feature flags implementation
+    /// The underlying `PVFeatureFlags` instance that handles core logic and data persistence.
     private let featureFlags: PVFeatureFlags
 
-    /// Dictionary of cached feature states
-    @Published public private(set) var featureStates: [PVFeatureFlags.PVFeature: Bool] = [:]
+    /// Published dictionary of current feature states. Views can subscribe to this to react to changes in any feature flag.
+    /// Keys are `PVFeature` enums, values are `Bool` indicating if the feature is enabled.
+    @Published public private(set) var featureStates: [PVFeature: Bool] = [:]
 
-    /// Dictionary to store debug overrides - persisted in UserDefaults
-    private var _debugOverrides: [PVFeatureFlags.PVFeature: Bool] = [:] {
-        didSet {
-            // Convert PVFeature dictionary to string dictionary for storage
-            let stringDict = Dictionary(uniqueKeysWithValues: _debugOverrides.map { ($0.key.rawValue, $0.value) })
-            UserDefaults.standard.set(stringDict, forKey: "PVFeatureFlagsDebugOverrides")
-            objectWillChange.send()
-        }
-    }
+    /// Cache for `FeatureFlagObservable` instances to avoid recreating them, ensuring a single observable per feature.
+    private var flagObservablesCache: [PVFeature: FeatureFlagObservable] = [:]
 
-    public var debugOverrides: [PVFeatureFlags.PVFeature: Bool] {
-        get {
-            if _debugOverrides.isEmpty {
-                // Load from UserDefaults on first access
-                if let savedOverrides = UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides") as? [String: Bool] {
-                    _debugOverrides = Dictionary(uniqueKeysWithValues: savedOverrides.compactMap { key, value in
-                        if let feature = PVFeatureFlags.PVFeature(rawValue: key) {
-                            return (feature, value)
-                        }
-                        return nil
-                    })
-                }
-            }
-            return _debugOverrides
-        }
-        set {
-            _debugOverrides = newValue
-        }
-    }
-
-    /// Dictionary to store remote feature flags
-    private var remoteFlags: [String: Bool] = [:]
-
+    /// Private initializer to enforce singleton pattern. Loads initial states.
     private init() {
         self.featureFlags = PVFeatureFlags()
+        updateFeatureStates() // Initialize states
     }
 
-    /// Initialize with custom parameters for testing
+    /// Internal initializer for testing purposes, allowing injection of a custom `PVFeatureFlags` instance.
+    /// - Parameter featureFlags: A specific `PVFeatureFlags` instance to use.
     init(featureFlags: PVFeatureFlags) {
         self.featureFlags = featureFlags
+        updateFeatureStates()
     }
 
-    /// Load feature flags from a JSON file URL
-    /// - Parameter url: URL to the JSON configuration
-    /// - Returns: Async task that loads and parses the configuration
+    /// Asynchronously loads the feature flag configuration from a given URL.
+    /// After loading, it updates the internal `featureStates` to reflect the new configuration.
+    /// - Parameter url: The URL of the JSON configuration file.
+    /// - Throws: An error if loading or parsing the configuration fails.
     public func loadConfiguration(from url: URL) async throws {
         do {
             try await featureFlags.loadConfiguration(from: url)
             print("Loaded configuration from \(url)")
-            print("Current features: \(featureFlags.getAllFeatureFlags())")
             updateFeatureStates()
         } catch {
             print("Failed to load configuration from \(url): \(error)")
@@ -362,186 +422,137 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         }
     }
 
-    /// Whether the inAppFreeROMs feature is enabled
-    public var inAppFreeROMs: Bool {
-        /// Check debug override first
-        if let override = debugOverrides[.inAppFreeROMs] {
-            print("Debug override active for inAppFreeROMs: \(override)")
-            return override
-        }
-
-        /// Fall back to main feature flags system
-        let enabled = featureFlags.isEnabled(.inAppFreeROMs)
-        print("No debug override, using feature flags system value for inAppFreeROMs: \(enabled)")
-        return enabled
+    /// Sets a debug override for a specific feature flag.
+    /// This will override any configuration from the JSON file or default settings.
+    /// - Parameters:
+    ///   - feature: The `PVFeature` to override.
+    ///   - enabled: `true` to force enable, `false` to force disable, `nil` to clear the override.
+    public func setDebugOverride(for feature: PVFeature, enabled: Bool?) {
+        // Delegate to the underlying PVFeatureFlags instance to set the override
+        self.featureFlags.setDebugOverride(for: feature, enabled: enabled)
+        // Then, update the manager's published states
+        self.updateFeatureStates()
     }
 
-    /// Whether the romPathMigrator feature is enabled
-    public var romPathMigrator: Bool {
-        /// Check debug override first
-        if let override = debugOverrides[.romPathMigrator] {
-            print("Debug override active for romPathMigrator: \(override)")
-            return override
-        }
-
-        /// Fall back to main feature flags system
-        let enabled = featureFlags.isEnabled(.romPathMigrator)
-        print("No debug override, using feature flags system value for romPathMigrator: \(enabled)")
-        return enabled
+    /// Clears all currently set debug overrides, reverting features to their configured states.
+    public func clearDebugOverrides() {
+        self.featureFlags.clearDebugOverrides() // Delegate
+        self.updateFeatureStates() // Update manager's state
     }
 
-    /// Whether the retroarchBuiltinEditor feature is enabled
-    public var retroarchBuiltinEditor: Bool {
-        /// Check debug override first
-        if let override = debugOverrides[.retroarchBuiltinEditor] {
-            print("Debug override active for retroarchBuiltinEditor: \(override)")
-            return override
-        }
-
-        /// Fall back to main feature flags system
-        let enabled = featureFlags.isEnabled(.retroarchBuiltinEditor)
-        print("No debug override, using feature flags system value for retroarchBuiltinEditor: \(enabled)")
-        return enabled
-    }
-
-    /// Set a debug override for a feature flag
-    public func setDebugOverride(feature: PVFeatureFlags.PVFeature, enabled: Bool) {
-        print("Setting debug override for \(feature) to: \(enabled)")
-        var currentOverrides = debugOverrides
-        currentOverrides[feature] = enabled
-        debugOverrides = currentOverrides  // This will trigger the setter and save to UserDefaults
-        print("Current debug overrides: \(debugOverrides)")
-        // Update cached states
-        updateFeatureStates()
-    }
-
-    /// Updates the cached feature states
+    /// Updates the `featureStates` dictionary based on the current configuration in `featureFlags` and any active debug overrides.
+    /// This method is called internally whenever the configuration or overrides change to ensure `featureStates` is consistent.
     private func updateFeatureStates() {
-        // Check debug override first
-        if let override = debugOverrides[.inAppFreeROMs] {
-            featureStates[.inAppFreeROMs] = override
-        } else {
-            featureStates[.inAppFreeROMs] = featureFlags.isEnabled(.inAppFreeROMs)
+        var newStates: [PVFeature: Bool] = [:]
+        var hasChanges = false
+
+        for featureKey in PVFeature.allCases {
+            // self.featureFlags.isEnabled(featureKey) now correctly incorporates override logic.
+            let effectiveState = self.featureFlags.isEnabled(featureKey)
+            
+            newStates[featureKey] = effectiveState
+
+            if self.featureStates[featureKey] != effectiveState {
+                hasChanges = true
+            }
         }
         
-        // Post notification of change
-        NotificationCenter.default.post(name: .featureFlagDidChange, object: nil)
-    }
-
-    /// Check if a feature is enabled
-    /// - Parameter feature: The feature to check
-    /// - Returns: Boolean indicating if the feature is enabled
-    public func isEnabled(_ feature: PVFeatureFlags.PVFeature) -> Bool {
-        let featureKey = feature.rawValue
-        // Check debug override first
-        if let override = debugOverrides[feature] {
-            print("Debug override for \(featureKey): \(override)")
-            return override
-        }
-
-        // Fall back to cached state or feature flags system
-        if let cachedState = featureStates[feature] {
-            return cachedState
-        }
-        let enabled = featureFlags.isEnabled(feature)
-        featureStates[feature] = enabled
-        return enabled
-    }
-
-    /// Clear all debug overrides
-    public func clearDebugOverrides() {
-        print("Clearing all debug overrides")
-        debugOverrides = [:]  // This will trigger the setter and save to UserDefaults
-        updateFeatureStates()
-    }
-
-    /// Clear specific debug override
-    public func clearDebugOverride(for feature: PVFeatureFlags.PVFeature) {
-        print("Clearing debug override for \(feature)")
-        var currentOverrides = debugOverrides
-        currentOverrides.removeValue(forKey: feature)
-        debugOverrides = currentOverrides  // This will trigger the setter and save to UserDefaults
-        updateFeatureStates()
-    }
-
-    /// Update remote flags
-    public func updateRemoteFlags(_ flags: [String: Bool]) {
-        remoteFlags = flags
-    }
-
-    /// Non-actor-isolated version of feature check for use in UIKit
-    public nonisolated func isFeatureEnabled(_ featureKey: String) -> Bool {
-        // Since this is nonisolated, we need to be careful about thread safety
-        DispatchQueue.main.sync {
-            if let feature = PVFeatureFlags.PVFeature(rawValue: featureKey), let override = debugOverrides[feature] {
-                print("Debug override for \(featureKey): \(override)")
-                return override
+        // Only update and send notification if there were actual changes
+        if hasChanges || self.featureStates.count != newStates.count { // also check count in case a flag was removed/added (though enum prevents this)
+            let changedStates = newStates.filter { key, value in
+                self.featureStates[key] != value || self.featureStates.keys.contains(key) == false
             }
-
-            if let feature = PVFeatureFlags.PVFeature(rawValue: featureKey), let cachedState = featureStates[feature] {
-                return cachedState
+            if !changedStates.isEmpty {
+                print("PVFeatureFlagsManager: Broadcasting feature state changes. Changed: \(changedStates.mapValues { String(describing: $0) })")
             }
-
-            if let feature = PVFeatureFlags.PVFeature(rawValue: featureKey) {
-                let enabled = featureFlags.isEnabled(feature)
-                featureStates[feature] = enabled
-                return enabled
-            }
-            return false
+            self.featureStates = newStates
+            // objectWillChange.send() is automatically called by @Published when featureStates is set.
         }
     }
 
-    /// Get feature restrictions (wrapper for PVFeatureFlags method)
+    /// Returns an observable object for the given feature flag.
+    /// SwiftUI views can use instances of this class with `@ObservedObject` or `@StateObject`
+    /// to react to changes in a specific feature's enabled status.
+    /// - Parameter feature: The specific `PVFeature` this observable should track.
+    /// - Returns: A `FeatureFlagObservable` instance bound to the specified feature.
+    public func flag(_ feature: PVFeature) -> FeatureFlagObservable {
+        if let existingObservable = flagObservablesCache[feature] {
+            return existingObservable
+        }
+        let newObservable = FeatureFlagObservable(manager: self, feature: feature)
+        flagObservablesCache[feature] = newObservable
+        return newObservable
+    }
+
+    /// Retrieves all feature flags along with their configuration details and current enabled status.
+    /// Primarily intended for debugging and displaying feature flag information.
+    /// - Returns: An array of tuples, each containing the feature key (String), its `FeatureFlag` configuration, and its current enabled state (Bool).
+    public func getAllFeatureFlags() -> [(key: String, flag: FeatureFlag, enabled: Bool)] {
+        PVFeature.allCases.map { featureCase in
+            let key = featureCase.rawValue
+            let featureConfig = self.featureFlags.configuration?.features[key] ?? FeatureFlag(enabled: false, description: "Feature not defined in configuration")
+            let isEnabled = self.featureFlags.isEnabled(featureCase) // This now correctly checks overrides first
+            return (key: key, flag: featureConfig, enabled: isEnabled)
+        }
+    }
+
+    /// Retrieves the current raw debug overrides.
+    /// - Returns: A dictionary mapping features to their optional boolean override state (`nil` if not overridden).
+    public func getCurrentDebugOverrides() -> [PVFeature: Bool?] {
+        return self.featureFlags.debugOverrides
+    }
+
+    /// Retrieves the restriction reasons for a specific feature flag by its key.
+    /// Delegates to the underlying `PVFeatureFlags` instance.
+    /// - Parameter featureKey: The raw string value of the `PVFeature`.
+    /// - Returns: An array of strings describing restriction reasons.
     public func getFeatureRestrictions(_ featureKey: String) -> [String] {
         return featureFlags.getFeatureRestrictions(featureKey)
     }
 
-    /// Set debug configuration (wrapper for PVFeatureFlags method)
+    /// Allows setting a debug/test configuration directly on the underlying `PVFeatureFlags` instance.
+    /// After setting, it triggers an update of the manager's `featureStates`.
+    /// - Parameter features: A dictionary where keys are feature raw string values and values are `FeatureFlag` configurations.
     public func setDebugConfiguration(features: [String: FeatureFlag]) {
         featureFlags.setDebugConfiguration(features: features)
-        // Update cached states after setting new configuration
-        updateFeatureStates()
-        // Notify observers
-        objectWillChange.send()
-    }
-
-    /// Get all feature flags (wrapper for PVFeatureFlags method)
-    public func getAllFeatureFlags() -> [(key: String, flag: FeatureFlag, enabled: Bool)] {
-        return featureFlags.getAllFeatureFlags()
+        updateFeatureStates() // Crucial to refresh all states after setting debug config
     }
 }
 
-/// Observable class for feature flag changes
-@MainActor final class FeatureFlagObservable: ObservableObject {
-    @Published var value: Bool
-    private let feature: PVFeatureFlags.PVFeature
-
-    init(_ feature: PVFeatureFlags.PVFeature) {
-        self.feature = feature
-        self.value = PVFeatureFlagsManager.shared.isEnabled(feature)
-
-        // Setup observation of feature flag changes
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(featureFlagDidChange),
-            name: .featureFlagDidChange,
-            object: nil
-        )
+/// An observable object that represents the state of a single feature flag.
+/// SwiftUI views can use instances of this class with `@ObservedObject` or `@StateObject`
+/// to react to changes in a specific feature's enabled status.
+@MainActor public final class FeatureFlagObservable: ObservableObject {
+    /// Published property indicating whether the observed feature flag is currently enabled. Changes to this property will trigger UI updates.
+    @Published public var value: Bool {
+        didSet {
+            if oldValue != value { // Only log if the value actually changed
+                print("FeatureFlagObservable: \(self.feature.rawValue) changed from \(oldValue) to \(self.value)")
+            }
+        }
     }
+    private let feature: PVFeature // Added to store the feature for logging
+    /// Cancellable for the subscription to the manager's `featureStates`.
+    private var cancellable: AnyCancellable?
 
-    deinit {
-        NotificationCenter.default.removeObserver(self)
+    /// Initializes a new `FeatureFlagObservable`.
+    /// - Parameters:
+    ///   - manager: The `PVFeatureFlagsManager` instance that manages the state of all feature flags.
+    ///   - feature: The specific `PVFeature` this observable should track.
+    init(manager: PVFeatureFlagsManager, feature: PVFeature) {
+        self.feature = feature // Store the feature
+        // Initialize value correctly from the manager's current state
+        self.value = manager.featureStates[feature] ?? false
+
+        // Subscribe to changes in the manager's featureStates dictionary
+        self.cancellable = manager.$featureStates
+            .map { states -> Bool in // Extract the specific flag's state
+                states[feature] ?? false // Default to false if key somehow missing
+            }
+            .removeDuplicates() // Only emit if the value has actually changed
+            .receive(on: DispatchQueue.main) // Ensure updates are on the main thread for UI
+            .assign(to: \.value, on: self) // Assign to our @Published value property, this returns AnyCancellable
     }
-
-    @objc private func featureFlagDidChange() {
-        value = PVFeatureFlagsManager.shared.isEnabled(feature)
-    }
-}
-
-// Add notification for feature flag changes
-extension Notification.Name {
-    /// Notification sent when a feature flag changes
-    public static let featureFlagDidChange = Notification.Name("featureFlagDidChange")
 }
 
 // MARK: - Environment Values

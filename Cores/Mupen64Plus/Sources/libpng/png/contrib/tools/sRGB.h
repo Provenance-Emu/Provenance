@@ -1,7 +1,4 @@
-/*-
- * sRGB.h
- *
- * Last changed in libpng 1.6.0 [February 14, 2013]
+/* sRGB.h
  *
  * COPYRIGHT: Written by John Cunningham Bowler, 2013.
  * To the extent possible under law, the author has waived all copyright and
@@ -14,8 +11,9 @@
  * All routines take and return a floating point value in the range
  * 0 to 1.0, doing a calculation according to the sRGB specification
  * (in fact the source of the numbers is the wikipedia article at
- * http://en.wikipedia.org/wiki/SRGB).
+ * https://en.wikipedia.org/wiki/SRGB).
  */
+
 static double
 sRGB_from_linear(double l)
 {

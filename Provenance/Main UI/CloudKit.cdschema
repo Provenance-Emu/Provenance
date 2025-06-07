@@ -1,0 +1,84 @@
+DEFINE SCHEMA
+
+    RECORD TYPE BIOS (
+        "___createTime" TIMESTAMP,
+        "___createdBy"  REFERENCE,
+        "___etag"       STRING,
+        "___modTime"    TIMESTAMP,
+        "___modifiedBy" REFERENCE,
+        "___recordID"   REFERENCE QUERYABLE,
+        description     STRING QUERYABLE SEARCHABLE SORTABLE,
+        directory       STRING QUERYABLE SEARCHABLE SORTABLE,
+        filename        STRING QUERYABLE SEARCHABLE SORTABLE,
+        fileData        ASSET,
+        lastModified    TIMESTAMP QUERYABLE SORTABLE,
+        systemIdentifier STRING QUERYABLE SEARCHABLE SORTABLE,
+        GRANT WRITE TO "_creator",
+        GRANT CREATE TO "_icloud",
+        GRANT READ TO "_world"
+    );
+
+    RECORD TYPE File (
+        "___createTime" TIMESTAMP,
+        "___createdBy"  REFERENCE,
+        "___etag"       STRING,
+        "___modTime"    TIMESTAMP,
+        "___modifiedBy" REFERENCE,
+        "___recordID"   REFERENCE QUERYABLE,
+        directory       STRING QUERYABLE SEARCHABLE SORTABLE,
+        filename        STRING QUERYABLE SEARCHABLE SORTABLE,
+        fileData        ASSET,
+        lastModified    TIMESTAMP QUERYABLE SORTABLE,
+        GRANT WRITE TO "_creator",
+        GRANT CREATE TO "_icloud",
+        GRANT READ TO "_world"
+    );
+
+    RECORD TYPE ROM (
+        "___createTime" TIMESTAMP,
+        "___createdBy"  REFERENCE,
+        "___etag"       STRING,
+        "___modTime"    TIMESTAMP,
+        "___modifiedBy" REFERENCE,
+        "___recordID"   REFERENCE QUERYABLE,
+        directory       STRING QUERYABLE SEARCHABLE SORTABLE,
+        filename        STRING QUERYABLE SEARCHABLE SORTABLE,
+        fileData        ASSET,
+        lastModified    TIMESTAMP QUERYABLE SORTABLE,
+        title           STRING QUERYABLE SEARCHABLE SORTABLE,
+        md5             STRING QUERYABLE SEARCHABLE,
+        system          STRING QUERYABLE SEARCHABLE SORTABLE,
+        GRANT WRITE TO "_creator",
+        GRANT CREATE TO "_icloud",
+        GRANT READ TO "_world"
+    );
+
+    RECORD TYPE SaveState (
+        "___createTime" TIMESTAMP,
+        "___createdBy"  REFERENCE,
+        "___etag"       STRING,
+        "___modTime"    TIMESTAMP,
+        "___modifiedBy" REFERENCE,
+        "___recordID"   REFERENCE QUERYABLE,
+        description     STRING QUERYABLE SEARCHABLE SORTABLE,
+        directory       STRING QUERYABLE SEARCHABLE SORTABLE,
+        filename        STRING QUERYABLE SEARCHABLE SORTABLE,
+        fileData        ASSET,
+        lastModified    TIMESTAMP QUERYABLE SORTABLE,
+        gameID          STRING QUERYABLE SEARCHABLE SORTABLE,
+        GRANT WRITE TO "_creator",
+        GRANT CREATE TO "_icloud",
+        GRANT READ TO "_world"
+    );
+
+    RECORD TYPE Users (
+        "___createTime" TIMESTAMP,
+        "___createdBy"  REFERENCE,
+        "___etag"       STRING,
+        "___modTime"    TIMESTAMP,
+        "___modifiedBy" REFERENCE,
+        "___recordID"   REFERENCE QUERYABLE,
+        roles           LIST<INT64>,
+        GRANT WRITE TO "_creator",
+        GRANT READ TO "_world"
+    );

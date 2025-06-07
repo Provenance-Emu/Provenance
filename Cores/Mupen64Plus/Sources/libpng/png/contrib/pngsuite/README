@@ -1,4 +1,3 @@
-
 pngsuite
 --------
 Copyright (c) Willem van Schaik, 1999, 2011, 2012
@@ -15,6 +14,8 @@ chunks, etc.
 
 The "ft*.png" images are "free/libre" replacements for the transparent
 corresponding t*.png images in the PngSuite.
+
+The "i*.png" images are the same images, but interlaced.
 
 The images in this directory represent the basic PNG color-types:
 grayscale (1-16 bit deep), full color (8 or 16 bit), paletted
