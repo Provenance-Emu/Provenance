@@ -37,7 +37,7 @@ class MockGameImporter: GameImporting, ObservableObject {
     ]
 
     @MainActor
-    public init(importStatus: String = "", importQueue: [ImportQueueItem] = [], processingState: ProcessingState = .idle, importStartedHandler: GameImporterImportStartedHandler? = nil, completionHandler: GameImporterCompletionHandler? = nil, finishedImportHandler: GameImporterFinishedImportingGameHandler? = nil, finishedArtworkHandler: GameImporterFinishedGettingArtworkHandler? = nil, spotlightCompletionHandler: GameImporterCompletionHandler? = nil, spotlightFinishedImportHandler: GameImporterFinishedImportingGameHandler? = nil) {
+    public init(importStatus: String = "", importQueue: [ImportQueueItem] = [], processingState: ProcessingState = .idle, importStartedHandler: GameImporterImportStartedHandler? = nil, completionHandler: GameImporterCompletionHandler? = nil, finishedImportHandler: GameImporterFinishedImportingGameHandler? = nil, finishedArtworkHandler: GameImporterFinishedGettingArtworkHandler? = nil) {
         self.importStatus = importStatus
         self.importQueue = importQueue
         self.processingState = processingState
@@ -45,8 +45,6 @@ class MockGameImporter: GameImporting, ObservableObject {
         self.completionHandler = completionHandler
         self.finishedImportHandler = finishedImportHandler
         self.finishedArtworkHandler = finishedArtworkHandler
-        self.spotlightCompletionHandler = spotlightCompletionHandler
-        self.spotlightFinishedImportHandler = spotlightFinishedImportHandler
 
         if self.importQueue.isEmpty {
             self.importQueue = [{
@@ -168,12 +166,6 @@ class MockGameImporter: GameImporting, ObservableObject {
     public var finishedImportHandler: GameImporterFinishedImportingGameHandler? = nil
     /// Closure called when artwork finishes downloading
     public var finishedArtworkHandler: GameImporterFinishedGettingArtworkHandler? = nil
-
-    /// Spotlight Handerls
-    /// Closure called when spotlight completes
-    public var spotlightCompletionHandler: GameImporterCompletionHandler? = nil
-    /// Closure called when a game finishes importing
-    public var spotlightFinishedImportHandler: GameImporterFinishedImportingGameHandler? = nil
 
     public func clearCompleted() {
         self.importQueue = self.importQueue.filter({
