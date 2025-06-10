@@ -41,6 +41,10 @@ class ConsoleGamesViewModel: ObservableObject {
 
     /// Import status view properties
     @Published var showImportStatusView = false
+
+    /// Game Info Presentation State
+    @Published var selectedGameForInfo: PVGame? = nil
+    @Published var showingGameInfo: Bool = false
     
     var gameToUpdateCover: PVGame?
 
@@ -160,5 +164,24 @@ class ConsoleGamesViewModel: ObservableObject {
             self.showArtworkSourceAlert = false
             self.gameForArtworkUpdate = nil
         }
+    }
+
+    // MARK: - Game Info Presentation
+    @MainActor
+    func showGameInfo(gameId: String) {
+        guard let game = console.games.first(where: { $0.md5Hash == gameId }) else {
+            ELOG("ConsoleGamesViewModel: Could not find game with ID: \(gameId) in console \(console.name)")
+            return
+        }
+        DLOG("ConsoleGamesViewModel: Preparing to show game info for game: \(game.title)")
+        self.selectedGameForInfo = game
+        self.showingGameInfo = true
+    }
+
+    @MainActor
+    func dismissGameInfo() {
+        DLOG("ConsoleGamesViewModel: Dismissing game info")
+        self.showingGameInfo = false
+        self.selectedGameForInfo = nil
     }
 }

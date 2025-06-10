@@ -300,184 +300,233 @@ struct ConsoleGamesView: SwiftUI.View {
                     imagePickerSheet
 #endif
                 }
-            }
-            .sheet(isPresented: $gamesViewModel.showArtworkSearch) {
-                artworkSearchSheet
-            }
-            .uiKitAlert(
-                "Rename Game",
-                message: "Enter a new name for \(gamesViewModel.gameToRename?.title ?? "")",
-                isPresented: $gamesViewModel.showingRenameAlert,
-                textValue: newGameTitleBindingForAlert,
-                preferredContentSize: CGSize(width: 300, height: 200),
-                textField: { textField in
-                    textField.placeholder = "Game name"
-                    textField.clearButtonMode = .whileEditing
-                    textField.autocapitalizationType = .words
+                .sheet(isPresented: $gamesViewModel.showArtworkSearch) {
+                    artworkSearchSheet
                 }
-            ) {
-                [
-                    UIAlertAction(title: "Save", style: .default) { _ in
-                        // The submitRename() method in ConsoleGamesView+GameContextMenuDelegate.swift
-                        // has already been updated to use gamesViewModel and handle dismissal.
-                        submitRename()
-                    },
-                    UIAlertAction(title: "Cancel", style: .cancel) { _ in
-                        Task {
-                            await gamesViewModel.cancelRenameAction()
+                .sheet(isPresented: $gamesViewModel.showingGameInfo, onDismiss: {
+                    gamesViewModel.dismissGameInfo()
+                }) {
+                    if let game = gamesViewModel.selectedGameForInfo?.warmUp() {
+                        if let driver = try? RealmGameLibraryDriver() {
+                            let infoVM = PagedGameMoreInfoViewModel(
+                                driver: driver,
+                                initialGameId: game.md5Hash,
+                                playGameCallback: { [weak rootDelegate] md5 in
+                                    DLOG("Play game requested for MD5: \(md5) from PagedGameMoreInfoView")
+                                    Task {
+                                        await rootDelegate?.root_loadGame(byMD5Hash: md5)
+                                    }
+                                }
+                            )
+                            PagedGameMoreInfoView(viewModel: infoVM)
+                                .environmentObject(AppState.shared)
+                                .environmentObject(themeManager)
+                        } else {
+                            Text("Unable to initialise driver")
                         }
+                    } else {
+                        Text("No game selected")
                     }
-                ]
-            }
-            .sheet(item: $gamesViewModel.systemMoveState) { state in
-                SystemPickerView(
-                    game: state.game,
-                    isPresented: Binding(
-                        get: { state.isPresenting },
-                        set: { newValue in
-                            if !newValue {
-                                gamesViewModel.systemMoveState = nil
+                }
+                .sheet(item: $gamesViewModel.systemMoveState) { state in
+                    SystemPickerView(
+                        game: state.game,
+                        isPresented: Binding(
+                            get: { state.isPresenting },
+                            set: { newValue in
+                                if !newValue {
+                                    gamesViewModel.systemMoveState = nil
+                                }
+                            }
+                        )
+                    )
+                }
+                // Import Status View
+                .fullScreenCover(isPresented: Binding<Bool>(
+                    get: { gamesViewModel.showImportStatusView },
+                    set: { gamesViewModel.showImportStatusView = $0 }
+                )) {
+                    ImportStatusView(
+                        updatesController: AppState.shared.libraryUpdatesController!,
+                        gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
+                        delegate: rootDelegate as? ImportStatusDelegate,
+                        dismissAction: {
+                            withAnimation {
+                                gamesViewModel.showImportStatusView = false
                             }
                         }
                     )
-                )
-            }
-            // Import Status View
-            .fullScreenCover(isPresented: Binding<Bool>(
-                get: { gamesViewModel.showImportStatusView },
-                set: { gamesViewModel.showImportStatusView = $0 }
-            )) {
-                ImportStatusView(
-                    updatesController: AppState.shared.libraryUpdatesController!,
-                    gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
-                    delegate: rootDelegate as? ImportStatusDelegate,
-                    dismissAction: {
-                        withAnimation {
-                            gamesViewModel.showImportStatusView = false
+                }
+                .sheet(item: $gamesViewModel.continuesManagementState) { state in
+                    let game = state.game.warmUp()
+                    let realm = game.realm?.thaw() ?? RomDatabase.sharedInstance.realm.thaw()
+                    /// Create the Realm driver
+                    if let driver = try? RealmSaveStateDriver(realm: realm) {
+
+                        /// Create view model
+                        let viewModel = ContinuesMagementViewModel(
+                            driver: driver,
+                            gameTitle: game.title,
+                            systemTitle: game.system?.name ?? "",
+                            numberOfSaves: game.saveStates.count,
+                            onLoadSave: { saveID in
+                                gamesViewModel.continuesManagementState = nil
+                                Task.detached {
+                                    Task { @MainActor in
+                                        await rootDelegate?.root_openSaveState(saveID)
+                                    }
+                                }
+                            })
+
+                        /// Create and configure the view
+                        if #available(iOS 16.4, tvOS 16.4, *) {
+                            ContinuesManagementView(viewModel: viewModel)
+                                .onAppear {
+                                    /// Set the game ID filter
+                                    driver.gameId = game.id
+
+                                    let game = game.freeze()
+                                    Task { @MainActor in
+                                        let image: UIImage? = await game.fetchArtworkFromCache()
+                                        viewModel.gameUIImage = image
+                                    }
+                                }
+                                .presentationBackground(content: {Color.clear})
+                        } else {
+                            ContinuesManagementView(viewModel: viewModel)
+                                .onAppear {
+                                    /// Set the game ID filter
+                                    driver.gameId = game.id
+
+                                    let game = game.freeze()
+                                    Task { @MainActor in
+                                        let image: UIImage? = await game.fetchArtworkFromCache()
+                                        viewModel.gameUIImage = image
+                                    }
+                                }
                         }
-                    }
-                )
-            }
-            .sheet(item: $gamesViewModel.continuesManagementState) { state in
-                let game = state.game.warmUp()
-                let realm = game.realm?.thaw() ?? RomDatabase.sharedInstance.realm.thaw()
-                /// Create the Realm driver
-                if let driver = try? RealmSaveStateDriver(realm: realm) {
-
-                    /// Create view model
-                    let viewModel = ContinuesMagementViewModel(
-                        driver: driver,
-                        gameTitle: game.title,
-                        systemTitle: game.system?.name ?? "",
-                        numberOfSaves: game.saveStates.count,
-                        onLoadSave: { saveID in
-                            gamesViewModel.continuesManagementState = nil
-                            Task.detached {
-                                Task { @MainActor in
-                                    await rootDelegate?.root_openSaveState(saveID)
-                                }
-                            }
-                        })
-
-                    /// Create and configure the view
-                    if #available(iOS 16.4, tvOS 16.4, *) {
-                        ContinuesManagementView(viewModel: viewModel)
-                            .onAppear {
-                                /// Set the game ID filter
-                                driver.gameId = game.id
-
-                                let game = game.freeze()
-                                Task { @MainActor in
-                                    let image: UIImage? = await game.fetchArtworkFromCache()
-                                    viewModel.gameUIImage = image
-                                }
-                            }
-                            .presentationBackground(content: {Color.clear})
                     } else {
-                        ContinuesManagementView(viewModel: viewModel)
-                            .onAppear {
-                                /// Set the game ID filter
-                                driver.gameId = game.id
-
-                                let game = game.freeze()
-                                Task { @MainActor in
-                                    let image: UIImage? = await game.fetchArtworkFromCache()
-                                    viewModel.gameUIImage = image
+                        Text("Error: Could not load save states")
+                    }
+                }
+                .uiKitAlert(
+                    "Rename Game",
+                    message: "Enter a new name for \(gamesViewModel.gameToRename?.title ?? "")",
+                    isPresented: $gamesViewModel.showingRenameAlert,
+                    textValue: newGameTitleBindingForAlert,
+                    preferredContentSize: CGSize(width: 300, height: 200),
+                    textField: { textField in
+                        textField.placeholder = "Game name"
+                        textField.clearButtonMode = .whileEditing
+                        textField.autocapitalizationType = .words
+                    }
+                ) {
+                    [
+                        UIAlertAction(title: "Save", style: .default) { _ in
+                            // The submitRename() method in ConsoleGamesView+GameContextMenuDelegate.swift
+                            // has already been updated to use gamesViewModel and handle dismissal.
+                            submitRename()
+                        },
+                        UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                            Task {
+                                await gamesViewModel.cancelRenameAction()
+                            }
+                        }
+                    ]
+                }
+                .sheet(item: $gamesViewModel.systemMoveState) { state in
+                    SystemPickerView(
+                        game: state.game,
+                        isPresented: Binding(
+                            get: { state.isPresenting },
+                            set: { newValue in
+                                if !newValue {
+                                    gamesViewModel.systemMoveState = nil
                                 }
                             }
-                    }
-                } else {
-                    Text("Error: Could not load save states")
+                        )
+                    )
                 }
-            }
-            .uiKitAlert(
-                "Choose Artwork Source",
-                message: "Select artwork from your photo library or search online sources",
-                isPresented: $gamesViewModel.showArtworkSourceAlert,
-                buttons: {
-                    UIAlertAction(title: "Select from Photos", style: .default) { _ in
-                        Task {
-                            await gamesViewModel.handleSelectFromPhotos()
-                            // After alert is dismissed by ViewModel, trigger the sheet
-                            gamesViewModel.showImagePicker = true
+                .uiKitAlert(
+                    "Choose Artwork Source",
+                    message: "Select artwork from your photo library or search online sources",
+                    isPresented: $gamesViewModel.showArtworkSourceAlert,
+                    buttons: {
+                        UIAlertAction(title: "Select from Photos", style: .default) { _ in
+                            Task {
+                                await gamesViewModel.handleSelectFromPhotos()
+                                // After alert is dismissed by ViewModel, trigger the sheet
+                                gamesViewModel.showImagePicker = true
+                            }
+                        }
+                        UIAlertAction(title: "Search Online", style: .default) { _ in
+                            Task {
+                                // gameForArtworkUpdate is already set in gamesViewModel via prepareArtworkSourceAlert
+                                await gamesViewModel.handleSearchOnline()
+                                // After alert is dismissed by ViewModel, trigger the sheet
+                                gamesViewModel.showArtworkSearch = true
+                            }
+                        }
+                        UIAlertAction(title:  NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
+                            Task {
+                                await gamesViewModel.cancelArtworkSourceAlert()
+                            }
                         }
                     }
-                    UIAlertAction(title: "Search Online", style: .default) { _ in
-                        Task {
-                            // gameForArtworkUpdate is already set in gamesViewModel via prepareArtworkSourceAlert
-                            await gamesViewModel.handleSearchOnline()
-                            // After alert is dismissed by ViewModel, trigger the sheet
-                            gamesViewModel.showArtworkSearch = true
-                        }
-                    }
-                    UIAlertAction(title:  NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
-                        Task {
-                            await gamesViewModel.cancelArtworkSourceAlert()
-                        }
-                    }
-                }
-            )
-            .uiKitAlert(
-                "Select Disc",
-                message: "Choose which disc to load",
-                isPresented: Binding(
-                    get: { gamesViewModel.discSelectionAlert != nil },
-                    set: { if !$0 { gamesViewModel.discSelectionAlert = nil } }
-                ),
-                preferredContentSize: CGSize(width: 500, height: 300),
-                buttons: {
-                    if let alert = gamesViewModel.discSelectionAlert, let game = alert.game  {
-                        let actions = alert.discs.map { (disc: DiscSelectionAlert.Disc) -> UIAlertAction in
-                            UIAlertAction(title: disc.fileName, style: .default) { _ in
+                )
+                .uiKitAlert(
+                    "Select Disc",
+                    message: "Choose which disc to load",
+                    isPresented: Binding(
+                        get: { gamesViewModel.discSelectionAlert != nil },
+                        set: { if !$0 { gamesViewModel.discSelectionAlert = nil } }
+                    ),
+                    preferredContentSize: CGSize(width: 500, height: 300),
+                    buttons: {
+                        if let alert = gamesViewModel.discSelectionAlert, let game = alert.game  {
+                            let actions = alert.discs.map { (disc: DiscSelectionAlert.Disc) -> UIAlertAction in
+                                UIAlertAction(title: disc.fileName, style: .default) { _ in
+                                    gamesViewModel.discSelectionAlert = nil
+                                    Task {
+                                        await rootDelegate?.root_loadPath(disc.path, forGame: game, sender: nil, core: nil, saveState: nil)
+                                    }
+                                }
+                            }
+
+                            actions + [UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
                                 gamesViewModel.discSelectionAlert = nil
-                                Task {
-                                    await rootDelegate?.root_loadPath(disc.path, forGame: game, sender: nil, core: nil, saveState: nil)
-                                }
-                            }
+                            }]
+                        } else {
+                            [UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
+                                gamesViewModel.discSelectionAlert = nil
+                            }]
                         }
-
-                        actions + [UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
-                            gamesViewModel.discSelectionAlert = nil
-                        }]
-                    } else {
-                        [UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
-                            gamesViewModel.discSelectionAlert = nil
-                        }]
                     }
-                }
-            )
+                )
 
-            .task {
-                // Rescan specific system directory
-                let systemPath = Paths.biosesPath.appendingPathComponent(console.identifier)
-                await BIOSWatcher.shared.rescanDirectory(systemPath)
+                .task {
+                    // Rescan specific system directory
+                    let systemPath = Paths.biosesPath.appendingPathComponent(console.identifier)
+                    await BIOSWatcher.shared.rescanDirectory(systemPath)
+                }
+                .onAppear {
+                    self.recentGamesForBinding = Array(recentlyPlayedGames)
+                }
+                .onChange(of: recentlyPlayedGames) { newValue in
+                    self.recentGamesForBinding = Array(newValue)
+                }
             }
             .onAppear {
-                self.recentGamesForBinding = Array(recentlyPlayedGames)
+                print("➡️ ConsoleGamesView for \(console.name) (\(console.identifier)): APPEARED. ViewModel ID: \(ObjectIdentifier(gamesViewModel))")
             }
-            .onChange(of: recentlyPlayedGames) { newValue in
-                self.recentGamesForBinding = Array(newValue)
+            .onDisappear {
+                print("⬅️ ConsoleGamesView for \(console.name) (\(console.identifier)): DISAPPEARED.")
             }
+            .modifier(ConditionalSearchModifier(
+                isEnabled: games.count > 8,
+                searchText: $gamesViewModel.searchText
+            ))
+            .ignoresSafeArea(.all)
         }
         .onAppear {
             print("➡️ ConsoleGamesView for \(console.name) (\(console.identifier)): APPEARED. ViewModel ID: \(ObjectIdentifier(gamesViewModel))")

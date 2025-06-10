@@ -184,11 +184,8 @@ extension ConsoleGamesView: GameContextMenuDelegate {
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor gameId: String) {
-        DLOG("ConsoleGamesView: Received request to show game info")
-        // Handle showing game info, possibly by setting a @State or @Published var
-        // that triggers a sheet or navigation.
-        // For example: gamesViewModel.selectedGameForInfo = gameId
-        // Or if it's a root delegate action: rootDelegate?.showInfo(forGameID: gameId)
+        DLOG("ConsoleGamesView: Requesting to show game info for game ID: \(gameId) via ViewModel")
+        gamesViewModel.showGameInfo(gameId: gameId)
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame) {
