@@ -2,15 +2,40 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>ALTDeviceID</key>
+	<string>dummy</string>
+	<key>APP_GROUP_IDENTIFIER</key>
+	<string>$(APP_GROUP_IDENTIFIER)</string>
 	<key>CSExtensionLabel</key>
-	<string>SpotlightImportExtensionImporter</string>
+	<string>ProvenanceGameImporter</string>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionAttributes</key>
 		<dict>
 			<key>CSSupportedContentTypes</key>
 			<array>
-				<string>com.example.plain-text</string>
+				<!-- ROM file types -->
+				<string>com.provenance-emu.nes-rom</string>
+				<string>com.provenance-emu.snes-rom</string>
+				<string>com.provenance-emu.genesis-rom</string>
+				<string>com.provenance-emu.gameboy-rom</string>
+				<string>com.provenance-emu.gbc-rom</string>
+				<string>com.provenance-emu.gba-rom</string>
+				<string>com.provenance-emu.n64-rom</string>
+
+				<!-- Generic ROM types -->
+				<string>com.provenance-emu.rom</string>
+
+				<!-- Save state and other types -->
+				<string>com.provenance-emu.save-state</string>
+				<string>com.provenance-emu.cheat</string>
+
+				<!-- Common file extensions - support as raw files if needed -->
+				<string>public.item</string>
+				<string>public.data</string>
+				<string>public.content</string>
+				<string>public.archive</string>
+				<string>public.disk-image</string>
 			</array>
 		</dict>
 		<key>NSExtensionPointIdentifier</key>
@@ -18,5 +43,7 @@
 		<key>NSExtensionPrincipalClass</key>
 		<string>$(PRODUCT_MODULE_NAME).ImportExtension</string>
 	</dict>
+	<key>CSSearchableItemsProtocol</key>
+	<string>com.apple.coreservices.spotlight.search</string>
 </dict>
 </plist>

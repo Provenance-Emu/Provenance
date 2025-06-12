@@ -615,7 +615,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
     /// Screen configuration and filters
     public struct ScreenInfo: Codable {
         let inputFrame: CGRect?
-        let outputFrame: CGRect
+        let outputFrame: CGRect?
         let placement: DeltaSkinScreenPlacement?
         let filters: [FilterInfo]?
 
@@ -637,13 +637,16 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 inputFrame = nil
             }
 
-            // Decode required outputFrame
-            let outputContainer = try container.nestedContainer(keyedBy: DeltaSkinCodingKeys.self, forKey: .outputFrame)
-            let x = try outputContainer.decode(CGFloat.self, forKey: .x)
-            let y = try outputContainer.decode(CGFloat.self, forKey: .y)
-            let width = try outputContainer.decode(CGFloat.self, forKey: .width)
-            let height = try outputContainer.decode(CGFloat.self, forKey: .height)
-            outputFrame = CGRect(x: x, y: y, width: width, height: height)
+            // Decode optional outputFrame
+            if let outputContainer = try? container.nestedContainer(keyedBy: DeltaSkinCodingKeys.self, forKey: .outputFrame) {
+                let x = try outputContainer.decode(CGFloat.self, forKey: .x)
+                let y = try outputContainer.decode(CGFloat.self, forKey: .y)
+                let width = try outputContainer.decode(CGFloat.self, forKey: .width)
+                let height = try outputContainer.decode(CGFloat.self, forKey: .height)
+                outputFrame = CGRect(x: x, y: y, width: width, height: height)
+            } else {
+                outputFrame = nil
+            }
 
             // Decode optional fields
             placement = try container.decodeIfPresent(DeltaSkinScreenPlacement.self, forKey: .placement)
@@ -662,12 +665,14 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 try inputContainer.encode(inputFrame.size.height, forKey: .height)
             }
 
-            // Encode required outputFrame
-            var outputContainer = container.nestedContainer(keyedBy: DeltaSkinCodingKeys.self, forKey: .outputFrame)
-            try outputContainer.encode(outputFrame.origin.x, forKey: .x)
-            try outputContainer.encode(outputFrame.origin.y, forKey: .y)
-            try outputContainer.encode(outputFrame.size.width, forKey: .width)
-            try outputContainer.encode(outputFrame.size.height, forKey: .height)
+            // Encode optional outputFrame
+            if let frame = outputFrame {
+                var outputContainer = container.nestedContainer(keyedBy: DeltaSkinCodingKeys.self, forKey: .outputFrame)
+                try outputContainer.encode(frame.origin.x, forKey: .x)
+                try outputContainer.encode(frame.origin.y, forKey: .y)
+                try outputContainer.encode(frame.size.width, forKey: .width)
+                try outputContainer.encode(frame.size.height, forKey: .height)
+            }
 
             // Encode optional fields
             try container.encodeIfPresent(placement, forKey: .placement)
@@ -677,8 +682,13 @@ public struct DeltaSkin: DeltaSkinProtocol {
 
     /// CoreImage filter configuration
     public struct FilterInfo: Codable {
-        let name: String
-        let parameters: [String: FilterParameter]
+        public let name: String
+        public let parameters: [String: FilterParameter]
+        
+        public init(name: String, parameters: [String: FilterParameter]) {
+            self.name = name
+            self.parameters = parameters
+        }
 
         private enum CodingKeys: String, CodingKey {
             case name, parameters
@@ -728,6 +738,16 @@ public struct DeltaSkin: DeltaSkinProtocol {
 
         /// Frame for the game screen
         public let gameScreenFrame: CGRect?
+        
+        public init(assets: AssetRepresentation, mappingSize: CGSize = .zero, translucent: Bool? = nil, screens: [ScreenInfo]? = nil, items: [ItemRepresentation]? = nil, extendedEdges: UIEdgeInsets? = nil, gameScreenFrame: CGRect? = nil) {
+            self.assets = assets
+            self.mappingSize = mappingSize
+            self.translucent = translucent
+            self.screens = screens
+            self.items = items
+            self.extendedEdges = extendedEdges
+            self.gameScreenFrame = gameScreenFrame
+        }
     }
 
     public var jsonRepresentation: [String: Any] {

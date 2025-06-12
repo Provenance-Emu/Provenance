@@ -1,0 +1,48 @@
+Mednafen Network Play Server v0.5.0
+------------------------------------
+
+***IMPORTANT***
+This network play server will work best on LANs, or small-scale WANs.
+It will work on the Internet, but...physics might not be in your
+favor.
+***END IMPORTANT***
+
+To compile, type "./configure" and if nothing went wrong, "make".  To compile under MS Windows, you should use Cygwin.  I'm not
+going to change this server to use Win-old-dirty-smelly-sock natively.
+
+If it doesn't compile, sell your <eternally lasting essence of self> to the 
+<evil entity of your religion>.
+
+Most beings can run it like "./mednafen-server standard.conf >logfile &".
+Windows users can run it some other way.  A batch file with absolute paths, perhaps?
+	snuggums.bat:
+		C:\somethingdirectory\mednafen-server.exe c:\somethingdirectory\standard.conf
+
+With the default settings, each client should use about 65-70Kbps, excluding any
+data transferred during chat, state loads, etc.
+
+Clients connecting with high-latency or slow links may use more bandwidth, or they
+may use less bandwidth.  I'm really not quite sure.  If it concerns you, test it.
+
+Any client connecting over VERY high latency links, such as bidirectional satellite connections,
+may find that attempting network play will lock up his/her connection for 
+several minutes.  Right, Disch. ;)
+
+The server probably won't scale well to a huge number of clients connected at the same time.
+
+Bumping up the server's priority and running it on a low-latency kernel(preferably with
+1 ms or smaller timeslices) should help make network play more usable if you're running the 
+network play server on an otherwise non-idle physical server.
+
+
+When run, you'll likely get a warning such as the following:
+	Note: mlockall(MCL_CURRENT) failed: Cannot allocate memory (not a major problem; see the documentation if curious)
+It's not strictly necessary for the mlockall() to succeed, but having it succeed can greatly improve worst-case latency on systems that
+use swap space.  You'll need to increase the user's maximum locked memory resource limit, such as via "ulimit" or "limits.conf"(IE
+/etc/security/limits.conf on a Debian system).  However, ideally, you would run the server on a system that forgoes swap usage.
+
+
+TODO:
+
+Send emulation info, such as NTSC/PAL, input devices, and Game Genie emulation at connect
+time, to make it easier on end users.

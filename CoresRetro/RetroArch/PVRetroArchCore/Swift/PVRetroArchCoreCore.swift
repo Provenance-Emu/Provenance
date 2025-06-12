@@ -27,7 +27,9 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
     
     public override var rendersToOpenGL: Bool { true }
     public override var isDoubleBuffered: Bool { true }
-    
+    public override var supportsSkins: Bool { false }
+    public override var supportsAudioVisualizer: Bool { false }
+
     // MARK: Lifecycle
     public lazy var _bridge: PVRetroArchCoreBridge = .init()
     
@@ -419,5 +421,20 @@ extension PVRetroArchCoreCore: PVPSPSystemResponderClient {
     }
     public func didPush(_ button: PVCoreBridge.PVPSPButton, forPlayer player: Int) {
         (_bridge as! PVPSPSystemResponderClient).didPush(button, forPlayer: player)
+    }
+}
+
+// Sega Saturn
+extension PVRetroArchCoreCore: PVSaturnSystemResponderClient {
+    public func didRelease(_ button: PVCoreBridge.PVSaturnButton, forPlayer player: Int) {
+        (_bridge as! PVSaturnSystemResponderClient).didRelease(button, forPlayer: player)
+
+    }
+    public func didMoveJoystick(_ button: PVCoreBridge.PVSaturnButton, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
+        (_bridge as! PVSaturnSystemResponderClient).didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
+
+    }
+    public func didPush(_ button: PVCoreBridge.PVSaturnButton, forPlayer player: Int) {
+        (_bridge as! PVSaturnSystemResponderClient).didPush(button, forPlayer: player)
     }
 }

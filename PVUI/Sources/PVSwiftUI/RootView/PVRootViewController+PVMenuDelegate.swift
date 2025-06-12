@@ -49,7 +49,10 @@ extension PVRootViewController: PVMenuDelegate {
         NotificationCenter.default.post(name: NSNotification.Name.PVReimportLibrary, object: nil)
 
         let settingsView = ImportStatusView(updatesController:updatesController, gameImporter: gameImporter, delegate: self) {
-            gameImporter.clearCompleted()
+            // Use Task to handle the async call
+            Task {
+                await gameImporter.clearCompleted()
+            }
         }
 
         let hostingController = UIHostingController(rootView: settingsView)
@@ -124,7 +127,7 @@ extension PVRootViewController: PVMenuDelegate {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
 
-            let isEnabled = PVFeatureFlagsManager.shared.inAppFreeROMs
+            let isEnabled = PVFeatureFlagsManager.shared.featureStates[.inAppFreeROMs] ?? false
             print("Checking inAppFreeROMs in showImportOptionsAlert: \(isEnabled)")
 
             if isEnabled {
@@ -201,7 +204,10 @@ extension PVRootViewController: UIDocumentPickerDelegate {
                     gameImporter: gameImporter,
                     delegate: self
                 ) {
-                    gameImporter.clearCompleted()
+                    // Use Task to handle the async call
+                    Task {
+                        await gameImporter.clearCompleted()
+                    }
                 }
                 let hostingController = UIHostingController(rootView: settingsView)
                 let navigationController = UINavigationController(rootViewController: hostingController)
@@ -218,8 +224,14 @@ extension PVRootViewController: UIDocumentPickerDelegate {
 
 extension PVRootViewController: ImportStatusDelegate {
     public func dismissAction() {
-        AppState.shared.gameImporter?.clearCompleted()
-        self.dismiss(animated: true)
+        // Use Task to handle the async call
+        Task {
+            await AppState.shared.gameImporter?.clearCompleted()
+            // Ensure UI updates happen on the main thread
+            await MainActor.run {
+                self.dismiss(animated: true)
+            }
+        }
     }
 
     public func addImportsAction() {
@@ -227,14 +239,13 @@ extension PVRootViewController: ImportStatusDelegate {
     }
 
     public func forceImportsAction() {
-        //reset the status of each item that conflict or failed so we can try again.
-        GameImporter.shared.importQueue.forEach { item in
-            if (item.status == .failure || item.status == .conflict || item.status == .partial) {
-                item.status = .queued
-            }
+        // Use Task to handle async operations
+        Task {
+            //reset the status of each item that conflict or failed so we can try again.
+            let importQueue = await GameImporter.shared.importQueue
+            importQueue.filter { $0.status != .queued }.forEach({ $0.requeue()})
+            GameImporter.shared.startProcessing()
         }
-
-        GameImporter.shared.startProcessing()
     }
 
     public func didSelectSystem(_ system: SystemIdentifier, for item: ImportQueueItem) {

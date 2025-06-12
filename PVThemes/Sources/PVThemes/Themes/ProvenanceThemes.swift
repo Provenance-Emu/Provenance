@@ -9,18 +9,24 @@ import UIKit
 
 public enum ProvenanceThemes: String, CaseIterable, PaletteProvider {
     case `default`
+    case auto
     case dark
     case light
+    case retrowave
 
     public var palette: any UXThemePalette {
         let palette: any UXThemePalette
         switch self {
-        case .default:
+        case .auto:
             palette = UITraitCollection.current.userInterfaceStyle == .dark ? DarkThemePalette() : LightThemePalette()
+        case .default:
+            palette = RetroWaveThemePalette() // UITraitCollection.current.userInterfaceStyle == .dark ? DarkThemePalette() : LightThemePalette()
         case .dark:
             palette = DarkThemePalette()
         case .light:
             palette = LightThemePalette()
+        case .retrowave:
+            palette = RetroWaveThemePalette()
         }
         return palette
     }

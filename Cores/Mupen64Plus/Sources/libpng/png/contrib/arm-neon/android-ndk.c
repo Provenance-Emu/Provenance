@@ -2,7 +2,6 @@
  *
  * Copyright (c) 2014 Glenn Randers-Pehrson
  * Written by John Bowler, 2014.
- * Last changed in libpng 1.6.10 [March 6, 2014]
  *
  * This code is released under the libpng license.
  * For conditions of distribution and use, see the disclaimer
@@ -17,13 +16,14 @@
  *
  * Documentation:
  *    http://www.kandroid.org/ndk/docs/CPU-ARM-NEON.html
- *    http://code.google.com/p/android/issues/detail?id=49065
+ *    https://code.google.com/p/android/issues/detail?id=49065
  *
  * NOTE: this requires that libpng is built against the Android NDK and linked
  * with an implementation of the Android ARM 'cpu-features' library.  The code
  * has been compiled only, not linked: no version of the library has been found,
  * only the header files exist in the NDK.
  */
+
 #include <cpu-features.h>
 
 static int

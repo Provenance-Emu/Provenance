@@ -28,6 +28,11 @@ public final class PVSaveState: RealmSwift.Object, Identifiable, Filed, LocalFil
     @Persisted public var isFavorite: Bool = false
 
     @Persisted public var userDescription: String? = nil
+    
+    // CloudKit sync properties
+    @Persisted public var cloudRecordID: String? // CloudKit record ID for on-demand downloads
+    @Persisted public var isDownloaded: Bool = true // Whether the file is downloaded locally
+    @Persisted public var fileSize: Int = 0 // File size in bytes
 
     @Persisted public var createdWithCoreVersion: String!
 

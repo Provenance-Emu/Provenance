@@ -21,6 +21,13 @@ import UIKit
 // MARK: - System Scanner
 
 public extension PVEmulatorConfiguration {
+    /// Reset the initialization flags to allow re-initialization of systems and cores
+    /// This is primarily used for testing purposes
+    class func resetInitializationFlags() {
+        systemsInitialized = false
+        coresInitialized = false
+        ILOG("PVEmulatorConfiguration: Reset initialization flags")
+    }
     class func registerCore(_ core: EmulatorCoreInfoProvider) async throws {
         let database = RomDatabase.sharedInstance
         

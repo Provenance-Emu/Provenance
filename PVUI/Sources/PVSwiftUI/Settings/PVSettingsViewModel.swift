@@ -36,7 +36,7 @@ class PVSettingsViewModel: ObservableObject {
     }
 
     @Published var numberOfConflicts: Int = 0
-    
+    @AppStorage("showFeatureFlagsDebug") internal var showFeatureFlagsDebug = false
     
     private var cancellables = Set<AnyCancellable>()
     private let reachability = try? Reachability()

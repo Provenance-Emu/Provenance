@@ -304,6 +304,7 @@ static void InitializeLogging() {
     
     Settings::values.use_vsync_new.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVAzaharCore.Enable VSync"]);
     Settings::values.shaders_accurate_mul.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVAzaharCore.Enable Shader Accurate Mul"]);
+    Settings::values.disable_right_eye_render.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVAzaharCore.Right Eye Render Disable"]);
     Settings::values.use_shader_jit.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVAzaharCore.Enable Shader Just in Time"]);
 
     Settings::values.swap_screen.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVAzaharCore.Swap Screen"]);

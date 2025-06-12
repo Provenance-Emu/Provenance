@@ -134,7 +134,7 @@ public extension ThemeManager {
         // Apply general UIView appearance
         UIView.appearance().tintColor = palette.defaultTintColor
 //        UIView.appearance().backgroundColor = palette.uiviewBackground
-        DLOG("UIView appearance - tintColor: \(palette.defaultTintColor?.debugDescription ?? "nil"), backgroundColor: \(palette.uiviewBackground?.debugDescription ?? "nil")")
+        DLOG("UIView appearance - tintColor: \(palette.defaultTintColor.debugDescription), backgroundColor: \(palette.uiviewBackground?.debugDescription ?? "nil")")
     }
     
     @MainActor
@@ -142,7 +142,7 @@ public extension ThemeManager {
         // Apply general UIWindow appearance
         UIView.appearance().tintColor = palette.defaultTintColor
 //        UIView.appearance().backgroundColor = palette.uiviewBackground
-        DLOG("UIWindow appearance - tintColor: \(palette.defaultTintColor?.debugDescription ?? "nil"), backgroundColor: \(palette.uiviewBackground?.debugDescription ?? "nil")")
+        DLOG("UIWindow appearance - tintColor: \(palette.defaultTintColor.debugDescription), backgroundColor: \(palette.uiviewBackground?.debugDescription ?? "nil")")
     }
 
 
@@ -218,7 +218,7 @@ public extension ThemeManager {
 
             UILabel.appearance(whenContainedInInstancesOf: [actionSystemView]).textColor = palette.gameLibraryText
             UILabel.appearance(whenContainedInInstancesOf: [actionSystemView]).tintColor = palette.defaultTintColor
-            DLOG("Action sheet labels - textColor: \(palette.gameLibraryText.debugDescription), tintColor: \(palette.defaultTintColor?.debugDescription ?? "nil")")
+            DLOG("Action sheet labels - textColor: \(palette.gameLibraryText.debugDescription), tintColor: \(palette.defaultTintColor.debugDescription)")
         }
     }
 
@@ -229,7 +229,7 @@ public extension ThemeManager {
             $0.unselectedItemTintColor = palette.segmentedControlTint
             $0.barTintColor = palette.segmentedControlSelectedTint
         }
-        DLOG("Tab bar - tintColor: \(palette.defaultTintColor?.debugDescription ?? "nil"), barTintColor: \(palette.tabBarBackground?.debugDescription ?? "nil")")
+        DLOG("Tab bar - tintColor: \(palette.defaultTintColor.debugDescription), barTintColor: \(palette.tabBarBackground?.debugDescription ?? "nil")")
     }
 
     @MainActor
@@ -237,30 +237,30 @@ public extension ThemeManager {
         UISegmentedControl.appearance().selectedSegmentTintColor = palette.defaultTintColor
         UISegmentedControl.appearance().setTitleTextAttributes([.foregroundColor: palette.gameLibraryText], for: .normal)
         UISegmentedControl.appearance().setTitleTextAttributes([.foregroundColor: palette.settingsCellBackground ?? .white], for: .selected)
-        DLOG("Segmented control - selectedSegmentTintColor: \(palette.defaultTintColor?.debugDescription ?? "nil"), normalTextColor: \(palette.gameLibraryText.debugDescription), selectedTextColor: \(palette.settingsCellBackground?.debugDescription ?? "nil")")
+        DLOG("Segmented control - selectedSegmentTintColor: \(palette.defaultTintColor.debugDescription), normalTextColor: \(palette.gameLibraryText.debugDescription), selectedTextColor: \(palette.settingsCellBackground?.debugDescription ?? "nil")")
     }
     
     @MainActor
     private class func configurePageControl(_ palette: any UXThemePalette) {
         UIPageControl.appearance().currentPageIndicatorTintColor = palette.switchON?.saturation(0.8)
         UIPageControl.appearance().pageIndicatorTintColor = palette.switchON?.saturation(0.3) ?? palette.switchThumb
-        DLOG("Page control - configurePageControl - currentPageIndicatorTintColor: \(palette.defaultTintColor?.debugDescription ?? "nil"), pageIndicatorTintColor: \(palette.gameLibraryText.debugDescription ?? "") ")
+        DLOG("Page control - configurePageControl - currentPageIndicatorTintColor: \(palette.defaultTintColor.debugDescription), pageIndicatorTintColor: \(palette.gameLibraryText.debugDescription ?? "") ")
     }
 
     @MainActor
     private class func configureSlider(_ palette: any UXThemePalette) {
         #if !os(tvOS)
         UISlider.appearance().thumbTintColor = palette.defaultTintColor
-        UISlider.appearance().minimumTrackTintColor = palette.defaultTintColor?.withAlphaComponent(0.5)
+        UISlider.appearance().minimumTrackTintColor = palette.defaultTintColor.withAlphaComponent(0.5)
         UISlider.appearance().maximumTrackTintColor = palette.settingsSeperator
-        DLOG("Slider - thumbTintColor: \(palette.defaultTintColor?.debugDescription ?? "nil"), minimumTrackTintColor: \(palette.defaultTintColor?.withAlphaComponent(0.5).debugDescription ?? "nil"), maximumTrackTintColor: \(palette.settingsSeperator?.debugDescription ?? "nil")")
+        DLOG("Slider - thumbTintColor: \(palette.defaultTintColor.debugDescription), minimumTrackTintColor: \(palette.defaultTintColor.withAlphaComponent(0.5).debugDescription), maximumTrackTintColor: \(palette.settingsSeperator?.debugDescription ?? "nil")")
         #endif
     }
 
     @MainActor
     private class func configureActivityIndicator(_ palette: any UXThemePalette) {
         UIActivityIndicatorView.appearance().color = palette.defaultTintColor
-        DLOG("Activity indicator - color: \(palette.defaultTintColor?.debugDescription ?? "nil")")
+        DLOG("Activity indicator - color: \(palette.defaultTintColor.debugDescription)")
     }
 
     @MainActor

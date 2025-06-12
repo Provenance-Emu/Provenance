@@ -21,8 +21,8 @@ static int GBMap[] = { 6, 7, 5,     4, 0, 1, 3, 2 };
 static int GBAMap[] = { 6, 7, 5, 4, 0, 1, 9, 8, 3, 2};
 /// ↑, ↓, ←, →, A, B, Start, Select
 static const int NESMap[] = { 4, 5, 6, 7, 0, 1, 3, 2 };
-/// Pause, B, 1, 2, ↓, ↑, ←, →
-static const int LynxMap[] = { 6, 7, 4, 5, 0, 1, 3, 2 };
+/// A, B, 1, 2, ↓, ↑, ←, →, Pause
+static const int LynxMap[] = { 6, 7, 4, 5, 0, 1, 3, 2, 8};
 
 /// Select, [Triangle], [X], Start, R1, R2, left stick u, left stick left,
 static const int PSXMap[]  = { 4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16, 24, 23, 22, 21, 20, 19, 18, 17 };

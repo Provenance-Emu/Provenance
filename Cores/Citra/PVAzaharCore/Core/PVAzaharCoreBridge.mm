@@ -126,6 +126,7 @@ static bool _isOff = false;
     [[NSUserDefaults standardUserDefaults] setBool:self.enableJIT forKey:@"use_cpu_jit"];
     [[NSUserDefaults standardUserDefaults] setBool:self.enableLogging forKey:@"enable_logging"];
     [[NSUserDefaults standardUserDefaults] setBool:self.useNew3DS forKey:@"is_new_3ds"];
+    [[NSUserDefaults standardUserDefaults] setBool:self.rightEyeDisable forKey:@"disable_right_eye_render"];
     [[NSUserDefaults standardUserDefaults] setBool:self.enableVSync forKey:@"use_vsync_new"];
     [[NSUserDefaults standardUserDefaults] setBool:self.enableShaderAccurate forKey:@"shaders_accurate_mul"];
     [[NSUserDefaults standardUserDefaults] setBool:self.enableShaderJIT forKey:@"use_shader_jit"];
