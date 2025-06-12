@@ -82,6 +82,14 @@ import PVCoreBridge
               defaultValue: true)
     }
     
+    static var rightEyeDisableOption: CoreOption {
+        .bool(.init(
+            title: "Right Eye Render Disable",
+            description: "May improve performance by rendering only a single \"eye\".",
+            requiresRestart: false),
+              defaultValue: false)
+    }
+    
     static var gsOption: CoreOption {
         .enumeration(.init(title: "Graphics Handler",
                            description: "(Requires Restart)",
@@ -363,7 +371,7 @@ import PVCoreBridge
     public static var options: [CoreOption] {
         var options = [CoreOption]()
         let coreOptions: [CoreOption] = [
-            resolutionOption, enableHLEOption, cpuClockOption, enableJITOption, enableLoggingOption, enableNew3DSOption, gsOption, enableAsyncShaderOption, enableAsyncPresentOption,
+            resolutionOption, enableHLEOption, cpuClockOption, enableJITOption, enableLoggingOption, enableNew3DSOption, gsOption, rightEyeDisableOption, enableAsyncShaderOption, enableAsyncPresentOption,
             shaderTypeOption, enableVSyncOption, enableShaderAccurateMulOption, enableShaderJITOption, portraitTypeOption, landscapeTypeOption, inputTypeOption, volumeOption, realtimeAudioOption,
             stretchAudioOption, swapScreenOption, uprightScreenOption, regionOption, customTexturesOption, preloadTextuesOption, stereoRenderOption, threedFactorOption
         ]
@@ -383,6 +391,7 @@ extension PVAzaharCoreOptions {
     @objc public static var enableJIT: Bool { valueForOption(PVAzaharCoreOptions.enableJITOption) }
     @objc public static var enableLogging: Bool { valueForOption(PVAzaharCoreOptions.enableLoggingOption) }
     @objc public static var enableNew3DS: Bool { valueForOption(PVAzaharCoreOptions.enableNew3DSOption) }
+    @objc public static var rightEyeDisable: Bool { valueForOption(PVAzaharCoreOptions.rightEyeDisableOption) }
     @objc public static var gs: Int { valueForOption(PVAzaharCoreOptions.gsOption)  }
     @objc public static var enableAsyncShader: Bool { valueForOption(PVAzaharCoreOptions.enableAsyncShaderOption) }
     @objc public static var enableAsyncPresent: Int { valueForOption(PVAzaharCoreOptions.enableAsyncPresentOption)  }
@@ -410,6 +419,7 @@ extension PVAzaharCoreOptions {
         self.enableLogging = PVAzaharCoreOptions.valueForOption(PVAzaharCoreOptions.enableLoggingOption).asBool
         self.useNew3DS =
         PVAzaharCoreOptions.valueForOption(PVAzaharCoreOptions.enableNew3DSOption).asBool
+        self.rightEyeDisable = PVAzaharCoreOptions.valueForOption(PVAzaharCoreOptions.rightEyeDisableOption).asBool
         self.asyncShader = PVAzaharCoreOptions.valueForOption(PVAzaharCoreOptions.enableAsyncShaderOption).asBool
         self.asyncPresent = PVAzaharCoreOptions.valueForOption(PVAzaharCoreOptions.enableAsyncPresentOption).asBool
         self.shaderType = NSNumber(value:PVAzaharCoreOptions.valueForOption(PVAzaharCoreOptions.shaderTypeOption).asInt ?? 2).int8Value
