@@ -428,7 +428,6 @@
 		930499DF2A93073800BF257F /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EAC26CABE880088AC32 /* Provenance.storyboard */; platformFilters = (ios, maccatalyst, ); };
 		930499E02A93073800BF257F /* CRT.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703542896314200F75595 /* CRT.fsh */; };
 		930499E12A93073800BF257F /* PVSaveStateCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */; platformFilters = (ios, maccatalyst, ); };
-		930499E22A93073800BF257F /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EB726CABF250088AC32 /* Cheats.storyboard */; platformFilters = (ios, maccatalyst, ); };
 		930499E32A93073800BF257F /* PVGameLibraryCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3296EE026CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib */; platformFilters = (ios, maccatalyst, ); };
 		930499E42A93073800BF257F /* MonoLCD.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034E2896314100F75595 /* MonoLCD.fsh */; };
 		930499E52A93073800BF257F /* Scale2x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034F2896314100F75595 /* Scale2x.fsh */; };
@@ -519,6 +518,11 @@
 		93AC9F592A7F767000484B9E /* PVLibRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E5D9EC2959837A00907CFB /* PVLibRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		93BBFD892AA688C500940E5A /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; };
 		93BBFD8B2AA688FF00940E5A /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		93C77BDD2E12269100D154B5 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93C77BDC2E12269100D154B5 /* Cheats.storyboard */; };
+		93C77BDE2E12269100D154B5 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93C77BDC2E12269100D154B5 /* Cheats.storyboard */; };
+		93C77BDF2E12269100D154B5 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93C77BDC2E12269100D154B5 /* Cheats.storyboard */; };
+		93C77BE02E12269100D154B5 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93C77BDC2E12269100D154B5 /* Cheats.storyboard */; };
+		93C77BE12E12269100D154B5 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93C77BDC2E12269100D154B5 /* Cheats.storyboard */; };
 		93CB27D2297CE664006A940B /* libMoltenVK_Dolphin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93CB27D1297CE664006A940B /* libMoltenVK_Dolphin.dylib */; platformFilter = ios; };
 		93CB27D3297CE666006A940B /* libMoltenVK_Dolphin.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93CB27D1297CE664006A940B /* libMoltenVK_Dolphin.dylib */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		93CB27DA297CF017006A940B /* libMoltenVK_Dolphin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93CB27D1297CE664006A940B /* libMoltenVK_Dolphin.dylib */; platformFilter = ios; };
@@ -635,7 +639,6 @@
 		B3296EAA26CABE880088AC32 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EAC26CABE880088AC32 /* Provenance.storyboard */; platformFilters = (ios, maccatalyst, ); };
 		B3296EAF26CABEA80088AC32 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EB126CABEA80088AC32 /* SaveStates.storyboard */; platformFilters = (ios, maccatalyst, ); };
 		B3296EB226CABEE00088AC32 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EB426CABEE00088AC32 /* Settings.storyboard */; platformFilters = (ios, maccatalyst, ); };
-		B3296EB526CABF250088AC32 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EB726CABF250088AC32 /* Cheats.storyboard */; platformFilters = (ios, maccatalyst, ); };
 		B3296EBE26CABF9F0088AC32 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; };
 		B3296EC326CABFB00088AC32 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings.storyboard */; };
 		B3296EC826CABFCA0088AC32 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */; };
@@ -1835,7 +1838,6 @@
 		B394CDCE2BDEE53A006B63E8 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EAC26CABE880088AC32 /* Provenance.storyboard */; platformFilters = (ios, maccatalyst, ); };
 		B394CDCF2BDEE53A006B63E8 /* CRT.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703542896314200F75595 /* CRT.fsh */; };
 		B394CDD02BDEE53A006B63E8 /* PVSaveStateCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */; platformFilters = (ios, maccatalyst, ); };
-		B394CDD12BDEE53A006B63E8 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EB726CABF250088AC32 /* Cheats.storyboard */; platformFilters = (ios, maccatalyst, ); };
 		B394CDD22BDEE53A006B63E8 /* PVGameLibraryCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3296EE026CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib */; platformFilters = (ios, maccatalyst, ); };
 		B394CDD32BDEE53A006B63E8 /* MonoLCD.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034E2896314100F75595 /* MonoLCD.fsh */; };
 		B394CDD42BDEE53A006B63E8 /* Scale2x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034F2896314100F75595 /* Scale2x.fsh */; };
@@ -2270,7 +2272,6 @@
 		B3F7E3DB297736BE00362B92 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EAC26CABE880088AC32 /* Provenance.storyboard */; platformFilters = (ios, maccatalyst, ); };
 		B3F7E3DC297736BE00362B92 /* CRT.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703542896314200F75595 /* CRT.fsh */; };
 		B3F7E3DD297736BE00362B92 /* PVSaveStateCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */; platformFilters = (ios, maccatalyst, ); };
-		B3F7E3DE297736BE00362B92 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EB726CABF250088AC32 /* Cheats.storyboard */; platformFilters = (ios, maccatalyst, ); };
 		B3F7E3DF297736BE00362B92 /* PVGameLibraryCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3296EE026CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib */; platformFilters = (ios, maccatalyst, ); };
 		B3F7E3E0297736BE00362B92 /* MonoLCD.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034E2896314100F75595 /* MonoLCD.fsh */; };
 		B3F7E3E1297736BE00362B92 /* Scale2x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034F2896314100F75595 /* Scale2x.fsh */; };
@@ -2575,7 +2576,6 @@
 		B3F7E568297736C200362B92 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EAC26CABE880088AC32 /* Provenance.storyboard */; platformFilters = (ios, maccatalyst, ); };
 		B3F7E569297736C200362B92 /* CRT.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703542896314200F75595 /* CRT.fsh */; };
 		B3F7E56A297736C200362B92 /* PVSaveStateCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */; platformFilters = (ios, maccatalyst, ); };
-		B3F7E56B297736C200362B92 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EB726CABF250088AC32 /* Cheats.storyboard */; platformFilters = (ios, maccatalyst, ); };
 		B3F7E56C297736C200362B92 /* PVGameLibraryCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3296EE026CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib */; platformFilters = (ios, maccatalyst, ); };
 		B3F7E56D297736C200362B92 /* MonoLCD.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034E2896314100F75595 /* MonoLCD.fsh */; };
 		B3F7E56E297736C200362B92 /* Scale2x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034F2896314100F75595 /* Scale2x.fsh */; };
@@ -3543,10 +3543,12 @@
 		93654F75298F400B0046503F /* PVSupergrafx.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupergrafx.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		936BFD802986A5B4001FF097 /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules/libMoltenVK.dylib; sourceTree = "<group>"; };
 		936FDBEA295855670073628A /* libMoltenVK_Play.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK_Play.dylib; path = Cores/Play/lib/libMoltenVK_Play.dylib; sourceTree = "<group>"; };
+		9378593B2D9E6AE3006CD69D /* Provenance-XL.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Provenance-XL.entitlements"; sourceTree = "<group>"; };
 		938F29CF2A8D068B002F783A /* PVNP2Kai.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVNP2Kai.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		93A7277A2AAEB0DA0052B279 /* PVMameControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVMameControllerViewController.swift; sourceTree = "<group>"; };
 		93A7277B2AAEB0DB0052B279 /* PVNeoGeoControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVNeoGeoControllerViewController.swift; sourceTree = "<group>"; };
 		93A924552A6F0ACA0059BFEA /* PV3DSControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PV3DSControllerViewController.swift; sourceTree = "<group>"; };
+		93C77BDC2E12269100D154B5 /* Cheats.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Cheats.storyboard; sourceTree = "<group>"; };
 		93C792242954E869001212D2 /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = "Cores/Dolphin/dolphin-ios/Externals/MoltenVK/MoltenVK.xcframework"; sourceTree = "<group>"; };
 		93CB27D1297CE664006A940B /* libMoltenVK_Dolphin.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK_Dolphin.dylib; path = Cores/Dolphin/lib/libMoltenVK_Dolphin.dylib; sourceTree = "<group>"; };
 		93DB7D2C2A750966005F8B26 /* libswscale.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libswscale.framework; path = Cores/emuThree/lib/libswscale.framework; sourceTree = "<group>"; };
@@ -3653,8 +3655,6 @@
 		B31B360B2959734500E5AA3C /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Settings.strings; sourceTree = "<group>"; };
 		B31B360C2959734D00E5AA3C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Settings.strings; sourceTree = "<group>"; };
 		B31B360E2959735400E5AA3C /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Settings.strings"; sourceTree = "<group>"; };
-		B31B360F2959735B00E5AA3C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Cheats.storyboard; sourceTree = "<group>"; };
-		B31B36102959736800E5AA3C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Cheats.strings; sourceTree = "<group>"; };
 		B31B36122959759300E5AA3C /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Provenance.strings; sourceTree = "<group>"; };
 		B31B36132959759A00E5AA3C /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Provenance.strings; sourceTree = "<group>"; };
 		B31B36142959759F00E5AA3C /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Provenance.strings; sourceTree = "<group>"; };
@@ -3681,12 +3681,6 @@
 		B31B362C2959766B00E5AA3C /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Cheats.strings; sourceTree = "<group>"; };
 		B31B362D2959767000E5AA3C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Cheats.strings"; sourceTree = "<group>"; };
 		B31B362F2959767600E5AA3C /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Cheats.strings"; sourceTree = "<group>"; };
-		B31B3631295976AB00E5AA3C /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Cheats.strings; sourceTree = "<group>"; };
-		B31B3633295976B400E5AA3C /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Cheats.strings; sourceTree = "<group>"; };
-		B31B3635295976BD00E5AA3C /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Cheats.strings; sourceTree = "<group>"; };
-		B31B3637295976C500E5AA3C /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Cheats.strings"; sourceTree = "<group>"; };
-		B31B3639295976CE00E5AA3C /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Cheats.strings; sourceTree = "<group>"; };
-		B31B363B295976D600E5AA3C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Cheats.strings; sourceTree = "<group>"; };
 		B3203C2626DB1B6600B016C6 /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3203C2926DB1B9E00B016C6 /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B32296CB2878381C00585AD8 /* PVFBNeo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFBNeo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3748,7 +3742,6 @@
 		B3296EA926CABE760088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		B3296EAE26CABE950088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Provenance.strings"; sourceTree = "<group>"; };
 		B3296EB926CABF300088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Settings.strings"; sourceTree = "<group>"; };
-		B3296EBB26CABF340088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Cheats.strings"; sourceTree = "<group>"; };
 		B3296EBD26CABF6D0088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/SaveStates.strings"; sourceTree = "<group>"; };
 		B3296EBF26CABF9F0088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Provenance.storyboard; sourceTree = "<group>"; };
 		B3296EC226CABFA70088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Provenance.strings"; sourceTree = "<group>"; };
@@ -4851,7 +4844,7 @@
 				B3296EE426CAC2B10088AC32 /* Default.xib */,
 				B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */,
 				B3AE1F752073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib */,
-				B3296EB726CABF250088AC32 /* Cheats.storyboard */,
+				93C77BDC2E12269100D154B5 /* Cheats.storyboard */,
 			);
 			path = "User Interface";
 			sourceTree = "<group>";
@@ -4888,6 +4881,7 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
+				9378593B2D9E6AE3006CD69D /* Provenance-XL.entitlements */,
 				934BE9B3296F178400FB9933 /* modules */,
 				B381A2792926345F00305322 /* StickerPack.entitlements */,
 				B380EAC32759D69A001B8532 /* CodeSigning.xcconfig.sample */,
@@ -7116,7 +7110,7 @@
 				1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */,
 				B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */,
 				B32987D42B66198700728996 /* Cheats.storyboard in Resources */,
-				B3296EB526CABF250088AC32 /* Cheats.storyboard in Resources */,
+				93C77BDE2E12269100D154B5 /* Cheats.storyboard in Resources */,
 				B36703702896314200F75595 /* Bilinear.fsh in Resources */,
 				B367035E2896314200F75595 /* AAOmniScaleLegacy.fsh in Resources */,
 				B367036E2896314200F75595 /* OmniScale.fsh in Resources */,
@@ -7216,7 +7210,7 @@
 				930499DF2A93073800BF257F /* Provenance.storyboard in Resources */,
 				930499E02A93073800BF257F /* CRT.fsh in Resources */,
 				930499E12A93073800BF257F /* PVSaveStateCollectionViewCell.xib in Resources */,
-				930499E22A93073800BF257F /* Cheats.storyboard in Resources */,
+				93C77BE12E12269100D154B5 /* Cheats.storyboard in Resources */,
 				930499E32A93073800BF257F /* PVGameLibraryCollectionViewCell.xib in Resources */,
 				930499E42A93073800BF257F /* MonoLCD.fsh in Resources */,
 				930499E52A93073800BF257F /* Scale2x.fsh in Resources */,
@@ -7415,7 +7409,7 @@
 				B3AED2FA2BE355C3003A9290 /* Cheats.storyboard in Resources */,
 				B3AED2FB2BE355C3003A9290 /* Settings.storyboard in Resources */,
 				B3AED2FC2BE355C3003A9290 /* Provenance.storyboard in Resources */,
-				B394CDD12BDEE53A006B63E8 /* Cheats.storyboard in Resources */,
+				93C77BDF2E12269100D154B5 /* Cheats.storyboard in Resources */,
 				B3AED2F72BE355B7003A9290 /* LaunchScreenTV.storyboard in Resources */,
 				B394CDD22BDEE53A006B63E8 /* PVGameLibraryCollectionViewCell.xib in Resources */,
 				B394CDD32BDEE53A006B63E8 /* MonoLCD.fsh in Resources */,
@@ -7486,7 +7480,7 @@
 				B3F7E3DB297736BE00362B92 /* Provenance.storyboard in Resources */,
 				B3F7E3DC297736BE00362B92 /* CRT.fsh in Resources */,
 				B3F7E3DD297736BE00362B92 /* PVSaveStateCollectionViewCell.xib in Resources */,
-				B3F7E3DE297736BE00362B92 /* Cheats.storyboard in Resources */,
+				93C77BE02E12269100D154B5 /* Cheats.storyboard in Resources */,
 				B3F7E3DF297736BE00362B92 /* PVGameLibraryCollectionViewCell.xib in Resources */,
 				B3F7E3E0297736BE00362B92 /* MonoLCD.fsh in Resources */,
 				B3F7E3E1297736BE00362B92 /* Scale2x.fsh in Resources */,
@@ -7527,7 +7521,7 @@
 				B3F7E568297736C200362B92 /* Provenance.storyboard in Resources */,
 				B3F7E569297736C200362B92 /* CRT.fsh in Resources */,
 				B3F7E56A297736C200362B92 /* PVSaveStateCollectionViewCell.xib in Resources */,
-				B3F7E56B297736C200362B92 /* Cheats.storyboard in Resources */,
+				93C77BDD2E12269100D154B5 /* Cheats.storyboard in Resources */,
 				B3F7E56C297736C200362B92 /* PVGameLibraryCollectionViewCell.xib in Resources */,
 				B3F7E56D297736C200362B92 /* MonoLCD.fsh in Resources */,
 				B3F7E56E297736C200362B92 /* Scale2x.fsh in Resources */,
@@ -10153,22 +10147,6 @@
 			name = Settings.storyboard;
 			sourceTree = "<group>";
 		};
-		B3296EB726CABF250088AC32 /* Cheats.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				B3296EBB26CABF340088AC32 /* zh-Hans */,
-				B31B360F2959735B00E5AA3C /* Base */,
-				B31B36102959736800E5AA3C /* en */,
-				B31B3631295976AB00E5AA3C /* nl */,
-				B31B3633295976B400E5AA3C /* it */,
-				B31B3635295976BD00E5AA3C /* ja */,
-				B31B3637295976C500E5AA3C /* pt-BR */,
-				B31B3639295976CE00E5AA3C /* ru */,
-				B31B363B295976D600E5AA3C /* es */,
-			);
-			name = Cheats.storyboard;
-			sourceTree = "<group>";
-		};
 		B3296EC026CABF9F0088AC32 /* Provenance.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -10439,7 +10417,8 @@
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -10503,7 +10482,8 @@
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -10794,7 +10774,8 @@
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -10863,7 +10844,8 @@
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -10933,7 +10915,8 @@
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -12877,7 +12860,8 @@
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -13088,7 +13072,8 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = Extensions/Spotlight/Info.plist;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -13704,7 +13689,8 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = Extensions/Spotlight/Info.plist;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -13754,7 +13740,8 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = Extensions/Spotlight/Info.plist;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -14193,7 +14180,8 @@
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -14262,7 +14250,8 @@
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -14332,7 +14321,8 @@
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -14381,10 +14371,12 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = "Provenance-XL.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = NO;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -14405,7 +14397,8 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -14452,10 +14445,12 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = "Provenance-XL.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = NO;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -14476,7 +14471,8 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -14524,10 +14520,12 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = "Provenance-XL.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = NO;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -14548,7 +14546,8 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
