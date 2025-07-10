@@ -3632,6 +3632,7 @@
 			<string>cue</string>
 			<string>iso</string>
 			<string>elf</string>
+			<string>7z</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
