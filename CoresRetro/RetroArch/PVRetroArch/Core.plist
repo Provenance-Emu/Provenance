@@ -156,7 +156,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Flycast JIT-less (RetroArch)</string>
+			<string>Flycast JIT-less (Provenance Beta) </string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.dreamcast</string>
@@ -166,7 +166,7 @@
 			<key>PVProjectVersion</key>
 			<string>2.0</string>
 			<key>PVAppStoreDisabled</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
