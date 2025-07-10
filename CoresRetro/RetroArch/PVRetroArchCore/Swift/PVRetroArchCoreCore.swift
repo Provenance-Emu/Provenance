@@ -260,7 +260,7 @@ extension PVRetroArchCoreCore: PVSega32XSystemResponderClient {
 // MARK: Dreamcast
 extension PVRetroArchCoreCore: PVDreamcastSystemResponderClient {
     public func didMoveJoystick(_ button: PVCoreBridge.PVDreamcastButton, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
-        
+        (_bridge as! PVDreamcastSystemResponderClient).didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
     }
     
     public func didPush(_ button: PVCoreBridge.PVDreamcastButton, forPlayer player: Int) {
