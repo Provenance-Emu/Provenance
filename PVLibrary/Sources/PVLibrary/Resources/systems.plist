@@ -3646,7 +3646,7 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>A</string>
+						<string>B</string>
 						<key>PVControlFrame</key>
 						<string>{{116,60},{60,60}}</string>
 						<key>PVControlTint</key>
@@ -3656,7 +3656,7 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>B</string>
+						<string>A</string>
 						<key>PVControlFrame</key>
 						<string>{{60,116},{60,60}}</string>
 						<key>PVControlTint</key>
@@ -3666,7 +3666,7 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>X</string>
+						<string>Y</string>
 						<key>PVControlFrame</key>
 						<string>{{60,4},{60,60}}</string>
 						<key>PVControlTint</key>
@@ -3676,7 +3676,7 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>Y</string>
+						<string>X</string>
 						<key>PVControlFrame</key>
 						<string>{{4,60},{60,60}}</string>
 						<key>PVControlTint</key>
