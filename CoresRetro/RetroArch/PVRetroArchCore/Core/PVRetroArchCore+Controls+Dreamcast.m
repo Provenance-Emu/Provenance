@@ -82,9 +82,13 @@ extern GCController *touch_controller;
             break;
         case(PVDreamcastButtonL):
             [touch_controller.extendedGamepad.leftShoulder setValue:pressed?1:0];
+            [touch_controller.extendedGamepad.leftTrigger setValue:pressed?1:0];
+            [touch_controller.extendedGamepad.leftThumbstickButton setValue:pressed?1:0];
             break;
         case(PVDreamcastButtonR):
             [touch_controller.extendedGamepad.rightShoulder setValue:pressed?1:0];
+            [touch_controller.extendedGamepad.rightTrigger setValue:pressed?1:0];
+            [touch_controller.extendedGamepad.rightThumbstickButton setValue:pressed?1:0];
             break;
         case(PVDreamcastButtonStart):
             [touch_controller.extendedGamepad.buttonMenu setValue:pressed?1:0];
