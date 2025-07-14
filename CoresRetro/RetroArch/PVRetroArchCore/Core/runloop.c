@@ -4391,29 +4391,28 @@ float runloop_get_fastforward_ratio(
 }
 
 void runloop_set_video_swap_interval(
-      bool vrr_runloop_enable,
-      bool crt_switching_active,
-      unsigned swap_interval_config,
-      unsigned black_frame_insertion,
-      unsigned shader_subframes,
-      float audio_max_timing_skew,
-      float video_refresh_rate,
-      double input_fps)
+      settings_t *settings)
 {
-   runloop_state_t *runloop_st = &runloop_state;
-   float core_hz               = input_fps;
-   float timing_hz             = crt_switching_active ?
-         input_fps : video_refresh_rate;
-   float swap_ratio;
-   unsigned swap_integer;
-   float timing_skew;
+   runloop_state_t *runloop_st    = &runloop_state;
+   video_driver_state_t *video_st = video_state_get_ptr();
+   float video_refresh_rate       = settings->floats.video_refresh_rate;
+   float audio_max_timing_skew    = settings->floats.audio_max_timing_skew;
+   float input_fps                = video_st->av_info.timing.fps;
+   float timing_fps               = (video_st->flags & VIDEO_FLAG_CRT_SWITCHING_ACTIVE)
+         ? input_fps : video_refresh_rate;
+   float swap_ratio               = 1;
+   float timing_skew              = 0;
+   unsigned swap_interval_config  = settings->uints.video_swap_interval;
+   unsigned black_frame_insertion = settings->uints.video_black_frame_insertion;
+   unsigned shader_subframes      = settings->uints.video_shader_subframes;
+   unsigned swap_integer          = 1;
+   bool vrr_runloop_enable        = settings->bools.vrr_runloop_enable;
 
    /* If automatic swap interval selection is
     * disabled, just record user-set value */
    if (swap_interval_config != 0)
    {
-      runloop_st->video_swap_interval_auto =
-            swap_interval_config;
+      runloop_st->video_swap_interval_auto = swap_interval_config;
       return;
    }
 
@@ -4426,11 +4425,12 @@ void runloop_set_video_swap_interval(
     * > If BFI is active set swap interval to 1
     * > If Shader Subframes active, set swap interval to 1 */
    if (   (vrr_runloop_enable)
-       || (core_hz    > timing_hz)
-       || (core_hz   <= 0.0f)
-       || (timing_hz <= 0.0f)
        || (black_frame_insertion)
-       || (shader_subframes > 1))
+       || (shader_subframes > 1)
+       || (input_fps   > timing_fps)
+       || (input_fps  <= 0.0f)
+       || (timing_fps <= 0.0f)
+      )
    {
       runloop_st->video_swap_interval_auto = 1;
       return;
@@ -4438,7 +4438,7 @@ void runloop_set_video_swap_interval(
 
    /* Check whether display refresh rate is an integer
     * multiple of core fps (within timing skew tolerance) */
-   swap_ratio   = timing_hz / core_hz;
+   swap_ratio   = timing_fps / input_fps;
    swap_integer = (unsigned)(swap_ratio + 0.5f);
 
    /* > Sanity check: swap interval must be in the
@@ -4450,7 +4450,7 @@ void runloop_set_video_swap_interval(
       return;
    }
 
-   timing_skew = fabs(1.0f - core_hz / (timing_hz / (float)swap_integer));
+   timing_skew = fabs(1.0f - input_fps / (timing_fps / (float)swap_integer));
 
    runloop_st->video_swap_interval_auto =
          (timing_skew <= audio_max_timing_skew) ?
@@ -5142,25 +5142,72 @@ error:
    return false;
 }
 
-void core_options_reset(void)
+void core_options_reset(const char* label)
 {
    size_t i;
    runloop_state_t *runloop_st     = &runloop_state;
    core_option_manager_t *coreopts = runloop_st->core_options;
 
-   /* If there are no core options, there
-    * is nothing to do */
-   if (!coreopts || (coreopts->size < 1))
+   /* If there are no loaded core options, or the menu entry
+    * was indicating a reset for a specific core instead,
+    * do a "cold reset" (deletion of options file) */
+   if (!coreopts || !string_is_empty(label))
+   {
+      settings_t *settings             = config_get_ptr();
+      const char *core_name            = label;
+      char per_core_options_path[PATH_MAX_LENGTH];
+
+      RARCH_DBG("[Core] Core options cold reset, label from menu entry \"%s\", loaded core \"%s\".\n",
+                label, runloop_st->system.info.library_name);
+
+      if (string_is_empty(label))
+         core_name = runloop_st->system.info.library_name;
+
+      if (settings->bools.global_core_options)
+      {
+         RARCH_WARN("[Core] Core options cold reset is not supported when global core options are used, deletion skipped.\n");
+         return;
+      }
+
+      /* Get current options file path */
+      per_core_options_path[0]      = '\0';
+      validate_per_core_options(
+            per_core_options_path, sizeof(per_core_options_path), true,
+            core_name, core_name);
+
+      if (string_is_empty(per_core_options_path))
+      {
+         RARCH_ERR("[Core] Core options file could not be located, deletion skipped.\n");
+         return;
+      }
+      /* Remove current options file, if possible */
+      if (path_is_valid(per_core_options_path))
+      {
+         RARCH_WARN("[Core] Deleting core options file: \"%s\".\n", per_core_options_path);
+         filestream_delete(per_core_options_path);
+      }
+      else
+      {
+         RARCH_ERR("[Core] Core options file path is not valid, deletion skipped: \"%s\".\n", per_core_options_path);
+         return;
+      }
+   }
+   else if (coreopts->size < 1)
+   {
+      RARCH_WARN("[Core] Core options reset invoked but there are no options.\n");
       return;
+   }
+   else
+   {
+      for (i = 0; i < coreopts->size; i++)
+         coreopts->opts[i].index = coreopts->opts[i].default_index;
 
-   for (i = 0; i < coreopts->size; i++)
-      coreopts->opts[i].index = coreopts->opts[i].default_index;
-
-   coreopts->updated = true;
+      coreopts->updated = true;
 
 #ifdef HAVE_CHEEVOS
-   rcheevos_validate_config_settings();
+      rcheevos_validate_config_settings();
 #endif
+   }
 
    {
       const char *_msg = msg_hash_to_str(MSG_CORE_OPTIONS_RESET);
@@ -7324,7 +7371,7 @@ bool runloop_get_savestate_path(char *s, size_t len, int state_slot)
    return true;
 }
 
-bool runloop_get_replay_path(char *s, size_t len, unsigned slot)
+bool runloop_get_replay_path(char *s, size_t len, int slot)
 {
    size_t _len;
    runloop_state_t *runloop_st = &runloop_state;
@@ -7339,10 +7386,11 @@ bool runloop_get_replay_path(char *s, size_t len, unsigned slot)
 
    _len = strlcpy(s, name_replay, len);
    if (slot >= 0)
-      snprintf(s + _len, len - _len, "%d",  slot);
+      snprintf(s + _len, len - _len, "%d", slot);
 
    return true;
 }
+
 
 
 bool runloop_get_entry_state_path(char *s, size_t len, int slot)
