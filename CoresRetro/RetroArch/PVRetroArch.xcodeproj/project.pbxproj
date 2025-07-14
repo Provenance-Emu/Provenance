@@ -1320,11 +1320,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				936BFD8A2986AF03001FF097 /* cocoa_vk_ctx.m in Sources */,
 				B3EEFB6A2D66C7630080CA51 /* RetroArchCoreOptionsLoader.swift in Sources */,
 				B3EEFB6B2D66C7630080CA51 /* PVRetroArchCore+Options.swift in Sources */,
 				B3EEFB6C2D66C7630080CA51 /* CorePlist.swift in Sources */,
 				B3EEFB6D2D66C7630080CA51 /* PVRetroArchCoreCore.swift in Sources */,
+				B30C8C892BF45AFB00C91991 /* PVRetroArchCore+Controls.swift in Sources */,
+				B3EEF0702D66AF440080CA51 /* PVRetroArchCoreBridge.swift in Sources */,
+				936BFD8A2986AF03001FF097 /* cocoa_vk_ctx.m in Sources */,
 				93835811296CFAA700A23231 /* cocoa_common.m in Sources */,
 				936B47FA2969798B00C7D2A3 /* platform_darwin.m in Sources */,
 				935E7D4B29A4ABDD00D92748 /* vulkan_common.c in Sources */,
@@ -1351,7 +1353,6 @@
 				93A7278A2AAEB1C60052B279 /* PVRetroArchCore+Controls+MAME.m in Sources */,
 				9319F10A2976C15900A7414A /* PVRetroArchCore+Controls+SNES.m in Sources */,
 				B322019C2D8A692B00B1F81B /* vulkan_ios_tvos_helpers.c in Sources */,
-				B30C8C892BF45AFB00C91991 /* PVRetroArchCore+Controls.swift in Sources */,
 				93FF38222965FF9C00772659 /* PVRetroArchCore+Audio.mm in Sources */,
 				93448E562980043F002F87BB /* PVRetroArchCore+Controls+PSX.m in Sources */,
 				93FF38242965FF9C00772659 /* PVRetroArchCore+Video.mm in Sources */,
@@ -1359,7 +1360,6 @@
 				9383580D296CDBB600A23231 /* metal.m in Sources */,
 				B3FD53ED2CD17D8200175917 /* JITSupport.m in Sources */,
 				B3CC2E0C2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m in Sources */,
-				B3EEF0702D66AF440080CA51 /* PVRetroArchCoreBridge.swift in Sources */,
 				93C372692A8B68000007671D /* PVRetroArchCore+Controls+3DO.m in Sources */,
 				93FF38262965FF9C00772659 /* PVRetroArchCore+Saves.mm in Sources */,
 				93C372682A8B68000007671D /* PVRetroArchCore+Controls+Dreamcast.m in Sources */,
