@@ -58,7 +58,7 @@ static bool OpenVulkanLibrary()
     for (const auto& path : vulkanPaths)
     {
         std::cout << "Attempting to load Vulkan library from: " << path << std::endl;
-        
+
         if (s_vulkan_module.Open(path.c_str()))
         {
             std::cout << "Successfully loaded Vulkan library from: " << path << std::endl;
@@ -240,7 +240,7 @@ void LogVulkanResult(int level, const char* func_name, VkResult res, const char*
   real_msg = fmt::format("({}) {} ({}: {})", func_name, real_msg, static_cast<int>(res),
                          VkResultToString(res));
 
-  GENERIC_LOG_FMT(Common::Log::VIDEO, static_cast<Common::Log::LOG_LEVELS>(level), "{}", real_msg);
+  GENERIC_LOG_FMT(Common::Log::LogType::VIDEO, static_cast<Common::Log::LogLevel>(level), "{}", real_msg);
 }
 
 }  // namespace Vulkan

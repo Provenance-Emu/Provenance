@@ -7,6 +7,7 @@
 //
 
 #import <PVDolphin/PVDolphinCore.h>
+//#include "Core/MachineContext.h"
 
 NS_ASSUME_NONNULL_BEGIN
 @interface PVDolphinCoreBridge (Controls) <PVGameCubeSystemResponderClient>

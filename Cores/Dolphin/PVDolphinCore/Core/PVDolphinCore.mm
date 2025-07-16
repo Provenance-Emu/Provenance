@@ -23,6 +23,7 @@
 #import <AVFoundation/AVFoundation.h>
 
 /* Dolphin Includes */
+//#include "Core/MachineContext.h"
 #include "AudioCommon/AudioCommon.h"
 #include "AudioCommon/SoundStream.h"
 
@@ -31,6 +32,7 @@
 #include "Common/CommonTypes.h"
 #include "Common/FileUtil.h"
 #include "Common/IniFile.h"
+#include "Common/FileSearch.h"
 #include "Common/Logging/LogManager.h"
 #include "Common/MsgHandler.h"
 #include "Common/Thread.h"
@@ -60,8 +62,15 @@
 #include "Core/IOS/IOS.h"
 #include "Core/IOS/STM/STM.h"
 #include "Core/PowerPC/PowerPC.h"
-#include "Core/State.h"
-#include "Core/WiiUtils.h"
+#include "Core/PowerPC/MMU.h"
+#ifdef HAVE_JIT
+#include "Core/PowerPC/JitInterface.h"
+#endif
+
+#include "Core/Config/MainSettings.h"
+
+#include "Core/System.h"
+#include "Core/Config/GraphicsSettings.h"
 
 #include "UICommon/CommandLineParse.h"
 #include "UICommon/UICommon.h"
@@ -72,7 +81,7 @@
 #include "InputCommon/ControllerEmu/ControlGroup/Cursor.h"
 #include "InputCommon/ControllerEmu/Control/Control.h"
 #include "InputCommon/ControlReference/ControlReference.h"
-#include "InputCommon/ControllerInterface/Touch/ButtonManager.h"
+#include "InputCommon/ControllerInterface/iOS/StateManager.h"
 
 #include "VideoCommon/AsyncRequests.h"
 #include "VideoCommon/Fifo.h"
@@ -81,6 +90,7 @@
 #include "VideoCommon/VideoBackendBase.h"
 #include "VideoCommon/VideoConfig.h"
 #include "VideoCommon/OnScreenDisplay.h"
+#include "VideoCommon/Present.h"
 #include "VideoBackends/Vulkan/VideoBackend.h"
 #include "VideoBackends/Vulkan/VulkanContext.h"
 
@@ -202,7 +212,7 @@ static void UpdateWiiPointer();
 - (void)setOptionValues {
     [self parseOptions];
     Config::Load();
-    SConfig::GetInstance().LoadSettings();
+    Config::Load();
 
     // Resolution upscaling
     Config::SetBase(Config::GFX_EFB_SCALE, self.resFactor);
@@ -216,13 +226,13 @@ static void UpdateWiiPointer();
         Config::SetBase(Config::MAIN_GFX_BACKEND, "OGL");
         Config::SetBase(Config::MAIN_OSD_MESSAGES, false);
     }
-    VideoBackendBase::PopulateBackendInfoFromUI();
+    // PopulateBackendInfo is called automatically during initialization
 
     // CPU
     if (self.cpuType == 0) {
-        SConfig::GetInstance().cpu_core = PowerPC::CPUCore::Interpreter;
+        Config::SetBase(Config::MAIN_CPU_CORE, PowerPC::CPUCore::Interpreter);
     } else if (self.cpuType == 1) {
-        SConfig::GetInstance().cpu_core = PowerPC::CPUCore::CachedInterpreter;
+        Config::SetBase(Config::MAIN_CPU_CORE, PowerPC::CPUCore::CachedInterpreter);
     } else if (self.cpuType == 2) {
 #if defined(__x86_64__)
         Config::SetBase(Config::MAIN_CPU_CORE, PowerPC::CPUCore::JIT64);
@@ -232,18 +242,19 @@ static void UpdateWiiPointer();
     }
 
     // SDCard
-    SConfig::GetInstance().m_WiiSDCard = true;
-    SConfig::GetInstance().bEnableMemcardSdWriting = true;
+    Config::SetBase(Config::MAIN_WII_SD_CARD, true);
+    Config::SetBase(Config::MAIN_ALLOW_SD_WRITES, true);
 
     // Filtering
-    Config::SetBase(Config::GFX_ENHANCE_FORCE_FILTERING, self.isBilinear);
+    Config::SetBase(Config::GFX_ENHANCE_FORCE_TEXTURE_FILTERING, self.isBilinear ? TextureFilteringMode::Linear : TextureFilteringMode::Default);
 
     // Fast Mem
     if (self.fastMemory) {
         Config::SetBase(Config::MAIN_FASTMEM, self.fastMemory);
-        SConfig::GetInstance().bFastmem = self.fastMemory;
+        Config::SetBase(Config::MAIN_FASTMEM, self.fastMemory);
         if (can_enable_fastmem) {
-            Config::SetBase(Config::MAIN_DEBUG_HACKY_FASTMEM, hacky_fastmem);
+            // MAIN_DEBUG_HACKY_FASTMEM has been removed in modern Dolphin
+            // Fastmem behavior is automatically determined by the system
         }
     }
     Config::SetBase(Config::GFX_SHOW_FPS, false);
@@ -258,15 +269,15 @@ static void UpdateWiiPointer();
     }
 
     // Cheats
-    SConfig::GetInstance().bEnableCheats = self.enableCheatCode;
+    Config::SetBase(Config::MAIN_ENABLE_CHEATS, self.enableCheatCode);
 
     // CPU Overclock
     Config::SetBase(Config::MAIN_CPU_THREAD, true);
-    SConfig::GetInstance().m_OCFactor = self.cpuOClock;
-    SConfig::GetInstance().m_OCEnable = self.cpuOClock > 1;
+    Config::SetBase(Config::MAIN_OVERCLOCK, self.cpuOClock);
+    Config::SetBase(Config::MAIN_OVERCLOCK_ENABLE, self.cpuOClock > 1);
 
     // CPU High Level / Low Level Emulation
-    SConfig::GetInstance().bDSPHLE = true;
+    Config::SetBase(Config::MAIN_DSP_HLE, true);
     Core::SetIsThrottlerTempDisabled(false);
 
     // Wait for Shaders
@@ -274,9 +285,9 @@ static void UpdateWiiPointer();
 
     // Wiimote
     Config::SetBase(Config::SYSCONF_WIIMOTE_MOTOR, false);
-    SConfig::GetInstance().m_WiiKeyboard = false;
-    SConfig::GetInstance().m_WiimoteContinuousScanning = false;
-    SConfig::GetInstance().m_bt_passthrough_enabled = false;
+    Config::SetBase(Config::MAIN_WII_KEYBOARD, false);
+    Config::SetBase(Config::MAIN_WIIMOTE_CONTINUOUS_SCANNING, false);
+    Config::SetBase(Config::MAIN_BLUETOOTH_PASSTHROUGH_ENABLED, false);
 
     // Social
     Discord::SetDiscordPresenceEnabled(false);
@@ -285,12 +296,12 @@ static void UpdateWiiPointer();
     Common::SetEnableAlert(false);
 
     // Audio
-    SConfig::GetInstance().m_Volume = self.volume;
-    SConfig::GetInstance().bAutomaticStart = true;
+    // Volume is handled by Settings::Instance().SetVolume() in DolphinQt
+    // bAutomaticStart is no longer needed in modern Dolphin
 
     // Debug Settings
-    SConfig::GetInstance().bEnableDebugging = false;
-    SConfig::GetInstance().m_ShowFrameCount = false;
+    Config::SetBase(Config::MAIN_ENABLE_DEBUGGING, false);
+    // m_ShowFrameCount is handled by video config now
 }
 
 #pragma mark - Running
@@ -364,8 +375,8 @@ static void UpdateWiiPointer();
     NSLog(@"Starting VM\n");
     m_view=view;
     // Ensure core is stopped (otherwise game lags)
-    Core::Stop();
-    while (Core::GetState() != Core::State::Uninitialized) {
+    Core::Stop(Core::System::GetInstance());
+    while (Core::GetState(Core::System::GetInstance()) != Core::State::Uninitialized) {
         sleep(1);
     }
     [NSThread detachNewThreadSelector:@selector(startDolphin) toTarget:self withObject:nil];
@@ -374,7 +385,7 @@ static void UpdateWiiPointer();
 - (void)startDolphin {
     std::unique_lock<std::mutex> guard(s_host_identity_lock);
     __block WindowSystemInfo wsi;
-    wsi.type = WindowSystemType::IPhoneOS;
+    wsi.type = WindowSystemType::iOS;
     wsi.display_connection = nullptr;
     dispatch_sync(dispatch_get_main_queue(), ^{
         wsi.render_surface = (__bridge void*)m_view.layer;
@@ -386,13 +397,13 @@ static void UpdateWiiPointer();
     std::vector<std::string> normalized_game_paths;
     normalized_game_paths.push_back(gamePath);
     [self setupControllers];
-    if (!BootManager::BootCore(BootParameters::GenerateFromFile(normalized_game_paths), wsi))
+    if (!BootManager::BootCore(Core::System::GetInstance(), BootParameters::GenerateFromFile(normalized_game_paths), wsi))
     {
         NSLog(@"Could not boot %s\n", [_romPath UTF8String]);
         return;
     }
-    AudioCommon::SetSoundStreamRunning(true);
-    while (Core::GetState() == Core::State::Starting && !Core::IsRunning())
+    AudioCommon::SetSoundStreamRunning(Core::System::GetInstance(), true);
+    while (Core::GetState(Core::System::GetInstance()) == Core::State::Starting && !Core::IsRunning(Core::System::GetInstance()))
     {
         Common::SleepCurrentThread(100);
     }
@@ -404,7 +415,7 @@ static void UpdateWiiPointer();
         guard.unlock();
         s_update_main_frame_event.Wait();
         guard.lock();
-        Core::HostDispatchJobs();
+        Core::HostDispatchJobs(Core::System::GetInstance());
     }
     _isOff=true;
 }
@@ -421,7 +432,7 @@ static void UpdateWiiPointer();
 
 - (void)setPauseEmulation:(BOOL)flag {
     Core::State state = flag ? Core::State::Paused : Core::State::Running;
-    Core::SetState(state);
+    Core::SetState(Core::System::GetInstance(), state);
     [super setPauseEmulation:flag];
 }
 
@@ -431,22 +442,22 @@ static void UpdateWiiPointer();
     self.shouldStop = YES;
     _isInitialized = false;
     g_controller_interface.Shutdown();
-    Core::SetState(Core::State::Running);
-    ProcessorInterface::PowerButton_Tap();
-    Core::Stop();
+    Core::SetState(Core::System::GetInstance(), Core::State::Running);
+    Core::System::GetInstance().GetProcessorInterface().PowerButton_Tap();
+    Core::Stop(Core::System::GetInstance());
     s_update_main_frame_event.Set();
-    while (CPU::GetState() != CPU::State::PowerDown ||
-           Core::GetState() != Core::State::Uninitialized ||
+    while (Core::System::GetInstance().GetCPU().GetState() != CPU::State::PowerDown ||
+           Core::GetState(Core::System::GetInstance()) != Core::State::Uninitialized ||
            !_isOff) {
         sleep(1);
     }
-    Core::Shutdown();
+    Core::Shutdown(Core::System::GetInstance());
     VertexLoaderManager::Clear();
-    Fifo::ExitGpuLoop();
-    Fifo::Shutdown();
-    Memory::ShutdownFastmemArena();
-    Memory::Shutdown();
-    PowerPC::Shutdown();
+    Core::System::GetInstance().GetFifo().ExitGpuLoop();
+    Core::System::GetInstance().GetFifo().Shutdown();
+    Core::System::GetInstance().GetMemory().ShutdownFastmemArena();
+    Core::System::GetInstance().GetMemory().Shutdown();
+    Core::System::GetInstance().GetPowerPC().Shutdown();
     g_video_backend->Shutdown();
     s_host_identity_lock.unlock();
     [m_view removeFromSuperview];
@@ -455,19 +466,19 @@ static void UpdateWiiPointer();
     m_metal_layer = nullptr;
     m_view_controller = nullptr;
     m_view=nullptr;
-    AudioCommon::ShutdownSoundStream();
+    AudioCommon::ShutdownSoundStream(Core::System::GetInstance());
     g_renderer.release();
 }
 -(void)startHaptic { }
 -(void)stopHaptic { }
 
 - (void)resetEmulation {
-	ProcessorInterface::ResetButton_Tap();
+	Core::System::GetInstance().GetProcessorInterface().ResetButton_Tap();
 }
 
 - (void)refreshScreenSize {
-    if (Core::IsRunningAndStarted() && g_renderer)
-        g_renderer->ResizeSurface();
+    if (Core::IsRunningOrStarting(Core::System::GetInstance()) && g_presenter)
+        g_presenter->ResizeSurface();
 }
 -(void) prepareAudio {
     NSError *error = nil;
@@ -509,7 +520,7 @@ static void UpdateWiiPointer();
             m_view=cgsh_view_controller.view;
             m_view.contentMode = UIViewContentModeScaleToFill;
         }
-        
+
         m_view=m_view_controller.view;
         UIViewController *rootController = m_view_controller;
         [self.touchViewController.view addSubview:m_view];
@@ -624,8 +635,8 @@ void Host_Message(HostMessageID id)
 	  s_update_main_frame_event.Set();
   else if (id == HostMessageID::WMUserStop) {
 	s_have_wm_user_stop = true;
-	if (Core::IsRunning())
-	  Core::QueueHostJob(&Core::Stop);
+	if (Core::IsRunning(Core::System::GetInstance()))
+	  Core::QueueHostJob([](Core::System& system) { Core::Stop(system); });
   } else if (id == HostMessageID::WMUserCreate)
       NSLog(@"User Create Called %i\n", (int)id);
 }
@@ -701,8 +712,8 @@ bool MsgAlert(const char* caption, const char* text, bool yes_no, Common::MsgTyp
 void UpdateWiiPointer()
 {
     NSLog(@"Update Wii Pointer\n");
-    if (Core::IsRunningAndStarted() && g_renderer) {
-        g_renderer->ResizeSurface();
-        ButtonManager::GamepadEvent("Touchscreen", 4, ButtonManager::ButtonType::WIIMOTE_IR_RECENTER, 1);
+    if (Core::IsRunningOrStarting(Core::System::GetInstance()) && g_presenter) {
+        g_presenter->ResizeSurface();
+        ciface::iOS::StateManager::GetInstance()->SetButtonPressed(4, ciface::iOS::ButtonType::WIIMOTE_IR_RECENTER, true);
     }
 }

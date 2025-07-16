@@ -31,8 +31,7 @@
 #include "VideoCommon/VideoCommon.h"
 #include "VideoCommon/VideoConfig.h"
 
-#include "VideoBackends/Null/NullRender.h"
-#include "VideoBackends/OGL/OGLRender.h"
+#include "VideoBackends/Null/NullGfx.h"
 #include "VideoBackends/OGL/VideoBackend.h"
 #include "VideoBackends/Vulkan/VideoBackend.h"
 #include "VideoBackends/Vulkan/VulkanContext.h"

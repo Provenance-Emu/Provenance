@@ -21,7 +21,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
 				.init(title: "8X", description: "8X", value: 8),
 				.init(title: "16X", description: "16X", value: 16),
 			],
-			defaultValue: 2)
+			defaultValue: 1)
 			}()
 
 	static var gsOption: CoreOption = {
@@ -89,7 +89,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
 			.init(title: "Cached Interpreter", description: "Cached Interpreter", value: 1),
 			.init(title: "Just In Time", description: "Just In Time", value: 2)
 		  ],
-		  defaultValue: 2)
+		  defaultValue: 1)
 	}()
 
 	static var cpuClockOption: CoreOption = {

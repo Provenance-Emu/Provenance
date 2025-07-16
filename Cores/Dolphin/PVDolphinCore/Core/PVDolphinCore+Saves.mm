@@ -20,6 +20,7 @@
 #include "Common/Version.h"
 
 #include "Core/State.h"
+#include "Core/System.h"
 
 extern bool _isInitialized;
 NSString *autoLoadStatefileName;
@@ -33,7 +34,7 @@ NSString *autoLoadStatefileName;
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName {
 	// we need to make sure we are initialized before attempting to save a state
 	if( _isInitialized)
-		State::SaveAs([fileName UTF8String]);
+		State::SaveAs(Core::System::GetInstance(), [fileName UTF8String]);
 	//block(dol_host->SaveState([fileName UTF8String]),nil);
     return true;
 }
@@ -41,7 +42,7 @@ NSString *autoLoadStatefileName;
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
 	bool success=false;
 	if( _isInitialized) {
-		State::SaveAs([fileName UTF8String]);
+		State::SaveAs(Core::System::GetInstance(), [fileName UTF8String]);
 		success=true;
 	}
 	block(success, nil);
@@ -53,14 +54,14 @@ NSString *autoLoadStatefileName;
 		autoLoadStatefileName = fileName;
 		[NSThread detachNewThreadSelector:@selector(autoloadWaitThread) toTarget:self withObject:nil];
 	} else {
-		State::LoadAs([fileName UTF8String]);
+		State::LoadAs(Core::System::GetInstance(), [fileName UTF8String]);
 		//block(dol_host->LoadState([fileName UTF8String]),nil);
 	}
     return true;
 }
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
-	State::LoadAs([fileName UTF8String]);
+	State::LoadAs(Core::System::GetInstance(), [fileName UTF8String]);
 	bool success=true;
 	block(success, nil);
 }
@@ -72,7 +73,7 @@ NSString *autoLoadStatefileName;
 		//Wait here until we get the signal for full initialization
 		while (!_isInitialized)
 				Common::SleepCurrentThread(1000);
-		State::LoadAs([autoLoadStatefileName UTF8String]);
+		State::LoadAs(Core::System::GetInstance(), [autoLoadStatefileName UTF8String]);
 		//dol_host->LoadState([autoLoadStatefileName UTF8String]);
 	}
 }
