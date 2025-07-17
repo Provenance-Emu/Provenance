@@ -1342,17 +1342,17 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         let effectiveRect = isScreenRectValid ? screenRect : CGRect(x: 0, y: 0, width: bufferSize.width, height: bufferSize.height)
 
         // Log frame draw at a lower frequency to avoid log spam
-        if frameCount % 60 == 0 {
-            VLOG("""
-                 Drawing frame \(frameCount):
-                 Buffer size: \(bufferSize)
-                 Screen rect: \(screenRect)
-                 Effective rect: \(effectiveRect)
-                 Is screen rect valid: \(isScreenRectValid)
-                 View size: \(view.frame.size)
-                 Drawable size: \(view.drawableSize)
-                """)
-        }
+//        if frameCount % 60 == 0 {
+//            VLOG("""
+//                 Drawing frame \(frameCount):
+//                 Buffer size: \(bufferSize)
+//                 Screen rect: \(screenRect)
+//                 Effective rect: \(effectiveRect)
+//                 Is screen rect valid: \(isScreenRectValid)
+//                 View size: \(view.frame.size)
+//                 Drawable size: \(view.drawableSize)
+//                """)
+//        }
 
         // Check if the texture needs to be created or updated
         if inputTexture == nil {
