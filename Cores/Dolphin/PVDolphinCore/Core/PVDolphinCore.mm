@@ -283,6 +283,8 @@ static void UpdateWiiPointer();
     // Wait for Shaders
     Config::SetBase(Config::GFX_WAIT_FOR_SHADERS_BEFORE_STARTING, true);
 
+    // iOS Power Management
+    Config::SetBase(Config::MAIN_ANALYTICS_ENABLED, false);           // Disable analytics for privacy/performance
     // Wiimote
     Config::SetBase(Config::SYSCONF_WIIMOTE_MOTOR, false);
     Config::SetBase(Config::MAIN_WII_KEYBOARD, false);
