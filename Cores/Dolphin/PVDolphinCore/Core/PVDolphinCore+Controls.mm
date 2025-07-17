@@ -97,6 +97,11 @@
 #define DC_AXIS_Y        (0X20001)
 
 // Dolphin Button Maps
+// Copyright 2022 DolphiniOS Project
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+#pragma once
+
 enum ButtonType
 {
   // GC
@@ -110,12 +115,12 @@ enum ButtonType
   BUTTON_DOWN = 7,
   BUTTON_LEFT = 8,
   BUTTON_RIGHT = 9,
-  STICK_MAIN = 10,  // Used on Java Side
+  STICK_MAIN = 10,
   STICK_MAIN_UP = 11,
   STICK_MAIN_DOWN = 12,
   STICK_MAIN_LEFT = 13,
   STICK_MAIN_RIGHT = 14,
-  STICK_C = 15,  // Used on Java Side
+  STICK_C = 15,
   STICK_C_UP = 16,
   STICK_C_DOWN = 17,
   STICK_C_LEFT = 18,
@@ -134,7 +139,7 @@ enum ButtonType
   WIIMOTE_DOWN = 108,
   WIIMOTE_LEFT = 109,
   WIIMOTE_RIGHT = 110,
-  WIIMOTE_IR = 111,  // To Be Used on Java Side
+  WIIMOTE_IR = 111,
   WIIMOTE_IR_UP = 112,
   WIIMOTE_IR_DOWN = 113,
   WIIMOTE_IR_LEFT = 114,
@@ -142,14 +147,14 @@ enum ButtonType
   WIIMOTE_IR_FORWARD = 116,
   WIIMOTE_IR_BACKWARD = 117,
   WIIMOTE_IR_HIDE = 118,
-  WIIMOTE_SWING = 119,  // To Be Used on Java Side
+  WIIMOTE_SWING = 119,
   WIIMOTE_SWING_UP = 120,
   WIIMOTE_SWING_DOWN = 121,
   WIIMOTE_SWING_LEFT = 122,
   WIIMOTE_SWING_RIGHT = 123,
   WIIMOTE_SWING_FORWARD = 124,
   WIIMOTE_SWING_BACKWARD = 125,
-  WIIMOTE_TILT = 126,  // To Be Used on Java Side
+  WIIMOTE_TILT = 126,
   WIIMOTE_TILT_FORWARD = 127,
   WIIMOTE_TILT_BACKWARD = 128,
   WIIMOTE_TILT_LEFT = 129,
@@ -161,19 +166,19 @@ enum ButtonType
   // Nunchuk
   NUNCHUK_BUTTON_C = 200,
   NUNCHUK_BUTTON_Z = 201,
-  NUNCHUK_STICK = 202,  // To Be Used on Java Side
+  NUNCHUK_STICK = 202,
   NUNCHUK_STICK_UP = 203,
   NUNCHUK_STICK_DOWN = 204,
   NUNCHUK_STICK_LEFT = 205,
   NUNCHUK_STICK_RIGHT = 206,
-  NUNCHUK_SWING = 207,  // To Be Used on Java Side
+  NUNCHUK_SWING = 207,
   NUNCHUK_SWING_UP = 208,
   NUNCHUK_SWING_DOWN = 209,
   NUNCHUK_SWING_LEFT = 210,
   NUNCHUK_SWING_RIGHT = 211,
   NUNCHUK_SWING_FORWARD = 212,
   NUNCHUK_SWING_BACKWARD = 213,
-  NUNCHUK_TILT = 214,  // To Be Used on Java Side
+  NUNCHUK_TILT = 214,
   NUNCHUK_TILT_FORWARD = 215,
   NUNCHUK_TILT_BACKWARD = 216,
   NUNCHUK_TILT_LEFT = 217,
@@ -196,74 +201,18 @@ enum ButtonType
   CLASSIC_DPAD_DOWN = 310,
   CLASSIC_DPAD_LEFT = 311,
   CLASSIC_DPAD_RIGHT = 312,
-  CLASSIC_STICK_LEFT = 313,  // To Be Used on Java Side
+  CLASSIC_STICK_LEFT = 313,
   CLASSIC_STICK_LEFT_UP = 314,
   CLASSIC_STICK_LEFT_DOWN = 315,
   CLASSIC_STICK_LEFT_LEFT = 316,
   CLASSIC_STICK_LEFT_RIGHT = 317,
-  CLASSIC_STICK_RIGHT = 318,  // To Be Used on Java Side
+  CLASSIC_STICK_RIGHT = 318,
   CLASSIC_STICK_RIGHT_UP = 319,
   CLASSIC_STICK_RIGHT_DOWN = 320,
   CLASSIC_STICK_RIGHT_LEFT = 321,
   CLASSIC_STICK_RIGHT_RIGHT = 322,
   CLASSIC_TRIGGER_L = 323,
   CLASSIC_TRIGGER_R = 324,
-  // Guitar
-  GUITAR_BUTTON_MINUS = 400,
-  GUITAR_BUTTON_PLUS = 401,
-  GUITAR_FRET_GREEN = 402,
-  GUITAR_FRET_RED = 403,
-  GUITAR_FRET_YELLOW = 404,
-  GUITAR_FRET_BLUE = 405,
-  GUITAR_FRET_ORANGE = 406,
-  GUITAR_STRUM_UP = 407,
-  GUITAR_STRUM_DOWN = 408,
-  GUITAR_STICK = 409,  // To Be Used on Java Side
-  GUITAR_STICK_UP = 410,
-  GUITAR_STICK_DOWN = 411,
-  GUITAR_STICK_LEFT = 412,
-  GUITAR_STICK_RIGHT = 413,
-  GUITAR_WHAMMY_BAR = 414,
-  // Drums
-  DRUMS_BUTTON_MINUS = 500,
-  DRUMS_BUTTON_PLUS = 501,
-  DRUMS_PAD_RED = 502,
-  DRUMS_PAD_YELLOW = 503,
-  DRUMS_PAD_BLUE = 504,
-  DRUMS_PAD_GREEN = 505,
-  DRUMS_PAD_ORANGE = 506,
-  DRUMS_PAD_BASS = 507,
-  DRUMS_STICK = 508,  // To Be Used on Java Side
-  DRUMS_STICK_UP = 509,
-  DRUMS_STICK_DOWN = 510,
-  DRUMS_STICK_LEFT = 511,
-  DRUMS_STICK_RIGHT = 512,
-  // Turntable
-  TURNTABLE_BUTTON_GREEN_LEFT = 600,
-  TURNTABLE_BUTTON_RED_LEFT = 601,
-  TURNTABLE_BUTTON_BLUE_LEFT = 602,
-  TURNTABLE_BUTTON_GREEN_RIGHT = 603,
-  TURNTABLE_BUTTON_RED_RIGHT = 604,
-  TURNTABLE_BUTTON_BLUE_RIGHT = 605,
-  TURNTABLE_BUTTON_MINUS = 606,
-  TURNTABLE_BUTTON_PLUS = 607,
-  TURNTABLE_BUTTON_HOME = 608,
-  TURNTABLE_BUTTON_EUPHORIA = 609,
-  TURNTABLE_TABLE_LEFT = 610,  // To Be Used on Java Side
-  TURNTABLE_TABLE_LEFT_LEFT = 611,
-  TURNTABLE_TABLE_LEFT_RIGHT = 612,
-  TURNTABLE_TABLE_RIGHT = 613,  // To Be Used on Java Side
-  TURNTABLE_TABLE_RIGHT_LEFT = 614,
-  TURNTABLE_TABLE_RIGHT_RIGHT = 615,
-  TURNTABLE_STICK = 616,  // To Be Used on Java Side
-  TURNTABLE_STICK_UP = 617,
-  TURNTABLE_STICK_DOWN = 618,
-  TURNTABLE_STICK_LEFT = 619,
-  TURNTABLE_STICK_RIGHT = 620,
-  TURNTABLE_EFFECT_DIAL = 621,
-  TURNTABLE_CROSSFADE = 622,  // To Be Used on Java Side
-  TURNTABLE_CROSSFADE_LEFT = 623,
-  TURNTABLE_CROSSFADE_RIGHT = 624,
   // Wiimote IMU
   WIIMOTE_ACCEL_LEFT = 625,
   WIIMOTE_ACCEL_RIGHT = 626,
@@ -277,10 +226,15 @@ enum ButtonType
   WIIMOTE_GYRO_ROLL_RIGHT = 634,
   WIIMOTE_GYRO_YAW_LEFT = 635,
   WIIMOTE_GYRO_YAW_RIGHT = 636,
-  // Wiimote IMU IR
-  WIIMOTE_IR_RECENTER = 800,
   // Rumble
   RUMBLE = 700,
+  // Nunchuk IMU
+  NUNCHUK_ACCEL_LEFT = 900,
+  NUNCHUK_ACCEL_RIGHT = 901,
+  NUNCHUK_ACCEL_FORWARD = 902,
+  NUNCHUK_ACCEL_BACKWARD = 903,
+  NUNCHUK_ACCEL_UP = 904,
+  NUNCHUK_ACCEL_DOWN = 905
 };
 
 static const int GameCubeMap[]  = {
@@ -350,6 +304,7 @@ s8 joyx[4], joyy[4];
     [self writeWiiIniFile];
     [self writeGCIniFile];
     ciface::iOS::StateManager::GetInstance()->Init();
+    NSLog(@"🎮 StateManager initialized");
     Wiimote::Initialize(Wiimote::InitializeMode::DO_NOT_WAIT_FOR_WIIMOTES);
     Pad::Initialize();
     Wiimote::LoadConfig();
@@ -557,7 +512,7 @@ s8 joyx[4], joyy[4];
             controller.extendedGamepad.rightThumbstickButton.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                 [self gamepadEventOnPad:port button:ciface::iOS::ButtonType::WIIMOTE_BUTTON_HOME
                     action:(pressed?1:0)];
-                [self gamepadEventOnPad:port button:ciface::iOS::ButtonType::WIIMOTE_IR_RECENTER action:(pressed?1:0)];
+//                [self gamepadEventOnPad:port button:ciface::iOS::ButtonType::WIIMOTE_IR_RECENTER action:(pressed?1:0)];
                 [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_START action:(pressed?1:0)];
                 //GC
                 [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_START
@@ -570,7 +525,7 @@ s8 joyx[4], joyy[4];
             controller.extendedGamepad.buttonHome.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                 [self gamepadEventOnPad:port button:ciface::iOS::ButtonType::WIIMOTE_BUTTON_HOME
                     action:(pressed?1:0)];
-                [self gamepadEventOnPad:port button:ciface::iOS::ButtonType::WIIMOTE_IR_RECENTER action:(pressed?1:0)];
+//                [self gamepadEventOnPad:port button:ciface::iOS::ButtonType::WIIMOTE_IR_RECENTER action:(pressed?1:0)];
                 [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_START action:(pressed?1:0)];
             };
 		} else if (controller.microGamepad != nil) {
@@ -655,7 +610,7 @@ s8 joyx[4], joyy[4];
 - (void)rotate:(BOOL) pressed {
     rotateIr = pressed ? !rotateIr : rotateIr;
     rotateControls = pressed ? !rotateControls : rotateControls;
-    [self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_IR_RECENTER action:(pressed?1:0)];
+//    [self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_IR_RECENTER action:(pressed?1:0)];
 }
 
 // pad == 4 is WiiMote, pad == 0 is GC (in both GC / Wii Modes)
@@ -663,6 +618,8 @@ s8 joyx[4], joyy[4];
 {
 	// Convert action to boolean (1 = pressed, 0 = released)
 	bool pressed = (action == 1);
+	NSLog(@"🎮 gamepadEventOnPad: pad=%d, button=%d, action=%d, pressed=%s",
+	      pad, button, action, pressed ? "YES" : "NO");
 	ciface::iOS::StateManager::GetInstance()->SetButtonPressed(pad, static_cast<ciface::iOS::ButtonType>(button), pressed);
 }
 
@@ -677,7 +634,7 @@ s8 joyx[4], joyy[4];
 	for (int i = 4; i < 8; i++) {
 	  NSLog(@"Received IR %d \n", action);
 	  bool pressed = (action == 1);
-	  ciface::iOS::StateManager::GetInstance()->SetButtonPressed(i, ciface::iOS::ButtonType::WIIMOTE_IR_RECENTER, pressed);
+//	  ciface::iOS::StateManager::GetInstance()->SetButtonPressed(i, ciface::iOS::ButtonType::WIIMOTE_IR_RECENTER, pressed);
 	}
 }
 
@@ -812,8 +769,8 @@ s8 joyx[4], joyy[4];
             NSLog(@"Rotating Controls %d\n", rotateControls);
             break;
 		case(PVWiiMoteButtonWiiHome):
-            [self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_IR_RECENTER
-             action:(pressed?1:0)];
+//            [self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_IR_RECENTER
+//             action:(pressed?1:0)];
 			[self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_BUTTON_HOME
              action:(pressed?1:0)];
             [self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_START
@@ -925,8 +882,8 @@ s8 joyx[4], joyy[4];
              action:(pressed?1:0)];
 			break;
 		default:
-            [self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_IR_RECENTER
-             action:(pressed?1:0)];
+//            [self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_IR_RECENTER
+//             action:(pressed?1:0)];
 			[self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_BUTTON_HOME
              action:(pressed?1:0)];
             [self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_START
@@ -1036,6 +993,7 @@ s8 joyx[4], joyy[4];
         content = [content stringByAppendingString:[self getWiiTouchpadConfig:1 wiiMotePort:4 source:1]];
     }
     NSLog(@"Config File: %s\n%s\n", fileName.UTF8String, content.UTF8String);
+    NSLog(@"🎮 Writing Wii config with iOS device source");
 	[content writeToFile:fileName
 	   atomically:NO
 	   encoding:NSStringEncodingConversionAllowLossy
@@ -1045,7 +1003,7 @@ s8 joyx[4], joyy[4];
 -(NSString *)getWiiTouchpadConfig:(int)port wiiMotePort:(int)wiiMotePort source:(int)source {
     NSString *content = [NSString stringWithFormat:
      @"[Wiimote%d]\n"
-     @"Device = Android/%d/Touchscreen\n"
+     @"Device = iOS/%d/Touchscreen\n"
      @"Buttons/A = `Button 100`\n"
      @"Buttons/B = `Button 101`\n"
      @"Buttons/- = `Button 102`\n"
@@ -1271,6 +1229,7 @@ s8 joyx[4], joyy[4];
         content = [self getGCTouchConfig:1 gcPort:0 source:1];
     }
     NSLog(@"Config File: %s\n%s\n", fileName.UTF8String, content.UTF8String);
+    NSLog(@"🎮 Writing GC config with iOS device source");
     [content writeToFile:fileName
        atomically:NO
        encoding:NSStringEncodingConversionAllowLossy
@@ -1280,7 +1239,7 @@ s8 joyx[4], joyy[4];
 -(NSString *)getGCTouchConfig:(int)port gcPort:(int)gcPort source:(int)source {
     NSString *content = [NSString stringWithFormat:
     @"[GCPad%d]\n"
-    @"Device = Android/%d/Touchscreen\n"
+    @"Device = iOS/%d/Touchscreen\n"
     @"Buttons/A = `Button 0`\n"
     @"Buttons/B = `Button 1`\n"
     @"Buttons/Start = `Button 2`\n"
