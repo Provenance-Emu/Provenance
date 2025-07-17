@@ -393,6 +393,11 @@ static void UpdateWiiPointer();
     wsi.render_surface_scale = [UIScreen mainScreen].scale;
     VideoBackendBase::ActivateBackend(Config::Get(Config::MAIN_GFX_BACKEND));
     NSLog(@"Using GFX backend: %s\n", Config::Get(Config::MAIN_GFX_BACKEND).c_str());
+
+    // Initialize ControllerInterface for iOS input backend
+    g_controller_interface.Initialize(wsi);
+    NSLog(@"🎮 ControllerInterface initialized for iOS input backend");
+
     std::string gamePath=std::string([_romPath UTF8String]);
     std::vector<std::string> normalized_game_paths;
     normalized_game_paths.push_back(gamePath);
@@ -714,6 +719,6 @@ void UpdateWiiPointer()
     NSLog(@"Update Wii Pointer\n");
     if (Core::IsRunningOrStarting(Core::System::GetInstance()) && g_presenter) {
         g_presenter->ResizeSurface();
-        ciface::iOS::StateManager::GetInstance()->SetButtonPressed(4, ciface::iOS::ButtonType::WIIMOTE_IR_RECENTER, true);
+//        ciface::iOS::StateManager::GetInstance()->SetButtonPressed(4, ciface::iOS::ButtonType::WIIMOTE_IR_RECENTER, true);
     }
 }
