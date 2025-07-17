@@ -11,7 +11,7 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PVGCButton {
         get {
-            return PVGCButton(rawValue: tag)!
+            return PVGCButton(rawValue: tag) ?? .a
         }
         set {
             tag = newValue.rawValue
