@@ -42,7 +42,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
 			requiresRestart: true),
 		defaultValue: false)
 	}()
-    
+
     static var enableCheatOption: CoreOption = {
         .bool(.init(
             title: "Enable Cheat Codes (Runs Slower)",
@@ -61,7 +61,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
 			   .init(title: "4X", description: "4X", value: 4),
 			   .init(title: "8X", description: "8X", value: 8),
 		   ],
-		   defaultValue: 8)
+		   defaultValue: 1)
 		   }()
 
 	static var ssaaOption: CoreOption = {
@@ -69,7 +69,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
 			title: "Single Surface Anti-Aliasing",
 			description: nil,
 			requiresRestart: false),
-		defaultValue: true)
+		defaultValue: false)
 	}()
 
 	static var fastMemoryOption: CoreOption = {
