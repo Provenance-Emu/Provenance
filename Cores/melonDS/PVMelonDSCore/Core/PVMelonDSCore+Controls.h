@@ -9,7 +9,7 @@
 #import <PVMelonDS/PVMelonDSCore.h>
 
 @protocol PVDSSystemResponderClient;
-typedef enum PVDSButton: NSInteger PVGenesisButton;
+typedef enum PVDSButton: NSInteger PVDSButton;
 
 NS_ASSUME_NONNULL_BEGIN
 
