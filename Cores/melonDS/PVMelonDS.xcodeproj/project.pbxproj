@@ -111,6 +111,7 @@
 		B33809162877BA350009C732 /* ARMJIT_LoadStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33808642877B50A0009C732 /* ARMJIT_LoadStore.cpp */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
+		B341AD962E2C0C3E00B18E76 /* opengl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33806AB2877B5080009C732 /* opengl.cpp */; };
 		B3447E9C218B826F00557ACE /* PVMelonDS+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E9A218B826F00557ACE /* PVMelonDS+Audio.h */; };
 		B3447E9F218B858100557ACE /* PVMelonDSCore+Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E96218B809200557ACE /* PVMelonDSCore+Controls.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3447EA3218BBFBC00557ACE /* PVMelonDS+AudioTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EA2218BBFB700557ACE /* PVMelonDS+AudioTypes.h */; };
@@ -5456,6 +5457,7 @@
 				B33808C72877B6090009C732 /* GBACart.cpp in Sources */,
 				B33808BF2877B6090009C732 /* GPU.cpp in Sources */,
 				B33809072877B99C0009C732 /* rthreads.c in Sources */,
+				B341AD962E2C0C3E00B18E76 /* opengl.cpp in Sources */,
 				B338089A2877B5E70009C732 /* DSi_NAND.cpp in Sources */,
 				B3C8A68A28780AB90037A946 /* ff.c in Sources */,
 				B33808BD2877B6090009C732 /* NDSCart.cpp in Sources */,
@@ -5678,6 +5680,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "";
 				SDKROOT = auto;
+				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos xros appletvsimulator appletvos xrsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -5796,6 +5799,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
 				SDKROOT = auto;
+				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos xros appletvsimulator appletvos xrsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SYMROOT = "${SRCROOT}/cmake";
