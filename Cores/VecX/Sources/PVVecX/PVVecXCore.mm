@@ -40,7 +40,7 @@
 
 - (instancetype)init {
 	if (self = [super init]) {
-        pitch_shift = 2;
+        pitch_shift = 1; // Fixed: 16-bit pixels need pitch_shift = 1, not 2
 	}
 
 	_current = self;
