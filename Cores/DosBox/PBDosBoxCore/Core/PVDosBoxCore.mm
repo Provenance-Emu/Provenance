@@ -11,6 +11,8 @@
 #import "PVDosBoxCore+Controls.h"
 #import "PVDosBoxCore+Audio.h"
 #import "PVDosBoxCore+Video.h"
+@import PVLogging;
+@import PVLoggingObjC;
 
 #import "PVDosBoxCore+Audio.h"
 
