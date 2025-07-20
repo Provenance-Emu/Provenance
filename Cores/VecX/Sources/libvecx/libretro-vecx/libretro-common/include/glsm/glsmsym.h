@@ -41,10 +41,8 @@ RETRO_BEGIN_DECLS
 #define glProvokingVertex           rglProvokingVertex
 #define glGetInteger64v             rglGetInteger64v
 #define glGenSamplers               rglGenSamplers
-#define glDeleteSamplers            rglDeleteSamplers
 #define glBindSampler               rglBindSampler
 #define glSamplerParameteri         rglSamplerParameteri
-#define glSamplerParameterf         rglSamplerParameterf
 #define glGetBufferSubData          rglGetBufferSubData
 #define glUniform2iv                rglUniform2iv
 #define glUniform2uiv               rglUniform2uiv
@@ -188,18 +186,6 @@ RETRO_BEGIN_DECLS
 #define glFlushMappedBufferRange    rglFlushMappedBufferRange
 #define glClientWaitSync            rglClientWaitSync
 #define glDrawElementsBaseVertex    rglDrawElementsBaseVertex
-#define glTexParameteri             rglTexParameteri
-#define glTexParameterf             rglTexParameterf
-#define glGetFloatv                 rglGetFloatv
-#define glClearStencil              rglClearStencil
-#define glTexImage2D                rglTexImage2D
-#define glReadPixels                rglReadPixels
-#define glGetIntegerv               rglGetIntegerv
-#define glGetString                 rglGetString
-#define glGetAttachedShaders		rglGetAttachedShaders
-#define glGetShaderPrecisionFormat  rglGetShaderPrecisionFormat
-#define glClearDepthf               rglClearDepthf
-#define glPrimitiveRestartIndex		rglPrimitiveRestartIndex
 
 const GLubyte* rglGetStringi(GLenum name, GLuint index);
 void rglTexBuffer(GLenum target, GLenum internalFormat, GLuint buffer);
@@ -480,15 +466,10 @@ void rglGetBufferSubData(	GLenum target,
 void rglSamplerParameteri(	GLuint sampler,
  	GLenum pname,
  	GLint param);
-void rglSamplerParameterf(	GLuint sampler,
- 	GLenum pname,
- 	GLfloat param);
 void rglBindSampler(	GLuint unit,
  	GLuint sampler);
 void rglGenSamplers(	GLsizei n,
  	GLuint *samplers);
-void rglDeleteSamplers( GLsizei n,
-    GLuint *samplers);
 void rglGetInteger64v(	GLenum pname,
  	int64_t * data);
 void rglUniform2iv(	GLint location,
@@ -496,18 +477,6 @@ void rglUniform2iv(	GLint location,
  	const GLint *value);
 void rglProvokingVertex(	GLenum provokeMode);
 void rglDrawRangeElementsBaseVertex(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, GLvoid *indices, GLint basevertex);
-void rglTexParameteri(GLenum target, GLenum pname, GLint param);
-void rglTexParameterf(GLenum target, GLenum pname, GLfloat param);
-void rglGetFloatv(GLenum pname, GLfloat* params);
-void rglClearStencil(GLint s);
-void rglTexImage2D(GLenum target,GLint level, GLint internalformat, GLsizei width, GLsizei height,GLint border, GLenum format,	GLenum type, const GLvoid * data);
-void rglReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid * data);
-void rglGetIntegerv(GLenum pname, GLint * data);
-const GLubyte* rglGetString(GLenum name);
-void rglGetAttachedShaders(GLuint program, GLsizei maxCount, GLsizei *count, GLuint *shaders);
-void rglGetShaderPrecisionFormat(GLenum shaderType, GLenum precisionType, GLint *range, GLint *precision);
-void rglClearDepthf(GLfloat depth);
-void rglPrimitiveRestartIndex(GLuint index);
 
 RETRO_END_DECLS
 

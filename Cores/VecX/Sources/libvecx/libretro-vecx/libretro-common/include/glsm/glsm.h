@@ -31,7 +31,7 @@
 
 RETRO_BEGIN_DECLS
 
-#ifdef HAVE_OPENGLES
+#ifdef HAVE_OPENGLES2
 typedef double GLdouble;
 typedef double GLclampd;
 #endif
@@ -105,9 +105,7 @@ enum
    SGL_SAMPLE_COVERAGE,
 #ifndef HAVE_OPENGLES
    SGL_COLOR_LOGIC_OP,
-   SGL_PRIMITIVE_RESTART,
 #endif
-   SGL_PRIMITIVE_RESTART_FIXED_INDEX,
    SGL_CAP_MAX
 };
 

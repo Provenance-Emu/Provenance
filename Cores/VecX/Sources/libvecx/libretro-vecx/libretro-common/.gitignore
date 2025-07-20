@@ -1,0 +1,8 @@
+glsm/
+*.[od]
+*.dll
+*.so
+*.dylib
+*.exe
+/.vscode
+/.build
