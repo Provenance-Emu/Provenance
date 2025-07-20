@@ -126,3 +126,4 @@ build
 
 .sentryclirc
 *.code-workspace
+/Cores/Dolphin/venv
