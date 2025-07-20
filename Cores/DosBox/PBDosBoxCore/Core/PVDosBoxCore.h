@@ -16,7 +16,7 @@
 @protocol PVDOSSystemResponderClient;
 
 __attribute__((visibility("default")))
-@interface PVDosBoxCore : PVLibRetroCoreBridge <PVDOSSystemResponderClient> {
+@interface PVDosBoxCoreBridge : PVLibRetroCoreBridge <PVDOSSystemResponderClient> {
 //	uint8_t padData[4][PVDOSButtonCount];
 //	int8_t xAxis[4];
 //	int8_t yAxis[4];

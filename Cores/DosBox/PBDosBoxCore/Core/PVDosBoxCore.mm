@@ -24,15 +24,15 @@
 #define OpenEmu 1
 
 #pragma mark - Private
-@interface PVDosBoxCore() {
+@interface PVDosBoxCoreBridge() {
 
 }
 
 @end
 
-#pragma mark - PVDosBoxCore Begin
+#pragma mark - PVDosBoxCoreBridge Begin
 
-@implementation PVDosBoxCore
+@implementation PVDosBoxCoreBridge
 {
 }
 

@@ -12,7 +12,7 @@ typedef enum PVDOSButton: NSInteger PVDOSButton;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PVDosBoxCore (Controls) <PVDOSSystemResponderClient>
+@interface PVDosBoxCoreBridge (Controls) <PVDOSSystemResponderClient>
 
 - (void)initControllBuffers;
 - (void)pollControllers;

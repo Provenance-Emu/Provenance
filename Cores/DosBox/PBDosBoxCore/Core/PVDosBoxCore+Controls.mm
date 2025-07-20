@@ -51,7 +51,7 @@ u8 lt[4];
 u32 vks[4];
 s8 joyx[4], joyy[4];
 
-@implementation PVDosBoxCore (Controls)
+@implementation PVDosBoxCoreBridge (Controls)
 
 - (void)initControllBuffers {
     memset(&kcode, 0xFFFF, sizeof(kcode));

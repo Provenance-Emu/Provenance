@@ -9,7 +9,7 @@
 #import "PVDosBoxCore+Saves.h"
 #import "PVDosBoxCore.h"
 
-@implementation PVDosBoxCore (Saves)
+@implementation PVDosBoxCoreBridge (Saves)
 
 #pragma mark - Properties
 -(BOOL)supportsSaveStates {

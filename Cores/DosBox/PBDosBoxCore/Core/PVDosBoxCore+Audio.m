@@ -8,7 +8,7 @@
 
 #import "PVDosBoxCore+Audio.h"
 
-@implementation PVDosBoxCore (Audio)
+@implementation PVDosBoxCoreBridge (Audio)
 
 - (NSTimeInterval)frameInterval {
     return 60;

@@ -18,7 +18,7 @@
 #import <GLUT/GLUT.h>
 #endif
 
-@implementation PVDosBoxCore (Video)
+@implementation PVDosBoxCoreBridge (Video)
 
 # pragma mark - Methods
 
