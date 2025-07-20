@@ -19,6 +19,7 @@
 		B32299672878DBE000585AD8 /* dynamic.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC36B286717AE00B60497 /* dynamic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B322996C28792B4000585AD8 /* movie.c in Sources */ = {isa = PBXBuildFile; fileRef = B3225169286C6F2A001FDF42 /* movie.c */; };
 		B322996E28792BA000585AD8 /* nullinput.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4ED28671EFF00B60497 /* nullinput.c */; };
+		B341AD952E2BF5BE00B18E76 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B341AD942E2BF5BE00B18E76 /* PVSupport */; };
 		B342325B286EB4060033EFA5 /* dylib.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6452867202D00B60497 /* dylib.c */; };
 		B3423260286EB5CA0033EFA5 /* dynamic_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC59528671EFF00B60497 /* dynamic_dummy.c */; };
 		B345EAF72CC10F3600DE822B /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B345EAF62CC10F3600DE822B /* PVCoreBridge */; };
@@ -905,6 +906,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B341AD952E2BF5BE00B18E76 /* PVSupport in Frameworks */,
 				B377E9FA2CB25FA000E9B750 /* PVCoreObjCBridge in Frameworks */,
 				B377EBDF2CB2A18A00E9B750 /* PVSettings in Frameworks */,
 				B345EAF72CC10F3600DE822B /* PVCoreBridge in Frameworks */,
@@ -2916,6 +2918,7 @@
 				B377E9F92CB25FA000E9B750 /* PVCoreObjCBridge */,
 				B377EBDE2CB2A18A00E9B750 /* PVSettings */,
 				B345EAF62CC10F3600DE822B /* PVCoreBridge */,
+				B341AD942E2BF5BE00B18E76 /* PVSupport */,
 			);
 			productName = PVLibRetro;
 			productReference = B392848E28670348003BAC21 /* PVCoreBridgeRetro.framework */;
@@ -2960,6 +2963,7 @@
 				B377E9F82CB25FA000E9B750 /* XCLocalSwiftPackageReference "../PVCoreObjCBridge" */,
 				B377EBDD2CB2A18A00E9B750 /* XCLocalSwiftPackageReference "../PVSettings" */,
 				B345EAF52CC10F3600DE822B /* XCLocalSwiftPackageReference "../PVCoreBridge" */,
+				B341AD932E2BF5BE00B18E76 /* XCLocalSwiftPackageReference "../PVSupport" */,
 			);
 			productRefGroup = 1ACEA64517F7467D0031B1C9 /* Products */;
 			projectDirPath = "";
@@ -3686,6 +3690,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		B341AD932E2BF5BE00B18E76 /* XCLocalSwiftPackageReference "../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../PVSupport;
+		};
 		B345EAF52CC10F3600DE822B /* XCLocalSwiftPackageReference "../PVCoreBridge" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../PVCoreBridge;
@@ -3705,6 +3713,10 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		B341AD942E2BF5BE00B18E76 /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
 		B345EAF62CC10F3600DE822B /* PVCoreBridge */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVCoreBridge;
