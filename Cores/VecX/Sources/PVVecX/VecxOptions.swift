@@ -169,6 +169,8 @@ public extension VecxOptions {
     @objc static var lineWidth: Int { valueForOption(Options.Rendering.lineWidthOption).asInt ?? 4 }
     @objc static var bloomBrightness: Int { valueForOption(Options.Rendering.bloomBrightnessOption).asInt ?? 4 }
     @objc static var bloomWidth: String { valueForOption(Options.Rendering.bloomWidthOption).asString }
+    #else
+    @objc static var useHardware: String { "Software" }
     #endif
     
     @objc static var resolutionMulti: Int { valueForOption(Options.Display.resolutionMultiOption).asInt ?? 1 }
@@ -187,6 +189,8 @@ public extension VecxOptions {
         case "vecx_line_width": return lineWidth
         case "vecx_bloom_brightness": return bloomBrightness
         case "vecx_bloom_width": return bloomWidth
+        #else
+        case "vecx_use_hw": return "Software"
         #endif
         case "vecx_res_multi": return resolutionMulti
         case "vecx_scale_x": return scaleX
