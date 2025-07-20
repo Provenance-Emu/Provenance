@@ -6,6 +6,23 @@
 	objectVersion = 60;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		B3DE9E3D2E2D7321008E97F6 /* Make XCFrameworks */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B3DE9E3E2E2D7321008E97F6 /* Build configuration list for PBXAggregateTarget "Make XCFrameworks" */;
+			buildPhases = (
+				B3DE9E432E2D7367008E97F6 /* Setup Python */,
+				B3DE9E412E2D7333008E97F6 /* build_dolphin_core */,
+			);
+			dependencies = (
+			);
+			name = "Make XCFrameworks";
+			packageProductDependencies = (
+			);
+			productName = "Make XCFrameworks";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		932931A0297EC23600464B9D /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9329319F297EC23300464B9D /* Security.framework */; };
 		932931A2297EC31900464B9D /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932931A1297EC31800464B9D /* SystemConfiguration.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
@@ -23,8 +40,6 @@
 		9366AC862959CD4A00162286 /* Sys in Resources */ = {isa = PBXBuildFile; fileRef = 9366AC852959CD4A00162286 /* Sys */; };
 		93713380298BEE0F0050DB6E /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 9371337F298BEE0E0050DB6E /* PVDebug.c */; };
 		93CB27D0297CE5DF006A940B /* VulkanLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93CB27CF297CE5DF006A940B /* VulkanLoader.cpp */; };
-		B3082DB72E274BB1009DFE5D /* libdolphin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3082DB62E274BB1009DFE5D /* libdolphin.dylib */; };
-		B3082DBB2E27505E009DFE5D /* libdolphin.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = B3082DB62E274BB1009DFE5D /* libdolphin.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B30E98FF2C6EF18400C1431E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30E98FE2C6EF18400C1431E /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B30E9B1C2C6FD20400C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9B1B2C6FD20400C1431E /* PVCoreBridge */; };
 		B30E9B1F2C6FD20E00C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9B1E2C6FD20E00C1431E /* PVEmulatorCore */; };
@@ -54,6 +69,7 @@
 		B3AAFB552949F73D00CC8234 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB532949F73C00CC8234 /* Metal.framework */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, maccatalyst, tvos, watchos, xros, ); };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
+		B3DE9E4A2E2D7ABC008E97F6 /* PVlibDolphin.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DE9E492E2D7ABC008E97F6 /* PVlibDolphin.xcframework */; };
 		B3F8E0FA2CB3C7E600017D1B /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0F92CB3C7E600017D1B /* PVPlists */; };
 		B3F8E0FD2CB3C83600017D1B /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0FC2CB3C83600017D1B /* PVCoreObjCBridge */; };
 		B3F8E1002CB3C87D00017D1B /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0FF2CB3C87D00017D1B /* PVSettings */; };
@@ -617,21 +633,14 @@
 			remoteGlobalIDString = BEC567F50761D90600A33029;
 			remoteInfo = torturethread;
 		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		B3082DBC2E27505E009DFE5D /* Embed Libraries */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				B3082DBB2E27505E009DFE5D /* libdolphin.dylib in Embed Libraries */,
-			);
-			name = "Embed Libraries";
-			runOnlyForDeploymentPostprocessing = 0;
+		B3DE9E442E2D7377008E97F6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3DE9E3D2E2D7321008E97F6;
+			remoteInfo = "Make XCFrameworks";
 		};
-/* End PBXCopyFilesBuildPhase section */
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		930D481D2954B18400D83090 /* Sys */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Sys; path = "dolphin-ios/Data/Sys"; sourceTree = "<group>"; };
@@ -677,6 +686,8 @@
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B372F34D2E2CAFF700B6B563 /* libdolphin.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdolphin.dylib; path = "dolphin-ios/build-appletvos-/Source/iOS/Library/libdolphin.dylib"; sourceTree = "<group>"; };
+		B372F3562E2CB6C300B6B563 /* libdolphin.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdolphin.dylib; path = "dolphin-ios/build-iphoneos-Release/Source/iOS/Library/libdolphin.dylib"; sourceTree = "<group>"; };
 		B3AAFB322949F26800CC8234 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		B3AAFB362949F2D500CC8234 /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreHaptics.framework; sourceTree = DEVELOPER_DIR; };
 		B3AAFB382949F2DC00CC8234 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/iOSSupport/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
@@ -690,6 +701,12 @@
 		B3B295EF2E26F11D00FCBD5D /* SDLTest.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = SDLTest.xcodeproj; sourceTree = "<group>"; };
 		B3B2960E2E26F11D00FCBD5D /* Demos.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Demos.xcodeproj; sourceTree = "<group>"; };
 		B3B2B0372E26F11D00FCBD5D /* DolphiniOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = DolphiniOS.xcodeproj; sourceTree = "<group>"; };
+		B3B898F42E2D4FF5002EF9EE /* libdolphin-ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libdolphin-ios.a"; path = "dolphin-ios/build-iphoneos-/Source/iOS/Library/libdolphin-ios.a"; sourceTree = "<group>"; };
+		B3B898F62E2D5072002EF9EE /* libcore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcore.a; path = "dolphin-ios/build-iphoneos-/Source/Core/Core/libcore.a"; sourceTree = "<group>"; };
+		B3B898F82E2D50A2002EF9EE /* libuicommon.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libuicommon.a; path = "dolphin-ios/build-iphoneos-/Source/Core/UICommon/libuicommon.a"; sourceTree = "<group>"; };
+		B3B898FA2E2D5962002EF9EE /* libdolphin-tvos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libdolphin-tvos.a"; path = "dolphin-ios/build-appletvos-/Source/iOS/Library/libdolphin-tvos.a"; sourceTree = "<group>"; };
+		B3B898FC2E2D59F6002EF9EE /* build_dolphin_core.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build_dolphin_core.sh; sourceTree = "<group>"; };
+		B3B898FD2E2D70D9002EF9EE /* PVDolphin.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PVDolphin.xcframework; path = build/xcframework/PVDolphin.xcframework; sourceTree = "<group>"; };
 		B3C7621020783162009950E4 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVDolphin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVDolphin.h; sourceTree = "<group>"; };
 		B3C7621420783162009950E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -699,6 +716,7 @@
 		B3C76223207833DE009950E4 /* PVDolphinCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVDolphinCore.h; sourceTree = "<group>"; };
 		B3C76224207833DE009950E4 /* PVDolphinCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVDolphinCore.mm; sourceTree = "<group>"; };
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B3DE9E492E2D7ABC008E97F6 /* PVlibDolphin.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PVlibDolphin.xcframework; path = build/xcframework/PVlibDolphin.xcframework; sourceTree = "<group>"; };
 		B3F8E1252CB6007700017D1B /* PVDolphinCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDolphinCore.swift; sourceTree = "<group>"; };
 		B3F8E1272CB6052800017D1B /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
 		B3F8E1282CB6052800017D1B /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
@@ -715,6 +733,7 @@
 				B3AAFB332949F26900CC8234 /* CoreGraphics.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3F8E0FA2CB3C7E600017D1B /* PVPlists in Frameworks */,
+				B3DE9E4A2E2D7ABC008E97F6 /* PVlibDolphin.xcframework in Frameworks */,
 				B30E9B1F2C6FD20E00C1431E /* PVEmulatorCore in Frameworks */,
 				932931A2297EC31900464B9D /* SystemConfiguration.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
@@ -732,7 +751,6 @@
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B30E9B1C2C6FD20400C1431E /* PVCoreBridge in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
-				B3082DB72E274BB1009DFE5D /* libdolphin.dylib in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B3AAFB552949F73D00CC8234 /* Metal.framework in Frameworks */,
 			);
@@ -897,6 +915,7 @@
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
+				B3B898FC2E2D59F6002EF9EE /* build_dolphin_core.sh */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
 				93BC050A298AFFFC00BA5157 /* LibDolphinConfig.xcconfig */,
 				932931A7297ECFF700464B9D /* Resources */,
@@ -930,7 +949,15 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3DE9E492E2D7ABC008E97F6 /* PVlibDolphin.xcframework */,
+				B3B898FD2E2D70D9002EF9EE /* PVDolphin.xcframework */,
+				B3B898FA2E2D5962002EF9EE /* libdolphin-tvos.a */,
+				B3B898F82E2D50A2002EF9EE /* libuicommon.a */,
+				B3B898F62E2D5072002EF9EE /* libcore.a */,
+				B3B898F42E2D4FF5002EF9EE /* libdolphin-ios.a */,
 				B3082DB62E274BB1009DFE5D /* libdolphin.dylib */,
+				B372F34D2E2CAFF700B6B563 /* libdolphin.dylib */,
+				B372F3562E2CB6C300B6B563 /* libdolphin.dylib */,
 				B30E98FE2C6EF18400C1431E /* OpenGL.framework */,
 				934FA1B92A7905880019C951 /* libdolphin.a */,
 				9333C82629895CEF0042CD99 /* PVSupport.framework */,
@@ -996,17 +1023,15 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVDolphin" */;
 			buildPhases = (
-				B3B2B1C82E26F1A200FCBD5D /* Setup Python */,
-				B3B2B1C92E26F1F100FCBD5D /* Build Dolphin Core */,
 				B3C7620B20783162009950E4 /* Sources */,
 				B3C7620C20783162009950E4 /* Frameworks */,
 				B3C7620D20783162009950E4 /* Headers */,
 				B3C7620E20783162009950E4 /* Resources */,
-				B3082DBC2E27505E009DFE5D /* Embed Libraries */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B3DE9E452E2D7377008E97F6 /* PBXTargetDependency */,
 			);
 			name = PVDolphin;
 			packageProductDependencies = (
@@ -1034,6 +1059,9 @@
 				TargetAttributes = {
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
+					};
+					B3DE9E3D2E2D7321008E97F6 = {
+						CreatedOnToolsVersion = 16.2;
 					};
 				};
 			};
@@ -1094,6 +1122,7 @@
 			projectRoot = "";
 			targets = (
 				B3C7620F20783162009950E4 /* PVDolphin */,
+				B3DE9E3D2E2D7321008E97F6 /* Make XCFrameworks */,
 			);
 		};
 /* End PBXProject section */
@@ -1668,7 +1697,26 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		B3B2B1C82E26F1A200FCBD5D /* Setup Python */ = {
+		B3DE9E412E2D7333008E97F6 /* build_dolphin_core */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = build_dolphin_core;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(PROJECT_DIR)/build/xcframework/PVlibDolphin.xcframework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/build_dolphin_core.sh\"\n\n";
+		};
+		B3DE9E432E2D7367008E97F6 /* Setup Python */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1685,26 +1733,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "#!/bin/bash\n\nset -e\n\n# Fix path for PVDolphin project - create venv in dolphin-ios directory\nVENV_DIR=\"$PROJECT_DIR/dolphin-ios/venv\"\n\nif [ ! -d \"$VENV_DIR\" ]; then\n  python3 -m venv \"$VENV_DIR\"\nfi\n\n\"$VENV_DIR/bin/python3\" -m pip install polib\n";
-		};
-		B3B2B1C92E26F1F100FCBD5D /* Build Dolphin Core */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Build Dolphin Core";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(PROJECT_DIR)/dolphin-ios/build-$(PLATFORM_NAME)-$(DOL_CORE_BUILD_TARGET)/Source/iOS/Library/libdolphin.a",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#!/bin/bash\n\nset -e\n\nPATH=\"$PATH:/opt/homebrew/bin:/usr/local/bin\"\n\n# Fix path for PVDolphin project - point to dolphin-ios directory\nREPO_ROOT_DIR=\"$PROJECT_DIR/dolphin-ios\"\nCMAKE_BUILD_DIR=\"$REPO_ROOT_DIR/build-$PLATFORM_NAME-$DOL_CORE_BUILD_TARGET\"\n\nMACHINE_ARCH=\"$(arch)\"\n\ncase $PLATFORM_NAME in\n    iphoneos)\n        PLATFORM=OS64\n        PLATFORM_DEPLOYMENT_TARGET=$IPHONEOS_DEPLOYMENT_TARGET\n        ;;\n    iphonesimulator)\n        if [ \"$MACHINE_ARCH\" = \"arm64\" ]; then\n            PLATFORM=SIMULATORARM64\n        else\n            PLATFORM=SIMULATOR64\n        fi\n\n        PLATFORM_DEPLOYMENT_TARGET=$IPHONEOS_DEPLOYMENT_TARGET\n        ;;\n    appletvos)\n        PLATFORM=TVOS\n        PLATFORM_DEPLOYMENT_TARGET=$TVOS_DEPLOYMENT_TARGET\n        ;;\n    appletvsimulator)\n        PLATFORM=SIMULATOR_TVOS\n        PLATFORM_DEPLOYMENT_TARGET=$TVOS_DEPLOYMENT_TARGET\n        ;;\n    *)\n        echo \"Unknown platform \\\"$PLATFORM_NAME\\\"\"\n        exit 1\n        ;;\nesac\n\nif [ ! -d \"$CMAKE_BUILD_DIR\" ]; then\n    mkdir \"$CMAKE_BUILD_DIR\"\nfi\n\ncd \"$CMAKE_BUILD_DIR\"\n\nif [ ! -f \"$CMAKE_BUILD_DIR/build.ninja\" ]; then\n  cmake \"$REPO_ROOT_DIR\" -G Ninja -DCMAKE_TOOLCHAIN_FILE=\"$REPO_ROOT_DIR/Externals/ios-cmake/ios.toolchain.cmake\" -DPLATFORM=$PLATFORM -DDEPLOYMENT_TARGET=$PLATFORM_DEPLOYMENT_TARGET -DENABLE_VISIBILITY=ON -DENABLE_BITCODE=OFF -DENABLE_ARC=ON -DCMAKE_BUILD_TYPE=$DOL_CORE_BUILD_TARGET -DCMAKE_CXX_FLAGS=\"-fPIC\" -DIOS=ON -DENABLE_ANALYTICS=NO -DUSE_SYSTEM_LIBS=OFF -DENABLE_TESTS=OFF -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_SHARED_LIBS=OFF\nfi\n\nninja\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1734,6 +1762,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B3DE9E452E2D7377008E97F6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3DE9E3D2E2D7321008E97F6 /* Make XCFrameworks */;
+			targetProxy = B3DE9E442E2D7377008E97F6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		B3C7621720783162009950E4 /* Release */ = {
@@ -1910,6 +1946,10 @@
 					"\"$(SRCROOT)/lib/$(CONFIGURATION)\"",
 					"$(PROJECT_DIR)/lib",
 					"$(PROJECT_DIR)/dolphin-ios/build-iphoneos-/Source/iOS/Library",
+					"$(PROJECT_DIR)/dolphin-ios/build-appletvos-/Source/iOS/Library",
+					"$(PROJECT_DIR)/dolphin-ios/build-iphoneos-Release/Source/iOS/Library",
+					"$(PROJECT_DIR)/dolphin-ios/build-iphoneos-/Source/Core/Core",
+					"$(PROJECT_DIR)/dolphin-ios/build-iphoneos-/Source/Core/UICommon",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -2102,6 +2142,10 @@
 					"\"$(SRCROOT)/lib/$(CONFIGURATION)\"",
 					"$(PROJECT_DIR)/lib",
 					"$(PROJECT_DIR)/dolphin-ios/build-iphoneos-/Source/iOS/Library",
+					"$(PROJECT_DIR)/dolphin-ios/build-appletvos-/Source/iOS/Library",
+					"$(PROJECT_DIR)/dolphin-ios/build-iphoneos-Release/Source/iOS/Library",
+					"$(PROJECT_DIR)/dolphin-ios/build-iphoneos-/Source/Core/Core",
+					"$(PROJECT_DIR)/dolphin-ios/build-iphoneos-/Source/Core/UICommon",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -2118,6 +2162,24 @@
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				TVOS_DEPLOYMENT_TARGET = 16.6;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
+			};
+			name = Debug;
+		};
+		B3DE9E3F2E2D7321008E97F6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B3DE9E402E2D7321008E97F6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -2138,6 +2200,15 @@
 			buildConfigurations = (
 				B3C7621A20783162009950E4 /* Release */,
 				B3D067CF2BC4FA2B00A7327F /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3DE9E3E2E2D7321008E97F6 /* Build configuration list for PBXAggregateTarget "Make XCFrameworks" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3DE9E3F2E2D7321008E97F6 /* Release */,
+				B3DE9E402E2D7321008E97F6 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
