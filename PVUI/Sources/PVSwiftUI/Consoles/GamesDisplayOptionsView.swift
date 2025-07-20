@@ -13,6 +13,19 @@ import PVLibrary
 import PVThemes
 import Defaults
 import PVUIBase
+import PVCoreBridge
+import UIKit
+// Import for core options detail view
+import struct PVUIBase.CoreOptionsDetailView
+
+@available(iOS 14, tvOS 14, *)
+/// Context for the settings button to determine its behavior
+enum SettingsContext {
+    /// Home view context - opens main app settings
+    case home
+    /// Console view context - opens core options for the system
+    case console(PVSystem)
+}
 
 @available(iOS 14, tvOS 14, *)
 struct GamesDisplayOptionsView: SwiftUI.View {
@@ -33,6 +46,12 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     
     // Optional action for the import status button
     var importStatusAction: (() -> Void)?
+    
+    // Optional action for the settings button
+    var settingsAction: (() -> Void)?
+    
+    // Context for the settings button
+    var settingsContext: SettingsContext = .home
 
     var toggleFilterAction: () -> Void
     var toggleSortAction: () -> Void
@@ -203,6 +222,10 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 RetroLogButton(size: 12, color: .retroBlue)
                     .padding(.trailing, padding)
 
+                // Settings button - contextual based on parent view
+                settingsButton(for: settingsContext)
+                    .padding(.trailing, padding)
+                
                 // Status control button for viewing system status
                 StatusControlButton()
                     .padding(.trailing, padding)
@@ -252,5 +275,81 @@ struct GamesDisplayOptionsView: SwiftUI.View {
             #endif
             Defaults[.gameLibraryScale] += 1
         }
+    }
+    
+    // MARK: - Settings Button
+    
+    /// Creates a settings button appropriate for the current context
+    @ViewBuilder
+    private func settingsButton(for context: SettingsContext) -> some View {
+        switch context {
+        case .home:
+            // Main app settings button
+            Button(action: {
+                #if !os(tvOS)
+                Haptics.impact(style: .light)
+                #endif
+                if let action = settingsAction {
+                    action()
+                }
+            }) {
+                Image(systemName: "gear")
+                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    .font(font)
+            }
+            
+        case .console(let system):
+            // Core options button - shows dropdown if multiple cores
+            if system.cores.count > 1 {
+                // Multiple cores - show menu
+                if #available(iOS 15, tvOS 17, *) {
+                    Menu {
+                        ForEach(system.cores, id: \.identifier) { core in
+                            if let coreClass = NSClassFromString(core.principleClass) as? CoreOptional.Type {
+                                Button(action: {
+#if !os(tvOS)
+                                    Haptics.impact(style: .light)
+#endif
+                                    presentCoreOptions(for: coreClass, title: core.projectName)
+                                }) {
+                                    Label("\(core.projectName) Options", systemImage: "slider.horizontal.3")
+                                }
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "gearshape.2")
+                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                            .font(font)
+                    }
+                }
+            } else if let core = system.cores.first,
+                      let coreClass = NSClassFromString(core.principleClass) as? CoreOptional.Type {
+                // Single core - direct button
+                Button(action: {
+                    #if !os(tvOS)
+                    Haptics.impact(style: .light)
+                    #endif
+                    presentCoreOptions(for: coreClass, title: core.projectName)
+                }) {
+                    Image(systemName: "gearshape")
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .font(font)
+                }
+            }
+        }
+    }
+    
+    /// Present core options for a specific core
+    private func presentCoreOptions(for coreClass: CoreOptional.Type, title: String) {
+        #if !os(tvOS)
+        // Find the nearest UIViewController to present from
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let rootVC = windowScene.windows.first?.rootViewController {
+            let coreOptionsView = CoreOptionsDetailView(coreClass: coreClass, title: title)
+            let hostingController = UIHostingController(rootView: coreOptionsView)
+            let navigationController = UINavigationController(rootViewController: hostingController)
+            rootVC.present(navigationController, animated: true)
+        }
+        #endif
     }
 }

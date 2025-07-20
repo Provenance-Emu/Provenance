@@ -865,6 +865,7 @@ extension ConsoleGamesView {
                     gamesViewModel.showImportStatusView = true
                 }
             },
+            settingsContext: .console(console),
             toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },
             toggleSortAction: { viewModel.sortGamesAscending.toggle() },
             toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }

@@ -16,6 +16,12 @@ import Combine
 import PVUIBase
 import Perception
 import PVWebServer
+#if canImport(UIKit)
+import UIKit
+#endif
+#if canImport(FreemiumKit)
+import FreemiumKit
+#endif
 
 @available(iOS 14, tvOS 14, *)
 struct HomeView: SwiftUI.View {
@@ -30,7 +36,7 @@ struct HomeView: SwiftUI.View {
     @Default(.showRecentGames) private var showRecentGames
     @Default(.showSearchbar) private var showSearchbar
     @Default(.showFavorites) private var showFavorites
-    
+
     // Import status view properties
     @State private var showImportStatusView = false
 
@@ -139,7 +145,7 @@ struct HomeView: SwiftUI.View {
                         .padding(.horizontal, 8)
                         .padding(.bottom, 8)
                 }
-                
+
                 // Import Progress View
                 ImportProgressView(
                     gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
@@ -399,7 +405,7 @@ struct HomeView: SwiftUI.View {
                 Text("Error: Could not load save states")
             }
         }
-        
+
         .uiKitAlert(
             "Select Disc",
             message: "Choose which disc to load",
@@ -531,6 +537,12 @@ struct HomeView: SwiftUI.View {
                     showImportStatusView = true
                 }
             },
+            settingsAction: {
+                // TODO: This is a hack, we should use the delegate
+                // Use NotificationCenter to trigger settings
+                NotificationCenter.default.post(name: NSNotification.Name("PVShowSettings"), object: nil)
+            },
+            settingsContext: .home,
             toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },
             toggleSortAction: { viewModel.sortGamesAscending.toggle() },
             toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }

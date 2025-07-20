@@ -98,6 +98,14 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 
         // Listen for bootup state changes
         setupBootupStateObserver()
+        
+        // Listen for settings notification from HomeView
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleShowSettings),
+            name: NSNotification.Name("PVShowSettings"),
+            object: nil
+        )
 
         // Listen for app open actions
         setupAppOpenActionObserver()
@@ -553,12 +561,19 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 /// HUD State for the view controller
 extension PVRootViewController {
     /// Handle tap on the HUD to dismiss it
-    @objc private func hudTapped(_ gesture: UITapGestureRecognizer) {
+    @objc private func hudTapped(_ sender: UITapGestureRecognizer) {
+        // Dismiss the HUD when tapped
         DLOG("HUD tapped, dismissing")
         Task { @MainActor in
             await AppState.shared.hudCoordinator.updateHUD(.hidden)
         }
     }
+    
+    @objc private func handleShowSettings() {
+        // Handle the PVShowSettings notification by calling didTapSettings
+        didTapSettings()
+    }
+    
     private func setupHUDObserver(hud: RetroProgressHUD) {
         Task { @MainActor in
             for try await state in await AppState.shared.hudCoordinator.$hudState.values {
