@@ -974,6 +974,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return .r8Unorm
         case (GLenum(GL_RG8), _):
             return .rg8Unorm
+        case (GLenum(GL_RGB5_A1), GLenum(GL_UNSIGNED_SHORT)): // VecX core uses RGB555 with 1-bit alpha
+            return .a1bgr5Unorm
 #if !targetEnvironment(macCatalyst) && !os(macOS)
         case (GLenum(GL_RGB565), _):
             return .b5g6r5Unorm
@@ -981,6 +983,15 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         case (GLenum(GL_UNSIGNED_SHORT_5_6_5), _):
             return .b5g6r5Unorm
 #endif
+        case (GLenum(GL_UNSIGNED_SHORT_5_6_5), _): // Handle when pixel type is incorrectly passed as format
+            WLOG("GL_UNSIGNED_SHORT_5_6_5 passed as pixelFormat instead of pixelType, using RGB565 format")
+            return .b5g6r5Unorm
+        case (GLenum(GL_UNSIGNED_SHORT_4_4_4_4), _): // Handle RGBA4444 pixel type as format
+            WLOG("GL_UNSIGNED_SHORT_4_4_4_4 passed as pixelFormat instead of pixelType, using RGBA4444 format")
+            return .abgr4Unorm
+        case (GLenum(GL_UNSIGNED_SHORT_5_5_5_1), _): // Handle RGB5551 pixel type as format
+            WLOG("GL_UNSIGNED_SHORT_5_5_5_1 passed as pixelFormat instead of pixelType, using RGB5551 format")
+            return .a1bgr5Unorm
             // Add more cases as needed for your specific use cases
         default:
             WLOG("Unknown GL pixelFormat: \(pixelFormat.toString), pixelType: \(pixelType.toString). Defaulting to .rgba8Unorm")
