@@ -84,7 +84,7 @@ let OTHER_CFLAGS: [CSetting] = [
         "-fvisibility=default",
         "-mcpu=apple-a10",
         "-mtune=apple-a12",
-        "-march=armv8-a+simd"
+        "-march=armv8-a+simd+crc+crypto",
 //        "-fvisibility-inlines-hidden",
 //        "-fvisibility=hidden"
     ])]
