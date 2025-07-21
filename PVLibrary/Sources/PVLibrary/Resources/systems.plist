@@ -456,6 +456,8 @@
 		<true/>
 		<key>PVPortable</key>
 		<true/>
+		<key>PVAppStoreDisabled</key>
+		<true/>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>zip</string>
