@@ -212,7 +212,6 @@ static void UpdateWiiPointer();
 - (void)setOptionValues {
     [self parseOptions];
     Config::Load();
-    Config::Load();
 
     // Resolution upscaling
     Config::SetBase(Config::GFX_EFB_SCALE, self.resFactor);
