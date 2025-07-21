@@ -96,7 +96,7 @@ import PVLogging
     #if os(tvOS)
         featureSet = .tvOS_GPUFamily2_v2
     #else
-        featureSet = .iOS_GPUFamily3_v2
+        featureSet = .iOS_GPUFamily3_v4
     #endif
         guard dev.supportsFeatureSet(featureSet) else {
             assertionFailure("GPU doesn't support required MTL feature set.")
