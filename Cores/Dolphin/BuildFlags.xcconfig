@@ -20,6 +20,23 @@ OTHER_CFLAGS = $(inherited) -mtune=apple-a15
 OTHER_LDFLAGS = $(inherited) -ObjC -l"c++" -l"z" -DIPHONEOS
 //-l"nanopb" -l"PromisesObjC"
 
+// rpath-based isolation to prioritize bundled glslang libraries
+OTHER_LDFLAGS = $(inherited) -Wl,-rpath,@loader_path
+OTHER_LDFLAGS = $(inherited) -Wl,-rpath,@loader_path/../Frameworks/PVlibDolphin.framework
+OTHER_LDFLAGS = $(inherited) -Wl,-rpath,@executable_path/../Frameworks/PVlibDolphin.framework
+// Prevent implicit dylib loading and force explicit paths
+//OTHER_LDFLAGS = $(inherited) -Wl,-no_implicit_dylibs
+// Use two-level namespace for better symbol isolation
+//OTHER_LDFLAGS = $(inherited) -Wl,-two_levelnamespace
+// Symbol hiding for glslang to prevent conflicts
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,_glslang* -Wl,-unexported_symbol,_SPIRV*
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,_TBuiltInResource* -Wl,-unexported_symbol,_EShLanguage*
+// Hide C++ mangled glslang symbols
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,__ZN7glslang* -Wl,-unexported_symbol,__ZN5SPIRV*
+// Additional visibility flags to hide symbols
+OTHER_CFLAGS = $(inherited) -fvisibility=hidden -fvisibility-inlines-hidden
+OTHER_CPLUSPLUSFLAGS = $(inherited) -fvisibility=hidden -fvisibility-inlines-hidden
+
 // MARK: - Device
 
 GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) TARGET_IPHONE=1
