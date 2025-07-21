@@ -1466,7 +1466,10 @@
 					"$(inherited)",
 					"-Wno-module-import-in-extern-c",
 				);
-				OTHER_LDFLAGS = "-Wl,-segalign,4000";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-Wl,-segalign,4000",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
@@ -1769,7 +1772,10 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_ENABLE_MODULES = YES;
 				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "-Wl,-segalign,4000";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-Wl,-segalign,4000",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.coresretro.pvretroarchcore";
 				PRODUCT_NAME = PVRetroArch;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1987,7 +1993,10 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_ENABLE_MODULES = YES;
 				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "-Wl,-segalign,4000";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-Wl,-segalign,4000",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.coresretro.pvretroarchcore";
 				PRODUCT_NAME = PVRetroArch;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2075,7 +2084,10 @@
 					"$(inherited)",
 					"-Wno-module-import-in-extern-c",
 				);
-				OTHER_LDFLAGS = "-Wl,-segalign,4000";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-Wl,-segalign,4000",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
