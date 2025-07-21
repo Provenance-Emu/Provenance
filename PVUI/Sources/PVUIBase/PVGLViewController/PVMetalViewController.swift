@@ -939,17 +939,17 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         //        VLOG("Getting MTLPixelFormat for pixelFormat: \(pixelFormat.toString), pixelType: \(pixelType.toString)")
         switch (pixelFormat, pixelType) {
         case (GLenum(GL_BGRA), GLenum(GL_UNSIGNED_BYTE)),
-            (GLenum(GL_BGRA), GLenum(0x8367)): // GL_UNSIGNED_INT_8_8_8_8_REV
+             (GLenum(GL_BGRA), GLenum(0x8367)): // GL_UNSIGNED_INT_8_8_8_8_REV
             return .bgra8Unorm
         case (GLenum(GL_BGRA), GLenum(GL_UNSIGNED_INT)):
             return .bgra8Unorm
         case (GLenum(GL_RGBA), GLenum(GL_UNSIGNED_BYTE)),
-            (GLenum(GL_RGBA8), GLenum(GL_UNSIGNED_BYTE)):
+             (GLenum(GL_RGBA8), GLenum(GL_UNSIGNED_BYTE)):
             return .rgba8Unorm
         case (GLenum(GL_RGBA), GLenum(GL_BYTE)):
             return .rgba8Snorm
         case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_BYTE)),
-            (GLenum(GL_RGB8), GLenum(GL_UNSIGNED_BYTE)):
+             (GLenum(GL_RGB8), GLenum(GL_UNSIGNED_BYTE)):
             // Note: Metal doesn't have a direct RGB8 format, using RGBA8 and ignoring alpha
             return .rgba8Unorm
         case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_SHORT)):
@@ -966,8 +966,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return .a1bgr5Unorm
         case (_, GLenum(GL_UNSIGNED_SHORT_4_4_4_4)):
             return .abgr4Unorm
-        case (GLenum(GL_RGBA8), GLenum(GL_UNSIGNED_SHORT)):
-            return .rgba16Uint
+        case (GLenum(GL_RGBA8), GLenum(GL_UNSIGNED_SHORT)): // Invalid GL combination, map to compatible format
+            WLOG("Invalid GL combination: GL_RGBA8 with GL_UNSIGNED_SHORT. Mapping to .rgba8Unorm for Metal shader compatibility")
+            return .rgba8Unorm
         case (GLenum(GL_RGBA8), GLenum(GL_UNSIGNED_INT)):
             return .rgba32Uint
         case (GLenum(GL_R8), _):
