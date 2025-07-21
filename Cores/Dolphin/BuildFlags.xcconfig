@@ -33,9 +33,11 @@ OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,_glslang* -Wl,-unexported_sy
 OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,_TBuiltInResource* -Wl,-unexported_symbol,_EShLanguage*
 // Hide C++ mangled glslang symbols
 OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,__ZN7glslang* -Wl,-unexported_symbol,__ZN5SPIRV*
-// Additional visibility flags to hide symbols
-OTHER_CFLAGS = $(inherited) -fvisibility=hidden -fvisibility-inlines-hidden
-OTHER_CPLUSPLUSFLAGS = $(inherited) -fvisibility=hidden -fvisibility-inlines-hidden
+// Additional C++ mangled symbol patterns for comprehensive glslang hiding
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,__ZN4spv* -Wl,-unexported_symbol,__Z*glslang*
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,__Z*SPIRV* -Wl,-unexported_symbol,__Z*spv*
+// NOTE: Removed global -fvisibility=hidden flags as they break curl and system headers
+// Using targeted linker-based symbol hiding instead for glslang-specific isolation
 
 // MARK: - Device
 
