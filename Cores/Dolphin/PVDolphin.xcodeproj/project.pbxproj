@@ -7,6 +7,20 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		B3C188542E2ED1440014ACC3 /* Make ALL XCFrameworks */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B3C188572E2ED1440014ACC3 /* Build configuration list for PBXAggregateTarget "Make ALL XCFrameworks" */;
+			buildPhases = (
+				B3C188552E2ED1440014ACC3 /* Setup Python */,
+				B3C188562E2ED1440014ACC3 /* build_dolphin_core */,
+			);
+			dependencies = (
+			);
+			name = "Make ALL XCFrameworks";
+			packageProductDependencies = (
+			);
+			productName = "Make XCFrameworks";
+		};
 		B3DE9E3D2E2D7321008E97F6 /* Make XCFrameworks */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = B3DE9E3E2E2D7321008E97F6 /* Build configuration list for PBXAggregateTarget "Make XCFrameworks" */;
@@ -1123,6 +1137,7 @@
 			targets = (
 				B3C7620F20783162009950E4 /* PVDolphin */,
 				B3DE9E3D2E2D7321008E97F6 /* Make XCFrameworks */,
+				B3C188542E2ED1440014ACC3 /* Make ALL XCFrameworks */,
 			);
 		};
 /* End PBXProject section */
@@ -1697,6 +1712,43 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		B3C188552E2ED1440014ACC3 /* Setup Python */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Setup Python";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/bash\n\nset -e\n\n# Fix path for PVDolphin project - create venv in dolphin-ios directory\nVENV_DIR=\"$PROJECT_DIR/dolphin-ios/venv\"\n\nif [ ! -d \"$VENV_DIR\" ]; then\n  python3 -m venv \"$VENV_DIR\"\nfi\n\n\"$VENV_DIR/bin/python3\" -m pip install polib\n";
+		};
+		B3C188562E2ED1440014ACC3 /* build_dolphin_core */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = build_dolphin_core;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(PROJECT_DIR)/build/xcframework/PVlibDolphin.xcframework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/build_dolphin_core.py\" --all-platforms\n\n";
+		};
 		B3DE9E412E2D7333008E97F6 /* build_dolphin_core */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1714,7 +1766,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/build_dolphin_core.sh\"\n\n";
+			shellScript = "\"${SRCROOT}/build_dolphin_core.py\" --platform OS64 --platform SIMULATORARM64 --platform TVOS --platform SIMULATORARM64_TVOS                              \n\n";
 		};
 		B3DE9E432E2D7367008E97F6 /* Setup Python */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1772,6 +1824,24 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		B3C188582E2ED1440014ACC3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B3C188592E2ED1440014ACC3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
 		B3C7621720783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
@@ -2186,6 +2256,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		B3C188572E2ED1440014ACC3 /* Build configuration list for PBXAggregateTarget "Make ALL XCFrameworks" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3C188582E2ED1440014ACC3 /* Release */,
+				B3C188592E2ED1440014ACC3 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVDolphin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
