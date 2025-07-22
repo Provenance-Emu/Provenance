@@ -140,21 +140,113 @@ s8 joyx[4], joyy[4];
 }
 
 -(void)didPushDOSButton:(enum PVDOSButton)button forPlayer:(NSInteger)player {
-//	if(_isInitialized)
-//	  {
-//	  }
+    if (player >= 2) return; // Only support 2 players in libretro
+    
+    // Map DOS buttons to libretro device IDs
+    switch (button) {
+        case PVDOSButtonUp:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_UP] = 1;
+            break;
+        case PVDOSButtonDown:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_DOWN] = 1;
+            break;
+        case PVDOSButtonLeft:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_LEFT] = 1;
+            break;
+        case PVDOSButtonRight:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_RIGHT] = 1;
+            break;
+        case PVDOSButtonFire1:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_B] = 1; // Primary fire button
+            break;
+        case PVDOSButtonFire2:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_A] = 1; // Secondary fire button
+            break;
+        case PVDOSButtonSelect:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_SELECT] = 1;
+            break;
+        case PVDOSButtonPause:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_START] = 1;
+            break;
+        case PVDOSButtonReset:
+            // Reset is typically handled at core level, not as regular input
+            break;
+        case PVDOSButtonLeftDiff:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_L] = 1;
+            break;
+        case PVDOSButtonRightDiff:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_R] = 1;
+            break;
+        default:
+            break;
+    }
 }
 
 -(void)didReleaseDOSButton:(enum PVDOSButton)button forPlayer:(NSInteger)player {
-//	if(_isInitialized)
-//	  {
-//	  }
+    if (player >= 2) return; // Only support 2 players in libretro
+    
+    // Map DOS buttons to libretro device IDs
+    switch (button) {
+        case PVDOSButtonUp:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_UP] = 0;
+            break;
+        case PVDOSButtonDown:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_DOWN] = 0;
+            break;
+        case PVDOSButtonLeft:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_LEFT] = 0;
+            break;
+        case PVDOSButtonRight:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_RIGHT] = 0;
+            break;
+        case PVDOSButtonFire1:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_B] = 0; // Primary fire button
+            break;
+        case PVDOSButtonFire2:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_A] = 0; // Secondary fire button
+            break;
+        case PVDOSButtonSelect:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_SELECT] = 0;
+            break;
+        case PVDOSButtonPause:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_START] = 0;
+            break;
+        case PVDOSButtonReset:
+            // Reset is typically handled at core level, not as regular input
+            break;
+        case PVDOSButtonLeftDiff:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_L] = 0;
+            break;
+        case PVDOSButtonRightDiff:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_R] = 0;
+            break;
+        default:
+            break;
+    }
 }
 
 - (void)didMoveDOSJoystickDirection:(enum PVDOSButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-//	if(_isInitialized)
-//	  {
-//	  }
+    if (player >= 2) return; // Only support 2 players in libretro
+    
+    // Handle analog stick input by converting to digital for libretro
+    const float threshold = 0.5f;
+    
+    switch (button) {
+        case PVDOSButtonUp:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_UP] = (value > threshold) ? 1 : 0;
+            break;
+        case PVDOSButtonDown:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_DOWN] = (value > threshold) ? 1 : 0;
+            break;
+        case PVDOSButtonLeft:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_LEFT] = (value > threshold) ? 1 : 0;
+            break;
+        case PVDOSButtonRight:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_RIGHT] = (value > threshold) ? 1 : 0;
+            break;
+        default:
+            break;
+    }
 }
 
 -(void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
