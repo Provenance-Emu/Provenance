@@ -13,7 +13,7 @@ GCC_PREPROCESSOR_DEFINITIONS = $(inherited) JIT_ENABLED=0
 // JIT_ENABLED=1
 OTHER_CFLAGS = $(inherited) -ObjC -ffast-math -ftree-vectorize -fno-strict-aliasing -fpermissive -fomit-frame-pointer -fPIC -fmodules -fcxx-modules -fvisibility=default
 OTHER_CPLUSPLUSFLAGS = $(inherited) -fvisibility=default
-OTHER_LDFLAGS =  $(inherited) -ObjC -Wl,-all_load -all_load
+OTHER_LDFLAGS =  $(inherited) -ObjC -Wl,-all_load -all_load -Wl,-exported_symbols_list,$(SRCROOT)/exported_symbols.txt
 
 GCC_PREPROCESSOR_DEFINITIONS[arch=armv7] = $(inherited) __RETRO_ARM__ ARCHITECTURE_ARM=1
 GCC_PREPROCESSOR_DEFINITIONS[arch=armv72] = $(inherited) __RETRO_ARM__ ARCHITECTURE_ARM=1
