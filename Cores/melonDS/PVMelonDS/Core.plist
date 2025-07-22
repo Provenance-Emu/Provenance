@@ -17,6 +17,6 @@
 	<key>PVProjectVersion</key>
 	<string>0.9.4</string>
 	<key>PVDisabled</key>
-	<false/>
+	<true/>
 </dict>
 </plist>
