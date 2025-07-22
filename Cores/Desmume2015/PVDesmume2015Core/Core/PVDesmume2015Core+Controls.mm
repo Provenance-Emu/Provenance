@@ -141,37 +141,135 @@ typedef unsigned int   u32;
 //}
 
 -(void)didPushDSButton:(enum PVDSButton)button forPlayer:(NSInteger)player {
-//    if (button == PVDSButtonL) {
-//        lt[player] |= 0xff * true;
-//    } else if (button == PVDSButtonR) {
-//        rt[player] |= 0xff * true;
-//    } else {
-//        int mapped = DSMap[button];
-//        kcode[player] &= ~(mapped);
-//    }
+    if (player >= 2) return; // Only support 2 players in libretro
+    
+    // Map DS buttons to libretro device IDs
+    switch (button) {
+        case PVDSButtonUp:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_UP] = 1;
+            break;
+        case PVDSButtonDown:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_DOWN] = 1;
+            break;
+        case PVDSButtonLeft:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_LEFT] = 1;
+            break;
+        case PVDSButtonRight:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_RIGHT] = 1;
+            break;
+        case PVDSButtonA:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_A] = 1;
+            break;
+        case PVDSButtonB:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_B] = 1;
+            break;
+        case PVDSButtonX:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_X] = 1;
+            break;
+        case PVDSButtonY:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_Y] = 1;
+            break;
+        case PVDSButtonL:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_L] = 1;
+            break;
+        case PVDSButtonR:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_R] = 1;
+            break;
+        case PVDSButtonStart:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_START] = 1;
+            break;
+        case PVDSButtonSelect:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_SELECT] = 1;
+            break;
+        case PVDSButtonScreenSwap:
+            // Screen swap is typically handled by the core, map to L2
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_L2] = 1;
+            break;
+        case PVDSButtonRotate:
+            // Screen rotate is typically handled by the core, map to R2
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_R2] = 1;
+            break;
+        default:
+            break;
+    }
 }
 
 -(void)didReleaseDSButton:(enum PVDSButton)button forPlayer:(NSInteger)player {
-//    if (button == PVDSButtonL) {
-//        lt[player] |= 0xff * false;
-//    } else if (button == PVDSButtonR) {
-//        rt[player] |= 0xff * false;
-//    } else {
-//        int mapped = DSMap[button];
-//        kcode[player] |= (mapped);
-//    }
+    if (player >= 2) return; // Only support 2 players in libretro
+    
+    // Map DS buttons to libretro device IDs
+    switch (button) {
+        case PVDSButtonUp:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_UP] = 0;
+            break;
+        case PVDSButtonDown:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_DOWN] = 0;
+            break;
+        case PVDSButtonLeft:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_LEFT] = 0;
+            break;
+        case PVDSButtonRight:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_RIGHT] = 0;
+            break;
+        case PVDSButtonA:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_A] = 0;
+            break;
+        case PVDSButtonB:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_B] = 0;
+            break;
+        case PVDSButtonX:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_X] = 0;
+            break;
+        case PVDSButtonY:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_Y] = 0;
+            break;
+        case PVDSButtonL:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_L] = 0;
+            break;
+        case PVDSButtonR:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_R] = 0;
+            break;
+        case PVDSButtonStart:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_START] = 0;
+            break;
+        case PVDSButtonSelect:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_SELECT] = 0;
+            break;
+        case PVDSButtonScreenSwap:
+            // Screen swap is typically handled by the core, map to L2
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_L2] = 0;
+            break;
+        case PVDSButtonRotate:
+            // Screen rotate is typically handled by the core, map to R2
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_R2] = 0;
+            break;
+        default:
+            break;
+    }
 }
 
 - (void)didMoveDSJoystickDirection:(enum PVDSButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-    /*
-     float xvalue = gamepad.leftThumbstick.xAxis.value;
-     s8 x=(s8)(xvalue*127);
-     joyx[0] = x;
-
-     float yvalue = gamepad.leftThumbstick.yAxis.value;
-     s8 y=(s8)(yvalue*127 * - 1); //-127 ... + 127 range
-     joyy[0] = y;
-     */
+    if (player >= 2) return; // Only support 2 players in libretro
+    
+    // Handle analog stick input by converting to digital for libretro
+    const float threshold = 0.5f;
+    
+    switch (button) {
+        case PVDSButtonUp:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_UP] = (value > threshold) ? 1 : 0;
+            break;
+        case PVDSButtonDown:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_DOWN] = (value > threshold) ? 1 : 0;
+            break;
+        case PVDSButtonLeft:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_LEFT] = (value > threshold) ? 1 : 0;
+            break;
+        case PVDSButtonRight:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_RIGHT] = (value > threshold) ? 1 : 0;
+            break;
+        default:
+            break;
+    }
 }
 
 -(void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {

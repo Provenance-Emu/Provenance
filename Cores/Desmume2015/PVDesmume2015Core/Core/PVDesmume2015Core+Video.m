@@ -72,7 +72,9 @@
 //}
 ////
 - (CGSize)aspectSize {
-    return CGSizeMake(1, 2);
+    // DS dual screens: 256x192 each, stacked = 256x384 total
+    // Correct aspect ratio: 256:384 = 2:3
+    return CGSizeMake(2, 3);
 }
 //
 //- (BOOL)rendersToOpenGL {
