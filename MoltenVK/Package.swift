@@ -13,6 +13,9 @@ let package = Package(
         .visionOS(.v1)
     ],
     products: [
+        .library(
+            name: "MoltenVK-1.2.8",
+            targets: ["MoltenVK-1.2.8", "MoltenVK-1.2.8.xcframework"]),
         .library(name: "MoltenVK-Catalyst",
                  targets: ["MoltenVK-Catalyst.xcframework"]),
         .library(
@@ -36,6 +39,13 @@ let package = Package(
                 "MoltenVK.xcframework"
             ],
             path: "MoltenVK/dynamic"
+        ),
+        .target(
+            name: "MoltenVK-1.2.8",
+            dependencies: [
+                "MoltenVK-1.2.8.xcframework"
+            ],
+            path: "MoltenVK-1.2.8/dynamic"
         ),
         .target(
             name: "MoltenVK-Static",
@@ -65,7 +75,10 @@ let package = Package(
         /// Multi-platform static XCFramework
         .binaryTarget(
             name: "MoltenVK-Static.xcframework",
-            path: "MoltenVK/static/MoltenVK.xcframework")
+            path: "MoltenVK/static/MoltenVK.xcframework"),
+        .binaryTarget(
+            name: "MoltenVK-1.2.8.xcframework",
+            path: "MoltenVK/dynamic/MoltenVK-1.2.8.xcframework"),
     ],
     swiftLanguageModes: [.v5],
     cLanguageStandard: .gnu11,

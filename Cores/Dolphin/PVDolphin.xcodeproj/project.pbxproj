@@ -74,6 +74,7 @@
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, ); };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
+		B37CCD2B2E2FF07900ABFCF5 /* PVlibDolphin.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DE9E492E2D7ABC008E97F6 /* PVlibDolphin.xcframework */; };
 		B3A3204527209EE100F338F6 /* PVDolphinCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDolphinCore+Controls.mm */; };
 		B3AAFB332949F26900CC8234 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB322949F26800CC8234 /* CoreGraphics.framework */; };
 		B3AAFB372949F2D500CC8234 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB362949F2D500CC8234 /* CoreHaptics.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
@@ -83,7 +84,6 @@
 		B3AAFB552949F73D00CC8234 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB532949F73C00CC8234 /* Metal.framework */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, maccatalyst, tvos, watchos, xros, ); };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3DE9E4A2E2D7ABC008E97F6 /* PVlibDolphin.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DE9E492E2D7ABC008E97F6 /* PVlibDolphin.xcframework */; };
 		B3F8E0FA2CB3C7E600017D1B /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0F92CB3C7E600017D1B /* PVPlists */; };
 		B3F8E0FD2CB3C83600017D1B /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0FC2CB3C83600017D1B /* PVCoreObjCBridge */; };
 		B3F8E1002CB3C87D00017D1B /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0FF2CB3C87D00017D1B /* PVSettings */; };
@@ -747,7 +747,7 @@
 				B3AAFB332949F26900CC8234 /* CoreGraphics.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3F8E0FA2CB3C7E600017D1B /* PVPlists in Frameworks */,
-				B3DE9E4A2E2D7ABC008E97F6 /* PVlibDolphin.xcframework in Frameworks */,
+				B37CCD2B2E2FF07900ABFCF5 /* PVlibDolphin.xcframework in Frameworks */,
 				B30E9B1F2C6FD20E00C1431E /* PVEmulatorCore in Frameworks */,
 				932931A2297EC31900464B9D /* SystemConfiguration.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
@@ -1766,7 +1766,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/build_dolphin_core.py\" --platform OS64 --platform SIMULATORARM64 --platform TVOS --platform SIMULATORARM64_TVOS                              \n\n";
+			shellScript = "\"${SRCROOT}/build_dolphin_core.py\" --all-platforms                 \n\n";
 		};
 		B3DE9E432E2D7367008E97F6 /* Setup Python */ = {
 			isa = PBXShellScriptBuildPhase;

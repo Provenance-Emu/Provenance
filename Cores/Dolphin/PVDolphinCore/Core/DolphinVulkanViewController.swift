@@ -20,20 +20,68 @@ import PVLogging
 	@objc public init(resFactor: Int8, videoWidth: CGFloat, videoHeight: CGFloat, core: PVDolphinCoreBridge) {
 		super.init(nibName: nil, bundle: nil)
 		self.core = core;
+		
+		// Use shared Metal device to avoid conflicts
 		self.dev = MTLCreateSystemDefaultDevice()!
+		
+		// Disable Metal validation to test if rendering works despite buffer size warnings
+		// This helps determine if it's a validation issue or actual rendering problem
+		if let device = self.dev {
+			// Note: Metal validation can only be disabled via environment variables or build settings
+			// For now, we'll proceed with validation enabled but log the issue
+			ILOG("Metal device created: \(device.name)")
+		}
+		
 		metalView = MTKView(frame: UIScreen.main.bounds, device: dev)
-		metalView.isUserInteractionEnabled=false;
-		metalView.contentMode = .scaleToFill;
-		metalView.colorPixelFormat = .bgra8Unorm;
+		
+		// Configure MTKView for Vulkan/Metal interop
+		metalView.isUserInteractionEnabled = false
+		metalView.contentMode = .scaleToFill
+		metalView.colorPixelFormat = .bgra8Unorm
 		metalView.depthStencilPixelFormat = .depth32Float
 		metalView.translatesAutoresizingMaskIntoConstraints = false
-        metalView.preferredFramesPerSecond = 120
+		metalView.preferredFramesPerSecond = 60  // Reduced from 120 to prevent GPU overload
+		
+		// Critical: Prevent MTKView from interfering with Vulkan rendering
+		metalView.isPaused = true
+		metalView.enableSetNeedsDisplay = false
+		metalView.autoResizeDrawable = false  // Let Vulkan control drawable size
+		metalView.framebufferOnly = true      // Optimize for rendering only
+		metalView.delegate = nil              // No MTKView delegate to avoid conflicts
+		
+		// Ensure Metal layer is properly configured for Vulkan
+		if let metalLayer = metalView.layer as? CAMetalLayer {
+			metalLayer.framebufferOnly = true
+			metalLayer.allowsNextDrawableTimeout = false
+			metalLayer.maximumDrawableCount = 3  // Triple buffering
+		}
 	}
 	override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
 		super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
 	}
 	required init?(coder: NSCoder) {
 		super.init(coder:coder)
+	}
+	
+	deinit {
+		// Critical: Clean up Metal resources to prevent GPU memory leaks
+		ILOG("DolphinVulkanViewController deinit - cleaning up Metal resources")
+		
+		if let metalView = self.metalView {
+			// Stop any ongoing rendering
+			metalView.isPaused = true
+			metalView.delegate = nil
+			
+			// Remove from superview to break retain cycles
+			metalView.removeFromSuperview()
+			self.metalView = nil
+		}
+		
+		// Clear Metal device reference
+		self.dev = nil
+		self.core = nil
+		
+		ILOG("DolphinVulkanViewController deinit complete")
 	}
 	@objc public override func viewDidLoad() {
 		ILOG("View Did Load\n")

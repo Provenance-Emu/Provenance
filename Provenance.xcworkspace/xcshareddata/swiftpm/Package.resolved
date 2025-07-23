@@ -141,8 +141,8 @@
         "repositoryURL": "https://github.com/google/GoogleUtilities.git",
         "state": {
           "branch": null,
-          "revision": "53156c7ec267db846e6b64c9f4c4e31ba4cf75eb",
-          "version": "8.0.2"
+          "revision": "60da361632d0de02786f709bdc0c4df340f7613e",
+          "version": "8.1.0"
         }
       },
       {
@@ -159,8 +159,8 @@
         "repositoryURL": "https://github.com/google/gtm-session-fetcher.git",
         "state": {
           "branch": null,
-          "revision": "4d70340d55d7d07cc2fdf8e8125c4c126c1d5f35",
-          "version": "4.4.0"
+          "revision": "c756a29784521063b6a1202907e2cc47f41b667c",
+          "version": "4.5.0"
         }
       },
       {
@@ -555,8 +555,8 @@
         "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
         "state": {
           "branch": null,
-          "revision": "39de59b2d47f7ef3ca88a039dff3084688fe27f4",
-          "version": "1.5.2"
+          "revision": "23e3442166b5122f73f9e3e622cd1e4bafeab3b7",
+          "version": "1.6.0"
         }
       },
       {

@@ -49,21 +49,62 @@
 @public
     dispatch_queue_t _callbackQueue;
 }
+// System Properties
 @property (nonatomic, assign) bool isWii;
 @property (nonatomic, assign) int videoWidth;
 @property (nonatomic, assign) int videoHeight;
 @property (nonatomic, assign) int videoBitDepth;
+
+// Graphics Settings
 @property (nonatomic, assign) int8_t resFactor;
 @property (nonatomic, assign) int8_t gsPreference;
-@property (nonatomic, assign) int8_t cpuType;
-@property (nonatomic, assign) int8_t cpuOClock;
+@property (nonatomic, assign) int8_t aspectRatio;
+@property (nonatomic, assign) bool vsync;
+@property (nonatomic, assign) int8_t anisotropicFiltering;
 @property (nonatomic, assign) bool isBilinear;
+@property (nonatomic, assign) bool showFPS;
+
+// Graphics Enhancements
+@property (nonatomic, assign) bool scaledEFBCopy;
+@property (nonatomic, assign) bool disableFog;
+@property (nonatomic, assign) bool pixelLighting;
+@property (nonatomic, assign) bool forceTrueColor;
+
+// Shader Settings
+@property (nonatomic, assign) int8_t shaderCompilationMode;
+@property (nonatomic, assign) bool waitForShaders;
+
+// Anti-Aliasing
 @property (nonatomic, assign) int8_t msaa;
 @property (nonatomic, assign) bool ssaa;
+
+// CPU/Emulation Settings
+@property (nonatomic, assign) int8_t cpuType;
+@property (nonatomic, assign) int8_t cpuOClock;
+@property (nonatomic, assign) bool dualCore;
+@property (nonatomic, assign) bool idleSkipping;
 @property (nonatomic, assign) bool fastMemory;
 @property (nonatomic, assign) bool enableCheatCode;
-@property (nonatomic, assign) bool multiPlayer;
+
+// Advanced Emulation Settings
+@property (nonatomic, assign) bool enableVBIOverride;
+@property (nonatomic, assign) float vbiFrequencyRange;
+@property (nonatomic, assign) bool enableMMU;
+@property (nonatomic, assign) bool pauseOnPanic;
+@property (nonatomic, assign) bool enableWriteBackCache;
+@property (nonatomic, assign) int8_t speedLimit;
+@property (nonatomic, assign) int8_t fallbackRegion;
+
+// Audio Settings
+@property (nonatomic, assign) int8_t audioBackend;
+@property (nonatomic, assign) bool audioStretch;
 @property (nonatomic, assign) int8_t volume;
+
+// System Settings
+@property (nonatomic, assign) bool skipIPL;
+@property (nonatomic, assign) int8_t wiiLanguage;
+@property (nonatomic, assign) bool multiPlayer;
+@property (nonatomic, assign) bool enableLogging;
 - (void) refreshScreenSize;
 - (void) startVM:(UIView *)view;
 - (void) setupControllers;
