@@ -685,6 +685,13 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 optionValuesFile = "MAME/MAME.opt"
                 optionOverwrite = true
             }
+            if (coreIdentifier.contains("dosbox")) {
+                optionValues += "dosbox_pure_mouse_input = \"pad\"\n"
+                optionValues += "dosbox_pure_midi = \"enabled\"\n"
+
+                optionValuesFile = "DOSBox-pure/DOSBox-pure.opt"
+                optionOverwrite = false
+            }
             if (coreIdentifier.contains("psx_hw")) {
                 optionValues += "beetle_psx_hw_renderer = \"hardware_vk\"\n"
                 optionValues += "beetle_psx_hw_renderer_software_fb = \"enabled\"\n"
