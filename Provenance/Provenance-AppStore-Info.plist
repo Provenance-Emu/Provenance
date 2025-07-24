@@ -658,6 +658,12 @@
 			</dict>
 		</dict>
 	</array>
+	<key>NSUbiquitousContainerIdentifiers</key>
+	<array>
+		<string>iCloud.$(CFBundleIdentifier)</string>
+	</array>
+	<key>NSUbiquitousContainerName</key>
+	<string>Provenance</string>
 	<key>appcenter</key>
 	<string>862ca352-4607-4f8e-8c77-1248fa68ca3a</string>
 </dict>
