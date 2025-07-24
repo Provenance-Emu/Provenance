@@ -18,6 +18,6 @@
 	<key>PVProjectVersion</key>
 	<string>3.2.0b2 (186)</string>
 	<key>PVAppStoreDisabled</key>
-	<true/>
+	<false/>
 </dict>
 </plist>
