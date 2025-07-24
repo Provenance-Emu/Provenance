@@ -35,6 +35,10 @@
 /* Begin PBXBuildFile section */
 		93049A542A930B9700BF257F /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0504298AF1A600BA5157 /* PVDebug.c */; };
 		93BC0505298AF1A600BA5157 /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0504298AF1A600BA5157 /* PVDebug.c */; };
+		B308B7642E32067D002CCF7E /* glsm.c in Sources */ = {isa = PBXBuildFile; fileRef = B33807EE2877B5090009C732 /* glsm.c */; };
+		B308B7652E320857002CCF7E /* glsym_es2.c in Sources */ = {isa = PBXBuildFile; fileRef = B33806F72877B5090009C732 /* glsym_es2.c */; };
+		B308B7662E32085F002CCF7E /* rglgen.c in Sources */ = {isa = PBXBuildFile; fileRef = B33806F82877B5090009C732 /* rglgen.c */; };
+		B308B7672E320889002CCF7E /* OpenGLSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B338065E2877B5080009C732 /* OpenGLSupport.cpp */; };
 		B30E99C22C6F004000C1431E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30E99C12C6F004000C1431E /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B30E99C92C6F03F300C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99C82C6F03F300C1431E /* PVCoreBridge */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
@@ -100,15 +104,8 @@
 		B33809042877B6A80009C732 /* sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = B338085A2877B50A0009C732 /* sha1.c */; };
 		B33809072877B99C0009C732 /* rthreads.c in Sources */ = {isa = PBXBuildFile; fileRef = B33808262877B5090009C732 /* rthreads.c */; };
 		B33809082877B9A20009C732 /* rsemaphore.c in Sources */ = {isa = PBXBuildFile; fileRef = B338082B2877B5090009C732 /* rsemaphore.c */; };
-		B338090A2877B9F10009C732 /* ARMJIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B338068B2877B5080009C732 /* ARMJIT.cpp */; };
-		B338090B2877B9F10009C732 /* ARMJIT_Memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B338086D2877B50A0009C732 /* ARMJIT_Memory.cpp */; };
 		B338090C2877B9F10009C732 /* CommonFuncs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33806692877B5080009C732 /* CommonFuncs.cpp */; };
 		B338090D2877B9F10009C732 /* ARM_InstrInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B338068A2877B5080009C732 /* ARM_InstrInfo.cpp */; };
-		B33809122877BA350009C732 /* ARMJIT_Linkage.S in Sources */ = {isa = PBXBuildFile; fileRef = B33808652877B50A0009C732 /* ARMJIT_Linkage.S */; };
-		B33809132877BA350009C732 /* ARMJIT_Branch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33808662877B50A0009C732 /* ARMJIT_Branch.cpp */; };
-		B33809142877BA350009C732 /* ARMJIT_Compiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33808612877B50A0009C732 /* ARMJIT_Compiler.cpp */; };
-		B33809152877BA350009C732 /* ARMJIT_ALU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33808632877B50A0009C732 /* ARMJIT_ALU.cpp */; };
-		B33809162877BA350009C732 /* ARMJIT_LoadStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33808642877B50A0009C732 /* ARMJIT_LoadStore.cpp */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		B341AD962E2C0C3E00B18E76 /* opengl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33806AB2877B5080009C732 /* opengl.cpp */; };
@@ -5412,16 +5409,15 @@
 				B3C8A69028780B9A0037A946 /* diskio.c in Sources */,
 				B33808DE2877B62D0009C732 /* input.cpp in Sources */,
 				B338089F2877B5E70009C732 /* ARM.cpp in Sources */,
+				B308B7662E32085F002CCF7E /* rglgen.c in Sources */,
 				B33808FA2877B67C0009C732 /* vfs_implementation.c in Sources */,
 				B33808992877B5E70009C732 /* ARMInterpreter.cpp in Sources */,
 				B33808C32877B6090009C732 /* WifiAP.cpp in Sources */,
 				B33808EF2877B6570009C732 /* file_path.c in Sources */,
 				B33808F22877B6680009C732 /* file_stream_transforms.c in Sources */,
 				B33808EA2877B64F0009C732 /* compat_strcasestr.c in Sources */,
-				B33809162877BA350009C732 /* ARMJIT_LoadStore.cpp in Sources */,
 				B33809042877B6A80009C732 /* sha1.c in Sources */,
 				B3C8A66C287809920037A946 /* teakra_c.cpp in Sources */,
-				B33809142877BA350009C732 /* ARMJIT_Compiler.cpp in Sources */,
 				B3C8A66D287809920037A946 /* disassembler_c.cpp in Sources */,
 				B3C8A674287809B00037A946 /* dma.cpp in Sources */,
 				B33808A22877B5E70009C732 /* DSi_DSP.cpp in Sources */,
@@ -5435,11 +5431,9 @@
 				B33808A52877B5E70009C732 /* DSi_AES.cpp in Sources */,
 				B3C8A677287809B00037A946 /* processor.cpp in Sources */,
 				B3C8A673287809B00037A946 /* ahbm.cpp in Sources */,
-				B33809132877BA350009C732 /* ARMJIT_Branch.cpp in Sources */,
 				B33808DD2877B62D0009C732 /* libretro.cpp in Sources */,
 				B33808942877B5E70009C732 /* DSi_Camera.cpp in Sources */,
 				B33808FE2877B68B0009C732 /* aes.c in Sources */,
-				B33809152877BA350009C732 /* ARMJIT_ALU.cpp in Sources */,
 				B3C8A672287809B00037A946 /* apbp.cpp in Sources */,
 				B33808D92877B61B0009C732 /* Util_ROM.cpp in Sources */,
 				B33808972877B5E70009C732 /* ARMInterpreter_ALU.cpp in Sources */,
@@ -5447,13 +5441,13 @@
 				B33808C92877B6090009C732 /* SPI.cpp in Sources */,
 				B33808C82877B6090009C732 /* NDSCart_SRAMManager.cpp in Sources */,
 				B33808C12877B6090009C732 /* GPU3D_Soft.cpp in Sources */,
-				B338090A2877B9F10009C732 /* ARMJIT.cpp in Sources */,
 				B3C8A675287809B00037A946 /* parser.cpp in Sources */,
 				B3C8A676287809B00037A946 /* mmio.cpp in Sources */,
 				B3C8A670287809B00037A946 /* btdmp.cpp in Sources */,
 				B3C8A67B287809B00037A946 /* timer.cpp in Sources */,
 				B33808962877B5E70009C732 /* DMA.cpp in Sources */,
 				B33808F12877B6680009C732 /* file_stream.c in Sources */,
+				B308B7652E320857002CCF7E /* glsym_es2.c in Sources */,
 				B33808C72877B6090009C732 /* GBACart.cpp in Sources */,
 				B33808BF2877B6090009C732 /* GPU.cpp in Sources */,
 				B33809072877B99C0009C732 /* rthreads.c in Sources */,
@@ -5471,12 +5465,12 @@
 				B3C8A678287809B00037A946 /* teakra.cpp in Sources */,
 				B33808E82877B64F0009C732 /* fopen_utf8.c in Sources */,
 				B33809082877B9A20009C732 /* rsemaphore.c in Sources */,
+				B308B7672E320889002CCF7E /* OpenGLSupport.cpp in Sources */,
 				B33808A72877B5E70009C732 /* DSi_SPI_TSC.cpp in Sources */,
 				B33808FC2877B6860009C732 /* xxhash.c in Sources */,
 				B3C8A679287809B00037A946 /* memory_interface.cpp in Sources */,
 				B3C8A67A287809B00037A946 /* test_generator.cpp in Sources */,
 				B33808E72877B64F0009C732 /* compat_strl.c in Sources */,
-				B33809122877BA350009C732 /* ARMJIT_Linkage.S in Sources */,
 				B33808952877B5E70009C732 /* CRC32.cpp in Sources */,
 				B3C8A668287809340037A946 /* MathUtil.cpp in Sources */,
 				B33808DB2877B62D0009C732 /* screenlayout.cpp in Sources */,
@@ -5484,6 +5478,7 @@
 				B33808A32877B5E70009C732 /* ARMInterpreter_LoadStore.cpp in Sources */,
 				B3C8A671287809B00037A946 /* disassembler.cpp in Sources */,
 				B338089B2877B5E70009C732 /* DSi_SD.cpp in Sources */,
+				B308B7642E32067D002CCF7E /* glsm.c in Sources */,
 				B33808A12877B5E70009C732 /* AREngine.cpp in Sources */,
 				B338089E2877B5E70009C732 /* DSi_NWifi.cpp in Sources */,
 				B338090C2877B9F10009C732 /* CommonFuncs.cpp in Sources */,
@@ -5491,7 +5486,6 @@
 				B33808982877B5E70009C732 /* ARMInterpreter_Branch.cpp in Sources */,
 				B3C8A66A2878093A0037A946 /* Arm64Emitter.cpp in Sources */,
 				B33808C52877B6090009C732 /* GPU2D_Soft.cpp in Sources */,
-				B338090B2877B9F10009C732 /* ARMJIT_Memory.cpp in Sources */,
 				B33808C22877B6090009C732 /* GPU3D.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5603,6 +5597,12 @@
 				DEAD_CODE_STRIPPING = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-Wl,-all_load",
+					"-all_load",
+				);
 				PRODUCT_NAME = MelonDS;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
@@ -5678,7 +5678,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_LDFLAGS = "";
 				SDKROOT = auto;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos xros appletvsimulator appletvos xrsimulator";
@@ -5716,6 +5715,11 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = mh_dylib;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-Wl,-exported_symbols_list,$(SRCROOT)/exported_symbols.txt",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.core.PVMelonDS";
 				PRODUCT_NAME = PVMelonDS;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -5797,7 +5801,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = "";
 				SDKROOT = auto;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos xros appletvsimulator appletvos xrsimulator";
@@ -5870,6 +5873,11 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = mh_dylib;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-Wl,-exported_symbols_list,$(SRCROOT)/exported_symbols.txt",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.core.PVMelonDS";
 				PRODUCT_NAME = PVMelonDS;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -5893,6 +5901,12 @@
 				DEAD_CODE_STRIPPING = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-Wl,-all_load",
+					"-all_load",
+				);
 				PRODUCT_NAME = MelonDS;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
