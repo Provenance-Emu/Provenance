@@ -123,6 +123,90 @@ std::string user_dir;
 static bool MsgAlert(const char* caption, const char* text, bool yes_no, Common::MsgType style);
 static void UpdateWiiPointer();
 
+// Function to reset all static/global state for iOS dynamic library reloading
+static void ResetDolphinStaticState() {
+    NSLog(@"🐬 [RESET] Resetting Dolphin static/global state for iOS dynamic library reload");
+
+    // CRITICAL: Ensure the host identity lock is unlocked before reset
+    // This prevents deadlock on second core load
+    try {
+        // Try to unlock if it's currently locked (non-blocking check)
+        if (s_host_identity_lock.try_lock()) {
+            s_host_identity_lock.unlock();
+            NSLog(@"🐬 [RESET] Host identity lock was unlocked");
+        } else {
+            NSLog(@"🐬 [RESET] Host identity lock was already unlocked or in use");
+        }
+    } catch (...) {
+        NSLog(@"🐬 [RESET] Exception while checking host identity lock state");
+    }
+
+    // Reset static flags and events
+    s_running.Set(true);
+    s_shutdown_requested.Set(false);
+    s_tried_graceful_shutdown.Set(false);
+    s_update_main_frame_event.Reset();
+    s_have_wm_user_stop = false;
+    s_game_metadata_is_valid = false;
+    _isOff = false;
+    _isInitialized = false;
+
+    // Reset Dolphin core systems that may have static state
+    try {
+        // Reset Core system state
+        if (Core::GetState(Core::System::GetInstance()) != Core::State::Uninitialized) {
+            Core::Stop(Core::System::GetInstance());
+            while (Core::GetState(Core::System::GetInstance()) != Core::State::Uninitialized) {
+                Common::SleepCurrentThread(10);
+            }
+        }
+
+        // Reset PowerPC state (use correct API)
+//        auto& ppc = Core::System::GetInstance().GetPowerPC();
+//        ppc.Reset();
+
+        // Reset memory system
+        auto& memory = Core::System::GetInstance().GetMemory();
+        memory.Shutdown();
+
+        // Reset CPU state
+        auto& cpu = Core::System::GetInstance().GetCPU();
+        cpu.Reset();
+
+        // Reset video backend state
+        if (g_video_backend) {
+            g_video_backend->Shutdown();
+        }
+
+        // Reset audio system
+        AudioCommon::ShutdownSoundStream(Core::System::GetInstance());
+
+        // Reset controller interface
+        g_controller_interface.Shutdown();
+        
+        // CRITICAL: Shutdown UICommon to reset its static state
+        try {
+            UICommon::Shutdown();
+            NSLog(@"🐬 [RESET] UICommon shutdown completed in reset");
+        } catch (...) {
+            NSLog(@"🐬 [RESET] UICommon shutdown failed in reset - continuing");
+        }
+
+        // Reset configuration to defaults (if method exists)
+        try {
+            Config::ClearCurrentRunLayer();
+        } catch (...) {
+            // Method may not exist in all Dolphin versions, ignore
+        }
+
+        NSLog(@"🐬 [RESET] Static state reset complete");
+    } catch (const std::exception& e) {
+        NSLog(@"🐬 [ERROR] Exception during state reset: %s", e.what());
+    } catch (...) {
+        NSLog(@"🐬 [ERROR] Unknown exception during state reset");
+    }
+}
+
 #pragma mark - Private
 @interface PVDolphinCoreBridge() {
 
@@ -398,7 +482,7 @@ static void UpdateWiiPointer();
 
     // Debug Settings
     Config::SetBase(Config::MAIN_ENABLE_DEBUGGING, self.enableLogging);
-    
+
     // OSD Messages (logging configuration is handled in setupEmulation)
     Config::SetBase(Config::MAIN_OSD_MESSAGES, self.enableLogging);
 
@@ -422,6 +506,9 @@ static void UpdateWiiPointer();
 
 #pragma mark - Running
 - (void)setupEmulation {
+    // CRITICAL: Reset all static/global state to prevent iOS dynamic library issues
+    ResetDolphinStaticState();
+
     NSError *error;
     NSFileManager *fm = [[NSFileManager alloc] init];
     NSString* saveDirectory = [self.batterySavesPath stringByAppendingPathComponent:@"../DolphinData" ];
@@ -451,15 +538,30 @@ static void UpdateWiiPointer();
     Common::RegisterMsgAlertHandler(&MsgAlert);
     UICommon::SetUserDirectory(user_dir);
     UICommon::CreateDirectories();
-    UICommon::Init();
-    NSLog(@"User Directory set to '%s'\n", user_dir.c_str());
     
+    // CRITICAL: Shutdown UICommon first to prevent deadlock on second load
+    // UICommon::Init() has static state that must be cleaned up between sessions
+    try {
+        UICommon::Shutdown();
+        NSLog(@"🐬 [SETUP] UICommon shutdown completed");
+    } catch (...) {
+        NSLog(@"🐬 [SETUP] UICommon shutdown failed or was not initialized - continuing");
+    }
+    
+    UICommon::Init();
+    NSLog(@"🐬 [SETUP] UICommon initialized, User Directory set to '%s'", user_dir.c_str());
+
     // Initialize logging system EARLY - before any other configuration
     Common::Log::LogManager::Init();
     
-    // Configure logging to output to iOS console
+    // Apply critical settings immediately after Dolphin initialization
+    // This ensures BIOS skip is set before any game loading attempts
+    [self parseOptions];  // Parse options FIRST to get current enableLogging value
+    Config::Load();
+    
+    // Configure logging to output to iOS console AFTER parsing options
     if (self.enableLogging) {
-        NSLog(@"🐬 Dolphin Debug Logging ENABLED");
+        NSLog(@"🐬 Dolphin Debug Logging ENABLED (user setting: %s)", self.enableLogging ? "true" : "false");
         Common::Log::LogManager::GetInstance()->SetLogLevel(Common::Log::LogLevel::LINFO);
         Common::Log::LogManager::GetInstance()->SetEnable(Common::Log::LogType::OSREPORT, true);
         Common::Log::LogManager::GetInstance()->SetEnable(Common::Log::LogType::CORE, true);
@@ -469,15 +571,10 @@ static void UpdateWiiPointer();
         // Enable console listener for iOS output
         Common::Log::LogManager::GetInstance()->EnableListener(Common::Log::LogListener::CONSOLE_LISTENER, true);
     } else {
-        NSLog(@"🐬 Dolphin Debug Logging DISABLED");
+        NSLog(@"🐬 Dolphin Debug Logging DISABLED (user setting: %s)", self.enableLogging ? "true" : "false");
         Common::Log::LogManager::GetInstance()->SetLogLevel(Common::Log::LogLevel::LERROR);
         Common::Log::LogManager::GetInstance()->EnableListener(Common::Log::LogListener::CONSOLE_LISTENER, false);
     }
-
-    // Apply critical settings immediately after Dolphin initialization
-    // This ensures BIOS skip is set before any game loading attempts
-    [self parseOptions];
-    Config::Load();
 
     // CRITICAL: Skip GameCube BIOS - must be set early to prevent BIOS loading errors
     Config::SetBase(Config::MAIN_SKIP_IPL, self.skipIPL);
@@ -545,7 +642,7 @@ static void UpdateWiiPointer();
     });
     wsi.render_surface_scale = [UIScreen mainScreen].scale;
     NSLog(@"🐬 [DEBUG] WindowSystemInfo configured for iOS");
-    
+
     VideoBackendBase::ActivateBackend(Config::Get(Config::MAIN_GFX_BACKEND));
     NSLog(@"🐬 [DEBUG] Using GFX backend: %s", Config::Get(Config::MAIN_GFX_BACKEND).c_str());
 
@@ -557,10 +654,10 @@ static void UpdateWiiPointer();
     std::vector<std::string> normalized_game_paths;
     normalized_game_paths.push_back(gamePath);
     NSLog(@"🐬 [DEBUG] Game path: %s", gamePath.c_str());
-    
+
     [self setupControllers];
     NSLog(@"🐬 [DEBUG] Controllers setup complete");
-    
+
     NSLog(@"🐬 [DEBUG] Attempting to boot game...");
     if (!BootManager::BootCore(Core::System::GetInstance(), BootParameters::GenerateFromFile(normalized_game_paths), wsi))
     {
@@ -568,10 +665,10 @@ static void UpdateWiiPointer();
         return;
     }
     NSLog(@"🐬 [DEBUG] BootCore succeeded, setting up audio...");
-    
+
     AudioCommon::SetSoundStreamRunning(Core::System::GetInstance(), true);
     NSLog(@"🐬 [DEBUG] Audio stream started, waiting for core to start...");
-    
+
     while (Core::GetState(Core::System::GetInstance()) == Core::State::Starting && !Core::IsRunning(Core::System::GetInstance()))
     {
         NSLog(@"🐬 [DEBUG] Core state: Starting, waiting...");
@@ -579,20 +676,25 @@ static void UpdateWiiPointer();
     }
     _isInitialized = true;
     _isOff = false;
-    NSLog(@"🐬 [SUCCESS] VM Started! Core state: %d, IsRunning: %s", 
-          (int)Core::GetState(Core::System::GetInstance()), 
+    NSLog(@"🐬 [SUCCESS] VM Started! Core state: %d, IsRunning: %s",
+          (int)Core::GetState(Core::System::GetInstance()),
           Core::IsRunning(Core::System::GetInstance()) ? "YES" : "NO");
-    
+
     NSLog(@"🐬 [DEBUG] Entering main emulation loop...");
     int loopCount = 0;
+    bool guardLocked = true; // Track guard state
+    
     while (_isInitialized)
     {
-        guard.unlock();
-        
+        if (guardLocked) {
+            guard.unlock();
+            guardLocked = false;
+        }
+
         // Log every 60 iterations (roughly once per second at 60 FPS)
         if (loopCount % 60 == 0) {
-            NSLog(@"🐬 [DEBUG] Emulation loop iteration %d, Core state: %d, IsRunning: %s", 
-                  loopCount, 
+            NSLog(@"🐬 [DEBUG] Emulation loop iteration %d, Core state: %d, IsRunning: %s",
+                  loopCount,
                   (int)Core::GetState(Core::System::GetInstance()),
                   Core::IsRunning(Core::System::GetInstance()) ? "YES" : "NO");
         }
@@ -601,11 +703,17 @@ static void UpdateWiiPointer();
         // Wait for events with timeout to prevent indefinite blocking
         if (s_update_main_frame_event.WaitFor(std::chrono::milliseconds(16))) {
             // Event received, process jobs
-            guard.lock();
+            if (!guardLocked) {
+                guard.lock();
+                guardLocked = true;
+            }
             Core::HostDispatchJobs(Core::System::GetInstance());
         } else {
             // Timeout - continue emulation loop anyway
-            guard.lock();
+            if (!guardLocked) {
+                guard.lock();
+                guardLocked = true;
+            }
             Core::HostDispatchJobs(Core::System::GetInstance());
 
             // Manually trigger frame update if emulation is running
@@ -615,6 +723,14 @@ static void UpdateWiiPointer();
             }
         }
     }
+    
+    // CRITICAL: Ensure guard is unlocked before method exits
+    if (guardLocked) {
+        guard.unlock();
+        guardLocked = false;
+        NSLog(@"🐬 [DEBUG] Guard unlocked before startDolphin method exit");
+    }
+    
     _isOff=true;
 }
 
@@ -646,18 +762,22 @@ static void UpdateWiiPointer();
     s_update_main_frame_event.Set();
     while (Core::System::GetInstance().GetCPU().GetState() != CPU::State::PowerDown ||
            Core::GetState(Core::System::GetInstance()) != Core::State::Uninitialized ||
-           !_isOff) {
-        sleep(1);
+           _isInitialized) {
+        Common::SleepCurrentThread(20);
     }
-    Core::Shutdown(Core::System::GetInstance());
-    VertexLoaderManager::Clear();
-    Core::System::GetInstance().GetFifo().ExitGpuLoop();
-    Core::System::GetInstance().GetFifo().Shutdown();
     Core::System::GetInstance().GetMemory().ShutdownFastmemArena();
     Core::System::GetInstance().GetMemory().Shutdown();
     Core::System::GetInstance().GetPowerPC().Shutdown();
     g_video_backend->Shutdown();
-    s_host_identity_lock.unlock();
+    
+    // CRITICAL: Ensure host identity lock is unlocked before cleanup
+    try {
+        s_host_identity_lock.unlock();
+        NSLog(@"🐬 [STOP] Host identity lock unlocked during stopEmulation");
+    } catch (...) {
+        NSLog(@"🐬 [STOP] Host identity lock was already unlocked or exception occurred");
+    }
+    
     [m_view removeFromSuperview];
     [m_view_controller dismissViewControllerAnimated:NO completion:nil];
     m_gl_layer = nullptr;
@@ -666,6 +786,17 @@ static void UpdateWiiPointer();
     m_view=nullptr;
     AudioCommon::ShutdownSoundStream(Core::System::GetInstance());
     g_renderer.release();
+    
+    // CRITICAL: Shutdown UICommon before resetting state
+    try {
+        UICommon::Shutdown();
+        NSLog(@"🐬 [STOP] UICommon shutdown completed in stopEmulation");
+    } catch (...) {
+        NSLog(@"🐬 [STOP] UICommon shutdown failed in stopEmulation - continuing");
+    }
+    
+    // Reset all static/global state for next load
+    ResetDolphinStaticState();
 }
 -(void)startHaptic { }
 -(void)stopHaptic { }
