@@ -180,6 +180,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                     #if !os(tvOS)
                     Haptics.impact(style: .light)
                     #endif
+                    isGrid.toggle()
                     toggleViewTypeAction()
                 }) {
                     Image(systemName: isGrid == true ? "square.grid.3x3.fill" : "line.3.horizontal")
