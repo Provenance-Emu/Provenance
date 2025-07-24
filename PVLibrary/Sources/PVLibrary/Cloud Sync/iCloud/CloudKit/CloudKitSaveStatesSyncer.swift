@@ -76,13 +76,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         return "SaveState"
     }
     
-    /// Initialize a new save states syncer
-    /// - Parameters:
-    ///   - notificationCenter: Notification center to use
-    ///   - errorHandler: Error handler to use
-    public init(container: CKContainer, notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
-        super.init(container: container, directories: ["Saves"], notificationCenter: notificationCenter, errorHandler: errorHandler)
-    }
+
     
     /// Get the local URL for a save state
     /// - Parameter saveState: The save state to get the URL for
@@ -141,8 +135,20 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                     
                     DLOG("Uploaded save state to CloudKit: \(localURL.lastPathComponent)")
                     observer(.completed)
+                } catch let error as CKError {
+                    ELOG("CloudKit error uploading save state: \(error.localizedDescription) (Code: \(error.code.rawValue))")
+                    
+                    // Handle specific CloudKit errors
+                    if error.isRecoverableCloudKitError {
+                        WLOG("Save state upload failed with recoverable error, will retry automatically")
+                    } else {
+                        ELOG("Save state upload failed with non-recoverable CloudKit error")
+                    }
+                    
+                    await self.errorHandler.handle(error: error)
+                    observer(.error(error))
                 } catch {
-                    ELOG("Failed to upload save state to CloudKit: \(error.localizedDescription)")
+                    ELOG("Unexpected error uploading save state to CloudKit: \(error.localizedDescription)")
                     await self.errorHandler.handle(error: error)
                     observer(.error(error))
                 }
@@ -165,7 +171,8 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             Task {
                 do {
                     // Find the record for this save state
-                    let recordID = CKRecord.ID(recordName: "savestate_\(saveState.id)")
+                    let filename = saveState.file?.fileName ?? "savestate_\(saveState.id)"
+                    let recordID = CloudKitSchema.RecordIDGenerator.saveStateRecordID(gameID: saveState.game.id, filename: filename)
                     let privateDatabase = self.container.privateCloudDatabase
                     
                     do {
@@ -221,7 +228,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         // Create query
                         let predicate = NSPredicate(format: "directory == %@ AND system == %@ AND gameID == %@ AND filename == %@", 
                                                    "Saves", systemDir, saveState.game.id, filename)
-                        let query = CKQuery(recordType: "File", predicate: predicate)
+                        let query = CKQuery(recordType: CloudKitSchema.RecordType.saveState.rawValue, predicate: predicate)
                         
                         // Execute query
                         let (results, _) = try await privateDatabase.records(matching: query)
@@ -265,8 +272,29 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         DLOG("Downloaded save state from CloudKit: \(filename)")
                         observer(.completed)
                     }
+                } catch let error as CKError {
+                    ELOG("CloudKit error downloading save state: \(error.localizedDescription) (Code: \(error.code.rawValue))")
+                    
+                    // Handle specific CloudKit errors
+                    switch error.code {
+                    case .unknownItem:
+                        WLOG("Save state record not found in CloudKit, may have been deleted")
+                    case .networkFailure, .networkUnavailable:
+                        WLOG("Network error downloading save state, will retry automatically")
+                    case .requestRateLimited:
+                        WLOG("Rate limited downloading save state, will retry after delay")
+                    default:
+                        if error.isRecoverableCloudKitError {
+                            WLOG("Save state download failed with recoverable error, will retry automatically")
+                        } else {
+                            ELOG("Save state download failed with non-recoverable CloudKit error")
+                        }
+                    }
+                    
+                    await self.errorHandler.handle(error: error)
+                    observer(.error(error))
                 } catch {
-                    ELOG("Failed to download save state from CloudKit: \(error.localizedDescription)")
+                    ELOG("Unexpected error downloading save state from CloudKit: \(error.localizedDescription)")
                     await self.errorHandler.handle(error: error)
                     observer(.error(error))
                 }

@@ -42,8 +42,8 @@ public enum CloudKitSchema {
         // Core Identifiers & File Info
         public static let md5 = "md5" // String, Indexed
         public static let systemIdentifier = "systemIdentifier" // String
-        public static let romFile = "romFile" // CKAsset
-        public static let isArchive = "isArchive" // Bool (True if romFile is a zip)
+        public static let fileData = "fileData" // CKAsset (standardized asset field name)
+        public static let isArchive = "isArchive" // Bool (True if fileData is a zip)
         public static let fileSize = "fileSize" // Int64
         public static let originalFilename = "originalFilename" // String
         public static let relatedFilenames = "relatedFilenames" // [String]?
@@ -189,5 +189,69 @@ public enum CloudKitSchema {
         
         // No need to create and delete test records, which can cause clutter
         // CloudKit will create the schema when actual records are saved
+    }
+    
+    /// Centralized record ID generation for consistency across all record types
+    public enum RecordIDGenerator {
+        /// Generate a record ID for a ROM based on its MD5 hash
+        /// - Parameter md5: The MD5 hash of the ROM
+        /// - Returns: A CKRecord.ID with format "rom_<md5>"
+        public static func romRecordID(md5: String) -> CKRecord.ID {
+            return CKRecord.ID(recordName: "rom_\(md5)")
+        }
+        
+        /// Generate a record ID for a save state
+        /// - Parameters:
+        ///   - gameID: The game ID this save state belongs to
+        ///   - filename: The save state filename
+        /// - Returns: A CKRecord.ID with format "savestate_<gameID>_<filename>"
+        public static func saveStateRecordID(gameID: String, filename: String) -> CKRecord.ID {
+            // Use a sanitized filename for the record ID
+            let sanitizedFilename = filename.replacingOccurrences(of: ".", with: "_")
+            return CKRecord.ID(recordName: "savestate_\(gameID)_\(sanitizedFilename)")
+        }
+        
+        /// Generate a record ID for a BIOS file
+        /// - Parameters:
+        ///   - systemID: The system identifier
+        ///   - md5: The MD5 hash of the BIOS
+        /// - Returns: A CKRecord.ID with format "bios_<systemID>_<md5>"
+        public static func biosRecordID(systemID: String, md5: String) -> CKRecord.ID {
+            return CKRecord.ID(recordName: "bios_\(systemID)_\(md5)")
+        }
+        
+        /// Generate a record ID for a generic file
+        /// - Parameters:
+        ///   - directory: The directory name
+        ///   - filename: The filename
+        ///   - uniqueID: A unique identifier (e.g., UUID or hash)
+        /// - Returns: A CKRecord.ID with format "file_<directory>_<uniqueID>"
+        public static func fileRecordID(directory: String, filename: String, uniqueID: String) -> CKRecord.ID {
+            return CKRecord.ID(recordName: "file_\(directory)_\(uniqueID)")
+        }
+        
+        /// Extract MD5 from a ROM record ID
+        /// - Parameter recordID: The CKRecord.ID to extract from
+        /// - Returns: The MD5 hash if the record ID is valid, nil otherwise
+        public static func extractMD5FromRomRecordID(_ recordID: CKRecord.ID) -> String? {
+            let recordName = recordID.recordName
+            guard recordName.starts(with: "rom_") else { return nil }
+            return String(recordName.dropFirst(4)) // Remove "rom_" prefix
+        }
+        
+        /// Extract game ID and filename from a save state record ID
+        /// - Parameter recordID: The CKRecord.ID to extract from
+        /// - Returns: A tuple of (gameID, filename) if valid, nil otherwise
+        public static func extractFromSaveStateRecordID(_ recordID: CKRecord.ID) -> (gameID: String, filename: String)? {
+            let recordName = recordID.recordName
+            guard recordName.starts(with: "savestate_") else { return nil }
+            
+            let components = recordName.dropFirst(10).components(separatedBy: "_") // Remove "savestate_" prefix
+            guard components.count >= 2 else { return nil }
+            
+            let gameID = components[0]
+            let filename = components.dropFirst().joined(separator: "_").replacingOccurrences(of: "_", with: ".")
+            return (gameID: gameID, filename: filename)
+        }
     }
 }

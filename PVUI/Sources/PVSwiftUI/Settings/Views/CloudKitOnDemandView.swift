@@ -196,7 +196,7 @@ final class CloudKitOnDemandViewModel: ObservableObject {
             let system: PVSystem? = PVEmulatorConfiguration.system(forIdentifier: systemID)
             if let size = record[CloudKitSchema.ROMFields.fileSize] as? Int64, size > 0 {
                 fileSize = size
-            } else if let asset = record[CloudKitSchema.ROMFields.romFile] as? CKAsset {
+            } else if let asset = record[CloudKitSchema.ROMFields.fileData] as? CKAsset {
                 fileSize = getFileSize(from: asset)
             }
             fileSizeString = formatBytes(fileSize)

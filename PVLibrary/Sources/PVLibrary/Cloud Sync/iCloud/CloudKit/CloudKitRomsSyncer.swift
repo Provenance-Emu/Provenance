@@ -81,16 +81,17 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 switch result {
                 case .success(let record):
                     allRecords.append(record)
-                    // TODO: Process record - e.g., check if local exists, update status, trigger download if needed?
-                    VLOG("Fetched ROM record: \(record.recordID.recordName)")
+                    // Process record - check if local exists, update status, trigger download if needed
+                    await processCloudRecord(record)
+                    VLOG("Processed ROM record: \(record.recordID.recordName)")
                 case .failure(let error):
                     WLOG("Failed to fetch a specific ROM record during loadAll: \(error.localizedDescription)")
                     // Decide if we should continue or propagate the error
                 }
             }
 
-            ILOG("Finished loadAllFromCloud. Fetched \(allRecords.count) ROM records.")
-            // TODO: Perform further actions based on the fetched records (e.g., reconcile with local state).
+            ILOG("Finished loadAllFromCloud. Processed \(allRecords.count) ROM records for download.")
+            // Records have been processed individually above
 
         } catch {
             ELOG("Failed to execute query for loadAllFromCloud: \(error.localizedDescription)")
@@ -224,7 +225,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
 
         // 1. Fetch or Create Record
-        let recordID = Self.recordID(forRomMD5: md5)
+        let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
         var record: CKRecord
         do {
             record = try await fetchRecord(recordID: recordID) ?? CKRecord(recordType: CloudKitSchema.RecordType.rom.rawValue, recordID: recordID)
@@ -284,7 +285,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
             // Create the CKAsset from the final URL (either original file or temp zip)
             asset = CKAsset(fileURL: assetSourceURL)
-            record[CloudKitSchema.ROMFields.romFile] = asset
+            record[CloudKitSchema.ROMFields.fileData] = asset
             record[CloudKitSchema.ROMFields.isArchive] = isArchive as NSNumber
             record[CloudKitSchema.ROMFields.originalFilename] = primaryFileURL.lastPathComponent // Always store primary filename
 
@@ -304,14 +305,23 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             throw CloudSyncError.fileSystemError(error)
         }
 
-        // 4. Save Record to CloudKit
+        // 4. Verify asset is set before saving to CloudKit
+        if record[CloudKitSchema.ROMFields.fileData] as? CKAsset == nil {
+            ELOG("Critical error: Asset not set on record before upload for game \(md5)")
+            if let url = tempZipURL, FileManager.default.fileExists(atPath: url.path) {
+                try? await FileManager.default.removeItem(at: url)
+            }
+            throw CloudSyncError.invalidData
+        }
+        
+        // Save Record to CloudKit
         do {
             try await saveRecord(record)
-            ILOG("Successfully saved record for game \(md5) to CloudKit.")
+            ILOG("Successfully saved record with asset for game \(md5) to CloudKit.")
         } catch {
             // Clean up zip file if upload fails
             if let url = tempZipURL, FileManager.default.fileExists(atPath: url.path) {
-                try? await FileManager.default.removeItem(at: url) // Use sync remove here
+                try? await FileManager.default.removeItem(at: url)
             }
             // Error already logged in saveRecord, just rethrow
             throw error
@@ -386,6 +396,82 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         // before this function is called.
     }
 
+    /// Process a cloud record to check if download is needed and trigger it
+    /// - Parameter record: The CloudKit record to process
+    private func processCloudRecord(_ record: CKRecord) async {
+        // Extract MD5 from record ID using centralized method
+        guard let md5 = CloudKitSchema.RecordIDGenerator.extractMD5FromRomRecordID(record.recordID) else {
+            ELOG("Invalid ROM record ID format: \(record.recordID.recordName)")
+            return
+        }
+        
+        let recordName = record.recordID.recordName
+        
+        do {
+            // Check if record is marked as deleted
+            if let isDeleted = record[CloudKitSchema.ROMFields.isDeleted] as? Bool, isDeleted {
+                VLOG("Record \(recordName) is marked as deleted, skipping")
+                return
+            }
+            
+            // Check if we have a local game for this MD5
+            let existingLocalGame = RomDatabase.sharedInstance.game(withMD5: md5)
+            var updatedOrCreatedGame: PVGame?
+            
+            if let localGame = existingLocalGame {
+                VLOG("Local game found for MD5 \(md5). Updating from cloud record...")
+                try await updatePVGame(from: record, localGame: localGame)
+                updatedOrCreatedGame = RomDatabase.sharedInstance.game(withMD5: md5)
+            } else {
+                VLOG("No local game found for MD5 \(md5). Creating from cloud record...")
+                updatedOrCreatedGame = try await createPVGame(from: record)
+            }
+            
+            // Check if download is needed
+            if let game = updatedOrCreatedGame, !game.isDownloaded {
+                // Verify the record has an asset before triggering download
+                if record[CloudKitSchema.ROMFields.fileData] is CKAsset {
+                    VLOG("Local game \(md5) needs download. Triggering download...")
+                    Task {
+                        do {
+                            try await downloadGame(md5: md5)
+                            ILOG("Successfully downloaded game \(md5)")
+                        } catch {
+                            ELOG("Failed to download game \(md5): \(error.localizedDescription)")
+                        }
+                    }
+                } else {
+                    WLOG("Local game \(md5) needs download, but remote record has no asset")
+                }
+            } else if let game = updatedOrCreatedGame {
+                VLOG("Local game \(md5) already downloaded or up to date")
+            } else {
+                ELOG("Failed to create or update game for MD5 \(md5)")
+            }
+            
+        } catch let error as CKError {
+            ELOG("CloudKit error processing record \(record.recordID.recordName): \(error.localizedDescription) (Code: \(error.code.rawValue))")
+            
+            // Handle specific CloudKit errors
+            switch error.code {
+            case .unknownItem:
+                WLOG("ROM record not found in CloudKit, may have been deleted")
+            case .networkFailure, .networkUnavailable:
+                WLOG("Network error processing ROM record, will retry automatically")
+            case .requestRateLimited:
+                WLOG("Rate limited processing ROM record, will retry after delay")
+            default:
+                if error.isRecoverableCloudKitError {
+                    WLOG("ROM record processing failed with recoverable error, will retry automatically")
+                } else {
+                    ELOG("ROM record processing failed with non-recoverable CloudKit error")
+                }
+            }
+        } catch {
+            ELOG("Unexpected error processing cloud record \(record.recordID.recordName): \(error.localizedDescription)")
+        }
+    }
+    
     public func handleRemoteGameChange(recordID: CKRecord.ID) async throws {
         VLOG("Handling remote change for record ID: \(recordID.recordName)")
 
@@ -403,14 +489,12 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             throw error
         }
 
-        let md5 = String(recordID.recordName.dropFirst((CloudKitSchema.RecordType.rom.rawValue + "_md5_").count))
-
-        // 2. Extract MD5 (Needed regardless of fetch success to check local state)
-        guard recordID.recordName.starts(with: CloudKitSchema.RecordType.rom.rawValue + "_md5_"), // Assuming CloudKitSchema provides prefix
-              !md5.isEmpty else {
-            ELOG("Could not extract valid MD5 from record ID: \(recordID.recordName). Skipping change.")
-            throw CloudSyncError.invalidData // Or just return if non-fatal
+        guard let md5 = CloudKitSchema.RecordIDGenerator.extractMD5FromRomRecordID(recordID) else {
+            ELOG("Invalid ROM record ID format: \(recordID.recordName)")
+            return
         }
+
+        // MD5 already extracted and validated above
 
         // 3. Process based on fetched record and isDeleted flag
         if let record = fetchedRecord {
@@ -455,7 +539,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 // Trigger asset download if necessary
                 if let game = updatedOrCreatedGame, !game.isDownloaded {
                     // Check asset exists before triggering download?
-                    if record[CloudKitSchema.ROMFields.romFile] is CKAsset {
+                    if record[CloudKitSchema.ROMFields.fileData] is CKAsset {
                         VLOG("Local game \(md5) is not marked as downloaded. Triggering download...")
                         // Add error handling for download itself if needed
                         Task { try? await downloadGame(md5: md5) }
@@ -515,9 +599,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
 
         // 2. Get Asset and Metadata from Record
-        guard let asset = record[CloudKitSchema.ROMFields.romFile] as? CKAsset,
+        guard let asset = record[CloudKitSchema.ROMFields.fileData] as? CKAsset,
               let assetURL = asset.fileURL else {
-            ELOG("Download failed: Missing romFile asset in record \(recordID.recordName). MD5: \(md5)")
+            ELOG("Download failed: Missing fileData asset in record \(recordID.recordName). MD5: \(md5)")
             if let localGame = RomDatabase.sharedInstance.game(withMD5: md5), localGame.isDownloaded {
                 WLOG("Local game \(md5) was marked downloaded but asset missing. Updating status.")
                 try? await updateLocalDownloadStatus(md5: md5, isDownloaded: false, fileURL: nil, record: record)
@@ -613,7 +697,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         record[CloudKitSchema.ROMFields.systemIdentifier] = game.systemIdentifier
         record[CloudKitSchema.ROMFields.fileSize] = game.fileSize as NSNumber // Store as NSNumber (Int64)
         record[CloudKitSchema.ROMFields.originalFilename] = game.fileName // Fallback to fileName
-        // Note: romFile and isArchive are set later during asset preparation
+        // Note: fileData and isArchive are set later during asset preparation
 
         // --- OpenVGDB Metadata ---
         let regionID = (record[CloudKitSchema.ROMFields.regionID] as? NSNumber)?.intValue ?? game.regionID
@@ -686,7 +770,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             // TODO: Handle OpenVGDB Cover URL update? Requires PVImageFile handling.
 
             // Update download status and size based on asset presence
-            if let asset = record[CloudKitSchema.ROMFields.romFile] as? CKAsset {
+            if let asset = record[CloudKitSchema.ROMFields.fileData] as? CKAsset {
                 localGame.isDownloaded = true // Assume true if asset exists, actual file check happens later
                 // Get fileSize using FileManager
                 if let url = asset.fileURL, let attributes = try? FileManager.default.attributesOfItem(atPath: url.path), let fileSize = attributes[.size] as? Int64 {
@@ -822,7 +906,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 // Update fileSize from the downloaded file or record if available
                 if let attributes = try? FileManager.default.attributesOfItem(atPath: validFileURL.path), let fileSize = attributes[.size] as? Int64 {
                     game.fileSize = Int(fileSize) // Corrected file size access
-                } else if let recordAsset = record?[CloudKitSchema.ROMFields.romFile] as? CKAsset,
+                } else if let recordAsset = record?[CloudKitSchema.ROMFields.fileData] as? CKAsset,
                           let assetURL = recordAsset.fileURL,
                           let attributes = try? FileManager.default.attributesOfItem(atPath: assetURL.path),
                           let assetSize = attributes[.size] as? Int64  { // Get size via FileManager
@@ -968,9 +1052,10 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
     }
 
-    // Helper to generate CloudKit Record ID from MD5
+    // MARK: - Deprecated - Use CloudKitSchema.RecordIDGenerator instead
+    // Helper to generate CloudKit Record ID from MD5 (deprecated)
+    @available(*, deprecated, message: "Use CloudKitSchema.RecordIDGenerator.romRecordID(md5:) instead")
     static func recordID(forRomMD5 md5: String) -> CKRecord.ID {
-        // Ensure MD5 is safe for record name (should be okay as it's hex)
-        return CKRecord.ID(recordName: "rom_md5_\(md5)")
+        return CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
     }
 }
