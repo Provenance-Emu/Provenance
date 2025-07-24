@@ -44,9 +44,10 @@ public struct BootupViewRetroWave: View {
     }
     
     public init() {
-        ILOG("ContentView: App is not initialized, showing BootupView. iconName: \(iconName)")
-        defaultIcon = UIImage(named: "AppIcon-Blue-Preview", in: .main, with: nil)
-        ILOG("BootupViewRetroWave: defaultIcon: \(String(describing: defaultIcon))")
+        let currentIconName = IconManager.shared.currentIconName
+        ILOG("ContentView: App is not initialized, showing BootupView. currentIconName: \(currentIconName ?? "nil")")
+        loadDefaultIcon()
+        ILOG("BootupViewRetroWave: defaultIcon loaded: \(defaultIcon != nil ? "SUCCESS" : "FAILED")")
     }
     
     @ViewBuilder
@@ -109,9 +110,19 @@ public struct BootupViewRetroWave: View {
             VStack(spacing: 30) {
                 Spacer()
                 Group {
-                    if iconName == "AppIcon" || iconName == "" || iconName.lowercased() == "default", let defaultIcon {
-                        /// Use the default icon from info.plist
-                        iconWrapper(defaultIcon)
+                    if iconName == "AppIcon" || iconName == "" || iconName.lowercased() == "default" {
+                        /// Use the default icon from info.plist or fallback
+                        if let defaultIcon {
+                            iconWrapper(defaultIcon)
+                        } else {
+                            /// Force fallback to blue preview if defaultIcon is nil
+                            if let fallbackIcon = UIImage(named: "AppIcon-Blue-Preview", in: .main, with: nil) {
+                                iconWrapper(fallbackIcon)
+                            } else {
+                                /// Last resort placeholder
+                                fallbackIcon
+                            }
+                        }
                     } else if let uiImage = UIImage(named: previewImageName, in: .main, with: nil) {
                         /// Use preview images for alternate icons
                         iconWrapper(uiImage)
@@ -220,6 +231,28 @@ public struct BootupViewRetroWave: View {
                     showText.toggle()
                 }
             }
+        }
+    }
+    
+    /// Load the default app icon from the Info.plist with fallback
+    private func loadDefaultIcon() {
+        // Try to load from Info.plist first
+        if let icons = Bundle.main.object(forInfoDictionaryKey: "CFBundleIcons") as? [String: Any],
+           let primaryIcon = icons["CFBundlePrimaryIcon"] as? [String: Any],
+           let iconFiles = primaryIcon["CFBundleIconFiles"] as? [String],
+           let iconFileName = iconFiles.last,
+           let icon = UIImage(named: iconFileName) {
+            self.defaultIcon = icon
+            ILOG("BootupViewRetroWave: Successfully loaded default icon from Info.plist: \(iconFileName)")
+            return
+        }
+        
+        // Fallback to AppIcon-Blue-Preview if Info.plist method fails
+        if let fallbackIcon = UIImage(named: "AppIcon-Blue-Preview", in: .main, with: nil) {
+            self.defaultIcon = fallbackIcon
+            ILOG("BootupViewRetroWave: Using fallback icon AppIcon-Blue-Preview")
+        } else {
+            ELOG("BootupViewRetroWave: Failed to load both default icon and fallback icon")
         }
     }
 }
