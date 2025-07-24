@@ -55,6 +55,9 @@ public struct RetroSystemStatsView: View {
                 }
             }
             
+            // Device info section
+            deviceInfoSection
+            
             // System stats section
             systemStatsSection
             
@@ -109,6 +112,128 @@ public struct RetroSystemStatsView: View {
     }
     
     // MARK: - Subviews
+    
+    /// Device information section (Device Model, CPU, GPU, OS)
+    private var deviceInfoSection: some View {
+        VStack(spacing: 10) {
+            // Section header with glowing effect
+            Text("DEVICE INFO")
+                .font(.system(size: 12, weight: .bold, design: .monospaced))
+                .foregroundColor(RetroTheme.retroPink)
+                .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2, x: 0, y: 0)
+            
+            // Divider with gradient
+            Rectangle()
+                .fill(LinearGradient(
+                    gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroBlue]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                ))
+                .frame(height: 1)
+                .padding(.vertical, 2)
+            
+            // Device model
+            HStack {
+                Label {
+                    Text("DEVICE")
+                        .font(.system(size: 12, weight: .medium, design: .monospaced))
+                        .foregroundColor(RetroTheme.retroBlue)
+                } icon: {
+                    Image(systemName: "iphone")
+                        .font(.system(size: 10))
+                        .foregroundColor(RetroTheme.retroPink)
+                }
+                
+                Spacer()
+                
+                Text(viewModel.deviceModel)
+                    .font(.system(size: 12, weight: .medium, design: .monospaced))
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            
+            // CPU model
+            HStack {
+                Label {
+                    Text("CPU")
+                        .font(.system(size: 12, weight: .medium, design: .monospaced))
+                        .foregroundColor(RetroTheme.retroBlue)
+                } icon: {
+                    Image(systemName: "cpu")
+                        .font(.system(size: 10))
+                        .foregroundColor(RetroTheme.retroPink)
+                }
+                
+                Spacer()
+                
+                Text(viewModel.cpuModel)
+                    .font(.system(size: 12, weight: .medium, design: .monospaced))
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            
+            // CPU cores
+            HStack {
+                Label {
+                    Text("CORES")
+                        .font(.system(size: 12, weight: .medium, design: .monospaced))
+                        .foregroundColor(RetroTheme.retroBlue)
+                } icon: {
+                    Image(systemName: "circle.grid.2x2")
+                        .font(.system(size: 10))
+                        .foregroundColor(RetroTheme.retroPink)
+                }
+                
+                Spacer()
+                
+                Text("\(viewModel.cpuCoreCount) cores")
+                    .font(.system(size: 12, weight: .medium, design: .monospaced))
+                    .foregroundColor(.white)
+            }
+            
+            // GPU model
+            HStack {
+                Label {
+                    Text("GPU")
+                        .font(.system(size: 12, weight: .medium, design: .monospaced))
+                        .foregroundColor(RetroTheme.retroBlue)
+                } icon: {
+                    Image(systemName: "display")
+                        .font(.system(size: 10))
+                        .foregroundColor(RetroTheme.retroPink)
+                }
+                
+                Spacer()
+                
+                Text(viewModel.gpuModel)
+                    .font(.system(size: 12, weight: .medium, design: .monospaced))
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            
+            // OS version
+            HStack {
+                Label {
+                    Text("OS")
+                        .font(.system(size: 12, weight: .medium, design: .monospaced))
+                        .foregroundColor(RetroTheme.retroBlue)
+                } icon: {
+                    Image(systemName: "gear")
+                        .font(.system(size: 10))
+                        .foregroundColor(RetroTheme.retroPink)
+                }
+                
+                Spacer()
+                
+                Text(viewModel.osVersion)
+                    .font(.system(size: 12, weight: .medium, design: .monospaced))
+                    .foregroundColor(.white)
+            }
+        }
+    }
     
     /// System stats section (CPU, Memory)
     private var systemStatsSection: some View {

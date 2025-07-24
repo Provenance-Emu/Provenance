@@ -22,6 +22,13 @@ public final class RetroSystemStatsViewModel: ObservableObject {
     @Published public var memoryUsed: UInt64 = 0
     @Published public var memoryTotal: UInt64 = 0
     
+    /// Device information
+    @Published public var deviceModel: String = ""
+    @Published public var cpuModel: String = ""
+    @Published public var gpuModel: String = ""
+    @Published public var osVersion: String = ""
+    @Published public var cpuCoreCount: Int = 0
+    
     /// Library statistics
     @Published public var gameCount: Int = 0
     @Published public var saveStateCount: Int = 0
@@ -46,6 +53,7 @@ public final class RetroSystemStatsViewModel: ObservableObject {
         // Initial update
         updateSystemStats()
         updateLibraryStats()
+        updateDeviceInfo()
         
         // Start timer for system stats updates
         updateTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
@@ -73,6 +81,15 @@ public final class RetroSystemStatsViewModel: ObservableObject {
         let memory = Self.memoryUsage()
         memoryUsed = memory.used
         memoryTotal = memory.total
+    }
+    
+    /// Update device information (one-time setup)
+    private func updateDeviceInfo() {
+        deviceModel = Self.deviceModel()
+        cpuModel = Self.cpuModel()
+        gpuModel = Self.gpuModel()
+        osVersion = Self.osVersion()
+        cpuCoreCount = Self.cpuCoreCount()
     }
     
     /// Update library statistics (games, save states, BIOSes)
@@ -105,7 +122,10 @@ public final class RetroSystemStatsViewModel: ObservableObject {
             let realm = try await Realm()
             gameCount = realm.objects(PVGame.self).count
             saveStateCount = realm.objects(PVSaveState.self).count
-            biosCount = realm.objects(PVBIOS.self).count
+            
+            // Count only BIOS entries that have a file on disk
+            let bioses = realm.objects(PVBIOS.self)
+            biosCount = bioses.filter { $0.file?.url != nil }.count
 
             // Calculate storage usage (expensive operation)
             
@@ -155,13 +175,12 @@ public final class RetroSystemStatsViewModel: ObservableObject {
                 }
             }
             
-            // Get BIOS sizes
-            let bioses = realm.objects(PVBIOS.self)
+            // Get BIOS sizes (reuse bioses from count calculation)
             for bios in bioses {
                 if let url = bios.file?.url {
                     do {
                         let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
-                        if let size = attributes[.size] as? Int64 {
+                        if let size = attributes[FileAttributeKey.size] as? Int64 {
                             totalSize += size
                         }
                     } catch {
@@ -221,6 +240,190 @@ public final class RetroSystemStatsViewModel: ObservableObject {
         }
         
         return totalUsageOfCPU
+    }
+    
+    /// Get device model
+    private static func deviceModel() -> String {
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        let identifier = machineMirror.children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8, value != 0 else { return identifier }
+            return identifier + String(UnicodeScalar(UInt8(value)))
+        }
+        
+        // Map device identifiers to human-readable names
+        switch identifier {
+        // iPhone models
+        case "iPhone14,7": return "iPhone 13 mini"
+        case "iPhone14,8": return "iPhone 13"
+        case "iPhone14,2": return "iPhone 13 Pro"
+        case "iPhone14,3": return "iPhone 13 Pro Max"
+        case "iPhone15,4": return "iPhone 14"
+        case "iPhone15,5": return "iPhone 14 Plus"
+        case "iPhone15,2": return "iPhone 14 Pro"
+        case "iPhone15,3": return "iPhone 14 Pro Max"
+        case "iPhone16,1": return "iPhone 15"
+        case "iPhone16,2": return "iPhone 15 Plus"
+        case "iPhone16,3": return "iPhone 15 Pro"
+        case "iPhone16,4": return "iPhone 15 Pro Max"
+        case "iPhone17,1": return "iPhone 16"
+        case "iPhone17,2": return "iPhone 16 Plus"
+        case "iPhone17,3": return "iPhone 16 Pro"
+        case "iPhone17,4": return "iPhone 16 Pro Max"
+        
+        // iPad models
+        case "iPad14,1", "iPad14,2": return "iPad mini (6th generation)"
+        case "iPad13,18", "iPad13,19": return "iPad (10th generation)"
+        case "iPad14,3", "iPad14,4": return "iPad Air (5th generation)"
+        case "iPad14,8", "iPad14,9": return "iPad Air (6th generation)"
+        case "iPad13,4", "iPad13,5", "iPad13,6", "iPad13,7": return "iPad Pro 11-inch (5th generation)"
+        case "iPad13,8", "iPad13,9", "iPad13,10", "iPad13,11": return "iPad Pro 12.9-inch (5th generation)"
+        case "iPad14,5", "iPad14,6": return "iPad Pro 11-inch (6th generation)"
+        case "iPad14,10", "iPad14,11": return "iPad Pro 12.9-inch (6th generation)"
+        
+        // Apple TV models
+        case "AppleTV11,1": return "Apple TV 4K (3rd generation)"
+        case "AppleTV14,1": return "Apple TV 4K (4th generation)"
+        
+        // Mac models (for Mac Catalyst)
+        case let identifier where identifier.hasPrefix("MacBookAir"): return "MacBook Air"
+        case let identifier where identifier.hasPrefix("MacBookPro"): return "MacBook Pro"
+        case let identifier where identifier.hasPrefix("iMac"): return "iMac"
+        case let identifier where identifier.hasPrefix("Mac"): return "Mac"
+        
+        // Simulator
+        case "x86_64", "arm64": return "Simulator"
+        
+        default: return identifier
+        }
+    }
+    
+    /// Get CPU model information
+    private static func cpuModel() -> String {
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        let identifier = machineMirror.children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8, value != 0 else { return identifier }
+            return identifier + String(UnicodeScalar(UInt8(value)))
+        }
+        
+        // Map device identifiers to CPU models
+        switch identifier {
+        // A17 Pro (iPhone 15 Pro series)
+        case "iPhone16,3", "iPhone16,4": return "A17 Pro"
+        
+        // A16 Bionic (iPhone 14 Pro series, iPhone 15 series)
+        case "iPhone15,2", "iPhone15,3", "iPhone16,1", "iPhone16,2": return "A16 Bionic"
+        
+        // A15 Bionic (iPhone 13 series, iPhone 14 series)
+        case "iPhone14,2", "iPhone14,3", "iPhone14,7", "iPhone14,8", "iPhone15,4", "iPhone15,5": return "A15 Bionic"
+        
+        // A18 (iPhone 16 series)
+        case "iPhone17,1", "iPhone17,2": return "A18"
+        case "iPhone17,3", "iPhone17,4": return "A18 Pro"
+        
+        // M-series chips (iPad Pro)
+        case "iPad13,4", "iPad13,5", "iPad13,6", "iPad13,7", "iPad13,8", "iPad13,9", "iPad13,10", "iPad13,11": return "M1"
+        case "iPad14,5", "iPad14,6", "iPad14,10", "iPad14,11": return "M2"
+        
+        // A-series chips (iPad Air, iPad mini)
+        case "iPad14,1", "iPad14,2": return "A15 Bionic"
+        case "iPad14,3", "iPad14,4": return "M1"
+        case "iPad14,8", "iPad14,9": return "M2"
+        
+        // Apple TV
+        case "AppleTV11,1": return "A12 Bionic"
+        case "AppleTV14,1": return "A15 Bionic"
+        
+        // Mac (for Mac Catalyst)
+        case let identifier where identifier.hasPrefix("Mac"): return "Apple Silicon"
+        
+        // Simulator
+        case "x86_64": return "Intel x86_64"
+        case "arm64": return "Apple Silicon (Simulator)"
+        
+        default: return "Unknown CPU"
+        }
+    }
+    
+    /// Get GPU model information
+    private static func gpuModel() -> String {
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        let identifier = machineMirror.children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8, value != 0 else { return identifier }
+            return identifier + String(UnicodeScalar(UInt8(value)))
+        }
+        
+        // Map device identifiers to GPU models
+        switch identifier {
+        // A17 Pro GPU (iPhone 15 Pro series)
+        case "iPhone16,3", "iPhone16,4": return "6-core GPU (A17 Pro)"
+        
+        // A16 Bionic GPU (iPhone 14 Pro series, iPhone 15 series)
+        case "iPhone15,2", "iPhone15,3": return "5-core GPU (A16 Bionic)"
+        case "iPhone16,1", "iPhone16,2": return "5-core GPU (A16 Bionic)"
+        
+        // A15 Bionic GPU (iPhone 13 series, iPhone 14 series)
+        case "iPhone14,2", "iPhone14,3": return "5-core GPU (A15 Bionic)"
+        case "iPhone14,7", "iPhone14,8", "iPhone15,4", "iPhone15,5": return "4-core GPU (A15 Bionic)"
+        
+        // A18 GPU (iPhone 16 series)
+        case "iPhone17,1", "iPhone17,2": return "5-core GPU (A18)"
+        case "iPhone17,3", "iPhone17,4": return "6-core GPU (A18 Pro)"
+        
+        // M-series GPUs (iPad Pro)
+        case "iPad13,4", "iPad13,5", "iPad13,6", "iPad13,7": return "8-core GPU (M1)"
+        case "iPad13,8", "iPad13,9", "iPad13,10", "iPad13,11": return "8-core GPU (M1)"
+        case "iPad14,5", "iPad14,6": return "10-core GPU (M2)"
+        case "iPad14,10", "iPad14,11": return "10-core GPU (M2)"
+        
+        // A-series GPUs (iPad Air, iPad mini)
+        case "iPad14,1", "iPad14,2": return "5-core GPU (A15 Bionic)"
+        case "iPad14,3", "iPad14,4": return "8-core GPU (M1)"
+        case "iPad14,8", "iPad14,9": return "10-core GPU (M2)"
+        
+        // Apple TV
+        case "AppleTV11,1": return "4-core GPU (A12 Bionic)"
+        case "AppleTV14,1": return "5-core GPU (A15 Bionic)"
+        
+        // Mac (for Mac Catalyst)
+        case let identifier where identifier.hasPrefix("Mac"): return "Apple GPU"
+        
+        // Simulator
+        case "x86_64": return "Intel Integrated Graphics"
+        case "arm64": return "Apple GPU (Simulator)"
+        
+        default: return "Unknown GPU"
+        }
+    }
+    
+    /// Get OS version
+    private static func osVersion() -> String {
+        let version = ProcessInfo.processInfo.operatingSystemVersion
+        let versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
+        
+        #if os(iOS)
+        #if targetEnvironment(macCatalyst)
+        return "macOS \(versionString)"
+        #else
+        return "iOS \(versionString)"
+        #endif
+        #elseif os(tvOS)
+        return "tvOS \(versionString)"
+        #elseif os(macOS)
+        return "macOS \(versionString)"
+        #else
+        return "Unknown OS \(versionString)"
+        #endif
+    }
+    
+    /// Get CPU core count
+    private static func cpuCoreCount() -> Int {
+        return ProcessInfo.processInfo.processorCount
     }
     
     /// Get memory usage
