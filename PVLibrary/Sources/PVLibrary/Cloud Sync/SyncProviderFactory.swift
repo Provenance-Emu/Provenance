@@ -68,20 +68,16 @@ public class SyncProviderFactory {
         
         DLOG("iCloudSync=\(iCloudSyncEnabled), iCloudSyncMode=\(syncMode.description), container=\(container)")
 #if os(tvOS)
-        // tvOS likely always uses CloudKit if enabled
-        // Get the shared CloudSyncManager and return its RomsSyncing instance
-        // Force unwrap: Assumes romsSyncer is initialized if iCloud sync is enabled.
-        return CloudSyncManager.shared.romsSyncer!
+        // tvOS always uses CloudKit if enabled
+        DLOG("Creating CloudKitRomsSyncer for tvOS based on iCloudSyncMode=\(syncMode.description)")
+        return CloudKitRomsSyncer(container: container, retryStrategy: CloudKitRetryStrategy.retryCloudKitOperation)
 #else
         // Return the appropriate syncer based on the mode
         if syncMode.isCloudKit {
-            DLOG("Returning CloudSyncManager.shared.romsSyncer based on iCloudSyncMode=\(syncMode.description)")
-            // Get the shared CloudSyncManager and return its RomsSyncing instance
-            // Force unwrap: Assumes romsSyncer is initialized if iCloud sync is enabled and mode is CloudKit.
-            return CloudSyncManager.shared.romsSyncer!
+            DLOG("Creating CloudKitRomsSyncer based on iCloudSyncMode=\(syncMode.description)")
+            return CloudKitRomsSyncer(container: container, retryStrategy: CloudKitRetryStrategy.retryCloudKitOperation)
         } else {
             DLOG("Creating iCloudDriveRomsSyncer based on iCloudSyncMode=\(syncMode.description)")
-            // Assuming iCloudDriveRomsSyncer initialization is still correct
             return iCloudDriveRomsSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
         }
 #endif
@@ -103,14 +99,15 @@ public class SyncProviderFactory {
         // Log the current sync state
         DLOG("iCloudSync=\(iCloudSyncEnabled), iCloudSyncMode=\(syncMode.description)")
 #if os(tvOS)
+        DLOG("Creating CloudKitSaveStatesSyncer for tvOS based on iCloudSyncMode=\(syncMode.description)")
         return CloudKitSaveStatesSyncer(container: iCloudConstants.container, notificationCenter: notificationCenter, errorHandler: errorHandler)
 #else
         // Return the appropriate syncer based on the mode
         if syncMode.isCloudKit {
-            DLOG("Creating CloudKit save states syncer based on iCloudSyncMode=\(syncMode.description)")
+            DLOG("Creating CloudKitSaveStatesSyncer based on iCloudSyncMode=\(syncMode.description)")
             return CloudKitSaveStatesSyncer(container: iCloudConstants.container, notificationCenter: notificationCenter, errorHandler: errorHandler)
         } else {
-            DLOG("Creating iCloud save states syncer based on iCloudSyncMode=\(syncMode.description)")
+            DLOG("Creating iCloudDriveSaveStatesSyncer based on iCloudSyncMode=\(syncMode.description)")
             return iCloudDriveSaveStatesSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
         }
 #endif
@@ -132,14 +129,15 @@ public class SyncProviderFactory {
         // Log the current sync state
         DLOG("iCloudSync=\(iCloudSyncEnabled), iCloudSyncMode=\(syncMode.description)")
 #if os(tvOS)
+        DLOG("Creating CloudKitBIOSSyncer for tvOS based on iCloudSyncMode=\(syncMode.description)")
         return CloudKitBIOSSyncer(container: iCloudConstants.container, notificationCenter: notificationCenter, errorHandler: errorHandler)
 #else
         // Return the appropriate syncer based on the mode
         if syncMode.isCloudKit {
-            DLOG("Creating CloudKit BIOS syncer based on iCloudSyncMode=\(syncMode.description)")
+            DLOG("Creating CloudKitBIOSSyncer based on iCloudSyncMode=\(syncMode.description)")
             return CloudKitBIOSSyncer(container: iCloudConstants.container, notificationCenter: notificationCenter, errorHandler: errorHandler)
         } else {
-            DLOG("Creating iCloud BIOS syncer based on iCloudSyncMode=\(syncMode.description)")
+            DLOG("Creating iCloudDriveBIOSSyncer based on iCloudSyncMode=\(syncMode.description)")
             return iCloudDriveBIOSSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
         }
 #endif

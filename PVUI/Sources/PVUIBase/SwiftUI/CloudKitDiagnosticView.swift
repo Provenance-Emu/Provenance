@@ -207,6 +207,7 @@ public struct CloudKitDiagnosticView: View {
         .onAppear {
             Task {
                 await viewModel.checkAccountStatus()
+                await viewModel.checkSchemaStatus()
                 await viewModel.refreshAllRecords()
             }
         }
@@ -395,8 +396,9 @@ class CloudKitDiagnosticViewModel: ObservableObject {
             var allRecords: [CloudKitRecordDetail] = []
             var counts: [String: Int] = [:]
             
-            // Query each record type
-            for recordTypeRawValue in CloudKitSchema.RecordType.allCases.map({ $0.rawValue }) {
+            // Query each record type (excluding Metadata until deployed to CloudKit)
+            let deployedRecordTypes = CloudKitSchema.RecordType.allCases.filter { $0 != .metadata }
+            for recordTypeRawValue in deployedRecordTypes.map({ $0.rawValue }) {
                 let query = CKQuery(recordType: recordTypeRawValue, predicate: NSPredicate(value: true))
                 let (matchResults, _) = try await privateDatabase.records(matching: query)
                 
@@ -464,8 +466,9 @@ class CloudKitDiagnosticViewModel: ObservableObject {
         do {
             var totalDeleted = 0
             
-            // Delete records for each record type
-            for recordTypeRawValue in CloudKitSchema.RecordType.allCases.map({ $0.rawValue }) {
+            // Delete records for each record type (excluding Metadata until deployed to CloudKit)
+            let deployedRecordTypes = CloudKitSchema.RecordType.allCases.filter { $0 != .metadata }
+            for recordTypeRawValue in deployedRecordTypes.map({ $0.rawValue }) {
                 let query = CKQuery(recordType: recordTypeRawValue, predicate: NSPredicate(value: true))
                 let (results, _) = try await privateDatabase.records(matching: query)
                 

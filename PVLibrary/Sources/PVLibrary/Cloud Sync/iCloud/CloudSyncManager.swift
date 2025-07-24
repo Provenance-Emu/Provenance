@@ -275,22 +275,35 @@ public class CloudSyncManager {
 
     /// Initialize sync providers
     private func initializeSyncProviders() {
-        DLOG("Initializing CloudKit sync providers...")
+        let syncMode = Defaults[.iCloudSyncMode]
+        DLOG("Initializing sync providers for mode: \(syncMode.description)...")
         updateSyncStatus(.initializing)
 
-        // Ensure we have a valid container
-        // let container = iCloudConstants.container // Already have self.container
+        // Use SyncProviderFactory to create syncers based on the selected mode
+        // 1. Initialize ROM Syncer using factory
+        self.romsSyncer = SyncProviderFactory.createROMSyncProvider(
+            container: container,
+            notificationCenter: .default,
+            errorHandler: errorHandler
+        )
 
-        // 1. Initialize ROM Syncer (Using Factory or direct init)
-        let romsDatastore = RomDatabase.sharedInstance // Use correct shared instance
-        self.romsSyncer = CloudKitRomsSyncer(container: container, retryStrategy: CloudKitRetryStrategy.retryCloudKitOperation)
+        // 2. Initialize Save States Syncer using factory
+        self.saveStatesSyncer = SyncProviderFactory.createSaveStatesSyncProvider(
+            notificationCenter: .default,
+            errorHandler: errorHandler
+        )
 
-        // 2. Initialize Save States Syncer (Using Factory)
-        self.saveStatesSyncer = CloudKitSaveStatesSyncer(container: container, errorHandler: errorHandler)
-
-        // 4. Initialize Non-Database Syncer (Add BIOS directory)
+        // 3. Initialize BIOS Syncer using factory
+        // Note: We don't store this directly but it's available through the factory
+        
+        // 4. Initialize Non-Database Syncer (CloudKit only for now)
         let nonDBSyncDirectories: Set<String> = ["BIOS", "Battery States", "Screenshots", "RetroArch", "DeltaSkins"]
-        self.nonDatabaseSyncer = CloudKitNonDatabaseSyncer(container: container, directories: nonDBSyncDirectories, errorHandler: errorHandler)
+        self.nonDatabaseSyncer = SyncProviderFactory.createNonDatabaseSyncProvider(
+            container: container,
+            for: nonDBSyncDirectories,
+            notificationCenter: .default,
+            errorHandler: errorHandler
+        )
 
         // Check if all initializations were successful (optional, depends on initializer throwing)
         if romsSyncer == nil || saveStatesSyncer == nil || nonDatabaseSyncer == nil {

@@ -112,7 +112,7 @@ final class CloudKitOnDemandViewModel: ObservableObject {
             // Example: Fetch all supported types
             var combinedResults: [CloudKitRecordViewModel] = []
             // Define the types we want to query for this view
-            let queryableTypes: [CloudKitSchema.RecordType] = [.rom, .saveState, .bios, .screenshot, .artwork] // Add relevant types
+            let queryableTypes: [CloudKitSchema.RecordType] = [.rom, .saveState, .bios] // Metadata type not deployed to CloudKit yet
 
             for recordType in queryableTypes {
                 let typeQuery = CKQuery(recordType: recordType.rawValue, predicate: NSPredicate(value: true))
@@ -233,18 +233,7 @@ final class CloudKitOnDemandViewModel: ObservableObject {
             fileSizeString = formatBytes(fileSize)
             subtitle = "\(systemName) • \(fileSizeString)"
 
-        case .screenshot, .artwork:
-            // Handle screenshot/artwork types similarly if needed, potentially using SaveStateFields
-            title = record[CloudKitSchema.SaveStateFields.filename] as? String ?? "Untitled Media"
-            let systemIdentifier = record[CloudKitSchema.SaveStateFields.systemIdentifier] as? String
-            let systemName = getSystemName(fromIdentifier: systemIdentifier)
-            if let size = record[CloudKitSchema.SaveStateFields.fileSize] as? Int64, size > 0 {
-                fileSize = size
-            } else if let asset = record[CloudKitSchema.SaveStateFields.fileData] as? CKAsset {
-                fileSize = getFileSize(from: asset)
-            }
-            fileSizeString = formatBytes(fileSize)
-            subtitle = "\(systemName) \(recordType.rawValue) • \(fileSizeString)"
+        // Screenshot and artwork record types have been removed from schema
 
             // Remove .file and .metadata cases as they are not displayed or handled here
         case .file, .metadata:
@@ -350,8 +339,8 @@ final class CloudKitOnDemandViewModel: ObservableObject {
                 )
             }
 
-            // Add cases for other synced types (Artwork, Screenshots, etc.) if needed
-        case .screenshot, .artwork, .file, .metadata:
+            // Add cases for other synced types (Screenshots, etc.) if needed
+        case .file, .metadata:
             DLOG("Local Realm fetch not implemented for type: \(recordType.rawValue)")
             break // No local mapping defined yet
         }
@@ -409,7 +398,7 @@ final class CloudKitOnDemandViewModel: ObservableObject {
                     let md5 = String(recordName.dropFirst(prefix.count))
                     try await syncManager.romsSyncer?.downloadGame(md5: md5) // Call correct method
 
-                case .saveState, .bios, .screenshot, .artwork:
+                case .saveState, .bios:
                     try await CloudSyncManager.shared.nonDatabaseSyncer?.downloadFile(for: recordID)
 
                 default: // Other types like .file, .metadata not downloadable here
@@ -478,7 +467,7 @@ final class CloudKitOnDemandViewModel: ObservableObject {
                 try await database.add(operation)
                 // Note: Local Realm object deletion might be needed separately
 
-            case .bios, .screenshot, .artwork:
+            case .bios:
                 DLOG("Attempting direct CloudKit delete for NonDatabase: \(recordID.recordName)")
                 let operation = CKModifyRecordsOperation(recordsToSave: nil, recordIDsToDelete: [recordID])
                 try await database.add(operation)
@@ -516,10 +505,7 @@ final class CloudKitOnDemandViewModel: ObservableObject {
             return .saveState
         } else if recordName.starts(with: CloudKitSchema.RecordType.bios.rawValue + "_") {
             return .bios
-        } else if recordName.starts(with: CloudKitSchema.RecordType.screenshot.rawValue + "_") {
-            return .screenshot
-        } else if recordName.starts(with: CloudKitSchema.RecordType.artwork.rawValue + "_") {
-            return .artwork
+        // Screenshot and artwork record types have been removed from schema
         } else {
             // Consider other types or return nil/unknown
             // This simple prefix check might be insufficient for complex IDs
@@ -546,7 +532,7 @@ final class CloudKitOnDemandViewModel: ObservableObject {
                 let operation = CKModifyRecordsOperation(recordsToSave: nil, recordIDsToDelete: [recordID])
                 try await database.add(operation)
 
-            case .bios, .screenshot, .artwork:
+            case .bios:
                 DLOG("Attempting direct CloudKit delete for NonDatabase: \(recordID.recordName)")
                 let operation = CKModifyRecordsOperation(recordsToSave: nil, recordIDsToDelete: [recordID])
                 try await database.add(operation)

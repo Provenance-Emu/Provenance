@@ -29,10 +29,9 @@ public enum CloudKitSchema {
         case rom = "ROM" // Changed from Game to ROM for clarity, or keep Game if preferred?
         case saveState = "SaveState"
         case bios = "BIOS"
-        case screenshot = "Screenshot"
-        case artwork = "Artwork"
-        case file = "File" // Generic file type, maybe used by non-DB syncer?
+        case file = "File" // Generic file type for non-DB files (Screenshots, Battery States, etc.)
         case metadata = "Metadata" // For general sync metadata, like last sync tokens
+        // Note: Screenshots and other non-DB files use the generic "File" record type with directory filtering
     }
     
     /// Field keys for the ROM record type.
@@ -91,6 +90,9 @@ public enum CloudKitSchema {
         public static let md5 = "md5" // String? (Optional, e.g., for BIOS verification)
         // Add other relevant fields specific to generic files if needed
     }
+    
+    // Note: Screenshots and other non-database files are handled using the generic "File" record type
+    // with directory-based filtering. This approach is simpler and avoids schema complexity.
     
     /// Field keys for the Metadata record type (e.g., for sync tokens).
     public struct MetadataFields {
@@ -219,6 +221,9 @@ public enum CloudKitSchema {
         public static func biosRecordID(systemID: String, md5: String) -> CKRecord.ID {
             return CKRecord.ID(recordName: "bios_\(systemID)_\(md5)")
         }
+        
+        // Note: Screenshots and other non-database files use the generic fileRecordID method
+        // since they are handled as File records with directory filtering
         
         /// Generate a record ID for a generic file
         /// - Parameters:

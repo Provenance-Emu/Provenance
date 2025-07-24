@@ -35,12 +35,12 @@ import Perception
 public struct CloudSyncSettingsView: View {
     @Default(.iCloudSync) internal var iCloudSyncEnabled
     @Default(.autoSyncNewContent) private var autoSyncNewContent
-    @Default(.iCloudSyncMode) private var currentiCloudSyncMode
+    @Default(.iCloudSyncMode) internal var currentiCloudSyncMode
     
     @State internal var showingResetConfirmation = false
     @State private var isResetting = false
     @State private var selectedTab = 0
-    @State private var showDiagnostics = false
+    @State internal var showDiagnostics = false
     
     @StateObject internal var viewModel = UnifiedCloudSyncViewModel()
     
@@ -73,6 +73,19 @@ public struct CloudSyncSettingsView: View {
         }
         .onAppear {
             viewModel.loadSyncInfo()
+        }
+        .sheet(isPresented: $showDiagnostics) {
+            NavigationView {
+                CloudKitDiagnosticView()
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("Done") {
+                                showDiagnostics = false
+                            }
+                        }
+                    }
+            }
         }
     }
     

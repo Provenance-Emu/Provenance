@@ -436,9 +436,34 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
                 await try moveClosure(currentItem, destination)
                 await insertUploadedFileClosure?(destination)
             } catch {
-                await errorHandler.handleError(error, file: currentItem)
-                //this could indicate no more space is left when moving to iCloud
-                ELOG("#\(totalMoved) failed to move \(currentItem.pathDecoded) to \(destination.pathDecoded): \(error)")
+                // Try fallback: remove "Documents" from the destination path and try again
+                let destinationPath = destination.pathDecoded
+                if destinationPath.contains("/Documents/") {
+                    let fallbackPath = destinationPath.replacingOccurrences(of: "/Documents/", with: "/")
+                    let fallbackDestination = URL(fileURLWithPath: fallbackPath)
+                    
+                    DLOG("#\(totalMoved) First move failed, trying fallback path: \(fallbackDestination.pathDecoded)")
+                    
+                    do {
+                        // Create parent directory for fallback destination if needed
+                        let fallbackParent = fallbackDestination.deletingLastPathComponent()
+                        if !fileManager.fileExists(atPath: fallbackParent.pathDecoded) {
+                            try fileManager.createDirectory(atPath: fallbackParent.pathDecoded, withIntermediateDirectories: true)
+                        }
+                        
+                        await try moveClosure(currentItem, fallbackDestination)
+                        await insertUploadedFileClosure?(fallbackDestination)
+                        DLOG("#\(totalMoved) Fallback move succeeded to \(fallbackDestination.pathDecoded)")
+                    } catch {
+                        await errorHandler.handleError(error, file: currentItem)
+                        //this could indicate no more space is left when moving to iCloud
+                        ELOG("#\(totalMoved) failed to move \(currentItem.pathDecoded) to both \(destination.pathDecoded) and fallback \(fallbackDestination.pathDecoded): \(error)")
+                    }
+                } else {
+                    await errorHandler.handleError(error, file: currentItem)
+                    //this could indicate no more space is left when moving to iCloud
+                    ELOG("#\(totalMoved) failed to move \(currentItem.pathDecoded) to \(destination.pathDecoded): \(error)")
+                }
             }
         }
         ILOG("\(logPrefix) moved a total of \(totalMoved)")

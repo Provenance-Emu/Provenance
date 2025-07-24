@@ -10,6 +10,7 @@ import SwiftUI
 import PVUIBase
 import PVLogging
 import Defaults
+import PVSettings
 
 /// Extension for the Settings tab of CloudSyncSettingsView
 extension CloudSyncSettingsView {
@@ -31,6 +32,11 @@ extension CloudSyncSettingsView {
                 resetSyncView
                     .padding(.horizontal)
                     .transitionWithReducedMotion(.opacity)
+                
+                // Diagnostics
+                cloudKitDiagnosticsView
+                    .padding(.horizontal)
+                    .transitionWithReducedMotion(.opacity)
             }
             .padding(.vertical)
         }
@@ -50,6 +56,11 @@ extension CloudSyncSettingsView {
             VStack(spacing: 12) {
                 Toggle("Enable iCloud Sync", isOn: $iCloudSyncEnabled)
                     .toggleStyle(RetroTheme.RetroToggleStyle())
+                
+                // Sync mode picker - only show when sync is enabled
+                if iCloudSyncEnabled {
+                    syncModePickerView
+                }
 
                 // Toggle("Auto-sync on App Launch", isOn: $autoSyncOnLaunch)
                 //     .toggleStyle(RetroTheme.RetroToggleStyle())
@@ -162,6 +173,117 @@ extension CloudSyncSettingsView {
                         secondaryButton: .cancel()
                     )
                 }
+            }
+            .padding()
+            .background(Color.retroBlack.opacity(0.3))
+            .cornerRadius(10)
+        }
+    }
+    
+    /// Sync mode picker view for selecting between iCloud Drive and CloudKit
+    var syncModePickerView: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Sync Mode")
+                .font(.subheadline)
+                .foregroundColor(.white)
+            
+            VStack(spacing: 8) {
+                ForEach(iCloudSyncMode.allCases, id: \.self) { mode in
+                    syncModeOptionView(mode: mode)
+                }
+            }
+        }
+        .padding(.top, 8)
+    }
+    
+    /// Individual sync mode option view
+    private func syncModeOptionView(mode: iCloudSyncMode) -> some View {
+        Button(action: {
+            currentiCloudSyncMode = mode
+            #if !os(tvOS)
+            HapticFeedbackService.shared.playSelection()
+            #endif
+        }) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(mode.description)
+                        .font(.subheadline)
+                        .foregroundColor(.white)
+                    
+                    Text(mode.subtitle)
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.leading)
+                }
+                
+                Spacer()
+                
+                // Selection indicator
+                Image(systemName: currentiCloudSyncMode == mode ? "checkmark.circle.fill" : "circle")
+                    .foregroundColor(currentiCloudSyncMode == mode ? .retroPink : .gray)
+                    .font(.title2)
+            }
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(currentiCloudSyncMode == mode ? Color.retroPink.opacity(0.2) : Color.retroBlack.opacity(0.3))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(currentiCloudSyncMode == mode ? Color.retroPink : Color.clear, lineWidth: 1)
+                    )
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+    
+    /// CloudKit diagnostics view with button for opening CloudKit diagnostic tools
+    var cloudKitDiagnosticsView: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Diagnostics")
+                .retroSectionHeader()
+
+            VStack(spacing: 12) {
+                Text("Advanced diagnostic tools for troubleshooting CloudKit sync issues.")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+
+                Button(action: {
+                    showDiagnostics = true
+                    #if !os(tvOS)
+                    HapticFeedbackService.shared.playSelection()
+                    #endif
+                }) {
+                    HStack {
+                        Image(systemName: "stethoscope")
+                        Text("CloudKit Diagnostics")
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                    .padding()
+                }
+                .retroButton(colors: [.retroBlue.opacity(0.7), .retroPurple.opacity(0.7)])
+                
+                Button(action: {
+                    viewModel.forceInitialSync()
+                    #if !os(tvOS)
+                    HapticFeedbackService.shared.playSelection()
+                    #endif
+                }) {
+                    HStack {
+                        Image(systemName: "icloud.and.arrow.up")
+                        Text("Force Initial Sync")
+                        Spacer()
+                        if viewModel.isPerformingInitialSync {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                        }
+                    }
+                    .padding()
+                }
+                .retroButton(colors: [.retroGreen.opacity(0.7), .retroBlue.opacity(0.7)])
+                .disabled(viewModel.isPerformingInitialSync)
             }
             .padding()
             .background(Color.retroBlack.opacity(0.3))

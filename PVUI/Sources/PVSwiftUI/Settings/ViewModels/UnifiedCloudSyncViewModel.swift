@@ -93,6 +93,7 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
         roms: 0, saveStates: 0, bios: 0, batteryStates: 0, screenshots: 0, deltaSkins: 0
     )
     @Published public var isLoadingCloudKitRecords = false
+    @Published public var isPerformingInitialSync = false
 
     // Sync progress
     @Published public var syncProgress: Double = 0.0
@@ -197,6 +198,38 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
         // Update UI after a delay to allow reset to start
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             self.syncStatus = "Cloud sync reset in progress..."
+        }
+    }
+    
+    /// Force initial sync of all local content to CloudKit
+    public func forceInitialSync() {
+        guard !isPerformingInitialSync else {
+            DLOG("Initial sync already in progress")
+            return
+        }
+        
+        isPerformingInitialSync = true
+        syncStatus = "Starting initial sync..."
+        
+        Task {
+            do {
+                // Force initial sync by calling performInitialSync directly with forceSync: true
+                let syncCount = await CloudKitInitialSyncer.shared.performInitialSync(forceSync: true)
+                DLOG("Force initial sync completed - uploaded \(syncCount) records")
+                
+                await MainActor.run {
+                    self.syncStatus = "Initial sync completed"
+                    self.isPerformingInitialSync = false
+                    // Reload sync info to update counts
+                    self.loadSyncInfo()
+                }
+            } catch {
+                ELOG("Error during initial sync: \(error.localizedDescription)")
+                await MainActor.run {
+                    self.syncStatus = "Initial sync failed: \(error.localizedDescription)"
+                    self.isPerformingInitialSync = false
+                }
+            }
         }
     }
     

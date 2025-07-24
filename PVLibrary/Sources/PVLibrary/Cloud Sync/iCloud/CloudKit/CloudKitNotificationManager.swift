@@ -18,13 +18,13 @@ public class CloudKitNotificationManager {
     /// Shared instance for app-wide access
     public static let shared = CloudKitNotificationManager()
 
-    // Define CloudKit Record Types locally
-    // (Should match definitions in other syncers)
+    // Use CloudKit Record Types from CloudKitSchema
+    // This ensures consistency across all CloudKit components
     private enum RecordType {
-        static let file = "PVFile"
-        static let rom = "PVRom"
-        static let saveState = "PVSaveState"
-        static let bios = "PVBIOS"
+        static let file = CloudKitSchema.RecordType.file.rawValue
+        static let rom = CloudKitSchema.RecordType.rom.rawValue
+        static let saveState = CloudKitSchema.RecordType.saveState.rawValue
+        static let bios = CloudKitSchema.RecordType.bios.rawValue
         // Add other types if needed
     }
 
