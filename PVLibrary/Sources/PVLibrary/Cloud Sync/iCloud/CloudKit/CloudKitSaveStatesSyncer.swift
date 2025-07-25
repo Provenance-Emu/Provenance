@@ -226,7 +226,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         let filename = saveState.file?.fileName ?? "savestate_\(saveState.id)"
                         
                         // Create query
-                        let predicate = NSPredicate(format: "directory == %@ AND system == %@ AND gameID == %@ AND filename == %@", 
+                        let predicate = NSPredicate(format: "directory == %@ AND systemIdentifier == %@ AND gameID == %@ AND filename == %@", 
                                                    "Saves", systemDir, saveState.game.id, filename)
                         let query = CKQuery(recordType: CloudKitSchema.RecordType.saveState.rawValue, predicate: predicate)
                         

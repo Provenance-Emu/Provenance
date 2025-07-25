@@ -223,7 +223,13 @@ public enum iCloudDriveSync {
         ILOG("Initial Download: moving all local files to cloud container: \(documentsDirectory)")
         await withTaskGroup(of: Void.self) { group in
             group.addTask {
-                await moveLocalFilesToCloudContainer(directories: ["BIOS", "Battery States", "Screenshots", "RetroArch", "DeltaSkins"], parentContainer: documentsDirectory)
+                await moveLocalFilesToCloudContainer(directories: [
+                    "BIOS",
+                    "Battery States",
+                    "Screenshots",
+                    "RetroArch",
+                    "DeltaSkins"
+                ], parentContainer: documentsDirectory)
             }
             group.addTask {
                 await moveLocalFilesToCloudContainer(directories: ["Save States"], parentContainer: documentsDirectory)
@@ -376,7 +382,13 @@ public enum iCloudDriveSync {
             await initiateDownloadOfiCloudDocumentsContainer()
             
             var nonDatabaseFileSyncer: iCloudContainerSyncer! =
-                .init(directories: ["BIOS", "Battery States", "Screenshots", "RetroArch", "DeltaSkins"],
+                .init(directories: [
+                    "BIOS",
+                    "Battery States",
+                    "Screenshots",
+//                    "RetroArch",
+                    "DeltaSkins"
+                ],
                       notificationCenter: .default,
                       errorHandler: CloudSyncErrorHandler.shared)
             
@@ -859,7 +871,15 @@ public enum iCloudDriveSync {
         
         ILOG("Using iCloud Documents path: \(iCloudDocuments.path)")
         
-        let directories = ["BIOS", "Battery States", "Screenshots", "RetroArch", "DeltaSkins", "Save States", "ROMs"]
+        let directories = [
+            "BIOS",
+            "Battery States",
+            "Screenshots",
+//            "RetroArch",
+            "DeltaSkins",
+            "Save States",
+            "ROMs"
+        ]
         
         // First count all files to get a total
         await countAllFiles(in: directories, iCloudContainer: iCloudDocuments)
@@ -1809,7 +1829,14 @@ public enum iCloudDriveSync {
         }
         
         // Check if there are any files in the iCloud Drive directories
-        let directories = ["BIOS", "Battery States", "Screenshots", "RetroArch", "DeltaSkins", "Save States", "ROMs"]
+        let directories = [
+            "BIOS",
+            "Battery States",
+            "Screenshots",
+//            "RetroArch",
+            "DeltaSkins",
+            "Save States",
+            "ROMs"]
         var hasStuckFiles = false
         var stuckFilesCount = 0
         

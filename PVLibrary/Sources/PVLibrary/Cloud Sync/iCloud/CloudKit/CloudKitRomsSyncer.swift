@@ -67,8 +67,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     public func loadAllFromCloud(iterationComplete: (() async -> Void)?) async -> Completable {
         ILOG("Starting loadAllFromCloud for CloudKit ROMs...")
         let query = CKQuery(recordType: CloudKitSchema.RecordType.rom.rawValue, predicate: NSPredicate(value: true))
-        // Sort by modification date descending to potentially process newest first? Or creation date?
-        query.sortDescriptors = [NSSortDescriptor(key: "modificationDate", ascending: false)]
+        // Note: Removed sort descriptor as modificationDate is not marked sortable in CloudKit schema
+        // Records will be processed in CloudKit's default order
 
         var allRecords: [CKRecord] = []
 
@@ -163,7 +163,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     // MARK: - CloudKit Operations
 
     /// Fetches a single CKRecord by its ID using the retry strategy.
-    private func fetchRecord(recordID: CKRecord.ID) async throws -> CKRecord? {
+    public func fetchRecord(recordID: CKRecord.ID) async throws -> CKRecord? {
         do {
             // Pass nil directly, relying on compiler inference with the simplified init/property
             let result = try await retryOperation({ // Renamed method
@@ -194,8 +194,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     public func localURL(for game: PVGame) -> URL? {
         // Check if the game object is valid first
         if game.isInvalidated {
-             WLOG("Attempting to get localURL for invalidated game: \(game.debugDescription)")
-             return nil
+            WLOG("Attempting to get localURL for invalidated game: \(game.debugDescription)")
+            return nil
         }
 
         // Check if the file URL exists and the file is actually present
@@ -313,7 +313,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             }
             throw CloudSyncError.invalidData
         }
-        
+
         // Save Record to CloudKit
         do {
             try await saveRecord(record)
@@ -344,7 +344,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// This performs a "soft delete" by setting the `isDeleted` flag.
     /// - Parameter md5: The MD5 hash of the game to mark as deleted.
     public func markGameAsDeleted(md5: String) async throws {
-        let recordID = Self.recordID(forRomMD5: md5)
+        let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
         VLOG("Attempting to mark CloudKit record as deleted: \(recordID.recordName)")
 
         do {
@@ -378,7 +378,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     }
 
     internal func hardDeleteGame(md5: String) async throws {
-        let recordID = Self.recordID(forRomMD5: md5)
+        let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
         VLOG("Attempting HARD delete for CloudKit record: \(recordID.recordName)")
         do {
             try await database.deleteRecord(withID: recordID)
@@ -404,29 +404,30 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             ELOG("Invalid ROM record ID format: \(record.recordID.recordName)")
             return
         }
-        
+
         let recordName = record.recordID.recordName
-        
+
         do {
             // Check if record is marked as deleted
             if let isDeleted = record[CloudKitSchema.ROMFields.isDeleted] as? Bool, isDeleted {
                 VLOG("Record \(recordName) is marked as deleted, skipping")
                 return
             }
-            
+
             // Check if we have a local game for this MD5
             let existingLocalGame = RomDatabase.sharedInstance.game(withMD5: md5)
             var updatedOrCreatedGame: PVGame?
-            
+
             if let localGame = existingLocalGame {
-                VLOG("Local game found for MD5 \(md5). Updating from cloud record...")
+                ILOG("🔄 Local game found for MD5 \(md5). Updating from cloud record: \(localGame.title) (isDownloaded: \(localGame.isDownloaded))")
                 try await updatePVGame(from: record, localGame: localGame)
                 updatedOrCreatedGame = RomDatabase.sharedInstance.game(withMD5: md5)
             } else {
-                VLOG("No local game found for MD5 \(md5). Creating from cloud record...")
+                ILOG("🆕 No local game found for MD5 \(md5). Creating from cloud record...")
                 updatedOrCreatedGame = try await createPVGame(from: record)
+                ILOG("📥 Created new game from CloudKit: \(updatedOrCreatedGame?.title ?? "Unknown") (isDownloaded: \(updatedOrCreatedGame?.isDownloaded ?? false))")
             }
-            
+
             // Check if download is needed
             if let game = updatedOrCreatedGame, !game.isDownloaded {
                 // Verify the record has an asset before triggering download
@@ -448,10 +449,10 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             } else {
                 ELOG("Failed to create or update game for MD5 \(md5)")
             }
-            
+
         } catch let error as CKError {
             ELOG("CloudKit error processing record \(record.recordID.recordName): \(error.localizedDescription) (Code: \(error.code.rawValue))")
-            
+
             // Handle specific CloudKit errors
             switch error.code {
             case .unknownItem:
@@ -471,7 +472,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             ELOG("Unexpected error processing cloud record \(record.recordID.recordName): \(error.localizedDescription)")
         }
     }
-    
+
     public func handleRemoteGameChange(recordID: CKRecord.ID) async throws {
         VLOG("Handling remote change for record ID: \(recordID.recordName)")
 
@@ -587,7 +588,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         VLOG("Starting download for game MD5: \(md5) using ZipArchive path")
 
         // 1. Fetch the CloudKit Record
-        let recordID = Self.recordID(forRomMD5: md5)
+        let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
         guard let record = try await fetchRecord(recordID: recordID) else {
             ELOG("Download failed: Record not found in CloudKit for MD5 \(md5).")
             // Check local state and update if needed
@@ -689,7 +690,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             throw CloudSyncError.invalidData
         }
 
-        let recordID = Self.recordID(forRomMD5: md5)
+        let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
         let record = existingRecord ?? CKRecord(recordType: CloudKitSchema.RecordType.rom.rawValue, recordID: recordID)
 
         // --- Core Identifiers & File Info ---
@@ -769,9 +770,13 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             localGame.genres = record[CloudKitSchema.ROMFields.genres] as? String ?? localGame.genres
             // TODO: Handle OpenVGDB Cover URL update? Requires PVImageFile handling.
 
-            // Update download status and size based on asset presence
+            // Update download status and size based on asset presence and local file existence
             if let asset = record[CloudKitSchema.ROMFields.fileData] as? CKAsset {
-                localGame.isDownloaded = true // Assume true if asset exists, actual file check happens later
+                // Check if the local file actually exists before marking as downloaded
+                let expectedLocalURL = self.localURL(for: localGame)
+                let hasLocalFile = expectedLocalURL.map { FileManager.default.fileExists(atPath: $0.path) } ?? false
+                localGame.isDownloaded = hasLocalFile
+                ILOG("🔍 Updated game \(localGame.title): hasLocalFile=\(hasLocalFile), expectedPath=\(expectedLocalURL?.path ?? "nil"), isDownloaded=\(localGame.isDownloaded)")
                 // Get fileSize using FileManager
                 if let url = asset.fileURL, let attributes = try? FileManager.default.attributesOfItem(atPath: url.path), let fileSize = attributes[.size] as? Int64 {
                     localGame.fileSize = Int(fileSize)
@@ -779,7 +784,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     localGame.fileSize = 0 // Or keep existing?
                 }
                 // Ensure the PVFile.url points to the *expected* local path, not the CKAsset temp path
-                if let expectedLocalURL = self.localURL(for: localGame) {
+                if let expectedLocalURL = expectedLocalURL {
                     if localGame.file == nil {
                         // Corrected RelativeRoot usage
                         let newFile = PVFile(withURL: expectedLocalURL, relativeRoot: .documents)
@@ -793,7 +798,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 }
             } else {
                 // Mark as not downloaded
-                VLOG("Marking game \(localGame.md5 ?? "unknown") as not downloaded.")
+                ILOG("📤 Marking game \(localGame.title) as not downloaded (no CloudKit asset)")
                 localGame.isDownloaded = false
 
                 // Optionally clear PVFile URL or mark as offline?
@@ -857,7 +862,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         // 4. Add the new game to the database using RomDatabase.shared
         do {
             try RomDatabase.sharedInstance.add(newGame) // Add the fully populated object
-            ILOG("Successfully created and added new PVGame \(title) (MD5: \(md5)) from CloudKit record \(record.recordID.recordName).")
+            ILOG("✅ Successfully created and added new PVGame \(title) (MD5: \(md5)) from CloudKit record \(record.recordID.recordName). isDownloaded: \(newGame.isDownloaded)")
             return newGame
         } catch let error as NSError where error.code == 1 /* RLMErrorPrimaryKeyExists */ {
             WLOG("Attempted to create PVGame for MD5 \(md5), but it already exists. Fetching existing.")
@@ -982,24 +987,57 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// Helper to update local game state after a successful upload.
     private func updateLocalGamePostUpload(md5: String, record: CKRecord) async throws {
         VLOG("Updating local game \(md5) with CloudKit record ID \(record.recordID.recordName)")
-        // Fetch game directly using RomDatabase
-        guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else {
-            ELOG("Cannot update game post-upload: Game \(md5) not found in Realm.")
-            return // Or throw error? If game *should* exist, this is unexpected.
-        }
-        // Perform update in write transaction
-        try RomDatabase.sharedInstance.writeTransaction {
-            // Ensure we have the live object inside the transaction
-            guard let liveGame = game.realm?.object(ofType: PVGame.self, forPrimaryKey: game.md5) else {
-                ELOG("Game \(md5) was invalidated before post-upload update could be applied.")
-                return
-            }
-            liveGame.cloudRecordID = record.recordID.recordName
-            // localGame.lastCloudSyncDate = record.modificationDate // Update sync date
 
-            VLOG("Finished updating local game \(md5) post-upload.")
-        } // End write transaction
-    }
+        // Use a more robust approach with retry logic
+        var retryCount = 0
+        let maxRetries = 3
+
+        while retryCount < maxRetries {
+            do {
+                // Fetch game directly using RomDatabase with fresh realm access
+                guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else {
+                    if retryCount < maxRetries - 1 {
+                        WLOG("Game \(md5) not found in Realm (attempt \(retryCount + 1)/\(maxRetries)). Retrying...")
+                        retryCount += 1
+                        try await Task.sleep(nanoseconds: 100_000_000) // 100ms delay
+                        continue
+                    } else {
+                        ELOG("Cannot update game post-upload: Game \(md5) not found in Realm after \(maxRetries) attempts.")
+                        return
+                    }
+                }
+
+                // Perform update in write transaction
+                try RomDatabase.sharedInstance.writeTransaction {
+                    // Re-fetch the game inside the transaction to ensure we have a valid reference
+                    guard let liveGame = RomDatabase.sharedInstance.game(withMD5: md5) else {
+                        ELOG("Game \(md5) was invalidated during transaction.")
+                        return
+                    }
+
+                    liveGame.cloudRecordID = record.recordID.recordName
+                    if let modificationDate = record.modificationDate {
+                        liveGame.lastCloudSyncDate = modificationDate
+                    }
+
+                    VLOG("Successfully updated local game \(md5) with CloudKit record ID post-upload.")
+                }
+
+                // Success - break out of retry loop
+                break
+
+            } catch {
+                if retryCount < maxRetries - 1 {
+                    WLOG("Failed to update game \(md5) post-upload (attempt \(retryCount + 1)/\(maxRetries)): \(error.localizedDescription). Retrying...")
+                    retryCount += 1
+                    try await Task.sleep(nanoseconds: 200_000_000) // 200ms delay
+                } else {
+                    ELOG("Failed to update game \(md5) post-upload after \(maxRetries) attempts: \(error.localizedDescription)")
+                    throw error
+                }
+            }
+        }
+    } // End write transaction
 
     // MARK: - File & Asset Helpers
 
@@ -1024,6 +1062,33 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// - Throws: `CloudSyncError.zipError` if zip creation fails, `CloudSyncError.fileSystemError` for other file issues.
     private func createZip(files: [URL], primaryFile: URL, outputURL: URL) async throws {
         VLOG("Creating ZipArchive zip archive at \(outputURL.path) for \(files.count) files (primary: \(primaryFile.lastPathComponent)).")
+
+        // Validate input files before attempting zip creation
+        for file in files {
+            guard FileManager.default.fileExists(atPath: file.path) else {
+                ELOG("Cannot create zip: File does not exist: \(file.path)")
+                throw CloudSyncError.zipError(DescriptiveError(description: "Input file does not exist: \(file.path)"))
+            }
+
+            // Check file readability
+            guard FileManager.default.isReadableFile(atPath: file.path) else {
+                ELOG("Cannot create zip: File is not readable: \(file.path)")
+                throw CloudSyncError.zipError(DescriptiveError(description: "Input file is not readable: \(file.path)"))
+            }
+        }
+
+        // Ensure output directory exists
+        let outputDirectory = outputURL.deletingLastPathComponent()
+        if !FileManager.default.fileExists(atPath: outputDirectory.path) {
+            do {
+                try FileManager.default.createDirectory(at: outputDirectory, withIntermediateDirectories: true)
+                VLOG("Created output directory: \(outputDirectory.path)")
+            } catch {
+                ELOG("Failed to create output directory \(outputDirectory.path): \(error.localizedDescription)")
+                throw CloudSyncError.zipError(error)
+            }
+        }
+
         do {
             // Remove existing zip if present to prevent appending issues
             if FileManager.default.fileExists(atPath: outputURL.path) {
@@ -1032,30 +1097,55 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             }
 
             // Create Zip Archive using ZipArchive
-            let success = SSZipArchive.createZipFile(atPath: outputURL.path, withFilesAtPaths: files.map { $0.path })
-            guard success else {
-                throw CloudSyncError.zipError(DescriptiveError(description: "ZipArchive failed to create zip at \(outputURL.path)"))
-            }
-            // SSZipArchive.createZipFile handles adding all files directly.
+            let filePaths = files.map { $0.path }
+            VLOG("Zip input files: \(filePaths)")
 
-            ILOG("Successfully created ZipArchive zip archive at \(outputURL.path) for primary file \(primaryFile.lastPathComponent).")
+            let success = SSZipArchive.createZipFile(atPath: outputURL.path, withFilesAtPaths: filePaths)
+
+            if !success {
+                // Enhanced error reporting for zip failures
+                let errorDetails = [
+                    "Output path: \(outputURL.path)",
+                    "Input files: \(filePaths.count)",
+                    "Primary file: \(primaryFile.path)",
+                    "Output directory exists: \(FileManager.default.fileExists(atPath: outputDirectory.path))",
+                    "Output directory writable: \(FileManager.default.isWritableFile(atPath: outputDirectory.path))"
+                ].joined(separator: ", ")
+
+                ELOG("ZipArchive creation failed. Details: \(errorDetails)")
+                throw CloudSyncError.zipError(DescriptiveError(description: "ZipArchive failed to create zip at \(outputURL.path). \(errorDetails)"))
+            }
+
+            // Verify the zip was actually created and has content
+            guard FileManager.default.fileExists(atPath: outputURL.path) else {
+                ELOG("Zip file was not created at expected path: \(outputURL.path)")
+                throw CloudSyncError.zipError(DescriptiveError(description: "Zip file was not created at \(outputURL.path)"))
+            }
+
+            let attributes = try FileManager.default.attributesOfItem(atPath: outputURL.path)
+            let fileSize = attributes[.size] as? Int64 ?? 0
+
+            if fileSize == 0 {
+                ELOG("Created zip file is empty: \(outputURL.path)")
+                try? await FileManager.default.removeItem(at: outputURL)
+                throw CloudSyncError.zipError(DescriptiveError(description: "Created zip file is empty"))
+            }
+
+            ILOG("Successfully created ZipArchive zip archive at \(outputURL.path) (\(fileSize) bytes) for primary file \(primaryFile.lastPathComponent).")
+
         } catch let error as CocoaError {
-            ELOG("CocoaError during ZipArchive zip creation for \(primaryFile.lastPathComponent): \(error)")
+            ELOG("CocoaError during ZipArchive zip creation for \(primaryFile.lastPathComponent): \(error.localizedDescription) (Code: \(error.code.rawValue))")
             // Clean up partial zip
             try? await FileManager.default.removeItem(at: outputURL)
             throw CloudSyncError.zipError(error)
+        } catch let cloudSyncError as CloudSyncError {
+            // Re-throw CloudSyncError as-is
+            throw cloudSyncError
         } catch { // Catch other potential errors from ZipArchive or FileManager
-            ELOG("Unexpected error during ZipArchive zip creation for \(primaryFile.lastPathComponent): \(error)")
+            ELOG("Unexpected error during ZipArchive zip creation for \(primaryFile.lastPathComponent): \(error.localizedDescription)")
             // Clean up partial zip
             try? await FileManager.default.removeItem(at: outputURL)
             throw CloudSyncError.zipError(error) // Wrap other errors as zip errors for context
         }
-    }
-
-    // MARK: - Deprecated - Use CloudKitSchema.RecordIDGenerator instead
-    // Helper to generate CloudKit Record ID from MD5 (deprecated)
-    @available(*, deprecated, message: "Use CloudKitSchema.RecordIDGenerator.romRecordID(md5:) instead")
-    static func recordID(forRomMD5 md5: String) -> CKRecord.ID {
-        return CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
     }
 }

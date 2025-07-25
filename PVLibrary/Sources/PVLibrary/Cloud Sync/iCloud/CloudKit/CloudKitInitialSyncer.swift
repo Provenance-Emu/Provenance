@@ -13,19 +13,63 @@ import PVRealm
 import RealmSwift
 import Combine
 import PVFileSystem
+import RxSwift
+import RxCocoa
+
+/// Represents a failed upload that can be retried
+private struct RetryableUpload {
+    enum UploadType {
+        case rom(md5: String)
+        case saveState(id: String)
+        case bios(id: String)
+        case nonDatabase(path: String)
+    }
+
+    let type: UploadType
+    let error: Error
+    var attemptCount: Int
+    let firstAttemptDate: Date
+
+    init(type: UploadType, error: Error) {
+        self.type = type
+        self.error = error
+        self.attemptCount = 1
+        self.firstAttemptDate = Date()
+    }
+
+    var canRetry: Bool {
+        return attemptCount < 3 && Date().timeIntervalSince(firstAttemptDate) < 300 // 5 minutes max
+    }
+
+    var nextRetryDelay: TimeInterval {
+        switch attemptCount {
+        case 1: return 5   // 5 seconds
+        case 2: return 15  // 15 seconds
+        default: return 30 // 30 seconds
+        }
+    }
+}
 
 /// A class responsible for performing the initial sync of all local files to CloudKit
 public actor CloudKitInitialSyncer {
     // MARK: - Properties
 
-    /// Shared instance
-    public static let shared = CloudKitInitialSyncer()
+    /// Shared instance - will be initialized when CloudSyncManager is set up
+    public static var shared: CloudKitInitialSyncer!
 
     /// CloudKit container
     private let container = iCloudConstants.container
 
     /// Private database
     private let privateDatabase: CKDatabase
+    private let romsSyncer: RomsSyncing
+    private let saveStatesSyncer: SaveStatesSyncing
+    private let nonDatabaseSyncer: NonDatabaseFileSyncing
+
+    // Retry queue for failed uploads
+    private var retryQueue: [RetryableUpload] = []
+    private let maxRetryAttempts = 3
+    private let retryDelaySeconds: [TimeInterval] = [5, 15, 30] // Exponential backoff
 
     /// Sync progress publisher
     private let syncProgressSubject = CurrentValueSubject<CloudKitInitialSyncProgress, Never>(CloudKitInitialSyncProgress())
@@ -41,15 +85,45 @@ public actor CloudKitInitialSyncer {
     /// Whether an initial sync is in progress
     @Published public private(set) var isInitialSyncInProgress = false
 
-    // MARK: - Initialization
+        // MARK: - Initialization
 
-    private init() {
+    /// Initialize with dependency injection
+    /// - Parameters:
+    ///   - romsSyncer: The ROM syncer to use
+    ///   - saveStatesSyncer: The save states syncer to use
+    ///   - nonDatabaseSyncer: The non-database file syncer to use
+    public init(
+        romsSyncer: RomsSyncing,
+        saveStatesSyncer: SaveStatesSyncing,
+        nonDatabaseSyncer: NonDatabaseFileSyncing
+    ) {
         privateDatabase = container.privateCloudDatabase
+
+        self.romsSyncer = romsSyncer
+        self.saveStatesSyncer = saveStatesSyncer
+        self.nonDatabaseSyncer = nonDatabaseSyncer
 
         // Subscribe to progress updates
         syncProgressSubject
             .receive(on: DispatchQueue.main)
             .assign(to: &$syncProgress)
+    }
+
+    /// Static method to configure the shared instance
+    /// - Parameters:
+    ///   - romsSyncer: The ROM syncer to use
+    ///   - saveStatesSyncer: The save states syncer to use
+    ///   - nonDatabaseSyncer: The non-database file syncer to use
+    public static func configureShared(
+        romsSyncer: RomsSyncing,
+        saveStatesSyncer: SaveStatesSyncing,
+        nonDatabaseSyncer: NonDatabaseFileSyncing
+    ) {
+        shared = CloudKitInitialSyncer(
+            romsSyncer: romsSyncer,
+            saveStatesSyncer: saveStatesSyncer,
+            nonDatabaseSyncer: nonDatabaseSyncer
+        )
     }
 
     // MARK: - Public Methods
@@ -180,7 +254,7 @@ public actor CloudKitInitialSyncer {
         var romCount = 0
         do {
             let romSyncTask = Task {
-                await syncAllROMs()
+                await syncAllROMs(forceSync: forceSync)
             }
 
             romCount = try await withTimeout(seconds: 300) { // 5-minute timeout
@@ -209,21 +283,9 @@ public actor CloudKitInitialSyncer {
         var saveStateCount = 0
         do {
             let saveStateSyncTask = Task {
-                await syncAllSaveStates()
+                await syncAllSaveStates(forceSync: forceSync)
+                totalCount += saveStateCount
             }
-
-            saveStateCount = try await withTimeout(seconds: 300) { // 5-minute timeout
-                await saveStateSyncTask.value
-            }
-
-            progress.saveStatesTotal = saveStateCount
-            progress.saveStatesCompleted = saveStateCount
-            await MainActor.run {
-                syncProgressSubject.send(progress)
-            }
-
-            DLOG("Successfully synced \(saveStateCount) save states")
-            totalCount += saveStateCount
         } catch is TimeoutError {
             ELOG("Save state sync timed out after 5 minutes")
             overallSuccess = false
@@ -238,7 +300,7 @@ public actor CloudKitInitialSyncer {
         var biosCount = 0
         do {
             let biosSyncTask = Task {
-                await syncAllBIOSFiles()
+                await syncAllBIOSFiles(forceSync: forceSync)
             }
 
             biosCount = try await withTimeout(seconds: 180) { // 3-minute timeout
@@ -267,7 +329,7 @@ public actor CloudKitInitialSyncer {
         var nonDatabaseFileCounts: [String: Int] = [:]
         do {
             let nonDbSyncTask = Task {
-                await syncAllNonDatabaseFiles()
+                await syncAllNonDatabaseFiles(forceSync: forceSync)
             }
 
             nonDatabaseFileCounts = try await withTimeout(seconds: 300) { // 5-minute timeout
@@ -294,6 +356,9 @@ public actor CloudKitInitialSyncer {
         await MainActor.run {
             syncProgressSubject.send(progress)
         }
+
+        // Process retry queue after main sync
+        await processRetryQueue()
 
         // Set sync complete
         isInitialSyncInProgress = false
@@ -335,19 +400,112 @@ public actor CloudKitInitialSyncer {
         return totalCount
     }
 
+    // MARK: - Retry Queue Management
+
+    /// Adds a failed upload to the retry queue
+    private func addToRetryQueue(_ upload: RetryableUpload) {
+        retryQueue.append(upload)
+        WLOG("Added failed upload to retry queue: \(upload.type) (attempt \(upload.attemptCount))")
+    }
+
+    /// Processes the retry queue, attempting to retry failed uploads
+    private func processRetryQueue() async {
+        guard !retryQueue.isEmpty else { return }
+
+        ILOG("Processing retry queue with \(retryQueue.count) failed uploads")
+
+        var completedRetries: [Int] = []
+
+        for (index, var upload) in retryQueue.enumerated() {
+            guard upload.canRetry else {
+                ELOG("Upload exceeded retry limits: \(upload.type)")
+                completedRetries.append(index)
+                continue
+            }
+
+            // Wait for retry delay
+            let delay = upload.nextRetryDelay
+            VLOG("Retrying upload after \(delay)s delay: \(upload.type)")
+            try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+
+            upload.attemptCount += 1
+
+            do {
+                // Attempt retry based on upload type
+                switch upload.type {
+                case .rom(let md5):
+                    if let game = RomDatabase.sharedInstance.game(withMD5: md5) {
+                        try await romsSyncer.uploadGame(game)
+                        ILOG("Successfully retried ROM upload: \(md5)")
+                        completedRetries.append(index)
+                    } else {
+                        ELOG("ROM not found for retry: \(md5)")
+                        completedRetries.append(index)
+                    }
+
+                case .saveState(let id):
+                    let realm = try await Realm()
+                    if let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: id) {
+                        try await saveStatesSyncer.uploadSaveState(for: saveState).toAsync()
+                        ILOG("Successfully retried save state upload: \(id)")
+                        completedRetries.append(index)
+                    } else {
+                        ELOG("Save state not found for retry: \(id)")
+                        completedRetries.append(index)
+                    }
+
+                case .bios(let id):
+                    // BIOS syncer not implemented yet, skip for now
+                    WLOG("BIOS syncer not implemented, skipping retry: \(id)")
+                    completedRetries.append(index)
+
+                case .nonDatabase(let path):
+                    // Non-database files are harder to retry individually
+                    // For now, just remove from queue
+                    WLOG("Skipping non-database file retry: \(path)")
+                    completedRetries.append(index)
+                }
+
+            } catch {
+                WLOG("Retry attempt \(upload.attemptCount) failed for \(upload.type): \(error.localizedDescription)")
+
+                if upload.attemptCount >= maxRetryAttempts {
+                    ELOG("Upload failed after \(maxRetryAttempts) attempts: \(upload.type)")
+                    completedRetries.append(index)
+                } else {
+                    // Update the upload in the queue with new attempt count
+                    retryQueue[index] = upload
+                }
+            }
+        }
+
+        // Remove completed retries (in reverse order to maintain indices)
+        for index in completedRetries.sorted(by: >) {
+            retryQueue.remove(at: index)
+        }
+
+        if !retryQueue.isEmpty {
+            WLOG("\(retryQueue.count) uploads remain in retry queue")
+        } else {
+            ILOG("Retry queue processed successfully")
+        }
+    }
+
     // MARK: - Private Methods
 
     /// Sync all ROMs to CloudKit
+    /// - Parameter forceSync: If true, upload all ROMs regardless of existing cloudRecordID
     /// - Returns: Number of ROMs synced
     // TODO: I would prefer this not be main actor, but realm keeps crashing, even making a local realm @JoeMatt
     @MainActor
-    private func syncAllROMs() async -> Int {
+    private func syncAllROMs(forceSync: Bool = false) async -> Int {
         DLOG("Syncing all ROMs to CloudKit...")
 
         do {
-            // Get all ROMs from Realm
+            // Get all ROMs from Realm and convert to array to avoid Realm threading issues
             let realm = try! await Realm()
-            let games = realm.objects(PVGame.self)
+            let realmGames = realm.objects(PVGame.self)
+            let games = Array(realmGames) // Convert to array to avoid Realm invalidation issues
 
             DLOG("Found \(games.count) ROMs in Realm")
 
@@ -358,17 +516,16 @@ public actor CloudKitInitialSyncer {
                 syncProgressSubject.send(progress)
             }
 
-            // Create CloudKit syncer from the shared manager
-            guard let syncer = CloudSyncManager.shared.romsSyncer else {
-                ELOG("RomsSyncer not available from CloudSyncManager.shared. Aborting ROM initial sync.")
-                return 0 // Or throw an error?
-            }
+            // Use the injected ROM syncer
 
             // Sync each ROM
             var syncedCount = 0
-            for (index, game) in games.enumerated() {
-                // Skip if already synced
-                if game.cloudRecordID != nil && !game.cloudRecordID!.isEmpty {
+            DLOG("Starting to process \(games.count) ROMs...")
+
+                        for (index, game) in games.enumerated() {
+                DLOG("Processing ROM \(index + 1)/\(games.count): \(game.title) (\(game.md5 ?? "no-md5"))")
+                // Skip logic: only skip if not forcing sync AND record has cloudRecordID
+                if !forceSync && game.cloudRecordID != nil && !game.cloudRecordID!.isEmpty {
                     VLOG("ROM already synced: \(game.title) (\(game.md5))")
 
                     // Update progress
@@ -381,9 +538,15 @@ public actor CloudKitInitialSyncer {
                     continue
                 }
 
+                if forceSync {
+                    DLOG("Force sync: uploading ROM regardless of existing cloudRecordID: \(game.title) (\(game.md5))")
+                } else {
+                    DLOG("No cloudRecordID found, uploading ROM: \(game.title) (\(game.md5))")
+                }
+
                 do {
                     let frozenGame = game.freeze()
-                    try await syncer.uploadGame(frozenGame)
+                    try await romsSyncer.uploadGame(frozenGame)
 
                     syncedCount += 1
                     DLOG("Successfully initiated upload for ROM: \(frozenGame.title) (\(frozenGame.md5))")
@@ -398,11 +561,22 @@ public actor CloudKitInitialSyncer {
                          syncedCount += 1 // Count it as done for initial sync progress
                     } else {
                         ELOG("Error uploading ROM \(game.title) (\(game.md5)): \(error.localizedDescription)")
-                        // Error is logged within uploadGame, but we log here too for context
+
+                        // Add to retry queue for later processing
+                        if let md5 = game.md5 {
+                            let retryUpload = RetryableUpload(type: .rom(md5: md5), error: error)
+                            await addToRetryQueue(retryUpload)
+                        }
                     }
 
                 } catch {
                     ELOG("Error uploading ROM \(game.title) (\(game.md5)): \(error.localizedDescription)")
+
+                    // Add to retry queue for later processing
+                    if let md5 = game.md5 {
+                        let retryUpload = RetryableUpload(type: .rom(md5: md5), error: error)
+                        await addToRetryQueue(retryUpload)
+                    }
                 }
 
                 // Update progress (moved outside the try-catch for simplicity, updates regardless of success/failure/skip)
@@ -421,16 +595,17 @@ public actor CloudKitInitialSyncer {
     }
 
     /// Sync all save states to CloudKit
+    /// - Parameter forceSync: If true, upload all save states regardless of existing cloudRecordID
     /// - Returns: Number of save states synced
     // TODO: I would prefer this not be main actor, but realm keeps crashing, even making a local realm @JoeMatt
     @MainActor
-    private func syncAllSaveStates() async -> Int {
+    private func syncAllSaveStates(forceSync: Bool = false) async -> Int {
         DLOG("Syncing all save states to CloudKit...")
 
         do {
             // Get all save states from Realm
             let realm = try! await Realm()
-            let saveStates = realm.objects(PVSaveState.self)
+            let saveStates = Array(realm.objects(PVSaveState.self)) // Convert to array to avoid invalidation
 
             DLOG("Found \(saveStates.count) save states in Realm")
 
@@ -441,16 +616,13 @@ public actor CloudKitInitialSyncer {
                 syncProgressSubject.send(progress)
             }
 
-            // Create CloudKit syncer with proper managed directories
-            let errorHandler = CloudSyncErrorHandler()
-            // Initialize with both "Saves" and "Save States" as managed directories to handle different path formats
-            let syncer = CloudKitSaveStatesSyncer(container: container, directories: ["Saves", "Save States"], errorHandler: errorHandler)
+            // Use the injected save states syncer
 
-            // Sync each save state
+                        // Sync each save state
             var syncedCount = 0
             for (index, saveState) in saveStates.enumerated() {
-                // Skip if already synced
-                if saveState.cloudRecordID != nil && !saveState.cloudRecordID!.isEmpty {
+                // Skip logic: only skip if not forcing sync AND record has cloudRecordID
+                if !forceSync && saveState.cloudRecordID != nil && !saveState.cloudRecordID!.isEmpty {
                     VLOG("Save state already synced: \(saveState.fileName)")
 
                     // Update progress
@@ -463,41 +635,16 @@ public actor CloudKitInitialSyncer {
                     continue
                 }
 
-                // Get save state file path
-                guard let filePath = saveState.file?.partialPath else {
-                    WLOG("Save state has no file path: \(saveState.fileName)")
-                    continue
-                }
-
-                // Create proper file URL from path
-                // First, check if the path is already absolute
-                let fileURL: URL
-                if filePath.hasPrefix("/") {
-                    // Path is already absolute
-                    fileURL = URL(fileURLWithPath: filePath)
+                if forceSync {
+                    DLOG("Force sync: uploading save state regardless of existing cloudRecordID: \(saveState.fileName)")
                 } else {
-                    // Path is relative, construct from documents directory
-                    let documentsURL = URL.documentsPath
-                    fileURL = documentsURL.appendingPathComponent(filePath)
-                }
-
-                DLOG("Save state file path: \(fileURL.path)")
-
-                // Check if file exists
-                guard FileManager.default.fileExists(atPath: fileURL.path) else {
-                    WLOG("Save state file does not exist: \(fileURL.path)")
-                    continue
+                    DLOG("No cloudRecordID found, uploading save state: \(saveState.fileName)")
                 }
 
                 do {
-                    // Upload save state to CloudKit
+                    // Upload save state using the protocol method
                     DLOG("Uploading save state \(index + 1)/\(saveStates.count): \(saveState.fileName)")
-                    let record = try await syncer.uploadFile(fileURL, gameID: saveState.game.id, systemID: saveState.game.system?.systemIdentifier)
-
-                    // Update Realm object with CloudKit record ID
-                    try await realm.asyncWrite {
-                        saveState.cloudRecordID = record.recordID.recordName
-                    }
+                    try await saveStatesSyncer.uploadSaveState(for: saveState).toAsync()
 
                     syncedCount += 1
 
@@ -510,6 +657,10 @@ public actor CloudKitInitialSyncer {
                     DLOG("Successfully uploaded save state: \(saveState.fileName)")
                 } catch {
                     ELOG("Error uploading save state \(saveState.fileName): \(error.localizedDescription)")
+
+                    // Add to retry queue for later processing
+                    let retryUpload = RetryableUpload(type: .saveState(id: saveState.id), error: error)
+                    await addToRetryQueue(retryUpload)
                 }
             }
 
@@ -522,16 +673,17 @@ public actor CloudKitInitialSyncer {
     }
 
     /// Sync all BIOS files to CloudKit
+    /// - Parameter forceSync: If true, upload all BIOS files regardless of existing cloudRecordID
     /// - Returns: Number of BIOS files synced
     // TODO: I would prefer this not be main actor, but realm keeps crashing, even making a local realm @JoeMatt
     @MainActor
-    private func syncAllBIOSFiles() async -> Int {
+    private func syncAllBIOSFiles(forceSync: Bool = false) async -> Int {
         DLOG("Syncing all BIOS files to CloudKit...")
 
         do {
             // Get all BIOS files from Realm
             let realm = try! await Realm()
-            let biosFiles = realm.objects(PVBIOS.self)
+            let biosFiles = Array(realm.objects(PVBIOS.self))
 
             DLOG("Found \(biosFiles.count) BIOS files in Realm")
 
@@ -619,17 +771,15 @@ public actor CloudKitInitialSyncer {
     }
 
     /// Sync all non-database files to CloudKit (Battery States, Screenshots, DeltaSkins)
+    /// - Parameter forceSync: If true, upload all files regardless of existing records
     /// - Returns: Dictionary mapping directory names to sync counts
-    private func syncAllNonDatabaseFiles() async -> [String: Int] {
+    private func syncAllNonDatabaseFiles(forceSync: Bool = false) async -> [String: Int] {
         DLOG("Syncing all non-database files to CloudKit...")
 
         do {
-            // Create CloudKit syncer for non-database files
-            let errorHandler = CloudSyncErrorHandler()
-            let syncer = CloudKitNonDatabaseSyncer(container: container, errorHandler: errorHandler)
-
+            // Use the injected non-database syncer
             // Get all files in all directories
-            let allFiles = await syncer.getAllFiles()
+            let allFiles = await nonDatabaseSyncer.getAllFiles()
 
             // Initialize results dictionary
             var syncCounts: [String: Int] = [:]
@@ -640,7 +790,7 @@ public actor CloudKitInitialSyncer {
             // Process Battery States
             if let batteryStateFiles = allFiles["Battery States"] {
                 progress.batteryStatesTotal = batteryStateFiles.count
-                syncCounts["Battery States"] = await syncFiles(batteryStateFiles, using: syncer, progressUpdater: { completedCount in
+                syncCounts["Battery States"] = await syncFiles(batteryStateFiles, using: nonDatabaseSyncer, progressUpdater: { completedCount in
                     progress.batteryStatesCompleted = completedCount
                     return progress
                 })
@@ -649,7 +799,7 @@ public actor CloudKitInitialSyncer {
             // Process Screenshots
             if let screenshotFiles = allFiles["Screenshots"] {
                 progress.screenshotsTotal = screenshotFiles.count
-                syncCounts["Screenshots"] = await syncFiles(screenshotFiles, using: syncer, progressUpdater: { completedCount in
+                syncCounts["Screenshots"] = await syncFiles(screenshotFiles, using: nonDatabaseSyncer, progressUpdater: { completedCount in
                     progress.screenshotsCompleted = completedCount
                     return progress
                 })
@@ -658,7 +808,7 @@ public actor CloudKitInitialSyncer {
             // Process DeltaSkins
             if let deltaSkinFiles = allFiles["DeltaSkins"] {
                 progress.deltaSkinsTotal = deltaSkinFiles.count
-                syncCounts["DeltaSkins"] = await syncFiles(deltaSkinFiles, using: syncer, progressUpdater: { completedCount in
+                syncCounts["DeltaSkins"] = await syncFiles(deltaSkinFiles, using: nonDatabaseSyncer, progressUpdater: { completedCount in
                     progress.deltaSkinsCompleted = completedCount
                     return progress
                 })
@@ -686,7 +836,7 @@ public actor CloudKitInitialSyncer {
     ///   - syncer: The syncer to use for uploading
     ///   - progressUpdater: Closure that updates the progress with the completed count
     /// - Returns: Number of files successfully synced
-    private func syncFiles(_ files: [URL], using syncer: CloudKitSyncer, progressUpdater: @escaping (Int) -> CloudKitInitialSyncProgress) async -> Int {
+    private func syncFiles(_ files: [URL], using syncer: any SyncProvider, progressUpdater: @escaping (Int) -> CloudKitInitialSyncProgress) async -> Int {
         var syncedCount = 0
         let totalFiles = files.count
 
@@ -720,8 +870,13 @@ public actor CloudKitInitialSyncer {
                             // Upload file
                             let parentDirectoryName = fileURL.deletingLastPathComponent().lastPathComponent
                             let systemID = SystemIdentifier(rawValue: parentDirectoryName)
-                            _ = try await syncer.uploadFile(fileURL, gameID: nil, systemID: systemID)
-                            return (fileURL, true, nil)
+                            // Cast to CloudKitNonDatabaseSyncer since we know it implements uploadFile
+                            if let cloudKitSyncer = syncer as? CloudKitNonDatabaseSyncer {
+                                _ = try await cloudKitSyncer.uploadFile(fileURL, gameID: nil, systemID: systemID)
+                                return (fileURL, true, nil)
+                            } else {
+                                return (fileURL, false, NSError(domain: "SyncError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Syncer does not support uploadFile"]))
+                            }
                         } catch {
                             return (fileURL, false, error)
                         }

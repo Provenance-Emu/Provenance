@@ -13,6 +13,10 @@ public protocol NonDatabaseFileSyncing: SyncProvider {
     /// - Returns: Array of file URLs
     func getAllFiles(in directory: String) async -> [URL]
 
+    /// Get all files in all managed directories
+    /// - Returns: Dictionary mapping directory names to arrays of file URLs
+    func getAllFiles() async -> [String: [URL]]
+
     /// Check if a file is downloaded locally
     /// - Parameter filename: The filename to check
     /// - Returns: True if the file is downloaded locally

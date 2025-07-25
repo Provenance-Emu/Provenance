@@ -23,28 +23,28 @@ extension CloudSyncManager {
     public enum SyncStatus: Equatable {
         /// Idle - no sync in progress
         case idle
-        
+
         /// Syncing - general sync in progress (use more specific states if possible)
         case syncing
-        
+
         /// Initial sync - first-time sync or checking all records
         case initialSync
-        
+
         /// Uploading - upload in progress
         case uploading
-        
+
         /// Downloading - download in progress
         case downloading
-        
+
         /// Initializing - sync providers are being set up
         case initializing
-        
+
         /// Error - sync encountered an error
         case error(Error)
-        
+
         /// Disabled - sync is turned off in settings
         case disabled
-        
+
         public static func == (lhs: SyncStatus, rhs: SyncStatus) -> Bool {
             switch (lhs, rhs) {
             case (.idle, .idle),
@@ -162,13 +162,42 @@ public class CloudSyncManager {
         let syncCount = await CloudKitInitialSyncer.shared.performInitialSync(forceSync: false) // Don't force unless specific reason
         DLOG("CloudKit initial sync completed - potentially uploaded \(syncCount) new records.")
 
-        // TODO: Implement fetching changes from CloudKit after initial upload
-        // This might involve calling fetch methods on each syncer or using CKFetchDatabaseChangesOperation
-        DLOG("TODO: Implement fetching remote changes from CloudKit.")
+        // Fetch remote changes from CloudKit
+        DLOG("Fetching remote changes from CloudKit...")
+        updateSyncStatus(.downloading)
 
-        // For now, just update status
+        await fetchRemoteChanges()
+
+        // Update status to idle
         updateSyncStatus(.idle)
         DLOG("Initial sync phase complete.")
+    }
+
+    /// Fetch only remote changes without doing initial sync
+    /// Useful for responding to CloudKit notifications
+    public func fetchRemoteChangesOnly() async {
+        guard Defaults[.iCloudSync] else {
+            DLOG("iCloud sync disabled, skipping fetchRemoteChangesOnly.")
+            return
+        }
+
+        // Initialize sync providers if needed
+        if romsSyncer == nil || saveStatesSyncer == nil || nonDatabaseSyncer == nil {
+            initializeSyncProviders()
+        }
+
+        guard romsSyncer != nil || saveStatesSyncer != nil || nonDatabaseSyncer != nil else {
+            ELOG("Sync providers failed to initialize. Aborting fetch.")
+            return
+        }
+
+        updateSyncStatus(.downloading)
+        DLOG("Fetching remote changes from CloudKit...")
+
+        await fetchRemoteChanges()
+
+        updateSyncStatus(.idle)
+        DLOG("Remote fetch complete.")
     }
 
     /// Upload a ROM file to the cloud
@@ -273,6 +302,46 @@ public class CloudSyncManager {
 
     // MARK: - Private Methods
 
+    /// Fetch remote changes from CloudKit
+    private func fetchRemoteChanges() async {
+        DLOG("Starting to fetch remote changes from CloudKit...")
+
+        // Fetch ROM changes
+        if let romsSyncer = romsSyncer {
+            do {
+                DLOG("Fetching remote ROM changes...")
+                _ = try await romsSyncer.loadAllFromCloud(iterationComplete: nil).toAsync()
+                DLOG("Successfully fetched remote ROM changes")
+            } catch {
+                ELOG("Error fetching remote ROM changes: \(error.localizedDescription)")
+            }
+        }
+
+        // Fetch Save State changes
+        if let saveStatesSyncer = saveStatesSyncer {
+            do {
+                DLOG("Fetching remote save state changes...")
+                _ = try await saveStatesSyncer.loadAllFromCloud(iterationComplete: nil).toAsync()
+                DLOG("Successfully fetched remote save state changes")
+            } catch {
+                ELOG("Error fetching remote save state changes: \(error.localizedDescription)")
+            }
+        }
+
+        // Fetch Non-Database file changes (BIOS, screenshots, etc.)
+        if let nonDatabaseSyncer = nonDatabaseSyncer {
+            do {
+                DLOG("Fetching remote non-database file changes...")
+                _ = try await nonDatabaseSyncer.loadAllFromCloud(iterationComplete: nil).toAsync()
+                DLOG("Successfully fetched remote non-database file changes")
+            } catch {
+                ELOG("Error fetching remote non-database file changes: \(error.localizedDescription)")
+            }
+        }
+
+        DLOG("Completed fetching remote changes from CloudKit")
+    }
+
     /// Initialize sync providers
     private func initializeSyncProviders() {
         let syncMode = Defaults[.iCloudSyncMode]
@@ -295,9 +364,15 @@ public class CloudSyncManager {
 
         // 3. Initialize BIOS Syncer using factory
         // Note: We don't store this directly but it's available through the factory
-        
+
         // 4. Initialize Non-Database Syncer (CloudKit only for now)
-        let nonDBSyncDirectories: Set<String> = ["BIOS", "Battery States", "Screenshots", "RetroArch", "DeltaSkins"]
+        let nonDBSyncDirectories: Set<String> = [
+            "BIOS",
+            "Battery States",
+            "Screenshots",
+//            "RetroArch",
+            "DeltaSkins"
+        ]
         self.nonDatabaseSyncer = SyncProviderFactory.createNonDatabaseSyncProvider(
             container: container,
             for: nonDBSyncDirectories,
@@ -315,6 +390,15 @@ public class CloudSyncManager {
             self.nonDatabaseSyncer = nil
         } else {
             DLOG("CloudKit sync providers initialized successfully.")
+
+            // Configure CloudKitInitialSyncer with the initialized providers
+            CloudKitInitialSyncer.configureShared(
+                romsSyncer: romsSyncer!,
+                saveStatesSyncer: saveStatesSyncer!,
+                nonDatabaseSyncer: nonDatabaseSyncer!
+            )
+            DLOG("CloudKitInitialSyncer configured with dependency injection.")
+
             // Don't immediately set to idle, let startSync manage state
             // updateSyncStatus(.idle)
         }
