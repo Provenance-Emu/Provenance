@@ -1,7 +1,9 @@
 # TODO.md
 
-## Before merge to develop
+## Before merge to release
 
+- [ ] Better screenshot support (protocol, fix gamecube and retroarch)
+- [X] Dolhin hacks options, especially vbi sync off
 - [ ] Fix rotation
 - [ ] Option to use a custom skin or not
 - [ ] if rotate and same skin, don't reload
@@ -21,6 +23,11 @@
 
 ## Other
 
+- [ ] Moveable buttons goes weird
+- [ ] Moveable buttons in the pause menu and close button
+- [ ] Indicator in import queue for roms that are being copied from the cloud
+- [ ] Indicator on game start that could games are being downloaded
+- [ ] Add mutli-select delete/move/favorite support
 - [ ] Hookup PVMediaCache trimDiskCache, fix it, and make it work with the status info thing (maybe add a force button too)
 - [ ] retroarch audio visualizer
 - [ ] test v-sync
