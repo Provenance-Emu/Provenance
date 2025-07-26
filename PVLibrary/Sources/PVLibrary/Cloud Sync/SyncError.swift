@@ -19,4 +19,10 @@ public enum CloudSyncError: Error {
     case realmError(Error)
     case unknown
     case recordNotFound
+    
+    // CloudKit Account Status Errors
+    case noAccount // No iCloud account configured
+    case accountRestricted // iCloud account is restricted
+    case accountStatusUnknown // Could not determine account status
+    case accountTemporarilyUnavailable // Account temporarily unavailable
 }

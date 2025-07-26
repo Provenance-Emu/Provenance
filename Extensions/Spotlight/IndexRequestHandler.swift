@@ -50,7 +50,7 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
             let realm = database.realm
             
             // Get the game and freeze it so it can be used across threads
-            return realm.object(ofType: PVGame.self, forPrimaryKey: md5)?.freeze()
+            return realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())?.freeze()
         }
         
         /// Get all games
@@ -254,7 +254,7 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
                 
                 // Create a new Realm instance directly
                 let realm = try RomDatabase.sharedInstance.realm
-                let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5)
+                let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())
                 
                 if let game = game, let artworkURL = game.pathOfCachedImage {
                     ILOG("Spotlight: Found artwork for game with md5: \(md5)")

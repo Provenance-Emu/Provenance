@@ -529,7 +529,7 @@ public struct BatchArtworkMatchingView: View {
                 guard let artwork = artworkResults[md5] else { continue }
                 
                 // Find the game in the database
-                guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5) else { continue }
+                guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else { continue }
                 
                 // Download the artwork
                 do {

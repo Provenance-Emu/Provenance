@@ -14,6 +14,9 @@ import PVSupport
 import RxSwift
 import ZipArchive
 import RealmSwift // Ensure RealmSwift is imported for error codes
+import PVLookup
+import PVLookupTypes
+import PVMediaCache
 
 // Define the type for the retry function
 public typealias CloudKitRetryOperation<T> = (_ operation: @escaping () async throws -> T, _ maxRetries: Int, _ progressTracker: SyncProgressTracker?) async throws -> T
@@ -77,20 +80,34 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             // TODO: Consider limiting fields fetched if only specific data is needed initially.
             let (matchResults, _) = try await database.records(matching: query)
 
+            // First, collect all successful records
             for (_, result) in matchResults {
                 switch result {
                 case .success(let record):
                     allRecords.append(record)
-                    // Process record - check if local exists, update status, trigger download if needed
-                    await processCloudRecord(record)
-                    VLOG("Processed ROM record: \(record.recordID.recordName)")
                 case .failure(let error):
                     WLOG("Failed to fetch a specific ROM record during loadAll: \(error.localizedDescription)")
                     // Decide if we should continue or propagate the error
                 }
             }
 
-            ILOG("Finished loadAllFromCloud. Processed \(allRecords.count) ROM records for download.")
+            // Sort records by file size (smallest first) for better download reliability
+            let sortedRecords = allRecords.sorted { record1, record2 in
+                let size1 = extractFileSize(from: record1)
+                let size2 = extractFileSize(from: record2)
+                return size1 < size2
+            }
+
+            ILOG("Found \(allRecords.count) ROM records, sorted by file size for reliable downloading")
+
+            // Now process the sorted records
+            for record in sortedRecords {
+                // Process record - check if local exists, update status, trigger download if needed
+                await processCloudRecord(record)
+                VLOG("Processed ROM record: \(record.recordID.recordName)")
+            }
+
+            ILOG("Finished loadAllFromCloud. Processed \(sortedRecords.count) ROM records for download.")
             // Records have been processed individually above
 
         } catch {
@@ -218,7 +235,13 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         return nil
     }
 
-    public func uploadGame(_ game: PVGame) async throws {
+    @MainActor
+    public func uploadGame(_ md5: String) async throws {
+        let realm = try await Realm()
+        guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
+            throw CloudSyncError.invalidData
+        }
+        
         guard let md5 = game.md5, !md5.isEmpty else {
             ELOG("Cannot upload game without MD5: \(game.title)")
             throw CloudSyncError.invalidData
@@ -252,11 +275,11 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
 
         // 3. Prepare Asset (CKAsset) - Zip if necessary using ZipArchive
-        guard let primaryFileURL = game.file?.url else {
+        guard let primaryFileURL = PVEmulatorConfiguration.path(forGame: game) else {
             ELOG("Cannot upload game \(md5): Missing primary file URL.")
             throw CloudSyncError.invalidData
         }
-        let relatedFileURLs = game.relatedFiles.compactMap { $0.url }
+        let relatedFileURLs = game.relatedFiles.filter { $0.url?.lastPathComponent != primaryFileURL.lastPathComponent }.compactMap { $0.url }
         let filesToPackage = [primaryFileURL] + relatedFileURLs
 
         var asset: CKAsset?
@@ -420,7 +443,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
             if let localGame = existingLocalGame {
                 ILOG("🔄 Local game found for MD5 \(md5). Updating from cloud record: \(localGame.title) (isDownloaded: \(localGame.isDownloaded))")
-                try await updatePVGame(from: record, localGame: localGame)
+                try await updatePVGame(from: record, gameMD5: md5)
                 updatedOrCreatedGame = RomDatabase.sharedInstance.game(withMD5: md5)
             } else {
                 ILOG("🆕 No local game found for MD5 \(md5). Creating from cloud record...")
@@ -529,7 +552,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
                 if let localGame = existingLocalGame {
                     VLOG("Local game found for MD5 \(md5). Updating...")
-                    try await updatePVGame(from: record, localGame: localGame)
+                    try await updatePVGame(from: record, gameMD5: localGame.md5Hash)
                     // Re-fetch in case update modified it significantly or mapping requires it
                     updatedOrCreatedGame = RomDatabase.sharedInstance.game(withMD5: md5)
                 } else {
@@ -734,7 +757,12 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         return record
     }
 
-    private func updatePVGame(from record: CKRecord, localGame: PVGame) async throws {
+    private func updatePVGame(from record: CKRecord, gameMD5: String) async throws {
+        // Fetch a fresh game instance on this thread
+        guard let localGame = RomDatabase.sharedInstance.game(withMD5: gameMD5) else {
+            throw CloudSyncError.invalidData
+        }
+
         ILOG("Updating local game \(localGame.md5 ?? "nil") from CloudKit record \(record.recordID.recordName).")
 
         // Modification Date Check (Option B)
@@ -815,6 +843,14 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             }
         } // End write transaction
         VLOG("Finished updating game: \(localGame.title) (MD5: \(localGame.md5 ?? "unknown"))")
+
+        // Enhance with artwork if game doesn't already have any
+        if localGame.originalArtworkFile == nil && localGame.customArtworkURL.isEmpty {
+            ILOG("🎨 Game \(localGame.title) has no artwork, attempting lookup...")
+            // Pass MD5 instead of the Realm object to avoid threading issues
+            await enhanceGameWithArtworkAndMetadata(md5: gameMD5)
+            ILOG("🎨 Artwork enhancement completed for game with MD5: \(gameMD5)")
+        }
     }
 
     private func createPVGame(from record: CKRecord) async throws -> PVGame? {
@@ -834,7 +870,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             WLOG("Skipping PVGame creation: Local PVSystem with identifier '\(systemIdentifier)' not found for CloudKit record \(record.recordID.recordName). App update might be required.")
             return nil // Skip creation, don't treat as fatal error
         }
-
+        
         // 3. Create and Populate the new PVGame object
         // Note: Creation should happen outside a write block if we're just initializing
         let newGame = PVGame()
@@ -861,9 +897,14 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         // 4. Add the new game to the database using RomDatabase.shared
         do {
-            try RomDatabase.sharedInstance.add(newGame) // Add the fully populated object
+            try RomDatabase.sharedInstance.add(newGame, update: true) // Add the fully populated object
             ILOG("✅ Successfully created and added new PVGame \(title) (MD5: \(md5)) from CloudKit record \(record.recordID.recordName). isDownloaded: \(newGame.isDownloaded)")
-            return newGame
+
+            // Perform artwork and metadata lookup for the new game
+            await enhanceGameWithArtworkAndMetadata(md5: md5)
+
+            // Return the updated game from the database
+            return RomDatabase.sharedInstance.game(withMD5: md5)
         } catch let error as NSError where error.code == 1 /* RLMErrorPrimaryKeyExists */ {
             WLOG("Attempted to create PVGame for MD5 \(md5), but it already exists. Fetching existing.")
             // If it already exists, fetch and return the existing one
@@ -871,6 +912,206 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         } catch {
             ELOG("Failed to add new PVGame \(title) (MD5: \(md5)) to Realm: \(error.localizedDescription)")
             throw CloudSyncError.realmError(error)
+        }
+    }
+
+        /// Perform artwork and metadata lookup for a game created from CloudKit
+    /// - Parameter md5: The MD5 hash of the game to enhance with artwork and metadata
+    private func enhanceGameWithArtworkAndMetadata(md5: String) async {
+        ILOG("🎨 Starting artwork and metadata lookup for game with MD5: \(md5)")
+
+        // Fetch a fresh game instance on this thread
+        guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else {
+            WLOG("🎨 Game with MD5 \(md5) not found for artwork enhancement")
+            return
+        }
+
+        // First, try to get updated game info (metadata lookup)
+        await getUpdatedGameInfo(forMD5: md5)
+
+        // Then, try to get artwork
+        await getArtwork(forGameMD5: md5)
+
+        ILOG("🎨 Completed artwork lookup for game with MD5: \(md5)")
+    }
+
+    /// Get updated game metadata from PVLookup database
+    /// - Parameter md5: The MD5 hash of the game to lookup metadata for
+    @MainActor
+    private func getUpdatedGameInfo(forMD5 md5: String) async {
+        do {
+            let realm = try await Realm()
+            // Fetch a fresh game instance on this thread
+            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
+                WLOG("Game with MD5 \(md5) not found for metadata lookup")
+                return
+            }
+
+            let lookup = PVLookup.shared
+            var resultsMaybe: [ROMMetadata]?
+
+            // Try MD5 lookup first
+            if !game.md5Hash.isEmpty {
+                resultsMaybe = try? await lookup.searchDatabase(usingMD5: game.md5Hash, systemID: nil)
+            }
+
+            // Try filename lookup if MD5 failed
+            if resultsMaybe == nil || resultsMaybe!.isEmpty {
+                let fileName = game.title
+                // Remove any extraneous stuff in the rom name
+                let nonCharRange: NSRange = (fileName as NSString).rangeOfCharacter(from: CharacterSet.alphanumerics.inverted)
+                var gameTitleLen: Int
+                if nonCharRange.length > 0, nonCharRange.location > 1 {
+                    gameTitleLen = nonCharRange.location - 1
+                } else {
+                    gameTitleLen = fileName.count
+                }
+                let subfileName = String(fileName.prefix(gameTitleLen))
+
+                // Convert system identifier to database ID
+                let system = SystemIdentifier(rawValue: game.systemIdentifier)
+                resultsMaybe = try? await lookup.searchDatabase(usingFilename: subfileName, systemID: system)
+            }
+
+            // If no results found, just return the original game
+            guard let results = resultsMaybe, !results.isEmpty else {
+                ILOG("No metadata found for game: \(game.title)")
+                try RomDatabase.sharedInstance.writeTransaction {
+                    game.requiresSync = false  // Mark as synced so we don't try again
+                }
+                return
+            }
+
+            var chosenResult: ROMMetadata?
+
+            // Try to find USA version first (Region ID 21)
+            chosenResult = results.first { metadata in
+                return metadata.regionID == 21 // USA region ID
+            } ?? results.first { metadata in
+                // Fallback: try matching by region string containing "USA"
+                return metadata.region?.uppercased().contains("USA") ?? false
+            }
+
+            // If no USA version found, use the first result
+            if chosenResult == nil {
+                if results.count > 1 {
+                    ILOG("Query returned \(results.count) possible matches for \(game.title). Using first result.")
+                }
+                chosenResult = results.first
+            }
+
+            // Apply the metadata to the game
+            if let result = chosenResult {
+                ILOG("Found metadata for \(game.title): \(result.gameTitle ?? "Unknown")")
+
+                try RomDatabase.sharedInstance.writeTransaction {
+                    // Update game with metadata
+                    if let gameDescription = result.gameDescription {
+                        game.gameDescription = gameDescription
+                    }
+                    if let boxImageURL = result.boxImageURL {
+                        game.originalArtworkURL = boxImageURL
+                    }
+                    if let developer = result.developer {
+                        game.developer = developer
+                    }
+                    if let publisher = result.publisher {
+                        game.publisher = publisher
+                    }
+                    if let genres = result.genres {
+                        game.genres = genres
+                    }
+                    if let regionID = result.regionID {
+                        game.regionID = regionID
+                    }
+                    if let referenceURL = result.referenceURL {
+                        game.referenceURL = referenceURL
+                    }
+                    if let releaseID = result.releaseID {
+                        game.releaseID = releaseID
+                    }
+                    game.requiresSync = false
+                }
+            }
+        } catch {
+            ELOG("Error during metadata lookup for game with MD5 \(md5): \(error.localizedDescription)")
+        }
+    }
+
+    /// Get artwork for a game
+    /// - Parameter md5: The MD5 hash of the game to get artwork for
+    @MainActor
+    private func getArtwork(forGameMD5 md5: String) async {
+        // Fetch a fresh game instance on this thread
+        guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else {
+            WLOG("Game with MD5 \(md5) not found for artwork lookup")
+            return
+        }
+
+                // Check for existing custom artwork first
+        let gameMD5 = game.md5Hash
+        if !gameMD5.isEmpty {
+            DLOG("Checking for existing custom artwork for game with MD5: \(gameMD5)")
+
+            // Try to find existing custom artwork with this MD5
+            if let customArtworkKey = PVMediaCache.findExistingCustomArtwork(forMD5: gameMD5) {
+                DLOG("Found existing custom artwork with key: \(customArtworkKey)")
+
+                // If we found a custom artwork key, set it as the customArtworkURL
+                if let localURL = PVMediaCache.filePath(forKey: customArtworkKey) {
+                    DLOG("Setting custom artwork URL: \(localURL.path)")
+                    try? RomDatabase.sharedInstance.writeTransaction {
+                        game.customArtworkURL = customArtworkKey
+                    }
+                }
+                return
+            } else {
+                DLOG("No existing custom artwork found for game with MD5: \(gameMD5)")
+            }
+        }
+
+        // Continue with original artwork handling
+        var url = game.originalArtworkURL
+        if url.isEmpty {
+            return
+        }
+
+        if PVMediaCache.fileExists(forKey: url) {
+            if let localURL = PVMediaCache.filePath(forKey: url) {
+                let file = PVImageFile(withURL: localURL, relativeRoot: .documents)
+                try? RomDatabase.sharedInstance.writeTransaction {
+                    game.originalArtworkFile = file
+                }
+                return
+            }
+        }
+
+        DLOG("Starting artwork download for \(game.title): \(url)")
+
+        // Note: Evil hack for bad domain in DB
+        url = url.replacingOccurrences(of: "gamefaqs1.cbsistatic.com/box/", with: "gamefaqs.gamespot.com/a/box/")
+        guard let artworkURL = URL(string: url) else {
+            ELOG("Invalid artwork URL for \(game.title): \(url)")
+            return
+        }
+
+        do {
+            let request = URLRequest(url: artworkURL)
+            let (data, _) = try await URLSession.shared.data(for: request)
+
+            // Cache the artwork
+            try PVMediaCache.writeData(toDisk: data, withKey: url)
+
+            // Create image file and assign to game
+            if let localURL = PVMediaCache.filePath(forKey: url) {
+                let file = PVImageFile(withURL: localURL, relativeRoot: .documents)
+                try RomDatabase.sharedInstance.writeTransaction {
+                    game.originalArtworkFile = file
+                }
+                ILOG("Successfully downloaded and cached artwork for \(game.title)")
+            }
+                } catch {
+            ELOG("Failed to download artwork for \(game.title): \(error.localizedDescription)")
         }
     }
 
@@ -1147,5 +1388,31 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             try? await FileManager.default.removeItem(at: outputURL)
             throw CloudSyncError.zipError(error) // Wrap other errors as zip errors for context
         }
+    }
+
+    /// Extract file size from a CloudKit record for sorting purposes
+    /// - Parameter record: The CloudKit record to extract file size from
+    /// - Returns: The file size in bytes, or 0 if not available
+    private func extractFileSize(from record: CKRecord) -> Int64 {
+        // Try to get file size from the record's fileSize field
+        if let fileSize = record[CloudKitSchema.ROMFields.fileSize] as? Int {
+            return Int64(fileSize)
+        }
+
+        // Try to get file size from the CKAsset if available
+        if let asset = record[CloudKitSchema.ROMFields.fileData] as? CKAsset,
+           let fileURL = asset.fileURL {
+            do {
+                let attributes = try FileManager.default.attributesOfItem(atPath: fileURL.path)
+                if let size = attributes[.size] as? Int64 {
+                    return size
+                }
+            } catch {
+                // Ignore error and fall through to default
+            }
+        }
+
+        // Default to 0 if no size information is available
+        return 0
     }
 }

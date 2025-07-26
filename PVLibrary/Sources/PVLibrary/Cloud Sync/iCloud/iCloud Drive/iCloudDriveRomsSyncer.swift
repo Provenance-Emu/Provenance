@@ -56,7 +56,12 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
     /// Upload a ROM file to the cloud (Async Version)
     /// - Parameter game: The game to upload
     /// - Throws: CloudSyncError on failure
-    public func uploadGame(_ game: PVGame) async throws {
+    public func uploadGame(_ md5: String) async throws {
+        let realm = try await Realm()
+        guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
+            throw CloudSyncError.invalidData
+        }
+        
         guard let localURL = self.localURL(for: game),
               let cloudURL = self.cloudURL(for: game) else {
             ELOG("Invalid ROM file or URLs for game: \(game.title)")
@@ -137,7 +142,7 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
             // Use a Realm write transaction to update the game properties
             try RomDatabase.sharedInstance.writeTransaction {
                 // Re-fetch game within the transaction's Realm instance
-                if let gameToUpdate = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: md5) {
+                if let gameToUpdate = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) {
                     gameToUpdate.isDownloaded = true
                     gameToUpdate.lastCloudSyncDate = Date()
                 } else {
@@ -154,7 +159,7 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
             // Use a Realm write transaction to update the game properties
             try? RomDatabase.sharedInstance.writeTransaction {
                 // Re-fetch game within the transaction's Realm instance
-                if let gameToUpdate = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: md5) {
+                if let gameToUpdate = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) {
                     gameToUpdate.isDownloaded = false
                     // We don't have an error state, just mark as not downloaded
                 } else {

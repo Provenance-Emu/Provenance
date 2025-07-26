@@ -98,14 +98,11 @@ public final class LocalGameSyncMonitor {
                         continue 
                     }
                     let insertedGame = currentResults[index]
-                    guard let md5 = insertedGame.md5 else {
-                        WLOG("Skipping upload for inserted game: Missing MD5.")
-                        continue
-                    }
+                    let md5 = insertedGame.md5Hash.uppercased()
                     Task {
                         do {
                             VLOG("Realm insertion detected for \(md5). Triggering CloudKit upload.")
-                            try await self.romsSyncer.uploadGame(insertedGame)
+                            try await self.romsSyncer.uploadGame(md5)
                             VLOG("CloudKit upload task completed for inserted game \(md5).")
                         } catch {
                             ELOG("Error uploading newly inserted game \(md5) to CloudKit: \(error)")
@@ -124,14 +121,11 @@ public final class LocalGameSyncMonitor {
                         continue 
                     }
                     let modifiedGame = currentResults[index]
-                    guard let md5 = modifiedGame.md5 else {
-                         WLOG("Skipping upload for modified game: Missing MD5.")
-                         continue
-                    }
+                    let md5 = modifiedGame.md5Hash
                     Task {
                          do {
                              VLOG("Realm modification detected for \(md5). Triggering CloudKit upload/update.")
-                             try await self.romsSyncer.uploadGame(modifiedGame)
+                             try await self.romsSyncer.uploadGame(md5)
                              VLOG("CloudKit upload/update task completed for modified game \(md5).")
                          } catch {
                              ELOG("Error uploading/updating modified game \(md5) to CloudKit: \(error)")

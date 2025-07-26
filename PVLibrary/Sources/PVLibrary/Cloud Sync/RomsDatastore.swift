@@ -37,7 +37,7 @@ actor RomsDatastore {
         else {
             return nil
         }
-        return realm.object(ofType: PVGame.self, forPrimaryKey: md5)
+        return realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())
     }
     
     /// stores game assoicated with save
@@ -135,7 +135,7 @@ actor RomsDatastore {
     /// - Parameter md5Hash: hash used to query for the game in the database
     @RealmActor
     func deleteGame(md5Hash: String) async throws {
-        guard let game: PVGame = await realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash)
+        guard let game: PVGame = await realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash.uppercased())
         else {
             return
         }

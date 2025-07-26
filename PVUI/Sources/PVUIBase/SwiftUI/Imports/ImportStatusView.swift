@@ -299,24 +299,24 @@ public struct ImportStatusView: View {
     }
 }
 
-#if DEBUG
-#Preview {
-    @ObservedObject var themeManager = ThemeManager.shared
-    var currentPalette: any UXThemePalette { themeManager.currentPalette }
-    
-    let mockImportStatusDriverData = MockImportStatusDriverData()
-    
-    ImportStatusView(
-        updatesController: mockImportStatusDriverData.pvgamelibraryUpdatesController,
-        gameImporter: mockImportStatusDriverData.gameImporter,
-        delegate: mockImportStatusDriverData) {
-            print("Import Status View Closed")
-        }
-        .onAppear {
-            themeManager.setCurrentPalette(CGAThemes.green.palette)
-        }
-}
-#endif
+//#if DEBUG
+//#Preview {
+//    @ObservedObject var themeManager = ThemeManager.shared
+//    var currentPalette: any UXThemePalette { themeManager.currentPalette }
+//    
+//    let mockImportStatusDriverData = MockImportStatusDriverData()
+//    
+//    ImportStatusView(
+//        updatesController: mockImportStatusDriverData.pvgamelibraryUpdatesController,
+//        gameImporter: mockImportStatusDriverData.gameImporter,
+//        delegate: mockImportStatusDriverData) {
+//            print("Import Status View Closed")
+//        }
+//        .onAppear {
+//            themeManager.setCurrentPalette(CGAThemes.green.palette)
+//        }
+//}
+//#endif
 
 #if os(tvOS)
 private extension ButtonStyle where Self == TVCardButtonStyle {

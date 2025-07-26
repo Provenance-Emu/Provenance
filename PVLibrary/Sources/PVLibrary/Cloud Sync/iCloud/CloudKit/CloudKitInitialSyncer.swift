@@ -434,14 +434,8 @@ public actor CloudKitInitialSyncer {
                 // Attempt retry based on upload type
                 switch upload.type {
                 case .rom(let md5):
-                    if let game = RomDatabase.sharedInstance.game(withMD5: md5) {
-                        try await romsSyncer.uploadGame(game)
-                        ILOG("Successfully retried ROM upload: \(md5)")
-                        completedRetries.append(index)
-                    } else {
-                        ELOG("ROM not found for retry: \(md5)")
-                        completedRetries.append(index)
-                    }
+                    try await romsSyncer.uploadGame(md5.uppercased())
+                    completedRetries.append(index)
 
                 case .saveState(let id):
                     let realm = try await Realm()
@@ -505,9 +499,16 @@ public actor CloudKitInitialSyncer {
             // Get all ROMs from Realm and convert to array to avoid Realm threading issues
             let realm = try! await Realm()
             let realmGames = realm.objects(PVGame.self)
-            let games = Array(realmGames) // Convert to array to avoid Realm invalidation issues
+            let unsortedGames = Array(realmGames) // Convert to array to avoid Realm invalidation issues
 
-            DLOG("Found \(games.count) ROMs in Realm")
+            // Sort games by file size (smallest first) for better reliability
+            let games = unsortedGames.sorted { game1, game2 in
+                let size1 = game1.fileSize
+                let size2 = game2.fileSize
+                return size1 < size2
+            }
+
+            DLOG("Found \(games.count) ROMs in Realm, sorted by file size (smallest first)")
 
             // Update progress
             var progress = await MainActor.run { syncProgressSubject.value }
@@ -539,17 +540,16 @@ public actor CloudKitInitialSyncer {
                 }
 
                 if forceSync {
-                    DLOG("Force sync: uploading ROM regardless of existing cloudRecordID: \(game.title) (\(game.md5))")
+                    DLOG("Force sync: uploading ROM regardless of existing cloudRecordID: \(game.title) (\(game.md5Hash))")
                 } else {
-                    DLOG("No cloudRecordID found, uploading ROM: \(game.title) (\(game.md5))")
+                    DLOG("No cloudRecordID found, uploading ROM: \(game.title) (\(game.md5Hash))")
                 }
 
                 do {
-                    let frozenGame = game.freeze()
-                    try await romsSyncer.uploadGame(frozenGame)
+                    try await romsSyncer.uploadGame(game.md5Hash)
 
                     syncedCount += 1
-                    DLOG("Successfully initiated upload for ROM: \(frozenGame.title) (\(frozenGame.md5))")
+                    DLOG("Successfully initiated upload for ROM: \(game.title) (\(game.md5Hash))")
 
                 } catch let error as CloudSyncError {
                     if case .alreadyExists = error {

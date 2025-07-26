@@ -112,7 +112,7 @@ private func calculateMD5Attempt(fileURL: URL, offset: UInt64, promise: @escapin
             }
             
             let result = hasher.finalize()
-            let hashString = result.map { String(format: "%02x", $0) }.joined()
+            let hashString = result.map { String(format: "%02x", $0) }.joined().uppercased()
             
             promise(.success(hashString))
         } catch {
@@ -158,7 +158,7 @@ func calculateMD5Synchronously(of fileURL: URL, startingAt offset: UInt64 = 0) t
         throw NSError(domain: "PVHashingErrorDomain", code: 1, userInfo: [NSLocalizedDescriptionKey: "MD5 calculation produced an empty hash."])
     }
     
-    return md5Hash
+    return md5Hash.uppercased()
 }
 
 public extension URL {

@@ -1485,7 +1485,10 @@ public final class GameImporter: GameImporting, ObservableObject {
             try await performImport(for: item)
             Task { @MainActor in
                 item.status = .success
-                let userInfo = [PVNotificationUserInfoKeys.fileNameKey: item.url.lastPathComponent]
+                let userInfo = [
+                    PVNotificationUserInfoKeys.fileNameKey: item.url.lastPathComponent,
+                    PVNotificationUserInfoKeys.md5Key: item.md5 ?? FileManager.default.md5ForFile(at: item.url),
+                ]
                 NotificationCenter.default.post(name: .PVGameImported, object: nil, userInfo: userInfo)
             }
             updateImporterStatus("Completed \(item.url.lastPathComponent)")
@@ -1500,6 +1503,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                 WLOG("GameImportQueue - processing item in queue: \(item.url) restuled in conflict.")
                 let userInfo = [
                     PVNotificationUserInfoKeys.fileNameKey: item.url.lastPathComponent,
+                    PVNotificationUserInfoKeys.md5Key: item.md5 ?? FileManager.default.md5ForFile(at: item.url),
                     PVNotificationUserInfoKeys.errorKey: error.localizedDescription
                 ]
                 NotificationCenter.default.post(name: .GameImporterFileDidFail, object: nil, userInfo: userInfo)
@@ -1517,6 +1521,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                 ELOG("GameImportQueue - processing item in queue: \(item.url) failed. Error: \(error.localizedDescription)")
                 let userInfo = [
                     PVNotificationUserInfoKeys.fileNameKey: item.url.lastPathComponent,
+                    PVNotificationUserInfoKeys.md5Key: item.md5 ?? FileManager.default.md5ForFile(at: item.url),
                     PVNotificationUserInfoKeys.errorKey: error.localizedDescription
                 ]
                 NotificationCenter.default.post(name: .GameImporterFileDidFail, object: nil, userInfo: userInfo)
@@ -1530,6 +1535,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             ELOG("GameImportQueue - processing item in queue: \(item.url) failed. Unexpected Error: \(error.localizedDescription)")
             let userInfo = [
                 PVNotificationUserInfoKeys.fileNameKey: item.url.lastPathComponent,
+                PVNotificationUserInfoKeys.md5Key: item.md5 ?? FileManager.default.md5ForFile(at: item.url),
                 PVNotificationUserInfoKeys.errorKey: error.localizedDescription
             ]
             NotificationCenter.default.post(name: .GameImporterFileDidFail, object: nil, userInfo: userInfo)

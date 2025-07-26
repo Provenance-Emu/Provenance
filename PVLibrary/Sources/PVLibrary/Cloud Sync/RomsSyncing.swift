@@ -20,9 +20,9 @@ public protocol RomsSyncing: SyncProvider {
     func cloudURL(for game: PVGame) -> URL?
     
     /// Upload a ROM file to the cloud
-    /// - Parameter game: The game to upload
+    /// - Parameter md5: The game to upload
     /// - Throws: CloudSyncError on failure
-    func uploadGame(_ game: PVGame) async throws
+    func uploadGame(_ md5: String) async throws
     
     /// Download a ROM file from the cloud
     /// - Parameter game: The game to download

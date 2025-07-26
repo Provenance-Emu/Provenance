@@ -140,11 +140,13 @@ public class CloudSyncManager {
     public func startSync() async {
         guard Defaults[.iCloudSync] else {
             DLOG("iCloud sync disabled, skipping startSync.")
+            updateSyncStatus(.disabled)
             return
         }
 
         // Initialize sync providers if needed
         if romsSyncer == nil || saveStatesSyncer == nil || nonDatabaseSyncer == nil {
+            ILOG("Initializing sync providers...")
             initializeSyncProviders()
         }
 
@@ -158,19 +160,38 @@ public class CloudSyncManager {
         DLOG("Performing initial sync check and potentially syncing all local files to CloudKit...")
         updateSyncStatus(.initialSync)
 
+        var hasErrors = false
+        var lastError: Error?
+        
         // Perform initial sync (this checks if needed internally unless forced)
-        let syncCount = await CloudKitInitialSyncer.shared.performInitialSync(forceSync: false) // Don't force unless specific reason
-        DLOG("CloudKit initial sync completed - potentially uploaded \(syncCount) new records.")
+        do {
+            let syncCount = await CloudKitInitialSyncer.shared.performInitialSync(forceSync: false)
+            DLOG("CloudKit initial sync completed - potentially uploaded \(syncCount) new records.")
+        } catch {
+            ELOG("CloudKit initial sync failed: \(error.localizedDescription)")
+            hasErrors = true
+            lastError = error
+            await errorHandler.handle(error: error)
+        }
 
-        // Fetch remote changes from CloudKit
-        DLOG("Fetching remote changes from CloudKit...")
-        updateSyncStatus(.downloading)
+        // Fetch remote changes from CloudKit only if initial sync didn't fail
+        if !hasErrors {
+            DLOG("Fetching remote changes from CloudKit...")
+            updateSyncStatus(.downloading)
+            await fetchRemoteChanges()
+        }
 
-        await fetchRemoteChanges()
-
-        // Update status to idle
-        updateSyncStatus(.idle)
-        DLOG("Initial sync phase complete.")
+        // Update status based on results
+        if hasErrors {
+            ELOG("Sync completed with errors")
+            if let error = lastError {
+                updateSyncStatus(.error(CloudSyncError.cloudKitError(error)))
+            }
+        } else if syncStatus != .error(CloudSyncError.cloudKitError(lastError ?? CloudSyncError.unknown)) {
+            // Only set to idle if we're not already in an error state from fetchRemoteChanges
+            updateSyncStatus(.idle)
+            DLOG("Initial sync phase completed successfully.")
+        }
     }
 
     /// Fetch only remote changes without doing initial sync
@@ -203,7 +224,14 @@ public class CloudSyncManager {
     /// Upload a ROM file to the cloud
     /// - Parameter game: The game to upload
     /// - Returns: Async function that completes when the upload is done or throws an error
-    public func uploadROM(for game: PVGame) async throws {
+    @MainActor
+    public func uploadROM(for md5: String) async throws {
+        
+        let realm = await try Realm()
+        guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
+            ELOG("No PVGame found for md5: \(md5.uppercased())")
+            return
+        }
         guard Defaults[.iCloudSync], let romsSyncer = romsSyncer else {
             DLOG("Sync disabled or syncer not available. Skipping ROM upload.")
             return // Or throw an error? Depends on expected behavior
@@ -211,7 +239,7 @@ public class CloudSyncManager {
 
         updateSyncStatus(.uploading, info: ["type": "ROM", "title": game.title])
         do {
-            try await romsSyncer.uploadGame(game)
+            try await romsSyncer.uploadGame(md5)
             DLOG("Successfully uploaded ROM: \(game.title)")
             updateSyncStatus(.idle)
         } catch {
@@ -305,6 +333,9 @@ public class CloudSyncManager {
     /// Fetch remote changes from CloudKit
     private func fetchRemoteChanges() async {
         DLOG("Starting to fetch remote changes from CloudKit...")
+        
+        var hasErrors = false
+        var lastError: Error?
 
         // Fetch ROM changes
         if let romsSyncer = romsSyncer {
@@ -314,7 +345,12 @@ public class CloudSyncManager {
                 DLOG("Successfully fetched remote ROM changes")
             } catch {
                 ELOG("Error fetching remote ROM changes: \(error.localizedDescription)")
+                hasErrors = true
+                lastError = error
+                await errorHandler.handle(error: error)
             }
+        } else {
+            WLOG("ROM syncer not available for fetching remote changes")
         }
 
         // Fetch Save State changes
@@ -325,7 +361,12 @@ public class CloudSyncManager {
                 DLOG("Successfully fetched remote save state changes")
             } catch {
                 ELOG("Error fetching remote save state changes: \(error.localizedDescription)")
+                hasErrors = true
+                lastError = error
+                await errorHandler.handle(error: error)
             }
+        } else {
+            WLOG("Save states syncer not available for fetching remote changes")
         }
 
         // Fetch Non-Database file changes (BIOS, screenshots, etc.)
@@ -336,10 +377,23 @@ public class CloudSyncManager {
                 DLOG("Successfully fetched remote non-database file changes")
             } catch {
                 ELOG("Error fetching remote non-database file changes: \(error.localizedDescription)")
+                hasErrors = true
+                lastError = error
+                await errorHandler.handle(error: error)
             }
+        } else {
+            WLOG("Non-database syncer not available for fetching remote changes")
         }
-
-        DLOG("Completed fetching remote changes from CloudKit")
+        
+        // Update sync status based on results
+        if hasErrors {
+            ELOG("Completed fetching remote changes with errors")
+            if let error = lastError {
+                updateSyncStatus(.error(CloudSyncError.cloudKitError(error)))
+            }
+        } else {
+            DLOG("Completed fetching remote changes from CloudKit successfully")
+        }
     }
 
     /// Initialize sync providers
@@ -347,6 +401,15 @@ public class CloudSyncManager {
         let syncMode = Defaults[.iCloudSyncMode]
         DLOG("Initializing sync providers for mode: \(syncMode.description)...")
         updateSyncStatus(.initializing)
+        
+        // Validate CloudKit container configuration
+        guard container.containerIdentifier != nil else {
+            ELOG("CloudKit container identifier is nil. Check Info.plist configuration.")
+            updateSyncStatus(.error(CloudSyncError.missingDependency))
+            return
+        }
+        
+        DLOG("CloudKit container validated: \(container.containerIdentifier!)")
 
         // Use SyncProviderFactory to create syncers based on the selected mode
         // 1. Initialize ROM Syncer using factory
@@ -472,13 +535,109 @@ public class CloudSyncManager {
 
     /// Checks CloudKit account status and initiates setup if needed.
     private func checkAccountStatusAndSetupIfNeeded() async {
-        // ... (unchanged)
+        DLOG("Checking CloudKit account status...")
+        
+        do {
+            let accountStatus = try await container.accountStatus()
+            
+            switch accountStatus {
+            case .available:
+                ILOG("CloudKit account is available. Proceeding with sync setup.")
+                // Account is good, proceed with sync
+                await startSync()
+                
+            case .noAccount:
+                ELOG("No iCloud account configured. CloudKit sync disabled.")
+                updateSyncStatus(.error(CloudSyncError.noAccount))
+                
+            case .restricted:
+                ELOG("iCloud account is restricted. CloudKit sync disabled.")
+                updateSyncStatus(.error(CloudSyncError.accountRestricted))
+                
+            case .couldNotDetermine:
+                ELOG("Could not determine iCloud account status. CloudKit sync disabled.")
+                updateSyncStatus(.error(CloudSyncError.accountStatusUnknown))
+                
+            case .temporarilyUnavailable:
+                WLOG("iCloud account temporarily unavailable. Will retry later.")
+                updateSyncStatus(.error(CloudSyncError.accountTemporarilyUnavailable))
+                
+                // Schedule a retry after a delay
+                Task {
+                    try await Task.sleep(nanoseconds: 30_000_000_000) // 30 seconds
+                    await checkAccountStatusAndSetupIfNeeded()
+                }
+                
+            @unknown default:
+                ELOG("Unknown iCloud account status: \(accountStatus). CloudKit sync disabled.")
+                updateSyncStatus(.error(CloudSyncError.accountStatusUnknown))
+            }
+            
+        } catch {
+            ELOG("Failed to check CloudKit account status: \(error.localizedDescription)")
+            updateSyncStatus(.error(CloudSyncError.cloudKitError(error)))
+        }
     }
 
     // MARK: - Notification Handlers
-
+    @MainActor
     @objc private func handleGameAdded(_ notification: Notification) {
-        // ... (unchanged)
+        guard Defaults[.iCloudSync], let romsSyncer = romsSyncer else {
+            DLOG("CloudKit sync disabled or ROM syncer not available. Skipping game upload.")
+            return
+        }
+        
+        // Extract filename from notification userInfo
+        let fileName = notification.userInfo?[PVNotificationUserInfoKeys.fileNameKey] as? String
+        let md5 = notification.userInfo?[PVNotificationUserInfoKeys.md5Key] as? String
+        
+//        precondition(fileName != nil, "Missing fileName in gameAdded notification")
+//        precondition(md5 != nil, "Missing md5 in gameAdded notification")
+        
+        // Update sync status
+        
+        ILOG("Game imported: \(fileName ?? "nil") \(md5 ?? "nil"). Uploading to CloudKit...")
+        
+        Task {
+            do {
+                // Find the game by filename (since we don't have MD5 in the notification)
+                // This is a bit inefficient but necessary given the current notification structure
+                let realm = try await Realm()
+                
+                if let md5 = md5 {
+                    guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5) ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())  else {
+                        ELOG("Game with MD5 \(md5) not found for upload")
+                        return
+                    }
+                    
+                    ILOG("Found imported game: \(game.title) (MD5: \(game.md5Hash ?? "N/A")). Uploading to CloudKit...")
+                    
+                    // Upload the game using the existing upload method
+                    try await uploadROM(for: game.md5Hash)
+                    
+                    ILOG("Successfully uploaded newly imported game: \(game.title)")
+                } else if let fileName = fileName {
+                    guard let game = realm.objects(PVGame.self).filter("romPath CONTAINS[c] %@", fileName).first else {
+                        ELOG("Game with filename \(fileName) not found for upload")
+                        return
+                    }
+                    
+                    ILOG("Found imported game: \(game.title) (MD5: \(game.md5Hash ?? "N/A")). Uploading to CloudKit...")
+                    
+                    // Upload the game using the existing upload method
+                    try await uploadROM(for: game.md5Hash)
+                    
+                    ILOG("Successfully uploaded newly imported game: \(game.title)")
+                } else {
+                    ELOG("Missing fileName or md5 in gameAdded notification")
+                    return
+                }
+            } catch {
+                ELOG("Failed to upload newly imported game \(fileName): \(error.localizedDescription)")
+                await errorHandler.handle(error: error)
+                updateSyncStatus(.error(error))
+            }
+        }
     }
 
     @objc private func handleGameWillBeDeleted(_ notification: Notification) {

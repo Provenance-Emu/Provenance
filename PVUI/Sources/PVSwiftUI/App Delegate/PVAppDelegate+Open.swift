@@ -46,7 +46,7 @@ public extension PVAppDelegate {
     internal func fetchGame(byMD5 md5: String) -> PVGame? {
         do {
             let realm = try Realm()
-            return realm.object(ofType: PVGame.self, forPrimaryKey: md5)
+            return realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())
         } catch {
             ELOG("Failed to access Realm: \(error.localizedDescription)")
             return nil

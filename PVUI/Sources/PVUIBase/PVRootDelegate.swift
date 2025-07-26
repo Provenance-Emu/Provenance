@@ -87,7 +87,7 @@ public extension PVRootDelegate {
                 let realm = try Realm()
 
                 // Find the game
-                guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5) else {
+                guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
                     showMessage("Failed to load game with MD5: \(md5)", title: "Failed to Load Game")
                     return
                 }

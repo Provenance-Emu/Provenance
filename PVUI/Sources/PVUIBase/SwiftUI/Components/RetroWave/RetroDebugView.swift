@@ -41,14 +41,14 @@ public struct RetroDebugView: View {
     // Debug state
     @State private var showDatabaseStats = false
     @State private var showImportQueue = false
-    @State private var showMockImportQueue = false
+//    @State private var showMockImportQueue = false
     @State private var showConfirmResetAlert = false
     
     // Realm importer
     @StateObject private var importStatusDriverData = AppState.shared.gameImporter ?? GameImporter.shared
 
     // Mock importer for testing
-    @StateObject private var mockImportStatusDriverData = MockImportStatusDriverData()
+//    @StateObject private var mockImportStatusDriverData = MockImportStatusDriverData()
     
     // Add these state variables at the top of the RetroDebugView struct
     @State private var showSaveStatesMock = false
@@ -108,14 +108,14 @@ public struct RetroDebugView: View {
         .sheet(isPresented: $showDatabaseStats) {
             DatabaseStatsView()
         }
-        .sheet(isPresented: $showMockImportQueue) {
-            ImportStatusView(
-                updatesController: mockImportStatusDriverData.pvgamelibraryUpdatesController,
-                gameImporter: mockImportStatusDriverData.gameImporter,
-                delegate: mockImportStatusDriverData) {
-                    showMockImportQueue = false
-                }
-        }
+//        .sheet(isPresented: $showMockImportQueue) {
+//            ImportStatusView(
+//                updatesController: mockImportStatusDriverData.pvgamelibraryUpdatesController,
+//                gameImporter: mockImportStatusDriverData.gameImporter,
+//                delegate: mockImportStatusDriverData) {
+//                    showMockImportQueue = false
+//                }
+//        }
         .sheet(isPresented: $showImportQueue) {
             ImportStatusView(
                 updatesController: appState.libraryUpdatesController!,
@@ -324,11 +324,11 @@ public struct RetroDebugView: View {
                         .padding(.vertical, 8)
 #endif
                         
-                        Button("SHOW MOCK IMPORT QUEUE") {
-                            showMockImportQueue = true
-                        }
-                        .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroYellow], glowColor: .retroBlue))
-                        .frame(maxWidth: .infinity)
+//                        Button("SHOW MOCK IMPORT QUEUE") {
+//                            showMockImportQueue = true
+//                        }
+//                        .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroYellow], glowColor: .retroBlue))
+//                        .frame(maxWidth: .infinity)
 #if os(tvOS)
                         .focusable(true)
                         .padding(.vertical, 8)
