@@ -344,6 +344,51 @@ static void ResetDolphinStaticState() {
     // Force True Color
     Config::SetBase(Config::GFX_ENHANCE_FORCE_TRUE_COLOR, self.forceTrueColor);
 
+    // === GRAPHICS HACKS (DolphinQt Parity) ===
+    
+    // Skip EFB Access from CPU (inverted logic - true means disable access)
+    Config::SetBase(Config::GFX_HACK_EFB_ACCESS_ENABLE, !self.skipEFBAccessFromCPU);
+    
+    // Ignore Format Changes (inverted logic - true means emulate format changes)
+    Config::SetBase(Config::GFX_HACK_EFB_EMULATE_FORMAT_CHANGES, !self.ignoreFormatChanges);
+    
+    // Store EFB Copies to Texture Only (skip copy to RAM)
+    Config::SetBase(Config::GFX_HACK_SKIP_EFB_COPY_TO_RAM, self.storeEFBCopiesToTextureOnly);
+    
+    // Defer EFB Copies
+    Config::SetBase(Config::GFX_HACK_DEFER_EFB_COPIES, self.deferEFBCopies);
+    
+    // Texture Cache Accuracy (note: this may need special handling as it's not a simple bool)
+    // For now, map: 0=Safe (false), 1=Medium (false), 2=Fast (true)
+    Config::SetBase(Config::GFX_HACK_FAST_TEXTURE_SAMPLING, (self.textureCacheAccuracy == 2));
+    
+    // Store XFB Copies to Texture Only (skip copy to RAM)
+    Config::SetBase(Config::GFX_HACK_SKIP_XFB_COPY_TO_RAM, self.storeXFBCopiesToTextureOnly);
+    
+    // Immediate XFB
+    Config::SetBase(Config::GFX_HACK_IMMEDIATE_XFB, self.immediateXFB);
+    
+    // Skip Duplicate XFBs
+    Config::SetBase(Config::GFX_HACK_SKIP_DUPLICATE_XFBS, self.skipDuplicateXFBs);
+    
+    // GPU Texture Decoding
+    Config::SetBase(Config::GFX_ENABLE_GPU_TEXTURE_DECODING, self.gpuTextureDecoding);
+    
+    // Fast Depth Calculation
+    Config::SetBase(Config::GFX_FAST_DEPTH_CALC, self.fastDepthCalculation);
+    
+    // Disable Bounding Box (inverted logic - true means disable, false means enable)
+    Config::SetBase(Config::GFX_HACK_BBOX_ENABLE, !self.disableBoundingBox);
+    
+    // Save Texture Cache to State
+    Config::SetBase(Config::GFX_SAVE_TEXTURE_CACHE_TO_STATE, self.saveTextureCacheToState);
+    
+    // Vertex Rounding
+    Config::SetBase(Config::GFX_HACK_VERTEX_ROUNDING, self.vertexRounding);
+    
+    // VI Skip
+    Config::SetBase(Config::GFX_HACK_VI_SKIP, self.viSkip);
+
     // === SHADER SETTINGS ===
 
     // Shader Compilation Mode

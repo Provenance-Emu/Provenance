@@ -70,6 +70,22 @@
 @property (nonatomic, assign) bool pixelLighting;
 @property (nonatomic, assign) bool forceTrueColor;
 
+// Graphics Hacks (DolphinQt Parity)
+@property (nonatomic, assign) bool skipEFBAccessFromCPU;
+@property (nonatomic, assign) bool ignoreFormatChanges;
+@property (nonatomic, assign) bool storeEFBCopiesToTextureOnly;
+@property (nonatomic, assign) bool deferEFBCopies;
+@property (nonatomic, assign) int8_t textureCacheAccuracy;
+@property (nonatomic, assign) bool storeXFBCopiesToTextureOnly;
+@property (nonatomic, assign) bool immediateXFB;
+@property (nonatomic, assign) bool skipDuplicateXFBs;
+@property (nonatomic, assign) bool gpuTextureDecoding;
+@property (nonatomic, assign) bool fastDepthCalculation;
+@property (nonatomic, assign) bool disableBoundingBox;
+@property (nonatomic, assign) bool saveTextureCacheToState;
+@property (nonatomic, assign) bool vertexRounding;
+@property (nonatomic, assign) bool viSkip;
+
 // Shader Settings
 @property (nonatomic, assign) int8_t shaderCompilationMode;
 @property (nonatomic, assign) bool waitForShaders;

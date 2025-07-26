@@ -121,6 +121,124 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
         defaultValue: true)
     }()
 
+    // MARK: - Graphics Hacks (DolphinQt Parity)
+
+    static var skipEFBAccessFromCPUOption: CoreOption = {
+        .bool(.init(
+            title: "Skip EFB Access from CPU",
+            description: "Disables EFB access from CPU for speed, but may break some games.",
+            requiresRestart: false),
+        defaultValue: true)
+    }()
+
+    static var ignoreFormatChangesOption: CoreOption = {
+        .bool(.init(
+            title: "Ignore Format Changes",
+            description: "Ignores EFB format changes for speed, but may cause graphical glitches.",
+            requiresRestart: false),
+        defaultValue: false)
+    }()
+
+    static var storeEFBCopiesToTextureOnlyOption: CoreOption = {
+        .bool(.init(
+            title: "Store EFB Copies to Texture Only",
+            description: "Stores EFB copies only to texture, not RAM. Faster but less accurate.",
+            requiresRestart: false),
+        defaultValue: true)
+    }()
+
+    static var deferEFBCopiesOption: CoreOption = {
+        .bool(.init(
+            title: "Defer EFB Copies",
+            description: "Defers EFB copies for performance. May cause issues in some games.",
+            requiresRestart: false),
+        defaultValue: false)
+    }()
+
+    static var textureCacheAccuracyOption: CoreOption = {
+        .enumeration(.init(title: "Texture Cache Accuracy",
+                          description: "Controls accuracy of the texture cache. Higher values are more accurate but slower.",
+                          requiresRestart: false),
+                    values: [
+                        .init(title: "Safe", description: "Most accurate, slowest", value: 0),
+                        .init(title: "Medium", description: "Balanced accuracy/performance", value: 1),
+                        .init(title: "Fast", description: "Least accurate, fastest", value: 2)
+                    ],
+                    defaultValue: 1)
+    }()
+
+    static var storeXFBCopiesToTextureOnlyOption: CoreOption = {
+        .bool(.init(
+            title: "Store XFB Copies to Texture Only",
+            description: "Stores XFB copies only to texture, not RAM. Faster but less accurate.",
+            requiresRestart: false),
+        defaultValue: true)
+    }()
+
+    static var immediateXFBOption: CoreOption = {
+        .bool(.init(
+            title: "Immediate XFB",
+            description: "Presents XFB copies immediately. May improve performance but can cause issues.",
+            requiresRestart: false),
+        defaultValue: false)
+    }()
+
+    static var skipDuplicateXFBsOption: CoreOption = {
+        .bool(.init(
+            title: "Skip Presenting Duplicate Frames",
+            description: "Skips presenting duplicate XFB frames. Required for VI skip.",
+            requiresRestart: false),
+        defaultValue: true)
+    }()
+
+    static var gpuTextureDecodingOption: CoreOption = {
+        .bool(.init(
+            title: "GPU Texture Decoding",
+            description: "Use GPU for texture decoding. Faster but may be less accurate.",
+            requiresRestart: false),
+        defaultValue: false)
+    }()
+
+    static var fastDepthCalculationOption: CoreOption = {
+        .bool(.init(
+            title: "Fast Depth Calculation",
+            description: "Enables fast depth calculation for performance. May cause graphical issues.",
+            requiresRestart: false),
+        defaultValue: true)
+    }()
+
+    static var disableBoundingBoxOption: CoreOption = {
+        .bool(.init(
+            title: "Disable Bounding Box",
+            description: "Disables bounding box emulation. May improve performance but breaks some games.",
+            requiresRestart: false),
+        defaultValue: false)
+    }()
+
+    static var saveTextureCacheToStateOption: CoreOption = {
+        .bool(.init(
+            title: "Save Texture Cache to State",
+            description: "Saves texture cache to save states. May improve save state accuracy but increase size.",
+            requiresRestart: false),
+        defaultValue: false)
+    }()
+
+    static var vertexRoundingOption: CoreOption = {
+        .bool(.init(
+            title: "Vertex Rounding",
+            description: "Enables vertex rounding for improved accuracy in some games.",
+            requiresRestart: false),
+        defaultValue: false)
+    }()
+
+    static var viSkipOption: CoreOption = {
+        .bool(.init(
+            title: "VI Skip",
+            description: "Skips VI updates for performance. May cause issues in some games.",
+            requiresRestart: false),
+        defaultValue: false)
+    }()
+
     // MARK: - Shader Settings
 
     static var shaderCompilationModeOption: CoreOption = {
@@ -438,6 +556,27 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
                                                  description: "Audio output and volume settings"),
                                            subOptions: audioOptions)
 
+        // Graphics Hacks Group
+        let hacksOptions: [CoreOption] = [
+            skipEFBAccessFromCPUOption,
+            ignoreFormatChangesOption,
+            storeEFBCopiesToTextureOnlyOption,
+            deferEFBCopiesOption,
+            textureCacheAccuracyOption,
+            storeXFBCopiesToTextureOnlyOption,
+            immediateXFBOption,
+            skipDuplicateXFBsOption,
+            gpuTextureDecodingOption,
+            fastDepthCalculationOption,
+            disableBoundingBoxOption,
+            saveTextureCacheToStateOption,
+            vertexRoundingOption,
+            viSkipOption
+        ]
+        let hacksGroup: CoreOption = .group(.init(title: "Graphics Hacks",
+                                                description: "Advanced graphics hacks for performance and compatibility. Change with caution."),
+                                          subOptions: hacksOptions)
+
         // System Settings Group
         let systemOptions: [CoreOption] = [
             skipIPLOption, wiiLanguageOption, multiPlayerOption, enableLoggingOption
@@ -446,7 +585,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
                                                   description: "GameCube and Wii system settings"),
                                             subOptions: systemOptions)
 
-		options.append(contentsOf: [graphicsGroup, enhancementGroup, aaGroup, shaderGroup, cpuGroup, audioGroup, systemGroup])
+		options.append(contentsOf: [graphicsGroup, enhancementGroup, hacksGroup, aaGroup, shaderGroup, cpuGroup, audioGroup, systemGroup])
 		return options
 	}
 }
@@ -489,6 +628,51 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
     }
     @objc static var forceTrueColor: Bool{
         PVDolphinCore.valueForOption(PVDolphinCoreOptions.forceTrueColorOption).asBool
+    }
+
+    // MARK: - Graphics Hacks (DolphinQt Parity)
+
+    @objc static var skipEFBAccessFromCPU: Bool {
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.skipEFBAccessFromCPUOption).asBool
+    }
+    @objc static var ignoreFormatChanges: Bool {
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.ignoreFormatChangesOption).asBool
+    }
+    @objc static var storeEFBCopiesToTextureOnly: Bool {
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.storeEFBCopiesToTextureOnlyOption).asBool
+    }
+    @objc static var deferEFBCopies: Bool {
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.deferEFBCopiesOption).asBool
+    }
+    @objc static var textureCacheAccuracy: Int {
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.textureCacheAccuracyOption).asInt ?? 1
+    }
+    @objc static var storeXFBCopiesToTextureOnly: Bool {
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.storeXFBCopiesToTextureOnlyOption).asBool
+    }
+    @objc static var immediateXFB: Bool {
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.immediateXFBOption).asBool
+    }
+    @objc static var skipDuplicateXFBs: Bool {
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.skipDuplicateXFBsOption).asBool
+    }
+    @objc static var gpuTextureDecoding: Bool {
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.gpuTextureDecodingOption).asBool
+    }
+    @objc static var fastDepthCalculation: Bool {
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.fastDepthCalculationOption).asBool
+    }
+    @objc static var disableBoundingBox: Bool {
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.disableBoundingBoxOption).asBool
+    }
+    @objc static var saveTextureCacheToState: Bool {
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.saveTextureCacheToStateOption).asBool
+    }
+    @objc static var vertexRounding: Bool {
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.vertexRoundingOption).asBool
+    }
+    @objc static var viSkip: Bool {
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.viSkipOption).asBool
     }
 
     // MARK: - Shader Settings
