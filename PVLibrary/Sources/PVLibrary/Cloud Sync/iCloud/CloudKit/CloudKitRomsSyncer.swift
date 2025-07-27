@@ -275,9 +275,15 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
 
         // 3. Prepare Asset (CKAsset) - Zip if necessary using ZipArchive
-        guard let primaryFileURL = PVEmulatorConfiguration.path(forGame: game) else {
-            ELOG("Cannot upload game \(md5): Missing primary file URL.")
+        guard let primaryFileURL = game.file?.url else {
+            ELOG("Cannot upload game \(md5): Missing primary file URL in game.file.url.")
             throw CloudSyncError.invalidData
+        }
+        
+        // Verify the file actually exists at the expected location
+        guard FileManager.default.fileExists(atPath: primaryFileURL.path) else {
+            ELOG("Cannot upload game \(md5): Primary file does not exist at \(primaryFileURL.path)")
+            throw CloudSyncError.fileSystemError(NSError(domain: "CloudKitRomsSyncer", code: 404, userInfo: [NSLocalizedDescriptionKey: "ROM file not found at expected path"]))
         }
         let relatedFileURLs = game.relatedFiles.filter { $0.url?.lastPathComponent != primaryFileURL.lastPathComponent }.compactMap { $0.url }
         let filesToPackage = [primaryFileURL] + relatedFileURLs
@@ -1219,8 +1225,53 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             }
 
             VLOG("Successfully saved record: \(savedRecord.recordID.recordName)")
+        } catch let error as CKError where error.code == .serverRecordChanged {
+            // Handle CloudKit conflict: record already exists, fetch and update it
+            WLOG("Record \(record.recordID.recordName) already exists in CloudKit. Attempting to update existing record.")
+            try await handleRecordConflict(localRecord: record, cloudKitError: error)
         } catch {
             ELOG("Failed to save record \(record.recordID.recordName): \(error.localizedDescription)")
+            throw CloudSyncError.cloudKitError(error)
+        }
+    }
+    
+    /// Handle CloudKit record conflicts by fetching the existing record and updating it
+    private func handleRecordConflict(localRecord: CKRecord, cloudKitError: CKError) async throws {
+        DLOG("Handling record conflict for \(localRecord.recordID.recordName)")
+        
+        // Fetch the existing record from CloudKit
+        guard let existingRecord = try await fetchRecord(recordID: localRecord.recordID) else {
+            ELOG("Could not fetch existing record \(localRecord.recordID.recordName) to resolve conflict")
+            throw CloudSyncError.cloudKitError(cloudKitError)
+        }
+        
+        // Update the existing record with our local changes
+        // Copy all fields from local record to existing record (preserving CloudKit metadata)
+        for key in localRecord.allKeys() {
+            existingRecord[key] = localRecord[key]
+        }
+        
+        DLOG("Updating existing CloudKit record \(existingRecord.recordID.recordName) with local changes")
+        
+        // Retry saving the updated record
+        do {
+            let result = try await retryOperation({
+                try await self.database.save(existingRecord)
+            }, 3, nil)
+            
+            guard let savedRecord = result as? CKRecord else {
+                ELOG("Retry operation returned unexpected type for conflict resolution: \(type(of: result))")
+                throw CloudSyncError.unknown
+            }
+            
+            // Update local game state AFTER successful save
+            if let md5 = savedRecord[CloudKitSchema.ROMFields.md5] as? String {
+                try await updateLocalGamePostUpload(md5: md5, record: savedRecord)
+            }
+            
+            ILOG("Successfully resolved conflict and updated record: \(savedRecord.recordID.recordName)")
+        } catch {
+            ELOG("Failed to resolve record conflict for \(localRecord.recordID.recordName): \(error.localizedDescription)")
             throw CloudSyncError.cloudKitError(error)
         }
     }
