@@ -88,6 +88,7 @@ public enum CloudKitSchema {
         public static let fileSize = "fileSize" // Int64
         public static let lastModified = "lastModified" // Date
         public static let md5 = "md5" // String? (Optional, e.g., for BIOS verification)
+        public static let lastModifiedDevice =  "lastModifiedDevice" // UUID
         // Add other relevant fields specific to generic files if needed
     }
     

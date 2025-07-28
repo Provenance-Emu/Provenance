@@ -128,12 +128,40 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                     // Upload the file to CloudKit
                     let systemPath = (saveState.game.systemIdentifier as NSString)
                     let systemDir = systemPath.components(separatedBy: "/").last ?? systemPath as String
+                    let filename = saveState.file?.fileName ?? "savestate_\(saveState.id)"
+                    let recordID = CloudKitSchema.RecordIDGenerator.saveStateRecordID(gameID: saveState.game.id, filename: filename)
                     
-                    // Save the record to CloudKit
-                    _ = try await self.uploadFile(localURL, gameID: saveState.game.id, systemID: saveState.game.system?.systemIdentifier)
+                    // Create the record with all required fields
+                    let record = CKRecord(recordType: CloudKitSchema.RecordType.saveState.rawValue, recordID: recordID)
+                    
+                    // Populate CloudKit fields according to schema
+                    record[CloudKitSchema.SaveStateFields.filename] = filename
+                    record[CloudKitSchema.SaveStateFields.directory] = "Saves"
+                    record[CloudKitSchema.SaveStateFields.systemIdentifier] = saveState.game.systemIdentifier
+                    record[CloudKitSchema.SaveStateFields.gameID] = saveState.game.id
+                    record[CloudKitSchema.SaveStateFields.lastModified] = saveState.date
+                    record[CloudKitSchema.SaveStateFields.fileSize] = self.getFileSize(from: localURL)
+                    record[CloudKitSchema.SaveStateFields.lastModifiedDevice] = UIDevice.current.identifierForVendor?.uuidString
+                    
+                    // Create asset from file
+                    let asset = CKAsset(fileURL: localURL)
+                    record[CloudKitSchema.SaveStateFields.fileData] = asset
+                    
+                    // Save to CloudKit
+                    let privateDatabase = self.container.privateCloudDatabase
+                    let savedRecord = try await privateDatabase.save(record)
+                    
+                    // Update local save state with CloudKit metadata
+                    try await MainActor.run {
+                        let realm = try Realm()
+                        try realm.write {
+                            saveState.cloudRecordID = savedRecord.recordID.recordName
+//                            saveState.lastUploadedDate = Date()
+                        }
+                    }
+                    
                     await self.insertUploadedFile(localURL)
-                    
-                    DLOG("Uploaded save state to CloudKit: \(localURL.lastPathComponent)")
+                    DLOG("Uploaded save state to CloudKit: \(filename)")
                     observer(.completed)
                 } catch let error as CKError {
                     ELOG("CloudKit error uploading save state: \(error.localizedDescription) (Code: \(error.code.rawValue))")
@@ -155,6 +183,16 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             }
             
             return Disposables.create()
+        }
+    }
+    
+    func getFileSize(from fileURL: URL) -> Int64 {
+        do {
+            let attributes = try FileManager.default.attributesOfItem(atPath: fileURL.path)
+            return (attributes[.size] as? NSNumber)?.int64Value ?? 0
+        } catch {
+            ELOG("Error getting file size from CKAsset \(fileURL.lastPathComponent): \(error.localizedDescription)")
+            return 0
         }
     }
     
@@ -295,6 +333,276 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                     observer(.error(error))
                 } catch {
                     ELOG("Unexpected error downloading save state from CloudKit: \(error.localizedDescription)")
+                    await self.errorHandler.handle(error: error)
+                    observer(.error(error))
+                }
+            }
+            
+            return Disposables.create()
+        }
+    }
+    
+    /// Load all save state records from CloudKit and process them
+    /// - Parameter iterationComplete: Callback when iteration is complete
+    /// - Returns: Completable that completes when all records are processed
+    public override func loadAllFromCloud(iterationComplete: (() async -> Void)? = nil) async -> Completable {
+        return Completable.create { [weak self] observer in
+            guard let self = self else {
+                observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid save states syncer"])))
+                return Disposables.create()
+            }
+            
+            Task {
+                do {
+                    DLOG("Loading all save state records from CloudKit")
+                    
+                    // Fetch all save state records
+                    let records = await self.getAllRecords()
+                    DLOG("Found \(records.count) save state records in CloudKit")
+                    
+                    // Process each record
+                    for record in records {
+                        await self.processCloudRecord(record)
+                    }
+                    
+                    // Call iteration complete callback
+                    await iterationComplete?()
+                    
+                    await self.setNewCloudFilesAvailable()
+                    DLOG("Completed loading save state records from CloudKit")
+                    observer(.completed)
+                } catch {
+                    ELOG("Error loading save state records from CloudKit: \(error.localizedDescription)")
+                    await self.errorHandler.handle(error: error)
+                    observer(.error(error))
+                }
+            }
+            
+            return Disposables.create()
+        }
+    }
+    
+    /// Process a CloudKit record and determine if it should be downloaded
+    /// - Parameter record: The CloudKit record to process
+    private func processCloudRecord(_ record: CKRecord) async {
+        guard let filename = record[CloudKitSchema.SaveStateFields.filename] as? String,
+              let gameID = record[CloudKitSchema.SaveStateFields.gameID] as? String,
+              let systemIdentifier = record[CloudKitSchema.SaveStateFields.systemIdentifier] as? String else {
+            WLOG("Save state record missing required fields: \(record.recordID.recordName)")
+            return
+        }
+        
+        do {
+            // Check if we already have this save state locally
+            let realm = try await Realm()
+            let existingGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameID)
+            
+            guard let game = existingGame else {
+                WLOG("Game not found locally for save state: \(gameID)")
+                return
+            }
+            
+            // Check if save state already exists locally
+            let existingSaveState = game.saveStates.first { saveState in
+                saveState.file?.fileName == filename
+            }
+            
+            if let existingSaveState = existingSaveState {
+                // Handle conflict resolution
+                await self.handleSaveStateConflict(existingSaveState, cloudRecord: record)
+            } else {
+                // Create new save state entry and mark for download
+                await self.createSaveStateFromCloudRecord(record, game: game)
+            }
+        } catch {
+            ELOG("Error processing save state record \(record.recordID.recordName): \(error.localizedDescription)")
+        }
+    }
+    
+    /// Handle conflict between local and cloud save state
+    /// - Parameters:
+    ///   - localSaveState: The local save state
+    ///   - cloudRecord: The CloudKit record
+    private func handleSaveStateConflict(_ localSaveState: PVSaveState, cloudRecord: CKRecord) async {
+        guard let cloudModificationDate = cloudRecord.modificationDate else {
+            // If we can't determine dates, prefer cloud version
+            await self.markSaveStateForDownload(localSaveState, cloudRecord: cloudRecord)
+            return
+        }
+        
+        let localModificationDate = localSaveState.lastUploadedDate ?? localSaveState.date
+        
+        // Use most recent version
+        if cloudModificationDate > localModificationDate {
+            DLOG("Cloud save state is newer, marking for download: \(localSaveState.file?.fileName ?? "unknown")")
+            await self.markSaveStateForDownload(localSaveState, cloudRecord: cloudRecord)
+        } else {
+            DLOG("Local save state is newer or same, keeping local: \(localSaveState.file?.fileName ?? "unknown")")
+            // Local is newer, could upload to cloud if needed
+        }
+    }
+    
+    /// Create a new save state entry from a CloudKit record
+    /// - Parameters:
+    ///   - record: The CloudKit record
+    ///   - game: The game this save state belongs to
+    private func createSaveStateFromCloudRecord(_ record: CKRecord, game: PVGame) async {
+        guard let filename = record[CloudKitSchema.SaveStateFields.filename] as? String else {
+            return
+        }
+        
+        do {
+            try await MainActor.run {
+                let realm = try Realm()
+                try realm.write {
+                    let saveState = PVSaveState()
+                    saveState.game = game
+                    saveState.cloudRecordID = record.recordID.recordName
+                    saveState.isDownloaded = false
+                    
+                    if let creationDate = record[CloudKitSchema.SaveStateFields.lastModified] as? Date {
+                        saveState.date = creationDate
+                    }
+                    
+                    // Create placeholder file entry
+                    let documentsURL = URL.documentsPath
+                    let systemDir = (game.systemIdentifier as NSString).components(separatedBy: "/").last ?? game.systemIdentifier
+                    let directoryURL = documentsURL.appendingPathComponent("Saves").appendingPathComponent(systemDir)
+                    let fileURL = directoryURL.appendingPathComponent(filename)
+                    
+                    let file = PVFile(withURL: fileURL, relativeRoot: .documents)
+                    saveState.file = file
+                    
+                    realm.add(saveState)
+                }
+            }
+            
+            DLOG("Created save state entry for download: \(filename)")
+        } catch {
+            ELOG("Error creating save state from cloud record: \(error.localizedDescription)")
+        }
+    }
+    
+    /// Mark a save state for download from CloudKit
+    /// - Parameters:
+    ///   - saveState: The save state to download
+    ///   - cloudRecord: The CloudKit record
+    private func markSaveStateForDownload(_ saveState: PVSaveState, cloudRecord: CKRecord) async {
+        guard let localURL = self.localURL(for: saveState) else {
+            return
+        }
+        
+        // Add to pending downloads
+        if await self.insertDownloadingFile(localURL) != nil {
+            try? await MainActor.run {
+                let realm = try Realm()
+                try realm.write {
+                    saveState.isDownloaded = false
+                    saveState.cloudRecordID = cloudRecord.recordID.recordName
+                }
+            }
+        }
+    }
+    
+    /// Upload all local save states that haven't been uploaded yet
+    /// - Returns: Completable that completes when all uploads are done
+    public func uploadAllSaveStates() -> Completable {
+        return Completable.create { [weak self] observer in
+            guard let self = self else {
+                observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid save states syncer"])))
+                return Disposables.create()
+            }
+            
+            Task {
+                do {
+                    let realm = try await Realm()
+                    let saveStatesNeedingUpload = realm.objects(PVSaveState.self).filter("cloudRecordID == nil OR lastUploadedDate == nil")
+                    
+                    DLOG("Found \(saveStatesNeedingUpload.count) save states needing upload")
+                    
+                    for saveState in saveStatesNeedingUpload {
+                        // Upload each save state
+                        let uploadResult = await self.uploadSaveState(for: saveState).asObservable().asSingle().asCompletable()
+                        try await uploadResult.toAsync()
+                    }
+                    
+                    DLOG("Completed uploading all save states")
+                    observer(.completed)
+                } catch {
+                    ELOG("Error uploading save states: \(error.localizedDescription)")
+                    await self.errorHandler.handle(error: error)
+                    observer(.error(error))
+                }
+            }
+            
+            return Disposables.create()
+        }
+    }
+    
+    /// Download all save states that are marked as not downloaded
+    /// - Returns: Completable that completes when all downloads are done
+    public func downloadAllSaveStates() -> Completable {
+        return Completable.create { [weak self] observer in
+            guard let self = self else {
+                observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid save states syncer"])))
+                return Disposables.create()
+            }
+            
+            Task {
+                do {
+                    let realm = try await Realm()
+                    let saveStatesNeedingDownload = realm.objects(PVSaveState.self).filter("isDownloaded == false AND cloudRecordID != nil")
+                    
+                    DLOG("Found \(saveStatesNeedingDownload.count) save states needing download")
+                    
+                    for saveState in saveStatesNeedingDownload {
+                        // Download each save state
+                        let downloadResult = await self.downloadSaveState(for: saveState).asObservable().asSingle().asCompletable()
+                        try await downloadResult.toAsync()
+                    }
+                    
+                    DLOG("Completed downloading all save states")
+                    observer(.completed)
+                } catch {
+                    ELOG("Error downloading save states: \(error.localizedDescription)")
+                    await self.errorHandler.handle(error: error)
+                    observer(.error(error))
+                }
+            }
+            
+            return Disposables.create()
+        }
+    }
+    
+    /// Sync all save states (upload local, download remote)
+    /// - Returns: Completable that completes when sync is done
+    public func syncAllSaveStates() -> Completable {
+        return Completable.create { [weak self] observer in
+            guard let self = self else {
+                observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid save states syncer"])))
+                return Disposables.create()
+            }
+            
+            Task {
+                do {
+                    DLOG("Starting complete save states sync")
+                    
+                    // First load all from cloud to identify what needs to be downloaded
+                    let loadResult = await self.loadAllFromCloud()
+                    try await loadResult.toAsync()
+                    
+                    // Upload all local save states that haven't been uploaded
+                    let uploadResult = await self.uploadAllSaveStates()
+                    try await uploadResult.toAsync()
+                    
+                    // Download all save states that need downloading
+                    let downloadResult = await self.downloadAllSaveStates()
+                    try await downloadResult.toAsync()
+                    
+                    DLOG("Completed complete save states sync")
+                    observer(.completed)
+                } catch {
+                    ELOG("Error during complete save states sync: \(error.localizedDescription)")
                     await self.errorHandler.handle(error: error)
                     observer(.error(error))
                 }
