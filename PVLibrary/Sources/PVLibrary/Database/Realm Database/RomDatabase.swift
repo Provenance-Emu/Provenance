@@ -20,7 +20,7 @@ import AsyncAlgorithms
 import PVSystems
 import PVMediaCache
 
-public let schemaVersion: UInt64 = 17
+public let schemaVersion: UInt64 = 18
 
 public enum RomDeletionError: Error {
     case relatedFiledDeletionError
@@ -211,6 +211,14 @@ public final class RealmConfiguration {
                 }
 
                 ILOG("Migration to version 17 complete.")
+            }
+            if oldSchemaVersion < 18 {
+                migration.enumerateObjects(ofType: PVSaveState.className()) { oldObject, newObject in
+                    newObject!["lastUploadedDate"] = nil
+                }
+
+                ILOG("Migration to version 18 complete.")
+
             }
         }
 
