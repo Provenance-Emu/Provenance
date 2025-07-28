@@ -403,6 +403,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         self.cdFileHandler = cdFileHandler // Initialize here
 
         // Set up the queue update handler for logging purposes
+        #if DEBUG
         Task {
             // Use the proper method to set the queue update handler
             await importQueueActor.setQueueUpdateHandler { queue in
@@ -412,6 +413,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                 }
             }
         }
+        #endif
 
         //create defaults
         createDefaultDirectories(fm: fm)
