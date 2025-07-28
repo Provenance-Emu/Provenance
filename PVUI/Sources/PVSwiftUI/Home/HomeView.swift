@@ -39,6 +39,10 @@ struct HomeView: SwiftUI.View {
 
     // Import status view properties
     @State private var showImportStatusView = false
+    
+    // Modal state for log viewer and system status
+    @State private var showLogViewer = false
+    @State private var showSystemStatus = false
 
     @ObservedResults(
         PVSaveState.self,
@@ -277,6 +281,14 @@ struct HomeView: SwiftUI.View {
                     }
                 }
             )
+        }
+        // Log Viewer Modal
+        .fullScreenCover(isPresented: $showLogViewer) {
+            RetroLogView(isFullscreen: $showLogViewer)
+        }
+        // System Status Modal
+        .fullScreenCover(isPresented: $showSystemStatus) {
+            RetroStatusControlView()
         }
         .sheet(isPresented: $showImagePicker) {
 #if !os(tvOS)
@@ -536,6 +548,12 @@ struct HomeView: SwiftUI.View {
                 withAnimation {
                     showImportStatusView = true
                 }
+            },
+            logViewerAction: {
+                showLogViewer = true
+            },
+            systemStatusAction: {
+                showSystemStatus = true
             },
             settingsAction: {
                 // TODO: This is a hack, we should use the delegate

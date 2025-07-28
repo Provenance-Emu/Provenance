@@ -45,6 +45,10 @@ struct ConsoleGamesView: SwiftUI.View {
     
     // New state variable for HomeContinueSection binding
     @State private var recentGamesForBinding: [PVRecentGame] = []
+    
+    // Modal state for log viewer and system status
+    @State private var showLogViewer = false
+    @State private var showSystemStatus = false
 
     weak var rootDelegate: PVRootDelegate?
     var showGameInfo: (String) -> Void
@@ -356,6 +360,14 @@ struct ConsoleGamesView: SwiftUI.View {
                             }
                         }
                     )
+                }
+                // Log Viewer Modal
+                .fullScreenCover(isPresented: $showLogViewer) {
+                    RetroLogView(isFullscreen: $showLogViewer)
+                }
+                // System Status Modal
+                .fullScreenCover(isPresented: $showSystemStatus) {
+                    RetroStatusControlView()
                 }
                 .sheet(item: $gamesViewModel.continuesManagementState) { state in
                     let game = state.game.warmUp()
@@ -864,6 +876,17 @@ extension ConsoleGamesView {
                 withAnimation {
                     gamesViewModel.showImportStatusView = true
                 }
+            },
+            logViewerAction: {
+                showLogViewer = true
+            },
+            systemStatusAction: {
+                showSystemStatus = true
+            },
+            settingsAction: {
+                // TODO: This is a hack, we should use the delegate
+                // Use NotificationCenter to trigger settings
+                NotificationCenter.default.post(name: NSNotification.Name("PVShowSettings"), object: nil)
             },
             settingsContext: .console(console),
             toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },
