@@ -871,6 +871,7 @@ extension ConsoleGamesView {
             toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }
         )
         .padding(.vertical, 12)
+        .padding(.horizontal, 12)
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.black.opacity(0.7))
