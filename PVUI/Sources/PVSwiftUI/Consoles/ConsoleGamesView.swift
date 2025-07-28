@@ -866,8 +866,7 @@ extension ConsoleGamesView {
     @ViewBuilder
     private func displayOptionsView() -> some View {
         GamesDisplayOptionsView(
-            sortAscending: viewModel.sortGamesAscending,
-            isGrid: viewModel.viewGamesAsGrid,
+            viewModel: viewModel,
             showImportStatusView: Binding(
                 get: { gamesViewModel.showImportStatusView },
                 set: { gamesViewModel.showImportStatusView = $0 }

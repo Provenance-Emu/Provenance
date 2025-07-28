@@ -541,8 +541,7 @@ struct HomeView: SwiftUI.View {
     @ViewBuilder
     private func displayOptionsView() -> some View {
         GamesDisplayOptionsView(
-            sortAscending: viewModel.sortGamesAscending,
-            isGrid: viewModel.viewGamesAsGrid,
+            viewModel: viewModel,
             showImportStatusView: $showImportStatusView,
             importStatusAction: {
                 withAnimation {

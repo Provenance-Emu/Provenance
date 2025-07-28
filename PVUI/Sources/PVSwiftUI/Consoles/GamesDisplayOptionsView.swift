@@ -38,8 +38,8 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     @Default(.showFavorites) private var showFavorites
     @Default(.showGameBadges) private var showGameBadges
 
-    @State var sortAscending = true
-    @State var isGrid = true
+    // View model for sort and grid state
+    @ObservedObject var viewModel: PVRootViewModel
 
     // Binding to control the import status view visibility
     @Binding var showImportStatusView: Bool
@@ -176,13 +176,13 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 .frame(width: 1, height: 12)
             
             // Sort indicator
-            OptionsIndicator(pointDown: sortAscending, action: {
+            OptionsIndicator(pointDown: viewModel.sortGamesAscending, action: {
                 #if !os(tvOS)
                 Haptics.impact(style: .light)
                 #endif
                 toggleSortAction()
             }) {
-                Image(systemName: sortAscending ? "chevron.down.dotted.2" :"chevron.up.dotted.2")
+                Image(systemName: viewModel.sortGamesAscending ? "chevron.down.dotted.2" :"chevron.up.dotted.2")
                     .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                     .font(font.weight(.light))
             }
@@ -195,7 +195,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 #endif
                 toggleViewTypeAction()
             }) {
-                Image(systemName: isGrid ? "rectangle.grid.1x2" : "square.grid.3x3")
+                Image(systemName: viewModel.viewGamesAsGrid ? "square.grid.3x3" : "rectangle.grid.1x2")
                     .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                     .font(font)
             }
