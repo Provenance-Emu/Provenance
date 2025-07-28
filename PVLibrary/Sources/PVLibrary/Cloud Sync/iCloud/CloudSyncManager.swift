@@ -199,9 +199,14 @@ public class CloudSyncManager {
 
     /// Check if the device is currently charging
     private func isDeviceCharging() async -> Bool {
+#if os(tvOS)
+        return true
+#else
+
         return await MainActor.run {
             UIDevice.current.batteryState == .charging || UIDevice.current.batteryState == .full
         }
+#endif
     }
 
     /// Check if a file should be synced based on content type settings

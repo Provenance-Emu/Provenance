@@ -81,7 +81,9 @@ public struct CloudSyncSettingsView: View {
         .sheet(isPresented: $showDiagnostics) {
             NavigationView {
                 CloudKitDiagnosticView()
+                    #if !os(tvOS)
                     .navigationBarTitleDisplayMode(.inline)
+                    #endif
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
                             Button("Done") {
@@ -1122,7 +1124,11 @@ public struct CloudSyncSettingsView: View {
                         .tag(mode)
                     }
                 }
+                #if os(tvOS)
+                .pickerStyle(.automatic)
+                #else
                 .pickerStyle(.menu)
+                #endif
                 .retroCard()
 
                 // Max cellular file size
@@ -1137,6 +1143,24 @@ public struct CloudSyncSettingsView: View {
 
                         Spacer()
 
+                        #if os(tvOS)
+                        // tvOS alternative: Use button controls instead of slider
+                        HStack {
+                            Button("-") {
+                                let currentMB = Int(cloudKitMaxCellularFileSizeBytes / (1024 * 1024))
+                                let newValue = max(1, currentMB - 5)
+                                cloudKitMaxCellularFileSizeBytes = newValue * 1024 * 1024
+                            }
+                            .disabled(cloudKitMaxCellularFileSizeBytes <= 1024 * 1024)
+                            
+                            Button("+") {
+                                let currentMB = Int(cloudKitMaxCellularFileSizeBytes / (1024 * 1024))
+                                let newValue = min(500, currentMB + 5)
+                                cloudKitMaxCellularFileSizeBytes = newValue * 1024 * 1024
+                            }
+                            .disabled(cloudKitMaxCellularFileSizeBytes >= 500 * 1024 * 1024)
+                        }
+                        #else
                         Slider(
                             value: Binding(
                                 get: { Double(cloudKitMaxCellularFileSizeBytes) / 1024.0 / 1024.0 },
@@ -1146,6 +1170,7 @@ public struct CloudSyncSettingsView: View {
                             step: 5
                         )
                         .accentColor(.retroBlue)
+                        #endif
                     }
                 }
                 .retroCard()
@@ -1178,7 +1203,11 @@ public struct CloudSyncSettingsView: View {
                         .tag(frequency)
                     }
                 }
+                #if os(tvOS)
+                .pickerStyle(.automatic)
+                #else
                 .pickerStyle(.menu)
+                #endif
                 .retroCard()
             }
         }
@@ -1207,7 +1236,11 @@ public struct CloudSyncSettingsView: View {
                         .tag(contentType)
                     }
                 }
+                #if os(tvOS)
+                .pickerStyle(.automatic)
+                #else
                 .pickerStyle(.menu)
+                #endif
                 .retroCard()
             }
         }
@@ -1322,6 +1355,22 @@ public struct CloudSyncSettingsView: View {
 
                         Spacer()
 
+                        #if os(tvOS)
+                        // tvOS alternative: Use button controls instead of slider
+                        HStack {
+                            Button("-") {
+                                let newValue = max(1, Defaults[.cloudKitMaxConcurrentUploads] - 1)
+                                Defaults[.cloudKitMaxConcurrentUploads] = newValue
+                            }
+                            .disabled(Defaults[.cloudKitMaxConcurrentUploads] <= 1)
+                            
+                            Button("+") {
+                                let newValue = min(10, Defaults[.cloudKitMaxConcurrentUploads] + 1)
+                                Defaults[.cloudKitMaxConcurrentUploads] = newValue
+                            }
+                            .disabled(Defaults[.cloudKitMaxConcurrentUploads] >= 10)
+                        }
+                        #else
                         Slider(
                             value: Binding(
                                 get: { Double(Defaults[.cloudKitMaxConcurrentUploads]) },
@@ -1331,6 +1380,7 @@ public struct CloudSyncSettingsView: View {
                             step: 1
                         )
                         .accentColor(.retroBlue)
+                        #endif
                     }
                 }
                 .retroCard()
@@ -1401,7 +1451,11 @@ public struct CloudSyncSettingsView: View {
                         get: { Defaults[.cloudKitRetryFailedUploads] },
                         set: { Defaults[.cloudKitRetryFailedUploads] = $0 }
                     ))
+                    #if os(tvOS)
+                    .toggleStyle(.automatic)
+                    #else
                     .toggleStyle(SwitchToggleStyle(tint: .retroBlue))
+                    #endif
                 }
                 .retroCard()
 
@@ -1418,6 +1472,22 @@ public struct CloudSyncSettingsView: View {
 
                             Spacer()
 
+                            #if os(tvOS)
+                            // tvOS alternative: Use button controls instead of slider
+                            HStack {
+                                Button("-") {
+                                    let newValue = max(1, Defaults[.cloudKitMaxRetryAttempts] - 1)
+                                    Defaults[.cloudKitMaxRetryAttempts] = newValue
+                                }
+                                .disabled(Defaults[.cloudKitMaxRetryAttempts] <= 1)
+                                
+                                Button("+") {
+                                    let newValue = min(10, Defaults[.cloudKitMaxRetryAttempts] + 1)
+                                    Defaults[.cloudKitMaxRetryAttempts] = newValue
+                                }
+                                .disabled(Defaults[.cloudKitMaxRetryAttempts] >= 10)
+                            }
+                            #else
                             Slider(
                                 value: Binding(
                                     get: { Double(Defaults[.cloudKitMaxRetryAttempts]) },
@@ -1427,6 +1497,7 @@ public struct CloudSyncSettingsView: View {
                                 step: 1
                             )
                             .accentColor(.retroBlue)
+                            #endif
                         }
                     }
                     .retroCard()
@@ -1448,7 +1519,11 @@ public struct CloudSyncSettingsView: View {
                         get: { Defaults[.cloudKitDeleteLocalAfterUpload] },
                         set: { Defaults[.cloudKitDeleteLocalAfterUpload] = $0 }
                     ))
+                    #if os(tvOS)
+                    .toggleStyle(.automatic)
+                    #else
                     .toggleStyle(SwitchToggleStyle(tint: .orange))
+                    #endif
                 }
                 .retroCard()
             }

@@ -243,54 +243,59 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
     @ViewBuilder
     private var logStatusMenu: some View {
-        Menu {
-            // Settings button content
-            settingsMenuContent(for: settingsContext)
-
-            Divider()
-
-            // Log viewer
-            Button(action: {
-                #if !os(tvOS)
-                Haptics.impact(style: .light)
-                #endif
-                if let action = logViewerAction {
-                    action()
-                }
-            }) {
-                Label("View Logs", systemImage: "doc.text")
-            }
-            Button(action: {
-                #if !os(tvOS)
-                Haptics.impact(style: .light)
-                #endif
-                if let action = systemStatusAction {
-                    action()
-                } else {
-                    NotificationCenter.default.post(name: NSNotification.Name("PVShowSystemInfo"), object: nil)
-                }
-            }) {
-                Label("System Status", systemImage: "info.circle")
-            }
-
-            // Import status - only show if we have an action or binding
-            if importStatusAction != nil || showImportStatusView != nil {
+        if #available(tvOS 17.0, *) {
+            Menu {
+                // Settings button content
+                settingsMenuContent(for: settingsContext)
+                
+                Divider()
+                
+                // Log viewer
                 Button(action: {
-                    #if !os(tvOS)
+#if !os(tvOS)
                     Haptics.impact(style: .light)
-                    #endif
-                    if let action = importStatusAction {
+#endif
+                    if let action = logViewerAction {
                         action()
                     }
                 }) {
-                    Label("Import Status", systemImage: "square.and.arrow.down")
+                    Label("View Logs", systemImage: "doc.text")
+                }
+                Button(action: {
+#if !os(tvOS)
+                    Haptics.impact(style: .light)
+#endif
+                    if let action = systemStatusAction {
+                        action()
+                    } else {
+                        NotificationCenter.default.post(name: NSNotification.Name("PVShowSystemInfo"), object: nil)
+                    }
+                }) {
+                    Label("System Status", systemImage: "info.circle")
+                }
+                
+                // Import status - only show if we have an action or binding
+                if importStatusAction != nil || showImportStatusView != nil {
+                    Button(action: {
+#if !os(tvOS)
+                        Haptics.impact(style: .light)
+#endif
+                        if let action = importStatusAction {
+                            action()
+                        }
+                    }) {
+                        Label("Import Status", systemImage: "square.and.arrow.down")
+                    }
                 }
             }
-        }
-        label: {
-            Image(systemName: "ellipsis.circle")
-                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                .font(font)
+            label: {
+                Image(systemName: "ellipsis.circle")
+                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    .font(font)
+            }
+        } else {
+            // TODO: Fallback version
+            // Fallback on earlier versions
         }
     }
 
