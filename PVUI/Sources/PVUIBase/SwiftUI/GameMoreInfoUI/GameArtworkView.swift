@@ -80,18 +80,18 @@ struct GameArtworkView: View {
     @State private var glowOpacity: Double = 0.7
     @State private var pulseScale: CGFloat = 1.0
     @State private var scanlineOffset: CGFloat = 0
-    
+
     var body: some View {
         ZStack {
             // RetroWave background for the artwork container
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.black.opacity(0.8))
-            
+
             // Grid overlay for retrowave effect
             RetroGrid()
                 .opacity(0.15)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
-            
+
             // Artwork content
             Group {
                 if let currentArtwork = currentArtwork {
@@ -109,13 +109,13 @@ struct GameArtworkView: View {
                     .padding(8)
                 }
             }
-            
+
             // Scanlines effect (subtle)
             ScanlineEffect(offset: 12)
                 .opacity(0.1)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .offset(y: scanlineOffset)
-            
+
             // Neon border with glow effect
             RoundedRectangle(cornerRadius: 12)
                 .strokeBorder(
@@ -139,7 +139,7 @@ struct GameArtworkView: View {
             withAnimation(Animation.linear(duration: 10).repeatForever(autoreverses: false)) {
                 scanlineOffset = 500
             }
-            
+
             withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
                 glowOpacity = 1.0
                 pulseScale = 1.02
@@ -282,7 +282,7 @@ struct GameArtworkView: View {
         Task {
             do {
                 let uniqueID: String = UUID().uuidString
-                let md5: String = game.md5 ?? ""
+                let md5: String = game.md5Hash ?? ""
                 let key = "artwork_\(md5)_\(uniqueID)"
 
                 // Write image to disk asynchronously

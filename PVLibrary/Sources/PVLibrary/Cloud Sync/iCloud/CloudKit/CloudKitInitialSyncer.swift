@@ -130,7 +130,14 @@ public actor CloudKitInitialSyncer {
 
     /// Check if initial sync is needed
     /// - Returns: True if initial sync is needed, false otherwise
+    /// NOTE: This method now always returns true to allow individual sync types to decide if they need to sync
+    /// This fixes the issue where save state sync was skipped when ROM records existed
     public func isInitialSyncNeeded() async -> Bool {
+        DLOG("🔄 [isInitialSyncNeeded] Always allowing initial sync to run - individual sync types will decide if they need to sync")
+        return true
+        
+        // DISABLED: Previous flawed logic that prevented save state sync when other record types existed
+        /*
         do {
             // Check multiple record types, not just ROMs
             for recordTypeRaw in [CloudKitSchema.RecordType.rom.rawValue,
@@ -176,6 +183,7 @@ public actor CloudKitInitialSyncer {
             ELOG("Error checking if initial sync is needed: \(error.localizedDescription)")
             return true // Assume we need initial sync if we can't check
         }
+        */
     }
 
     /// Helper function to add timeout to async operations
@@ -214,19 +222,25 @@ public actor CloudKitInitialSyncer {
     /// - Returns: Number of records synced
     @discardableResult
     public func performInitialSync(forceSync: Bool = false) async -> Int {
+        DLOG("🚀 [performInitialSync] Starting initial sync (forceSync: \(forceSync))")
+        
         // Check if sync is already in progress
         guard !isInitialSyncInProgress else {
-            ILOG("Initial sync already in progress")
+            ILOG("⏸️ [performInitialSync] Initial sync already in progress")
             return 0
         }
 
         // Check if sync is needed (unless forced)
         if !forceSync {
+            DLOG("🔍 [performInitialSync] Checking if initial sync is needed...")
             let syncNeeded = await isInitialSyncNeeded()
+            DLOG("🔍 [performInitialSync] isInitialSyncNeeded result: \(syncNeeded)")
             if !syncNeeded {
-                ILOG("Initial sync not needed, skipping")
+                ILOG("⏭️ [performInitialSync] Initial sync not needed, skipping")
                 return 0
             }
+        } else {
+            DLOG("🔄 [performInitialSync] Force sync enabled, skipping sync needed check")
         }
 
         // Set sync in progress
@@ -280,18 +294,32 @@ public actor CloudKitInitialSyncer {
         }
 
         // Sync save states with timeout protection
+        DLOG("🔄 Starting save state sync section...")
         var saveStateCount = 0
         do {
+            DLOG("🔄 Creating save state sync task...")
             let saveStateSyncTask = Task {
-                await syncAllSaveStates(forceSync: forceSync)
-                totalCount += saveStateCount
+                DLOG("🔄 Executing syncAllSaveStates(forceSync: \(forceSync))...")
+                let result = await syncAllSaveStates(forceSync: forceSync)
+                DLOG("🔄 syncAllSaveStates completed with result: \(result)")
+                return result
             }
+            
+            DLOG("🔄 Awaiting save state sync task with timeout...")
+            saveStateCount = try await withTimeout(seconds: 300) { // 5-minute timeout
+                await saveStateSyncTask.value
+            }
+            
+            progress.saveStatesTotal = saveStateCount
+            DLOG("✅ Successfully synced \(saveStateCount) save states")
+            totalCount += saveStateCount
         } catch is TimeoutError {
-            ELOG("Save state sync timed out after 5 minutes")
+            ELOG("❌ Save state sync timed out after 5 minutes")
             overallSuccess = false
             // Continue with other sync operations
         } catch {
-            ELOG("Error syncing save states: \(error.localizedDescription)")
+            ELOG("❌ Error syncing save states: \(error.localizedDescription)")
+            ELOG("❌ Error type: \(type(of: error))")
             overallSuccess = false
             // Continue with other sync operations
         }
@@ -438,7 +466,7 @@ public actor CloudKitInitialSyncer {
                     completedRetries.append(index)
 
                 case .saveState(let id):
-                    let realm = try await Realm()
+                    let realm = try await Realm(queue: nil)
                     if let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: id) {
                         try await saveStatesSyncer.uploadSaveState(for: saveState).toAsync()
                         ILOG("Successfully retried save state upload: \(id)")
@@ -524,10 +552,10 @@ public actor CloudKitInitialSyncer {
             DLOG("Starting to process \(games.count) ROMs...")
 
                         for (index, game) in games.enumerated() {
-                DLOG("Processing ROM \(index + 1)/\(games.count): \(game.title) (\(game.md5 ?? "no-md5"))")
+                DLOG("Processing ROM \(index + 1)/\(games.count): \(game.title) (\(game.md5Hash ?? "no-md5"))")
                 // Skip logic: only skip if not forcing sync AND record has cloudRecordID
                 if !forceSync && game.cloudRecordID != nil && !game.cloudRecordID!.isEmpty {
-                    VLOG("ROM already synced: \(game.title) (\(game.md5))")
+                    VLOG("ROM already synced: \(game.title) (\(game.md5Hash))")
 
                     // Update progress
                     progress.romsCompleted += 1
@@ -557,26 +585,24 @@ public actor CloudKitInitialSyncer {
                          // we can count it as 'synced' for the initial sync purpose.
                          // We might want to verify the asset exists too, but for initial sync,
                          // assuming the record existing is enough.
-                         WLOG("ROM \(game.title) (\(game.md5)) record already exists in CloudKit. Skipping initial upload.")
+                         WLOG("ROM \(game.title) (\(game.md5Hash)) record already exists in CloudKit. Skipping initial upload.")
                          syncedCount += 1 // Count it as done for initial sync progress
                     } else {
-                        ELOG("Error uploading ROM \(game.title) (\(game.md5)): \(error.localizedDescription)")
+                        ELOG("Error uploading ROM \(game.title) (\(game.md5Hash)): \(error.localizedDescription)")
 
                         // Add to retry queue for later processing
-                        if let md5 = game.md5 {
-                            let retryUpload = RetryableUpload(type: .rom(md5: md5), error: error)
-                            await addToRetryQueue(retryUpload)
-                        }
-                    }
-
-                } catch {
-                    ELOG("Error uploading ROM \(game.title) (\(game.md5)): \(error.localizedDescription)")
-
-                    // Add to retry queue for later processing
-                    if let md5 = game.md5 {
+                        let md5 = game.md5Hash
                         let retryUpload = RetryableUpload(type: .rom(md5: md5), error: error)
                         await addToRetryQueue(retryUpload)
                     }
+
+                } catch {
+                    ELOG("Error uploading ROM \(game.title) (\(game.md5Hash)): \(error.localizedDescription)")
+
+                    // Add to retry queue for later processing
+                    let md5 = game.md5Hash
+                    let retryUpload = RetryableUpload(type: .rom(md5: md5), error: error)
+                    await addToRetryQueue(retryUpload)
                 }
 
                 // Update progress (moved outside the try-catch for simplicity, updates regardless of success/failure/skip)
@@ -600,7 +626,8 @@ public actor CloudKitInitialSyncer {
     // TODO: I would prefer this not be main actor, but realm keeps crashing, even making a local realm @JoeMatt
     @MainActor
     private func syncAllSaveStates(forceSync: Bool = false) async -> Int {
-        DLOG("Syncing all save states to CloudKit...")
+        DLOG("💾 [syncAllSaveStates] Starting save state sync to CloudKit (forceSync: \(forceSync))...")
+        DLOG("💾 [syncAllSaveStates] saveStatesSyncer type: \(type(of: saveStatesSyncer))")
 
         do {
             // Get all save states from Realm

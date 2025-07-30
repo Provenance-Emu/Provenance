@@ -236,7 +236,7 @@ public struct FreeROMsView: View {
                 }
             }
             .navigationTitle("FREE ROMS")
-#if !os(tvOS)
+            #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .searchable(text: $searchText, prompt: "SEARCH ROMS")

@@ -276,7 +276,7 @@ extension Game: RealmRepresentable {
 
 public extension Realm {
     func buildGame(from game: Game) -> PVGame {
-        if let existing = object(ofType: PVGame.self, forPrimaryKey: game.md5) {
+        if let existing = object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) {
             return existing
         }
 
@@ -284,7 +284,7 @@ public extension Realm {
             object.id = game.id
             object.title = game.title
             // TODO: Test that file is correct
-            object.md5Hash = game.md5
+            object.md5Hash = game.md5Hash
             object.crc = game.crc
             object.isFavorite = game.isFavorite
             object.playCount = Int(game.playCount)

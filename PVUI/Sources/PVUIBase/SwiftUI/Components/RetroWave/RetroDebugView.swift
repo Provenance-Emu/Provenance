@@ -34,46 +34,46 @@ public struct RetroDebugView: View {
     @Namespace private var namespace
     @ObservedObject private var themeManager = ThemeManager.shared
     @EnvironmentObject private var appState: AppState
-    
+
     // For tvOS navigation
     @Environment(\.presentationMode) private var presentationMode
-    
+
     // Debug state
     @State private var showDatabaseStats = false
     @State private var showImportQueue = false
 //    @State private var showMockImportQueue = false
     @State private var showConfirmResetAlert = false
-    
+
     // Realm importer
     @StateObject private var importStatusDriverData = AppState.shared.gameImporter ?? GameImporter.shared
 
     // Mock importer for testing
 //    @StateObject private var mockImportStatusDriverData = MockImportStatusDriverData()
-    
+
     // Add these state variables at the top of the RetroDebugView struct
     @State private var showSaveStatesMock = false
     @State private var showGameMoreInfo = false
     @State private var showGameMoreInfoRealm = false
     @State private var showArtworkSearch = false
-    
+
     // Add these additional state variables
     @State private var showFreeROMs = false
     @State private var showDeltaSkinList = false
     @State private var selectedTheme: ThemeName = .default
-    
+
     // Add this new state variable
     @State private var showDeltaSkinImport = false
     @State private var showDeltaSkinPreview = false
-    
+
     // Add this state variable
     @State private var showAIEnhancements = false
-    
+
     // Animation states
     @State private var scanlineOffset: CGFloat = 0
     @State private var glowOpacity: Double = 0.7
-    
+
     public init() { }
-    
+
     public var body: some View {
         NavigationStack {
             contentView()
@@ -182,7 +182,7 @@ public struct RetroDebugView: View {
             }
         }
     }
-    
+
     // Reset the Realm database
     private func resetDatabase() {
         do {
@@ -195,22 +195,22 @@ public struct RetroDebugView: View {
             ELOG("Error resetting database: \(error)")
         }
     }
-    
+
     // Install the test ROM
     private func installTestROM() async throws {
         // Get the path to the test ROM in the app bundle
         guard let testROMURL = Bundle.main.url(forResource: "240p", withExtension: "nes") else {
             throw NSError(domain: "UITestingApp", code: 3, userInfo: [NSLocalizedDescriptionKey: "Test ROM not found in app bundle"])
         }
-        
+
         // Get the Documents directory
         guard let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
             throw NSError(domain: "UITestingApp", code: 5, userInfo: [NSLocalizedDescriptionKey: "Could not access Documents directory"])
         }
-        
+
         // Create the ROMs/com.provenance.nes directory if it doesn't exist
         let romsDirectoryURL = documentsURL.appendingPathComponent("ROMs/com.provenance.nes", isDirectory: true)
-        
+
         do {
             try FileManager.default.createDirectory(at: romsDirectoryURL, withIntermediateDirectories: true)
             ILOG("Created ROMs directory at: \(romsDirectoryURL.path)")
@@ -218,16 +218,16 @@ public struct RetroDebugView: View {
             ELOG("Error creating ROMs directory: \(error)")
             throw error
         }
-        
+
         // Define the destination URL for the ROM
         let destinationURL = romsDirectoryURL.appendingPathComponent("240p-test.nes")
-        
+
         // Check if the ROM already exists
         if FileManager.default.fileExists(atPath: destinationURL.path) {
             ILOG("ROM already exists at destination, skipping copy")
             return
         }
-        
+
         // Copy the ROM to the ROMs directory
         do {
             try FileManager.default.copyItem(at: testROMURL, to: destinationURL)
@@ -237,11 +237,11 @@ public struct RetroDebugView: View {
             ELOG("Error copying ROM: \(error)")
             throw error
         }
-        
+
         // Resume the importer to process the new ROM
         appState.gameImporter?.resume()
     }
-    
+
     // Add this helper method to apply the selected theme
     private func applyTheme(_ theme: ThemeName) {
         switch theme {
@@ -269,9 +269,9 @@ public struct RetroDebugView: View {
             ThemeManager.shared.setCurrentPalette(CGAThemes.rainbow.palette)
         }
     }
-    
+
     // These methods have been replaced by the RetrowaveBackgroundModifier
-    
+
     @ViewBuilder
     func contentView() -> some View {
         // Content
@@ -289,7 +289,7 @@ public struct RetroDebugView: View {
                         .focusable(true)
                         .padding(.vertical, 8) // Add more padding for tvOS remote navigation
 #endif
-                        
+
                         Button("RESET DATABASE") {
                             showConfirmResetAlert = true
                         }
@@ -299,7 +299,7 @@ public struct RetroDebugView: View {
                         .focusable(true)
                         .padding(.vertical, 8) // Add more padding for tvOS remote navigation
 #endif
-                        
+
                         NavigationLink("BROWSE GAMES") {
                             DatabaseBrowserView()
                         }
@@ -310,7 +310,7 @@ public struct RetroDebugView: View {
 #endif
                     }
                 }
-                
+
                 // IMPORT Section
                 RetroSectionView(title: "IMPORT") {
                     VStack(spacing: 12) {
@@ -323,7 +323,7 @@ public struct RetroDebugView: View {
                         .focusable(true)
                         .padding(.vertical, 8)
 #endif
-                        
+
 //                        Button("SHOW MOCK IMPORT QUEUE") {
 //                            showMockImportQueue = true
 //                        }
@@ -333,7 +333,7 @@ public struct RetroDebugView: View {
                         .focusable(true)
                         .padding(.vertical, 8)
 #endif
-                        
+
                         Button("FORCE IMPORT SCAN") {
                             // Force a scan of the import directories
                             appState.gameImporter?.startProcessing()
@@ -344,7 +344,7 @@ public struct RetroDebugView: View {
                         .focusable(true)
                         .padding(.vertical, 8)
 #endif
-                        
+
                         Button("INSTALL TEST ROM") {
                             // Install the test ROM
                             Task {
@@ -363,7 +363,7 @@ public struct RetroDebugView: View {
 #endif
                     }
                 }
-                
+
                 // UI TESTING Section
                 RetroSectionView(title: "UI TESTING") {
                     VStack(spacing: 16) {
@@ -375,7 +375,7 @@ public struct RetroDebugView: View {
 #if os(tvOS)
                         .padding(.vertical, 8)
 #endif
-                        
+
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                             Button("SAVE STATES") {
                                 showSaveStatesMock = true
@@ -386,7 +386,7 @@ public struct RetroDebugView: View {
                             .focusable(true)
                             .padding(.vertical, 8)
 #endif
-                            
+
                             Button("GAME INFO") {
                                 showGameMoreInfo = true
                             }
@@ -396,7 +396,7 @@ public struct RetroDebugView: View {
                             .focusable(true)
                             .padding(.vertical, 8)
 #endif
-                            
+
                             Button("GAME INFO (REALM)") {
                                 showGameMoreInfoRealm = true
                             }
@@ -406,7 +406,7 @@ public struct RetroDebugView: View {
                             .focusable(true)
                             .padding(.vertical, 8)
 #endif
-                            
+
                             Button("ARTWORK SEARCH") {
                                 showArtworkSearch = true
                             }
@@ -416,13 +416,13 @@ public struct RetroDebugView: View {
                             .focusable(true)
                             .padding(.vertical, 8)
 #endif
-                            
+
                             Button("FREE ROMS") {
                                 showFreeROMs = true
                             }
                             .buttonStyle(GradientButtonStyle(colors: [.retroYellow, .retroBlue]))
                             .frame(maxWidth: .infinity)
-                            
+
                             Button("DELTA SKIN LIST") {
                                 showDeltaSkinList = true
                             }
@@ -435,7 +435,7 @@ public struct RetroDebugView: View {
                         }
                     }
                 }
-                
+
                 // THEME TESTING Section
                 RetroSectionView(title: "THEME TESTING") {
                     VStack(spacing: 16) {
@@ -444,7 +444,7 @@ public struct RetroDebugView: View {
                                 .font(.system(.headline, design: .monospaced))
                                 .foregroundColor(.retroBlue)
                                 .shadow(color: .retroPink.opacity(0.8), radius: 2, x: 1, y: 1)
-                            
+
                             Picker("Select Theme", selection: $selectedTheme) {
                                 ForEach(ThemeName.allCases, id: \.self) { theme in
                                     Text(theme.rawValue.uppercased()).tag(theme)
@@ -474,12 +474,12 @@ public struct RetroDebugView: View {
                             .cornerRadius(8)
                         }
                         .frame(maxWidth: .infinity)
-                        
+
                         RetroPalettePreview(palette: themeManager.currentPalette)
                             .frame(maxWidth: .infinity)
                     }
                 }
-                
+
                 // CONTROLLER SKINS Section
                 RetroSectionView(title: "CONTROLLER SKINS") {
                     VStack(spacing: 16) {
@@ -488,7 +488,7 @@ public struct RetroDebugView: View {
                         }
                         .buttonStyle(GradientButtonStyle(colors: [.retroBlue, .retroPurple], glowColor: .retroBlue))
                         .frame(maxWidth: .infinity)
-                        
+
 #if os(tvOS)
                         VStack(spacing: 16) {
                             Button("IMPORT SKIN") {
@@ -498,7 +498,7 @@ public struct RetroDebugView: View {
                             .frame(maxWidth: .infinity)
                             .focusable(true)
                             .padding(.vertical, 8)
-                            
+
                             Button("SKIN PREVIEW") {
                                 showDeltaSkinPreview = true
                             }
@@ -506,7 +506,7 @@ public struct RetroDebugView: View {
                             .frame(maxWidth: .infinity)
                             .focusable(true)
                             .padding(.vertical, 8)
-                            
+
                             Button("AI ENHANCEMENTS") {
                                 showAIEnhancements = true
                             }
@@ -522,13 +522,13 @@ public struct RetroDebugView: View {
                             }
                             .buttonStyle(GradientButtonStyle(colors: [.retroPurple, .retroPink]))
                             .frame(maxWidth: .infinity)
-                            
+
                             Button("SKIN PREVIEW") {
                                 showDeltaSkinPreview = true
                             }
                             .buttonStyle(GradientButtonStyle(colors: [.retroPink, .retroYellow]))
                             .frame(maxWidth: .infinity)
-                            
+
                             Button("AI ENHANCEMENTS") {
                                 showAIEnhancements = true
                             }
@@ -550,28 +550,28 @@ public struct RetroDebugView: View {
 
 struct DatabaseStatsView: View {
     @Environment(\.presentationMode) var presentationMode
-    
+
     // Database stats
     @State private var gameCount = 0
     @State private var systemCount = 0
     @State private var coreCount = 0
     @State private var saveStateCount = 0
-    
+
     // Animation states
     @State private var scanlineOffset: CGFloat = 0
     @State private var glowOpacity: Double = 0.7
     @State private var isLoading = true
     @State private var pulseOpacity = 0.0
-    
+
     var body: some View {
         ZStack {
             // Retrowave background
             RetroTheme.retroBackground
-            
+
             // Grid overlay
             RetroGrid()
             //                .opacity(0.3)
-            
+
             // Content
             VStack(spacing: 20) {
                 // Header
@@ -580,7 +580,7 @@ struct DatabaseStatsView: View {
                     .foregroundColor(RetroTheme.retroPink)
                     .padding(.top, 20)
                     .shadow(color: RetroTheme.retroPink.opacity(0.8), radius: 10, x: 0, y: 0)
-                
+
                 // Stats cards
                 VStack(spacing: 16) {
                     // Main stats grid
@@ -590,7 +590,7 @@ struct DatabaseStatsView: View {
                         RetroStatCard(title: "CORES", value: "\(coreCount)", icon: "memorychip.fill", color: RetroTheme.retroBlue)
                         RetroStatCard(title: "SAVE STATES", value: "\(saveStateCount)", icon: "square.and.arrow.down.fill", color: RetroTheme.retroPink)
                     }
-                    
+
                     // Navigation button
                     if gameCount > 0 {
                         NavigationLink(destination: GamesBySystemView()) {
@@ -638,7 +638,7 @@ struct DatabaseStatsView: View {
                                 }
                             }
                     }
-                    
+
                     // Done button
                     Button(action: {
                         presentationMode.wrappedValue.dismiss()
@@ -678,21 +678,21 @@ struct DatabaseStatsView: View {
                         )
                 )
                 .padding(.horizontal)
-                
+
                 Spacer()
             }
             .padding(.vertical)
-            
+
             // Loading overlay
             if isLoading {
                 ZStack {
                     Color.black.opacity(0.7)
-                    
+
                     VStack {
                         Text("SCANNING DATABASE")
                             .font(.system(size: 24, weight: .bold))
                             .foregroundColor(RetroTheme.retroPink)
-                        
+
                         ProgressView()
                             .progressViewStyle(CircularProgressViewStyle(tint: RetroTheme.retroPink))
                             .scaleEffect(1.5)
@@ -723,22 +723,22 @@ struct DatabaseStatsView: View {
             withAnimation(Animation.linear(duration: 20).repeatForever(autoreverses: false)) {
                 scanlineOffset = 1000
             }
-            
+
             withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
                 glowOpacity = 1.0
             }
-            
+
             // Load stats with a slight delay to show loading animation
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 loadStats()
-                
+
                 withAnimation {
                     isLoading = false
                 }
             }
         }
     }
-    
+
     private func loadStats() {
         do {
             let realm = try Realm()
@@ -757,21 +757,21 @@ struct RetroStatCard: View {
     let value: String
     let icon: String
     let color: Color
-    
+
     @State private var glowOpacity = 0.7
-    
+
     var body: some View {
         VStack(spacing: 8) {
             HStack {
                 Image(systemName: icon)
                     .font(.system(size: 16))
                     .foregroundColor(color)
-                
+
                 Text(title)
                     .font(.system(size: 14, weight: .bold))
                     .foregroundColor(.white)
             }
-            
+
             Text(value)
                 .font(.system(size: 32, weight: .bold))
                 .foregroundColor(color)
@@ -800,21 +800,21 @@ struct RetroStatCard: View {
 
 struct GamesBySystemView: View {
     @ObservedResults(PVSystem.self) var systems
-    
+
     var body: some View {
         ZStack {
             // Retrowave background
             RetroTheme.retroBackground
-            
+
             // Grid overlay
             RetroGrid()
             //                .opacity(0.3)
-            
+
             ScrollView {
                 VStack(spacing: 16) {
                     ForEach(systems, id: \.self) { system in
                         let gameCount = system.games.count
-                        
+
                         HStack {
                             // System icon or placeholder
                             ZStack {
@@ -827,24 +827,24 @@ struct GamesBySystemView: View {
                                         )
                                     )
                                     .frame(width: 40, height: 40)
-                                
+
                                 Text(String(system.name.prefix(1)))
                                     .font(.system(size: 18, weight: .bold))
                                     .foregroundColor(.white)
                             }
-                            
+
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(system.name)
                                     .font(.system(size: 16, weight: .bold))
                                     .foregroundColor(.white)
-                                
+
                                 Text("\(gameCount) \(gameCount == 1 ? "game" : "games")")
                                     .font(.system(size: 14))
                                     .foregroundColor(RetroTheme.retroPink)
                             }
-                            
+
                             Spacer()
-                            
+
                             Image(systemName: "chevron.right")
                                 .foregroundColor(RetroTheme.retroBlue)
                         }
@@ -882,7 +882,7 @@ struct GamesBySystemView: View {
 
 struct DatabaseBrowserView: View {
     @ObservedResults(PVGame.self) var games
-    
+
     // Animation states
     @State private var selectedGame: PVGame?
     @State private var showGameDetails = false
@@ -890,7 +890,7 @@ struct DatabaseBrowserView: View {
     @State private var isSearching = false
     @State private var glowOpacity = 0.7
     @State private var scanlineOffset: CGFloat = 0
-    
+
     var filteredGames: Results<PVGame> {
         if searchText.isEmpty {
             return games
@@ -898,22 +898,22 @@ struct DatabaseBrowserView: View {
             return games.filter("title CONTAINS[c] %@", searchText)
         }
     }
-    
+
     var body: some View {
         ZStack {
             // Retrowave background
             RetroTheme.retroBackground
-            
+
             // Grid overlay
             RetroGrid()
             //                .opacity(0.3)
-            
+
             VStack(spacing: 0) {
                 // Search bar
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(isSearching ? RetroTheme.retroPink : .gray)
-                    
+
                     TextField("SEARCH GAMES", text: $searchText)
                         .foregroundColor(.white)
                         .autocapitalization(.none)
@@ -921,7 +921,7 @@ struct DatabaseBrowserView: View {
                         .onTapGesture {
                             isSearching = true
                         }
-                    
+
                     if !searchText.isEmpty {
                         Button(action: {
                             searchText = ""
@@ -949,7 +949,7 @@ struct DatabaseBrowserView: View {
                 )
                 .padding(.horizontal)
                 .padding(.top)
-                
+
                 // Game count
                 Text("FOUND \(filteredGames.count) GAMES")
                     .font(.system(size: 14, weight: .bold))
@@ -957,7 +957,7 @@ struct DatabaseBrowserView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
                     .padding(.top, 8)
-                
+
                 // Game list
                 ScrollView {
                     LazyVStack(spacing: 16) {
@@ -988,7 +988,7 @@ struct DatabaseBrowserView: View {
             withAnimation(Animation.linear(duration: 20).repeatForever(autoreverses: false)) {
                 scanlineOffset = 1000
             }
-            
+
             withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
                 glowOpacity = 1.0
             }
@@ -999,9 +999,9 @@ struct DatabaseBrowserView: View {
 struct RetroGameCard: View {
     let game: PVGame
     let isSelected: Bool
-    
+
     @State private var glowOpacity = 0.7
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // Main content
@@ -1010,11 +1010,11 @@ struct RetroGameCard: View {
                     .font(.system(size: 18, weight: .bold))
                     .foregroundColor(.white)
                     .lineLimit(1)
-                
+
                 HStack {
                     Image(systemName: "cpu")
                         .foregroundColor(RetroTheme.retroPurple)
-                    
+
                     Text(game.system?.name ?? "Unknown System")
                         .font(.system(size: 14))
                         .foregroundColor(RetroTheme.retroPurple)
@@ -1029,50 +1029,49 @@ struct RetroGameCard: View {
                     endPoint: .bottom
                 )
             )
-            
+
             // Expanded details
             if isSelected {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Image(systemName: "doc.text")
                             .foregroundColor(RetroTheme.retroBlue)
-                        
+
                         Text("ROM Path:")
                             .font(.system(size: 14, weight: .bold))
                             .foregroundColor(RetroTheme.retroBlue)
                     }
-                    
+
                     Text(game.romPath)
                         .font(.system(size: 12))
                         .foregroundColor(.white)
                         .lineLimit(2)
-                    
-                    if let md5 = game.md5 {
-                        HStack {
-                            Image(systemName: "checkmark.shield")
-                                .foregroundColor(RetroTheme.retroPink)
-                            
-                            Text("MD5: \(md5)")
-                                .font(.system(size: 12))
-                                .foregroundColor(.white)
-                                .lineLimit(1)
-                        }
+
+                    let md5 = game.md5Hash
+                    HStack {
+                        Image(systemName: "checkmark.shield")
+                            .foregroundColor(RetroTheme.retroPink)
+
+                        Text("MD5: \(md5)")
+                            .font(.system(size: 12))
+                            .foregroundColor(.white)
+                            .lineLimit(1)
                     }
-                    
+
                     if let lastPlayed = game.lastPlayed {
                         HStack {
                             Image(systemName: "clock")
                                 .foregroundColor(RetroTheme.retroPink)
-                            
+
                             Text("Last Played: \(formattedDate(lastPlayed))")
                                 .font(.system(size: 12))
                                 .foregroundColor(.white)
                         }
                     }
-                    
+
                     HStack {
                         Spacer()
-                        
+
                         Button(action: {
                             // Action to play game
                         }) {
@@ -1127,7 +1126,7 @@ struct RetroGameCard: View {
             }
         }
     }
-    
+
     private func formattedDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
@@ -1139,21 +1138,21 @@ struct RetroGameCard: View {
 
 struct ThemePreviewView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
-    
+
     var body: some View {
         SwiftUI.List {
             SwiftUI.Section("Text") {
                 Text("Header")
                     .foregroundColor(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
-                
+
                 Text("Title Text")
                     .font(.title)
                     .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                
+
                 Text("Body Text")
                     .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
             }
-            
+
             SwiftUI.Section("Colors") {
                 ColorRow(name: "Header", color: themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
                 ColorRow(name: "Background", color: themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
@@ -1161,15 +1160,15 @@ struct ThemePreviewView: View {
                 ColorRow(name: "Tint", color: themeManager.currentPalette.defaultTintColor.swiftUIColor)
                 ColorRow(name: "Text", color: themeManager.currentPalette.gameLibraryText.swiftUIColor)
             }
-            
+
             SwiftUI.Section("UI Elements") {
                 Toggle("Toggle", isOn: .constant(true))
-                
+
                 Picker("Picker", selection: .constant(1)) {
                     Text("Option 1").tag(1)
                     Text("Option 2").tag(2)
                 }
-                
+
                 Button("Button") {
                     // Action
                 }
@@ -1188,7 +1187,7 @@ struct ThemePreviewView: View {
 struct ColorRow: View {
     let name: String
     let color: Color
-    
+
     var body: some View {
         HStack {
             Text(name)
@@ -1205,12 +1204,12 @@ struct RetroSectionView<Content: View>: View {
     let title: String
     let content: Content
     @State private var glowOpacity: Double = 0.7
-    
+
     init(title: String, @ViewBuilder content: () -> Content) {
         self.title = title
         self.content = content()
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Section header
@@ -1221,7 +1220,7 @@ struct RetroSectionView<Content: View>: View {
                 .shadow(color: .retroBlue.opacity(0.8), radius: 2, x: 2, y: 2)
                 .padding(.bottom, 4)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            
+
             // Content
             content
                 .frame(maxWidth: .infinity)
@@ -1231,7 +1230,7 @@ struct RetroSectionView<Content: View>: View {
             ZStack {
                 // Base background
                 Color.retroBlack.opacity(0.7)
-                
+
                 // Grid overlay
                 RetroGrid(lineSpacing: 15, lineColor: Color.white.opacity(0.07))
             }
@@ -1260,7 +1259,7 @@ struct RetroSectionView<Content: View>: View {
 
 struct ColorPalettePreview: View {
     let palette: any UXThemePalette
-    
+
     var body: some View {
         VStack(spacing: 12) {
             HStack(spacing: 8) {
@@ -1268,7 +1267,7 @@ struct ColorPalettePreview: View {
                 ColorSwatch(color: palette.gameLibraryBackground.swiftUIColor, name: "Background")
                 ColorSwatch(color: palette.gameLibraryText.swiftUIColor, name: "Text")
             }
-            
+
             HStack(spacing: 8) {
                 ColorSwatch(color: palette.gameLibraryHeaderText.swiftUIColor, name: "Header")
                 ColorSwatch(color: palette.gameLibraryCellBackground?.swiftUIColor ?? .gray, name: "Cell")
@@ -1284,14 +1283,14 @@ struct ColorPalettePreview: View {
 struct ColorSwatch: View {
     let color: Color
     let name: String
-    
+
     var body: some View {
         VStack {
             RoundedRectangle(cornerRadius: 8)
                 .fill(color)
                 .frame(width: 50, height: 50)
                 .shadow(radius: 2)
-            
+
             Text(name)
                 .font(.caption)
                 .lineLimit(1)
@@ -1304,7 +1303,7 @@ struct ColorSwatch: View {
 struct SaveStatesMockView: View {
     @State private var viewModel: ContinuesMagementViewModel?
     @State private var isLoading = true
-    
+
     var body: some View {
         Group {
             if isLoading {
@@ -1321,13 +1320,13 @@ struct SaveStatesMockView: View {
             loadViewModel()
         }
     }
-    
+
     private func loadViewModel() {
         Task {
             // Create mock driver with sample data
             let mockDriver = MockSaveStateDriver(mockData: true)
             let saveStatesCount = mockDriver.getAllSaveStates().count
-            
+
             // Create view model with mock driver
             let newViewModel = ContinuesMagementViewModel(
                 driver: mockDriver,
@@ -1336,7 +1335,7 @@ struct SaveStatesMockView: View {
                 numberOfSaves: saveStatesCount,
                 gameUIImage: mockDriver.gameUIImage
             )
-            
+
             // Update on main thread
             await MainActor.run {
                 self.viewModel = newViewModel
@@ -1351,7 +1350,7 @@ struct DeltaSkinPreviewWrapper: View {
     @StateObject private var skinManager = DeltaSkinManager.shared
     @State private var skins: [any DeltaSkinProtocol] = []
     @State private var isLoading = true
-    
+
     var body: some View {
         Group {
             if isLoading {
@@ -1374,13 +1373,13 @@ struct DeltaSkinPreviewWrapper: View {
             loadSkins()
         }
     }
-    
+
     private func loadSkins() {
         Task {
             do {
                 // Get all available skins from the manager
                 let availableSkins = try await skinManager.availableSkins()
-                
+
                 await MainActor.run {
                     self.skins = availableSkins
                     self.isLoading = false

@@ -31,7 +31,7 @@ public extension SaveState {
             image = nil
         }
         let isAutosave = saveState.isAutosave
-        
+
         self.init(id: id, game: game, core: core, file: file, date: date, lastOpened: lastOpened, image: image, isAutosave: isAutosave)
     }
 }
@@ -58,8 +58,8 @@ public extension Realm {
     func buildSaveState(from save: SaveState) -> PVSaveState {
         return PVSaveState.build { object in
             object.id = save.id
-            
-            if let rmGame = self.object(ofType: PVGame.self, forPrimaryKey: save.game.md5) {
+
+            if let rmGame = self.object(ofType: PVGame.self, forPrimaryKey: save.game.md5Hash) {
                 object.game = rmGame
             } else {
                 object.game = buildGame(from: save.game)
@@ -74,7 +74,7 @@ public extension Realm {
             let path = save.game.file.fileName.saveStatePath.deletingPathExtension().appendingPathComponent(save.file.fileName)
             object.file = PVFile(withURL: path, relativeRoot: .iCloud)
             DLOG("file path: \(path)")
-            
+
             object.date = save.date
             object.lastOpened = save.lastOpened
             if let image = save.image {

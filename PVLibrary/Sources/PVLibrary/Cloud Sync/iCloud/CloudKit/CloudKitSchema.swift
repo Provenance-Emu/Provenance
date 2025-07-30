@@ -71,6 +71,11 @@ public enum CloudKitSchema {
         public static let isDeleted = "isDeleted" // Boolean flag for soft delete
         public static let importDate = "importDate" // Date?
 
+        // Artwork Fields
+        public static let originalArtworkURL = "originalArtworkURL" // String? (Remote URL - just sync the value)
+        public static let customArtworkURL = "customArtworkURL" // String? (PVMediaCache key)
+        public static let customArtworkAsset = "customArtworkAsset" // CKAsset? (The actual cached artwork file)
+        
         // Sync Metadata
         public static let lastModifiedDevice = "lastModifiedDevice" // String? (Identifier for device)
         // CloudKit system fields like creationDate, modificationDate are implicit
@@ -80,16 +85,24 @@ public enum CloudKitSchema {
     public struct SaveStateFields {
         public static let recordType = RecordType.saveState.rawValue
         
+        // Core Fields
         public static let filename = "filename" // String
         public static let directory = "directory" // String (e.g., "BIOS", "Saves", "Cheats")
         public static let systemIdentifier = "systemIdentifier" // String? (Optional, e.g., for BIOS)
-        public static let gameID = "gameID" // String? (Optional, e.g., for Saves)
-        public static let fileData = "fileData" // CKAsset
+        public static let gameID = "gameID" // String (Foreign key to PVGame)
+        public static let fileData = "fileData" // CKAsset (The .svs save state file)
         public static let fileSize = "fileSize" // Int64
-        public static let lastModified = "lastModified" // Date
-        public static let md5 = "md5" // String? (Optional, e.g., for BIOS verification)
-        public static let lastModifiedDevice =  "lastModifiedDevice" // UUID
-        // Add other relevant fields specific to generic files if needed
+        
+        // Dates and Sync Metadata
+        public static let creationDate = "creationDate" // Date
+        public static let lastUploadedDate = "lastUploadedDate" // Date?
+        public static let lastModifiedDevice = "lastModifiedDevice" // String? (Identifier for device)
+        
+        // Artwork Fields
+        public static let imageAsset = "imageAsset" // CKAsset? (Save state screenshot/artwork)
+        
+        // Metadata Fields for Orphaned Save State Re-import
+        public static let metadataJSON = "metadataJSON" // String? (Serialized SavePackage metadata for re-import)
     }
     
     // Note: Screenshots and other non-database files are handled using the generic "File" record type

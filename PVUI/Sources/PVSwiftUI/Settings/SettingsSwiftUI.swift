@@ -923,6 +923,14 @@ private struct LibrarySection2: View {
     var body: some View {
         Section(header: Text("Library")) {
             
+            #if os(tvOS)
+                // Cloud Sync Settings
+                NavigationLink(destination: CloudSyncSettingsView()) {
+                    SettingsRow(title: "Cloud Sync Settings",
+                                 subtitle: "Manage CloudKit and iCloud Drive sync settings",
+                                 icon: .sfSymbol("icloud"))
+                }
+            #else
             if viewModel.showFeatureFlagsDebug {
                 PaidFeatureView {
                     // Cloud Sync Settings
@@ -937,6 +945,7 @@ private struct LibrarySection2: View {
                               icon: .sfSymbol("lock.fill"))
                 }
             }
+            #endif
             
             NavigationLink(destination: BatchArtworkMatchingView()) {
                 SettingsRow(title: "Batch Artwork Matcher",

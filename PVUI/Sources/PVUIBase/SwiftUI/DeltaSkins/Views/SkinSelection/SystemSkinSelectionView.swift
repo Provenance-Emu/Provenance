@@ -66,7 +66,7 @@ public struct SystemSkinSelectionView: View {
                     }
                 }
                 .navigationTitle("\(system.fullName) Skins")
-#if !os(tvOS)
+                #if !os(tvOS)
                 .navigationBarTitleDisplayMode(.inline)
                 #endif
                 .toolbar {

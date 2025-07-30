@@ -16,12 +16,12 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
     var savesDatabaseSubscriber: AnyCancellable?
     //initially when downloading, we need to keep a local cache of what has been processed. for large libraries we are pausing/stopping/starting query after an event processed. so when this happens, the saves are inserted several times and 2000 files, from the test where this happened, turned into 10k files and the app got a lot of app hangs.
     lazy var initiallyProcessedFiles: ConcurrentSet<URL> = []
-    
+
     convenience init(notificationCenter: NotificationCenter = .default, errorHandler: SyncErrorHandler) {
         self.init(directories: ["Save States"], notificationCenter: notificationCenter, errorHandler: errorHandler)
         fileImportQueueMaxCount = 1
         jsonDecorder.dataDecodingStrategy = .deferredToData
-        
+
         let publishers = [
             .SavesFinishedImporting,
             .RomDatabaseInitialized]
@@ -32,12 +32,12 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
             }
         }
     }
-    
+
     override func stopObserving() {
         super.stopObserving()
         savesDatabaseSubscriber?.cancel()
     }
-    
+
     override func setNewCloudFilesAvailable() async {
         await super.setNewCloudFilesAvailable()
         guard await status.value == .filesAlreadyMoved
@@ -46,7 +46,7 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
         }
         await initiallyProcessedFiles.removeAll()
     }
-    
+
     func removeSavesDeletedWhileApplicationClosed() async {
         await removeDeletionsCriticalSection.performWithLock { [weak self] in
             guard let canPurge = await self?.canPurgeDatastore,
@@ -65,7 +65,7 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
             }
         }
     }
-    
+
     override func insertDownloadedFile(_ file: URL) async {
         guard let _ = await pendingFilesToDownload.remove(file),
               await !initiallyProcessedFiles.contains(file),
@@ -77,7 +77,7 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
         await newFiles.insert(file)
         await importNewSaves()
     }
-    
+
     override func deleteFromDatastore(_ file: URL) async {
         guard "jpg".caseInsensitiveCompare(file.pathExtension) == .orderedSame
         else {
@@ -91,20 +91,20 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
             ELOG("error deleting \(file) from database: \(error)")
         }
     }
-    
+
     func getSaveFrom(_ json: URL) throws -> SaveState? {
         guard fileManager.fileExists(atPath: json.pathDecoded)
         else {
             return nil
         }
         let secureDoc = json.startAccessingSecurityScopedResource()
-        
+
         defer {
             if secureDoc {
                 json.stopAccessingSecurityScopedResource()
             }
         }
-        
+
         var dataMaybe = fileManager.contents(atPath: json.pathDecoded)
         if dataMaybe == nil {
             dataMaybe = try Data(contentsOf: json, options: [.uncached])
@@ -112,7 +112,7 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
         guard let data = dataMaybe else {
             throw iCloudError.dataReadFail
         }
-        
+
         DLOG("Data read \(String(describing: String(data: data, encoding: .utf8)))")
         let save: SaveState
         do {
@@ -123,7 +123,7 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
         DLOG("Read JSON data at (\(json.pathDecoded)")
         return save
     }
-    
+
     /// Attempts to fix/migrate a SaveState from 2.x to 3.x
     /// - Parameters:
     ///   - fileContents: binary of json save state
@@ -153,7 +153,7 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
         }
         return updated
     }
-    
+
     func importNewSaves() async {
         guard RomDatabase.databaseInitialized
         else {
@@ -173,7 +173,7 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
         //process save files batch
         await processJsonFiles(jsonFiles)
     }
-    
+
     func processJsonFiles(_ jsonFiles: any Collection<URL>) async {
         //setup processed count
         await processingState.set(value: .processing)
@@ -196,7 +196,7 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
                     continue
                 }
                 await updateExistingSave(existing, romsDatastore, save, json, processedCount)
-                
+
             } catch {
                 await errorHandler.handleError(error, file: json)
                 ELOG("Decode error on \(json): \(error)")
@@ -207,9 +207,9 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
         await removeSavesDeletedWhileApplicationClosed()
         notificationCenter.post(Notification(name: .SavesFinishedImporting))
     }
-    
+
     func updateExistingSave(_ existing: PVSaveState, _ romsDatastore: RomsDatastore, _ save: SaveState, _ json: URL, _ processedCount: Int) async {
-        guard let game = await romsDatastore.findGame(md5: save.game.md5, forSave: existing)
+        guard let game = await romsDatastore.findGame(md5: save.game.md5Hash, forSave: existing)
         else {
             return
         }
@@ -221,7 +221,7 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
             ELOG("Failed to update game \(json): \(error)")
         }
     }
-    
+
     func storeNewSave(_ save: SaveState, _ romsDatastore: RomsDatastore, _ json: URL) async {
         do {
             try await romsDatastore.create(newSave: save)

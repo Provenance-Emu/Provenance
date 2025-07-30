@@ -39,7 +39,7 @@ struct HomeView: SwiftUI.View {
 
     // Import status view properties
     @State private var showImportStatusView = false
-    
+
     // Modal state for log viewer and system status
     @State private var showLogViewer = false
     @State private var showSystemStatus = false
@@ -287,8 +287,24 @@ struct HomeView: SwiftUI.View {
             RetroLogView(isFullscreen: $showLogViewer)
         }
         // System Status Modal
-        .fullScreenCover(isPresented: $showSystemStatus) {
-            RetroStatusControlView()
+        .sheet(isPresented: $showSystemStatus) {
+            NavigationStack {
+                RetroStatusControlView()
+                    .navigationTitle("System Status")
+                #if !os(tvOS)
+                    .navigationBarTitleDisplayMode(.inline)
+                #endif
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("Done") {
+                                showSystemStatus = false
+                            }
+                            .foregroundColor(RetroTheme.retroPink)
+                        }
+                    }
+            }
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: $showImagePicker) {
 #if !os(tvOS)
@@ -1232,7 +1248,7 @@ extension HomeView: GameContextMenuDelegate {
         DLOG("GameContextMenu: Attempting to save artwork for game: \(game.title)")
 
         let uniqueID = UUID().uuidString
-        let md5: String = game.md5 ?? ""
+        let md5: String = game.md5Hash ?? ""
         let key = "artwork_\(md5)_\(uniqueID)"
         DLOG("Generated key for image: \(key)")
 

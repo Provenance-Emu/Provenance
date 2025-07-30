@@ -250,19 +250,19 @@ struct RetroMenuView: View {
         // Calculate if we should show the save & quit option
         let shouldSave: Bool = {
             guard let game = emulatorVC.game else { return false }
-            
+
             let lastPlayed = game.lastPlayed ?? Date()
             let minimumPlayTimeToMakeAutosave: TimeInterval = 60 * 2 // 2 minutes
-            
+
             var shouldSave = Defaults[.autoSave]
             shouldSave = shouldSave && abs(lastPlayed.timeIntervalSinceNow) > minimumPlayTimeToMakeAutosave
             shouldSave = shouldSave && (game.lastAutosaveAge ?? minutes(2)) > minutes(1)
             shouldSave = shouldSave && abs(game.saveStates.sorted(byKeyPath: "date", ascending: true).last?.date.timeIntervalSinceNow ?? minutes(2)) > minutes(1)
             shouldSave = shouldSave && emulatorVC.core.supportsSaveStates
-            
+
             return shouldSave
         }()
-        
+
         return VStack(spacing: menuSpacing) {
             // Resume game button
             menuButton(title: "RESUME GAME", icon: "play.fill", color: .retroBlue) {
@@ -290,13 +290,13 @@ struct RetroMenuView: View {
                     await emulatorVC.quit(optionallySave: false)
                 }
             }
-            
+
             // Save & Quit button - only show if save option is available
             if shouldSave {
                 menuButton(title: "SAVE & QUIT", icon: "square.and.arrow.down", color: .retroPink) {
                     dismissAction()
                     let image = emulatorVC.captureScreenshot()
-                    
+
                     Task {
                         do {
                             try await emulatorVC.createNewSaveState(auto: true, screenshot: image)
@@ -374,7 +374,7 @@ struct RetroMenuView: View {
                     emulatorVC.showSpeedMenu()
                 }
             }
-            
+
             // Audio visualizer button (iOS 16+ only, if supported by core)
             if emulatorVC.core.supportsAudioVisualizer {
                 AudioVisualizerButton(emulatorVC: emulatorVC, dismissAction: dismissAction)
@@ -475,7 +475,7 @@ struct RetroMenuView: View {
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
     @State private var isHoveredSkinId: String? = nil
-    
+
     // Button effect and sound settings
     @Default(.buttonPressEffect) var buttonPressEffect
     @Default(.buttonSound) var buttonSound
@@ -581,7 +581,7 @@ struct RetroMenuView: View {
                 Text("BUTTON EFFECT")
                     .font(.system(size: 12, weight: .bold))
                     .foregroundColor(.gray)
-                
+
                 Button(action: {
                     // Show button effect picker
                     showingButtonEffectPicker = true
@@ -590,9 +590,9 @@ struct RetroMenuView: View {
                         Text(buttonPressEffect.description)
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.white)
-                        
+
                         Spacer()
-                        
+
                         Image(systemName: "chevron.right")
                             .foregroundColor(.retroPurple)
                     }
@@ -611,13 +611,13 @@ struct RetroMenuView: View {
                     buttonEffectPickerView
                 }
             }
-            
+
             // Button Sound Selection
             VStack(alignment: .leading, spacing: 4) {
                 Text("BUTTON SOUND")
                     .font(.system(size: 12, weight: .bold))
                     .foregroundColor(.gray)
-                
+
                 Button(action: {
                     // Show button sound picker
                     showingButtonSoundPicker = true
@@ -626,9 +626,9 @@ struct RetroMenuView: View {
                         Text(buttonSound.description)
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.white)
-                        
+
                         Spacer()
-                        
+
                         Image(systemName: "speaker.wave.2")
                             .foregroundColor(.retroBlue)
                     }
@@ -647,7 +647,7 @@ struct RetroMenuView: View {
                     buttonSoundPickerView
                 }
             }
-            
+
             // Apply button
             menuButton(title: "APPLY CHANGES", icon: "checkmark.circle", color: .retroBlue) {
                 dismissAction()
@@ -1259,7 +1259,7 @@ struct RetroMenuView: View {
             return
         }
 
-        let gameId: String? = emulatorVC.game.md5 ?? emulatorVC.game.crc
+        let gameId: String? = emulatorVC.game.md5Hash ?? emulatorVC.game.crc
 
         do {
             // Apply filter changes if needed

@@ -37,14 +37,14 @@ public protocol GameLaunchingViewController {
     func updateRecentGames(_ game: PVGame)
     func presentCoreSelection(forGame game:
                               PVGame, sender: Any?)
-    
+
     func displayAndLogError(withTitle title: String,
                             message: String,
                             customActions: [UIAlertAction]?)
 }
 
 public extension GameLaunchingViewController {
-    
+
     //MARK: Default protocol implementation `GameLaunchingViewController`
     @MainActor
     func canLoad(_ game: PVGame) async throws {
@@ -54,7 +54,7 @@ public extension GameLaunchingViewController {
 
         try await biosCheck(system: system)
     }
-    
+
     @MainActor func openSaveState(withID objectId: String) async {
         let realm = RomDatabase.sharedInstance
         if let object = realm.object(ofType: PVSaveState.self, wherePrimaryKeyEquals: objectId) {
@@ -62,7 +62,7 @@ public extension GameLaunchingViewController {
             await openSaveState(threadObject!)
         }
     }
-    
+
     @MainActor
     private func biosCheck(system: PVSystem) async throws {
         guard system.requiresBIOS else {
@@ -199,8 +199,8 @@ public extension GameLaunchingViewController {
             throw GameLaunchingError.missingBIOSes(missingBIOSES)
         }
     }
-    
-    
+
+
     func updateRecentGames(_ game: PVGame) {
         let database = RomDatabase.sharedInstance
         RomDatabase.refresh()
@@ -250,7 +250,7 @@ public extension GameLaunchingViewController {
             }
         }
     }
-    
+
     func doLoad(_ game: PVGame) async throws {
         guard let system = game.system else {
             throw GameLaunchingError.systemNotFound
@@ -278,28 +278,28 @@ extension GameLaunchingViewController where Self: UIViewController {
     func donateShortcut(forGame game: PVGame) {
         let activity = NSUserActivity(activityType: "com.provenance-emu.provenance.openMD5")
         activity.title = "Open \(game.title) in Provenance"
-        activity.userInfo = ["url": "provenance://open?md5=\(game.md5)"]
+        activity.userInfo = ["url": "provenance://open?md5=\(game.md5Hash)"]
         activity.isEligibleForSearch = false
         activity.isEligibleForPublicIndexing = true
         activity.isEligibleForHandoff = true
-        
+
         #if !os(tvOS)
         activity.isEligibleForPrediction = true
         activity.persistentIdentifier = NSUserActivityPersistentIdentifier("com.provenance-emu.provenance.openMD5")
         #endif
-        
+
         Task { @MainActor in
             self.userActivity = activity
             self.userActivity?.becomeCurrent()
         }
     }
-    
+
     @MainActor
     func load(_ game: PVGame, sender: Any? = nil, core: PVCore? = nil, saveState: PVSaveState? = nil) async {
         guard game.realm != nil else {
             return
         }
-        
+
         ILOG("Loading game: \(game.title) at romPath: \(game.romPath), url: \(game.url?.absoluteString ?? "nil"), partialPath: \(game.file?.partialPath ?? "nil")")
 
         // Show retrowave-themed loading HUD
@@ -316,7 +316,7 @@ extension GameLaunchingViewController where Self: UIViewController {
         @ThreadSafe var game: PVGame! = game
         @ThreadSafe var core = core
         @ThreadSafe var saveState = saveState
-        
+
         Task.detached { [weak self] in
             self?.donateShortcut(forGame: game)
         }
@@ -386,11 +386,11 @@ extension GameLaunchingViewController where Self: UIViewController {
                 // If one has "retroarch" and the other doesn't, non-retroarch comes first
                 let aHasRetroarch = a.projectName.localizedCaseInsensitiveContains("retroarch")
                 let bHasRetroarch = b.projectName.localizedCaseInsensitiveContains("retroarch")
-                
+
                 if aHasRetroarch != bHasRetroarch {
                     return !aHasRetroarch // non-retroarch comes first
                 }
-                
+
                 // Within each group, sort alphabetically
                 return a.projectName < b.projectName
             }

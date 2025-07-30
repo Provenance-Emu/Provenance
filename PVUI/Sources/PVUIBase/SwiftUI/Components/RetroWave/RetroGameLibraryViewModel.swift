@@ -44,7 +44,7 @@ public class RetroGameLibraryViewModel: ObservableObject {
     /// Import status message
     @Published var importMessage: String? = nil
     @Published var showingImportMessage = false
-    
+
     /// Control visibility of status messages
     @Published var showStatusMessages = true
 
@@ -148,7 +148,7 @@ public class RetroGameLibraryViewModel: ObservableObject {
         Task {
             do {
                 let uniqueID = UUID().uuidString
-                let md5: String = game.md5 ?? ""
+                let md5: String = game.md5Hash ?? ""
                 let key = "artwork_\(md5)_\(uniqueID)"
                 DLOG("RetroGameLibraryViewModel: Generated key for image: \(key)")
 
@@ -235,10 +235,10 @@ public class RetroGameLibraryViewModel: ObservableObject {
     public init() {
         setupSearchDebounce()
         setupImportQueueTimer()
-        
+
         // Load status message visibility from UserDefaults
         showStatusMessages = UserDefaults.standard.bool(forKey: "ShowStatusMessages")
-        
+
         // Save status message visibility when it changes
         $showStatusMessages
             .dropFirst() // Skip initial value
@@ -351,7 +351,7 @@ public class RetroGameLibraryViewModel: ObservableObject {
             game.thaw()?.title = newName
         }
     }
-    
+
     /// Move a game to a different system
     public func moveGame(_ game: PVGame, toSystem system: PVSystem) async {
         // Get a reference to the Realm
@@ -359,14 +359,14 @@ public class RetroGameLibraryViewModel: ObservableObject {
             ELOG("Failed to open Realm for moving game")
             return
         }
-        
+
         do {
             try realm.write {
                 guard !game.isInvalidated else { return }
-                
+
                 let thawedGame = game.thaw() ?? game
                 thawedGame.systemIdentifier = system.identifier
-                
+
                 // Update any other system-specific properties if needed
                 DLOG("Successfully moved game \(thawedGame.title) to system \(system.name)")
             }
@@ -419,14 +419,14 @@ public class RetroGameLibraryViewModel: ObservableObject {
     /// Set up direct subscription to the import queue
     private func setupImportQueueTimer() {
         ILOG("RetroGameLibraryViewModel: Setting up direct import queue subscription")
-        
+
         // Get a publisher for the import queue
         // This is more efficient than polling and avoids the infinite loop
         gameImporter.importQueuePublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] queue in
                 guard let self = self else { return }
-                
+
                 // Always log the queue state for debugging
                 if queue.isEmpty {
                     VLOG("RetroGameLibraryViewModel: Import queue is empty")
@@ -438,10 +438,10 @@ public class RetroGameLibraryViewModel: ObservableObject {
                          Statuses: \(queue.map { $0.status.description }.joined(separator: ", "))
                          """)
                 }
-                
+
                 // Always update the queue items to ensure the view has the latest data
                 self.importQueueItems = queue
-                
+
                 // Force a redraw if the queue has any items (not just active ones)
                 // This ensures the view updates even if all items are completed or failed
                 if !queue.isEmpty {
@@ -483,7 +483,7 @@ public struct RetroGameLibrarySystemMoveState: Identifiable {
     let game: PVGame
     let availableSystems: [PVSystem]
     var isPresenting: Bool = true
-    
+
     public init(game: PVGame, availableSystems: [PVSystem]) {
         self.game = game
         self.availableSystems = availableSystems

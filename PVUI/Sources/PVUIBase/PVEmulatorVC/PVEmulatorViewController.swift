@@ -1356,7 +1356,7 @@ extension PVEmulatorViewController {
 
                             // Get the system and game IDs
                             guard let systemId = self.game.system?.systemIdentifier else { return }
-                            let gameId = self.game.md5 ?? self.game.crc
+                            let gameId = self.game.md5Hash ?? self.game.crc
 
                             // Check if we have a different skin for this orientation
                             // Use DeltaSkinManager which now handles session skins as well as preferences

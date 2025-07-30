@@ -195,7 +195,7 @@ public class iCloudRomsSyncer: iCloudContainerSyncer {
     
     func tryToImportNewRomFiles() async {
         //if the importer is currently importing files, we have to wait
-        let importState = gameImporter.processingState
+        let importState = await gameImporter.processingState
         guard importState == .idle,
               importState != .paused
         else {

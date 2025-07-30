@@ -185,7 +185,7 @@ public struct BootupViewRetroWave: View {
                 Spacer()
                 
                 // Footer text
-                Text("© 2025 PROVENANCE TEAM")
+                Text("© 2025 JOSEPH MATTIELLO")
                     .font(.caption)
                     .foregroundColor(.gray)
                     .padding(.bottom, 10)

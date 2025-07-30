@@ -136,7 +136,7 @@ public final class RetroSystemStatsViewModel: ObservableObject {
                 totalPlaytime += game.timeSpentInGame
                 // Get the correct file URL using the game's file property
                 guard let file = game.file, let fileURL = file.url else {
-                    WLOG("ROM has no valid file: \(game.title ?? "Unknown") (\(game.md5 ?? "No MD5"))")
+                    WLOG("ROM has no valid file: \(game.title ?? "Unknown") (\(game.md5Hash ?? "No MD5"))")
                     continue
                 }
 
@@ -317,17 +317,17 @@ public final class RetroSystemStatsViewModel: ObservableObject {
         case "iPad12,1", "iPad12,2": return "iPad (9th generation)"
         case "iPad13,18", "iPad13,19": return "iPad (10th generation)"
         case "iPad14,10", "iPad14,11": return "iPad (11th generation)"
-        
+
         // iPad Air (3rd generation and newer)
         case "iPad11,3", "iPad11,4": return "iPad Air (3rd generation)"
         case "iPad13,1", "iPad13,2": return "iPad Air (4th generation)"
         case "iPad14,3", "iPad14,4": return "iPad Air (5th generation)"
         case "iPad14,8", "iPad14,9": return "iPad Air (6th generation)"
-        
+
         // iPad mini (5th generation and newer)
         case "iPad11,1", "iPad11,2": return "iPad mini (5th generation)"
         case "iPad14,1", "iPad14,2": return "iPad mini (6th generation)"
-        
+
         // iPad Pro models (iOS 15+ compatible)
         // iPad Pro 9.7-inch
         case "iPad6,3", "iPad6,4": return "iPad Pro 9.7-inch"
@@ -388,58 +388,58 @@ public final class RetroSystemStatsViewModel: ObservableObject {
         // A9 (iPhone 6s series, iPhone SE 1st gen, iPad Pro 9.7", iPad 5th gen)
         case "iPhone8,1", "iPhone8,2", "iPhone8,4": return "A9"
         case "iPad6,3", "iPad6,4", "iPad6,7", "iPad6,8": return "A9X"
-        
+
         // A10 (iPhone 7 series, iPod touch 7th gen, iPad 6th/7th gen)
         case "iPhone9,1", "iPhone9,2", "iPhone9,3", "iPhone9,4": return "A10 Fusion"
         case "iPod9,1": return "A10 Fusion"
         case "iPad7,5", "iPad7,6", "iPad7,11", "iPad7,12": return "A10 Fusion"
         case "iPad7,3", "iPad7,4": return "A10X Fusion"
-        
+
         // A10X (iPad Pro 10.5", iPad Pro 12.9" 2nd gen)
         case "iPad7,1", "iPad7,2": return "A10X Fusion"
-        
+
         // A11 Bionic (iPhone 8 series, iPhone X)
         case "iPhone10,1", "iPhone10,2", "iPhone10,3", "iPhone10,4", "iPhone10,5", "iPhone10,6": return "A11 Bionic"
-        
+
         // A12 Bionic (iPhone XS series, iPhone XR, iPad Air 3rd gen, iPad mini 5th gen, iPad 8th gen)
         case "iPhone11,2", "iPhone11,4", "iPhone11,6", "iPhone11,8": return "A12 Bionic"
         case "iPad11,1", "iPad11,2", "iPad11,3", "iPad11,4", "iPad11,6", "iPad11,7": return "A12 Bionic"
-        
+
         // A12X Bionic (iPad Pro 11" 1st gen, iPad Pro 12.9" 3rd gen)
         case "iPad8,1", "iPad8,2", "iPad8,3", "iPad8,4", "iPad8,5", "iPad8,6", "iPad8,7", "iPad8,8": return "A12X Bionic"
-        
+
         // A12Z Bionic (iPad Pro 11" 2nd gen, iPad Pro 12.9" 4th gen)
         case "iPad8,9", "iPad8,10", "iPad8,11", "iPad8,12": return "A12Z Bionic"
-        
+
         // A13 Bionic (iPhone 11 series, iPhone SE 2nd gen)
         case "iPhone12,1", "iPhone12,3", "iPhone12,5", "iPhone12,8": return "A13 Bionic"
-        
+
         // A14 Bionic (iPhone 12 series, iPad Air 4th gen, iPad 9th gen)
         case "iPhone13,1", "iPhone13,2", "iPhone13,3", "iPhone13,4": return "A14 Bionic"
         case "iPad13,1", "iPad13,2", "iPad12,1", "iPad12,2": return "A14 Bionic"
-        
+
         // A15 Bionic (iPhone 13 series, iPhone 14 series, iPhone SE 3rd gen, iPad mini 6th gen)
         case "iPhone14,2", "iPhone14,3", "iPhone14,6", "iPhone14,7", "iPhone14,8", "iPhone15,4", "iPhone15,5": return "A15 Bionic"
         case "iPad14,1", "iPad14,2": return "A15 Bionic"
-        
+
         // A16 Bionic (iPhone 14 Pro series, iPhone 15 series)
         case "iPhone15,2", "iPhone15,3", "iPhone16,1", "iPhone16,2": return "A16 Bionic"
-        
+
         // A17 Pro (iPhone 15 Pro series)
         case "iPhone16,3", "iPhone16,4": return "A17 Pro"
-        
+
         // A18 (iPhone 16 series)
         case "iPhone17,1", "iPhone17,2": return "A18"
         case "iPhone17,3", "iPhone17,4": return "A18 Pro"
-        
+
         // M1 (iPad Pro 11" 3rd gen, iPad Pro 12.9" 5th gen, iPad Air 5th gen)
         case "iPad13,4", "iPad13,5", "iPad13,6", "iPad13,7", "iPad13,8", "iPad13,9", "iPad13,10", "iPad13,11": return "M1"
         case "iPad14,3", "iPad14,4": return "M1"
-        
+
         // M2 (iPad Pro 11" 4th gen, iPad Pro 12.9" 6th gen, iPad Air 6th gen)
         case "iPad14,5", "iPad14,6", "iPad14,10", "iPad14,11": return "M2"
         case "iPad14,8", "iPad14,9": return "M2"
-        
+
         // Apple TV
         case "AppleTV5,3": return "A8"
         case "AppleTV6,2": return "A10X Fusion"
@@ -473,59 +473,59 @@ public final class RetroSystemStatsViewModel: ObservableObject {
         case "iPhone8,1", "iPhone8,2", "iPhone8,4": return "PowerVR GT7600 (A9)"
         case "iPad6,3", "iPad6,4": return "PowerVR 7XT (A9X)"
         case "iPad6,7", "iPad6,8": return "PowerVR 7XT (A9X)"
-        
+
         // A10 GPU (iPhone 7 series, iPod touch 7th gen, iPad 6th/7th gen)
         case "iPhone9,1", "iPhone9,2", "iPhone9,3", "iPhone9,4": return "PowerVR GT7600 Plus (A10 Fusion)"
         case "iPod9,1": return "PowerVR GT7600 Plus (A10 Fusion)"
         case "iPad7,5", "iPad7,6", "iPad7,11", "iPad7,12": return "PowerVR GT7600 Plus (A10 Fusion)"
         case "iPad7,1", "iPad7,2", "iPad7,3", "iPad7,4": return "PowerVR 7XT Plus (A10X Fusion)"
-        
+
         // A11 Bionic GPU (iPhone 8 series, iPhone X)
         case "iPhone10,1", "iPhone10,2", "iPhone10,3", "iPhone10,4", "iPhone10,5", "iPhone10,6": return "3-core GPU (A11 Bionic)"
-        
+
         // A12 Bionic GPU (iPhone XS series, iPhone XR, iPad Air 3rd gen, iPad mini 5th gen, iPad 8th gen)
         case "iPhone11,2", "iPhone11,4", "iPhone11,6": return "4-core GPU (A12 Bionic)"
         case "iPhone11,8": return "3-core GPU (A12 Bionic)"
         case "iPad11,1", "iPad11,2", "iPad11,3", "iPad11,4", "iPad11,6", "iPad11,7": return "4-core GPU (A12 Bionic)"
-        
+
         // A12X/A12Z Bionic GPU (iPad Pro models)
         case "iPad8,1", "iPad8,2", "iPad8,3", "iPad8,4", "iPad8,5", "iPad8,6", "iPad8,7", "iPad8,8": return "7-core GPU (A12X Bionic)"
         case "iPad8,9", "iPad8,10", "iPad8,11", "iPad8,12": return "8-core GPU (A12Z Bionic)"
-        
+
         // A13 Bionic GPU (iPhone 11 series, iPhone SE 2nd gen)
         case "iPhone12,1", "iPhone12,8": return "4-core GPU (A13 Bionic)"
         case "iPhone12,3", "iPhone12,5": return "4-core GPU (A13 Bionic)"
-        
+
         // A14 Bionic GPU (iPhone 12 series, iPad Air 4th gen, iPad 9th gen)
         case "iPhone13,1", "iPhone13,2", "iPhone13,3", "iPhone13,4": return "4-core GPU (A14 Bionic)"
         case "iPad13,1", "iPad13,2", "iPad12,1", "iPad12,2": return "4-core GPU (A14 Bionic)"
-        
+
         // A15 Bionic GPU (iPhone 13 series, iPhone 14 series, iPhone SE 3rd gen, iPad mini 6th gen)
         case "iPhone14,2", "iPhone14,3": return "5-core GPU (A15 Bionic)"
         case "iPhone14,6", "iPhone14,7", "iPhone14,8", "iPhone15,4", "iPhone15,5": return "4-core GPU (A15 Bionic)"
         case "iPad14,1", "iPad14,2": return "5-core GPU (A15 Bionic)"
-        
+
         // A16 Bionic GPU (iPhone 14 Pro series, iPhone 15 series)
         case "iPhone15,2", "iPhone15,3": return "5-core GPU (A16 Bionic)"
         case "iPhone16,1", "iPhone16,2": return "5-core GPU (A16 Bionic)"
-        
+
         // A17 Pro GPU (iPhone 15 Pro series)
         case "iPhone16,3", "iPhone16,4": return "6-core GPU (A17 Pro)"
-        
+
         // A18 GPU (iPhone 16 series)
         case "iPhone17,1", "iPhone17,2": return "5-core GPU (A18)"
         case "iPhone17,3", "iPhone17,4": return "6-core GPU (A18 Pro)"
-        
+
         // M1 GPU (iPad Pro 11" 3rd gen, iPad Pro 12.9" 5th gen, iPad Air 5th gen)
         case "iPad13,4", "iPad13,5", "iPad13,6", "iPad13,7": return "8-core GPU (M1)"
         case "iPad13,8", "iPad13,9", "iPad13,10", "iPad13,11": return "8-core GPU (M1)"
         case "iPad14,3", "iPad14,4": return "8-core GPU (M1)"
-        
+
         // M2 GPU (iPad Pro 11" 4th gen, iPad Pro 12.9" 6th gen, iPad Air 6th gen)
         case "iPad14,5", "iPad14,6": return "10-core GPU (M2)"
         case "iPad14,10", "iPad14,11": return "10-core GPU (M2)"
         case "iPad14,8", "iPad14,9": return "10-core GPU (M2)"
-        
+
         // Apple TV
         case "AppleTV5,3": return "PowerVR GX6450 (A8)"
         case "AppleTV6,2": return "PowerVR 7XT Plus (A10X Fusion)"

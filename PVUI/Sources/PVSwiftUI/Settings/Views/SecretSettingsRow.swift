@@ -72,6 +72,8 @@ private struct SecretDPadView: View {
     @State private var controller: GCController?
     @State private var isHandlingX = false
     @State private var isHandlingY = false
+    @State private var lastInputTime: Date = Date()
+    private let inputDebounceInterval: TimeInterval = 0.2
 #endif
     
     private let konamiCode: [Direction] = [.up, .up, .down, .down, .left, .right, .left, .right]
@@ -161,25 +163,31 @@ private struct SecretDPadView: View {
             DLOG("[SecretDPadView] onMoveCommand received: \(direction)")
             switch direction {
             case .up:
-                DLOG("[SecretDPadView] UP button pressed")
-                handleDirection(.up)
+                handleInput(.up)
             case .down:
-                DLOG("[SecretDPadView] DOWN button pressed")
-                handleDirection(.down)
+                handleInput(.down)
             case .left:
-                DLOG("[SecretDPadView] LEFT button pressed")
-                handleDirection(.left)
+                handleInput(.left)
             case .right:
-                DLOG("[SecretDPadView] RIGHT button pressed")
-                handleDirection(.right)
-            default:
-                DLOG("[SecretDPadView] Unknown direction: \(direction)")
+                handleInput(.right)
+            @unknown default:
                 break
             }
         }
-        // Make sure the view can receive focus for remote input
-        .focusable(true)
+        // Note: DragGesture is not available in tvOS, so we rely on:
+        // 1. onMoveCommand for physical D-pad button presses
+        // 2. GameController framework for all controller input (including touchpad via microGamepad)
+        // 3. The setupController() method handles modern Siri Remote input via microGamepad.dpad
+        .focusable()
         .focused($isFocused)
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                // Ensure the view has focus to receive remote input
+                isFocused = true
+                setupController()
+                DLOG("[SecretDPadView] View is now focused and ready for input")
+            }
+        }
         .onLongPressGesture(minimumDuration: 5) {
             DLOG("[SecretDPadView] Long press detected")
             withAnimation(.easeInOut) {
@@ -221,42 +229,156 @@ private struct SecretDPadView: View {
 #if os(tvOS)
     private func setupController() {
         DLOG("[SecretDPadView] Setting up controller")
-        // Get the first connected controller (Siri Remote)
-        controller = GCController.controllers().first
         
-        controller?.microGamepad?.dpad.valueChangedHandler = { [self] dpad, xValue, yValue in
-            DLOG("[SecretDPadView] Dpad input - x: \(xValue), y: \(yValue)")
+        // Find all connected controllers and log them
+        let controllers = GCController.controllers()
+        DLOG("[SecretDPadView] Found \(controllers.count) controllers")
+        
+        for (index, ctrl) in controllers.enumerated() {
+            DLOG("[SecretDPadView] Controller \(index): \(ctrl.vendorName ?? "Unknown")")
+            DLOG("[SecretDPadView] - Has microGamepad: \(ctrl.microGamepad != nil)")
+            DLOG("[SecretDPadView] - Has extendedGamepad: \(ctrl.extendedGamepad != nil)")
+        }
+        
+        // Get the first connected controller
+        controller = controllers.first
+        
+        guard let controller = controller else {
+            DLOG("[SecretDPadView] No controller found")
+            return
+        }
+        
+        DLOG("[SecretDPadView] Using controller: \(controller.vendorName ?? "Unknown")")
+        
+        // Prioritize extendedGamepad over microGamepad for full controllers
+        // This prevents conflicts when a controller supports both profiles
+        if let extendedGamepad = controller.extendedGamepad {
+            DLOG("[SecretDPadView] Setting up extendedGamepad (full controller)")
+            setupExtendedGamepad(extendedGamepad)
+        } else if let microGamepad = controller.microGamepad {
+            DLOG("[SecretDPadView] Setting up microGamepad (Siri Remote)")
+            setupMicroGamepad(microGamepad)
+        } else {
+            DLOG("[SecretDPadView] Controller has no supported input profile")
+        }
+    }
+    
+    private func setupMicroGamepad(_ microGamepad: GCMicroGamepad) {
+        microGamepad.reportsAbsoluteDpadValues = false
+        
+        microGamepad.dpad.valueChangedHandler = { [self] dpad, xValue, yValue in
+            DLOG("[SecretDPadView] MicroGamepad dpad input - x: \(xValue), y: \(yValue)")
+            
+            let threshold: Float = 0.5 // Threshold for detecting directional input
+            let resetThreshold: Float = 0.2 // Lower threshold for resetting state
             
             // Handle X-axis (left/right)
-            if xValue == 1.0 && !isHandlingX {
-                isHandlingX = true
-                pressButton(.right)
-            } else if xValue == -1.0 && !isHandlingX {
-                isHandlingX = true
-                pressButton(.left)
-            } else if xValue == 0 {
-                isHandlingX = false
+            if xValue > threshold && !self.isHandlingX {
+                self.isHandlingX = true
+                self.handleInput(.right)
+                DLOG("[SecretDPadView] MicroGamepad detected RIGHT")
+            } else if xValue < -threshold && !self.isHandlingX {
+                self.isHandlingX = true
+                self.handleInput(.left)
+                DLOG("[SecretDPadView] MicroGamepad detected LEFT")
+            } else if abs(xValue) < resetThreshold {
+                self.isHandlingX = false
             }
             
             // Handle Y-axis (up/down)
-            if yValue == 1.0 && !isHandlingY {
-                isHandlingY = true
-                pressButton(.up)
-            } else if yValue == -1.0 && !isHandlingY {
-                isHandlingY = true
-                pressButton(.down)
-            } else if yValue == 0 {
-                isHandlingY = false
+            if yValue > threshold && !self.isHandlingY {
+                self.isHandlingY = true
+                self.handleInput(.up)
+                DLOG("[SecretDPadView] MicroGamepad detected UP")
+            } else if yValue < -threshold && !self.isHandlingY {
+                self.isHandlingY = true
+                self.handleInput(.down)
+                DLOG("[SecretDPadView] MicroGamepad detected DOWN")
+            } else if abs(yValue) < resetThreshold {
+                self.isHandlingY = false
+            }
+        }
+    }
+    
+    private func setupExtendedGamepad(_ extendedGamepad: GCExtendedGamepad) {
+        // Handle D-pad input with higher priority
+        extendedGamepad.dpad.valueChangedHandler = { [self] dpad, xValue, yValue in
+            DLOG("[SecretDPadView] ExtendedGamepad dpad input - x: \(xValue), y: \(yValue)")
+            
+            let threshold: Float = 0.3 // Lower threshold for game controller D-pads
+            let resetThreshold: Float = 0.1 // Lower threshold for resetting state
+            
+            // Handle X-axis (left/right)
+            if xValue > threshold && !self.isHandlingX {
+                self.isHandlingX = true
+                self.handleInput(.right)
+                DLOG("[SecretDPadView] ExtendedGamepad D-pad detected RIGHT")
+            } else if xValue < -threshold && !self.isHandlingX {
+                self.isHandlingX = true
+                self.handleInput(.left)
+                DLOG("[SecretDPadView] ExtendedGamepad D-pad detected LEFT")
+            } else if abs(xValue) < resetThreshold {
+                self.isHandlingX = false
+            }
+            
+            // Handle Y-axis (up/down)
+            if yValue > threshold && !self.isHandlingY {
+                self.isHandlingY = true
+                self.handleInput(.up)
+                DLOG("[SecretDPadView] ExtendedGamepad D-pad detected UP")
+            } else if yValue < -threshold && !self.isHandlingY {
+                self.isHandlingY = true
+                self.handleInput(.down)
+                DLOG("[SecretDPadView] ExtendedGamepad D-pad detected DOWN")
+            } else if abs(yValue) < resetThreshold {
+                self.isHandlingY = false
             }
         }
         
-        // Enable basic gamepad input profile for Siri Remote
-        controller?.microGamepad?.reportsAbsoluteDpadValues = false
+        // Handle left joystick input as backup
+        extendedGamepad.leftThumbstick.valueChangedHandler = { [self] thumbstick, xValue, yValue in
+            let threshold: Float = 0.7 // Higher threshold for joystick to avoid accidental input
+            let resetThreshold: Float = 0.3
+            
+            DLOG("[SecretDPadView] Left thumbstick input - x: \(xValue), y: \(yValue)")
+            
+            // Handle X-axis (left/right)
+            if xValue > threshold && !self.isHandlingX {
+                self.isHandlingX = true
+                self.handleInput(.right)
+                DLOG("[SecretDPadView] ExtendedGamepad joystick detected RIGHT")
+            } else if xValue < -threshold && !self.isHandlingX {
+                self.isHandlingX = true
+                self.handleInput(.left)
+                DLOG("[SecretDPadView] ExtendedGamepad joystick detected LEFT")
+            } else if abs(xValue) < resetThreshold {
+                self.isHandlingX = false
+            }
+            
+            // Handle Y-axis (up/down) - Note: Y is inverted for thumbsticks
+            if yValue > threshold && !self.isHandlingY {
+                self.isHandlingY = true
+                self.handleInput(.up)
+                DLOG("[SecretDPadView] ExtendedGamepad joystick detected UP")
+            } else if yValue < -threshold && !self.isHandlingY {
+                self.isHandlingY = true
+                self.handleInput(.down)
+                DLOG("[SecretDPadView] ExtendedGamepad joystick detected DOWN")
+            } else if abs(yValue) < resetThreshold {
+                self.isHandlingY = false
+            }
+        }
     }
     
     private func removeController() {
         DLOG("[SecretDPadView] Removing controller")
+        // Clean up microGamepad handlers
         controller?.microGamepad?.dpad.valueChangedHandler = nil
+        
+        // Clean up extendedGamepad handlers
+        controller?.extendedGamepad?.dpad.valueChangedHandler = nil
+        controller?.extendedGamepad?.leftThumbstick.valueChangedHandler = nil
+        
         controller = nil
         isHandlingX = false
         isHandlingY = false
@@ -274,15 +396,28 @@ private struct SecretDPadView: View {
         }.joined(separator: " ")
     }
     
-    // Handle D-pad direction input from tvOS physical remote buttons
+    // Unified input handler for all input sources (Siri Remote, gamepads, touchpad, iOS buttons)
+    private func handleInput(_ direction: Direction) {
+        let currentTime = Date()
+        
 #if os(tvOS)
-    private func handleDirection(_ direction: Direction) {
-        DLOG("[SecretDPadView] D-pad pressed: \(direction)")
-        // Always show the D-pad UI when we receive input
+        // Debounce input to prevent duplicate triggers from multiple sources
+        guard currentTime.timeIntervalSince(lastInputTime) >= inputDebounceInterval else {
+            DLOG("[SecretDPadView] Input debounced: \(direction)")
+            return
+        }
+        lastInputTime = currentTime
+#endif
+        
+        DLOG("[SecretDPadView] Input received: \(direction)")
+        
+        // Always show the D-pad UI when we receive input (for tvOS)
         if !showDPad {
             withAnimation {
                 showDPad = true
+#if os(tvOS)
                 isFocused = true
+#endif
             }
         }
         
@@ -290,32 +425,9 @@ private struct SecretDPadView: View {
         pressedButtons.append(direction)
         DLOG("[SecretDPadView] Current sequence: \(pressedButtons)")
         
-        // Keep only the last N inputs
-        if pressedButtons.count > konamiCode.count {
-            pressedButtons.removeFirst(pressedButtons.count - konamiCode.count)
-        }
-        
-        // Check if the sequence matches the Konami code
-        if pressedButtons == konamiCode {
-            DLOG("[SecretDPadView] KONAMI CODE MATCHED!")
-            AudioServicesPlaySystemSound(1104) // Play a sound
-            onComplete()
-            pressedButtons.removeAll()
-            dismiss()
-        } else {
-            // Provide feedback for each button press
-            AudioServicesPlaySystemSound(1519)
-        }
-    }
-#endif
-
-    private func pressButton(_ direction: Direction) {
-        DLOG("[SecretDPadView] Button pressed: \(direction)")
-        pressedButtons.append(direction)
-        
+        // Provide audio feedback
 #if os(tvOS)
-        // Use AudioServicesPlaySystemSound for tvOS feedback
-        AudioServicesPlaySystemSound(1519) // Standard system sound
+        AudioServicesPlaySystemSound(1519) // Standard system sound for tvOS
 #endif
         
         // Check if the sequence matches the Konami code
@@ -323,17 +435,27 @@ private struct SecretDPadView: View {
             let lastEight = Array(pressedButtons.suffix(konamiCode.count))
             DLOG("[SecretDPadView] Checking sequence: \(lastEight) against \(konamiCode)")
             if lastEight == konamiCode {
-                DLOG("[SecretDPadView] Konami code matched!")
+                DLOG("[SecretDPadView] KONAMI CODE MATCHED!")
+#if os(tvOS)
+                AudioServicesPlaySystemSound(1104) // Success sound
+#endif
                 onComplete()
+                pressedButtons.removeAll()
                 dismiss()
+                return
             }
         }
         
-        // Limit the stored sequence length
+        // Limit the stored sequence length to prevent memory bloat
         if pressedButtons.count > 16 {
             pressedButtons.removeFirst(8)
         }
         
-        DLOG("[SecretDPadView] Current sequence: \(sequenceText)")
+        DLOG("[SecretDPadView] Current sequence display: \(sequenceText)")
+    }
+    
+    // iOS button press handler - routes to unified input handler
+    private func pressButton(_ direction: Direction) {
+        handleInput(direction)
     }
 }

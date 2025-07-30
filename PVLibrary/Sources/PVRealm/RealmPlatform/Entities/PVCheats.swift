@@ -56,7 +56,7 @@ public extension Cheats {
         let lastOpened = cheat.lastOpened
         let enabled = cheat.enabled
         let file = FileInfo(fileName: cheat.file?.fileName ?? "", size: cheat.file?.size ?? 0, md5: cheat.file?.md5 ?? "", online: cheat.file?.online ?? true, local: true)
-        
+
         self.init(id: id, game: game, core: core, code: code, type: type, date: date, lastOpened: lastOpened, enabled: enabled, file: file)
     }
 }
@@ -78,7 +78,7 @@ extension Cheats: RealmRepresentable {
         return PVCheats.build { object in
             object.id = id
             let realm = try! Realm()
-            if let rmGame = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5) {
+            if let rmGame = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) {
                 object.game = rmGame
             } else {
                 object.game = game.asRealm()

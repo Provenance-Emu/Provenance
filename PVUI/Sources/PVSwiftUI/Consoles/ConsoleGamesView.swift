@@ -366,8 +366,24 @@ struct ConsoleGamesView: SwiftUI.View {
                     RetroLogView(isFullscreen: $showLogViewer)
                 }
                 // System Status Modal
-                .fullScreenCover(isPresented: $showSystemStatus) {
-                    RetroStatusControlView()
+                .sheet(isPresented: $showSystemStatus) {
+                    NavigationStack {
+                        RetroStatusControlView()
+                            .navigationTitle("System Status")
+                        #if !os(tvOS)
+                            .navigationBarTitleDisplayMode(.inline)
+                        #endif
+                            .toolbar {
+                                ToolbarItem(placement: .navigationBarTrailing) {
+                                    Button("Done") {
+                                        showSystemStatus = false
+                                    }
+                                    .foregroundColor(RetroTheme.retroPink)
+                                }
+                            }
+                    }
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
                 }
                 .sheet(item: $gamesViewModel.continuesManagementState) { state in
                     let game = state.game.warmUp()

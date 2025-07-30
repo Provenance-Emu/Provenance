@@ -89,7 +89,7 @@ public struct GameContextMenu: View {
                         contextMenuDelegate?.gameContextMenu(self, didRequestDownloadFromCloudFor: game)
                     } label: { Label("Download from Cloud", systemImage: "icloud.and.arrow.down") }
                 }
-                
+
                 Button {
                     // Toggle isFavorite for the selected PVGame
                     toggleFavorite()
@@ -174,7 +174,7 @@ public struct GameContextMenu: View {
         Task {
             do {
                 let uniqueID = UUID().uuidString
-                let md5: String = game.md5 ?? ""
+                let md5: String = game.md5Hash ?? ""
                 let key = "artwork_\(md5)_\(uniqueID)"
 
                 // Write image to disk asynchronously
@@ -206,12 +206,12 @@ extension GameContextMenu {
     /// Download a game from CloudKit
     func downloadGameFromCloud() {
         guard !game.isInvalidated, let recordID = game.cloudRecordID else { return }
-        
+
         DLOG("Downloading game from CloudKit: \(game.title) (\(recordID))")
-        
+
         // Show loading indicator
         rootDelegate?.showMessage("Downloading \(game.title)...", title: "Downloading")
-        
+
         Task {
             do {
                 // Find the appropriate syncer
@@ -222,14 +222,14 @@ extension GameContextMenu {
                     }
                     return
                 }
-                
+
                 // Download the file
                 let fileURL = try await syncer.downloadFileOnDemand(recordName: recordID)
                 DLOG("Downloaded file to: \(fileURL.path)")
-                
+
                 // Update the game's download status in the database
                 try await updateGameDownloadStatus(recordID: recordID, isDownloaded: true)
-                
+
                 await MainActor.run {
                     rootDelegate?.showMessage("\(game.title) has been downloaded successfully", title: "Download Complete")
                 }
@@ -241,11 +241,11 @@ extension GameContextMenu {
             }
         }
     }
-    
+
     /// Update the download status of a game in the database
     private func updateGameDownloadStatus(recordID: String, isDownloaded: Bool) async throws {
         let realm = try await Realm()
-        
+
         try await realm.asyncWrite {
             if let game = realm.objects(PVGame.self).filter("cloudRecordID == %@", recordID).first {
                 game.isDownloaded = isDownloaded
@@ -253,7 +253,7 @@ extension GameContextMenu {
             }
         }
     }
-    
+
     func promptUserMD5CopiedToClipboard(forGame game: PVGame) {
         guard !game.isInvalidated else { return }
         // Get the MD5 of the game

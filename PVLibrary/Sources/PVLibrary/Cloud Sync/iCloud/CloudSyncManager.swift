@@ -351,9 +351,6 @@ public class CloudSyncManager {
             return
         }
 
-        // Check for missing ROM files at startup
-        await checkForMissingROMFiles(force: false)
-
         // Initialize sync providers if needed
         if romsSyncer == nil || saveStatesSyncer == nil || nonDatabaseSyncer == nil {
             ILOG("Initializing sync providers...")
@@ -364,6 +361,11 @@ public class CloudSyncManager {
             ELOG("Sync providers failed to initialize. Aborting sync.")
             updateSyncStatus(.error(CloudSyncError.missingDependency))
             return
+        }
+
+        // Check for missing ROM files at startup
+        Task.detached {
+            await self.checkForMissingROMFiles(force: false)
         }
 
         updateSyncStatus(.syncing)
@@ -457,10 +459,7 @@ public class CloudSyncManager {
             return
         }
 
-        guard let md5 = game.md5, !md5.isEmpty else {
-            ELOG("Game missing MD5 hash, cannot upload: \(game.title)")
-            throw CloudSyncError.missingDependency
-        }
+        let md5 = game.md5Hash
 
         // Check file size if it exists
         if let romPath = PVEmulatorConfiguration.path(forGame: game),
@@ -475,22 +474,23 @@ public class CloudSyncManager {
 
         var retryCount = 0
         let maxRetries = shouldRetryFailedUploads() ? getMaxRetryAttempts() : 1
+        let title = game.title
 
         while retryCount < maxRetries {
             do {
                 try await romsSyncer.uploadGame(md5)
-                DLOG("Successfully uploaded ROM: \(game.title)")
+                DLOG("Successfully uploaded ROM: \(title)")
 
                 // Show notification if enabled
                 if shouldShowSyncNotifications() {
-                    await showSyncNotification(message: "Uploaded ROM: \(game.title)")
+                    await showSyncNotification(message: "Uploaded ROM: \(title)")
                 }
 
                 updateSyncStatus(.idle)
                 return
             } catch {
                 retryCount += 1
-                ELOG("Failed to upload ROM \(game.title) (attempt \(retryCount)/\(maxRetries)): \(error)")
+                ELOG("Failed to upload ROM \(title) (attempt \(retryCount)/\(maxRetries)): \(error)")
 
                 if retryCount >= maxRetries {
                     updateSyncStatus(.error(error))
@@ -517,7 +517,7 @@ public class CloudSyncManager {
         do {
             // Ensure downloadGame exists and is async
             // Assuming downloadGame updates local state implicitly
-            try await romsSyncer.downloadGame(md5: game.md5 ?? "") // Need downloadGame on protocol/syncer
+            try await romsSyncer.downloadGame(md5: game.md5Hash ?? "") // Need downloadGame on protocol/syncer
             DLOG("Successfully downloaded ROM: \(game.title)")
             updateSyncStatus(.idle)
         } catch {
@@ -604,11 +604,13 @@ public class CloudSyncManager {
             DLOG("Sync disabled or syncer not available. Skipping save state download.")
             return
         }
+        let saveState = saveState.freeze()
 
         updateSyncStatus(.downloading, info: ["type": "Save State", "game": saveState.game.title])
         do {
             // Ensure downloadSaveState exists, handle Completable return
             // Assuming Completable has an extension like .toAsync()
+            ILOG("Downloading save state for game: \(saveState.game.title)")
             try await saveStatesSyncer.downloadSaveState(for: saveState).toAsync()
             DLOG("Successfully downloaded save state for game: \(saveState.game.title)")
             updateSyncStatus(.idle)
@@ -743,6 +745,8 @@ public class CloudSyncManager {
             notificationCenter: .default,
             errorHandler: errorHandler
         )
+        
+        // TODO: Support partial init
 
         // Check if all initializations were successful (optional, depends on initializer throwing)
         if romsSyncer == nil || saveStatesSyncer == nil || nonDatabaseSyncer == nil {
@@ -978,8 +982,8 @@ public class CloudSyncManager {
             do {
                 // Find the game by filename (since we don't have MD5 in the notification)
                 // This is a bit inefficient but necessary given the current notification structure
-                let realm = try await Realm()
-
+                let realm = try await Realm(actor: RealmActor.shared)
+                
                 if let md5 = md5 {
                     guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5) ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())  else {
                         ELOG("Game with MD5 \(md5) not found for upload")

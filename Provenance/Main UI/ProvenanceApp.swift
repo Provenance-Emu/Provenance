@@ -116,7 +116,7 @@ struct ProvenanceApp: App {
 #endif
 
 #if canImport(FreemiumKit)
-#if targetEnvironment(simulator) || DEBUG
+#if targetEnvironment(simulator) || DEBUG || os(tvOS)
                     FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
 #else
                     if !appDelegate.isAppStore {
@@ -161,7 +161,8 @@ struct ProvenanceApp: App {
                            !md5Value.isEmpty {
                             ILOG("ProvenanceApp: Found direct md5 parameter in URL: \(md5Value)")
                             AppState.shared.appOpenAction = .openMD5(md5Value)
-                            openEmulatorSceneIfNeeded()
+                            // Don't open immediately - wait for bootup completion
+                            openEmulatorSceneWhenReady()
                             return
                         }
 
@@ -173,7 +174,8 @@ struct ProvenanceApp: App {
                               let md5Value = first.value {
                         ILOG("ProvenanceApp: Found game controller path with MD5: \(md5Value)")
                         AppState.shared.appOpenAction = .openMD5(md5Value)
-                        openEmulatorSceneIfNeeded()
+                        // Don't open immediately - wait for bootup completion
+                        openEmulatorSceneWhenReady()
                         return
                     } else {
                         WLOG("ProvenanceApp: Unrecognized URL format: \(url.absoluteString)")
@@ -193,6 +195,9 @@ struct ProvenanceApp: App {
 //                        DispatchQueue.global(qos: .utility).async {
 //                            self.forceSpotlightReindexing()
 //                        }
+                        
+                        // CRITICAL: Now that bootup is complete, handle any pending emulator scene requests
+                        openEmulatorSceneIfNeeded()
                     }
                 }
         }
@@ -275,6 +280,18 @@ extension ProvenanceApp {
         if appState.appOpenAction.requiresEmulatorScene {
             ILOG("Opening emulator scene for action: \(appState.appOpenAction)")
             sceneCoordinator.openEmulatorScene()
+        }
+    }
+    
+    // Safe method to open emulator scene only when bootup is complete
+    private func openEmulatorSceneWhenReady() {
+        // Check if bootup is already complete
+        if case .completed = appState.bootupStateManager.currentState {
+            ILOG("Bootup already complete, opening emulator scene immediately")
+            openEmulatorSceneIfNeeded()
+        } else {
+            ILOG("Bootup not complete, deferring emulator scene opening until bootup finishes")
+            // The scene will be opened when bootup completes via the onReceive handler
         }
     }
 

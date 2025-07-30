@@ -230,7 +230,6 @@ public final class RealmConfiguration {
         let config = Realm.Configuration(
             fileURL: realmURL,
             inMemoryIdentifier: nil,
-            syncConfiguration: nil,
             encryptionKey: nil,
             readOnly: false,
             schemaVersion: schemaVersion,
@@ -542,7 +541,7 @@ public extension RomDatabase {
     func allGamesSortedBySystemThenTitle() -> Results<PVGame> {
         return realm.objects(PVGame.self).sorted(byKeyPath: "systemIdentifier").sorted(byKeyPath: "title")
     }
-    
+
     func game(withMD5 md5: String) -> PVGame? {
         return object(ofType: PVGame.self, wherePrimaryKeyEquals: md5)
     }
@@ -768,27 +767,22 @@ public extension RomDatabase {
     func delete(game: PVGame, deleteArtwork: Bool = false, deleteSaves: Bool = false, source: DeletionSource = .userInitiated) throws {
         // --- Cloud Sync Pre-Deletion Hook ---
         // Capture MD5 *before* attempting any local deletion.
-        let md5 = game.md5
+        let md5 = game.md5Hash
 
         // Only post notification if the deletion was initiated by the user AND md5 is valid
         if source == .userInitiated {
-            if let validMD5 = md5, !validMD5.isEmpty {
-                // Use the game object itself for the notification, ensure it's valid
-                if game.isInvalidated {
-                    WLOG("Attempted to post deletion notification for an invalidated game object.")
-                } else {
-                    NotificationCenter.default.post(name: .PVGameWillBeDeleted, object: game, userInfo: ["md5": validMD5])
-                    VLOG("Posted PVGameWillBeDeleted notification for md5: \(validMD5)")
-                }
+            // Use the game object itself for the notification, ensure it's valid
+            if game.isInvalidated {
+                WLOG("Attempted to post deletion notification for an invalidated game object.")
             } else {
-                // Log that notification couldn't be sent due to missing MD5, but deletion will proceed.
-                ELOG("Cannot post PVGameWillBeDeleted notification: Game MD5 is missing or empty for \(game.title ?? "Untitled"). Deletion will continue.")
+                NotificationCenter.default.post(name: .PVGameWillBeDeleted, object: game, userInfo: ["md5": md5])
+                VLOG("Posted PVGameWillBeDeleted notification for md5: \(md5)")
             }
         } else {
             VLOG("Skipping PVGameWillBeDeleted notification due to source: \(source)")
         }
         // --- End Cloud Sync Hook ---
-        
+
         let romURL = PVEmulatorConfiguration.path(forGame: game)
         if deleteArtwork, !game.customArtworkURL.isEmpty {
             do {

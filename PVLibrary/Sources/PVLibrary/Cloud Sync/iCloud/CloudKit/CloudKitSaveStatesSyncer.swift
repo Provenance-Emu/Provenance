@@ -116,6 +116,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     /// - Parameter saveState: The save state to upload
     /// - Returns: Completable that completes when the upload is done
     public func uploadSaveState(for saveState: PVSaveState) -> Completable {
+        let saveState = saveState.freeze()
         return Completable.create { [weak self] observer in
             guard let self = self,
                   let localURL = self.localURL(for: saveState) else {
@@ -139,13 +140,25 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                     record[CloudKitSchema.SaveStateFields.directory] = "Saves"
                     record[CloudKitSchema.SaveStateFields.systemIdentifier] = saveState.game.systemIdentifier
                     record[CloudKitSchema.SaveStateFields.gameID] = saveState.game.id
-                    record[CloudKitSchema.SaveStateFields.lastModified] = saveState.date
+                    record[CloudKitSchema.SaveStateFields.creationDate] = saveState.date
                     record[CloudKitSchema.SaveStateFields.fileSize] = self.getFileSize(from: localURL)
                     record[CloudKitSchema.SaveStateFields.lastModifiedDevice] = UIDevice.current.identifierForVendor?.uuidString
                     
-                    // Create asset from file
+                    // Create asset from save state file
                     let asset = CKAsset(fileURL: localURL)
                     record[CloudKitSchema.SaveStateFields.fileData] = asset
+                    
+                    // Prepare save state artwork asset (if exists)
+                    if let imageAsset = try await self.prepareSaveStateArtworkAsset(for: saveState) {
+                        record[CloudKitSchema.SaveStateFields.imageAsset] = imageAsset
+                        DLOG("Added artwork asset for save state: \(filename)")
+                    }
+                    
+                    // Prepare metadata JSON for orphaned save state re-import
+                    if let metadataJSON = try await self.prepareSaveStateMetadataJSON(for: saveState) {
+                        record[CloudKitSchema.SaveStateFields.metadataJSON] = metadataJSON
+                        DLOG("Added metadata JSON for save state: \(filename)")
+                    }
                     
                     // Save to CloudKit
                     let privateDatabase = self.container.privateCloudDatabase
@@ -155,6 +168,10 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                     try await MainActor.run {
                         let realm = try Realm()
                         try realm.write {
+                            guard let saveState = saveState.thaw() else {
+                                ELOG("Thaw of save state failed")
+                                return
+                            }
                             saveState.cloudRecordID = savedRecord.recordID.recordName
 //                            saveState.lastUploadedDate = Date()
                         }
@@ -200,6 +217,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     /// - Parameter saveState: The save state to download
     /// - Returns: Completable that completes when the download is done
     public func downloadSaveState(for saveState: PVSaveState) -> Completable {
+        let saveState = saveState.freeze()
         return Completable.create { [weak self] observer in
             guard let self = self else {
                 observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid save state syncer"])))
@@ -249,10 +267,29 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                             try await MainActor.run {
                                 let realm = try Realm()
                                 try realm.write {
+                                    guard let saveState = saveState.thaw() else {
+                                        ELOG("Thaw of SaveState failed")
+                                        return
+                                    }
                                     let file = PVFile(withURL: destinationURL, relativeRoot: .documents)
                                     saveState.file = file
                                 }
                             }
+                        }
+                        
+                        // Download artwork and metadata if available
+                        do {
+                            try await self.downloadSaveStateArtworkAsset(from: record, for: saveState, saveStateURL: destinationURL)
+                        } catch {
+                            WLOG("Failed to download artwork for save state \(saveState.id): \(error.localizedDescription)")
+                            // Continue with other operations even if artwork download fails
+                        }
+                        
+                        do {
+                            try await self.downloadSaveStateMetadataJSON(from: record, saveStateURL: destinationURL)
+                        } catch {
+                            WLOG("Failed to download metadata JSON for save state \(saveState.id): \(error.localizedDescription)")
+                            // Continue with other operations even if metadata download fails
                         }
                         
                         DLOG("Downloaded save state from CloudKit: \(filename)")
@@ -301,6 +338,10 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                             try await MainActor.run {
                                 let realm = try Realm()
                                 try realm.write {
+                                    guard let saveState = saveState.thaw() else {
+                                        ELOG("Save state thaw failed")
+                                        return
+                                    }
                                     let file = PVFile(withURL: destinationURL, relativeRoot: .documents)
                                     saveState.file = file
                                 }
@@ -394,7 +435,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         
         do {
             // Check if we already have this save state locally
-            let realm = try await Realm()
+            let realm = try await Realm(queue: nil)
             let existingGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameID)
             
             guard let game = existingGame else {
@@ -460,7 +501,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                     saveState.cloudRecordID = record.recordID.recordName
                     saveState.isDownloaded = false
                     
-                    if let creationDate = record[CloudKitSchema.SaveStateFields.lastModified] as? Date {
+                    if let creationDate = record[CloudKitSchema.SaveStateFields.creationDate] as? Date {
                         saveState.date = creationDate
                     }
                     
@@ -488,6 +529,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     ///   - saveState: The save state to download
     ///   - cloudRecord: The CloudKit record
     private func markSaveStateForDownload(_ saveState: PVSaveState, cloudRecord: CKRecord) async {
+        let saveState = saveState.freeze()
         guard let localURL = self.localURL(for: saveState) else {
             return
         }
@@ -497,6 +539,10 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             try? await MainActor.run {
                 let realm = try Realm()
                 try realm.write {
+                    guard let saveState = saveState.thaw() else {
+                        ELOG("Save state thaw failed")
+                        return
+                    }
                     saveState.isDownloaded = false
                     saveState.cloudRecordID = cloudRecord.recordID.recordName
                 }
@@ -515,7 +561,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             
             Task {
                 do {
-                    let realm = try await Realm()
+                    let realm = try await Realm(queue: nil)
                     let saveStatesNeedingUpload = realm.objects(PVSaveState.self).filter("cloudRecordID == nil OR lastUploadedDate == nil")
                     
                     DLOG("Found \(saveStatesNeedingUpload.count) save states needing upload")
@@ -550,7 +596,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             
             Task {
                 do {
-                    let realm = try await Realm()
+                    let realm = try await Realm(queue: nil)
                     let saveStatesNeedingDownload = realm.objects(PVSaveState.self).filter("isDownloaded == false AND cloudRecordID != nil")
                     
                     DLOG("Found \(saveStatesNeedingDownload.count) save states needing download")
@@ -609,6 +655,145 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             }
             
             return Disposables.create()
+        }
+    }
+    
+    // MARK: - Artwork and Metadata Helpers
+    
+    /// Prepare save state artwork asset for CloudKit upload
+    /// - Parameter saveState: The PVSaveState with potential artwork
+    /// - Returns: CKAsset for the artwork if it exists, nil otherwise
+    private func prepareSaveStateArtworkAsset(for saveState: PVSaveState) async throws -> CKAsset? {
+        guard let imageFile = saveState.image else {
+            DLOG("No artwork image for save state: \(saveState.file?.fileName ?? "unknown")")
+            return nil
+        }
+        
+        // Get the artwork file path using PVImageFile+Artwork extension
+        guard let artworkURL = imageFile.url else {
+            DLOG("No cached artwork path for save state: \(saveState.file?.fileName ?? "unknown")")
+            return nil
+        }
+        
+        // Verify the artwork file exists
+        guard FileManager.default.fileExists(atPath: artworkURL.path) else {
+            WLOG("Save state artwork file does not exist at path: \(artworkURL.path)")
+            return nil
+        }
+        
+        do {
+            // Create CKAsset from the artwork file
+            let artworkAsset = CKAsset(fileURL: artworkURL)
+            DLOG("Successfully prepared artwork asset for save state: \(saveState.file?.fileName ?? "unknown")")
+            return artworkAsset
+        } catch {
+            ELOG("Failed to create CKAsset for save state artwork: \(error.localizedDescription)")
+            throw error
+        }
+    }
+    
+    /// Prepare save state metadata JSON for orphaned save state re-import
+    /// - Parameter saveState: The PVSaveState to create metadata for
+    /// - Returns: JSON string containing SavePackage metadata, nil if creation fails
+    private func prepareSaveStateMetadataJSON(for saveState: PVSaveState) async throws -> String? {
+        do {
+            // Create SavePackage using the Packageable protocol
+            guard let savePackage = try await saveState.toPackage() else {
+                WLOG("Failed to create SavePackage for save state: \(saveState.file?.fileName ?? "unknown")")
+                return nil
+            }
+            
+            // Serialize the metadata to JSON
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
+            encoder.outputFormatting = .prettyPrinted
+            
+            let jsonData = try encoder.encode(savePackage.metadata)
+            let jsonString = String(data: jsonData, encoding: .utf8)
+            
+            DLOG("Successfully prepared metadata JSON for save state: \(saveState.file?.fileName ?? "unknown")")
+            return jsonString
+        } catch {
+            ELOG("Failed to create metadata JSON for save state: \(error.localizedDescription)")
+            // Don't throw here - metadata JSON is optional for sync
+            return nil
+        }
+    }
+    
+    /// Download and save artwork asset for a save state
+    /// - Parameters:
+    ///   - record: The CloudKit record containing the artwork asset
+    ///   - saveState: The save state to update with artwork
+    ///   - saveStateURL: The local URL of the save state file
+    private func downloadSaveStateArtworkAsset(from record: CKRecord, for saveState: PVSaveState, saveStateURL: URL) async throws {
+        // Check if there's an artwork asset to download
+        guard let artworkAsset = record[CloudKitSchema.SaveStateFields.imageAsset] as? CKAsset,
+              let assetFileURL = artworkAsset.fileURL else {
+            DLOG("No artwork asset to download for save state: \(saveState.id)")
+            return
+        }
+        
+        do {
+            // Create artwork file path in the same directory as the save state
+            let saveStateDirectory = saveStateURL.deletingLastPathComponent()
+            let artworkFilename = saveStateURL.deletingPathExtension().appendingPathExtension("png").lastPathComponent
+            let artworkURL = saveStateDirectory.appendingPathComponent(artworkFilename)
+            
+            // Remove existing artwork file if it exists
+            if FileManager.default.fileExists(atPath: artworkURL.path) {
+                try await FileManager.default.removeItem(at: artworkURL)
+            }
+            
+            // Copy artwork from CloudKit asset to local storage
+            try FileManager.default.copyItem(at: assetFileURL, to: artworkURL)
+            
+            // Update save state with artwork reference
+            try await MainActor.run {
+                let realm = try Realm()
+                try realm.write {
+                    guard let saveState = saveState.thaw() else {
+                        ELOG("Failed to thaw save state for artwork update")
+                        return
+                    }
+                    
+                    // Create or update PVImageFile for the artwork
+                    let imageFile = PVImageFile(withURL: artworkURL, relativeRoot: .documents)
+                    saveState.image = imageFile
+                }
+            }
+            
+            DLOG("Successfully downloaded and saved artwork for save state: \(saveState.id) at: \(artworkURL.path)")
+        } catch {
+            ELOG("Failed to download artwork for save state \(saveState.id): \(error.localizedDescription)")
+            throw CloudSyncError.fileSystemError(error)
+        }
+    }
+    
+    /// Download and save metadata JSON for orphaned save state re-import
+    /// - Parameters:
+    ///   - record: The CloudKit record containing the metadata JSON
+    ///   - saveStateURL: The local URL of the save state file
+    private func downloadSaveStateMetadataJSON(from record: CKRecord, saveStateURL: URL) async throws {
+        // Check if there's metadata JSON to download
+        guard let metadataJSON = record[CloudKitSchema.SaveStateFields.metadataJSON] as? String,
+              !metadataJSON.isEmpty else {
+            DLOG("No metadata JSON to download for save state at: \(saveStateURL.path)")
+            return
+        }
+        
+        do {
+            // Create metadata file path in the same directory as the save state
+            let saveStateDirectory = saveStateURL.deletingLastPathComponent()
+            let metadataFilename = saveStateURL.deletingPathExtension().appendingPathExtension("json").lastPathComponent
+            let metadataURL = saveStateDirectory.appendingPathComponent(metadataFilename)
+            
+            // Write metadata JSON to file
+            try metadataJSON.write(to: metadataURL, atomically: true, encoding: .utf8)
+            
+            DLOG("Successfully downloaded and saved metadata JSON for save state at: \(metadataURL.path)")
+        } catch {
+            ELOG("Failed to download metadata JSON for save state at \(saveStateURL.path): \(error.localizedDescription)")
+            throw CloudSyncError.fileSystemError(error)
         }
     }
 }

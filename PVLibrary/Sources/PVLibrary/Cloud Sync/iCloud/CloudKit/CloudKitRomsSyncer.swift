@@ -150,10 +150,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 return
             }
 
-            guard let md5 = game.md5 else {
-                WLOG("Found game \(game.title) but it has no MD5. Cannot delete from CloudKit via URL.")
-                return
-            }
+            let md5 = game.md5Hash
 
             // Call the primary deletion method
             ILOG("Found game with MD5 \(md5) for URL \(file.path). Calling markGameAsDeleted.")
@@ -217,7 +214,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         // Check if the file URL exists and the file is actually present
         guard let url = game.file?.url, fileManager.fileExists(atPath: url.path) else {
-            VLOG("Game \(game.title) (MD5: \(game.md5 ?? "N/A")) does not have a valid local file URL or the file doesn't exist.")
+            VLOG("Game \(game.title) (MD5: \(game.md5Hash ?? "N/A")) does not have a valid local file URL or the file doesn't exist.")
             return nil
         }
 
@@ -231,18 +228,20 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         // CloudKit doesn't provide a predictable URL for a potential cloud asset
         // merely from the PVGame object. We need the CKRecord to check for the asset.
         // Returning nil signifies this limitation compared to file-based syncers.
-        VLOG("cloudURL requested for CloudKit, returning nil as it's not directly applicable. Game MD5: \(game.md5 ?? "N/A")")
+        VLOG("cloudURL requested for CloudKit, returning nil as it's not directly applicable. Game MD5: \(game.md5Hash ?? "N/A")")
         return nil
     }
 
-    @MainActor
     public func uploadGame(_ md5: String) async throws {
-        let realm = try await Realm()
-        guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
+        // Create a new Realm instance for background thread usage
+        // This avoids the need for @MainActor while preventing crashes
+        let realm = try! Realm.init(queue: nil)
+        guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())?.freeze() else {
             throw CloudSyncError.invalidData
         }
-        
-        guard let md5 = game.md5, !md5.isEmpty else {
+
+        let md5 = game.md5Hash
+        guard !md5.isEmpty else {
             ELOG("Cannot upload game without MD5: \(game.title)")
             throw CloudSyncError.invalidData
         }
@@ -273,13 +272,21 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             ELOG("Unexpected error mapping PVGame to record for \(md5): \(error.localizedDescription)")
             throw CloudSyncError.unknown // Or map to a more specific error if possible
         }
+        
+        // 2.5. Prepare Custom Artwork Asset (if exists)
+        do {
+            record = try await prepareCustomArtworkAsset(for: game, record: record)
+        } catch {
+            WLOG("Failed to prepare custom artwork asset for \(md5): \(error.localizedDescription)")
+            // Continue with upload even if artwork preparation fails
+        }
 
         // 3. Prepare Asset (CKAsset) - Zip if necessary using ZipArchive
         guard let primaryFileURL = game.file?.url else {
             ELOG("Cannot upload game \(md5): Missing primary file URL in game.file.url.")
             throw CloudSyncError.invalidData
         }
-        
+
         // Verify the file actually exists at the expected location
         guard FileManager.default.fileExists(atPath: primaryFileURL.path) else {
             ELOG("Cannot upload game \(md5): Primary file does not exist at \(primaryFileURL.path)")
@@ -714,10 +721,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
     private func mapPVGameToRecord(_ game: PVGame, existingRecord: CKRecord? = nil) throws -> CKRecord {
         // Ensure MD5 exists, otherwise we can't generate the ID or sync.
-        guard let md5 = game.md5, !md5.isEmpty else {
-            ELOG("Cannot map PVGame to CKRecord without a valid MD5: \(game.title)")
-            throw CloudSyncError.invalidData
-        }
+        let md5 = game.md5Hash
 
         let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
         let record = existingRecord ?? CKRecord(recordType: CloudKitSchema.RecordType.rom.rawValue, recordID: recordID)
@@ -752,6 +756,16 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         record[CloudKitSchema.ROMFields.rating] = game.rating as NSNumber
         record[CloudKitSchema.ROMFields.importDate] = game.importDate
 
+        // --- Artwork Fields ---
+        // Sync originalArtworkURL (just the URL value, no asset upload needed)
+        record[CloudKitSchema.ROMFields.originalArtworkURL] = game.originalArtworkURL
+        
+        // Sync customArtworkURL (PVMediaCache key) and prepare custom artwork asset
+        record[CloudKitSchema.ROMFields.customArtworkURL] = game.customArtworkURL
+        
+        // Note: customArtworkAsset will be set later during artwork asset preparation
+        // This is handled separately to avoid blocking the main record mapping
+
         // --- Sync Metadata ---
 #if os(macOS)
         let deviceIdentifier = Host.current().name ?? "Unknown macOS"
@@ -761,6 +775,123 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         record[CloudKitSchema.ROMFields.lastModifiedDevice] = deviceIdentifier
 
         return record
+    }
+    
+    /// Prepare custom artwork asset for CloudKit upload
+    /// - Parameters:
+    ///   - game: The PVGame with custom artwork
+    ///   - record: The CloudKit record to attach the artwork asset to
+    /// - Returns: The updated record with custom artwork asset attached
+    private func prepareCustomArtworkAsset(for game: PVGame, record: CKRecord) async throws -> CKRecord {
+        let customArtworkURL = game.customArtworkURL
+        
+        guard !customArtworkURL.isEmpty else {
+            DLOG("No custom artwork URL for game: \(game.title)")
+            return record
+        }
+        
+        // Check if artwork exists in PVMediaCache
+        guard PVMediaCache.fileExists(forKey: customArtworkURL) else {
+            WLOG("Custom artwork not found in cache for key: \(customArtworkURL)")
+            return record
+        }
+        
+        // Get the cached artwork file path
+        guard let artworkFilePath = PVMediaCache.filePath(forKey: customArtworkURL) else {
+            WLOG("Failed to get file path for custom artwork key: \(customArtworkURL)")
+            return record
+        }
+        
+        // Verify the file exists on disk
+        guard FileManager.default.fileExists(atPath: artworkFilePath.path) else {
+            WLOG("Custom artwork file does not exist at path: \(artworkFilePath.path)")
+            return record
+        }
+        
+        do {
+            // Create CKAsset from the artwork file
+            let artworkAsset = CKAsset(fileURL: artworkFilePath)
+            record[CloudKitSchema.ROMFields.customArtworkAsset] = artworkAsset
+            
+            DLOG("Successfully prepared custom artwork asset for game: \(game.title)")
+            return record
+        } catch {
+            ELOG("Failed to create CKAsset for custom artwork: \(error.localizedDescription)")
+            throw CloudSyncError.fileSystemError(error)
+        }
+    }
+    
+    /// Download and cache custom artwork asset from CloudKit
+    /// - Parameters:
+    ///   - record: The CloudKit record containing the artwork asset
+    ///   - game: The PVGame to update with the cached artwork
+    ///   - forceUpdate: Whether to force download even if artwork is already cached
+    private func downloadCustomArtworkAsset(from record: CKRecord, for game: PVGame, forceUpdate: Bool = false) async throws {
+        // Check if there's a custom artwork asset to download
+        guard let customArtworkAsset = record[CloudKitSchema.ROMFields.customArtworkAsset] as? CKAsset,
+              let assetFileURL = customArtworkAsset.fileURL else {
+            DLOG("No custom artwork asset to download for game: \(game.title)")
+            return
+        }
+        
+        // Get the custom artwork URL key from the record
+        guard let cloudCustomArtworkURL = record[CloudKitSchema.ROMFields.customArtworkURL] as? String,
+              !cloudCustomArtworkURL.isEmpty else {
+            WLOG("Custom artwork asset exists but no customArtworkURL key for game: \(game.title)")
+            return
+        }
+        
+        // Check if the cloud customArtworkURL differs from the local one
+        let localCustomArtworkURL = game.customArtworkURL
+        let artworkURLChanged = localCustomArtworkURL != cloudCustomArtworkURL
+        
+        if artworkURLChanged {
+            ILOG("Custom artwork URL changed for game \(game.title): '\(localCustomArtworkURL)' -> '\(cloudCustomArtworkURL)'")
+            
+            // Remove old cached artwork if it exists and is different
+            if !localCustomArtworkURL.isEmpty && PVMediaCache.fileExists(forKey: localCustomArtworkURL) {
+                do {
+                    try PVMediaCache.deleteImage(forKey: localCustomArtworkURL)
+                    DLOG("Removed old cached artwork for key: \(localCustomArtworkURL)")
+                } catch {
+                    WLOG("Failed to remove old cached artwork for key \(localCustomArtworkURL): \(error.localizedDescription)")
+                }
+            }
+        }
+        
+        // Check if artwork is already cached locally (skip if forcing update or URL changed)
+        if !forceUpdate && !artworkURLChanged && PVMediaCache.fileExists(forKey: cloudCustomArtworkURL) {
+            DLOG("Custom artwork already cached for game: \(game.title)")
+            return
+        }
+        
+        do {
+            // Read the artwork data from the CloudKit asset
+            let artworkData = try Data(contentsOf: assetFileURL)
+            
+            // Cache the artwork in PVMediaCache using the cloudCustomArtworkURL as the key
+            let cachedURL = try PVMediaCache.writeData(toDisk: artworkData, withKey: cloudCustomArtworkURL)
+            
+            ILOG("Successfully downloaded and cached custom artwork for game: \(game.title) at: \(cachedURL.path) (key: \(cloudCustomArtworkURL))")
+            
+            // Update the local game record with the new customArtworkURL if it changed
+            if artworkURLChanged {
+                try RomDatabase.sharedInstance.writeTransaction {
+                    // Re-fetch the game to ensure we have a valid reference
+                    guard let liveGame = RomDatabase.sharedInstance.game(withMD5: game.md5Hash) else {
+                        ELOG("Game \(game.md5Hash) was invalidated during artwork URL update.")
+                        return
+                    }
+                    
+                    liveGame.customArtworkURL = cloudCustomArtworkURL
+                    ILOG("Updated local customArtworkURL for game \(game.title): \(cloudCustomArtworkURL)")
+                }
+            }
+            
+        } catch {
+            ELOG("Failed to download and cache custom artwork for game \(game.title): \(error.localizedDescription)")
+            throw CloudSyncError.fileSystemError(error)
+        }
     }
 
     private func updatePVGame(from record: CKRecord, gameMD5: String) async throws {
@@ -802,7 +933,10 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             localGame.developer = record[CloudKitSchema.ROMFields.developer] as? String ?? localGame.developer
             localGame.publisher = record[CloudKitSchema.ROMFields.publisher] as? String ?? localGame.publisher
             localGame.genres = record[CloudKitSchema.ROMFields.genres] as? String ?? localGame.genres
-            // TODO: Handle OpenVGDB Cover URL update? Requires PVImageFile handling.
+            
+            // Update artwork fields
+            localGame.originalArtworkURL = record[CloudKitSchema.ROMFields.originalArtworkURL] as? String ?? localGame.originalArtworkURL
+            localGame.customArtworkURL = record[CloudKitSchema.ROMFields.customArtworkURL] as? String ?? localGame.customArtworkURL
 
             // Update download status and size based on asset presence and local file existence
             if let asset = record[CloudKitSchema.ROMFields.fileData] as? CKAsset {
@@ -849,6 +983,14 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             }
         } // End write transaction
         VLOG("Finished updating game: \(localGame.title) (MD5: \(localGame.md5 ?? "unknown"))")
+        
+        // Download custom artwork asset if available
+        do {
+            try await downloadCustomArtworkAsset(from: record, for: localGame)
+        } catch {
+            WLOG("Failed to download custom artwork for game \(localGame.title): \(error.localizedDescription)")
+            // Continue with other operations even if artwork download fails
+        }
 
         // Enhance with artwork if game doesn't already have any
         if localGame.originalArtworkFile == nil && localGame.customArtworkURL.isEmpty {
@@ -876,7 +1018,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             WLOG("Skipping PVGame creation: Local PVSystem with identifier '\(systemIdentifier)' not found for CloudKit record \(record.recordID.recordName). App update might be required.")
             return nil // Skip creation, don't treat as fatal error
         }
-        
+
         // 3. Create and Populate the new PVGame object
         // Note: Creation should happen outside a write block if we're just initializing
         let newGame = PVGame()
@@ -946,7 +1088,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     @MainActor
     private func getUpdatedGameInfo(forMD5 md5: String) async {
         do {
-            let realm = try await Realm()
+            let realm = try await Realm(queue: nil)
             // Fetch a fresh game instance on this thread
             guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
                 WLOG("Game with MD5 \(md5) not found for metadata lookup")
@@ -1234,41 +1376,41 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             throw CloudSyncError.cloudKitError(error)
         }
     }
-    
+
     /// Handle CloudKit record conflicts by fetching the existing record and updating it
     private func handleRecordConflict(localRecord: CKRecord, cloudKitError: CKError) async throws {
         DLOG("Handling record conflict for \(localRecord.recordID.recordName)")
-        
+
         // Fetch the existing record from CloudKit
         guard let existingRecord = try await fetchRecord(recordID: localRecord.recordID) else {
             ELOG("Could not fetch existing record \(localRecord.recordID.recordName) to resolve conflict")
             throw CloudSyncError.cloudKitError(cloudKitError)
         }
-        
+
         // Update the existing record with our local changes
         // Copy all fields from local record to existing record (preserving CloudKit metadata)
         for key in localRecord.allKeys() {
             existingRecord[key] = localRecord[key]
         }
-        
+
         DLOG("Updating existing CloudKit record \(existingRecord.recordID.recordName) with local changes")
-        
+
         // Retry saving the updated record
         do {
             let result = try await retryOperation({
                 try await self.database.save(existingRecord)
             }, 3, nil)
-            
+
             guard let savedRecord = result as? CKRecord else {
                 ELOG("Retry operation returned unexpected type for conflict resolution: \(type(of: result))")
                 throw CloudSyncError.unknown
             }
-            
+
             // Update local game state AFTER successful save
             if let md5 = savedRecord[CloudKitSchema.ROMFields.md5] as? String {
                 try await updateLocalGamePostUpload(md5: md5, record: savedRecord)
             }
-            
+
             ILOG("Successfully resolved conflict and updated record: \(savedRecord.recordID.recordName)")
         } catch {
             ELOG("Failed to resolve record conflict for \(localRecord.recordID.recordName): \(error.localizedDescription)")

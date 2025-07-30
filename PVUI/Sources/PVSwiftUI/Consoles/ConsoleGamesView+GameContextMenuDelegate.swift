@@ -137,7 +137,7 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         DLOG("GameContextMenu: Attempting to save artwork for game: \(game.title)")
 
         let uniqueID: String = UUID().uuidString
-        let md5: String = game.md5 ?? ""
+        let md5: String = game.md5Hash ?? ""
         let key = "artwork_\(md5)_\(uniqueID)"
         DLOG("Generated key for image: \(key)")
 

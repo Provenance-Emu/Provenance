@@ -562,9 +562,11 @@ public extension Defaults.Keys {
     static let iCloudSyncMode = Key<iCloudSyncMode>("iCloudSyncMode", default: .cloudKit)
     static let unsupportedCores = Key<Bool>("unsupportedCores", default: false)
 
-    static let iCloudSync = Key<Bool>("iCloudSync", default: false)
 #if os(tvOS)
+    static let iCloudSync = Key<Bool>("iCloudSync", default: true)
     static let tvOSThemes = Key<Bool>("tvOSThemes", default: false)
+#else
+    static let iCloudSync = Key<Bool>("iCloudSync", default: false)
 #endif
 #if os(macOS) || targetEnvironment(macCatalyst)
     static let movableButtons = Key<Bool>("movableButtons", default: true)

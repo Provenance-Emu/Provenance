@@ -310,6 +310,13 @@ public extension PVEmualatorControllerProtocol {
             /// Create and add the save state
             let saveState = PVSaveState(withGame: game, core: core, file: saveFile, image: imageFile, isAutosave: auto)
             realm.add(saveState)
+            
+            /// Post notification for CloudKit sync
+            let saveStateID = saveState.id
+            Task { @MainActor in
+                NotificationCenter.default.post(name: .PVSaveStateSaved, object: nil, userInfo: ["saveStateID": saveStateID])
+                DLOG("Posted PVSaveStateSaved notification for save state: \(saveStateID)")
+            }
 
             /// Store metadata asynchronously
             LibrarySerializer.storeMetadata(saveState) { result in

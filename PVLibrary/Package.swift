@@ -56,7 +56,7 @@ let package = Package(
         .package(url: "https://github.com/ReactiveX/RxSwift.git",
                  .upToNextMajor(from: "6.7.1")),
         .package(url: "https://github.com/RxSwiftCommunity/RxRealm.git",
-                 .upToNextMajor(from: "5.1.0")),
+                 branch: "main"),
         .package(url: "https://github.com/ZipArchive/ZipArchive.git",
                  exact: "2.4.3"),
         .package(url: "https://github.com/OlehKulykov/PLzmaSDK.git",
