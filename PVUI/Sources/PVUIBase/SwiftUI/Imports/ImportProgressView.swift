@@ -229,6 +229,12 @@ public struct ImportProgressView: View {
     private var contentView: some View {
         VStack(alignment: .leading, spacing: 8) {
             headerView
+            
+            // File copy progress section (mini version)
+            if viewModel.isFileCopying {
+                fileCopyProgressView
+            }
+            
             progressBarsView
             statusDetailsView // Existing view for counts
             
@@ -334,6 +340,71 @@ public struct ImportProgressView: View {
         }
     }
 
+    /// File Copy Progress View (Mini version for ImportProgressView)
+    private var fileCopyProgressView: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text("COPYING FILES")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(.retroPurple)
+                
+                Spacer()
+                
+                Text("\(viewModel.fileCopyOperations.filter { $0.status == .downloading || $0.status == .copying }.count)")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(.retroPurple)
+            }
+            
+            // Mini progress bars for active file copies
+            ForEach(viewModel.fileCopyOperations.filter { $0.status == .downloading || $0.status == .copying }.prefix(3), id: \.id) { operation in
+                HStack(spacing: 6) {
+                    // File name (truncated)
+                    Text(operation.filename)
+                        .font(.system(size: 8))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                        .frame(maxWidth: 80, alignment: .leading)
+                    
+                    // Mini progress bar
+                    GeometryReader { geometry in
+                        ZStack(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 1)
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(height: 2)
+                            
+                            RoundedRectangle(cornerRadius: 1)
+                                .fill(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .frame(width: geometry.size.width * operation.progress, height: 2)
+                        }
+                    }
+                    .frame(height: 2)
+                    
+                    // Status
+                    Text(operation.status.displayName)
+                        .font(.system(size: 8))
+                        .foregroundColor(operation.status == .downloading ? .retroBlue : .retroPurple)
+                        .frame(width: 50, alignment: .trailing)
+                }
+            }
+        }
+        .padding(.vertical, 4)
+        .padding(.horizontal, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 6)
+                .fill(Color.black.opacity(0.3))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6)
+                        .strokeBorder(Color.retroPurple.opacity(0.5), lineWidth: 1)
+                )
+        )
+    }
+    
     // MARK: - Log Display View (from old structure)
     private var logDisplayView: some View {
         VStack(alignment: .leading, spacing: 4) {

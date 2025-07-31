@@ -126,10 +126,15 @@ public struct ImportStatusView: View {
                 
                 // Main content
                 VStack {
+                                // File copy progress (shown above import queue)
+                                FileCopyProgressView()
+                                    .padding(.bottom, 16)
+                                
                                 // Retrowave header
                                 Text("IMPORT QUEUE")
                                     .font(.system(size: 28, weight: .bold))
                                     .foregroundColor(RetroTheme.retroPink)
+                                    .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
                                     .padding(.top, 20)
                                     .padding(.bottom, 10)
                                     .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)

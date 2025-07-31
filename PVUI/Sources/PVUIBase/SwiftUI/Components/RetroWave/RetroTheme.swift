@@ -10,6 +10,7 @@ public struct RetroTheme {
     public static let retroDarkBlue = Color.retroDarkBlue
     public static let retroBlack = Color.retroBlack
     public static let retroBlackClear = Color.retroBlackClear
+    public static let retroGreen = Color.retroGreen
     
     // MARK: - Gradients
     public static let retroGradient = LinearGradient(

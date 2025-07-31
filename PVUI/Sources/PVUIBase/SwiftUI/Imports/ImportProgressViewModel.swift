@@ -72,6 +72,10 @@ public class ImportProgressViewModel: ObservableObject {
     /// iCloud File recovery state (newer feature)
     @Published public var fileRecoveryState: PVPrimitives.FileRecoveryState = .idle
     @Published public var fileRecoveryProgress: ProgressInfo?
+    
+    /// File copy operations progress (newer feature)
+    @Published public var fileCopyOperations: [FileCopyProgressTracker.FileCopyOperation] = []
+    @Published public var isFileCopying: Bool = false
 
     /// Controls the visibility of the ImportProgressView
     @Published public var shouldShow: Bool = false
@@ -244,6 +248,7 @@ public class ImportProgressViewModel: ObservableObject {
         setupCloudKitSubscriptions()
         setupFileRecoveryNotificationListeners() // Sets initial state from iCloudDriveSync notifications
         setupStatusMessageManagerSubscription() // New subscription for general status messages
+        setupFileCopyProgressSubscription() // New subscription for file copy progress
         // Initial call to reflect current setting state
         reactToiCloudSettingChange(isEnabled: self.iCloudSyncEnabledSetting)
         ILOG("Primary subscriptions and trackers set up.")
@@ -486,6 +491,35 @@ public class ImportProgressViewModel: ObservableObject {
             self.updateShouldShow()
         }
     }
+    
+    private func setupFileCopyProgressSubscription() {
+        ILOG("ImportProgressViewModel: Setting up file copy progress subscription.")
+        
+        FileCopyProgressTracker.shared.progressPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] operations in
+                guard let self = self else { return }
+                
+                self.fileCopyOperations = operations
+                self.isFileCopying = !operations.filter { 
+                    $0.status == .downloading || $0.status == .copying 
+                }.isEmpty
+                
+                // Update shouldShow to include file copy operations
+                self.updateShouldShow()
+                
+                // Log file copy status changes
+                if self.isFileCopying {
+                    let activeCount = operations.filter { $0.status == .downloading || $0.status == .copying }.count
+                    ILOG("File copy operations active: \(activeCount)")
+                } else if !operations.isEmpty {
+                    let completedCount = operations.filter { $0.status == .completed }.count
+                    let failedCount = operations.filter { $0.status == .failed }.count
+                    ILOG("File copy operations completed: \(completedCount), failed: \(failedCount)")
+                }
+            }
+            .store(in: &cancellables)
+    }
 
     // MARK: - Public Computed Properties for View Logic
 
@@ -493,6 +527,7 @@ public class ImportProgressViewModel: ObservableObject {
     public var shouldShowImporterSpecificUI: Bool {
         return isImporting ||
                isSyncing ||
+               isFileCopying ||
                (fileRecoveryState != .idle && fileRecoveryState != .complete) ||
                importProgress != nil ||
                initialSyncProgress != nil ||
