@@ -165,6 +165,8 @@
 		B306D7E62D3DDC6B00C71EBE /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = B306D7E52D3DDC6B00C71EBE /* FirebaseCore */; };
 		B306D7E82D3DDC6B00C71EBE /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = B306D7E72D3DDC6B00C71EBE /* FirebaseCrashlytics */; };
 		B306D7EA2D3DDC6B00C71EBE /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = B306D7E92D3DDC6B00C71EBE /* FirebasePerformance */; };
+		B30D49C42E3809C10073B038 /* Spotlight.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B30D49C72E3809C10073B038 /* SpotlightImportExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B30ED0D72CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B30ED0D62CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic */; };
 		B30ED0D82CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B30ED0D62CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B30ED0DA2CFD3C5200AFCFCE /* PVCoreMednafen-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B30ED0D92CFD3C5200AFCFCE /* PVCoreMednafen-Dynamic */; };
@@ -1103,6 +1105,20 @@
 			remoteGlobalIDString = B300593B2C794D6B003010F5;
 			remoteInfo = "Provenance Mini Watch App";
 		};
+		B30D49C52E3809C10073B038 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3E21D6A203211BE009939D3;
+			remoteInfo = Spotlight;
+		};
+		B30D49C82E3809C10073B038 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B355E0102920AA9700E4C858;
+			remoteInfo = SpotlightImportExtension;
+		};
 		B32111A62CBC428700BE8D6C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -1530,6 +1546,8 @@
 			dstSubfolderSpec = 13;
 			files = (
 				B3BD3A1C2D729007000FBB11 /* Provenance Stickers.appex in Embed Foundation Extensions */,
+				B30D49C42E3809C10073B038 /* Spotlight.appex in Embed Foundation Extensions */,
+				B30D49C72E3809C10073B038 /* SpotlightImportExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7661,6 +7679,8 @@
 			dependencies = (
 				B394CC572BDEE53A006B63E8 /* PBXTargetDependency */,
 				B3BD3A1E2D729008000FBB11 /* PBXTargetDependency */,
+				B30D49C62E3809C10073B038 /* PBXTargetDependency */,
+				B30D49C92E3809C10073B038 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				B39436502CCDEC9D004D5DFB /* Main UI */,
@@ -10601,6 +10621,24 @@
 			isa = PBXTargetDependency;
 			target = B300593B2C794D6B003010F5 /* Provenance Mini Watch App */;
 			targetProxy = B30059592C794D6D003010F5 /* PBXContainerItemProxy */;
+		};
+		B30D49C62E3809C10073B038 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+			);
+			target = B3E21D6A203211BE009939D3 /* Spotlight */;
+			targetProxy = B30D49C52E3809C10073B038 /* PBXContainerItemProxy */;
+		};
+		B30D49C92E3809C10073B038 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+			);
+			target = B355E0102920AA9700E4C858 /* SpotlightImportExtension */;
+			targetProxy = B30D49C82E3809C10073B038 /* PBXContainerItemProxy */;
 		};
 		B32111A72CBC428700BE8D6C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -15940,7 +15978,7 @@
 			repositoryURL = "https://github.com/realm/realm-swift.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 10.50.1;
+				minimumVersion = 20.0.3;
 			};
 		};
 		B3E0CFA02C054F9F00F45074 /* XCRemoteSwiftPackageReference "ZipArchive" */ = {
