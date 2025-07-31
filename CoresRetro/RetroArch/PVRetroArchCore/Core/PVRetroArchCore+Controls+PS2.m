@@ -35,15 +35,15 @@ extern GCController *touch_controller;
 
 @implementation PVRetroArchCoreBridge (PSXControls)
 #pragma mark - Control
-- (void)didPushPSXButton:(PVPS2Button)button forPlayer:(NSInteger)player {
+- (void)didPushPS2Button:(PVPS2Button)button forPlayer:(NSInteger)player {
     [self handlePSXButton:button forPlayer:player pressed:true value:1];
 }
 
-- (void)didReleasePSXButton:(PVPS2Button)button forPlayer:(NSInteger)player {
+- (void)didReleasePS2Button:(PVPS2Button)button forPlayer:(NSInteger)player {
     [self handlePSXButton:button forPlayer:player pressed:false value:0];
 }
 
-- (void)didMovePSXJoystickDirection:(PVPS2Button)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player {
+- (void)didMovePS2JoystickDirection:(PVPS2Button)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player {
     switch (button) {
         case(PVPS2ButtonLeftAnalog):
             [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:xValue yAxis:yValue];
