@@ -140,7 +140,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                     record[CloudKitSchema.SaveStateFields.directory] = "Saves"
                     record[CloudKitSchema.SaveStateFields.systemIdentifier] = saveState.game.systemIdentifier
                     record[CloudKitSchema.SaveStateFields.gameID] = saveState.game.id
-                    record[CloudKitSchema.SaveStateFields.creationDate] = saveState.date
+                    record[CloudKitSchema.SaveStateFields.lastUploadedDate] = saveState.date
                     record[CloudKitSchema.SaveStateFields.fileSize] = self.getFileSize(from: localURL)
                     record[CloudKitSchema.SaveStateFields.lastModifiedDevice] = UIDevice.current.identifierForVendor?.uuidString
                     
@@ -501,7 +501,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                     saveState.cloudRecordID = record.recordID.recordName
                     saveState.isDownloaded = false
                     
-                    if let creationDate = record[CloudKitSchema.SaveStateFields.creationDate] as? Date {
+                    if let creationDate = record[CloudKitSchema.SaveStateFields.lastUploadedDate] as? Date {
                         saveState.date = creationDate
                     }
                     

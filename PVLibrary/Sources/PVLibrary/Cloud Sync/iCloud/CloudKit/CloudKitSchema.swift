@@ -94,7 +94,7 @@ public enum CloudKitSchema {
         public static let fileSize = "fileSize" // Int64
         
         // Dates and Sync Metadata
-        public static let creationDate = "creationDate" // Date
+//        public static let creationDate = "creationDate" // Date
         public static let lastUploadedDate = "lastUploadedDate" // Date?
         public static let lastModifiedDevice = "lastModifiedDevice" // String? (Identifier for device)
         

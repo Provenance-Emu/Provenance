@@ -19,6 +19,8 @@ public enum CloudSyncError: Error {
     case realmError(Error)
     case unknown
     case recordNotFound
+    case genericError(String)
+    case gameNotFound(String)
     
     // CloudKit Account Status Errors
     case noAccount // No iCloud account configured

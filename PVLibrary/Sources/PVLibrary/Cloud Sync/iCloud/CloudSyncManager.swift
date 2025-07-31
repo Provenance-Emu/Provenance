@@ -982,7 +982,7 @@ public class CloudSyncManager {
             do {
                 // Find the game by filename (since we don't have MD5 in the notification)
                 // This is a bit inefficient but necessary given the current notification structure
-                let realm = try await Realm(actor: RealmActor.shared)
+                let realm = try await Realm(queue: nil)
                 
                 if let md5 = md5 {
                     guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5) ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())  else {

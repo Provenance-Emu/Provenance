@@ -48,6 +48,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     private let operationQueue = OperationQueue()
     private var cancellables = Set<AnyCancellable>()
     private let progressTracker = SyncProgressTracker.shared // Added Progress Tracker
+    private let uploadQueue = CloudKitUploadQueueActor.shared
 
     // MARK: - Initialization
     public init(container: CKContainer, retryStrategy: @escaping CloudKitRetryOperation<Any>, romsDatastore: RomDatabase = RomDatabase.sharedInstance) {
@@ -69,6 +70,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     // TODO: Implement these methods based on CloudKit logic
     public func loadAllFromCloud(iterationComplete: (() async -> Void)?) async -> Completable {
         ILOG("Starting loadAllFromCloud for CloudKit ROMs...")
+        ILOG("🔍 CloudKit Database: \(database.databaseScope.rawValue == 2 ? "Private" : "Public")")
+        ILOG("🔍 Query Record Type: \(CloudKitSchema.RecordType.rom.rawValue)")
+        
         let query = CKQuery(recordType: CloudKitSchema.RecordType.rom.rawValue, predicate: NSPredicate(value: true))
         // Note: Removed sort descriptor as modificationDate is not marked sortable in CloudKit schema
         // Records will be processed in CloudKit's default order
@@ -76,17 +80,21 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         var allRecords: [CKRecord] = []
 
         do {
+            ILOG("🔍 Executing CloudKit query...")
             // Use the convenience method to fetch all records, handling cursors automatically.
             // TODO: Consider limiting fields fetched if only specific data is needed initially.
             let (matchResults, _) = try await database.records(matching: query)
+            ILOG("🔍 CloudKit query completed. Processing \(matchResults.count) results...")
 
             // First, collect all successful records
-            for (_, result) in matchResults {
+            for (recordID, result) in matchResults {
                 switch result {
                 case .success(let record):
                     allRecords.append(record)
+                    VLOG("🔍 Found ROM record: \(recordID.recordName)")
                 case .failure(let error):
                     WLOG("Failed to fetch a specific ROM record during loadAll: \(error.localizedDescription)")
+                    WLOG("🔍 Failed record ID: \(recordID.recordName)")
                     // Decide if we should continue or propagate the error
                 }
             }
@@ -98,20 +106,70 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 return size1 < size2
             }
 
-            ILOG("Found \(allRecords.count) ROM records, sorted by file size for reliable downloading")
-
-            // Now process the sorted records
-            for record in sortedRecords {
-                // Process record - check if local exists, update status, trigger download if needed
-                await processCloudRecord(record)
-                VLOG("Processed ROM record: \(record.recordID.recordName)")
+            ILOG("Found \(allRecords.count) ROM records, starting two-phase sync...")
+            
+            // Debug: If we found 0 records, let's investigate why
+            if allRecords.isEmpty {
+                ELOG("⚠️ No ROM records found in CloudKit! This suggests:")
+                ELOG("   1. No ROMs have been uploaded to CloudKit yet")
+                ELOG("   2. CloudKit authentication/permission issues")
+                ELOG("   3. Records are in a different database/zone")
+                ELOG("   4. Record ID format mismatch (old vs new format)")
+                
+                // Let's try a more specific query to see if there are ANY records
+                ILOG("🔍 Attempting to query for any records with 'rom_' prefix...")
+                do {
+                    let legacyQuery = CKQuery(recordType: CloudKitSchema.RecordType.rom.rawValue, 
+                                            predicate: NSPredicate(format: "recordID BEGINSWITH 'rom_'"))
+                    let (legacyResults, _) = try await database.records(matching: legacyQuery)
+                    ILOG("🔍 Legacy format query found \(legacyResults.count) records")
+                    
+                    for (recordID, result) in legacyResults {
+                        switch result {
+                        case .success(let record):
+                            ILOG("🔍 Legacy ROM record found: \(recordID.recordName)")
+                            allRecords.append(record)
+                        case .failure(let error):
+                            WLOG("🔍 Legacy ROM record failed: \(recordID.recordName) - \(error.localizedDescription)")
+                        }
+                    }
+                } catch {
+                    ELOG("🔍 Legacy query also failed: \(error.localizedDescription)")
+                }
             }
+            
+            ILOG("Total ROM records after legacy check: \(allRecords.count)")
 
-            ILOG("Finished loadAllFromCloud. Processed \(sortedRecords.count) ROM records for download.")
-            // Records have been processed individually above
+            // PHASE 1: Sync all metadata first (fast)
+            ILOG("📋 Phase 1: Syncing metadata for \(allRecords.count) ROM records...")
+            var gamesNeedingDownload: [String] = []
+            
+            for record in allRecords {
+                // Process metadata only - collect games that need downloads
+                if let md5 = await processCloudRecordMetadata(record) {
+                    gamesNeedingDownload.append(md5)
+                }
+                VLOG("Processed ROM metadata: \(record.recordID.recordName)")
+            }
+            
+            ILOG("✅ Phase 1 complete: \(allRecords.count) games synced, \(gamesNeedingDownload.count) need downloads")
+            
+            // PHASE 2: Start background downloads (non-blocking)
+            if !gamesNeedingDownload.isEmpty {
+                ILOG("📥 Phase 2: Starting background downloads for \(gamesNeedingDownload.count) games...")
+                downloadGamesInBackground(gamesNeedingDownload)
+            }
+            
+            ILOG("🚀 Two-phase sync initiated. UI should be responsive with \(allRecords.count) games visible.")
 
         } catch {
-            ELOG("Failed to execute query for loadAllFromCloud: \(error.localizedDescription)")
+            ELOG("❌ Failed to execute query for loadAllFromCloud: \(error.localizedDescription)")
+            if let ckError = error as? CKError {
+                ELOG("❌ CloudKit Error Code: \(ckError.code.rawValue)")
+                ELOG("❌ CloudKit Error Domain: \(ckError.errorCode)")
+                ELOG("❌ CloudKit Error User Info: \(ckError.userInfo)")
+            }
+            ELOG("❌ Full Error: \(error)")
             // Handle error appropriately (e.g., log, notify user)
             // Consider throwing or returning an error state if the protocol allowed.
         }
@@ -432,13 +490,14 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         // before this function is called.
     }
 
-    /// Process a cloud record to check if download is needed and trigger it
+    /// Process a cloud record for metadata sync only (Phase 1)
     /// - Parameter record: The CloudKit record to process
-    private func processCloudRecord(_ record: CKRecord) async {
+    /// - Returns: MD5 of games that need file downloads
+    private func processCloudRecordMetadata(_ record: CKRecord) async -> String? {
         // Extract MD5 from record ID using centralized method
         guard let md5 = CloudKitSchema.RecordIDGenerator.extractMD5FromRomRecordID(record.recordID) else {
             ELOG("Invalid ROM record ID format: \(record.recordID.recordName)")
-            return
+            return nil
         }
 
         let recordName = record.recordID.recordName
@@ -447,7 +506,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             // Check if record is marked as deleted
             if let isDeleted = record[CloudKitSchema.ROMFields.isDeleted] as? Bool, isDeleted {
                 VLOG("Record \(recordName) is marked as deleted, skipping")
-                return
+                return nil
             }
 
             // Check if we have a local game for this MD5
@@ -455,7 +514,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             var updatedOrCreatedGame: PVGame?
 
             if let localGame = existingLocalGame {
-                ILOG("🔄 Local game found for MD5 \(md5). Updating from cloud record: \(localGame.title) (isDownloaded: \(localGame.isDownloaded))")
+                VLOG("🔄 Local game found for MD5 \(md5). Updating from cloud record: \(localGame.title) (isDownloaded: \(localGame.isDownloaded))")
                 try await updatePVGame(from: record, gameMD5: md5)
                 updatedOrCreatedGame = RomDatabase.sharedInstance.game(withMD5: md5)
             } else {
@@ -464,19 +523,12 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 ILOG("📥 Created new game from CloudKit: \(updatedOrCreatedGame?.title ?? "Unknown") (isDownloaded: \(updatedOrCreatedGame?.isDownloaded ?? false))")
             }
 
-            // Check if download is needed
+            // Check if download will be needed (but don't trigger it yet)
             if let game = updatedOrCreatedGame, !game.isDownloaded {
-                // Verify the record has an asset before triggering download
+                // Verify the record has an asset before marking for download
                 if record[CloudKitSchema.ROMFields.fileData] is CKAsset {
-                    VLOG("Local game \(md5) needs download. Triggering download...")
-                    Task {
-                        do {
-                            try await downloadGame(md5: md5)
-                            ILOG("Successfully downloaded game \(md5)")
-                        } catch {
-                            ELOG("Failed to download game \(md5): \(error.localizedDescription)")
-                        }
-                    }
+                    VLOG("Local game \(md5) marked for background download")
+                    return md5 // Return MD5 for Phase 2 download
                 } else {
                     WLOG("Local game \(md5) needs download, but remote record has no asset")
                 }
@@ -506,6 +558,76 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             }
         } catch {
             ELOG("Unexpected error processing cloud record \(record.recordID.recordName): \(error.localizedDescription)")
+        }
+        
+        return nil // No download needed
+    }
+    
+    /// Queue a ROM upload without blocking sync operations
+    /// - Parameters:
+    ///   - md5: ROM MD5 hash
+    ///   - gameTitle: Game title for logging
+    ///   - filePath: Path to ROM file
+    ///   - priority: Upload priority
+    /// - Returns: Upload task ID for tracking
+    @discardableResult
+    public func queueROMUpload(md5: String, gameTitle: String, filePath: URL, priority: CloudKitUploadQueueActor.UploadTask.Priority = .normal) async -> UUID {
+        ILOG("📤 Queueing ROM upload: \(gameTitle) (MD5: \(md5))")
+        return await uploadQueue.enqueueUpload(md5: md5, gameTitle: gameTitle, filePath: filePath, priority: priority)
+    }
+    
+    /// Upload a ROM file directly (used by upload queue)
+    /// - Parameters:
+    ///   - md5: ROM MD5 hash  
+    ///   - filePath: Path to ROM file
+    internal func uploadGameFile(md5: String, filePath: URL) async throws {
+//        // Get the game from database
+//        guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else {
+//            throw CloudSyncError.gameNotFound("Game with MD5 \(md5) not found in database")
+//        }
+//        
+//        ILOG("📤 Starting direct ROM upload: \(game.title) (MD5: \(md5))")
+        
+        // Use existing uploadGame method
+        _ = try await uploadGame(md5)
+        
+//        ILOG("✅ Direct ROM upload completed: \(game.title) (MD5: \(md5))")
+    }
+    
+    /// Download ROM files in background (Phase 2)
+    /// - Parameter md5List: Array of MD5 hashes for games that need downloads
+    private func downloadGamesInBackground(_ md5List: [String]) {
+        guard !md5List.isEmpty else {
+            ILOG("No games need background downloads")
+            return
+        }
+        
+        ILOG("🔄 Starting background downloads for \(md5List.count) games")
+        
+        // Start background downloads with proper concurrency control
+        Task.detached(priority: .background) {
+            // Limit concurrent downloads to avoid overwhelming the system
+            let maxConcurrentDownloads = 3
+            
+            for chunk in md5List.chunked(into: maxConcurrentDownloads) {
+                await withTaskGroup(of: Void.self) { group in
+                    for md5 in chunk {
+                        group.addTask {
+                            do {
+                                try await self.downloadGame(md5: md5)
+                                ILOG("✅ Background download completed for game \(md5)")
+                            } catch {
+                                ELOG("❌ Background download failed for game \(md5): \(error.localizedDescription)")
+                            }
+                        }
+                    }
+                }
+                
+                // Small delay between chunks to be respectful of system resources
+                try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+            }
+            
+            ILOG("🏁 Background downloads completed")
         }
     }
 
@@ -1607,5 +1729,14 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         // Default to 0 if no size information is available
         return 0
+    }
+}
+
+// MARK: - Array Extension for Chunking
+private extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        return stride(from: 0, to: count, by: size).map {
+            Array(self[$0..<Swift.min($0 + size, count)])
+        }
     }
 }

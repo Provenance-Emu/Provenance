@@ -462,7 +462,26 @@ public actor CloudKitInitialSyncer {
                 // Attempt retry based on upload type
                 switch upload.type {
                 case .rom(let md5):
-                    try await romsSyncer.uploadGame(md5.uppercased())
+                    // Queue the retry upload instead of blocking
+                    if let romSyncer = romsSyncer as? CloudKitRomsSyncer {
+                        // Find the game to get file path and title
+                        let realm = try await Realm(queue: nil)
+                        if let game = realm.objects(PVGame.self).filter("md5Hash == %@", md5.uppercased()).first,
+                           let romURL = game.file?.url {
+                            let taskId = await romSyncer.queueROMUpload(
+                                md5: md5.uppercased(),
+                                gameTitle: game.title,
+                                filePath: romURL,
+                                priority: .high // Higher priority for retries
+                            )
+                            DLOG("Queued ROM retry upload: \(game.title) (\(md5)) - Task ID: \(taskId)")
+                        } else {
+                            ELOG("Game not found for ROM retry: \(md5)")
+                        }
+                    } else {
+                        // Fallback to direct upload
+                        try await romsSyncer.uploadGame(md5.uppercased())
+                    }
                     completedRetries.append(index)
 
                 case .saveState(let id):
@@ -574,7 +593,20 @@ public actor CloudKitInitialSyncer {
                 }
 
                 do {
-                    try await romsSyncer.uploadGame(game.md5Hash)
+                    // Queue the upload instead of blocking sync
+                    if let romSyncer = romsSyncer as? CloudKitRomsSyncer,
+                       let romURL = game.file?.url {
+                        let taskId = await romSyncer.queueROMUpload(
+                            md5: game.md5Hash,
+                            gameTitle: game.title,
+                            filePath: romURL,
+                            priority: .normal
+                        )
+                        DLOG("Queued ROM upload: \(game.title) (\(game.md5Hash)) - Task ID: \(taskId)")
+                    } else {
+                        // Fallback to direct upload if queueing fails
+                        try await romsSyncer.uploadGame(game.md5Hash)
+                    }
 
                     syncedCount += 1
                     DLOG("Successfully initiated upload for ROM: \(game.title) (\(game.md5Hash))")
@@ -815,7 +847,11 @@ public actor CloudKitInitialSyncer {
             var progress = await MainActor.run { syncProgressSubject.value }
 
             // Process Battery States
-            if let batteryStateFiles = allFiles["Battery States"] {
+      
+            if let batteryStateFiles = allFiles["Battery States"]?.filter({ url in
+                !url.pathDecoded.contains("DolphinData") &&
+                !url.pathDecoded.contains("SaveStates")
+            }) {
                 progress.batteryStatesTotal = batteryStateFiles.count
                 syncCounts["Battery States"] = await syncFiles(batteryStateFiles, using: nonDatabaseSyncer, progressUpdater: { completedCount in
                     progress.batteryStatesCompleted = completedCount
