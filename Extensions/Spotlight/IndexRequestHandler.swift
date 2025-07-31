@@ -31,52 +31,36 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
     /// Mock data driver for testing
     private var mockDriver: MockSpotlightDataDriver?
     
-    /// Actor to isolate Realm configuration and coordinate access
-    private actor RealmActor {
-        var configuration: Realm.Configuration?
+    /// Safe database access methods using shared RomDatabase instance
+    private func getGame(byMD5 md5: String) throws -> PVGame? {
+        // Always use the shared RomDatabase instance to prevent corruption
+        let database = RomDatabase.sharedInstance
+        let realm = database.realm
         
-        func setConfiguration(_ config: Realm.Configuration) {
-            self.configuration = config
-        }
-        
-        func getConfiguration() -> Realm.Configuration? {
-            return configuration
-        }
-        
-        /// Get a game by its MD5 hash
-        func getGame(byMD5 md5: String) throws -> PVGame? {
-            // Use the shared RomDatabase instance to access Realm safely
-            let database = RomDatabase.sharedInstance
-            let realm = database.realm
-            
-            // Get the game and freeze it so it can be used across threads
-            return realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())?.freeze()
-        }
-        
-        /// Get all games
-        func getAllGames() throws -> [PVGame] {
-            // Use the shared RomDatabase instance to access Realm safely
-            let database = RomDatabase.sharedInstance
-            let realm = database.realm
-            
-            // Get all games and freeze them
-            return realm.objects(PVGame.self).map { $0.freeze() }
-        }
-        
-        /// Get games matching specific identifiers
-        func getGames(withIdentifiers identifiers: [String]) throws -> [PVGame] {
-            // Use the shared RomDatabase instance to access Realm safely
-            let database = RomDatabase.sharedInstance
-            let realm = database.realm
-            
-            // Get games matching the identifiers and freeze them
-            let predicate = NSPredicate(format: "md5Hash IN %@", identifiers)
-            return realm.objects(PVGame.self).filter(predicate).map { $0.freeze() }
-        }
+        // Get the game and freeze it so it can be used across threads
+        return realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())?.freeze()
     }
     
-    /// Realm actor instance
-    private let realmActor = RealmActor()
+    /// Get all games using shared database instance
+    private func getAllGames() throws -> [PVGame] {
+        // Use the shared RomDatabase instance to access Realm safely
+        let database = RomDatabase.sharedInstance
+        let realm = database.realm
+        
+        // Get all games and freeze them for thread safety
+        return realm.objects(PVGame.self).map { $0.freeze() }
+    }
+    
+    /// Get games matching specific identifiers
+    private func getGames(withIdentifiers identifiers: [String]) throws -> [PVGame] {
+        // Use the shared RomDatabase instance to access Realm safely
+        let database = RomDatabase.sharedInstance
+        let realm = database.realm
+        
+        // Get games with specific identifiers and freeze them
+        let predicate = NSPredicate(format: "md5Hash IN %@", identifiers.map { $0.uppercased() })
+        return realm.objects(PVGame.self).filter(predicate).map { $0.freeze() }
+    }
     
     public override init() {
         super.init()
@@ -94,7 +78,16 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
                 }
             }
         } else {
-            // We'll use RomDatabase.sharedInstance.realm directly when needed
+            // Ensure RomDatabase is properly initialized
+            // The shared instance will handle all configuration automatically
+            do {
+                // Verify the shared database is accessible
+                let database = RomDatabase.sharedInstance
+                let _ = database.realm // This will initialize if needed
+                ILOG("Spotlight: Successfully connected to shared Realm database")
+            } catch {
+                ELOG("Spotlight: Failed to connect to shared Realm database: \(error)")
+            }
             ILOG("Spotlight: Using shared RomDatabase instance")
         }
     }
@@ -118,11 +111,11 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
             }
             
             acknowledgementHandler()
-        } else if RealmConfiguration.supportsAppGroups {
+        } else {
             Task {
                 do {
-                    // Get all games using the actor
-                    let allGames = try await realmActor.getAllGames()
+                    // Get all games using the shared RomDatabase instance
+                    let allGames = try getAllGames()
                     
                     if allGames.isEmpty {
                         WLOG("Spotlight: No games found to index")
@@ -137,9 +130,6 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
                 // Always call the acknowledgement handler
                 acknowledgementHandler()
             }
-        } else {
-            WLOG("Spotlight: App Groups not setup, cannot reindex")
-            acknowledgementHandler()
         }
     }
     
@@ -165,14 +155,14 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
         } else if RealmConfiguration.supportsAppGroups {
             Task {
                 do {
-                    // Get matching games using the actor
-                    let matchingGames = try await realmActor.getGames(withIdentifiers: identifiers)
+                    // Get specific games using the shared RomDatabase instance
+                    let games = try getGames(withIdentifiers: identifiers)
                     
-                    if matchingGames.isEmpty {
+                    if games.isEmpty {
                         WLOG("Spotlight: No matching games found for identifiers")
                     } else {
-                        ILOG("Spotlight: Found \(matchingGames.count) matching games to reindex")
-                        indexGames(matchingGames)
+                        ILOG("Spotlight: Found \(games.count) matching games to reindex")
+                        indexGames(games)
                     }
                 } catch {
                     ELOG("Spotlight: Error getting games with identifiers: \(error)")

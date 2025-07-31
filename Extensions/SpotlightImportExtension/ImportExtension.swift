@@ -27,31 +27,27 @@ class ImportExtension: CSImportExtension {
     /// Domain identifier for all Provenance items
     private let domainIdentifier = "org.provenance-emu.games"
     
-    /// Actor to isolate Realm configuration and coordinate access
+    /// Actor to isolate Realm database access safely
     private actor RealmActor {
-        var configuration: Realm.Configuration?
         
-        func setConfiguration(_ config: Realm.Configuration) {
-            self.configuration = config
-        }
-        
-        func getConfiguration() -> Realm.Configuration? {
-            return configuration
-        }
-        
-        /// Get a game by its MD5 hash
+        /// Get a game by its MD5 hash using shared database instance
         func getGame(byMD5 md5: String) throws -> PVGame? {
-            guard let config = configuration else { 
-                throw ImportExtensionError.configurationError
-            }
+            // Always use the shared RomDatabase instance to prevent corruption
+            let database = RomDatabase.sharedInstance
+            let realm = database.realm
             
-            // Create a new Realm instance for this operation
-//            let realm = try Realm(configuration: config)
-            let realm = try RomDatabase.sharedInstance.realm
-
             // Get the game and freeze it so it can be used across threads
             let predicate = NSPredicate(format: "md5Hash == %@", md5)
             return realm.objects(PVGame.self).filter(predicate).first?.freeze()
+        }
+        
+        /// Get all games using shared database instance
+        func getAllGames() throws -> [PVGame] {
+            let database = RomDatabase.sharedInstance
+            let realm = database.realm
+            
+            // Get all games and freeze them for thread safety
+            return realm.objects(PVGame.self).map { $0.freeze() }
         }
     }
     
@@ -63,18 +59,17 @@ class ImportExtension: CSImportExtension {
         
         ILOG("SpotlightImport: Initializing Import Extension")
         
-        // Configure Realm for app group access
-        if RealmConfiguration.supportsAppGroups {
-            // Set up the Realm configuration
-            let config = RealmConfiguration.realmConfig
-            
-            // Store the configuration in the actor
-            Task {
-                await realmActor.setConfiguration(config)
-                ILOG("SpotlightImport: Realm configuration set up successfully")
+        // Ensure RomDatabase is properly initialized
+        // The shared instance will handle all configuration automatically
+        Task {
+            do {
+                // Verify the shared database is accessible
+                let database = RomDatabase.sharedInstance
+                let _ = database.realm // This will initialize if needed
+                ILOG("SpotlightImport: Successfully connected to shared Realm database")
+            } catch {
+                ELOG("SpotlightImport: Failed to connect to shared Realm database: \(error)")
             }
-        } else {
-            WLOG("SpotlightImport: App Groups not supported during initialization")
         }
     }
     
