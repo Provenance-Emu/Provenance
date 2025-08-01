@@ -2,8 +2,10 @@
 
 ## Before merge to release
 
+- [ ] Remove or fix spotlight breaking the library
 - [ ] Better screenshot support (protocol, fix gamecube and retroarch)
 - [X] Dolhin hacks options, especially vbi sync off
+- [ ] Fix all @MainActor code in cloudkit sync
 - [ ] Fix rotation
 - [ ] Option to use a custom skin or not
 - [ ] if rotate and same skin, don't reload
