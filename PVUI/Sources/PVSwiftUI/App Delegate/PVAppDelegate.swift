@@ -73,8 +73,21 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 
     // Check if the app is running in App Store mode
     public var isAppStore: Bool {
-        guard let appType = Bundle.main.infoDictionary?["PVAppType"] as? String else { return false }
-        return appType.lowercased().contains("appstore")
+        guard Bundle.main.bundleIdentifier!.hasPrefix("org.provenance-emu.provenance") else {
+            ILOG("Bundle id \(Bundle.main.bundleIdentifier ?? "null") is NOT official. Disabling Provenance Plus checks.")
+            return false
+        }
+        guard let appType = Bundle.main.infoDictionary?["PVAppType"] as? String else {
+            ILOG("appType \( Bundle.main.infoDictionary?["PVAppType"] ?? "null") is NOT official. Disabling Provenance Plus checks.")
+            return false
+        }
+        let isAppStore = appType.lowercased().contains("appstore")
+        if isAppStore {
+            ILOG("isAppStore true.")
+        } else {
+            ILOG("isAppStore false.")
+        }
+        return isAppStore
     }
 
     // JIT-related properties for iOS, non-App Store builds with PVJIT support
