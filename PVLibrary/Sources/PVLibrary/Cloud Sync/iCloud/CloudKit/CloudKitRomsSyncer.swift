@@ -1022,7 +1022,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             throw CloudSyncError.invalidData
         }
 
-        ILOG("Updating local game \(localGame.md5 ?? "nil") from CloudKit record \(record.recordID.recordName).")
+        ILOG("Updating local game \(localGame.md5Hash ?? "nil") from CloudKit record \(record.recordID.recordName).")
 
         // Modification Date Check (Option B)
         // Assumes PVGame model has `lastCloudSyncDate: Date?` added.
@@ -1030,7 +1030,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         let localSyncDate = localGame.lastCloudSyncDate ?? .distantPast
 
         if cloudModDate <= localSyncDate {
-            VLOG("Skipping update for game \(localGame.md5 ?? "nil"): CloudKit record modification date (\(cloudModDate)) is not newer than last local sync date (\(localSyncDate)).")
+            VLOG("Skipping update for game \(localGame.md5Hash ?? "nil"): CloudKit record modification date (\(cloudModDate)) is not newer than last local sync date (\(localSyncDate)).")
             return // No update needed
         }
 
@@ -1083,7 +1083,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                         // Replace existing PVFile object as URL is get-only
                         let updatedFile = PVFile(withURL: expectedLocalURL, relativeRoot: .documents) // Use same root as above
                         localGame.file = updatedFile
-                        VLOG("Replaced PVFile due to differing URL for game \(localGame.md5 ?? "nil")")
+                        VLOG("Replaced PVFile due to differing URL for game \(localGame.md5Hash ?? "nil")")
                     }
                 }
             } else {
@@ -1100,11 +1100,11 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 // For now, let's mark them offline if they had URLs.
                 for relatedFile in localGame.relatedFiles where relatedFile.url != nil {
                     // No 'isOffline' property on PVFile. Their existence is tracked by PVGame.
-                    VLOG("Related file \(relatedFile.fileName) exists for game \(localGame.md5 ?? "unknown") but primary is not downloaded.")
+                    VLOG("Related file \(relatedFile.fileName) exists for game \(localGame.md5Hash ?? "unknown") but primary is not downloaded.")
                 }
             }
         } // End write transaction
-        VLOG("Finished updating game: \(localGame.title) (MD5: \(localGame.md5 ?? "unknown"))")
+        VLOG("Finished updating game: \(localGame.title) (MD5: \(localGame.md5Hash ?? "unknown"))")
         
         // Download custom artwork asset if available
         do {
