@@ -118,10 +118,8 @@ public struct PVSettingsView: View {
                                 ControllerSection()
                             }
                             
-                            if advancedSkinFeaturesFlag.value {
-                                CollapsibleSection(title: "Delta Skins") {
-                                    DeltaSkinsSection()
-                                }
+                            CollapsibleSection(title: "Delta Skins") {
+                                DeltaSkinsSection()
                             }
                             
                             CollapsibleSection(title: "Library") {
@@ -931,7 +929,7 @@ private struct LibrarySection2: View {
                                  icon: .sfSymbol("icloud"))
                 }
             #else
-            if viewModel.showFeatureFlagsDebug {
+//            if viewModel.showFeatureFlagsDebug {
                 PaidFeatureView {
                     // Cloud Sync Settings
                     NavigationLink(destination: CloudSyncSettingsView()) {
@@ -944,7 +942,7 @@ private struct LibrarySection2: View {
                               subtitle: "Unlock to access CloudKit and iCloud Drive sync settings.",
                               icon: .sfSymbol("lock.fill"))
                 }
-            }
+//            }
             #endif
             
             NavigationLink(destination: BatchArtworkMatchingView()) {
