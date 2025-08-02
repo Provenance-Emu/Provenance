@@ -934,7 +934,7 @@ extension ConsoleGamesView {
     @ViewBuilder
     private func continueSection() -> some View {
         Group {
-            if showRecentSaveStates && !recentGamesForBinding.isEmpty { // Check recentGamesForBinding here as well
+            if showRecentSaveStates && !recentSaveStates.isEmpty { // Check recentGamesForBinding here as well
                 HomeContinueSection(
                     rootDelegate: rootDelegate,
                     consoleIdentifier: console.identifier,

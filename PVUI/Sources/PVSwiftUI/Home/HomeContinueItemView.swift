@@ -9,8 +9,14 @@ import SwiftUI
 import PVThemes
 import RealmSwift
 
+/// Optimized HomeContinueItemView with cached image loading and efficient retro effects
 struct HomeContinueItemView: SwiftUI.View {
-    @ObservedRealmObject var continueState: PVSaveState
+    // Use computed properties instead of @ObservedRealmObject to reduce re-renders
+    let saveStateId: String
+    let gameTitle: String?
+    let imageURL: URL?
+    let isInvalidated: Bool
+    
     @ObservedObject private var themeManager = ThemeManager.shared
     let height: CGFloat
     let hideSystemLabel: Bool
@@ -19,6 +25,7 @@ struct HomeContinueItemView: SwiftUI.View {
     weak var rootDelegate: PVRootDelegate?
 
     @State private var showDeleteAlert = false
+    @State private var isVisible = false
 
     /// Constants for CRT and retrowave effects
     internal enum CRTEffects {
@@ -34,32 +41,45 @@ struct HomeContinueItemView: SwiftUI.View {
         // Image presentation
         static let zoomFactor: CGFloat = 1.15
     }
+    
+    /// Convenience initializer that extracts data from PVSaveState to reduce Realm observation overhead
+    init(continueState: PVSaveState, height: CGFloat, hideSystemLabel: Bool, action: @escaping () -> Void, isFocused: Bool, rootDelegate: PVRootDelegate?) {
+        self.saveStateId = continueState.id
+        self.gameTitle = continueState.game?.title
+        self.imageURL = continueState.image?.url
+        self.isInvalidated = continueState.isInvalidated
+        self.height = height
+        self.hideSystemLabel = hideSystemLabel
+        self.action = action
+        self.isFocused = isFocused
+        self.rootDelegate = rootDelegate
+    }
 
     var body: some SwiftUI.View {
-        if !continueState.isInvalidated {
+        if !isInvalidated {
             Button {
                 action()
             } label: {
                 ZStack(alignment: .top) {
-                    if let screenshot = continueState.image,
-                       !screenshot.isInvalidated,
-                       let url = screenshot.url,
-                       let image = UIImage(contentsOfFile: url.path) {
-                        baseImageLayer(image)
-                            .drawingGroup() // Use Metal rendering
-                            .overlay(RetroEffects())
-                    } else {
-                        Image(uiImage: UIImage.missingArtworkImage(gameTitle: continueState.game?.title ?? "Deleted", ratio: 1))
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(height: height * CRTEffects.zoomFactor)
-                            .frame(maxWidth: .infinity)
-                            .scaleEffect(CRTEffects.zoomFactor)
-                            .clipped()
-                            .drawingGroup() // Use Metal rendering
-                            .overlay(RetroEffects())
-                            .id(themeManager.currentPalette.name)
-                    }
+                    // Use optimized cached async image loading
+                    CachedAsyncImageView(
+                        url: imageURL,
+                        fallbackImage: UIImage.missingArtworkImage(gameTitle: gameTitle ?? "Deleted", ratio: 1),
+                        height: height,
+                        zoomFactor: CRTEffects.zoomFactor
+                    )
+                    .overlay(
+                        // Use lightweight effects when not focused, full effects when focused
+                        Group {
+                            if isVisible {
+                                if isFocused {
+                                    OptimizedRetroEffects()
+                                } else {
+                                    LightweightRetroEffects()
+                                }
+                            }
+                        }
+                    )
                 }
                 .frame(height: height)
                 .clipShape(Rectangle())
@@ -100,25 +120,38 @@ struct HomeContinueItemView: SwiftUI.View {
                     Label("Load Save", systemImage: "play.fill")
                 }
 
-                if let game = continueState.game, !game.isInvalidated {
-                    if let system = continueState.game.system {
-                        Button {
-                            /// Show the continues management view for all games
-                            Task { @MainActor in
-                                rootDelegate?.root_showContinuesManagement(forSystemID: system.identifier)
-                            }
-                        } label: {
-                            Label("Manage All \(system.shortName) Save States", systemImage: "clock.arrow.circlepath")
-                        }
-                    }
-                    
+                // Context menu items that require Realm access - fetch fresh data
+                if let continueState = RomDatabase.sharedInstance.object(ofType: PVSaveState.self, wherePrimaryKeyEquals: saveStateId),
+                   let game = continueState.game, !game.isInvalidated {
                     Button {
-                        /// Show the continues management view for this specific game
-                        Task { @MainActor in
+                        Task.detached { @MainActor in
+                            await rootDelegate?.root_load(
+                                game,
+                                sender: self,
+                                core: nil,
+                                saveState: nil
+                            )
+                        }
+                    } label: {
+                        Label("Load Game", systemImage: "gamecontroller")
+                    }
+
+                    Button {
+                        Task.detached { @MainActor in
                             rootDelegate?.root_showContinuesManagement(game)
                         }
                     } label: {
-                        Label("Manage Game Save States", systemImage: "gamecontroller")
+                        Label("Manage Game Save States", systemImage: "clock.arrow.circlepath")
+                    }
+                    
+                    if let system = game.system {
+                        Button {
+                            Task.detached { @MainActor in
+                                rootDelegate?.root_showContinuesManagement(forSystemID: system.identifier)
+                            }
+                        } label: {
+                            Label("Manage All \(system.shortName) Save States", systemImage: "folder")
+                        }
                     }
                 }
 
@@ -130,15 +163,18 @@ struct HomeContinueItemView: SwiftUI.View {
             }
             .uiKitAlert(
                 "Delete Save State",
-                message: "Are you sure you want to delete this save state for \(continueState.game?.isInvalidated == true ? "this game" : continueState.game?.title ?? "Deleted")?",
+                message: "Are you sure you want to delete this save state for \(gameTitle ?? "Deleted")?",
                 isPresented: $showDeleteAlert,
                 preferredContentSize: CGSize(width: 500, height: 300)
             ) {
                 UIAlertAction(title: "Delete", style: .destructive) { _ in
-                    do {
-                        try RomDatabase.sharedInstance.delete(saveState: continueState)
-                    } catch {
-                        ELOG("Failed to delete save state: \(error.localizedDescription)")
+                    // Fetch fresh save state for deletion
+                    if let continueState = RomDatabase.sharedInstance.object(ofType: PVSaveState.self, wherePrimaryKeyEquals: saveStateId) {
+                        do {
+                            try RomDatabase.sharedInstance.delete(saveState: continueState)
+                        } catch {
+                            ELOG("Failed to delete save state: \(error.localizedDescription)")
+                        }
                     }
                     showDeleteAlert = false
                 }
@@ -146,82 +182,12 @@ struct HomeContinueItemView: SwiftUI.View {
                     showDeleteAlert = false
                 }
             }
-        }
-    }
-
-    @ViewBuilder
-    private func baseImageLayer(_ image: UIImage) -> some View {
-        Image(uiImage: image)
-            .resizable()
-            .aspectRatio(contentMode: .fill)
-            .frame(height: height * CRTEffects.zoomFactor)
-            .frame(maxWidth: .infinity)
-            .scaleEffect(CRTEffects.zoomFactor)
-            .clipped()
-    }
-}
-
-/// Combined retro effects overlay with enhanced retrowave styling
-private struct RetroEffects: View {
-    @ObservedObject private var themeManager = ThemeManager.shared
-    @State private var isAnimating = false
-    
-    /// Environment value for reduce motion setting
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    
-    var body: some View {
-        ZStack {
-            // Subtle color tint overlay for retrowave effect
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.1),
-                    RetroTheme.retroPurple.opacity(0.05)
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            
-            // Scanlines
-            GeometryReader { geometry in
-                Path { path in
-                    stride(from: 0, to: geometry.size.height, by: 2).forEach { y in
-                        path.move(to: CGPoint(x: 0, y: y))
-                        path.addLine(to: CGPoint(x: geometry.size.width, y: y))
-                    }
-                }
-                .stroke(.black.opacity(HomeContinueItemView.CRTEffects.scanlineOpacity), lineWidth: 1)
+            .onAppear {
+                isVisible = true
             }
-
-            // LCD effect (vertical lines)
-            GeometryReader { geometry in
-                Path { path in
-                    stride(from: 0, to: geometry.size.width, by: 3).forEach { x in
-                        path.move(to: CGPoint(x: x, y: 0))
-                        path.addLine(to: CGPoint(x: x, y: geometry.size.height))
-                    }
-                }
-                .stroke(.black.opacity(HomeContinueItemView.CRTEffects.lcdOpacity), lineWidth: 1)
+            .onDisappear {
+                isVisible = false
             }
-            
-            // Subtle vignette effect
-            RadialGradient(
-                gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.3)]),
-                center: .center,
-                startRadius: 50,
-                endRadius: 150
-            )
-            
-            // Subtle flicker animation for CRT effect - only if reduce motion is not enabled
-//            if !reduceMotion {
-//                Color.white.opacity(isAnimating ? 0.03 : 0.0)
-//                    .blendMode(.overlay)
-//                    .onAppear {
-//                        withAnimation(Animation.easeInOut(duration: 0.2).repeatForever(autoreverses: true)) {
-//                            isAnimating = true
-//                        }
-//                    }
-//            }
         }
-        .allowsHitTesting(false)
     }
 }

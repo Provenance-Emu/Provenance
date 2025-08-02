@@ -13,6 +13,7 @@ import PVLibrary
 import PVThemes
 import Combine
 
+/// Optimized view model with reduced @Published properties to minimize re-renders
 class ContinuesSectionViewModel: ObservableObject {
     /// Maximum number of save states to load initially
     /// This can be adjusted or made into a user setting later
@@ -28,16 +29,12 @@ class ContinuesSectionViewModel: ObservableObject {
     @Published var selectedItemId: String?
     @Published var hasFocus: Bool = false
     @Published var isControllerConnected: Bool = GamepadManager.shared.isControllerConnected
-    @Published var currentSaveState: PVSaveState?
-
-    /// Total number of save states available (may be more than what's loaded)
-    @Published var totalSaveStatesCount: Int = 0
-
-    /// Current limit for how many save states to load
-    @Published var currentLimit: Int = initialSaveStateLimit
-
-    /// Flag to indicate if all save states have been loaded
-    @Published var hasLoadedAllSaveStates: Bool = false
+    
+    // Reduce @Published properties to minimize re-renders
+    var currentSaveState: PVSaveState?
+    var totalSaveStatesCount: Int = 0
+    var currentLimit: Int = initialSaveStateLimit
+    var hasLoadedAllSaveStates: Bool = false
 
     /// Filtered save states from parent
     private var saveStates: [PVSaveState] = []
@@ -719,7 +716,7 @@ struct HomeContinueSection: SwiftUI.View {
     }
 }
 
-// Create a new struct for the grid view
+// Optimized grid view with better lazy loading and performance
 private struct SaveStatesGridView: View {
     let pageIndex: Int
     let filteredSaveStates: [PVSaveState]
@@ -748,6 +745,7 @@ private struct SaveStatesGridView: View {
     var body: some View {
         LazyVGrid(columns: gridColumns, spacing: 16) {
             ForEach(saveStatesForPage, id: \.id) { saveState in
+                // Use optimized HomeContinueItemView with extracted data
                 HomeContinueItemView(
                     continueState: saveState,
                     height: adjustedHeight,
@@ -765,6 +763,7 @@ private struct SaveStatesGridView: View {
                     isFocused: (parentFocusedSection == .recentSaveStates && parentFocusedItem == saveState.id) && viewModel.isControllerConnected,
                     rootDelegate: rootDelegate
                 )
+                .id(saveState.id) // Stable identity for better performance
                 .focusableIfAvailable()
                 .onChange(of: parentFocusedItem) { newValue in
                     if newValue == saveState.id {
