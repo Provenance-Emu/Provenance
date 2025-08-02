@@ -230,6 +230,8 @@ private struct FeatureFlagRow: View {
     }
 
     var body: some View {
+#if os(tvOS)
+        // tvOS: Keep the current button-based approach that works
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(flag.key)
@@ -258,23 +260,45 @@ private struct FeatureFlagRow: View {
         }
         .onChange(of: isEnabled) { newValue in // React to local toggle changes
             guard let feature = featureEnum else { return }
-            // The toggle directly reflects the desired state, so if it's true, we want to enable (or set override to true).
-            // If the current effective state (flag.enabled) is already what newValue is, and there's no specific override, 
-            // setting an override to nil might be desired if the UI implies 'remove override'. 
-            // For simplicity here, we assume the toggle sets an explicit override true/false.
-            // If you want a three-state (On/Off/Default), the UI needs a different control.
             featureFlags.setDebugOverride(for: feature, enabled: newValue)
             refreshAction() // Refresh the main list to reflect changes
         }
-        // Ensure flag.enabled (effective state) is used to initialize `isEnabled`
-        // and refresh if the parent data changes
-        .onAppear {
-             // This ensures that if the flag data from parent changes, isEnabled reflects it.
-             // However, direct changes from parent might fight with user interaction if not careful.
-             // The current init() and onChange should handle most cases.
-             // If issues arise, might need to use .onChange(of: flag.enabled) { self.isEnabled = $0 }
-             // but be cautious of feedback loops.
+#else
+        // iOS: Use RetroWaveToggle for proper touch interaction
+        VStack(alignment: .leading, spacing: 8) {
+            // Feature info section
+            VStack(alignment: .leading, spacing: 4) {
+                Text(flag.key)
+                    .font(.headline)
+                    .foregroundColor(RetroTheme.retroPink)
+                Text(flag.flag.description ?? "Feature not defined in configuration")
+                    .font(.caption)
+                    .foregroundColor(RetroTheme.retroBlue.opacity(0.8))
+                Text("Effective: \(flag.enabled ? "ON" : "OFF")")
+                    .font(.caption)
+                    .foregroundColor(flag.enabled ? .green : .red)
+                Text(overrideStatusText)
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                let restrictions = featureFlags.getFeatureRestrictions(flag.key)
+                if !restrictions.isEmpty {
+                    Text("Restrictions: \(restrictions.joined(separator: ", "))")
+                        .font(.caption)
+                        .foregroundColor(.orange)
+                }
+            }
+            
+            // RetroWave toggle
+            RetroWaveToggle(isOn: $isEnabled, label: "Override")
+                .padding(.top, 4)
         }
+        .padding(.vertical, 8)
+        .onChange(of: isEnabled) { newValue in // React to local toggle changes
+            guard let feature = featureEnum else { return }
+            featureFlags.setDebugOverride(for: feature, enabled: newValue)
+            refreshAction() // Refresh the main list to reflect changes
+        }
+#endif
     }
 }
 
