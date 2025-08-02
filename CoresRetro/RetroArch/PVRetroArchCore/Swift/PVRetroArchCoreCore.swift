@@ -29,6 +29,13 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
     public override var isDoubleBuffered: Bool { true }
     public override var supportsSkins: Bool { false }
     public override var supportsAudioVisualizer: Bool { false }
+    public override var supportsSaveStates: Bool {
+        let unsupportedCores = [
+            "dreamcast"
+        ]
+        return !unsupportedCores.contains(self.systemIdentifier ?? "")
+        //true /*core_info_current_supports_savestate()*/
+    }
 
     // MARK: Lifecycle
     public lazy var _bridge: PVRetroArchCoreBridge = .init()
