@@ -105,6 +105,11 @@ public struct CloudSyncSettingsView: View {
                 .font(.title)
                 .foregroundColor(.retroPink)
                 .padding(.top)
+            
+            Text("Cloud sync is currently under development. UI is not final. Not all features work yet. Use at your own risk.")
+                .font(.subheadline)
+                .foregroundColor(.retroBlue)
+                .padding(.top)
 
             HStack(spacing: 12) {
                 // Status indicator
