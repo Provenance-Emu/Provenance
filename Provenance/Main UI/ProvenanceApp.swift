@@ -195,7 +195,7 @@ struct ProvenanceApp: App {
 //                        DispatchQueue.global(qos: .utility).async {
 //                            self.forceSpotlightReindexing()
 //                        }
-                        
+
                         // CRITICAL: Now that bootup is complete, handle any pending emulator scene requests
                         openEmulatorSceneIfNeeded()
                     }
@@ -203,10 +203,10 @@ struct ProvenanceApp: App {
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
-                
+
                 // Start bootup sequence
                 appState.startBootupSequence()
-                
+
                 // Initialize CloudKit subscription manager when app becomes active
                 if Defaults[.iCloudSync] {
                     Task {
@@ -282,7 +282,7 @@ extension ProvenanceApp {
             sceneCoordinator.openEmulatorScene()
         }
     }
-    
+
     // Safe method to open emulator scene only when bootup is complete
     private func openEmulatorSceneWhenReady() {
         // Check if bootup is already complete
@@ -450,6 +450,12 @@ extension ProvenanceApp {
     /// - Parameter md5: The MD5 hash of the game
     /// - Returns: The game if found, nil otherwise
     private func fetchGame(byMD5 md5: String) -> PVGame? {
+        // Ensure database is ready before accessing
+        guard case .completed = appState.bootupStateManager.currentState else {
+            WLOG("Attempted to fetch game by MD5 \(md5) before database was ready")
+            return nil
+        }
+
         return RomDatabase.sharedInstance.object(ofType: PVGame.self, wherePrimaryKeyEquals: md5)
     }
 
@@ -457,6 +463,12 @@ extension ProvenanceApp {
     /// - Parameter identifier: The system identifier
     /// - Returns: The system if found, nil otherwise
     private func fetchSystem(byIdentifier identifier: String) -> PVSystem? {
+        // Ensure database is ready before accessing
+        guard case .completed = appState.bootupStateManager.currentState else {
+            WLOG("Attempted to fetch system by identifier \(identifier) before database was ready")
+            return nil
+        }
+
         return RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: identifier)
     }
 }
@@ -596,16 +608,10 @@ extension ProvenanceApp {
                 let md5Hash = uniqueIdentifier.replacingOccurrences(of: "org.provenance-emu.game.", with: "")
                 ILOG("Extracted game MD5 hash: \(md5Hash)")
 
-                // Look up the game by MD5 hash
-                if let game = fetchGame(byMD5: md5Hash) {
-                    ILOG("Found game by MD5 \(md5Hash): \(game.title)")
-                    // Set the app open action to open this game
-                    AppState.shared.appOpenAction = .openGame(game)
-                    // Open the emulator scene to play the game
-                    openEmulatorSceneIfNeeded()
-                } else {
-                    WLOG("No game found with MD5 hash: \(md5Hash)")
-                }
+                // Set the app open action to open this game by MD5
+                // Use the safe pattern that waits for bootup completion
+                AppState.shared.appOpenAction = .openMD5(md5Hash)
+                openEmulatorSceneWhenReady()
             }
             // Check if this is a save state identifier
             else if uniqueIdentifier.hasPrefix("org.provenance-emu.savestate.") {
@@ -616,12 +622,9 @@ extension ProvenanceApp {
                 let components = saveStateId.components(separatedBy: "-")
                 if components.count >= 2 {
                     let potentialMD5 = components[components.count - 2]
-                    if let game = fetchGame(byMD5: potentialMD5) {
-                        ILOG("Found game for save state: \(game.title)")
-                        // For now, just open the game
-                        AppState.shared.appOpenAction = .openGame(game)
-                        openEmulatorSceneIfNeeded()
-                    }
+                    // Use the safe pattern that waits for bootup completion
+                    AppState.shared.appOpenAction = .openMD5(potentialMD5)
+                    openEmulatorSceneWhenReady()
                 }
             }
         }
