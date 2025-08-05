@@ -239,9 +239,9 @@ int argc =  1;
 
 void extract_bundles();
 -(void) writeConfigFile {
-    
+
     [PVRetroArchCoreBridge synchronizeOptionsWithRetroArch];
-    
+
     // Initialize file manager
     NSFileManager *fm = [[NSFileManager alloc] init];
     NSString *fileName = [NSString stringWithFormat:@"%@/RetroArch/config/retroarch.cfg",
@@ -267,6 +267,14 @@ void extract_bundles();
 
     BOOL shouldUpdateAssets = [self shouldUpdateAssets];
     ILOG(@"Should update assets: %@", shouldUpdateAssets ? @"YES" : @"NO");
+
+#if TARGET_OS_TV
+    BOOL shouldUpdateOverlays = false;
+#else
+    BOOL shouldUpdateOverlays = [self shouldUpdateOverlays];
+#endif
+    ILOG(@"Should update overlays: %@", shouldUpdateOverlays ? @"YES" : @"NO");
+
 
     if (!configFileExists || !versionFileExists || shouldUpdateAssets) {
 
@@ -298,6 +306,12 @@ void extract_bundles();
         [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/systematic/png/arrow.png", self.documentsDirectory]];
 
         processing_init=true;
+    }
+
+    // Handle overlay updates
+    if (shouldUpdateOverlays) {
+        ILOG(@"Overlays need updating, starting download...");
+        [self downloadAndExtractOverlays];
     }
     // Additional Override Settings
     NSString* content = @"video_driver = \"vulkan\"\n";
@@ -374,6 +388,92 @@ void extract_bundles();
     ILOG(@"File does not exist or size is not 1687, returning true");
     return true;
 // #endif
+}
+
+- (bool)shouldUpdateOverlays {
+    /// Check if overlays need to be downloaded by looking for the COPYING file
+    NSFileManager *fm = [[NSFileManager alloc] init];
+    NSString *copyingFile = [NSString stringWithFormat:@"%@/RetroArch/overlays/COPYING", self.documentsDirectory];
+    ILOG(@"Checking if overlays COPYING file exists at %@", copyingFile);
+
+    if ([fm fileExistsAtPath:copyingFile]) {
+        ILOG(@"Overlays COPYING file exists, no update needed");
+        return false;
+    }
+
+    ILOG(@"Overlays COPYING file does not exist, update needed");
+    return true;
+}
+
+- (void)downloadAndExtractOverlays {
+    /// Download and extract overlays from libretro buildbot
+    NSString *overlayURL = @"https://buildbot.libretro.com/assets/frontend/overlays.zip";
+    NSString *overlaysDestination = [NSString stringWithFormat:@"%@/RetroArch/overlays", self.documentsDirectory];
+
+    ILOG(@"Starting overlay download from %@", overlayURL);
+
+    NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+    config.timeoutIntervalForRequest = 30.0;
+    config.timeoutIntervalForResource = 300.0; // 5 minutes for large file
+
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:config];
+
+    NSURL *url = [NSURL URLWithString:overlayURL];
+    NSURLSessionDownloadTask *downloadTask = [session downloadTaskWithURL:url completionHandler:^(NSURL *tempLocation, NSURLResponse *response, NSError *error) {
+
+        if (error) {
+            ELOG(@"Error downloading overlays: %@", error.localizedDescription);
+            return;
+        }
+
+        if (!tempLocation) {
+            ELOG(@"No temporary file location for downloaded overlays");
+            return;
+        }
+
+        ILOG(@"Overlays downloaded successfully to temporary location: %@", tempLocation.path);
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSFileManager *fm = [[NSFileManager alloc] init];
+
+            // Create overlays directory if it doesn't exist
+            NSError *dirError;
+            if (![fm fileExistsAtPath:overlaysDestination]) {
+                [fm createDirectoryAtPath:overlaysDestination withIntermediateDirectories:YES attributes:nil error:&dirError];
+                if (dirError) {
+                    ELOG(@"Error creating overlays directory: %@", dirError.localizedDescription);
+                    return;
+                }
+                ILOG(@"Created overlays directory at %@", overlaysDestination);
+            }
+
+            // Extract the downloaded zip file
+            BOOL extractSuccess = [self extractZIP:tempLocation.path toDestination:overlaysDestination overwrite:YES];
+
+            if (extractSuccess) {
+                ILOG(@"Overlays extracted successfully to %@", overlaysDestination);
+
+                // Verify the COPYING file exists after extraction
+                NSString *copyingFile = [NSString stringWithFormat:@"%@/COPYING", overlaysDestination];
+                if ([fm fileExistsAtPath:copyingFile]) {
+                    ILOG(@"Overlay installation verified - COPYING file found");
+                } else {
+                    WLOG(@"Warning: COPYING file not found after extraction");
+                }
+            } else {
+                ELOG(@"Failed to extract overlays zip file");
+            }
+
+            // Clean up temporary file
+            NSError *removeError;
+            [fm removeItemAtURL:tempLocation error:&removeError];
+            if (removeError) {
+                WLOG(@"Warning: Could not remove temporary file: %@", removeError.localizedDescription);
+            }
+        });
+    }];
+
+    [downloadTask resume];
 }
 #pragma mark - Running
 
@@ -579,7 +679,7 @@ void extract_bundles();
 //     AVAudioSessionCategoryOptionMixWithOthers
 //     error:&error];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAudioSessionInterruption:) name:AVAudioSessionInterruptionNotification object:[AVAudioSession sharedInstance]];
-    
+
 	[self refreshSystemConfig];
 	[self showGameView];
 	rarch_main(argc, argv, NULL);
@@ -692,13 +792,13 @@ void extract_bundles();
 }
 - (void)showGameView {
     ILOG(@"In Show Game View now\n");
-    
+
 #if TARGET_OS_IOS
 //    [self.touchViewController.navigationController setToolbarHidden:true animated:NO];
    [[UIApplication sharedApplication] setStatusBarHidden:true withAnimation:UIStatusBarAnimationNone];
    [[UIApplication sharedApplication] setIdleTimerDisabled:true];
 #endif
-    
+
     [self setupWindow];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         [self setVolume];

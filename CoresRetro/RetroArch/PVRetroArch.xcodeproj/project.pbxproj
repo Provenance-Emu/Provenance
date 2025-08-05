@@ -157,6 +157,7 @@
 		B36B5BC02D798BBC00BABCA3 /* audio_thread_wrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5BBE2D798BBC00BABCA3 /* audio_thread_wrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36B5BC32D7A779200BABCA3 /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = 932A5CBE29686A8D0032C168 /* libretro.h */; };
 		B36B5BC72D7A95F500BABCA3 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B36B5BC52D7A95F500BABCA3 /* GCDWebDAVServer.m */; };
+		B36CEE8B2E415C8200F6F05D /* PVRetroArchCore+Controls+Colecovision.m in Sources */ = {isa = PBXBuildFile; fileRef = B36CEE8A2E415C8200F6F05D /* PVRetroArchCore+Controls+Colecovision.m */; };
 		B37C00592BFF6A1000FEC6AC /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B37C00582BFF6A1000FEC6AC /* MoltenVK */; };
 		B39FAC3F2D6013EC0065B66B /* SDL2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */; };
 		B39FAC422D6013F50065B66B /* SDL2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */; };
@@ -447,6 +448,7 @@
 		B36B5BBE2D798BBC00BABCA3 /* audio_thread_wrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = audio_thread_wrapper.h; path = RetroArch/audio/audio_thread_wrapper.h; sourceTree = SOURCE_ROOT; };
 		B36B5BC42D7A95F500BABCA3 /* GCDWebDAVServer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GCDWebDAVServer.h; sourceTree = "<group>"; };
 		B36B5BC52D7A95F500BABCA3 /* GCDWebDAVServer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GCDWebDAVServer.m; sourceTree = "<group>"; };
+		B36CEE8A2E415C8200F6F05D /* PVRetroArchCore+Controls+Colecovision.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+Colecovision.m"; sourceTree = "<group>"; };
 		B37106F32D51AFC300688298 /* RetroArchCoreOptionsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetroArchCoreOptionsLoader.swift; sourceTree = "<group>"; };
 		B39C4BEA2BF3430B00F199BB /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework; sourceTree = "<group>"; };
 		B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SDL2.xcframework; path = ../../Dependencies/SDL2.xcframework; sourceTree = "<group>"; };
@@ -841,6 +843,7 @@
 				9366AC5E295976D000162286 /* PVRetroArchCore+Cheats.mm */,
 				B3447E97218B809300557ACE /* PVRetroArchCore+Controls.m */,
 				93C372622A8B68000007671D /* PVRetroArchCore+Controls+3DO.m */,
+				B36CEE8A2E415C8200F6F05D /* PVRetroArchCore+Controls+Colecovision.m */,
 				B3632A512D15161300041145 /* PVRetroArchCore+Controls+DOS.m */,
 				93C372612A8B67FF0007671D /* PVRetroArchCore+Controls+Dreamcast.m */,
 				93654F79298F4A2C0046503F /* PVRetroArchCore+Controls+DS.m */,
@@ -1358,6 +1361,7 @@
 				93FF38242965FF9C00772659 /* PVRetroArchCore+Video.mm in Sources */,
 				B3FD53FB2CD17E2200175917 /* dispserv_apple.m in Sources */,
 				9383580D296CDBB600A23231 /* metal.m in Sources */,
+				B36CEE8B2E415C8200F6F05D /* PVRetroArchCore+Controls+Colecovision.m in Sources */,
 				B3FD53ED2CD17D8200175917 /* JITSupport.m in Sources */,
 				B3CC2E0C2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m in Sources */,
 				93C372692A8B68000007671D /* PVRetroArchCore+Controls+3DO.m in Sources */,
