@@ -22,18 +22,18 @@ public final class RetroArchConfigManager: @unchecked Sendable {
 
     private init() {}
 
-    // MARK: - Public Properties
+        // MARK: - Public Properties
 
     /// Whether RetroAchievements is enabled in the app
     public var isRetroAchievementsEnabled: Bool {
         get {
-            return queue.sync {
-                userDefaults.bool(forKey: enabledKey)
-            }
+            // Direct access to UserDefaults is thread-safe
+            return userDefaults.bool(forKey: enabledKey)
         }
         set {
+            // Use queue for writes and sync operations
+            userDefaults.set(newValue, forKey: enabledKey)
             queue.async {
-                self.userDefaults.set(newValue, forKey: self.enabledKey)
                 self.syncToRetroArch()
             }
         }
@@ -42,13 +42,13 @@ public final class RetroArchConfigManager: @unchecked Sendable {
     /// Whether hardcore mode is enabled
     public var isHardcoreModeEnabled: Bool {
         get {
-            return queue.sync {
-                userDefaults.bool(forKey: hardcoreModeKey)
-            }
+            // Direct access to UserDefaults is thread-safe
+            return userDefaults.bool(forKey: hardcoreModeKey)
         }
         set {
+            // Use queue for writes and sync operations
+            userDefaults.set(newValue, forKey: hardcoreModeKey)
             queue.async {
-                self.userDefaults.set(newValue, forKey: self.hardcoreModeKey)
                 self.syncToRetroArch()
             }
         }

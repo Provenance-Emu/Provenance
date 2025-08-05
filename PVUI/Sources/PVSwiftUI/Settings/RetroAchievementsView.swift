@@ -6,9 +6,15 @@ import Combine
 /// RetroAchievements login and profile view with RetroWave styling
 @available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
 public struct RetroAchievementsView: View {
+    // MARK: - Configuration
+
+    /// Controls which authentication methods are available
+    private let enableAPIKeyAuth = false  // Set to true to enable API key authentication
+    private let enablePasswordAuth = true // Set to false to disable password authentication
+
     // MARK: - State Management
 
-    @State private var authMethod: AuthMethod = .apiKey
+    @State private var authMethod: AuthMethod = .password
     @State private var username: String = ""
     @State private var password: String = ""
     @State private var apiKey: String = ""
@@ -18,12 +24,20 @@ public struct RetroAchievementsView: View {
     @State private var showingError = false
     @State private var currentSession: RAUserSession?
     @State private var userProfile: RAUserProfile?
+    @State private var isAuthenticated = false
+
+    // RetroArch configuration state
+    @State private var retroAchievementsEnabled = false
+    @State private var hardcoreModeEnabled = false
 
     // Animation properties
     @State private var glowIntensity: CGFloat = 0.5
     @State private var formScale: CGFloat = 1.0
 
     @Environment(\.dismiss) private var dismiss
+
+    // RetroAchievements client
+    @State private var client: RetroAchievementsClient?
 
     // Authentication method enum
     enum AuthMethod: String, CaseIterable {
@@ -43,6 +57,19 @@ public struct RetroAchievementsView: View {
             case .password: return "Use username/password for real-time gaming"
             }
         }
+    }
+
+    // Computed property for available auth methods based on configuration
+    private var availableAuthMethods: [AuthMethod] {
+        var methods: [AuthMethod] = []
+        if enablePasswordAuth { methods.append(.password) }
+        if enableAPIKeyAuth { methods.append(.apiKey) }
+        return methods
+    }
+
+    // Whether to show the auth method selector
+    private var shouldShowAuthMethodSelector: Bool {
+        return availableAuthMethods.count > 1
     }
 
     // MARK: - Body
@@ -77,9 +104,15 @@ public struct RetroAchievementsView: View {
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
+        .task {
+            await initializeClient()
+        }
         .onAppear {
             startGlowAnimation()
-            checkExistingAuth()
+            // Set default auth method to first available method
+            if let firstMethod = availableAuthMethods.first {
+                authMethod = firstMethod
+            }
         }
         .retroAlert("Error",
                     message: errorMessage ?? "",
@@ -115,8 +148,24 @@ public struct RetroAchievementsView: View {
 
     private var loginFormView: some View {
         VStack(spacing: 20) {
-            // Authentication method selector
-            authMethodSelector
+            // Info text
+            VStack(spacing: 8) {
+                Text("SIGN IN TO YOUR ACCOUNT")
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                    .tracking(1)
+
+                Text(getAuthDescription())
+                    .font(.caption)
+                    .foregroundColor(.white.opacity(0.6))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+            }
+
+            // Authentication method selector (only show if multiple methods available)
+            if shouldShowAuthMethodSelector {
+                authMethodSelector
+            }
 
             // Login form
             loginForm
@@ -139,7 +188,7 @@ public struct RetroAchievementsView: View {
                 .tracking(1)
 
             HStack(spacing: 0) {
-                ForEach(AuthMethod.allCases, id: \.self) { method in
+                ForEach(availableAuthMethods, id: \.self) { method in
                     Button {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                             authMethod = method
@@ -187,23 +236,23 @@ public struct RetroAchievementsView: View {
                 icon: "person.fill"
             )
 
-            // Conditional fields based on auth method
-            switch authMethod {
-            case .apiKey:
-                retroTextField(
-                    title: "WEB API KEY",
-                    text: $apiKey,
-                    placeholder: "Enter your web API key",
-                    icon: "key.fill",
-                    isSecure: true
-                )
-
-            case .password:
+            // Conditional fields based on auth method and configuration
+            if authMethod == .password && enablePasswordAuth {
                 retroTextField(
                     title: "PASSWORD",
                     text: $password,
                     placeholder: "Enter your password",
                     icon: "lock.fill",
+                    isSecure: true
+                )
+            }
+
+            if authMethod == .apiKey && enableAPIKeyAuth {
+                retroTextField(
+                    title: "WEB API KEY",
+                    text: $apiKey,
+                    placeholder: "Enter your web API key",
+                    icon: "key.fill",
                     isSecure: true
                 )
             }
@@ -386,6 +435,9 @@ public struct RetroAchievementsView: View {
                 )
             }
 
+            // RetroArch Configuration Section
+            retroArchConfigSection
+
             // Logout button
             Button {
                 performLogout()
@@ -468,8 +520,8 @@ public struct RetroAchievementsView: View {
 
     private var isFormValid: Bool {
         !username.isEmpty && (
-            (authMethod == .apiKey && !apiKey.isEmpty) ||
-            (authMethod == .password && !password.isEmpty)
+            (authMethod == .apiKey && !apiKey.isEmpty && enableAPIKeyAuth) ||
+            (authMethod == .password && !password.isEmpty && enablePasswordAuth)
         )
     }
 
@@ -487,9 +539,57 @@ public struct RetroAchievementsView: View {
         apiKey = ""
     }
 
-    private func checkExistingAuth() {
-        // TODO: Check for stored credentials/session
-        // This would be implemented with proper keychain storage
+    private func getAuthDescription() -> String {
+        if shouldShowAuthMethodSelector {
+            switch authMethod {
+            case .apiKey:
+                return "Enter your web API key to access achievement data and statistics."
+            case .password:
+                return "Enter your username and password to track achievements and compete with friends."
+            }
+        } else {
+            // Single method available
+            if enablePasswordAuth {
+                return "Enter your RetroAchievements username and password to track achievements and compete with friends."
+            } else if enableAPIKeyAuth {
+                return "Enter your web API key to access achievement data and statistics."
+            } else {
+                return "No authentication methods available."
+            }
+        }
+    }
+
+    private func initializeClient() async {
+        // Create client and check for existing session
+        client = PVCheevos.client()
+
+        await MainActor.run {
+            // Check if already authenticated
+            if let currentClient = client {
+                Task {
+                    let authenticated = await currentClient.isAuthenticated
+                    let currentUser = await currentClient.currentUsername
+
+                    await MainActor.run {
+                        isAuthenticated = authenticated
+                        if authenticated {
+                            // Load stored profile or create basic one
+                            if let storedProfile = RetroCredentialsManager.shared.loadUserProfile() {
+                                userProfile = storedProfile
+                            }
+                        }
+
+                        // Load RetroArch settings
+                        loadRetroArchSettings()
+                    }
+                }
+            }
+        }
+    }
+
+    private func loadRetroArchSettings() {
+        retroAchievementsEnabled = PVCheevos.retroArch.isRetroAchievementsEnabled
+        hardcoreModeEnabled = PVCheevos.retroArch.isHardcoreModeEnabled
     }
 
     private func performLogin() {
@@ -512,23 +612,23 @@ public struct RetroAchievementsView: View {
             }
 
             do {
-                let client: RetroAchievementsClient
+                guard let currentClient = client else {
+                    throw LoginError.unknownError
+                }
 
                 switch authMethod {
                 case .apiKey:
-                    client = PVCheevos.client(username: username, webAPIKey: apiKey)
-
-                    // Validate credentials and get profile
-                    let isValid = await client.validateCredentials()
+                    // Legacy API key method (if enabled)
+                    let legacyClient = PVCheevos.client(username: username, webAPIKey: apiKey)
+                    let isValid = await legacyClient.validateCredentials()
                     if !isValid {
                         throw LoginError.invalidCredentials
                     }
-
-                    let profile = try await client.getUserProfile(username: username)
+                    let profile = try await legacyClient.getUserProfile(username: username)
 
                     await MainActor.run {
                         self.userProfile = profile
-                        self.currentSession = nil
+                        isAuthenticated = true
                         loadingProgress = 1.0
 
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -538,14 +638,12 @@ public struct RetroAchievementsView: View {
                     }
 
                 case .password:
-                    client = PVCheevos.clientWithPassword(username: username, password: password)
-
-                    // Perform login to get session
-                    let session = try await client.login(username: username, password: password)
+                    // Username/password login using current client
+                    let session = try await currentClient.login(username: username, password: password)
 
                     await MainActor.run {
-                        self.currentSession = session
                         self.userProfile = session.user
+                        isAuthenticated = true
                         loadingProgress = 1.0
 
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -554,8 +652,6 @@ public struct RetroAchievementsView: View {
                         }
                     }
                 }
-
-                // TODO: Store credentials securely in keychain
 
             } catch {
                 await MainActor.run {
@@ -570,13 +666,19 @@ public struct RetroAchievementsView: View {
     }
 
     private func performLogout() {
-        withAnimation(.easeOut(duration: 0.3)) {
-            userProfile = nil
-            currentSession = nil
-            clearForm()
-        }
+        Task {
+            if let currentClient = client {
+                await currentClient.logout()
+            }
 
-        // TODO: Clear stored credentials from keychain
+            await MainActor.run {
+                withAnimation(.easeOut(duration: 0.3)) {
+                    userProfile = nil
+                    isAuthenticated = false
+                    clearForm()
+                }
+            }
+        }
     }
 
     private func formatMemberSince(_ dateString: String?) -> String {
@@ -592,6 +694,137 @@ public struct RetroAchievementsView: View {
         }
 
         return dateString
+    }
+
+    private var retroArchConfigSection: some View {
+        VStack(spacing: 16) {
+            // Section header
+            HStack {
+                Image(systemName: "gamecontroller.fill")
+                    .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                    .font(.system(size: 16))
+
+                Text("RETROARCH INTEGRATION")
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                    .tracking(1)
+
+                Spacer()
+            }
+
+            VStack(spacing: 12) {
+                // Enable RetroAchievements toggle
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Enable RetroAchievements")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.white)
+
+                        Text("Sync achievements with RetroArch cores")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.7))
+                    }
+
+                    Spacer()
+
+                    Toggle("", isOn: $retroAchievementsEnabled)
+                        .toggleStyle(RetroToggleStyle())
+                        .onChange(of: retroAchievementsEnabled) { newValue in
+                            PVCheevos.retroArch.isRetroAchievementsEnabled = newValue
+                        }
+                }
+
+                // Hardcore mode toggle
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Hardcore Mode")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.white)
+
+                        Text("Disables savestates and cheating features. Achievements earned in hardcore mode are uniquely marked.")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.7))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+
+                    Spacer()
+
+                    Toggle("", isOn: $hardcoreModeEnabled)
+                        .toggleStyle(RetroToggleStyle())
+                        .onChange(of: hardcoreModeEnabled) { newValue in
+                            PVCheevos.retroArch.isHardcoreModeEnabled = newValue
+                        }
+                }
+            }
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.black.opacity(0.4))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(Color.white.opacity(0.1), lineWidth: 1)
+                )
+        )
+    }
+}
+
+// MARK: - Custom Toggle Style
+
+struct RetroToggleStyle: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            configuration.label
+            Spacer()
+            toggleSwitch(isOn: configuration.isOn) {
+                configuration.isOn.toggle()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func toggleSwitch(isOn: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            toggleBackground(isOn: isOn)
+                .overlay(toggleThumb(isOn: isOn))
+                .frame(width: 50, height: 30)
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private func toggleBackground(isOn: Bool) -> some View {
+        RoundedRectangle(cornerRadius: 16)
+            .fill(backgroundFill(isOn: isOn))
+            .overlay(backgroundBorder(isOn: isOn))
+            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isOn)
+    }
+
+    @ViewBuilder
+    private func toggleThumb(isOn: Bool) -> some View {
+        Circle()
+            .fill(Color.white)
+            .frame(width: 26, height: 26)
+            .offset(x: isOn ? 10 : -10)
+            .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 1)
+            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isOn)
+    }
+
+    private func backgroundFill(isOn: Bool) -> AnyShapeStyle {
+        if isOn {
+            return AnyShapeStyle(RetroTheme.retroHorizontalGradient)
+        } else {
+            return AnyShapeStyle(Color.black.opacity(0.6))
+        }
+    }
+
+    @ViewBuilder
+    private func backgroundBorder(isOn: Bool) -> some View {
+        RoundedRectangle(cornerRadius: 16)
+            .strokeBorder(
+                isOn ? Color.clear : Color.white.opacity(0.3),
+                lineWidth: 1
+            )
     }
 }
 
