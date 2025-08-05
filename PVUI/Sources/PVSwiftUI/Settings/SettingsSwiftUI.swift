@@ -17,16 +17,7 @@ import Perception
 import PVFeatureFlags
 import Defaults
 import AudioToolbox
-
-// Retrowave color extensions
-extension Color {
-    static let retroPink = Color(red: 0.99, green: 0.11, blue: 0.55)
-    static let retroPurple = Color(red: 0.53, green: 0.11, blue: 0.91)
-    static let retroBlue = Color(red: 0.0, green: 0.75, blue: 0.95)
-    static let retroDarkBlue = Color(red: 0.05, green: 0.05, blue: 0.2)
-    static let retroBlack = Color(red: 0.05, green: 0.0, blue: 0.1)
-}
-
+import PVCheevos
 
 #if os(tvOS)
 import GameController
@@ -52,7 +43,7 @@ public struct PVSettingsView: View {
     weak var menuDelegate: PVMenuDelegate!
 
     @ObservedObject var conflictsController: PVGameLibraryUpdatesController
-    
+
     @State public var showsDoneButton: Bool = true
 
     // Update initializer to take dismissAction
@@ -68,12 +59,12 @@ public struct PVSettingsView: View {
             ZStack {
                 // Retrowave background
                 Color.black.edgesIgnoringSafeArea(.all)
-                
+
                 // Grid background
                 RetroGridForSettings()
                     .edgesIgnoringSafeArea(.all)
                     .opacity(0.5)
-                
+
                 // Main content
                 ScrollView {
                     VStack(spacing: 16) {
@@ -90,67 +81,72 @@ public struct PVSettingsView: View {
                             .padding(.top, 20)
                             .padding(.bottom, 10)
                             .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
-                        
+
                         // Sections
                         VStack(spacing: 16) {
                             CollapsibleSection(title: "App") {
                                 AppSection(viewModel: viewModel)
                                     .environmentObject(viewModel)
                             }
-            
+
                             CollapsibleSection(title: "Core Options") {
                                 CoreOptionsSection()
                             }
-            
+
                             CollapsibleSection(title: "Saves") {
                                 SavesSection()
                             }
-            
+
                             CollapsibleSection(title: "Audio") {
                                 AudioSection()
                             }
-            
+
                             CollapsibleSection(title: "Video") {
                                 VideoSection()
                             }
-            
+
                             CollapsibleSection(title: "Controller") {
                                 ControllerSection()
                             }
-                            
+
+                            CollapsibleSection(title: "RetroAchievements") {
+                                RetroAchievementsSection(viewModel: viewModel)
+                                    .environmentObject(viewModel)
+                            }
+
                             CollapsibleSection(title: "Delta Skins") {
                                 DeltaSkinsSection()
                             }
-                            
+
                             CollapsibleSection(title: "Library") {
                                 LibrarySection(viewModel: viewModel)
                                     .environmentObject(viewModel)
                             }
-            
+
                             CollapsibleSection(title: "Library Management") {
                                 LibrarySection2(viewModel: viewModel)
                                     .environmentObject(viewModel)
                             }
-            
+
                             CollapsibleSection(title: "Advanced") {
                                 AdvancedSection()
                             }
-            
+
                             #if !os(tvOS)
                             CollapsibleSection(title: "Social Links") {
                                 SocialLinksSection()
                             }
-            
+
                             CollapsibleSection(title: "Documentation") {
                                 DocumentationSection()
                             }
                             #endif
-            
+
                             CollapsibleSection(title: "Build") {
                                 BuildSection(viewModel: viewModel)
                                     .environmentObject(viewModel)
                             }
-            
+
                             CollapsibleSection(title: "Extra Info") {
                                 ExtraInfoSection()
                             }
@@ -190,9 +186,9 @@ public struct PVSettingsView: View {
                                             )
                                     )
                             }
-                            
+
                             Spacer()
-                            
+
                             // Help button with retrowave styling
                             Button(action: { viewModel.showHelp() }) {
                                 Text("HELP")
@@ -221,7 +217,7 @@ public struct PVSettingsView: View {
                     }
                     .padding(.horizontal)
                     .padding(.top, 10)
-                    
+
                     Spacer()
                 }
             )
@@ -237,9 +233,9 @@ struct SettingsRow: View {
     var subtitle: String? = nil
     var value: String? = nil
     var icon: SettingsIcon? = nil
-    
+
     @State private var isHovered = false
-    
+
     var body: some View {
         HStack(spacing: 12) {
             // Icon with retrowave styling
@@ -260,7 +256,7 @@ struct SettingsRow: View {
                                 )
                         )
                         .shadow(color: .retroPink.opacity(isHovered ? 0.5 : 0.2), radius: 5)
-                    
+
                     icon.image
                         .resizable()
                         .scaledToFit()
@@ -274,13 +270,13 @@ struct SettingsRow: View {
                         )
                 }
             }
-            
+
             // Text content with retrowave styling
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(.white)
-                
+
                 if let subtitle = subtitle {
                     Text(subtitle)
                         .font(.caption)
@@ -288,9 +284,9 @@ struct SettingsRow: View {
                         .lineLimit(2)
                 }
             }
-            
+
             Spacer()
-            
+
             // Value with retrowave styling
             if let value = value {
                 Text(value)
@@ -920,7 +916,7 @@ private struct LibrarySection2: View {
 
     var body: some View {
         Section(header: Text("Library")) {
-            
+
             #if os(tvOS)
                 // Cloud Sync Settings
                 NavigationLink(destination: CloudSyncSettingsView()) {
@@ -944,13 +940,13 @@ private struct LibrarySection2: View {
                 }
 //            }
             #endif
-            
+
             NavigationLink(destination: BatchArtworkMatchingView()) {
                 SettingsRow(title: "Batch Artwork Matcher",
                             subtitle: "Find and apply artwork for multiple games at once",
                             icon: .sfSymbol("photo.on.rectangle.angled"))
             }
-            
+
             Button(action: viewModel.reimportROMs) {
                 SettingsRow(title: "Re-import ROMs",
                             subtitle: "Scan ROM directories for new or updated files.",
@@ -984,24 +980,24 @@ private struct AdvancedSection: View {
                     .listRowBackground(Color.accentColor)
                 #endif
                 AdvancedTogglesView()
-                
+
                 // App Group File Browser for debugging
                 NavigationLink(destination: AppGroupFileBrowserView()) {
                     SettingsRow(title: "App Group File Browser",
                                 subtitle: "Browse files in the app group container for debugging.",
                                 icon: .sfSymbol("folder.badge.gear"))
                 }
-                
+
                 #if os(tvOS)
                 // TopShelf Log Viewer
                 NavigationLink(destination: TopShelfLogView()) {
                     SettingsRow(title: "TopShelf Log",
                                 subtitle: "View logs from the TopShelf extension.",
-                            
+
                                 icon: .sfSymbol("doc.text.magnifyingglass"))
                 }
                 #endif
-                
+
                 #if !os(tvOS)
                 // Spotlight Debug View
                 NavigationLink(destination: SpotlightDebugView()) {
@@ -1010,14 +1006,14 @@ private struct AdvancedSection: View {
                                 icon: .sfSymbol("magnifyingglass.circle"))
                 }
                 #endif
-                
+
                 // Log view
                 NavigationLink(destination: RetroLogView()) {
                     SettingsRow(title: "Logs",
                                 subtitle: "View logs for debugging.",
                                 icon: .sfSymbol("doc.text.magnifyingglass"))
                 }
-                
+
                 SecretSettingsRow()
             }
         }
@@ -1038,7 +1034,7 @@ private struct DeltaSkinsSection: View {
                         .font(.system(.headline, design: .monospaced))
                         .foregroundColor(.retroBlue)
                         .shadow(color: .retroPink.opacity(0.8), radius: 2, x: 1, y: 1)
-                    
+
                     Picker("Select skin mode", selection: $skinMode) {
                         ForEach(SkinMode.allCases, id: \.self) { theme in
                             Text(theme.rawValue.uppercased()).tag(theme)
@@ -1063,7 +1059,7 @@ private struct DeltaSkinsSection: View {
                     )
                     .background(Color.retroBlack.opacity(0.5))
                     .cornerRadius(8)
-                    
+
                     Text(skinMode.subtitle)
                         .font(.system(.subheadline, design: .monospaced))
                         .foregroundColor(.retroBlue)
@@ -1075,7 +1071,7 @@ private struct DeltaSkinsSection: View {
                           subtitle: "Unlock to to active controller skin mode.",
                           icon: .sfSymbol("lock.fill"))
             }
-            
+
             // Button to select skins (premium locked)
             PaidFeatureView {
                 NavigationLink {
@@ -1090,7 +1086,7 @@ private struct DeltaSkinsSection: View {
                           subtitle: "Unlock to choose controller skins for each system.",
                           icon: .sfSymbol("lock.fill"))
             }
-            
+
             // Button to manage skins (premium locked)
             PaidFeatureView {
                 NavigationLink {
@@ -1105,7 +1101,7 @@ private struct DeltaSkinsSection: View {
                           subtitle: "Unlock to manage your controller skins.",
                           icon: .sfSymbol("lock.fill"))
             }
-            
+
             PaidFeatureView {
                 buttonSoundEFfect
             } lockedView: {
@@ -1113,7 +1109,7 @@ private struct DeltaSkinsSection: View {
                             subtitle: "Unlock to select a button sound effect.",
                             icon: .sfSymbol("lock.fill"))
             }
-            
+
             PaidFeatureView {
                 buttonTouchFeedback
             } lockedView: {
@@ -1123,7 +1119,7 @@ private struct DeltaSkinsSection: View {
             }
         }
     }
-    
+
     var buttonTouchFeedback: some View {
         // Button Press Effect Picker
         NavigationLink {
@@ -1134,7 +1130,7 @@ private struct DeltaSkinsSection: View {
                        icon: .sfSymbol("circle.circle"))
         }
     }
-    
+
     var buttonSoundEFfect: some View {
         // Button Sound Effect Picker
         NavigationLink {
@@ -1145,9 +1141,24 @@ private struct DeltaSkinsSection: View {
                         icon: .sfSymbol("speaker.wave.2"))
         }
     }
-    
-    
+
+
     private func playButtonSound(_ sound: ButtonSound) {
         PVUIBase.ButtonSoundGenerator.shared.playSound(sound, pan: 0, volume: 1.0)
+    }
+}
+
+@available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
+private struct RetroAchievementsSection: View {
+    @ObservedObject var viewModel: PVSettingsViewModel
+
+    var body: some View {
+        Section(header: Text("RetroAchievements")) {
+            NavigationLink(destination: RetroAchievementsView()) {
+                SettingsRow(title: "RetroAchievements",
+                            subtitle: "Login and view your achievement progress",
+                            icon: .sfSymbol("trophy.fill"))
+            }
+        }
     }
 }
