@@ -91,12 +91,10 @@ internal struct AdvancedTogglesView: View {
                                 icon: .sfSymbol("network"))
                 }
                 
-                if !isAppStore {
-                    PremiumThemedToggle(isOn: $unsupportedCores) {
-                        SettingsRow(title: "Show Unsupported Cores",
-                                    subtitle: "Display experimental and unsupported cores.",
-                                    icon: .sfSymbol("exclamationmark.triangle"))
-                    }
+                PremiumThemedToggle(isOn: $unsupportedCores) {
+                    SettingsRow(title: "Show Unsupported Cores",
+                                subtitle: "Display experimental and unsupported cores.",
+                                icon: .sfSymbol("exclamationmark.triangle"))
                 }
             }
         }
