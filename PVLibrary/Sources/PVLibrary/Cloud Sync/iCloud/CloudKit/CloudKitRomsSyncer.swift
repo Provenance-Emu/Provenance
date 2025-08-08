@@ -72,7 +72,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         ILOG("Starting loadAllFromCloud for CloudKit ROMs...")
         ILOG("🔍 CloudKit Database: \(database.databaseScope.rawValue == 2 ? "Private" : "Public")")
         ILOG("🔍 Query Record Type: \(CloudKitSchema.RecordType.rom.rawValue)")
-        
+
         let query = CKQuery(recordType: CloudKitSchema.RecordType.rom.rawValue, predicate: NSPredicate(value: true))
         // Note: Removed sort descriptor as modificationDate is not marked sortable in CloudKit schema
         // Records will be processed in CloudKit's default order
@@ -107,7 +107,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             }
 
             ILOG("Found \(allRecords.count) ROM records, starting two-phase sync...")
-            
+
             // Debug: If we found 0 records, let's investigate why
             if allRecords.isEmpty {
                 ELOG("⚠️ No ROM records found in CloudKit! This suggests:")
@@ -115,15 +115,15 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 ELOG("   2. CloudKit authentication/permission issues")
                 ELOG("   3. Records are in a different database/zone")
                 ELOG("   4. Record ID format mismatch (old vs new format)")
-                
+
                 // Let's try a more specific query to see if there are ANY records
                 ILOG("🔍 Attempting to query for any records with 'rom_' prefix...")
                 do {
-                    let legacyQuery = CKQuery(recordType: CloudKitSchema.RecordType.rom.rawValue, 
+                    let legacyQuery = CKQuery(recordType: CloudKitSchema.RecordType.rom.rawValue,
                                             predicate: NSPredicate(format: "recordID BEGINSWITH 'rom_'"))
                     let (legacyResults, _) = try await database.records(matching: legacyQuery)
                     ILOG("🔍 Legacy format query found \(legacyResults.count) records")
-                    
+
                     for (recordID, result) in legacyResults {
                         switch result {
                         case .success(let record):
@@ -137,13 +137,13 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     ELOG("🔍 Legacy query also failed: \(error.localizedDescription)")
                 }
             }
-            
+
             ILOG("Total ROM records after legacy check: \(allRecords.count)")
 
             // PHASE 1: Sync all metadata first (fast)
             ILOG("📋 Phase 1: Syncing metadata for \(allRecords.count) ROM records...")
             var gamesNeedingDownload: [String] = []
-            
+
             for record in allRecords {
                 // Process metadata only - collect games that need downloads
                 if let md5 = await processCloudRecordMetadata(record) {
@@ -151,15 +151,15 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 }
                 VLOG("Processed ROM metadata: \(record.recordID.recordName)")
             }
-            
+
             ILOG("✅ Phase 1 complete: \(allRecords.count) games synced, \(gamesNeedingDownload.count) need downloads")
-            
-            // PHASE 2: Start background downloads (non-blocking)
+
+            // PHASE 2: Queue background downloads (non-blocking)
             if !gamesNeedingDownload.isEmpty {
-                ILOG("📥 Phase 2: Starting background downloads for \(gamesNeedingDownload.count) games...")
-                downloadGamesInBackground(gamesNeedingDownload)
+                ILOG("📥 Phase 2: Queuing background downloads for \(gamesNeedingDownload.count) games...")
+                await queueGamesForDownload(gamesNeedingDownload)
             }
-            
+
             ILOG("🚀 Two-phase sync initiated. UI should be responsive with \(allRecords.count) games visible.")
 
         } catch {
@@ -330,7 +330,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             ELOG("Unexpected error mapping PVGame to record for \(md5): \(error.localizedDescription)")
             throw CloudSyncError.unknown // Or map to a more specific error if possible
         }
-        
+
         // 2.5. Prepare Custom Artwork Asset (if exists)
         do {
             record = try await prepareCustomArtworkAsset(for: game, record: record)
@@ -559,10 +559,10 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         } catch {
             ELOG("Unexpected error processing cloud record \(record.recordID.recordName): \(error.localizedDescription)")
         }
-        
+
         return nil // No download needed
     }
-    
+
     /// Queue a ROM upload without blocking sync operations
     /// - Parameters:
     ///   - md5: ROM MD5 hash
@@ -575,59 +575,84 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         ILOG("📤 Queueing ROM upload: \(gameTitle) (MD5: \(md5))")
         return await uploadQueue.enqueueUpload(md5: md5, gameTitle: gameTitle, filePath: filePath, priority: priority)
     }
-    
+
     /// Upload a ROM file directly (used by upload queue)
     /// - Parameters:
-    ///   - md5: ROM MD5 hash  
+    ///   - md5: ROM MD5 hash
     ///   - filePath: Path to ROM file
     internal func uploadGameFile(md5: String, filePath: URL) async throws {
 //        // Get the game from database
 //        guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else {
 //            throw CloudSyncError.gameNotFound("Game with MD5 \(md5) not found in database")
 //        }
-//        
+//
 //        ILOG("📤 Starting direct ROM upload: \(game.title) (MD5: \(md5))")
-        
+
         // Use existing uploadGame method
         _ = try await uploadGame(md5)
-        
+
 //        ILOG("✅ Direct ROM upload completed: \(game.title) (MD5: \(md5))")
     }
-    
-    /// Download ROM files in background (Phase 2)
+
+        /// Queue ROM files for download with space checking (Phase 2)
     /// - Parameter md5List: Array of MD5 hashes for games that need downloads
-    private func downloadGamesInBackground(_ md5List: [String]) {
+    private func queueGamesForDownload(_ md5List: [String]) async {
         guard !md5List.isEmpty else {
             ILOG("No games need background downloads")
             return
         }
-        
-        ILOG("🔄 Starting background downloads for \(md5List.count) games")
-        
-        // Start background downloads with proper concurrency control
-        Task.detached(priority: .background) {
-            // Limit concurrent downloads to avoid overwhelming the system
-            let maxConcurrentDownloads = 3
-            
-            for chunk in md5List.chunked(into: maxConcurrentDownloads) {
-                await withTaskGroup(of: Void.self) { group in
-                    for md5 in chunk {
-                        group.addTask {
-                            do {
-                                try await self.downloadGame(md5: md5)
-                                ILOG("✅ Background download completed for game \(md5)")
-                            } catch {
-                                ELOG("❌ Background download failed for game \(md5): \(error.localizedDescription)")
-                            }
-                        }
-                    }
-                }
-                
-                // Small delay between chunks to be respectful of system resources
-                try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+
+        ILOG("🔄 Queuing \(md5List.count) games for download with space checking")
+
+        let downloadQueue = CloudKitDownloadQueue.shared
+        var queuedCount = 0
+        var skippedCount = 0
+
+        for md5 in md5List {
+            // Get game info for the download queue
+            guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else {
+                WLOG("Cannot queue download - game not found for MD5: \(md5)")
+                skippedCount += 1
+                continue
             }
-            
-            ILOG("🏁 Background downloads completed")
+
+            do {
+                // Queue with normal priority for background sync
+                try await downloadQueue.queueDownload(
+                    md5: md5,
+                    title: game.title,
+                    fileSize: Int64(game.fileSize),
+                    systemIdentifier: game.systemIdentifier,
+                    priority: .normal,
+                    onDemand: false
+                )
+                queuedCount += 1
+                VLOG("Queued download: \(game.title) (\(md5))")
+
+            } catch CloudSyncError.insufficientSpace(let required, let available) {
+                WLOG("Insufficient space for \(game.title): requires \(ByteCountFormatter.string(fromByteCount: required, countStyle: .file)), available: \(ByteCountFormatter.string(fromByteCount: available, countStyle: .file))")
+                skippedCount += 1
+
+                #if os(tvOS)
+                // On tvOS, stop queuing more downloads if we hit space limits
+                WLOG("tvOS space limit reached - stopping further downloads")
+                break
+                #endif
+
+            } catch {
+                ELOG("Failed to queue download for \(game.title) (\(md5)): \(error)")
+                skippedCount += 1
+            }
+        }
+
+        ILOG("✅ Download queue updated: \(queuedCount) queued, \(skippedCount) skipped")
+
+        if queuedCount > 0 {
+            ILOG("📥 Download queue will process \(queuedCount) games in background")
+        }
+
+        if skippedCount > 0 {
+            WLOG("⚠️ Skipped \(skippedCount) downloads due to space or other constraints")
         }
     }
 
@@ -881,10 +906,10 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         // --- Artwork Fields ---
         // Sync originalArtworkURL (just the URL value, no asset upload needed)
         record[CloudKitSchema.ROMFields.originalArtworkURL] = game.originalArtworkURL
-        
+
         // Sync customArtworkURL (PVMediaCache key) and prepare custom artwork asset
         record[CloudKitSchema.ROMFields.customArtworkURL] = game.customArtworkURL
-        
+
         // Note: customArtworkAsset will be set later during artwork asset preparation
         // This is handled separately to avoid blocking the main record mapping
 
@@ -898,7 +923,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         return record
     }
-    
+
     /// Prepare custom artwork asset for CloudKit upload
     /// - Parameters:
     ///   - game: The PVGame with custom artwork
@@ -906,35 +931,35 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// - Returns: The updated record with custom artwork asset attached
     private func prepareCustomArtworkAsset(for game: PVGame, record: CKRecord) async throws -> CKRecord {
         let customArtworkURL = game.customArtworkURL
-        
+
         guard !customArtworkURL.isEmpty else {
             DLOG("No custom artwork URL for game: \(game.title)")
             return record
         }
-        
+
         // Check if artwork exists in PVMediaCache
         guard PVMediaCache.fileExists(forKey: customArtworkURL) else {
             WLOG("Custom artwork not found in cache for key: \(customArtworkURL)")
             return record
         }
-        
+
         // Get the cached artwork file path
         guard let artworkFilePath = PVMediaCache.filePath(forKey: customArtworkURL) else {
             WLOG("Failed to get file path for custom artwork key: \(customArtworkURL)")
             return record
         }
-        
+
         // Verify the file exists on disk
         guard FileManager.default.fileExists(atPath: artworkFilePath.path) else {
             WLOG("Custom artwork file does not exist at path: \(artworkFilePath.path)")
             return record
         }
-        
+
         do {
             // Create CKAsset from the artwork file
             let artworkAsset = CKAsset(fileURL: artworkFilePath)
             record[CloudKitSchema.ROMFields.customArtworkAsset] = artworkAsset
-            
+
             DLOG("Successfully prepared custom artwork asset for game: \(game.title)")
             return record
         } catch {
@@ -942,7 +967,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             throw CloudSyncError.fileSystemError(error)
         }
     }
-    
+
     /// Download and cache custom artwork asset from CloudKit
     /// - Parameters:
     ///   - record: The CloudKit record containing the artwork asset
@@ -955,21 +980,21 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             DLOG("No custom artwork asset to download for game: \(game.title)")
             return
         }
-        
+
         // Get the custom artwork URL key from the record
         guard let cloudCustomArtworkURL = record[CloudKitSchema.ROMFields.customArtworkURL] as? String,
               !cloudCustomArtworkURL.isEmpty else {
             WLOG("Custom artwork asset exists but no customArtworkURL key for game: \(game.title)")
             return
         }
-        
+
         // Check if the cloud customArtworkURL differs from the local one
         let localCustomArtworkURL = game.customArtworkURL
         let artworkURLChanged = localCustomArtworkURL != cloudCustomArtworkURL
-        
+
         if artworkURLChanged {
             ILOG("Custom artwork URL changed for game \(game.title): '\(localCustomArtworkURL)' -> '\(cloudCustomArtworkURL)'")
-            
+
             // Remove old cached artwork if it exists and is different
             if !localCustomArtworkURL.isEmpty && PVMediaCache.fileExists(forKey: localCustomArtworkURL) {
                 do {
@@ -980,22 +1005,22 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 }
             }
         }
-        
+
         // Check if artwork is already cached locally (skip if forcing update or URL changed)
         if !forceUpdate && !artworkURLChanged && PVMediaCache.fileExists(forKey: cloudCustomArtworkURL) {
             DLOG("Custom artwork already cached for game: \(game.title)")
             return
         }
-        
+
         do {
             // Read the artwork data from the CloudKit asset
             let artworkData = try Data(contentsOf: assetFileURL)
-            
+
             // Cache the artwork in PVMediaCache using the cloudCustomArtworkURL as the key
             let cachedURL = try PVMediaCache.writeData(toDisk: artworkData, withKey: cloudCustomArtworkURL)
-            
+
             ILOG("Successfully downloaded and cached custom artwork for game: \(game.title) at: \(cachedURL.path) (key: \(cloudCustomArtworkURL))")
-            
+
             // Update the local game record with the new customArtworkURL if it changed
             if artworkURLChanged {
                 try RomDatabase.sharedInstance.writeTransaction {
@@ -1004,12 +1029,12 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                         ELOG("Game \(game.md5Hash) was invalidated during artwork URL update.")
                         return
                     }
-                    
+
                     liveGame.customArtworkURL = cloudCustomArtworkURL
                     ILOG("Updated local customArtworkURL for game \(game.title): \(cloudCustomArtworkURL)")
                 }
             }
-            
+
         } catch {
             ELOG("Failed to download and cache custom artwork for game \(game.title): \(error.localizedDescription)")
             throw CloudSyncError.fileSystemError(error)
@@ -1055,7 +1080,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             localGame.developer = record[CloudKitSchema.ROMFields.developer] as? String ?? localGame.developer
             localGame.publisher = record[CloudKitSchema.ROMFields.publisher] as? String ?? localGame.publisher
             localGame.genres = record[CloudKitSchema.ROMFields.genres] as? String ?? localGame.genres
-            
+
             // Update artwork fields
             localGame.originalArtworkURL = record[CloudKitSchema.ROMFields.originalArtworkURL] as? String ?? localGame.originalArtworkURL
             localGame.customArtworkURL = record[CloudKitSchema.ROMFields.customArtworkURL] as? String ?? localGame.customArtworkURL
@@ -1105,7 +1130,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             }
         } // End write transaction
         VLOG("Finished updating game: \(localGame.title) (MD5: \(localGame.md5Hash ?? "unknown"))")
-        
+
         // Download custom artwork asset if available
         do {
             try await downloadCustomArtworkAsset(from: record, for: localGame)

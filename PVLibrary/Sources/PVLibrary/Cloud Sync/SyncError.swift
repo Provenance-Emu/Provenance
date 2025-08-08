@@ -21,10 +21,17 @@ public enum CloudSyncError: Error {
     case recordNotFound
     case genericError(String)
     case gameNotFound(String)
-    
+
     // CloudKit Account Status Errors
     case noAccount // No iCloud account configured
     case accountRestricted // iCloud account is restricted
     case accountStatusUnknown // Could not determine account status
     case accountTemporarilyUnavailable // Account temporarily unavailable
+
+    // New: Space and Download Management Errors
+    case insufficientSpace(required: Int64, available: Int64)
+    case downloadCancelled
+    case downloadQueueFull
+    case assetTooLarge(size: Int64, maxSize: Int64)
+    case networkUnavailable
 }

@@ -437,10 +437,10 @@ public class CloudSyncManager {
     /// - Parameter game: The game to upload
     /// - Returns: Async function that completes when the upload is done or throws an error
     public func uploadROM(for game: PVGame) async throws {
-        guard let game = game.thaw() else {
-            ELOG("Failed to thaw game: \(game.title)")
-            return
-        }
+//        guard let game = game.thaw() else {
+//            ELOG("Failed to thaw game: \(game.title)")
+//            return
+//        }
 
         guard Defaults[.iCloudSync], let romsSyncer = romsSyncer else {
             DLOG("Sync disabled or syncer not available. Skipping ROM upload.")
