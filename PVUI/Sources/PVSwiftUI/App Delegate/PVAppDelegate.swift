@@ -28,6 +28,7 @@ import SwiftUI
 import Defaults
 import PVFeatureFlags
 import BackgroundTasks
+import PVWebServer
 
 #if canImport(FirebaseCore)
 import FirebaseCore
@@ -351,11 +352,11 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 
         initializeAppComponents()
         configureApplication(application)
-        
+
         // Register BGTaskScheduler handlers at app launch
         // This must be after DB registration
         registerBGTaskSchedulerHandlers()
-        
+
         return true
     }
 
@@ -391,6 +392,11 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         #if canImport(PVWebServer)
         // Initialize web server notifications
         setupWebServerNotifications()
+        #if os(tvOS)
+        // Start webdav for tvos, only way to get files on
+        PVWebServer.shared.startWWWUploadServer()
+        PVWebServer.shared.startWebDavServer()
+        #endif
         #endif
 
         // Register intent handler for Siri shortcuts
