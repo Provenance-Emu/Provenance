@@ -33,8 +33,9 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
         let unsupportedCores = [
             "dreamcast"
         ]
-        return !unsupportedCores.contains(self.systemIdentifier ?? "")
-        //true /*core_info_current_supports_savestate()*/
+        return (!unsupportedCores.contains(self.systemIdentifier ?? "")
+                && !unsupportedCores.contains(self.systemName))
+                || core_info_current_supports_savestate()
     }
 
     // MARK: Lifecycle
