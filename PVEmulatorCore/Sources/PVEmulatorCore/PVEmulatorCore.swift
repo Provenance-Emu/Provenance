@@ -241,7 +241,6 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     }
 
     /// Wrapper for systemName
-    @MainActor
     @objc dynamic open var systemName: String {
         get {
                 EmulationState.shared.systemName
