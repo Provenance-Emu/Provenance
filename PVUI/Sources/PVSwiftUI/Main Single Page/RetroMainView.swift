@@ -66,12 +66,14 @@ public struct RetroMainView: View {
             RetroTheme.retroBackground
                 .ignoresSafeArea()
 
+            #if !os(tvOS)
             // Dynamic Island retrowave effects
             if showDynamicIslandEffects {
                 RetroDynamicIsland()
                     .allowsHitTesting(false) // Prevent interaction with the effects
                     .ignoresSafeArea()
             }
+            #endif
 
             // Custom RetroTabView with retrowave styling
             RetroTabView(
@@ -89,14 +91,19 @@ public struct RetroMainView: View {
                         } else if selectedTab == 1 {
                             SettingsWrapperView()
                         } else if selectedTab == 2 {
-                            ScrollView {
-                                VStack {
+                            Group {
+                                #if os(tvOS)
+                                // On tvOS, let RetroStatusControlView handle its own scrolling for better focus management
+                                RetroStatusControlView()
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 6)
+                                #else
+                                ScrollView {
                                     RetroStatusControlView()
                                         .padding(.horizontal, 8)
                                         .padding(.vertical, 6)
-
-                                    FileRecoveryTestView()
                                 }
+                                #endif
                             }
                             .tabItem {
                                 Label("Status", systemImage: "test")
