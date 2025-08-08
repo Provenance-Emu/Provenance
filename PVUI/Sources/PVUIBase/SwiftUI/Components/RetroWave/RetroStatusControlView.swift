@@ -16,14 +16,14 @@ import PVUIBase
 import PVPrimitives
 
 public struct RetroStatusControlView: View {
-    
+
     // MARK: - Environment & ViewModel
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @StateObject private var viewModel = RetroStatusControlViewModel()
-    
+
     // MARK: - UI State (View-Specific)
     @State private var isExpanded: Bool = true // Start expanded by default
-    
+
     // MARK: - Computed Properties (Derived from ViewModel)
     private var shouldShowProgress: Bool {
         isExpanded ||
@@ -37,11 +37,41 @@ public struct RetroStatusControlView: View {
         viewModel.downloadProgress != nil ||
         viewModel.cloudKitSyncProgress != nil
     }
-    
+
     public init() { }
-    
+
     // MARK: - Body
-    public var body: some View {
+        public var body: some View {
+        #if os(tvOS)
+        // On tvOS, use a completely different approach - flat list of focusable items
+        VStack(alignment: .leading, spacing: 0) {
+            // Always show header as first focusable item
+            tvOSHeader
+
+            if isExpanded {
+                // Show content as individual focusable sections
+                tvOSContent
+            }
+        }
+        .background(RetroTheme.retroDarkBlue.opacity(0.8))
+        .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(RetroTheme.retroGradient, lineWidth: 2)
+        )
+        .padding(.horizontal, 20)
+        .padding(.vertical, 10)
+        .alert(item: $viewModel.currentAlert) { alert in
+            Alert(
+                title: Text(alert.title),
+                message: Text(alert.message),
+                dismissButton: .default(Text("OK")) {
+                    viewModel.dismissAlert()
+                }
+            )
+        }
+        #else
+        // On other platforms, use the original layout
         VStack(alignment: .leading, spacing: 0) {
             header
             if isExpanded {
@@ -63,12 +93,13 @@ public struct RetroStatusControlView: View {
                 }
             )
         }
+        #endif
         // No .onAppear/.onDisappear needed here, ViewModel handles lifecycle
         // No .onChange needed here, ViewModel uses Combine/Notifications internally
     }
-    
+
     // MARK: - Subviews
-    
+
     /// The header row with title and expand/collapse button
     private var header: some View {
         HStack {
@@ -76,22 +107,38 @@ public struct RetroStatusControlView: View {
                 .font(.system(size: 20, weight: .bold, design: .rounded))
                 .foregroundColor(RetroTheme.retroPink)
                 .shadow(color: RetroTheme.retroPink.opacity(0.8), radius: 3, x: 0, y: 0)
-            
+
             Spacer()
-            
+
             controlButtonsSection // Include header buttons here
         }
         .padding(.horizontal)
         .padding(.vertical, 8)
         .background(RetroTheme.retroBlack.opacity(0.5)) // Header background
+        #if os(tvOS)
+        .focusable(true)
+        .background(
+            // Add focus indication background
+            RoundedRectangle(cornerRadius: 8)
+                .fill(RetroTheme.retroBlue.opacity(0.2))
+                .opacity(0) // This will be animated by tvOS focus system
+        )
+        .onPlayPauseCommand {
+            withAnimation {
+                isExpanded.toggle()
+            }
+            ButtonSoundGenerator.shared.playSound(.switch)
+        }
+        #else
         .onTapGesture {
             withAnimation { // Use default animation if custom one is missing
                 isExpanded.toggle()
             }
             ButtonSoundGenerator.shared.playSound(.switch) // Was .expand / .collapse
         }
+        #endif
     }
-    
+
     /// Buttons shown in the header
     private var controlButtonsSection: some View {
         HStack(spacing: 15) {
@@ -104,7 +151,7 @@ public struct RetroStatusControlView: View {
             //             .buttonStyle(RetroTheme.RetroButtonStyle())
             //             .frame(width: 24, height: 24)
             //             .padding(.horizontal, 4)
-            
+
             // Expand/Collapse Button
             //            Button {
             //                withAnimation { // Use default animation if custom one is missing
@@ -123,12 +170,12 @@ public struct RetroStatusControlView: View {
             //            .buttonStyle(.plain) // Remove default button styling
         }
     }
-    
+
     /// The main collapsible content area
     private var mainContent: some View {
         Group {
-            VStack(alignment: .leading, spacing: 10) {
-                
+            VStack(alignment: .leading, spacing: 16) { // Increased spacing for better tvOS navigation
+
                 // MARK: Temporary Status Message (New)
                 // Ensure viewModel.temporaryStatusMessage exists and is @Published
                 if let tempMessage = viewModel.temporaryStatusMessage {
@@ -142,7 +189,7 @@ public struct RetroStatusControlView: View {
                         .background(RetroTheme.retroBlack.opacity(0.4))
                         .transition(.opacity.combined(with: .move(edge: .top)))
                 }
-                
+
                 // MARK: iCloud Sync Disabled Warning (New)
                 if !viewModel.isICloudSyncEnabled {
                     HStack {
@@ -158,17 +205,17 @@ public struct RetroStatusControlView: View {
                     .background(RetroTheme.retroPink.opacity(0.1))
                     .transition(.opacity)
                 }
-                
+
                 // MARK: Alerts
                 // Alert is now handled by the .alert modifier on the main body
-                
+
                 // MARK: Progress Indicators
                 if shouldShowProgress {
                     Divider()
                         .frame(height: 2)
                         .overlay(RetroTheme.retroGradient)
                         .shadow(color: RetroTheme.retroPurple.opacity(0.5), radius: 2, x: 0, y: 0)
-                    
+
                     // --- File Recovery Progress ---
                     if viewModel.fileRecoveryState == .inProgress, let progressInfo = viewModel.fileRecoveryProgressInfo {
                         VStack(alignment: .leading, spacing: 4) {
@@ -189,7 +236,7 @@ public struct RetroStatusControlView: View {
                         .padding(.horizontal)
                         .padding(.top, 5)
                     }
-                    
+
                     // --- Archive Extraction Progress ---
                     if viewModel.archiveExtractionInProgress || viewModel.archiveExtractionProgress > 0 {
                         VStack(alignment: .leading, spacing: 4) {
@@ -209,7 +256,7 @@ public struct RetroStatusControlView: View {
                         }
                         .padding(.horizontal)
                     }
-                    
+
                     // --- Web Server Upload Progress ---
                     if let uploadInfo = viewModel.webServerUploadProgress {
                         VStack(alignment: .leading, spacing: 4) {
@@ -224,7 +271,7 @@ public struct RetroStatusControlView: View {
                                 .lineLimit(2) // Limit message lines if needed
                         }
                     }
-                    
+
                     // --- Other Progress Types ---
                     createProgressSection(for: viewModel.fileImportProgress, title: "Importing Files") // Add File Import
                     createProgressSection(for: viewModel.romScanningProgress, title: "Scanning ROMs")
@@ -232,11 +279,11 @@ public struct RetroStatusControlView: View {
                     createProgressSection(for: viewModel.cacheManagementProgress, title: "Managing Cache")
                     createProgressSection(for: viewModel.downloadProgress, title: "Downloading")
                     createProgressSection(for: viewModel.cloudKitSyncProgress, title: "CloudKit Sync", color: .cyan) // Add missing color
-                    
-                    
+
+
                     // --- Manual Recovery Button ---
                     if viewModel.fileRecoveryState == .error || (viewModel.fileRecoveryState == .idle && !viewModel.pendingRecoveryFiles.isEmpty) {
-                        
+
                         // --- Pending iCloud Files (New) ---
                         if let pendingCount = viewModel.pendingRecoveryFileCount, pendingCount > 0 { // Check count > 0
                             Text("Files Pending iCloud Recovery: \(pendingCount)")
@@ -245,7 +292,7 @@ public struct RetroStatusControlView: View {
                                 .padding(.horizontal)
                                 .padding(.bottom, 2) // Add slight bottom padding
                         }
-                        
+
                         Button {
                             viewModel.recoverFiles()
                         } label: {
@@ -254,17 +301,21 @@ public struct RetroStatusControlView: View {
                                 .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 2, x: 0, y: 0)
                         }
                         .buttonStyle(RetroTheme.RetroButtonStyle())
+                        #if os(tvOS)
+                        .focusable(true)
+                        .buttonStyle(.card) // Use tvOS card style for better focus indication
+                        #endif
                         .padding(.vertical, 6)
                         .padding(.horizontal)
                         .padding(.top, 5)
                     }
-                    
+
                     Divider()
                         .frame(height: 2)
                         .overlay(RetroTheme.retroGradient)
                         .shadow(color: RetroTheme.retroPurple.opacity(0.5), radius: 2, x: 0, y: 0)
                 }
-                
+
                 // --- Archive Extraction Progress ---
                 if viewModel.archiveExtractionInProgress || viewModel.archiveExtractionProgress > 0 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -284,7 +335,7 @@ public struct RetroStatusControlView: View {
                     }
                     .padding(.horizontal)
                 }
-                
+
                 // --- Web Server Upload Progress ---
                 if let uploadInfo = viewModel.webServerUploadProgress {
                     VStack(alignment: .leading, spacing: 4) {
@@ -299,7 +350,7 @@ public struct RetroStatusControlView: View {
                     }
                     .padding(.horizontal)
                 }
-                
+
                 // MARK: Web Server & System Stats Section
                 VStack(alignment: .leading, spacing: 12) {
                     // Create a PVWebServerStatus object from our view model properties
@@ -308,13 +359,13 @@ public struct RetroStatusControlView: View {
                             "http://\(ip):\(port)"
                         }
                     }
-                    
+
                     // Pass the status object and toggle function
                     RetroWebServerStatusView(
                         status: PVWebServerStatus(isRunning: viewModel.isWebServerRunning, serverAddress: serverAddress),
                         startServer: viewModel.toggleWebServer
                     )
-                    
+
                     // Display error if present
                     if let error = viewModel.webServerError {
                         Text("Error: \(error)")
@@ -322,7 +373,7 @@ public struct RetroStatusControlView: View {
                             .foregroundColor(RetroTheme.retroPink)
                             .padding(.horizontal)
                     }
-                    
+
                     // iCloud Sync Status Indicator - Always visible section
                     HStack(spacing: 10) {
                         // Status indicator with glow effect
@@ -330,14 +381,14 @@ public struct RetroStatusControlView: View {
                             .fill(viewModel.isICloudSyncEnabled ? RetroTheme.retroBlue : RetroTheme.retroPink)
                             .frame(width: 10, height: 10)
                             .shadow(color: (viewModel.isICloudSyncEnabled ? RetroTheme.retroBlue : RetroTheme.retroPink).opacity(0.7), radius: 3, x: 0, y: 0)
-                        
+
                         // Status text with retrowave styling
                         VStack(alignment: .leading, spacing: 4) {
                             Text("iCLOUD SYNC: \(viewModel.isICloudSyncEnabled ? "ENABLED" : "DISABLED")")
                                 .font(.system(size: 12, weight: .bold, design: .monospaced))
                                 .foregroundColor(viewModel.isICloudSyncEnabled ? RetroTheme.retroBlue : RetroTheme.retroPink)
                                 .shadow(color: (viewModel.isICloudSyncEnabled ? RetroTheme.retroBlue : RetroTheme.retroPink).opacity(0.7), radius: 1, x: 0, y: 0)
-                            
+
                             if !viewModel.isICloudSyncEnabled {
                                 // Disabled state
                                 Text("Enable in Settings to sync your files")
@@ -356,7 +407,7 @@ public struct RetroStatusControlView: View {
                                     Text("Idle")
                                         .font(.system(size: 10, weight: .medium, design: .monospaced))
                                         .foregroundColor(.gray)
-                                    
+
                                     if let pendingCount = viewModel.pendingRecoveryFileCount, pendingCount > 0 {
                                         Text("(\(pendingCount) files pending)")
                                             .font(.system(size: 10, weight: .medium, design: .monospaced))
@@ -367,20 +418,25 @@ public struct RetroStatusControlView: View {
                             }
                         }
                         .frame(height: 36) // Fixed height container to prevent layout shifts
-                        
+
                         Spacer()
-                        
+
                         // Action buttons - always visible when enabled
                         if viewModel.isICloudSyncEnabled {
                             HStack(spacing: 12) {
-                                // CloudKit diagnostic button
+                                                                // CloudKit diagnostic button
                                 NavigationLink(destination: CloudKitDiagnosticView()) {
                                     Image(systemName: "bolt.horizontal.icloud.fill")
                                         .foregroundColor(RetroTheme.retroPink)
                                         .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2, x: 0, y: 0)
                                 }
-                                .buttonStyle(RetroTheme.RetroButtonStyle())
-                                
+                                                        #if os(tvOS)
+                        .buttonStyle(.card) // Use tvOS card style for better focus indication
+                        .focusable(true)
+                        #else
+                        .buttonStyle(RetroTheme.RetroButtonStyle())
+                        #endif
+
                                 // Manual sync button
                                 Button(action: {
                                     DLOG("Manual sync triggered")
@@ -390,7 +446,12 @@ public struct RetroStatusControlView: View {
                                         .foregroundColor(RetroTheme.retroBlue)
                                         .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 2, x: 0, y: 0)
                                 }
+                                #if os(tvOS)
+                                .buttonStyle(.card) // Use tvOS card style for better focus indication
+                                .focusable(true)
+                                #else
                                 .buttonStyle(RetroTheme.RetroButtonStyle())
+                                #endif
                             }
                         }
                     }
@@ -400,12 +461,12 @@ public struct RetroStatusControlView: View {
                         RoundedRectangle(cornerRadius: 8)
                             .fill(Color.black.opacity(0.3))
                     )
-                    
+
                     RetroSystemStatsView() // Assumes this view manages its own state or uses env objects/notifications
                 }
                 .padding(.horizontal)
-                
-                
+
+
                 // MARK: File Access Errors
                 if !viewModel.fileAccessErrors.isEmpty {
                     Divider()
@@ -435,33 +496,40 @@ public struct RetroStatusControlView: View {
                         .font(.system(size: 14, weight: .medium, design: .rounded))
                         .foregroundColor(RetroTheme.retroBlue)
                         #else
-                        ScrollView(.vertical) { // Make it scrollable if list gets long
-                            VStack(alignment: .leading) {
-                                ForEach(viewModel.fileAccessErrors.prefix(5)) { errorInfo in // Show latest 5
-                                    VStack(alignment: .leading) {
-                                        Text("\(errorInfo.filename): \(errorInfo.error)")
-                                            .font(.caption)
-                                            .foregroundColor(RetroTheme.retroPink)
-                                        Text("(\(errorInfo.timestamp, style: .time))")
-                                            .font(.caption2)
-                                            .foregroundColor(.gray)
-                                    }
-                                    .padding(.bottom, 2)
+                        // On tvOS, make errors focusable and easier to navigate
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("File Access Errors (\(viewModel.fileAccessErrors.count))")
+                                .font(.system(size: 16, weight: .medium, design: .rounded))
+                                .foregroundColor(RetroTheme.retroBlue)
+                                .padding(.bottom, 4)
+
+                            ForEach(viewModel.fileAccessErrors.prefix(5)) { errorInfo in // Show latest 5
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("\(errorInfo.filename): \(errorInfo.error)")
+                                        .font(.caption)
+                                        .foregroundColor(RetroTheme.retroPink)
+                                    Text("(\(errorInfo.timestamp, style: .time))")
+                                        .font(.caption2)
+                                        .foregroundColor(.gray)
                                 }
+                                .padding(.vertical, 6)
+                                .padding(.horizontal, 12)
+                                .background(RetroTheme.retroBlack.opacity(0.3))
+                                .cornerRadius(8)
+                                .focusable(true) // Make each error item focusable
                             }
                         }
-                        .frame(maxHeight: 100) // Limit height
                         #endif
                     }
                     .padding(.horizontal)
                 }
-                
+
                 // MARK: Messages
                 Divider()
                     .frame(height: 2)
                     .overlay(RetroTheme.retroGradient)
                     .shadow(color: RetroTheme.retroPurple.opacity(0.5), radius: 2, x: 0, y: 0)
-                
+
                 RetroMessagesView(
                     messages: viewModel.messages,
                     formatTimeInterval: { date in
@@ -481,8 +549,8 @@ public struct RetroStatusControlView: View {
                     }
                 )
                 .padding(.horizontal)
-                
-                
+
+
                 // MARK: Footer Buttons (e.g., Clear Messages)
                 HStack {
                     Spacer()
@@ -491,7 +559,12 @@ public struct RetroStatusControlView: View {
                     } label: {
                         Label("Clear Messages", systemImage: "trash")
                     }
+                    #if os(tvOS)
+                    .buttonStyle(.card) // Use tvOS card style for better focus indication
+                    .focusable(true)
+                    #else
                     .buttonStyle(RetroTheme.RetroButtonStyle())
+                    #endif
                 }
                 .padding(.horizontal)
             }
@@ -499,7 +572,358 @@ public struct RetroStatusControlView: View {
         .padding(.vertical) // Add padding to the main content area
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-    
+
+    #if os(tvOS)
+    // MARK: - tvOS Specific Views
+
+    /// tvOS-optimized header that's clearly focusable
+    private var tvOSHeader: some View {
+        Button(action: {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                isExpanded.toggle()
+            }
+            ButtonSoundGenerator.shared.playSound(.switch)
+        }) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("System Status")
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .foregroundColor(RetroTheme.retroPink)
+                        .shadow(color: RetroTheme.retroPink.opacity(0.8), radius: 3, x: 0, y: 0)
+
+                    Text(isExpanded ? "Tap to collapse" : "Tap to expand")
+                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                        .foregroundColor(.gray)
+                }
+
+                Spacer()
+
+                Image(systemName: isExpanded ? "chevron.up.circle.fill" : "chevron.down.circle.fill")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(RetroTheme.retroBlue)
+                    .shadow(color: RetroTheme.retroBlue.opacity(0.8), radius: 3, x: 0, y: 0)
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
+            .background(RetroTheme.retroBlack.opacity(0.6))
+            .cornerRadius(12)
+        }
+        .buttonStyle(.card)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+    }
+
+    /// tvOS-optimized content with individual focusable sections
+    private var tvOSContent: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // File Recovery Progress
+            tvOSFileRecoverySection
+
+            // Archive Extraction Progress
+            tvOSArchiveExtractionSection
+
+            // Web Server Upload Progress
+            tvOSWebServerUploadSection
+
+            // Web Server & System Stats Section
+            tvOSWebServerAndSystemSection
+
+            // File Access Errors
+            tvOSFileAccessErrorsSection
+
+            // Messages Section
+            tvOSMessagesSection
+
+            // Footer Actions
+            tvOSFooterSection
+        }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 16)
+    }
+
+    // MARK: - tvOS File Recovery Section
+    @ViewBuilder
+    private var tvOSFileRecoverySection: some View {
+        if viewModel.fileRecoveryState == .inProgress, let progressInfo = viewModel.fileRecoveryProgressInfo {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("File Recovery")
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundColor(RetroTheme.retroBlue)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("iCloud File Recovery: \(Int(progressInfo.current))/\(Int(progressInfo.total))")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.white)
+                    ProgressView(value: Double(progressInfo.current), total: Double(progressInfo.total))
+                        .progressViewStyle(LinearProgressViewStyle())
+                        .accentColor(RetroTheme.retroBlue)
+                }
+                .padding(12)
+                .background(RetroTheme.retroBlack.opacity(0.4))
+                .cornerRadius(8)
+                .focusable(true)
+            }
+        } else if viewModel.fileRecoveryState == .error || (viewModel.fileRecoveryState == .idle && !viewModel.pendingRecoveryFiles.isEmpty) {
+            Button(action: {
+                viewModel.recoverFiles()
+            }) {
+                HStack {
+                    Image(systemName: "arrow.clockwise.icloud")
+                        .foregroundColor(RetroTheme.retroPink)
+                    Text("Recover Files (\(viewModel.pendingRecoveryFiles.count) pending)")
+                        .foregroundColor(.white)
+                    Spacer()
+                }
+                .padding(12)
+                .background(RetroTheme.retroBlack.opacity(0.4))
+                .cornerRadius(8)
+            }
+            .buttonStyle(.card)
+        }
+    }
+
+    // MARK: - tvOS Archive Extraction Section
+    @ViewBuilder
+    private var tvOSArchiveExtractionSection: some View {
+        if viewModel.archiveExtractionInProgress || viewModel.archiveExtractionProgress > 0 {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Archive Extraction")
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundColor(RetroTheme.retroPurple)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Extracting: \(viewModel.archiveExtractionFilename ?? "Archive")")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.white)
+                    ProgressView(value: viewModel.archiveExtractionProgress, total: 1.0)
+                        .progressViewStyle(LinearProgressViewStyle())
+                        .accentColor(RetroTheme.retroPurple)
+
+                    if let errorInfo = viewModel.archiveExtractionError {
+                        Text("Error: \(errorInfo.error)")
+                            .font(.caption)
+                            .foregroundColor(RetroTheme.retroPink)
+                            .lineLimit(2)
+                    }
+                }
+                .padding(12)
+                .background(RetroTheme.retroBlack.opacity(0.4))
+                .cornerRadius(8)
+                .focusable(true)
+            }
+        }
+    }
+
+    // MARK: - tvOS Web Server Upload Section
+    @ViewBuilder
+    private var tvOSWebServerUploadSection: some View {
+        if let uploadInfo = viewModel.webServerUploadProgress {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Web Upload")
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundColor(RetroTheme.retroBlue)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Uploading: \(uploadInfo.currentFile)")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.white)
+                    ProgressView(value: Double(uploadInfo.transferredBytes), total: Double(uploadInfo.totalBytes))
+                        .progressViewStyle(LinearProgressViewStyle())
+                        .accentColor(RetroTheme.retroBlue)
+                    Text(ByteCountFormatter.string(fromByteCount: Int64(uploadInfo.bytesTransferred), countStyle: .file) + " / " + ByteCountFormatter.string(fromByteCount: Int64(uploadInfo.totalBytes), countStyle: .file))
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
+                .padding(12)
+                .background(RetroTheme.retroBlack.opacity(0.4))
+                .cornerRadius(8)
+                .focusable(true)
+            }
+        }
+    }
+
+    // MARK: - tvOS Web Server & System Stats Section
+    private var tvOSWebServerAndSystemSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Web Server Status with start/stop controls - same as iOS version
+            let serverAddress = viewModel.webServerIPAddress.flatMap { ip in
+                viewModel.webServerPort.map { port in
+                    "http://\(ip):\(port)"
+                }
+            }
+
+            RetroWebServerStatusView(
+                status: PVWebServerStatus(isRunning: viewModel.isWebServerRunning, serverAddress: serverAddress),
+                startServer: viewModel.toggleWebServer
+            )
+            .buttonStyle(.card) // Make the start/stop button focusable on tvOS
+
+            // Display web server error if present
+            if let error = viewModel.webServerError {
+                Text("Error: \(error)")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(RetroTheme.retroPink)
+                    .padding(.horizontal)
+            }
+
+            // iCloud Sync Status - same as iOS version
+            HStack(spacing: 10) {
+                // Status indicator with glow effect
+                Circle()
+                    .fill(viewModel.isICloudSyncEnabled ? RetroTheme.retroBlue : RetroTheme.retroPink)
+                    .frame(width: 10, height: 10)
+                    .shadow(color: (viewModel.isICloudSyncEnabled ? RetroTheme.retroBlue : RetroTheme.retroPink).opacity(0.7), radius: 3, x: 0, y: 0)
+
+                // Status text with retrowave styling
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("iCLOUD SYNC: \(viewModel.isICloudSyncEnabled ? "ENABLED" : "DISABLED")")
+                        .font(.system(size: 12, weight: .bold, design: .monospaced))
+                        .foregroundColor(viewModel.isICloudSyncEnabled ? RetroTheme.retroBlue : RetroTheme.retroPink)
+                        .shadow(color: (viewModel.isICloudSyncEnabled ? RetroTheme.retroBlue : RetroTheme.retroPink).opacity(0.7), radius: 1, x: 0, y: 0)
+
+                    if !viewModel.isICloudSyncEnabled {
+                        // Disabled state
+                        Text("Enable in Settings to sync your files")
+                            .font(.system(size: 10, weight: .medium, design: .monospaced))
+                            .foregroundColor(.gray)
+                            .frame(height: 14) // Fixed height
+                    } else if let progress = viewModel.cloudKitSyncProgress {
+                        // Active sync with progress
+                        Text("\(progress.current)/\(progress.total) \(progress.detail ?? "")")
+                            .font(.system(size: 10, weight: .medium, design: .monospaced))
+                            .foregroundColor(.gray)
+                            .frame(height: 14) // Fixed height
+                    } else {
+                        // Idle state with pending files info if available
+                        HStack(spacing: 4) {
+                            Text("Idle")
+                                .font(.system(size: 10, weight: .medium, design: .monospaced))
+                                .foregroundColor(.gray)
+
+                            if let pendingCount = viewModel.pendingRecoveryFileCount, pendingCount > 0 {
+                                Text("(\(pendingCount) files pending)")
+                                    .font(.system(size: 10, weight: .medium, design: .monospaced))
+                                    .foregroundColor(RetroTheme.retroPink.opacity(0.8))
+                            }
+                        }
+                        .frame(height: 14) // Fixed height
+                    }
+                }
+                .frame(height: 36) // Fixed height container to prevent layout shifts
+
+                Spacer()
+
+                // Action buttons - always visible when enabled
+                if viewModel.isICloudSyncEnabled {
+                    HStack(spacing: 12) {
+                        // CloudKit diagnostic button
+                        NavigationLink(destination: CloudKitDiagnosticView()) {
+                            Image(systemName: "bolt.horizontal.icloud.fill")
+                                .foregroundColor(RetroTheme.retroPink)
+                                .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2, x: 0, y: 0)
+                        }
+                        .buttonStyle(.card) // Use tvOS card style for better focus indication
+                        .focusable(true)
+
+                        // Manual sync button
+                        Button(action: {
+                            DLOG("Manual sync triggered")
+                            viewModel.triggerManualSync()
+                        }) {
+                            Image(systemName: "arrow.clockwise.icloud")
+                                .foregroundColor(RetroTheme.retroBlue)
+                                .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 2, x: 0, y: 0)
+                        }
+                        .buttonStyle(.card) // Use tvOS card style for better focus indication
+                        .focusable(true)
+                    }
+                }
+            }
+            .padding(.vertical, 8)
+            .padding(.horizontal, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.black.opacity(0.3))
+            )
+
+            // System Stats - same as iOS version
+            RetroSystemStatsView()
+        }
+    }
+
+    // MARK: - tvOS File Access Errors Section
+    @ViewBuilder
+    private var tvOSFileAccessErrorsSection: some View {
+        if !viewModel.fileAccessErrors.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("File Access Errors (\(viewModel.fileAccessErrors.count))")
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundColor(RetroTheme.retroBlue)
+                    .padding(.bottom, 4)
+
+                VStack(spacing: 8) {
+                    ForEach(viewModel.fileAccessErrors.prefix(5)) { errorInfo in // Show latest 5
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("\(errorInfo.filename): \(errorInfo.error)")
+                                .font(.caption)
+                                .foregroundColor(RetroTheme.retroPink)
+                            Text("(\(errorInfo.timestamp, style: .time))")
+                                .font(.caption2)
+                                .foregroundColor(.gray)
+                        }
+                        .padding(.vertical, 6)
+                        .padding(.horizontal, 12)
+                        .background(RetroTheme.retroBlack.opacity(0.3))
+                        .cornerRadius(8)
+                        .focusable(true) // Make each error item focusable
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - tvOS Footer Section
+    private var tvOSFooterSection: some View {
+        HStack {
+            Spacer()
+            Button {
+                viewModel.clearMessages()
+            } label: {
+                Label("Clear Messages", systemImage: "trash")
+            }
+            .buttonStyle(.card) // Use tvOS card style for better focus indication
+            .focusable(true)
+        }
+    }
+
+
+
+        // MARK: - tvOS Messages Section
+    private var tvOSMessagesSection: some View {
+        // Use the same RetroMessagesView as iOS for consistency
+        RetroMessagesView(
+            messages: viewModel.messages,
+            formatTimeInterval: { date in
+                let formatter = RelativeDateTimeFormatter()
+                formatter.unitsStyle = .abbreviated
+                return formatter.localizedString(for: date, relativeTo: Date())
+            },
+            messageTypeColor: { messageType in
+                switch messageType {
+                case .error: return RetroTheme.retroPink
+                case .warning: return .orange
+                case .info: return RetroTheme.retroBlue
+                case .success: return .green
+                case .progress: return RetroTheme.retroPurple
+                @unknown default: return .gray
+                }
+            }
+        )
+    }
+
+
+    #endif
+
     /// Helper to create progress views for optional progress tuples
     @ViewBuilder
     private func createProgressSection(for progress: ProgressInfo?, title: String, color: Color = RetroTheme.retroPurple) -> some View {
@@ -524,21 +948,21 @@ public struct RetroStatusControlView: View {
 
 // MARK: - Helper Types (Kept in View for now, as ViewModel references them via RetroStatusControlView.Type)
 extension RetroStatusControlView {
-    
+
     /// Represents an alert message to be displayed
     struct AlertMessage: Identifiable, Equatable {
         let id = UUID()
         let title: String
         let message: String
         let type: AlertType
-        
+
         /// Defines the type of alert for styling and sound effects
         enum AlertType: String, CaseIterable, Equatable {
             case info
             case warning
             case error
             case success
-            
+
             var iconName: String {
                 switch self {
                 case .info: return "info.circle.fill"
@@ -547,7 +971,7 @@ extension RetroStatusControlView {
                 case .success: return "checkmark.circle.fill"
                 }
             }
-            
+
             var color: Color {
                 switch self {
                 case .info: return RetroTheme.retroBlue
@@ -557,13 +981,13 @@ extension RetroStatusControlView {
                 }
             }
         }
-        
+
         // Equatable conformance
         static func == (lhs: AlertMessage, rhs: AlertMessage) -> Bool {
             lhs.id == rhs.id
         }
     }
-    
+
     // Using FileRecoveryState from ViewModel
 }
 
@@ -575,7 +999,7 @@ struct RetroStatusControlView_Previews: PreviewProvider {
         // Easiest way is often to just instantiate the view
         // and let it create its default ViewModel instance.
         // For specific states, you might need a mock ViewModel setup.
-        
+
         return ZStack {
             RetroTheme.retroBackground.ignoresSafeArea()
             ScrollView { // Add ScrollView for potentially long content
