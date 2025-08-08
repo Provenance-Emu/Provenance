@@ -33,6 +33,41 @@ import SafariServices
 import PVWebServer
 #endif
 
+// MARK: - tvOS Navigation Support
+
+/// ViewModifier that adds proper navigation support for tvOS
+@available(tvOS 13.0, *)
+struct TVOSNavigationSupport: ViewModifier {
+    let title: String
+    @Environment(\.dismiss) private var dismiss
+
+    func body(content: Content) -> some View {
+        content
+        #if os(tvOS)
+            .navigationTitle(title)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Back") {
+                        dismiss()
+                    }
+                    .foregroundColor(.retroBlue)
+                }
+            }
+        #endif
+    }
+}
+
+extension View {
+    /// Adds tvOS navigation support with a back button
+    func tvOSNavigationSupport(title: String) -> some View {
+        #if os(tvOS)
+        self.modifier(TVOSNavigationSupport(title: title))
+        #else
+        self
+        #endif
+    }
+}
+
 // MARK: - PVSettingsView
 public struct PVSettingsView: View {
 
@@ -114,9 +149,11 @@ public struct PVSettingsView: View {
                                     .environmentObject(viewModel)
                             }
 
+                            #if !os(tvOS)
                             CollapsibleSection(title: "Delta Skins") {
                                 DeltaSkinsSection()
                             }
+                            #endif
 
                             CollapsibleSection(title: "Library") {
                                 LibrarySection(viewModel: viewModel)
@@ -224,6 +261,12 @@ public struct PVSettingsView: View {
             #endif
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        #if os(tvOS)
+        .onExitCommand {
+            // Handle the Menu button press on tvOS to go back in navigation
+            // This will be handled by individual views that need custom back behavior
+        }
+        #endif
     }
 }
 

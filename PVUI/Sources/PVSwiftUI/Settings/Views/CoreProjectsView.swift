@@ -52,6 +52,7 @@ struct CoreProjectsView: View {
         }
         .searchable(text: $searchText, prompt: "Search cores or systems")
         .navigationTitle("Emulator Cores")
+        .tvOSNavigationSupport(title: "Emulator Cores")
         .onChange(of: unsupportedCores) { _ in
             /// Force view to update by toggling state
             viewUpdateTrigger.toggle()

@@ -16,11 +16,11 @@ struct SystemSettingsView: View {
     @ObservedResults(PVSystem.self) private var systems
     @State private var searchText = ""
     @Default(.unsupportedCores) private var unsupportedCores
-    
+
     var isAppStore: Bool = {
         AppState.shared.isAppStore
     }()
-    
+
     var filteredSystems: [PVSystem] {
         let filteredSystems = systems.filter { system in
             // Filter cores for this system
@@ -31,13 +31,13 @@ struct SystemSettingsView: View {
                 (!core.disabled || unsupportedCores) &&
                 (!core.appStoreDisabled || !isAppStore || unsupportedCores)
             }
-            
+
             // System is valid if:
             // 1. It has valid cores (or unsupportedCores is true)
             // 2. AND (It's not app store disabled, OR we're not in the app store, OR unsupportedCores is true)
             let hasValidCores = !validCores.isEmpty || unsupportedCores
             let isSystemValid = hasValidCores && (!system.appStoreDisabled || !isAppStore || unsupportedCores)
-            
+
             if searchText.isEmpty {
                 return isSystemValid
             } else {
@@ -50,26 +50,26 @@ struct SystemSettingsView: View {
                 (system.BIOSes?.contains { bios in
                     bios.descriptionText.localizedCaseInsensitiveContains(searchText)
                 } ?? false)
-                
+
                 return isSystemValid && meetsSearchCriteria
             }
         }
-        
+
         return filteredSystems.sorted(by: { $0.identifier < $1.identifier })
     }
-    
-    
+
+
     var body: some View {
 #if os(tvOS)
         ZStack {
             // Retrowave background
             Color.black.edgesIgnoringSafeArea(.all)
-            
+
             // Grid background
             RetroGrid()
                 .edgesIgnoringSafeArea(.all)
                 .opacity(0.3)
-            
+
             VStack {
                 // Search field with retrowave styling
                 HStack {
@@ -81,7 +81,7 @@ struct SystemSettingsView: View {
                                 endPoint: .trailing
                             )
                         )
-                    
+
                     TextField("Search systems, cores, or BIOSes", text: $searchText)
                         .foregroundColor(.white)
                         .padding(10)
@@ -102,7 +102,7 @@ struct SystemSettingsView: View {
                         )
                 }
                 .padding()
-                
+
                 // Title with retrowave styling
                 Text("SYSTEMS")
                     .font(.system(size: 32, weight: .bold, design: .rounded))
@@ -115,7 +115,7 @@ struct SystemSettingsView: View {
                     )
                     .padding(.bottom, 20)
                     .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
-                
+
                 // Scrollable list
                 ScrollView {
                     LazyVStack(spacing: 20) {
@@ -132,12 +132,12 @@ struct SystemSettingsView: View {
         ZStack {
             // Retrowave background
             Color.black.edgesIgnoringSafeArea(.all)
-            
+
             // Grid background
             RetroGrid()
                 .edgesIgnoringSafeArea(.all)
                 .opacity(0.3)
-            
+
             // Main content
             ScrollView {
                 VStack(spacing: 16) {
@@ -154,7 +154,7 @@ struct SystemSettingsView: View {
                         .padding(.top, 20)
                         .padding(.bottom, 10)
                         .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
-                    
+
                     // Search field with retrowave styling
                     HStack {
                         Image(systemName: "magnifyingglass")
@@ -165,7 +165,7 @@ struct SystemSettingsView: View {
                                     endPoint: .trailing
                                 )
                             )
-                        
+
                         TextField("Search systems, cores, or BIOSes", text: $searchText)
                             .foregroundColor(.white)
                             .padding(10)
@@ -189,7 +189,7 @@ struct SystemSettingsView: View {
                     )
                     .padding(.horizontal)
                     .padding(.bottom, 16)
-                    
+
                     // Systems list
                     VStack(spacing: 16) {
                         ForEach(filteredSystems) { system in
@@ -201,7 +201,10 @@ struct SystemSettingsView: View {
                 .padding(.bottom, 20)
             }
         }
+        .tvOSNavigationSupport(title: "Systems")
+        #if !os(tvOS)
         .navigationBarHidden(true)
+        #endif
 #endif
     }
 }
@@ -212,7 +215,7 @@ struct SystemSection: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @State private var isCoresExpanded = false
     @State private var isBiosesExpanded = false
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Header with system icon and name
@@ -233,7 +236,7 @@ struct SystemSection: View {
                                 )
                         )
                         .shadow(color: .retroPink.opacity(0.3), radius: 5)
-                    
+
                     Image(system.iconName, bundle: PVUIBase.BundleLoader.myBundle)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -246,7 +249,7 @@ struct SystemSection: View {
                             )
                         )
                 }
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(system.name)
                         .font(.system(size: 20, weight: .bold))
@@ -257,20 +260,20 @@ struct SystemSection: View {
                                 endPoint: .trailing
                             )
                         )
-                    
+
                     // Games count with retrowave styling
                     HStack(spacing: 6) {
                         Image(systemName: "gamecontroller.fill")
                             .font(.system(size: 12))
                             .foregroundColor(.retroBlue)
-                        
+
                         Text("\(system.games.count) Games")
                             .font(.system(size: 14))
                             .foregroundColor(.white.opacity(0.8))
                     }
                 }
             }
-            
+
             // Cores section with retrowave styling
             VStack(alignment: .leading, spacing: 8) {
                 Button(action: { withAnimation { isCoresExpanded.toggle() } }) {
@@ -284,9 +287,9 @@ struct SystemSection: View {
                                     endPoint: .trailing
                                 )
                             )
-                        
+
                         Spacer()
-                        
+
                         Image(systemName: isCoresExpanded ? "chevron.up" : "chevron.down")
                             .foregroundStyle(
                                 LinearGradient(
@@ -304,7 +307,7 @@ struct SystemSection: View {
                             .fill(Color.black.opacity(0.4))
                     )
                 }
-                
+
                 if isCoresExpanded {
                     VStack(alignment: .leading, spacing: 8) {
                         ForEach(system.cores.filter { core in
@@ -314,7 +317,7 @@ struct SystemSection: View {
                                 Circle()
                                     .fill(Color.retroBlue.opacity(0.7))
                                     .frame(width: 6, height: 6)
-                                
+
                                 Text(core.projectName)
                                     .font(.system(size: 14))
                                     .foregroundColor(.white.opacity(0.9))
@@ -330,7 +333,7 @@ struct SystemSection: View {
                     .transition(.opacity)
                 }
             }
-            
+
             // BIOSes section with retrowave styling
             if let bioses = system.BIOSes, !bioses.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
@@ -345,9 +348,9 @@ struct SystemSection: View {
                                         endPoint: .trailing
                                     )
                                 )
-                            
+
                             Spacer()
-                            
+
                             Image(systemName: isBiosesExpanded ? "chevron.up" : "chevron.down")
                                 .foregroundStyle(
                                     LinearGradient(
@@ -365,7 +368,7 @@ struct SystemSection: View {
                                 .fill(Color.black.opacity(0.4))
                         )
                     }
-                    
+
                     if isBiosesExpanded {
                         VStack(alignment: .leading, spacing: 8) {
                             ForEach(bioses) { bios in
@@ -408,23 +411,23 @@ struct BIOSRow: View {
     let bios: PVBIOS
     @State private var biosStatus: BIOSStatus?
     @State private var showCopiedAlert = false
-    
+
     var body: some View {
         HStack(spacing: 12) {
             // Status indicator circle
             Circle()
                 .fill(statusColor(for: biosStatus))
                 .frame(width: 12, height: 12)
-            
+
             VStack(alignment: .leading) {
                 Text(bios.descriptionText)
                 Text("\(bios.expectedMD5.uppercased()) : \(bios.expectedSize) bytes")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
-            
+
             Spacer()
-            
+
             if let status = biosStatus {
                 statusIndicator(for: status)
             }
@@ -453,10 +456,10 @@ struct BIOSRow: View {
             })
         })
     }
-    
+
     private func statusColor(for status: BIOSStatus?) -> Color {
         guard let status = status else { return .gray }
-        
+
         switch status.state {
         case .match:
             return .green
@@ -466,7 +469,7 @@ struct BIOSRow: View {
             return .orange
         }
     }
-    
+
     @ViewBuilder
     private func statusIndicator(for status: BIOSStatus) -> some View {
         switch status.state {
