@@ -15,7 +15,8 @@ import UniformTypeIdentifiers
 public struct RetroMainView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var themeManager: ThemeManager
-    
+    @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = false
+
     // Document picker manager as an environment object
     @StateObject private var documentPickerManager = DocumentPickerManager.shared
 
@@ -24,8 +25,23 @@ public struct RetroMainView: View {
 
     // Timer for occasional special effects
     @State private var effectTimer: AnyCancellable?
-    
+
     public init () { }
+
+    // Computed property for tab items that conditionally includes debug tab
+    private var tabItems: [RetroTabItem] {
+        var items = [
+            RetroTabItem(title: "Games", systemImage: "gamecontroller"),
+            RetroTabItem(title: "Settings", systemImage: "gear"),
+            RetroTabItem(title: "Status", systemImage: "info")
+        ]
+
+        if showFeatureFlagsDebug {
+            items.append(RetroTabItem(title: "Debug", systemImage: "ladybug"))
+        }
+
+        return items
+    }
 
     public var body: some View {
         ZStack {
@@ -38,7 +54,7 @@ public struct RetroMainView: View {
                     DocumentPicker(onImport: { urls in
                         // Call the callback if it exists
                         documentPickerManager.documentPickerCompleted(urls: urls)
-                        
+
                         // Explicitly set isShowingDocumentPicker to false to ensure proper state update
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                             documentPickerManager.isShowingDocumentPicker = false
@@ -73,15 +89,26 @@ public struct RetroMainView: View {
                         } else if selectedTab == 1 {
                             SettingsWrapperView()
                         } else if selectedTab == 2 {
+                            ScrollView {
+                                VStack {
+                                    RetroStatusControlView()
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 6)
+
+                                    FileRecoveryTestView()
+                                }
+                            }
+                            .tabItem {
+                                Label("Status", systemImage: "test")
+                            }
+                            .tag("status")
+                            .ignoresSafeArea(.all, edges: .bottom)
+                        } else if selectedTab == 3 && showFeatureFlagsDebug {
                             RetroDebugView()
                         }
                     }
                 },
-                tabItems: [
-                    RetroTabItem(title: "Games", systemImage: "gamecontroller"),
-                    RetroTabItem(title: "Settings", systemImage: "gear"),
-                    RetroTabItem(title: "Debug", systemImage: "ladybug")
-                ]
+                tabItems: tabItems
             )
             .onAppear {
                 ILOG("MainView: Appeared with RetroTabView")
