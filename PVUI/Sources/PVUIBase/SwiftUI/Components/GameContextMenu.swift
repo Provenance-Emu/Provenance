@@ -90,6 +90,13 @@ public struct GameContextMenu: View {
                     } label: { Label("Download from Cloud", systemImage: "icloud.and.arrow.down") }
                 }
 
+                // Show offload option for games that are downloaded and have a CloudKit record
+                if iCloudSyncEnabled && hasCloudRecord && isDownloaded {
+                    Button {
+                        offloadGameFromDevice(game)
+                    } label: { Label("Offload from Device", systemImage: "icloud.and.arrow.up") }
+                }
+
                 Button {
                     // Toggle isFavorite for the selected PVGame
                     toggleFavorite()
@@ -203,6 +210,37 @@ public struct GameContextMenu: View {
 }
 
 extension GameContextMenu {
+    /// Offload the game's primary ROM file from the device while keeping CloudKit record and metadata
+    private func offloadGameFromDevice(_ game: PVGame) {
+        Task {
+            guard !game.isInvalidated else { return }
+            let fileURL = game.file?.url
+
+            do {
+                if let url = fileURL, FileManager.default.fileExists(atPath: url.path) {
+                    try FileManager.default.removeItem(at: url)
+                }
+
+                // Update Realm to mark as not downloaded and clear PVFile reference
+                try await RomDatabase.sharedInstance.asyncWriteTransaction {
+                    if let thawed = game.thaw() {
+                        thawed.isDownloaded = false
+                        thawed.file = nil
+                    }
+                }
+
+                await MainActor.run {
+                    // Update local state so the menu reflects the new status if reopened
+                    self.isDownloaded = false
+                    rootDelegate?.showMessage("Offloaded \(game.title) from this device. You can re-download it from Cloud later.", title: "Offloaded")
+                }
+            } catch {
+                await MainActor.run {
+                    rootDelegate?.showMessage("Failed to offload \(game.title): \(error.localizedDescription)", title: "Error")
+                }
+            }
+        }
+    }
     /// Download a game from CloudKit
     func downloadGameFromCloud() {
         guard !game.isInvalidated, let recordID = game.cloudRecordID else { return }
