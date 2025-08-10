@@ -101,11 +101,10 @@ public class RetroGameLibraryViewModel: ObservableObject {
     public func loadExpandedSections(from data: Data, allSystems: [PVSystem]) {
         DLOG("RetroGameLibraryViewModel: Loading expanded sections from AppStorage")
 
-        // If no data is stored yet, expand all sections by default
+        // If no data is stored yet, keep all sections collapsed by default
         if data.isEmpty {
-            DLOG("RetroGameLibraryViewModel: No expanded sections data found, expanding all sections by default")
-            expandedSections = Set(allSystems.map { $0.systemIdentifier.rawValue })
-            expandedSections.insert("all") // Also expand the "All Games" section
+            DLOG("RetroGameLibraryViewModel: No expanded sections data found, keeping all sections collapsed by default")
+            expandedSections = Set() // Empty set means all sections are collapsed
             return
         }
 
@@ -115,9 +114,8 @@ public class RetroGameLibraryViewModel: ObservableObject {
             expandedSections = decoded
         } else {
             ELOG("RetroGameLibraryViewModel: Failed to decode expanded sections data")
-            // Fallback to expanding all sections
-            expandedSections = Set(allSystems.map { $0.systemIdentifier.rawValue })
-            expandedSections.insert("all") // Also expand the "All Games" section
+            // Fallback to keeping all sections collapsed
+            expandedSections = Set() // Empty set means all sections are collapsed
         }
     }
 
