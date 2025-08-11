@@ -11,7 +11,7 @@ import Combine
 
 /// Extension to add DeltaSkin support to the emulator view controller
 extension PVEmulatorViewController {
-    
+
     var isDeltaSkinEnabled: Bool {
         return Defaults[.skinMode] != .off && core.supportsSkins
 //        return true
@@ -19,7 +19,7 @@ extension PVEmulatorViewController {
 
     /// Set up the DeltaSkin view if enabled in settings
     @objc public func setupDeltaSkinView() async throws {
-        
+
         // Check if DeltaSkin is enabled
         let useDeltaSkins = isDeltaSkinEnabled
         ILOG("Delta Skin setting: \(useDeltaSkins)")
@@ -168,9 +168,9 @@ extension PVEmulatorViewController {
 
     /// Add the skin view to the view hierarchy
     private func addSkinView() async {
-        
+
         guard isDeltaSkinEnabled else { return }
-        
+
         // Get the GPU view from the gpuViewController
         guard let gameScreenView = gpuViewController.view else {
             ELOG("GPU view not found")

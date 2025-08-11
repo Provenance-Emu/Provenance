@@ -31,3 +31,10 @@ import Foundation
 @objc public protocol EmulatorCoreAudioDelegate {
     @objc func audioSampleRateDidChange();
 }
+
+/// Optional: Bridges that can provide waveform data for visualizers
+@objc public protocol EmulatorCoreWaveformProvider {
+    @objc func installWaveformTap()
+    @objc func removeWaveformTap()
+    @objc func dequeueWaveformAmplitudes(withMaxCount: UInt) -> [NSNumber]
+}

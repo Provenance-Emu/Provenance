@@ -32,7 +32,7 @@ extension PVEmulatorViewController {
             DLOG("Audio visualizer requires iOS 16 or later")
             return
         }
-        
+
         // Check if the core supports audio visualizer
         guard core.supportsAudioVisualizer else {
             DLOG("Core does not support audio visualizer: \(core.description)")
@@ -49,6 +49,31 @@ extension PVEmulatorViewController {
 
         // Create the appropriate visualizer based on the selected mode
         let visualizerView: AnyView
+        let isRetroArch = core.coreIdentifier?.contains("libretro") == true
+        DLOG("core identifier: \(core.coreIdentifier ?? "null")")
+        // Acquire waveform provider from bridge if available
+        let provider: (any EmulatorCoreWaveformProvider)? = {
+            guard isRetroArch, let objcCore = core as? (any ObjCBridgedCore) else {
+                DLOG("isRetroArch: \(isRetroArch ? "Yes" : "No")")
+                return nil
+            }
+            if let typed = objcCore.bridge as? (any EmulatorCoreWaveformProvider) {
+                DLOG("Has audio visualizer api? Yes (typed)")
+                return typed
+            } else {
+                DLOG("Has audio visualizer api? No")
+                return nil
+            }
+        }()
+
+        // For RetroArch, enable the waveform tap immediately so data starts flowing
+        if let provider = provider {
+            provider.installWaveformTap()
+            DLOG("Installed RA waveform tap from setupAudioVisualizer (typed)")
+        }
+
+        // Choose engine: RA taps its own audio, others use our engine
+        let engine: AudioEngineProtocol = isRetroArch ? RAAudioTapEngine(provider: provider) : gameAudio
 
         switch visualizerMode {
         case .off:
@@ -58,7 +83,7 @@ extension PVEmulatorViewController {
             // Create the standard bar-style retrowave audio visualizer
             visualizerView = AnyView(
                 RetrowaveDynamicIslandAudioVisualizer(
-                    audioEngine: gameAudio,
+                    audioEngine: engine,
                     numberOfPoints: 60,
                     updateInterval: 0.008 // 120fps updates for smoother animation
                 )
@@ -68,7 +93,7 @@ extension PVEmulatorViewController {
             // Create the standard circular retrowave audio visualizer
             visualizerView = AnyView(
                 RetrowaveDynamicIslandAudioVisualizer(
-                    audioEngine: gameAudio,
+                    audioEngine: engine,
                     numberOfPoints: 60,
                     updateInterval: 0.008, // 120fps updates for smoother animation
                     isCircular: true
@@ -79,7 +104,7 @@ extension PVEmulatorViewController {
             // Create the enhanced Metal-based bar-style retrowave audio visualizer
             visualizerView = AnyView(
                 EnhancedMetalVisualizer(
-                    audioEngine: gameAudio,
+                    audioEngine: engine,
                     numberOfPoints: 128, // More points for higher resolution
                     updateInterval: 0.008 // 120fps updates for smoother animation
                 )
@@ -92,7 +117,7 @@ extension PVEmulatorViewController {
             // Create the enhanced circular Metal visualizer with actual dimensions
             visualizerView = AnyView(
                 EnhancedCircularMetalVisualizer(
-                    audioEngine: gameAudio,
+                    audioEngine: engine,
                     numberOfPoints: 128, // More points for higher resolution
                     islandWidth: islandFrame.width,
                     islandHeight: islandFrame.height,
@@ -149,7 +174,7 @@ extension PVEmulatorViewController {
         // Remove orientation change observer
         NotificationCenter.default.removeObserver(self, name: UIDevice.orientationDidChangeNotification, object: nil)
 #endif
-        
+
         // Remove the hosting controller
         hostingController.willMove(toParent: nil)
         hostingController.view.removeFromSuperview()
@@ -167,6 +192,11 @@ extension PVEmulatorViewController {
 extension PVEmulatorViewController {
     /// Show the audio visualizer
     @objc public func showAudioVisualizer() {
+        if core.coreIdentifier?.contains("libretro") == true,
+           let objcCore = core as? (any ObjCBridgedCore),
+           let provider = objcCore.bridge as? (any EmulatorCoreWaveformProvider) {
+            provider.installWaveformTap()
+        }
         setupAudioVisualizer()
         // Ensure it's on top after showing
         ensureVisualizerOnTop()
@@ -174,6 +204,11 @@ extension PVEmulatorViewController {
 
     /// Hide the audio visualizer
     @objc public func hideAudioVisualizer() {
+        if core.coreIdentifier?.contains("libretro") == true,
+           let objcCore = core as? (any ObjCBridgedCore),
+           let provider = objcCore.bridge as? (any EmulatorCoreWaveformProvider) {
+            provider.removeWaveformTap()
+        }
         removeAudioVisualizer()
     }
 
@@ -337,7 +372,7 @@ extension PVEmulatorViewController {
         #endif
     }
 
-    
+
     /// Get the appropriate top offset for the Dynamic Island based on device model
     private func getDynamicIslandTopOffset() -> CGFloat {
         let deviceName = UIDevice.current.name

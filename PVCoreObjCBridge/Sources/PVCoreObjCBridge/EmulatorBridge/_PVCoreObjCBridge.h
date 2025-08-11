@@ -55,6 +55,8 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 };
 
 @protocol PVAudioDelegate;
+@protocol EmulatorCoreWaveformProvider;
+
 //@required
 //- (void)audioSampleRateDidChange;
 //@end
