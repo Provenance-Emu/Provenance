@@ -9,7 +9,8 @@ public enum CreateEmulatorError: Error, LocalizedError {
     case couldNotCreateCore
     case gameHasNilRomPath
     case fileDoesNotExist(path: String?)
-    
+    case insufficientSpace
+
     var description: String {
         switch self {
         case .couldNotCreateCore:
@@ -18,13 +19,15 @@ public enum CreateEmulatorError: Error, LocalizedError {
             return "Game has a nil rom path."
         case let .fileDoesNotExist(path):
             return "File does not exist at path: \(path ?? "nil")"
+        case .insufficientSpace:
+            return "Insufficient storage space for download."
         }
     }
-    
+
     public var errorDescription: String? { description }
-    
+
     public var failureReason: String? { description }
- 
+
     public var recoverySuggestion: String? {
         switch self {
         case .couldNotCreateCore:
@@ -33,6 +36,8 @@ public enum CreateEmulatorError: Error, LocalizedError {
             "Check for a rom path in the game."
         case .fileDoesNotExist(path: let path):
             "Check for file at path: \(path ?? "nil")"
+        case .insufficientSpace:
+            "Free up storage space and try again."
         }
     }
 }
