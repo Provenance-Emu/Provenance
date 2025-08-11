@@ -706,7 +706,7 @@ void extract_bundles();
 }
 
 - (void)setupWindow {
-    ILOG(@"Set:METAL VULKAN OPENGLES:Attaching View Controller\n");
+    ILOG(@"Set:METAL VULKAN OPENGLES:Attaching View Controller. isRootView %@\n", self.isRootView ? @"Yes" : @"No");
     if (m_view) {
         [m_view removeFromSuperview];
         m_view=nil;
