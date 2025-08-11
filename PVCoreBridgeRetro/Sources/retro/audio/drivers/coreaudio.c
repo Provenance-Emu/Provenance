@@ -410,10 +410,13 @@ static bool coreaudio_stop(void *data)
 static bool coreaudio_start(void *data)
 {
    coreaudio_t *dev = (coreaudio_t*)data;
-   if (!dev)
-      return false;
-   dev->is_paused = (AudioOutputUnitStart(dev->dev) == noErr) ? false : true;
-   return dev->is_paused ? false : true;
+   if (dev)
+   {
+      dev->is_paused = (AudioOutputUnitStart(dev->dev) == noErr) ? false : true;
+      if (!dev->is_paused)
+         return true;
+   }
+   return false;
 }
 
 static bool coreaudio_use_float(void *data)
