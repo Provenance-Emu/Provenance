@@ -52,6 +52,12 @@ public class SyncProgressTracker: ObservableObject {
     /// Space required for pending downloads
     @Published public var spaceRequiredForQueue: Int64 = 0
 
+    /// Set true once Realm DB has been populated from metadata sync (PVGame/PVSystem/etc.)
+    @Published public var databaseSynced: Bool = false
+
+    /// Downloads that were requested before databaseSynced and/or before PVGame existed
+    @Published public private(set) var deferredDownloads: [QueuedDownload] = []
+
     // MARK: - Cancellable subscriptions
     private var cancellables = Set<AnyCancellable>()
 
@@ -304,7 +310,7 @@ public class SyncProgressTracker: ObservableObject {
 
         let completedDownload = activeDownloads.remove(at: index)
         updateSpaceRequirements()
-        updateDiskSpace()
+        updateDiskSpaceInternal()
 
         // Check if queue is now empty
         if activeDownloads.isEmpty && queuedDownloads.isEmpty {
@@ -392,15 +398,15 @@ public class SyncProgressTracker: ObservableObject {
 
     /// Check if there's enough space for a download
     private func checkSpaceForDownload(fileSize: Int64) throws {
-        updateDiskSpace()
+        updateDiskSpaceInternal()
 
         let spaceBuffer: Int64 = 500_000_000 // 500MB buffer
         let requiredSpace = fileSize + spaceBuffer
 
         #if os(tvOS)
         // More aggressive space checking on tvOS due to limited storage
-        let tvOSBuffer: Int64 = 2_000_000_000 // 2GB buffer for tvOS
-        let requiredSpaceTvOS = fileSize + tvOSBuffer
+        let tvOSBuffer: Int64 = 1_000_000_000 // 1GB buffer for tvOS
+        let requiredSpaceTvOS = max(fileSize + tvOSBuffer, 1_000_000_000)
 
         if availableDiskSpace < requiredSpaceTvOS {
             throw CloudSyncError.insufficientSpace(required: requiredSpaceTvOS, available: availableDiskSpace)
@@ -413,7 +419,7 @@ public class SyncProgressTracker: ObservableObject {
     }
 
     /// Update available disk space
-    private func updateDiskSpace() {
+    private func updateDiskSpaceInternal() {
         do {
             let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
             let resourceValues = try documentsURL.resourceValues(forKeys: [.volumeAvailableCapacityKey])
@@ -422,6 +428,11 @@ public class SyncProgressTracker: ObservableObject {
             ELOG("Failed to get available disk space: \(error)")
             availableDiskSpace = 0
         }
+    }
+
+    /// Update available disk space (public method)
+    public func updateDiskSpace() {
+        updateDiskSpaceInternal()
     }
 
     /// Update space requirements for queued downloads
@@ -441,5 +452,18 @@ public class SyncProgressTracker: ObservableObject {
                 self?.progress = newProgress
             }
             .store(in: &cancellables)
+    }
+
+    // MARK: - Deferred handling
+    public func deferDownload(_ item: QueuedDownload) {
+        if !deferredDownloads.contains(where: { $0.md5 == item.md5 }) {
+            deferredDownloads.append(item)
+        }
+    }
+
+    public func takeDeferred() -> [QueuedDownload] {
+        let items = deferredDownloads
+        deferredDownloads.removeAll()
+        return items
     }
 }

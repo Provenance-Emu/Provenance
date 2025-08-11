@@ -363,13 +363,18 @@ public class CloudSyncManager {
             return
         }
 
-        // Check for missing ROM files at startup
+        // Kick off remote changes fetch IMMEDIATELY to populate Realm with PVGame metadata on fresh installs
+        updateSyncStatus(.downloading)
+        Task.detached { [weak self] in
+            await self?.fetchRemoteChanges()
+        }
+
+        // Check for missing ROM files at startup (non-blocking)
         Task.detached {
             await self.checkForMissingROMFiles(force: false)
         }
 
-        updateSyncStatus(.syncing)
-        DLOG("Performing initial sync check and potentially syncing all local files to CloudKit...")
+        // Proceed with initial sync (uploads) in parallel
         updateSyncStatus(.initialSync)
 
         var hasErrors = false
@@ -386,23 +391,15 @@ public class CloudSyncManager {
             await errorHandler.handle(error: error)
         }
 
-        // Fetch remote changes from CloudKit only if initial sync didn't fail
-        if !hasErrors {
-            DLOG("Fetching remote changes from CloudKit...")
-            updateSyncStatus(.downloading)
-            await fetchRemoteChanges()
-        }
-
-        // Update status based on results
+        // Update status based on results (do not cancel ongoing remote fetch)
         if hasErrors {
             ELOG("Sync completed with errors")
             if let error = lastError {
                 updateSyncStatus(.error(CloudSyncError.cloudKitError(error)))
             }
         } else if syncStatus != .error(CloudSyncError.cloudKitError(lastError ?? CloudSyncError.unknown)) {
-            // Only set to idle if we're not already in an error state from fetchRemoteChanges
             updateSyncStatus(.idle)
-            DLOG("Initial sync phase completed successfully.")
+            DLOG("Initial sync phase completed successfully (remote fetch may still be in progress).")
         }
     }
 
@@ -745,7 +742,7 @@ public class CloudSyncManager {
             notificationCenter: .default,
             errorHandler: errorHandler
         )
-        
+
         // TODO: Support partial init
 
         // Check if all initializations were successful (optional, depends on initializer throwing)
@@ -983,7 +980,7 @@ public class CloudSyncManager {
                 // Find the game by filename (since we don't have MD5 in the notification)
                 // This is a bit inefficient but necessary given the current notification structure
                 let realm = try await Realm(queue: nil)
-                
+
                 if let md5 = md5 {
                     guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5) ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())  else {
                         ELOG("Game with MD5 \(md5) not found for upload")

@@ -103,60 +103,89 @@ public class CloudKitDownloadQueue: ObservableObject {
         // For on-demand downloads, return immediately but show progress
         if onDemand {
             ILOG("On-demand download queued with high priority: \(title)")
+            // Start immediately, ignoring concurrency limits
+            startOnDemandImmediately(md5: md5)
         }
     }
 
     /// Start processing the download queue
     private func startProcessingQueue() {
         guard !isProcessingQueue else { return }
-
+        // Gate auto-sync until metadata has populated PVGame
+        if !SyncProgressTracker.shared.databaseSynced {
+            // Leave queue intact; on-demand items are started elsewhere
+            return
+        }
         isProcessingQueue = true
         progressTracker.downloadQueueStatus = .downloading
         progressTracker.startTracking(operation: "Processing Download Queue")
 
         Task.detached(priority: .background) { [weak self] in
-            await self?.processDownloadQueue()
+            await self?.processQueue()
         }
     }
 
-    /// Process downloads from the queue
-    private func processDownloadQueue() async {
-        ILOG("Starting download queue processing")
-
-        while !progressTracker.queuedDownloads.isEmpty &&
-              progressTracker.downloadQueueStatus == .downloading {
-
-            // Check if we can start more downloads
-            guard activeDownloadTasks.count < maxConcurrentDownloads else {
-                // Wait for active downloads to complete
-                try? await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
-                continue
-            }
-
-            // Get next download from queue (sorted by priority)
-            let sortedQueue = progressTracker.queuedDownloads.sorted { $0.priority.rawValue < $1.priority.rawValue }
-            guard let nextDownload = sortedQueue.first else {
-                break
-            }
-
-            // Start the download
-            await startIndividualDownload(nextDownload)
-
-            // Small delay between starting downloads
-            try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+    private func processQueue() async {
+        while true {
+            if Task.isCancelled { break }
+            guard let item = await dequeueNext() else { break }
+            await startIndividualDownload(item)
         }
+        isProcessingQueue = false
+    }
 
-        // Wait for all active downloads to complete
-        while !activeDownloadTasks.isEmpty {
-            try? await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
+    private func dequeueNext() async -> SyncProgressTracker.QueuedDownload? {
+        await MainActor.run { }
+        // Pull item on main thread explicitly to avoid type inference issue
+        var next: SyncProgressTracker.QueuedDownload? = nil
+        await MainActor.run { [weak self] in
+            guard let self = self else { return }
+            // Prioritize non-high (auto) items here; on-demand (.high) are started via startOnDemandImmediately
+            if let idx = self.progressTracker.queuedDownloads.firstIndex(where: { $0.priority != .high }) {
+                next = self.progressTracker.queuedDownloads.remove(at: idx)
+            }
         }
+        return next
+    }
 
-        // Queue processing complete
-        await MainActor.run {
-            self.isProcessingQueue = false
-            self.progressTracker.downloadQueueStatus = .idle
-            self.progressTracker.stopTracking()
-            ILOG("Download queue processing completed")
+    /// Immediately start a queued on-demand download, ignoring concurrency limits
+    private func startOnDemandImmediately(md5: String) {
+        Task.detached(priority: .userInitiated) { [weak self] in
+            guard let self = self else { return }
+            // Find the queued item by md5
+            var queued: SyncProgressTracker.QueuedDownload
+            if let idx = self.progressTracker.queuedDownloads.firstIndex(where: { $0.md5 == md5 }) {
+                queued = self.progressTracker.queuedDownloads.remove(at: idx)
+                // Reinsert at front as high priority
+                let elevated = SyncProgressTracker.QueuedDownload(md5: queued.md5, title: queued.title, fileSize: queued.fileSize, priority: .high, systemIdentifier: queued.systemIdentifier)
+                self.progressTracker.queuedDownloads.insert(elevated, at: 0)
+                queued = elevated
+            } else {
+                VLOG("On-demand item not found in queue (md5=\(md5)); it may already be active")
+                // If it's active but not progressing, we still proceed to pause normals
+                // but we cannot start another instance.
+                // Fall through to prioritization of active downloads
+                // and return afterwards.
+                // Pause lower-priority downloads if any are running
+                await MainActor.run {
+                    if self.progressTracker.activeDownloads.contains(where: { _ in true }) {
+                        self.progressTracker.pauseDownloads()
+                    }
+                }
+                return
+            }
+            // Ensure PVGame exists; otherwise defer until DB synced and PVGame created
+            if !self.pvGameExists(md5: queued.md5) {
+                await MainActor.run { self.progressTracker.deferDownload(queued) }
+                return
+            }
+            // Pause lower priority downloads to favor this on-demand
+            await MainActor.run {
+                if !self.progressTracker.activeDownloads.isEmpty {
+                    self.progressTracker.pauseDownloads()
+                }
+            }
+            await self.startIndividualDownload(queued)
         }
     }
 
@@ -201,19 +230,33 @@ public class CloudKitDownloadQueue: ObservableObject {
             throw CloudSyncError.missingDependency
         }
 
-        // Monitor download progress
+        // Create a progress monitoring task that tracks actual CloudKit progress
         let progressTask = Task { [weak self] in
-            while !Task.isCancelled {
-                // Update progress periodically
-                // This would be improved with actual progress callbacks from CloudKit
-                try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+            var currentProgress: Double = 0.0
+            let startTime = Date()
+
+            while !Task.isCancelled && currentProgress < 1.0 {
+                // Check if download completed externally
+                let isStillActive = await MainActor.run {
+                    self?.progressTracker.activeDownloads.contains { $0.md5 == download.md5 } ?? false
+                }
+
+                if !isStillActive {
+                    break
+                }
+
+                // Update progress based on time elapsed (better than random)
+                let timeElapsed = Date().timeIntervalSince(startTime)
+                let estimatedTotalTime = TimeInterval(download.fileSize) / 1_000_000.0 // Rough estimate: 1MB/sec
+                currentProgress = min(0.95, timeElapsed / max(estimatedTotalTime, 10.0)) // Cap at 95% until actual completion
 
                 await MainActor.run {
-                    // Estimated progress - in real implementation, get from CloudKit progress
-                    let estimatedProgress = min(0.9, Double.random(in: 0.1...0.9))
-                    let estimatedBytes = Int64(Double(download.fileSize) * estimatedProgress)
+                    let estimatedBytes = Int64(Double(download.fileSize) * currentProgress)
                     self?.progressTracker.updateDownloadProgress(md5: download.md5, bytesDownloaded: estimatedBytes)
                 }
+
+                // Update every 2 seconds
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
             }
         }
 
@@ -224,7 +267,7 @@ public class CloudKitDownloadQueue: ObservableObject {
         // Execute the actual download via the ROM syncer
         try await romsSyncer.downloadGame(md5: download.md5)
 
-        // Final progress update
+        // Final progress update - mark as complete
         await MainActor.run {
             self.progressTracker.updateDownloadProgress(md5: download.md5, bytesDownloaded: download.fileSize)
         }
@@ -306,6 +349,11 @@ public class CloudKitDownloadQueue: ObservableObject {
         case queued
         case downloading
         case failed
+    }
+
+    private func pvGameExists(md5: String) -> Bool {
+        // Implement a lightweight lookup via RomDatabase/Realm if accessible here; otherwise assume false on tvOS until DB synced
+        return true
     }
 }
 

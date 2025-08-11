@@ -348,7 +348,7 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
     /// - Throws: CloudSyncError if download fails
     public func downloadFile(for recordID: CKRecord.ID) async throws {
         DLOG("Downloading file for record ID: \(recordID.recordName)")
-        
+
         // 1. Fetch the record from CloudKit
         let record: CKRecord
         do {
@@ -361,49 +361,51 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
             ELOG("Error fetching record \(recordID.recordName): \(error.localizedDescription)")
             throw CloudSyncError.cloudKitError(error)
         }
-        
+
         // 2. Extract necessary info (directory, relative path, asset)
-        guard let directory = record[Field.directory] as? String,
-              let relativePath = record[Field.relativePath] as? String,
-              let fileAsset = record[Field.fileAsset] as? CKAsset,
-              let assetURL = fileAsset.fileURL else {
-            ELOG("Record \(recordID.recordName) is missing required fields or asset.")
+        let directory = resolveDirectory(from: record)
+        let relativePath = resolveRelativePath(from: record, directory: directory)
+        let fileAsset = resolveAsset(from: record)
+        guard let directory, let relativePath, let fileAsset, let assetURL = fileAsset.fileURL else {
+            ELOG("Record \(recordID.recordName) is missing required fields or asset even after fallback resolution.")
             throw CloudSyncError.invalidData
         }
-        
+
         // 3. Determine the local file path
         let documentsURL = URL.documentsPath
         let directoryURL = documentsURL.appendingPathComponent(directory)
         let fileURL = directoryURL.appendingPathComponent(relativePath)
-        
+
         do {
             // Ensure the target directory exists
             try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
-            
+
             // Remove existing item at destination if it exists (replace)
             if FileManager.default.fileExists(atPath: fileURL.path) {
                 try await FileManager.default.removeItem(at: fileURL)
                 DLOG("Removed existing local file at \(fileURL.path)")
             }
-            
+
             // Copy the file from the temporary CloudKit location
             try FileManager.default.copyItem(at: assetURL, to: fileURL)
             ILOG("Successfully downloaded file \(relativePath) in \(directory) from CloudKit.")
-            
+
             // Post notification about file download if needed
             notificationCenter.post(name: .PVCloudSyncDidDownloadFile, object: self, userInfo: ["fileURL": fileURL, "directory": directory])
-            
+
             return
         } catch {
             ELOG("Error saving downloaded file to \(fileURL.path): \(error.localizedDescription)")
             throw CloudSyncError.fileSystemError(error)
         }
     }
-    
+
     /// Processes a remote change notification for a single record.
     /// Fetches the record and handles the download/update of the associated file.
     /// - Parameter recordID: The ID of the record that changed.
-    public func processRemoteRecordUpdate(recordID: CKRecord.ID) async {
+    public func processRemoteRecordUpdate(recordID: CKRecord.ID) async throws {
+        // Defer non-database assets until the DB is populated
+        guard SyncProgressTracker.shared.databaseSynced else { return }
         DLOG("Processing remote update notification for record ID: \(recordID.recordName)")
         do {
             // 1. Fetch the record from CloudKit
@@ -411,14 +413,11 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
             DLOG("Successfully fetched record: \(record.recordType) - \(record.recordID.recordName)")
 
             // 2. Extract necessary info (directory, relative path, asset)
-            guard let directory = record[Field.directory] as? String,
-                  let relativePath = record[Field.relativePath] as? String,
-                  let fileAsset = record[Field.fileAsset] as? CKAsset else {
-                WLOG("Record \(recordID.recordName) is missing required fields (directory, relativePath, or fileAsset). Skipping.")
-                // Consider if this should be an error or just logged.
-                // If the record was deleted remotely, this might be expected.
-                // Need to check if the record fetch indicated deletion.
-                // TODO: Handle potential deletion case if fetch indicates record not found.
+            let directory = resolveDirectory(from: record)
+            let relativePath = resolveRelativePath(from: record, directory: directory)
+            let fileAsset = resolveAsset(from: record)
+            guard let directory, let relativePath, let fileAsset else {
+                WLOG("Record \(recordID.recordName) is missing required fields (directory, relativePath, or fileAsset) even after fallback. Skipping.")
                 return
             }
 
@@ -469,5 +468,44 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
             ELOG("Error processing remote update for record \(recordID.recordName): \(error.localizedDescription)")
             await errorHandler.handleError(error, file: nil)
         }
+    }
+
+    // MARK: - Fallback Resolvers
+
+    /// Attempts to resolve directory from record field or record name prefix
+    private func resolveDirectory(from record: CKRecord) -> String? {
+        if let directory = record[Field.directory] as? String { return directory }
+        let name = record.recordID.recordName
+        if let prefix = name.split(separator: "_", maxSplits: 1, omittingEmptySubsequences: true).first {
+            let candidate = String(prefix)
+            if directories.contains(candidate) { return candidate }
+        }
+        return nil
+    }
+
+    /// Attempts to resolve relative path from record field or record name body
+    private func resolveRelativePath(from record: CKRecord, directory: String?) -> String? {
+        if let relativePath = record[Field.relativePath] as? String { return relativePath }
+        let name = record.recordID.recordName
+        let parts = name.split(separator: "_")
+        guard parts.count >= 2 else { return nil }
+        // If there are 3+ parts, assume format: <Directory>_<Filename with underscores>_<Suffix>
+        if parts.count >= 3 {
+            let filenameParts = parts.dropFirst().dropLast()
+            let joined = filenameParts.joined(separator: "_")
+            return joined
+        } else {
+            // 2 parts: <Directory>_<Filename>
+            return String(parts[1])
+        }
+    }
+
+    /// Attempts to resolve asset under multiple possible keys
+    private func resolveAsset(from record: CKRecord) -> CKAsset? {
+        if let asset = record[Field.fileAsset] as? CKAsset { return asset }
+        if let asset = record["asset"] as? CKAsset { return asset }
+        if let asset = record["file"] as? CKAsset { return asset }
+        if let asset = record["fileData"] as? CKAsset { return asset }
+        return nil
     }
 }

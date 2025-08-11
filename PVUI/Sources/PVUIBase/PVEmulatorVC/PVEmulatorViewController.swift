@@ -359,46 +359,62 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         setupDeltaSkinDirectly()
 
         initNotificationObservers()
-        do {
-            try createEmulator()
-            //            } catch is CreateEmulatorError {
-            //                let customError = error as! CreateEmulatorError
-            //
-            //                presentingViewController?.presentError(customError.localizedDescription, source: self.view)
-        } catch {
-            let neError = error as NSError
 
-            //                if let presentingViewController = presentingViewController {
-            //                    Task { @MainActor in
-            //                        presentingViewController.presentError(error.localizedDescription, source: self.view)
-            //                    }
-            //                } else {
-            Task { @MainActor in
-                let alert = UIAlertController(title: neError.localizedDescription,
-                                              message: neError.localizedRecoverySuggestion,
-                                              preferredStyle: .alert)
+        // Initialize emulator asynchronously to support CloudKit downloads
+        Task {
+            do {
+                try await createEmulator()
+                //            } catch is CreateEmulatorError {
+                //                let customError = error as! CreateEmulatorError
+                //
+                //                presentingViewController?.presentError(customError.localizedDescription, source: self.view)
+            } catch {
+                let neError = error as NSError
 
-                alert.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
-                alert.popoverPresentationController?.sourceView = self.navigationItem.titleView ?? self.view
-                alert.addAction(UIAlertAction(title: "OK",
-                                              style: .default,
-                                              handler: { (_: UIAlertAction) -> Void in
-                    self.dismiss(animated: true, completion: nil)
-                }))
-                let code = neError.code
-                if code == PVEmulatorCoreErrorCode.missingM3U.rawValue {
-                    alert.addAction(UIAlertAction(title: "View Wiki", style: .cancel, handler: { (_: UIAlertAction) -> Void in
-                        if let url = URL(string: "https://bitly.com/provdiscs") {
-                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                //                if let presentingViewController = presentingViewController {
+                //                    Task { @MainActor in
+                //                        presentingViewController.presentError(error.localizedDescription, source: self.view)
+                //                    }
+                //                } else {
+                Task { @MainActor in
+                    let alert = UIAlertController(title: neError.localizedDescription,
+                                                  message: neError.localizedRecoverySuggestion,
+                                                  preferredStyle: .alert)
+
+                    alert.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
+                    alert.popoverPresentationController?.sourceView = self.navigationItem.titleView ?? self.view
+                    alert.addAction(UIAlertAction(title: "OK",
+                                                  style: .default,
+                                                  handler: { (_: UIAlertAction) -> Void in
+                        ILOG("PVEmulatorViewController: User tapped OK on error alert, returning to main scene")
+                        // Ensure we're on the main thread for UI updates with a small delay
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            ILOG("PVEmulatorViewController: About to call SceneCoordinator.closeEmulator()")
+
+                            // First dismiss any presented view controllers
+                            if let presentedVC = self.presentedViewController {
+                                ILOG("PVEmulatorViewController: Dismissing presented view controller first")
+                                presentedVC.dismiss(animated: false) {
+                                    SceneCoordinator.shared.closeEmulator()
+                                }
+                            } else {
+                                // Dismiss this view controller if it's presented
+                                if self.presentingViewController != nil {
+                                    ILOG("PVEmulatorViewController: Dismissing self, then calling closeEmulator")
+                                    self.dismiss(animated: false) {
+                                        SceneCoordinator.shared.closeEmulator()
+                                    }
+                                } else {
+                                    ILOG("PVEmulatorViewController: No presented view controllers, calling closeEmulator directly")
+                                    SceneCoordinator.shared.closeEmulator()
+                                }
+                            }
                         }
                     }))
+
+                    self.present(alert, animated: true)
                 }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [weak self] in
-                    self?.present(alert, animated: true) { () -> Void in }
-                })
             }
-            //                }
-            return
         }
     }
 
@@ -409,7 +425,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         gpuViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     }
 
-    private func createEmulator() throws {
+    private func createEmulator() async throws {
         initCore()
 
         // Load now. Moved here becauase Mednafen needed to know what kind of game it's working with in order
@@ -451,34 +467,34 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         //            throw CreateEmulatorError.gameHasNilRomPath
         //        }
 
-        if let romPath = romPathMaybe, needsDownload(romPath) {
-            let hud = MBProgressHUD.showAdded(to: view, animated: true)
-            hud.label.text = "Downloading \(romPath.lastPathComponent) from iCloud..."
-            Task {
-                try? await downloadFileIfNeeded(romPath)
-            }
-            hud.hide(animated: true)
+        // Check if file needs download and handle with improved UI
+        if await needsCloudKitDownload(for: game) {
+            try await handleOnDemandDownload(for: game)
+            /// Refresh ROM path after download completes
+            romPathMaybe = game.file?.url
+            /// Handle archives again in case the downloaded asset was a zip
+            romPathMaybe = handleArchives(atPath: romPathMaybe)
         }
 
-        if let path = romPathMaybe?.path {
-            guard FileManager.default.fileExists(atPath: path), !needsDownload(romPathMaybe!) else {
-                ELOG("File doesn't exist at path \(path)")
-
-                // Copy path to Pasteboard
-#if !os(tvOS)
-                UIPasteboard.general.string = path
-#endif
-
-                throw CreateEmulatorError.fileDoesNotExist(path: path)
-            }
+        /// Ensure we have a valid ROM URL before attempting to load
+        guard let romURL = romPathMaybe else {
+            throw CreateEmulatorError.gameHasNilRomPath
+        }
+        /// Ensure file exists locally and is not an iCloud placeholder
+        guard FileManager.default.fileExists(atPath: romURL.path), !needsDownload(romURL) else {
+            ELOG("File doesn't exist at path \(romURL.path)")
+            #if !os(tvOS)
+            UIPasteboard.general.string = romURL.path
+            #endif
+            throw CreateEmulatorError.fileDoesNotExist(path: romURL.path)
         }
 
-        ILOG("Loading ROM: \(romPathMaybe?.path ?? "null")")
+        ILOG("Loading ROM: \(romURL.path)")
 
         if let core = core as? any ObjCBridgedCore, let bridge = core.bridge as? EmulatorCoreIOInterface {
-            try bridge.loadFile(atPath: romPathMaybe?.path ?? "")
+            try bridge.loadFile(atPath: romURL.path)
         } else {
-            try core.loadFile(atPath: romPathMaybe?.path ?? "")
+            try core.loadFile(atPath: romURL.path)
         }
 
 #warning("TODO: Handle multiple screens with UIScene")
@@ -614,6 +630,229 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         // Handle skin changes for orientation
         handleOrientationChange(to: size, with: coordinator)
+    }
+
+    // MARK: - CloudKit Download Handling
+
+    /// Check if a game needs CloudKit download
+    /// - Parameter game: The game to check
+    /// - Returns: True if the game needs to be downloaded from CloudKit
+    private func needsCloudKitDownload(for game: PVGame) async -> Bool {
+        // Check if local file exists and is accessible
+        guard let fileURL = game.file?.url else {
+            VLOG("Game \(game.title) has no file URL - needs download")
+            return true
+        }
+
+        let fileExists = FileManager.default.fileExists(atPath: fileURL.path)
+
+        if !fileExists {
+            VLOG("Game \(game.title) file doesn't exist at \(fileURL.path) - needs download")
+            return true
+        }
+
+        // Check if file is just an iCloud placeholder
+        do {
+            let resourceValues = try fileURL.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey])
+            if let downloadStatus = resourceValues.ubiquitousItemDownloadingStatus {
+                switch downloadStatus {
+                case .notDownloaded:
+                    VLOG("Game \(game.title) is not downloaded from iCloud - needs download")
+                    return true
+                case .downloaded:
+                    VLOG("Game \(game.title) is already downloaded")
+                    return false
+                case .current:
+                    VLOG("Game \(game.title) is current")
+                    return false
+                default:
+                    VLOG("Game \(game.title) has unknown download status - assuming needs download")
+                    return true
+                }
+            }
+        } catch {
+            VLOG("Could not check iCloud status for \(game.title): \(error)")
+        }
+
+        return false
+    }
+
+    /// Handle on-demand download with improved progress UI
+    /// - Parameters:
+    ///   - game: The game to download
+    ///   - romPath: The ROM file path
+    private func handleOnDemandDownload(for game: PVGame) async throws {
+        ILOG("Starting on-demand download for: \(game.title)")
+
+        let downloadQueue = CloudKitDownloadQueue.shared
+
+        // Check if already queued or downloading
+        let status = downloadQueue.downloadStatus(for: game.md5Hash ?? "")
+        switch status {
+        case .downloading:
+            ILOG("Game \(game.title) is already downloading")
+            try await showDownloadProgress(for: game)
+            return
+        case .queued:
+            ILOG("Game \(game.title) is already queued")
+            try await showDownloadProgress(for: game)
+            return
+        case .failed:
+            ILOG("Game \(game.title) had failed download - retrying")
+            downloadQueue.retryDownload(md5: game.md5Hash ?? "")
+            try await showDownloadProgress(for: game)
+            return
+        case .notQueued:
+            break
+        }
+
+        do {
+            // Queue the download with high priority (on-demand)
+            try await downloadQueue.queueDownload(
+                md5: game.md5Hash ?? "",
+                title: game.title,
+                fileSize: Int64(game.fileSize),
+                systemIdentifier: game.systemIdentifier,
+                priority: .high,
+                onDemand: true
+            )
+
+            // Show progress UI
+            try await showDownloadProgress(for: game)
+
+        } catch CloudSyncError.insufficientSpace(let required, let available) {
+            // Show space error alert
+            await showInsufficientSpaceAlert(
+                gameTitle: game.title,
+                required: required,
+                available: available
+            )
+            throw CreateEmulatorError.insufficientSpace
+
+        } catch {
+            ELOG("Failed to queue on-demand download for \(game.title): \(error)")
+            await showDownloadErrorAlert(gameTitle: game.title, error: error)
+            throw error
+        }
+    }
+
+    /// Show download progress UI with cancel option
+    /// - Parameter game: The game being downloaded
+    private func showDownloadProgress(for game: PVGame) async throws {
+        await MainActor.run {
+            let progressView = CloudKitDownloadProgressView(
+                gameMD5: game.md5Hash ?? "",
+                gameTitle: game.title,
+                onCancel: { [weak self] in
+                    // User cancelled - go back to library
+                    ILOG("User cancelled download for: \(game.title)")
+                    self?.dismiss(animated: true)
+                },
+                onComplete: { [weak self] in
+                    // Download completed – dismiss progress UI and allow calling flow to continue
+                    ILOG("Download UI dismissed for: \(game.title)")
+                    self?.dismiss(animated: true)
+                }
+            )
+
+            let hostingController = UIHostingController(rootView: progressView)
+            hostingController.modalPresentationStyle = .fullScreen
+            hostingController.modalTransitionStyle = .crossDissolve
+
+            self.present(hostingController, animated: true)
+        }
+
+        /// Wait for download to start and then complete (or fail)
+        return try await withCheckedThrowingContinuation { continuation in
+            let progressTracker = SyncProgressTracker.shared
+            var cancellables = Set<AnyCancellable>()
+            var hasStarted = false
+
+            Publishers.CombineLatest3(
+                progressTracker.$queuedDownloads,
+                progressTracker.$activeDownloads,
+                progressTracker.$failedDownloads
+            )
+            .sink { queued, active, failed in
+                let md5 = game.md5Hash ?? ""
+                let inQueued = queued.contains { $0.md5 == md5 }
+                let inActive = active.contains { $0.md5 == md5 }
+                let hasFailed = failed.contains { $0.md5 == md5 }
+
+                if inQueued || inActive { hasStarted = true }
+
+                if hasFailed {
+                    cancellables.removeAll()
+                    if let failure = failed.first(where: { $0.md5 == md5 }) {
+                        continuation.resume(throwing: failure.error)
+                    } else {
+                        continuation.resume(throwing: CloudSyncError.unknown)
+                    }
+                    return
+                }
+
+                if hasStarted && !inQueued && !inActive {
+                    // Completed successfully
+                    cancellables.removeAll()
+                    continuation.resume()
+                }
+            }
+            .store(in: &cancellables)
+        }
+    }
+
+    /// Show insufficient space alert
+    private func showInsufficientSpaceAlert(gameTitle: String, required: Int64, available: Int64) async {
+        await MainActor.run {
+            let requiredStr = ByteCountFormatter.string(fromByteCount: required, countStyle: .file)
+            let availableStr = ByteCountFormatter.string(fromByteCount: available, countStyle: .file)
+
+            let alert = UIAlertController(
+                title: "Insufficient Storage",
+                message: "Cannot download \(gameTitle). Requires \(requiredStr) but only \(availableStr) available.\n\nPlease free up space and try again.",
+                preferredStyle: .alert
+            )
+
+            alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+                self.dismiss(animated: true)
+            })
+
+            #if os(tvOS)
+            alert.addAction(UIAlertAction(title: "Storage Settings", style: .default) { _ in
+                // On tvOS, open storage settings if possible
+                if let settingsURL = URL(string: "App-Prefs:General&path=STORAGE_MGMT") {
+                    UIApplication.shared.open(settingsURL)
+                }
+                self.dismiss(animated: true)
+            })
+            #endif
+
+            present(alert, animated: true)
+        }
+    }
+
+    /// Show download error alert
+    private func showDownloadErrorAlert(gameTitle: String, error: Error) async {
+        await MainActor.run {
+            let alert = UIAlertController(
+                title: "Download Failed",
+                message: "Failed to download \(gameTitle).\n\nError: \(error.localizedDescription)",
+                preferredStyle: .alert
+            )
+
+            alert.addAction(UIAlertAction(title: "Retry", style: .default) { _ in
+                Task {
+                    // Retry the download
+                    try? await self.handleOnDemandDownload(for: self.game)
+                }
+            })
+
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                self.dismiss(animated: true)
+            })
+
+            present(alert, animated: true)
+        }
     }
 
 #if os(iOS) //&& !targetEnvironment(simulator)

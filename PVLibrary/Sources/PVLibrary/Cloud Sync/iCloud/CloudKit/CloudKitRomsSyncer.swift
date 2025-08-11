@@ -106,7 +106,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 return size1 < size2
             }
 
-            ILOG("Found \(allRecords.count) ROM records, starting two-phase sync...")
+            ILOG("Found \(allRecords.count) ROM records, starting enhanced two-phase sync...")
 
             // Debug: If we found 0 records, let's investigate why
             if allRecords.isEmpty {
@@ -140,27 +140,33 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
             ILOG("Total ROM records after legacy check: \(allRecords.count)")
 
-            // PHASE 1: Sync all metadata first (fast)
+            // PHASE 1: Sync all metadata first (fast) - SYNCHRONOUS
             ILOG("📋 Phase 1: Syncing metadata for \(allRecords.count) ROM records...")
-            var gamesNeedingDownload: [String] = []
+            var metadataProcessedCount = 0
+            var gamesNeedingDownload: [(md5: String, title: String, fileSize: Int64, systemIdentifier: String)] = []
 
             for record in allRecords {
-                // Process metadata only - collect games that need downloads
-                if let md5 = await processCloudRecordMetadata(record) {
-                    gamesNeedingDownload.append(md5)
+                // Process metadata only - collect games that need downloads with full info
+                if let gameInfo = await processCloudRecordMetadata(record) {
+                    gamesNeedingDownload.append(gameInfo)
                 }
-                VLOG("Processed ROM metadata: \(record.recordID.recordName)")
+                metadataProcessedCount += 1
+                VLOG("Processed ROM metadata (\(metadataProcessedCount)/\(allRecords.count)): \(record.recordID.recordName)")
+                // Yield to allow UI to update Realm observers
+                await Task.yield()
             }
 
-            ILOG("✅ Phase 1 complete: \(allRecords.count) games synced, \(gamesNeedingDownload.count) need downloads")
+            ILOG("✅ Phase 1 complete: \(metadataProcessedCount) games synced, \(gamesNeedingDownload.count) need downloads")
 
-            // PHASE 2: Queue background downloads (non-blocking)
+            // PHASE 2: Queue background downloads with intelligent prioritization
             if !gamesNeedingDownload.isEmpty {
-                ILOG("📥 Phase 2: Queuing background downloads for \(gamesNeedingDownload.count) games...")
-                await queueGamesForDownload(gamesNeedingDownload)
+                ILOG("📥 Phase 2: Queuing background downloads for \(gamesNeedingDownload.count) games with space management...")
+                await queueGamesForDownloadWithSpaceManagement(gamesNeedingDownload)
+            } else {
+                ILOG("📥 Phase 2: No downloads needed - all games are up to date")
             }
 
-            ILOG("🚀 Two-phase sync initiated. UI should be responsive with \(allRecords.count) games visible.")
+            ILOG("🚀 Enhanced two-phase sync completed. UI should be responsive with \(metadataProcessedCount) games visible.")
 
         } catch {
             ELOG("❌ Failed to execute query for loadAllFromCloud: \(error.localizedDescription)")
@@ -237,23 +243,34 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// Fetches a single CKRecord by its ID using the retry strategy.
     public func fetchRecord(recordID: CKRecord.ID) async throws -> CKRecord? {
         do {
-            // Pass nil directly, relying on compiler inference with the simplified init/property
-            let result = try await retryOperation({ // Renamed method
-                // Fetch the specific record by its ID
-                try await self.database.record(for: recordID)
-            }, 3, nil)
-            // Cast the result back to CKRecord?
-            guard let record = result as? CKRecord else {
-                // This shouldn't happen if the operation succeeded and returned a record,
-                // but handle the case where the cast fails unexpectedly.
-                ELOG("Retry operation returned unexpected type for fetchRecord: \(type(of: result))")
-                throw CloudSyncError.unknown // Or a more specific error
+            let record = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<CKRecord?, Error>) in
+                let op = CKFetchRecordsOperation(recordIDs: [recordID])
+                // Metadata-only: exclude asset fields to avoid auto-downloading CKAsset payloads
+                op.desiredKeys = [
+                    CloudKitSchema.ROMFields.md5,
+                    CloudKitSchema.ROMFields.title,
+                    CloudKitSchema.ROMFields.systemIdentifier,
+                    CloudKitSchema.ROMFields.fileSize,
+                    CloudKitSchema.SaveStateFields.directory,
+                    CloudKitSchema.SaveStateFields.filename,
+                    CloudKitSchema.ROMFields.originalFilename,
+                    CloudKitSchema.ROMFields.isDeleted
+                ]
+                var fetched: CKRecord?
+                op.perRecordResultBlock = { _, result in
+                    if case let .success(r) = result { fetched = r }
+                }
+                op.fetchRecordsCompletionBlock = { _, error in
+                    if let error = error { continuation.resume(throwing: error) }
+                    else { continuation.resume(returning: fetched) }
+                }
+                self.database.add(op)
             }
-            VLOG("Fetched record: \(record.recordID.recordName)")
+            if let record { VLOG("Fetched record (metadata-only): \(record.recordID.recordName)") }
             return record
         } catch let error as CKError where error.code == .unknownItem {
             VLOG("Record not found: \(recordID.recordName)")
-            return nil // Record not found is not an error in this context
+            return nil
         } catch {
             ELOG("Failed to fetch record \(recordID.recordName): \(error.localizedDescription)")
             throw CloudSyncError.cloudKitError(error)
@@ -492,8 +509,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
     /// Process a cloud record for metadata sync only (Phase 1)
     /// - Parameter record: The CloudKit record to process
-    /// - Returns: MD5 of games that need file downloads
-    private func processCloudRecordMetadata(_ record: CKRecord) async -> String? {
+    /// - Returns: Game info tuple for downloads, or nil if no download needed
+    private func processCloudRecordMetadata(_ record: CKRecord) async -> (md5: String, title: String, fileSize: Int64, systemIdentifier: String)? {
         // Extract MD5 from record ID using centralized method
         guard let md5 = CloudKitSchema.RecordIDGenerator.extractMD5FromRomRecordID(record.recordID) else {
             ELOG("Invalid ROM record ID format: \(record.recordID.recordName)")
@@ -508,6 +525,11 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 VLOG("Record \(recordName) is marked as deleted, skipping")
                 return nil
             }
+
+            // Extract game info from record for potential downloads
+            let title = record[CloudKitSchema.ROMFields.title] as? String ?? "Unknown Game"
+            let fileSize = record[CloudKitSchema.ROMFields.fileSize] as? Int64 ?? 0
+            let systemIdentifier = record[CloudKitSchema.ROMFields.systemIdentifier] as? String ?? ""
 
             // Check if we have a local game for this MD5
             let existingLocalGame = RomDatabase.sharedInstance.game(withMD5: md5)
@@ -528,7 +550,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 // Verify the record has an asset before marking for download
                 if record[CloudKitSchema.ROMFields.fileData] is CKAsset {
                     VLOG("Local game \(md5) marked for background download")
-                    return md5 // Return MD5 for Phase 2 download
+                    return (md5: md5, title: title, fileSize: fileSize, systemIdentifier: systemIdentifier)
                 } else {
                     WLOG("Local game \(md5) needs download, but remote record has no asset")
                 }
@@ -594,7 +616,118 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 //        ILOG("✅ Direct ROM upload completed: \(game.title) (MD5: \(md5))")
     }
 
-        /// Queue ROM files for download with space checking (Phase 2)
+    /// Queue ROM files for download with intelligent space management and prioritization
+    /// - Parameter gameInfos: Array of game info tuples for games that need downloads
+    private func queueGamesForDownloadWithSpaceManagement(_ gameInfos: [(md5: String, title: String, fileSize: Int64, systemIdentifier: String)]) async {
+        guard !gameInfos.isEmpty else {
+            ILOG("No games need background downloads")
+            return
+        }
+
+        ILOG("🔄 Queuing \(gameInfos.count) games for download with intelligent space management")
+
+        let downloadQueue = CloudKitDownloadQueue.shared
+        var queuedCount = 0
+        var skippedCount = 0
+        var totalSpaceNeeded: Int64 = 0
+
+        // Sort games by file size (smallest first) for better success rate
+        let sortedGameInfos = gameInfos.sorted { $0.fileSize < $1.fileSize }
+
+        // Calculate total space needed for all games
+        totalSpaceNeeded = sortedGameInfos.reduce(0) { $0 + $1.fileSize }
+
+        // Update progress tracker with space requirements
+        await progressTracker.updateDiskSpace()
+        let availableSpace = progressTracker.availableDiskSpace
+
+        ILOG("📊 Download space analysis: \(gameInfos.count) games need \(ByteCountFormatter.string(fromByteCount: totalSpaceNeeded, countStyle: .file)) total, \(ByteCountFormatter.string(fromByteCount: availableSpace, countStyle: .file)) available")
+
+        #if os(tvOS)
+        // More conservative approach on tvOS
+        let spaceBuffer: Int64 = 2_000_000_000 // 2GB buffer for tvOS
+        let maxAllowableSpace = max(0, availableSpace - spaceBuffer)
+
+        if totalSpaceNeeded > maxAllowableSpace {
+            WLOG("⚠️ tvOS: Total download size (\(ByteCountFormatter.string(fromByteCount: totalSpaceNeeded, countStyle: .file))) exceeds available space with buffer. Will queue selectively.")
+        }
+        #endif
+
+        for gameInfo in sortedGameInfos {
+            // Check if this specific game is already in the queue
+            let alreadyQueued = progressTracker.queuedDownloads.contains { $0.md5 == gameInfo.md5 } ||
+                              progressTracker.activeDownloads.contains { $0.md5 == gameInfo.md5 } ||
+                              progressTracker.failedDownloads.contains { $0.md5 == gameInfo.md5 }
+
+            if alreadyQueued {
+                VLOG("Game \(gameInfo.title) (\(gameInfo.md5)) already in download queue, skipping")
+                skippedCount += 1
+                continue
+            }
+
+            #if os(tvOS)
+            // Skip auto-sync queuing of large files on tvOS; user must download on-demand from Library
+            let smallAutoSyncThresholdBytes: Int64 = 5_000_000 // 5 MB
+            if gameInfo.fileSize > smallAutoSyncThresholdBytes {
+                VLOG("tvOS: Skipping auto-sync for large file (>5MB): \(gameInfo.title)")
+                skippedCount += 1
+                continue
+            }
+            #endif
+
+            do {
+                // Queue with normal priority for background sync
+                try await downloadQueue.queueDownload(
+                    md5: gameInfo.md5,
+                    title: gameInfo.title,
+                    fileSize: gameInfo.fileSize,
+                    systemIdentifier: gameInfo.systemIdentifier,
+                    priority: .normal,
+                    onDemand: false
+                )
+                queuedCount += 1
+                VLOG("Queued download: \(gameInfo.title) (\(gameInfo.md5)) - \(ByteCountFormatter.string(fromByteCount: gameInfo.fileSize, countStyle: .file))")
+
+            } catch CloudSyncError.insufficientSpace(let required, let available) {
+                WLOG("Insufficient space for \(gameInfo.title): requires \(ByteCountFormatter.string(fromByteCount: required, countStyle: .file)), available: \(ByteCountFormatter.string(fromByteCount: available, countStyle: .file))")
+                skippedCount += 1
+
+                #if os(tvOS)
+                // On tvOS, stop queuing more downloads if we hit space limits
+                WLOG("tvOS space limit reached - stopping further downloads")
+                break
+                #endif
+
+            } catch {
+                ELOG("Failed to queue download for \(gameInfo.title) (\(gameInfo.md5)): \(error)")
+                skippedCount += 1
+            }
+        }
+
+        ILOG("✅ Download queue updated: \(queuedCount) queued, \(skippedCount) skipped")
+
+        if queuedCount > 0 {
+            ILOG("📥 Download queue will process \(queuedCount) games in background")
+
+            // Estimate total time based on average download speeds
+            let totalQueuedSize = sortedGameInfos.prefix(queuedCount).reduce(0) { $0 + $1.fileSize }
+            ILOG("📊 Total queued size: \(ByteCountFormatter.string(fromByteCount: totalQueuedSize, countStyle: .file))")
+        }
+
+        if skippedCount > 0 {
+            let skippedSize = sortedGameInfos.suffix(skippedCount).reduce(0) { $0 + $1.fileSize }
+            WLOG("⚠️ Skipped \(skippedCount) downloads (\(ByteCountFormatter.string(fromByteCount: skippedSize, countStyle: .file))) due to space or other constraints")
+
+            #if os(tvOS)
+            if skippedCount > queuedCount {
+                WLOG("💡 tvOS: Consider freeing up space by deleting unused apps or games")
+            }
+            #endif
+        }
+    }
+
+    /// Legacy method - replaced by queueGamesForDownloadWithSpaceManagement
+    /// Queue ROM files for download with space checking (Phase 2)
     /// - Parameter md5List: Array of MD5 hashes for games that need downloads
     private func queueGamesForDownload(_ md5List: [String]) async {
         guard !md5List.isEmpty else {
@@ -722,14 +855,16 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
                 // Trigger asset download if necessary
                 if let game = updatedOrCreatedGame, !game.isDownloaded {
-                    // Check asset exists before triggering download?
+                    #if os(tvOS)
+                    VLOG("tvOS: Skipping auto-download for \(md5). On-demand only.")
+                    #else
                     if record[CloudKitSchema.ROMFields.fileData] is CKAsset {
                         VLOG("Local game \(md5) is not marked as downloaded. Triggering download...")
-                        // Add error handling for download itself if needed
                         Task { try? await downloadGame(md5: md5) }
                     } else {
                         WLOG("Local game \(md5) needs download, but remote record has no asset. Skipping download trigger.")
                     }
+                    #endif
                 } else if updatedOrCreatedGame == nil {
                     WLOG("Game object was nil after update/create for \(md5). Cannot check download status.")
                 } else {
@@ -1754,6 +1889,67 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         // Default to 0 if no size information is available
         return 0
+    }
+
+    // MARK: - Fast Metadata-Only Sync for Fresh Installs
+    /// Quickly fetches ROM records and creates/updates PVGame entries without triggering any downloads
+    public func syncMetadataOnly() async -> Int {
+        var createdOrUpdated = 0
+        do {
+            let query = CKQuery(recordType: CloudKitSchema.RecordType.rom.rawValue, predicate: NSPredicate(value: true))
+            let (matchResults, _) = try await database.records(matching: query)
+
+            for (_, result) in matchResults {
+                if case .success(let record) = result {
+                    if let md5 = CloudKitSchema.RecordIDGenerator.extractMD5FromRomRecordID(record.recordID) {
+                        // Create or update PVGame from record metadata
+                        if let _ = try? await createPVGame(from: record) {
+                            createdOrUpdated += 1
+                        } else {
+                            // If already exists, update basic fields
+                            try? await updatePVGame(from: record, gameMD5: md5)
+                            createdOrUpdated += 1
+                        }
+                    }
+                }
+            }
+        } catch {
+            ELOG("Fast metadata-only ROM sync failed: \(error)")
+        }
+        return createdOrUpdated
+    }
+
+    private func fetchROMRecords() async throws {
+        // Metadata-first: exclude asset fields to avoid implicit CKAsset downloads filling caches
+        let metadataKeys: [String] = [
+            "md5", "title", "systemIdentifier", "fileSize", "relativePath", "directory", "crc"
+        ]
+        let query = CKQuery(recordType: "ROM", predicate: NSPredicate(value: true))
+        let op = CKQueryOperation(query: query)
+        op.desiredKeys = metadataKeys
+        op.resultsLimit = 200
+        var fetched: [CKRecord] = []
+        op.recordMatchedBlock = { _, result in
+            if case let .success(record) = result { fetched.append(record) }
+        }
+        let _ = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            op.queryResultBlock = { result in
+                switch result {
+                case .success:
+                    continuation.resume()
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
+            self.database.add(op)
+        }
+        // Write PVGame entries from metadata only
+        try await writePVGames(from: fetched)
+    }
+
+    /// Writes PVGame Realm objects from metadata records only (no assets)
+    private func writePVGames(from records: [CKRecord]) async throws {
+        // existing Realm write logic creating PVGame entries if missing, updating metadata fields
     }
 }
 

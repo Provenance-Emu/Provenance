@@ -346,8 +346,12 @@ public class CloudKitSubscriptionManager {
                 if let nonDatabaseSyncer = CloudSyncManager.shared.nonDatabaseSyncer {
                     // Call the method we added earlier in CloudKitNonDatabaseSyncer.swift
                     // This method currently handles deletion implicitly by catching CKError.unknownItem
-                    await nonDatabaseSyncer.processRemoteRecordUpdate(recordID: recordID)
-                    DLOG("Processed File/BIOS notification via nonDatabaseSyncer for \(recordID.recordName)")
+                    do {
+                        try await nonDatabaseSyncer.processRemoteRecordUpdate(recordID: recordID)
+                        DLOG("Processed File/BIOS notification via nonDatabaseSyncer for \(recordID.recordName)")
+                    } catch {
+                        ELOG("NonDatabaseSyncer failed processing update for \(recordID.recordName): \(error)")
+                    }
                 } else {
                     WLOG("NonDatabase Syncer not available to handle notification for \(recordID.recordName)")
                 }
@@ -404,12 +408,13 @@ public class CloudKitSubscriptionManager {
                         // Trigger sync for this file
                         if directory == "ROMs" {
                             // Handle ROM file
+                            #if !os(tvOS)
                             if let gameID = record["gameID"] as? String {
-                                // Find game and download
                                 if let game = PVGame.with(primaryKey: gameID) {
                                     _ = try await CloudSyncManager.shared.downloadROM(for: game)
                                 }
                             }
+                            #endif
                         } else if directory == "Saves" {
                             // Handle save state file
                             if let saveStateID = record["saveStateID"] as? String {
@@ -456,12 +461,13 @@ public class CloudKitSubscriptionManager {
                         // Trigger sync for this file (same as created)
                         if directory == "ROMs" {
                             // Handle ROM file
+                            #if !os(tvOS)
                             if let gameID = record["gameID"] as? String {
-                                // Find game and download
                                 if let game = PVGame.with(primaryKey: gameID) {
                                     _ = try await CloudSyncManager.shared.downloadROM(for: game)
                                 }
                             }
+                            #endif
                         } else if directory == "Saves" {
                             // Handle save state file
                             if let saveStateID = record["saveStateID"] as? String {
