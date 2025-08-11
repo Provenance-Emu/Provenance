@@ -11,7 +11,7 @@ import Combine
 import PVLogging
 
 /// A singleton class to track CloudKit sync progress across the app
-public class SyncProgressTracker: ObservableObject {
+public final class SyncProgressTracker: ObservableObject, Sendable {
     /// Shared instance for app-wide access
     public static let shared = SyncProgressTracker()
 
