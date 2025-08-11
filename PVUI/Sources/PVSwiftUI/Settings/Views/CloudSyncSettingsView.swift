@@ -105,7 +105,7 @@ public struct CloudSyncSettingsView: View {
                 .font(.title)
                 .foregroundColor(.retroPink)
                 .padding(.top)
-            
+
             Text("Cloud sync is currently under development. UI is not final. Not all features work yet. Use at your own risk.")
                 .font(.subheadline)
                 .foregroundColor(.retroBlue)
@@ -1157,7 +1157,7 @@ public struct CloudSyncSettingsView: View {
                                 cloudKitMaxCellularFileSizeBytes = newValue * 1024 * 1024
                             }
                             .disabled(cloudKitMaxCellularFileSizeBytes <= 1024 * 1024)
-                            
+
                             Button("+") {
                                 let currentMB = Int(cloudKitMaxCellularFileSizeBytes / (1024 * 1024))
                                 let newValue = min(500, currentMB + 5)
@@ -1368,7 +1368,7 @@ public struct CloudSyncSettingsView: View {
                                 Defaults[.cloudKitMaxConcurrentUploads] = newValue
                             }
                             .disabled(Defaults[.cloudKitMaxConcurrentUploads] <= 1)
-                            
+
                             Button("+") {
                                 let newValue = min(10, Defaults[.cloudKitMaxConcurrentUploads] + 1)
                                 Defaults[.cloudKitMaxConcurrentUploads] = newValue
@@ -1485,7 +1485,7 @@ public struct CloudSyncSettingsView: View {
                                     Defaults[.cloudKitMaxRetryAttempts] = newValue
                                 }
                                 .disabled(Defaults[.cloudKitMaxRetryAttempts] <= 1)
-                                
+
                                 Button("+") {
                                     let newValue = min(10, Defaults[.cloudKitMaxRetryAttempts] + 1)
                                     Defaults[.cloudKitMaxRetryAttempts] = newValue

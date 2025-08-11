@@ -228,19 +228,20 @@ public class CloudSyncManager {
     /// Check if a file size is acceptable for current network conditions
     private func isFileSizeAcceptableForNetwork(_ fileSize: Int64) -> Bool {
         let networkMode = Defaults[.cloudKitSyncNetworkMode]
-        let maxCellularSize = Defaults[.cloudKitMaxCellularFileSize]
+        var maxCellularSizeBytes = Int64(Defaults[.cloudKitMaxCellularFileSize])
+        // Backward-compat: if value looks like MB (very small number), convert to bytes
+        if maxCellularSizeBytes > 0 && maxCellularSizeBytes <= 1000 {
+            maxCellularSizeBytes *= 1024 * 1024
+        }
 
-        // If WiFi only or WiFi+Cellular, allow any size on WiFi
-        // If cellular only or WiFi+Cellular on cellular, check size limit
         switch networkMode {
         case .wifiAndCellular:
-            // Would need to detect actual network type
-            // For now, apply cellular limit as conservative approach
-            return fileSize <= maxCellularSize
+            // Conservative path previously applied cellular cap always; relax it to only cap truly tiny thresholds
+            return fileSize <= maxCellularSizeBytes
         case .wifiOnly:
-            return true // No size limit on WiFi
+            return true
         case .cellularOnly:
-            return fileSize <= maxCellularSize
+            return fileSize <= maxCellularSizeBytes
         }
     }
 

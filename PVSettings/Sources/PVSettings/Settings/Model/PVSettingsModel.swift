@@ -414,8 +414,8 @@ public extension Defaults.Keys {
     /// Pause sync when device is charging only
     static let cloudKitSyncOnlyWhenCharging = Key<Bool>("cloudKitSyncOnlyWhenCharging", default: false)
 
-    /// Maximum file size to sync over cellular (in MB)
-    static let cloudKitMaxCellularFileSize = Key<Int>("cloudKitMaxCellularFileSize", default: 50)
+    /// Maximum file size to sync over cellular (in bytes)
+    static let cloudKitMaxCellularFileSize = Key<Int>("cloudKitMaxCellularFileSize", default: 50 * 1024 * 1024)
 
     /// Enable background sync
     static let cloudKitBackgroundSync = Key<Bool>("cloudKitBackgroundSync", default: true)
