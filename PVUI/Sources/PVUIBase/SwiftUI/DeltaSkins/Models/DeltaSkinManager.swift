@@ -122,12 +122,12 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     ///   - orientation: The current orientation
     /// - Returns: The effective skin identifier to use
     public func effectiveSkinIdentifier(for systemId: SystemIdentifier, gameId: String? = nil, orientation: SkinOrientation) -> String? {
-        
+
         // Check for system session skin first
         if let sessionSkin = sessionSkinIdentifier(for: systemId, orientation: orientation) {
             return sessionSkin
         }
-        
+
         // Then, ff we have a game ID, check game-specific session skin first
         if let gameId = gameId {
             // Use the composite key for game-specific session skins
@@ -296,12 +296,11 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             locations.append(contentsOf: frameworkSkins)
         }
 
-        // Add Documents directory skins
-        if let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            let skinsURL = documentsURL.appendingPathComponent("DeltaSkins")
-            DLOG("Found Documents directory: \(skinsURL.path)")
-            locations.append(skinsURL)
-        }
+        // Add Documents directory skins (use URL.documentsPath for tvOS caches mapping)
+        let documentsURL = URL.documentsPath
+        let skinsURL = documentsURL.appendingPathComponent("DeltaSkins", isDirectory: true)
+        DLOG("Found Documents directory: \(skinsURL.path)")
+        locations.append(skinsURL)
 
         DLOG("Total locations to scan: \(locations.count)")
         return locations
@@ -310,8 +309,8 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     /// Directory for storing imported skins
     public var skinsDirectory: URL {
         get throws {
-            let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-            let skinsURL = documentsURL.appendingPathComponent("DeltaSkins")
+            let documentsURL = URL.documentsPath
+            let skinsURL = documentsURL.appendingPathComponent("DeltaSkins", isDirectory: true)
 
             // Create directory if it doesn't exist
             if !FileManager.default.fileExists(atPath: skinsURL.path) {
