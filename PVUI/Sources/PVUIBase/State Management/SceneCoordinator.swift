@@ -77,9 +77,10 @@ public class SceneCoordinator: ObservableObject {
 
         ILOG("SceneCoordinator: Opening main scene")
 //        UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        ILOG("SceneCoordinator: Opening main scene")
+        ILOG("SceneCoordinator: Setting currentScene = .main and showEmulator = false")
         currentScene = .main
         showEmulator = false
+        ILOG("SceneCoordinator: Main scene state updated - currentScene: \(currentScene), showEmulator: \(showEmulator)")
     }
 
     /// Opens the emulator scene with the current game from AppState
@@ -96,7 +97,7 @@ public class SceneCoordinator: ObservableObject {
         showEmulator = true
     }
 
-    /// Launch a specific game
+    /// Launch a specific game with error handling
     public func launchGame(_ game: PVGame) {
         ILOG("SceneCoordinator: Launching game: \(game.title) (ID: \(game.id))")
 
@@ -107,25 +108,55 @@ public class SceneCoordinator: ObservableObject {
         if let currentGame = AppState.shared.emulationUIState.currentGame {
             ILOG("SceneCoordinator: Successfully set current game in EmulationUIState: \(currentGame.title) (ID: \(currentGame.id))")
 
-            // Open the emulator scene
+            // Open the emulator scene - errors will be handled by PVEmulatorViewController
             openEmulatorScene()
         } else {
             ELOG("SceneCoordinator: Failed to set current game in EmulationUIState")
+            // Show error and stay in main scene
+            showGameLaunchError(title: "Failed to Launch Game", message: "Could not prepare game for launch.")
+        }
+    }
+
+    /// Show error alert for game launch failures and return to main scene
+    private func showGameLaunchError(title: String, message: String) {
+        // Ensure we're on the main scene
+        openMainScene()
+
+        // Show error alert
+        DispatchQueue.main.async {
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let rootViewController = windowScene.windows.first?.rootViewController {
+
+                let alert = UIAlertController(
+                    title: title,
+                    message: message,
+                    preferredStyle: .alert
+                )
+
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+
+                rootViewController.present(alert, animated: true)
+            }
         }
     }
 
     /// Handles closing the emulator and returning to the main scene
     public func closeEmulator() {
+        ILOG("SceneCoordinator: closeEmulator() called")
+
         // Clear the emulation state
         AppState.shared.emulationUIState.core = nil
         AppState.shared.emulationUIState.emulator = nil
         AppState.shared.emulationUIState.currentGame = nil
+        ILOG("SceneCoordinator: Cleared emulation state")
 
         // Reset the app open action to prevent reopening the same game
         AppState.shared.appOpenAction = .none
         ILOG("SceneCoordinator: Reset appOpenAction to .none when closing emulator")
 
         // Return to the main scene
+        ILOG("SceneCoordinator: Calling openMainScene()")
         openMainScene()
+        ILOG("SceneCoordinator: closeEmulator() completed")
     }
 }
