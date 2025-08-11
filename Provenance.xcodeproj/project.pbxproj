@@ -281,8 +281,8 @@
 		B33BD1C62C6A622A001E933A /* PVTGBDual-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1C42C6A622A001E933A /* PVTGBDual-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B33BD1C82C6A6261001E933A /* PVStella-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1C72C6A6261001E933A /* PVStella-Dynamic */; };
 		B33BD1C92C6A6261001E933A /* PVStella-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1C72C6A6261001E933A /* PVStella-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		B341AD912E2BF4BA00B18E76 /* PVMelonDS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B341AD902E2BF4BA00B18E76 /* PVMelonDS.framework */; };
-		B341AD922E2BF4BA00B18E76 /* PVMelonDS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B341AD902E2BF4BA00B18E76 /* PVMelonDS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B341AD912E2BF4BA00B18E76 /* PVMelonDS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B341AD902E2BF4BA00B18E76 /* PVMelonDS.framework */; platformFilters = (ios, maccatalyst, ); };
+		B341AD922E2BF4BA00B18E76 /* PVMelonDS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B341AD902E2BF4BA00B18E76 /* PVMelonDS.framework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B341FD932BE61EC100718929 /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8B27DCB2B200E83180 /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B341FD9C2BE61EC100718929 /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A826EA159400E95488 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B341FD9F2BE61EC100718929 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A526EA159400E95488 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
