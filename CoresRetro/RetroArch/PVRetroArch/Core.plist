@@ -1026,7 +1026,7 @@
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVAppStoreDisabled</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
