@@ -272,9 +272,21 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 #endif
         updatePlayedDuration()
         destroyAutosaveTimer()
+        // Remove all menu-related gesture recognizers
+        #if os(tvOS)
+        // Remove all gesture recognizers that handle menu button presses
+        let menuGestures = view.gestureRecognizers?.filter { gesture in
+            if let tapGesture = gesture as? UITapGestureRecognizer {
+                return tapGesture.allowedPressTypes.contains(NSNumber(value: UIPress.PressType.menu.rawValue))
+            }
+            return false
+        }
+        menuGestures?.forEach { view.removeGestureRecognizer($0) }
+        #else
         if let menuGestureRecognizer = menuGestureRecognizer {
             view.removeGestureRecognizer(menuGestureRecognizer)
         }
+        #endif
 
         Task { @MainActor in
             let emulationUIState = AppState.shared.emulationUIState
@@ -569,12 +581,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
 #if os(tvOS)
         // On tvOS the siri-remotes menu-button will default to go back in the hierachy (thus dismissing the emulator), we don't want that behaviour
-        // (we'd rather pause the game), so we just install a tap-recognizer here (that doesn't do anything), and add our own logic in `setupPauseHandler`
-        if menuGestureRecognizer == nil {
-            menuGestureRecognizer = UITapGestureRecognizer()
-            menuGestureRecognizer?.allowedPressTypes = [.menu]
-            view.addGestureRecognizer(menuGestureRecognizer!)
-        }
+        // Set up gesture recognizers for menu button interactions
+        setupTVOSMenuGestures()
 #endif
         PVControllerManager.shared.controllers.forEach {
             $0.setupPauseHandler(onPause: {
@@ -592,6 +600,89 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             }
         }
     }
+
+#if os(tvOS)
+    /// Set up tvOS-specific menu button gesture recognizers
+    private func setupTVOSMenuGestures() {
+        // Single tap gesture for "start" button
+        let singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleMenuSingleTap(_:)))
+        singleTapGesture.allowedPressTypes = [NSNumber(value: UIPress.PressType.menu.rawValue)]
+        singleTapGesture.numberOfTapsRequired = 1
+
+        // Double tap gesture for pause menu
+        let doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleMenuDoubleTap(_:)))
+        doubleTapGesture.allowedPressTypes = [NSNumber(value: UIPress.PressType.menu.rawValue)]
+        doubleTapGesture.numberOfTapsRequired = 2
+
+        // Make single tap wait for double tap to fail
+        singleTapGesture.require(toFail: doubleTapGesture)
+
+        // Add gestures to the view
+        view.addGestureRecognizer(singleTapGesture)
+        view.addGestureRecognizer(doubleTapGesture)
+
+        // Store reference to single tap gesture (reusing existing property)
+        menuGestureRecognizer = singleTapGesture
+
+        ILOG("tvOS menu gestures configured: single tap = start button, double tap = pause menu")
+    }
+
+    /// Handle single tap of menu button - send "start" button press
+    @objc private func handleMenuSingleTap(_ gesture: UITapGestureRecognizer) {
+        ILOG("tvOS menu single tap - sending start button press")
+
+        // Send start button press to the controller
+        if let controllerVC = controllerViewController {
+            // Try to find and trigger the start button
+            if let startButton = findStartButton(in: controllerVC.view) {
+                DLOG("Found start button, triggering press")
+                startButton.sendActions(for: .touchUpInside)
+            } else {
+                // Fallback: Log that no start button was found
+                DLOG("No start button found in controller view hierarchy")
+                // Could potentially add other fallback methods here if needed
+            }
+        }
+    }
+
+    /// Handle double tap of menu button - show pause menu
+    @objc private func handleMenuDoubleTap(_ gesture: UITapGestureRecognizer) {
+        ILOG("tvOS menu double tap - showing pause menu")
+        showMenu(gesture)
+    }
+
+    /// Recursively find the start button in the controller view hierarchy
+    private func findStartButton(in view: UIView) -> UIButton? {
+        // Check if this view is a start button
+        if let button = view as? UIButton {
+            // Check button title, accessibility identifier, or tag to identify start button
+            if let title = button.titleLabel?.text?.lowercased(),
+               title.contains("start") || title.contains("pause") {
+                return button
+            }
+
+            // Check accessibility identifier
+            if let identifier = button.accessibilityIdentifier?.lowercased(),
+               identifier.contains("start") || identifier.contains("pause") {
+                return button
+            }
+
+            // Check tag (you might need to adjust this based on your button tagging system)
+            if button.tag == 1000 { // Assuming start button has a specific tag
+                return button
+            }
+        }
+
+        // Recursively search subviews
+        for subview in view.subviews {
+            if let startButton = findStartButton(in: subview) {
+                return startButton
+            }
+        }
+
+        return nil
+    }
+#endif
 
     public override func viewDidAppear(_: Bool) {
         super.viewDidAppear(true)
@@ -916,9 +1007,21 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 #endif
         updatePlayedDuration()
         destroyAutosaveTimer()
+        // Remove all menu-related gesture recognizers
+        #if os(tvOS)
+        // Remove all gesture recognizers that handle menu button presses
+        let menuGestures = view.gestureRecognizers?.filter { gesture in
+            if let tapGesture = gesture as? UITapGestureRecognizer {
+                return tapGesture.allowedPressTypes.contains(NSNumber(value: UIPress.PressType.menu.rawValue))
+            }
+            return false
+        }
+        menuGestures?.forEach { view.removeGestureRecognizer($0) }
+        #else
         if let menuGestureRecognizer = menuGestureRecognizer {
             view.removeGestureRecognizer(menuGestureRecognizer)
         }
+        #endif
 
         let emulationUIState = AppState.shared.emulationUIState
 
