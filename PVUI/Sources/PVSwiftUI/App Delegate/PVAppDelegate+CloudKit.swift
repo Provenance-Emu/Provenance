@@ -21,15 +21,15 @@ public extension PVAppDelegate {
         // Register for remote notifications if iCloud sync is enabled
         if Defaults[.iCloudSync] {
             DLOG("Initializing CloudKit for all platforms")
-            
+
             // Initialize CloudKit schema first
             Task<Void, Never>.detached {
                 let containerIdentifier = iCloudConstants.containerIdentifier
-                
+
                 // Initialize CloudKit container and database
                 let container = CKContainer(identifier: containerIdentifier)
                 let privateDatabase = container.privateCloudDatabase
-                
+
                 // Initialize CloudKit schema
                 DLOG("Initializing CloudKit schema...")
                 let success = await CloudKitSchema.initializeSchema(in: privateDatabase)
@@ -38,54 +38,62 @@ public extension PVAppDelegate {
                 } else {
                     ELOG("Failed to initialize CloudKit schema")
                 }
-                
+
                 // Initialize CloudSyncManager to create syncers
                 _ = CloudSyncManager.shared
                 DLOG("CloudSyncManager initialized")
-                
+
+                // Trigger a fast metadata-only ROM sync ASAP to populate library on fresh installs
+                if let romsSyncer = CloudSyncManager.shared.romsSyncer as? CloudKitRomsSyncer {
+                    Task.detached {
+                        let count = await romsSyncer.syncMetadataOnly()
+                        ILOG("Fast metadata-only ROM sync created/updated \(count) records")
+                    }
+                }
+
                 // Register for remote notifications and setup background tasks
                 self.setupCloudKitBackgroundSync()
-                
+
                 // Start initial sync
                 try? await CloudSyncManager.shared.startSync()
             }
         }
     }
-    
+
     /// Setup CloudKit background sync and notifications
     private func setupCloudKitBackgroundSync() {
         // Register for remote notifications
         CloudKitNotificationManager.shared.registerForRemoteNotifications()
-        
+
         // Setup CloudKit subscriptions for push notifications
         Task {
             await CloudKitNotificationManager.shared.setupSubscriptions()
         }
-        
+
         // Register background tasks
         registerBackgroundTasks()
     }
-    
+
     /// Schedule background tasks for CloudKit sync
     /// Registration is done in the main AppDelegate at app launch
     private func registerBackgroundTasks() {
         // Only schedule the task - registration is done in the AppDelegate at launch
         scheduleCloudKitSyncTask()
-        
+
         DLOG("Scheduled background tasks for CloudKit sync")
     }
-    
+
     /// Schedule a background task for CloudKit sync
     private func scheduleCloudKitSyncTask() {
         let request = BGProcessingTaskRequest(identifier: "com.provenance-emu.provenance.cloudkit-sync")
-        
+
         // Only run when on Wi-Fi and charging
         request.requiresNetworkConnectivity = true
         request.requiresExternalPower = true
-        
+
         // Set earliest begin date to 15 minutes from now
         request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)
-        
+
         do {
             try BGTaskScheduler.shared.submit(request)
             DLOG("Scheduled background CloudKit sync task")
@@ -93,29 +101,29 @@ public extension PVAppDelegate {
             ELOG("Could not schedule background CloudKit sync: \(error.localizedDescription)")
         }
     }
-    
+
     /// Handle a background CloudKit sync task
     /// - Parameter task: The background processing task
     /// Handle a background processing task for CloudKit sync
     /// This is called by the BGTaskScheduler when a background task is launched
     public func handleCloudKitSyncTask(_ task: BGProcessingTask) {
         DLOG("Starting background CloudKit sync task")
-        
+
         // Schedule the next background task
         scheduleCloudKitSyncTask()
-        
+
         // Create a task assertion to track the background work
         let taskAssertionID = UIApplication.shared.beginBackgroundTask {
             // If the background task expires, complete the BGTask
             task.setTaskCompleted(success: false)
         }
-        
+
         // Perform the sync in the background
         Task {
             do {
                 // Sync metadata only to avoid large downloads in the background
                 var totalSynced = 0
-                
+
                 // Iterate over all CloudKitSyncers and sync metadata
                 for syncer in CloudKitSyncerStore.shared.cloudKitSyncers {
                     let count = await syncer.syncMetadataOnly()
@@ -124,7 +132,7 @@ public extension PVAppDelegate {
                         DLOG("Background sync: Synced \(count) records for type: \(syncer.recordType)")
                     }
                 }
-                
+
                 if totalSynced > 0 {
                     DLOG("Background sync: Total records synced: \(totalSynced)")
                     task.setTaskCompleted(success: true)
@@ -132,20 +140,20 @@ public extension PVAppDelegate {
                     ILOG("Background sync: No data to sync or syncers not found")
                     task.setTaskCompleted(success: false)
                 }
-                
+
                 // End the background task assertion
                 if taskAssertionID != .invalid {
                     ILOG("Ending background task assertion: \(taskAssertionID)")
                     UIApplication.shared.endBackgroundTask(taskAssertionID)
                 }
-                
+
                 DLOG("Background CloudKit sync completed successfully")
             } catch {
                 ELOG("Error during background CloudKit sync: \(error.localizedDescription)")
-                
+
                 // Mark the task as completed with failure
                 task.setTaskCompleted(success: false)
-                
+
                 // End the background task assertion
                 if taskAssertionID != .invalid {
                     ILOG("Ending background task assertion: \(taskAssertionID)")
@@ -154,14 +162,14 @@ public extension PVAppDelegate {
             }
         }
     }
-    
+
     /// Handle a remote notification
     /// - Parameters:
     ///   - application: The application
     ///   - userInfo: User info from the notification
     ///   - fetchCompletionHandler: Completion handler to call when done
     public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        
+
         if handleCloudKitNotification(userInfo, fetchCompletionHandler: completionHandler) {
             return
         }
@@ -171,14 +179,14 @@ public extension PVAppDelegate {
             completionHandler(.noData)
             return
         }
-        
+
         // Process the notification using our notification manager
         Task {
             let result = await CloudKitNotificationManager.shared.processNotification(userInfo)
             completionHandler(result)
         }
     }
-    
+
     /// Handle successful registration for remote notifications
     /// - Parameters:
     ///   - application: The application
@@ -187,7 +195,7 @@ public extension PVAppDelegate {
         // Pass the device token to our notification manager
         CloudKitNotificationManager.shared.didRegisterForRemoteNotifications(withDeviceToken: deviceToken)
     }
-    
+
     /// Handle failure to register for remote notifications
     /// - Parameters:
     ///   - application: The application
@@ -196,7 +204,7 @@ public extension PVAppDelegate {
         // Pass the error to our notification manager
         CloudKitNotificationManager.shared.didFailToRegisterForRemoteNotifications(withError: error)
     }
-    
+
     /// Handle background fetch request
     /// - Parameters:
     ///   - application: The application
@@ -208,13 +216,13 @@ public extension PVAppDelegate {
             completionHandler(.noData)
             return
         }
-        
+
         // Perform background sync
         Task {
             do {
                 // Sync metadata only to avoid large downloads in the background
                 var totalSynced = 0
-                
+
                 // Iterate over all CloudKitSyncers and sync metadata
                 for syncer in CloudKitSyncerStore.shared.cloudKitSyncers {
                     let count = await syncer.syncMetadataOnly()
@@ -223,7 +231,7 @@ public extension PVAppDelegate {
                         DLOG("Background fetch: Synced \(count) records for type: \(syncer.recordType)")
                     }
                 }
-                
+
                 if totalSynced > 0 {
                     DLOG("Background fetch: Total records synced: \(totalSynced)")
                     completionHandler(.newData)
@@ -237,7 +245,7 @@ public extension PVAppDelegate {
             }
         }
     }
-    
+
     /// Register for CloudKit push notifications
     func setupCloudKitNotifications() {
         // Only register if iCloud sync is enabled
@@ -245,22 +253,22 @@ public extension PVAppDelegate {
             DLOG("iCloud sync is disabled, skipping notification registration")
             return
         }
-        
+
         // Register for remote notifications
         CloudKitNotificationManager.shared.registerForRemoteNotifications()
-        
+
         // Setup background fetch
         setupBackgroundFetch()
     }
-    
+
     /// Setup background fetch for periodic syncing
     private func setupBackgroundFetch() {
         // Set minimum background fetch interval
         UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
-        
+
         DLOG("Background fetch configured with minimum interval")
     }
-    
+
     /// Handle a CloudKit remote notification
     /// - Parameters:
     ///   - userInfo: User info from the notification
@@ -271,18 +279,18 @@ public extension PVAppDelegate {
         guard let notification = CKNotification(fromRemoteNotificationDictionary: userInfo) else {
             return false
         }
-        
+
         DLOG("Received CloudKit notification: \(notification.notificationType.rawValue)")
-        
+
         // Handle notification
         CloudKitSubscriptionManager.shared.handleRemoteNotification(userInfo)
-        
+
         // Start sync
         Task {
             do {
                 // Start sync
                 try await CloudSyncManager.shared.startSync()
-                
+
                 // Complete with new data
                 completionHandler(.newData)
             } catch {
@@ -290,8 +298,8 @@ public extension PVAppDelegate {
                 completionHandler(.failed)
             }
         }
-        
+
         return true
     }
-    
+
 }
