@@ -315,12 +315,12 @@ public final class GameImporter: GameImporting, ObservableObject {
     public var importStatus: String = ""
 
     var importAutoStartDelayTask: Task<Void, Never>?
-    
+
     // Task management for preventing concurrent processing
     private var currentProcessingTask: Task<Void, Never>?
     private var currentTimeoutTask: Task<Void, Never>?
     private let processingTaskLock = NSLock()
-    
+
     // Timeout configuration for hung task detection
     private let processingTimeoutDuration: TimeInterval = 600 // 10 minutes
     private var processingStartTime: Date?
@@ -437,14 +437,14 @@ public final class GameImporter: GameImporting, ObservableObject {
         Task {
             await importQueueActor.setAutoStartCallback { [weak self] in
                 guard let self = self else { return }
-                
+
                 // Only auto-start if we're not already processing
                 Task { @MainActor in
                     guard self.processingState == .idle else {
                         VLOG("GameImporter: Skipping auto-start - already processing (state: \(self.processingState))")
                         return
                     }
-                    
+
                     self.importAutoStartDelayTask?.cancel()
                     self.importAutoStartDelayTask = Task.detached {
                         await try? Task.sleep(for: .seconds(1))
@@ -458,9 +458,25 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     /// Creates default directories
     private func createDefaultDirectories(fm: FileManager) {
+        // Core roots
         createDefaultDirectory(fm, url: romsPath)
         createDefaultDirectory(fm, url: romsImportPath)
         createDefaultDirectory(fm, url: biosPath)
+
+        // Additional roots
+        createDefaultDirectory(fm, url: Paths.saveSavesPath)
+        createDefaultDirectory(fm, url: Paths.batterySavesPath)
+        createDefaultDirectory(fm, url: Paths.screenShotsPath)
+
+        // DeltaSkins directory
+        let deltaSkinsURL = URL.documentsPath.appendingPathComponent("DeltaSkins", isDirectory: true)
+        createDefaultDirectory(fm, url: deltaSkinsURL)
+
+        // Per-system ROM subfolders
+        for system in PVSystem.all {
+            let systemDir = Paths.romsPath(forSystemIdentifier: system.identifier)
+            createDefaultDirectory(fm, url: systemDir)
+        }
     }
 
     /// Creates a default directory at the given URL
@@ -639,12 +655,12 @@ public final class GameImporter: GameImporting, ObservableObject {
             await startProcessingSafely()
         }
     }
-    
+
     // Thread-safe method to start processing with proper task management
     private func startProcessingSafely() async {
         // Check state on main actor
         let currentState = await MainActor.run { processingState }
-        
+
         // Only start processing if it's idle (not processing or paused)
         guard currentState == .idle else {
             // If we're paused, resume processing
@@ -654,31 +670,31 @@ public final class GameImporter: GameImporting, ObservableObject {
             VLOG("GameImporter: Skipping start processing - current state: \(currentState)")
             return
         }
-        
+
         // Use lock to prevent concurrent task creation
         processingTaskLock.lock()
         defer { processingTaskLock.unlock() }
-        
+
         // Double-check we don't already have a processing task
         if currentProcessingTask != nil {
             VLOG("GameImporter: Skipping start processing - task already running")
             return
         }
-        
+
         ILOG("GameImporter: Starting processing safely")
-        
+
         // Set state to processing on main actor
         await MainActor.run {
             self.processingState = .processing
         }
-        
+
         // Record processing start time
         processingStartTime = Date()
-        
+
         // Create and store the processing task
         currentProcessingTask = Task.detached { [weak self] in
             guard let self = self else { return }
-            
+
             defer {
                 // Clean up task references when done
                 self.processingTaskLock.lock()
@@ -688,15 +704,15 @@ public final class GameImporter: GameImporting, ObservableObject {
                 self.processingStartTime = nil
                 self.processingTaskLock.unlock()
             }
-            
+
             await self.preProcessQueue()
             await self.processQueue()
         }
-        
+
         // Create timeout task to detect hung processing
         currentTimeoutTask = Task.detached { [weak self] in
             guard let self = self else { return }
-            
+
             // Wait for timeout duration
             do {
                 try await Task.sleep(for: .seconds(self.processingTimeoutDuration))
@@ -704,59 +720,59 @@ public final class GameImporter: GameImporting, ObservableObject {
                 // Task was cancelled (normal completion)
                 return
             }
-            
+
             // Check if processing task is still running
             await self.handleProcessingTimeout()
         }
     }
-    
+
     /// Handles timeout recovery when processing task hangs
     private func handleProcessingTimeout() async {
         processingTaskLock.lock()
         defer { processingTaskLock.unlock() }
-        
+
         // Check if we still have a processing task (it might have completed just before timeout)
         guard let processingTask = currentProcessingTask else {
             VLOG("GameImporter: Timeout triggered but processing task already completed")
             return
         }
-        
+
         let startTime = processingStartTime ?? Date()
         let duration = Date().timeIntervalSince(startTime)
-        
+
         ELOG("GameImporter: Processing task timeout detected after \(Int(duration)) seconds (limit: \(Int(processingTimeoutDuration))s)")
         ELOG("GameImporter: Cancelling hung processing task and resetting state")
-        
+
         // Cancel the hung processing task
         processingTask.cancel()
-        
+
         // Clean up task references
         currentProcessingTask = nil
         currentTimeoutTask = nil
         processingStartTime = nil
-        
+
         // Reset state to idle on main actor
         await MainActor.run {
             self.processingState = .idle
             self.updateImporterStatus("Import processing recovered from timeout")
         }
-        
+
         // Post notification about the timeout recovery
         NotificationCenter.default.post(
             name: .GameImporterDidFinish,
             object: nil,
             userInfo: ["reason": "timeout_recovery"]
         )
-        
+
         ILOG("GameImporter: Processing state reset to idle after timeout recovery")
-        
+
         // Optionally restart processing after a brief delay to avoid immediate re-hang
         // Only restart if there are items in the queue
         let queue = await importQueueActor.getQueue()
         let queuedItemsCount = queue.filter { $0.status == .queued || $0.userChosenSystem != nil }.count
         if queuedItemsCount > 0 {
             ILOG("GameImporter: Scheduling restart after timeout recovery (\(queuedItemsCount) items in queue)")
-            
+
             Task.detached { [weak self] in
                 // Wait a bit before restarting to avoid immediate re-hang
                 try? await Task.sleep(for: .seconds(5))
@@ -1530,7 +1546,7 @@ public final class GameImporter: GameImporting, ObservableObject {
     private func processQueue() async {
         ILOG("GameImportQueue - processQueue Start Import Processing")
         NotificationCenter.default.post(name: .GameImporterDidStart, object: nil)
-        
+
         // Ensure we're in processing state
         await MainActor.run {
             if self.processingState != .processing {
@@ -1538,7 +1554,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                 self.processingState = .processing
             }
         }
-        
+
         defer {
             Task { @MainActor in
                 // Only change to idle if we're not paused
@@ -1619,23 +1635,23 @@ public final class GameImporter: GameImporting, ObservableObject {
     public func processItem(_ item: ImportQueueItem) async {
         let itemName = item.url.lastPathComponent
         ILOG("GameImportQueue - processing item in queue: \(itemName)")
-        
+
         // Set status to processing on main actor for thread safety
         await MainActor.run {
             item.status = .processing
+            updateImporterStatus("Importing \(itemName)")
         }
-        updateImporterStatus("Importing \(itemName)")
 
         do {
             ILOG("GameImportQueue - About to call performImport for: \(itemName)")
-            
+
             // Add detailed timing for debugging hangs
             let startTime = Date()
             try await performImport(for: item)
             let duration = Date().timeIntervalSince(startTime)
-            
+
             ILOG("GameImportQueue - performImport completed for: \(itemName) in \(String(format: "%.2f", duration))s")
-            
+
             // Set success status and post notification on main actor
             await MainActor.run {
                 item.status = .success
@@ -1655,18 +1671,18 @@ public final class GameImporter: GameImporting, ObservableObject {
                     item.status = .conflict
                     updateImporterStatus("Conflict for \(itemName). User action needed.")
                     WLOG("GameImportQueue - processing item in queue: \(itemName) resulted in conflict.")
-                    
+
                 case .waitingForAssociatedFiles(let expectedFiles):
                     item.status = .partial(expectedFiles: expectedFiles)
                     updateImporterStatus("Waiting for files for \(itemName)")
                     ILOG("GameImportQueue - item \(itemName) is waiting for associated files: \(expectedFiles.joined(separator: ", ")).")
-                    
+
                 default:
                     item.status = .failure(error: error)
                     updateImporterStatus("Failed \(itemName) with error: \(error.localizedDescription)")
                     ELOG("GameImportQueue - processing item in queue: \(itemName) failed. Error: \(error.localizedDescription)")
                 }
-                
+
                 // Post notification for failures and conflicts (but not for partial status)
                 if case .waitingForAssociatedFiles = error {
                     // Don't post failure notification for partial status
@@ -1682,11 +1698,11 @@ public final class GameImporter: GameImporting, ObservableObject {
         } catch {
             // Handle unexpected errors
             ELOG("GameImportQueue - processing item in queue: \(itemName) caught unexpected error: \(error.localizedDescription)")
-            
+
             await MainActor.run {
                 item.status = .failure(error: error)
                 updateImporterStatus("Failed \(itemName) with error: \(error.localizedDescription)")
-                
+
                 let userInfo = [
                     PVNotificationUserInfoKeys.fileNameKey: itemName,
                     PVNotificationUserInfoKeys.md5Key: item.md5 ?? FileManager.default.md5ForFile(at: item.url),
@@ -1983,7 +1999,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         } catch {
             // Handle system determination failure
             ELOG("Failed to determine systems for Import Item: \(item.url.lastPathComponent) - \(error.localizedDescription)")
-            
+
             // Set status on main actor for thread safety
             await MainActor.run {
                 item.status = .failure(error: GameImporterError.noSystemMatched)
@@ -1991,7 +2007,7 @@ public final class GameImporter: GameImporting, ObservableObject {
 
             // Clean up file if it's in imports directory
             await cleanupFailedImportFile(item.url)
-            
+
             throw GameImporterError.noSystemMatched
         }
 
@@ -2209,11 +2225,11 @@ public final class GameImporter: GameImporting, ObservableObject {
     public func pause() {
         Task { @MainActor in
             guard processingState == .processing else { return }
-            
+
             ILOG("GameImportQueue - Pausing import processing")
             processingState = .paused
             updateImporterStatus("Import processing paused")
-            
+
             // Cancel timeout task when pausing to avoid false timeout triggers
             processingTaskLock.lock()
             currentTimeoutTask?.cancel()
@@ -2228,7 +2244,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             await resumeSafely()
         }
     }
-    
+
     // Thread-safe method to resume processing
     private func resumeSafely() async {
         let currentState = await MainActor.run { processingState }
@@ -2236,21 +2252,21 @@ public final class GameImporter: GameImporting, ObservableObject {
             VLOG("GameImporter: Skipping resume - not paused (state: \(currentState))")
             return
         }
-        
+
         ILOG("GameImportQueue - Resuming import processing safely")
-        
+
         // Cancel any pending auto-start tasks
         importAutoStartDelayTask?.cancel()
         importAutoStartDelayTask = nil
-        
+
         // Use the safe start method which handles task management
         await MainActor.run {
             processingState = .idle  // Reset to idle so startProcessingSafely can proceed
         }
-        
+
         await startProcessingSafely()
     }
-    
+
     /// Manually trigger timeout recovery if processing appears stuck
     /// This can be called externally if the UI detects a hung state
     public func recoverFromTimeout() {
@@ -2258,7 +2274,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             await handleProcessingTimeout()
         }
     }
-    
+
     /// Get current processing duration for debugging
     public func getCurrentProcessingDuration() -> TimeInterval? {
         guard let startTime = processingStartTime else { return nil }
@@ -2397,13 +2413,13 @@ public final class GameImporter: GameImporting, ObservableObject {
         importStatus = message
         ILOG("Importer status: \(message)")
     }
-    
+
     /// Safely cleans up failed import files with proper error handling
     private func cleanupFailedImportFile(_ fileURL: URL) async {
         guard fileURL.path.contains("/Imports/") && FileManager.default.fileExists(atPath: fileURL.path) else {
             return // Only clean up files in imports directory that actually exist
         }
-        
+
         do {
             try await FileManager.default.removeItem(at: fileURL)
             ILOG("Cleaned up failed import file: \(fileURL.path)")
