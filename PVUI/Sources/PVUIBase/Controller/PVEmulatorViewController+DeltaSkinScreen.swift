@@ -3,6 +3,7 @@ import SwiftUI
 import PVEmulatorCore
 import PVLibrary
 import PVLogging
+import PVCoreBridge
 
 // MARK: - DeltaSkin Screen Integration
 extension PVEmulatorViewController {
@@ -889,6 +890,22 @@ extension PVEmulatorViewController {
             return
         }
 
+        // If this is a RetroArch core, size its internal renderView directly
+        if core.coreIdentifier?.contains("libretro") == true,
+           let bridge = core.bridge as? (any NSObjectProtocol) {
+            if let viewportBridge = bridge as? EmulatorCoreViewportPositioning {
+                // Ensure RA uses custom layout and apply frame in touchView space
+                viewportBridge.setUseCustomRenderViewLayout(true)
+                // Frame passed is already in self.view coordinates; convert to touchViewController.view
+                if let parent = core.touchViewController?.view {
+                    let rectInParent = view.convert(frame, to: parent)
+                    viewportBridge.applyRenderViewFrameInTouchView(rectInParent)
+                    DLOG("🔴 Applied frame to RA renderView: \(rectInParent)")
+                    return
+                }
+            }
+        }
+
         // Get the available space in the view
         let viewBounds = view.bounds
 
@@ -934,6 +951,22 @@ extension PVEmulatorViewController {
         guard let gameScreenView = gpuViewController.view else {
             DLOG("🔴 ERROR: GPU view not found")
             return
+        }
+
+        // If this is a RetroArch core, size its internal renderView directly
+        if core.coreIdentifier?.contains("libretro") == true,
+           let bridge = core.bridge as? (any NSObjectProtocol) {
+            if let viewportBridge = bridge as? EmulatorCoreViewportPositioning {
+                // Ensure RA uses custom layout and apply frame in touchView space
+                viewportBridge.setUseCustomRenderViewLayout(true)
+                // Frame passed is already in self.view coordinates; convert to touchViewController.view
+                if let parent = core.touchViewController?.view {
+                    let rectInParent = view.convert(frame, to: parent)
+                    viewportBridge.applyRenderViewFrameInTouchView(rectInParent)
+                    DLOG("🔴 Applied frame to RA renderView: \(rectInParent)")
+                    return
+                }
+            }
         }
 
         // Validate the frame - ensure it has valid dimensions

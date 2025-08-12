@@ -7,7 +7,7 @@
 //
 
 #import <PVRetroArch/PVRetroArch.h>
-#import <PVCoreObjCBridge/_PVCoreObjCBridge.h>
+#import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
 NS_ASSUME_NONNULL_BEGIN
 @protocol EmulatorCoreWaveformProvider;

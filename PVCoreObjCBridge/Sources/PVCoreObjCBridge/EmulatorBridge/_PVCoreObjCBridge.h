@@ -58,6 +58,7 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 
 /// Optional: Bridges that can provide waveform data for visualizers
 @protocol EmulatorCoreWaveformProvider;
+@protocol EmulatorCoreViewportPositioning;
 
 //@required
 //- (void)audioSampleRateDidChange;

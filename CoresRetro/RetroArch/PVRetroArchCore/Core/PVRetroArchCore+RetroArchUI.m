@@ -47,6 +47,7 @@
 #endif
 #import <AVFoundation/AVFoundation.h>
 #import <PVLogging/PVLoggingObjC.h>
+#import <objc/runtime.h>
 
 #define IS_IPHONE() ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone)
 
@@ -120,7 +121,44 @@ int argc =  1;
 
 #pragma mark - PVRetroArchCoreBridge Begin
 
-@interface PVRetroArchCoreBridge (RetroArchUI)
+@interface PVRetroArchCoreBridge (CustomLayout)
+@property (nonatomic, assign) BOOL useCustomRenderViewLayout;
+@end
+
+@implementation PVRetroArchCoreBridge (CustomLayout)
+
+- (void)setUseCustomRenderViewLayout:(BOOL)enabled {
+    objc_setAssociatedObject(self, @selector(useCustomRenderViewLayout), @(enabled), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    if (!_renderView) { return; }
+    UIView *rootView = [CocoaView get].view;
+    if (!rootView) { return; }
+    // Remove any constraints tying renderView to root
+    NSMutableArray<NSLayoutConstraint *> *toDeactivate = [NSMutableArray array];
+    for (NSLayoutConstraint *c in rootView.constraints) {
+        if (c.firstItem == _renderView || c.secondItem == _renderView) {
+            [toDeactivate addObject:c];
+        }
+    }
+    for (NSLayoutConstraint *c in _renderView.constraints) {
+        [toDeactivate addObject:c];
+    }
+    if (toDeactivate.count > 0) {
+        [NSLayoutConstraint deactivateConstraints:toDeactivate];
+        DLOG(@"[RA] CustomLayout: deactivated %lu constraints", (unsigned long)toDeactivate.count);
+    }
+    _renderView.translatesAutoresizingMaskIntoConstraints = YES;
+    _renderView.autoresizingMask = UIViewAutoresizingNone;
+}
+
+- (BOOL)useCustomRenderViewLayout {
+    NSNumber *val = objc_getAssociatedObject(self, @selector(useCustomRenderViewLayout));
+    return val.boolValue;
+}
+
+@end
+
+@interface PVRetroArchCoreBridge ()
+@property (nonatomic, assign) BOOL useCustomRenderViewLayout;
 @end
 
 @implementation PVRetroArchCoreBridge (RetroArchUI)
@@ -555,9 +593,6 @@ void extract_bundles();
 #if TARGET_OS_IOS
             v.multipleTouchEnabled  = YES;
 #endif
-//            v.autoresizesSubviews=true;
-//            v.autoResizeDrawable=true;
-//            v.contentMode=UIViewContentModeScaleToFill;
             _renderView = v;
         }
             break;
@@ -593,10 +628,33 @@ void extract_bundles();
     _renderView.translatesAutoresizingMaskIntoConstraints = NO;
     UIView *rootView = [CocoaView get].view;
     [rootView addSubview:_renderView];
-    [[_renderView.safeAreaLayoutGuide.topAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.topAnchor] setActive:YES];
-    [[_renderView.safeAreaLayoutGuide.bottomAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.bottomAnchor] setActive:YES];
-    [[_renderView.safeAreaLayoutGuide.leadingAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.leadingAnchor] setActive:YES];
-    [[_renderView.safeAreaLayoutGuide.trailingAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.trailingAnchor] setActive:YES];
+
+    if (!self.useCustomRenderViewLayout) {
+        // Default: pin to full-screen
+        [[_renderView.safeAreaLayoutGuide.topAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.topAnchor] setActive:YES];
+        [[_renderView.safeAreaLayoutGuide.bottomAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.bottomAnchor] setActive:YES];
+        [[_renderView.safeAreaLayoutGuide.leadingAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.leadingAnchor] setActive:YES];
+        [[_renderView.safeAreaLayoutGuide.trailingAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.trailingAnchor] setActive:YES];
+    }
+}
+
+//
+// Custom Viewport Positioning methods
+- (void)applyRenderViewFrameInTouchView:(CGRect)frame {
+    if (!self.touchViewController) { return; }
+    if (!_renderView) { return; }
+    UIView *parent = self.touchViewController.view;
+    if (_renderView.superview != parent) {
+        [parent addSubview:_renderView];
+    }
+    _renderView.translatesAutoresizingMaskIntoConstraints = YES;
+    _renderView.autoresizingMask = UIViewAutoresizingNone;
+    _renderView.frame = frame;
+    // Keep it under overlays
+    [parent sendSubviewToBack:_renderView];
+    [parent setNeedsLayout];
+    [parent layoutIfNeeded];
+    DLOG(@"[RA] CustomLayout: applied frame=%@", NSStringFromCGRect(_renderView.frame));
 }
 
 - (void)setupView {

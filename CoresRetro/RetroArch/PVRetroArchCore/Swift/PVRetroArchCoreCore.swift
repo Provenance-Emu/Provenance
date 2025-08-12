@@ -27,7 +27,7 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
 
     public override var rendersToOpenGL: Bool { true }
     public override var isDoubleBuffered: Bool { true }
-    public override var supportsSkins: Bool { false }
+    public override var supportsSkins: Bool { true }
     public override var supportsAudioVisualizer: Bool { true }
     public override var supportsSaveStates: Bool {
         let unsupportedCores = [
