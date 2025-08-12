@@ -183,7 +183,7 @@ static void ResetDolphinStaticState() {
 
         // Reset controller interface
         g_controller_interface.Shutdown();
-        
+
         // CRITICAL: Shutdown UICommon to reset its static state
         try {
             UICommon::Shutdown();
@@ -345,47 +345,47 @@ static void ResetDolphinStaticState() {
     Config::SetBase(Config::GFX_ENHANCE_FORCE_TRUE_COLOR, self.forceTrueColor);
 
     // === GRAPHICS HACKS (DolphinQt Parity) ===
-    
+
     // Skip EFB Access from CPU (inverted logic - true means disable access)
     Config::SetBase(Config::GFX_HACK_EFB_ACCESS_ENABLE, !self.skipEFBAccessFromCPU);
-    
+
     // Ignore Format Changes (inverted logic - true means emulate format changes)
     Config::SetBase(Config::GFX_HACK_EFB_EMULATE_FORMAT_CHANGES, !self.ignoreFormatChanges);
-    
+
     // Store EFB Copies to Texture Only (skip copy to RAM)
     Config::SetBase(Config::GFX_HACK_SKIP_EFB_COPY_TO_RAM, self.storeEFBCopiesToTextureOnly);
-    
+
     // Defer EFB Copies
     Config::SetBase(Config::GFX_HACK_DEFER_EFB_COPIES, self.deferEFBCopies);
-    
+
     // Texture Cache Accuracy (note: this may need special handling as it's not a simple bool)
     // For now, map: 0=Safe (false), 1=Medium (false), 2=Fast (true)
     Config::SetBase(Config::GFX_HACK_FAST_TEXTURE_SAMPLING, (self.textureCacheAccuracy == 2));
-    
+
     // Store XFB Copies to Texture Only (skip copy to RAM)
     Config::SetBase(Config::GFX_HACK_SKIP_XFB_COPY_TO_RAM, self.storeXFBCopiesToTextureOnly);
-    
+
     // Immediate XFB
     Config::SetBase(Config::GFX_HACK_IMMEDIATE_XFB, self.immediateXFB);
-    
+
     // Skip Duplicate XFBs
     Config::SetBase(Config::GFX_HACK_SKIP_DUPLICATE_XFBS, self.skipDuplicateXFBs);
-    
+
     // GPU Texture Decoding
     Config::SetBase(Config::GFX_ENABLE_GPU_TEXTURE_DECODING, self.gpuTextureDecoding);
-    
+
     // Fast Depth Calculation
     Config::SetBase(Config::GFX_FAST_DEPTH_CALC, self.fastDepthCalculation);
-    
+
     // Disable Bounding Box (inverted logic - true means disable, false means enable)
     Config::SetBase(Config::GFX_HACK_BBOX_ENABLE, !self.disableBoundingBox);
-    
+
     // Save Texture Cache to State
     Config::SetBase(Config::GFX_SAVE_TEXTURE_CACHE_TO_STATE, self.saveTextureCacheToState);
-    
+
     // Vertex Rounding
     Config::SetBase(Config::GFX_HACK_VERTEX_ROUNDING, self.vertexRounding);
-    
+
     // VI Skip
     Config::SetBase(Config::GFX_HACK_VI_SKIP, self.viSkip);
 
@@ -445,27 +445,19 @@ static void ResetDolphinStaticState() {
     // Cheats
     Config::SetBase(Config::MAIN_ENABLE_CHEATS, self.enableCheatCode);
 
-    // === ADVANCED EMULATION SETTINGS ===
+        // === ADVANCED EMULATION SETTINGS ===
 
-    // VBI Frequency Override
+    // VI Overclock (frequency override)
     if (self.enableVBIOverride) {
-        // Use custom VBI frequency percentage (4%-501%)
-        float vbiMultiplier = self.vbiFrequencyRange / 100.0f;
-        Config::SetBase(Config::MAIN_CUSTOM_RTC_ENABLE, true);
-        Config::SetBase(Config::MAIN_CUSTOM_RTC_VALUE, (u32)(40500000 * vbiMultiplier)); // Base GameCube CPU clock * multiplier
-
-        // Set appropriate video mode based on frequency range
-        if (self.vbiFrequencyRange < 55.0f) {
-            // Closer to PAL (50Hz)
-            Config::SetBase(Config::SYSCONF_PAL60, false);
-        } else {
-            // Closer to NTSC (60Hz) or higher
-            Config::SetBase(Config::SYSCONF_PAL60, true);
-        }
+        // Map percentage (4–501%) to factor for MAIN_VI_OVERCLOCK
+        float factor = self.vbiFrequencyRange / 100.0f;
+        if (factor < 0.04f) factor = 0.04f;
+        if (factor > 5.01f) factor = 5.01f;
+        Config::SetBase(Config::MAIN_VI_OVERCLOCK_ENABLE, true);
+        Config::SetBase(Config::MAIN_VI_OVERCLOCK, factor);
     } else {
-        // Auto - let game decide, disable custom timing
-        Config::SetBase(Config::MAIN_CUSTOM_RTC_ENABLE, false);
-        Config::SetBase(Config::SYSCONF_PAL60, false);
+        Config::SetBase(Config::MAIN_VI_OVERCLOCK_ENABLE, false);
+        Config::SetBase(Config::MAIN_VI_OVERCLOCK, 1.0f);
     }
 
     // Memory Management Unit
@@ -583,7 +575,7 @@ static void ResetDolphinStaticState() {
     Common::RegisterMsgAlertHandler(&MsgAlert);
     UICommon::SetUserDirectory(user_dir);
     UICommon::CreateDirectories();
-    
+
     // CRITICAL: Shutdown UICommon first to prevent deadlock on second load
     // UICommon::Init() has static state that must be cleaned up between sessions
     try {
@@ -592,18 +584,18 @@ static void ResetDolphinStaticState() {
     } catch (...) {
         NSLog(@"🐬 [SETUP] UICommon shutdown failed or was not initialized - continuing");
     }
-    
+
     UICommon::Init();
     NSLog(@"🐬 [SETUP] UICommon initialized, User Directory set to '%s'", user_dir.c_str());
 
     // Initialize logging system EARLY - before any other configuration
     Common::Log::LogManager::Init();
-    
+
     // Apply critical settings immediately after Dolphin initialization
     // This ensures BIOS skip is set before any game loading attempts
     [self parseOptions];  // Parse options FIRST to get current enableLogging value
     Config::Load();
-    
+
     // Configure logging to output to iOS console AFTER parsing options
     if (self.enableLogging) {
         NSLog(@"🐬 Dolphin Debug Logging ENABLED (user setting: %s)", self.enableLogging ? "true" : "false");
@@ -728,7 +720,7 @@ static void ResetDolphinStaticState() {
     NSLog(@"🐬 [DEBUG] Entering main emulation loop...");
     int loopCount = 0;
     bool guardLocked = true; // Track guard state
-    
+
     while (_isInitialized)
     {
         if (guardLocked) {
@@ -768,14 +760,14 @@ static void ResetDolphinStaticState() {
             }
         }
     }
-    
+
     // CRITICAL: Ensure guard is unlocked before method exits
     if (guardLocked) {
         guard.unlock();
         guardLocked = false;
         NSLog(@"🐬 [DEBUG] Guard unlocked before startDolphin method exit");
     }
-    
+
     _isOff=true;
 }
 
@@ -814,7 +806,7 @@ static void ResetDolphinStaticState() {
     Core::System::GetInstance().GetMemory().Shutdown();
     Core::System::GetInstance().GetPowerPC().Shutdown();
     g_video_backend->Shutdown();
-    
+
     // CRITICAL: Ensure host identity lock is unlocked before cleanup
     try {
         s_host_identity_lock.unlock();
@@ -822,7 +814,7 @@ static void ResetDolphinStaticState() {
     } catch (...) {
         NSLog(@"🐬 [STOP] Host identity lock was already unlocked or exception occurred");
     }
-    
+
     [m_view removeFromSuperview];
     [m_view_controller dismissViewControllerAnimated:NO completion:nil];
     m_gl_layer = nullptr;
@@ -831,7 +823,7 @@ static void ResetDolphinStaticState() {
     m_view=nullptr;
     AudioCommon::ShutdownSoundStream(Core::System::GetInstance());
     g_renderer.release();
-    
+
     // CRITICAL: Shutdown UICommon before resetting state
     try {
         UICommon::Shutdown();
@@ -839,7 +831,7 @@ static void ResetDolphinStaticState() {
     } catch (...) {
         NSLog(@"🐬 [STOP] UICommon shutdown failed in stopEmulation - continuing");
     }
-    
+
     // Reset all static/global state for next load
     ResetDolphinStaticState();
 }
