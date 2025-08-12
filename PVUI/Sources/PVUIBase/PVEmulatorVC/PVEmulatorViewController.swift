@@ -14,18 +14,19 @@ import RealmSwift
 #if canImport(UIKit)
 import UIKit
 #endif
-import SwiftUI
-import ZipArchive
-import PVEmulatorCore
-import PVCoreBridge
-import PVAudio
-import PVCoreAudio
-import PVThemes
-import PVSettings
-import PVRealm
-import PVLogging
 import Combine
 import MBProgressHUD
+import PVAudio
+import PVCoreAudio
+import PVCoreBridge
+import PVEmulatorCore
+import PVLibrary
+import PVLogging
+import PVRealm
+import PVSettings
+import PVThemes
+import SwiftUI
+import ZipArchive
 
 private weak var staticSelf: PVEmualatorControllerProtocol?
 
@@ -51,48 +52,46 @@ typealias PVEmulatorViewControllerRootClass = UIViewController
 
 public
 final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmualatorControllerProtocol, PVAudioDelegate, PVSaveStatesViewControllerDelegate {
-
-
     public let core: PVEmulatorCore
     @ThreadSafe
     public var game: PVGame!
     public internal(set) var autosaveTimer: Timer?
     public internal(set) var gameStartTime: Date?
     // Store a reference to the skin container view
-    internal var skinContainerView: UIView?
+    var skinContainerView: UIView?
 
     // Store the current target frame for positioning
-    internal var currentTargetFrame: CGRect?
+    var currentTargetFrame: CGRect?
 
     // Store the original calculated frame for reset functionality
-    internal var originalCalculatedFrame: CGRect?
+    var originalCalculatedFrame: CGRect?
 
     // Store cancellables for skin loading observation
-    internal var skinLoadingCancellable: AnyCancellable?
+    var skinLoadingCancellable: AnyCancellable?
 
     // Store the current skin for rotation handling
-    internal var currentSkin: DeltaSkinProtocol?
+    var currentSkin: DeltaSkinProtocol?
 
     // Track current orientation
-#if !os(tvOS)
-    internal var currentOrientation: SkinOrientation = .portrait
+    #if !os(tvOS)
+    var currentOrientation: SkinOrientation = .portrait
     #else
-    internal var currentOrientation: SkinOrientation = .landscape
+    var currentOrientation: SkinOrientation = .landscape
     #endif
 
     // Keep track of whether we've positioned the GPU view
-    internal static var hasPositionedGPUView = false
+    static var hasPositionedGPUView = false
 
     // Property to track skin hosting controllers - using UIViewController for type flexibility
-    internal var skinHostingControllers: [UIViewController] = []
+    var skinHostingControllers: [UIViewController] = []
 
     // Shared input handler to maintain input state across skin changes
-    internal var sharedInputHandler: DeltaSkinInputHandler?
+    var sharedInputHandler: DeltaSkinInputHandler?
 
-    internal var audioVisualizerHostingController: UIHostingController<AnyView>? = nil
+    var audioVisualizerHostingController: UIHostingController<AnyView>? = nil
 
     /// The current visualizer mode
-    internal var visualizerMode: VisualizerMode = .off {
+    var visualizerMode: VisualizerMode = .off {
         didSet {
             if visualizerMode == .off {
                 removeAudioVisualizer()
@@ -105,9 +104,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     }
 
     // Debug overlay view
-    internal var debugOverlayView: UIView?
-    internal var debugInfoLabel: UILabel?
-    internal var debugUpdateTimer: Timer?
+    var debugOverlayView: UIView?
+    var debugInfoLabel: UILabel?
+    var debugUpdateTimer: Timer?
 
     var menuButton: MenuButton?
 
@@ -116,7 +115,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         return useMetal ? PVMetalViewController(withEmulatorCore: core) : PVGLViewController(withEmulatorCore: core)
     }()
 
-    private(set) lazy public var controllerViewController: (any ControllerVC)? = {
+    public private(set) lazy var controllerViewController: (any ControllerVC)? = {
         guard let system = game.system else {
             ELOG("Nil system for \(game.title)")
             return nil
@@ -125,9 +124,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         return controller
     }()
 
-#if os(tvOS)
-    public override var preferredUserInterfaceStyle: UIUserInterfaceStyle { ThemeManager.shared.currentPalette.dark ? .dark : .light }
-#endif
+    #if os(tvOS)
+    override public var preferredUserInterfaceStyle: UIUserInterfaceStyle { ThemeManager.shared.currentPalette.dark ? .dark : .light }
+    #endif
 
     public var audioInited: Bool = false
     public private(set) lazy var gameAudio: any AudioEngineProtocol = {
@@ -148,13 +147,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         fpsLabel.textAlignment = .right
         fpsLabel.isOpaque = false
         fpsLabel.numberOfLines = 5
-#if os(tvOS)
+        #if os(tvOS)
         fpsLabel.font = .monospacedSystemFont(ofSize: 26, weight: .light)
-#else
+        #else
         fpsLabel.font = .monospacedSystemFont(ofSize: 13, weight: .light)
-#endif
+        #endif
         return fpsLabel
     }()
+
     var secondaryScreen: UIScreen?
     var secondaryWindow: UIWindow?
     var menuGestureRecognizer: UITapGestureRecognizer?
@@ -163,7 +163,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         willSet {
             DispatchQueue.main.async { [self] in
                 if newValue == true {
-                    if (!core.skipLayout) {
+                    if !core.skipLayout {
                         core.setPauseEmulation(true)
 //                        gpuViewController.isPaused = true
                     }
@@ -174,7 +174,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         didSet {
             DispatchQueue.main.async { [self] in
                 if isShowingMenu == false {
-                    if (!core.skipLayout) {
+                    if !core.skipLayout {
                         core.setPauseEmulation(false)
 //                        gpuViewController.isPaused = false
                         if let metalVC = gpuViewController as? PVMetalViewController {
@@ -189,16 +189,15 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
     let minimumPlayTimeToMakeAutosave: Double = 60
 
-    required public init(game: PVGame, core: PVEmulatorCore) {
+    public required init(game: PVGame, core: PVEmulatorCore) {
         self.core = core
         self.game = game
 
         super.init(nibName: nil, bundle: nil)
 
-
         let emulationUIState = AppState.shared.emulationUIState
         emulationUIState.core = core
-        if (emulationUIState.emulator == nil) {
+        if emulationUIState.emulator == nil {
             emulationUIState.emulator = self
         }
         // Update the singleton state
@@ -209,7 +208,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 state.isOn = true
             }
         }
-        PVControllerManager.shared.hasLayout=false
+        PVControllerManager.shared.hasLayout = false
         if core.skipLayout {
             gpuViewController.dismiss(animated: false)
         } else if core.alwaysUseMetal && !core.alwaysUseGL {
@@ -228,11 +227,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         core.addObserver(self, forKeyPath: "isRunning", options: .new, context: nil)
     }
 
-    public override func observeValue(forKeyPath keyPath: String?, of _: Any?, change _: [NSKeyValueChangeKey: Any]?, context _: UnsafeMutableRawPointer?) {
+    override public func observeValue(forKeyPath keyPath: String?, of _: Any?, change _: [NSKeyValueChangeKey: Any]?, context _: UnsafeMutableRawPointer?) {
         if keyPath == "isRunning" {
-#if os(tvOS) && canImport(SteamController)
+            #if os(tvOS) && canImport(SteamController)
             PVControllerManager.shared.setSteamControllersMode(core.isRunning ? .gameController : .keyboardAndMouse)
-#endif
+            #endif
             if core.isRunning {
                 if gameStartTime != nil {
                     ELOG("Didn't expect to get a KVO update of isRunning to true while we still have an unflushed gameStartTime variable")
@@ -246,6 +245,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
     }
 
+    @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -264,12 +264,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         staticSelf = nil
         gpuViewController.dismiss(animated: false)
         controllerViewController?.dismiss(animated: false)
-        core.touchViewController=nil
-#if os(iOS) || os(tvOS)
+        core.touchViewController = nil
+        #if os(iOS) || os(tvOS)
         Task.detached { @MainActor in
             PVControllerManager.shared.controllers.forEach { $0.clearPauseHandler() }
         }
-#endif
+        #endif
         updatePlayedDuration()
         destroyAutosaveTimer()
         // Remove all menu-related gesture recognizers
@@ -329,7 +329,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     }
 
     private func initMenuButton() {
-        let alpha: CGFloat = CGFloat(Defaults[.controllerOpacity])
+        let alpha = CGFloat(Defaults[.controllerOpacity])
         menuButton = MenuButton(type: .custom)
         menuButton?.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
         menuButton?.setImage(UIImage(named: "button-menu", in: Bundle.module, with: nil), for: .normal)
@@ -345,13 +345,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         menuButton?.tintColor = ThemeManager.shared.currentPalette.defaultTintColor ?? UIColor.white
         menuButton?.alpha = alpha
         menuButton?.addTarget(self, action: #selector(PVEmulatorViewController.showMenu(_:)), for: .touchUpInside)
-#if !os(tvOS)
+        #if !os(tvOS)
         menuButton?.isPointerInteractionEnabled = true
-#endif
+        #endif
         view.addSubview(menuButton!)
     }
 
-    public override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
         title = game.title
         view.backgroundColor = UIColor.black
@@ -360,7 +360,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         let emulationState = AppState.shared.emulationUIState
 
         emulationState.core = core
-        if (emulationState.emulator == nil) {
+        if emulationState.emulator == nil {
             emulationState.emulator = self
         }
 
@@ -397,32 +397,32 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                     alert.popoverPresentationController?.sourceView = self.navigationItem.titleView ?? self.view
                     alert.addAction(UIAlertAction(title: "OK",
                                                   style: .default,
-                                                  handler: { (_: UIAlertAction) -> Void in
-                        ILOG("PVEmulatorViewController: User tapped OK on error alert, returning to main scene")
-                        // Ensure we're on the main thread for UI updates with a small delay
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            ILOG("PVEmulatorViewController: About to call SceneCoordinator.closeEmulator()")
+                                                  handler: { (_: UIAlertAction) in
+                                                      ILOG("PVEmulatorViewController: User tapped OK on error alert, returning to main scene")
+                                                      // Ensure we're on the main thread for UI updates with a small delay
+                                                      DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                                          ILOG("PVEmulatorViewController: About to call SceneCoordinator.closeEmulator()")
 
-                            // First dismiss any presented view controllers
-                            if let presentedVC = self.presentedViewController {
-                                ILOG("PVEmulatorViewController: Dismissing presented view controller first")
-                                presentedVC.dismiss(animated: false) {
-                                    SceneCoordinator.shared.closeEmulator()
-                                }
-                            } else {
-                                // Dismiss this view controller if it's presented
-                                if self.presentingViewController != nil {
-                                    ILOG("PVEmulatorViewController: Dismissing self, then calling closeEmulator")
-                                    self.dismiss(animated: false) {
-                                        SceneCoordinator.shared.closeEmulator()
-                                    }
-                                } else {
-                                    ILOG("PVEmulatorViewController: No presented view controllers, calling closeEmulator directly")
-                                    SceneCoordinator.shared.closeEmulator()
-                                }
-                            }
-                        }
-                    }))
+                                                          // First dismiss any presented view controllers
+                                                          if let presentedVC = self.presentedViewController {
+                                                              ILOG("PVEmulatorViewController: Dismissing presented view controller first")
+                                                              presentedVC.dismiss(animated: false) {
+                                                                  SceneCoordinator.shared.closeEmulator()
+                                                              }
+                                                          } else {
+                                                              // Dismiss this view controller if it's presented
+                                                              if self.presentingViewController != nil {
+                                                                  ILOG("PVEmulatorViewController: Dismissing self, then calling closeEmulator")
+                                                                  self.dismiss(animated: false) {
+                                                                      SceneCoordinator.shared.closeEmulator()
+                                                                  }
+                                                              } else {
+                                                                  ILOG("PVEmulatorViewController: No presented view controllers, calling closeEmulator directly")
+                                                                  SceneCoordinator.shared.closeEmulator()
+                                                              }
+                                                          }
+                                                      }
+                                                  }))
 
                     self.present(alert, animated: true)
                 }
@@ -446,7 +446,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // TODO: Why are we using `UserDefaults`? @JoeMatt
         // Now I know why, this is how the old library VC would set selected disc
 
-
         var romPathMaybe: URL?
 
         // First check if the user selected a specific related file
@@ -467,7 +466,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             romPathMaybe = game.file?.url
         }
 
-#warning("should throw if nil?")
+        #warning("should throw if nil?")
         //        guard let romPath = romPathMaybe else {
         //            throw CreateEmulatorError.gameHasNilRomPath
         //        }
@@ -509,7 +508,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             try core.loadFile(atPath: romURL.path)
         }
 
-#warning("TODO: Handle multiple screens with UIScene")
+        #warning("TODO: Handle multiple screens with UIScene")
         if UIScreen.screens.count > 1 && !core.skipLayout {
             secondaryScreen = UIScreen.screens[1]
             if let aBounds = secondaryScreen?.bounds {
@@ -525,7 +524,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             }
             secondaryWindow?.isHidden = false
         } else {
-#if os(tvOS)
+            #if os(tvOS)
             if core.skipLayout {
                 // Special handling for RetroArch cores on tvOS
                 addChild(gpuViewController)
@@ -545,8 +544,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 }
                 gpuViewController.didMove(toParent: self)
             }
-#else
-            if (!core.skipLayout) {
+            #else
+            if !core.skipLayout {
                 // Keep existing iOS behavior unchanged
                 gpuViewController.willMove(toParent: self)
                 addChild(gpuViewController)
@@ -559,12 +558,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 }
             }
             gpuViewController.didMove(toParent: self)
-#endif
+            #endif
         }
-#if os(iOS) && !targetEnvironment(macCatalyst) && !os(macOS)
+        #if os(iOS) && !targetEnvironment(macCatalyst) && !os(macOS)
         addControllerOverlay()
         initMenuButton()
-#endif
+        #endif
 
         if Defaults[.showFPSCount] && !core.skipLayout {
             initFPSLabel()
@@ -577,15 +576,18 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         try gameAudio.setupAudioGraph(for: core)
         try startAudio()
 
+        // Pause CloudKit when gameplay starts
+        CloudKitDownloadQueue.shared.pauseQueue()
+
         core.startEmulation()
 
-#if os(tvOS)
+        #if os(tvOS)
         // On tvOS the siri-remotes menu-button will default to go back in the hierachy (thus dismissing the emulator), we don't want that behaviour
         // Set up gesture recognizers for menu button interactions
         setupTVOSMenuGestures()
-#endif
-        PVControllerManager.shared.controllers.forEach {
-            $0.setupPauseHandler(onPause: {
+        #endif
+        for controller in PVControllerManager.shared.controllers {
+            controller.setupPauseHandler(onPause: {
                 NotificationCenter.default.post(name: NSNotification.Name("PauseGame"), object: nil)
             })
         }
@@ -601,7 +603,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
     }
 
-#if os(tvOS)
+    #if os(tvOS)
     /// Set up tvOS-specific menu button gesture recognizers
     private func setupTVOSMenuGestures() {
         // Single tap gesture for "start" button
@@ -657,13 +659,15 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         if let button = view as? UIButton {
             // Check button title, accessibility identifier, or tag to identify start button
             if let title = button.titleLabel?.text?.lowercased(),
-               title.contains("start") || title.contains("pause") {
+               title.contains("start") || title.contains("pause")
+            {
                 return button
             }
 
             // Check accessibility identifier
             if let identifier = button.accessibilityIdentifier?.lowercased(),
-               identifier.contains("start") || identifier.contains("pause") {
+               identifier.contains("start") || identifier.contains("pause")
+            {
                 return button
             }
 
@@ -682,17 +686,17 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         return nil
     }
-#endif
+    #endif
 
-    public override func viewDidAppear(_: Bool) {
+    override public func viewDidAppear(_: Bool) {
         super.viewDidAppear(true)
         // Notifies UIKit that your view controller updated its preference regarding the visual indicator
 
-#if os(iOS)
+        #if os(iOS)
         setNeedsStatusBarAppearanceUpdate()
         setNeedsUpdateOfHomeIndicatorAutoHidden()
         setNeedsUpdateOfScreenEdgesDeferringSystemGestures()
-#endif
+        #endif
 
         if Defaults[.timedAutoSaves] {
             createAutosaveTimer()
@@ -711,12 +715,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
     }
 
-    public override func viewWillDisappear(_ animated: Bool) {
+    override public func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         destroyAutosaveTimer()
     }
 
-    public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    override public func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
         // Handle skin changes for orientation
@@ -811,7 +815,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             // Show progress UI
             try await showDownloadProgress(for: game)
 
-        } catch CloudSyncError.insufficientSpace(let required, let available) {
+        } catch let CloudSyncError.insufficientSpace(required, available) {
             // Show space error alert
             await showInsufficientSpaceAlert(
                 gameTitle: game.title,
@@ -946,35 +950,35 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
     }
 
-#if os(iOS) //&& !targetEnvironment(simulator)
+    #if os(iOS) // && !targetEnvironment(simulator)
     // Check Controller Manager if it has a Controller connected and thus if Home Indicator should hide…
-    public override var prefersHomeIndicatorAutoHidden: Bool {
+    override public var prefersHomeIndicatorAutoHidden: Bool {
 //        let shouldHideHomeIndicator: Bool = PVControllerManager.shared.hasControllers
 //        return shouldHideHomeIndicator
         return true
     }
-#endif
+    #endif
 
-    public override func viewDidLayoutSubviews() {
+    override public func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-#if os(iOS)
+        #if os(iOS)
         layoutMenuButton()
-#endif
+        #endif
     }
 
-#if os(iOS) && !targetEnvironment(macCatalyst)
-    public override var prefersStatusBarHidden: Bool {
+    #if os(iOS) && !targetEnvironment(macCatalyst)
+    override public var prefersStatusBarHidden: Bool {
         return true
     }
 
-    public override var preferredScreenEdgesDeferringSystemGestures: UIRectEdge {
+    override public var preferredScreenEdgesDeferringSystemGestures: UIRectEdge {
         return [.left, .right, .bottom]
     }
 
-    public override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    override public var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .all
     }
-#endif
+    #endif
 
     public func quit(optionallySave canSave: Bool = true, completion: QuitCompletion? = nil) async {
         NotificationCenter.default.removeObserver(self)
@@ -990,6 +994,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         if audioInited {
             gameAudio.stopAudio()
         }
+        // Resume CloudKit when gameplay stops
+        CloudKitDownloadQueue.shared.resumeQueue()
+
         core.stopEmulation()
         gpuViewController.dismiss(animated: false)
         if let view = controllerViewController?.view {
@@ -999,12 +1006,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
         controllerViewController?.dismiss(animated: false)
         core.touchViewController = nil
-#if os(iOS)
-        PVControllerManager.shared.controllers.forEach {
-            $0.clearPauseHandler()
+        #if os(iOS)
+        for controller in PVControllerManager.shared.controllers {
+            controller.clearPauseHandler()
         }
 
-#endif
+        #endif
         updatePlayedDuration()
         destroyAutosaveTimer()
         // Remove all menu-related gesture recognizers
@@ -1034,10 +1041,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         fpsTimer?.invalidate()
         fpsTimer = nil
         dismiss(animated: true, completion: completion)
-        self.view?.removeFromSuperview()
-        self.removeFromParent()
+        view?.removeFromSuperview()
+        removeFromParent()
         staticSelf = nil
-
 
         AppState.shared.emulationUIState.reset()
     }
@@ -1058,13 +1064,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
 
         // If using a DeltaSkin, ensure game screen view is visible and positioned properly
-        if let skinContainerView = self.view.viewWithTag(9876) {
+        if let skinContainerView = view.viewWithTag(9876) {
             // Make sure the GPU view is visible on top of the proper layer
-            self.gpuViewController.view.alpha = 1.0
-            self.gpuViewController.view.isHidden = false
+            gpuViewController.view.alpha = 1.0
+            gpuViewController.view.isHidden = false
 
             // If we have a stored target frame, ensure the GPU view is positioned there
-            if let targetFrame = self.currentTargetFrame {
+            if let targetFrame = currentTargetFrame {
                 UIView.animate(withDuration: 0.2) {
                     self.gpuViewController.view.frame = targetFrame
                 }
@@ -1075,12 +1081,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     }
 }
 
-
 extension PVEmulatorViewController: GameplayDurationTrackerUtil {}
 
 // MARK: - Skin Management
-extension PVEmulatorViewController {
 
+extension PVEmulatorViewController {
     /// Apply a skin to the emulator
     /// - Parameter skin: The skin to apply
     public func applySkin(_ skin: DeltaSkinProtocol) async throws {
@@ -1095,19 +1100,19 @@ extension PVEmulatorViewController {
         // Log core dimensions before skin application
         if let metalVC = gpuViewController as? PVMetalViewController {
             ILOG("""
-                 Core dimensions before skin application:
-                 Buffer size: \(core.bufferSize)
-                 Screen rect: \(core.screenRect)
-                 GPU view frame: \(metalVC.view.frame)
-                 Orientation: \(currentOrientation)
-                 """)
+            Core dimensions before skin application:
+            Buffer size: \(core.bufferSize)
+            Screen rect: \(core.screenRect)
+            GPU view frame: \(metalVC.view.frame)
+            Orientation: \(currentOrientation)
+            """)
         }
 
         // Reset the current target frame to force recalculation for the new skin
         currentTargetFrame = nil
 
         // Store the current skin for rotation handling
-        self.currentSkin = skin
+        currentSkin = skin
 
         // IMPORTANT: Use device orientation for skin traits
         // First get the real device orientation
@@ -1121,17 +1126,17 @@ extension PVEmulatorViewController {
 
         // Determine the current orientation from device or interface orientation
         if isValidOrientation {
-            self.currentOrientation = deviceOrientation.isLandscape ? .landscape : .portrait
+            currentOrientation = deviceOrientation.isLandscape ? .landscape : .portrait
         } else {
             // Fallback to interface orientation
             let interfaceOrientation = UIApplication.shared.windows.first?.windowScene?.interfaceOrientation
-            self.currentOrientation = (interfaceOrientation == .landscapeLeft || interfaceOrientation == .landscapeRight) ? .landscape : .portrait
+            currentOrientation = (interfaceOrientation == .landscapeLeft || interfaceOrientation == .landscapeRight) ? .landscape : .portrait
         }
         #else
         #endif
 
         // Log the orientation we're using
-        DLOG("Using orientation for skin application: \(self.currentOrientation)")
+        DLOG("Using orientation for skin application: \(currentOrientation)")
 
         // RADICAL APPROACH: Completely rebuild the view hierarchy
         await MainActor.run {
@@ -1147,7 +1152,7 @@ extension PVEmulatorViewController {
         let skinContainer = UIView(frame: view.bounds)
         skinContainer.tag = 9876 // Unique tag for skin container views
         skinContainer.isOpaque = false
-        skinContainer.backgroundColor = .clear //UIColor.black // Set background to black for retrowave aesthetic
+        skinContainer.backgroundColor = .clear // UIColor.black // Set background to black for retrowave aesthetic
         skinContainer.autoresizingMask = [.flexibleWidth, .flexibleHeight] // Ensure it resizes with parent
 
         // 4. Add the container at the bottom of the view hierarchy
@@ -1248,7 +1253,7 @@ extension PVEmulatorViewController {
         )
 
         // Store the input handler for reuse
-        self.sharedInputHandler = inputHandler
+        sharedInputHandler = inputHandler
 
         // Set up menu button handler
         inputHandler.menuButtonHandler = { [weak self] in
@@ -1316,22 +1321,22 @@ extension PVEmulatorViewController {
 
         // Log core dimensions before repositioning
         ILOG("""
-             Core dimensions before repositioning game screen:
-             Buffer size: \(core.bufferSize)
-             Screen rect: \(core.screenRect)
-             GPU view frame: \(gpuView.frame)
-             Orientation: \(orientation)
-             Force recalculation: \(forceRecalculation)
-            """)
+         Core dimensions before repositioning game screen:
+         Buffer size: \(core.bufferSize)
+         Screen rect: \(core.screenRect)
+         GPU view frame: \(gpuView.frame)
+         Orientation: \(orientation)
+         Force recalculation: \(forceRecalculation)
+        """)
 
         // If we have a cached target frame and we're not forcing recalculation, use it
         if let targetFrame = currentTargetFrame, !forceRecalculation {
             // Only apply if the frames are significantly different to avoid jitter
             if abs(gpuView.frame.width - targetFrame.width) > 1 ||
-               abs(gpuView.frame.height - targetFrame.height) > 1 ||
-               abs(gpuView.frame.origin.x - targetFrame.origin.x) > 1 ||
-               abs(gpuView.frame.origin.y - targetFrame.origin.y) > 1 {
-
+                abs(gpuView.frame.height - targetFrame.height) > 1 ||
+                abs(gpuView.frame.origin.x - targetFrame.origin.x) > 1 ||
+                abs(gpuView.frame.origin.y - targetFrame.origin.y) > 1
+            {
                 DLOG("Using cached target frame: \(targetFrame)")
                 gpuView.frame = targetFrame
             }
@@ -1369,13 +1374,13 @@ extension PVEmulatorViewController {
 
                     // Log dimensions after refresh
                     ILOG("""
-                         Core dimensions after repositioning game screen:
-                         Buffer size: \(self.core.bufferSize)
-                         Screen rect: \(self.core.screenRect)
-                         GPU view frame: \(gpuView.frame)
-                         Metal view drawable size: \(metalVC.mtlView.drawableSize)
-                         Orientation: \(orientation)
-                         """)
+                    Core dimensions after repositioning game screen:
+                    Buffer size: \(self.core.bufferSize)
+                    Screen rect: \(self.core.screenRect)
+                    GPU view frame: \(gpuView.frame)
+                    Metal view drawable size: \(metalVC.mtlView.drawableSize)
+                    Orientation: \(orientation)
+                    """)
 
                     // Dump texture info for debugging
 //                    metalVC.dumpTextureInfo()
@@ -1397,14 +1402,14 @@ extension PVEmulatorViewController {
             if orientation == .landscape {
                 // Default landscape position (centered, 80% of width, maintain aspect ratio)
                 let width = view.bounds.width * 0.8
-                let height = width * (3.0/4.0) // 4:3 aspect ratio typical for retro games
+                let height = width * (3.0 / 4.0) // 4:3 aspect ratio typical for retro games
                 let x = (view.bounds.width - width) / 2
                 let y = (view.bounds.height - height) / 2
                 defaultFrame = CGRect(x: x, y: y, width: width, height: height)
             } else {
                 // Default portrait position (centered, 80% of width, maintain aspect ratio)
                 let width = view.bounds.width * 0.8
-                let height = width * (3.0/4.0) // 4:3 aspect ratio typical for retro games
+                let height = width * (3.0 / 4.0) // 4:3 aspect ratio typical for retro games
                 let x = (view.bounds.width - width) / 2
                 let y = view.bounds.height * 0.2 // Position in upper part of screen
                 defaultFrame = CGRect(x: x, y: y, width: width, height: height)
@@ -1538,7 +1543,7 @@ extension PVEmulatorViewController {
 
         // 5. Clear the skin container reference and reset target frame
         skinContainerView = nil
-        currentTargetFrame = nil  // Reset target frame to force recalculation
+        currentTargetFrame = nil // Reset target frame to force recalculation
 
         // NOTE: We intentionally DO NOT reset the sharedInputHandler here
         // to maintain input state across skin changes
@@ -1660,11 +1665,11 @@ extension PVEmulatorViewController {
 
         // Log core dimensions before orientation change
         ILOG("""
-             Core dimensions before orientation change:
-             Buffer size: \(core.bufferSize)
-             Screen rect: \(core.screenRect)
-             New orientation: \(newOrientation)
-             """)
+        Core dimensions before orientation change:
+        Buffer size: \(core.bufferSize)
+        Screen rect: \(core.screenRect)
+        New orientation: \(newOrientation)
+        """)
         ILOG("New orientation: \(newOrientation)")
 
         // Only reload skin if orientation changed
@@ -1672,7 +1677,7 @@ extension PVEmulatorViewController {
             ILOG("Orientation changed from \(currentOrientation) to \(newOrientation)")
 
             // Update orientation first
-            let previousSkin = self.currentSkin // Capture before changing currentOrientation
+            let previousSkin = currentSkin // Capture before changing currentOrientation
             currentOrientation = newOrientation
 
             coordinator.animate { _ in
@@ -1718,7 +1723,8 @@ extension PVEmulatorViewController {
                             if needsSkinChange {
                                 DLOG("Need to change skin for new orientation")
                                 if let skinId = skinIdentifier,
-                                   let skin = try? await DeltaSkinManager.shared.skin(withIdentifier: skinId) {
+                                   let skin = try? await DeltaSkinManager.shared.skin(withIdentifier: skinId)
+                                {
                                     DLOG("Applying new skin: \(skin.name)")
                                     try await self.applySkin(skin)
                                 } else {
@@ -1757,24 +1763,23 @@ extension PVEmulatorViewController {
         } else {
             ILOG("Orientation didn't change, just repositioning")
             // Even if orientation didn't change, we might need to reposition due to size changes
-            if self.isDeltaSkinEnabled { // CHECK if skins are enabled
-                if let skin = self.currentSkin {
-                    self.repositionGameScreen(for: skin, orientation: newOrientation)
+            if isDeltaSkinEnabled { // CHECK if skins are enabled
+                if let skin = currentSkin {
+                    repositionGameScreen(for: skin, orientation: newOrientation)
                 }
             } else { // Skins are NOT enabled
                 DLOG("Sizing GPU view, no orientation change (DeltaSkin Disabled)")
-                self.gpuViewController.view.frame = self.view.bounds
-                self.ensureProperZOrder() // Ensure OSD/menu are on top
+                gpuViewController.view.frame = view.bounds
+                ensureProperZOrder() // Ensure OSD/menu are on top
             }
         }
     }
 }
 
 extension PVEmulatorViewController {
-
     @objc func appWillEnterForeground(_: Notification?) {
-        if (!core.isOn) {
-            return;
+        if !core.isOn {
+            return
         }
         Task.detached { @MainActor in
             self.updateLastPlayedTime()
@@ -1784,8 +1789,8 @@ extension PVEmulatorViewController {
     @objc func appDidEnterBackground(_: Notification?) {}
 
     @objc func appWillResignActive(_: Notification?) {
-        if (!core.isOn) {
-            return;
+        if !core.isOn {
+            return
         }
         Task {
             if Defaults[.autoSave], core.supportsSaveStates {
@@ -1804,8 +1809,8 @@ extension PVEmulatorViewController {
     }
 
     @objc func appDidBecomeActive(_: Notification?) {
-        if (!core.isOn) {
-            return;
+        if !core.isOn {
+            return
         }
         if !isShowingMenu {
             core.setPauseEmulation(false)
