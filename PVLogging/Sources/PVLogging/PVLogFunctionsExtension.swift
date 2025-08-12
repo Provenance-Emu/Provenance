@@ -22,6 +22,7 @@ public func VLOG(_ message: @autoclosure () -> String,
     PVLogPublisher.shared.verbose(msg, file: file, function: function, line: line)
 }
 
+#if DEBUG
 @inlinable
 public func DLOG(_ message: @autoclosure () -> String,
                  file: String = #file,
@@ -33,6 +34,12 @@ public func DLOG(_ message: @autoclosure () -> String,
     // Also send to the publisher
     PVLogPublisher.shared.debug(msg, file: file, function: function, line: line)
 }
+#else
+public func DLOG(_ message: @autoclosure () -> String,
+                 file: String = #file,
+                 function: String = #function,
+                 line: Int = #line) { }
+#endif
 
 @inlinable
 public func ILOG(_ message: @autoclosure () -> String,
