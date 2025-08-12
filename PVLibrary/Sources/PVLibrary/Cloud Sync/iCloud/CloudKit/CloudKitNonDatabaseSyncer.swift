@@ -405,7 +405,7 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
     /// - Parameter recordID: The ID of the record that changed.
     public func processRemoteRecordUpdate(recordID: CKRecord.ID) async throws {
         // Defer non-database assets until the DB is populated
-        guard SyncProgressTracker.shared.databaseSynced else { return }
+        guard await SyncProgressTracker.shared.databaseSynced else { return }
         DLOG("Processing remote update notification for record ID: \(recordID.recordName)")
         do {
             // 1. Fetch the record from CloudKit

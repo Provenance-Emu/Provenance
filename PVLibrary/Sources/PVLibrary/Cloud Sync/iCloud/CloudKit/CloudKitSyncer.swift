@@ -1344,17 +1344,19 @@ public class CloudKitSyncer: SyncProvider {
                         guard let self = self else { throw NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "Syncer deallocated"]) }
 
                         DLOG("Requesting on-demand download for record: \(recordName)")
-                        progressTracker.updateProgress(0.1)
+                        await progressTracker.updateProgress(0.1)
 
                         // Create a record ID from the record name
                         let recordID = CKRecord.ID(recordName: recordName)
 
                         // Fetch the record from CloudKit
-                        progressTracker.currentOperation = "Fetching record details..."
+                        Task { @MainActor in
+                            progressTracker.currentOperation = "Fetching record details..."
+                        }
                         let record = try await self.privateDatabase.record(for: recordID)
                         DLOG("Retrieved record of type: \(record.recordType)")
 
-                        progressTracker.updateProgress(0.3)
+                        await progressTracker.updateProgress(0.3)
 
                         // Extract required fields from the record
                         guard let directory = record["directory"] as? String,
@@ -1371,13 +1373,17 @@ public class CloudKitSyncer: SyncProvider {
                            let size = attributes[.size] as? Int64 {
                             fileSize = size
                             let fileSizeString = ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file)
-                            progressTracker.currentOperation = "Downloading \(filename) (\(fileSizeString))..."
+                            Task { @MainActor in
+                                progressTracker.currentOperation = "Downloading \(filename) (\(fileSizeString))..."
+                            }
                         } else {
                             fileSize = 0
-                            progressTracker.currentOperation = "Downloading \(filename)..."
+                            Task { @MainActor in
+                                progressTracker.currentOperation = "Downloading \(filename)..."
+                            }
                         }
 
-                        progressTracker.updateProgress(0.4)
+                        await progressTracker.updateProgress(0.4)
 
                         // Create destination path
                         let documentsURL = URL.documentsPath
@@ -1424,7 +1430,7 @@ public class CloudKitSyncer: SyncProvider {
                             try FileManager.default.createDirectory(at: destinationURL.deletingLastPathComponent(), withIntermediateDirectories: true)
                         }
 
-                        progressTracker.updateProgress(0.5)
+                        await progressTracker.updateProgress(0.5)
 
                         // Remove existing file if needed
                         if FileManager.default.fileExists(atPath: destinationURL.path) {
@@ -1432,13 +1438,13 @@ public class CloudKitSyncer: SyncProvider {
                             try await FileManager.default.removeItem(at: destinationURL)
                         }
 
-                        progressTracker.updateProgress(0.6)
+                        await progressTracker.updateProgress(0.6)
 
                         // Copy file from CloudKit asset to local storage
                         DLOG("Copying file from CloudKit asset (\(fileURL.path)) to local storage (\(destinationURL.path))")
                         try FileManager.default.copyItem(at: fileURL, to: destinationURL)
 
-                        progressTracker.updateProgress(0.8)
+                        await progressTracker.updateProgress(0.8)
 
                         // Get file size for logging
                         let attributes = try FileManager.default.attributesOfItem(atPath: destinationURL.path)
@@ -1447,12 +1453,14 @@ public class CloudKitSyncer: SyncProvider {
                         DLOG("Downloaded file size: \(fileSizeString)")
 
                         // Update database to mark file as downloaded
-                        progressTracker.currentOperation = "Updating database..."
-                        progressTracker.updateProgress(0.9)
+                        Task { @MainActor in
+                            progressTracker.currentOperation = "Updating database..."
+                        }
+                        await progressTracker.updateProgress(0.9)
                         await self.createDatabaseEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: true)
 
                         DLOG("Successfully downloaded file on demand: \(filename)")
-                        progressTracker.updateProgress(1.0)
+                        await progressTracker.updateProgress(1.0)
 
                         // Record analytics
                         await CloudKitSyncAnalytics.shared.recordSuccessfulSync(bytesDownloaded: downloadedFileSize)
@@ -1488,8 +1496,10 @@ public class CloudKitSyncer: SyncProvider {
                     operation: { [weak self] in
                         guard let self = self else { throw NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "Syncer deallocated"]) }
 
-                        progressTracker.updateProgress(0.1)
-                        progressTracker.currentOperation = "Preparing \(filename)..."
+                        await progressTracker.updateProgress(0.1)
+                        Task { @MainActor in
+                            progressTracker.currentOperation = "Preparing \(filename)..."
+                        }
 
                         // Ensure file exists before proceeding
                         guard self.fileManager.fileExists(atPath: file.path) else {
@@ -1510,13 +1520,17 @@ public class CloudKitSyncer: SyncProvider {
                         let relativePath = self.calculateRelativePath(for: file, in: directory) ?? ""
 
                         // Find existing record or create new one
-                        progressTracker.updateProgress(0.2)
-                        progressTracker.currentOperation = "Checking for existing record..."
+                        await progressTracker.updateProgress(0.2)
+                        Task { @MainActor in
+                            progressTracker.currentOperation = "Checking for existing record..."
+                        }
                         var record: CKRecord
                         if let existingRecord = try? await self.findRecordForFile(file) {
                             // Update existing record
-                            progressTracker.updateProgress(0.3)
-                            progressTracker.currentOperation = "Updating existing record..."
+                            await progressTracker.updateProgress(0.3)
+                            Task { @MainActor in
+                                progressTracker.currentOperation = "Updating existing record..."
+                            }
                             record = existingRecord
 
                             // Check if local file is newer than cloud record's modification date
@@ -1528,8 +1542,10 @@ public class CloudKitSyncer: SyncProvider {
                             VLOG("Updating existing record for \(filename)")
                         } else {
                             // Create new record with the appropriate record type
-                            progressTracker.updateProgress(0.3)
-                            progressTracker.currentOperation = "Creating new record..."
+                            await progressTracker.updateProgress(0.3)
+                            Task { @MainActor in
+                                progressTracker.currentOperation = "Creating new record..."
+                            }
                             let recordID = CKRecord.ID(recordName: "\(directory)_\(filename)_\(UUID().uuidString.prefix(8))") // Ensure unique record name
                             record = CKRecord(recordType: self.recordType, recordID: recordID)
                             VLOG("Creating new record for \(filename)")
@@ -1559,11 +1575,13 @@ public class CloudKitSyncer: SyncProvider {
                         record["fileData"] = asset
 
                         // Save the record
-                        progressTracker.updateProgress(0.4)
-                        progressTracker.currentOperation = "Saving record to CloudKit..."
+                        await progressTracker.updateProgress(0.4)
+                        Task { @MainActor in
+                            progressTracker.currentOperation = "Saving record to CloudKit..."
+                        }
                         let savedRecord = try await self.privateDatabase.save(record)
                         VLOG("Successfully saved record for \(filename)")
-                        progressTracker.updateProgress(1.0)
+                        await progressTracker.updateProgress(1.0)
 
                         // Log successful upload
                         CloudSyncLogManager.shared.logSyncOperation(

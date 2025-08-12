@@ -40,27 +40,29 @@ public class CloudKitDownloadQueue: ObservableObject {
         self.maxConcurrentDownloads = 3
         #endif
 
-        // Listen to progress tracker changes
-        progressTracker.$queuedDownloads
-            .map { $0.count }
-            .assign(to: &$queueCount)
+        Task { @MainActor in
+            // Listen to progress tracker changes
+            progressTracker.$queuedDownloads
+                .map { $0.count }
+                .assign(to: &$queueCount)
 
-        progressTracker.$activeDownloads
-            .map { $0.count }
-            .assign(to: &$activeCount)
+            progressTracker.$activeDownloads
+                .map { $0.count }
+                .assign(to: &$activeCount)
 
-        progressTracker.$failedDownloads
-            .map { $0.count }
-            .assign(to: &$failedCount)
+            progressTracker.$failedDownloads
+                .map { $0.count }
+                .assign(to: &$failedCount)
 
-        progressTracker.$downloadQueueStatus
-            .map { status in
-                switch status {
-                case .downloading: return true
-                default: return false
+            progressTracker.$downloadQueueStatus
+                .map { status in
+                    switch status {
+                    case .downloading: return true
+                    default: return false
+                    }
                 }
-            }
-            .assign(to: &$isProcessingQueue)
+                .assign(to: &$isProcessingQueue)
+        }
 
         ILOG("CloudKit Download Queue initialized with max concurrent downloads: \(maxConcurrentDownloads)")
     }
@@ -87,7 +89,7 @@ public class CloudKitDownloadQueue: ObservableObject {
         ILOG("Queuing download: \(title) (\(md5)) - Size: \(ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file))")
 
         // Check space before queuing
-        try progressTracker.queueDownload(
+        try await progressTracker.queueDownload(
             md5: md5,
             title: title,
             fileSize: fileSize,
@@ -97,28 +99,30 @@ public class CloudKitDownloadQueue: ObservableObject {
 
         // Start processing queue if not already running
         if !isProcessingQueue {
-            startProcessingQueue()
+            await startProcessingQueue()
         }
 
         // For on-demand downloads, return immediately but show progress
         if onDemand {
             ILOG("On-demand download queued with high priority: \(title)")
             // Start immediately, ignoring concurrency limits
-            startOnDemandImmediately(md5: md5)
+            await startOnDemandImmediately(md5: md5)
         }
     }
 
     /// Start processing the download queue
-    private func startProcessingQueue() {
+    private func startProcessingQueue() async {
         guard !isProcessingQueue else { return }
         // Gate auto-sync until metadata has populated PVGame
-        if !SyncProgressTracker.shared.databaseSynced {
+        if await !SyncProgressTracker.shared.databaseSynced {
             // Leave queue intact; on-demand items are started elsewhere
             return
         }
         isProcessingQueue = true
-        progressTracker.downloadQueueStatus = .downloading
-        progressTracker.startTracking(operation: "Processing Download Queue")
+        Task { @MainActor in
+            progressTracker.downloadQueueStatus = .downloading
+        }
+        await progressTracker.startTracking(operation: "Processing Download Queue")
 
         Task.detached(priority: .background) { [weak self] in
             await self?.processQueue()
@@ -149,15 +153,16 @@ public class CloudKitDownloadQueue: ObservableObject {
     }
 
     /// Immediately start a queued on-demand download, ignoring concurrency limits
-    private func startOnDemandImmediately(md5: String) {
-        Task.detached(priority: .userInitiated) { [weak self] in
+    private func startOnDemandImmediately(md5: String) async {
+        Task.detached(priority: .userInitiated) { @MainActor [weak self] in
             guard let self = self else { return }
             // Find the queued item by md5
             var queued: SyncProgressTracker.QueuedDownload
-            if let idx = self.progressTracker.queuedDownloads.firstIndex(where: { $0.md5 == md5 }) {
+            if let idx = await self.progressTracker.queuedDownloads.firstIndex(where: { $0.md5 == md5 }) {
                 queued = self.progressTracker.queuedDownloads.remove(at: idx)
                 // Reinsert at front as high priority
                 let elevated = SyncProgressTracker.QueuedDownload(md5: queued.md5, title: queued.title, fileSize: queued.fileSize, priority: .high, systemIdentifier: queued.systemIdentifier)
+
                 self.progressTracker.queuedDownloads.insert(elevated, at: 0)
                 queued = elevated
             } else {
@@ -191,7 +196,7 @@ public class CloudKitDownloadQueue: ObservableObject {
 
     /// Start an individual download
     private func startIndividualDownload(_ queuedDownload: SyncProgressTracker.QueuedDownload) async {
-        guard let _ = progressTracker.startDownload(md5: queuedDownload.md5) else {
+        guard let _ = await progressTracker.startDownload(md5: queuedDownload.md5) else {
             ELOG("Failed to start download for \(queuedDownload.md5)")
             return
         }
@@ -280,13 +285,17 @@ public class CloudKitDownloadQueue: ObservableObject {
         if let task = activeDownloadTasks[md5] {
             task.cancel()
             activeDownloadTasks.removeValue(forKey: md5)
-            progressTracker.failDownload(md5: md5, error: .downloadCancelled)
+            Task { @MainActor in
+                progressTracker.failDownload(md5: md5, error: .downloadCancelled)
+            }
             ILOG("Cancelled download: \(md5)")
         } else {
             // Remove from queue if not active
-            if let index = progressTracker.queuedDownloads.firstIndex(where: { $0.md5 == md5 }) {
-                progressTracker.queuedDownloads.remove(at: index)
-                ILOG("Removed from queue: \(md5)")
+            Task { @MainActor in
+                if let index = progressTracker.queuedDownloads.firstIndex(where: { $0.md5 == md5 }) {
+                    progressTracker.queuedDownloads.remove(at: index)
+                    ILOG("Removed from queue: \(md5)")
+                }
             }
         }
     }
@@ -300,43 +309,50 @@ public class CloudKitDownloadQueue: ObservableObject {
         activeDownloadTasks.removeAll()
 
         // Clear queue
-        progressTracker.cancelAllDownloads()
-
+        Task { @MainActor in
+            progressTracker.cancelAllDownloads()
+        }
         isProcessingQueue = false
         ILOG("Cancelled all downloads")
     }
 
     /// Pause the download queue
     public func pauseQueue() {
-        progressTracker.pauseDownloads()
+        Task { @MainActor in
+            progressTracker.pauseDownloads()
+        }
         ILOG("Paused download queue")
     }
 
     /// Resume the download queue
     public func resumeQueue() {
-        progressTracker.resumeDownloads()
-        if !progressTracker.queuedDownloads.isEmpty && !isProcessingQueue {
-            startProcessingQueue()
+        Task { @MainActor in
+            progressTracker.resumeDownloads()
+            if !progressTracker.queuedDownloads.isEmpty && !isProcessingQueue {
+                await startProcessingQueue()
+            }
         }
         ILOG("Resumed download queue")
     }
 
     /// Retry a failed download
     public func retryDownload(md5: String) {
-        progressTracker.retryFailedDownload(md5: md5)
-        if !isProcessingQueue {
-            startProcessingQueue()
+        Task { @MainActor in
+            progressTracker.retryFailedDownload(md5: md5)
+            if !isProcessingQueue {
+                await startProcessingQueue()
+            }
         }
         ILOG("Retrying download: \(md5)")
     }
 
     /// Get download status for a specific MD5
-    public func downloadStatus(for md5: String) -> DownloadStatus {
-        if progressTracker.activeDownloads.contains(where: { $0.md5 == md5 }) {
+    public func downloadStatus(for md5: String) async -> DownloadStatus {
+        if await progressTracker.activeDownloads.contains(where: { $0.md5 == md5 }) {
             return .downloading
-        } else if progressTracker.queuedDownloads.contains(where: { $0.md5 == md5 }) {
+        } else if await progressTracker.queuedDownloads.contains(where: { $0.md5 == md5 }) {
             return .queued
-        } else if progressTracker.failedDownloads.contains(where: { $0.md5 == md5 }) {
+        } else if await progressTracker.failedDownloads.contains(where: { $0.md5 == md5 }) {
             return .failed
         } else {
             return .notQueued

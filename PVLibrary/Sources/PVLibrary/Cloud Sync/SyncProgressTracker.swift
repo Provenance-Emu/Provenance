@@ -11,6 +11,7 @@ import Combine
 import PVLogging
 
 /// A singleton class to track CloudKit sync progress across the app
+@MainActor
 public final class SyncProgressTracker: ObservableObject, Sendable {
     /// Shared instance for app-wide access
     public static let shared = SyncProgressTracker()
@@ -394,6 +395,12 @@ public final class SyncProgressTracker: ObservableObject, Sendable {
         ILOG("Resumed download queue")
     }
 
+    public func alreadyQueued(md5: String) -> Bool {
+        queuedDownloads.contains { $0.md5 == md5 } ||
+        activeDownloads.contains { $0.md5 == md5 } ||
+        failedDownloads.contains { $0.md5 == md5 }
+    }
+    
     // MARK: - Space Management
 
     /// Check if there's enough space for a download

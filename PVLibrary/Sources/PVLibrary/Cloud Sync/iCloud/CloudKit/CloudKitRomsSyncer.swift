@@ -639,7 +639,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         // Update progress tracker with space requirements
         await progressTracker.updateDiskSpace()
-        let availableSpace = progressTracker.availableDiskSpace
+        let availableSpace = await progressTracker.availableDiskSpace
 
         ILOG("📊 Download space analysis: \(gameInfos.count) games need \(ByteCountFormatter.string(fromByteCount: totalSpaceNeeded, countStyle: .file)) total, \(ByteCountFormatter.string(fromByteCount: availableSpace, countStyle: .file)) available")
 
@@ -655,9 +655,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         for gameInfo in sortedGameInfos {
             // Check if this specific game is already in the queue
-            let alreadyQueued = progressTracker.queuedDownloads.contains { $0.md5 == gameInfo.md5 } ||
-                              progressTracker.activeDownloads.contains { $0.md5 == gameInfo.md5 } ||
-                              progressTracker.failedDownloads.contains { $0.md5 == gameInfo.md5 }
+            let alreadyQueued = await progressTracker.alreadyQueued(md5: gameInfo.md5)
 
             if alreadyQueued {
                 VLOG("Game \(gameInfo.title) (\(gameInfo.md5)) already in download queue, skipping")

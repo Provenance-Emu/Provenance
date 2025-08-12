@@ -69,8 +69,10 @@ public enum CloudKitRetryStrategy {
             do {
                 // If we're retrying, update the progress tracker
                 if retryCount > 0 && progressTracker != nil {
-                    progressTracker?.updateProgress(Double(retryCount) / Double(maxRetries) * 0.5)
-                    progressTracker?.currentOperation += " (Retry \(retryCount)/\(maxRetries))"
+                    await progressTracker?.updateProgress(Double(retryCount) / Double(maxRetries) * 0.5)
+                    Task { @MainActor in
+                        progressTracker?.currentOperation += " (Retry \(retryCount)/\(maxRetries))"
+                    }
                 }
                 
                 return try await operation()
@@ -91,7 +93,9 @@ public enum CloudKitRetryStrategy {
                     let delay = error.recommendedRetryDelay
                     
                     // Update progress tracker if available
-                    progressTracker?.currentOperation = "Waiting to retry... (\(Int(delay))s)"
+                    Task { @MainActor in
+                        progressTracker?.currentOperation = "Waiting to retry... (\(Int(delay))s)"
+                    }
                     
                     // Wait before retrying
                     try await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
