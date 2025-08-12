@@ -93,20 +93,42 @@ public final class RAAudioTapEngine: AudioEngineProtocol {
     public func stopAudio() {}
     public func setupAudioGraph(for gameCore: EmulatorCoreAudioDataSource) throws {}
     private var logTick: Int = 0
+    private var lastFetchTime: CFTimeInterval = 0
+    private var scratch: [Float] = Array(repeating: 0, count: 1024)
     public func getWaveformData(numberOfPoints: Int) -> WaveformData {
         guard let provider = provider else {
             if logTick % 30 == 0 { DLOG("RAAudioTapEngine: no provider") }
             logTick &+= 1
             return WaveformData(amplitudes: Array(repeating: 0.0, count: numberOfPoints))
         }
-        let maxCount = max(1, numberOfPoints)
-        let array = provider.dequeueWaveformAmplitudes(withMaxCount: UInt(maxCount))
-        let floats: [Float] = array.map { Float(truncating: $0) }
+        // Throttle to ~60 Hz to reduce bridge overhead
+        let now = CACurrentMediaTime()
+        if now - lastFetchTime < 1.0/30.0 {
+            logTick &+= 1
+            return WaveformData(amplitudes: Array(repeating: 0.0, count: numberOfPoints))
+        }
+        lastFetchTime = now
+
+        let requested = min(max(1, numberOfPoints/2), 128)
+        if scratch.count < requested { scratch = Array(repeating: 0, count: requested) }
+        let written = provider.copyWaveformAmplitudes(to: &scratch, maxCount: UInt(requested))
+        let floats = Array(scratch.prefix(Int(written)))
         if logTick % 30 == 0 {
             let peak = floats.reduce(0) { max($0, abs($1)) }
             DLOG("RAAudioTapEngine: count=\(floats.count) peak=\(String(format: "%.3f", peak)) first=\(String(format: "%.3f", floats.first ?? 0))")
         }
         logTick &+= 1
-        return WaveformData(amplitudes: floats)
+        // Optionally decimate if we fetched more than needed
+        if floats.isEmpty { return WaveformData(amplitudes: Array(repeating: 0.0, count: numberOfPoints)) }
+        if floats.count == numberOfPoints { return WaveformData(amplitudes: floats) }
+        let step = max(1, floats.count / numberOfPoints)
+        var out: [Float] = []
+        out.reserveCapacity(numberOfPoints)
+        var i = 0
+        while out.count < numberOfPoints && i < floats.count {
+            out.append(floats[i])
+            i += step
+        }
+        return WaveformData(amplitudes: out)
     }
 }

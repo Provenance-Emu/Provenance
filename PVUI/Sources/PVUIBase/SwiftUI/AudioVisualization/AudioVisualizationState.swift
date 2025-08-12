@@ -52,7 +52,8 @@ public class AudioVisualizationState: ObservableObject {
         stopUpdating()
         
         // Create a new timer to update the visualization
-        updateTimer = Timer.scheduledTimer(withTimeInterval: updateInterval, repeats: true) { [weak self] _ in
+        let interval = max(1.0/60.0, updateInterval)
+        updateTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
             self?.updateVisualization()
         }
     }
