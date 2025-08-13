@@ -1148,6 +1148,8 @@ extension PVEmulatorViewController {
         }
 
         // 5. Create and add the skin view
+        // Pause emulation while building the skin to avoid glitches
+        core.setPauseEmulation(true)
         let skinView = try await createSkinView(from: skin)
 
         await MainActor.run {
@@ -1200,6 +1202,9 @@ extension PVEmulatorViewController {
 
             // Make sure to reconnect all input handlers
             reconnectAllInputHandlers()
+
+            // Skin fully applied; resume emulation
+            core.setPauseEmulation(false)
         }
     }
 

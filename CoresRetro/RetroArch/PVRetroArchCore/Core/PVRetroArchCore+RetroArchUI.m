@@ -200,6 +200,7 @@ int argc =  1;
 }
 
 - (void)setPauseEmulation:(BOOL)flag {
+    DLOG(@"RetroArchCoreBridge setPauseEmulation: %i", flag);
     if (!EmulationState.shared.isOn) {
         WLOG(@"Core isn't set to \"on\", skipping set pause : %i", flag);
         return;
@@ -231,8 +232,8 @@ int argc =  1;
     runloop_st->flags &= ~RUNLOOP_FLAG_SLOWMOTION;
     runloop_st->flags &= ~RUNLOOP_FLAG_PAUSED;
     runloop_st->flags &= ~RUNLOOP_FLAG_IDLE;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void){
-        settings_t *settings = config_get_ptr();
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void){
+//        settings_t *settings = config_get_ptr();
         float sm = self.smSpeed / 100.0;
         float ff = self.ffSpeed / 100.0;
         settings->floats.slowmotion_ratio  = sm;
@@ -244,7 +245,7 @@ int argc =  1;
             ILOG(@"RetroArch:slow motion %f", sm);
             apple_direct_input_keyboard_event(true, (int)RETROK_F14, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
         }
-    });
+//    });
 }
 
 - (void)stopEmulation {

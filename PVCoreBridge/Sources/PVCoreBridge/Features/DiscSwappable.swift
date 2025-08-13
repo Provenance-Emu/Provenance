@@ -8,7 +8,10 @@
 
 import Foundation
 @objc public protocol DiscSwappable {
+    @MainActor
     var currentGameSupportsMultipleDiscs: Bool { get }
+    @MainActor
     var numberOfDiscs: UInt { get }
+    @MainActor
     func swapDisc(number: UInt)
 }

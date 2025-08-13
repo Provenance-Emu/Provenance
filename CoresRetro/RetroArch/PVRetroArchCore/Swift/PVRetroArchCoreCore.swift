@@ -29,6 +29,10 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
     public override var isDoubleBuffered: Bool { true }
     public override var supportsSkins: Bool { true }
     public override var supportsAudioVisualizer: Bool { true }
+    public override func setPauseEmulation(_ flag: Bool) {
+        _bridge.setPauseEmulation(flag)
+        super.setPauseEmulation(flag)
+    }
     public override var supportsSaveStates: Bool {
         let unsupportedCores = [
             "dreamcast"

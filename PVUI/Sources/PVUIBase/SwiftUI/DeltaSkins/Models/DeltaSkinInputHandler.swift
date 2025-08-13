@@ -59,6 +59,7 @@ public class DeltaSkinInputHandler: ObservableObject {
     }
 
     /// Handle button press
+    @MainActor
     func buttonPressed(_ buttonId: String) {
         DLOG("Delta Skin button pressed: \(buttonId)")
 
@@ -123,15 +124,16 @@ public class DeltaSkinInputHandler: ObservableObject {
     }
 
     /// Handle button release
+    @MainActor
     func buttonReleased(_ buttonId: String) {
         DLOG("Delta Skin button released: \(buttonId)")
 
         // Check if the emulator is not running or is paused
-        if let core = emulatorCore, (!core.isRunning || core.isEmulationPaused) {
-            DLOG("Emulator core is not running or is paused during button release, attempting to unpause")
-            // Attempt to unpause the emulator
-            core.setPauseEmulation(false)
-        }
+//        if let core = emulatorCore, (!core.isRunning || core.isEmulationPaused) {
+//            DLOG("Emulator core is not running or is paused during button release, attempting to unpause")
+//            // Attempt to unpause the emulator
+//            core.setPauseEmulation(false)
+//        }
 
         // Check for hold-style fast forward button release
         let lowercasedId = buttonId.lowercased()

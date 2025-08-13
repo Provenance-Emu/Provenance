@@ -28,5 +28,8 @@ import Foundation
     @objc func startEmulation()
     @MainActor
     @objc optional func resetEmulation()
+    @MainActor
+    @objc func setPauseEmulation(_ flag: Bool)
+    
     @objc optional func emulationLoopThread()
 }

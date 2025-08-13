@@ -223,6 +223,7 @@ public extension PVEmualatorControllerProtocol {
         return try await createNewSaveState(auto: true, screenshot: image)
     }
 
+    @MainActor
     func takeScreenshot() {
         if let screenshot = captureScreenshot() {
 #if os(iOS)
