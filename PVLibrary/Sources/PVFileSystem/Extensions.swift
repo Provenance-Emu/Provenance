@@ -34,6 +34,7 @@ public enum Extensions: String, CaseIterable {
     
     // Skins
     case deltaSkin = "deltaskin"
+    case manicSkin = "manicskin"
     
     // Other
     case mcr = "mcr"
@@ -46,7 +47,7 @@ public enum Extensions: String, CaseIterable {
     private static let _discImageExtensions: Set<Extensions> = [.ccd, .img, .iso, .chd]
     private static let _playlistExtensions: Set<Extensions> = [.m3u, .cue]
     private static let _specialExtensions: Set<Extensions> = [.svs, .mcr, .plist, .ccd, .sub, .bin]
-    private static let _skinExtensions: Set<Extensions> = [.deltaSkin]
+    private static let _skinExtensions: Set<Extensions> = [.deltaSkin, .manicSkin]
 
     public static let archiveExtensions: Set<String> = Set(_archiveExtensions.map { $0.rawValue })
     public static let artworkExtensions: Set<String> = Set(_artworkExtensions.map { $0.rawValue })
