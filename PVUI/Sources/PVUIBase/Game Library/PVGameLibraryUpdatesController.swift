@@ -34,6 +34,23 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     public let biosWatcher: BIOSWatcher
 
     private var statusCheckTimer: Timer?
+    
+    public enum State {
+        case idle
+        case importing
+    }
+    
+    @Published
+    public private(set) var state: State = .importing
+    
+    public func resume() {
+        state = .importing
+    }
+    
+    public func pause() {
+        state = .idle
+        stopObserving()
+    }
 
     private var hudCoordinator: HUDCoordinator {
         AppState.shared.hudCoordinator
@@ -585,7 +602,9 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         }
 
         //it seems reasonable to kick off the queue here
-        gameImporter.startProcessing()
+        if state == .importing {
+            gameImporter.startProcessing()
+        }
     }
 
     var biosTask: Task<Void, Never>?
@@ -593,12 +612,16 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         biosTask?.cancel()
         biosTask = Task(priority: .utility) {
             for await newBIOSFiles in biosWatcher.newBIOSFilesSequence {
-                await processBIOSFiles(newBIOSFiles)
+                if state == .importing {
+                    await processBIOSFiles(newBIOSFiles)
+                }
             }
         }
     }
 
     private func processBIOSFiles(_ files: [URL]) async {
+        guard state == .importing else { return }
+        
         await files.asyncForEach { file in
             do {
                 try await PVEmulatorConfiguration.validateAndImportBIOS(at: file)

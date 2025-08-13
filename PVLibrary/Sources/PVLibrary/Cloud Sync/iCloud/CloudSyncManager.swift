@@ -383,7 +383,7 @@ public class CloudSyncManager {
 
         // Perform initial sync (this checks if needed internally unless forced)
         do {
-            let syncCount = await CloudKitInitialSyncer.shared.performInitialSync(forceSync: false)
+            let syncCount = await CloudKitInitialSyncer.shared?.performInitialSync(forceSync: false)
             DLOG("CloudKit initial sync completed - potentially uploaded \(syncCount) new records.")
         } catch {
             ELOG("CloudKit initial sync failed: \(error.localizedDescription)")
