@@ -224,25 +224,15 @@ struct ConsolesWrapperView: SwiftUI.View {
                 .toolbarColorScheme(SwiftUI.ColorScheme.dark, for: SwiftUI.ToolbarPlacement.tabBar)
                 .tag(console.identifier)
                 .tabItem {
-                    // Attempt to load image using ImageResource if available (iOS 17+ behavior mirrored)
-                    // Fallback to a generic gamecontroller icon if specific icon fails or for older OS
                     let iconName = console.iconName
-                    if #available(iOS 17.0, tvOS 17.0, *), !iconName.isEmpty {
-                        // Check if ImageResource can be initialized. This doesn't guarantee the image exists,
-                        // but it's a step closer to the new API. Actual image loading is by SwiftUI.
-                        Label(console.name, image: ImageResource(name: iconName, bundle: PVUIBase.BundleLoader.myBundle))
-                    } else if !iconName.isEmpty, UIImage(named: iconName, in: PVUIBase.BundleLoader.myBundle, compatibleWith: nil) != nil {
-                        // Fallback for older systems or if ImageResource isn't suitable, using direct UIImage check
+                    if let icon = rasterizedTabIcon(named: iconName) {
                         Label {
                             Text(console.name)
-                        } icon: {
-                            Image(uiImage: UIImage(named: iconName, in: PVUIBase.BundleLoader.myBundle, compatibleWith: nil)!)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                        }
+                        } icon: { icon }
                     } else {
                         // Generic fallback
                         Label(console.name, systemImage: "gamecontroller")
+                            .imageScale(.medium)
                     }
                 }
             }
@@ -317,14 +307,38 @@ struct ConsolesWrapperView: SwiftUI.View {
 
             consolesList
         }
+        .tabViewStyle(.page)
+        .indexViewStyle(.page(backgroundDisplayMode: .interactive))
         .onChange(of: delegate.selectedTab) { newValue in
             DLOG("Tab changed in view: \(newValue)")
         }
-        .tabViewStyle(.page)
-        .indexViewStyle(.page(backgroundDisplayMode: .interactive))
         .tint(themeManager.currentPalette.defaultTintColor.swiftUIColor)
         .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
         .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+    }
+
+    // MARK: - Icon Rasterization
+    private func rasterizedTabIcon(named name: String) -> Image? {
+        if name.isEmpty { return nil }
+        #if canImport(UIKit)
+        // Derive a conservative size based on tab bar metrics to prevent page style from upscaling
+        let defaultPointSize: CGFloat = 12
+        let font = UIFont.systemFont(ofSize: defaultPointSize, weight: .regular)
+        let metrics = UIFontMetrics(forTextStyle: .footnote)
+        let clamped = metrics.scaledValue(for: font.pointSize)
+        let side = max(36, min(42, clamped))
+        let targetSize = CGSize(width: side, height: side)
+        guard let source = UIImage(named: name, in: PVUIBase.BundleLoader.myBundle, compatibleWith: nil) else {
+            return nil
+        }
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+        let scaled = renderer.image { _ in
+            source.draw(in: CGRect(origin: .zero, size: targetSize))
+        }
+        return Image(uiImage: scaled).renderingMode(.template)
+        #else
+        return nil
+        #endif
     }
 }
 
