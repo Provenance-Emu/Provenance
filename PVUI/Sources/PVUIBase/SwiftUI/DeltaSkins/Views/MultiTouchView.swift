@@ -25,6 +25,8 @@ public struct MultiTouchView: UIViewRepresentable {
     let touchHandler: (MultiTouchPhase, [TouchPoint]) -> Void
     /// Rects to ignore for hit testing (touches pass through)
     var ignoredRects: [CGRect] = []
+    /// Rects to capture for hit testing (only these regions will receive touches if non-empty)
+    var capturedRects: [CGRect] = []
 
     public func makeUIView(context: Context) -> TouchDetectingView {
         let view = TouchDetectingView()
@@ -34,6 +36,7 @@ public struct MultiTouchView: UIViewRepresentable {
 #endif
         view.backgroundColor = .clear
         view.ignoredRects = ignoredRects
+        view.capturedRects = capturedRects
         DLOG("MultiTouchView created with frame: \(view.frame)")
         return view
     }
@@ -41,6 +44,7 @@ public struct MultiTouchView: UIViewRepresentable {
     public func updateUIView(_ uiView: TouchDetectingView, context: Context) {
         uiView.touchHandler = touchHandler
         uiView.ignoredRects = ignoredRects
+        uiView.capturedRects = capturedRects
     }
 
     /// The UIView that detects touches
@@ -62,12 +66,20 @@ public struct MultiTouchView: UIViewRepresentable {
         }
         var touchHandler: ((MultiTouchPhase, [TouchPoint]) -> Void)?
         var ignoredRects: [CGRect] = []
+        var capturedRects: [CGRect] = []
 
         /// Allow touches to pass through specific regions so underlying controls (e.g., thumbsticks) can receive gestures
         override public func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-            for rect in ignoredRects {
-                if rect.contains(point) { return false }
+            /// If capturedRects is set, only allow touches inside these rects
+            if !capturedRects.isEmpty {
+                let insideCaptured = capturedRects.contains(where: { $0.contains(point) })
+                if !insideCaptured { return false }
+                /// Even if inside captured, ignore explicit passthrough regions
+                for rect in ignoredRects { if rect.contains(point) { return false } }
+                return true
             }
+            /// Default behavior: ignore explicit passthrough regions
+            for rect in ignoredRects { if rect.contains(point) { return false } }
             return super.point(inside: point, with: event)
         }
 
