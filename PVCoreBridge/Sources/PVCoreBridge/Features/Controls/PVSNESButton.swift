@@ -24,7 +24,9 @@
     case count
 
     public init(_ value: String) {
-        switch value.lowercased() {
+        /// Accept common synonyms for SNES including L/R, L1/R1, and trigger/shoulder aliases
+        let s = value.lowercased()
+        switch s {
             case "up": self = .up
             case "down": self = .down
             case "left": self = .left
@@ -33,8 +35,8 @@
             case "b": self = .b
             case "x": self = .x
             case "y": self = .y
-            case "triggerLeft", "l": self = .triggerLeft
-            case "triggerRight", "r": self = .triggerRight
+            case "l", "l1", "lb", "leftshoulder", "shoulderleft", "triggerleft": self = .triggerLeft
+            case "r", "r1", "rb", "rightshoulder", "shoulderright", "triggerright": self = .triggerRight
             case "start": self = .start
             case "select": self = .select
             case "count": self = .count
