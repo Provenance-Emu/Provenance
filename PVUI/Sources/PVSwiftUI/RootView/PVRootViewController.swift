@@ -431,6 +431,8 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
                             await handleAppOpenEvents(currentAction)
                         }
                     }
+                    
+                    updatesController.resume()
 
                     // Break the loop since we only need to handle this once
                     break
