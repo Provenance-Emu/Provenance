@@ -508,7 +508,7 @@ private struct MetadataGrid: View {
 
                 MetadataCell(
                     title: "Game Type",
-                    value: skin.gameType.systemIdentifier?.fullName ?? skin.gameType.rawValue,
+                    value: skin.gameType.systemIdentifier?.fullName ?? (skin.gameType.deltaIdentifierString ?? skin.gameType.manicIdentifierString ?? String(describing: skin.gameType)),
                     systemImage: "gamecontroller",
                     lineLimit: 2
                 )

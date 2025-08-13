@@ -54,7 +54,7 @@ struct DeltaSkinFullscreenPreview: View {
         """
         Skin: \(skin.name)
         ID: \(skin.identifier)
-        Game Type: \(skin.gameType.rawValue)
+        Game Type: \(skin.gameType.systemIdentifier?.fullName ?? (skin.gameType.deltaIdentifierString ?? skin.gameType.manicIdentifierString ?? String(describing: skin.gameType)))
         Device: \(traits.device.rawValue)
         Display: \(traits.displayType.rawValue)
         Orientation: \(traits.orientation.rawValue)
@@ -233,7 +233,7 @@ private struct DeltaSkinInfoSheet: View {
                 SwiftUI.Section("Skin Information") {
                     LabeledContent("Name", value: skin.name)
                     LabeledContent("Identifier", value: skin.identifier)
-                    LabeledContent("Game Type", value: skin.gameType.rawValue)
+                    LabeledContent("Game Type", value: skin.gameType.systemIdentifier?.fullName ?? (skin.gameType.deltaIdentifierString ?? skin.gameType.manicIdentifierString ?? String(describing: skin.gameType)))
                 }
 
                 SwiftUI.Section("Supported Configurations") {

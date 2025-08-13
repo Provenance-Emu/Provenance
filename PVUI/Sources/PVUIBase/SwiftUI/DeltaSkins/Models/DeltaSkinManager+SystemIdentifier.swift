@@ -65,7 +65,7 @@ public extension DeltaSkinManager {
         // Find a skin that matches the identifier
         let matchingSkin = allSkins.first { skin in
             return skin.identifier.contains(skinIdentifier) ||
-            (skin.gameType.rawValue.lowercased() == skinIdentifier)
+            (skin.gameType.matchesIdentifier(skinIdentifier))
         }
 
         if let skin = matchingSkin {
@@ -94,7 +94,7 @@ public extension DeltaSkinManager {
         // Filter skins for this system and convert to [DeltaSkin]
         let filteredSkins = allSkins.filter { skin in
             // Check if the skin is for this system
-            return skin.gameType.rawValue.lowercased() == skinIdentifier ||
+            return skin.gameType.matchesIdentifier(skinIdentifier) ||
                    skin.identifier.contains(skinIdentifier)
         }
 
@@ -113,7 +113,7 @@ public extension DeltaSkinManager {
         // Filter skins for this system and convert to [DeltaSkin]
         let filteredSkins = allSkins.filter { skin in
             // Check if the skin is for this system
-            return (skin.gameType.rawValue.lowercased() == skinIdentifier) ||
+            return (skin.gameType.matchesIdentifier(skinIdentifier)) ||
                    skin.identifier.contains(skinIdentifier)
         }
 
@@ -124,7 +124,10 @@ public extension DeltaSkinManager {
 
     /// Get the default skin for a system
     public func defaultSkin(for systemIdentifier: String) -> (any DeltaSkinProtocol)? {
-        return loadedSkins.first { $0.gameType.rawValue == systemIdentifier }
+        return loadedSkins.first { skin in
+            let candidates = [skin.gameType.deltaIdentifierString, skin.gameType.manicIdentifierString].compactMap { $0?.lowercased() }
+            return candidates.contains(systemIdentifier.lowercased())
+        }
     }
 
     /// Get the default skin for a system
@@ -141,22 +144,26 @@ public extension DeltaSkinManager {
             return "snes"
         case .N64:
             return "n64"
-        case .GB:
-            return "gb"
-        case .GBC:
+        case .GBC, .GB:
             return "gbc"
         case .GBA:
             return "gba"
         case .Genesis:
-            return "genesis"
+            return "md"
         case .SegaCD:
-            return "segacd"
+            return "mcd"
         case .Sega32X:
             return "32x"
         case .MasterSystem:
-            return "mastersystem"
+            return "ms"
+        case .GameGear:
+            return "gg"
+        case .Saturn:
+            return "ss"
+        case .SG1000:
+            return "sg1000"
         case .PSX:
-            return "psx"
+            return "ps1"
         case .PSP:
             return "psp"
         case .DS:
@@ -172,19 +179,19 @@ public extension DeltaSkinManager {
         case .Lynx:
             return "lynx"
         case .PCE, .PCECD:
-            return "pcengine"
+            return "pce"
         case .SGFX:
             return "sgfx"
         case .WonderSwan, .WonderSwanColor:
-            return "wonderswan"
+            return "ws"
         case .NGP, .NGPC:
-            return "neogeopocket"
+            return "ngp"
         case .PokemonMini:
-            return "pokemonmini"
+            return "pm"
         case .VirtualBoy:
-            return "virtualboy"
+            return "vb"
         case .Dreamcast:
-            return "dreamcast"
+            return "dc"
         default:
             // For any other system, return a default identifier
             return systemIdentifier.rawValue.lowercased()

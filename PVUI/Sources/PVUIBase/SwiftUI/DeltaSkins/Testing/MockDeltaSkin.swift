@@ -126,7 +126,7 @@ public struct MockDeltaSkin: DeltaSkinProtocol {
         return [
             "name": name,
             "identifier": identifier,
-            "gameTypeIdentifier": gameType.rawValue,
+            "gameTypeIdentifier": (gameType.deltaIdentifierString ?? gameType.manicIdentifierString ?? String(describing: gameType)),
             "debug": isDebugEnabled,
             "representations": [
                 "iphone": [

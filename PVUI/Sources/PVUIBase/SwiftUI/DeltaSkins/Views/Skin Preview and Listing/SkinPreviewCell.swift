@@ -12,7 +12,7 @@ struct SkinPreviewCell: View {
     let skin: any DeltaSkinProtocol
     let manager: DeltaSkinManager
     var orientation: DeltaSkinOrientation = .portrait
-    
+
     @State private var showingDeleteAlert = false
     @State private var deleteError: Error?
     @State private var showingErrorAlert = false
@@ -44,7 +44,7 @@ struct SkinPreviewCell: View {
         if skin.supports(traits) {
             return traits
         }
-        
+
         // Try with edge to edge display type
         let edgeToEdgeTraits = DeltaSkinTraits(device: device, displayType: .edgeToEdge, orientation: orientation)
         if skin.supports(edgeToEdgeTraits) {
@@ -58,17 +58,17 @@ struct SkinPreviewCell: View {
         if skin.supports(altTraits) {
             return altTraits
         }
-        
+
         // Try alternate device with edge to edge
         let altEdgeToEdgeTraits = DeltaSkinTraits(device: altDevice, displayType: .edgeToEdge, orientation: orientation)
         if skin.supports(altEdgeToEdgeTraits) {
             return altEdgeToEdgeTraits
         }
-        
+
         // If the requested orientation isn't supported, try the opposite orientation
         let oppositeOrientation: DeltaSkinOrientation = orientation == .portrait ? .landscape : .portrait
         let oppositeTraits = DeltaSkinTraits(device: device, displayType: .standard, orientation: oppositeOrientation)
-        
+
         if skin.supports(oppositeTraits) {
             return oppositeTraits
         }
@@ -159,7 +159,7 @@ struct SkinPreviewCell: View {
                     .lineLimit(1)
 
                 HStack {
-                    Label(skin.gameType.systemIdentifier?.fullName ?? skin.gameType.rawValue,
+                    Label(skin.gameType.systemIdentifier?.fullName ?? (skin.gameType.deltaIdentifierString ?? skin.gameType.manicIdentifierString ?? String(describing: skin.gameType)),
                           systemImage: "gamecontroller")
                         .lineLimit(1)
 

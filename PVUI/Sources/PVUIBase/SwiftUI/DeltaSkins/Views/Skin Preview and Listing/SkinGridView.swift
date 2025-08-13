@@ -24,7 +24,7 @@ struct SkinGridView: View {
     // Use manager's loadedSkins directly
     private var groupedSkins: [(String, [any DeltaSkinProtocol])] {
         let grouped = Dictionary(grouping: manager.loadedSkins) { skin in
-            skin.gameType.systemIdentifier?.fullName ?? skin.gameType.rawValue
+            skin.gameType.systemIdentifier?.fullName ?? (skin.gameType.deltaIdentifierString ?? skin.gameType.manicIdentifierString ?? String(describing: skin.gameType))
         }
         return grouped.sorted { $0.key < $1.key }
     }
