@@ -172,7 +172,7 @@
 		<key>PVManufacturer</key>
 		<string>Nintendo</string>
 		<key>PVSystemName</key>
-		<string>Nintendo GameCube</string>
+		<string>GameCube</string>
 		<key>PVSystemShortName</key>
 		<string>GC</string>
 		<key>PVReleaseYear</key>
@@ -437,7 +437,7 @@
 		<key>PVManufacturer</key>
 		<string>Nintendo</string>
 		<key>PVSystemName</key>
-		<string>Nintendo Wii</string>
+		<string>Wii</string>
 		<key>PVSystemShortName</key>
 		<string>Wii</string>
 		<key>PVScreenType</key>
