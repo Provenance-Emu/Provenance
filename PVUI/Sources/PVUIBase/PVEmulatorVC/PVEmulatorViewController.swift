@@ -79,6 +79,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     var currentOrientation: SkinOrientation = .landscape
     #endif
 
+    // Rotation handling state
+    private var isHandlingRotation: Bool = false
+    private var pendingRotationWorkItem: DispatchWorkItem?
+
     // Keep track of whether we've positioned the GPU view
     static var hasPositionedGPUView = false
 
@@ -1652,132 +1656,116 @@ extension PVEmulatorViewController {
 
     // Handle rotation and skin changes
     func handleOrientationChange(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        ILOG("Handling orientation change to size: \(size)")
+        DLOG("Handling orientation change to size: \(size)")
 
         // Determine new orientation
         let newOrientation: SkinOrientation = size.width > size.height ? .landscape : .portrait
 
-        // Log core dimensions before orientation change
-        ILOG("""
-        Core dimensions before orientation change:
-        Buffer size: \(core.bufferSize)
-        Screen rect: \(core.screenRect)
-        New orientation: \(newOrientation)
-        """)
-        ILOG("New orientation: \(newOrientation)")
+        // Debounce and coalesce rapid orientation callbacks
+        pendingRotationWorkItem?.cancel()
+        let work = DispatchWorkItem { [weak self] in
+            guard let self = self else { return }
+            if self.isHandlingRotation { return }
+            self.isHandlingRotation = true
 
-        // Only reload skin if orientation changed
-        if newOrientation != currentOrientation {
-            ILOG("Orientation changed from \(currentOrientation) to \(newOrientation)")
+            // Log core dimensions before orientation change
+            DLOG("""
+            Core dimensions before orientation change:
+            Buffer size: \(self.core.bufferSize)
+            Screen rect: \(self.core.screenRect)
+            New orientation: \(newOrientation)
+            """)
 
-            // Update orientation first
-            let previousSkin = currentSkin // Capture before changing currentOrientation
-            currentOrientation = newOrientation
+            let previousSkin = self.currentSkin
+            let orientationChanged = (newOrientation != self.currentOrientation)
+            self.currentOrientation = newOrientation
 
-            coordinator.animate { _ in
-                if self.isDeltaSkinEnabled { // CHECK if skins are enabled
-                    // During animation phase, just reposition the game screen
-                    // but don't change the skin yet to avoid visual glitches
-                    if let skin = previousSkin {
-                        DLOG("Repositioning game screen during animation (DeltaSkin Enabled)")
-                        // Force recalculation during rotation to ensure proper positioning
-                        self.repositionGameScreen(for: skin, orientation: newOrientation, forceRecalculation: true)
-                    }
-                } else { // Skins are NOT enabled
-                    DLOG("Sizing GPU view during animation (DeltaSkin Disabled)")
-                    self.gpuViewController.view.frame = self.view.bounds
-                    self.ensureProperZOrder() // Ensure OSD/menu are on top
-                }
-            } completion: { _ in
-                // After rotation animation completes, apply the appropriate skin OR reset to default
-                Task {
-                    if self.isDeltaSkinEnabled { // CHECK if skins are enabled
-                        do {
-                            DLOG("Rotation animation completed, applying appropriate skin (DeltaSkin Enabled)")
-
-                            // Get the system and game IDs
-                            guard let systemId = self.game.system?.systemIdentifier else { return }
-                            let gameId = self.game.md5Hash ?? self.game.crc
-
-                            // Check if we have a different skin for this orientation
-                            // Use DeltaSkinManager which now handles session skins as well as preferences
-                            let skinIdentifier = DeltaSkinManager.shared.effectiveSkinIdentifier(
-                                for: systemId,
-                                gameId: gameId,
-                                orientation: newOrientation
-                            )
-
-                            DLOG("Effective skin identifier for new orientation: \(skinIdentifier ?? "nil")")
-                            DLOG("Current skin identifier: \(self.currentSkin?.identifier ?? "nil")")
-
-                            // Determine if we need to change the skin
-                            let needsSkinChange = skinIdentifier != nil &&
-                                (self.currentSkin == nil || skinIdentifier != self.currentSkin?.identifier)
-
-                            if needsSkinChange {
-                                DLOG("Need to change skin for new orientation")
-                                if let skinId = skinIdentifier,
-                                   let skin = try? await DeltaSkinManager.shared.skin(withIdentifier: skinId)
-                                {
-                                    DLOG("Applying new skin: \(skin.name)")
-                                    try await self.applySkin(skin)
-                                } else {
-                                    DLOG("Falling back to default skin")
-                                    try await self.resetToDefaultSkin()
-                                }
-                            } else if let current = self.currentSkin {
-                                DLOG("Using existing skin, skipping reload; performing relayout only")
-                                // Minimal work: recompute frames and relayout instead of reloading skin assets
-                                self.repositionGameScreen(for: current, orientation: newOrientation, forceRecalculation: true)
-                                if let skinView = self.skinContainerView {
-                                    skinView.frame = self.view.bounds
-                                    skinView.setNeedsLayout()
-                                    skinView.layoutIfNeeded()
-                                }
-                                // For RetroArch, re-apply internal render view frame to keep it visible
-                                if self.core.coreIdentifier?.contains("libretro") == true,
-                                   let frame = self.currentTargetFrame,
-                                   let viewport = (self.core.bridge as? EmulatorCoreViewportPositioning) {
-                                    viewport.setUseCustomRenderViewLayout(true)
-                                    let parent = (self.core.touchViewController ?? self).view
-                                    let rectInParent = self.view.convert(frame, to: parent)
-                                    viewport.applyRenderViewFrameInTouchView(rectInParent)
-                                }
-
-                            } else {
-                                DLOG("No skin at all, applying default")
-                                try await self.resetToDefaultSkin()
-                            }
-
-                            // Final check to ensure proper z-order after all changes
-                            self.ensureProperZOrder()
-                        } catch {
-                            DLOG("Error handling orientation change with DeltaSkin: \(error)")
-                        }
-                    } else { // Skins are NOT enabled
-                        DLOG("Rotation animation completed, resetting to default controls (DeltaSkin Disabled)")
-                        do {
-                            self.gpuViewController.view.frame = self.view.bounds // Ensure GPU view is correct size
-                            self.ensureProperZOrder() // Ensure OSD/menu are on top
-                        } catch {
-                            DLOG("Error resetting to default skin after orientation change: \(error)")
-                        }
-                    }
-                }
-            }
-        } else {
-            ILOG("Orientation didn't change, just repositioning")
-            // Even if orientation didn't change, we might need to reposition due to size changes
-            if isDeltaSkinEnabled { // CHECK if skins are enabled
-                if let skin = currentSkin {
-                    repositionGameScreen(for: skin, orientation: newOrientation)
-                }
-            } else { // Skins are NOT enabled
-                DLOG("Sizing GPU view, no orientation change (DeltaSkin Disabled)")
-                gpuViewController.view.frame = view.bounds
-                ensureProperZOrder() // Ensure OSD/menu are on top
+            self.coordinatorAnimateRotation(previousSkin: previousSkin, newOrientation: newOrientation) {
+                self.isHandlingRotation = false
             }
         }
+        pendingRotationWorkItem = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05, execute: work)
+    }
+
+    private func coordinatorAnimateRotation(previousSkin: DeltaSkinProtocol?, newOrientation: SkinOrientation, completion: @escaping () -> Void) {
+        let coordinator = self.transitionCoordinator
+        let animateBlock = {
+            if self.isDeltaSkinEnabled, let skin = previousSkin {
+                self.repositionGameScreen(for: skin, orientation: newOrientation, forceRecalculation: true)
+            } else {
+                self.gpuViewController.view.frame = self.view.bounds
+                self.ensureProperZOrder()
+            }
+        }
+
+        let applyBlock = { [weak self] in
+            guard let self = self else { completion(); return }
+            if self.isDeltaSkinEnabled {
+                Task { @MainActor in
+                    defer { completion() }
+                    // Determine effective skin id for the new orientation
+                    let systemId = self.game.system?.systemIdentifier
+                    let gameId = self.game.md5Hash ?? self.game.crc
+                    let effectiveId = systemId.flatMap {
+                        DeltaSkinManager.shared.effectiveSkinIdentifier(for: $0, gameId: gameId, orientation: newOrientation)
+                    }
+
+                    let currentId = self.currentSkin?.identifier
+                    DLOG("Effective skin id: \(effectiveId ?? "nil"), current: \(currentId ?? "nil")")
+
+                    // If effective id is nil but we have a current skin, keep current and relayout
+                    if effectiveId == nil, let current = self.currentSkin {
+                        self.minimalRelayout(with: current, orientation: newOrientation)
+                        return
+                    }
+
+                    // Reload only if the id differs
+                    if let eid = effectiveId, eid != currentId {
+                        if let skin = try? await DeltaSkinManager.shared.skin(withIdentifier: eid) {
+                            try? await self.applySkin(skin)
+                        } else {
+                            try? await self.resetToDefaultSkin()
+                        }
+                        self.ensureProperZOrder()
+                    } else if let current = self.currentSkin {
+                        self.minimalRelayout(with: current, orientation: newOrientation)
+                    } else {
+                        try? await self.resetToDefaultSkin()
+                    }
+                }
+            } else {
+                self.gpuViewController.view.frame = self.view.bounds
+                self.ensureProperZOrder()
+                completion()
+            }
+        }
+
+        if let coordinator = coordinator {
+            coordinator.animate(alongsideTransition: { _ in animateBlock() }, completion: { _ in applyBlock() })
+        } else {
+            animateBlock()
+            applyBlock()
+        }
+    }
+
+    private func minimalRelayout(with skin: DeltaSkinProtocol, orientation: SkinOrientation) {
+        self.repositionGameScreen(for: skin, orientation: orientation, forceRecalculation: true)
+        if let skinView = self.skinContainerView {
+            skinView.frame = self.view.bounds
+            skinView.setNeedsLayout()
+            skinView.layoutIfNeeded()
+        }
+        // For RetroArch, re-apply internal render view frame to keep it visible
+        if self.core.coreIdentifier?.contains("libretro") == true,
+           let frame = self.currentTargetFrame,
+           let viewport = (self.core.bridge as? EmulatorCoreViewportPositioning) {
+            viewport.setUseCustomRenderViewLayout(true)
+            let parent = (self.core.touchViewController ?? self).view
+            let rectInParent = self.view.convert(frame, to: parent)
+            viewport.applyRenderViewFrameInTouchView(rectInParent)
+        }
+        self.ensureProperZOrder()
     }
 }
 
