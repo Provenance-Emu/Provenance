@@ -104,7 +104,7 @@ public extension Defaults.Keys {
     static let hapticFeedback = Key<Bool>("hapticFeedback", default: true)
 
     static let buttonPressEffect = Key<ButtonPressEffect>("buttonPressEffect", default: .glow)
-    static let buttonSound = Key<ButtonSound>("buttonSound", default: .click)
+    static let buttonSound = Key<ButtonSound>("buttonSound", default: .none)
 }
 
 public enum ButtonPressEffect: String, Codable, Equatable, UserDefaultsRepresentable, Defaults.Serializable, CaseIterable {
