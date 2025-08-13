@@ -25,6 +25,7 @@ import PVSupport
 import PVSystems
 import RealmSwift
 import SwiftUI
+import Perception
 
 #if canImport(UIKit)
 import UIKit
@@ -2410,7 +2411,9 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     /// Updates the importer status message
     private func updateImporterStatus(_ message: String) {
-        importStatus = message
+        Task { @MainActor in
+            self.importStatus = message
+        }
         ILOG("Importer status: \(message)")
     }
 

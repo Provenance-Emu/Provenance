@@ -214,7 +214,7 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
         Task {
             do {
                 // Force initial sync by calling performInitialSync directly with forceSync: true
-                let syncCount = await CloudKitInitialSyncer.shared.performInitialSync(forceSync: true)
+                let syncCount = await CloudKitInitialSyncer.shared?.performInitialSync(forceSync: true)
                 DLOG("Force initial sync completed - uploaded \(syncCount) records")
                 
                 await MainActor.run {

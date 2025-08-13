@@ -207,7 +207,8 @@ final class RetroStatusControlViewModel: ObservableObject {
         // Subscribe to initial sync progress updates if available
         Task {
             do {
-                for await progress in await CloudKitInitialSyncer.shared.syncProgressPublisher.values {
+                guard let cloudKitInitialSyncer = CloudKitInitialSyncer.shared else { return }
+                for await progress in await cloudKitInitialSyncer.syncProgressPublisher.values {
                     await MainActor.run {
                         // Convert the initial sync progress to our ProgressInfo format
                         let total = progress.romsTotal + progress.saveStatesTotal + progress.biosTotal
