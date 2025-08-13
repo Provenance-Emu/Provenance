@@ -39,10 +39,10 @@ public typealias BaseViewController = GLKViewController /// Use GLKViewControlle
 @objcMembers
 public class PVGPUViewController: BaseViewController {
     var screenType: String = "crt"
-    
+
     /// Flag to indicate that custom positioning is being used
     public var useCustomPositioning: Bool = false
-    
+
     /// Custom frame to use when useCustomPositioning is true
     public var customFrame: CGRect = .zero
 
@@ -51,17 +51,22 @@ public class PVGPUViewController: BaseViewController {
     public var framesPerSecond: Double = 0
     public var timeSinceLastDraw: TimeInterval = 0
     #endif
-    
+
     #if os(iOS)
     public override var prefersHomeIndicatorAutoHidden: Bool {
 //        let shouldHideHomeIndicator: Bool = PVControllerManager.shared.hasControllers
 //        return shouldHideHomeIndicator
         return true
     }
-    
+
+    public override var preferredScreenEdgesDeferringSystemGestures: UIRectEdge {
+        return [.left, .right, .bottom]
+    }
+
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         setNeedsUpdateOfHomeIndicatorAutoHidden()
+        setNeedsUpdateOfScreenEdgesDeferringSystemGestures()
     }
     #endif
 }

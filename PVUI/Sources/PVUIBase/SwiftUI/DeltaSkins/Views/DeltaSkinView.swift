@@ -390,8 +390,9 @@ public struct DeltaSkinView: View {
                         if let skinImage = skinImage {
                             Image(uiImage: skinImage)
                                 .resizable()
-                                .aspectRatio(contentMode: .fit)
+                                .scaledToFill()
                                 .frame(width: layout.width, height: layout.height)
+                                .clipped()
                         } else {
                             // Loading placeholder
                             Rectangle()
@@ -421,6 +422,7 @@ public struct DeltaSkinView: View {
                                 size: geometry.size
                             )
                             .zIndex(2)
+                            .allowsHitTesting(false)
                         }
                         if showHitTestOverlay {
                             DeltaSkinHitTestOverlay(
@@ -429,6 +431,7 @@ public struct DeltaSkinView: View {
                                 size: geometry.size
                             )
                             .zIndex(2)
+                            .allowsHitTesting(false)
                         }
 
                         // Effects and thumbsticks inside the skin container
@@ -440,6 +443,7 @@ public struct DeltaSkinView: View {
                                 buttonId: button.buttonId
                             )
                             .zIndex(3)
+                            .allowsHitTesting(false)
                         }
 
                         // Thumbstick layer - should be on top
@@ -457,6 +461,7 @@ public struct DeltaSkinView: View {
                         ForEach(Array(touchLocations), id: \.self) { location in
                             DeltaSkinTouchIndicator(at: location)
                                 .zIndex(5)
+                                .allowsHitTesting(false)
                         }
                     }
                     .frame(width: layout.width, height: layout.height)
@@ -466,6 +471,8 @@ public struct DeltaSkinView: View {
                         DLOG("DeltaSkinView appeared")
                         logLayoutInfo(geometry: geometry, layout: layout)
                         loadSkinResources()
+                        // Preload thumbstick caps so they render immediately
+                        Task { await loadThumbsticks() }
                     }
                 }
 
@@ -517,73 +524,100 @@ public struct DeltaSkinView: View {
             }
             #if !os(tvOS)
             .overlay(
-                MultiTouchView { touchPhase, touches in
-                    DLOG("MultiTouchView callback: phase=\(touchPhase), touches=\(touches.count)")
+                MultiTouchView(
+                    touchHandler: { touchPhase, touches in
+                        DLOG("MultiTouchView callback: phase=\(touchPhase), touches=\(touches.count)")
 
-                    switch touchPhase {
-                    case .began, .moved:
-                        // Process each active touch
-                        for touch in touches {
-                            let location = touch.location
-                            DLOG("Processing touch: \(touch.id) at \(location)")
+                        switch touchPhase {
+                        case .began, .moved:
+                            // Process each active touch
+                            for touch in touches {
+                                let location = touch.location
+                                DLOG("Processing touch: \(touch.id) at \(location)")
 
-                            // Store this touch point for visualization
-                            touchLocations.insert(location)
+                                // Store this touch point for visualization
+                                touchLocations.insert(location)
 
-                            // Store the mapping between touch ID and location
-                            touchToButtonMap[touch.id] = nil
+                                // Store the mapping between touch ID and location
+                                touchToButtonMap[touch.id] = nil
 
-                            // Handle this touch location
-                            handleTouchAtLocation(location, in: geometry.size, touchId: touch.id)
-                        }
-                        DLOG("Current touch points: \(touchLocations.count)")
-
-                    case .ended, .cancelled:
-                        // Process ended touches
-                        for touch in touches {
-                            DLOG("Ending touch: \(touch.id)")
-
-                            // Remove this touch point from visualization
-                            touchLocations.remove(touch.location)
-
-                            // Release any button associated with this touch
-                            if let buttonId = touchToButtonMap[touch.id] {
-                                DLOG("Releasing button \(buttonId) for touch \(touch.id)")
-                                handleButtonRelease(buttonId)
-                                touchToButtonMap.removeValue(forKey: touch.id)
+                                // Handle this touch location
+                                handleTouchAtLocation(location, in: geometry.size, touchId: touch.id)
                             }
-                        }
+                            DLOG("Current touch points: \(touchLocations.count)")
 
-                        // If all touches are gone, ensure everything is reset
-                        if touchToButtonMap.isEmpty {
-                            DLOG("All touches ended, cleaning up")
+                        case .ended, .cancelled:
+                            // Process ended touches
+                            for touch in touches {
+                                DLOG("Ending touch: \(touch.id)")
 
-                            // Clear active buttons to ensure visual feedback is removed
-                            activeButtons.removeAll()
+                                // Remove this touch point from visualization
+                                touchLocations.remove(touch.location)
 
-                            // Reset state
-                            touchLocations.removeAll()
-                            currentlyPressedButton = nil
-
-                            // Double-check that all D-pad buttons are released
-                            for direction in ["up", "down", "left", "right"] {
-                                if pressedButtons.contains(direction) {
-                                    DLOG("Force releasing stuck D-pad button: \(direction)")
-                                    handleButtonRelease(direction)
+                                // Release any button associated with this touch
+                                if let buttonId = touchToButtonMap[touch.id] {
+                                    DLOG("Releasing button \(buttonId) for touch \(touch.id)")
+                                    handleButtonRelease(buttonId)
+                                    touchToButtonMap.removeValue(forKey: touch.id)
                                 }
                             }
 
-                            // Clear all pressed buttons as a final safety measure
-                            let allButtons = pressedButtons
-                            for buttonId in allButtons {
-                                handleButtonRelease(buttonId)
+                            // If all touches are gone, ensure everything is reset
+                            if touchToButtonMap.isEmpty {
+                                DLOG("All touches ended, cleaning up")
+
+                                // Clear active buttons to ensure visual feedback is removed
+                                activeButtons.removeAll()
+
+                                // Reset state
+                                touchLocations.removeAll()
+                                currentlyPressedButton = nil
+
+                                // Double-check that all D-pad buttons are released
+                                for direction in ["up", "down", "left", "right", "upleft", "upright", "downleft", "downright"] {
+                                    if pressedButtons.contains(direction) {
+                                        DLOG("Force releasing stuck D-pad button: \(direction)")
+                                        handleButtonRelease(direction)
+                                    }
+                                }
+
+                                // Clear all pressed buttons as a final safety measure
+                                let allButtons = pressedButtons
+                                for buttonId in allButtons {
+                                    handleButtonRelease(buttonId)
+                                }
                             }
                         }
                     }
-                }
+                    , ignoredRects: thumbstickIgnoredRects(in: geometry)
+                )
                 .frame(width: geometry.size.width, height: geometry.size.height)
             )
             #endif
+        }
+    }
+
+    /// Compute regions (in view coordinates) occupied by active thumbsticks.
+    /// Touches within these rects should pass through the MultiTouch overlay to reach the thumbstick drag gesture.
+    private func thumbstickIgnoredRects(in geometry: GeometryProxy) -> [CGRect] {
+        guard let mappingSize = skin.mappingSize(for: traits) else { return [] }
+        let scale = min(
+            geometry.size.width / mappingSize.width,
+            geometry.size.height / mappingSize.height
+        )
+        let scaledSkinWidth = mappingSize.width * scale
+        let scaledSkinHeight = mappingSize.height * scale
+        let xOffset = (geometry.size.width - scaledSkinWidth) / 2
+        let hasScreenPosition = skin.screens(for: traits) != nil
+        let yOffset: CGFloat = hasScreenPosition ? ((geometry.size.height - scaledSkinHeight) / 2) : (geometry.size.height - scaledSkinHeight)
+
+        return activeThumbsticks.map { ts in
+            CGRect(
+                x: ts.frame.minX * scale + xOffset,
+                y: yOffset + (ts.frame.minY * scale),
+                width: ts.frame.width * scale,
+                height: ts.frame.height * scale
+            ).insetBy(dx: -8, dy: -8)
         }
     }
 
@@ -863,83 +897,86 @@ public struct DeltaSkinView: View {
             let angle = atan2(relativeY, relativeX)
             let degrees = angle * 180 / .pi
 
-            // Determine horizontal component
+            // Determine vertical component
             if degrees > -135 && degrees < -45 {
-                // Up
                 activeDirections.insert("up")
             } else if degrees > 45 && degrees < 135 {
-                // Down
                 activeDirections.insert("down")
             }
 
-            // Determine vertical component
+            // Determine horizontal component
             if degrees > -45 && degrees < 45 {
-                // Right
                 activeDirections.insert("right")
             } else if degrees > 135 || degrees < -135 {
-                // Left
                 activeDirections.insert("left")
             }
 
-            // Handle diagonal directions - prevent opposing directions
+            // Resolve opposing directions
             if activeDirections.contains("up") && activeDirections.contains("down") {
-                // Can't press up and down simultaneously
                 if abs(relativeY) > abs(relativeX) {
-                    // Vertical movement is stronger
                     if relativeY < 0 {
                         activeDirections.remove("down")
                     } else {
                         activeDirections.remove("up")
                     }
                 } else {
-                    // Default to removing both in case of ambiguity
                     activeDirections.remove("up")
                     activeDirections.remove("down")
                 }
             }
 
             if activeDirections.contains("left") && activeDirections.contains("right") {
-                // Can't press left and right simultaneously
                 if abs(relativeX) > abs(relativeY) {
-                    // Horizontal movement is stronger
                     if relativeX < 0 {
                         activeDirections.remove("right")
                     } else {
                         activeDirections.remove("left")
                     }
                 } else {
-                    // Default to removing both in case of ambiguity
                     activeDirections.remove("left")
                     activeDirections.remove("right")
                 }
             }
         }
 
-        // Get currently pressed D-pad directions
-        let currentDirections: Set<String> = Set(["up", "down", "left", "right"].filter { pressedButtons.contains($0) })
+        // Resolve to diagonal token if both a vertical and horizontal are active
+        let hasUp = activeDirections.contains("up")
+        let hasDown = activeDirections.contains("down")
+        let hasLeft = activeDirections.contains("left")
+        let hasRight = activeDirections.contains("right")
 
-        // Release directions that are no longer active
-        for direction in currentDirections {
-            if !activeDirections.contains(direction) {
-                DLOG("Releasing D-pad direction: \(direction)")
-                handleButtonRelease(direction)
-            }
+        var resolvedDirections: Set<String> = []
+        if hasUp && hasLeft { resolvedDirections = ["upleft"] }
+        else if hasUp && hasRight { resolvedDirections = ["upright"] }
+        else if hasDown && hasLeft { resolvedDirections = ["downleft"] }
+        else if hasDown && hasRight { resolvedDirections = ["downright"] }
+        else if hasUp { resolvedDirections = ["up"] }
+        else if hasDown { resolvedDirections = ["down"] }
+        else if hasLeft { resolvedDirections = ["left"] }
+        else if hasRight { resolvedDirections = ["right"] }
+
+        // Get currently pressed D-pad directions (include diagonals)
+        let dpadTokens = ["up","down","left","right","upleft","upright","downleft","downright"]
+        let currentDirections: Set<String> = Set(dpadTokens.filter { pressedButtons.contains($0) })
+
+        // Release tokens not in resolved set
+        for direction in currentDirections.subtracting(resolvedDirections) {
+            DLOG("Releasing D-pad direction: \(direction)")
+            handleButtonRelease(direction)
         }
 
-        // Press new directions
-        for direction in activeDirections {
-            if !currentDirections.contains(direction) {
-                DLOG("Pressing D-pad direction: \(direction)")
-                handleButtonPress(direction)
-            }
+        // Press tokens in resolved set not already active
+        for direction in resolvedDirections.subtracting(currentDirections) {
+            DLOG("Pressing D-pad direction: \(direction)")
+            handleButtonPress(direction)
         }
 
         // Update the current button for legacy support
         currentlyPressedButton = button
 
         // Add visual feedback for active directions
-        if !activeDirections.isEmpty {
-            for direction in activeDirections {
+        if !resolvedDirections.isEmpty {
+            for direction in resolvedDirections {
                 let newButton = (
                     frame: button.frame,
                     mappingSize: mappingSize,
@@ -1519,7 +1556,7 @@ public struct DeltaSkinView: View {
         DLOG("Releasing all pressed buttons in DeltaSkinView: \(pressedButtons)")
 
         // Ensure all D-pad buttons are released
-        for direction in ["up", "down", "left", "right"] {
+        for direction in ["up", "down", "left", "right", "upleft", "upright", "downleft", "downright"] {
             if pressedButtons.contains(direction) {
                 handleButtonRelease(direction)
             }

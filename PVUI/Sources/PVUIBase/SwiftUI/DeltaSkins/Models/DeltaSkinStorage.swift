@@ -39,7 +39,12 @@ public final class DeltaSkinStorage: DeltaSkinStorageProtocol {
 
     public func url(forSkinIdentifier identifier: String) -> URL? {
         guard let directory = try? skinsDirectory() else { return nil }
-        let url = directory.appendingPathComponent("\(identifier).deltaskin")
-        return fileManager.fileExists(atPath: url.path) ? url : nil
+        let urls = [
+            directory.appendingPathComponent("\(identifier).deltaskin"),
+            directory.appendingPathComponent("\(identifier).manicskin")
+        ]
+        return urls.first {
+            fileManager.fileExists(atPath: $0.path)
+        }
     }
 }

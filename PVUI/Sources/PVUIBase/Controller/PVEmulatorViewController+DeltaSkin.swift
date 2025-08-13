@@ -219,9 +219,29 @@ extension PVEmulatorViewController {
 
                 // Pause emulation for 1 second after skin is loaded to ensure smooth startup
                 self?.pauseEmulationTemporarily()
+
+                // Re-apply RA viewport to ensure z-order and sizing after rebuild
+                if let self = self, self.core.coreIdentifier?.contains("libretro") == true,
+                   let frame = self.currentTargetFrame,
+                   let viewport = (self.core.bridge as? EmulatorCoreViewportPositioning) {
+                    viewport.setUseCustomRenderViewLayout(true)
+                    let parent = (self.core.touchViewController ?? self).view
+                    let rectInParent = self.view.convert(frame, to: parent)
+                    viewport.applyRenderViewFrameInTouchView(rectInParent)
+                    // Keep RA behind skin: retroarch bridge handles sendSubviewToBack internally after frame apply
+                }
             },
             onRefreshRequested: { [weak self] in
                 self?.refreshGPUView()
+                // Also re-apply RA viewport on explicit refresh
+                if let self = self, self.core.coreIdentifier?.contains("libretro") == true,
+                   let frame = self.currentTargetFrame,
+                   let viewport = (self.core.bridge as? EmulatorCoreViewportPositioning) {
+                    viewport.setUseCustomRenderViewLayout(true)
+                    let parent = (self.core.touchViewController ?? self).view
+                    let rectInParent = self.view.convert(frame, to: parent)
+                    viewport.applyRenderViewFrameInTouchView(rectInParent)
+                }
             }
         )
 
@@ -297,6 +317,16 @@ extension PVEmulatorViewController {
 
         // 1. Update the GPU view position based on the DeltaSkin screen information
         updateGPUViewPositionForDeltaSkin()
+
+        // 1b. If RA, re-apply its internal renderView frame to keep it visible after rotation
+        if core.coreIdentifier?.contains("libretro") == true,
+           let frame = currentTargetFrame,
+           let viewport = (core.bridge as? EmulatorCoreViewportPositioning) {
+            viewport.setUseCustomRenderViewLayout(true)
+            let parent = (core.touchViewController ?? self).view
+            let rectInParent = view.convert(frame, to: parent)
+            viewport.applyRenderViewFrameInTouchView(rectInParent)
+        }
 
         // 2. Then update Metal view (middle layer)
         if let metalVC = gpuViewController as? PVMetalViewController,

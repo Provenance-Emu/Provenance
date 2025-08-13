@@ -24,11 +24,11 @@ struct RetrowaveBackground: View {
             // Deep blue/purple background
             Color(red: 0.05, green: 0.0, blue: 0.15, opacity: 0.9)
                 .edgesIgnoringSafeArea(.all)
-            
+
             // Grid with perspective effect
             RetrowaveGrid()
                 .opacity(0.35)
-            
+
             // Sun glow effect
             RetrowaveSun()
                 .opacity(0.25)
@@ -45,7 +45,7 @@ struct RetrowaveGrid: View {
                 let height = geometry.size.height
                 let horizonY = height * 0.6
                 let centerX = width / 2
-                
+
                 // Horizontal grid lines
                 for i in 0..<20 {
                     let y = horizonY + CGFloat(i) * CGFloat(i) * 2.0
@@ -54,7 +54,7 @@ struct RetrowaveGrid: View {
                         path.addLine(to: CGPoint(x: width, y: y))
                     }
                 }
-                
+
                 // Vertical grid lines with perspective
                 for i in 0..<20 {
                     let spacing = width / 20
@@ -63,7 +63,7 @@ struct RetrowaveGrid: View {
                         path.move(to: CGPoint(x: x, y: horizonY))
                         path.addLine(to: CGPoint(x: width, y: height))
                     }
-                    
+
                     let x2 = centerX - spacing * CGFloat(i)
                     if x2 > 0 {
                         path.move(to: CGPoint(x: x2, y: horizonY))
@@ -83,7 +83,7 @@ struct RetrowaveSun: View {
             let width = geometry.size.width
             let height = geometry.size.height
             let horizonY = height * 0.6
-            
+
             Circle()
                 .fill(
                     RadialGradient(
@@ -108,13 +108,13 @@ struct NeonText: View {
     let text: String
     let color: Color
     let fontSize: CGFloat
-    
+
     init(_ text: String, color: Color = Color(red: 0.99, green: 0.11, blue: 0.55), fontSize: CGFloat = 14) {
         self.text = text
         self.color = color
         self.fontSize = fontSize
     }
-    
+
     var body: some View {
         Text(text)
             .font(.system(size: fontSize, weight: .bold))
@@ -126,14 +126,14 @@ struct NeonText: View {
 
 // MARK: - Default Controller
 extension EmulatorWithSkinView {
-    
+
     /// Create a default skin for a system
     /// - Parameter systemId: The system identifier
     /// - Returns: A default skin for the system
     public static func defaultSkin(for systemId: SystemIdentifier) -> DeltaSkinProtocol {
         return DefaultDeltaSkin(systemId: systemId)
     }
-    
+
     /// Default controller skin as a fallback
     internal func defaultControllerSkin() -> some View {
         // Use a local state variable for the joystick toggle since we can't mutate self
@@ -153,25 +153,25 @@ struct DefaultControllerSkinView: View {
     let inputHandler: DeltaSkinInputHandler
     let systemId: SystemIdentifier?
     let coreInstance: PVEmulatorCore
-    
+
     // Access theme manager for colors
     @ObservedObject private var themeManager = ThemeManager.shared
-    
+
     // State for control layout data
     @State private var controlLayout: [ControlLayoutEntry]? = nil
-    
+
     init(useJoystick: Bool, inputHandler: DeltaSkinInputHandler, systemId: SystemIdentifier?, coreInstance: PVEmulatorCore) {
         self._useJoystickInternal = State(initialValue: useJoystick)
         self.inputHandler = inputHandler
         self.systemId = systemId
         self.coreInstance = coreInstance
     }
-    
+
     var body: some View {
         // Load control layout data when view appears
         GeometryReader { geometry in
             let isLandscape = geometry.size.width > geometry.size.height
-            
+
             ZStack {
                 // Only show background in portrait mode with a gradual fade
                 if !isLandscape {
@@ -193,7 +193,7 @@ struct DefaultControllerSkinView: View {
                             )
                     }
                 }
-                
+
                 if isLandscape {
                     // Landscape layout - controls positioned at edges with safe area awareness
                     dynamicLandscapeControllerSkin
@@ -205,7 +205,7 @@ struct DefaultControllerSkinView: View {
                     // Portrait layout - controls at bottom
                     VStack {
                         Spacer() // Push the controller to the bottom of the screen
-                        
+
                         dynamicControllerSkin
                             .onAppear {
                                 loadControlLayoutData()
@@ -215,7 +215,7 @@ struct DefaultControllerSkinView: View {
             }
         }
     }
-    
+
     // Landscape-specific layout with controls positioned correctly
     private var landscapeControllerLayout: some View {
         GeometryReader { geometry in
@@ -230,17 +230,17 @@ struct DefaultControllerSkinView: View {
                             shoulderButton(label: "L3", color: .gray)
                         }
                         .padding(.leading, 20)
-                        
+
                         Spacer()
-                        
+
                         // Menu and Turbo buttons in center
                         HStack(spacing: 20) {
                             utilityButton(label: "MENU", color: .purple, systemImage: "line.3.horizontal")
                             utilityButton(label: "TURBO", color: .orange, systemImage: "forward.fill")
                         }
-                        
+
                         Spacer()
-                        
+
                         // Right shoulder buttons
                         HStack(spacing: 15) {
                             shoulderButton(label: "R3", color: .gray)
@@ -250,9 +250,9 @@ struct DefaultControllerSkinView: View {
                         .padding(.trailing, 20)
                     }
                     .padding(.top, 20)
-                    
+
                     Spacer()
-                    
+
                     // Start/Select buttons at the center bottom
                     HStack {
                         Spacer()
@@ -265,7 +265,7 @@ struct DefaultControllerSkinView: View {
                     }
                 }
             }
-            
+
             // D-pad on the left side
             VStack {
                 Spacer()
@@ -279,7 +279,7 @@ struct DefaultControllerSkinView: View {
             .frame(width: 150)
             .padding(.leading, 80)
             .position(x: 150, y: geometry.size.height / 2)
-            
+
             // Action buttons on the right side
             VStack {
                 Spacer()
@@ -288,7 +288,7 @@ struct DefaultControllerSkinView: View {
                         circleButton(label: "Y", color: .yellow)
                         circleButton(label: "X", color: .blue)
                     }
-                    
+
                     VStack(spacing: 25) {
                         circleButton(label: "B", color: .red)
                         circleButton(label: "A", color: .green)
@@ -300,17 +300,17 @@ struct DefaultControllerSkinView: View {
             .position(x: geometry.size.width - 150, y: geometry.size.height / 2)
         }
     }
-    
+
     // Get the screen size based on the core's aspect size
     private func getScreenSize() -> CGSize {
         // Use the core's aspectSize property
         return coreInstance.aspectSize
     }
-    
+
     // Load control layout data from the system
     private func loadControlLayoutData() {
         guard let systemId = systemId else { return }
-        
+
         // Access Realm to get the system
         do {
             let realm = try Realm()
@@ -321,7 +321,7 @@ struct DefaultControllerSkinView: View {
             print("Error accessing Realm: \(error)")
         }
     }
-    
+
     // Dynamic controller skin based on system's control layout
     private var dynamicControllerSkin: AnyView {
         // If we have control layout data, use it to build a dynamic skin
@@ -332,7 +332,7 @@ struct DefaultControllerSkinView: View {
             AnyView(buildGenericSkin())
         }
     }
-    
+
     // Dynamic landscape controller skin
     private var dynamicLandscapeControllerSkin: AnyView {
         // If we have control layout data, use it to build a dynamic skin for landscape
@@ -343,7 +343,7 @@ struct DefaultControllerSkinView: View {
             AnyView(landscapeControllerLayout)
         }
     }
-    
+
     // Generic skin when no control layout data is available
     @ViewBuilder
     private func buildGenericSkin() -> some View {
@@ -358,17 +358,17 @@ struct DefaultControllerSkinView: View {
                     }
                     shoulderButton(label: "L3", color: .gray)
                 }
-                
+
                 Spacer()
-                
+
                 // Menu and Turbo buttons - horizontally aligned
                 HStack(spacing: 15) {
                     utilityButton(label: "MENU", color: .purple, systemImage: "line.3.horizontal")
                     utilityButton(label: "TURBO", color: .orange, systemImage: "forward.fill")
                 }
-                
+
                 Spacer()
-                
+
                 // R buttons
                 VStack(spacing: 5) {
                     HStack(spacing: 5) {
@@ -379,9 +379,9 @@ struct DefaultControllerSkinView: View {
                 }
             }
             .padding(.horizontal)
-            
+
             Spacer().frame(height: 20) // Add space to raise D-pad position
-            
+
             HStack(spacing: 30) { // Increased spacing between D-pad and action buttons
                 // Left side - D-Pad or Joystick
                 VStack(spacing: 5) {
@@ -394,7 +394,7 @@ struct DefaultControllerSkinView: View {
                             Image(systemName: useJoystickInternal ? "circle.grid.cross" : "dpad")
                                 .font(.system(size: 14))
                                 .foregroundColor(.white)
-                            
+
                             Text(useJoystickInternal ? "JOYSTICK" : "D-PAD")
                                 .font(.system(size: 10, weight: .bold))
                                 .foregroundColor(.white)
@@ -409,7 +409,7 @@ struct DefaultControllerSkinView: View {
                     }, releaseAction: {
                         inputHandler.buttonReleased("toggle")
                     }))
-                    
+
                     // Show either D-pad or joystick based on toggle
                     if useJoystickInternal {
                         joystickView()
@@ -417,9 +417,9 @@ struct DefaultControllerSkinView: View {
                         dPadView()
                     }
                 }
-                
+
                 Spacer() // Push action buttons to the right
-                
+
                 // Right side - Action buttons (right-aligned) with increased spacing
                 VStack(spacing: 20) { // Increased vertical spacing
                     HStack(spacing: 30) { // Significantly increased horizontal spacing
@@ -427,7 +427,7 @@ struct DefaultControllerSkinView: View {
                             circleButton(label: "Y", color: .yellow)
                             circleButton(label: "X", color: .blue)
                         }
-                        
+
                         VStack(spacing: 25) { // Increased vertical spacing between B and A
                             circleButton(label: "B", color: .red)
                             circleButton(label: "A", color: .green)
@@ -435,9 +435,9 @@ struct DefaultControllerSkinView: View {
                     }
                 }
             }
-            
+
             Spacer().frame(height: 15) // Reduced space before Start/Select buttons to move them up
-            
+
             // Start/Select buttons centered at the bottom
             HStack {
                 Spacer() // Center the buttons
@@ -450,18 +450,18 @@ struct DefaultControllerSkinView: View {
         }
         .padding()
     }
-    
+
     /// Stylized D-Pad view with retrowave aesthetic
     /// Custom octagon shape with rounded corners
     private struct RoundedOctagon: Shape {
         var cornerRadius: CGFloat
-        
+
         func path(in rect: CGRect) -> Path {
             let width = rect.width
             let height = rect.height
             let radius = min(width, height) / 2
             let center = CGPoint(x: rect.midX, y: rect.midY)
-            
+
             // Calculate the eight points of the octagon
             var points: [CGPoint] = []
             for i in 0..<8 {
@@ -470,24 +470,24 @@ struct DefaultControllerSkinView: View {
                 let y = center.y + radius * sin(angle)
                 points.append(CGPoint(x: x, y: y))
             }
-            
+
             // Create a path with rounded corners
             var path = Path()
             for (index, point) in points.enumerated() {
                 let nextIndex = (index + 1) % points.count
                 let nextPoint = points[nextIndex]
-                
+
                 if index == 0 {
                     path.move(to: point)
                 }
-                
+
                 path.addLine(to: nextPoint)
             }
-            
+
             return path
         }
     }
-    
+
     // Track active D-pad directions and touch position
     private class DPadState: ObservableObject {
         @Published var up = false
@@ -496,7 +496,7 @@ struct DefaultControllerSkinView: View {
         @Published var right = false
         @Published var touchPosition: CGPoint = .zero
         @Published var isTouching = false
-        
+
         func reset() {
             up = false
             down = false
@@ -505,11 +505,11 @@ struct DefaultControllerSkinView: View {
             isTouching = false
         }
     }
-    
+
     private func dPadView() -> some View {
         // Create a state object to track active directions
         let dpadState = DPadState()
-        
+
         return ZStack {
             // D-pad background with neon glow using octagon shape
             RoundedOctagon(cornerRadius: 15)
@@ -524,20 +524,20 @@ struct DefaultControllerSkinView: View {
                     RoundedOctagon(cornerRadius: 15)
                         .stroke(Color.white, lineWidth: 1)
                 )
-            
+
             // D-pad cross indicator (plus shape)
             ZStack {
                 // Horizontal line
                 Rectangle()
                     .fill(Color.white.opacity(0.3))
                     .frame(width: 120, height: 2)
-                
+
                 // Vertical line
                 Rectangle()
                     .fill(Color.white.opacity(0.3))
                     .frame(width: 2, height: 120)
             }
-            
+
             // Directional indicators that highlight when active
             ZStack {
                 // Up indicator
@@ -546,49 +546,49 @@ struct DefaultControllerSkinView: View {
                     .foregroundColor(dpadState.up ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55)) : .white)
                     .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55), radius: dpadState.up ? 6 : 2)
                     .position(x: 90, y: 45)
-                
+
                 // Down indicator
                 Text("▼")
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(dpadState.down ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55)) : .white)
                     .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55), radius: dpadState.down ? 6 : 2)
                     .position(x: 90, y: 135)
-                
+
                 // Left indicator
                 Text("◀")
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(dpadState.left ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55)) : .white)
                     .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55), radius: dpadState.left ? 6 : 2)
                     .position(x: 45, y: 90)
-                
+
                 // Right indicator
                 Text("▶")
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(dpadState.right ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55)) : .white)
                     .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55), radius: dpadState.right ? 6 : 2)
                     .position(x: 135, y: 90)
-                
+
                 // Up-Left diagonal indicator
                 Text("⬉")
                     .font(.system(size: 20, weight: .bold))
                     .foregroundColor((dpadState.up && dpadState.left) ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55)) : .white)
                     .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55), radius: (dpadState.up && dpadState.left) ? 6 : 2)
                     .position(x: 45, y: 45)
-                
+
                 // Up-Right diagonal indicator
                 Text("⬈")
                     .font(.system(size: 20, weight: .bold))
                     .foregroundColor((dpadState.up && dpadState.right) ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55)) : .white)
                     .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55), radius: (dpadState.up && dpadState.right) ? 6 : 2)
                     .position(x: 135, y: 45)
-                
+
                 // Down-Left diagonal indicator
                 Text("⬋")
                     .font(.system(size: 20, weight: .bold))
                     .foregroundColor((dpadState.down && dpadState.left) ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55)) : .white)
                     .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55), radius: (dpadState.down && dpadState.left) ? 6 : 2)
                     .position(x: 45, y: 135)
-                
+
                 // Down-Right diagonal indicator
                 Text("⬊")
                     .font(.system(size: 20, weight: .bold))
@@ -596,7 +596,7 @@ struct DefaultControllerSkinView: View {
                     .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55), radius: (dpadState.down && dpadState.right) ? 6 : 2)
                     .position(x: 135, y: 135)
             }
-            
+
             // Touch indicator overlay - positioned above the gesture area but below the gesture recognizer
             if dpadState.isTouching {
                 DeltaSkinTouchIndicator(at: dpadState.touchPosition)
@@ -614,17 +614,17 @@ struct DefaultControllerSkinView: View {
                             let location = value.location
                             let dx = location.x - center.x
                             let dy = location.y - center.y
-                            
+
                             // Update touch position for the indicator
                             dpadState.touchPosition = location
                             dpadState.isTouching = true
-                            
+
                             // Determine which directions should be active
                             let newUp = dy < -20
                             let newDown = dy > 20
                             let newLeft = dx < -20
                             let newRight = dx > 20
-                            
+
                             // Handle direction changes
                             if newUp != dpadState.up {
                                 dpadState.up = newUp
@@ -634,7 +634,7 @@ struct DefaultControllerSkinView: View {
                                     inputHandler.buttonReleased("up")
                                 }
                             }
-                            
+
                             if newDown != dpadState.down {
                                 dpadState.down = newDown
                                 if newDown {
@@ -643,7 +643,7 @@ struct DefaultControllerSkinView: View {
                                     inputHandler.buttonReleased("down")
                                 }
                             }
-                            
+
                             if newLeft != dpadState.left {
                                 dpadState.left = newLeft
                                 if newLeft {
@@ -652,7 +652,7 @@ struct DefaultControllerSkinView: View {
                                     inputHandler.buttonReleased("left")
                                 }
                             }
-                            
+
                             if newRight != dpadState.right {
                                 dpadState.right = newRight
                                 if newRight {
@@ -683,7 +683,7 @@ struct DefaultControllerSkinView: View {
         }
         .frame(width: 150, height: 150)
     }
-    
+
     // State class for joystick
     private class JoystickState: ObservableObject {
         @Published var position: CGSize = .zero
@@ -691,105 +691,89 @@ struct DefaultControllerSkinView: View {
         @Published var isTouching = false
         @Published var isActive = false
     }
-    
-    /// Joystick view with touch tracking
-    private func joystickView() -> some View {
-        // State for joystick position
-        let joystickState = JoystickState()
-        
-        return GeometryReader { geometry in
-            ZStack {
-                // Joystick background
-                Circle()
-                    .fill(Color.black.opacity(0.7))
-                    .frame(width: geometry.size.width, height: geometry.size.width)
-                    .overlay(
-                        Circle()
-                            .stroke(themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.0, green: 0.8, blue: 0.9, opacity: 0.8), lineWidth: 2)
-                            .blur(radius: 4)
-                    )
-                    .overlay(
-                        Circle()
-                            .stroke(Color.white, lineWidth: 1)
-                    )
-                
-                // Joystick handle
-                Circle()
-                    .fill(joystickState.isActive ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.0, green: 0.8, blue: 0.9)) : Color.gray)
-                    .frame(width: geometry.size.width * 0.4, height: geometry.size.width * 0.4)
-                    .offset(x: joystickState.position.width, y: joystickState.position.height)
-                    .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.0, green: 0.8, blue: 0.9), radius: joystickState.isActive ? 10 : 0)
-                
-                // Touch indicator overlay
-                if joystickState.isTouching {
-                    DeltaSkinTouchIndicator(at: joystickState.touchPosition)
-                        .allowsHitTesting(false) // Prevent the indicator from interfering with touches
+
+    private struct DeltaJoystickView: View {
+        @StateObject private var joystickState = JoystickState()
+        let inputHandler: DeltaSkinInputHandler
+
+        var body: some View {
+            GeometryReader { geometry in
+                ZStack {
+                    // Joystick background
+                    Circle()
+                        .fill(Color.black.opacity(0.7))
+                        .frame(width: geometry.size.width, height: geometry.size.width)
+                        .overlay(
+                            Circle()
+                                .stroke(ThemeManager.shared.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.0, green: 0.8, blue: 0.9, opacity: 0.8), lineWidth: 2)
+                                .blur(radius: 4)
+                        )
+                        .overlay(
+                            Circle()
+                                .stroke(Color.white, lineWidth: 1)
+                        )
+
+                    // Joystick handle (top cap)
+                    Circle()
+                        .fill(joystickState.isActive ? (ThemeManager.shared.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.0, green: 0.8, blue: 0.9)) : Color.gray)
+                        .frame(width: geometry.size.width * 0.4, height: geometry.size.width * 0.4)
+                        .offset(x: joystickState.position.width, y: joystickState.position.height)
+                        .shadow(color: ThemeManager.shared.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.0, green: 0.8, blue: 0.9), radius: joystickState.isActive ? 10 : 0)
+
+                    // Touch indicator overlay
+                    if joystickState.isTouching {
+                        DeltaSkinTouchIndicator(at: joystickState.touchPosition)
+                            .allowsHitTesting(false)
+                    }
                 }
-                
-#if !os(tvOS)
-                // Gesture area
-                Color.clear
-                    .contentShape(Circle())
-                    .gesture(
-                        DragGesture(minimumDistance: 0)
-                            .onChanged { value in
-                                // Calculate position relative to center
-                                let center = CGPoint(x: geometry.size.width/2, y: geometry.size.width/2)
-                                let location = value.location
-                                
-                                // Update touch position for the indicator
-                                joystickState.touchPosition = location
-                                joystickState.isTouching = true
-                                joystickState.isActive = true
-                                
-                                // Calculate distance from center
-                                let deltaX = location.x - center.x
-                                let deltaY = location.y - center.y
-                                
-                                // Calculate distance and angle
-                                let distance = sqrt(deltaX*deltaX + deltaY*deltaY)
-                                
-                                // Limit the joystick movement to the maximum radius
-                                let maxDistance = geometry.size.width/2 * 0.6
-                                let limitedDistance = min(distance, maxDistance)
-                                let angle = atan2(deltaY, deltaX)
-                                
-                                // Calculate the limited position
-                                let limitedX = limitedDistance * cos(angle)
-                                let limitedY = limitedDistance * sin(angle)
-                                
-                                // Update joystick position
-                                joystickState.position = CGSize(width: limitedX, height: limitedY)
-                                
-                                // Normalize to -1.0 to 1.0 range
-                                let normalizedX = Float(min(max(deltaX / maxDistance, -1.0), 1.0))
-                                let normalizedY = Float(min(max(-deltaY / maxDistance, -1.0), 1.0)) // Invert Y for proper direction
-                                
-                                // Send to input handler
-                                inputHandler.analogStickMoved("leftAnalog", x: normalizedX, y: normalizedY)
+                .contentShape(Circle())
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { value in
+                            let center = CGPoint(x: geometry.size.width/2, y: geometry.size.width/2)
+                            let location = value.location
+
+                            joystickState.touchPosition = location
+                            joystickState.isTouching = true
+                            joystickState.isActive = true
+
+                            let deltaX = location.x - center.x
+                            let deltaY = location.y - center.y
+                            let distance = sqrt(deltaX*deltaX + deltaY*deltaY)
+                            let maxDistance = geometry.size.width/2 * 0.6
+                            let limitedDistance = min(distance, maxDistance)
+                            let angle = atan2(deltaY, deltaX)
+                            let limitedX = limitedDistance * cos(angle)
+                            let limitedY = limitedDistance * sin(angle)
+                            joystickState.position = CGSize(width: limitedX, height: limitedY)
+
+                            let normalizedX = Float(min(max(deltaX / maxDistance, -1.0), 1.0))
+                            let normalizedY = Float(min(max(-deltaY / maxDistance, -1.0), 1.0))
+                            inputHandler.analogStickMoved("leftAnalog", x: normalizedX, y: normalizedY)
+                        }
+                        .onEnded { _ in
+                            withAnimation(.spring()) {
+                                joystickState.position = .zero
+                                joystickState.isActive = false
+                                joystickState.isTouching = false
                             }
-                            .onEnded { _ in
-                                // Reset to center when released
-                                withAnimation(.spring()) {
-                                    joystickState.position = .zero
-                                    joystickState.isActive = false
-                                    joystickState.isTouching = false
-                                }
-                                inputHandler.analogStickMoved("leftAnalog", x: 0, y: 0)
-                            }
-                    )
-                #endif
+                            inputHandler.analogStickMoved("leftAnalog", x: 0, y: 0)
+                        }
+                )
             }
         }
-        .aspectRatio(1, contentMode: .fit)
-        .frame(width: 120, height: 120)
     }
-    
+
+    /// Joystick view with touch tracking
+    private func joystickView() -> some View {
+        DeltaJoystickView(inputHandler: inputHandler)
+    }
+
     /// Circle button view with retrowave styling
     private func circleButton(label: String, color: Color) -> some View {
         // Use theme's tint color if no specific color is provided
         let buttonColor = color == .gray ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? color) : color
-        
+
         return Button(action: {}) {
             ZStack {
                 // Outer glow
@@ -805,7 +789,7 @@ struct DefaultControllerSkinView: View {
                         Circle()
                             .stroke(Color.white, lineWidth: 1)
                     )
-                
+
                 // Button label with neon effect
                 NeonText(label, color: buttonColor, fontSize: 20)
             }
@@ -817,7 +801,7 @@ struct DefaultControllerSkinView: View {
             inputHandler.buttonReleased(label.lowercased())
         }))
     }
-    
+
     /// Pill-shaped button view with retrowave styling
     private func pillButton(label: String, color: Color) -> some View {
         Button(action: {}) {
@@ -835,7 +819,7 @@ struct DefaultControllerSkinView: View {
                         Capsule()
                             .stroke(Color.white, lineWidth: 1)
                     )
-                
+
                 // Button label with neon effect
                 NeonText(label, color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.99, green: 0.11, blue: 0.55), fontSize: 14)
             }
@@ -847,7 +831,7 @@ struct DefaultControllerSkinView: View {
             inputHandler.buttonReleased(label.lowercased())
         }))
     }
-    
+
     /// Shoulder button view with retrowave styling
     private func shoulderButton(label: String, color: Color) -> some View {
         Button(action: {}) {
@@ -865,7 +849,7 @@ struct DefaultControllerSkinView: View {
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(Color.white, lineWidth: 1)
                     )
-                
+
                 // Button label with neon effect
                 NeonText(label, color: themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.0, green: 0.8, blue: 0.9), fontSize: 14)
             }
@@ -877,10 +861,17 @@ struct DefaultControllerSkinView: View {
             inputHandler.buttonReleased(label.lowercased())
         }))
     }
-    
+
     /// Utility button with icon and retrowave styling
     private func utilityButton(label: String, color: Color, systemImage: String) -> some View {
-        Button(action: {}) {
+        Button(action: {
+            let id = label.lowercased()
+            if id == "menu" {
+                inputHandler.buttonPressed("menu")
+            } else if id == "turbo" {
+                inputHandler.buttonPressed("togglefastforward")
+            }
+        }) {
             ZStack {
                 // Outer glow
                 RoundedRectangle(cornerRadius: 10)
@@ -895,7 +886,7 @@ struct DefaultControllerSkinView: View {
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(Color.white, lineWidth: 1)
                     )
-                
+
                 // Button content with neon effect
                 VStack(spacing: 4) {
                     Image(systemName: systemImage)
@@ -903,19 +894,26 @@ struct DefaultControllerSkinView: View {
                         .foregroundColor(.white)
                         .shadow(color: color, radius: 2)
                         .shadow(color: color, radius: 4)
-                    
+
                     NeonText(label, color: color, fontSize: 12)
                 }
             }
             .frame(width: 60, height: 50)
         }
         .buttonStyle(GameButtonStyle(pressAction: {
-            inputHandler.buttonPressed(label.lowercased())
+            // For utility buttons, forward generic press events except TURBO and MENU (handled via toggle/action)
+            let id = label.lowercased()
+            if id != "turbo" && id != "menu" {
+                inputHandler.buttonPressed(id)
+            }
         }, releaseAction: {
-            inputHandler.buttonReleased(label.lowercased())
+            let id = label.lowercased()
+            if id != "turbo" && id != "menu" {
+                inputHandler.buttonReleased(id)
+            }
         }))
     }
-    
+
     // Build a dynamic landscape skin based on the system's control layout data
     @ViewBuilder
     private func buildDynamicLandscapeSkin(from layout: [ControlLayoutEntry]) -> some View {
@@ -925,7 +923,7 @@ struct DefaultControllerSkinView: View {
                 VStack {
                     // Add minimal spacing at the top
                     Spacer().frame(height: 5)
-                    
+
                     HStack {
                         // Left shoulder buttons
                         HStack(spacing: 15) {
@@ -940,17 +938,17 @@ struct DefaultControllerSkinView: View {
                             }
                         }
                         .padding(.leading, 20)
-                        
+
                         Spacer()
-                        
+
                         // Menu and Turbo buttons in center
                         HStack(spacing: 20) {
                             utilityButton(label: "MENU", color: .purple, systemImage: "line.3.horizontal")
                             utilityButton(label: "TURBO", color: .orange, systemImage: "forward.fill")
                         }
-                        
+
                         Spacer()
-                        
+
                         // Right shoulder buttons
                         HStack(spacing: 15) {
                             if hasControl(type: "PVRightAnalogButton", title: "R3", in: layout) {
@@ -966,13 +964,13 @@ struct DefaultControllerSkinView: View {
                         .padding(.trailing, 20)
                     }
                     .padding(.top, 20)
-                    
+
                     Spacer()
-                    
+
                     // Start/Select buttons at the center bottom
                     HStack {
                         Spacer()
-                        
+
                         HStack(spacing: 30) {
                             if hasControl(type: "PVSelectButton", in: layout) {
                                 pillButton(label: "SELECT", color: .black)
@@ -982,11 +980,11 @@ struct DefaultControllerSkinView: View {
                             }
                         }
                         .padding(.bottom, 20)
-                        
+
                         Spacer()
                     }
                 }
-                
+
                 // D-pad positioned at left edge
                 VStack {
                     Spacer()
@@ -1002,13 +1000,13 @@ struct DefaultControllerSkinView: View {
                     Spacer()
                 }
                 .frame(width: geometry.size.width, alignment: .leading)
-                
+
                 // Action buttons positioned at right edge using absolute positioning
                 VStack {
                     Spacer()
                     // Find all button groups in the layout
                     let buttonGroups = layout.filter { $0.PVControlType == "PVButtonGroup" }
-                    
+
                     if !buttonGroups.isEmpty {
                         // If we have button groups, display them in a VStack
                         VStack(spacing: 20) {
@@ -1026,7 +1024,7 @@ struct DefaultControllerSkinView: View {
                                 circleButton(label: "Y", color: .yellow)
                                 circleButton(label: "X", color: .blue)
                             }
-                            
+
                             VStack(spacing: 25) {
                                 circleButton(label: "B", color: .red)
                                 circleButton(label: "A", color: .green)
@@ -1040,7 +1038,7 @@ struct DefaultControllerSkinView: View {
             }
         }
     }
-    
+
     // Build a dynamic skin based on the system's control layout data
     @ViewBuilder
     private func buildDynamicSkin(from layout: [ControlLayoutEntry]) -> some View {
@@ -1065,17 +1063,17 @@ struct DefaultControllerSkinView: View {
                         shoulderButton(label: "L3", color: .gray)
                     }
                 }
-                
+
                 Spacer()
-                
+
                 // Menu and Turbo buttons - horizontally aligned
                 HStack(spacing: 15) {
                     utilityButton(label: "MENU", color: .purple, systemImage: "line.3.horizontal")
                     utilityButton(label: "TURBO", color: .orange, systemImage: "forward.fill")
                 }
-                
+
                 Spacer()
-                
+
                 // R buttons
                 VStack(spacing: 5) {
                     HStack(spacing: 5) {
@@ -1096,9 +1094,9 @@ struct DefaultControllerSkinView: View {
                 }
             }
             .padding(.horizontal)
-            
+
             Spacer().frame(height: 20) // Add space to raise D-pad position
-            
+
             HStack(spacing: 30) { // Increased spacing between D-pad and action buttons
                 // Left side - D-Pad or Joystick
                 VStack(spacing: 5) {
@@ -1111,7 +1109,7 @@ struct DefaultControllerSkinView: View {
                                 Image(systemName: useJoystickInternal ? "circle.grid.cross" : "dpad")
                                     .font(.system(size: 14))
                                     .foregroundColor(.white)
-                                
+
                                 Text(useJoystickInternal ? "JOYSTICK" : "D-PAD")
                                     .font(.system(size: 10, weight: .bold))
                                     .foregroundColor(.white)
@@ -1127,7 +1125,7 @@ struct DefaultControllerSkinView: View {
                             inputHandler.buttonReleased("up")
                         }))
                     }
-                    
+
                     // Show either D-pad or joystick based on toggle and system support
                     if useJoystickInternal && hasControl(type: "PVJoyPad", in: layout) {
                         joystickView()
@@ -1135,14 +1133,14 @@ struct DefaultControllerSkinView: View {
                         dPadView()
                     }
                 }
-                
+
                 Spacer() // Push action buttons to the right
-                
+
                 // Right side - Action buttons (right-aligned)
                 VStack(spacing: 10) {
                     // Find all button groups in the layout
                     let buttonGroups = layout.filter { $0.PVControlType == "PVButtonGroup" }
-                    
+
                     if !buttonGroups.isEmpty {
                         // If we have button groups, display them in a VStack
                         VStack(spacing: 20) {
@@ -1166,7 +1164,7 @@ struct DefaultControllerSkinView: View {
                                     circleButton(label: "Y", color: .yellow)
                                     circleButton(label: "X", color: .blue)
                                 }
-                                
+
                                 VStack(spacing: 25) { // Increased vertical spacing between B and A
                                     circleButton(label: "B", color: .red)
                                     circleButton(label: "A", color: .green)
@@ -1176,9 +1174,9 @@ struct DefaultControllerSkinView: View {
                     }
                 }
             }
-            
+
             Spacer().frame(height: 15) // Reduced space before Start/Select buttons to move them up
-            
+
             // Start/Select buttons centered at the bottom
             HStack {
                 Spacer() // Center the buttons
@@ -1195,7 +1193,7 @@ struct DefaultControllerSkinView: View {
         }
         .padding()
     }
-    
+
     // Create a button group based on the system's button layout
     private func createButtonGroup(from buttons: [ControlGroupButton]) -> some View {
         // Determine the best layout based on button count
@@ -1280,16 +1278,16 @@ struct DefaultControllerSkinView: View {
             )
         }
     }
-    
+
     // Create a button from a ControlGroupButton
     private func createButton(from button: ControlGroupButton) -> some View {
         let displayLabel = button.PVControlTitle ?? "Button"
-        
+
         // Map special PlayStation symbols to their proper identifiers
         let actionIdentifier = button.PVControlTitle ?? displayLabel
-        
+
         let color = colorFromString(button.PVControlTint) ?? .gray
-        
+
         return Button(action: {}) {
             ZStack {
                 // Outer glow
@@ -1305,7 +1303,7 @@ struct DefaultControllerSkinView: View {
                         Circle()
                             .stroke(Color.white, lineWidth: 1)
                     )
-                
+
                 // Button label with neon effect
                 NeonText(displayLabel, color: color, fontSize: 20)
             }
@@ -1322,15 +1320,15 @@ struct DefaultControllerSkinView: View {
         }))
         .id("button_\(actionIdentifier)_\(UUID().uuidString)") // Ensure each button has a unique ID
     }
-    
+
     // Custom button style that handles press and release events
     struct GameButtonStyle: ButtonStyle {
         let pressAction: () -> Void
         let releaseAction: () -> Void
-        
+
         @State private var isShowingOverlay = false
         @State private var touchPosition: CGPoint = CGPoint(x: 30, y: 30)
-        
+
         func makeBody(configuration: Configuration) -> some View {
             ZStack {
                 // The button itself
@@ -1361,33 +1359,33 @@ struct DefaultControllerSkinView: View {
             }
         }
     }
-    
+
     // Convert a color string to a Color
     private func colorFromString(_ colorString: String?) -> Color? {
         guard let hexString = colorString else { return nil }
-        
+
         // Remove the # prefix if present
         var hex = hexString
         if hex.hasPrefix("#") {
             hex = String(hex.dropFirst())
         }
-        
+
         // Parse the hex color
         var rgb: UInt64 = 0
         Scanner(string: hex).scanHexInt64(&rgb)
-        
+
         let r = Double((rgb & 0xFF0000) >> 16) / 255.0
         let g = Double((rgb & 0x00FF00) >> 8) / 255.0
         let b = Double(rgb & 0x0000FF) / 255.0
-        
+
         return Color(red: r, green: g, blue: b)
     }
-    
+
     // Check if a specific control type exists in the layout
     private func hasControl(type: String, in layout: [ControlLayoutEntry]) -> Bool {
         return layout.contains(where: { $0.PVControlType == type })
     }
-    
+
     // Check if a specific control type with a specific title exists in the layout
     private func hasControl(type: String, title: String, in layout: [ControlLayoutEntry]) -> Bool {
         return layout.contains(where: { $0.PVControlType == type && $0.PVControlTitle == title })

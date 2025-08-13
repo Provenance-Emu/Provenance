@@ -194,7 +194,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
                 // 1. A .deltaskin directory
                 // 2. A directory containing .deltaskin files/directories
                 if isDirectory {
-                    if location.lastPathComponent.hasSuffix(".deltaskin") {
+                    if location.lastPathComponent.hasSuffix(".deltaskin") || location.lastPathComponent.hasSuffix(".manicskin") {
                         // This is a .deltaskin directory, load it directly
                         if let skin = try? loadSkinFromURL(location) {
                             if !scannedSkins.contains(where: { $0.identifier == skin.identifier }) {
@@ -209,7 +209,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
                             options: [.skipsHiddenFiles]
                         )
 
-                        for url in contents where url.lastPathComponent.hasSuffix(".deltaskin") {
+                        for url in contents where (url.lastPathComponent.hasSuffix(".deltaskin") || url.lastPathComponent.hasSuffix(".manicskin")) {
                             if let skin = try? loadSkinFromURL(url) {
                                 if !scannedSkins.contains(where: { $0.identifier == skin.identifier }) {
                                     scannedSkins.append(skin)
@@ -234,7 +234,10 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
 
         // Log results
         DLOG("Scan complete. Available skins by type:")
-        let groupedSkins = Dictionary(grouping: scannedSkins) { $0.gameType.rawValue }
+        let groupedSkins = Dictionary(grouping: scannedSkins) { skin in
+            // Prefer Delta-style identifier for logging; fallback to Manic; else case name
+            skin.gameType.deltaIdentifierString ?? skin.gameType.manicIdentifierString ?? String(describing: skin.gameType)
+        }
         for (type, skins) in groupedSkins.sorted(by: { $0.key < $1.key }) {
             DLOG("- \(type): \(skins.count) skins")
             for skin in skins {
@@ -254,7 +257,8 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
 
         do {
             let skin = try DeltaSkin(fileURL: url)
-            ILOG("Successfully loaded skin: \(skin.name) (type: \(skin.gameType.rawValue))")
+            let typeLabel = skin.gameType.deltaIdentifierString ?? skin.gameType.manicIdentifierString ?? String(describing: skin.gameType)
+            ILOG("Successfully loaded skin: \(skin.name) (type: \(typeLabel))")
 
             DLOG("Current loaded skins count: \(loadedSkins.count)")
             Task { @MainActor in
@@ -277,7 +281,9 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
         var locations: [URL] = []
 
         // Add bundle skins from all bundles
-        let bundleSkins = Bundle.main.urls(forResourcesWithExtension: "deltaskin", subdirectory: nil) ?? []
+        let deltaSkins = Bundle.main.urls(forResourcesWithExtension: "deltaskin", subdirectory: nil) ?? []
+        let manicSkins = Bundle.main.urls(forResourcesWithExtension: "manicskin", subdirectory: nil) ?? []
+        let bundleSkins = deltaSkins + manicSkins
         locations.append(contentsOf: bundleSkins)
 
         if !bundleSkins.isEmpty {
@@ -289,7 +295,9 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
 
         // Add framework bundle skins
         let frameworkSkins = Bundle.allFrameworks.flatMap { bundle in
-            bundle.urls(forResourcesWithExtension: "deltaskin", subdirectory: nil) ?? []
+            let deltaSkins = bundle.urls(forResourcesWithExtension: "deltaskin", subdirectory: nil) ?? []
+            let manicSkins = bundle.urls(forResourcesWithExtension: "manicskin", subdirectory: nil) ?? []
+            return deltaSkins + manicSkins
         }
         if !frameworkSkins.isEmpty {
             DLOG("Found framework skins: \(frameworkSkins.map { $0.lastPathComponent })")

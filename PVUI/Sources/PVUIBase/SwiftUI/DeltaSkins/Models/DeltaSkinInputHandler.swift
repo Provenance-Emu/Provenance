@@ -62,14 +62,7 @@ public class DeltaSkinInputHandler: ObservableObject {
     func buttonPressed(_ buttonId: String) {
         DLOG("Delta Skin button pressed: \(buttonId)")
 
-        // Check if the emulator is not running or is paused
-        if let core = emulatorCore, (!core.isRunning || core.isEmulationPaused) {
-            DLOG("Emulator core is not running or is paused, attempting to unpause")
-            // Attempt to unpause the emulator
-            core.setPauseEmulation(false)
-        }
-
-        // Check for special commands
+        // Check for special commands first (do not auto-unpause here)
         let lowercasedId = buttonId.lowercased()
 
         // Handle menu button
@@ -108,26 +101,22 @@ public class DeltaSkinInputHandler: ObservableObject {
             return
         }
 
+        // For gameplay inputs: unpause if paused before forwarding
+        if let core = emulatorCore, (!core.isRunning || core.isEmulationPaused) {
+            DLOG("Auto-unpausing core for gameplay input: \(lowercasedId)")
+            core.setPauseEmulation(false)
+        }
+
         // Normalize the button ID
         let normalizedId = buttonId.lowercased()
         DLOG("Normalized button ID: \(normalizedId)")
 
-        // Log controller availability
-        if let _ = controllerVC {
-            DLOG("Controller VC is available")
-        } else {
-            DLOG("Controller VC is NOT available")
-        }
-
-        // Check if we should use the controller VC for this button
-        if let controller = controllerVC, isControllerButton(normalizedId) {
-            DLOG("Using controller for button press: \(normalizedId)")
-            // Use the controller view controller for D-pad, Start, and Select buttons
+        // Prefer core/system-specific mapping; it will fall back to controllerVC or generic if needed
+        if emulatorCore != nil {
+            forwardButtonPress(normalizedId, isPressed: true)
+        } else if let controller = controllerVC, isControllerButton(normalizedId) {
+            DLOG("No core available, forwarding to controller: \(normalizedId)")
             forwardButtonPressToController(normalizedId, isPressed: true)
-        } else if let core = emulatorCore {
-            DLOG("Using core for button press: \(normalizedId)")
-            // Forward to the core for other buttons
-            forwardButtonPress(buttonId, isPressed: true)
         } else {
             ELOG("No emulator core or controller available for button press: \(buttonId)")
         }
@@ -164,22 +153,12 @@ public class DeltaSkinInputHandler: ObservableObject {
         let normalizedId = buttonId.lowercased()
         DLOG("Normalized button ID for release: \(normalizedId)")
 
-        // Log controller availability
-        if let _ = controllerVC {
-            DLOG("Controller VC is available for release")
-        } else {
-            DLOG("Controller VC is NOT available for release")
-        }
-
-        // Check if we should use the controller VC for this button
-        if let controller = controllerVC, isControllerButton(normalizedId) {
-            DLOG("Using controller for button release: \(normalizedId)")
-            // Use the controller view controller for D-pad, Start, and Select buttons
+        // Prefer core/system-specific mapping; it will fall back to controllerVC or generic if needed
+        if emulatorCore != nil {
+            forwardButtonPress(normalizedId, isPressed: false)
+        } else if let controller = controllerVC, isControllerButton(normalizedId) {
+            DLOG("No core available, forwarding release to controller: \(normalizedId)")
             forwardButtonPressToController(normalizedId, isPressed: false)
-        } else if let core = emulatorCore {
-            DLOG("Using core for button release: \(normalizedId)")
-            // Forward to the core for other buttons
-            forwardButtonPress(buttonId, isPressed: false)
         } else {
             ELOG("No emulator core or controller available for button release: \(buttonId)")
         }
@@ -580,7 +559,7 @@ public class DeltaSkinInputHandler: ObservableObject {
                     DLOG("MATCH FOUND for \(label) -> \(buttonLabel)")
                     return button
                 }
-                
+
                 // First character match as fallback
                 if buttonLabel.first?.lowercased() == normalizedLabel.first?.lowercased() {
                     DLOG("FIRST CHAR MATCH FOUND for \(label) -> \(buttonLabel)")
@@ -604,7 +583,7 @@ public class DeltaSkinInputHandler: ObservableObject {
                             DLOG("MATCH FOUND in group for \(label) -> \(buttonLabel)")
                             return button
                         }
-                        
+
                         // First character match as fallback
                         if buttonLabel.first?.lowercased() == normalizedLabel.first?.lowercased() {
                             DLOG("FIRST CHAR MATCH FOUND in group for \(label) -> \(buttonLabel)")
@@ -721,6 +700,11 @@ public class DeltaSkinInputHandler: ObservableObject {
         // Normalize the button ID
         let normalizedId = buttonId.lowercased()
 
+        // Prefer direct system-specific responder path (works best for RA and native cores)
+        if trySystemResponderCall(normalizedId, isPressed: isPressed, core: core) {
+            return
+        }
+
         // Use system-specific button handling if we have a controller VC
         if let controllerVC = controllerVC {
             // Forward to the controller VC which knows how to map buttons for specific systems
@@ -780,8 +764,8 @@ public class DeltaSkinInputHandler: ObservableObject {
         // Get the button type for this system
         let buttonType = systemId.controllerType
 
-        // Create a button instance from the string
-        let button = buttonType.init(buttonId)
+        // Create a button instance from the normalized string
+        let button = buttonType.init(normalizeSkinButtonId(buttonId, for: systemId))
 
         // Get the raw value (button index)
         let buttonIndex = button.rawValue
@@ -797,6 +781,178 @@ public class DeltaSkinInputHandler: ObservableObject {
                 responder.controllerReleasedButton(buttonIndex, forPlayer: 0)
             }
         }
+    }
+
+    /// Try calling the typed system responder protocol if the core supports it
+    /// Returns true if the call was handled.
+    private func trySystemResponderCall(_ buttonId: String, isPressed: Bool, core: PVEmulatorCore) -> Bool {
+        guard let systemIdentifier = core.systemIdentifier, let systemId = SystemIdentifier(rawValue: systemIdentifier) else {
+            return false
+        }
+        let id = normalizeSkinButtonId(buttonId, for: systemId)
+
+        switch systemId {
+        case .PSX:
+            if let r = core as? PVPSXSystemResponderClient {
+                let b = PVPSXButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .Genesis, .SegaCD:
+            if let r = core as? PVGenesisSystemResponderClient {
+                let b = PVGenesisButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .SNES:
+            if let r = core as? PVSNESSystemResponderClient {
+                let b = PVSNESButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .NES, .FDS:
+            if let r = core as? PVNESSystemResponderClient {
+                let b = PVNESButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .GBA:
+            if let r = core as? PVGBASystemResponderClient {
+                let b = PVGBAButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .GB, .GBC:
+            if let r = core as? PVGBSystemResponderClient {
+                let b = PVGBButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .N64:
+            if let r = core as? PVN64SystemResponderClient {
+                let b = PVN64Button(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .PSP:
+            if let r = core as? PVPSPSystemResponderClient {
+                let b = PVPSPButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .PS2, .PS3:
+            if let r = core as? PVPS2SystemResponderClient {
+                let b = PVPS2Button(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .Saturn:
+            if let r = core as? PVSaturnSystemResponderClient {
+                let b = PVSaturnButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .Dreamcast:
+            if let r = core as? PVDreamcastSystemResponderClient {
+                let b = PVDreamcastButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .PCE:
+            if let r = core as? PVPCESystemResponderClient {
+                let b = PVPCEButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .PCECD:
+            if let r = core as? PVPCECDSystemResponderClient {
+                let b = PVPCECDButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .MasterSystem:
+            if let r = core as? PVMasterSystemSystemResponderClient {
+                let b = PVMasterSystemButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .GameGear:
+            if let r = core as? PVGenesisSystemResponderClient {
+                let b = PVGenesisButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .AtariJaguar, .AtariJaguarCD:
+            if let r = core as? PVJaguarSystemResponderClient {
+                let b = PVJaguarButton(id)
+                isPressed ? r.didPush(jaguarButton: b, forPlayer: 0) : r.didRelease(jaguarButton: b, forPlayer: 0)
+                return true
+            }
+        case .NeoGeo:
+            if let r = core as? PVNeoGeoSystemResponderClient {
+                let b = PVNeoGeoButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .MAME:
+            if let r = core as? PVMAMESystemResponderClient {
+                let b = PVMAMEButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .DS:
+            if let r = core as? PVDSSystemResponderClient {
+                let b = PVDSButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .WonderSwan, .WonderSwanColor:
+            if let r = core as? PVWonderSwanSystemResponderClient {
+                let b = PVWSButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        default:
+            break
+        }
+        return false
+    }
+
+    /// Normalize skin button IDs to canonical names per system
+    private func normalizeSkinButtonId(_ id: String, for system: SystemIdentifier) -> String {
+        let s = id.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Common
+        if ["run", "play"].contains(s) { return "start" }
+        if ["mode", "option"].contains(s) { return "select" }
+        if ["l", "lb", "lshoulder", "shoulderleft"].contains(s) { return "l1" }
+        if ["r", "rb", "rshoulder", "shoulderright"].contains(s) { return "r1" }
+        if ["lt", "ltrigger", "ltrigger1", "triggerleft"].contains(s) { return "l1" }
+        if ["rt", "rtrigger", "rtrigger1", "triggerright"].contains(s) { return "r1" }
+        if ["lt2", "l2", "ltrigger2", "trigger2", "lefttrigger2"].contains(s) { return "l2" }
+        if ["rt2", "r2", "rtrigger2", "trigger2", "righttrigger2"].contains(s) { return "r2" }
+        if ["l3", "stickpressleft", "lstick"].contains(s) { return "l3" }
+        if ["r3", "stickpressright", "rstick"].contains(s) { return "r3" }
+
+        switch system {
+        case .PSX, .PS2, .PSP:
+            // Prefer PS shape names/symbols; treat plain "x" as Cross by default
+            if ["△", "tri", "triangle"].contains(s) { return "triangle" }
+            if ["□", "sq", "square"].contains(s) { return "square" }
+            if ["○", "o", "circle"].contains(s) { return "circle" }
+            if ["✕", "cross", "x"].contains(s) { return "cross" }
+            // Accept common A/B/Y labels for PS layouts
+            if s == "a" { return "cross" }
+            if s == "b" { return "circle" }
+            if s == "y" { return "triangle" }
+        case .SNES:
+            if ["a", "b", "x", "y"].contains(s) { return s }
+        case .Genesis, .SegaCD:
+            if ["a", "b", "c", "x", "y", "z"].contains(s) { return s }
+        default:
+            break
+        }
+        return s
     }
 
     /// Fallback to generic mapping when system-specific mapping is not available

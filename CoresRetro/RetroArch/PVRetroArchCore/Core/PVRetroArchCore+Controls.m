@@ -181,7 +181,7 @@ void apple_gamecontroller_joypad_disconnect(GCController* controller);
                 [touch_controller.extendedGamepad.leftShoulder setValue:pressed ? 1.0 : 0.0];
                 break;
             case(KEY_LeftShift):
-                [touch_controller.extendedGamepad.leftTrigger 
+                [touch_controller.extendedGamepad.leftTrigger
                     setValue:pressed ? 1.0 : 0.0];
                 break;
             case(KEY_X):
@@ -200,14 +200,14 @@ void apple_gamecontroller_joypad_disconnect(GCController* controller);
                 [touch_controller.extendedGamepad.buttonOptions setValue:pressed ? 1.0 : 0.0];
                 break;
             case(KEY_I):
-                [touch_controller.extendedGamepad.buttonMenu 
+                [touch_controller.extendedGamepad.buttonMenu
                     setValue:pressed ? 1.0 : 0.0];
                 break;
             case(KEY_Slash):
                 [touch_controller.extendedGamepad.buttonOptions setValue:pressed ? 1.0 : 0.0];
                 break;
             case(KEY_RightShift):
-                [touch_controller.extendedGamepad.buttonMenu 
+                [touch_controller.extendedGamepad.buttonMenu
                     setValue:pressed ? 1.0 : 0.0];
                 break;
             default:
@@ -473,14 +473,15 @@ void apple_gamecontroller_joypad_disconnect(GCController* controller);
                 ILOG(@"Updating %s to %s\n", original_overlay.UTF8String, new_overlay.UTF8String);
             }
         }
-        settings->bools.input_overlay_enable=true;
+        // Host controls present; ensure RA overlay is disabled even if this flag is true
+        settings->bools.input_overlay_enable=false;
         should_update=true;
         [[NSNotificationCenter defaultCenter] postNotificationName:@"HideTouchControls" object:nil userInfo:nil];
     } else {
         should_update=true;
         settings->bools.input_overlay_enable=false;
         ILOG(@"Option: Don't Use Retro arch controller\n");
-        
+
         [[NSNotificationCenter defaultCenter] postNotificationName:@"ShowTouchControls" object:nil userInfo:nil];
     }
     if (should_update) {
@@ -561,7 +562,7 @@ static void apple_gamecontroller_joypad_poll_internal(GCController *controller)
 			 * LS + Menu => Select
 			 * LT + Menu => L3
 			 * RT + Menu => R3
-		 */
+			*/
 			if (gp.buttonMenu.pressed )
 			{
 				if (gp.leftShoulder.pressed)
@@ -708,7 +709,7 @@ static void apple_gamecontroller_joypad_register(GCExtendedGamepad * _Nullable _
 int auto_incr_id=0;
 static void mfi_joypad_autodetect_add(unsigned autoconf_pad)
 {
-    auto_incr_id+=1;    
+    auto_incr_id+=1;
 	input_autoconfigure_connect("mFi Controller", NULL, mfi_joypad.ident, autoconf_pad, auto_incr_id, 0);
 }
 
@@ -797,9 +798,9 @@ void apple_gamecontroller_joypad_disconnect(GCController* controller)
 void *apple_gamecontroller_joypad_init(void *data) {
     if (!apple_gamecontroller_available())
       return NULL;
-    
+
     mfiControllers=[[NSMutableArray alloc] initWithCapacity:MAX_MFI_CONTROLLERS];
-    
+
     for (int i=0; i < MAX_MFI_CONTROLLERS; i++) {
         mfi_controllers[i]=0;
     }
@@ -1813,4 +1814,3 @@ input_driver_t input_cocoa = {
    NULL                          /* vibrate */
 #endif
 };
-

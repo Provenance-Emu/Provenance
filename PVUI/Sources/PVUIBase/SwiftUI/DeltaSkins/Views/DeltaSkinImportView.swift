@@ -26,7 +26,7 @@ public struct DeltaSkinImportView: View {
                     .font(.title2)
                     .fontWeight(.bold)
 
-                Text("Import a .deltaskin file to use custom controller layouts for your games.")
+                Text("Import a .deltaskin/.manicskin file to use custom controller layouts for your games.")
                     .multilineTextAlignment(.center)
                     .foregroundColor(.secondary)
                     .padding(.horizontal)
@@ -37,7 +37,7 @@ public struct DeltaSkinImportView: View {
                 }) {
                     HStack {
                         Image(systemName: "square.and.arrow.down")
-                        Text("Select .deltaskin File")
+                        Text("Select .deltaskin/.manicskin File")
                     }
                     .frame(maxWidth: .infinity)
                     .padding()

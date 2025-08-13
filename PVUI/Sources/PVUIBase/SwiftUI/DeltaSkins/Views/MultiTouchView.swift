@@ -23,23 +23,26 @@ public struct TouchPoint: Identifiable {
 public struct MultiTouchView: UIViewRepresentable {
     /// The touch handler closure
     let touchHandler: (MultiTouchPhase, [TouchPoint]) -> Void
-    
+    /// Rects to ignore for hit testing (touches pass through)
+    var ignoredRects: [CGRect] = []
+
     public func makeUIView(context: Context) -> TouchDetectingView {
         let view = TouchDetectingView()
         view.touchHandler = touchHandler
 #if !os(tvOS)
         view.isMultipleTouchEnabled = true
-        #endif
-        // Use a slightly visible background for debugging
-        view.backgroundColor = UIColor(white: 0.5, alpha: 0.1)
+#endif
+        view.backgroundColor = .clear
+        view.ignoredRects = ignoredRects
         DLOG("MultiTouchView created with frame: \(view.frame)")
         return view
     }
-    
+
     public func updateUIView(_ uiView: TouchDetectingView, context: Context) {
         uiView.touchHandler = touchHandler
+        uiView.ignoredRects = ignoredRects
     }
-    
+
     /// The UIView that detects touches
     public class TouchDetectingView: UIView {
         override init(frame: CGRect) {
@@ -47,34 +50,43 @@ public struct MultiTouchView: UIViewRepresentable {
             DLOG("TouchDetectingView initialized with frame: \(frame)")
             self.isUserInteractionEnabled = true
         }
-        
+
         required init?(coder: NSCoder) {
             super.init(coder: coder)
             self.isUserInteractionEnabled = true
         }
-        
+
         override public func layoutSubviews() {
             super.layoutSubviews()
             DLOG("TouchDetectingView layout updated: \(self.frame)")
         }
         var touchHandler: ((MultiTouchPhase, [TouchPoint]) -> Void)?
-        
+        var ignoredRects: [CGRect] = []
+
+        /// Allow touches to pass through specific regions so underlying controls (e.g., thumbsticks) can receive gestures
+        override public func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+            for rect in ignoredRects {
+                if rect.contains(point) { return false }
+            }
+            return super.point(inside: point, with: event)
+        }
+
         override public func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
             handleTouches(.began, touches: touches)
         }
-        
+
         override public func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
             handleTouches(.moved, touches: touches)
         }
-        
+
         override public func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
             handleTouches(.ended, touches: touches)
         }
-        
+
         override public func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
             handleTouches(.cancelled, touches: touches)
         }
-        
+
         private func handleTouches(_ phase: MultiTouchPhase, touches: Set<UITouch>) {
             DLOG("""
                     ⚡️ MultiTouchView: \(phase) with \(touches.count) touches
@@ -82,13 +94,13 @@ public struct MultiTouchView: UIViewRepresentable {
                     ⚡️ isUserInteractionEnabled: \(self.isUserInteractionEnabled), alpha: \(self.alpha)
                     ⚡️ superview: \(String(describing: self.superview))
                 """)
-            
+
             let touchPoints = touches.map { touch in
                 let location = touch.location(in: self)
                 DLOG("⚡️ Touch at \(location) - phase: \(phase), force: \(touch.force)")
                 return TouchPoint(touch: touch, location: location)
             }
-            
+
             DLOG("⚡️ MultiTouchView: Handling \(touchPoints.count) touches in phase \(phase)")
             touchHandler?(phase, touchPoints)
         }

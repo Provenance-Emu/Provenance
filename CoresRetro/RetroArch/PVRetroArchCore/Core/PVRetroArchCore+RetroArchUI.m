@@ -857,6 +857,15 @@ void extract_bundles();
    [[UIApplication sharedApplication] setIdleTimerDisabled:true];
 #endif
 
+    // Disable RetroArch overlay when host UI provides controls (DeltaSkins or ControllerViewController)
+    BOOL hostProvidesControls = YES; // Provenance always supplies skin/controls in-app
+    if (hostProvidesControls) {
+        settings_t *settings = config_get_ptr();
+        settings->bools.input_overlay_enable = false;
+        command_event(CMD_EVENT_OVERLAY_INIT, NULL);
+        ILOG(@"[RA] Disabled RA overlay due to host-provided controls");
+    }
+
     [self setupWindow];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         [self setVolume];

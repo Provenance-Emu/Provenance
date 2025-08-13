@@ -60,7 +60,7 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
                 title: ENABLE_ANALOG_KEY,
                 description: nil,
                 requiresRestart: false),
-                  defaultValue: !isDOS)}()
+              defaultValue: !isDOS)}()
         subCoreOptions.append(analogKeyControllerOption)
 
         let subCoreGroup:CoreOption = .group(.init(title: "Core Options",
@@ -595,7 +595,7 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
             if (systemIdentifier.contains("psp")) {
                 self.gsPreference = 2; // Use Vulkan PSP
             }
-            
+
             let systemsWithBindNumlock: Set<String> = [
                 "snes", "nes", "dreamcast", "genesis",
                 "3do", "gb", "segacd", "gba", "psx",
@@ -820,4 +820,56 @@ func retrieveJSON<T: Decodable>(_ url: URL, as type: T.Type) -> T? {
         NSLog("No data at \(url.path)!")
     }
     return nil
+}
+
+extension PVRetroArchCoreBridge {
+    /// Set a RetroArch option by exact key or title/label match
+    @objc public static func setOption(keyOrTitle: String, valueIndex: Int) {
+        guard let optionsPtr: UnsafeMutablePointer<core_option_manager_t> = getOptions() else { return }
+        var idx: size_t = 0
+        // Try direct key match first
+        if core_option_manager_get_idx(optionsPtr, keyOrTitle, &idx) {
+            core_option_manager_set_val(optionsPtr, idx, size_t(valueIndex), true)
+            if let conf = optionsPtr.pointee.conf { core_option_manager_flush(optionsPtr, conf) }
+            return
+        }
+        // Otherwise, scan by title/labels
+        let opts = optionsPtr.pointee
+        for i in 0..<opts.size {
+            let opt = opts.opts.advanced(by: Int(i)).pointee
+            if let desc = opt.desc, String(cString: desc) == keyOrTitle {
+                core_option_manager_set_val(optionsPtr, size_t(i), size_t(valueIndex), true)
+                if let conf = optionsPtr.pointee.conf { core_option_manager_flush(optionsPtr, conf) }
+                return
+            }
+        }
+    }
+}
+
+extension PVRetroArchCoreCore {
+    /// Toggle PSX pad analog/digital depending on active core
+    /// Beetle PSX: keys "beetle_psx_pad1type" / HW variant key "beetle_psx_hw_pad1type"
+    /// Values typically: index 0 = digital, 1 = analog (DualShock)
+    /// PCSX ReARMed: key "pcsx_rearmed_pad1type" values 0/1 or similar
+    func togglePSXAnalogMode() {
+        guard let coreId = _bridge.coreIdentifier?.lowercased() else { return }
+        if coreId.contains("psx_hw") {
+            // Beetle PSX HW
+            PVRetroArchCoreBridge.setOption(keyOrTitle: "beetle_psx_hw_pad1type", valueIndex: 1 - currentRAOptionIndex("beetle_psx_hw_pad1type"))
+        } else if coreId.contains("psx") {
+            // Beetle PSX (software)
+            PVRetroArchCoreBridge.setOption(keyOrTitle: "beetle_psx_pad1type", valueIndex: 1 - currentRAOptionIndex("beetle_psx_pad1type"))
+        } else if coreId.contains("pcsx_rearmed") {
+            PVRetroArchCoreBridge.setOption(keyOrTitle: "pcsx_rearmed_pad1type", valueIndex: 1 - currentRAOptionIndex("pcsx_rearmed_pad1type"))
+        }
+    }
+
+    /// Read current index for a RetroArch option key; returns 0 if not found
+    private func currentRAOptionIndex(_ key: String) -> Int {
+        guard let optionsPtr: UnsafeMutablePointer<core_option_manager_t> = PVRetroArchCoreBridge.getOptions() else { return 0 }
+        var idx: size_t = 0
+        guard core_option_manager_get_idx(optionsPtr, key, &idx) else { return 0 }
+        let opt = optionsPtr.pointee.opts.advanced(by: Int(idx)).pointee
+        return Int(opt.index)
+    }
 }

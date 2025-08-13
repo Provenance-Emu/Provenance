@@ -160,28 +160,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     var menuGestureRecognizer: UITapGestureRecognizer?
 
     public var isShowingMenu: Bool = false {
-        willSet {
-            DispatchQueue.main.async { [self] in
-                if newValue == true {
-                    if !core.skipLayout {
-                        core.setPauseEmulation(true)
-//                        gpuViewController.isPaused = true
-                    }
-                }
-                core.setPauseEmulation(newValue)
-            }
-        }
         didSet {
             DispatchQueue.main.async { [self] in
-                if isShowingMenu == false {
-                    if !core.skipLayout {
-                        core.setPauseEmulation(false)
-//                        gpuViewController.isPaused = false
-                        if let metalVC = gpuViewController as? PVMetalViewController {
-//                            metalVC.safelyRefreshGPUView()
-                        }
-                    }
-                }
+                // Single authoritative pause toggle to avoid conflicting calls
                 core.setPauseEmulation(isShowingMenu)
             }
         }
@@ -209,11 +190,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             }
         }
         PVControllerManager.shared.hasLayout = false
-        if core.skipLayout {
-            gpuViewController.dismiss(animated: false)
-        } else if core.alwaysUseMetal && !core.alwaysUseGL {
-            gpuViewController = PVMetalViewController(withEmulatorCore: core)
-        }
+        // Ensure a single stable GPU VC instance; do not reassign or dismiss here
 
         staticSelf = self
 
@@ -323,7 +300,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         if let aView = controllerViewController?.view {
             view.addSubview(aView)
             ILOG("controllerViewController \(controllerViewController), core: \(core)")
-            core.touchViewController = controllerViewController
+            // For RetroArch with DeltaSkins, attach RA views to self to avoid hiding issues
+            if Defaults[.skinMode] != .off && (core.coreIdentifier?.contains("libretro") == true) {
+                core.touchViewController = self
+            } else {
+                core.touchViewController = controllerViewController
+            }
         }
         controllerViewController?.didMove(toParent: self)
     }
@@ -431,10 +413,17 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     }
 
     private func setupGPUView() {
-        // Add the GPU view to the view hierarchy
-        view.addSubview(gpuViewController.view)
-        gpuViewController.view.frame = view.bounds
-        gpuViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        // Attach gpuViewController as child once; update frame if already added
+        if gpuViewController.parent !== self {
+            addChild(gpuViewController)
+            gpuViewController.view.frame = view.bounds
+            gpuViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            view.addSubview(gpuViewController.view)
+            gpuViewController.didMove(toParent: self)
+        } else {
+            gpuViewController.view.frame = view.bounds
+            gpuViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        }
     }
 
     private func createEmulator() async throws {
@@ -546,22 +535,25 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             }
             #else
             if !core.skipLayout {
-                // Keep existing iOS behavior unchanged
-                gpuViewController.willMove(toParent: self)
-                addChild(gpuViewController)
-                // Note: This also initilaizes the view
-                // using viewIfLoaded will crash.
-                // Should probably imporve this?
-                if let aView = gpuViewController.view {
-                    aView.frame = view.bounds
-                    view.addSubview(aView)
+                if gpuViewController.parent !== self {
+                    gpuViewController.willMove(toParent: self)
+                    addChild(gpuViewController)
+                    if let aView = gpuViewController.view {
+                        aView.frame = view.bounds
+                        view.addSubview(aView)
+                    }
+                    gpuViewController.didMove(toParent: self)
+                } else {
+                    gpuViewController.view.frame = view.bounds
                 }
             }
-            gpuViewController.didMove(toParent: self)
             #endif
         }
         #if os(iOS) && !targetEnvironment(macCatalyst) && !os(macOS)
-        addControllerOverlay()
+        // Do not show legacy controller overlay when DeltaSkins are enabled
+        if Defaults[.skinMode] == .off || !core.supportsSkins {
+            addControllerOverlay()
+        }
         initMenuButton()
         #endif
 
@@ -782,7 +774,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         let downloadQueue = CloudKitDownloadQueue.shared
 
         // Check if already queued or downloading
-        let status = downloadQueue.downloadStatus(for: game.md5Hash ?? "")
+        let status = await downloadQueue.downloadStatus(for: game.md5Hash ?? "")
         switch status {
         case .downloading:
             ILOG("Game \(game.title) is already downloading")
@@ -950,14 +942,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
     }
 
-    #if os(iOS) // && !targetEnvironment(simulator)
-    // Check Controller Manager if it has a Controller connected and thus if Home Indicator should hide…
-    override public var prefersHomeIndicatorAutoHidden: Bool {
-//        let shouldHideHomeIndicator: Bool = PVControllerManager.shared.hasControllers
-//        return shouldHideHomeIndicator
-        return true
-    }
-    #endif
 
     override public func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -1286,7 +1270,7 @@ extension PVEmulatorViewController {
         )
 
         // Create a UIHostingController to host the SwiftUI view
-        let hostingController = UIHostingController(rootView: wrapperView)
+        let hostingController = SkinHostingController(rootView: wrapperView)
 
         // Add the hosting controller as a child
         await MainActor.run {
@@ -1295,6 +1279,11 @@ extension PVEmulatorViewController {
 
             // Keep track of the hosting controller
             skinHostingControllers.append(hostingController)
+            #if os(iOS)
+            setNeedsStatusBarAppearanceUpdate()
+            setNeedsUpdateOfHomeIndicatorAutoHidden()
+            setNeedsUpdateOfScreenEdgesDeferringSystemGestures()
+            #endif
         }
 
         // Get the view from the hosting controller
@@ -1731,14 +1720,25 @@ extension PVEmulatorViewController {
                                     DLOG("Falling back to default skin")
                                     try await self.resetToDefaultSkin()
                                 }
-                            } else if self.currentSkin != nil {
-                                DLOG("Using existing skin, need to reapply for proper layout")
-                                // We need to do a complete reapplication to ensure proper traits
-                                // This fixes issues with skins not drawing correctly after rotation
-                                try await self.applySkin(self.currentSkin!)
+                            } else if let current = self.currentSkin {
+                                DLOG("Using existing skin, skipping reload; performing relayout only")
+                                // Minimal work: recompute frames and relayout instead of reloading skin assets
+                                self.repositionGameScreen(for: current, orientation: newOrientation, forceRecalculation: true)
+                                if let skinView = self.skinContainerView {
+                                    skinView.frame = self.view.bounds
+                                    skinView.setNeedsLayout()
+                                    skinView.layoutIfNeeded()
+                                }
+                                // For RetroArch, re-apply internal render view frame to keep it visible
+                                if self.core.coreIdentifier?.contains("libretro") == true,
+                                   let frame = self.currentTargetFrame,
+                                   let viewport = (self.core.bridge as? EmulatorCoreViewportPositioning) {
+                                    viewport.setUseCustomRenderViewLayout(true)
+                                    let parent = (self.core.touchViewController ?? self).view
+                                    let rectInParent = self.view.convert(frame, to: parent)
+                                    viewport.applyRenderViewFrameInTouchView(rectInParent)
+                                }
 
-                                // Ensure the game screen is properly positioned with the correct z-order
-                                self.repositionGameScreen(for: self.currentSkin!, orientation: newOrientation, forceRecalculation: true)
                             } else {
                                 DLOG("No skin at all, applying default")
                                 try await self.resetToDefaultSkin()
