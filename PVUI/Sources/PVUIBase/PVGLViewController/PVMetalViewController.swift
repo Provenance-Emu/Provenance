@@ -2526,7 +2526,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return false
         }
 
-        DLOG("Copying buffer to texture: size=(\(finalWidth)x\(finalHeight)), offset=\(finalSourceOffset)")
+//        VLOG("Copying buffer to texture: size=(\(finalWidth)x\(finalHeight)), offset=\(finalSourceOffset)")
 
         // Copy from the upload buffer to the texture with safe dimensions
         blitEncoder.copy(
@@ -2543,7 +2543,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
 
 
-        //        DLOG("Updated texture from core: \(bufferSize.width)x\(bufferSize.height), bytes per pixel: \(bytesPerPixel)")
+        //        VLOG("Updated texture from core: \(bufferSize.width)x\(bufferSize.height), bytes per pixel: \(bytesPerPixel)")
         return true
     }
 
