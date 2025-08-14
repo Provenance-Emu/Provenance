@@ -376,7 +376,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case "gba": return .gba
         case "nes": return .nes
         case "snes": return .snes
-        case "n64": return .n64
+        case "n64", "gc", "gamecube": return .n64
         case "ds", "nds": return .nds
         case "vb", "virtualboy": return .virtualBoy
         case "3ds", "three3ds", "threeds": return .threeDS
@@ -391,7 +391,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case "ss", "saturn": return .saturn
 
         // Sony
-        case "psx", "ps1": return .psx
+        case "psx", "ps1", "ps2", "ps3": return .psx
         case "psp": return .psp
 
         // Other
@@ -496,7 +496,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case .GBA: self = .gba
         case .FDS, .NES: self = .nes
         case .SNES: self = .snes
-        case .N64: self = .n64
+        case .N64, .GameCube: self = .n64
         case .DS: self = .nds
         case .Genesis: self = .genesis
         case .GameGear: self = .gamegear
@@ -506,7 +506,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case .SegaCD: self = .segaCD
         case .Saturn: self = .saturn
         case .VirtualBoy: self = .virtualBoy
-        case .PSX: self = .psx
+        case .PSX, .PS2, .PS3: self = .psx
         case .PSP: self = .psp
         case ._3DS: self = .threeDS
         case .PokemonMini: self = .pokemonMini

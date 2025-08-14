@@ -162,7 +162,7 @@ public extension DeltaSkinManager {
             return "ss"
         case .SG1000:
             return "sg1000"
-        case .PSX:
+        case .PSX, .PS2, .PS3:
             return "ps1"
         case .PSP:
             return "psp"
