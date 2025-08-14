@@ -102,6 +102,15 @@ public struct DeltaSkin: DeltaSkinProtocol {
                             ciFilter?.setValue(CIColor(red: CGFloat(r), green: CGFloat(g), blue: CGFloat(b)), forKey: key)
                         case .rectangle(let x, let y, let width, let height):
                             ciFilter?.setValue(CIVector(x: CGFloat(x), y: CGFloat(y), z: CGFloat(width), w: CGFloat(height)), forKey: key)
+                        case .affineTransform(let sx, let sy, let tx, let ty, let rot):
+                            // Build a CGAffineTransform: T = Translate * Rotate * Scale
+                            var t = CGAffineTransform.identity
+                            if let sx = sx, let sy = sy {
+                                t = t.scaledBy(x: CGFloat(sx), y: CGFloat(sy))
+                            }
+                            if let rot = rot { t = t.rotated(by: CGFloat(rot)) }
+                            if let tx = tx, let ty = ty { t = t.translatedBy(x: CGFloat(tx), y: CGFloat(ty)) }
+                            ciFilter?.setValue(NSValue(cgAffineTransform: t), forKey: key)
                         }
                     }
                     return ciFilter
