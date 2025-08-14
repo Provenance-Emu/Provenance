@@ -17,12 +17,15 @@
 
 ## Skins
 
+- [ ] Joysticks don't move
+- [ ] N64 DPAD not working
+- [ ] PSP skins not working
+- [ ] "Scalable" verticle skins still not rendering correctly
+- [ ] GLES Retroarch cores not working (N64, PSP)
 - [X] save and quit in the new pause menu
 - [X] uikit settings needs useUIKit replaced with new selections
 - [X] homeview settings bar size and padding
-- [ ] RetroArch cores don't work with skins
-- [ ] fix deltaskin showing up on rotate when off
-- [ ] fix deltaskin joysticks
+- [X] RetroArch cores don't work with skins
 
 ## Other
 
