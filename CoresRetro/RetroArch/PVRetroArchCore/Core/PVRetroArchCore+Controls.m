@@ -1410,35 +1410,43 @@ static void cocoa_input_poll(void *data)
    cocoa_input_data_t *apple    = (cocoa_input_data_t*)data;
 #ifndef IOS
    float   backing_scale_factor = cocoa_screen_get_backing_scale_factor();
+#else
+   int     backing_scale_factor = 1;
 #endif
 
-   if (!apple)
-      return;
+    if (!apple)
+       return;
 
-   for (i = 0; i < apple->touch_count; i++)
-   {
-      struct video_viewport vp;
+    apple->mouse_rel_x = apple->window_pos_x - apple->mouse_x_last;
+    apple->mouse_x_last = apple->window_pos_x;
 
-      vp.x                        = 0;
-      vp.y                        = 0;
-      vp.width                    = 0;
-      vp.height                   = 0;
-      vp.full_width               = 0;
-      vp.full_height              = 0;
+    apple->mouse_rel_y = apple->window_pos_y - apple->mouse_y_last;
+    apple->mouse_y_last = apple->window_pos_y;
 
-#ifndef IOS
-      apple->touches[i].screen_x *= backing_scale_factor;
-      apple->touches[i].screen_y *= backing_scale_factor;
-#endif
-      video_driver_translate_coord_viewport_wrap(
-            &vp,
-            apple->touches[i].screen_x,
-            apple->touches[i].screen_y,
-            &apple->touches[i].fixed_x,
-            &apple->touches[i].fixed_y,
-            &apple->touches[i].full_x,
-            &apple->touches[i].full_y);
-   }
+    for (i = 0; i < apple->touch_count || i == 0; i++)
+    {
+       struct video_viewport vp;
+
+       memset(&vp, 0, sizeof(vp));
+
+       video_driver_translate_coord_viewport_confined_wrap(
+             &vp,
+             apple->touches[i].screen_x * backing_scale_factor,
+             apple->touches[i].screen_y * backing_scale_factor,
+             &apple->touches[i].confined_x,
+             &apple->touches[i].confined_y,
+             &apple->touches[i].full_x,
+             &apple->touches[i].full_y);
+
+       video_driver_translate_coord_viewport_wrap(
+             &vp,
+             apple->touches[i].screen_x * backing_scale_factor,
+             apple->touches[i].screen_y * backing_scale_factor,
+             &apple->touches[i].fixed_x,
+             &apple->touches[i].fixed_y,
+             &apple->touches[i].full_x,
+             &apple->touches[i].full_y);
+    }
 }
 
 static int16_t cocoa_input_state(
@@ -1791,6 +1799,16 @@ static void cocoa_input_grab_mouse(void *data, bool state)
    cocoa_show_mouse(nil, !state);
    apple->mouse_grabbed = state;
 }
+#elif TARGET_OS_IOS
+static void cocoa_input_grab_mouse(void *data, bool state)
+{
+   cocoa_input_data_t *apple = (cocoa_input_data_t*)data;
+
+   apple->mouse_grabbed = state;
+
+   if (@available(iOS 14, *))
+      [[CocoaView get] setNeedsUpdateOfPrefersPointerLocked];
+}
 #endif
 
 input_driver_t input_cocoa = {
@@ -1802,7 +1820,7 @@ input_driver_t input_cocoa = {
    cocoa_input_get_sensor_input,
    cocoa_input_get_capabilities,
    "cocoa",
-#ifdef OSX
+#if defined(OSX) || TARGET_OS_IOS
    cocoa_input_grab_mouse,
 #else
    NULL,                         /* grab_mouse */
