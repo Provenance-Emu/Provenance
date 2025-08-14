@@ -217,6 +217,7 @@ public enum FilterParameter: Codable, Hashable, Equatable {
     case vector(x: Float, y: Float)
     case color(r: Float, g: Float, b: Float)
     case rectangle(x: Float, y: Float, width: Float, height: Float)
+    case affineTransform(scaleX: Float?, scaleY: Float?, translateX: Float?, translateY: Float?, rotation: Float?)
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -224,18 +225,25 @@ public enum FilterParameter: Codable, Hashable, Equatable {
         if let number = try? container.decode(Float.self) {
             self = .number(number)
         } else if let dict = try? container.decode([String: NumericValue].self) {
-            if dict.keys.contains("x") && dict.keys.contains("y") {
-                self = .vector(x: dict["x"]!.value, y: dict["y"]!.value)
-            } else if dict.keys.contains("r") && dict.keys.contains("g") && dict.keys.contains("b") {
-                self = .color(r: dict["r"]!.value, g: dict["g"]!.value, b: dict["b"]!.value)
-            } else if dict.keys.contains("x") && dict.keys.contains("y") &&
-                      dict.keys.contains("width") && dict.keys.contains("height") {
+            if dict.keys.contains("x") && dict.keys.contains("y") &&
+               dict.keys.contains("width") && dict.keys.contains("height") {
                 self = .rectangle(
                     x: dict["x"]!.value,
                     y: dict["y"]!.value,
                     width: dict["width"]!.value,
                     height: dict["height"]!.value
                 )
+            } else if dict.keys.contains("x") && dict.keys.contains("y") {
+                self = .vector(x: dict["x"]!.value, y: dict["y"]!.value)
+            } else if dict.keys.contains("r") && dict.keys.contains("g") && dict.keys.contains("b") {
+                self = .color(r: dict["r"]!.value, g: dict["g"]!.value, b: dict["b"]!.value)
+            } else if dict.keys.contains("scaleX") || dict.keys.contains("scaleY") || dict.keys.contains("translateX") || dict.keys.contains("translateY") || dict.keys.contains("rotation") {
+                let sx = dict["scaleX"]?.value
+                let sy = dict["scaleY"]?.value
+                let tx = dict["translateX"]?.value
+                let ty = dict["translateY"]?.value
+                let rot = dict["rotation"]?.value
+                self = .affineTransform(scaleX: sx, scaleY: sy, translateX: tx, translateY: ty, rotation: rot)
             } else {
                 throw DecodingError.dataCorrupted(
                     DecodingError.Context(
@@ -269,6 +277,14 @@ public enum FilterParameter: Codable, Hashable, Equatable {
                 "x": x, "y": y,
                 "width": width, "height": height
             ])
+        case .affineTransform(let sx, let sy, let tx, let ty, let rot):
+            var dict: [String: Float] = [:]
+            if let sx = sx { dict["scaleX"] = sx }
+            if let sy = sy { dict["scaleY"] = sy }
+            if let tx = tx { dict["translateX"] = tx }
+            if let ty = ty { dict["translateY"] = ty }
+            if let rot = rot { dict["rotation"] = rot }
+            try container.encode(dict)
         }
     }
 }
